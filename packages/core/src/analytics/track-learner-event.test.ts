@@ -4,19 +4,9 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { trackServerEvent } from "./server";
 import { trackLearnerEvents } from "./track-learner-event";
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("./server", () => ({ trackServerEvent: vi.fn() }));
-
-// Request headers only exist inside a Next.js request; outside one, reading them fails like this.
-vi.mock("next/headers", () => ({
-  headers: vi.fn(async () => {
-    throw new Error("`headers` was called outside a request scope");
-  }),
-}));
 
 const APPLE_APP_USER_AGENT = "Zoonk/42 CFNetwork/3826.500.111 Darwin/25.0.0";
 
@@ -43,6 +33,11 @@ async function setup() {
 }
 
 describe(trackLearnerEvents, () => {
+  // Request headers only exist inside a Next.js request; outside one, reading them fails like this.
+  beforeEach(() => {
+    vi.mocked(headers).mockRejectedValue(new Error("`headers` was called outside a request scope"));
+  });
+
   it("sends each event with the active goal's kind, phase and language", async () => {
     const { user } = await setup();
 

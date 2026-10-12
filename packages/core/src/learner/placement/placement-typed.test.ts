@@ -11,16 +11,6 @@ import { getUsageRule } from "../../entitlements/limits";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
-import type * as Grader from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-
-/**
- * The grader's model is an external boundary. The real grader runs, so code settles accepted
- * answers as in production; a test that needs the model's verdict gives it once.
- */
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", async (importOriginal) => {
-  const actual = await importOriginal<typeof Grader>();
-  return { ...actual, gradeTypedAnswer: vi.fn(actual.gradeTypedAnswer) };
-});
 
 const KEY_POINTS = ["Names the shared denominator", "Adds the numerators"];
 
@@ -32,6 +22,10 @@ const TYPED_CONTENT = {
   sampleAnswer: "Use sixths: 3/6 + 2/6 = 5/6.",
 };
 
+/**
+ * The real grader settles accepted answers by code, as in production; an answer that needs its
+ * model gets this verdict once.
+ */
 function mockGrade({ met }: { met: number }) {
   vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
     data: {

@@ -18,9 +18,6 @@ import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-// The classifier is a paid model call; its behavior is covered by its eval.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });

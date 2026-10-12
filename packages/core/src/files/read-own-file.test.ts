@@ -6,9 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readOwnFile, toOwnFileResponse } from "./read-own-file";
 
-// Blob storage is an external service; tests serve the stored file from memory.
-vi.mock("@vercel/blob", () => ({ get: vi.fn() }));
-
 const ETAG = '"etag-1"';
 
 function blobInfo(pathname: string) {
@@ -25,6 +22,7 @@ function blobInfo(pathname: string) {
   };
 }
 
+/** What Blob storage serves for a stored file, from memory. */
 function storedFile({ bytes, pathname }: { bytes: string; pathname: string }) {
   return {
     blob: { ...blobInfo(pathname), contentType: "image/webp", size: bytes.length },

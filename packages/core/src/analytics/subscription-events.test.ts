@@ -1,12 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { trackServerEvent } from "./server";
 import { registerSubscriptionAnalytics } from "./subscription-events";
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("./server", () => ({ trackServerEvent: vi.fn() }));
 
 describe(registerSubscriptionAnalytics, () => {
   it('sends "Subscription Conversion" with the learner\'s shared properties when Stripe confirms a checkout', async () => {

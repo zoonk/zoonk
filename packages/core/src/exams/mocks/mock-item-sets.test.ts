@@ -8,14 +8,12 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getMock } from "./get-mock";
 import { type MockView } from "./mock-contract";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
-
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const SUBJECT = "Reading";

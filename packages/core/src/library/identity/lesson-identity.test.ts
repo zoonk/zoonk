@@ -16,9 +16,6 @@ import {
 import { MAX_MATCHES_PER_TERM } from "./_utils/text-search-sql";
 import { resolveLibraryIdentity } from "./resolve-library-identity";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 /** A request whose own title and skill match nothing, so only the mocked terms find lessons. */
 async function lessonRequest() {
   const skill = await skillFixture();

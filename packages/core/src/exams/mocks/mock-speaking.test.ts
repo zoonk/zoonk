@@ -15,8 +15,6 @@ import { startAnytimeMock } from "./start-anytime-mock";
 import { startMockSpeaking } from "./start-mock-speaking";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 // Writing a paper's cards is a paid model call per task (its storing is tested with
 // exam-speaking): here the paper comes back as written.
 vi.mock("../../language/exam-speaking/start-speaking-section", () => ({

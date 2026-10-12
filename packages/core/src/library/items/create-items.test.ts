@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { prisma } from "@zoonk/db";
@@ -8,7 +9,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { uploadImage } from "../../images/upload-image";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { mockSearchTerms } from "../identity/_test-utils/identity-mocks";
 import {
   drawBlankImage,
@@ -27,14 +28,6 @@ import { discountMath, discountQuestion } from "./_test-utils/math-problems";
 import { createItems } from "./create-items";
 import { parseItemContent } from "./item-content";
 
-/** Vercel Blob and the image models are external boundaries; scene reuse and storage run for real. */
-vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/scene", () => ({ generateImageScene: vi.fn() }));
-
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 
 const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula vegetal.";
@@ -42,10 +35,7 @@ const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula 
 /** Fresh image models and uploads for a test that draws: queued results never leak between tests. */
 function mockUploads() {
   resetImageModels();
-
-  vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
-    Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
-  );
+  storeBlobUploads();
 }
 
 const figure = {
@@ -249,7 +239,7 @@ describe(createItems, () => {
 
     expect(sceneSpy).not.toHaveBeenCalled();
     expect(drawSpy).not.toHaveBeenCalled();
-    expect(uploadImage).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
     vi.unstubAllEnvs();
   });
 

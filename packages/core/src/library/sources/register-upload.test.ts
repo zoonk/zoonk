@@ -8,14 +8,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
 
-// Blob storage is an external service; tests serve the uploaded file from memory.
-vi.mock("@vercel/blob", () => ({ del: vi.fn(), get: vi.fn() }));
-
 /** The private store uploads live in. */
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
 const NOTICE_TEXT = "ENEM 2026: 180 questoes objetivas e uma redacao.";
 
+/** Blob storage serves the uploaded file from memory. */
 function mockUploadedFile({
   bytes,
   contentType,

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { checkMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/check";
 import { generateMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/image";
 import { type MindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/schema";
@@ -8,9 +9,8 @@ import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
-import { readStoredImage } from "../images/read-stored-image";
-import { uploadImage } from "../images/upload-image";
 import { drawTestImage } from "../library/media/_test-utils/image-mocks";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
@@ -25,13 +25,6 @@ import {
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
-
-/** Models and Vercel Blob are the external boundaries; rows, claims and files' sizes run for real. */
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/structure", () => ({ generateMindMapStructure: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/image", () => ({ generateMindMapImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/check", () => ({ checkMindMapImage: vi.fn() }));
-vi.mock("../images/upload-image", () => ({ uploadImage: vi.fn() }));
-vi.mock("../images/read-stored-image", () => ({ readStoredImage: vi.fn() }));
 
 const structure: MindMapStructure = {
   branches: [
@@ -119,6 +112,8 @@ function runAnalytics() {
 }
 
 describe("chapter mind maps", () => {
+  let readStoredFile: ReturnType<typeof serveStoredFile>;
+
   beforeEach(async () => {
     const image = new Uint8Array(await drawTestImage());
 
@@ -136,11 +131,10 @@ describe("chapter mind maps", () => {
     });
 
     vi.mocked(checkMindMapImage).mockResolvedValue(passed);
-    vi.mocked(readStoredImage).mockResolvedValue({ data: image, mediaType: "image/webp" });
 
-    vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
-      Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
-    );
+    // Maps are stored in Vercel Blob, and the check reads the stored picture back from there.
+    storeBlobUploads();
+    readStoredFile = serveStoredFile({ data: image, mediaType: "image/webp" });
   });
 
   it("offers a map only for a finished chapter whose lessons are written, to its own learner", async () => {
@@ -272,12 +266,12 @@ describe("chapter mind maps", () => {
     // Drawing stores nothing: storing is its own step, so a store that fails never pays for the
     // drawing again.
     const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
-    expect(uploadImage).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
     await showChapterMindMap({ chapterId: finished, drawn });
 
     // Public chapters' maps go to the Library's public folder, with a small copy for lists.
     expect(
-      vi.mocked(uploadImage).mock.calls.map(([upload]) => [upload.access, upload.fileName]),
+      vi.mocked(put).mock.calls.map(([pathname, , options]) => [options.access, pathname]),
     ).toStrictEqual([
       ["public", "library/mind-maps/mind-map.webp"],
       ["public", "library/mind-maps/mind-map-thumb.webp"],
@@ -356,7 +350,7 @@ describe("chapter mind maps", () => {
       problems: failed.data.problems,
     });
 
-    expect(readStoredImage).toHaveBeenCalledWith({ url: expect.stringContaining("mind-map.webp") });
+    expect(readStoredFile).toHaveBeenCalledWith(expect.stringContaining("mind-map.webp"));
 
     // Drawn again with those corrections, the new picture replaces the old one at once.
     await showChapterMindMap({

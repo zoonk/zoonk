@@ -17,9 +17,6 @@ import { runPlanSetupTask } from "./plan-setup";
 import type * as NoticeDay from "../exams/_utils/notice-day";
 import type * as Announcement from "./announce-tested-out-items";
 
-/** The model call is an external boundary: each test says what the model understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
-
 // A database read or write that fails for a moment (a dropped connection) can't be made safely
 // with the real database: tests make the placement's announcement and the notice's day fail once.
 vi.mock("./announce-tested-out-items", async (importOriginal) => {

@@ -17,8 +17,6 @@ import { saveMockAnswer } from "./save-mock-answer";
 import { startMock } from "./start-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const MINUTE_MS = 60_000;
 
 function mockStructure(method: "itemResponseTheory" | "raw" | "wrongCancelsRight") {

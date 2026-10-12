@@ -16,10 +16,6 @@ import {
   storeWebSource,
 } from "./web-sources";
 
-// Model calls are external: identity search's terms and reuse decisions are mocked.
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 // The web is an external boundary: each test serves its own pages from memory.
 function servePage(html: string) {
   vi.stubGlobal(

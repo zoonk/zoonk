@@ -7,9 +7,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
 import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
 
-// Blob storage is an external service; tests serve the uploaded file from memory.
-vi.mock("@vercel/blob", () => ({ del: vi.fn(), get: vi.fn() }));
-
+/** Blob storage serves the uploaded file from memory. */
 function mockStoredFile({
   bytes,
   contentType,

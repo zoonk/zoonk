@@ -22,16 +22,6 @@ import {
   setAsidePublishedLesson,
 } from "./published-lesson-check";
 
-/** Model calls are the external boundary; checks, versions and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", () => ({
-  getLessonRewriteModel: vi.fn(() => "anthropic/claude-sonnet-5.5"),
-  writeLessonDraft: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/material/cite", () => ({ citeMaterial: vi.fn() }));
-
 type ReviewIssue = Awaited<ReturnType<typeof checkLessonQuality>>["data"]["issues"][number];
 
 function provenance(model = "openai/gpt-6-sol") {

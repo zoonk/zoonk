@@ -14,11 +14,6 @@ import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 
-/** The model call is the one external boundary; each test says what the model wrote. */
-vi.mock("@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline", () => ({
-  generateSetupLessonOutline: vi.fn(),
-}));
-
 /** A Monday in 2020, before other tests' learning events, so pace estimates stay out of it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 

@@ -1,12 +1,9 @@
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
-import { generateLanguageAudio } from "../../../audio/generate-language-audio";
+import { storeBlobUploads } from "../../../_test-utils/blob-uploads";
 import { writeAlphabetLesson } from "./write-alphabet-lesson";
-
-// The writer and text-to-speech (with its upload) are paid external services.
-vi.mock("@zoonk/ai/tasks/v2/language/alphabet-lesson", () => ({ generateAlphabetLesson: vi.fn() }));
-vi.mock("../../../audio/generate-language-audio", () => ({ generateLanguageAudio: vi.fn() }));
 
 type Content = Awaited<ReturnType<typeof generateAlphabetLesson>>["data"];
 
@@ -50,20 +47,31 @@ function mockContent(data: Content) {
   });
 }
 
-/** Voices every clip except the one for `failing`, which leaves its card without audio. */
+/**
+ * Voices every clip except the one for `failing`, which leaves its card without audio. Each clip
+ * is stored in Vercel Blob under its words.
+ */
 function mockAudio({ failing }: { failing?: string } = {}) {
+  storeBlobUploads();
+
   vi.mocked(generateLanguageAudio).mockImplementation(async ({ text }) =>
     text === failing
       ? { data: null, error: new Error("TTS failed") }
       : {
           data: {
+            audio: new Uint8Array([1, 2, 3]),
+            durationMs: 900,
+            format: "mp3",
             provenance: {
               generatedAt: new Date().toISOString(),
+              latencyMs: 900,
               model: "google/gemini-3.8-flash-tts",
               promptVersion: "speech-v1",
+              provider: "vertex",
+              requestedModel: "google/gemini-3.8-flash-tts",
               runId: "speech-run",
+              usage: {},
             },
-            url: `https://blob.test/audio/${encodeURIComponent(text)}.mp3`,
           },
           error: null,
         },
@@ -131,7 +139,7 @@ describe(writeAlphabetLesson, () => {
     ]);
 
     expect(lesson.steps[1]?.content).toMatchObject({
-      audioUrl: "https://blob.test/audio/%EC%95%84.mp3",
+      audioUrl: expect.stringContaining("/아.mp3"),
       symbol: "ㅏ",
     });
 

@@ -15,11 +15,6 @@ import {
   startLanguageConversation,
 } from "./start-language-conversation";
 
-// A unit's call is written by a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
-  generateConversationScenario: vi.fn(),
-}));
-
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
   latencyMs: 1,

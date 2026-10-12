@@ -15,10 +15,6 @@ import { createGoalPlan } from "../../plans/create-goal-plan";
 import { scheduleMemoryAfterSession } from "../after-session";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
-// Noticing patterns and the coach are paid model calls; their behavior is covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));
-
 const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
 const ANSWERS_PER_DAY = 7;

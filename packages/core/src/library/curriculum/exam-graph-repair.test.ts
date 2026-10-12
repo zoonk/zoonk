@@ -19,11 +19,6 @@ import {
 } from "../identity/_test-utils/identity-mocks";
 import { addMissingExamGraphSkills } from "./exam-graph-repair";
 
-/** Model calls are the external boundary; identity search and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/curriculum/coverage-check", () => ({ checkCoverage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 const provenance = {
   generatedAt: new Date().toISOString(),
   model: "openai/gpt-6-sol",

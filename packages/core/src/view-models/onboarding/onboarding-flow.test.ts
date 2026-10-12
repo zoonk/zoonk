@@ -24,11 +24,6 @@ import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
 
-// Memory's extraction, gate and reconciling are paid model calls; their behavior is covered by evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/reconcile", () => ({ reconcileMemoryFact: vi.fn() }));
-
 const MEMORY_PROVENANCE = {
   generatedAt: "2026-10-08T12:00:00.000Z",
   model: "openai/gpt-6-luna",

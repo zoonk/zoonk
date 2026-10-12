@@ -25,9 +25,6 @@ import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-// The classifier is a paid model call; its behavior is covered by its eval.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const MATH_CONTENT = { context: null, math: discountMath, question: discountQuestion };
 
 function mathItemFixture(skillId: string) {

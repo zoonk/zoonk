@@ -9,22 +9,11 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getCurrentUser, suggestCurrentUsername, updateCurrentUser } from "./current-user";
 
-const authMocks = vi.hoisted(() => ({
-  isUsernameAvailable:
-    vi.fn<(input: { body: { username: string } }) => Promise<{ available: boolean }>>(),
-  updateUser: vi.fn<(input: { body: { name?: string; username?: string } }) => Promise<void>>(),
-}));
-
-vi.mock("@zoonk/auth", () => ({
-  auth: {
-    api: { isUsernameAvailable: authMocks.isUsernameAvailable, updateUser: authMocks.updateUser },
-  },
-}));
-
-vi.mock("next/headers", () => ({ headers: vi.fn() }));
-
 describe("current user", () => {
+  // Better Auth's endpoints need a signed-in request: each test says what they answer.
   beforeEach(() => {
+    vi.spyOn(auth.api, "isUsernameAvailable").mockResolvedValue(undefined as never);
+    vi.spyOn(auth.api, "updateUser").mockResolvedValue(undefined as never);
     vi.mocked(headers).mockResolvedValue(new Headers());
     mockSession(null);
   });
@@ -59,8 +48,9 @@ describe("current user", () => {
       const username = `after_${randomUUID().slice(0, 8)}`;
       mockSession(user.id);
 
-      authMocks.updateUser.mockImplementation(async ({ body }) => {
-        await prisma.user.update({ data: body, where: { id: user.id } });
+      vi.mocked(auth.api.updateUser).mockImplementation(async (request) => {
+        await prisma.user.update({ data: request?.body ?? {}, where: { id: user.id } });
+        return { status: true };
       });
 
       const result = await updateCurrentUser({ input: { name: "After", username } });
@@ -83,8 +73,9 @@ describe("current user", () => {
       const user = await prisma.user.update({ data: { username }, where: { id: fixtureUser.id } });
       mockSession(user.id);
 
-      authMocks.updateUser.mockImplementation(async ({ body }) => {
-        await prisma.user.update({ data: body, where: { id: user.id } });
+      vi.mocked(auth.api.updateUser).mockImplementation(async (request) => {
+        await prisma.user.update({ data: request?.body ?? {}, where: { id: user.id } });
+        return { status: true };
       });
 
       await updateCurrentUser({ input: { name: "After", username } });
@@ -108,8 +99,8 @@ describe("current user", () => {
       await prisma.user.update({ data: { username: null }, where: { id: user.id } });
       mockSession(user.id);
 
-      authMocks.isUsernameAvailable.mockImplementation(async ({ body }) => ({
-        available: body.username !== prefix,
+      vi.mocked(auth.api.isUsernameAvailable).mockImplementation(async (request) => ({
+        available: request?.body.username !== prefix,
       }));
 
       await expect(suggestCurrentUsername()).resolves.toMatch(new RegExp(`^${prefix}_\\d+$`, "u"));

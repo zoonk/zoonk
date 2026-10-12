@@ -23,13 +23,6 @@ import {
 } from "./_test-utils/choice-blueprint";
 import { chooseExamOption } from "./choose-exam-option";
 
-vi.mock("../../progress/get-request-date-context", () => ({
-  getRequestProgressDateContext: vi.fn(),
-}));
-
-/** Reading the learner's words is the one model call in the buddy's proposal; the test says what it understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
-
 /** A Monday in 2020, before other tests' learning events, so pace estimates stay out of it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "America/Sao_Paulo";
@@ -71,6 +64,8 @@ async function setup({
 async function proposeFocusInAnswer({ areas, goalId }: { areas: string[]; goalId: string }) {
   const question = "More of the languages area, please";
 
+  // Reading the learner's words is the one model call in the buddy's proposal: here it understood
+  // a focus on `areas`.
   vi.mocked(interpretPlanEdit).mockResolvedValue({
     data: {
       leftOut: [],

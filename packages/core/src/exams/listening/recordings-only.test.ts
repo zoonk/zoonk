@@ -22,8 +22,6 @@ import {
 } from "../../sessions/_test-utils/session-goal";
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 /**
  * An exam's listening skills are practiced only with recordings: a text question about a
  * conversation tests reading. Practice asks their recordings whole (sessions/item-set-practice);

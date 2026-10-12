@@ -20,11 +20,6 @@ import {
   saveExamBlueprint,
 } from "./save-exam-blueprint";
 
-/** Whether two exams are the same is an evaluation model's call: each test says what it answers. */
-vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
-  decideExamIdentity: vi.fn(),
-}));
-
 /** The stored exams the search hands the identity decision for a request, best first. */
 async function searchedCandidates(request: Partial<ExamRequest> & Pick<ExamRequest, "name">) {
   vi.mocked(decideExamIdentity).mockClear();

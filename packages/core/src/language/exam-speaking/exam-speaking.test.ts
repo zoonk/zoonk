@@ -8,32 +8,15 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import sharp from "sharp";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { uploadImage } from "../../images/upload-image";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
 import { getLanguageConversation } from "../conversations/get-language-conversation";
 import { startLanguageConversation } from "../conversations/start-language-conversation";
 import { loadSpeakingPaper } from "./_utils/exam-speaking-setup";
 import { getSpeakingSection } from "./get-speaking-section";
 import { startSpeakingSection } from "./start-speaking-section";
-
-// The card, its photos and the grade are paid model calls; the photo's file goes to Blob storage.
-vi.mock("@zoonk/ai/tasks/v2/language/exam-speaking-card", () => ({
-  generateExamSpeakingCard: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/exam-speaking-photo", () => ({
-  drawExamSpeakingPhoto: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/exam-speaking-score", () => ({ scoreExamSpeaking: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-objectives", () => ({
-  checkConversationObjectives: vi.fn(),
-}));
-
-vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
 
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
@@ -177,7 +160,7 @@ describe("exam speaking tasks", () => {
       provenance: PROVENANCE,
     } as never);
 
-    vi.mocked(uploadImage).mockResolvedValue({ data: PHOTO_URL, error: null });
+    storeBlobUploads({ url: PHOTO_URL });
     gradeAt(2);
   });
 

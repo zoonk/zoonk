@@ -18,9 +18,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-// The classifier is a paid model call; placement answers never reach it.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const TIME_ZONE = "UTC";
 
 const DAY_MS = 86_400_000;

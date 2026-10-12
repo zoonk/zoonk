@@ -10,9 +10,6 @@ import {
 } from "./_test-utils/identity-mocks";
 import { resolveLibraryIdentity } from "./resolve-library-identity";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 function imageRequest(overrides: {
   prompt: string;
   hasLabels?: boolean;

@@ -11,17 +11,6 @@ import { getLanguageConversation } from "./get-language-conversation";
 import { prepareSpeakingMock } from "./prepare-language-calls";
 import { startLanguageConversation } from "./start-language-conversation";
 
-// The examiner's script and the scores are paid model calls.
-vi.mock("@zoonk/ai/tasks/v2/language/speaking-mock-scenario", () => ({
-  generateSpeakingMockScenario: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/speaking-mock-score", () => ({ scoreSpeakingMock: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-objectives", () => ({
-  checkConversationObjectives: vi.fn(),
-}));
-
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
   latencyMs: 1,

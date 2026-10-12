@@ -11,8 +11,6 @@ import { trackServerEvent } from "../../analytics/server";
 import { answerMaterialQuestion } from "./answer-material-question";
 import { PAGE_BREAK, PPTX_CONTENT_TYPE } from "./source-contract";
 
-vi.mock("@zoonk/ai/tasks/v2/material/answer", () => ({ answerFromMaterial: vi.fn() }));
-
 function mockAnswer(data: { answer: string; found: boolean; refs: string[] }) {
   vi.mocked(answerFromMaterial).mockResolvedValueOnce({
     data,

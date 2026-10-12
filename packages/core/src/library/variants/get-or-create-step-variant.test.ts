@@ -6,13 +6,6 @@ import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/
 import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { getOrCreateStepVariant } from "./get-or-create-step-variant";
-import type * as StepVariantTask from "@zoonk/ai/tasks/v2/variants/step-variant";
-
-/** The model call is the external boundary; conversion, checks and the unique row run for real. */
-vi.mock("@zoonk/ai/tasks/v2/variants/step-variant", async (importOriginal) => ({
-  ...(await importOriginal<typeof StepVariantTask>()),
-  generateStepVariant: vi.fn(),
-}));
 
 const original = {
   exampleLineSlot: { idea: "A discount on something the learner buys." },

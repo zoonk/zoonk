@@ -2,16 +2,11 @@ import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateLearningProfile } from "../profile/update-learning-profile";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
-
-vi.mock("next/headers", () => ({
-  cookies: vi.fn(async () => ({ get: () => {} })),
-  headers: vi.fn(async () => new Headers()),
-}));
 
 const TWENTY_MINUTES_IN_SECONDS = 1200;
 

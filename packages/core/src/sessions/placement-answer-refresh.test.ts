@@ -13,9 +13,6 @@ import { readBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
 import type * as Refresh from "../plans/refresh-goal-plan";
 
-// The classifier is a paid model call; placement answers never reach it.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 vi.mock("../plans/refresh-goal-plan", async (importOriginal) => {
   const original = await importOriginal<typeof Refresh>();
   return { ...original, refreshGoalPlan: vi.fn(original.refreshGoalPlan) };

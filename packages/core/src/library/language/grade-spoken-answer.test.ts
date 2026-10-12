@@ -1,3 +1,4 @@
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { explainSpokenAnswer } from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
 import { transcribeSpeech } from "@zoonk/ai/tasks/v2/language/transcribe-speech";
 import { prisma } from "@zoonk/db";
@@ -7,19 +8,12 @@ import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtu
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
-
-// Speech recognition, the explanation model and Blob storage are paid external services.
-vi.mock("@zoonk/ai/tasks/v2/language/transcribe-speech", () => ({ transcribeSpeech: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/language/explain-spoken-answer", () => ({
-  explainSpokenAnswer: vi.fn(),
-}));
 
 function sentTips() {
   return vi
@@ -86,6 +80,15 @@ async function createSpokenStep(lesson: Parameters<typeof libraryLessonFixture>[
 }
 
 describe(gradeSpokenAnswer, () => {
+  // A missed word nobody voiced yet gets its native audio after the response; here text-to-speech
+  // fails, so the word stays silent.
+  beforeEach(() => {
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("Text-to-speech is unavailable"),
+    });
+  });
+
   it("requires a signed-in learner", async () => {
     mockSession(null);
 

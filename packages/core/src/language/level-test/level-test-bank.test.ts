@@ -7,9 +7,6 @@ import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { writeLevelTestBank } from "./write-level-test-bank";
 
-// Writing the bank is a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/language/level-test-bank", () => ({ generateLevelTestBank: vi.fn() }));
-
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 
 type Written = Awaited<ReturnType<typeof generateLevelTestBank>>;

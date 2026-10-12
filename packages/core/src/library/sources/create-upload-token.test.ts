@@ -7,9 +7,6 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken, isOwnUploadPathname } from "./create-upload-token";
 import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-contract";
 
-// The signed token comes from Vercel Blob's API, an external service.
-vi.mock("@vercel/blob", () => ({ issueSignedToken: vi.fn() }));
-
 const SIGNED_TOKEN = {
   clientSigningToken: "client-signing-token",
   delegationToken: "delegation-token",

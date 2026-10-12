@@ -14,12 +14,6 @@ import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-// The model that grades a typed answer code doesn't accept is a paid call; its eval covers its
-// verdicts. Here it says "goed" is wrong, so the mock counts what the model says.
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", () => ({ gradeTypedAnswer: vi.fn() }));
-
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const SUBJECT = "Paper 1";
 
@@ -188,6 +182,8 @@ function answer({ id, itemId, value }: { id: string; itemId?: string; value: Moc
 
 describe("a mock in the exam's own answer formats", () => {
   it("asks several picks, a typed number and a typed word, and scores them as the notice does", async () => {
+    // A model grades a typed answer code doesn't accept. Here it says "goed" is wrong, so the mock
+    // counts what the model says.
     vi.mocked(gradeTypedAnswer).mockResolvedValue({
       data: {
         corrections: [],

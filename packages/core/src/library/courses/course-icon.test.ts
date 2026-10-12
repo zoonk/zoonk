@@ -1,14 +1,11 @@
+import { put } from "@vercel/blob";
 import { generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { uploadImage } from "../../images/upload-image";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { drawBlankImage, drawTestImage } from "../media/_test-utils/image-mocks";
 import { createCourseIcon } from "./course-icon";
-
-/** The image model and Vercel Blob are external services; checks, optimizing and saving run for real. */
-vi.mock("@zoonk/ai/tasks/v2/courses/icon", () => ({ generateCourseIcon: vi.fn() }));
-vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
 
 const ICON_URL = "https://blob.test/library/courses/immunology.webp";
 
@@ -32,7 +29,7 @@ function drawnIcon(
 
 describe(createCourseIcon, () => {
   beforeEach(() => {
-    vi.mocked(uploadImage).mockResolvedValue({ data: ICON_URL, error: null });
+    storeBlobUploads({ url: ICON_URL });
   });
 
   it("draws, stores and links the icon of a shared course, drawing again after a blank frame", async () => {
@@ -65,9 +62,7 @@ describe(createCourseIcon, () => {
       title: "Immunology",
     });
 
-    expect(vi.mocked(uploadImage).mock.calls[0]?.[0].fileName).toBe(
-      `library/courses/${course.slug}.webp`,
-    );
+    expect(vi.mocked(put).mock.calls[0]?.[0]).toBe(`library/courses/${course.slug}.webp`);
   });
 
   it("goes without an icon when every drawing is blank", async () => {
@@ -79,7 +74,7 @@ describe(createCourseIcon, () => {
     const stored = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
 
     expect(stored).toMatchObject({ iconRunId: null, imageUrl: null });
-    expect(uploadImage).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
   });
 
   it("keeps an existing icon and never draws one for private or language courses", async () => {

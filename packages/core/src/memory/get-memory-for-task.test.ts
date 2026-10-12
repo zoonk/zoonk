@@ -7,10 +7,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getMemoryForTask } from "./get-memory-for-task";
 
-// Search terms and relevance are paid model calls; their behavior is covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/search-terms", () => ({ generateMemorySearchTerms: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/relevance", () => ({ selectRelevantMemoryFacts: vi.fn() }));
-
 const MINUTE_MS = 60_000;
 
 async function learnerWithFacts(facts: { category: MemoryCategory; statement: string }[]) {

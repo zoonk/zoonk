@@ -1,7 +1,10 @@
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it, vi } from "vitest";
+import { list } from "@vercel/blob";
+import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
+import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type SimFinding, formatSimBatch, runSimBatch } from "./_test-utils/sim/sim-batch";
 import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
 import { SIM_FIXTURES, type SimFixtureName } from "./_test-utils/sim/sim-fixture";
@@ -27,17 +30,6 @@ const fixtures = (process.env.SIM_FIXTURES?.split(",") ?? SIM_FIXTURES).filter(
 const HOURS = 3_600_000;
 const throughDb = process.env.SIM_TIER === "db";
 
-// The mistake classifier is a paid model call: a wrong answer whose cause isn't clear is a gap here.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({
-  classifyMistakeCause: vi.fn(async () => ({ data: { cause: "gap" } })),
-}));
-
-// Vercel Blob is the external store a deleted account's files are removed from.
-vi.mock("@vercel/blob", () => ({
-  del: vi.fn(),
-  list: vi.fn(async () => ({ blobs: [], cursor: undefined, hasMore: false })),
-}));
-
 /** A life through the real capabilities, with questions to answer, on the learner's own clock. */
 async function liveInDb(life: SimLife) {
   vi.useFakeTimers({ toFake: ["Date"] });
@@ -62,6 +54,30 @@ async function confirmInDb(finding: SimFinding) {
 }
 
 describe.runIf(runs > 0)("simulated learners, large tier", () => {
+  beforeEach(() => {
+    // The mistake classifier is a paid model call: a wrong answer whose cause isn't clear is a gap
+    // here.
+    vi.mocked(classifyMistakeCause).mockResolvedValue({
+      data: { cause: "gap" },
+      provenance: {} as never,
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    // Noticing a session's patterns is a paid model call too: here it fails, so memory learns
+    // nothing from these lives.
+    vi.mocked(findSessionPatterns).mockRejectedValue(new Error("The model is unavailable"));
+
+    // Vercel Blob is the external store a deleted account's files are removed from.
+    vi.mocked(list).mockResolvedValue({
+      blobs: [],
+      cursor: undefined,
+      folders: [],
+      hasMore: false,
+    });
+  });
+
   it(
     "keeps the owner's rules for every learner",
     async () => {

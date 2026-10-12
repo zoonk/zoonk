@@ -21,9 +21,6 @@ import {
 } from "./_test-utils/identity-mocks";
 import { resolveLibraryIdentities, resolveLibraryIdentity } from "./resolve-library-identity";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 /** Every lesson request in these tests is for one course; other courses never match exactly. */
 const course = { id: randomUUID(), title: "Everyday math" };
 

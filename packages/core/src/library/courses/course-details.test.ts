@@ -10,9 +10,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import { writeCourseDetails } from "./course-details";
 
-/** The model is the external boundary; reads, rules and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/courses/details", () => ({ generateCourseDetails: vi.fn() }));
-
 const details = {
   categories: ["health" as const, "science" as const],
   description: "Immunology is how the body tells friend from foe.",

@@ -3,19 +3,11 @@ import { put } from "@vercel/blob";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { prisma } from "@zoonk/db";
 import { listeningContent, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { getListeningAudioKey } from "./listening-audio-key";
 import { listeningContentSchema } from "./listening-content";
 import { voiceListeningSet } from "./voice-listening-set";
-
-// Text-to-speech and file storage are paid external services: the recording they'd return is faked.
-vi.mock("@zoonk/ai/tasks/audio/listening", () => ({ voiceListeningScript: vi.fn() }));
-
-vi.mock("@vercel/blob", () => ({
-  put: vi.fn(async (pathname: string) => ({
-    url: `https://blob.test/${randomUUID()}-${pathname}`,
-  })),
-}));
 
 const VOICED = {
   audio: new Uint8Array([1, 2, 3]),
@@ -38,6 +30,10 @@ function voiceSucceeds() {
 }
 
 describe(voiceListeningSet, () => {
+  beforeEach(() => {
+    storeBlobUploads();
+  });
+
   it("voices a new recording once, with each speaker's voice and accent, and stores it for everyone", async () => {
     voiceSucceeds();
     const content = listeningContent();

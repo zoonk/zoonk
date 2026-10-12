@@ -33,8 +33,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestion } from "./get-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
-/** A missed mock question's cause and memory extraction call models; their modules test them. */
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
 const ANSWER_RUN = {

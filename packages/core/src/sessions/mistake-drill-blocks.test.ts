@@ -21,9 +21,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 
-// The classifier is a paid model call; its behavior is covered by its eval.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 /** An active practice block of today's session asking one mistake's drill, in any payload shape. */
 async function drillBlockFixture(drill: Record<string, unknown>) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);

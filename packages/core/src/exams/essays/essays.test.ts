@@ -1,3 +1,4 @@
+import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
@@ -34,10 +35,6 @@ const GRADE = {
   total: { maxScore: 1000, score: 720 },
   zeroReason: null,
 };
-
-const gradeEssay = vi.hoisted(() => vi.fn());
-
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-essay", () => ({ gradeEssay }));
 
 const ESSAY_CONTENT = {
   context: "Theme: fighting disinformation.",
@@ -140,12 +137,19 @@ describe("essays in sessions", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
-    gradeEssay.mockResolvedValue({ data: GRADE, provenance: null, usage: null });
+
+    vi.mocked(gradeEssay).mockResolvedValue({
+      data: GRADE,
+      provenance: null,
+      systemPrompt: "",
+      usage: null,
+      userPrompt: "",
+    });
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    gradeEssay.mockReset();
+    vi.mocked(gradeEssay).mockReset();
   });
 
   it("plans a writing block, grades drafts by the rubric and settles the block", async () => {
@@ -261,12 +265,19 @@ describe("essay drafts and access", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
-    gradeEssay.mockResolvedValue({ data: GRADE, provenance: null, usage: null });
+
+    vi.mocked(gradeEssay).mockResolvedValue({
+      data: GRADE,
+      provenance: null,
+      systemPrompt: "",
+      usage: null,
+      userPrompt: "",
+    });
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    gradeEssay.mockReset();
+    vi.mocked(gradeEssay).mockReset();
   });
 
   it("starts today's writing block when a draft is sent, but never another day's", async () => {

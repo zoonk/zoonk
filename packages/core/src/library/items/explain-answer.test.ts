@@ -11,9 +11,6 @@ import { generatedProvenance, generatedTypedItem } from "./_test-utils/generated
 import { explainAnswer } from "./explain-answer";
 import { toStoredItem } from "./item-content";
 
-/** The model call is the external boundary; persistence and reuse run for real. */
-vi.mock("@zoonk/ai/tasks/v2/grading/explain-wrong-answer", () => ({ explainWrongAnswer: vi.fn() }));
-
 function mockExplanation(explanation: string) {
   vi.mocked(explainWrongAnswer).mockResolvedValueOnce({
     data: { explanation },

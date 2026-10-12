@@ -18,9 +18,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
 
-// The classifier is a paid model call; its behavior is covered by its eval.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const deferred: Promise<unknown>[] = [];
 const YESTERDAY = new Date(Date.now() - 86_400_000);
 

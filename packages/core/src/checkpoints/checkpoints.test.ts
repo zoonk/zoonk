@@ -24,8 +24,6 @@ import { getStudyBlock } from "../sessions/get-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getWeeklyChallenge } from "./get-weekly-challenge";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 /** A goal whose first phase (two lessons) is done, with its boss next and a lesson after it. */
 async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   const user = await userFixture();

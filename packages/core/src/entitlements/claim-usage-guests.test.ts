@@ -11,8 +11,6 @@ import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
 import { claimUsage } from "./claim-usage";
 import { GUEST_DAILY_SPEND_BUDGET_MICROS, getEstimatedCostMicros } from "./limits";
 
-vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
-
 async function useGuest() {
   const guest = await userFixture();
   await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });

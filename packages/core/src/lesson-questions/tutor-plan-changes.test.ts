@@ -33,16 +33,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
-/** Reading the learner's words is the one model call here; each test says what it understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
-
-/** Finding a topic's Library skill asks models for search terms and a verdict; the search is real. */
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
-/** Naming an added topic as its shared skill is a model call too; each test says what it named. */
-vi.mock("@zoonk/ai/tasks/v2/plans/topic-skill-names", () => ({ nameTopicSkills: vi.fn() }));
-
 /** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -56,6 +46,7 @@ const ANSWER_RUN = {
   runId: "run-goal-tutor",
 };
 
+/** What reading the learner's words, the one model call in a plan change, understood. */
 function mockWords(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) {
   vi.mocked(interpretPlanEdit).mockResolvedValue({
     data,

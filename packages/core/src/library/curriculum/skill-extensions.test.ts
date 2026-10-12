@@ -19,10 +19,6 @@ import { getRequestProgressDateContext } from "../../progress/get-request-date-c
 import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
 import { listSkillExtensions, planSkillExtensions } from "./skill-extensions";
 
-vi.mock("../../progress/get-request-date-context", () => ({
-  getRequestProgressDateContext: vi.fn(),
-}));
-
 /** A Monday in 2020, before the learning events other tests write, so no one's pace moves dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 /** The Monday after `NOW`: this week's lessons come before it. */

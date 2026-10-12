@@ -1,3 +1,4 @@
+import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -20,12 +21,6 @@ import { type MockView } from "./mock-contract";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
-
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-const gradeEssay = vi.hoisted(() => vi.fn());
-
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-essay", () => ({ gradeEssay }));
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const UTC = "UTC";
@@ -208,12 +203,19 @@ describe("a full mock of an exam with a written test", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
-    gradeEssay.mockResolvedValue({ data: GRADE, provenance: null, usage: null });
+
+    vi.mocked(gradeEssay).mockResolvedValue({
+      data: GRADE,
+      provenance: null,
+      systemPrompt: "",
+      usage: null,
+      userPrompt: "",
+    });
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    gradeEssay.mockReset();
+    vi.mocked(gradeEssay).mockReset();
   });
 
   it("offers the whole exam day, the written test included, at its real length", async () => {

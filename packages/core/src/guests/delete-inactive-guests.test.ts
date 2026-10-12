@@ -14,9 +14,6 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { deleteInactiveGuests } from "./delete-inactive-guests";
 
-// Blob storage is an external service; tests list the guest's pictures from memory.
-vi.mock("@vercel/blob", () => ({ del: vi.fn(), list: vi.fn() }));
-
 function daysAgo(days: number) {
   return new Date(Date.now() - days * MS_PER_DAY);
 }

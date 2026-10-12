@@ -26,8 +26,6 @@ import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 import { startChallenge } from "./start-challenge";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 function byId(a: string, b: string): number {
   return a.localeCompare(b);
 }

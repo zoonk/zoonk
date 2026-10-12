@@ -8,8 +8,6 @@ import { parseStepContent } from "../steps/contract/step-contract";
 import { createChapterChallenge } from "./chapter-challenge";
 import { writeChallengeLessonContent } from "./write-challenge-content";
 
-vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
-
 type Written = Awaited<ReturnType<typeof generateChallengeCase>>;
 
 function written(data: Written["data"]): Written {

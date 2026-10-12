@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
 import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/v2/images/style";
@@ -16,8 +17,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildImageReuseKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { uploadImage } from "../../images/upload-image";
 import { mockSearchTerms } from "../identity/_test-utils/identity-mocks";
 import {
   TEST_IMAGE_HEIGHT,
@@ -35,14 +36,6 @@ import {
   listLessonImageSteps,
   listLessonOptionPictures,
 } from "./lesson-images";
-
-/** Vercel Blob is an external service; the stored URL is all these tests need from it. */
-vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/scene", () => ({ generateImageScene: vi.fn() }));
 
 const image = { alt: "A price tag before and after a discount", prompt: "A discounted price tag" };
 
@@ -158,9 +151,7 @@ describe(createStepImage, () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
-      Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
-    );
+    storeBlobUploads();
   });
 
   it("draws and stores a new picture in the subject's palette, showing it before its model check", async () => {
@@ -308,8 +299,10 @@ describe(createStepImage, () => {
     });
 
     // The file goes to the owner's folder in the private store, which account deletion empties.
-    expect(uploadImage).toHaveBeenCalledWith(
-      expect.objectContaining({ access: "private", fileName: `images/${owner.id}/step.webp` }),
+    expect(put).toHaveBeenCalledWith(
+      `images/${owner.id}/step.webp`,
+      expect.any(Buffer),
+      expect.objectContaining({ access: "private" }),
     );
 
     resetImageModels();
@@ -324,8 +317,10 @@ describe(createStepImage, () => {
     );
 
     // A shared picture goes to the public store, which the CDN serves to everyone.
-    expect(uploadImage).toHaveBeenLastCalledWith(
-      expect.objectContaining({ access: "public", fileName: "library/images/step.webp" }),
+    expect(put).toHaveBeenLastCalledWith(
+      "library/images/step.webp",
+      expect.any(Buffer),
+      expect.objectContaining({ access: "public" }),
     );
 
     vi.unstubAllEnvs();
@@ -360,7 +355,7 @@ describe(createStepImage, () => {
 
     expect(sceneSpy).not.toHaveBeenCalled();
     expect(drawSpy).not.toHaveBeenCalled();
-    expect(uploadImage).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
 
     await expect(prisma.step.findUnique({ where: { id: step.id } })).resolves.toMatchObject({
       mediaAssetId: null,
@@ -374,9 +369,7 @@ describe("pictures questions are asked about", () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
-      Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
-    );
+    storeBlobUploads();
   });
 
   it("lists each picture option not drawn yet, in screen order", async () => {

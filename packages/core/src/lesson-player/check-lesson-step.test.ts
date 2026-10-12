@@ -16,13 +16,6 @@ import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
-import type * as GradeTypedAnswer from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-
-/** Accepted answers are graded by code; only answers that need the model get a stand-in. */
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", async (importOriginal) => {
-  const actual = await importOriginal<typeof GradeTypedAnswer>();
-  return { ...actual, gradeTypedAnswer: vi.fn(actual.gradeTypedAnswer) };
-});
 
 async function setupRun(options?: Parameters<typeof setupPlayableLesson>[0]) {
   const setup = await setupPlayableLesson(options);

@@ -19,17 +19,6 @@ import { describe, expect, it, vi } from "vitest";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
 import { writeLessonContent } from "./write-lesson-content";
-import type * as LessonWriter from "@zoonk/ai/tasks/v2/lesson-writer";
-
-/** Model calls are the external boundary; the writer's model choice, checks and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
-  ...(await importOriginal<typeof LessonWriter>()),
-  writeLessonDraft: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/material/cite", () => ({ citeMaterial: vi.fn() }));
 
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";

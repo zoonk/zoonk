@@ -21,23 +21,6 @@ import { connectLanguageConversation } from "./connect-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
 import { startLanguageConversation } from "./start-language-conversation";
 
-// Scenarios, objective checks, feedback and Live tokens are paid model calls.
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
-  generateConversationScenario: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-objectives", () => ({
-  checkConversationObjectives: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-feedback", () => ({
-  writeConversationFeedback: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/language/live-conversation-token", () => ({
-  createLiveConversationToken: vi.fn(),
-}));
-
 const PROVENANCE = {
   generatedAt: new Date().toISOString(),
   latencyMs: 1,

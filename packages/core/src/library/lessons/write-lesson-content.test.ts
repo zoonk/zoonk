@@ -24,12 +24,6 @@ import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/sour
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
 import { writeLessonContent } from "./write-lesson-content";
 
-/** Model calls are the external boundary; checks, claims and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", () => ({ writeLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/material/cite", () => ({ citeMaterial: vi.fn() }));
-
 function provenance(model = "openai/gpt-6-sol") {
   return {
     generatedAt: new Date().toISOString(),

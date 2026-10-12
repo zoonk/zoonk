@@ -1,13 +1,15 @@
-import { describe, expect, it, vi } from "vitest";
+import { shuffle } from "@zoonk/utils/shuffle";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
-const shuffleMock = vi.hoisted(() => vi.fn((items: readonly unknown[]) => [...items]));
-
-vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: shuffleMock }));
+/** Shuffles keep the order options are built in, unless a test shuffles them itself. */
+function keepOrder() {
+  vi.mocked(shuffle).mockImplementation((items) => [...items]);
+}
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -61,6 +63,8 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildWordBankOptions, () => {
+  beforeEach(keepOrder);
+
   it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
@@ -170,7 +174,7 @@ describe(buildWordBankOptions, () => {
   });
 
   it("shuffles reading distractors before applying the visible cap", () => {
-    shuffleMock
+    vi.mocked(shuffle)
       .mockImplementationOnce((items: readonly unknown[]) => [...items].toReversed())
       .mockImplementationOnce((items: readonly unknown[]) => [...items]);
 
@@ -237,6 +241,8 @@ describe(buildWordBankOptions, () => {
 });
 
 describe(buildSentenceWordOptions, () => {
+  beforeEach(keepOrder);
+
   it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions(
       "おはよう ございます",

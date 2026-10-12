@@ -12,9 +12,6 @@ import { scheduleMistakePatternCheck } from "./find-mistake-pattern";
 import { getMistakePattern } from "./get-mistake-pattern";
 import { practiceMistakePattern } from "./practice-mistake-pattern";
 
-// Finding a pattern is a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/language/mistake-pattern", () => ({ findMistakePattern: vi.fn() }));
-
 const DRILL = [
   {
     answer: "since",

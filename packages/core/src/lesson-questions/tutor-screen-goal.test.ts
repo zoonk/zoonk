@@ -18,9 +18,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
-/** Reading the learner's words is a model call; each test says what it understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
-
 /** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 

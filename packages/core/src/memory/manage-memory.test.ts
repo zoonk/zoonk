@@ -14,9 +14,6 @@ import { undoMemoryChanges } from "./undo-memory-changes";
 import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
 
-// The sensitivity check is a paid model call; its behavior is covered by the memory-gate eval.
-vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
-
 const DAY_MS = 86_400_000;
 
 async function useLearner() {

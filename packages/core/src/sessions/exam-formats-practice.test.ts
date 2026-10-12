@@ -21,12 +21,6 @@ import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-// The model that grades a typed answer code can't match is a paid call; its verdicts are covered by
-// its eval. Tests check when it's asked and that its verdict counts.
-vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", () => ({ gradeTypedAnswer: vi.fn() }));
-
 const SELECT_ALL = {
   context: "A patient takes 1 g of paracetamol every 6 hours.",
   fixedOrder: false,
@@ -140,6 +134,8 @@ describe("exam answer formats in practice", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
+    // A test that needs the grader's model gives its verdict: tests check when it's asked and that
+    // its verdict counts.
     vi.mocked(gradeTypedAnswer).mockReset();
   });
 

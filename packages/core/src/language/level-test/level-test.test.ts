@@ -16,13 +16,6 @@ import { getLanguageLevelTest } from "./get-language-level-test";
 import { gradeLevelTestSpeech } from "./grade-level-test-speech";
 import { type LevelTestBank } from "./level-test-contract";
 
-// Writing the bank and checking speech are paid model calls.
-vi.mock("@zoonk/ai/tasks/v2/language/level-test-bank", () => ({ generateLevelTestBank: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/language/assess-pronunciation", () => ({
-  assessPronunciation: vi.fn(),
-}));
-
 const TEST_LEVELS = CEFR_LEVELS.slice(0, 5);
 
 const BANK: LevelTestBank = {

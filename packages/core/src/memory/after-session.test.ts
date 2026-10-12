@@ -15,12 +15,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { scheduleMemoryAfterSession } from "./after-session";
 
-// Noticing patterns and the coach are paid model calls; their behavior is covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));
-
-vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn(), logWarning: vi.fn() }));
-
 const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
 

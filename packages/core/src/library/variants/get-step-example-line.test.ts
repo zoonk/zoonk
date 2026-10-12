@@ -12,9 +12,6 @@ import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-ou
 import { mockSession } from "../../_test-utils/mock-session";
 import { getStepExampleLine } from "./get-step-example-line";
 
-/** The model call is the external boundary; memory reads and the stored lines run for real. */
-vi.mock("@zoonk/ai/tasks/v2/variants/example-lines", () => ({ generateExampleLines: vi.fn() }));
-
 const slotContent = {
   exampleLineSlot: { idea: "A discount on something the learner buys." },
   text: "A 25% discount takes a quarter off the price.",

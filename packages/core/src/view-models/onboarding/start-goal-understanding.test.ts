@@ -6,15 +6,11 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { startGoalUnderstanding } from "./start-goal-understanding";
-
-/** Model calls are the external boundary; saving a draft must never call them. */
-vi.mock("@zoonk/ai/tasks/v2/goals/understand-goal", () => ({ understandGoal: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/courses/intent", () => ({ classifyCourseIntent: vi.fn() }));
 
 function uniqueGoal(text: string) {
   return `${text} ${randomUUID()}`;

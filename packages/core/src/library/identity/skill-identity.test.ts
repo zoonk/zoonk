@@ -15,9 +15,6 @@ import {
 } from "./_test-utils/identity-mocks";
 import { resolveLibraryIdentity } from "./resolve-library-identity";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 function skillRequest({ name, ownerId }: { name: string; ownerId?: string }) {
   return {
     description: "",

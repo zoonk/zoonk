@@ -38,10 +38,6 @@ import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
 import { saveGoalSkills } from "./save-goal-skills";
 import { type OutlineChapter, saveOutlineChapter } from "./save-outline-chapter";
 
-/** Model calls are the external boundary; identity search, claims and storage run for real. */
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 const provenance = {
   generatedAt: new Date(),
   model: "openai/gpt-6-sol",

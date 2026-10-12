@@ -13,12 +13,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { undoMemoryChanges } from "./undo-memory-changes";
 import { scheduleMemoryUpdate, updateMemoryFromActivity } from "./update-memory-from-activity";
 
-// Extraction, the gate and reconciling are paid model calls; their behavior is covered by evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/reconcile", () => ({ reconcileMemoryFact: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
-
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
   model: "openai/gpt-6-luna",

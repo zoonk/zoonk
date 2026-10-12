@@ -8,9 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 
-/** The model call is the one external boundary; each test says what the model understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
-
 /** A Monday in 2020, before other tests' learning events, so pace estimates don't move dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 

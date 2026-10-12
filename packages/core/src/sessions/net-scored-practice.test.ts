@@ -22,8 +22,6 @@ import { getStudySessionSummary } from "./get-study-session-summary";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 /**
  * A Cebraspe-style exam goal whose lesson is done, with two false statements on its skill and a
  * mistake on the first, so today's practice drills it: that question, then the other one.

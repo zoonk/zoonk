@@ -6,9 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveGoalField } from "./goal-field";
 
-/** The model call is the external boundary; storing and reusing the field run for real. */
-vi.mock("@zoonk/ai/tasks/v2/items/work-field", () => ({ classifyWorkField: vi.fn() }));
-
 function mockField(field: WorkFieldResult["field"]) {
   vi.mocked(classifyWorkField).mockResolvedValueOnce({
     data: { field },

@@ -3,16 +3,13 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replaceMemoryFact } from "./_utils/memory-writes";
 import { deleteMemoryFact } from "./delete-memory-fact";
 import { undoMemoryChanges } from "./undo-memory-changes";
 import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
-
-// The sensitivity check after a correction is a paid model call; it runs after the response.
-vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 
 /**
  * Example lines quote what a learner shared ("At the pharmacy where you work…"), so a line must not

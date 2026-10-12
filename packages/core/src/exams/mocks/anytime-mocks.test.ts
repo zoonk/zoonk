@@ -20,8 +20,6 @@ import { requestMockQuestions } from "./request-mock-questions";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const AREAS = ["Mathematics", "Languages"] as const;
 const SKILLS_PER_AREA = 2;

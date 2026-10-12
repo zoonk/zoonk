@@ -1,9 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
 import {
   parseLessonQuestionContextSnapshot,
@@ -23,9 +22,6 @@ const ANSWER_RUN = {
   promptVersion: "lesson-question-test",
   runId: "run-lesson-question-test",
 };
-
-/** Memory extraction calls a model; the memory module's own tests cover what it learns. */
-vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
 async function createFollowUpQuestion({
   lessonId,
@@ -48,7 +44,6 @@ async function createFollowUpQuestion({
 
 describe("lesson question answer lifecycle", () => {
   beforeEach(() => {
-    vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
     mockSession(null);
   });
 

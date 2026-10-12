@@ -6,9 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { shareSourceUpload } from "./share-upload";
 
-// Blob storage is an external service; only the removal of a duplicate file is observed.
-vi.mock("@vercel/blob", () => ({ del: vi.fn(), get: vi.fn() }));
-
 /** The private store uploads live in. */
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 

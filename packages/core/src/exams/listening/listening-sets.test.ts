@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -10,15 +11,12 @@ import {
 } from "@zoonk/testing/fixtures/listening";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
-import { createListeningSet } from "../../library/listening/create-listening-set";
+import { describe, expect, it } from "vitest";
+import { mockWrittenListeningSet } from "../../library/listening/_test-utils/written-listening-set";
 import { type ListeningExam, loadListeningExam } from "./listening-exam";
 import { loadListeningSkills } from "./listening-skills";
 import { MAX_SETS_PER_PART, pickListeningSets } from "./pick-listening-sets";
 import { findUnvoicedPartSet, writePartSet } from "./prepare-listening-part";
-
-// Writing a set is a paid model call (its storing is tested in create-listening-set.test.ts).
-vi.mock("../../library/listening/create-listening-set", () => ({ createListeningSet: vi.fn() }));
 
 async function loadExam(goalId: string): Promise<ListeningExam> {
   const exam = await loadListeningExam(goalId);
@@ -241,28 +239,35 @@ describe(writePartSet, () => {
     await Promise.all(Array.from({ length: MAX_SETS_PER_PART }, () => partSet({ exam })));
 
     await expect(writePartSet({ exam, part: firstPart(exam) })).resolves.toBeNull();
-    expect(createListeningSet).not.toHaveBeenCalled();
+    expect(writeListeningSet).not.toHaveBeenCalled();
   });
 
   it("writes the part's next set on the exam's listening skills", async () => {
     const { goal, listeningSkills } = await listeningGoalFixture();
     const exam = await loadExam(goal.id);
-    vi.mocked(createListeningSet).mockResolvedValue("new-set");
+    const part = firstPart(exam);
+    const { provenance } = mockWrittenListeningSet();
 
-    await expect(writePartSet({ exam, part: firstPart(exam) })).resolves.toBe("new-set");
+    const setId = await writePartSet({ exam, part });
 
-    expect(createListeningSet).toHaveBeenCalledExactlyOnceWith(
+    expect(writeListeningSet).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        exam: { blueprintId: exam.blueprintId, name: exam.name },
+        count: part.count,
+        exam: exam.name,
         language: "pt",
-        part: firstPart(exam),
+        plays: part.plays,
         scriptLanguage: "en",
         skills: listeningSkills.map((skill) => ({
           description: skill.description,
           name: skill.name,
           skillId: skill.id,
         })),
+        task: part.task,
       }),
     );
+
+    await expect(
+      prisma.itemSet.findUniqueOrThrow({ where: { id: setId ?? "" } }),
+    ).resolves.toMatchObject({ examBlueprintId: exam.blueprintId, runId: provenance.runId });
   });
 });

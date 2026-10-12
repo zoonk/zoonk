@@ -14,9 +14,6 @@ import { temperatureSpec } from "../quality/_test-utils/written-lessons";
 import { loadLessonSpecInputs } from "./lesson-spec-inputs";
 import { saveLessonSpecs } from "./save-lesson-specs";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
 const provenance = {
   generatedAt: new Date(),
   model: "openai/gpt-6-sol",

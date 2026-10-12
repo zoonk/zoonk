@@ -6,8 +6,6 @@ import {
   serializeExerciseSteps,
 } from "./prepare-lesson-data";
 
-vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: vi.fn(<T>(items: T[]) => items) }));
-
 type SerializeInput = Parameters<typeof serializeExerciseSteps>[0];
 type Resources = SerializeInput["resources"];
 type StepInput = SerializeInput["steps"][number];

@@ -7,9 +7,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { parseStepContent } from "../steps/contract/step-contract";
 import { getOrCreateFieldChallenge } from "./field-challenge";
 
-/** The model call is the external boundary; the contract check and the shared row run for real. */
-vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
-
 type Written = Awaited<ReturnType<typeof generateChallengeCase>>;
 
 function mockCase(data: Written["data"]) {

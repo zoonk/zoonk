@@ -22,8 +22,6 @@ import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 describe("swipe capsules", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

@@ -4,23 +4,12 @@ import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { requestSpeechClip } from "./request-speech-clip";
 import { getSpeechClipKey } from "./speech-clip-key";
-import type * as AudioTask from "@zoonk/ai/tasks/audio";
-
-vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
-  ...(await importOriginal<typeof AudioTask>()),
-  generateLanguageAudio: vi.fn(),
-}));
-
-vi.mock("@vercel/blob", () => ({
-  put: vi.fn(async (pathname: string) => ({
-    url: `https://blob.test/${randomUUID()}-${pathname}`,
-  })),
-}));
 
 const VOICED = {
   audio: new Uint8Array([1, 2, 3]),
@@ -58,6 +47,10 @@ function assistClaims(userId: string) {
 }
 
 describe(requestSpeechClip, () => {
+  beforeEach(() => {
+    storeBlobUploads();
+  });
+
   it("requires a session", async () => {
     mockSession(null);
 

@@ -1,3 +1,4 @@
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/v2/language/language-lesson";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -10,15 +11,11 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { wordFixture, wordPronunciationFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
-import { generateLanguageAudio } from "../../audio/generate-language-audio";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
 import { languageLessonDraft } from "./_test-utils/language-lesson-draft";
 import { writeLanguageLessonContent } from "./write-language-lesson-content";
-
-// The writer and text-to-speech (with its upload) are paid external services.
-vi.mock("@zoonk/ai/tasks/v2/language/language-lesson", () => ({ generateLanguageLesson: vi.fn() }));
-vi.mock("../../audio/generate-language-audio", () => ({ generateLanguageAudio: vi.fn() }));
 
 type Draft = ReturnType<typeof languageLessonDraft>;
 
@@ -69,19 +66,28 @@ function mockDraft(draft: Draft, runId: string = crypto.randomUUID()) {
 
 const SPEECH_PROVENANCE = {
   generatedAt: new Date().toISOString(),
+  latencyMs: 900,
   model: "google/gemini-3.8-flash-tts",
   promptVersion: "speech-v1",
+  provider: "vertex",
+  requestedModel: "google/gemini-3.8-flash-tts",
   runId: "speech-run",
-} as const;
+  usage: {},
+};
 
+/** Voices every clip, which is stored in Vercel Blob. */
 function mockAudio() {
-  vi.mocked(generateLanguageAudio).mockImplementation(async ({ text }) => ({
+  storeBlobUploads();
+
+  vi.mocked(generateLanguageAudio).mockResolvedValue({
     data: {
+      audio: new Uint8Array([1, 2, 3]),
+      durationMs: 900,
+      format: "mp3",
       provenance: SPEECH_PROVENANCE,
-      url: `https://blob.test/audio/${encodeURIComponent(text)}.mp3`,
     },
     error: null,
-  }));
+  });
 }
 
 async function claimLanguageLesson(attrs: { language: string; chapterId?: string }) {

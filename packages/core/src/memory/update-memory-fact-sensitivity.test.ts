@@ -8,12 +8,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateMemoryFact } from "./update-memory-fact";
 
-// The sensitivity check is a paid model call; its behavior is covered by the memory-gate eval.
-vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
-
-// A failed check is logged, not surfaced; the test reads the log instead of printing it.
-vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn(), logWarning: vi.fn() }));
-
 const SENSITIVE = "Has diabetes";
 
 type Gate = Awaited<ReturnType<typeof gateMemoryFact>>;
@@ -90,6 +84,7 @@ describe("sensitivity of a corrected fact", () => {
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
     ).resolves.toMatchObject({ sensitive: false, statement: SENSITIVE });
 
+    // A failed check is logged, not surfaced.
     expect(logError).toHaveBeenCalledOnce();
   });
 });

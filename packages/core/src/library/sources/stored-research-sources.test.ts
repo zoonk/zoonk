@@ -4,12 +4,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { findStoredResearchSources } from "./stored-research-sources";
 
-// The reuse decision is a model call, the one external boundary: each test says which it accepts.
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({
-  LIBRARY_IDENTITY_MIN_PROBABILITY: 0.6,
-  decideLibraryIdentity: vi.fn(),
-}));
-
 const DAY_MS = 86_400_000;
 
 /** A law's text as research stores it: long enough for a model to read the law from. */
@@ -23,6 +17,7 @@ const LAW_TEXT = [
 /** What a page that builds its text with JavaScript stores. */
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
 
+/** The reuse decision is a model call, the one external boundary: it accepts only `ids`. */
 function acceptOnly(ids: string[]) {
   return vi.mocked(decideLibraryIdentity).mockImplementation(({ candidates }) => {
     const verdicts = candidates.map((candidate) => ({

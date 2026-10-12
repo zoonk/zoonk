@@ -6,16 +6,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildExamIdentityKey } from "../../../library/exams/exam-identity";
 import { findExamFacts } from "./exam-facts";
 
-/**
- * The quick date lookup searches the web and the identity decision asks an evaluation model: both
- * are external boundaries, so each test says what they answer.
- */
-vi.mock("@zoonk/ai/tasks/v2/goals/find-exam-date", () => ({ findExamDate: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
-  decideExamIdentity: vi.fn(),
-}));
-
 const TODAY = "2026-09-28";
 const NOTICE_URL = "https://cdn.cebraspe.org.br/concursos/camara_25/edital.pdf";
 

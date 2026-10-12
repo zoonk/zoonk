@@ -5,8 +5,6 @@ import { type CurriculumScope } from "./curriculum-scope";
 import { mergeGraphSkillTwins } from "./merge-skill-twins";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-
 type GraphSkill = GoalSkillGraph["skills"][number];
 
 function skill(overrides: Partial<GraphSkill> & { key: string; name: string }): GraphSkill {

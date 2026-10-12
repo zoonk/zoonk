@@ -14,8 +14,6 @@ import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const UTC = "UTC";
 const MINUTE_MS = 60_000;

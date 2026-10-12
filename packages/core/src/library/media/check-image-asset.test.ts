@@ -6,8 +6,7 @@ import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/l
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { readStoredImage } from "../../images/read-stored-image";
-import { uploadImage } from "../../images/upload-image";
+import { serveStoredFile, storeBlobUploads } from "../../_test-utils/blob-uploads";
 import {
   drawTestImage,
   mockDrawnImages,
@@ -15,12 +14,6 @@ import {
   testScene,
 } from "./_test-utils/image-mocks";
 import { checkImageAsset } from "./check-image-asset";
-
-/** Vercel Blob is an external service: the stored file is read back and written through it. */
-vi.mock("../../images/read-stored-image", () => ({ readStoredImage: vi.fn() }));
-vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
 
 /** A picture already shown on a lesson screen and on a question about it, not checked yet. */
 async function shownPicture() {
@@ -39,17 +32,18 @@ async function shownPicture() {
 }
 
 describe(checkImageAsset, () => {
+  let readStoredFile: ReturnType<typeof serveStoredFile>;
+
+  // The check reads the stored picture back from Vercel Blob, and a redraw is stored there.
   beforeEach(async () => {
     vi.resetAllMocks();
 
-    vi.mocked(readStoredImage).mockResolvedValue({
+    readStoredFile = serveStoredFile({
       data: new Uint8Array(await drawTestImage()),
       mediaType: "image/webp",
     });
 
-    vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
-      Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
-    );
+    storeBlobUploads();
   });
 
   it("leaves a shown picture that passes its check as it is, checking it at flex", async () => {
@@ -60,7 +54,7 @@ describe(checkImageAsset, () => {
       status: "passed",
     });
 
-    expect(readStoredImage).toHaveBeenCalledWith({ url: asset.url });
+    expect(readStoredFile).toHaveBeenCalledWith(asset.url);
     expect(checkLessonImage).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
 
     await expect(prisma.mediaAsset.findUnique({ where: { id: asset.id } })).resolves.toMatchObject({

@@ -4,16 +4,12 @@ import { PostHog } from "posthog-node";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerAiGenerationAnalytics } from "./ai-generations";
 
-const posthogClient = vi.hoisted(() => ({ capture: vi.fn(), shutdown: vi.fn() }));
+const posthogClient = { capture: vi.fn(), shutdown: vi.fn() };
 
-vi.mock("posthog-node", () => ({
-  PostHog: vi.fn(
-    class {
-      capture = posthogClient.capture;
-      shutdown = posthogClient.shutdown;
-    },
-  ),
-}));
+class TestPostHog {
+  capture = posthogClient.capture;
+  shutdown = posthogClient.shutdown;
+}
 
 const generation: AiGeneration = {
   context: { distinctId: "user-id" },
@@ -42,6 +38,7 @@ async function sendThroughRegisteredSink() {
 describe(registerAiGenerationAnalytics, () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(PostHog).mockImplementation(TestPostHog as never);
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_HOST", "https://posthog.test");
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "project-token");
   });
