@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import { runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 
-/** Pyodide loads in a couple of seconds, past Vitest's default 5 second limit on a busy machine. */
-const PYTHON_TEST_TIMEOUT_MS = 30_000;
+/**
+ * Pyodide loads in a couple of seconds, and an endless program runs out its 3-second limit: past
+ * Vitest's default 5 second limit on a busy machine.
+ */
+const RUNNER_TEST_TIMEOUT_MS = 30_000;
 
 const countries = sqlSetupStatements([
   {
@@ -41,18 +44,22 @@ describe(runPrograms, () => {
     );
   });
 
-  it("reports JavaScript errors with their line, endless loops and floods", async () => {
-    const [failing, endless, flood] = await runPrograms([
-      { code: "const list = [1];\nconsole.log(list.missing.length);", kind: "javascript" },
-      { code: "let n = 0;\nwhile (true) { n += 1; }", kind: "javascript" },
-      { code: 'while (true) console.log("x".repeat(100));', kind: "javascript" },
-    ]);
+  it(
+    "reports JavaScript errors with their line, endless loops and floods",
+    { timeout: RUNNER_TEST_TIMEOUT_MS },
+    async () => {
+      const [failing, endless, flood] = await runPrograms([
+        { code: "const list = [1];\nconsole.log(list.missing.length);", kind: "javascript" },
+        { code: "let n = 0;\nwhile (true) { n += 1; }", kind: "javascript" },
+        { code: 'while (true) console.log("x".repeat(100));', kind: "javascript" },
+      ]);
 
-    expect(failing).toMatchObject({ error: { line: 2 }, status: "error" });
-    expect(failing?.error?.message).toContain("TypeError");
-    expect(endless?.status).toBe("timeout");
-    expect(flood?.status).toBe("tooMuchOutput");
-  });
+      expect(failing).toMatchObject({ error: { line: 2 }, status: "error" });
+      expect(failing?.error?.message).toContain("TypeError");
+      expect(endless?.status).toBe("timeout");
+      expect(flood?.status).toBe("tooMuchOutput");
+    },
+  );
 
   it("gives JavaScript no way out of its sandbox", async () => {
     const [run] = await runPrograms([
@@ -65,38 +72,46 @@ describe(runPrograms, () => {
     expect(run?.output).toBe("undefined undefined undefined undefined\n");
   });
 
-  it("runs SQL on a fresh database and stops a query that never ends", async () => {
-    const [query, failing, endless, after] = await runPrograms([
-      {
-        kind: "sql",
-        query: "SELECT name, pop FROM countries ORDER BY pop DESC;",
-        setup: countries,
-      },
-      { kind: "sql", query: "SELECT nope FROM countries;", setup: countries },
-      {
-        kind: "sql",
-        query:
-          "WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM n) SELECT count(*) FROM n;",
-        setup: countries,
-      },
-      { kind: "sql", query: "SELECT count(*) AS total FROM countries;", setup: countries },
-    ]);
+  it(
+    "runs SQL on a fresh database and stops a query that never ends",
+    { timeout: RUNNER_TEST_TIMEOUT_MS },
+    async () => {
+      const [query, failing, endless, after] = await runPrograms([
+        {
+          kind: "sql",
+          query: "SELECT name, pop FROM countries ORDER BY pop DESC;",
+          setup: countries,
+        },
+        { kind: "sql", query: "SELECT nope FROM countries;", setup: countries },
+        {
+          kind: "sql",
+          query:
+            "WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM n) SELECT count(*) FROM n;",
+          setup: countries,
+        },
+        { kind: "sql", query: "SELECT count(*) AS total FROM countries;", setup: countries },
+      ]);
 
-    expect(query).toMatchObject({
-      status: "done",
-      table: {
-        columns: ["name", "pop"],
-        rows: [
-          ["India", 1451],
-          ["Brazil", 212],
-        ],
-      },
-    });
+      expect(query).toMatchObject({
+        status: "done",
+        table: {
+          columns: ["name", "pop"],
+          rows: [
+            ["India", 1451],
+            ["Brazil", 212],
+          ],
+        },
+      });
 
-    expect(failing).toMatchObject({ error: { message: "no such column: nope" }, status: "error" });
-    expect(endless?.status).toBe("timeout");
-    expect(after).toMatchObject({ status: "done", table: { rows: [[2]] } });
-  });
+      expect(failing).toMatchObject({
+        error: { message: "no such column: nope" },
+        status: "error",
+      });
+
+      expect(endless?.status).toBe("timeout");
+      expect(after).toMatchObject({ status: "done", table: { rows: [[2]] } });
+    },
+  );
 
   it(
     "runs Python like the player, with errors on their line, no network, host files or JavaScript, and traced runs",
@@ -157,6 +172,6 @@ describe(runPrograms, () => {
         },
       ]);
     },
-    PYTHON_TEST_TIMEOUT_MS,
+    RUNNER_TEST_TIMEOUT_MS,
   );
 });
