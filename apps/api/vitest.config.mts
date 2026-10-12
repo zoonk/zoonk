@@ -1,7 +1,7 @@
 import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { configDefaults, defineConfig } from "vitest/config";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment";
 
 /**
  * Test files that mock modules of their own (`vi.mock`, `vi.doMock`, `vi.unmock`): a mocked module
@@ -20,7 +20,7 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        // Use @zoonk/auth/testing in tests to avoid nextCookies() which requires Next.js context
+        // Use auth's testing config in tests to avoid nextCookies() which requires Next.js context
         find: /^@zoonk\/auth$/u,
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
@@ -57,7 +57,7 @@ export default defineConfig({
     },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
-    globalSetup: ["./vitest.global-setup.ts"],
+    globalSetup: ["../../packages/db/src/test-database.ts"],
     projects: [
       {
         extends: true,

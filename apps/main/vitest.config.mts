@@ -1,13 +1,13 @@
 import { resolve } from "node:path";
-import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment";
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: [
       {
-        // Use @zoonk/auth/testing in tests to avoid nextCookies() which requires Next.js context
+        // Use auth's testing config in tests to avoid nextCookies() which requires Next.js context
         find: /^@zoonk\/auth$/u,
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
@@ -19,7 +19,7 @@ export default defineConfig({
     env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
-    globalSetup: ["./vitest.global-setup.ts"],
+    globalSetup: ["../../packages/db/src/test-database.ts"],
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200

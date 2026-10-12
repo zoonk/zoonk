@@ -55,10 +55,8 @@ function readNoticeDays({
  * theirs. A class test's day is the learner's or their own material's, never a notice's. The day
  * is only ever offered: Today proposes it, the screens that show the date offer it with one tap,
  * and the goal's date changes only when the learner takes it.
- *
- * @internal Exported for its tests; the apps go through `loadNoticeDates`.
  */
-export function getNoticeDay({
+function getNoticeDay({
   blueprint,
   details,
   goalDate,

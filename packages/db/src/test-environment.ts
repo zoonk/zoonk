@@ -12,8 +12,7 @@ function readEnvironment(path: string): Record<string, string> {
 
 /**
  * Keeps Prisma, Vitest, Playwright, and E2E builds on the same database, even when the shell has a development URL.
- * This package entrypoint is for test tooling and is intentionally absent from production app bundles.
- * @public
+ * Test tooling only: test configs import it by path, so it's absent from production app bundles.
  */
 export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string> {
   const directory = resolve(import.meta.dirname, "..");
@@ -61,7 +60,7 @@ function toRunDatabaseUrl(url: string): string {
 
 /**
  * The test environment pointing at this run's own copy of the test database, for a Vitest config's
- * `test.env`. The `@zoonk/db/test-database` global setup creates that copy and drops it after the
+ * `test.env`. The `test-database.ts` global setup creates that copy and drops it after the
  * run; the copy is named after the process, which runs both the config and its global setup.
  */
 export function getTestRunEnvironment(): Record<string, string> {

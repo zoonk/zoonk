@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getLessonLookahead, listHeldSkillIds, pickDayLessonItems } from "./day-lessons";
+import { type PlanGraph } from "../../plans/planner/plan-state";
+import { getLessonLookahead, pickDayLessons } from "./day-lessons";
 
 const TODAY = new Date("2026-10-06T00:00:00Z");
 const TOMORROW = new Date("2026-10-07T00:00:00Z");
@@ -23,7 +24,15 @@ const graph = {
 type Item = ReturnType<typeof item>;
 
 function item(id: string, skillId: string, scheduledFor: Date | null) {
-  return { chapterId: null, id, lessonId: `lesson-${id}` as string | null, scheduledFor, skillId };
+  return {
+    chapterId: null,
+    id,
+    kind: "lesson" as const,
+    lessonId: `lesson-${id}` as string | null,
+    scheduledFor,
+    skillId,
+    status: "todo" as const,
+  };
 }
 
 const items = [
@@ -34,12 +43,38 @@ const items = [
   item("cf-2", "principles", TOMORROW),
 ];
 
-/** The day's pick when nothing due today is being outlined. */
-function pick(input: { isExam: boolean; items: readonly Item[]; today: Date }) {
-  return pickDayLessonItems({ awaitingOutlines: false, graph, ...input });
+/** A day's lessons and held skills from its goal's plan. */
+function pickDay({
+  awaitingOutlines = false,
+  graph: dayGraph = graph,
+  idleSkillIds,
+  isExam,
+  items: dayItems,
+  prerequisites,
+  today,
+}: {
+  awaitingOutlines?: boolean;
+  graph?: PlanGraph;
+  idleSkillIds?: ReadonlySet<string>;
+  isExam: boolean;
+  items: readonly Item[];
+  prerequisites?: ReadonlyMap<string, readonly string[]>;
+  today: Date;
+}) {
+  return pickDayLessons({
+    awaitingOutlines,
+    goal: { kind: isExam ? "exam" : "learn" },
+    localDate: today,
+    plan: { graph: dayGraph, idleSkillIds, items: dayItems, prerequisites },
+  });
 }
 
-describe(pickDayLessonItems, () => {
+/** The day's pick when nothing due today is being outlined. */
+function pick(input: { isExam: boolean; items: readonly Item[]; today: Date }) {
+  return pickDay(input).learnItems;
+}
+
+describe(pickDayLessons, () => {
   it("fills an exam day with today's lessons, then more of today's subjects, not tomorrow's", () => {
     const picked = pick({ isExam: true, items, today: TODAY });
 
@@ -55,13 +90,9 @@ describe(pickDayLessonItems, () => {
 
     expect(
       [true, false].map((isExam) =>
-        pickDayLessonItems({
-          awaitingOutlines: true,
-          graph,
-          isExam,
-          items: waiting,
-          today: TODAY,
-        }).map((entry) => entry.id),
+        pickDay({ awaitingOutlines: true, isExam, items: waiting, today: TODAY }).learnItems.map(
+          (entry) => entry.id,
+        ),
       ),
     ).toStrictEqual([["pt-1"], ["pt-1"]]);
   });
@@ -77,14 +108,12 @@ describe(pickDayLessonItems, () => {
     // builds on was outlined.
     const waiting = [{ ...item("en-0", "english", TODAY), lessonId: null }, ...items];
 
-    const picked = pickDayLessonItems({
-      awaitingOutlines: false,
-      graph,
+    const picked = pickDay({
       isExam: false,
       items: waiting,
       prerequisites: new Map([["principles", ["english"]]]),
       today: TODAY,
-    });
+    }).learnItems;
 
     // The first principles lesson waits for English; the second comes after English's lesson.
     expect(picked.map((entry) => entry.id)).toStrictEqual(["pt-1", "en-1", "pt-2", "cf-2"]);
@@ -110,13 +139,9 @@ const camara = {
 };
 
 function camaraPick(day: readonly Item[]) {
-  return pickDayLessonItems({
-    awaitingOutlines: false,
-    graph: camara,
-    isExam: true,
-    items: day,
-    today: TODAY,
-  }).map((entry) => entry.id);
+  return pickDay({ graph: camara, isExam: true, items: day, today: TODAY }).learnItems.map(
+    (entry) => entry.id,
+  );
 }
 
 function standIn(id: string, skillId: string, scheduledFor: Date) {
@@ -138,13 +163,7 @@ describe("an exam day whose subjects aren't all written yet", () => {
     expect(camaraPick(day)).toStrictEqual(["li-1", "li-2"]);
 
     expect(
-      listHeldSkillIds({
-        awaitingOutlines: false,
-        graph: camara,
-        isExam: true,
-        items: day,
-        today: TODAY,
-      }),
+      pickDay({ graph: camara, isExam: true, items: day, today: TODAY }).heldSkillIds,
     ).toStrictEqual(new Set(["ti"]));
   });
 
@@ -159,16 +178,15 @@ describe("an exam day whose subjects aren't all written yet", () => {
       item("cp-1", "cp", TOMORROW),
     ];
 
-    const input = {
-      awaitingOutlines: false,
+    const { heldSkillIds, learnItems } = pickDay({
       graph: camara,
       idleSkillIds: new Set(["ti"]),
       isExam: true,
       items: day,
       today: TODAY,
-    };
+    });
 
-    expect(pickDayLessonItems(input).map((entry) => entry.id)).toStrictEqual([
+    expect(learnItems.map((entry) => entry.id)).toStrictEqual([
       "li-1",
       "li-2",
       "li-3",
@@ -176,7 +194,7 @@ describe("an exam day whose subjects aren't all written yet", () => {
       "li-5",
     ]);
 
-    expect(listHeldSkillIds(input)).toStrictEqual(new Set());
+    expect(heldSkillIds).toStrictEqual(new Set());
   });
 
   it("takes a subject's own next written lessons for the ones it has nothing written for yet", () => {

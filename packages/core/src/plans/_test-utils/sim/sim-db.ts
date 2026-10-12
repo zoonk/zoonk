@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { loadPlacementPlan } from "../../../learner/_utils/goal-skill-graph";
 import { proposeChange } from "../../_utils/apply-plan-change";
-import { listPlacementListeningAreas } from "../../_utils/level-listening-starts";
+import { listPlacementListeningAreas } from "../../_utils/load-listening-starts";
 import { loadPlanContext } from "../../_utils/plan-context";
 import { settleNewPlan } from "../../_utils/recommended-bases";
 import { computePlan } from "../../_utils/replan";

@@ -10,9 +10,7 @@
     "./seed/v2": "./src/prisma/seed/v2/index.ts",
     "./seed/v2/localize": "./src/prisma/seed/v2/_utils/localize.ts",
     "./seed/v2/personas": "./src/prisma/seed/v2/learners/seed-personas.ts",
-    "./utils": "./src/utils.ts",
-    "./test-database": "./src/test-database.ts",
-    "./test-environment": "./src/test-environment.ts"
+    "./utils": "./src/utils.ts"
   },
   "scripts": {
     "db:deploy": "tsx src/scripts/deploy-migrations.ts",

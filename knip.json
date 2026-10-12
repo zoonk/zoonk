@@ -45,11 +45,18 @@
       "entry": ["scripts/*.ts!"],
       "project": ["src/**/*.ts!", "!**/_test-utils/**!"]
     },
-    "packages/auth": { "project": ["src/**/*.ts!", "!**/_test-utils/**!"] },
+    "packages/auth": {
+      "project": ["src/**/*.ts!", "!**/_test-utils/**!", "!src/{e2e,testing}.ts"]
+    },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
       "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!", "src/scripts/*.ts"],
-      "project": ["**/*.{ts,mts}!", "!src/scripts/**!", "!src/prisma/seed.ts!"],
+      "project": [
+        "**/*.{ts,mts}!",
+        "!src/scripts/**!",
+        "!src/prisma/seed.ts!",
+        "!src/test-{database,environment}.ts!"
+      ],
       "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },

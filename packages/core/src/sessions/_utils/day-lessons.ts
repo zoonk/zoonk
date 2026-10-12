@@ -122,11 +122,8 @@ function listOpenLessons<TItem extends DayItem>({
  * subject whose lessons today aren't written yet, up to what the day plans for it), and the held
  * subject's time goes to practice on it: Rafaela's day one was 27 linguistics lessons when IT's
  * weren't written. Other goals follow the plan's order, and a day with nothing due does too.
- *
- * @internal The simulator's sessions pick their lessons with it; the apps go through
- * `pickDayLessons`.
  */
-export function pickDayLessonItems<TItem extends DayItem>({
+function pickDayLessonItems<TItem extends DayItem>({
   awaitingOutlines,
   graph,
   idleSkillIds = new Set(),
@@ -189,10 +186,8 @@ export function pickDayLessonItems<TItem extends DayItem>({
  * The skills of an exam day's held subjects (`listHeldAreas`), which practice asks first so the
  * day's time for them stays theirs. None while the day's lessons are being outlined
  * (`awaitingOutlines`): the day holds that time for the lessons instead.
- *
- * @internal Exported for its tests; the apps go through `pickDayLessons`.
  */
-export function listHeldSkillIds<TItem extends DayItem>({
+function listHeldSkillIds<TItem extends DayItem>({
   awaitingOutlines,
   graph,
   idleSkillIds = new Set(),

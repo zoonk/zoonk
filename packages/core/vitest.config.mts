@@ -1,8 +1,8 @@
 import { globSync, readFileSync } from "node:fs";
 import { availableParallelism } from "node:os";
 import { resolve } from "node:path";
-import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { configDefaults, defineConfig } from "vitest/config";
+import { getTestRunEnvironment } from "../db/src/test-environment";
 
 /**
  * Prompts load as their text, as the apps' raw-loader serves them, so a prompt's version here is
@@ -42,7 +42,7 @@ export default defineConfig({
   test: {
     env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
-    globalSetup: ["./vitest.global-setup.ts"],
+    globalSetup: ["../db/src/test-database.ts"],
     // Fewer cores than that (CI's runners have 4) get one worker each, so the database work they
     // share isn't starved of CPU.
     maxWorkers: Math.min(MAX_DATABASE_WORKERS, availableParallelism()),

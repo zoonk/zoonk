@@ -201,9 +201,8 @@ function dropOnExit({ name, serverUrl }: { name: string; serverUrl: string }): v
 /**
  * Copies the test database for this run and drops the copy when the run ends, interrupted or not,
  * along with copies runs that crashed left behind. A copy whose migrations don't match the
- * repository's is refused, so tests never run on an old schema. Test tooling only, absent from
- * production bundles.
- * @public
+ * repository's is refused, so tests never run on an old schema. Test tooling only: Vitest configs
+ * name it as their `globalSetup` by path, so it's absent from production bundles.
  */
 export default async function setupTestDatabase(): Promise<() => Promise<void>> {
   const templateUrl = getTestEnvironment("test").DATABASE_URL_UNPOOLED ?? "";

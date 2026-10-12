@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
-import { listPlacementListeningAreas } from "../../../plans/_utils/level-listening-starts";
+import { listPlacementListeningAreas } from "../../../plans/_utils/load-listening-starts";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "../../../plans/_utils/plan-setup-tasks";
 import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../../_utils/known-skills";

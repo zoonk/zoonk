@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
+import { getTestEnvironment } from "../../db/src/test-environment";
 
 const CHROMIUM_PROJECT = {
   name: "chromium",

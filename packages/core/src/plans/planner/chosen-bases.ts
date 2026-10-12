@@ -1,60 +1,19 @@
 import { type BuildPlanInput } from "./build-plan";
 import { findChapterInProgress } from "./chapter-in-progress";
-import { getCoreLessons } from "./core-first";
 import { type PlanBase, getBaseChoices } from "./plan-bases";
-import { type ExistingPlanItem } from "./plan-items";
 import {
   type BaseChoice,
   type PlanGraph,
   type PlanGraphSkill,
   type StoredBaseChoice,
 } from "./plan-state";
-import { type PlannerLesson, assignLessonSkills, countStandInLessons } from "./plan-units";
+import { type PlannerLesson, assignLessonSkills } from "./plan-units";
+import { countCoreLessons, listStudiedCores } from "./studied-cores";
 
 type ChoiceInput = Pick<
   BuildPlanInput,
   "bases" | "graph" | "items" | "lessons" | "missedSkillIds" | "settings"
 >;
-
-/** How many of a skill's lessons the plan has, outlined and still to write (as `findPlanBases` counts). */
-function countSkillLessons({ outlined, skill }: { outlined: number; skill: PlanGraphSkill }) {
-  return outlined + countStandInLessons({ lessons: skill.lessons, taught: outlined });
-}
-
-/**
- * The skills whose core the learner studied, none of their lessons still to do in the plan: a
- * choice that keeps no more than a base's core changes nothing for them. Kept, a quick lesson for
- * prokaryotes, whose core a class test's learner had studied, planned the plan the way a plan
- * with choices goes, and cell theory left it.
- *
- * @internal The plan rules read a finished base with it (R15); the planner goes through
- * `getKeptBaseChoices`.
- */
-export function listStudiedCores(input: {
-  graph: Pick<PlanGraph, "skills">;
-  items: readonly Pick<ExistingPlanItem, "kind" | "skillId" | "status">[];
-  lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
-}): Set<string> {
-  const teaching = assignLessonSkills({ lessons: input.lessons, skills: input.graph.skills });
-  const outlined = Map.groupBy(teaching.values(), (skillId) => skillId);
-  const lessons = input.items.filter((item) => item.kind === "lesson" && item.skillId);
-  const todo = new Set(lessons.flatMap((item) => (item.status === "todo" ? [item.skillId] : [])));
-
-  const done = Map.groupBy(
-    lessons.filter((item) => item.status === "done"),
-    (item) => item.skillId ?? "",
-  );
-
-  return new Set(
-    input.graph.skills.flatMap((skill) => {
-      const outlinedCount = outlined.get(skill.skillId)?.length ?? 0;
-      const core = getCoreLessons(countSkillLessons({ outlined: outlinedCount, skill }));
-      const studied = (done.get(skill.skillId)?.length ?? 0) >= core;
-
-      return studied && !todo.has(skill.skillId) ? [skill.skillId] : [];
-    }),
-  );
-}
 
 /**
  * The learner's base choices but a skip of a base they then missed a question on: it comes back
@@ -109,7 +68,7 @@ function sizeBases({
       }
 
       const own = lessons.filter((lesson) => teaching.get(lesson.lessonId) === skill.skillId);
-      const core = getCoreLessons(countSkillLessons({ outlined: own.length, skill }));
+      const core = countCoreLessons({ outlined: own.length, skill });
 
       const started = own
         .slice(core)

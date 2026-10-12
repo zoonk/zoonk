@@ -1,8 +1,8 @@
 import { type PlanOperation } from "../../plan-contract";
-import { listStudiedCores } from "../../planner/chosen-bases";
 import { getWrittenTestAreas } from "../../planner/graph-areas";
 import { addDays, daysBetween, fromIsoDate } from "../../planner/plan-calendar";
 import { type BaseChoice } from "../../planner/plan-state";
+import { listStudiedCores } from "../../planner/studied-cores";
 import { type RuleContext, type RuleItem, type RulePlan, type RuleViolation } from "./rule-context";
 import {
   findFirstDue,

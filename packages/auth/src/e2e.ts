@@ -26,7 +26,6 @@ async function recordSessionLookup(headers: Headers | undefined) {
 }
 
 /**
- * @public
  * E2E-specific auth configuration.
  * - Enables email+password with plain-text matching (no bcrypt overhead)
  * - Disables rate limiting to avoid 429 errors during parallel test runs
@@ -61,7 +60,7 @@ export const auth = betterAuth({
   socialProviders,
 });
 
-/** @public Next's E2E alias replaces the package root with this module, so it must expose the same server capabilities as the production entrypoint while using test-safe OTP storage. */
+/** Next's E2E alias replaces the package root with this module, so it must expose the same server capabilities as the production entrypoint while using test-safe OTP storage. */
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: false },
   storeOTP: "plain",
