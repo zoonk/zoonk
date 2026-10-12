@@ -25,6 +25,11 @@ jobs:
   vitest:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # MEASUREMENT: how many suites at once a 4-vCPU runner keeps busy without starving tests.
+    strategy:
+      fail-fast: false
+      matrix:
+        concurrency: [1, 2, 10]
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -63,6 +68,18 @@ jobs:
           docker logs db
           exit 1
 
+      - name: Sample CPU
+        run: (vmstat -n 2 > "$RUNNER_TEMP/vmstat.log" &)
+
       # Migrates the test database first (`db:setup:test`), then runs every suite.
       - name: Run Vitest
-        run: pnpm test
+        run: pnpm turbo run test --concurrency=${{ matrix.concurrency }} --continue
+        env:
+          TURBO_FORCE: "true"
+
+      - name: CPU use
+        if: always()
+        run: |
+          awk 'NR > 2 { n++; us += $13; sy += $14; id += $15; wa += $16; r += $1 }
+            END { printf "samples=%d user=%.0f%% sys=%.0f%% idle=%.0f%% wait=%.0f%% runnable=%.1f\n", n, us/n, sy/n, id/n, wa/n, r/n }' "$RUNNER_TEMP/vmstat.log"
+          awk 'NR > 2 { printf "%s%d", (NR > 3 ? " " : ""), 100 - $15 } END { print "" }' "$RUNNER_TEMP/vmstat.log"
