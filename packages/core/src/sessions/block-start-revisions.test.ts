@@ -6,6 +6,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
+import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -42,6 +43,7 @@ describe("block start revisions", () => {
     const before = await versions(day);
     const results = await Promise.all([start(day), start(day)]);
     expect(results.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
+    expect(revalidateTag).not.toHaveBeenCalled();
 
     const active = await prisma.studySessionBlock.findUniqueOrThrow({
       where: { id: day.block.id },

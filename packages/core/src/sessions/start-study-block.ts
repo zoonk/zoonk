@@ -1,8 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getUserProgressCacheTag, getUserSessionCacheTag } from "../cache/tags";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
@@ -256,7 +254,6 @@ export async function startStudyBlock({
   }
 
   const result = attempt.data;
-  revalidateCacheTags([getUserProgressCacheTag(userId), getUserSessionCacheTag(userId)]);
 
   if (result.opened) {
     trackSessionStarted(result.session);
