@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
+import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
 import "../globals.css";
 
@@ -21,10 +22,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * Cmd/Ctrl+K for anyone with a session, streamed in after the page, and what keeps a "Search"
- * chosen before it arrived from opening on another page. The reset comes first, so on a commit
- * that both changes the page and mounts the palette, it drops the old request before the palette
- * can answer it.
+ * Cmd/Ctrl+K from anywhere, and what keeps a "Search" chosen before the palette loaded from opening
+ * on another page. The reset comes first, so on a commit that both changes the page and mounts the
+ * palette, it drops the old request before the palette can answer it.
  */
 function AppCommandPaletteSlot() {
   return (
@@ -32,16 +32,16 @@ function AppCommandPaletteSlot() {
       <Suspense fallback={null}>
         <PaletteRequestReset />
       </Suspense>
-      <Suspense fallback={null}>
-        <AppCommandPalette />
-      </Suspense>
+      <AppCommandPalette />
     </>
   );
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
+  const locale = await lang();
+
   return (
-    <html className={`${geistSans.variable} ${geistMono.variable}`} lang={await lang()}>
+    <html className={`${geistSans.variable} ${geistMono.variable}`} lang={locale}>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the
             confirmation of a deleted account, shown as the home page loads). */}
@@ -56,8 +56,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           </ClientMessagesProvider>
         </NuqsAdapter>
         <Suspense fallback={null}>
-          <AppAnalytics />
+          <LearnerSummarySync />
         </Suspense>
+        <AppAnalytics locale={locale} />
       </body>
     </html>
   );

@@ -1,42 +1,61 @@
 "use client";
 
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type Mission } from "@zoonk/core/sessions/missions";
 import { type LearnTabMissions } from "@zoonk/learn/navigation";
 import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
-import { countTabMissions } from "./tab-missions";
-
-/** Today's missions as counted by one read, and when that read ran (`getReadAt`). */
-type TabMissionsRead = { missions: LearnTabMissions; readAt: number };
+import {
+  type TabMissionsReport,
+  type TabMissionsReports,
+  addTabMissionsReport,
+  countTabMissions,
+  findTabMissionsReport,
+} from "./tab-missions";
 
 const TabMissionsContext = createContext<{
-  newest: TabMissionsRead | null;
-  report: (read: TabMissionsRead) => void;
+  newest: TabMissionsReport | null;
+  report: (read: TabMissionsReport) => void;
 } | null>(null);
+
+/** Whose reads count: the learner the summary holds; nobody's while it holds no one. */
+function useLearnerId(): string | null {
+  const learner = useLearnerSummary();
+  return learner.status === "ready" ? learner.summary.identity.userId : null;
+}
 
 /**
  * Keeps the newest count of today's missions the pages read, for the buddy's tab. The frame keeps
- * its first read while the learner moves between pages, and the read before Today builds the day's
- * session has none: the tab said "0 of 2" beside a buddy page saying "1/2".
+ * its summary while the learner moves between pages, and a page reads the missions again after
+ * every answer: the tab said "0 of 2" beside a buddy page saying "1/2". A read counts only for the
+ * learner it was made for (its viewer), so another account (or a visitor) taking the session never
+ * wears it, even when it arrives late.
  */
 export function TabMissionsProvider({ children }: { children: React.ReactNode }) {
-  const [newest, setNewest] = useState<TabMissionsRead | null>(null);
+  const learnerId = useLearnerId();
+  const [reports, setReports] = useState<TabMissionsReports>({});
 
-  const report = useCallback((read: TabMissionsRead) => {
-    setNewest((current) => (current && current.readAt > read.readAt ? current : read));
+  const report = useCallback((read: TabMissionsReport) => {
+    setReports((current) => addTabMissionsReport(current, read));
   }, []);
 
+  const newest = findTabMissionsReport({ learnerId, reports });
   const value = useMemo(() => ({ newest, report }), [newest, report]);
 
   return <TabMissionsContext value={value}>{children}</TabMissionsContext>;
 }
 
-/** A page that read today's missions with its own data hands them to the buddy's tab. */
+/**
+ * A page that read today's missions with its own data hands them to the buddy's tab, for the
+ * learner that read was made for (`userId`, its viewer).
+ */
 export function useReportTabMissions({
   missions,
   readAt,
+  userId,
 }: {
   missions: readonly Mission[] | null;
   readAt: number;
+  userId: string;
 }) {
   const report = use(TabMissionsContext)?.report;
   const count = countTabMissions(missions);
@@ -47,8 +66,9 @@ export function useReportTabMissions({
     report?.({
       missions: done === undefined || total === undefined ? null : { done, total },
       readAt,
+      userId,
     });
-  }, [done, readAt, report, total]);
+  }, [done, readAt, report, total, userId]);
 }
 
 /**

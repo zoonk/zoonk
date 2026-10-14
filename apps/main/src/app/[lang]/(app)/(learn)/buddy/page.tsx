@@ -65,7 +65,7 @@ async function BuddyContent() {
   ]);
 
   // Someone without a session may have goals in their account: they log in and come back here.
-  if (result.status !== "ready") {
+  if (result.status !== "ready" || !session) {
     const t = await getExtracted();
 
     return (
@@ -82,7 +82,7 @@ async function BuddyContent() {
     return <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />;
   }
 
-  const canAsk = Boolean(session && !session.user.isAnonymous);
+  const canAsk = !session.user.isAnonymous;
 
   const [hasMistake, thread, readAt, memory] = await Promise.all([
     hasOpenMistake(goal.id),
@@ -103,6 +103,7 @@ async function BuddyContent() {
         readAt={readAt}
         situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
         status={result.buddy}
+        viewerId={session.user.id}
       />
     </ClientMessagesProvider>
   );

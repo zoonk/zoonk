@@ -1,22 +1,38 @@
-import { getSession } from "@zoonk/core/users/session";
+"use client";
+
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
 import { User } from "lucide-react";
 
 /**
  * The learner's photo or initial. A guest has no name of their own yet (auth calls them
- * "Anonymous"), so they get the plain person icon.
+ * "Anonymous"), so they get the plain person icon: their `name` is left out.
  */
-export async function UserAvatar() {
-  const session = await getSession();
-  const isGuest = Boolean(session?.user.isAnonymous);
-  const userAvatar = session?.user.image || undefined;
-  const userName = isGuest ? undefined : session?.user.name || session?.user.email;
-  const fallback = userName?.[0] || <User size={16} />;
+export function UserAvatar({ image, name }: { image?: string | null; name?: string | null }) {
+  const fallback = name?.[0] || <User size={16} />;
 
   return (
     <Avatar className="focus-visible:ring-ring size-full cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2">
-      <AvatarImage src={userAvatar} />
+      <AvatarImage src={image || undefined} />
       <AvatarFallback>{fallback}</AvatarFallback>
     </Avatar>
+  );
+}
+
+/** The signed-in learner's (or guest's) avatar, from the learner summary. */
+export function LearnerAvatar() {
+  const learner = useLearnerSummary();
+
+  if (learner.status !== "ready") {
+    return <UserAvatar />;
+  }
+
+  const { account, identity } = learner.summary;
+
+  return (
+    <UserAvatar
+      image={account.image}
+      name={identity.isAnonymous ? null : account.name || account.email}
+    />
   );
 }

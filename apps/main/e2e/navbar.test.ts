@@ -201,11 +201,12 @@ test.describe("User menu - Guest", () => {
 
     const items = await openUserMenu(page);
 
-    // A guest who already has an account finds the way in too.
+    // A guest who already has an account finds the way in too, and what an account costs.
     await expect(items).toHaveText([
       /^Search/u,
       /^Statistics/u,
       "Explore courses",
+      "Pricing",
       "Settings",
       "Help",
       "Create an account",

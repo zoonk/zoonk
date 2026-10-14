@@ -39,7 +39,7 @@ async function AccountRow() {
     <ListGroup>
       <ListRowLink href={getMenu("profile").url}>
         <span className="flex size-9 shrink-0 self-center overflow-hidden rounded-full">
-          <UserAvatar />
+          <UserAvatar image={session.user.image} name={session.user.name || session.user.email} />
         </span>
         <ListRowContent>
           <ListRowTitle className="truncate">{session.user.name}</ListRowTitle>

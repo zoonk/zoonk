@@ -51,3 +51,13 @@ export function listenForCommandPaletteOpen(open: () => void): () => void {
 
   return () => globalThis.removeEventListener(OPEN_COMMAND_PALETTE_EVENT, answer);
 }
+
+/**
+ * Lets the palette's launcher hear every request before a palette answers one, so it loads the
+ * palette (which then opens for the request it missed). It never answers, so the request waits.
+ * Returns the cleanup.
+ */
+export function listenForCommandPaletteRequest(request: () => void): () => void {
+  globalThis.addEventListener(OPEN_COMMAND_PALETTE_EVENT, request);
+  return () => globalThis.removeEventListener(OPEN_COMMAND_PALETTE_EVENT, request);
+}

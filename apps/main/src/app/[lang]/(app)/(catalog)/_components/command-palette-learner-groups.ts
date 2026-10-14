@@ -1,13 +1,12 @@
 "use client";
 
-import {
-  type LearnerPlaces,
-  type TodayQueue,
-} from "@/app/[lang]/(app)/(learn)/_components/learner-places";
+import { type ReadyMistakesResponse } from "@/app/api/learner/ready-mistakes/route";
 import { getMenu } from "@/lib/menu";
+import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
 import { useFormatDuration } from "@zoonk/learn/time-format";
 import { useExtracted } from "next-intl";
+import { useEffect, useState } from "react";
 import {
   type PaletteGroup,
   type PaletteItem,
@@ -32,9 +31,51 @@ export type LearnerPalette = {
   explanations: { id: string; title: string }[];
   goals: { id: string; kind: string; title: string }[];
   onSwitchGoal: (goalId: string) => Promise<void>;
-  places: LearnerPlaces;
-  today: TodayQueue | null;
+  places: LearnerSummary["places"];
+  today: LearnerSummary["today"];
 };
+
+/** The active goal's mistakes ready to practice; zero when the read can't tell. */
+async function fetchReadyMistakes(goalId: string, signal: AbortSignal): Promise<number> {
+  const response = await fetch(`/api/learner/ready-mistakes?${new URLSearchParams({ goalId })}`, {
+    cache: "no-store",
+    signal,
+  });
+
+  if (!response.ok) {
+    return 0;
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Main's own route answers with this shape.
+  const body = (await response.json()) as ReadyMistakesResponse;
+  return body.ready;
+}
+
+/**
+ * The active goal's mistakes ready to practice, read each time the palette opens (and dropped when
+ * it closes): the notebook's own count, too costly for every page. A read that fails can't tell
+ * what's ready, so the palette offers no practice until one can.
+ */
+function useReadyMistakes({ goalId, isOpen }: { goalId: string | null; isOpen: boolean }): number {
+  const [ready, setReady] = useState<{ count: number; goalId: string } | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !goalId) {
+      return;
+    }
+
+    const read = new AbortController();
+
+    void fetchReadyMistakes(goalId, read.signal).then(
+      (count) => setReady({ count, goalId }),
+      () => !read.signal.aborted && setReady({ count: 0, goalId }),
+    );
+
+    return () => read.abort();
+  }, [goalId, isOpen]);
+
+  return ready && ready.goalId === goalId ? ready.count : 0;
+}
 
 /** Rows a learner only has in some cases are left out as `false` or `null` while listed. */
 function isPaletteItem(item: PaletteItem | false | null): item is PaletteItem {
@@ -45,7 +86,7 @@ function isPaletteItem(item: PaletteItem | false | null): item is PaletteItem {
  * Continue today's session, with its next block's name and minutes: the lesson's title when it
  * has one, otherwise the minutes alone.
  */
-function useContinueItem(today: TodayQueue | null): PaletteItem | null {
+function useContinueItem(today: LearnerSummary["today"]): PaletteItem | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const next = today?.next;
@@ -70,9 +111,11 @@ function useContinueItem(today: TodayQueue | null): PaletteItem | null {
  * quick explanations. Null outside the app (a visitor).
  */
 export function useLearnerPaletteGroups({
+  isOpen,
   learner,
   searching,
 }: {
+  isOpen: boolean;
   learner?: LearnerPalette;
   searching: boolean;
 }): PaletteGroup[] | null {
@@ -80,14 +123,15 @@ export function useLearnerPaletteGroups({
   const continueItem = useContinueItem(learner?.today ?? null);
   const buddy = useBuddyName(learner?.buddy ?? null);
 
+  /** The goal switcher falls back to the first goal when none is saved as active yet. */
+  const activeGoalId = learner ? (learner.activeGoalId ?? learner.goals[0]?.id ?? null) : null;
+  const readyMistakes = useReadyMistakes({ goalId: activeGoalId, isOpen });
+
   if (!learner) {
     return null;
   }
 
   const { places } = learner;
-
-  /** The goal switcher falls back to the first goal when none is saved as active yet. */
-  const activeGoalId = learner.activeGoalId ?? learner.goals[0]?.id;
 
   const actions = [
     continueItem,
@@ -98,9 +142,9 @@ export function useLearnerPaletteGroups({
         label: t("Take a mock exam"),
         menu: getMenu("mock"),
       }),
-    places.readyMistakes > 0 &&
+    readyMistakes > 0 &&
       createNavigationPaletteItem({
-        count: places.readyMistakes,
+        count: readyMistakes,
         id: "practice-mistakes",
         label: t("Practice your mistakes"),
         menu: getMenu("mistakesPractice"),
@@ -127,7 +171,7 @@ export function useLearnerPaletteGroups({
       menu: getMenu("buddy"),
     }),
     createNavigationPaletteItem({
-      count: places.readyMistakes,
+      count: readyMistakes,
       id: "mistakes",
       label: t("Mistakes notebook"),
       menu: getMenu("mistakes"),

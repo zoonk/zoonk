@@ -36,18 +36,20 @@ const MAX_MOCK_RESULTS = 6;
  */
 export function usePaletteGroups({
   isLoggedIn,
+  isOpen,
   learner,
   query,
   results,
 }: {
   isLoggedIn: boolean;
+  isOpen: boolean;
   learner?: LearnerPalette;
   query: string;
   results: PaletteSearchResults;
 }) {
   const t = useExtracted();
   const searching = query.trim().length > 0;
-  const learnerGroups = useLearnerPaletteGroups({ learner, searching });
+  const learnerGroups = useLearnerPaletteGroups({ isOpen, learner, searching });
   const fallback = useFallbackGroup({ learner, query });
 
   const settings = useSettingsPaletteItems(isLoggedIn);

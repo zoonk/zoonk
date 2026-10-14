@@ -1,19 +1,18 @@
+"use client";
+
 import { UserAvatarMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar-menu";
-import { VisitorBarLinks } from "@/components/login-bar-link";
 import { Link } from "@/i18n/navigation";
-import { getBeltLabel } from "@/lib/belt-colors";
+import { useBeltLabel } from "@/lib/belt-label";
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
-import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
-import { getSession } from "@zoonk/core/users/session";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnShellEnd } from "@zoonk/learn/shell";
 import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
-import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
+import { useExtracted } from "next-intl";
 
-/** The account avatar's place while the session is read, at its size in the bar (28px). */
+/** The account avatar's place while the learner is read, at its size in the bar (28px). */
 const AVATAR_SKELETON_CLASS = "size-7";
 
 /**
@@ -39,17 +38,11 @@ export function BeltLevel({
 
 /**
  * The learner's belt and level, opening their statistics: the one number of theirs that only
- * grows, in sight on every tab, and the shortest way to the rest. Nothing before they have a level.
+ * grows, in sight on every tab, and the shortest way to the rest.
  */
-async function LevelLink() {
-  const level = await getBeltLevel();
-
-  if (!level) {
-    return null;
-  }
-
-  const t = await getExtracted();
-  const belt = await getBeltLabel({ color: level.color });
+function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
+  const t = useExtracted();
+  const belt = useBeltLabel(level.color);
   const levelNumber = String(level.level);
 
   return (
@@ -67,42 +60,48 @@ async function LevelLink() {
   );
 }
 
-/**
- * The right of the learner's top bar: their belt and level opening Statistics (`stats`, on the
- * tabs), and the account avatar. A visitor has no account to open, so Pricing and the way in stand
- * there, as in the sidebar and the catalog's bar; the search field's palette holds what the menu
- * would.
- * Without the level link (as in onboarding) the avatar wears the belt as a dot. Energy lives on
- * the buddy's tab, and search opens with Cmd/Ctrl+K or from the avatar's menu.
- */
-export async function LearnBarEnd({ stats = false }: { stats?: boolean }) {
-  const [session, level] = await Promise.all([getSession(), getBeltLevel()]);
-  const showLevel = stats && level !== null;
-
-  if (!session) {
-    return (
-      <LearnShellEnd>
-        <VisitorBarLinks />
-      </LearnShellEnd>
-    );
-  }
-
+function LearnBarEndSkeleton() {
   return (
     <LearnShellEnd>
-      {showLevel && <LevelLink />}
-      <LearnAvatarBelt color={showLevel ? null : (level?.color ?? null)}>
-        <Suspense fallback={<AvatarSkeleton className={AVATAR_SKELETON_CLASS} />}>
-          <UserAvatarMenu />
-        </Suspense>
-      </LearnAvatarBelt>
+      <AvatarSkeleton className={AVATAR_SKELETON_CLASS} />
     </LearnShellEnd>
   );
 }
 
-export function LearnBarEndSkeleton() {
+/**
+ * The right of the learner's top bar: their belt and level opening Statistics (`stats`, on the
+ * tabs), and the account avatar. A visitor has no account to open, so Pricing and the way in
+ * (`visitor`) stand there, as in the sidebar and the catalog's bar; the search field's palette
+ * holds what the menu would. Nothing of a level before the learner has one.
+ * Without the level link (as in onboarding) the avatar wears the belt as a dot. Energy lives on
+ * the buddy's tab, and search opens with Cmd/Ctrl+K or from the avatar's menu.
+ */
+export function LearnBarEnd({
+  stats = false,
+  visitor,
+}: {
+  stats?: boolean;
+  visitor: React.ReactNode;
+}) {
+  const learner = useLearnerSummary();
+
+  if (learner.status === "visitor") {
+    return <LearnShellEnd>{visitor}</LearnShellEnd>;
+  }
+
+  if (learner.status !== "ready") {
+    return <LearnBarEndSkeleton />;
+  }
+
+  const { level } = learner.summary;
+  const shownLevel = stats ? level : null;
+
   return (
     <LearnShellEnd>
-      <AvatarSkeleton className={AVATAR_SKELETON_CLASS} />
+      {shownLevel && <LevelLink level={shownLevel} />}
+      <LearnAvatarBelt color={shownLevel ? null : (level?.color ?? null)}>
+        <UserAvatarMenu />
+      </LearnAvatarBelt>
     </LearnShellEnd>
   );
 }

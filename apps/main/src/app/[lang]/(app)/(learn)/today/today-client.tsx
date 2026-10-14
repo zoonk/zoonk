@@ -73,7 +73,7 @@ export function TodayClient({
   const router = useRouter();
   useRefreshWhenOld(readAt);
   useFollowTimeZone(today.goal.id);
-  useReportTabMissions({ missions: today.session.missions, readAt });
+  useReportTabMissions({ missions: today.session.missions, readAt, userId: today.userId });
 
   const refreshOnPlanChange = useRefreshOnPlanChange({
     goalId: today.goal.id,

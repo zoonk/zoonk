@@ -1,122 +1,128 @@
-import { CommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette";
+"use client";
+
 import {
-  type LearnerPlaces,
-  NO_PLACES,
-  type TodayQueue,
-  getLearnerPlaces,
-  getTodayQueue,
-} from "@/app/[lang]/(app)/(learn)/_components/learner-places";
-import { switchGoalAction } from "@/app/[lang]/(app)/(learn)/_components/switch-goal-action";
-import { type GoalView } from "@zoonk/core/goals/contract";
-import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
-import { DEFAULT_BUDDY, type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
-import { getLearningProfile } from "@zoonk/core/profile/get";
-import { getSession } from "@zoonk/core/users/session";
-import { logError } from "@zoonk/utils/logger";
-import { unstable_rethrow } from "next/navigation";
+  listenForCommandPaletteRequest,
+  openCommandPalette,
+} from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
+import { getLearnerSummaryState, subscribeToLearnerSummary } from "@/lib/learner/learner-store";
+import { hasSessionHint } from "@/lib/learner/session-hint";
+import { Suspense, lazy, useEffect, useState, useSyncExternalStore } from "react";
 
-/**
- * One part of the palette's data (today's next block, the goal's places, the buddy's name): one
- * that can't be read is left out, not the palette.
- */
-async function readPart<Value>({
-  fallback,
-  read,
-}: {
-  fallback: Value;
-  read: () => Promise<Value>;
-}): Promise<Value> {
-  try {
-    return await read();
-  } catch (error) {
-    // Next's own signals (dynamic rendering, redirects) must keep propagating.
-    unstable_rethrow(error);
-    logError("Command palette part failed to load", { error });
-    return fallback;
-  }
+const loadPalette = () => import("./app-command-palette-dialog");
+
+/** Where the browser can't say when it's idle, the palette's code loads this long after the page. */
+const PRELOAD_DELAY_MS = 2000;
+const AppCommandPaletteDialog = lazy(loadPalette);
+
+/** How many frames are mounted: a visitor's Cmd/Ctrl+K opens the palette only in the app's frame. */
+const frameScopes = { count: 0, listeners: new Set<() => void>() };
+
+function changeFrameScopes(change: 1 | -1) {
+  frameScopes.count += change;
+  frameScopes.listeners.forEach((listener) => listener());
 }
 
-/** The same resolved identity the buddy tab shows, with its own name unless renamed. */
-async function getBuddy(): Promise<ResolvedBuddy> {
-  const profile = await getLearningProfile();
-  return profile?.buddy ?? DEFAULT_BUDDY;
+/** Marks the app's frame as mounted, where a visitor's Cmd/Ctrl+K opens the palette too. */
+export function CommandPaletteScope() {
+  useEffect(() => {
+    changeFrameScopes(1);
+    return () => changeFrameScopes(-1);
+  }, []);
+
+  return null;
 }
 
-/** The viewer's session and goals; null for a visitor, or when they can't be read. */
-async function loadPaletteViewer() {
-  try {
-    const session = await getSession();
-
-    if (!session) {
-      return null;
-    }
-
-    const [list, places, today, buddy] = await Promise.all([
-      listCurrentUserGoals(),
-      readPart<LearnerPlaces>({ fallback: NO_PLACES, read: getLearnerPlaces }),
-      readPart<TodayQueue | null>({ fallback: null, read: getTodayQueue }),
-      readPart({ fallback: DEFAULT_BUDDY, read: getBuddy }),
-    ]);
-
-    return { buddy, list, places, session, today };
-  } catch (error) {
-    // Next's own signals (dynamic rendering, redirects) must keep propagating.
-    unstable_rethrow(error);
-    logError("Command palette viewer failed to load", { error });
-    return null;
-  }
+/** Anyone with a session has the palette everywhere; a visitor has it in the app's frame. */
+function canOpenPalette(): boolean {
+  return frameScopes.count > 0 || hasSessionHint() || getLearnerSummaryState().status === "ready";
 }
 
-/**
- * The goals the palette switches to and the quick explanations it opens (newest first): an
- * explanation has no plan for the tabs to show, and one read to the end is found again here.
- */
-function toPaletteGoals(goals: GoalView[]) {
-  const listed = goals.filter((goal) => goal.status !== "archived");
+function subscribeToPaletteScope(listener: () => void): () => void {
+  frameScopes.listeners.add(listener);
+  const stopLearner = subscribeToLearnerSummary(listener);
 
-  return {
-    explanations: listed
-      .filter((goal) => goal.kind === "explain")
-      .toReversed()
-      .map(({ id, title }) => ({ id, title })),
-    goals: listed
-      .filter((goal) => goal.kind !== "explain")
-      .map(({ id, kind, title }) => ({ id, kind, title })),
+  return () => {
+    frameScopes.listeners.delete(listener);
+    stopLearner();
   };
 }
 
-/** The buddy tutors the active goal unless it's a quick explanation, as its tab does. */
-function canAskBuddy(list: Awaited<ReturnType<typeof listCurrentUserGoals>>): boolean {
-  const active = list?.goals.find((goal) => goal.id === list.activeGoalId);
-  return Boolean(active && active.kind !== "explain");
+/**
+ * Whether the palette belongs on this page now. A visitor who opened it in the frame and moved to
+ * a public page loses it there (its code stays loaded), shortcut included.
+ */
+function usePaletteAllowed(): boolean {
+  return useSyncExternalStore(subscribeToPaletteScope, canOpenPalette, () => false);
+}
+
+function isPaletteShortcut(event: KeyboardEvent): boolean {
+  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
 }
 
 /**
- * Cmd/Ctrl+K from anywhere in the app for anyone with a session (the tabs, settings, the catalog,
- * course pages and full-screen tasks), with their actions, places and other goals. Visitors get
- * one only in the app's frame, so public pages never load it. It sits in the root layout, above
- * every error page, so a failed lookup leaves the palette out instead of failing the page. Today's
- * queue is a read of the saved day shared with the sidebar, without preparing a study day.
+ * Loads the palette's code once the page is idle where it can open (for anyone with a session, or
+ * in the app's frame), so the first Cmd/Ctrl+K opens it at once; a visitor's public page never
+ * loads it.
  */
-export async function AppCommandPalette() {
-  const viewer = await loadPaletteViewer();
+function usePreloadOnIdle() {
+  useEffect(() => {
+    if (!canOpenPalette()) {
+      return;
+    }
 
-  if (!viewer) {
+    if (!("requestIdleCallback" in globalThis)) {
+      const timer = setTimeout(() => void loadPalette(), PRELOAD_DELAY_MS);
+      return () => clearTimeout(timer);
+    }
+
+    const idle = requestIdleCallback(() => void loadPalette());
+    return () => cancelIdleCallback(idle);
+  }, []);
+}
+
+/**
+ * Cmd/Ctrl+K search, commands and questions from any page: the palette's code loads on the first
+ * request (the shortcut, a search field, the account menu's "Search"), or when the page is idle,
+ * and it reads the learner from the learner summary. A request made before it arrived opens it as
+ * it mounts (`listenForCommandPaletteOpen`).
+ */
+export function AppCommandPalette() {
+  const [requested, setRequested] = useState(false);
+  const allowed = usePaletteAllowed();
+  const mounted = requested && allowed;
+
+  usePreloadOnIdle();
+
+  useEffect(() => {
+    if (mounted) {
+      return;
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (!isPaletteShortcut(event) || !canOpenPalette()) {
+        return;
+      }
+
+      event.preventDefault();
+      openCommandPalette();
+    }
+
+    const stopListening = listenForCommandPaletteRequest(() => setRequested(true));
+    globalThis.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      stopListening();
+      globalThis.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mounted]);
+
+  if (!mounted) {
     return null;
   }
 
   return (
-    <CommandPalette
-      isLoggedIn={!viewer.session.user.isAnonymous}
-      learner={{
-        activeGoalId: viewer.list?.activeGoalId ?? null,
-        buddy: viewer.buddy,
-        canAskBuddy: canAskBuddy(viewer.list),
-        ...toPaletteGoals(viewer.list?.goals ?? []),
-        onSwitchGoal: switchGoalAction,
-        places: viewer.places,
-        today: viewer.today,
-      }}
-    />
+    <Suspense fallback={null}>
+      <AppCommandPaletteDialog />
+    </Suspense>
   );
 }

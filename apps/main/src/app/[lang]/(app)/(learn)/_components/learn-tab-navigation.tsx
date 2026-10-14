@@ -1,9 +1,11 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
-import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
+import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { markAppEntry } from "@zoonk/learn/bar";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { useGoalSwitchPending } from "@zoonk/learn/goal-switcher";
 import {
   LearnBottomNavigation,
@@ -13,6 +15,7 @@ import {
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useEffect } from "react";
 
@@ -65,11 +68,55 @@ function useActiveTab({ sidebar = false }: { sidebar?: boolean } = {}): LearnTab
   return TAB_PATHS[first] ?? null;
 }
 
-/** The frame's read of the buddy's tab, and when it ran (a page's newer read wins). */
-type TabsProps = { buddy?: LearnerBuddy; missions?: LearnTabMissions; readAt?: number };
+/** The buddy's tab as the frame draws it: its face and name, and today's missions as a ring. */
+type TabsProps = { buddy?: LearnBuddy | null; missions?: LearnTabMissions };
 
-/** What's left of today, at the end of the sidebar's Today; it streams in on its own. */
-type SideTabsProps = TabsProps & { todayCount?: React.ReactNode };
+/**
+ * The frame's read of the buddy's tab (the learner summary), and when it ran: a page's newer read
+ * of today's missions wins (`useTabMissions`). A visitor has the default buddy and no missions;
+ * until the learner is read, the buddy's face and name wait.
+ */
+function getSummaryTabs(learner: LearnerSummaryState) {
+  if (learner.status === "ready") {
+    const { buddy, missions, readAt } = learner.summary;
+    return { buddy, missions, readAt };
+  }
+
+  if (learner.status === "visitor") {
+    return { buddy: null, missions: null };
+  }
+
+  return {};
+}
+
+function useFrameTabs(): TabsProps {
+  const { buddy, ...read } = getSummaryTabs(useLearnerSummary());
+  return { buddy, missions: useTabMissions(read) };
+}
+
+/** What's left of today's session, in mono at the end of the sidebar's Today; nothing once done. */
+function TodayCount() {
+  const t = useExtracted();
+  const learner = useLearnerSummary();
+  const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
+
+  if (!blocksLeft) {
+    return null;
+  }
+
+  return (
+    <span className="text-faint in-aria-[current=page]:text-muted-foreground font-mono text-xs tabular-nums">
+      <span aria-hidden="true">{blocksLeft}</span>
+      <span className="sr-only">
+        {t("{count, plural, one {# activity left} other {# activities left}}", {
+          count: blocksLeft,
+        })}
+      </span>
+    </span>
+  );
+}
+
+type SideTabsProps = TabsProps & { todayCount: React.ReactNode };
 
 function CurrentSideTabs({ buddy, missions, todayCount }: SideTabsProps) {
   return (
@@ -108,8 +155,9 @@ const ONBOARDING_FIRST_PAINT_CLASS =
  * with its own id (a subject, a chapter) is only known once the page is open, so until then the
  * tabs are drawn without the mark, in the same place.
  */
-export function LearnSideTabs({ buddy, todayCount, ...read }: SideTabsProps) {
-  const missions = useTabMissions(read);
+export function LearnSideTabs() {
+  const { buddy, missions } = useFrameTabs();
+  const todayCount = <TodayCount />;
 
   return (
     <Suspense
@@ -131,8 +179,8 @@ export function LearnSideTabs({ buddy, todayCount, ...read }: SideTabsProps) {
  * The tab bar at the bottom of the screen under `lg`, with the current page's tab marked; none on
  * onboarding's screens.
  */
-export function LearnBottomTabs({ buddy, ...read }: TabsProps) {
-  const missions = useTabMissions(read);
+export function LearnBottomTabs() {
+  const { buddy, missions } = useFrameTabs();
 
   return (
     <Suspense

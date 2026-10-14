@@ -132,7 +132,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
     runPaletteItem(item);
   }
 
-  const paletteGroups = usePaletteGroups({ isLoggedIn, learner, query, results });
+  const paletteGroups = usePaletteGroups({ isLoggedIn, isOpen, learner, query, results });
 
   /**
    * The dialog may close from Escape, Cancel or an outside press. The search hook owns

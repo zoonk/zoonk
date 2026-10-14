@@ -87,6 +87,7 @@ export function BuddyPageClient({
   readAt,
   situation,
   status,
+  viewerId,
 }: {
   canAsk: boolean;
   /** The goal the buddy tutors. */
@@ -100,12 +101,14 @@ export function BuddyPageClient({
   readAt: number;
   situation: TutorSituation;
   status: BuddyStatusView;
+  /** The learner the page read the buddy's day for, whose missions the tab may show. */
+  viewerId: string;
 }) {
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId);
   useRefreshWhenOld(readAt);
-  useReportTabMissions({ missions: status.today?.missions ?? null, readAt });
+  useReportTabMissions({ missions: status.today?.missions ?? null, readAt, userId: viewerId });
 
   return (
     <BuddyScreen
