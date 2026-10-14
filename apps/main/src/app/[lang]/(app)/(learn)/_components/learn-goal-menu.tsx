@@ -1,10 +1,11 @@
 "use client";
 
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { switchGoal } from "./switch-goal";
 
 type Placement = "bar" | "sidebar";
@@ -18,12 +19,21 @@ function toSwitcherGoals(goals: readonly LearnerSummaryGoal[]) {
   );
 }
 
-/** The switcher's place while the learner's goals are read: its row in the bar or the sidebar. */
-function LearnGoalMenuSkeleton({ placement = "bar" }: { placement?: Placement }) {
-  return placement === "sidebar" ? (
-    <Skeleton className="h-8 w-full rounded-md" />
-  ) : (
-    <Skeleton className="h-9 w-36 rounded-lg" />
+/**
+ * The switcher's place while the learner is unread: a visitor's logo, or on a page marked signed in
+ * the switcher's row left empty (32px in the sidebar, 36px in the bar) for the goal to fill.
+ */
+function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
+  return (
+    <>
+      <VisitorLook>
+        <PublicHomeLink />
+      </VisitorLook>
+      <div
+        aria-hidden="true"
+        className={cn("signed-in:block hidden", placement === "sidebar" ? "h-8 w-full" : "h-9")}
+      />
+    </>
   );
 }
 
@@ -46,7 +56,7 @@ export function LearnGoalMenu({
   }
 
   if (learner.status !== "ready") {
-    return <LearnGoalMenuSkeleton placement={placement} />;
+    return <PendingGoalMenu placement={placement} />;
   }
 
   return (

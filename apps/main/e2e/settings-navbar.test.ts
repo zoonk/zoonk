@@ -7,9 +7,13 @@ test.describe("Settings Navbar", () => {
   }) => {
     await page.goto("/settings");
 
-    // The app's sidebar stays, so the learner never loses their place.
-    await expect(page.getByRole("complementary", { name: "Sidebar" })).toBeVisible();
-    await expect(page.getByRole("link", { exact: true, name: "Zoonk" })).toHaveCount(0);
+    // The app's sidebar stays, so the learner never loses their place: a visitor's logo sits where
+    // a learner's goal would, and no public header comes with it.
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+
+    await expect(sidebar).toBeVisible();
+    await expect(sidebar.getByRole("link", { exact: true, name: "Zoonk" })).toBeVisible();
+    await expect(page.getByRole("link", { exact: true, name: "Zoonk" })).toHaveCount(1);
 
     // A visitor's first settings page is Preferences, marked in the tabs.
     await expect(page.getByRole("heading", { level: 1, name: "Preferences" })).toBeAttached();

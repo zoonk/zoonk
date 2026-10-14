@@ -2,6 +2,7 @@
 
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
+import { cn } from "@zoonk/ui/lib/utils";
 import { User } from "lucide-react";
 
 /**
@@ -16,6 +17,22 @@ export function UserAvatar({ image, name }: { image?: string | null; name?: stri
       <AvatarImage src={image || undefined} />
       <AvatarFallback>{fallback}</AvatarFallback>
     </Avatar>
+  );
+}
+
+/**
+ * A learner's account place while their summary is unread, only on a page the session hint marked
+ * signed in (`signed-in:`): the plain person avatar at the account's size (`className`), filled in
+ * once the summary arrives. A visitor's look stands there otherwise (`VisitorLook`).
+ */
+export function PendingAccountAvatar({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("signed-in:flex hidden shrink-0 overflow-hidden rounded-full", className)}
+    >
+      <UserAvatar />
+    </span>
   );
 }
 

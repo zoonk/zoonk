@@ -1,9 +1,10 @@
 "use client";
 
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnSectionBar } from "@zoonk/learn/bar";
-import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
+import { PendingAccountAvatar } from "./user-avatar";
 import { UserAvatarMenu } from "./user-avatar-menu";
 
 /**
@@ -15,7 +16,8 @@ const CATALOG_BAR_CLASS = "-mx-4 -mt-4 mb-6 sm:-mx-8 sm:-mt-6 lg:hidden";
 /**
  * The way back leaves the catalog for the app page the learner left for it, or Today; a visitor
  * who landed here goes to the home page. On the right, the account's menu, or a visitor's Pricing
- * and way in (`visitor`).
+ * and way in (`visitor`); until the learner is read, the visitor's, or a learner's quiet avatar on a
+ * page marked signed in.
  */
 export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
   const learner = useLearnerSummary();
@@ -34,7 +36,10 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
             <UserAvatarMenu />
           </LearnAvatarBelt>
         ) : (
-          <AvatarSkeleton className="size-7" />
+          <>
+            <VisitorLook>{visitor}</VisitorLook>
+            <PendingAccountAvatar className="size-7" />
+          </>
         )
       }
     />

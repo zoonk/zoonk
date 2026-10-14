@@ -1,13 +1,15 @@
 "use client";
 
-import { LearnerAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
+import {
+  LearnerAvatar,
+  PendingAccountAvatar,
+} from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserDropdownMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu";
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
-import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
@@ -44,13 +46,18 @@ export function StudyLinks() {
 const ACCOUNT_ROW_CLASS =
   "hover:bg-sidebar-accent/70 aria-expanded:bg-sidebar-accent focus-visible:ring-ring/50 flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px]";
 
-/** The account row's place while the learner is read: the avatar and a bar for the name. */
-function SidebarAccountSkeleton() {
+/**
+ * The account row's place while the learner is unread: a visitor's Pricing and way in, or on a page
+ * marked signed in the row's quiet avatar, its name filled in with the rest once read.
+ */
+function PendingSidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   return (
-    <div className="flex h-11 w-full items-center gap-2.5 px-1">
-      <AvatarSkeleton className="size-6" />
-      <Skeleton className="h-3.5 w-24 rounded-sm" />
-    </div>
+    <>
+      <VisitorLook>{visitor}</VisitorLook>
+      <div aria-hidden="true" className="signed-in:flex hidden h-11 w-full items-center px-1">
+        <PendingAccountAvatar className="size-6" />
+      </div>
+    </>
   );
 }
 
@@ -138,7 +145,7 @@ export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   }
 
   if (learner.status !== "ready") {
-    return <SidebarAccountSkeleton />;
+    return <PendingSidebarAccount visitor={visitor} />;
   }
 
   return <AccountRow summary={learner.summary} />;

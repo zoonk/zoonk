@@ -1,19 +1,17 @@
 "use client";
 
+import { PendingAccountAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserAvatarMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar-menu";
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnShellEnd } from "@zoonk/learn/shell";
-import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
-
-/** The account avatar's place while the learner is read, at its size in the bar (28px). */
-const AVATAR_SKELETON_CLASS = "size-7";
 
 /**
  * The learner's belt as a dot and their level in mono, as the top bar's level link and the
@@ -60,10 +58,15 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   );
 }
 
-function LearnBarEndSkeleton() {
+/**
+ * The bar's end while the learner is unread: a visitor's Pricing and way in, or on a page marked
+ * signed in the account's quiet avatar at its size in the bar (28px).
+ */
+function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
   return (
     <LearnShellEnd>
-      <AvatarSkeleton className={AVATAR_SKELETON_CLASS} />
+      <VisitorLook>{visitor}</VisitorLook>
+      <PendingAccountAvatar className="size-7" />
     </LearnShellEnd>
   );
 }
@@ -90,7 +93,7 @@ export function LearnBarEnd({
   }
 
   if (learner.status !== "ready") {
-    return <LearnBarEndSkeleton />;
+    return <PendingBarEnd visitor={visitor} />;
   }
 
   const { level } = learner.summary;

@@ -1,7 +1,6 @@
 "use client";
 
 import { Buddy } from "@zoonk/ui/components/buddy";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -15,8 +14,18 @@ import { LEARN_TABS, type LearnTab } from "./learn-tabs";
 
 export type { LearnTab } from "./learn-tabs";
 
-/** The learner's buddy, null for a host without a profile, undefined while it loads. */
+/**
+ * The learner's buddy, null for a host without a profile, undefined while it loads: until then the
+ * tab has a visitor's default buddy, its face and name kept invisible on a page the host marked
+ * signed in (`signed-in:`), so a learner's own buddy never follows another.
+ */
 type TabBuddy = LearnBuddy | null | undefined;
+
+/**
+ * The buddy's face and name while it loads, invisible on a page marked signed in, where the tab is
+ * called "Buddy" instead until the learner's own is known.
+ */
+const LOADING_BUDDY_CLASS = "signed-in:invisible";
 
 /** Today's missions, which ring the buddy's tab; null before today's session exists. */
 export type LearnTabMissions = MissionsCount | null;
@@ -42,8 +51,10 @@ function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
   if (buddy === undefined) {
     return (
       <>
-        <Skeleton aria-hidden="true" className="inline-block h-3 w-10 align-middle" />
-        <span className="sr-only">{t("Buddy")}</span>
+        <span className={LOADING_BUDDY_CLASS}>
+          <BuddyTabName buddy={null} />
+        </span>
+        <span className="signed-in:inline sr-only hidden">{t("Buddy")}</span>
       </>
     );
   }
@@ -98,16 +109,12 @@ function TabIcon({
     return <MapIcon aria-hidden="true" className={sizes.icon} />;
   }
 
-  if (buddy === undefined) {
-    return <Skeleton className={cn("rounded-full", sizes.face)} />;
-  }
-
-  const resolved = resolveLearnBuddy(buddy);
+  const resolved = resolveLearnBuddy(buddy ?? null);
 
   const face = (
     <Buddy
       beltColor={resolved.beltColor}
-      className={faceClass}
+      className={cn(faceClass, buddy === undefined && LOADING_BUDDY_CLASS)}
       crop="face"
       energy={resolved.energy}
       glasses={resolved.glasses}
