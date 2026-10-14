@@ -1,6 +1,13 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import * as calendarDay from "@/lib/public/calendar-day";
+import * as cacheTags from "@zoonk/core/cache-tags";
+import {
+  getCourseCacheTag,
+  getCourseCurriculumCacheTag,
+  getExamBlueprintCacheTag,
+} from "@zoonk/core/cache-tags";
 import * as estimate from "@zoonk/core/catalog/course-estimate";
 import * as examDays from "@zoonk/core/catalog/course-exam-days";
 import { prisma } from "@zoonk/db";
@@ -9,12 +16,14 @@ import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as logger from "@zoonk/utils/logger";
+import { cacheTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import * as navigation from "next/navigation";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import * as planEstimate from "./plan-estimate";
 
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
+type CacheEntry = { result: Promise<unknown>; tags: Set<string> };
 
 type GetCoursePlanExample = (course: {
   format: string;
@@ -25,30 +34,43 @@ const SOURCE = new URL("course-plan.ts", import.meta.url).pathname;
 
 /**
  * Vitest doesn't compile cache directives, so the module is compiled with the installed Next
- * compiler and run on a stand-in for its cache platform: entries a `"use cache"` read keeps for
- * the app (across requests), and those a `"use cache: private"` read keeps for one request. Core's
- * reads and PostgreSQL stay real; another app's write is a database write this app's tags never
- * hear about.
+ * compiler and run on a stand-in for the app's shared cache: entries kept across requests, with
+ * the tags their reads (core's too) attached, and tag expiry. Core's reads and PostgreSQL stay
+ * real; another app's write is a database write followed by the tag expiry it sends this app.
  */
 function cachePlatform(code: string) {
-  const shared = new Map<string, Promise<unknown>>();
-  const request = new Map<string, Promise<unknown>>();
+  const sharedEntries = new Map<string, CacheEntry>();
+  const requestEntries = new Map<string, CacheEntry>();
+  const activeTags = new AsyncLocalStorage<Set<string>>();
 
+  /** A private cache keeps its entries for one request only; a shared one, across requests. */
   function cache(kind: string, id: string, _bound: number, read: CachedRead, args: unknown[]) {
-    const entries = kind === "private" ? request : shared;
+    const entries = kind === "private" ? requestEntries : sharedEntries;
     const key = JSON.stringify([id, args]);
-    const entry = entries.get(key) ?? read(...args);
+    const tags = new Set<string>();
+
+    const entry = entries.get(key) ?? {
+      result: Promise.resolve().then(() => activeTags.run(tags, () => read(...args))),
+      tags,
+    };
+
     entries.set(key, entry);
-    return entry;
+    return entry.result;
   }
+
+  vi.mocked(cacheTag).mockImplementation((...tags) => {
+    tags.forEach((tag) => activeTags.getStore()?.add(tag));
+  });
 
   const imports: Record<string, unknown> = {
     "./plan-estimate": planEstimate,
     "@/lib/public/cache-until-midnight": { cacheUntilMidnight: () => null },
     "@/lib/public/calendar-day": calendarDay,
+    "@zoonk/core/cache-tags": cacheTags,
     "@zoonk/core/catalog/course-estimate": estimate,
     "@zoonk/core/catalog/course-exam-days": examDays,
     "@zoonk/utils/logger": logger,
+    "next/cache": { cacheTag },
     "next/navigation": navigation,
     "private-next-rsc-cache-wrapper": { cache },
     "private-next-rsc-server-reference": { registerServerReference: (read: unknown) => read },
@@ -71,8 +93,16 @@ function cachePlatform(code: string) {
   });
 
   return {
+    expireTag: (tag: string) => {
+      sharedEntries.forEach((entry, key) => {
+        if (entry.tags.has(tag)) {
+          sharedEntries.delete(key);
+        }
+      });
+    },
     getCoursePlanExample: compiled.getCoursePlanExample,
-    nextRequest: () => request.clear(),
+    nextRequest: () => requestEntries.clear(),
+    tags: () => new Set([...sharedEntries.values()].flatMap((entry) => [...entry.tags])),
   };
 }
 
@@ -155,23 +185,35 @@ describe("the course page's example plan cache", () => {
     compiled.code = result.code;
   });
 
-  it("reads an exam notice another app revised on the next request, though the course row didn't change", async () => {
+  it("keeps the example for every visitor until a notice revised elsewhere expires its tag", async () => {
     const platform = cachePlatform(compiled.code);
     const { blueprint, course } = await examCourse(dayIn(40));
 
     const first = await platform.getCoursePlanExample(course);
     expect(first.exam?.days).toStrictEqual([dayIn(40)]);
 
-    // The API's notice research revises the edition: this app's tags and the course row stay as
-    // they were.
+    expect(platform.tags()).toStrictEqual(
+      new Set([
+        getCourseCacheTag(course.id),
+        getCourseCurriculumCacheTag(course.id),
+        getExamBlueprintCacheTag(blueprint.id),
+      ]),
+    );
+
+    // The API's notice research revises the edition; until its tag reaches this app, every
+    // visitor's static course page keeps the sitting it showed.
     await prisma.examBlueprint.update({
       data: { edition: edition(dayIn(54)) },
       where: { id: blueprint.id },
     });
 
     platform.nextRequest();
-    const next = await platform.getCoursePlanExample(course);
+    const kept = await platform.getCoursePlanExample(course);
+    expect(kept.exam?.days).toStrictEqual([dayIn(40)]);
 
+    platform.expireTag(getExamBlueprintCacheTag(blueprint.id));
+
+    const next = await platform.getCoursePlanExample(course);
     expect(next.exam?.days).toStrictEqual([dayIn(54)]);
   });
 });

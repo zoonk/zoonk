@@ -1,9 +1,11 @@
 import "server-only";
 import { cacheUntilMidnight } from "@/lib/public/cache-until-midnight";
 import { daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
+import { getCourseCacheTag, getCourseCurriculumCacheTag } from "@zoonk/core/cache-tags";
 import { estimateCoursePlan } from "@zoonk/core/catalog/course-estimate";
 import { getCourseExamDays } from "@zoonk/core/catalog/course-exam-days";
 import { logError } from "@zoonk/utils/logger";
+import { cacheTag } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
 import { type PaceEstimate, hasStudyToShow, isDatedEstimate } from "./plan-estimate";
 
@@ -88,18 +90,18 @@ async function getPaceEstimates({
 }
 
 /**
- * The example plan in a private cache: a runtime prefetch carries it (so a tap paints it at once)
- * and one request reads it once, while every new request reaches core's own fresh checks. Another
- * app (the API, Admin) revises an exam's notice or a course's chapters without touching this
- * app's tags or the course's row, so a shared cache here would keep the old sitting and plan;
- * core's estimate and exam days keep their own shared caches, keyed by fresh versions. A browser
- * keeps the plan until the day changes, its countdown and estimate reading today's date.
+ * The example plan in the app's shared cache, so the course's page is static: the same for every
+ * visitor, worked out again every hour and at each midnight it counts by, in the background
+ * (`cacheUntilMidnight`). The course's and its curriculum's tags expire it when the course or its
+ * outline changes, and an exam's notice does through the tag core's exam days carry; the other
+ * inputs the planner reads (lesson specs, skills, item banks, paces) show at its next hourly run.
  */
-async function getPrivateCoursePlanExample(
+async function getCachedCoursePlanExample(
   courseId: string,
   isExam: boolean,
 ): Promise<CoursePlanExample> {
-  "use cache: private";
+  "use cache";
+  cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
   const exam = isExam ? await getUpcomingExam(courseId) : null;
   // Both days the plan reads change at their own midnight: the estimate's and the countdown's.
   cacheUntilMidnight(exam ? [UTC, exam.timeZone] : [UTC]);
@@ -113,7 +115,8 @@ async function getPrivateCoursePlanExample(
 /**
  * The course's example plan, which the hero's eyebrow, the plan window and the outline's marks
  * read: an exam course's next sitting and the plan against its first day, any other course's plan
- * to its end. A failure is never cached and only hides the example: the page stands without it.
+ * to its end. A failure only hides the example: the plan's cache doesn't keep it, so the page's
+ * next regeneration tries again.
  */
 export async function getCoursePlanExample(course: {
   format: string;
@@ -122,7 +125,7 @@ export async function getCoursePlanExample(course: {
   const isExam = course.format === "exam";
 
   try {
-    return await getPrivateCoursePlanExample(course.id, isExam);
+    return await getCachedCoursePlanExample(course.id, isExam);
   } catch (error) {
     // Next's own signals (a prerender's interrupted request) must keep propagating.
     unstable_rethrow(error);

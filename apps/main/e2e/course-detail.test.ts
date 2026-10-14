@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Locator } from "@playwright/test";
+import { getExamBlueprintCacheTag } from "@zoonk/core/cache-tags";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
@@ -8,6 +9,9 @@ import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
+
+/** Matches Main's Playwright-only cache hook secret (`playwright.config.ts`). */
+const CACHE_SECRET_HEADERS = { "x-zoonk-cache-secret": "e2e-cache-tags-secret" };
 
 /** The seeded course whose outline core can plan, at each time a day the page offers. */
 const PLANNED_COURSE_PATH = `/b/${AI_ORG_SLUG}/c/quantum-physics-from-scratch`;
@@ -178,8 +182,9 @@ test.describe("Course Detail Page", () => {
     await expectAccessibleScreen(page, "a course whose outline isn't written yet, on a phone");
   });
 
-  test("an exam course's page reads a notice revised by another app on the next visit", async ({
+  test("an exam course's page reads a notice another app revised once its tag reaches this app", async ({
     page,
+    request,
   }) => {
     const first = dayIn(40);
     const revised = dayIn(54);
@@ -188,12 +193,22 @@ test.describe("Course Detail Page", () => {
     await page.goto(path);
     await expect(page.getByText(new RegExp(`^Exam on ${eyebrowDay(first)} · `, "u"))).toBeVisible();
 
-    // The API's notice research revises the edition: it touches neither this app's caches nor the
-    // course's row.
+    // The API's notice research revises the edition, then its tag expiry reaches this app the way
+    // `revalidateCacheTags` forwards it: until then the page keeps the sitting it showed.
     await prisma.examBlueprint.update({
       data: { edition: examEdition([revised]) },
       where: { id: blueprint.id },
     });
+
+    await page.reload();
+    await expect(page.getByText(new RegExp(`^Exam on ${eyebrowDay(first)} · `, "u"))).toBeVisible();
+
+    const expired = await request.post("/api/cache/tags", {
+      data: { tags: [getExamBlueprintCacheTag(blueprint.id)] },
+      headers: CACHE_SECRET_HEADERS,
+    });
+
+    expect(expired.status()).toBe(200);
 
     await page.reload();
 
