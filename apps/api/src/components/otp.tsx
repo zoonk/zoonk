@@ -77,12 +77,14 @@ function keepDigits(text: string) {
   return text.replaceAll(/\D/gu, "");
 }
 
+export const OTP_LENGTH = 6;
+
 /** Six boxes, read as two groups of three: a little more room in the middle. */
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (
     <InputOTP
       containerClassName="justify-center gap-3"
-      maxLength={6}
+      maxLength={OTP_LENGTH}
       name="otp"
       pasteTransformer={keepDigits}
       pattern="[0-9]*"

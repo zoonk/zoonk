@@ -7,11 +7,13 @@ import {
   OTPInput,
   OTPLinks,
   OTPSubmit,
+  OTP_LENGTH,
   OTP_LINK_CLASS,
 } from "@/components/otp";
 import { authClient } from "@zoonk/auth/client";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -58,6 +60,49 @@ function getErrorStatus(error: { code?: string; status: number }): OTPStatus {
 
 function needsNewCode(status: OTPStatus): boolean {
   return status === "expired" || status === "tooManyAttempts";
+}
+
+/** Only a wrong or failed try leaves the next code worth checking: the others answer any code. */
+function canTryAnotherCode(answer: OTPStatus | "signedIn"): boolean {
+  return answer === "wrongCode" || answer === "error";
+}
+
+/** A try that never reaches auth, as when a phone loses its connection, can be tried again. */
+async function signInWithCode({
+  email,
+  otp,
+}: {
+  email: string;
+  otp: string;
+}): Promise<OTPStatus | "signedIn"> {
+  const { data: result, error } = await safeAsync(() => authClient.signIn.emailOtp({ email, otp }));
+
+  if (error) {
+    return "error";
+  }
+
+  return result.error ? getErrorStatus(result.error) : "signedIn";
+}
+
+/** A new code that never reaches auth failed like any other, so it can be asked for again. */
+async function sendNewSignInCode(email: string): Promise<ResendStatus> {
+  const { data: result, error } = await safeAsync(() =>
+    authClient.emailOtp.sendVerificationOtp({ email, type: "sign-in" }),
+  );
+
+  if (error) {
+    return "failed";
+  }
+
+  if (result.error) {
+    return result.error.status === TOO_MANY_REQUESTS ? "rateLimited" : "failed";
+  }
+
+  return result.data.success ? "sent" : "failed";
+}
+
+function readCode(form: HTMLFormElement): string {
+  return parseFormField(new FormData(form), "otp") ?? "";
 }
 
 function OTPErrorMessage({ status }: { status: OTPStatus }) {
@@ -114,19 +159,9 @@ function useResendCode(email: string) {
   const resend = async (): Promise<boolean> => {
     setStatus("sending");
 
-    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
-      email,
-      type: "sign-in",
-    });
-
-    if (error) {
-      setStatus(error.status === TOO_MANY_REQUESTS ? "rateLimited" : "failed");
-      return false;
-    }
-
-    const isSent = data.success;
-    setStatus(isSent ? "sent" : "failed");
-    return isSent;
+    const sendStatus = await sendNewSignInCode(email);
+    setStatus(sendStatus);
+    return sendStatus === "sent";
   };
 
   return { resend, status };
@@ -135,32 +170,64 @@ function useResendCode(email: string) {
 export function OTPForm({ email, redirectTo }: { email: string; redirectTo: string | null }) {
   const t = useExtracted();
   const formRef = useRef<HTMLFormElement>(null);
+  /**
+   * Held while a code is checked, and once it's gone until a new one arrives. A ref, since status
+   * lags an answer until it renders: a code finished in between must be neither dropped nor tried
+   * against a gone code.
+   */
+  const isLockedRef = useRef(false);
   const [status, setStatus] = useState<OTPStatus>("idle");
   const [codeRound, setCodeRound] = useState(0);
   const resendCode = useResendCode(email);
   const isCodeGone = needsNewCode(status);
   const isChecking = status === "pending";
 
+  /**
+   * Checks one code at a time: auth turns away a check that overlaps another. A different code
+   * finished while one was checked goes next, so the answer shown is always about the code in the box.
+   */
+  const checkCode = async ({
+    form,
+    otp,
+  }: {
+    form: HTMLFormElement;
+    otp: string;
+  }): Promise<OTPStatus | "signedIn"> => {
+    const answer = await signInWithCode({ email, otp });
+    const latestCode = readCode(form);
+    const isNewerCode = latestCode.length === OTP_LENGTH && latestCode !== otp;
+
+    if (canTryAnotherCode(answer) && isNewerCode) {
+      return checkCode({ form, otp: latestCode });
+    }
+
+    return answer;
+  };
+
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isCodeGone || isChecking) {
+    // A code finished while a new one is sent is about to be replaced, so it isn't tried.
+    if (isLockedRef.current || resendCode.status === "sending") {
       return;
     }
 
-    setStatus("pending");
-
-    const otp = parseFormField(new FormData(event.currentTarget), "otp");
+    const form = event.currentTarget;
+    const otp = readCode(form);
 
     if (!otp) {
       setStatus("wrongCode");
       return;
     }
 
-    const { error } = await authClient.signIn.emailOtp({ email, otp });
+    isLockedRef.current = true;
+    setStatus("pending");
 
-    if (error) {
-      setStatus(getErrorStatus(error));
+    const answer = await checkCode({ form, otp });
+
+    if (answer !== "signedIn") {
+      isLockedRef.current = needsNewCode(answer);
+      setStatus(answer);
       return;
     }
 
@@ -172,6 +239,7 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   /** A new code starts a clean try: an empty input and no old error. */
   const sendNewCode = async () => {
     if (await resendCode.resend()) {
+      isLockedRef.current = false;
       setStatus("idle");
       setCodeRound((round) => round + 1);
     }
@@ -211,9 +279,10 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
         {!isCodeGone && (
           <>
             {t("Didn't get it?")}
+            {/* Not while a code is checked: its answer would land on the new code's empty box. */}
             <button
               className={OTP_LINK_CLASS}
-              disabled={resendCode.status === "sending"}
+              disabled={isChecking || resendCode.status === "sending"}
               onClick={sendNewCode}
               type="button"
             >
