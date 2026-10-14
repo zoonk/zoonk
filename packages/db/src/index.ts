@@ -35,6 +35,7 @@ export type {
   EvaluationRun,
   ExamBlueprint,
   Feedback,
+  FreeCallSpendDay,
   GenerationStatus,
   Goal,
   InstrumentWaitlistEntry,
@@ -52,6 +53,9 @@ export type {
   LessonQuestionStatus,
   LessonQuestionThread,
   LessonSkill,
+  LiveCallConnection,
+  LiveCallSetting,
+  LiveCallSlot,
   MediaAsset,
   MemoryFact,
   MemoryInsight,
@@ -102,6 +106,7 @@ export {
   LearnerSourceOrigin,
   LearningEventKind,
   LibraryVisibility,
+  LiveCallEndReason,
   MasteryState,
   MediaKind,
   MemoryCategory,
@@ -147,7 +152,11 @@ export const DbNull = Prisma.DbNull;
 
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
-export { isPrismaForeignKeyError, isPrismaUniqueConstraintError } from "./prisma-errors";
+export {
+  isPrismaForeignKeyError,
+  isPrismaTransactionConflictError,
+  isPrismaUniqueConstraintError,
+} from "./prisma-errors";
 
 export {
   getCourseRouteWhere,
