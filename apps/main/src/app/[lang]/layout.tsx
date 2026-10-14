@@ -14,6 +14,7 @@ import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
+import { SignedInHintScript } from "./signed-in-hint-script";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -41,7 +42,15 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   const locale = await lang();
 
   return (
-    <html className={`${geistSans.variable} ${geistMono.variable}`} lang={locale}>
+    // The hint script marks `<html>` before React hydrates it.
+    <html
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      lang={locale}
+      suppressHydrationWarning
+    >
+      <head>
+        <SignedInHintScript />
+      </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the
             confirmation of a deleted account, shown as the home page loads). */}

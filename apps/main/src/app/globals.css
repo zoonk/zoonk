@@ -10,3 +10,11 @@
 @source not "../../../blog";
 @source not "../../../evals";
 @source not "../../../mailbox";
+
+/*
+ * `signed-in:` applies while the browser's session hint says it holds a session
+ * (`SignedInHintScript` marks `<html>` before the first paint), so a static page can show a learner
+ * a quiet place for their account instead of a visitor's way in until their learner summary
+ * arrives.
+ */
+@custom-variant signed-in (&:where([data-signed-in] *));
