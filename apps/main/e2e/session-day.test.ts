@@ -8,6 +8,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
+import { openUserAsGuest } from "./guest-session";
 import { tabTo } from "./keyboard-focus";
 import { continueToLastStep, continueToStep } from "./result-steps";
 import {
@@ -499,12 +500,7 @@ test.describe("Today's session", () => {
 
   test("asks a guest to save their plan when their session ends", async ({ browser }) => {
     const { user } = await createStudyDay({ reviewDone: true });
-    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-    const page = await openAs(browser, user);
-
-    // The session cookie's cached copy still says "signed up": drop it so the server reads the guest.
-    await page.context().clearCookies({ name: /session_data/u });
+    const { page } = await openUserAsGuest(browser, user);
     await page.goto("/session");
 
     await page.getByRole("button", { name: "Stop for today" }).click();
@@ -689,11 +685,7 @@ test.describe("Today's session", () => {
     browser,
   }) => {
     const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
-
-    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-    const page = await openAs(browser, user);
-    await page.context().clearCookies({ name: /session_data/u });
+    const { page } = await openUserAsGuest(browser, user);
     await refuseLessonWriting(page, { limit: 1, period: "total", tier: "guest" });
     await page.goto("/today");
 
