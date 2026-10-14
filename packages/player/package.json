@@ -12,7 +12,11 @@
     "./preview/catalog": "./src/preview/preview-catalog.ts",
     "./questions/styles.css": "./src/questions/styles.css",
     "./tutor": "./src/questions/ask-tutor.tsx",
+    "./tutor/app-links": "./src/questions/tutor-app-links.ts",
     "./tutor/conversation": "./src/questions/tutor-conversation.tsx",
+    "./tutor/item": "./src/questions/item-tutor.tsx",
+    "./tutor/item-aside": "./src/questions/item-tutor-aside.tsx",
+    "./tutor/markdown": "./src/questions/lesson-question-markdown.tsx",
     "./tutor/suggestion-words": "./src/questions/tutor-suggestion-words.ts",
     "./usage-refusal": "./src/questions/lesson-question-usage.ts"
   },
@@ -49,6 +53,7 @@
     "web-haptics": "0.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/d3-geo": "3.1.1",
     "@types/geojson": "7946.0.16",
