@@ -1,6 +1,6 @@
 "use client";
 
-import { decidePlanChangeAction } from "@/app/[lang]/(learn)/journey/journey-actions";
+import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { useRouter } from "@/i18n/navigation";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
