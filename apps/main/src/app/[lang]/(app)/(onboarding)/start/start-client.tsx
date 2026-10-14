@@ -6,6 +6,7 @@ import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/con
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { OnboardingEmbedded } from "@zoonk/learn/onboarding/frame";
 import {
   WEB_ONBOARDING_ACTIONS,
   WEB_ONBOARDING_ROUTES,
@@ -17,18 +18,24 @@ export function StartClient({
   buddy,
   canAttach,
   defaultGoal,
+  embedded = false,
   goalLimit,
+  header,
   initialDraft,
   needsAccount,
   planId,
 }: {
-  /** The learner's buddy, who answers questions about their material; null before they pick one. */
+  /** The learner's resolved buddy, who answers questions about their material. */
   buddy: TutorViewer["buddy"];
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach: boolean;
   defaultGoal: string;
+  /** Under a host page's title (Today without a goal), as that page's section. */
+  embedded?: boolean;
   /** A goal limit the learner already reached, said before they type. */
   goalLimit: GoalLimitReason | null;
+  /** The host page's top over the flow when `embedded`, such as Today's title. */
+  header?: React.ReactNode;
   initialDraft: OnboardingDraftView | null;
   /** A guest whose one goal is taken: only an account adds another. */
   needsAccount: boolean;
@@ -37,7 +44,7 @@ export function StartClient({
 }) {
   const navigation = useOnboardingNavigation();
 
-  return (
+  const flow = (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <StartFlow
         actions={planId ? getPlanLinkOnboardingActions(planId) : WEB_ONBOARDING_ACTIONS}
@@ -53,4 +60,6 @@ export function StartClient({
       />
     </GenerationFollowerProvider>
   );
+
+  return embedded ? <OnboardingEmbedded header={header}>{flow}</OnboardingEmbedded> : flow;
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { startCourseFormAction } from "@/app/[lang]/start/course-start-actions";
+import { startCourseFormAction } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
 import { CourseStartFailureNote, isStartBlocked } from "@/components/public/course-start-failure";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
-import { CHAPTER_PARAM } from "@/lib/public/public-hrefs";
+import { CHAPTER_PARAM, MINUTES_PARAM, PICKED_PARAM } from "@/lib/public/public-hrefs";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -29,6 +29,10 @@ import { useState } from "react";
 type StartTarget = {
   chapter: { id: string; title: string } | null;
   course: { id: string; title: string };
+  /** The time a day the course's page showed, which the plan starts with; null for the default. */
+  dailyMinutes: number | null;
+  /** The visitor chose that time on the course's page, rather than leaving its first one. */
+  minutesPicked: boolean;
 };
 
 /** A chapter the plan will teach, in the course's order. */
@@ -49,32 +53,27 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
   const more = chapters.length - PREVIEW_CHAPTERS;
 
   return (
-    <section
-      aria-labelledby={PLAN_PREVIEW_ID}
-      className="bg-card ring-foreground/10 rounded-3xl p-4 ring-1 sm:p-5"
-    >
-      <h2 className="text-muted-foreground text-sm font-medium" id={PLAN_PREVIEW_ID}>
+    <section aria-labelledby={PLAN_PREVIEW_ID} className="flex flex-col gap-1">
+      <h2 className="text-label" id={PLAN_PREVIEW_ID}>
         {t(
           "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}",
           { chapters: chapters.length, lessons },
         )}
       </h2>
 
-      <ol className="mt-3 flex flex-col gap-2.5">
+      <ol className="flex flex-col [&>li+li]:border-t">
         {chapters.slice(0, PREVIEW_CHAPTERS).map((chapter, index) => (
-          <li className="flex items-start gap-3 text-[15px] leading-6" key={chapter.id}>
-            <span className="flex h-6 shrink-0 items-center">
-              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium tabular-nums">
-                {index + 1}
-              </span>
+          <li className="flex items-start gap-3 py-2.5 text-sm leading-6" key={chapter.id}>
+            <span className="text-faint w-4 shrink-0 font-mono text-xs leading-6 tabular-nums">
+              {index + 1}
             </span>
-            <span className="min-w-0 text-pretty">{chapter.title}</span>
+            <span className="min-w-0 font-medium text-pretty">{chapter.title}</span>
           </li>
         ))}
       </ol>
 
       {more > 0 && (
-        <p className="text-muted-foreground mt-2.5 pl-9 text-sm">
+        <p className="text-muted-foreground pl-7 text-sm">
           {t("{count, plural, one {and # more chapter} other {and # more chapters}}", {
             count: more,
           })}
@@ -84,13 +83,17 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
   );
 }
 
-function StartHeading({ asksLevel, chapter, course }: StartTarget & { asksLevel: boolean }) {
+function StartHeading({
+  asksLevel,
+  chapter,
+  course,
+}: Omit<StartTarget, "dailyMinutes" | "minutesPicked"> & { asksLevel: boolean }) {
   const t = useExtracted();
 
   if (chapter) {
     return (
       <OnboardingHeading>
-        <p className="text-muted-foreground text-sm font-medium">{course.title}</p>
+        <OnboardingSubject>{course.title}</OnboardingSubject>
         <OnboardingTitle>{chapter.title}</OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -134,8 +137,10 @@ function CourseStartForm({
   children,
   chapter,
   course,
+  dailyMinutes,
   initialFailure,
   level,
+  minutesPicked,
   note,
 }: StartTarget & {
   children: React.ReactNode;
@@ -150,6 +155,7 @@ function CourseStartForm({
   const { failure, pending, start, startWithLevel } = useCourseStart({
     chapterId: chapter?.id,
     courseId: course.id,
+    dailyMinutes,
     initialFailure,
   });
 
@@ -159,11 +165,27 @@ function CourseStartForm({
 
   return (
     <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6">
+      {!blocked && dailyMinutes && (
+        <p className="text-muted-foreground -mt-2 text-sm text-pretty">
+          {minutesPicked
+            ? t(
+                "{minutes, plural, one {# minute} other {# minutes}} a day, as you picked. You can change it in the next steps.",
+                { minutes: dailyMinutes },
+              )
+            : t(
+                "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps.",
+                { minutes: dailyMinutes },
+              )}
+        </p>
+      )}
+
       {!blocked && children}
 
       <OnboardingFooter className="gap-3 [&:has([data-slot=start-failure])>[data-slot=start-note]]:hidden">
         <input name="courseId" type="hidden" value={course.id} />
         {chapter && <input name={CHAPTER_PARAM} type="hidden" value={chapter.id} />}
+        {dailyMinutes && <input name={MINUTES_PARAM} type="hidden" value={dailyMinutes} />}
+        {dailyMinutes && minutesPicked && <input name={PICKED_PARAM} type="hidden" value="1" />}
 
         {!blocked && (
           <OnboardingPrimaryButton
@@ -174,7 +196,7 @@ function CourseStartForm({
             }}
             type="submit"
           >
-            {chapter ? t("Start the chapter") : t("Start this course")}
+            {t("Build my plan")}
             {pending && <Loader2Icon aria-hidden="true" className="animate-spin" />}
           </OnboardingPrimaryButton>
         )}
@@ -190,7 +212,7 @@ function CourseStartForm({
         <CourseStartFailureNote
           actionClassName={cn(
             buttonVariants({ size: "lg", variant: blocked ? "default" : "outline" }),
-            "h-12 w-full text-base",
+            "w-full",
           )}
           className="max-w-none items-stretch text-center"
           failure={failure}
@@ -204,7 +226,9 @@ function CourseStartForm({
 /** A whole course's start: the learner's level first, and Start creates the goal with it. */
 function CourseLevelStart({
   course,
+  dailyMinutes,
   initialFailure,
+  minutesPicked,
   note,
 }: Omit<StartTarget, "chapter"> & {
   initialFailure: CourseStartFailure | null;
@@ -216,8 +240,10 @@ function CourseLevelStart({
     <CourseStartForm
       chapter={null}
       course={course}
+      dailyMinutes={dailyMinutes}
       initialFailure={initialFailure}
       level={level}
+      minutesPicked={minutesPicked}
       note={note}
     >
       <LevelChoiceList onChange={setLevel} value={level} />
@@ -236,7 +262,9 @@ export function CourseStartScreen({
   chapter,
   chapters,
   course,
+  dailyMinutes,
   initialFailure,
+  minutesPicked,
   note,
 }: StartTarget & {
   chapters: PlanChapter[];
@@ -246,7 +274,7 @@ export function CourseStartScreen({
 }) {
   return (
     <OnboardingFrame>
-      <OnboardingColumn className="sm:pt-16">
+      <OnboardingColumn>
         <StartHeading
           asksLevel={!isStartBlocked(initialFailure)}
           chapter={chapter}
@@ -257,13 +285,21 @@ export function CourseStartScreen({
           <CourseStartForm
             chapter={chapter}
             course={course}
+            dailyMinutes={dailyMinutes}
             initialFailure={initialFailure}
+            minutesPicked={minutesPicked}
             note={note}
           >
             <PlanPreview chapters={chapters} />
           </CourseStartForm>
         ) : (
-          <CourseLevelStart course={course} initialFailure={initialFailure} note={note} />
+          <CourseLevelStart
+            course={course}
+            dailyMinutes={dailyMinutes}
+            initialFailure={initialFailure}
+            minutesPicked={minutesPicked}
+            note={note}
+          />
         )}
       </OnboardingColumn>
     </OnboardingFrame>

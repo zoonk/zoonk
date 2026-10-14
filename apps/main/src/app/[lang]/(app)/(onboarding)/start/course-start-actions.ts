@@ -2,8 +2,15 @@
 
 import { redirect } from "@/i18n/navigation";
 import { startGoalWork } from "@/lib/goals/start-goal-work";
-import { CHAPTER_PARAM, getCourseStartHref } from "@/lib/public/public-hrefs";
+import {
+  CHAPTER_PARAM,
+  MINUTES_PARAM,
+  PICKED_PARAM,
+  getCourseStartHref,
+  readDailyMinutes,
+} from "@/lib/public/public-hrefs";
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
+import { isResearchedCourseStart } from "@zoonk/core/goals/research";
 import { startCourseGoal } from "@zoonk/core/goals/start-course";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
@@ -25,22 +32,26 @@ export type CourseStartOutcome =
 /**
  * Starts a Library course (or one of its chapters) as the learner's goal: the same capability as
  * `POST /v1/courses/{courseId}/goals`, with the level the start page asked (null for a quick
- * test). A new goal's run then writes ahead what its plan needs; a run that couldn't start shows
- * on the steps with a retry. The learner's goal already on the course starts nothing new.
+ * test). A new goal's run then writes ahead what its plan needs (an exam course nobody stored an
+ * exam for has its notice read first); a run that couldn't start shows on the steps with a retry. The learner's goal already on the course starts nothing new.
  */
 export async function startCourseAction({
   chapterId,
   courseId,
+  dailyMinutes,
   level,
   timeZone,
 }: {
   chapterId?: string | null;
   courseId: string;
+  /** The time a day picked on the course's page; the default plan's otherwise. */
+  dailyMinutes?: number | null;
   level?: OnboardingOwnLevel | null;
   timeZone?: string;
 }): Promise<CourseStartOutcome> {
   const input = courseGoalStartInputSchema.safeParse({
     chapterId: chapterId ?? undefined,
+    dailyMinutes: dailyMinutes ?? undefined,
     level,
     timeZone,
   });
@@ -53,7 +64,7 @@ export async function startCourseAction({
 
   switch (result.status) {
     case "created":
-      await startGoalWork([result.goal], { research: false });
+      await startGoalWork([result.goal], { research: isResearchedCourseStart(result.goal) });
       return { goalId: result.goal.id, next: "steps", status: "started" };
     case "existing":
       return {
@@ -110,14 +121,17 @@ function getFormDestination({
 export async function startCourseFormAction(formData: FormData): Promise<void> {
   const courseId = readField(formData, "courseId") ?? "";
   const chapterId = readField(formData, CHAPTER_PARAM);
+  const minutes = readDailyMinutes(readField(formData, MINUTES_PARAM) ?? undefined);
+  const picked = readField(formData, PICKED_PARAM) !== null;
 
-  const [locale, outcome] = await Promise.all([
-    getLocale(),
-    startCourseAction({ chapterId, courseId }),
-  ]);
+  const locale = await getLocale();
+  const outcome = await startCourseAction({ chapterId, courseId, dailyMinutes: minutes });
 
   redirect({
-    href: getFormDestination({ outcome, startHref: getCourseStartHref({ chapterId, courseId }) }),
+    href: getFormDestination({
+      outcome,
+      startHref: getCourseStartHref({ chapterId, courseId, minutes, picked }),
+    }),
     locale,
   });
 }

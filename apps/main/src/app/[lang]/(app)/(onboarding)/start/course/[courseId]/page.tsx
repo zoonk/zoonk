@@ -1,13 +1,25 @@
-import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { LoginBarLink } from "@/components/login-bar-link";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
-import { CHAPTER_PARAM } from "@/lib/public/public-hrefs";
+import {
+  CHAPTER_PARAM,
+  MINUTES_PARAM,
+  PICKED_PARAM,
+  readDailyMinutes,
+} from "@/lib/public/public-hrefs";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
+import { getSession } from "@zoonk/core/users/session";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import {
+  OnboardingColumn,
+  OnboardingFrame,
+  OnboardingHeading,
+  OnboardingPage,
+} from "@zoonk/learn/onboarding/frame";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -56,7 +68,8 @@ async function loadStartableCourse(courseId: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const [{ courseId }, t] = await Promise.all([params, getExtracted()]);
+  const t = await getExtracted();
+  const { courseId } = await params;
   const course = await loadStartableCourse(courseId);
 
   return {
@@ -75,12 +88,14 @@ function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null
 async function CourseStartContent({ params, searchParams }: Props) {
   // Their goal on the course and whether they can start another are read fresh for each visit.
   await connection();
-  const [{ courseId, lang }, query, t] = await Promise.all([params, searchParams, getExtracted()]);
+  const t = await getExtracted();
+  const [{ courseId, lang }, query] = await Promise.all([params, searchParams]);
 
-  const [course, existing, limit] = await Promise.all([
+  const [course, existing, limit, session] = await Promise.all([
     loadStartableCourse(courseId),
     findCourseGoalStart(courseId),
     findGoalStartLimit(),
+    getSession(),
   ]);
 
   if (!course) {
@@ -100,8 +115,13 @@ async function CourseStartContent({ params, searchParams }: Props) {
   const chapter = chapters.find((item) => item.id === chapterId && item.lessons.length > 0);
   const planned = chapter ? chapters.slice(chapters.indexOf(chapter)) : chapters;
 
+  // Back to the course it was started from, else the catalog; a visitor logs in from the bar under
+  // `lg`, where the sidebar's way in isn't.
   return (
-    <MainLearnProvider>
+    <OnboardingPage
+      backHref="/courses"
+      barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
+    >
       <CourseStartScreen
         chapter={chapter ? { id: chapter.id, title: chapter.title } : null}
         chapters={planned.map((item) => ({
@@ -110,36 +130,53 @@ async function CourseStartContent({ params, searchParams }: Props) {
           title: item.title,
         }))}
         course={{ id: course.id, title: course.title }}
+        dailyMinutes={readDailyMinutes(query[MINUTES_PARAM])}
+        minutesPicked={readParam(query[PICKED_PARAM]) !== null}
         initialFailure={
           toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
         }
         note={
           <NoAccountNote>
             <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
-              {t("Free to start. No account needed for your first lesson.")}
+              {t("Start free, no account needed.")}
             </p>
           </NoAccountNote>
         }
       />
-    </MainLearnProvider>
+    </OnboardingPage>
   );
 }
 
+/** The start's shape while it loads: the course over the question, the levels, and Start. */
 function CourseStartSkeleton() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-24 sm:pt-32">
-      <Skeleton className="h-9 w-3/4" />
-      <Skeleton className="h-5 w-full" />
-      <Skeleton className="mt-auto mb-8 h-12 w-full rounded-full" />
-    </main>
+    <OnboardingPage backHref="/courses">
+      <OnboardingFrame>
+        <OnboardingColumn aria-busy="true">
+          <OnboardingHeading>
+            <Skeleton className="h-4 w-32" data-slot="page-eyebrow" />
+            <Skeleton className="h-16.5 w-4/5 sm:h-8.25" />
+            <Skeleton className="mt-1 h-5 w-3/5" />
+          </OnboardingHeading>
+
+          <div className="flex flex-col gap-2.5">
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+          </div>
+
+          <Skeleton className="mt-auto h-11 w-full sm:mt-0" />
+        </OnboardingColumn>
+      </OnboardingFrame>
+    </OnboardingPage>
   );
 }
 
 /**
  * Where every start of a whole course leads (asking the learner's level first), a visitor without
- * JavaScript lands, and a shareable way to start a course or one of its chapters (`?chapter=`):
- * the page only asks and shows its start button, since links are followed by crawlers too. The
- * button starts the goal.
+ * JavaScript lands, and a shareable way to start a course or one of its chapters (`?chapter=`), as
+ * a page of the app's frame: the page only asks and shows its start button, since links are
+ * followed by crawlers too. The button starts the goal.
  */
 export default function CourseStartPage(props: Props) {
   return (
