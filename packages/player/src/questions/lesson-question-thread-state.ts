@@ -1,3 +1,4 @@
+import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import {
   getReconciledAnswerError,
@@ -47,6 +48,31 @@ function getRefreshedPagination({
   return { hasMore: action.hasMore, nextCursor: action.nextCursor };
 }
 
+/**
+ * The questions as the server's latest read merges them, and the streamed answers that read
+ * settled: one whose completed, saved text the merge took no longer waits for its saved text (see
+ * `streamedAnswerIds`), so a stream cut before it doesn't leave its links as words. A partial
+ * answer, or an older read the merge kept the local one over, still waits.
+ */
+function mergeServerQuestions({
+  latestQuestions,
+  state,
+}: {
+  latestQuestions: LessonQuestionResource[];
+  state: LessonQuestionState;
+}): Pick<LessonQuestionState, "questions" | "streamedAnswerIds"> {
+  const questions = mergeLatestQuestions({ currentQuestions: state.questions, latestQuestions });
+  const taken = new Set(questions);
+
+  const settled = new Set(
+    latestQuestions
+      .filter((question) => question.status === "completed" && taken.has(question))
+      .map((question) => question.id),
+  );
+
+  return { questions, streamedAnswerIds: state.streamedAnswerIds.filter((id) => !settled.has(id)) };
+}
+
 export function isLessonQuestionThreadAction(
   action: LessonQuestionAction,
 ): action is LessonQuestionThreadAction {
@@ -85,10 +111,7 @@ export function reduceLessonQuestionThreadAction({
         isLoadingEarlier: false,
         isRefreshing: false,
         loadStatus: "ready",
-        questions: mergeLatestQuestions({
-          currentQuestions: state.questions,
-          latestQuestions: action.questions,
-        }),
+        ...mergeServerQuestions({ latestQuestions: action.questions, state }),
         requestError: null,
       };
     case "threadLoadFailed":
@@ -111,10 +134,7 @@ export function reduceLessonQuestionThreadAction({
         }),
         error: null,
         isCreating: false,
-        questions: mergeLatestQuestions({
-          currentQuestions: state.questions,
-          latestQuestions: action.questions,
-        }),
+        ...mergeServerQuestions({ latestQuestions: action.questions, state }),
         requestError: null,
       };
     case "earlierThreadLoadStarted":

@@ -97,7 +97,7 @@ async function getLessonQuestionAnswerCompletion({
 
   return {
     completion: {
-      answer: keepLinks ? keepLinks(text) : text,
+      answer: keepLinks(text),
       finishReason: finalStep.finishReason,
       generatedAt: provenance.generatedAt,
       model: provenance.model,
@@ -196,9 +196,9 @@ function enqueueConfirmation({
  * tells the client the answer is done: the learner can ask again while memory learns from the
  * exchange, whose changes follow as one data part for "Memory updated" with undo. A failed save
  * errors the stream before `finish`, so the client offers a retry. An answer whose model only
- * acted gets its confirmation as its words before `finish`. A buddy answer then comes once more as
- * it was saved, its links checked, which the client shows in place of what streamed: only that
- * text links the app.
+ * acted gets its confirmation as its words before `finish`. The answer then comes once more as it
+ * was saved, its links checked (`keepLinks`), which the client shows in place of what streamed:
+ * only that text links the app.
  */
 function streamGeneratedAnswer({
   confirm,
@@ -220,9 +220,7 @@ function streamGeneratedAnswer({
           enqueueConfirmation({ confirmation, controller });
         }
 
-        if (run.keepLinks) {
-          controller.enqueue({ data: { answer: saved }, type: LESSON_QUESTION_SAVED_ANSWER_PART });
-        }
+        controller.enqueue({ data: { answer: saved }, type: LESSON_QUESTION_SAVED_ANSWER_PART });
 
         heldBack.forEach((chunk) => controller.enqueue(chunk));
 

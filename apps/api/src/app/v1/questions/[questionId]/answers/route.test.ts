@@ -62,29 +62,34 @@ const ANSWER = "A grounded answer";
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const afterTasks: Promise<unknown>[] = [];
 
-const successfulProviderStream: MockLanguageModelV4["doStream"] = async () => ({
-  stream: simulateReadableStream({
-    chunks: [
-      {
-        id: "response-id",
-        modelId: "openai/gpt-6-luna",
-        timestamp: new Date("2026-09-04T12:00:00.000Z"),
-        type: "response-metadata",
-      },
-      { id: "answer", type: "text-start" },
-      { delta: ANSWER, id: "answer", type: "text-delta" },
-      { id: "answer", type: "text-end" },
-      {
-        finishReason: { raw: undefined, unified: "stop" },
-        type: "finish",
-        usage: {
-          inputTokens: { cacheRead: undefined, cacheWrite: undefined, noCache: 80, total: 80 },
-          outputTokens: { reasoning: undefined, text: 12, total: 12 },
+/** A provider that streams `text` as one answer and finishes. */
+const providerStreamOf =
+  (text: string): MockLanguageModelV4["doStream"] =>
+  async () => ({
+    stream: simulateReadableStream({
+      chunks: [
+        {
+          id: "response-id",
+          modelId: "openai/gpt-6-luna",
+          timestamp: new Date("2026-09-04T12:00:00.000Z"),
+          type: "response-metadata",
         },
-      },
-    ],
-  }),
-});
+        { id: "answer", type: "text-start" },
+        { delta: text, id: "answer", type: "text-delta" },
+        { id: "answer", type: "text-end" },
+        {
+          finishReason: { raw: undefined, unified: "stop" },
+          type: "finish",
+          usage: {
+            inputTokens: { cacheRead: undefined, cacheWrite: undefined, noCache: 80, total: 80 },
+            outputTokens: { reasoning: undefined, text: 12, total: 12 },
+          },
+        },
+      ],
+    }),
+  });
+
+const successfulProviderStream = providerStreamOf(ANSWER);
 
 /** Words with em dashes, cut where a provider may cut them: a dash alone, a dash ending a piece. */
 const emDashProviderStream: MockLanguageModelV4["doStream"] = async () => ({
@@ -776,12 +781,24 @@ describe("lesson question answer route", () => {
     expect(body.indexOf(savedPart)).toBeLessThan(body.indexOf('"type":"finish"'));
   });
 
-  it("sends a lesson tutor's answer without a saved copy: it has no links to check", async () => {
+  it("saves a lesson tutor's answer with its web links only: it's given no app link to keep", async () => {
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() =>
+      createTestGeneration(
+        providerStreamOf("See [the chapter](/plan/basics) or [the source](https://example.com)."),
+      ),
+    );
+
     const response = await createAnswerResponse();
     const body = await response.text();
     await Promise.all(afterTasks);
 
-    expect(body).not.toContain('"type":"data-saved-answer"');
+    const saved = "See the chapter or [the source](https://example.com).";
+
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ answer: saved }),
+    );
+
+    expect(body).toContain(JSON.stringify({ data: { answer: saved }, type: "data-saved-answer" }));
   });
 
   it("confirms in words what a buddy that only acted put under its answer, and saves it", async () => {

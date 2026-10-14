@@ -297,6 +297,64 @@ describe(lessonQuestionReducer, () => {
     expect(reconciled.questions[0]).toMatchObject({ answer: "Saved answer", status: "completed" });
   });
 
+  it("waits for a streamed answer's saved text before it links, and takes it from a later read", () => {
+    const question = questionResource();
+
+    const started = lessonQuestionReducer(
+      lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, { question, type: "questionCreated" }),
+      { questionId: question.id, type: "answerStarted" },
+    );
+
+    expect(started.streamedAnswerIds).toStrictEqual([question.id]);
+
+    // A read while the server still writes it settles nothing.
+    const stillRunning = lessonQuestionReducer(started, {
+      questions: [questionResource({ answer: "Open [Today](/today)", status: "running" })],
+      type: "latestThreadReconciled",
+    });
+
+    expect(stillRunning.streamedAnswerIds).toStrictEqual([question.id]);
+
+    // The stream dropped before its saved text; reading the saved answer back settles it.
+    const recovered = lessonQuestionReducer(stillRunning, {
+      questions: [
+        questionResource({
+          answer: "Open [Today](/today)",
+          status: "completed",
+          updatedAt: "2026-08-21T12:01:00.000Z",
+        }),
+      ],
+      type: "latestThreadReconciled",
+    });
+
+    expect(recovered.streamedAnswerIds).toStrictEqual([]);
+  });
+
+  it("links a streamed answer once its saved text arrives, in place of what streamed", () => {
+    const question = questionResource();
+
+    const streamed = lessonQuestionReducer(
+      lessonQuestionReducer(
+        lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, { question, type: "questionCreated" }),
+        { questionId: question.id, type: "answerStarted" },
+      ),
+      {
+        chunk: "Open [a site](https://example.com)",
+        questionId: question.id,
+        type: "answerChunkReceived",
+      },
+    );
+
+    const saved = lessonQuestionReducer(streamed, {
+      answer: "Open a site",
+      questionId: question.id,
+      type: "answerSaved",
+    });
+
+    expect(saved.questions[0]?.answer).toBe("Open a site");
+    expect(saved.streamedAnswerIds).toStrictEqual([]);
+  });
+
   it("keeps saved questions visible when a background refresh fails", () => {
     const question = questionResource({ answer: "Saved answer", status: "completed" });
 

@@ -35,6 +35,7 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { keepAllowedMarkdownLinks } from "@zoonk/utils/markdown-links";
 import { createEmDashReplacer } from "@zoonk/utils/string";
 import { type LanguageModelUsage, type UIMessageChunk, toUIMessageStream } from "ai";
 import { toAppToolResult } from "./tutor-app-tool-result";
@@ -79,10 +80,11 @@ export type AnswerRun = {
   answer: AnswerGeneration;
   chunks: ReadableStream<UIMessageChunk>;
   /**
-   * A buddy answer keeps only the links it was given (`createAnswerLinks`) when it's saved; the
-   * lesson tutor's answers have none to check.
+   * What the answer keeps of its links when it's saved: a buddy answer only the ones it was given
+   * (`createAnswerLinks`); the lesson tutor's, which is given none of the app's, only web
+   * addresses (`keepWebLinks`), so no answer saves an app link nobody checked.
    */
-  keepLinks?: (markdown: string) => string;
+  keepLinks: (markdown: string) => string;
   offers: TutorToolOffer[];
   /** Each plan change proposed, with the earlier proposals it replaced. */
   proposals: { change: PlanChangeView; replaced: string[] }[];
@@ -193,6 +195,14 @@ function startGoalTutorAnswer({
   };
 }
 
+const WEB_ADDRESS = /^https?:\/\//iu;
+
+/** The lesson tutor's answer as saved: its web links stay (the app asks before opening them). */
+function keepWebLinks(markdown: string): string {
+  return keepAllowedMarkdownLinks({ isAllowed: (href) => WEB_ADDRESS.test(href), markdown })
+    .markdown;
+}
+
 function startLessonQuestionAnswer({
   claim,
   contextSnapshot,
@@ -211,6 +221,7 @@ function startLessonQuestionAnswer({
   return {
     answer,
     chunks: toUIMessageStream({ sendReasoning: false, stream: answer.generation.stream }),
+    keepLinks: keepWebLinks,
     offers: [],
     proposals: [],
   };
