@@ -84,7 +84,7 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
       </CollapsibleTrigger>
 
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <ul className="bg-muted/40 text-muted-foreground flex flex-col gap-2 px-4 py-3 text-sm">
+        <ul className="text-muted-foreground flex flex-col gap-2 px-4 pt-1 pb-3.5 text-sm">
           {group.children.map((child) => (
             <li className={cn("text-pretty", child.depth > 1 && "pl-5")} key={child.topic.name}>
               <TopicNumber number={child.number} />
@@ -136,7 +136,7 @@ export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
         {hidden > 0 && (
           <li>
             <ListRowButton onClick={() => setShowAll(true)}>
-              <ListRowContent className="min-h-12 py-2.5">
+              <ListRowContent>
                 <ListRowTitle>
                   {t("See all {count, number}", { count: groups.length })}
                 </ListRowTitle>

@@ -80,7 +80,7 @@ function FailedMessage() {
   const t = useExtracted();
 
   return (
-    <p className="text-destructive mt-2 text-sm" role="alert">
+    <p className="text-destructive-text mt-2 text-sm" role="alert">
       {t("That didn't work. Try again in a moment.")}
     </p>
   );

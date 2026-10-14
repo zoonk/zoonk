@@ -40,7 +40,10 @@ function ChapterRows({
   chapters: readonly SyllabusChapter[];
 }) {
   return chapters.map((chapter) => (
-    <li key={chapter.chapterId ?? chapter.title}>
+    <li
+      aria-current={chapter.state === "current" ? "step" : undefined}
+      key={chapter.chapterId ?? chapter.title}
+    >
       <SyllabusChapterRow
         chapter={chapter}
         chapterHref={chapterHref}
@@ -96,7 +99,7 @@ function DoneChapters({
           {/* Every folded chapter skipped because the learner knows it: the skip mark, as each. */}
           <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
-        <ListRowContent className="min-h-13 py-2.5">
+        <ListRowContent>
           <ListRowTitle className="text-muted-foreground">{doneLine(chapters)}</ListRowTitle>
         </ListRowContent>
         <ChevronDownIcon
@@ -105,7 +108,7 @@ function DoneChapters({
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <ul className="flex flex-col">
+        <ul className="flex flex-col [&>li]:border-t">
           <ChapterRows chapterHref={chapterHref} chapters={chapters} />
         </ul>
       </CollapsibleContent>
@@ -160,10 +163,10 @@ export function SubjectChapters({
         {hidden > 0 && (
           <li>
             <ListRowButton chevron={false} onClick={() => setShowAll(true)}>
-              <ListRowLeading className="text-muted-foreground size-6 justify-center">
-                <PlusIcon aria-hidden="true" className="size-4" />
+              <ListRowLeading className="text-muted-foreground size-4 justify-center">
+                <PlusIcon aria-hidden="true" className="size-3.5" />
               </ListRowLeading>
-              <ListRowContent className="min-h-12 py-2.5">
+              <ListRowContent>
                 <ListRowTitle className="text-muted-foreground">
                   {t("{count, plural, one {# more chapter} other {# more chapters}}", {
                     count: hidden,

@@ -45,7 +45,7 @@ function ToolStatus({ tool }: { tool: PlanToolView }) {
 
   switch (tool.choice) {
     case "have":
-      return <span className="text-success font-medium">{t("You have it")}</span>;
+      return <span className="text-success-text font-medium">{t("You have it")}</span>;
     case "setup":
       return tool.system
         ? t("Setup lesson for {device}", { device: systemName(tool.system) })

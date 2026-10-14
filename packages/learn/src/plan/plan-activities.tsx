@@ -50,7 +50,7 @@ export function PlanActivities() {
 
           return (
             <Toggle
-              className="aria-pressed:bg-foreground aria-pressed:text-background h-11 px-4"
+              className="h-11 px-4"
               disabled={isPending}
               focusableWhenDisabled
               key={activity}

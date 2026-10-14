@@ -13,7 +13,7 @@ import {
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { type PlanTutor, usePlanScreen } from "./plan-context";
 
-function NamedTitle({ buddy }: { buddy: NonNullable<PlanTutor["buddy"]> }) {
+function NamedTitle({ buddy }: { buddy: PlanTutor["buddy"] }) {
   const t = useExtracted();
   const name = useBuddyName(buddy);
   return t("Something else? Tell {name}", { name });
@@ -30,11 +30,7 @@ function TutorRow({ tutor }: { tutor: PlanTutor }) {
         </ListRowIcon>
         <ListRowContent>
           <ListRowTitle>
-            {tutor.buddy ? (
-              <NamedTitle buddy={tutor.buddy} />
-            ) : (
-              t("Something else? Tell your buddy")
-            )}
+            <NamedTitle buddy={tutor.buddy} />
           </ListRowTitle>
           <ListRowDescription>
             {t(

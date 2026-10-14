@@ -164,7 +164,7 @@ function GroupCount({ group }: { group: Group }) {
   ).length;
 
   return (
-    <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
+    <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
       <span aria-hidden="true">{`${studied}/${topics.length}`}</span>
       <span className="sr-only">
         {t(
@@ -194,7 +194,7 @@ function GroupLine({ group, showFrequency }: { group: Group; showFrequency: bool
       <ListRowLeading>
         <TopicMark mark={mark} />
       </ListRowLeading>
-      <ListRowContent className="min-h-12 py-2.5">
+      <ListRowContent>
         <ListRowTitle className={cn(mark?.kind === "notPlanned" && "text-muted-foreground")}>
           <TopicNumber number={group.number} />
           {group.text}
@@ -245,7 +245,7 @@ function TopicGroupRow({
       </CollapsibleTrigger>
 
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="bg-muted/40 flex flex-col pr-4 pb-2 pl-13">
+        <div className="flex flex-col pr-4 pb-2 pl-13">
           {group.children.length > 0 && (
             <ul className="flex flex-col">
               {group.children.map((child) => (

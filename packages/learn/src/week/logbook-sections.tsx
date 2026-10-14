@@ -2,17 +2,12 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import {
-  ClockIcon,
-  LightbulbIcon,
-  ListChecksIcon,
-  NotebookPenIcon,
-  RotateCcwIcon,
-  SearchCheckIcon,
-} from "lucide-react";
+import { ClockIcon, ListChecksIcon, SearchCheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { FactChip, FactChips } from "../_components/fact-chips";
-import { KindTile } from "../_components/kind-tile";
+import { GoalRing } from "../_components/goal-ring";
+import { KindMark, type LearnKind } from "../_components/kind-tile";
+import { StatTile, StatTiles } from "../_components/stat-tile";
+import { DoneMark } from "../_components/status-mark";
 import {
   StepCard,
   StepDetail,
@@ -29,8 +24,11 @@ import { TurnaroundChart } from "./turnaround-chart";
 
 const DAYS_PER_WEEK = 7;
 
-/** The week's seven days, the ones studied filled in: the week at a glance. */
-function WeekDots() {
+/**
+ * The week's seven days as Today draws its week: a ring per day, closed in green with a check on a
+ * day studied, an empty track otherwise, and the day's letter under it in the mono face.
+ */
+function WeekRings() {
   const t = useExtracted();
   const format = useFormatter();
   const { recap } = useLogbook();
@@ -42,7 +40,7 @@ function WeekDots() {
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
         { count: studied.size },
       )}
-      className="flex gap-1.5"
+      className="grid w-full max-w-80 grid-cols-7 gap-1"
       role="img"
     >
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
@@ -50,14 +48,16 @@ function WeekDots() {
         const isStudied = studied.has(day.getTime());
 
         return (
-          <span
-            className={cn(
-              "flex size-9 items-center justify-center rounded-full text-xs font-semibold",
-              isStudied ? "bg-foreground text-background" : "text-muted-foreground border",
-            )}
-            key={day.toISOString()}
-          >
-            {format.dateTime(day, { timeZone: "UTC", weekday: "narrow" })}
+          <span className="flex flex-col items-center gap-1.5" key={day.toISOString()}>
+            <GoalRing share={isStudied ? 1 : 0}>{isStudied && <DoneMark />}</GoalRing>
+            <span
+              className={cn(
+                "font-mono text-[0.6875rem] uppercase",
+                isStudied ? "text-foreground" : "text-faint",
+              )}
+            >
+              {format.dateTime(day, { timeZone: "UTC", weekday: "narrow" })}
+            </span>
           </span>
         );
       })}
@@ -68,11 +68,12 @@ function WeekDots() {
 /** "40 min more than the week before!": only good news is compared; a quieter week starts over. */
 function useGainLine(): string | null {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const { recap } = useLogbook();
   const { minutes, questions } = recap.comparison;
 
   if (minutes > 0) {
-    return t("{minutes} min more than the week before!", { minutes: String(minutes) });
+    return t("{time} more than the week before!", { time: formatDuration(minutes) });
   }
 
   if (questions > 0) {
@@ -85,7 +86,10 @@ function useGainLine(): string | null {
   return null;
 }
 
-/** The week in one line: its days, time and questions, and a word when it beat the one before. */
+/**
+ * The week at a glance: its days, a word when it beat the one before, and its time and questions
+ * as numbers on their tiles.
+ */
 export function WeekStep({ range }: { range: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -95,7 +99,7 @@ export function WeekStep({ range }: { range: string }) {
 
   return (
     <StepCard>
-      <WeekDots />
+      <WeekRings />
       <StepHeader>
         <StepEyebrow>
           {finished
@@ -111,18 +115,15 @@ export function WeekStep({ range }: { range: string }) {
         {gain && <StepDetail>{gain}</StepDetail>}
       </StepHeader>
 
-      <FactChips className="justify-center">
-        <FactChip>
-          <ClockIcon aria-hidden="true" />
-          {formatDuration(recap.week.minutes)}
-        </FactChip>
-        <FactChip>
-          <ListChecksIcon aria-hidden="true" />
-          {t("{count, plural, one {# question} other {# questions}}", {
-            count: recap.week.questions,
-          })}
-        </FactChip>
-      </FactChips>
+      <StatTiles>
+        <StatTile
+          icon={<ClockIcon />}
+          label={t("Time")}
+          tone="time"
+          value={formatDuration(recap.week.minutes)}
+        />
+        <StatTile icon={<ListChecksIcon />} label={t("Questions")} value={recap.week.questions} />
+      </StatTiles>
     </StepCard>
   );
 }
@@ -134,7 +135,7 @@ export function QuietWeekStep({ range }: { range: string }) {
 
   return (
     <StepCard>
-      <WeekDots />
+      <WeekRings />
       <StepHeader>
         <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
         <StepTitle>
@@ -157,10 +158,10 @@ function useReason(): string | null {
   const turnaround = recap.turnaround;
 
   if (turnaround?.reason === "gold") {
-    return t("{skill} is Mastered now: you remembered it on {count} different days.", {
-      count: String(turnaround.rememberedOn.length),
-      skill: turnaround.name,
-    });
+    return t(
+      "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}.",
+      { count: turnaround.rememberedOn.length, skill: turnaround.name },
+    );
   }
 
   if (turnaround?.reason === "solid") {
@@ -189,7 +190,7 @@ export function TurnaroundStep() {
       <StepHeader>
         <StepEyebrow>{t("The biggest turnaround")}</StepEyebrow>
         <StepTitle>{turnaround.name}</StepTitle>
-        <StepDetail>
+        <StepDetail className="tabular-nums">
           {t("{from} → {to} right answers", {
             from: formatShare(turnaround.from),
             to: formatShare(turnaround.to),
@@ -228,8 +229,20 @@ function LearnedRow({
     <StepRow>
       {icon}
       <span className="min-w-0 flex-1 font-medium">{label}</span>
-      <span className="shrink-0 font-semibold tabular-nums">{format.number(value)}</span>
+      <span className="shrink-0 font-mono font-medium tabular-nums">{format.number(value)}</span>
     </StepRow>
+  );
+}
+
+/**
+ * A kind's icon as a row's mark here (`KindMark`), so the kinds read apart by shape. Wrapped, since
+ * a step row sizes and grays any icon that is its direct child.
+ */
+function LearnedKindMark({ kind }: { kind: LearnKind }) {
+  return (
+    <span className="flex size-4 shrink-0 items-center justify-center">
+      <KindMark kind={kind} />
+    </span>
   );
 }
 
@@ -245,22 +258,22 @@ export function LearnedStep() {
       <StepTitle>{t("What you learned")}</StepTitle>
       <StepRows>
         <LearnedRow
-          icon={<LightbulbIcon aria-hidden="true" className="text-muted-foreground" />}
+          icon={<LearnedKindMark kind="lesson" />}
           label={t("{count, plural, one {new idea} other {new ideas}}", { count: newIdeas })}
           value={newIdeas}
         />
         <LearnedRow
-          icon={<RotateCcwIcon aria-hidden="true" className="text-muted-foreground" />}
+          icon={<LearnedKindMark kind="review" />}
           label={t("{count, plural, one {review} other {reviews}}", { count: reviews })}
           value={reviews}
         />
         <LearnedRow
-          icon={<NotebookPenIcon aria-hidden="true" className="text-muted-foreground" />}
+          icon={<LearnedKindMark kind="mistakes" />}
           label={t("{count, plural, one {mistake fixed} other {mistakes fixed}}", { count: fixes })}
           value={fixes}
         />
         <LearnedRow
-          icon={<SearchCheckIcon aria-hidden="true" className="text-muted-foreground" />}
+          icon={<SearchCheckIcon aria-hidden="true" className="text-muted-foreground size-4" />}
           label={t("{count, plural, one {Trap hunter badge} other {Trap hunter badges}}", {
             count: badges,
           })}
@@ -277,7 +290,6 @@ export function NextWeekStep({ title }: { title: string }) {
 
   return (
     <StepCard>
-      <KindTile kind="lesson" size="lg" />
       <StepHeader>
         <StepEyebrow>{t("Next week")}</StepEyebrow>
         <StepTitle>{title}</StepTitle>

@@ -13,7 +13,6 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { CircleCheckIcon, EyeIcon, WrenchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
@@ -25,21 +24,14 @@ function useToolChoices(): Choice<ToolChoice>[] {
   const t = useExtracted();
 
   return [
-    {
-      description: t("You'll practice on your own device."),
-      icon: <CircleCheckIcon aria-hidden="true" />,
-      label: t("I have it"),
-      value: "have",
-    },
+    { description: t("You'll practice on your own device."), label: t("I have it"), value: "have" },
     {
       description: t("A short lesson shows how, right before you need it."),
-      icon: <WrenchIcon aria-hidden="true" />,
       label: t("I'll set it up"),
       value: "setup",
     },
     {
       description: t("Learn with examples. You won't practice on your own computer."),
-      icon: <EyeIcon aria-hidden="true" />,
       label: t("No install"),
       value: "none",
     },
@@ -62,7 +54,7 @@ function SystemPicker({
       <div className="flex flex-wrap gap-2">
         {TOOL_SYSTEMS.map((system) => (
           <Toggle
-            className="aria-pressed:border-foreground h-11 rounded-full px-4 aria-pressed:font-semibold"
+            className="h-11 rounded-lg px-4"
             key={system}
             onPressedChange={() => onChange(system)}
             pressed={value === system}

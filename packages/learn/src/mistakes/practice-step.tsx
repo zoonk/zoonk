@@ -2,104 +2,194 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useMemo } from "react";
-import { EnterButton } from "../_components/enter-button";
-import { ChoiceQuestion } from "../questions/choice-question";
+import {
+  FeedbackExplanation,
+  FeedbackNote,
+  FeedbackPanel,
+  FeedbackVerdict,
+} from "../_components/feedback-panel";
+import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemLine, ItemSupport } from "../questions/item-text";
+import { ItemSupport, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
+import { ChoiceQuestion, type ChoiceResult } from "../session/question-block/choice-question";
+import { CheckButton, ContinueButton } from "../session/question-block/question-actions";
+import { useVerdict } from "../session/question-block/question-feedback";
+import { QuestionTitle } from "../session/question-block/question-title";
+import {
+  TrueFalseQuestion,
+  type TrueFalseResult,
+} from "../session/question-block/true-false-question";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
 import { NotSureButton, ShowAnswersButton } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
 import { type LessonHref, isIdeaFirst, isReadFirst } from "./drill/drill-types";
-import { type PracticeStep as Step } from "./mistake-practice-state";
+import {
+  type MistakePracticeFeedback,
+  type PracticeStep as Step,
+  isMistakeQuestion,
+} from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-/** The step's main action: Check the picked answer, then Continue, both on Enter too. */
-function MainButton({ run }: { run: Run }) {
+/** The options an answer picks: one, several, or none for another shape. */
+function getPicks(answer: ChoiceAnswer | null): number[] {
+  if (!answer) {
+    return [];
+  }
+
+  if ("selectedIndex" in answer) {
+    return [answer.selectedIndex];
+  }
+
+  return "selectedIndexes" in answer ? answer.selectedIndexes : [];
+}
+
+/** What a graded choice question marks: the right options, and the learner's picks. */
+function getChoiceResult({
+  answer,
+  feedback,
+}: {
+  answer: ChoiceAnswer;
+  feedback: ChoiceFeedback;
+}): ChoiceResult {
+  return { correct: getPicks(feedback.correctAnswer), picked: getPicks(answer) };
+}
+
+/** What a graded statement marks: its right answer, and the learner's ("not sure" included). */
+function getTrueFalseResult({
+  answer,
+  feedback,
+}: {
+  answer: ChoiceAnswer;
+  feedback: ChoiceFeedback;
+}): TrueFalseResult {
+  const correct = feedback.correctAnswer;
+
+  return {
+    answer: "isTrue" in answer ? { isTrue: answer.isTrue } : { dontKnow: true },
+    correct: "isTrue" in correct ? correct.isTrue : null,
+  };
+}
+
+/**
+ * The step's actions in the run's pinned bar: "Show the answers" while a misread is read; Check
+ * the picked answer (or Enter) with the honest way out beside it; Continue once graded.
+ */
+export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
+
+  if (phase.kind === "reading") {
+    return <ShowAnswersButton onReveal={run.reveal} />;
+  }
+
+  if (phase.kind === "feedback") {
+    return <ContinueButton onContinue={run.next} />;
+  }
+
   const selected = phase.kind === "answering" ? phase.selected : null;
   const retry = phase.kind === "answerFailed" ? phase.answer : null;
   const answer = selected ?? retry;
-
-  const act = phase.kind === "feedback" ? run.next : () => (answer ? run.check(answer) : false);
-
-  useEnterKey(act, { enabled: phase.kind === "feedback" || answer !== null });
+  const checking = phase.kind === "checking";
 
   return (
-    <EnterButton
-      className="sm:flex-1"
-      disabled={phase.kind === "checking" || (phase.kind !== "feedback" && !answer)}
-      onClick={act}
-    >
-      {phase.kind === "feedback" ? t("Continue") : t("Check")}
-    </EnterButton>
+    <>
+      {step.entry.drill.kind === "noGuessing" ? (
+        <NotSureButton disabled={checking} onClick={run.notSure} />
+      ) : (
+        <Button disabled={checking} onClick={run.notSure} size="lg" variant="outline">
+          {t("I don't know yet")}
+        </Button>
+      )}
+
+      <CheckButton
+        busy={checking}
+        disabled={!answer}
+        onCheck={() => (answer ? run.check(answer) : undefined)}
+      />
+    </>
   );
 }
 
-function StepActions({ run, step }: { run: Run; step: Step }) {
+/**
+ * The grade on the quiet feedback panel, said as the session says it: right or wrong, why, the
+ * drill's notes (time running out, an honest "not sure", the trap) and, last, a fixed mistake.
+ */
+function PracticeFeedback({
+  feedback,
+  notSure,
+  notes,
+}: {
+  feedback: NonNullable<MistakePracticeFeedback>;
+  notSure: boolean;
+  notes: React.ReactNode;
+}) {
   const t = useExtracted();
-  const { phase } = run.state;
-  const noGuessing = step.entry.drill.kind === "noGuessing";
+  const verdict = useVerdict(feedback);
+  const fixed = feedback.fixedMistakeIds.length;
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row-reverse">
-      <MainButton run={run} />
-      {phase.kind !== "feedback" &&
-        (noGuessing ? (
-          <NotSureButton disabled={phase.kind === "checking"} onClick={run.notSure} />
-        ) : (
-          <Button
-            className="h-12 rounded-full"
-            disabled={phase.kind === "checking"}
-            onClick={run.notSure}
-            size="lg"
-            variant="ghost"
-          >
-            {t("I don't know yet")}
-          </Button>
-        ))}
-    </div>
+    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
+      <FeedbackVerdict tone={notSure ? "neutral" : verdict.tone}>
+        {notSure ? t("I don't know yet") : verdict.label}
+      </FeedbackVerdict>
+
+      {feedback.explanation && (
+        <FeedbackExplanation>
+          <ItemText text={feedback.explanation} />
+        </FeedbackExplanation>
+      )}
+
+      {notes}
+
+      {fixed > 0 && (
+        <FeedbackNote>
+          {t(
+            "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}",
+            { count: fixed },
+          )}
+        </FeedbackNote>
+      )}
+    </FeedbackPanel>
   );
 }
 
-/** A misread's question on its own, before its answers show. */
-function ReadingQuestion({ question }: { question: Step["question"] }) {
+/**
+ * The question's picture, chart or context, then the question itself, unless its statement sits
+ * on its own card (`withTitle`).
+ */
+function QuestionLead({
+  graded,
+  question,
+  withTitle,
+}: {
+  graded: boolean;
+  question: Step["question"];
+  withTitle: boolean;
+}) {
   return (
-    <div className="flex flex-col gap-4">
+    <>
       <ItemSupport
-        className="text-muted-foreground text-sm"
+        className="text-muted-foreground text-sm leading-relaxed"
         context={question.context}
         image={question.image}
         visual={question.visual}
       />
-      <h2 className="text-lg font-medium">
-        <ItemLine text={question.question} />
-      </h2>
-    </div>
-  );
-}
-
-function AnswerFailed() {
-  const t = useExtracted();
-
-  return (
-    <p className="text-destructive text-sm" role="alert">
-      {t("We couldn't save that answer. Check it again.")}
-    </p>
+      {withTitle && <QuestionTitle muted={graded} text={question.question} />}
+    </>
   );
 }
 
 /**
  * One question of the run, played by its drill: the idea first for a content gap, the question
  * before its answers for a misread, a clock for a timed drill, "I'm not sure" when guessing is the
- * habit, and the trap named after the answer in a trap drill.
+ * habit, and the trap named after the answer in a trap drill. Its options and feedback are the
+ * session's; its actions sit in the run's pinned bar (`PracticeStepActions`).
  */
 export function PracticeStepView({
   lessonHref,
@@ -115,14 +205,12 @@ export function PracticeStepView({
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { phase } = run.state;
   const { drill } = step.entry;
+  const { question } = step;
   // A recording's plays count in this run, as practice: a mistake retried another time starts over.
   const runId = useMemo(() => crypto.randomUUID(), []);
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
-  const lastAnswer =
-    step.question.question === step.entry.snapshot.question
-      ? answerText(step.entry.snapshot.answer)
-      : null;
+  const lastAnswer = isMistakeQuestion(step) ? answerText(step.entry.snapshot.answer) : null;
 
   if (phase.kind === "idea") {
     return (
@@ -135,68 +223,84 @@ export function PracticeStepView({
     );
   }
 
-  const feedback = phase.kind === "feedback" ? phase.feedback : null;
-  const answered = "answer" in phase ? phase.answer : null;
-  const selected = phase.kind === "answering" ? phase.selected : answered;
+  const graded = phase.kind === "feedback" ? phase : null;
+  const disabled = phase.kind === "checking";
 
   return (
-    <div className="flex flex-col gap-6">
+    <>
       {/* A gap's idea had its own screen; other drills say how they work above their first
-          question, and a misread above each one, since each waits behind "Show the answers". */}
+          question, and a misread above each one, since each waits behind "Show the answers".
+          From `lg` the run's aside says it beside every question (`PracticeAside`). */}
       {!isIdeaFirst(drill) && (step.firstOfEntry || isReadFirst(drill)) && (
-        <DrillIntro
-          drill={drill}
-          lastAnswer={step.firstOfEntry ? lastAnswer : null}
-          lessonHref={lessonHref}
-        />
+        <div className="contents lg:hidden">
+          <DrillIntro
+            answered={graded !== null}
+            drill={drill}
+            lastAnswer={step.firstOfEntry ? lastAnswer : null}
+            lessonHref={lessonHref}
+          />
+        </div>
       )}
 
       {drill.timeLimitSeconds !== null && phase.kind === "answering" && (
         <DrillCountdown
-          key={step.question.itemId}
+          key={question.itemId}
           onTimeUp={run.timeUp}
           seconds={drill.timeLimitSeconds}
         />
       )}
 
-      {step.question.set && (
-        <ItemSetStimulus
-          askedIn={runId}
-          key={step.question.itemId}
-          practice
-          set={step.question.set}
-        />
+      {question.set && (
+        <ItemSetStimulus askedIn={runId} key={question.itemId} practice set={question.set} />
       )}
 
-      {phase.kind === "reading" ? (
-        <>
-          <ReadingQuestion question={step.question} />
-          <ShowAnswersButton onReveal={run.reveal} />
-        </>
-      ) : (
-        <>
-          <ChoiceQuestion
-            disabled={phase.kind === "checking"}
-            feedback={feedback}
-            onSelect={run.select}
-            question={step.question}
-            selected={selected}
-            trueFalseLabels={trueFalseLabels}
-          />
+      <section aria-label={question.question} className="flex flex-col gap-4" key={question.itemId}>
+        {phase.kind === "reading" ? (
+          <QuestionLead graded={false} question={question} withTitle />
+        ) : (
+          <>
+            <QuestionLead
+              graded={graded !== null}
+              question={question}
+              withTitle={question.format !== "trueFalse"}
+            />
 
-          {phase.kind === "feedback" && (
+            {question.format === "trueFalse" ? (
+              <TrueFalseQuestion
+                allowBlank={false}
+                disabled={disabled}
+                onChange={run.select}
+                result={graded ? getTrueFalseResult(graded) : null}
+                statement={question.question}
+                trueFalseLabels={trueFalseLabels}
+              />
+            ) : (
+              <ChoiceQuestion
+                disabled={disabled}
+                onChange={run.select}
+                options={question.options ?? []}
+                result={graded ? getChoiceResult(graded) : null}
+                select={question.select}
+              />
+            )}
+          </>
+        )}
+      </section>
+
+      {graded && (
+        <PracticeFeedback
+          feedback={graded.feedback}
+          notSure={!graded.timedOut && "dontKnow" in graded.answer}
+          notes={
             <DrillAnswerNotes
               drill={drill}
-              notSure={answered !== null && "dontKnow" in answered}
-              timedOut={phase.timedOut}
-              trap={phase.feedback.trap}
+              notSure={"dontKnow" in graded.answer}
+              timedOut={graded.timedOut}
+              trap={graded.feedback.trap}
             />
-          )}
-
-          {phase.kind === "answerFailed" && <AnswerFailed />}
-          <StepActions run={run} step={step} />
-        </>
+          }
+        />
       )}
-    </div>
+    </>
   );
 }

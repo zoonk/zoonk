@@ -1,18 +1,20 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { LibraryBigIcon } from "lucide-react";
-import { KindTile } from "../_components/kind-tile";
 
-const IMAGE_SIZE = { lg: 64, md: 44, sm: 32 } as const;
+const IMAGE_SIZE = { lg: 64, list: 40, md: 44, sm: 32 } as const;
 
 const IMAGE_CLASS = {
-  lg: "size-16 rounded-2xl",
+  lg: "size-16 rounded-xl",
+  /** A list row's leading mark, as the catalog's courses have. */
+  list: "size-10 rounded-lg",
   md: "size-11 rounded-xl",
   sm: "size-8 rounded-lg",
 } as const;
 
 /**
- * A subject's anchor: the icon of the Library course that teaches it, else a tinted tile. Decorative:
- * the subject's name always sits beside it.
+ * A subject's anchor: the icon of the Library course that teaches it, else a quiet book on the same
+ * neutral square, as every course without its picture shows (the catalog's too). Decorative: the
+ * subject's name always sits beside it.
  */
 export function SubjectIcon({
   imageUrl,
@@ -22,7 +24,18 @@ export function SubjectIcon({
   size?: keyof typeof IMAGE_SIZE;
 }) {
   if (!imageUrl) {
-    return <KindTile icon={LibraryBigIcon} kind="lesson" size={size} />;
+    return (
+      <span
+        aria-hidden="true"
+        className={cn(
+          "bg-muted text-muted-foreground flex shrink-0 items-center justify-center [&>svg]:size-1/2",
+          IMAGE_CLASS[size],
+        )}
+        data-slot="subject-icon"
+      >
+        <LibraryBigIcon />
+      </span>
+    );
   }
 
   return (

@@ -4,6 +4,7 @@ import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { getShownEndMove } from "../plan-diff/end-move";
 import {
   useAddedTopicsStartText,
   useAreaEndTexts,
@@ -15,25 +16,24 @@ import { useLessonsEffectText, useTopicsEffectText } from "./use-effect-counts";
 import { usePhaseEndsText } from "./use-phase-ends-text";
 import { useNextMockText, useWeeklyEventsText } from "./use-weekday-texts";
 
-/** How a change moves the end: "Ends Nov 20 instead of Nov 12". Null when the end stays. */
+/**
+ * How a change moves the end: "Ends Nov 20 instead of Nov 12". Null when the end stays, or moves
+ * too little to say beside the lessons the change moves (see `getShownEndMove`).
+ */
 function useChangeEffectText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
   return function effectText(change: Pick<PlanChangeView, "effect">): string | null {
-    const { effect } = change;
+    const move = getShownEndMove(change.effect);
 
-    if (!effect?.endDateAfter || !effect.endDateBefore) {
-      return null;
-    }
-
-    if (effect.endDateAfter === effect.endDateBefore) {
+    if (!move) {
       return null;
     }
 
     return t("Ends {after} instead of {before}.", {
-      after: formatDate(effect.endDateAfter, "long"),
-      before: formatDate(effect.endDateBefore, "long"),
+      after: formatDate(move.after, "long"),
+      before: formatDate(move.before, "long"),
     });
   };
 }
@@ -61,12 +61,13 @@ function usePlanEndEffectText() {
     current: CurrentEnd;
     effect: PlanChangeView["effect"];
   }): string | null {
-    const before = effect?.endDateBefore;
-    const after = effect?.endDateAfter;
+    const move = getShownEndMove(effect);
 
-    if (current.targetDate || !current.endDate || !before || !after) {
+    if (current.targetDate || !current.endDate || !move) {
       return null;
     }
+
+    const { after, before } = move;
 
     if (toMonth(before) !== toMonth(current.endDate) || toMonth(after) === toMonth(before)) {
       return null;
@@ -117,7 +118,7 @@ function useAppliedEndText() {
       return t("You finish around {month}.", { month: formatDate(after, "month") });
     }
 
-    return before && toMonth(after) !== toMonth(before)
+    return before && getShownEndMove(change.effect) && toMonth(after) !== toMonth(before)
       ? t("Ends around {after} instead of {before}.", {
           after: formatDate(after, "month"),
           before: formatDate(before, "month"),
@@ -140,10 +141,20 @@ export function useProposalEffectText() {
   return function proposalEffectText(
     change: Pick<PlanChangeView, "effect">,
     current?: CurrentEnd,
+    {
+      besideDiff = false,
+      byDate = true,
+    }: {
+      /** Said over its diff, which counts the lessons first: their count isn't said again. */
+      besideDiff?: boolean;
+      /** Its lessons count against a date still ahead, as its diff's (`PlanEffectDiff`). */
+      byDate?: boolean;
+    } = {},
   ): string | null {
     return sentences(
       change,
       current ? planEndEffect({ current, effect: change.effect }) : effectText(change),
+      { besideDiff, byDate },
     );
   };
 }
@@ -181,6 +192,7 @@ function useEffectSentences() {
   return function effectSentences(
     change: Pick<PlanChangeView, "effect">,
     endText: string | null,
+    { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
     // With a review ahead that the focus opens, a start that stays says nothing the review doesn't.
     const ends = change.effect?.areaEnds ?? [];
@@ -199,7 +211,7 @@ function useEffectSentences() {
       reviewFirstText(change.effect),
       weeklyEventsText(change.effect),
       nextMockText(change.effect),
-      lessonsText(change.effect),
+      lessonsText(change.effect, { byDate, named: besideDiff }),
       phaseEndsText(change.effect),
       addedTopicsStartText(change.effect),
       topicsText(change.effect),

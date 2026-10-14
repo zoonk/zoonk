@@ -9,13 +9,18 @@ type NamedPhase = Pick<PlanPhaseView, "index" | "kind" | "name" | "short">;
 /**
  * Exam phases come without a name, so the app names them by what they're for; a plan for a test
  * days away names each by its days' focus. The names are site messages (`planPhases`), so a shared
- * plan's public page names them the same way.
+ * plan's public page names them the same way. `byPlace` names one by its place ("Phase 2") even
+ * when it has a name: listed over its chapters, one named like one of them (`isNamedLikeAChapter`).
  */
 export function usePhaseName() {
   const t = useExtracted("planPhases");
   const focusName = useShortFocusName();
 
-  return (phase: NamedPhase, { mocksRequirePlus = false } = {}): string => {
+  return (phase: NamedPhase, { byPlace = false, mocksRequirePlus = false } = {}): string => {
+    if (byPlace) {
+      return t("Phase {number, number}", { number: phase.index + 1 });
+    }
+
     if (phase.name) {
       return phase.name;
     }

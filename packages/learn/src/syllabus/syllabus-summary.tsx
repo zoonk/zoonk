@@ -16,13 +16,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { ChevronDownIcon, ChevronRightIcon, XIcon } from "lucide-react";
+import { ChevronDownIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { SubjectIcon } from "./subject-icon";
-import { CourseWeightsNote, PassMarks, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
-import { hasSyllabusSection } from "./syllabus-section";
+import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { SummaryTopics } from "./syllabus-summary-topics";
 
 /**
@@ -158,19 +157,6 @@ function useSummaryLines({
   return { detail: coverage, title };
 }
 
-/** Up to three subject icons, overlapping, as the card's anchor. */
-function IconStack({ subjects }: { subjects: readonly SyllabusSubject[] }) {
-  return (
-    <span aria-hidden="true" className="flex shrink-0 -space-x-3">
-      {subjects.slice(0, 3).map((subject) => (
-        <span className="ring-card rounded-xl ring-2" key={subject.key}>
-          <SubjectIcon imageUrl={subject.imageUrl} />
-        </span>
-      ))}
-    </span>
-  );
-}
-
 /** "8 questions · 7 topics, 2 out of your plan": what a subject weighs and what the plan leaves out. */
 function useSubjectLine(subject: SyllabusSubject): string | null {
   const t = useExtracted();
@@ -203,7 +189,7 @@ function SummarySubject({ subject }: { subject: SyllabusSubject }) {
       <SubjectIcon imageUrl={subject.imageUrl} size="sm" />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-sm leading-snug font-medium">{subject.name}</span>
-        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+        {line && <span className="text-muted-foreground text-xs tabular-nums">{line}</span>}
       </span>
     </>
   );
@@ -257,30 +243,26 @@ function SummaryGroup({
   );
 }
 
-function SummaryCard({
-  dailyMinutes,
+/**
+ * "See topics": the goal's structure in a sheet, one tap from the sentence that says what the plan
+ * covers: every subject, what it weighs and its topics in the notice's own words, the ones left
+ * out marked, so the learner sees it's all there before starting.
+ */
+export function SyllabusTopicsSheet({
+  className,
   syllabus,
 }: {
-  dailyMinutes: number | null;
+  /** The trigger's look: a word inside the sentence. */
+  className?: string;
   syllabus: SyllabusView;
 }) {
   const t = useExtracted();
-  const lines = useSummaryLines({ dailyMinutes, syllabus });
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
     <Drawer>
-      <DrawerTrigger
-        className="bg-card hover:bg-muted/40 focus-visible:ring-ring/50 flex w-full items-center gap-4 rounded-3xl border p-4 text-left shadow-xs transition-colors outline-none focus-visible:ring-[3px]"
-        data-slot="syllabus-summary"
-      >
-        <IconStack subjects={syllabus.subjects} />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="font-semibold">{lines.title}</span>
-          {lines.detail && <span className="text-muted-foreground text-sm">{lines.detail}</span>}
-        </span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-        <span className="sr-only">{t("See them all")}</span>
+      <DrawerTrigger className={className} data-slot="syllabus-summary">
+        {t("See topics")}
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -309,27 +291,18 @@ function SummaryCard({
 }
 
 /**
- * The goal's structure at the moment the plan is revealed: "9 subjects from the notice" with what
- * the plan leaves out at the learner's time (or "6 modules") on one card, opening a sheet with
- * every subject, what it weighs and its topics in the notice's own words, the ones left out marked,
- * so the learner sees it's all there before starting; and what it takes to pass, once.
+ * The goal's structure in one line, for the plan's reveal: "9 subjects from the notice · 18 of 70
+ * topics don't fit in 2h a day", "6 topics from your material" for a class test, "6 modules" for
+ * other goals. Null when the goal has no syllabus to show.
  */
-export function SyllabusSummary({
-  dailyMinutes = null,
+export function useSyllabusSummaryText({
+  dailyMinutes,
   syllabus,
 }: {
   /** The learner's time a day, so what doesn't fit says at which time. */
-  dailyMinutes?: number | null;
-  syllabus: SyllabusView | null;
-}) {
-  if (!hasSyllabusSection(syllabus)) {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-col gap-3">
-      <SummaryCard dailyMinutes={dailyMinutes} syllabus={syllabus} />
-      <PassMarks passMarks={syllabus.passMarks} />
-    </div>
-  );
+  dailyMinutes: number | null;
+  syllabus: SyllabusView;
+}): string {
+  const lines = useSummaryLines({ dailyMinutes, syllabus });
+  return lines.detail ? `${lines.title} · ${lines.detail}` : lines.title;
 }

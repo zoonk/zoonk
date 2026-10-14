@@ -5,7 +5,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent } from "@zoonk/ui/components/drawer";
 import { type LucideIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
 import { PhaseEndMoves } from "./phase-end-moves";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
@@ -18,7 +17,13 @@ import { useUndoChange } from "./use-undo-change";
  * the lessons they gain, when the plan ends, as the plan on screen now says it). Announced as it
  * appears.
  */
-export function PlanChangeSummary({ change, icon }: { change: PlanChangeView; icon: LucideIcon }) {
+export function PlanChangeSummary({
+  change,
+  icon: Icon,
+}: {
+  change: PlanChangeView;
+  icon: LucideIcon;
+}) {
   const t = useExtracted();
   const sentence = useChangeSentence();
   const effectText = useAppliedEffectText();
@@ -29,7 +34,9 @@ export function PlanChangeSummary({ change, icon }: { change: PlanChangeView; ic
 
   return (
     <div className="flex items-start gap-3" role="status">
-      <KindTile icon={icon} kind="challenge" size="sm" />
+      <span aria-hidden="true" className="flex h-6 shrink-0 items-center">
+        <Icon className="text-muted-foreground size-4" />
+      </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="font-medium text-balance">
           {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}

@@ -5,13 +5,12 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { CircleHelpIcon, ClockIcon, CrosshairIcon, LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { FactChip, FactChips } from "../../_components/fact-chips";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
-import { KindTile } from "../../_components/kind-tile";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
+import { TaskMeta } from "../../_components/task-meta";
+import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useLearnRoutes } from "../../learn-context";
@@ -66,6 +65,7 @@ function FocusTestIntro({
   test: FocusTestView;
 }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const routes = useLearnRoutes();
   const questions = test.areas.length * test.questionsPerArea;
   const minutes = Math.max(1, Math.round((questions * SECONDS_PER_QUESTION) / SECONDS_PER_MINUTE));
@@ -85,35 +85,23 @@ function FocusTestIntro({
         )
       }
     >
-      <div className="flex flex-1 flex-col justify-center lg:flex-none">
-        <StepCard>
-          <KindTile icon={CrosshairIcon} kind="challenge" size="lg" />
-          <StepHeader>
-            <StepTitle>{t("Where should you focus?")}</StepTitle>
-            <StepDetail>
-              {t(
-                "A few questions on each subject. The ones you need most come first and get more depth.",
-              )}
-            </StepDetail>
-          </StepHeader>
-          <FactChips className="justify-center">
-            <FactChip>
-              <LayersIcon aria-hidden="true" />
-              {t("{count, plural, one {# subject} other {# subjects}}", {
-                count: test.areas.length,
-              })}
-            </FactChip>
-            <FactChip>
-              <CircleHelpIcon aria-hidden="true" />
-              {t("{count, plural, one {# question} other {# questions}}", { count: questions })}
-            </FactChip>
-            <FactChip>
-              <ClockIcon aria-hidden="true" />
-              {t("About {minutes, number} min", { minutes })}
-            </FactChip>
-          </FactChips>
-        </StepCard>
-      </div>
+      <StepCard>
+        <StepHeader>
+          <StepTitle>{t("Where should you focus?")}</StepTitle>
+          <StepDetail>
+            {t(
+              "A few questions on each subject. The ones you need most come first and get more depth.",
+            )}
+          </StepDetail>
+        </StepHeader>
+        <TaskMeta
+          facts={[
+            t("{count, plural, one {# subject} other {# subjects}}", { count: test.areas.length }),
+            t("{count, plural, one {# question} other {# questions}}", { count: questions }),
+            t("About {time}", { time: formatDuration(minutes) }),
+          ]}
+        />
+      </StepCard>
     </TaskFrame>
   );
 }
@@ -237,9 +225,7 @@ function FocusTestRun({
   if (outcome === null && answers && !isPending) {
     return (
       <TaskFrame exitHref={closeHref}>
-        <div className="flex flex-1 flex-col justify-center">
-          <TaskSaveError onRetry={() => submit(answers)} />
-        </div>
+        <TaskSaveError onRetry={() => submit(answers)} />
       </TaskFrame>
     );
   }

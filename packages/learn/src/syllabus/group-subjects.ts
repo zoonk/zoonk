@@ -19,7 +19,7 @@ function getGroupKey(subject: GroupableSubject): string {
 
 /**
  * The subjects in groups, in the order each group first appears, so a notice that lists P1 then P2
- * reads the same way on the Journey and the exam screen; the plan's own areas come last.
+ * reads the same way on the Plan and the exam screen; the plan's own areas come last.
  */
 export function groupSubjects<Subject extends GroupableSubject>(
   subjects: readonly Subject[],

@@ -3,18 +3,19 @@
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HouseIcon, RouteIcon, SmileIcon } from "lucide-react";
+import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { BuddyTabName } from "../buddies/buddy-labels";
 import { type MissionsCount, MissionsRing } from "../buddies/missions-ring";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { LEARN_SIDEBAR_ITEM_CLASS } from "./learn-shell";
 import { LEARN_TABS, type LearnTab } from "./learn-tabs";
 
 export type { LearnTab } from "./learn-tabs";
 
-/** The learner's buddy, null before one is picked, undefined while it loads. */
+/** The learner's buddy, null for a host without a profile, undefined while it loads. */
 type TabBuddy = LearnBuddy | null | undefined;
 
 /** Today's missions, which ring the buddy's tab; null before today's session exists. */
@@ -35,7 +36,7 @@ function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
   }
 
   if (tab === "journey") {
-    return t("Journey");
+    return t("Plan");
   }
 
   if (buddy === undefined) {
@@ -67,12 +68,12 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 /** Icon and face sizes per bar, a step smaller inside the missions ring so it has room. */
 const GLYPH_SIZES = {
   md: { face: "size-7", icon: "size-5", ring: "size-8", ringedFace: "size-6" },
-  sm: { face: "size-6", icon: "size-4", ring: "size-7", ringedFace: "size-5" },
+  sm: { face: "size-5", icon: "size-4", ring: "size-6", ringedFace: "size-4" },
 } as const;
 
 /**
- * Lucide icons for Today and Journey; the buddy's own face once there is one, wearing today's
- * missions as a ring, so they're in sight from every tab.
+ * Lucide icons for Today (the sun) and the Plan (the map); the buddy's own face once there is one,
+ * wearing today's missions as a ring, so they're in sight from every tab.
  */
 function TabIcon({
   buddy,
@@ -90,29 +91,29 @@ function TabIcon({
   const faceClass = ringed ? sizes.ringedFace : sizes.face;
 
   if (tab === "today") {
-    return <HouseIcon aria-hidden="true" className={sizes.icon} />;
+    return <SunIcon aria-hidden="true" className={sizes.icon} />;
   }
 
   if (tab === "journey") {
-    return <RouteIcon aria-hidden="true" className={sizes.icon} />;
+    return <MapIcon aria-hidden="true" className={sizes.icon} />;
   }
 
   if (buddy === undefined) {
     return <Skeleton className={cn("rounded-full", sizes.face)} />;
   }
 
-  const face = buddy ? (
+  const resolved = resolveLearnBuddy(buddy);
+
+  const face = (
     <Buddy
-      beltColor={buddy.beltColor}
+      beltColor={resolved.beltColor}
       className={faceClass}
       crop="face"
-      energy={buddy.energy}
-      glasses={buddy.glasses}
-      kind={buddy.kind}
-      studiedToday={buddy.studiedToday}
+      energy={resolved.energy}
+      glasses={resolved.glasses}
+      kind={resolved.kind}
+      studiedToday={resolved.studiedToday}
     />
-  ) : (
-    <SmileIcon aria-hidden="true" className={sizes.icon} />
   );
 
   if (!missions) {
@@ -132,37 +133,45 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
 }
 
 /**
- * Both bars mark the current tab the same way: the whole item (icon and label) sits on a soft
- * pill in full contrast, so it reads at a glance; black stays for the page's main action.
+ * Both placements mark the current tab the same way: the whole item (icon and label) sits on a
+ * soft fill in full contrast, so it reads at a glance; black stays for the page's main action.
  */
 const TAB_ITEM_CLASS =
-  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-foreground/10 aria-[current=page]:text-foreground font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground font-medium transition-colors outline-none focus-visible:ring-[3px]";
 
-/** The three tabs in the middle of the top bar from `lg` up. Place it inside `LearnShellHeader`. */
-export function LearnTopNavigation({ activeTab, buddy, missions }: LearnNavigationProps) {
+/**
+ * The three tabs in the sidebar from `lg` up, one under the other, the buddy's face wearing
+ * today's missions and Today ending with what's left of the day (`todayCount`, the host's: it
+ * streams in on its own). Place it inside `LearnSidebar`.
+ */
+export function LearnSideNavigation({
+  activeTab,
+  buddy,
+  missions,
+  todayCount,
+}: LearnNavigationProps & { todayCount?: React.ReactNode }) {
   const routes = useLearnRoutes();
 
   return (
-    <NavigationRoot
-      className="col-start-2 row-start-1 hidden justify-self-center lg:block"
-      data-slot="learn-top-navigation"
-    >
-      <ul className="flex items-center gap-1">
+    <NavigationRoot data-slot="learn-side-navigation">
+      <ul className="flex flex-col gap-0.5">
         {LEARN_TABS.map((tab) => (
           <li key={tab}>
             <LearnLink
               aria-current={tab === activeTab ? "page" : undefined}
-              className={cn(
-                TAB_ITEM_CLASS,
-                "hit-area relative flex h-10 max-w-48 items-center gap-2 rounded-full px-4 text-sm",
-              )}
+              className={LEARN_SIDEBAR_ITEM_CLASS}
               href={routes[tab]}
             >
-              <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
-              <span className="min-w-0 truncate">
+              {/* As wide as the study links' icons, so every row's icon and name line up; the
+                  buddy's ringed face is a little wider and overflows it evenly. */}
+              <span className="flex size-4 shrink-0 items-center justify-center">
+                <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
+              </span>
+              <span className="min-w-0 flex-1 truncate">
                 <TabLabel buddy={buddy} tab={tab} />
               </span>
               {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
+              {tab === "today" && todayCount}
             </LearnLink>
           </li>
         ))}
@@ -182,18 +191,18 @@ export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavig
 
   return (
     <NavigationRoot
-      className="bg-background/95 supports-backdrop-filter:bg-background/80 sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="bg-background sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-3 gap-1 px-2 py-1.5">
+      <ul className="mx-auto flex justify-around px-4 py-1.5 sm:max-w-3xl sm:px-8">
         {LEARN_TABS.map((tab) => (
           <li className="flex" key={tab}>
             <LearnLink
               aria-current={tab === activeTab ? "page" : undefined}
               className={cn(
                 TAB_ITEM_CLASS,
-                "flex min-h-13 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 text-xs",
+                "flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-[0.625rem] px-1 text-[0.6875rem]",
               )}
               href={routes[tab]}
             >

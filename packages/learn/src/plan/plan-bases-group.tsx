@@ -68,7 +68,7 @@ function ChoiceToggles({
     <div aria-label={label} className="grid grid-cols-2 gap-1 sm:grid-cols-4" role="group">
       {options.map((option) => (
         <Toggle
-          className="aria-pressed:bg-foreground aria-pressed:text-background flex h-auto min-h-11 min-w-0 flex-col gap-0 px-1 py-1.5 text-center whitespace-normal"
+          className="flex h-auto min-h-11 min-w-0 flex-col gap-0 px-1 py-1.5 text-center whitespace-normal"
           disabled={disabled}
           focusableWhenDisabled
           key={option.value}

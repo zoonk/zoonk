@@ -2,98 +2,23 @@
 
 import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { getBreakEven } from "@zoonk/core/exams/net-score";
-import {
-  ClockIcon,
-  EyeOffIcon,
-  ListChecksIcon,
-  ScaleIcon,
-  TargetIcon,
-  TrophyIcon,
-} from "lucide-react";
+import { EyeOffIcon, ScaleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Callout } from "../_components/callout";
-import { FactChip, FactChips } from "../_components/fact-chips";
-import { KindTile } from "../_components/kind-tile";
-import { toLabelCase } from "../_utils/label-case";
+import { StepCard } from "../_components/step-card";
+import { TaskAsideContent } from "../_components/task-layout";
+import { TaskMeta } from "../_components/task-meta";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { useCheckpointEyebrow, useCheckpointWorth } from "../checkpoints/checkpoint-labels";
+import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { TricksterArt } from "../checkpoints/trickster-art";
 import { MockLeftOutNote } from "../mock/mock-notes";
+import { type TaskFrameAside } from "../shell/task-frame";
+import { CallIntro, WonCallIntro } from "./challenge-call-intro";
 import { useChallengeScreen } from "./challenge-context";
+import { IntroHeading, useEyebrow, usePrizeFact, useQuestionsFact } from "./challenge-intro-parts";
 import { useChallengeWhen } from "./challenge-labels";
-
-/**
- * The challenge as one card: its art or kind tile to anchor it, the name big, when or what it is
- * under it, and its facts as chips. The rule and the reward sit under the card, and the footer's
- * action right under them.
- */
-function IntroCard({ anchor, children }: { anchor: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <section className="bg-card flex flex-col items-center gap-5 rounded-3xl border px-6 py-8 text-center shadow-xs sm:px-8">
-      {anchor}
-      {children}
-    </section>
-  );
-}
-
-function IntroHeading({
-  detail,
-  eyebrow,
-  title,
-}: {
-  detail?: string | null;
-  eyebrow?: string | null;
-  title: string;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      {eyebrow && (
-        <p className="text-muted-foreground text-sm font-medium">{toLabelCase(eyebrow)}</p>
-      )}
-      <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{title}</h1>
-      {detail && <p className="text-muted-foreground text-balance">{detail}</p>}
-    </div>
-  );
-}
-
-function QuestionsChip({ count }: { count: number }) {
-  const t = useExtracted();
-
-  return (
-    <FactChip>
-      <ListChecksIcon aria-hidden="true" />
-      {t("{count, plural, one {# question} other {# questions}}", { count })}
-    </FactChip>
-  );
-}
-
-/** What winning or finishing is worth, as the reward under the card. */
-function WorthCallout() {
-  const { challenge } = useChallengeScreen();
-
-  const worth = useCheckpointWorth({
-    brainPower: challenge.reward.brainPower,
-    kind: challenge.kind,
-    phase: challenge.phase,
-  });
-
-  return (
-    <Callout>
-      <TrophyIcon aria-hidden="true" />
-      <p>{worth}</p>
-    </Callout>
-  );
-}
-
-/** "Phase 2 checkpoint", or a new try at it. Its day, before it opens, is the footer's to say. */
-function useEyebrow(): string {
-  const t = useExtracted();
-  const { challenge } = useChallengeScreen();
-  const name = useCheckpointEyebrow(challenge);
-
-  return challenge.rematch ? t("New try · {name}", { name }) : name;
-}
+import { ChallengeTopics, DuelBriefing, useTopicsTitle } from "./challenge-topics";
 
 /**
  * What the Trickster asks: mixed questions from the phase, or, for a phase practiced through
@@ -113,31 +38,37 @@ function useTricksterDetail(): string {
   return t("Mixed questions from this phase, with no hints.");
 }
 
-/** The phase's checkpoint: the Trickster, how many questions and how many right to win. */
+/**
+ * The phase's checkpoint: the Trickster, how many questions and how many right to win. Before its
+ * day, a phase with nothing to ask yet says neither (never "0 questions · 0 right to win"): the
+ * footer says when it opens.
+ */
 function TricksterIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
   const eyebrow = useEyebrow();
   const detail = useTricksterDetail();
+  const questions = useQuestionsFact();
+  const prize = usePrizeFact();
 
   return (
-    <>
-      <IntroCard anchor={<TricksterArt />}>
-        <IntroHeading detail={detail} eyebrow={eyebrow} title={t("The Trickster")} />
+    <StepCard>
+      <TricksterArt />
+      <IntroHeading detail={detail} eyebrow={eyebrow} title={t("The Trickster")} />
 
-        <FactChips className="justify-center">
-          <QuestionsChip count={challenge.questions} />
-          {challenge.passMark !== null && (
-            <FactChip>
-              <TargetIcon aria-hidden="true" />
-              {t("{count} right to win", { count: String(challenge.passMark) })}
-            </FactChip>
-          )}
-        </FactChips>
-      </IntroCard>
+      <TaskMeta
+        facts={[
+          challenge.questions > 0 && questions(challenge.questions),
+          (challenge.passMark ?? 0) > 0 &&
+            t("{count} right to win", { count: String(challenge.passMark) }),
+        ]}
+        reward={prize}
+      />
 
-      <WorthCallout />
-    </>
+      <DuelBriefing
+        rule={t("You'll see why each answer was right or wrong at the end, with the traps he set.")}
+      />
+    </StepCard>
   );
 }
 
@@ -151,17 +82,27 @@ function WonIntro() {
   const eyebrow = useCheckpointEyebrow(challenge);
   const { result } = challenge;
 
-  const score = result
-    ? t("{correct} of {total} right", {
-        correct: String(result.correct),
-        total: String(result.total),
-      })
-    : null;
-
   return (
-    <IntroCard anchor={<TricksterArt beaten />}>
-      <IntroHeading detail={score} eyebrow={eyebrow} title={t("You beat the Trickster!")} />
-    </IntroCard>
+    <StepCard>
+      <TricksterArt beaten />
+      <IntroHeading eyebrow={eyebrow} title={t("You beat the Trickster!")} />
+
+      {result && (
+        <TaskMeta
+          className="text-sm leading-6"
+          facts={[
+            t("{correct} of {total} right", {
+              correct: String(result.correct),
+              total: String(result.total),
+            }),
+          ]}
+        />
+      )}
+
+      <TaskAsideContent className="w-full">
+        <ChallengeTopics />
+      </TaskAsideContent>
+    </StepCard>
   );
 }
 
@@ -170,24 +111,22 @@ function WeeklyIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
+  const questions = useQuestionsFact();
+  const prize = usePrizeFact();
 
   // Its day is the footer's to say before it opens; a time of its own is said up top.
   return (
-    <>
-      <IntroCard anchor={<KindTile kind="challenge" size="lg" />}>
-        <IntroHeading
-          detail={t("Questions from what you studied this week, with no hints.")}
-          eyebrow={challenge.startTime ? when : null}
-          title={t("Weekly challenge")}
-        />
+    <StepCard>
+      <IntroHeading
+        detail={t("Questions from what you studied this week, with no hints.")}
+        title={t("Weekly challenge")}
+        when={challenge.startTime ? when : null}
+      />
 
-        <FactChips className="justify-center">
-          <QuestionsChip count={challenge.questions} />
-        </FactChips>
-      </IntroCard>
+      <TaskMeta facts={[questions(challenge.questions)]} reward={prize} />
 
-      <WorthCallout />
-    </>
+      <DuelBriefing rule={t("You'll see why each answer was right or wrong at the end.")} />
+    </StepCard>
   );
 }
 
@@ -199,7 +138,7 @@ function describeTasks(tasks: ChallengeView["written"][number]["tasks"]): string
 }
 
 /**
- * A mock with several sections lists them, inside its card; one section names it in the title.
+ * A mock with several sections lists them, as flat rows; one section names it in the title.
  * A written part (a discursive test, a legal brief) lists what the notice asks: written in the
  * mock and graded after hand-in, or, while the exam has no essay for it yet, in essay practice.
  */
@@ -213,10 +152,10 @@ function MockSections() {
   }
 
   return (
-    <ol className="bg-muted/50 flex w-full flex-col rounded-2xl px-4 text-left">
+    <ol className="border-border flex w-full flex-col border-t text-left">
       {challenge.sections.map((section) => (
         <li
-          className="border-border flex items-baseline justify-between gap-3 border-b py-3 text-sm last:border-b-0"
+          className="border-border flex items-baseline justify-between gap-3 border-b py-2.75 text-sm last:border-b-0"
           key={section.index}
         >
           <span className="flex min-w-0 flex-col gap-0.5">
@@ -225,7 +164,7 @@ function MockSections() {
               <span className="text-muted-foreground text-xs">{section.tools}</span>
             )}
           </span>
-          <span className="text-muted-foreground shrink-0 tabular-nums">
+          <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
             {t("{count, plural, one {# question} other {# questions}} · {time}", {
               count: section.questions,
               time: duration(section.minutes),
@@ -235,18 +174,18 @@ function MockSections() {
       ))}
       {challenge.written.map((part) => (
         <li
-          className="border-border flex flex-col gap-1 border-b py-3 text-sm last:border-b-0"
+          className="border-border flex flex-col gap-1 border-b py-2.75 text-sm last:border-b-0"
           key={part.name}
         >
           <span className="flex items-baseline justify-between gap-3">
             <span className="min-w-0 font-medium">{part.name}</span>
             {part.minutes !== null && (
-              <span className="text-muted-foreground shrink-0 tabular-nums">
+              <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
                 {duration(part.minutes)}
               </span>
             )}
           </span>
-          <span className="text-muted-foreground">{describeTasks(part.tasks)}</span>
+          <span className="text-muted-foreground text-xs">{describeTasks(part.tasks)}</span>
           <span className="text-muted-foreground text-xs">
             {part.asked
               ? t("Written in the mock, graded by the exam's criteria after you hand it in.")
@@ -290,6 +229,7 @@ function MockIntro() {
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
+  const questions = useQuestionsFact();
   const [section] = challenge.sections;
   // Half the exam leaves the day's written part for the full mocks: the day's name ("Linguagens,
   // Ciências Humanas e redação") would say it's asked.
@@ -301,24 +241,25 @@ function MockIntro() {
       : null;
 
   return (
-    <>
-      <IntroCard anchor={<KindTile kind="mock" size="lg" />}>
-        <IntroHeading
-          detail={[challenge.examName, area].filter(Boolean).join(" · ")}
-          eyebrow={when}
-          title={t("Mock exam {number}", { number: String(challenge.number ?? 1) })}
-        />
+    <StepCard>
+      <IntroHeading
+        detail={[challenge.examName, area].filter(Boolean).join(" · ")}
+        title={t("Mock exam {number}", { number: String(challenge.number ?? 1) })}
+        when={when}
+      />
 
-        <FactChips className="justify-center">
-          <QuestionsChip count={challenge.questions} />
-          <FactChip>
-            <ClockIcon aria-hidden="true" />
-            {t("About {time}", { time: duration(challenge.estimatedMinutes) })}
-          </FactChip>
-          {!challenge.fullLength && <FactChip>{t("Half the exam")}</FactChip>}
-          {objectiveOnly && <FactChip>{t("Objective part only")}</FactChip>}
-        </FactChips>
+      <TaskMeta
+        facts={[
+          questions(challenge.questions),
+          // The time on its clock, the same the plan saves for it and the real exam gives.
+          duration(challenge.minutes),
+          !challenge.fullLength && t("Half the exam"),
+          objectiveOnly && t("Objective part only"),
+        ]}
+      />
 
+      {/* Under the facts on a phone, beside the intro from `lg`: rendered once. */}
+      <TaskAsideContent className="flex w-full flex-col items-start gap-5">
         <MockSections />
         {/* Written parts are listed with the sections; the rest of what it leaves out, here. */}
         <MockLeftOutNote
@@ -326,20 +267,44 @@ function MockIntro() {
             (part) => part.part !== "written" && part.part !== "writtenInFull",
           )}
         />
-      </IntroCard>
 
-      <Callout>
-        {challenge.netScored ? <ScaleIcon aria-hidden="true" /> : <EyeOffIcon aria-hidden="true" />}
-        <p>
+        <Callout>
           {challenge.netScored ? (
-            <PenaltyRule />
+            <ScaleIcon aria-hidden="true" />
           ) : (
-            t("Your result only shows at the end, like on exam day.")
+            <EyeOffIcon aria-hidden="true" />
           )}
-        </p>
-      </Callout>
-    </>
+          <p>
+            {challenge.netScored ? (
+              <PenaltyRule />
+            ) : (
+              t("Your result only shows at the end, like on exam day.")
+            )}
+          </p>
+        </Callout>
+      </TaskAsideContent>
+    </StepCard>
   );
+}
+
+/**
+ * The intro's aside from `lg`: what a duel asks and its rule, or a mock's sections and rule, which
+ * the intro places there (`TaskAsideContent`), under the topics' name or the mock's exam. The
+ * challenge's own name already heads the intro, so it only names the aside for screen readers.
+ * Every intro has one, so the route's skeleton draws it before knowing which challenge it is.
+ */
+export function useChallengeIntroAside(): TaskFrameAside {
+  const t = useExtracted();
+  const { challenge } = useChallengeScreen();
+  const name = useCheckpointEyebrow(challenge);
+  const callGoals = challenge.call?.goals && challenge.status !== "done";
+
+  const title =
+    useTopicsTitle() ??
+    (challenge.mock ? challenge.examName : null) ??
+    (callGoals ? t("What to get across") : null);
+
+  return { label: title ?? name, title };
 }
 
 /** A challenge said plainly: the Trickster's checkpoint, the week's challenge or its mock. */
@@ -354,6 +319,12 @@ export function ChallengeIntro() {
     return <WeeklyIntro />;
   }
 
-  // A phase checkpoint is done once won.
-  return challenge.status === "done" ? <WonIntro /> : <TricksterIntro />;
+  const won = challenge.status === "done";
+
+  // A language goal's phase checkpoint is the unit's call; any phase checkpoint is done once won.
+  if (challenge.call) {
+    return won ? <WonCallIntro /> : <CallIntro call={challenge.call} />;
+  }
+
+  return won ? <WonIntro /> : <TricksterIntro />;
 }

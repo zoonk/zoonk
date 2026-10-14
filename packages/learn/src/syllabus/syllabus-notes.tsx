@@ -38,13 +38,20 @@ export function useGroupName({
 
 /**
  * Where the subjects' question counts come from when the notice gives none: "Questions per subject
- * in the 45th Exam, as counted by example.com", linked to the page.
+ * in the 45th Exam, as counted by example.com", linked to the page. `lead` comes first on the same
+ * line ("5 subjects · 46 topics"), so a list's counts and their source are one note.
  */
-export function QuestionsSourceNote({ source }: { source: SyllabusView["questionsSource"] }) {
+export function QuestionsSourceNote({
+  lead,
+  source,
+}: {
+  lead?: string;
+  source: SyllabusView["questionsSource"];
+}) {
   const t = useExtracted();
 
   if (!source) {
-    return null;
+    return lead ? <PageSectionFooter>{lead}</PageSectionFooter> : null;
   }
 
   const publisher = getSourceHost(source.url);
@@ -62,6 +69,7 @@ export function QuestionsSourceNote({ source }: { source: SyllabusView["question
 
   return (
     <PageSectionFooter>
+      {lead && `${lead} · `}
       {source.edition
         ? t.rich(
             "Questions per subject in the {edition}, as counted by <link>{publisher}</link>.",

@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 /**
- * The one phase a change moves the end of, as Journey dates it: "Basics ends Oct 1 instead of
+ * The one phase a change moves the end of, as Plan dates it: "Basics ends Oct 1 instead of
  * Oct 7." Null when it moves none, or more than one, which `PhaseEndMoves` lists.
  */
 export function usePhaseEndsText() {

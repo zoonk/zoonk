@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
 import {
+  CURRENT_ROW_CLASS,
   ListRow,
   ListRowButton,
   ListRowContent,
@@ -14,26 +15,27 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatPlanDate } from "../plan/plan-date-text";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
 
-/** What sits at the end of a chapter's row: when the plan gets to it, or nothing once done or next. */
+/** What sits at the end of a chapter's row: when the plan gets to it, or nothing once done. */
 function ChapterMeta({ chapter }: { chapter: SyllabusChapter }) {
-  const formatDate = useFormatIsoDate();
+  const formatPlanDate = useFormatPlanDate();
 
-  if (chapter.state !== "upcoming" || !chapter.nextDate) {
+  if (chapter.state === "done" || !chapter.nextDate) {
     return null;
   }
 
-  return formatDate(chapter.nextDate, "day");
+  return formatPlanDate(chapter.nextDate);
 }
 
 /**
  * The line under a chapter's name: for a topic whose lessons aren't written yet, that they're on
- * the way or the lessons the plan expects for it (its date is at the row's end), "1 lesson · up
- * next" for the next one, or that it was skipped because the learner showed they know it.
+ * the way or the lessons the plan expects for it (its date is at the row's end), "4 lessons · 1
+ * done" for the next one (its highlight says it's next), or that it was skipped because the
+ * learner showed they know it.
  */
 function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
   const t = useExtracted();
@@ -52,23 +54,21 @@ function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
     return null;
   }
 
-  const left = Math.max(0, chapter.lessonsTotal - chapter.lessonsDone);
-
   return (
     <ListRowDescription>
-      {left > 0
-        ? t("{count, plural, one {# lesson · up next} other {# lessons · up next}}", {
-            count: left,
-          })
-        : t("Up next")}
+      {t(
+        "{total, plural, one {# lesson} other {# lessons}} · {done, plural, =0 {# done} one {# done} other {# done}}",
+        { done: chapter.lessonsDone, total: chapter.lessonsTotal },
+      )}
     </ListRowDescription>
   );
 }
 
 /**
  * A chapter of a subject: its mark, its number in the subject and name and when the plan gets to
- * it, opening its page; the next one stands out with what's left in it. A topic whose lessons
- * aren't written yet has no page: it opens a sheet that can write them now.
+ * it, opening its page (a chevron says so); the next one is highlighted with its lessons. A topic
+ * whose lessons aren't written yet has no page: it opens a sheet that can write them now, or, on
+ * the way and not yet openable, is a quiet row without a chevron.
  */
 export function SyllabusChapterRow({
   chapter,
@@ -89,15 +89,14 @@ export function SyllabusChapterRow({
       <ListRowLeading>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={chapter.known} />
       </ListRowLeading>
-      <ListRowContent className="min-h-13 py-2.5">
+      <ListRowContent>
         <ListRowTitle
           className={cn(
             "line-clamp-2",
-            chapter.state === "done" && "text-muted-foreground",
-            isNext && "font-semibold",
+            (chapter.state === "done" || (!href && !chapter.skillId)) && "text-muted-foreground",
           )}
         >
-          <span className="text-muted-foreground font-normal tabular-nums">{`${chapter.position}. `}</span>
+          <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">{`${chapter.position}. `}</span>
           {chapter.title}
         </ListRowTitle>
         <ChapterLine chapter={chapter} />
@@ -108,7 +107,8 @@ export function SyllabusChapterRow({
     </>
   );
 
-  const className = cn(isNext && "bg-muted/50");
+  // The next one is the highlighted row, as Today's next block is.
+  const className = cn(isNext && CURRENT_ROW_CLASS);
 
   if (!href && chapter.writing && chapter.skillId && outlineActions) {
     return (

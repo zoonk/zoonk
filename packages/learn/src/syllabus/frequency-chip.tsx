@@ -11,7 +11,7 @@ export function setsApart(items: readonly { frequency: Frequency }[]): boolean {
   return frequent > 0 && frequent < items.length;
 }
 
-/** "Appears a lot": a topic or subject past exams asked most, as a small pill at a row's end. */
+/** "Appears a lot": a topic or subject past exams asked most, as a small tag at a row's end. */
 export function FrequencyChip({
   className,
   frequency,
@@ -28,7 +28,7 @@ export function FrequencyChip({
   return (
     <span
       className={cn(
-        "bg-warning/15 text-foreground shrink-0 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
+        "bg-warning/15 text-foreground shrink-0 rounded-md px-1.5 py-0.5 font-sans text-xs font-medium whitespace-nowrap",
         className,
       )}
     >

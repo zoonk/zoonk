@@ -37,7 +37,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
 
   return (
     <figure
-      className="bg-muted/50 flex w-full flex-col gap-2 rounded-2xl p-4"
+      className="ring-border flex w-full flex-col gap-2 rounded-lg p-4 ring-1 ring-inset"
       data-slot="turnaround-chart"
     >
       <svg
@@ -64,7 +64,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
         ))}
       </svg>
 
-      <figcaption className="text-muted-foreground grid grid-cols-7 text-center text-xs">
+      <figcaption className="text-muted-foreground grid grid-cols-7 text-center font-mono text-[0.6875rem]">
         {turnaround.points.map((point) => (
           <span key={point.date.toISOString()}>
             {format.dateTime(point.date, { timeZone: "UTC", weekday: "narrow" })}

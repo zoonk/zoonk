@@ -5,15 +5,12 @@ import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/componen
 import { useExtracted, useFormatter } from "next-intl";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
+import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
 
 type WrittenCadence = WrittenPractice["cadence"];
 
 const CADENCES = ["weekly", "biweekly", "finalWeeks"] as const satisfies WrittenCadence[];
-
-/** Options share the row but never squeeze a label onto two lines; they wrap instead. */
-const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm";
 
 /** What each cadence is called, and what it does in one honest line. */
 export function useWrittenCadenceWords() {
@@ -90,7 +87,7 @@ export function WrittenCadenceChoice({
         value={practice.cadence}
       >
         {cadences.map((cadence) => (
-          <RadioGroupOption className={OPTION_CLASS} key={cadence}>
+          <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
             <RadioGroupItem value={cadence} />
             {words.label(cadence)}
           </RadioGroupOption>

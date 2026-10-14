@@ -7,7 +7,7 @@ export function PlanFailedMessage() {
   const t = useExtracted();
 
   return (
-    <p className="text-destructive text-sm" role="alert">
+    <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't work. Try again in a moment.")}
     </p>
   );

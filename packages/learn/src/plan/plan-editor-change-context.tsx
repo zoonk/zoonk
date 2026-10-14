@@ -46,7 +46,7 @@ export function useEditorChange(): EditorChange | null {
 
 /**
  * Tells the editor about a change applied or undone, when there is one around: outside it (a
- * sheet the Journey opens itself, onboarding's exam day card) nothing listens.
+ * sheet the Plan opens itself, onboarding's exam day card) nothing listens.
  */
 export function useReportEditorChange(): Pick<EditorChangeValue, "report" | "undo"> {
   const value = use(EditorChangeContext);

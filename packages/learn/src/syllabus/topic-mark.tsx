@@ -24,7 +24,7 @@ export function TopicMark({
   if (mark?.kind === "studied" || mark?.kind === "known" || mark?.kind === "toStudy") {
     return (
       <StatusMark
-        className={cn(small && "size-4.5 [&_svg]:size-3")}
+        className={cn(small && "[&_svg]:size-3.5")}
         status={mark.kind === "toStudy" ? "todo" : "done"}
       />
     );
@@ -32,15 +32,15 @@ export function TopicMark({
 
   return (
     mark && (
-      <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center">
+      <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center">
         {mark.kind === "inProgress" ? (
           <ProgressRing
-            className={small ? "size-4" : "size-5"}
+            className={small ? "size-3" : "size-3.5"}
             share={Math.max(MIN_RING_SHARE, mark.share)}
           />
         ) : (
           <CircleMinusIcon
-            className={cn("text-muted-foreground/70", small ? "size-4.5" : "size-6")}
+            className={cn("text-muted-foreground/70", small ? "size-3.5" : "size-4")}
           />
         )}
       </span>

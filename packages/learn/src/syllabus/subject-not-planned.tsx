@@ -45,7 +45,7 @@ function RestoreButton({
         {t("Bring it back")}
       </Button>
       {failed && (
-        <p className="text-destructive text-sm" role="status">
+        <p className="text-destructive-text text-sm" role="status">
           {t("That didn't work. Try again in a moment.")}
         </p>
       )}
