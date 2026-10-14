@@ -4,6 +4,7 @@ import {
   formatMathAnswer,
   formatMoney,
   getUnitPosition,
+  moneySignGap,
   withUnit,
 } from "./math-answer";
 
@@ -37,6 +38,27 @@ describe(getUnitPosition, () => {
     expect(getUnitPosition({ language: "en", unit: "$" })).toBe("prefix");
     expect(getUnitPosition({ language: "de", unit: "€" })).toBe("suffix");
     expect(getUnitPosition({ language: "en", unit: "kg" })).toBe("suffix");
+  });
+});
+
+describe(moneySignGap, () => {
+  it("spaces a money sign from its amount the way formatMoney does", () => {
+    expect(moneySignGap({ language: "en", sign: "R$" })).toBe("");
+    expect(moneySignGap({ language: "pt", sign: "R$" })).toBe(NBSP);
+    expect(moneySignGap({ language: "pt", sign: "US$" })).toBe(NBSP);
+
+    expect(`R$${moneySignGap({ language: "en", sign: "R$" })}80`).toBe(
+      formatMoney({ currency: "BRL", locale: "en", value: 80 }),
+    );
+
+    expect(`R$${moneySignGap({ language: "pt", sign: "R$" })}80`).toBe(
+      formatMoney({ currency: "BRL", locale: "pt", value: 80 }),
+    );
+  });
+
+  it("knows no gap for a language that writes money after the amount, or a sign that isn't money", () => {
+    expect(moneySignGap({ language: "de", sign: "€" })).toBeNull();
+    expect(moneySignGap({ language: "en", sign: "₩" })).toBeNull();
   });
 });
 

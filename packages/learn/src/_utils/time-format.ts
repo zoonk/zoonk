@@ -1,25 +1,16 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
+import { formatDuration } from "@zoonk/utils/duration";
+import { useFormatter, useLocale } from "next-intl";
 
-const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
 
-/** "2h 30m", "2h" or "45 min": how long something takes, from whole minutes. */
+/** A compact duration in the learner's locale, from minutes. */
 export function useFormatDuration() {
-  const t = useExtracted();
+  const locale = useLocale();
 
-  return (totalMinutes: number): string => {
-    const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
-    const minutes = totalMinutes % MINUTES_PER_HOUR;
-
-    if (hours === 0) {
-      return t("{minutes} min", { minutes: String(minutes) });
-    }
-
-    return minutes === 0
-      ? t("{hours}h", { hours: String(hours) })
-      : t("{hours}h {minutes}m", { hours: String(hours), minutes: String(minutes) });
-  };
+  return (totalMinutes: number): string =>
+    formatDuration({ locale, totalSeconds: totalMinutes * SECONDS_PER_MINUTE });
 }
 
 /** A time of day sent as "13:30", in the viewer's clock, like "1:30 PM". */

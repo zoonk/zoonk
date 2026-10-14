@@ -89,6 +89,47 @@ export function fractionDigitsFor(value: number): number {
   return Math.min(MAX_FRACTION_DIGITS, leadingZeros + SMALL_SIGNIFICANT_DIGITS);
 }
 
+/** Decimals needed to keep rounding smaller than a positive resolution. */
+function digitsForResolution(resolution: number): number {
+  return Math.max(0, Math.ceil(-Math.log10(resolution)));
+}
+
+/**
+ * One precision for an expected answer and the learner's value. The tolerance sets the smallest
+ * meaningful decimal; a wrong answer also keeps a digit beyond their difference, so rounding
+ * cannot make both read the same. Zero tolerance keeps all supported decimals.
+ */
+export function exactFractionDigitsFor({
+  expected,
+  tolerance,
+  value = expected,
+}: {
+  expected: number;
+  tolerance: { kind: "absolute" | "relative"; value: number };
+  value?: number;
+}): number {
+  const allowed =
+    tolerance.kind === "absolute" ? tolerance.value : tolerance.value * Math.abs(expected);
+
+  if (allowed === 0) {
+    return MAX_FRACTION_DIGITS;
+  }
+
+  const difference = Math.abs(value - expected);
+  const differenceDigits = difference > allowed ? digitsForResolution(difference) + 1 : 0;
+
+  return Math.min(
+    MAX_FRACTION_DIGITS,
+    Math.max(
+      DEFAULT_FRACTION_DIGITS,
+      fractionDigitsFor(expected),
+      fractionDigitsFor(value),
+      digitsForResolution(allowed),
+      differenceDigits,
+    ),
+  );
+}
+
 function decimalSeparator(locale: string): string {
   return (
     getNumberFormatter(locale, { minimumFractionDigits: 1 })

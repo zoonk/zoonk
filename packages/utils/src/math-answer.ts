@@ -107,16 +107,58 @@ export function getUnitPosition({
   unit: string;
 }): "prefix" | "suffix" {
   const currency = currencyFor(unit);
+  return currency ? currencyLayout({ currency, language }).position : "suffix";
+}
+
+/**
+ * What goes between a money sign and the amount after it in the learner's language, as
+ * `formatMoney` writes it: nothing in English ("R$80"), a no-break space in Portuguese ("R$ 80").
+ * Lesson text spaces its money with it, so a prompt's "R$ 80" reads like the readouts, chart axes
+ * and answers beside it. Null for a sign that isn't money, or a language that writes money after
+ * the amount ("80 €" in German).
+ */
+export function moneySignGap({
+  language,
+  sign,
+}: {
+  language: string;
+  sign: string;
+}): string | null {
+  const currency = currencyFor(sign);
 
   if (!currency) {
-    return "suffix";
+    return null;
   }
 
+  const layout = currencyLayout({ currency, language });
+  return layout.position === "prefix" ? layout.gap : null;
+}
+
+/**
+ * Where a language's money format puts a currency's sign: before the amount, with what sits between
+ * them, or after it.
+ */
+function currencyLayout({
+  currency,
+  language,
+}: {
+  currency: string;
+  language: string;
+}): { gap: string; position: "prefix" } | { position: "suffix" } {
   const parts = getNumberFormatter(language, { currency, style: "currency" }).formatToParts(1);
   const symbol = parts.findIndex((part) => part.type === "currency");
   const number = parts.findIndex((part) => part.type === "integer");
 
-  return symbol < number ? "prefix" : "suffix";
+  if (symbol > number) {
+    return { position: "suffix" };
+  }
+
+  const gap = parts
+    .slice(symbol + 1, number)
+    .map((part) => part.value)
+    .join("");
+
+  return { gap, position: "prefix" };
 }
 
 function formatNumber({ language, value }: { language: string; value: number }): string {
@@ -133,13 +175,17 @@ function formatNumber({ language, value }: { language: string; value: number }):
 /**
  * Shows a math answer the way people write it in their language: "R$ 45,50", "12.5%" or "3 km".
  * Lesson checks, session questions, the notebook and the activities write units this way.
+ * `maximumFractionDigits` keeps a finer answer exact where two decimals would make a near miss
+ * read like the answer (`exactFractionDigitsFor`).
  */
 export function formatMathAnswer({
   language,
+  maximumFractionDigits,
   unit,
   value,
 }: {
   language: string;
+  maximumFractionDigits?: number;
   unit: string | null;
   value: number;
 }): string {
@@ -149,10 +195,15 @@ export function formatMathAnswer({
     return formatMoney({
       currency,
       locale: language,
-      maximumFractionDigits: MONEY_FRACTION_DIGITS,
+      maximumFractionDigits: maximumFractionDigits ?? MONEY_FRACTION_DIGITS,
       value,
     });
   }
 
-  return withUnit(formatNumber({ language, value }), unit);
+  const number =
+    maximumFractionDigits === undefined
+      ? formatNumber({ language, value })
+      : getNumberFormatter(language, { maximumFractionDigits }).format(value);
+
+  return withUnit(number, unit);
 }
