@@ -4,7 +4,7 @@ import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { CrosshairIcon, FastForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import { PlusNotice } from "../_components/plus-lock";
 import {
   type TestOutStart,
@@ -21,7 +21,7 @@ import {
   PronunciationOffer,
   StartGoalOffer,
 } from "./tutor-feature-offers";
-import { OfferCard, OfferLink } from "./tutor-offer-card";
+import { OfferCard, OfferLink, OfferTile } from "./tutor-offer-card";
 
 /**
  * How the host opens the features the buddy offers: where each one lives (a new goal with the
@@ -67,7 +67,11 @@ function ChapterTestOffer({
         "{lessons, plural, one {Pass it to skip # lesson you already know.} other {Pass it to skip up to # lessons you already know.}}",
         { lessons: offer.lessonsLeft },
       )}
-      tile={<KindTile icon={FastForwardIcon} kind="challenge" size="sm" />}
+      tile={
+        <OfferTile>
+          <FastForwardIcon />
+        </OfferTile>
+      }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
       <Button
@@ -92,7 +96,11 @@ function ChooseFocusOffer({ href }: { href: string }) {
       description={t(
         "Pick the subjects that get more depth, or take a short test that picks them.",
       )}
-      tile={<KindTile icon={CrosshairIcon} kind="challenge" size="sm" />}
+      tile={
+        <OfferTile>
+          <CrosshairIcon />
+        </OfferTile>
+      }
       title={t("Choose where to focus")}
     >
       <OfferLink href={href}>{t("Choose")}</OfferLink>
@@ -120,7 +128,11 @@ function ConversationCallOffer({
             })
           : t("A short call out loud, at your level.")
       }
-      tile={<KindTile kind="conversation" size="sm" />}
+      tile={
+        <OfferTile>
+          <KindDot kind="conversation" />
+        </OfferTile>
+      }
       title={offer.unitTitle}
     >
       <PracticeConversation
@@ -151,7 +163,11 @@ function MockExamOffer({
     <OfferCard
       description={description}
       locked={locked}
-      tile={<KindTile kind="mock" size="sm" />}
+      tile={
+        <OfferTile>
+          <KindDot kind="mock" />
+        </OfferTile>
+      }
       title={t("Take a mock exam")}
     >
       {locked ? (

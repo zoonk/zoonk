@@ -30,5 +30,13 @@ export function getLessonQuestionContextInput({
     };
   }
 
+  if (context.kind === "item") {
+    return {
+      answered: context.answered,
+      kind: "item",
+      ...(context.blockId ? { blockId: context.blockId } : {}),
+    };
+  }
+
   return { kind: context.kind };
 }

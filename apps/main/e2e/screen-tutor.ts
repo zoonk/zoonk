@@ -10,14 +10,14 @@ import { expect } from "./fixtures";
 import { fulfillTutorAnswer } from "./tutor-answer";
 
 /**
- * "Ask" beyond lessons: the chapter page and a finished mock. The tutor's API is stubbed in the
- * browser, like the lesson tutor's tests, so the answer is fixed; the API's own tests cover what it
- * stores and streams.
+ * "Ask" beyond lessons: the chapter page, a subject's page, a session's or practice's question and
+ * a finished mock. The tutor's API is stubbed in the browser, like the lesson tutor's tests, so the
+ * answer is fixed; the API's own tests cover what it stores and streams.
  */
 
 const SCREEN_TUTOR_ANSWER = "Here's the short version, from what the screen shows.";
 
-/** Screens ask about their chapter or mock as a whole. */
+/** Screens ask about their chapter, subject, question or mock as a whole. */
 function toContextSummary(
   context: CreateLessonQuestionInput["context"],
 ): LessonQuestionResource["context"] {
@@ -38,32 +38,35 @@ export async function stubScreenTutor(
 ) {
   const asked: { input: CreateLessonQuestionInput; path: string }[] = [];
 
-  await page.route(/\/v1\/(?:chapters|mocks)\/[^/]+\/questions/u, async (route) => {
-    const request = route.request();
+  await page.route(
+    /\/v1\/(?:chapters|mocks|items|goals\/[^/]+\/subjects)\/[^/]+\/questions/u,
+    async (route) => {
+      const request = route.request();
 
-    if (request.method() === "GET") {
-      await route.fulfill({ body: "null", contentType: "application/json" });
-      return;
-    }
+      if (request.method() === "GET") {
+        await route.fulfill({ body: "null", contentType: "application/json" });
+        return;
+      }
 
-    const input = createLessonQuestionInputSchema.parse(request.postDataJSON());
-    const now = new Date().toISOString();
-    asked.push({ input, path: new URL(request.url()).pathname });
+      const input = createLessonQuestionInputSchema.parse(request.postDataJSON());
+      const now = new Date().toISOString();
+      asked.push({ input, path: new URL(request.url()).pathname });
 
-    const question: LessonQuestionResource = {
-      answer: null,
-      context: toContextSummary(input.context),
-      createdAt: now,
-      id: randomUUID(),
-      planChange: null,
-      question: input.question,
-      status: "pending",
-      toolOffer: null,
-      updatedAt: now,
-    };
+      const question: LessonQuestionResource = {
+        answer: null,
+        context: toContextSummary(input.context),
+        createdAt: now,
+        id: randomUUID(),
+        planChange: null,
+        question: input.question,
+        status: "pending",
+        toolOffer: null,
+        updatedAt: now,
+      };
 
-    await route.fulfill({ json: question, status: 201 });
-  });
+      await route.fulfill({ json: question, status: 201 });
+    },
+  );
 
   await page.route("**/v1/questions/*/answers", (route) =>
     fulfillTutorAnswer(
@@ -77,15 +80,14 @@ export async function stubScreenTutor(
 }
 
 /**
- * Opens "Ask", where the learner's buddy answers (a neutral "Buddy" for learners who haven't
- * picked one), and sends a suggested question in one tap.
+ * Opens "Ask", where the learner's resolved buddy answers, and sends a suggested question in one tap.
  */
 export async function askSuggestion({
   ask,
   description,
   page,
   suggestion,
-  tutorName = "Buddy",
+  tutorName = "Zu",
 }: {
   ask: string;
   description: string;

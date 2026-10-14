@@ -4,8 +4,11 @@ import {
   streamLessonQuestionAnswer,
 } from "@zoonk/ai/tasks/lessons/question";
 import {
+  type ItemScopeContext,
   type LessonQuestionContextSnapshot,
   type PlanScopeContext,
+  type SubjectScopeContext,
+  type TutorScreenContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
 import {
@@ -17,6 +20,7 @@ import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
 } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { listGoalTutorPages } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
 import { type claimLessonQuestionAnswer } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import {
   LESSON_QUESTION_PLAN_CHANGE_PART,
@@ -28,6 +32,7 @@ import { lookUpTutorData } from "@zoonk/core/lesson-questions/look-up";
 import { offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
 import { proposeTutorPlanChange } from "@zoonk/core/lesson-questions/propose-plan-change";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { createEmDashReplacer } from "@zoonk/utils/string";
@@ -73,6 +78,11 @@ export type AnswerGeneration = {
 export type AnswerRun = {
   answer: AnswerGeneration;
   chunks: ReadableStream<UIMessageChunk>;
+  /**
+   * A buddy answer keeps only the links it was given (`createAnswerLinks`) when it's saved; the
+   * lesson tutor's answers have none to check.
+   */
+  keepLinks?: (markdown: string) => string;
   offers: TutorToolOffer[];
   /** Each plan change proposed, with the earlier proposals it replaced. */
   proposals: { change: PlanChangeView; replaced: string[] }[];
@@ -158,10 +168,15 @@ function startGoalTutorAnswer({
       : data;
   };
 
+  const { checkLinks, links } = createAnswerLinks(
+    listGoalTutorPages({ selectedGoal: contextSnapshot.selectedGoal === true }),
+  );
+
   const answer = streamGoalTutorAnswer({
     analytics: { ...claim.analytics, contentScope: "personal" },
     contextSnapshot,
     learnerMemory: claim.learnerMemory,
+    links,
     lookUp,
     offerAppTool,
     priorTurns: claim.priorTurns,
@@ -172,6 +187,7 @@ function startGoalTutorAnswer({
   return {
     answer,
     chunks: toUIMessageStream({ sendReasoning: false, stream: answer.generation.stream }),
+    keepLinks: (markdown) => checkLinks(markdown).markdown,
     offers,
     proposals,
   };
@@ -205,6 +221,16 @@ function isGoalSnapshot(snapshot: LessonQuestionContextSnapshot): snapshot is Pl
 }
 
 /**
+ * A screen the lesson tutor can answer alone: a subject or a session's question is only asked
+ * about with its goal's plan.
+ */
+function isStandaloneScreen(
+  screen: TutorScreenContext | undefined,
+): screen is Exclude<TutorScreenContext, ItemScopeContext | SubjectScopeContext> {
+  return screen !== undefined && screen.scope.kind !== "item" && screen.scope.kind !== "subject";
+}
+
+/**
  * A question inside one of the learner's goals goes to the buddy, the goal's tutor, with the plan
  * and the screen it was asked from. An answer written once for everyone who asks the same thing on
  * a lesson screen goes to the lesson tutor with the screen alone, never the learner's plan, and so
@@ -219,8 +245,8 @@ export function startTutorAnswer(claim: ClaimedAnswer): AnswerRun {
 
   const screen = isGoalSnapshot(contextSnapshot) ? contextSnapshot.screen : contextSnapshot;
 
-  if (!screen) {
-    throw new Error("A shared answer needs the screen it's about");
+  if (!isStandaloneScreen(screen)) {
+    throw new Error("A shared answer needs the lesson screen it's about");
   }
 
   return startLessonQuestionAnswer({ claim, contextSnapshot: screen });

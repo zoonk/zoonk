@@ -273,19 +273,21 @@ test.describe("The tutor", () => {
     await expect(page.getByText(scenario.question)).toBeVisible();
     const lessonUrl = page.url();
 
-    // The screen's history preloads once the page is interactive; the sheet opens with it.
+    // The screen's history preloads once the page is interactive. On a wide screen the buddy is
+    // beside the lesson: its composer at the foot of the aside, about the screen in view.
     await expect.poll(() => api.getRequests).toBe(1);
-    await page.getByRole("button", { name: "Ask Buddy" }).click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("heading", { name: "Buddy" })).toBeVisible();
-    await expect(dialog.getByText("Ask about this screen")).toBeVisible();
+    const aside = page.getByRole("complementary", { name: "Help with this screen" });
+    const textbox = aside.getByRole("textbox", { name: "Ask a question" });
+    await expect(textbox).toHaveAttribute("placeholder", "Ask Zu about this screen");
 
-    const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
-    await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
     const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
     await textbox.fill(firstQuestion);
     await textbox.press("Enter");
-    await expect(dialog.getByText(ANSWER_TEXT)).toBeVisible();
+
+    // The conversation shows in the aside, with the question still beside it.
+    const conversation = page.getByRole("region", { name: "Questions to Zu" });
+    await expect(conversation.getByText(ANSWER_TEXT)).toBeVisible();
+    await expect(page.getByText(scenario.question)).toBeVisible();
     expect(api.getRequests).toBe(1);
     expect(api.answerRequests).toBe(1);
     expect(api.statusRequests).toBe(0);
@@ -295,10 +297,9 @@ test.describe("The tutor", () => {
       question: firstQuestion,
     });
 
-    await page.keyboard.press("Escape");
-    await expect(dialog).not.toBeVisible();
+    await conversation.getByRole("button", { name: "From the lesson" }).click();
+    await expect(conversation).not.toBeVisible();
     expect(page.url()).toBe(lessonUrl);
-    await expect(page.getByText(scenario.question)).toBeVisible();
     await expect(page.getByRole("radio", { name: scenario.wrongOption })).not.toBeChecked();
 
     await checkOption(page, scenario.correctOption);
@@ -310,13 +311,13 @@ test.describe("The tutor", () => {
     }
 
     await expect(page.getByText(secondStepTitle)).toBeVisible();
-    await page.getByRole("button", { name: "Ask Buddy" }).click();
-    await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
 
+    // The next screen's questions are its own thread.
     const followUp = "How does that connect to free fall?";
-    await dialog.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
-    await dialog.getByRole("button", { name: "Send" }).click();
-    await expect(dialog.getByText(followUp)).toBeVisible();
+    await aside.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
+    await aside.getByRole("button", { name: "Send" }).click();
+    await expect(conversation.getByText(followUp)).toBeVisible();
+    await expect(conversation.getByText(firstQuestion)).not.toBeVisible();
     await expect.poll(() => api.inputs.length).toBe(2);
 
     expect(api.inputs[1]).toMatchObject({
@@ -326,13 +327,17 @@ test.describe("The tutor", () => {
   });
 });
 
-/** Opens the tutor on the lesson's first screen and taps "another example", as its chip reads. */
+/**
+ * Opens the tutor on the lesson's first screen and taps "another example", as its chip reads: in
+ * the drawer of a tablet in portrait, whose empty thread offers each of the lesson's suggestions.
+ */
 async function tapExample({ language, page }: { language: string; page: Page }) {
   const scenario = await createQuestionLesson({ language, staticOnly: true });
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
 
+  await page.setViewportSize({ height: 1180, width: 820 });
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask Buddy" }).click();
+  await page.getByRole("button", { name: "Ask Zu" }).click();
 
   const chips = page.getByRole("dialog").locator('[data-slot="empty-content"]').getByRole("button");
 
@@ -386,7 +391,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
   await expect.poll(() => api.completedGetRequests).toBe(1);
-  await expect(page.getByRole("button", { name: "Ask Buddy" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ask Zu" })).toBeVisible();
   const releaseScripts = Promise.withResolvers<null>();
   const errors: Error[] = [];
   page.on("pageerror", (error) => errors.push(error));
@@ -400,7 +405,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   const dialog = page.getByRole("dialog");
 
   try {
-    await page.getByRole("button", { name: "Ask Buddy" }).click();
+    await page.getByRole("button", { name: "Ask Zu" }).click();
     await expect(dialog.getByRole("heading", { name: "Key idea" })).toBeVisible();
     await expect(dialog.getByRole("status")).toHaveCount(0);
     expect(api.getRequests).toBe(1);
@@ -429,10 +434,10 @@ test("keeps the mobile visitor flow focused on creating an account", async ({ pa
 
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask Buddy" }).click();
+  await page.getByRole("button", { name: "Ask Zu" }).click();
 
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { name: "Buddy" })).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Zu" })).toBeVisible();
   await expect(dialog.getByText("Create a free account to ask questions")).toBeVisible();
   await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
   await expect(dialog.getByRole("button", { name: "Send" })).toHaveCount(0);

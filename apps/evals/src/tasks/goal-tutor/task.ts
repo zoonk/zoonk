@@ -11,7 +11,9 @@ import {
   type GoalTutorLookUp,
   type GoalTutorLookUpResult,
 } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import { listGoalTutorPages } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
+import { createAnswerLinks } from "@zoonk/player/tutor/app-links";
 import { TEST_CASES } from "./test-cases";
 
 /**
@@ -20,6 +22,12 @@ import { TEST_CASES } from "./test-cases";
  */
 type GoalTutorOutput = {
   answer: string;
+  /**
+   * The answer's links as the app checks them before saving it (`createAnswerLinks`): `kept`, the
+   * ones it was given; `removed`, any it wasn't (made up, outside the app), which the app turns
+   * into words. Null when the answer has none.
+   */
+  links: { kept: string[]; removed: string[] } | null;
   /** What the buddy looked up, with what core answered (`found`, `notFound`); null when nothing. */
   lookUps: string | null;
   offeredTools: string | null;
@@ -68,7 +76,7 @@ export type GoalTutorLookUpStandIn = Partial<Record<GoalTutorLookUp, GoalTutorLo
 
 type GoalTutorInput = Omit<
   GenerateGoalTutorAnswerParams,
-  "lookUp" | "offerAppTool" | "proposePlanChange"
+  "links" | "lookUp" | "offerAppTool" | "proposePlanChange"
 > & {
   /** What core answers each app tool with; a tool the case leaves out is unavailable. */
   appTools?: GoalTutorAppToolStandIn;
@@ -121,10 +129,16 @@ async function generate({
   const looked: string[] = [];
   const results: unknown[] = [];
 
+  // The web app's links, given and checked as the answers route gives and checks them.
+  const { checkLinks, links } = createAnswerLinks(
+    listGoalTutorPages({ selectedGoal: input.contextSnapshot.selectedGoal === true }),
+  );
+
   // The buddy's tools keep one card per message (`createCardTools`): only calls that may show
   // one reach these stand-ins, so a feature turned away for the message's card isn't listed.
   const result = await generateGoalTutorAnswer({
     ...input,
+    links,
     // What core finds for each kind, as the case says; a kind it leaves out finds nothing.
     lookUp: ({ area, query, what }) => {
       const answer = lookUps?.[what] ?? { status: "notFound" as const, what };
@@ -161,9 +175,13 @@ async function generate({
     },
   });
 
+  const checked = checkLinks(result.data.answer);
+  const hasLinks = checked.kept.length > 0 || checked.removed.length > 0;
+
   return {
     data: {
       answer: result.data.answer,
+      links: hasLinks ? { kept: checked.kept, removed: checked.removed } : null,
       lookUps: looked.join(" | ") || null,
       offeredTools: offers.join(" | ") || null,
       proposedChange: requests.join(" | ") || null,

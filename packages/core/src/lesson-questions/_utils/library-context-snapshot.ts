@@ -97,10 +97,12 @@ async function getRecordedAnswer({
 
 async function getAnswerContext({
   answer,
+  language,
   step,
   userId,
 }: {
   answer: LessonStepAnswer;
+  language: string;
   step: PlayableLibraryStep;
   userId: string;
 }): Promise<SnapshotAnswer | null> {
@@ -108,7 +110,7 @@ async function getAnswerContext({
     return getRecordedAnswer({ answer, step, userId });
   }
 
-  const graded = gradeStepAnswer({ answer, step });
+  const graded = gradeStepAnswer({ answer, language, step });
 
   return graded?.answerText
     ? {
@@ -201,7 +203,12 @@ export async function buildLibraryQuestionContextSnapshot({
 
   const answer =
     context.kind === "answer" && activeStep
-      ? await getAnswerContext({ answer: context.answer, step: activeStep, userId })
+      ? await getAnswerContext({
+          answer: context.answer,
+          language: row.language,
+          step: activeStep,
+          userId,
+        })
       : null;
 
   if (context.kind === "answer" && !answer) {

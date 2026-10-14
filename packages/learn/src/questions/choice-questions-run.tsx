@@ -2,22 +2,25 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  clearAnswerDraft,
-  getResumableAnswers,
-  readAnswerDraft,
-  writeAnswerDraft,
-} from "./_utils/answer-draft";
+import { TaskHeaderTitle } from "../_components/task-header";
+import { TaskActions } from "../_components/task-layout";
+import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
 import {
   CHOICE_QUESTION_TITLE_SLOT,
   type ChoiceAnswer,
   ChoiceQuestion,
   type ChoiceQuestionView,
 } from "./choice-question";
-import { QuestionsHeader } from "./questions-header";
+
+const PERCENT = 100;
+
+/** The run's header: where closing goes, the screen a report names, and the test's title. */
+type QuestionsHeader = { closeHref: string; screen: string; title: string };
 
 /** One answer of a run of questions, with how long the learner took on it. */
 export type ChoiceQuestionAnswer = { answer: ChoiceAnswer; durationMs: number; itemId: string };
@@ -34,7 +37,9 @@ export type UpcomingQuestions = {
 
 /**
  * Keeps each answer on the device as it's given (`draftKey`), so a reload goes on from the next
- * question instead of starting over; the draft goes once the run is finished and left.
+ * question instead of starting over. The host clears it once the answers are graded
+ * (`clearAnswerDraft`): answers whose grade didn't go through stay on the device, so leaving and
+ * coming back still has them.
  */
 function useAnswerDraft({
   answers,
@@ -49,7 +54,6 @@ function useAnswerDraft({
   questionIds: readonly string[];
   total: number;
 }) {
-  const finished = useRef(false);
   const resumed = useRef(false);
 
   // Read after hydration: the server never has the device's draft.
@@ -77,20 +81,9 @@ function useAnswerDraft({
     }
   }, [answers, draftKey]);
 
-  useEffect(
-    () => () => {
-      if (draftKey && finished.current) {
-        clearAnswerDraft(draftKey);
-      }
-    },
-    [draftKey],
-  );
-
   return {
-    /** The last answer is in: the draft holds them all until the run is left. */
+    /** The last answer is in: the draft holds them all until the host clears it. */
     finish: (all: ChoiceQuestionAnswer[]) => {
-      finished.current = true;
-
       if (draftKey) {
         writeAnswerDraft({ answers: all, key: draftKey });
       }
@@ -128,15 +121,21 @@ function useFocusNewQuestion({
 
 /**
  * Questions asked one per screen, full screen like every task: no feedback until the end, "I
- * don't know yet" always allowed, and Enter for Next once an option is picked. The test's header
- * (`header`) shows how far in, a quiet line sits above each question (`hint`), and the host gets
+ * don't know yet" always allowed beside Next in the pinned action bar, and Enter for Next once an
+ * option is picked. The task's header (`header`) has the question's "…" menu to report a problem
+ * and one bar for how far in; a quiet line sits above each question (`hint`) with its number in the
+ * mono face, and the host gets
  * every answer once the last one is in (`onFinish`); `pending` holds the buttons while it grades
- * them. Questions can arrive while the first ones are asked (`upcoming`): they're added at the
- * end of `questions`, and the run waits for them after the last one it has. With `draftKey`, each
- * answer is kept on the device as it's given, so a reload goes on where the learner was.
+ * them, and a grade that didn't go through says so over them (`error`), the last question still on
+ * screen and locked. Questions can arrive while the first ones are asked (`upcoming`): they're
+ * added at the end of `questions`, and the run waits for them after the last one it has. With
+ * `draftKey`, each answer is kept on the device as it's given, so a reload goes on where the
+ * learner was, until the host clears it once the answers are graded.
  */
 export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
+  aside,
   draftKey,
+  error,
   header,
   hint,
   onFinish,
@@ -145,9 +144,16 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   trueFalseLabels,
   upcoming,
 }: {
+  /**
+   * What helps beside the questions from `lg` (a test-out's rule and what passing skips); the hint
+   * line is then the phone's, since the aside says it on a wide screen.
+   */
+  aside?: TaskFrameAside | null;
   /** Where this run's answers are kept on the device until it's finished; none to keep them. */
   draftKey?: string;
-  header: Pick<React.ComponentProps<typeof QuestionsHeader>, "closeHref" | "screen" | "title">;
+  /** Over the actions: the answers couldn't be graded, with a way to send them again. */
+  error?: React.ReactNode;
+  header: QuestionsHeader;
   /** The line above a question: a rule of the test, or what the question is about. */
   hint?: (question: Question) => string;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
@@ -206,66 +212,128 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
     onFinish(next);
   };
 
-  const nextRef = useEnterClick<HTMLButtonElement>({
-    enabled: question !== undefined && selected !== null && !pending,
-  });
+  const finishNow = () => {
+    draft.finish(answers);
+    onFinish(answers);
+  };
+
+  const current = Math.min(index + 1, total);
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <QuestionsHeader {...header} index={index} itemId={itemId} total={total} />
-
-      {!question && upcoming && (
-        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-6 px-4 py-6">
-          {upcoming.waiting}
-
-          {upcoming.ended && (
-            <Button
-              onClick={() => {
-                draft.finish(answers);
-                onFinish(answers);
-              }}
-              size="lg"
-            >
-              {t("Finish with these answers")}
-            </Button>
-          )}
-        </div>
-      )}
+    <TaskFrame
+      aside={aside}
+      exitHref={header.closeHref}
+      footer={
+        (question || upcoming?.ended) && (
+          <>
+            {error}
+            <QuestionsFooter
+              canFinish={!question && Boolean(upcoming?.ended)}
+              isLast={index + 1 >= total}
+              onDontKnow={() => answer({ dontKnow: true })}
+              onFinish={finishNow}
+              onNext={() => selected && answer(selected)}
+              pending={pending}
+              question={question !== undefined}
+              selected={selected !== null}
+            />
+          </>
+        )
+      }
+      headerEnd={
+        itemId && (
+          <ContentVoteMenu
+            label={t("Question options")}
+            screen={header.screen}
+            size="task"
+            target={{ contentId: itemId, contentKind: "item" }}
+            votes={false}
+          />
+        )
+      }
+      headerTitle={<TaskHeaderTitle title={header.title} />}
+      progress={
+        total > 0
+          ? {
+              label: t("Question {current, number} of {total, number}", { current, total }),
+              value: (index / total) * PERCENT,
+            }
+          : undefined
+      }
+    >
+      {!question && upcoming?.waiting}
 
       {question && (
-        <div
-          className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-6"
-          ref={questionRef}
-        >
-          {hint && <p className="text-muted-foreground text-sm">{hint(question)}</p>}
+        <div className="flex flex-col gap-4" ref={questionRef}>
+          <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
+            <p className={cn("min-w-0 text-pretty", aside && "lg:hidden")}>{hint?.(question)}</p>
+            <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
+              {t("{current, number} of {total, number}", { current, total })}
+            </p>
+          </div>
 
+          {/* The answer being graded, or waiting to be sent again, stays the one on screen. */}
           <ChoiceQuestion
+            disabled={pending || Boolean(error)}
             onSelect={setSelected}
             question={question}
             selected={selected}
             trueFalseLabels={trueFalseLabels}
           />
-
-          <div className="mt-auto flex flex-col gap-2 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row-reverse">
-            <Button
-              disabled={!selected || pending}
-              onClick={() => selected && answer(selected)}
-              ref={nextRef}
-              size="lg"
-            >
-              {index + 1 < total ? t("Next") : t("Finish")}
-            </Button>
-            <Button
-              disabled={pending}
-              onClick={() => answer({ dontKnow: true })}
-              size="lg"
-              variant="ghost"
-            >
-              {t("I don't know yet")}
-            </Button>
-          </div>
         </div>
       )}
-    </div>
+    </TaskFrame>
+  );
+}
+
+/**
+ * The run's pinned action bar: "I don't know yet" beside Next (Finish on the last question, with a
+ * spinner while the answers are graded), or, while waiting for questions that stopped coming,
+ * finishing with the answers given.
+ */
+function QuestionsFooter({
+  canFinish,
+  isLast,
+  onDontKnow,
+  onFinish,
+  onNext,
+  pending,
+  question,
+  selected,
+}: {
+  canFinish: boolean;
+  isLast: boolean;
+  onDontKnow: () => void;
+  onFinish: () => void;
+  onNext: () => void;
+  pending: boolean;
+  question: boolean;
+  selected: boolean;
+}) {
+  const t = useExtracted();
+
+  if (!question) {
+    return canFinish ? (
+      <TaskActions>
+        <TaskMainButton onClick={onFinish}>{t("Finish with these answers")}</TaskMainButton>
+      </TaskActions>
+    ) : null;
+  }
+
+  return (
+    <TaskActions>
+      <Button
+        className="shrink-0"
+        disabled={pending}
+        onClick={onDontKnow}
+        size="xl"
+        variant="outline"
+      >
+        {t("I don't know yet")}
+      </Button>
+      <TaskMainButton busy={pending} disabled={!selected} onClick={onNext}>
+        {isLast ? t("Finish") : t("Next")}
+      </TaskMainButton>
+    </TaskActions>
   );
 }

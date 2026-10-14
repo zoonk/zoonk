@@ -9,7 +9,7 @@ import { useLessonBuddy } from "../tutor/lesson-tutor";
 import { useStrugglePause } from "./use-struggle-pause";
 
 /**
- * A calm offer to ask the learner's buddy when they seem stuck: after two misses in a row on the
+ * A calm offer to ask the learner's buddy when they seem stuck, as a quiet line over a hairline: after two misses in a row on the
  * same idea, or a long pause on an explanation. "Ask" opens the questions sheet with "Explain it
  * more simply" ready to send; it asks once and "No thanks" puts it away. Without a tutor (guests)
  * there's nothing to offer.
@@ -28,7 +28,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   return (
     <div
       aria-live="polite"
-      className="bg-muted/60 flex flex-col gap-2 rounded-xl px-3 py-2.5 text-sm"
+      className="border-border flex flex-col gap-2 border-t pt-3 text-sm"
       data-slot="lesson-ask-buddy-offer"
     >
       <p>
@@ -42,7 +42,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
           className="pl-1.5"
           onClick={() => buddy.open("simpler")}
           size="sm"
-          variant="secondary"
+          variant="outline"
         >
           <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
             {buddy.identity.avatar}

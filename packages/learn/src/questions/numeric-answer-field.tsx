@@ -54,7 +54,7 @@ function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) 
   };
 
   return (
-    <p className="text-destructive text-sm" id={id} role="alert">
+    <p className="text-destructive-text text-sm" id={id} role="alert">
       {hints[entry?.kind ?? "number"]}
     </p>
   );
@@ -143,7 +143,7 @@ export function NumericAnswerField({
       </label>
 
       <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-2xl"
+        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-xl"
         data-result={result ?? undefined}
       >
         {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}
@@ -173,9 +173,9 @@ export function NumericAnswerField({
         {result && (
           <InputGroupAddon align="inline-end">
             {result === "correct" ? (
-              <CheckIcon aria-hidden="true" className="text-success" />
+              <CheckIcon aria-hidden="true" className="text-success-text" />
             ) : (
-              <XIcon aria-hidden="true" className="text-destructive" />
+              <XIcon aria-hidden="true" className="text-destructive-text" />
             )}
           </InputGroupAddon>
         )}

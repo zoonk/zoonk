@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  type LessonScreenSuggestion,
   type LessonTutorSuggestion,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { useCallback, useEffect, useRef } from "react";
 import { type LessonQuestionConnection } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
@@ -33,6 +35,8 @@ export type LessonQuestionHost = {
    */
   initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
+  /** What a question just asked did to the day's missions (null: none), for the host to say. */
+  onMissionMoment?: (moment: MissionMomentView | null) => void;
   /**
    * The conversation is a page of its own (the buddy's), always on screen, not a sheet the learner
    * opens: an answer still being written elsewhere is followed as soon as it shows.
@@ -53,9 +57,22 @@ type UseLessonQuestionsInput = LessonQuestionHost & {
   target: TutorTarget;
 };
 
+/** Where a question is going and what it says, sent at once (`ask`). */
+type LessonQuestionAsk = {
+  context: LessonQuestionContext;
+  question: string;
+  /** The lesson screen suggestion the learner sent unchanged. */
+  suggestion?: LessonScreenSuggestion;
+};
+
 export type LessonQuestionController = {
   /** The learner answered a plan change an answer proposed (Apply, Not now, Undo). */
   answerPlanChange: (change: PlanChangeView) => void;
+  /**
+   * Sends a question about `context` at once, whatever the thread was last opened about: a
+   * composer that is always on screen (the lesson's aside) asks about the screen in view.
+   */
+  ask: (question: LessonQuestionAsk) => Promise<void>;
   canAskQuestions: boolean;
   changeDraft: (draft: string) => void;
   checkAnswer: (questionId: string) => Promise<void>;
@@ -64,7 +81,11 @@ export type LessonQuestionController = {
   close: () => void;
   load: () => Promise<boolean>;
   loadEarlier: () => Promise<void>;
-  open: (context: LessonQuestionContext) => void;
+  /**
+   * Shows the conversation about `context`. A draft written about something else is cleared,
+   * unless the composer stays on screen whatever is open (`keepDraft`), where it's the learner's.
+   */
+  open: (context: LessonQuestionContext, options?: { keepDraft?: boolean }) => void;
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
   /** Sends one of the tutor's suggested questions right away. */
@@ -81,6 +102,7 @@ export function useLessonQuestions({
   connection,
   initialThread = null,
   lessonStepIds,
+  onMissionMoment,
   page = false,
   preload = true,
   suggestions = NO_SUGGESTIONS,
@@ -114,8 +136,8 @@ export function useLessonQuestions({
   }, [activeContext, canAskQuestions, loadThread, preload]);
 
   const open = useCallback(
-    (context: LessonQuestionContext) => {
-      dispatchToContext({ action: { context, type: "open" }, context });
+    (context: LessonQuestionContext, { keepDraft = false }: { keepDraft?: boolean } = {}) => {
+      dispatchToContext({ action: { context, keepDraft, type: "open" }, context });
 
       const scope = getLessonQuestionScope(context);
 
@@ -162,22 +184,18 @@ export function useLessonQuestions({
     [dispatch],
   );
 
-  const { send, sendSuggestion, unresolvedQuestion } = useSendLessonQuestion({
+  const { ask, send, sendSuggestion, unresolvedQuestion } = useSendLessonQuestion({
     canAskQuestions,
     connection,
     dispatchToContext,
     getState,
     lessonStepIds,
+    onMissionMoment,
     reconcileThread: reconcileLatestThread,
     state,
     streamAnswer,
     target,
   });
-
-  const resumeAnswer = useCallback(
-    (questionId: string) => streamAnswer({ context: state.context, questionId }),
-    [state.context, streamAnswer],
-  );
 
   useLessonQuestionRecovery({
     canAskQuestions,
@@ -185,11 +203,11 @@ export function useLessonQuestions({
     dispatch,
     isShown: page || state.isOpen,
     state,
-    streamAnswer: resumeAnswer,
   });
 
   return {
     answerPlanChange,
+    ask,
     canAskQuestions,
     changeDraft,
     checkAnswer,

@@ -1,5 +1,6 @@
 "use client";
 
+import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -9,18 +10,24 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, PencilIcon, SmileIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { createContext, use, useState } from "react";
 import {
-  ListGroup,
-  ListRowButton,
-  ListRowContent,
-  ListRowDescription,
-  ListRowIcon,
-  ListRowTitle,
-} from "../_components/list-group";
-import { PageSubtitle, PageTitle } from "../_components/page";
+  CalendarDaysIcon,
+  EllipsisIcon,
+  GlassesIcon,
+  HistoryIcon,
+  PencilIcon,
+  SmileIcon,
+} from "lucide-react";
+import { useExtracted } from "next-intl";
+import {
+  createContext,
+  use,
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { type AppearanceBuddy, BuddyEditor } from "../appearance/buddy-settings";
 import {
   type TutorConversationContent,
@@ -30,13 +37,19 @@ import {
 import { type DecideTutorPlanChange } from "../conversation/tutor-plan-change";
 import { type TutorToolActions } from "../conversation/tutor-tool-offer";
 import { LearnLink } from "../learn-link";
-import { BuddyArt } from "./buddy-art";
+import { type MissionLinks } from "../missions/mission-links";
+import { PageWithAside } from "../shell/learn-shell";
+import { BuddyDay, type BuddyDayHrefs } from "./buddy-day";
 import { BuddyGlassesSheet } from "./buddy-glasses-sheet";
-import { BuddyStageName } from "./buddy-labels";
-import { type BuddyStatusView } from "./buddy-status-view";
+import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
+import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 import { BuddyToday } from "./buddy-today";
-import { type LearnBuddy } from "./use-buddy-name";
 
+export { BuddyDaySkeleton } from "./buddy-day";
+export { BUDDY_COLUMN_CLASS } from "./buddy-header";
+export { BuddyGoalStart } from "./buddy-goal-start";
+export { BuddyTabName } from "./buddy-labels";
+export type { MissionLinks } from "../missions/mission-links";
 export type { BuddyStatusView } from "./buddy-status-view";
 export type {
   TutorConversationContent,
@@ -60,50 +73,75 @@ export function useBuddyTutor(): TutorConversationContent {
 }
 
 /**
- * Where the buddy tab leads: its Energy over time and the week's summary. Statistics open from the
- * account menu and the level in the top bar.
+ * Where the buddy tab leads: Energy over time, what the buddy remembers and the week's summary.
+ * Statistics open from the account menu and the level in the top bar.
  */
-export type BuddyScreenHrefs = { energy: string; logbook: string };
+export type BuddyScreenHrefs = BuddyDayHrefs & {
+  /** The learner's questions from an earlier version of their courses, when they have any. */
+  earlierQuestions?: string;
+};
 
 /**
  * How the buddy tab saves: the buddy (kind, name and glasses), resolving to whether it was saved,
- * and the learner's answer to a plan change the buddy proposed in the conversation.
+ * and the learner's answer to a plan change the buddy proposed in the conversation. Today's
+ * missions open where they're done (`missionLinks`).
  */
 export type BuddyScreenActions = {
   decidePlanChange: DecideTutorPlanChange;
+  missionLinks: MissionLinks;
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
   /** How the app tools the buddy offers in the conversation open. */
   tools: TutorToolActions;
 };
 
 /**
- * The buddy as the learner sees it right away: a change shows at once and goes back if it didn't
- * save, with `failed` saying so.
+ * A pending choice shows at once, reconciled against the latest server profile so a retained
+ * page follows edits from Preferences. Only the latest save can report a failure.
  */
 function useBuddyChanges({
   initial,
   saveBuddy,
 }: {
-  initial: AppearanceBuddy | null;
+  initial: ResolvedBuddy;
   saveBuddy: BuddyScreenActions["saveBuddy"];
 }) {
-  const [current, setCurrent] = useState(initial);
+  const [current, setCurrent] = useOptimistic(initial);
   const [failed, setFailed] = useState(false);
+  const [, startTransition] = useTransition();
+  const latestSave = useRef(0);
 
-  async function save(next: AppearanceBuddy) {
-    const previous = current;
-    setCurrent(next);
+  function save(next: AppearanceBuddy) {
+    latestSave.current += 1;
+    const request = latestSave.current;
     setFailed(false);
 
-    const { data: saved } = await safeAsync(() => saveBuddy(next));
+    startTransition(async () => {
+      setCurrent({ ...next, picked: true });
+      const { data: saved } = await safeAsync(() => saveBuddy(next));
 
-    if (!saved) {
-      setCurrent(previous);
-      setFailed(true);
-    }
+      if (request === latestSave.current) {
+        setFailed(!saved);
+      }
+    });
   }
 
   return { current, failed, save };
+}
+
+/**
+ * With a mouse or trackpad, the tab opens ready to type: the conversation's field takes focus. On
+ * a phone it waits for a tap, so the keyboard doesn't cover the conversation.
+ */
+function useFocusComposerOnPointer() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (globalThis.matchMedia("(pointer: fine)").matches) {
+      ref.current?.querySelector("textarea")?.focus({ preventScroll: true });
+    }
+  }, []);
+
+  return ref;
 }
 
 /** What's done now and then with the buddy: change it, its glasses and the week's summary. */
@@ -115,7 +153,7 @@ function BuddyMenu({
   onEdit,
   onGlasses,
 }: {
-  buddy: LearnBuddy | null;
+  buddy: ResolvedBuddy;
   glassesCount: string;
   hrefs: BuddyScreenHrefs;
   name: string;
@@ -127,7 +165,9 @@ function BuddyMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button className="shrink-0 rounded-full" size="icon" variant="outline" />}
+        render={
+          <Button className="text-muted-foreground shrink-0" size="icon-sm" variant="ghost" />
+        }
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{t("More about {buddy}", { buddy: name })}</span>
@@ -135,17 +175,17 @@ function BuddyMenu({
 
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuItem onClick={onEdit}>
-          {buddy ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
-          {buddy ? t("Change {buddy}", { buddy: name }) : t("Pick your buddy")}
+          {buddy.picked ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
+          {buddy.picked ? t("Change {buddy}", { buddy: name }) : t("Choose your buddy")}
         </DropdownMenuItem>
 
-        {buddy && (
-          <DropdownMenuItem onClick={onGlasses}>
-            <GlassesIcon aria-hidden="true" />
-            <span className="flex-1">{t("Glasses")}</span>
-            <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem onClick={onGlasses}>
+          <GlassesIcon aria-hidden="true" />
+          <span className="flex-1">{t("Glasses")}</span>
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
+            {glassesCount}
+          </span>
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
@@ -153,46 +193,29 @@ function BuddyMenu({
           <CalendarDaysIcon aria-hidden="true" />
           {t("Weekly summary")}
         </DropdownMenuItem>
+
+        {hrefs.earlierQuestions && (
+          <DropdownMenuItem render={<LearnLink href={hrefs.earlierQuestions} />}>
+            <HistoryIcon aria-hidden="true" />
+            {t("Earlier questions")}
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-/** A learner without a buddy yet is offered one, right above the conversation. */
-function PickBuddyRow({ onPick }: { onPick: () => void }) {
+/**
+ * The default buddy gently offers choosing a look and name under its hello.
+ */
+function PickBuddyButton({ onPick }: { onPick: () => void }) {
   const t = useExtracted();
 
   return (
-    <ListGroup>
-      <ListRowButton aria-haspopup="dialog" onClick={onPick}>
-        <ListRowIcon>
-          <SmileIcon />
-        </ListRowIcon>
-        <ListRowContent>
-          <ListRowTitle>{t("Pick your buddy")}</ListRowTitle>
-          <ListRowDescription>
-            {t("It learns with you and grows with your belt.")}
-          </ListRowDescription>
-        </ListRowContent>
-      </ListRowButton>
-    </ListGroup>
-  );
-}
-
-/** "Your study buddy · Baby": what the buddy is, and its stage once there's one to grow. */
-function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] | null }) {
-  const t = useExtracted();
-
-  if (!stage) {
-    return t("Your study buddy");
-  }
-
-  return (
-    <span>
-      {t("Your study buddy")}
-      {" · "}
-      <BuddyStageName stage={stage} />
-    </span>
+    <Button aria-haspopup="dialog" onClick={onPick} size="sm" variant="outline">
+      <SmileIcon aria-hidden="true" />
+      {t("Choose your buddy")}
+    </Button>
   );
 }
 
@@ -204,15 +227,18 @@ function useGlassesCount(status: BuddyStatusView): string {
 
 /**
  * The buddy tab: the learner's conversation with their buddy, their tutor for the goal. The buddy
- * sits on top (its art, name and stage, the rest behind its "…") with its day as two small tiles
- * (Energy and today's missions, their details a tap away); the conversation takes the screen, its
- * suggestions and composer always within reach. Before a buddy is picked, a neutral tutor talks and the tab offers to pick one.
+ * sits on one compact row on top (its face, name and stage, and the rest behind its "…"); the
+ * conversation takes the screen, its suggestions and composer always within reach. On a phone or
+ * a tablet the buddy's day is one quiet line of Energy and missions that opens its sheet; on a
+ * wide screen it sits beside the conversation instead (`BuddyDay`), which keeps a comfortable
+ * line length. The default buddy's hello offers choosing a buddy.
  * The host places the conversation as its child, which reads the buddy with `useBuddyTutor`.
  */
 export function BuddyScreen({
   actions,
   children,
   hrefs,
+  memoryCount,
   situation,
   status,
 }: {
@@ -220,25 +246,21 @@ export function BuddyScreen({
   /** The conversation, which reads what it needs from `useBuddyTutor`. */
   children: React.ReactNode;
   hrefs: BuddyScreenHrefs;
+  memoryCount?: number;
   situation: TutorSituation;
   status: BuddyStatusView;
 }) {
   const t = useExtracted();
   const [editing, setEditing] = useState(false);
   const [wearing, setWearing] = useState(false);
+  const columnRef = useFocusComposerOnPointer();
 
   const { current, failed, save } = useBuddyChanges({
     initial: status.buddy,
     saveBuddy: actions.saveBuddy,
   });
 
-  const look = { beltColor: status.belt.color, energy: status.energy.current };
-
-  const buddy: LearnBuddy | null = current && {
-    ...look,
-    ...current,
-    studiedToday: status.energy.studiedToday,
-  };
+  const buddy = toLearnBuddy({ buddy: current, status });
 
   const content = useTutorConversationContent({
     buddy,
@@ -250,77 +272,85 @@ export function BuddyScreen({
   const name = content.identity.name;
   const glassesCount = useGlassesCount(status);
 
+  // Here, asking the buddy something is the composer on this page, not a link to it.
+  const missionLinks: MissionLinks = {
+    ...actions.missionLinks,
+    askBuddy: () => columnRef.current?.querySelector("textarea")?.focus(),
+  };
+
+  const tutorContent: TutorConversationContent = current.picked
+    ? content
+    : { ...content, greetingAction: <PickBuddyButton onPick={() => setEditing(true)} /> };
+
   return (
-    <div className="-mb-12 flex flex-1 flex-col gap-6" data-slot="buddy-screen">
-      <header className="flex flex-col gap-5">
-        <div className="flex items-center gap-4 px-1">
-          <BuddyArt buddy={buddy} name={name} />
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <PageTitle className="truncate">{name}</PageTitle>
-            <PageSubtitle className="pt-0">
-              <BuddyLine stage={buddy ? status.stage : null} />
-            </PageSubtitle>
-          </div>
+    <PageWithAside
+      aside={
+        <BuddyDay
+          buddy={buddy}
+          hrefs={hrefs}
+          memoryCount={memoryCount}
+          missionLinks={missionLinks}
+          name={name}
+          onGlasses={() => setWearing(true)}
+          status={status}
+        />
+      }
+      // Under 72rem the day is a tap away in its sheet (`BuddyToday`), not under the conversation.
+      asideClassName="hidden"
+      asideLabel={t("{buddy} today", { buddy: name })}
+      className="flex-1"
+    >
+      <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-screen" ref={columnRef}>
+        <BuddyHeader buddy={buddy} name={name} stage={status.stage}>
+          <BuddyToday
+            buddy={buddy}
+            className="min-[72rem]:hidden"
+            energyHref={hrefs.energy}
+            missionLinks={missionLinks}
+            name={name}
+            status={status}
+          />
 
           <BuddyMenu
-            buddy={buddy}
+            buddy={current}
             glassesCount={glassesCount}
             hrefs={hrefs}
             name={name}
             onEdit={() => setEditing(true)}
             onGlasses={() => setWearing(true)}
           />
-        </div>
+        </BuddyHeader>
 
-        <BuddyToday
-          energyHref={hrefs.energy}
-          hasBuddy={Boolean(buddy)}
-          name={name}
-          status={status}
-        />
-      </header>
+        {failed && !editing && (
+          <p className="text-destructive-text text-sm" role="alert">
+            {t("That didn't save. Try again in a moment.")}
+          </p>
+        )}
 
-      {failed && !editing && (
-        <p className="text-destructive text-sm" role="alert">
-          {t("That didn't save. Try again in a moment.")}
-        </p>
-      )}
+        <TutorContentContext value={tutorContent}>{children}</TutorContentContext>
+      </div>
 
-      {!buddy && <PickBuddyRow onPick={() => setEditing(true)} />}
-
-      <TutorContentContext value={content}>{children}</TutorContentContext>
-
-      {buddy && (
-        <BuddyGlassesSheet
-          buddy={buddy}
-          failed={failed}
-          glasses={status.glasses}
-          onOpenChange={setWearing}
-          onWear={(glasses) => void save({ glasses, kind: buddy.kind, name: buddy.name })}
-          open={wearing}
-        />
-      )}
+      <BuddyGlassesSheet
+        buddy={buddy}
+        failed={failed}
+        glasses={status.glasses}
+        onOpenChange={setWearing}
+        onWear={(glasses) => save({ glasses, kind: buddy.kind, name: buddy.name })}
+        open={wearing}
+      />
 
       {editing && (
         <BuddyEditor
-          initial={{
-            glasses: current?.glasses ?? "round",
-            kind: current?.kind ?? "zu",
-            name: current?.name ?? "",
-          }}
-          look={look}
+          initial={{ glasses: current.glasses, kind: current.kind, name: current.name ?? "" }}
+          look={buddy}
           onClose={() => setEditing(false)}
           onSave={(choice) => {
             setEditing(false);
 
-            void save({
-              glasses: choice.glasses,
-              kind: choice.kind,
-              name: choice.name.trim() || null,
-            });
+            save({ glasses: choice.glasses, kind: choice.kind, name: choice.name.trim() || null });
           }}
         />
       )}
-    </div>
+    </PageWithAside>
   );
 }

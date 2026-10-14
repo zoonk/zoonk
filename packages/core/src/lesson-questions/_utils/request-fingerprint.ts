@@ -52,7 +52,10 @@ function getContextFingerprint(context: LessonQuestionContextInput): unknown[] {
     case "chapter":
     case "mock":
     case "plan":
+    case "subject":
       return [context.kind];
+    case "item":
+      return [context.kind, context.answered, context.blockId ?? null];
     default:
       return context satisfies never;
   }

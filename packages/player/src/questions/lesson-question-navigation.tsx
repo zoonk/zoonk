@@ -6,6 +6,12 @@ import { type ReactNode, createContext, use } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 
 export type LessonQuestionNavigation = {
+  /**
+   * A host inside one of the learner's goals, where the buddy answers: its answers link the app,
+   * only where they were given a link (see `TutorAnswerLinks`), and `openBlock` opens one of
+   * today's blocks as Today does. Without it, an answer's links are the lesson tutor's.
+   */
+  appLinks?: { openBlock?: (blockId: string) => void };
   linkComponent: PlayerLinkComponent;
   loginHref: string;
   subscriptionHref: string;

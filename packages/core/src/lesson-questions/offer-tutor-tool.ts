@@ -14,6 +14,7 @@ import { findCurrentUnit, loadLanguageUnits } from "../language/units/language-u
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { countSkippableItems, getChapterSkills } from "../learner/test-out/_utils/chapter-items";
+import { loadBlockedTestOutChapters } from "../learner/test-out/_utils/offer-eligibility";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
@@ -87,11 +88,13 @@ async function listNextChapters({ area, goalId }: { area: string | null; goalId:
  */
 async function offerChapterTest({
   area,
-  goalId,
+  goal,
 }: {
   area: string | null;
-  goalId: string;
+  goal: Goal;
 }): Promise<TutorToolResult> {
+  const goalId = goal.id;
+
   const [chapters, plan] = await Promise.all([
     listNextChapters({ area, goalId }),
     loadGoalPlan(goalId),
@@ -106,6 +109,18 @@ async function offerChapterTest({
 
   if (!offer) {
     return { reason: "nothingToSkip", status: "unavailable" };
+  }
+
+  const blocked = await loadBlockedTestOutChapters({
+    chapterIds: [offer.chapter.id],
+    goalId,
+    now: new Date(),
+    timeZone: getAnswerTimeZone({ goal }),
+    userId: goal.userId,
+  });
+
+  if (blocked.has(offer.chapter.id)) {
+    return { reason: "testFailedToday", status: "unavailable" };
   }
 
   return {
@@ -221,7 +236,7 @@ function resolveOffer({
     case "startGoal":
       return offerStartGoal({ goal, topic, words: goalWords });
     case "chapterTest":
-      return offerChapterTest({ area, goalId: goal.id });
+      return offerChapterTest({ area, goal });
     case "chooseFocus":
       return offerChooseFocus(goal.id);
     case "mockExam":

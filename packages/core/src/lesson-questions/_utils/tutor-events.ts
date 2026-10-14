@@ -26,6 +26,8 @@ export function getTutorAskedEvent({
         name: "Tutor Asked",
         properties: { chapter_id: subject.chapterId, scope: "chapter" },
       };
+    case "item":
+      return { name: "Tutor Asked", properties: { item_id: subject.item.id, scope: "item" } };
     case "lesson":
       return {
         name: "Tutor Asked",
@@ -35,6 +37,15 @@ export function getTutorAskedEvent({
       return { name: "Tutor Asked", properties: { mock_id: subject.mockExamId, scope: "mock" } };
     case "plan":
       return { name: "Tutor Asked", properties: { goal_id: subject.goal.id, scope: "plan" } };
+    case "subject":
+      return {
+        name: "Tutor Asked",
+        properties: {
+          goal_id: subject.goal.id,
+          scope: "subject",
+          subject_key: subject.syllabusSubject.key,
+        },
+      };
     default:
       return subject satisfies never;
   }

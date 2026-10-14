@@ -1,5 +1,6 @@
 "use client";
 
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
@@ -10,8 +11,13 @@ import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
-import { QuestionComposer } from "./lesson-question-composer";
-import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
+import { PAGE_COMPOSER_FRAME_CLASS, QuestionComposer } from "./lesson-question-composer";
+import {
+  QuestionErrorAction,
+  QuestionLimitNotice,
+  RequestErrorMessage,
+  toHelpLimit,
+} from "./lesson-question-errors";
 import {
   LessonQuestionNavigationContext,
   useLessonQuestionNavigation,
@@ -21,8 +27,9 @@ import {
   useLessonQuestionController,
 } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
-import { QuestionTurn, TUTOR_BUBBLE_CLASS } from "./lesson-question-turn";
+import { QuestionTurn } from "./lesson-question-turn";
 import { FirstDay, Suggestions, TurnDay, type TutorSuggestion } from "./tutor-conversation-parts";
+import { ConversationMissionMoment, useConversationMissionMoment } from "./tutor-mission-moment";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 
@@ -33,8 +40,15 @@ import { type LessonQuestionHost } from "./use-lesson-questions";
 type TutorConversationProps = TutorCards & {
   /** What the composer is called for screen readers, such as "Message Zu". */
   composerLabel: string;
+  /**
+   * A question the learner brought from elsewhere (search's "Ask Buddy: …"): it waits in the
+   * composer for their own send, and is never sent for them.
+   */
+  draft?: string;
   /** The tutor's hello, always the conversation's first message. */
   greeting: string;
+  /** One action under the hello, such as picking a buddy before there's one. */
+  greetingAction?: React.ReactNode;
   identity: TutorIdentity;
   placeholder: string;
   /** Up to three questions the learner can send with one tap before the first message. */
@@ -51,6 +65,26 @@ const GOAL_CONTEXT = { kind: "plan" } as const;
 const COMPOSER_POSITION =
   "sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:bottom-0 z-10 -mx-4 bg-linear-to-t from-background from-75% to-transparent px-4 pt-6 pb-3 lg:pb-6";
 
+/** The conversation couldn't be read: why, and the one thing to do (try again, or what a limit asks). */
+function LoadError() {
+  const controller = useLessonQuestionController();
+  const error = controller.state.requestError;
+  const limit = toHelpLimit(error);
+
+  if (limit) {
+    return <QuestionLimitNotice limit={limit} />;
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <p className="text-muted-foreground text-sm">
+        <RequestErrorMessage error={error} />
+      </p>
+      <QuestionErrorAction error={error} onRetry={() => void controller.load()} />
+    </div>
+  );
+}
+
 function ConversationSkeleton() {
   const t = useExtracted();
 
@@ -60,7 +94,7 @@ function ConversationSkeleton() {
         {t("Loading the conversation…")}
       </p>
       <div aria-hidden="true" className="flex flex-col items-end gap-2">
-        <Skeleton className="h-12 w-3/5 rounded-2xl" />
+        <Skeleton className="h-12 w-3/5 rounded-xl" />
       </div>
       <div aria-hidden="true" className="flex flex-col gap-2">
         <Skeleton className="h-4 w-full" />
@@ -71,16 +105,20 @@ function ConversationSkeleton() {
   );
 }
 
+/**
+ * In the composer's place for guests and visitors: where they'd type, the way to an account that
+ * lets them.
+ */
 function SignUpPrompt() {
   const t = useExtracted();
   const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
 
   return (
-    <div className="bg-card flex flex-col gap-3 rounded-3xl border p-4 shadow-sm sm:flex-row sm:items-center">
-      <p className="flex-1 text-sm font-medium">
+    <div className={cn(PAGE_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
+      <p className="text-muted-foreground flex-1 text-sm">
         {t("Create a free account to start the conversation.")}
       </p>
-      <Link className={buttonVariants()} href={loginHref} prefetch={false}>
+      <Link className={buttonVariants({ size: "sm" })} href={loginHref} prefetch={false}>
         {t("Create a free account")}
       </Link>
     </div>
@@ -140,7 +178,7 @@ function ConversationTurns({
       {state.hasMore && (
         <div className="flex flex-col items-center gap-2">
           {state.earlierLoadFailed && (
-            <p className="text-destructive text-center text-sm" role="alert">
+            <p className="text-destructive-text text-center text-sm" role="alert">
               {t("Couldn't load earlier messages. Try again.")}
             </p>
           )}
@@ -159,7 +197,7 @@ function ConversationTurns({
 
       {state.questions.map((question, index) => (
         <div
-          className="flex scroll-mt-4 flex-col gap-6 lg:scroll-mt-24"
+          className="flex scroll-mt-4 flex-col gap-5 lg:scroll-mt-24"
           key={question.id}
           ref={trackTurn(question.id)}
         >
@@ -172,6 +210,7 @@ function ConversationTurns({
             answerError={state.answerError}
             answerInProgressCount={answering}
             identity={identity}
+            linksVerified={!state.streamedAnswerIds.includes(question.id)}
             memoryChanges={state.memoryChanges[question.id]}
             onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
             onRetry={(questionId) => void controller.retryAnswer(questionId)}
@@ -192,15 +231,33 @@ function ConversationTurns({
   );
 }
 
+/** Puts a question brought from elsewhere in the composer, once for each question brought. */
+function useBroughtQuestion({
+  changeDraft,
+  draft,
+}: {
+  changeDraft: (draft: string) => void;
+  draft?: string;
+}) {
+  useEffect(() => {
+    if (draft) {
+      changeDraft(draft);
+    }
+  }, [changeDraft, draft]);
+}
+
 function ConversationBody({
   composerLabel,
+  draft,
   greeting,
+  greetingAction,
   identity,
   placeholder,
   renderPlanChange,
+  missionMoment,
   renderToolOffer,
   suggestions,
-}: TutorConversationProps) {
+}: TutorConversationProps & { missionMoment: MissionMomentView | null }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
   const { canAskQuestions, state } = controller;
@@ -209,31 +266,24 @@ function ConversationBody({
 
   const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
 
+  useBroughtQuestion({ changeDraft: controller.changeDraft, draft });
+
   return (
     <section
       aria-label={t("Conversation with {name}", { name: identity.name })}
       className="flex flex-1 flex-col"
     >
-      <div aria-busy={answering} className="flex flex-1 flex-col gap-6 pb-2" role="log">
+      <div aria-busy={answering} className="flex flex-1 flex-col gap-5 pb-2" role="log">
         <FirstDay />
 
         <TutorMessage identity={identity} page>
-          <p className={cn(TUTOR_BUBBLE_CLASS, "w-fit")}>{greeting}</p>
+          <p>{greeting}</p>
+          {greetingAction && <div className="flex">{greetingAction}</div>}
         </TutorMessage>
 
         {canAskQuestions && state.loadStatus !== "ready" && <ConversationSkeleton />}
 
-        {state.error === "load" && (
-          <div className="flex flex-col items-start gap-3">
-            <p className="text-muted-foreground text-sm">
-              <RequestErrorMessage error={state.requestError} />
-            </p>
-            <QuestionErrorAction
-              error={state.requestError}
-              onRetry={() => void controller.load()}
-            />
-          </div>
-        )}
+        {state.error === "load" && <LoadError />}
 
         {ready && (
           <ConversationTurns
@@ -242,9 +292,11 @@ function ConversationBody({
             renderToolOffer={renderToolOffer}
           />
         )}
+
+        <ConversationMissionMoment buddyName={identity.name} moment={missionMoment} />
       </div>
 
-      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-3")}>
+      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>
         {empty && canAskQuestions && (
           <Suggestions
             onSend={(question) => void controller.sendSuggestion({ question })}
@@ -285,14 +337,18 @@ function ConversationBody({
 export function TutorConversation({
   goalId,
   initialThread = null,
+  onMissionMoment,
   tutor,
   ...props
 }: TutorConversationProps & {
   goalId: string;
   initialThread?: LessonQuestionThreadPage | null;
+  /** A question completed one of the day's missions, so the host can read its day again. */
+  onMissionMoment?: (moment: MissionMomentView) => void;
   tutor: LessonTutorConfig;
 }) {
   const target = useMemo(() => ({ goalId, kind: "plan" as const }), [goalId]);
+  const missionMoment = useConversationMissionMoment({ goalId, onMoment: onMissionMoment });
 
   const host = useMemo<LessonQuestionHost>(
     () => ({
@@ -300,10 +356,11 @@ export function TutorConversation({
       canAskQuestions: tutor.canAsk,
       initialThread,
       lessonStepIds: [],
+      onMissionMoment: missionMoment.receive,
       page: true,
       preload: true,
     }),
-    [initialThread, tutor.canAsk],
+    [initialThread, missionMoment.receive, tutor.canAsk],
   );
 
   // Each goal has its own thread: another goal starts its conversation from its own history.
@@ -315,7 +372,7 @@ export function TutorConversation({
         key={goalId}
         target={target}
       >
-        <ConversationBody {...props} />
+        <ConversationBody {...props} missionMoment={missionMoment.moment} />
       </LessonQuestionHostProvider>
     </LessonQuestionNavigationContext>
   );

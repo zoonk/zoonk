@@ -18,6 +18,8 @@ type UnavailableReason =
   | "nothingDue"
   /** No chapter ahead has enough lessons a test could skip (or the area has none left). */
   | "nothingToSkip"
+  /** This chapter's test failed today: a full lesson in it or the next local day unlocks offers. */
+  | "testFailedToday"
   /** A new goal needs words to start from. */
   | "unavailable";
 

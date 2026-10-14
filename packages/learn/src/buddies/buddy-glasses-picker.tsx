@@ -8,6 +8,7 @@ import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Meter, MeterFill } from "../_components/meter";
+import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BuddyGlassesHowToEarn, BuddyGlassesName } from "./buddy-labels";
 import { type BuddyLook } from "./buddy-picker";
 
@@ -22,11 +23,14 @@ export type BuddyGlassesOption = {
   target?: number;
 };
 
-/** Pairs earned by counting (7 days with all three missions, 50 reviews) show how far along the learner is. */
+/** Pairs earned by counting (7 days with every mission done, 50 reviews) show how far along the learner is. */
 const COUNTED_GLASSES = new Set<BuddyGlasses>(["catEye", "retro"]);
 
-const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default";
+/** A buddy option as a card, picked as every pick is: the blue line on its tint. */
+const OPTION_CLASS = cn(
+  "border-border has-focus-visible:ring-ring/50 flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default",
+  CHOICE_CARD_PICKED_CLASS,
+);
 
 /** "2 of 7 days", "38 of 50 reviews": how far a counted pair is. */
 function CountLine({
@@ -42,7 +46,7 @@ function CountLine({
   const counts = { current: String(current), target: String(target) };
 
   return glasses === "catEye"
-    ? t("{current} of {target} days with all three missions", counts)
+    ? t("{current} of {target} days with every mission done", counts)
     : t("{current} of {target} reviews", counts);
 }
 
@@ -77,7 +81,7 @@ function LockedDetail({ option }: { option: BuddyGlassesOption }) {
 
 /**
  * Every pair of glasses, one per row: the earned ones go on when picked, the rest say how they're
- * earned and how far the learner is. Nothing is random and nothing is sold. Appearance's editor
+ * earned and how far the learner is. Nothing is random and nothing is sold. Preferences' editor
  * and the buddy tab's glasses sheet share it.
  */
 export function BuddyGlassesPicker({
@@ -117,6 +121,7 @@ export function BuddyGlassesPicker({
             expression="happy"
             glasses={option.glasses}
             kind={kind}
+            studiedToday={look.studiedToday}
           />
 
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">

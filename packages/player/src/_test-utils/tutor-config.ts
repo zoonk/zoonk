@@ -22,7 +22,7 @@ const ENGLISH_SUGGESTIONS: LessonTutorSuggestion[] = [
 
 /**
  * The tutor as a host app sets it up for a learner who may ask, reaching the faked API. The
- * learner's buddy (Pip) answers unless a test passes `buddy: null` (no buddy picked yet); the
+ * learner's buddy (Pip) answers unless a test passes `buddy: null` (the default buddy); the
  * lesson's suggestions are English unless a test passes the payload's own.
  */
 export function buildTutor(

@@ -64,7 +64,7 @@ export function ThreadViewportSkeleton() {
       <div aria-hidden="true" className="flex flex-col gap-6">
         <div className="flex flex-col items-end gap-2">
           <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-16 w-3/4 rounded-2xl" />
+          <Skeleton className="h-16 w-3/4 rounded-xl" />
         </div>
         <div className="flex flex-col gap-2">
           <Skeleton className="h-4 w-full" />

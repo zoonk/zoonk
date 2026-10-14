@@ -1,8 +1,10 @@
+import { type TutorLink } from "../v2/tutor/goal-tutor-pages";
+
 /**
  * What the tutor sees when a learner asks, built on the server from stored content and the
  * learner's own records, never from text the client sends. `scope.kind` names the thing asked
  * about: a lesson (all of it, one screen or an answer given on a screen), a chapter, the learner's
- * plan or a mock exam they finished.
+ * plan, a subject of their goal, a question of a session or practice, or a mock exam they finished.
  */
 export type LessonQuestionStepContext = {
   content: unknown;
@@ -85,7 +87,11 @@ export type PlanItemReason =
 type PlanScopeItem = {
   /** What the learner will be able to do after a lesson. */
   canDo: string | null;
+  /** One of the lessons earlier days left (see `PlanScopeContext.catchUp`): the day opens with it. */
+  catchUp?: true;
   kind: string;
+  /** Where it opens: today's session's block while it's still to do; null otherwise. */
+  link?: TutorLink | null;
   minutes: number | null;
   /**
    * A mock exam the learner's plan doesn't include: it stays on its day and comes with Plus, and
@@ -147,6 +153,32 @@ export type ExamFactsContext = {
  * the outline of the course it's built from.
  */
 export type PlanScopeContext = {
+  /**
+   * Lessons earlier days left that the learner hasn't done yet (the plan's last new-day settling
+   * carried them first; see `status.lessons`): the first few by title in the plan's order, each
+   * `inToday` when today's session already holds it (the session opens with it), with where it
+   * opens, and `total` for all of them. `offeredToday`: Today offers adding the ones today doesn't
+   * hold to today with one tap; otherwise the next days open with them. Which day each one came
+   * from isn't kept. Null or absent when nothing is left from earlier days.
+   */
+  catchUp?: {
+    lessons: { inToday: boolean; link: TutorLink | null; title: string }[];
+    offeredToday: boolean;
+    total: number;
+  } | null;
+  /**
+   * The challenges still ahead: the current phase's challenge (`challenge`, the Trickster's duel
+   * that closes it) and, for an exam, the next planned mock exam (`mock`), each with its day, when
+   * it comes (`date`: on its day; `nextSession`: the learner's next session duels it; `queued`:
+   * after the challenge before it), whether starting it needs Plus (`locked`) and where it opens.
+   */
+  challenges?: {
+    date: string | null;
+    kind: "challenge" | "mock";
+    link: TutorLink | null;
+    locked: boolean;
+    when: "date" | "nextSession" | "queued";
+  }[];
   /** Null when the plan isn't built from a course. */
   course: CourseOutline | null;
   estimate: { endDate: string | null; remainingHours: number };
@@ -187,7 +219,8 @@ export type PlanScopeContext = {
   /** The next study days, each with its first items and how many more it has. */
   next: {
     date: string;
-    items: { kind: string; plusRequired?: true; title: string }[];
+    /** `link` for a challenge or a mock, whose page opens it before its day. */
+    items: { kind: string; link?: TutorLink | null; plusRequired?: true; title: string }[];
     moreItems?: number;
   }[];
   /**
@@ -204,6 +237,12 @@ export type PlanScopeContext = {
     name: string;
   } | null;
   scope: { kind: "plan" };
+  /**
+   * This is the buddy's own conversation about the goal the app has open: its answers may link what
+   * acts on the open goal (today's blocks, Today, the Plan and the guide's pages of the open goal).
+   * Absent on a screen's questions and for a goal the app doesn't have open.
+   */
+  selectedGoal?: true;
   /**
    * The page the learner asked from, when it isn't the buddy's own conversation: a chapter, a
    * lesson (one of its screens, or an answer given on one) or a mock exam they finished.
@@ -248,13 +287,24 @@ export type PlanScopeContext = {
     writtenCadence?: string | null;
   };
   /**
-   * Ahead or behind by days, with the fix; the words for it live in the apps. `lessons`: lessons
-   * earlier days left that the learner hasn't caught up on (they come first), when that's why.
+   * Ahead or behind by days, with the fix, past its date with lessons left (the plan doesn't end:
+   * it waits for the learner to adjust it), every lesson done with `challenges` phases' challenges
+   * left to win, or finished once every lesson and challenge is; the words for it live in the
+   * apps. `lessons`: lessons earlier days left that the learner hasn't caught up on (they come
+   * first), when that's why, or the lessons left once the date came.
    */
   status: {
+    challenges?: number | null;
     days: number | null;
     extraMinutesPerDay: number | null;
-    kind: "ahead" | "behind" | "needsAdjusting" | "onTrack";
+    kind:
+      | "ahead"
+      | "behind"
+      | "challengesLeft"
+      | "finished"
+      | "needsAdjusting"
+      | "onTrack"
+      | "pastDate";
     lessons?: number | null;
     options: string[];
   } | null;
@@ -311,8 +361,75 @@ export type MockScopeContext = {
   version: 1;
 };
 
-/** A page of the app the learner can ask the buddy about, besides their plan. */
-export type TutorScreenContext = ChapterScopeContext | LessonScopeContext | MockScopeContext;
+/**
+ * A subject of the learner's goal (a subject of the exam's notice, or a module of their plan), as
+ * its page shows it: its topics in the notice's words with their status, its chapters with their
+ * progress, and how much of it they studied, skipped because they knew it, and its size in lessons.
+ * `notPlannedReason` says why it, or a topic, is out of the plan; null when it's in.
+ */
+export type SubjectScopeContext = {
+  chapters: {
+    lessonsDone: number;
+    lessonsTotal: number;
+    nextDate: string | null;
+    state: string;
+    title: string;
+  }[];
+  language: string;
+  scope: { kind: "subject" };
+  subject: {
+    lessonsDone: number;
+    lessonsKnown: number;
+    lessonsTotal: number;
+    name: string;
+    nextDate: string | null;
+    notPlannedReason: string | null;
+    /** Its questions on the exam, when the notice says. */
+    questions: number | null;
+    /** `notice`: a subject of the exam's notice; `plan`: a module of the plan. */
+    source: string;
+  };
+  topics: {
+    name: string;
+    nextDate: string | null;
+    notPlannedReason: string | null;
+    status: string | null;
+  }[];
+  version: 1;
+};
+
+/**
+ * A question of a study session's block or of mistakes practice, as the learner saw it: its text
+ * with what it's read with (`set`: a passage, a case, a chart's description) and its options. Once
+ * they checked it, `answer` has what they answered, the right answer, whether it was right and
+ * why; before that it's null and holds nothing that gives the answer away.
+ */
+export type ItemScopeContext = {
+  answer: {
+    correctAnswer: string | null;
+    explanation: string | null;
+    isCorrect: boolean;
+    learnerAnswer: string | null;
+  } | null;
+  language: string;
+  question: { format: string; options: string[]; text: string };
+  scope: { kind: "item" };
+  set: string | null;
+  skill: string | null;
+  version: 1;
+};
+
+/**
+ * A page of the app the learner can ask the buddy about, besides their plan. A subject belongs to
+ * a goal, and a session's or practice's question comes from one, so they're only ever asked about
+ * with that goal's plan.
+ */
+export type TutorScreenContext =
+  | ChapterScopeContext
+  | ItemScopeContext
+  | LessonScopeContext
+  | MockScopeContext
+  | SubjectScopeContext;
 
 export type LessonQuestionContextSnapshot =
   | ChapterScopeContext

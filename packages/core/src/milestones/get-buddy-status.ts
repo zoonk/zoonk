@@ -1,5 +1,5 @@
 import "server-only";
-import { type BuddyGlasses, type BuddyKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import {
   type BeltLevelResult,
   calculateBeltLevel,
@@ -18,12 +18,16 @@ import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
+import { type ResolvedBuddy, resolveProfileBuddy } from "../profile/default-buddy";
 import { hasEnergyStarted } from "../progress/_utils/energy-started";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { measureProgress } from "../sessions/_utils/capture-snapshot";
-import { countMistakesFixedToday, getSessionMissions } from "../sessions/_utils/session-missions";
-import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
-import { type Mission } from "../sessions/missions";
+import { findCarriedOverSession } from "../sessions/_utils/current-session";
+import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
+import { type Mission, getMissionBonus } from "../sessions/missions";
+import { type FirstSteps } from "../sessions/missions/first-steps";
+import { getDayFirstSteps } from "../sessions/missions/get-day-first-steps";
+import { getDayMissions, hasDayMissionBonus } from "../sessions/missions/get-day-missions";
 import { getSession } from "../users/get-session";
 import { type BuddyDiet, loadBuddyDiet } from "./_utils/buddy-diet";
 import { loadMilestoneCounts } from "./award-milestones";
@@ -32,22 +36,23 @@ import { type GlassesProgress, getGlassesProgress } from "./milestone-rules";
 
 const DAYS_PER_WEEK = 7;
 
-/** Today's three missions and the full meal they make, from the active goal's session. */
+/** Today's achievable missions and their completion bonus, from the active goal's session. */
 type BuddyToday = { fullMeal: { bonus: number; earned: boolean }; missions: Mission[] };
 
 /**
  * The buddy's page: its Energy (and whether it naps, is awake or glows), its stage and how far the
  * next one is, today's missions, what it ate this week and the glasses earned. Stage and glow come
  * from the belt and Energy, and glasses from milestones, so the buddy has no economy of its own.
- * Learners without a buddy get the same numbers with `buddy` null.
+ * Learners without a saved choice get the default buddy with the same progress.
  */
 type BuddyStatus = {
   belt: BeltLevelResult & { totalBrainPower: number };
   /** `current` is null until a day of study has passed: a new buddy has no Energy to show yet. */
   energy: { current: number | null; state: BuddyEnergyState; studiedToday: boolean };
   glasses: GlassesProgress[];
+  firstSteps: FirstSteps | null;
   nextStage: { belt: string; brainPowerToGo: number; stage: BuddyStage } | null;
-  buddy: { glasses: BuddyGlasses; kind: BuddyKind; name: string | null } | null;
+  buddy: ResolvedBuddy;
   stage: BuddyStage;
   thisWeek: BuddyDiet;
   /** Null until today's session exists: reading the buddy never builds one. */
@@ -88,31 +93,34 @@ async function loadToday({
   localDate: Date;
   timeZone: string;
   userId: string;
-}): Promise<BuddyToday | null> {
-  const session = goalId
+}): Promise<{ today: BuddyToday; firstSteps: FirstSteps | null } | null> {
+  const carried = goalId
+    ? await findCarriedOverSession({ goalId, now: new Date(), timeZone, userId })
+    : null;
+
+  const current = goalId
     ? await prisma.studySession.findUnique({
-        include: { blocks: { orderBy: { position: "asc" } } },
+        include: STUDY_SESSION_INCLUDE,
         where: { userGoalDate: { goalId, localDate, userId } },
       })
     : null;
+
+  const session = carried && !current?.startedAt ? carried : current;
 
   if (!session) {
     return null;
   }
 
-  const [answers, fixedToday] = await Promise.all([
-    prisma.attempt.findMany({
-      select: { itemId: true },
-      where: { itemId: { not: null }, studySessionId: session.id, userId },
-    }),
-    countMistakesFixedToday({ localDate, timeZone, userId }),
+  const [missions, earned] = await Promise.all([
+    getDayMissions({ session, through: new Date(), timeZone }),
+    hasDayMissionBonus({ now: new Date(), session, timeZone }),
   ]);
 
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+  const firstSteps = await getDayFirstSteps({ missions, session, timeZone });
 
   return {
-    fullMeal: { bonus: BRAIN_POWER_BONUS.fullMeal, earned: session.fullMealAt !== null },
-    missions: getSessionMissions({ answeredItemIds, blocks: session.blocks, fixedToday }),
+    firstSteps,
+    today: { fullMeal: { bonus: getMissionBonus(missions), earned }, missions },
   };
 }
 
@@ -169,14 +177,13 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
   return {
     buddy: {
       belt: { ...belt, totalBrainPower: progress.brainPower },
-      buddy: profile?.buddyKind
-        ? { glasses: profile.buddyGlasses, kind: profile.buddyKind, name: profile.buddyName }
-        : null,
+      buddy: resolveProfileBuddy(profile),
       energy: {
         current: energy,
         state: getBuddyEnergyState(energy, { studiedToday }),
         studiedToday,
       },
+      firstSteps: todayMissions?.firstSteps ?? null,
       glasses: getGlassesProgress(counts),
       nextStage: next
         ? {
@@ -186,7 +193,7 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
         : null,
       stage: getBuddyStage(belt.color),
       thisWeek,
-      today: todayMissions,
+      today: todayMissions?.today ?? null,
     },
     status: "ready",
   };

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type PlanScopeContext } from "../../lessons/lesson-question-context";
+import { TEST_TUTOR_LINKS } from "../_test-utils/tutor-links";
 import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
 
 const CONTEXT = {
@@ -22,6 +23,7 @@ describe(createGoalTutorMessages, () => {
     const messages = createGoalTutorMessages({
       contextSnapshot: CONTEXT,
       learnerMemory: MEMORY,
+      links: TEST_TUTOR_LINKS,
       priorTurns: [{ answer: "Mais da metade dos membros.", question: FIRST }],
       question: SECOND,
     });
@@ -39,6 +41,7 @@ describe(createGoalTutorMessages, () => {
     const first = createGoalTutorMessages({
       contextSnapshot: CONTEXT,
       learnerMemory: MEMORY,
+      links: TEST_TUTOR_LINKS,
       priorTurns: [],
       question: FIRST,
     });
@@ -46,6 +49,7 @@ describe(createGoalTutorMessages, () => {
     const next = createGoalTutorMessages({
       contextSnapshot: CONTEXT,
       learnerMemory: ["Estuda à noite"],
+      links: TEST_TUTOR_LINKS,
       priorTurns: [{ answer: "Mais da metade dos membros.", question: FIRST }],
       question: SECOND,
     });
@@ -58,6 +62,7 @@ describe(createGoalTutorMessages, () => {
     const messages = createGoalTutorMessages({
       contextSnapshot: CONTEXT,
       learnerMemory: MEMORY,
+      links: TEST_TUTOR_LINKS,
       priorTurns: [{ answer: "Mais da metade dos membros.", question: FIRST }],
       question: SECOND,
     });
@@ -73,12 +78,40 @@ describe(createGoalTutorMessages, () => {
     const messages = createGoalTutorMessages({
       contextSnapshot: CONTEXT,
       learnerMemory: [],
+      links: TEST_TUTOR_LINKS,
       priorTurns: [],
       question: FIRST,
     });
 
     expect(serializeGoalTutorMessages(messages)).toBe(
       `USER:\n<CURRENT_CONTEXT>\n${JSON.stringify(CONTEXT)}\n</CURRENT_CONTEXT>\n\nUSER:\n<LEARNER_MESSAGE>\n${FIRST}\n</LEARNER_MESSAGE>`,
+    );
+  });
+
+  it("gives the model the host's link wherever the context points at something the app opens", () => {
+    const behind = {
+      ...CONTEXT,
+      catchUp: {
+        lessons: [
+          { inToday: true, link: { blockId: "block-1", kind: "block" }, title: "Quórum" },
+          { inToday: false, link: { kind: "page", page: "today" }, title: "Votação" },
+        ],
+        offeredToday: false,
+        total: 2,
+      },
+    } satisfies PlanScopeContext;
+
+    const [context] = texts(
+      createGoalTutorMessages({
+        contextSnapshot: behind,
+        links: TEST_TUTOR_LINKS,
+        priorTurns: [],
+        question: FIRST,
+      }),
+    );
+
+    expect(context?.text[0]).toContain(
+      '"lessons":[{"inToday":true,"link":"/block/block-1","title":"Quórum"},{"inToday":false,"link":"/today","title":"Votação"}]',
     );
   });
 });

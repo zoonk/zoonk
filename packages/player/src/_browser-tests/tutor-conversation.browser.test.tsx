@@ -2,13 +2,14 @@ import { render } from "@testing-library/react";
 import {
   LESSON_QUESTION_PLAN_CHANGE_PART,
   LESSON_QUESTION_REPLACED_CHANGES_PART,
+  LESSON_QUESTION_SAVED_ANSWER_PART,
   LESSON_QUESTION_TOOL_OFFER_PART,
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
+import { TUTOR_ANSWER, stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
@@ -51,6 +52,7 @@ const OFFERED_CALL: TutorToolOffer = {
     defaultMinutes: 2,
     limit: null,
     minutes: [1, 2, 3, 5],
+    paused: false,
     plusMinutes: [],
   },
   chapterId: "01a11014-0000-7000-8000-000000000002",
@@ -59,10 +61,14 @@ const OFFERED_CALL: TutorToolOffer = {
   unitTitle: "Talking about your projects",
 };
 
-function renderConversation() {
+function renderConversation({
+  draft,
+  openBlock,
+}: { draft?: string; openBlock?: (blockId: string) => void } = {}) {
   render(
     <TutorConversation
       composerLabel="Message Zu"
+      draft={draft}
       goalId="01a11014-0000-7000-8000-00000000000a"
       greeting="Hi! I'm Zu."
       identity={{ avatar: null, name: "Zu" }}
@@ -70,10 +76,13 @@ function renderConversation() {
       renderPlanChange={({ change }) => <p data-status={change.status}>Card: {change.reason}</p>}
       renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
       suggestions={[]}
-      tutor={buildTutor()}
+      tutor={buildTutor(openBlock ? { appLinks: { openBlock } } : {})}
     />,
   );
 }
+
+/** One of today's blocks, as the buddy links it. */
+const BLOCK_ID = "01a11014-0000-7000-8000-00000000000b";
 
 async function ask(question: string) {
   const composer = page.getByRole("textbox", { name: "Message Zu" });
@@ -83,6 +92,26 @@ async function ask(question: string) {
 }
 
 describe("the buddy's conversation", () => {
+  it("puts a question brought from search in the composer: only the learner's own send asks it", async () => {
+    // The API answers as it does when it writes an answer quickly: saved, so nothing is left to
+    // follow once the test ends.
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const question = "Why do two discounts in a row not add up?";
+
+    renderConversation({ draft: question });
+
+    const composer = page.getByRole("textbox", { name: "Message Zu" });
+    await expect.element(composer).toBeEnabled();
+    await expect.element(composer).toHaveValue(question);
+    expect(api.inputs).toStrictEqual([]);
+
+    await composer.click();
+    await userEvent.keyboard("{Enter}");
+
+    await expect.element(page.getByText(TUTOR_ANSWER)).toBeVisible();
+    expect(api.inputs.map((input) => input.question)).toStrictEqual([question]);
+  });
+
   it("shows a proposed plan change with the words that say it, never alone under Thinking…", async () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();
@@ -198,5 +227,57 @@ describe("the buddy's conversation", () => {
     await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
     await expect.element(page.getByText("The notice says 80 questions.")).toBeVisible();
     await expect.element(page.getByText("Thinking…")).not.toBeInTheDocument();
+  });
+
+  it("links the app only once the answer's saved text arrives, and opens a block as Today does", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+    const openBlock = vi.fn();
+
+    renderConversation({ openBlock });
+    await ask("Which lesson first?");
+
+    // While it streams, every link reads as its words, even one to the app.
+    stream.write(
+      `Start with [Atoms](/session?block=${BLOCK_ID}), not [this site](https://example.com).`,
+    );
+
+    await expect.element(page.getByText("this site", { exact: false })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "Atoms" })).not.toBeInTheDocument();
+
+    // Saved, the answer keeps only the links it was given: the outside one is words.
+    stream.part(LESSON_QUESTION_SAVED_ANSWER_PART, {
+      answer: `Start with [Atoms](/session?block=${BLOCK_ID}), not this site.`,
+    });
+
+    stream.finish();
+    stream.close();
+
+    const lesson = page.getByRole("link", { name: "Atoms" });
+    await expect.element(lesson).toHaveAttribute("href", `/session?block=${BLOCK_ID}`);
+    await expect.element(page.getByRole("link", { name: "this site" })).not.toBeInTheDocument();
+
+    await lesson.click();
+    expect(openBlock).toHaveBeenCalledExactlyOnceWith(BLOCK_ID);
+  });
+
+  it("keeps every link as words in an answer whose saved text never came", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+
+    renderConversation({ openBlock: vi.fn() });
+    await ask("Where are my mistakes?");
+
+    stream.write("Open [your mistakes notebook](/mistakes).");
+    stream.finish();
+    stream.close();
+
+    await expect.element(page.getByText("your mistakes notebook")).toBeVisible();
+    await expect.element(page.getByText("Thinking…")).not.toBeInTheDocument();
+
+    const notebook = page.getByRole("link", { name: "your mistakes notebook" });
+    await expect.element(notebook).not.toBeInTheDocument();
   });
 });

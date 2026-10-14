@@ -158,6 +158,8 @@ function describeOperation(operation: PlanOperation): string {
       return "the tools the lessons use change";
     case "setExamChoice":
       return `${operation.subject} is studied for ${operation.group}`;
+    case "fitLessons":
+      return "the lessons the learner's time fits by the date come in";
     default:
       return operation satisfies never;
   }

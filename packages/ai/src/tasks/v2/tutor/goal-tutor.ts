@@ -17,11 +17,14 @@ import {
 } from "./goal-tutor-cards";
 import chapterScreenPrompt from "./goal-tutor-chapter.prompt.md";
 import examGoalPrompt from "./goal-tutor-exam.prompt.md";
+import itemScreenPrompt from "./goal-tutor-item.prompt.md";
 import lessonScreenPrompt from "./goal-tutor-lesson.prompt.md";
 import { LOOKUP_DEADLINE_MS, type LookUpGoalData, createLookUpTool } from "./goal-tutor-lookup";
 import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
 import mockScreenPrompt from "./goal-tutor-mock.prompt.md";
+import { type GoalTutorLinks, formatGoalTutorPageGuide } from "./goal-tutor-pages";
 import { shouldSearchFirst } from "./goal-tutor-search";
+import subjectScreenPrompt from "./goal-tutor-subject.prompt.md";
 import systemPrompt from "./goal-tutor.prompt.md";
 
 /**
@@ -61,6 +64,7 @@ const MAX_STEPS = 4;
  * search and rejects the request ("Tool choice 'web_search_preview' not found").
  */
 const SEARCH_TOOL = "searchWeb";
+const LOOKUP_TOOL = "lookUp";
 const SEARCH_RESULTS = 5;
 const SEARCH_CHARACTERS_PER_RESULT = 1500;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty goal tutor answer";
@@ -70,6 +74,11 @@ type GoalTutorInput = {
   contextSnapshot: PlanScopeContext;
   /** Facts the learner shared before (their goals, routine, how they learn), when memory is on. */
   learnerMemory?: readonly string[];
+  /**
+   * How the host links its own pages and what the context and lookups point at: the buddy links
+   * only what it's given, copied as it reads it.
+   */
+  links: GoalTutorLinks;
   /** Reads the learner's own data the context doesn't show; only the model sees what it finds. */
   lookUp: LookUpGoalData;
   offerAppTool: OfferGoalAppTool;
@@ -85,10 +94,11 @@ export type GenerateGoalTutorAnswerParams = GoalTutorInput & {
 };
 
 function createTools({
+  links,
   lookUp,
   offerAppTool,
   proposePlanChange,
-}: Pick<GoalTutorInput, "lookUp" | "offerAppTool" | "proposePlanChange">) {
+}: Pick<GoalTutorInput, "links" | "lookUp" | "offerAppTool" | "proposePlanChange">) {
   return {
     [SEARCH_TOOL]: zoonkGateway.tools.parallelSearch({
       excerpts: { maxCharsPerResult: SEARCH_CHARACTERS_PER_RESULT },
@@ -96,7 +106,7 @@ function createTools({
       mode: "agentic",
     }),
     ...createCardTools({ offerAppTool, proposePlanChange }),
-    lookUp: createLookUpTool(lookUp),
+    [LOOKUP_TOOL]: createLookUpTool({ links, lookUp }),
   };
 }
 
@@ -109,10 +119,24 @@ const TOOL_TIMEOUT = { tools: { lookUpMs: LOOKUP_DEADLINE_MS } };
  * tools, the next step says what the card or button shows and answers the rest of the message,
  * and may still offer an app tool after a change; the last step only answers, so a message never
  * ends on tool calls. Every step sends the same tools and thinking, which a provider's cache keys
- * on, so a later step reads the whole request before it from the cache.
+ * on, so a later step reads the whole request before it from the cache; except that once a step
+ * looked up the learner's data, the steps after it can't search, so nothing it found goes into a
+ * search query (a mitigation: the context and earlier answers still reach the model that searches).
  */
-function createPrepareStep(searchFirst: Promise<boolean>) {
-  return async ({ stepNumber }: { stepNumber: number }) => {
+function createPrepareStep({
+  searchFirst,
+  toolNames,
+}: {
+  searchFirst: Promise<boolean>;
+  toolNames: (keyof ReturnType<typeof createTools>)[];
+}) {
+  return async ({
+    stepNumber,
+    steps,
+  }: {
+    stepNumber: number;
+    steps: readonly { toolCalls: readonly { toolName: string }[] }[];
+  }) => {
     if (stepNumber === MAX_STEPS - 1) {
       return { toolChoice: "none" as const };
     }
@@ -121,7 +145,11 @@ function createPrepareStep(searchFirst: Promise<boolean>) {
       return { toolChoice: { toolName: SEARCH_TOOL, type: "tool" } as const };
     }
 
-    return {};
+    const lookedUp = steps.some((step) =>
+      step.toolCalls.some((call) => call.toolName === LOOKUP_TOOL),
+    );
+
+    return lookedUp ? { activeTools: toolNames.filter((name) => name !== SEARCH_TOOL) } : {};
   };
 }
 
@@ -134,23 +162,46 @@ function createPrepareStep(searchFirst: Promise<boolean>) {
 const examSystemPrompt = `${systemPrompt}\n${examGoalPrompt}`;
 
 /**
- * A question asked from a screen (a chapter, a lesson or a finished mock) also reads that screen's
- * instructions, last. A thread stays on one screen, so its messages keep reading the same prompt
+ * A question asked from a screen (a chapter, a lesson, a subject, a session's or practice's question
+ * or a finished mock) also reads that screen's instructions, last. A thread stays on one screen, so its messages keep reading the same prompt
  * from the cache, and the buddy's own conversation never reads them.
  */
 const SCREEN_PROMPTS = {
   answer: lessonScreenPrompt,
   chapter: chapterScreenPrompt,
+  item: itemScreenPrompt,
   lesson: lessonScreenPrompt,
   mock: mockScreenPrompt,
   step: lessonScreenPrompt,
+  subject: subjectScreenPrompt,
 } satisfies Record<TutorScreenContext["scope"]["kind"], string>;
 
-function getSystemPrompt(contextSnapshot: PlanScopeContext): string {
+/**
+ * The app's pages the buddy may link here, with the host's links, after the instructions every
+ * goal shares: the same for every learner of a host, in its own conversation or on a screen, so it
+ * stays in the cached start of every request.
+ */
+function getPageGuide({
+  contextSnapshot,
+  links,
+}: Pick<GoalTutorInput, "contextSnapshot" | "links">) {
+  const guide = formatGoalTutorPageGuide({
+    pages: links.pages,
+    selectedGoal: contextSnapshot.selectedGoal === true,
+  });
+
+  return `## The app's pages\n\n${guide}\n`;
+}
+
+function getSystemPrompt({
+  contextSnapshot,
+  links,
+}: Pick<GoalTutorInput, "contextSnapshot" | "links">): string {
   const goalPrompt = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
+  const withPages = `${goalPrompt}\n${getPageGuide({ contextSnapshot, links })}`;
   const { screen } = contextSnapshot;
 
-  return screen ? `${goalPrompt}\n${SCREEN_PROMPTS[screen.scope.kind]}` : goalPrompt;
+  return screen ? `${withPages}\n${SCREEN_PROMPTS[screen.scope.kind]}` : withPages;
 }
 
 /**
@@ -178,16 +229,21 @@ function createGenerationOptions({
       })
     : Promise.resolve(false);
 
+  const tools = createTools(input);
+
   return {
-    instructions: getSystemPrompt(input.contextSnapshot),
+    instructions: getSystemPrompt(input),
     messages: createGoalTutorMessages(input),
     model,
-    prepareStep: createPrepareStep(searchFirst),
+    prepareStep: createPrepareStep({
+      searchFirst,
+      toolNames: Object.keys(tools).filter((name): name is keyof typeof tools => name in tools),
+    }),
     providerOptions: buildProviderOptions({ fallbackModels, model, useFallback }),
     reasoning,
     stopWhen: isStepCount(MAX_STEPS),
     timeout: TOOL_TIMEOUT,
-    tools: createTools(input),
+    tools,
   };
 }
 
@@ -265,7 +321,7 @@ export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
 
   const run = startTaskGeneration({
     analytics: context,
-    systemPrompt: getSystemPrompt(input.contextSnapshot),
+    systemPrompt: getSystemPrompt(input),
     task: GOAL_TUTOR_TASK,
   });
 

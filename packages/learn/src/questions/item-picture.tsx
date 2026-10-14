@@ -30,7 +30,7 @@ export function ItemPicture({ image }: { image: ItemPictureData }) {
     // oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; question pictures are stored, optimized webp files.
     <img
       alt={image.alt}
-      className="bg-muted/40 mx-auto h-auto max-h-[55dvh] w-auto max-w-full rounded-2xl object-contain"
+      className="bg-muted/40 mx-auto h-auto max-h-[55dvh] w-auto max-w-full rounded-xl object-contain"
       data-slot="item-picture"
       decoding="async"
       height={image.height ?? DEFAULT_HEIGHT}

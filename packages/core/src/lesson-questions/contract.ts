@@ -3,7 +3,15 @@ import { z } from "zod";
 import { lessonStepAnswerSchema } from "../lesson-player/contract";
 import { planChangeSchema } from "../plans/plan-change-contract";
 import { WRITTEN_CADENCES } from "../plans/planner/plan-state";
+import { missionMomentSchema } from "../sessions/completion-contract";
 import { practiceCallSchema } from "../view-models/language/language-view-contract";
+
+/** Where a buddy answer may send the learner: each host links the app's pages and these itself. */
+export type {
+  GoalTutorLinks,
+  GoalTutorPage,
+  TutorLink,
+} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
 
 export const MAX_LESSON_QUESTION_LENGTH = 2000;
 export const MAX_LESSON_QUESTION_THREAD_TURNS = 50;
@@ -13,7 +21,7 @@ const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 const lessonQuestionThreadCursorSchema = z.uuid();
 
 /** The things a learner can ask the tutor about beyond a lesson; each has one thread. */
-const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock"] as const;
+const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock", "subject"] as const;
 
 /**
  * The tutor's suggestions a learner taps to ask about a lesson screen: explain it more simply, go
@@ -33,7 +41,7 @@ export const lessonTutorSuggestionSchema = z
 
 export const getLessonQuestionThreadInputSchema = z
   .object({
-    contextKind: z.enum(["lesson", "step", "answer", ...SCREEN_CONTEXT_KINDS]).optional(),
+    contextKind: z.enum(["lesson", "step", "answer", "item", ...SCREEN_CONTEXT_KINDS]).optional(),
     cursor: lessonQuestionThreadCursorSchema.optional(),
     stepId: z.uuid().optional(),
   })
@@ -63,14 +71,32 @@ const lessonQuestionAnswerContextInputSchema = z
   })
   .strict();
 
-/** A chapter, plan or mock is asked about as a whole: the server builds what it shows. */
+/** A chapter, plan, mock or subject is asked about as a whole: the server builds what it shows. */
 const lessonQuestionScreenContextSchema = z.object({ kind: z.enum(SCREEN_CONTEXT_KINDS) }).strict();
+
+/**
+ * A question of the item bank as a session's block or mistakes practice shows it. The server
+ * builds it from the item: with the numbers a math problem was served with in its block
+ * (`blockId`), and, once the learner checked it (`answered`), with their latest answer to it from
+ * their own record and the right one. Before the check the tutor never sees the answer.
+ */
+const lessonQuestionItemContextSchema = z
+  .object({
+    answered: z.boolean(),
+    blockId: z
+      .uuid()
+      .optional()
+      .meta({ description: "The session block it's asked in; absent in mistakes practice" }),
+    kind: z.literal("item"),
+  })
+  .strict();
 
 export const lessonQuestionContextInputSchema = z.discriminatedUnion("kind", [
   lessonQuestionLessonContextInputSchema,
   lessonQuestionStepContextInputSchema,
   lessonQuestionAnswerContextInputSchema,
   lessonQuestionScreenContextSchema,
+  lessonQuestionItemContextSchema,
 ]);
 
 export const createLessonQuestionInputSchema = z
@@ -245,6 +271,7 @@ export type TutorToolOffer = z.infer<typeof tutorToolOfferSchema>;
 
 const lessonQuestionContextSummarySchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("lesson") }).strict(),
+  z.object({ kind: z.literal("item") }).strict(),
   lessonQuestionScreenContextSchema,
   z
     .object({
@@ -302,21 +329,35 @@ export type LessonScopeContextInput = Extract<
   { kind: "answer" | "lesson" | "step" }
 >;
 export type LessonQuestionContextSummary = z.infer<typeof lessonQuestionContextSummarySchema>;
+export type LessonQuestionItemContext = z.infer<typeof lessonQuestionItemContextSchema>;
 export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
 export type LessonScreenSuggestion = (typeof LESSON_SCREEN_SUGGESTIONS)[number];
 export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
 /**
  * What a tutor thread is about: a Library lesson, a chapter, the plan of one of the learner's
- * goals (with the course it's built from), or one of their finished mocks (by its session block,
- * as the API addresses mocks everywhere). A learner has one thread per thing.
+ * goals (with the course it's built from), a subject of one of their goals (by its key in the
+ * goal's syllabus), a question of the item bank they're asked in a session or practice, or one of
+ * their finished mocks (by its session block, as the API addresses mocks everywhere). A learner has
+ * one thread per thing.
  */
 export type TutorTarget =
   | { chapterId: string; kind: "chapter" }
   | { goalId: string; kind: "plan" }
+  | { goalId: string; kind: "subject"; subjectKey: string }
+  | { itemId: string; kind: "item" }
   | { blockId: string; kind: "mock" }
   | { kind: "lesson"; lessonId: string };
+/**
+ * A question just asked: the question, and what asking did to the day's missions (a question to
+ * the buddy can be one of them), so the conversation can say so. Older servers send no moment.
+ */
+export const createdLessonQuestionSchema = lessonQuestionResourceSchema.extend({
+  missionMoment: missionMomentSchema.nullable().default(null),
+});
+
 export type LessonQuestionResource = z.infer<typeof lessonQuestionResourceSchema>;
+export type CreatedLessonQuestion = z.infer<typeof createdLessonQuestionSchema>;
 export type LessonQuestionThreadResource = z.infer<typeof lessonQuestionThreadResourceSchema>;
 
 const memoryFactSummarySchema = z.object({ id: z.uuid(), statement: z.string() }).nullable();
@@ -354,3 +395,13 @@ export const LESSON_QUESTION_TOOL_OFFER_PART = "data-tool-offer";
 export const LESSON_QUESTION_REPLACED_CHANGES_PART = "data-plan-changes-replaced";
 
 export const replacedPlanChangesSchema = z.object({ ids: z.array(z.uuid()) });
+
+/**
+ * The answer stream's part that carries a buddy answer as it was saved, once it's saved: its links
+ * checked against the ones the answer was given (the rest are its words). The answer it streamed
+ * reads with no live links; this text replaces it, and only it, or the answer read again from the
+ * server, links the app.
+ */
+export const LESSON_QUESTION_SAVED_ANSWER_PART = "data-saved-answer";
+
+export const savedAnswerSchema = z.object({ answer: z.string() });

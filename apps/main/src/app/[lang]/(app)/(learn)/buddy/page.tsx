@@ -1,15 +1,20 @@
+import { AuthGatePage } from "@/components/auth-gate";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getReadAt } from "@/lib/learn/read-at";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
+import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
+import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { getSession } from "@zoonk/core/users/session";
+import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
+import { PageWithAside } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { LearnNoGoal } from "../_components/learn-no-goal";
+import { BuddyGoalStartClient } from "./buddy-goal-start-client";
 import { BuddyPageClient } from "./buddy-page-client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,23 +57,38 @@ async function hasOpenMistake(goalId: string): Promise<boolean> {
 }
 
 async function BuddyContent() {
-  const [result, goal, session] = await Promise.all([
+  const [result, goal, session, earlierQuestions] = await Promise.all([
     getBuddyStatus({}),
     findTutoredGoal(),
     getSession(),
+    hasEarlierQuestions(),
   ]);
 
-  // The buddy tutors a goal: without one, the tab's one next step is setting one, as the other tabs say.
-  if (result.status !== "ready" || !goal) {
-    return <LearnNoGoal />;
+  // Someone without a session may have goals in their account: they log in and come back here.
+  if (result.status !== "ready") {
+    const t = await getExtracted();
+
+    return (
+      <AuthGatePage
+        description={t("Your buddy answers your questions and adjusts your plan.")}
+        next="/buddy"
+        title={t("Your buddy")}
+      />
+    );
+  }
+
+  // The buddy tutors a goal: without one, it takes the learner's goal right here.
+  if (!goal) {
+    return <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />;
   }
 
   const canAsk = Boolean(session && !session.user.isAnonymous);
 
-  const [hasMistake, thread, readAt] = await Promise.all([
+  const [hasMistake, thread, readAt, memory] = await Promise.all([
     hasOpenMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
     getReadAt(),
+    getCurrentUserMemory(),
   ]);
 
   // The conversation is the lesson tutor's, so the tab needs the player's messages.
@@ -77,7 +97,9 @@ async function BuddyContent() {
       <BuddyPageClient
         canAsk={canAsk}
         goalId={goal.id}
+        hasEarlierQuestions={earlierQuestions}
         initialThread={thread}
+        memoryCount={memory?.facts.length ?? 0}
         readAt={readAt}
         situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
         status={result.buddy}
@@ -86,32 +108,51 @@ async function BuddyContent() {
   );
 }
 
-function BuddySkeleton() {
+/**
+ * The buddy's row, the start of its conversation and, on a wide screen, its day beside them, at
+ * their size and place while the tab loads.
+ */
+function BuddySkeleton({ dayLabel }: { dayLabel: string }) {
   return (
-    <div className="flex flex-1 flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Skeleton className="size-16 rounded-full" />
+    <PageWithAside
+      aside={<BuddyDaySkeleton />}
+      asideClassName="hidden"
+      asideLabel={dayLabel}
+      className="flex-1"
+    >
+      <div className={BUDDY_COLUMN_CLASS}>
+        <div className="flex items-center gap-2.5">
+          <Skeleton className="size-8 rounded-full" />
+          <div className="flex flex-1 flex-col gap-1.5">
+            <Skeleton className="h-3.5 w-20" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+          <Skeleton className="h-7 w-24 rounded-md min-[72rem]:hidden" />
+        </div>
         <div className="flex flex-col gap-2">
-          <Skeleton className="h-7 w-28" />
-          <Skeleton className="h-8 w-44 rounded-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
+        <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
+          <Skeleton className="h-6.5 w-4/5 rounded-md" />
+          <Skeleton className="h-12 w-full rounded-xl" />
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-5 w-24" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-4/5" />
-      </div>
-    </div>
+    </PageWithAside>
   );
 }
 
 /**
  * The buddy tab: the learner's conversation with their buddy, their tutor for the goal (doubts,
- * the plan, and changes to it by talking), with the buddy's Energy and missions kept to one line.
+ * the plan, and changes to it by talking), with the buddy's day (Energy and missions) a tap away
+ * on a phone and beside the conversation on a wide screen. Before there's a goal, the buddy takes
+ * one.
  */
-export default function BuddyPage() {
+export default async function BuddyPage() {
+  const t = await getExtracted();
+
   return (
-    <Suspense fallback={<BuddySkeleton />}>
+    <Suspense fallback={<BuddySkeleton dayLabel={t("Your day")} />}>
       <BuddyContent />
     </Suspense>
   );

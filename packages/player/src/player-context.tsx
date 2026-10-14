@@ -1,12 +1,13 @@
 "use client";
 
-import { type ReactNode, type Ref, createContext, useContext } from "react";
+import { type MouseEvent, type ReactNode, type Ref, createContext, useContext } from "react";
 
 type PlayerLinkComponentProps = {
   "aria-keyshortcuts"?: string;
   children: ReactNode;
   className?: string;
   href: string;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   prefetch?: boolean;
   ref?: Ref<HTMLAnchorElement>;
 };

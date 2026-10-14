@@ -11,7 +11,7 @@ import {
   SparklesIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import { PlusNotice } from "../_components/plus-lock";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -113,7 +113,11 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
     <OfferCard
       description={descriptions[offer.cadence]}
       locked={locked}
-      tile={<KindTile kind="essay" size="sm" />}
+      tile={
+        <OfferTile>
+          <KindDot kind="essay" />
+        </OfferTile>
+      }
       title={offer.subject}
     >
       {locked ? (
@@ -135,7 +139,11 @@ export function MistakesOffer({ href, offer }: { href: string; offer: Offer<"mis
         "{count, plural, one {# mistake to fix, with practice that brings it back.} other {# mistakes to fix, with practice that brings each one back.}}",
         { count: offer.open },
       )}
-      tile={<KindTile kind="mistakes" size="sm" />}
+      tile={
+        <OfferTile>
+          <KindDot kind="mistakes" />
+        </OfferTile>
+      }
       title={t("Mistakes notebook")}
     >
       <OfferLink href={href}>{t("Open")}</OfferLink>

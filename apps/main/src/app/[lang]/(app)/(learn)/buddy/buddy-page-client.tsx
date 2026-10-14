@@ -1,10 +1,13 @@
 "use client";
 
-import { saveBuddyAction } from "@/app/[lang]/(settings)/settings/appearance/actions";
+import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
 import { useRouter } from "@/i18n/navigation";
+import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
+import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
+import { useMissionLinks } from "@/lib/session/use-study-navigation";
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
   BuddyScreen,
@@ -14,14 +17,27 @@ import {
   useBuddyTutor,
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
+import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
-const HREFS: BuddyScreenHrefs = { energy: "/energy", logbook: "/logbook" };
+const HREFS: BuddyScreenHrefs = {
+  energy: "/energy",
+  logbook: "/logbook",
+  memory: "/settings/memory",
+};
+
+const WITH_EARLIER_QUESTIONS: BuddyScreenHrefs = {
+  ...HREFS,
+  earlierQuestions: "/buddy/earlier-questions",
+};
 
 /** What the conversation shows at once: the newest messages and where the earlier ones continue. */
 type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
 
-/** The goal's conversation with the buddy, as the buddy screen describes it. */
+/**
+ * The goal's conversation with the buddy, as the buddy screen describes it. A question asked from
+ * search (`?ask=`) waits in its composer: only the learner's own send asks it.
+ */
 function BuddyConversation({
   canAsk,
   goalId,
@@ -32,24 +48,42 @@ function BuddyConversation({
   initialThread: ThreadPage | null;
 }) {
   const content = useBuddyTutor();
+  const router = useRouter();
+  const appLinks = useTutorAppLinks(goalId);
+
   // The conversation names the buddy from the screen's own identity, which follows edits live.
-  const tutor = useMemo(() => getTutorConfig({ buddy: null, canAsk }), [canAsk]);
+  const tutor = useMemo(
+    () => getTutorConfig({ appLinks, buddy: null, canAsk }),
+    [appLinks, canAsk],
+  );
+
+  const question = useSearchParams().get("ask") ?? undefined;
 
   return (
-    <TutorConversation goalId={goalId} initialThread={initialThread} tutor={tutor} {...content} />
+    <TutorConversation
+      draft={question}
+      goalId={goalId}
+      initialThread={initialThread}
+      // A question that completed a mission moves the buddy's day: read it again.
+      onMissionMoment={() => router.refresh()}
+      tutor={tutor}
+      {...content}
+    />
   );
 }
 
 /**
  * The buddy saves as Appearance does, so both stay in step; a saved change refreshes the page, so
  * the tab bar's face and name follow it. The conversation is the goal's tutor thread over the
- * public API, and a plan change it proposes is answered as the Journey answers one, then the page
+ * public API, and a plan change it proposes is answered as the Plan answers one, then the page
  * reads the buddy's day again.
  */
 export function BuddyPageClient({
   canAsk,
   goalId,
+  hasEarlierQuestions,
   initialThread,
+  memoryCount,
   readAt,
   situation,
   status,
@@ -57,8 +91,11 @@ export function BuddyPageClient({
   canAsk: boolean;
   /** The goal the buddy tutors. */
   goalId: string;
+  /** Whether the learner asked questions in an earlier version of their courses, to reread. */
+  hasEarlierQuestions: boolean;
   /** The conversation as the page read it, shown at once and read again in the background. */
   initialThread: ThreadPage | null;
+  memoryCount: number;
   /** When the page read the buddy's day (`getReadAt`), to read it again from an old copy. */
   readAt: number;
   situation: TutorSituation;
@@ -66,12 +103,15 @@ export function BuddyPageClient({
 }) {
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
+  const missionLinks = useMissionLinks(goalId);
   useRefreshWhenOld(readAt);
+  useReportTabMissions({ missions: status.today?.missions ?? null, readAt });
 
   return (
     <BuddyScreen
       actions={{
         decidePlanChange: decide,
+        missionLinks,
         saveBuddy: async (buddy) => {
           const saved = await saveBuddyAction(buddy);
 
@@ -83,7 +123,8 @@ export function BuddyPageClient({
         },
         tools,
       }}
-      hrefs={HREFS}
+      hrefs={hasEarlierQuestions ? WITH_EARLIER_QUESTIONS : HREFS}
+      memoryCount={memoryCount}
       situation={situation}
       status={status}
     >

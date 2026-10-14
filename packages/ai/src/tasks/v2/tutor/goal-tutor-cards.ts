@@ -123,6 +123,7 @@ export type GoalTutorAppToolResult =
         | "nothingDue"
         | "nothingToSkip"
         | "onePerMessage"
+        | "testFailedToday"
         | "unavailable";
       status: "unavailable";
       tool: GoalTutorAppTool;

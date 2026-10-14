@@ -8,9 +8,16 @@ import { SURFACE_CLASS } from "../_components/surface";
 import { LearnLink } from "../learn-link";
 
 /**
- * The card around a feature the buddy offered: its tile, what it is in a few words, and its button.
- * A feature the learner's plan doesn't include looks the same, marked Plus, with Plus's notice in
- * place of its button (`PlusNotice inset`).
+ * A card in a conversation (a plan change, a feature offered) as wide as its content needs: the
+ * full width of a sheet, never stretched across a wide thread.
+ */
+export const TUTOR_CARD_WIDTH_CLASS = "w-full max-w-130";
+
+/**
+ * The card around a feature the buddy offered: its mark, what it is in a few words, and its button,
+ * on the same panel as a plan change, the thread's one kind of card. A feature the learner's plan
+ * doesn't include looks the same, marked Plus, with Plus's notice in place of its button
+ * (`PlusNotice inset`).
  */
 export function OfferCard({
   children,
@@ -28,15 +35,18 @@ export function OfferCard({
   const titleId = useId();
 
   return (
-    <section aria-labelledby={titleId} className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
+    <section
+      aria-labelledby={titleId}
+      className={cn(SURFACE_CLASS, TUTOR_CARD_WIDTH_CLASS, "flex flex-col gap-3 p-3")}
+    >
       <div className="flex items-start gap-3">
-        {tile}
+        <span className="flex h-5 shrink-0 items-center">{tile}</span>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1" id={titleId}>
-            <span className="font-medium text-balance">{title}</span>
+            <span className="text-sm font-medium text-balance">{title}</span>
             {locked && <PlusMark />}
           </h3>
-          <p className="text-muted-foreground text-sm text-pretty">{description}</p>
+          <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
         </div>
       </div>
       {children}
@@ -48,7 +58,7 @@ export function OfferCard({
 export function OfferLink({ children, href }: { children: React.ReactNode; href: string }) {
   return (
     <LearnLink
-      className={buttonVariants({ className: "self-start", variant: "outline" })}
+      className={buttonVariants({ className: "self-start", size: "sm", variant: "outline" })}
       href={href}
     >
       {children}
@@ -57,8 +67,8 @@ export function OfferLink({ children, href }: { children: React.ReactNode; href:
 }
 
 /**
- * The anchor of a feature that isn't one of the learning kinds (a new goal, statistics, memory):
- * its icon on a neutral tile, as small as a kind's tile on a card.
+ * The mark of a feature on its card: a kind's dot, or for one that isn't a learning kind (a new
+ * goal, statistics, memory) its 16px icon, quiet.
  */
 export function OfferTile({
   children,
@@ -72,7 +82,7 @@ export function OfferTile({
     <span
       aria-hidden="true"
       className={cn(
-        "bg-muted text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-lg [&_svg]:size-4",
+        "text-muted-foreground flex size-4 shrink-0 items-center justify-center [&_svg]:size-4",
         className,
       )}
     >

@@ -2,14 +2,13 @@
 
 import { type ChapterTestOutResult } from "@zoonk/core/learner/test-out/get";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
-import { ItemLine, ItemSupport, ItemText } from "./item-text";
+import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
+import { ItemLine, ItemStem, ItemSupport, ItemText, QUESTION_TEXT_CLASS } from "./item-text";
 import { PickRule, isCompletePick, isMultiPick, togglePick } from "./pick-rule";
 import { useTrueFalseLabels } from "./use-true-false-labels";
 
@@ -127,14 +126,44 @@ function usePicks({
 }
 
 /**
+ * The grade after an answer, on the panel every question's feedback uses: the verdict (only it
+ * carries color), why, and the notes the host adds last (a drill's trap, the time running out).
+ */
+function ChoiceGrade({
+  children,
+  feedback,
+}: {
+  children?: React.ReactNode;
+  feedback: ChoiceFeedback;
+}) {
+  const t = useExtracted();
+
+  return (
+    <FeedbackPanel aria-live="polite" role="status">
+      <FeedbackVerdict tone={feedback.isCorrect ? "right" : "wrong"}>
+        {feedback.isCorrect ? t("Correct!") : t("Not quite")}
+      </FeedbackVerdict>
+      {feedback.explanation && (
+        <FeedbackExplanation>
+          <ItemText text={feedback.explanation} />
+        </FeedbackExplanation>
+      )}
+      {children}
+    </FeedbackPanel>
+  );
+}
+
+/**
  * One multiple-choice or true-or-false question, for test-outs and mistake practice. The host
- * decides what happens on an answer; with feedback, the right answer and why appear in place. A
- * question that asks for several options (`select`) toggles them, and the host gets an answer
- * only once as many as it asks are picked (null before).
+ * decides what happens on an answer; with feedback, the right answer and why appear in place,
+ * with the host's notes about it (`feedbackNotes`). A question that asks for several options
+ * (`select`) toggles them, and the host gets an answer only once as many as it asks are picked
+ * (null before).
  */
 export function ChoiceQuestion({
   disabled = false,
   feedback = null,
+  feedbackNotes,
   onSelect,
   question,
   selected,
@@ -142,13 +171,14 @@ export function ChoiceQuestion({
 }: {
   disabled?: boolean;
   feedback?: ChoiceFeedback | null;
+  /** What the host adds under the grade, such as a drill's trap. */
+  feedbackNotes?: React.ReactNode;
   onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
   /** How true-or-false questions are answered: the goal's exam's words, or true or false. */
   trueFalseLabels?: TrueFalseLabels;
 }) {
-  const t = useExtracted();
   const options = useOptions({ question, trueFalseLabels });
   const locked = disabled || feedback !== null;
   const select = question.format === "multipleChoice" ? question.select : null;
@@ -184,13 +214,13 @@ export function ChoiceQuestion({
         image={question.image}
         visual={question.visual}
       />
-      <h2
-        className="text-lg font-medium outline-none"
+      <div
+        className={cn(QUESTION_TEXT_CLASS, "outline-none")}
         data-slot={CHOICE_QUESTION_TITLE_SLOT}
         tabIndex={-1}
       >
-        <ItemLine text={question.question} />
-      </h2>
+        <ItemStem text={question.question} heading="h2" />
+      </div>
 
       {isMultiPick(select) && <PickRule select={select} />}
 
@@ -202,45 +232,22 @@ export function ChoiceQuestion({
 
           return (
             <AnswerOption
-              className={cn(
-                result === "right" && "border-success bg-success/10",
-                result === "wrong" && "border-destructive bg-destructive/10",
-              )}
+              aria-keyshortcuts={String(index + 1)}
               disabled={locked}
               key={option.key}
               marker={index + 1}
               onClick={() => choose(index)}
               picked={picked}
+              result={result}
               role={isMultiPick(select) ? "checkbox" : "radio"}
             >
-              <span className="flex items-start gap-3">
-                <span className="flex-1">
-                  <ItemLine text={option.label} />
-                </span>
-                {result && (
-                  <LineMarker>
-                    {result === "right" && (
-                      <CheckIcon aria-label={t("Right answer")} className="text-success size-4" />
-                    )}
-                    {result === "wrong" && (
-                      <XIcon aria-label={t("Your answer")} className="text-destructive size-4" />
-                    )}
-                  </LineMarker>
-                )}
-              </span>
+              <ItemLine text={option.label} />
             </AnswerOption>
           );
         })}
       </AnswerOptionGroup>
 
-      {feedback && (
-        <div aria-live="polite" className="bg-muted rounded-2xl p-4 text-sm" role="status">
-          <p className="font-medium">{feedback.isCorrect ? t("Right!") : t("Not quite.")}</p>
-          {feedback.explanation && (
-            <ItemText className="text-muted-foreground mt-1" text={feedback.explanation} />
-          )}
-        </div>
-      )}
+      {feedback && <ChoiceGrade feedback={feedback}>{feedbackNotes}</ChoiceGrade>}
     </div>
   );
 }

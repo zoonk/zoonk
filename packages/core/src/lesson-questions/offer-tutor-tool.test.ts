@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -187,6 +188,26 @@ describe("app tools the buddy offers", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("does not newly offer a chapter test failed today", async () => {
+    const { goal, library, user } = await setup();
+
+    await learningEventFixture({
+      contentIds: { chapterId: library.chapters[0]?.id },
+      correctAnswers: 1,
+      goalId: goal.id,
+      incorrectAnswers: 7,
+      kind: "questions",
+      lessonKind: "testOut",
+      userId: user.id,
+    });
+
+    const asked = await askBuddy(goal.id);
+
+    await expect(
+      offerTutorTool({ ...asked, area: "english", tool: "chapterTest" }),
+    ).resolves.toStrictEqual({ reason: "testFailedToday", status: "unavailable" });
   });
 
   it("offers the test of the area's next chapter and keeps it with the answer", async () => {

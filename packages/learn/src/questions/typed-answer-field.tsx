@@ -48,7 +48,7 @@ export function TypedAnswerField({
       </label>
 
       <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-2xl"
+        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-xl"
         data-result={result ?? undefined}
       >
         <InputGroupInput
@@ -72,9 +72,9 @@ export function TypedAnswerField({
         {result && (
           <InputGroupAddon align="inline-end">
             {result === "correct" ? (
-              <CheckIcon aria-hidden="true" className="text-success" />
+              <CheckIcon aria-hidden="true" className="text-success-text" />
             ) : (
-              <XIcon aria-hidden="true" className="text-destructive" />
+              <XIcon aria-hidden="true" className="text-destructive-text" />
             )}
           </InputGroupAddon>
         )}

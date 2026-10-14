@@ -133,6 +133,10 @@ export function isSameDraftContext({
     return current.step.id === next.step.id;
   }
 
+  if (current.kind === "item" && next.kind === "item") {
+    return current.itemId === next.itemId;
+  }
+
   // A lesson, chapter, plan or mock has one conversation.
   return true;
 }

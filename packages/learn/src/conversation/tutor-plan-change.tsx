@@ -5,24 +5,27 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  CalendarCheck2Icon,
-  CalendarCogIcon,
-  CalendarSyncIcon,
-  CalendarX2Icon,
-} from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
+import { CHIP_CLASS } from "../_components/chip";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useLearnAnalytics } from "../learn-context";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { PlanFailedMessage } from "../plan/plan-failed-message";
+import {
+  useAddedTopicsStartText,
+  useAreaEndTexts,
+  useAreaStartTexts,
+  useReviewFirstText,
+} from "../plan/use-area-start-texts";
 import {
   useAppliedLine,
   useChangeSentence,
   useKeepOfficialDateLabel,
   useOfficialDateLine,
 } from "../plan/use-change-sentence";
-import { useProposalEffectText } from "../plan/use-effect-text";
+import { useLessonsEffectText, useTopicsEffectText } from "../plan/use-effect-counts";
+import { TUTOR_CARD_WIDTH_CLASS } from "./tutor-offer-card";
 
 type Decision = Extract<PlanChangeDecisionInput["status"], "applied" | "declined" | "undone">;
 
@@ -35,31 +38,63 @@ export type DecideTutorPlanChange = (input: {
   status: Decision;
 }) => Promise<PlanChangeView | null>;
 
-function ChangeIcon({ status }: { status: PlanChangeView["status"] }) {
-  const tone = {
-    applied: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-    declined: "bg-muted text-muted-foreground",
-    proposed: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
-    replaced: "bg-muted text-muted-foreground",
-    undone: "bg-muted text-muted-foreground",
-  }[status];
+type ChangeEffect = NonNullable<PlanChangeView["effect"]>;
 
-  const Icon = {
-    applied: CalendarCheck2Icon,
-    declined: CalendarX2Icon,
-    proposed: CalendarCogIcon,
-    replaced: CalendarSyncIcon,
-    undone: CalendarX2Icon,
-  }[status];
+/**
+ * What else a proposal does, in words under its diff (`PlanEffectDiff`, which counts the lessons it
+ * leaves out or adds first, then every date and count that moves): the lessons it leaves out by
+ * name, the topics, when focused areas start, an area that still ends on its day, the review it
+ * opens. Null when the diff says it all.
+ */
+function useChangeFootnote() {
+  const lessonsText = useLessonsEffectText();
+  const topicsText = useTopicsEffectText();
+  const areaStartTexts = useAreaStartTexts();
+  const areaEndTexts = useAreaEndTexts();
+  const addedTopicsStartText = useAddedTopicsStartText();
+  const reviewFirstText = useReviewFirstText();
 
-  return (
-    <span
-      aria-hidden="true"
-      className={cn("flex size-8 shrink-0 items-center justify-center rounded-lg", tone)}
-    >
-      <Icon className="size-4" />
-    </span>
+  return function changeFootnote(effect: PlanChangeView["effect"]): string | null {
+    if (!effect) {
+      return null;
+    }
+
+    const ends: ChangeEffect["areaEnds"] = effect.areaEnds ?? [];
+
+    // A start that stays says nothing when a review ahead opens with the area, or its end moves.
+    const starts = (effect.areaStarts ?? []).filter(
+      (start) =>
+        start.after !== start.before ||
+        (!effect.reviewFirst && !ends.some((areaEnd) => areaEnd.area === start.area)),
+    );
+
+    const sentences = [
+      ...areaStartTexts(starts),
+      // An end that moves is in the diff; one that stays says why.
+      ...areaEndTexts(ends.filter((areaEnd) => areaEnd.after === areaEnd.before)),
+      reviewFirstText(effect),
+      lessonsText(effect, { named: true }),
+      addedTopicsStartText(effect),
+      topicsText(effect),
+    ].filter(Boolean);
+
+    return sentences.length > 0 ? sentences.join(" ") : null;
+  };
+}
+
+/** How long a change lasts, when it's for a while only: a light week, a weekly event moved. */
+function ChangeScope({ operations }: { operations: PlanChangeView["operations"] }) {
+  const t = useExtracted();
+
+  const oneWeek = operations.some(
+    (operation) => operation.kind === "addLightWeek" || operation.kind === "moveWeeklyEvent",
   );
+
+  if (!oneWeek) {
+    return null;
+  }
+
+  return <span className={CHIP_CLASS}>{t("1 week")}</span>;
 }
 
 /** What became of the change, in the place its buttons were. */
@@ -143,17 +178,27 @@ function ChangeActions({
 
   if (status === "proposed") {
     return (
-      <div className="flex flex-wrap gap-2">
-        <Button disabled={isPending} focusableWhenDisabled onClick={() => answer("applied")}>
-          {overridesNotice ? t("Use my date anyway") : t("Apply")}
+      <div className="flex gap-2">
+        <Button
+          className="min-w-0 flex-1"
+          disabled={isPending}
+          focusableWhenDisabled
+          onClick={() => answer("applied")}
+          size="sm"
+        >
+          <span className="truncate">{overridesNotice ? t("Use my date anyway") : t("Apply")}</span>
         </Button>
         <Button
+          className="min-w-0 flex-1"
           disabled={isPending}
           focusableWhenDisabled
           onClick={() => answer("declined")}
-          variant="ghost"
+          size="sm"
+          variant="outline"
         >
-          {overridesNotice ? keepOfficialDate(document) : t("Not now")}
+          <span className="truncate">
+            {overridesNotice ? keepOfficialDate(document) : t("Not now")}
+          </span>
         </Button>
       </div>
     );
@@ -178,9 +223,12 @@ function ChangeActions({
 }
 
 /**
- * A change to the plan the buddy proposed in the conversation: what changes in one sentence, what
- * it does to the plan, and Apply or Not now. Nothing changes until the learner taps Apply; once
- * applied it can be undone while it's the plan's latest change.
+ * A change to the plan the buddy proposed in the conversation, on one panel: what changes in one
+ * sentence (and for how long, when it's for a week), what it moves as a diff (the lessons it leaves
+ * out or adds first, then each date and count as it is now and as it would be), what else it does
+ * in a quiet line, and Apply or Not now side by side. The sentence stays once it's answered.
+ * Nothing changes until the learner taps Apply; once applied it can be undone while it's the
+ * plan's latest change.
  */
 export function TutorPlanChange({
   change,
@@ -194,35 +242,40 @@ export function TutorPlanChange({
   const t = useExtracted();
   const titleId = useId();
   const cardRef = useRef<HTMLElement>(null);
-  const sentence = useChangeSentence();
-  const effectText = useProposalEffectText();
+  const changeFootnote = useChangeFootnote();
+  const sentence = useChangeSentence()(change);
   const officialDate = useOfficialDateLine()(change);
   const statusLine = useStatusLine(change);
   const { answer, failed, isPending } = useAnswer({ cardRef, change, decide, onAnswered });
-  const effect = change.status === "proposed" ? effectText(change) : null;
+  const proposed = change.status === "proposed";
+  const footnote = proposed ? changeFootnote(change.effect) : null;
 
   return (
     <section
       aria-labelledby={titleId}
       className={cn(
         SURFACE_CLASS,
-        "focus-visible:ring-ring/50 flex flex-col gap-3 p-4 outline-none focus-visible:ring-[3px]",
+        TUTOR_CARD_WIDTH_CLASS,
+        "focus-visible:ring-ring/50 flex flex-col gap-3 p-3 outline-none focus-visible:ring-[3px]",
       )}
       data-status={change.status}
       ref={cardRef}
       tabIndex={-1}
     >
-      <div className="flex items-start gap-3">
-        <ChangeIcon status={change.status} />
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <h3 className="text-muted-foreground text-xs font-medium" id={titleId}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h3 className="text-[0.8125rem] leading-snug font-semibold" id={titleId}>
             {t("Change to your plan")}
           </h3>
-          <p className="font-medium text-balance">{sentence(change)}</p>
-          {effect && <p className="text-muted-foreground text-sm">{effect}</p>}
-          {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
         </div>
+        <ChangeScope operations={change.operations} />
       </div>
+
+      {/* What the change is, then what it does: the diff leads with the lessons it moves. */}
+      <p className="text-sm leading-snug">{sentence}</p>
+      {proposed && <PlanEffectDiff effect={change.effect} />}
+      {footnote && <p className="text-muted-foreground text-xs leading-snug">{footnote}</p>}
+      {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
       {statusLine && (
         <p className="text-muted-foreground text-sm" role="status">

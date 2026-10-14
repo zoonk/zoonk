@@ -123,12 +123,72 @@ const mockScopeSnapshotSchema = z.object({
   version: z.literal(1),
 });
 
+const subjectScopeSnapshotSchema = z.object({
+  chapters: z.array(
+    z.object({
+      lessonsDone: z.number(),
+      lessonsTotal: z.number(),
+      nextDate: z.string().nullable(),
+      state: z.string(),
+      title: z.string(),
+    }),
+  ),
+  language: z.string(),
+  scope: z.object({ kind: z.literal("subject") }),
+  subject: z.object({
+    lessonsDone: z.number(),
+    lessonsKnown: z.number(),
+    lessonsTotal: z.number(),
+    name: z.string(),
+    nextDate: z.string().nullable(),
+    notPlannedReason: z.string().nullable(),
+    questions: z.number().nullable(),
+    source: z.string(),
+  }),
+  topics: z.array(
+    z.object({
+      name: z.string(),
+      nextDate: z.string().nullable(),
+      notPlannedReason: z.string().nullable(),
+      status: z.string().nullable(),
+    }),
+  ),
+  version: z.literal(1),
+});
+
+const itemScopeSnapshotSchema = z.object({
+  answer: z
+    .object({
+      correctAnswer: z.string().nullable(),
+      explanation: z.string().nullable(),
+      isCorrect: z.boolean(),
+      learnerAnswer: z.string().nullable(),
+    })
+    .nullable(),
+  language: z.string(),
+  question: z.object({ format: z.string(), options: z.array(z.string()), text: z.string() }),
+  scope: z.object({ kind: z.literal("item") }),
+  set: z.string().nullable(),
+  skill: z.string().nullable(),
+  version: z.literal(1),
+});
+
 /**
- * The page a question came from: a lesson (all of it, one screen or an answer given there), a
- * chapter or a finished mock, alone or with the goal's plan for the buddy.
+ * The page a question came from without a goal's plan: a lesson (all of it, one screen or an
+ * answer given there), a chapter or a finished mock.
  */
-export const screenSnapshotSchema = z.union([
+export const standaloneScreenSnapshotSchema = z.union([
   lessonScopeSnapshotSchema,
   chapterScopeSnapshotSchema,
   mockScopeSnapshotSchema,
+]);
+
+/**
+ * The page a question came from, with the goal's plan for the buddy: a subject and a session's or
+ * practice's question only come so.
+ */
+export const screenSnapshotSchema = z.union([
+  standaloneScreenSnapshotSchema,
+  subjectScopeSnapshotSchema,
+  itemScopeSnapshotSchema,
 ]);

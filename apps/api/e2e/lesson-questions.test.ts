@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
 import {
   MAX_LESSON_QUESTION_THREAD_TURNS,
-  lessonQuestionResourceSchema,
+  createdLessonQuestionSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
@@ -47,9 +47,18 @@ function ask({
 async function askQuestion(input: Parameters<typeof ask>[0]) {
   return readBody({
     response: await ask(input),
-    schema: lessonQuestionResourceSchema,
+    schema: createdLessonQuestionSchema,
     status: 201,
   });
+}
+
+/**
+ * A question as reading it again returns it: what asking did to the day's missions comes only in
+ * the answer to asking.
+ */
+function asRead({ missionMoment, ...question }: Awaited<ReturnType<typeof askQuestion>>) {
+  expect(missionMoment).toBeNull();
+  return question;
 }
 
 test.describe("Lesson questions API", () => {
@@ -98,7 +107,7 @@ test.describe("Lesson questions API", () => {
       other.api.get(`/v1/questions/${created.id}`),
     ]);
 
-    await expect(read.json()).resolves.toStrictEqual(created);
+    await expect(read.json()).resolves.toStrictEqual(asRead(created));
     expect(replay.status()).toBe(201);
     await expect(replay.json()).resolves.toStrictEqual(created);
     expect(conflicting.status()).toBe(409);
@@ -110,7 +119,7 @@ test.describe("Lesson questions API", () => {
         response: await api.get(`/v1/lessons/${lesson.id}/questions`),
         schema: lessonQuestionThreadResponseSchema,
       }),
-    ).resolves.toMatchObject({ lessonId: lesson.id, questions: [created] });
+    ).resolves.toMatchObject({ lessonId: lesson.id, questions: [asRead(created)] });
 
     await prisma.lessonQuestion.update({
       data: { answer: "A durable answer", status: "completed" },
@@ -154,7 +163,7 @@ test.describe("Lesson questions API", () => {
 
     await expect(
       readBody({ response: stepHistory, schema: lessonQuestionThreadResponseSchema }),
-    ).resolves.toMatchObject({ hasMore: false, questions: [first] });
+    ).resolves.toMatchObject({ hasMore: false, questions: [first && asRead(first)] });
 
     await expect(
       readBody({ response: lessonHistory, schema: lessonQuestionThreadResponseSchema }),
@@ -181,7 +190,7 @@ test.describe("Lesson questions API", () => {
     ).toStrictEqual([201, 409]);
 
     const created = responses.find((response) => response.status() === 201);
-    const { id } = lessonQuestionResourceSchema.parse(await created?.json());
+    const { id } = createdLessonQuestionSchema.parse(await created?.json());
 
     await expect(
       prisma.lessonQuestion.findMany({ where: { thread: { libraryLessonId: lesson.id, userId } } }),

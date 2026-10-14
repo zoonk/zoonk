@@ -1,6 +1,6 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
-import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { expectCount, focusOn, press } from "../_test-utils/activity-player";
@@ -26,6 +26,23 @@ import { type LessonQuestionNavigation } from "../questions/lesson-question-navi
  */
 
 const PHONE = { height: 812, width: 375 };
+
+/**
+ * Below `lg` the conversation opens in a drawer over the lesson, which most of these tests read; a
+ * wide screen docks the same conversation in the lesson's aside ("docked beside the lesson").
+ */
+const TABLET_PORTRAIT = { height: 1180, width: 820 };
+
+/** The browser tests' own size (`viewport` in vitest.config.mts), wide enough for the aside. */
+const HARNESS_VIEWPORT = { height: 720, width: 1280 };
+
+async function showDrawerSize() {
+  await page.viewport(TABLET_PORTRAIT.width, TABLET_PORTRAIT.height);
+}
+
+async function restoreViewport() {
+  await page.viewport(HARNESS_VIEWPORT.width, HARNESS_VIEWPORT.height);
+}
 
 /** The first poll for an answer still being written comes within 1.2 s (1 s, give or take 20%). */
 const FIRST_POLL_MS = 1200;
@@ -109,6 +126,9 @@ function distanceFromBottom(log: Locator) {
 }
 
 describe("asking the tutor", () => {
+  beforeEach(showDrawerSize);
+  afterEach(restoreViewport);
+
   it("keeps a late history preload in its own step and restores it on return", async () => {
     const { api, lesson } = lessonWithTutor({
       steps: [teachingStep("explanation"), teachingStep("explanation")],
@@ -162,8 +182,17 @@ describe("asking the tutor", () => {
     const [check] = lesson.steps;
     playLesson({ lesson });
 
+    // An icon beside Check on the question; after a wrong answer it says the buddy's name.
+    await expect
+      .element(page.getByRole("button", { name: "Ask Pip" }))
+      .not.toHaveTextContent("Ask Pip");
+
     await page.getByRole("radio", { name: "The electron's size" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: "Ask Pip" }))
+      .toHaveTextContent("Ask Pip");
 
     await expect
       .element(
@@ -277,7 +306,7 @@ describe("asking the tutor", () => {
     expect(api.requests.create).toBe(1);
   });
 
-  it("offers plans and stops sending once a free learner's daily allowance is used", async () => {
+  it("offers Plus and stops sending once a free learner's daily allowance is used", async () => {
     const { api, lesson } = lessonWithTutor();
 
     api.next("answer", () => {
@@ -301,27 +330,30 @@ describe("asking the tutor", () => {
 
     playLesson({ lesson });
     const sheet = await openTutor();
-    const limitReached = sheet.getByText(/asked all of today's questions/iu);
-    const viewPlans = sheet.getByRole("link", { name: "View plans" });
+    const limitReached = sheet.getByRole("alert").filter({ hasText: /used today's help/iu });
+    const seePlus = sheet.getByRole("link", { name: "See Plus" });
 
     await ask(sheet, "Explain this within my limit.");
     await expect.element(limitReached).toBeVisible();
-    await expect.element(viewPlans).toBeVisible();
+    await expect.element(seePlus).toBeVisible();
+    await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
 
-    await composer(sheet).fill("A question for tomorrow.");
-    await expect.element(sendButton(sheet)).toBeDisabled();
+    // The limit takes the composer's place: nothing looks ready to send until it comes back.
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sendButton(sheet)).not.toBeInTheDocument();
+    await expect.element(limitReached).toHaveFocus();
 
     await press("Escape");
     await openTutor();
     await expect.element(limitReached).toBeVisible();
-    await expect.element(viewPlans).toBeVisible();
-    await expect.element(sendButton(sheet)).toBeDisabled();
+    await expect.element(seePlus).toBeVisible();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
   });
 
-  it("answers a question another client left unfinished when this one conflicts with it", async () => {
+  it("lets the learner answer a question another client left unfinished when this one conflicts with it", async () => {
     const { api, lesson } = lessonWithTutor();
 
     const remote = api.question({
@@ -342,6 +374,9 @@ describe("asking the tutor", () => {
     await ask(sheet, "A local question waiting its turn.");
 
     await expect.element(sheet.getByText(remote.question)).toBeVisible();
+    await expect.element(sheet.getByRole("button", { name: "Get answer" })).toBeVisible();
+    expect(api.requests.answer).toBe(0);
+    await sheet.getByRole("button", { name: "Get answer" }).click();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     await expect.element(composer(sheet)).toHaveValue("A local question waiting its turn.");
     expect(api.requests.create).toBe(1);
@@ -370,6 +405,9 @@ describe("asking the tutor", () => {
 });
 
 describe("tutor answers", () => {
+  beforeEach(showDrawerSize);
+  afterEach(restoreViewport);
+
   it("renders a streamed answer as Markdown while it arrives", async () => {
     const { api, lesson } = lessonWithTutor();
     const stream = tutorAnswerStream();
@@ -572,7 +610,10 @@ describe("tutor answers", () => {
 });
 
 describe("answers still being written", () => {
-  it("resumes a question saved before its answer started", async () => {
+  beforeEach(showDrawerSize);
+  afterEach(restoreViewport);
+
+  it("waits for a tap to answer a question saved before its answer started", async () => {
     const { api, lesson } = lessonWithTutor();
 
     const pending = api.question({
@@ -585,11 +626,16 @@ describe("answers still being written", () => {
 
     const sheet = await openTutor();
     await expect.element(sheet.getByText(pending.question)).toBeVisible();
+    await expect.element(sheet.getByRole("button", { name: "Get answer" })).toBeVisible();
+    await expect.element(sheet.getByText("Thinking…")).not.toBeInTheDocument();
+    expect(api.requests.answer).toBe(0);
+
+    await sheet.getByRole("button", { name: "Get answer" }).click();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     expect(api.requests.answer).toBe(1);
   });
 
-  it("resumes a pending question again after it failed to reach the API", async () => {
+  it("waits for another tap after reopening a pending question that failed to reach the API", async () => {
     const { api, lesson } = lessonWithTutor();
 
     api.questions = [
@@ -604,10 +650,14 @@ describe("answers still being written", () => {
     playLesson({ lesson });
 
     const sheet = await openTutor();
+    await sheet.getByRole("button", { name: "Get answer" }).click();
     await expect.element(sheet.getByText("We couldn't finish this answer.")).toBeVisible();
     await press("Escape");
     await openTutor();
 
+    await expect.element(sheet.getByRole("button", { name: "Get answer" })).toBeVisible();
+    expect(api.requests.answer).toBe(1);
+    await sheet.getByRole("button", { name: "Get answer" }).click();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     expect(api.requests.answer).toBe(2);
   });
@@ -853,6 +903,9 @@ describe("answers still being written", () => {
 });
 
 describe("tutor history", () => {
+  beforeEach(showDrawerSize);
+  afterEach(restoreViewport);
+
   it("refreshes saved questions whenever the sheet is reopened", async () => {
     const { api, lesson } = lessonWithTutor();
 
@@ -915,7 +968,11 @@ describe("tutor history", () => {
     await releasePreload();
     await expect.element(loading).not.toBeInTheDocument();
     await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
-    await expect.element(sheet.getByText(/is an AI tutor and can make mistakes\./u)).toBeVisible();
+
+    await expect
+      .element(sheet.getByText(/is an AI study buddy and can make mistakes\./u))
+      .toBeVisible();
+
     expect(api.requests.thread).toBe(1);
   });
 
@@ -1133,6 +1190,9 @@ describe("tutor history", () => {
 });
 
 describe("the learner's buddy", () => {
+  beforeEach(showDrawerSize);
+  afterEach(restoreViewport);
+
   it("answers in the sheet by face and name", async () => {
     const { lesson } = lessonWithTutor();
     playLesson({ lesson });
@@ -1142,16 +1202,23 @@ describe("the learner's buddy", () => {
     await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
   });
 
-  it("answers as a neutral buddy before the learner picks one", async () => {
+  it("answers as the default buddy before the learner picks one", async () => {
     const lesson = buildLesson([teachingStep("check")]);
     stubTutorApi({ lesson });
     renderLessonPlayer({ lesson, tutor: buildTutor({}, { buddy: null }) });
 
-    await page.getByRole("button", { name: "Ask Buddy" }).click();
+    await page.getByRole("button", { name: "Ask Zu" }).click();
 
     await expect
-      .element(page.getByRole("dialog").getByRole("heading", { name: "Buddy" }))
+      .element(page.getByRole("dialog").getByRole("heading", { name: "Zu" }))
       .toBeVisible();
+
+    const face = page
+      .getByRole("dialog")
+      .element()
+      .querySelector<SVGSVGElement>('[data-buddy="zu"]');
+
+    expect(face?.dataset.energy).toBe("awake");
   });
 
   it("asks for a simpler or a deeper explanation in one tap", async () => {
@@ -1221,5 +1288,151 @@ describe("the learner's buddy", () => {
     const sheet = page.getByRole("dialog");
     await expect.element(composer(sheet)).toHaveValue("Explain it more simply");
     await expect.element(sheet.getByText("Ask about your answer")).toBeVisible();
+  });
+
+  // Ana's phone showed "Ask Zu" twice after her second miss: the offer's button and the bar's.
+  // The offer says the buddy's name then, and the bar keeps its quiet icon.
+  it("names the buddy once on a phone when it offers help", async () => {
+    await atViewport(PHONE, async () => {
+      const { lesson } = lessonWithTutor({
+        steps: [teachingStep("explanation"), teachingStep("check"), teachingStep("check")],
+      });
+
+      playLesson({ lesson });
+      await page.getByRole("button", { name: /^Next/u }).click();
+
+      const namedAsks = page.getByText("Ask Pip", { exact: true });
+
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await expect.element(page.getByText("Not quite")).toBeVisible();
+      await expectCount(namedAsks, 1);
+      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      await page.getByRole("radio", { name: "The electron's exact path" }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+
+      await expect
+        .element(page.getByText("This one is tricky. Pip can explain it another way."))
+        .toBeVisible();
+
+      await expectCount(namedAsks, 1);
+      await expect.element(page.getByRole("button", { name: "Ask Pip" }).last()).toBeVisible();
+    });
+  });
+});
+
+/** The lesson's aside from `lg`, the harness's own size: the buddy is docked at its foot. */
+function lessonAside() {
+  return page.getByRole("complementary", { name: "Help with this screen" });
+}
+
+/** The conversation docked in the aside, over what it showed. */
+function dockedConversation() {
+  return page.getByRole("region", { name: "Questions to Pip" });
+}
+
+describe("docked beside the lesson", () => {
+  it("asks from the aside's composer and shows the answer beside the question", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const [check] = lesson.steps;
+    playLesson({ lesson });
+
+    // The bar leaves the buddy to the aside, where its composer is always in reach.
+    await expect.element(page.getByRole("button", { name: "Ask Pip" })).not.toBeInTheDocument();
+
+    await composer(lessonAside()).fill("Why does the cloud show chances?");
+    await press("Enter");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(page.getByRole("radio", { name: "The electron's size" })).toBeVisible();
+    await expectAccessibleScreen("the buddy docked beside a question");
+
+    expect(api.inputs[0]).toMatchObject({
+      context: { kind: "step", stepId: check?.id },
+      question: "Why does the cloud show chances?",
+    });
+
+    await conversation.getByRole("button", { name: "From the lesson" }).click();
+    await expect.element(conversation).not.toBeInTheDocument();
+
+    // The aside's header leads back to what was asked about this screen.
+    await lessonAside().getByRole("button", { name: "1 question" }).click();
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+  });
+
+  it("offers the lesson's simpler and deeper takes on a reading screen, one tap each", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    playLesson({ lesson });
+
+    const suggestions = lessonAside().getByRole("group", { name: "Suggested questions" });
+    await expectCount(suggestions.getByRole("button"), 2);
+
+    await expect
+      .element(suggestions.getByRole("button", { name: "I want to go deeper" }))
+      .toBeVisible();
+
+    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+
+    expect(api.inputs[0]).toMatchObject({
+      question: "Explain it more simply",
+      suggestion: "simpler",
+    });
+
+    // Asked once, the screen's conversation is a tap away on the aside's header instead.
+    await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
+    await expect.element(suggestions).not.toBeInTheDocument();
+  });
+
+  it("keeps the aside's composer one line high, level with the action bar, however long its placeholder", async () => {
+    const { lesson } = lessonWithTutor();
+
+    // A long name stands in for a long translation ("Pergunte para Zu sobre esta questão" took two
+    // lines at 1180px and lifted the aside's foot over the action bar's).
+    const buddy = {
+      beltColor: "white",
+      energy: null,
+      glasses: "round",
+      kind: "zu",
+      name: "Pip, the very curious study owl from the northern woods",
+    } as const;
+
+    renderLessonPlayer({ lesson, tutor: buildTutor({}, { buddy }) });
+
+    const field = composer(lessonAside());
+
+    await expect
+      .element(field)
+      .toHaveAttribute("placeholder", `Ask ${buddy.name} about this screen`);
+
+    const frame = field.element().closest('[data-slot="input-group"]');
+    const foot = document.querySelector('[data-slot="task-aside-footer"]');
+    const bar = document.querySelector('[data-slot="task-action-bar"]');
+
+    expect(frame?.getBoundingClientRect().height).toBe(44);
+    expect(foot?.getBoundingClientRect().top).toBe(bar?.getBoundingClientRect().top);
+  });
+
+  it("offers two questions to ask after a wrong answer, each sent with a tap", async () => {
+    const { api, lesson } = lessonWithTutor();
+    playLesson({ lesson });
+
+    const suggestions = lessonAside().getByRole("group", { name: "Suggested questions" });
+
+    await page.getByRole("radio", { name: "The electron's size" }).click();
+    await expect.element(suggestions).not.toBeInTheDocument();
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expectCount(suggestions.getByRole("button"), 2);
+    await suggestions.getByRole("button", { name: "Walk me through this answer" }).click();
+
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+
+    expect(api.inputs[0]).toMatchObject({
+      context: { answer: { kind: "check", optionId: "size" }, kind: "answer" },
+      question: "Walk me through this answer",
+    });
   });
 });

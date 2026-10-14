@@ -22,6 +22,7 @@ export function TestLink({
   children,
   className,
   href,
+  onClick,
   ref,
 }: Parameters<PlayerLinkComponent>[0]) {
   return (
@@ -29,7 +30,10 @@ export function TestLink({
       aria-keyshortcuts={keyShortcuts}
       className={className}
       href={href}
-      onClick={(event) => event.preventDefault()}
+      onClick={(event) => {
+        onClick?.(event);
+        event.preventDefault();
+      }}
       ref={ref}
     >
       {children}

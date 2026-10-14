@@ -1,9 +1,11 @@
 import {
   type CreateLessonQuestionInput,
+  type CreatedLessonQuestion,
   type GetLessonQuestionThreadInput,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
   type TutorTarget,
+  createdLessonQuestionSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
@@ -152,7 +154,7 @@ export async function createLessonQuestionRequest({
   connection: LessonQuestionConnection;
   input: CreateLessonQuestionInput;
   target: TutorTarget;
-}): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
+}): Promise<LessonQuestionApiResult<CreatedLessonQuestion>> {
   const { data: response, error } = await safeAsync(async () =>
     fetch(questionsUrl({ connection, target }), {
       body: JSON.stringify(input),
@@ -171,7 +173,7 @@ export async function createLessonQuestionRequest({
   }
 
   const { data: body, error: bodyError } = await safeAsync<unknown>(() => response.json());
-  const parsed = lessonQuestionResourceSchema.safeParse(body);
+  const parsed = createdLessonQuestionSchema.safeParse(body);
 
   if (bodyError || !parsed.success) {
     return { error: { kind: "unknown" }, status: "error" };

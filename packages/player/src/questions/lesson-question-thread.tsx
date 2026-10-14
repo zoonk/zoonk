@@ -16,13 +16,18 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
-import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
+import {
+  QuestionErrorAction,
+  RequestErrorMessage,
+  getQuestionLimit,
+} from "./lesson-question-errors";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { ThreadViewport, ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
 import { QuestionTurn } from "./lesson-question-turn";
 import { type LessonQuestionController } from "./use-lesson-questions";
+import { useTutorSuggestions } from "./use-tutor-suggestions";
 
 function ThreadLoadError({
   error,
@@ -48,51 +53,6 @@ function ThreadLoadError({
   );
 }
 
-/** A lesson's suggestions as chips: their words are the server's, and a tap sends their id. */
-function toOffered(suggestions: readonly LessonTutorSuggestion[]): OfferedSuggestion[] {
-  return suggestions.map(({ id, label }) => ({ question: label, suggestion: id }));
-}
-
-/**
- * The buddy's suggested questions for what the learner is asking about; a few, never a list. In a
- * lesson they are what the old "Simpler" and "Go deeper" buttons did, as questions to the buddy,
- * worded by the server in the lesson's payload so the chip reads what the thread will.
- */
-function useSuggestions({
-  contextKind,
-  lessonSuggestions,
-}: {
-  contextKind: LessonQuestionController["state"]["context"]["kind"];
-  lessonSuggestions: readonly LessonTutorSuggestion[];
-}): OfferedSuggestion[] {
-  const t = useExtracted();
-
-  switch (contextKind) {
-    case "answer":
-      return [
-        { question: t("Walk me through this answer") },
-        ...toOffered(lessonSuggestions.filter(({ id }) => id === "simpler")),
-      ];
-    case "chapter":
-      return [{ question: t("What will I be able to do after this chapter?") }];
-    case "lesson":
-    case "step":
-      return toOffered(lessonSuggestions);
-    case "mock":
-      return [
-        { question: t("What should I practice first?") },
-        { question: t("Why did I miss these questions?") },
-      ];
-    case "plan":
-      return [
-        { question: t("Why am I studying this today?") },
-        { question: t("What comes next?") },
-      ];
-    default:
-      return contextKind satisfies never;
-  }
-}
-
 /** The conversation's name for screen readers, by what it's about. */
 function useThreadLabel(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
   const t = useExtracted();
@@ -104,6 +64,10 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
       return t("Questions about this mock exam");
     case "plan":
       return t("Questions about your plan");
+    case "subject":
+      return t("Questions about this subject");
+    case "item":
+      return t("Questions about this question");
     case "answer":
     case "lesson":
     case "step":
@@ -118,18 +82,26 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
  * to send in one tap.
  */
 function EmptyThread({
-  contextKind,
+  context,
   identity,
   lessonSuggestions,
   onSelect,
 }: {
-  contextKind: LessonQuestionController["state"]["context"]["kind"];
+  context: LessonQuestionController["state"]["context"];
   identity: TutorIdentity;
-  lessonSuggestions: readonly LessonTutorSuggestion[];
+  /** None once the learner's help is used up: nothing could be sent. */
+  lessonSuggestions: readonly LessonTutorSuggestion[] | null;
   onSelect: (suggestion: OfferedSuggestion) => void;
 }) {
   const t = useExtracted();
-  const suggestions = useSuggestions({ contextKind, lessonSuggestions });
+
+  const offered = useTutorSuggestions({
+    answered: context.kind === "item" && context.answered,
+    contextKind: context.kind,
+    lessonSuggestions: lessonSuggestions ?? [],
+  });
+
+  const suggestions = lessonSuggestions ? offered : [];
 
   return (
     <Empty className="min-h-full p-6">
@@ -141,10 +113,10 @@ function EmptyThread({
         </EmptyMedia>
         <EmptyTitle className="text-base">{t("What would you like help with?")}</EmptyTitle>
         <EmptyDescription>
-          {t("{name} is an AI tutor and can make mistakes.", { name: identity.name })}
+          {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
         </EmptyDescription>
       </EmptyHeader>
-      <EmptyContent className="flex-row flex-wrap justify-center">
+      <EmptyContent className="flex-row flex-wrap">
         {suggestions.map((suggestion) => (
           <Button
             className="h-auto min-h-8 py-1.5 whitespace-normal"
@@ -226,9 +198,9 @@ export function QuestionThread({
     return (
       <ThreadViewport>
         <EmptyThread
-          contextKind={state.context.kind}
+          context={state.context}
           identity={identity}
-          lessonSuggestions={controller.suggestions}
+          lessonSuggestions={getQuestionLimit(state) ? null : controller.suggestions}
           onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
         />
       </ThreadViewport>
@@ -246,7 +218,7 @@ export function QuestionThread({
         {state.hasMore && (
           <div className="flex flex-col items-center gap-2">
             {state.earlierLoadFailed && (
-              <p className="text-destructive text-center text-sm" role="alert">
+              <p className="text-destructive-text text-center text-sm" role="alert">
                 {t("Couldn't load earlier questions. Try again.")}
               </p>
             )}
@@ -274,6 +246,7 @@ export function QuestionThread({
               answerError={state.answerError}
               answerInProgressCount={answerInProgressCount}
               identity={identity}
+              linksVerified={!state.streamedAnswerIds.includes(question.id)}
               memoryChanges={state.memoryChanges[question.id]}
               onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
               onRetry={(questionId) => void controller.retryAnswer(questionId)}

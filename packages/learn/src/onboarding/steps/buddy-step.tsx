@@ -1,5 +1,6 @@
 "use client";
 
+import { DEFAULT_BUDDY } from "@zoonk/core/profile/default-buddy";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
@@ -9,7 +10,7 @@ import { type BuddyChoice, BuddyPicker } from "../../buddies/buddy-picker";
 import { useLearnAnalytics } from "../../learn-context";
 import { StepForm } from "./step-form";
 
-/** A new buddy is a baby with half its Energy, the same as on day 1. */
+/** The picker previews each choice as a baby at 50 Energy; choosing one customizes default Zu. */
 const NEW_BUDDY_LOOK = { beltColor: "white" as const, energy: 50 };
 
 /** A buddy that grows as the learner learns, with the learner's own name for it. */
@@ -22,7 +23,7 @@ export function BuddyStep({
 }) {
   const t = useExtracted();
   const analytics = useLearnAnalytics();
-  const [choice, setChoice] = useState<BuddyChoice>({ glasses: "round", kind: "zu", name: "" });
+  const [choice, setChoice] = useState<BuddyChoice>({ ...DEFAULT_BUDDY, name: "" });
   const name = choice.name.trim();
 
   useNumberKeys({

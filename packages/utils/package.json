@@ -33,6 +33,7 @@
     "./locale": "./src/locale.ts",
     "./localized-number": "./src/localized-number.ts",
     "./name-words": "./src/name-words.ts",
+    "./markdown-links": "./src/markdown-links.ts",
     "./markdown-table": "./src/markdown-table.ts",
     "./number": "./src/number.ts",
     "./number-format-flaws": "./src/number-format-flaws.ts",
@@ -66,9 +67,13 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.9.0",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-gfm": "3.1.0",
+    "micromark-extension-gfm": "3.0.0",
     "negotiator": "1.1.0"
   },
   "devDependencies": {
+    "@types/mdast": "4.0.4",
     "@types/negotiator": "0.6.5",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "catalog:",

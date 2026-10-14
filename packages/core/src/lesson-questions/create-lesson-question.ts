@@ -3,6 +3,10 @@ import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/ques
 import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { type MissionMomentView } from "../sessions/completion-contract";
+import { loadMissionMoment } from "../sessions/missions/mission-moment";
+import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { getSession } from "../users/get-session";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import {
@@ -34,6 +38,21 @@ type WordSuggestion = (input: {
 
 /** What the learner asked, as stored: a tapped suggestion in the app's own words. */
 type AskedQuestion = { question: string; suggestion: LessonScreenSuggestion | null };
+
+/** Counts the question toward today's missions; what it completed, for the conversation to say. */
+async function settleAskedQuestion({
+  questionId,
+  userId,
+}: {
+  questionId: string;
+  userId: string;
+}): Promise<MissionMomentView | null> {
+  const timeZone = await getLearnerTimeZone({ userId });
+  const source = { id: questionId, kind: "buddyQuestion" };
+
+  await settleLearnerMissions({ source, timeZone, userId });
+  return loadMissionMoment({ source, timeZone, userId });
+}
 
 function getCreateLessonQuestionOutcome({
   question,
@@ -201,7 +220,17 @@ export async function createLessonQuestion({
   });
 
   if (existingQuestion) {
-    return getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint });
+    const outcome = getCreateLessonQuestionOutcome({
+      question: existingQuestion,
+      requestFingerprint,
+    });
+
+    if (outcome.status === "created") {
+      const missionMoment = await settleAskedQuestion({ questionId: outcome.question.id, userId });
+      return { ...outcome, missionMoment };
+    }
+
+    return outcome;
   }
 
   const [context, asked] = await Promise.all([
@@ -213,7 +242,7 @@ export async function createLessonQuestion({
     return context;
   }
 
-  return persistLessonQuestion({
+  const outcome = await persistLessonQuestion({
     asked,
     contextSnapshot: context.contextSnapshot,
     input,
@@ -223,4 +252,11 @@ export async function createLessonQuestion({
     subject,
     userId,
   });
+
+  if (outcome.status === "created") {
+    const missionMoment = await settleAskedQuestion({ questionId: outcome.question.id, userId });
+    return { ...outcome, missionMoment };
+  }
+
+  return outcome;
 }

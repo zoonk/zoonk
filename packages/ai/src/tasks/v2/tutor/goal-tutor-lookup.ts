@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { isTimeoutError, toDeadlineError } from "../../../evaluate/evaluation-timeout";
+import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
 
 /**
  * What the buddy can look up about the learner's goal beyond its context, which stays small so
@@ -22,6 +23,12 @@ export type GoalTutorLookUp = (typeof GOAL_TUTOR_LOOKUPS)[number];
  * this, the buddy answers without it.
  */
 export const LOOKUP_DEADLINE_MS = 5000;
+
+/**
+ * Lookups one message may make, across its steps: enough for two kinds of data and one narrower
+ * look after a first result, never a loop over the learner's data.
+ */
+const MAX_LOOKUPS_PER_MESSAGE = 3;
 
 const MAX_AREA_LENGTH = 120;
 const MAX_QUERY_LENGTH = 120;
@@ -138,12 +145,17 @@ type GoalTutorLookUpFound =
 /**
  * What looking something up did, as the model reads it: what it found; nothing that matches
  * (with the names it knows, to try one of them); or why it can't look that up (`notExam`: notice
- * topics are for exams with a notice; `timeout` or `error`: it couldn't read it now).
+ * topics are for exams with a notice; `limit`: this message already looked up as much as one
+ * message may; `timeout` or `error`: it couldn't read it now).
  */
 export type GoalTutorLookUpResult =
   | ({ status: "found" } & GoalTutorLookUpFound)
   | { areas?: string[]; status: "notFound"; what: GoalTutorLookUp }
-  | { reason: "error" | "notExam" | "timeout"; status: "unavailable"; what: GoalTutorLookUp };
+  | {
+      reason: "error" | "limit" | "notExam" | "timeout";
+      status: "unavailable";
+      what: GoalTutorLookUp;
+    };
 
 /** Asks core for the learner's own data, for the answer being written. */
 export type LookUpGoalData = (request: GoalTutorLookUpRequest) => Promise<GoalTutorLookUpResult>;
@@ -167,7 +179,7 @@ const LOOKUP_USES: Record<GoalTutorLookUp, string> = {
  * for every learner, so it stays in the cached start of every request.
  */
 const LOOKUP_DESCRIPTION = [
-  "Looks up the learner's own data that CURRENT_CONTEXT doesn't show. Use it only when the answer needs something the context doesn't have, never for what it already shows, and at most once per message. Only you see what it returns: say what matters in your answer.",
+  `Looks up the learner's own data that CURRENT_CONTEXT doesn't show. Use it only when the answer needs something the context doesn't have, never for what it already shows, and at most ${MAX_LOOKUPS_PER_MESSAGE} times per message. Only you see what it returns: say what matters in your answer, and link what it links.`,
   ...GOAL_TUTOR_LOOKUPS.map((what) => `- ${what}: ${LOOKUP_USES[what]}`),
 ].join("\n");
 
@@ -205,12 +217,31 @@ async function lookUpUntilDeadline({
   }
 }
 
-/** The buddy's read-only tool: its result reaches only the model, never the learner's screen. */
-export function createLookUpTool(lookUp: LookUpGoalData) {
+/**
+ * The buddy's read-only tool: its result reaches only the model, never the learner's screen, with
+ * the host's link for everything it points at (`stringifyWithLinks`). One message looks up at most
+ * `MAX_LOOKUPS_PER_MESSAGE` times; past that, the buddy answers with what it has.
+ */
+export function createLookUpTool({
+  links,
+  lookUp,
+}: {
+  links: GoalTutorLinks;
+  lookUp: LookUpGoalData;
+}) {
+  let lookups = 0;
+
   return tool({
     description: LOOKUP_DESCRIPTION,
-    execute: (request, { abortSignal }) =>
-      lookUpUntilDeadline({ lookUp, request, signal: abortSignal }),
+    execute: (request, { abortSignal }): Promise<GoalTutorLookUpResult> => {
+      lookups += 1;
+
+      if (lookups > MAX_LOOKUPS_PER_MESSAGE) {
+        return Promise.resolve({ reason: "limit", status: "unavailable", what: request.what });
+      }
+
+      return lookUpUntilDeadline({ lookUp, request, signal: abortSignal });
+    },
     inputSchema: z.object({
       area: z
         .string()
@@ -227,6 +258,10 @@ export function createLookUpTool(lookUp: LookUpGoalData) {
           "Words to find, in the learner's language: a topic or law of the notice, a lesson's title, a mistake's topic; null for everything",
         ),
       what: z.enum(GOAL_TUTOR_LOOKUPS),
+    }),
+    toModelOutput: ({ output }) => ({
+      type: "text",
+      value: stringifyWithLinks(output, links.toLink),
     }),
   });
 }

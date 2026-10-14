@@ -5,6 +5,7 @@ import {
   type LessonScreenSuggestion,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { type Dispatch, useCallback, useRef, useState } from "react";
 import { type LessonQuestionConnection, createLessonQuestionRequest } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
@@ -57,6 +58,7 @@ export function useSendLessonQuestion({
   getState,
   target,
   lessonStepIds,
+  onMissionMoment,
   reconcileThread,
   state,
   streamAnswer,
@@ -67,6 +69,8 @@ export function useSendLessonQuestion({
   getState: (context: LessonQuestionContext) => LessonQuestionState;
   target: TutorTarget;
   lessonStepIds: readonly string[];
+  /** What each question did to the day's missions, null when it completed none. */
+  onMissionMoment?: (moment: MissionMomentView | null) => void;
   reconcileThread: (context: LessonQuestionContext) => Promise<boolean>;
   state: LessonQuestionState;
   streamAnswer: (input: { context: LessonQuestionContext; questionId: string }) => Promise<void>;
@@ -144,6 +148,8 @@ export function useSendLessonQuestion({
       setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
       dispatch({ question: result.data, type: "questionCreated" });
 
+      onMissionMoment?.(result.data.missionMoment);
+
       if (shouldGenerateAnswer(result.data.status)) {
         await streamAnswer({ context, questionId: result.data.id });
       }
@@ -155,6 +161,7 @@ export function useSendLessonQuestion({
       getState,
       target,
       lessonStepIds,
+      onMissionMoment,
       reconcileThread,
       streamAnswer,
     ],
@@ -181,5 +188,5 @@ export function useSendLessonQuestion({
     ? null
     : (pendingRequestSnapshot.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 
-  return { send, sendSuggestion, unresolvedQuestion };
+  return { ask: submitQuestion, send, sendSuggestion, unresolvedQuestion };
 }

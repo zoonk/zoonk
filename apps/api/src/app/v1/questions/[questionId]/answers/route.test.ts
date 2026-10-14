@@ -245,12 +245,16 @@ const CHANGE_AND_TEST_CALLS: ProviderStreamPart[] = [
  */
 function createGoalTutorGeneration({
   calls = CHANGE_AND_TEST_CALLS,
+  links,
   lookUp,
   offerAppTool,
   proposePlanChange,
+  intro = "Sure.",
   silent = false,
 }: Parameters<typeof streamGoalTutorAnswer>[0] & {
   calls?: ProviderStreamPart[];
+  /** The first step's words. */
+  intro?: string;
   silent?: boolean;
 }) {
   const steps: ProviderStreamPart[][] = [
@@ -259,7 +263,7 @@ function createGoalTutorGeneration({
         ? []
         : [
             { id: "intro", type: "text-start" as const },
-            { delta: "Sure.", id: "intro", type: "text-delta" as const },
+            { delta: intro, id: "intro", type: "text-delta" as const },
             { id: "intro", type: "text-end" as const },
           ]),
       ...calls,
@@ -294,7 +298,7 @@ function createGoalTutorGeneration({
     stopWhen: isStepCount(2),
     tools: {
       ...createCardTools({ offerAppTool, proposePlanChange }),
-      lookUp: createLookUpTool(lookUp),
+      lookUp: createLookUpTool({ links, lookUp }),
     },
   });
 
@@ -731,6 +735,53 @@ describe("lesson question answer route", () => {
     expect(proposeTutorPlanChange).toHaveBeenCalledOnce();
     expect(body).toContain('"type":"data-plan-change"');
     expect(body).not.toContain('"type":"data-tool-offer"');
+  });
+
+  it("saves a buddy answer with only the links it was given, and sends it as saved before it finishes", async () => {
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: { language: "en", scope: { kind: "plan" } },
+        learnerMemory: [],
+        priorTurns: [],
+        question: "Where do I turn sounds off?",
+        questionId: QUESTION_ID,
+        revision: 3,
+        shareAnswer: false,
+      },
+      status: "ready",
+    } as never);
+
+    const written =
+      "Open [Settings](/settings), not [this site](https://example.com) or [a challenge](/challenge/0199a8f2-6a1e-7c3d-9b0a-1d2e3f4a5b6c).";
+
+    vi.mocked(streamGoalTutorAnswer).mockImplementation((input) =>
+      createGoalTutorGeneration({ ...input, calls: [], intro: written }),
+    );
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    const saved = "Open [Settings](/settings), not this site or a challenge.";
+
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ answer: saved, questionId: QUESTION_ID, revision: 3 }),
+    );
+
+    const savedPart = JSON.stringify({ data: { answer: saved }, type: "data-saved-answer" });
+
+    expect(body).toContain(savedPart);
+    expect(body.indexOf(savedPart)).toBeGreaterThan(body.indexOf("this site"));
+    expect(body.indexOf(savedPart)).toBeLessThan(body.indexOf('"type":"finish"'));
+  });
+
+  it("sends a lesson tutor's answer without a saved copy: it has no links to check", async () => {
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(body).not.toContain('"type":"data-saved-answer"');
   });
 
   it("confirms in words what a buddy that only acted put under its answer, and saves it", async () => {

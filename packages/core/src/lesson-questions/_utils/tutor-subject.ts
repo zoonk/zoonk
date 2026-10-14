@@ -1,7 +1,11 @@
 import "server-only";
 import { type Goal, type LessonQuestionThread, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { hasStoredTimeRunOutAway } from "../../exams/mocks/_utils/owned-mock";
+import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
+import { type SyllabusSubject } from "../../view-models/syllabus/syllabus-contract";
 import { type TutorTarget } from "../contract";
 import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-access";
 
@@ -12,6 +16,14 @@ import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-
 export type TutorSubject =
   | { chapterId: string; kind: "chapter"; language: string }
   | { goal: Goal; kind: "plan"; language: string }
+  | { item: { id: string; language: string }; kind: "item"; language: string }
+  | {
+      goal: Goal;
+      kind: "subject";
+      language: string;
+      /** The subject as the goal's syllabus shows it now. */
+      syllabusSubject: SyllabusSubject;
+    }
   | {
       blockId: string | null;
       /** The goal the mock was taken for, whose plan the buddy reads with it. */
@@ -59,6 +71,76 @@ async function findPlanSubject({ goalId, userId }: { goalId: string; userId: str
   return toAccess(goal && { goal, kind: "plan", language: goal.language });
 }
 
+/** A subject of one of the learner's own goals, by its key in the goal's syllabus. */
+async function findSyllabusSubject({
+  goalId,
+  subjectKey,
+  userId,
+}: {
+  goalId: string;
+  subjectKey: string;
+  userId: string;
+}) {
+  const [goal, syllabus] = await Promise.all([
+    prisma.goal.findFirst({ where: { id: goalId, userId } }),
+    getSyllabusView({ goalId }),
+  ]);
+
+  const syllabusSubject =
+    syllabus.status === "ready"
+      ? syllabus.syllabus.subjects.find((subject) => subject.key === subjectKey)
+      : undefined;
+
+  return toAccess(
+    goal && syllabusSubject
+      ? { goal, kind: "subject", language: goal.language, syllabusSubject }
+      : null,
+  );
+}
+
+/**
+ * Whether the question is on a mock the learner is still sitting, not one whose time ran out while
+ * they were away.
+ */
+async function isOnRunningMock({ itemId, userId }: { itemId: string; userId: string }) {
+  const mocks = await prisma.mockExam.findMany({
+    select: {
+      answers: { select: { answer: true } },
+      conditions: true,
+      sectionIndex: true,
+      sectionStartedAt: true,
+      status: true,
+    },
+    where: { status: "active", userId },
+  });
+
+  const now = Date.now();
+
+  return mocks.some(
+    (mock) =>
+      !hasStoredTimeRunOutAway({ mock, now }) &&
+      mockConditionsSchema
+        .safeParse(mock.conditions)
+        .data?.sections.some((section) => section.itemIds.includes(itemId)),
+  );
+}
+
+/**
+ * A question of the item bank, as sessions and mistakes practice ask it, unless it's on a mock the
+ * learner is still sitting: the tutor never helps with an exam that's still running.
+ */
+async function findItemSubject({ itemId, userId }: { itemId: string; userId: string }) {
+  const [item, onRunningMock] = await Promise.all([
+    prisma.item.findFirst({
+      select: { id: true, language: true },
+      where: { id: itemId, skill: libraryRowsVisibleTo(userId) },
+    }),
+    isOnRunningMock({ itemId, userId }),
+  ]);
+
+  return toAccess(item && !onRunningMock ? { item, kind: "item", language: item.language } : null);
+}
+
 /**
  * Only the learner's own finished mocks: the tutor never helps with an exam that's still running.
  */
@@ -93,11 +175,14 @@ function getLookupId(lookup: SubjectLookup): string {
   switch (lookup.kind) {
     case "chapter":
       return lookup.chapterId;
+    case "item":
+      return lookup.itemId;
     case "lesson":
       return lookup.lessonId;
     case "mock":
       return "blockId" in lookup ? lookup.blockId : lookup.mockExamId;
     case "plan":
+    case "subject":
       return lookup.goalId;
     default:
       return lookup satisfies never;
@@ -108,6 +193,8 @@ function findSubject({ lookup, userId }: { lookup: SubjectLookup; userId: string
   switch (lookup.kind) {
     case "chapter":
       return findChapterSubject({ chapterId: lookup.chapterId, userId });
+    case "item":
+      return findItemSubject({ itemId: lookup.itemId, userId });
     case "lesson":
       return findLessonSubject({ lessonId: lookup.lessonId, userId });
     case "mock":
@@ -117,6 +204,8 @@ function findSubject({ lookup, userId }: { lookup: SubjectLookup; userId: string
       });
     case "plan":
       return findPlanSubject({ goalId: lookup.goalId, userId });
+    case "subject":
+      return findSyllabusSubject({ goalId: lookup.goalId, subjectKey: lookup.subjectKey, userId });
     default:
       return lookup satisfies never;
   }
@@ -124,7 +213,8 @@ function findSubject({ lookup, userId }: { lookup: SubjectLookup; userId: string
 
 /**
  * Checks the learner may ask about a thing, again for every question operation: lessons and
- * chapters that are public or their own, their own goals' plans and their own finished mocks.
+ * chapters that are public or their own, their own goals' plans and subjects, item-bank questions
+ * not on a mock they're sitting, and their own finished mocks.
  */
 export async function findTutorSubject({
   target,
@@ -147,14 +237,28 @@ export async function findTutorSubject({
 function getThreadLookup(
   thread: Pick<
     LessonQuestionThread,
-    "chapterId" | "goalId" | "kind" | "libraryLessonId" | "mockExamId"
+    | "chapterId"
+    | "goalId"
+    | "itemId"
+    | "kind"
+    | "libraryLessonId"
+    | "mockExamId"
+    | "subjectGoalId"
+    | "subjectKey"
   >,
 ): SubjectLookup | null {
   const lookups = {
     chapter: thread.chapterId && { chapterId: thread.chapterId, kind: "chapter" as const },
+    item: thread.itemId && { itemId: thread.itemId, kind: "item" as const },
     lesson: thread.libraryLessonId && { kind: "lesson" as const, lessonId: thread.libraryLessonId },
     mock: thread.mockExamId && { kind: "mock" as const, mockExamId: thread.mockExamId },
     plan: thread.goalId && { goalId: thread.goalId, kind: "plan" as const },
+    subject: thread.subjectGoalId &&
+      thread.subjectKey && {
+        goalId: thread.subjectGoalId,
+        kind: "subject" as const,
+        subjectKey: thread.subjectKey,
+      },
   };
 
   return lookups[thread.kind] || null;
@@ -177,12 +281,16 @@ export function getSubjectThreadColumn(subject: TutorSubject) {
   switch (subject.kind) {
     case "chapter":
       return { chapterId: subject.chapterId };
+    case "item":
+      return { itemId: subject.item.id };
     case "lesson":
       return { libraryLessonId: subject.lesson.id };
     case "mock":
       return { mockExamId: subject.mockExamId };
     case "plan":
       return { goalId: subject.goal.id };
+    case "subject":
+      return { subjectGoalId: subject.goal.id, subjectKey: subject.syllabusSubject.key };
     default:
       return subject satisfies never;
   }

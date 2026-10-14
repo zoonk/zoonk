@@ -4,6 +4,7 @@ import {
   type LessonQuestionScreenKind,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
+import { ListRowButton, ListRowContent, ListRowLeading, ListRowTitle } from "@zoonk/learn/list";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -17,10 +18,10 @@ import {
 
 type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
 
-/** The sheet brings the Markdown renderer with it, so a screen loads it once the learner asks. */
-const LessonQuestionSheet = lazy(async () => {
+/** The drawer brings the Markdown renderer with it, so a screen loads it once the learner asks. */
+const LessonQuestionDrawer = lazy(async () => {
   const panel = await import("./lesson-question-panel");
-  return { default: panel.LessonQuestionSheet };
+  return { default: panel.LessonQuestionDrawer };
 });
 
 function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: string }) {
@@ -33,6 +34,8 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
       return t("Ask {name} about this mock exam", { name });
     case "plan":
       return t("Ask {name} about your plan", { name });
+    case "subject":
+      return t("Ask {name} about this subject", { name });
     default:
       return kind satisfies never;
   }
@@ -44,6 +47,34 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
  * face alone, as wide as the close button across, so the header's title between stays clear.
  */
 type AskTutorSize = "bar" | "sm" | "task";
+
+/**
+ * "Ask Zu about this subject" as a row of a page's list (its aside's "Also"), by the buddy's face:
+ * the same drawer as the bar's button.
+ */
+function AskTutorRow({
+  identity,
+  kind,
+}: {
+  identity: TutorIdentity;
+  kind: LessonQuestionScreenKind;
+}) {
+  const { open } = useLessonQuestionController();
+  const label = useAskLabel({ kind, name: identity.name });
+
+  return (
+    <ListRowButton onClick={() => open({ kind })}>
+      <ListRowLeading>
+        <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
+          {identity.avatar}
+        </span>
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>{label}</ListRowTitle>
+      </ListRowContent>
+    </ListRowButton>
+  );
+}
 
 /** "Ask Zu": the learner's buddy, by face and name, answers about what the screen shows. */
 function AskTutorButton({
@@ -80,8 +111,8 @@ function AskTutorButton({
   );
 }
 
-/** The sheet mounts the first time it opens and stays for its closing animation after that. */
-function ScreenTutorSheet({
+/** The drawer mounts the first time it opens and stays for its closing animation after that. */
+function ScreenTutorDrawer({
   identity,
   navigation,
 }: {
@@ -101,13 +132,13 @@ function ScreenTutorSheet({
 
   return (
     <Suspense fallback={null}>
-      <LessonQuestionSheet identity={identity} navigation={navigation} />
+      <LessonQuestionDrawer identity={identity} navigation={navigation} open={state.isOpen} />
     </Suspense>
   );
 }
 
 /**
- * The questions sheet of a screen outside the player (a chapter or a finished mock), mounted with
+ * The questions drawer of a screen outside the player (a chapter, a subject or a finished mock), mounted with
  * its "Ask {name}" button. Keep `target` and `tutor` stable across renders, as the tutor's requests
  * follow them.
  */
@@ -135,25 +166,28 @@ function AskTutorProvider({
   return (
     <LessonQuestionHostProvider connection={tutor.connection} host={host} target={target}>
       {children}
-      <ScreenTutorSheet identity={identity} navigation={tutor.navigation} />
+      <ScreenTutorDrawer identity={identity} navigation={tutor.navigation} />
     </LessonQuestionHostProvider>
   );
 }
 
 /**
- * "Ask Zu" on a screen outside the player: the same questions sheet as in a lesson, where the
+ * "Ask Zu" on a screen outside the player: the same questions drawer as in a lesson, where the
  * learner's buddy answers about what the screen shows, with suggested questions. Its thread loads
- * when the learner opens it.
+ * when the learner opens it, and only what the learner sends is answered. As a `row` it's a list
+ * row saying what it asks about, for a page's aside.
  *
  * ```tsx
  * <AskTutor target={chapterTarget} tutor={tutorConfig} />
  * ```
  */
 export function AskTutor({
+  appearance = "button",
   size = "sm",
   target,
   tutor,
 }: {
+  appearance?: "button" | "row";
   size?: AskTutorSize;
   target: ScreenTarget;
   tutor: LessonTutorConfig;
@@ -162,7 +196,11 @@ export function AskTutor({
 
   return (
     <AskTutorProvider identity={identity} target={target} tutor={tutor}>
-      <AskTutorButton identity={identity} kind={target.kind} size={size} />
+      {appearance === "row" ? (
+        <AskTutorRow identity={identity} kind={target.kind} />
+      ) : (
+        <AskTutorButton identity={identity} kind={target.kind} size={size} />
+      )}
     </AskTutorProvider>
   );
 }

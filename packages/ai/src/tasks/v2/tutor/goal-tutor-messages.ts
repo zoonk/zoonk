@@ -1,5 +1,6 @@
 import { type LessonQuestionPriorTurn } from "../../lessons/lesson-question";
 import { type PlanScopeContext } from "../../lessons/lesson-question-context";
+import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
 
 /**
  * OpenAI caches a prompt up to its latest message on its own. Memory follows the learner's
@@ -41,10 +42,21 @@ function toHistoryMessages(priorTurns: readonly LessonQuestionPriorTurn[]) {
   ]);
 }
 
-function createContextMessage(contextSnapshot: PlanScopeContext) {
+/** The goal's context, with the host's link wherever it points at something the app opens. */
+function createContextMessage({
+  contextSnapshot,
+  links,
+}: {
+  contextSnapshot: PlanScopeContext;
+  links: GoalTutorLinks;
+}) {
   return textMessage({
     role: "user",
-    text: ["<CURRENT_CONTEXT>", JSON.stringify(contextSnapshot), "</CURRENT_CONTEXT>"].join("\n"),
+    text: [
+      "<CURRENT_CONTEXT>",
+      stringifyWithLinks(contextSnapshot, links.toLink),
+      "</CURRENT_CONTEXT>",
+    ].join("\n"),
   });
 }
 
@@ -78,17 +90,19 @@ function createMemoryMessages(learnerMemory: readonly string[] | undefined) {
 export function createGoalTutorMessages({
   contextSnapshot,
   learnerMemory,
+  links,
   priorTurns,
   question,
 }: {
   contextSnapshot: PlanScopeContext;
   /** Facts the learner shared before, picked for this message. */
   learnerMemory?: readonly string[];
+  links: GoalTutorLinks;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 }) {
   return [
-    createContextMessage(contextSnapshot),
+    createContextMessage({ contextSnapshot, links }),
     ...toHistoryMessages(priorTurns),
     learnerMessage({ breakpoint: true, question }),
     ...createMemoryMessages(learnerMemory),

@@ -1,7 +1,8 @@
 import "server-only";
 import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
+import { GOAL_TUTOR_PAGES } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
 import { z } from "zod";
-import { screenSnapshotSchema } from "./screen-snapshot-schema";
+import { screenSnapshotSchema, standaloneScreenSnapshotSchema } from "./screen-snapshot-schema";
 
 /** Snapshots saved before the outline kept only titles listed each chapter's lessons too. */
 const courseChapterTitleSchema = z.union([
@@ -37,13 +38,48 @@ const PLAN_ITEM_REASONS = [
 /** A mock exam the learner's plan doesn't include stays on its day, marked as Plus's. */
 const plusMarkSchema = z.literal(true).optional();
 
+/** Where something opens in the app (see `TutorLink`); null or absent when it opens nowhere. */
+const tutorLinkSchema = z
+  .discriminatedUnion("kind", [
+    z.object({ blockId: z.string(), kind: z.literal("block") }),
+    z.object({ kind: z.literal("challenge"), planItemId: z.string() }),
+    z.object({ kind: z.literal("page"), page: z.enum(GOAL_TUTOR_PAGES) }),
+    z.object({ key: z.string(), kind: z.literal("subject") }),
+  ])
+  .nullable()
+  .optional();
+
 const planNextItemSchema = z.object({
   kind: z.string(),
+  link: tutorLinkSchema,
   plusRequired: plusMarkSchema,
   title: z.string(),
 });
 
 const planScopeSnapshotSchema = z.object({
+  // Plan questions asked before the buddy saw what earlier days left have none.
+  catchUp: z
+    .object({
+      lessons: z.array(
+        z.object({ inToday: z.boolean(), link: tutorLinkSchema.default(null), title: z.string() }),
+      ),
+      offeredToday: z.boolean(),
+      total: z.number().int(),
+    })
+    .nullable()
+    .optional(),
+  // Plan questions asked before the buddy saw the challenges ahead have none.
+  challenges: z
+    .array(
+      z.object({
+        date: z.string().nullable(),
+        kind: z.enum(["challenge", "mock"]),
+        link: tutorLinkSchema.default(null),
+        locked: z.boolean(),
+        when: z.enum(["date", "nextSession", "queued"]),
+      }),
+    )
+    .optional(),
   // Plan questions asked before the plan's context carried its course have none.
   course: courseOutlineSchema.nullable().default(null),
   estimate: z.object({ endDate: z.string().nullable(), remainingHours: z.number() }),
@@ -138,6 +174,8 @@ const planScopeSnapshotSchema = z.object({
   scope: z.object({ kind: z.literal("plan") }),
   // Questions to the buddy from its own conversation have no screen.
   screen: screenSnapshotSchema.optional(),
+  // Questions asked from a screen, or before the buddy linked the open goal, have none.
+  selectedGoal: z.literal(true).optional(),
   setup: z
     .object({
       areas: z.array(
@@ -176,9 +214,19 @@ const planScopeSnapshotSchema = z.object({
     .optional(),
   status: z
     .object({
+      // Snapshots saved before challenges counted toward a finished plan have none.
+      challenges: z.number().nullable().optional(),
       days: z.number().nullable(),
       extraMinutesPerDay: z.number().nullable(),
-      kind: z.enum(["ahead", "behind", "needsAdjusting", "onTrack"]),
+      kind: z.enum([
+        "ahead",
+        "behind",
+        "challengesLeft",
+        "finished",
+        "needsAdjusting",
+        "onTrack",
+        "pastDate",
+      ]),
       lessons: z.number().nullable().optional(),
       options: z.array(z.string()),
     })
@@ -189,7 +237,9 @@ const planScopeSnapshotSchema = z.object({
       items: z.array(
         z.object({
           canDo: z.string().nullable(),
+          catchUp: z.literal(true).optional(),
           kind: z.string(),
+          link: tutorLinkSchema,
           minutes: z.number().nullable(),
           plusRequired: plusMarkSchema,
           reason: z.enum(PLAN_ITEM_REASONS),
@@ -204,7 +254,7 @@ const planScopeSnapshotSchema = z.object({
 });
 
 const lessonQuestionContextSnapshotSchema = z.union([
-  screenSnapshotSchema,
+  standaloneScreenSnapshotSchema,
   planScopeSnapshotSchema,
 ]);
 

@@ -1,8 +1,6 @@
 "use client";
 
-import { CalendarCogIcon, CalendarDaysIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "./tutor-cards";
 import { useTutorIdentity } from "./tutor-identity";
@@ -17,9 +15,11 @@ export type TutorSituation = { hasMistake: boolean; hasToday: boolean };
 export type TutorConversationContent = TutorCards & {
   composerLabel: string;
   greeting: string;
+  /** One action under the hello, such as customizing the learner's default buddy. */
+  greetingAction?: React.ReactNode;
   identity: { avatar: React.ReactNode; name: string };
   placeholder: string;
-  suggestions: { icon: React.ReactNode; id: string; label: string }[];
+  suggestions: { id: string; label: string }[];
 };
 
 /**
@@ -34,34 +34,14 @@ function useSuggestions(situation: TutorSituation): TutorConversationContent["su
     : t("What's in my plan for today?");
 
   const doubt = situation.hasMistake
-    ? {
-        icon: <KindTile kind="mistakes" size="sm" />,
-        id: "mistake",
-        label: t("Explain my last mistake"),
-      }
-    : {
-        icon: <KindTile icon={TargetIcon} kind="lesson" size="sm" />,
-        id: "focus",
-        label: t("What should I focus on first?"),
-      };
+    ? { id: "mistake", label: t("Explain my last mistake") }
+    : { id: "focus", label: t("What should I focus on first?") };
 
   return [
-    { icon: <KindTile icon={CalendarDaysIcon} kind="lesson" size="sm" />, id: "today", label: why },
-    { icon: <PlanChangeTile />, id: "lighter", label: t("I want to study less this week") },
+    { id: "today", label: why },
+    { id: "lighter", label: t("I want to study less this week") },
     doubt,
   ];
-}
-
-/** A change to the plan wears the plan's neutral tone: it's about time, not a kind of lesson. */
-function PlanChangeTile() {
-  return (
-    <span
-      aria-hidden="true"
-      className="bg-muted text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-lg"
-    >
-      <CalendarCogIcon className="size-4" />
-    </span>
-  );
 }
 
 /**
@@ -85,20 +65,17 @@ export function useTutorConversationContent({
 
   // The hello says the buddy is an AI, since it opens every conversation (EU AI Act art. 50;
   // Decreto 12.880/2026 art. 11 for minors).
-  const greeting = buddy
-    ? t(
-        "Hi! I'm {name}, your AI tutor. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
-        { name },
-      )
-    : t(
-        "Hi! I'm your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan. Pick my look and name whenever you like.",
-      );
+  const greeting = t(
+    "Hi! I'm {name}, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
+    { name },
+  );
 
+  // The placeholder teaches both things the buddy does: answer, and change the plan.
   return {
     composerLabel: t("Message {name}", { name }),
     greeting,
     identity,
-    placeholder: t("Message {name}…", { name }),
+    placeholder: t("Ask a question or request a change"),
     ...getTutorCards({ decide, tools }),
     suggestions,
   };

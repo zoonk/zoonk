@@ -1,13 +1,17 @@
 import "server-only";
 import {
+  type ItemScopeContext,
   type PlanScopeContext,
+  type SubjectScopeContext,
   type TutorScreenContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 import { type LessonQuestionContextInput, type LessonScopeContextInput } from "../contract";
 import { buildChapterContextSnapshot } from "./chapter-context-snapshot";
+import { buildItemContextSnapshot } from "./item-context-snapshot";
 import { buildLibraryQuestionContextSnapshot } from "./library-context-snapshot";
 import { buildMockContextSnapshot } from "./mock-context-snapshot";
 import { buildPlanContextSnapshot } from "./plan-context-snapshot";
+import { buildSubjectContextSnapshot } from "./subject-context-snapshot";
 import { type TutorSubject } from "./tutor-subject";
 import { findSubjectGoal } from "./tutored-goal";
 
@@ -28,6 +32,16 @@ function isLessonContext(context: LessonQuestionContextInput): context is Lesson
   return context.kind === "lesson" || context.kind === "step" || context.kind === "answer";
 }
 
+/**
+ * A subject is its goal's own, and a session's or practice's question comes from one, so they're
+ * only ever asked about with that goal's plan.
+ */
+function needsGoalPlan(
+  context: TutorScreenContext,
+): context is ItemScopeContext | SubjectScopeContext {
+  return context.scope.kind === "item" || context.scope.kind === "subject";
+}
+
 function toScreenSnapshot(contextSnapshot: TutorScreenContext | null): ScreenSnapshot {
   return contextSnapshot
     ? { contextSnapshot, status: "ready", stepId: null, stepNumber: null }
@@ -36,7 +50,8 @@ function toScreenSnapshot(contextSnapshot: TutorScreenContext | null): ScreenSna
 
 /**
  * What the screen shows: a lesson's screens and answers from the step ids the client sent, or the
- * chapter or mock as a whole. The context must match the thing the thread is about.
+ * chapter, mock or subject as a whole, or a session's or practice's question. The context must
+ * match the thing the thread is about.
  */
 async function buildScreenSnapshot({
   context,
@@ -69,6 +84,14 @@ async function buildScreenSnapshot({
           language: subject.language,
         }),
       );
+    case "subject":
+      return toScreenSnapshot(buildSubjectContextSnapshot(subject));
+    case "item":
+      return context.kind === "item"
+        ? toScreenSnapshot(
+            await buildItemContextSnapshot({ context, itemId: subject.item.id, userId }),
+          )
+        : INVALID_CONTEXT;
     default:
       return subject satisfies never;
   }
@@ -88,10 +111,10 @@ async function buildScreenGoalSnapshot({
 
 /**
  * What the tutor sees for a new question, built on the server. A question about the plan, or
- * from a chapter, a lesson or a finished mock inside one of the learner's goals, goes to the
- * buddy with the goal's plan, plus the screen it came from: every place the buddy is asked can
- * read the plan, propose a change to it and offer the app's features. A learner without a goal
- * asks about the screen alone.
+ * from a chapter, a lesson, a subject or a finished mock inside one of the learner's goals, goes
+ * to the buddy with the goal's plan, plus the screen it came from: every place the buddy is asked
+ * can read the plan, propose a change to it and offer the app's features. A learner without a
+ * goal asks about the screen alone.
  */
 export async function buildTutorContextSnapshot({
   context,
@@ -103,8 +126,11 @@ export async function buildTutorContextSnapshot({
   userId: string;
 }) {
   if (subject.kind === "plan") {
+    // The buddy's own conversation is about the goal the app has open: its answers may link it.
     const contextSnapshot =
-      context.kind === "plan" ? await buildPlanContextSnapshot(subject.goal) : null;
+      context.kind === "plan"
+        ? await buildPlanContextSnapshot(subject.goal, { conversation: true })
+        : null;
 
     return contextSnapshot
       ? { contextSnapshot, status: "ready" as const, stepId: null, stepNumber: null }
@@ -116,9 +142,14 @@ export async function buildTutorContextSnapshot({
     buildScreenGoalSnapshot({ subject, userId }),
   ]);
 
-  if (screen.status !== "ready" || !plan) {
+  if (screen.status !== "ready") {
     return screen;
   }
 
-  return { ...screen, contextSnapshot: { ...plan, screen: screen.contextSnapshot } };
+  if (plan) {
+    return { ...screen, contextSnapshot: { ...plan, screen: screen.contextSnapshot } };
+  }
+
+  const { contextSnapshot } = screen;
+  return needsGoalPlan(contextSnapshot) ? INVALID_CONTEXT : { ...screen, contextSnapshot };
 }

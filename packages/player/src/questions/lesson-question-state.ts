@@ -5,6 +5,10 @@ import {
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import {
+  isLessonQuestionAnswerAction,
+  reduceLessonQuestionAnswerAction,
+} from "./lesson-question-answer-state";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
@@ -41,6 +45,11 @@ export type LessonQuestionState = {
   questions: LessonQuestionResource[];
   requestError: LessonQuestionApiError | null;
   revealedQuestionId: string | null;
+  /**
+   * Answers streamed here whose saved text hasn't arrived yet: a buddy answer links the app only
+   * once its saved text, links checked, replaces what streamed (or it's read from the server).
+   */
+  streamedAnswerIds: string[];
   /** The suggested question the learner picked, so sending it unchanged says which one it was. */
   suggestion: OfferedSuggestion | null;
 };
@@ -52,7 +61,7 @@ export type LessonQuestionState = {
 export type OfferedSuggestion = { question: string; suggestion?: LessonScreenSuggestion };
 
 export type LessonQuestionAction =
-  | { context: LessonQuestionContext; type: "open" }
+  | { context: LessonQuestionContext; keepDraft?: boolean; type: "open" }
   | { type: "close" }
   | { type: "threadLoadStarted" }
   | {
@@ -79,6 +88,7 @@ export type LessonQuestionAction =
   | { questionId: string; type: "answerStarted" }
   | { chunk: string; questionId: string; type: "answerChunkReceived" }
   | { questionId: string; type: "answerCompleted" }
+  | { answer: string; questionId: string; type: "answerSaved" }
   | { changes: LessonQuestionMemoryChange[]; questionId: string; type: "memoryUpdated" }
   | { change: PlanChangeView; questionId: string; type: "planChangeProposed" }
   | { change: PlanChangeView; type: "planChangeAnswered" }
@@ -104,6 +114,7 @@ export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   questions: [],
   requestError: null,
   revealedQuestionId: null,
+  streamedAnswerIds: [],
   suggestion: null,
 };
 
@@ -125,107 +136,6 @@ function reduceQuestionCreated({
   };
 }
 
-function updateAnswerStarted(question: LessonQuestionResource): LessonQuestionResource {
-  return { ...question, answer: null, status: "running" };
-}
-
-function updateAnswerChunk({
-  chunk,
-  question,
-}: {
-  chunk: string;
-  question: LessonQuestionResource;
-}): LessonQuestionResource {
-  return { ...question, answer: `${question.answer ?? ""}${chunk}`, status: "running" };
-}
-
-function updateAnswerStatus({
-  question,
-  status,
-}: {
-  question: LessonQuestionResource;
-  status: "completed" | "failed";
-}): LessonQuestionResource {
-  return { ...question, status };
-}
-
-function reduceAnswerStarted({
-  action,
-  state,
-}: {
-  action: Extract<LessonQuestionAction, { type: "answerStarted" }>;
-  state: LessonQuestionState;
-}): LessonQuestionState {
-  if (
-    state.questions.find((question) => question.id === action.questionId)?.status === "completed"
-  ) {
-    return state;
-  }
-
-  return {
-    ...state,
-    activeQuestionId: action.questionId,
-    answerError: null,
-    questions: updateQuestionById({
-      questionId: action.questionId,
-      questions: state.questions,
-      update: updateAnswerStarted,
-    }),
-  };
-}
-
-function reduceAnswerChunk({
-  action,
-  state,
-}: {
-  action: Extract<LessonQuestionAction, { type: "answerChunkReceived" }>;
-  state: LessonQuestionState;
-}): LessonQuestionState {
-  if (state.activeQuestionId !== action.questionId) {
-    return state;
-  }
-
-  return {
-    ...state,
-    questions: updateQuestionById({
-      questionId: action.questionId,
-      questions: state.questions,
-      update: (question) => updateAnswerChunk({ chunk: action.chunk, question }),
-    }),
-  };
-}
-
-function reduceAnswerFinished({
-  action,
-  state,
-}: {
-  action: Extract<LessonQuestionAction, { type: "answerCompleted" | "answerFailed" }>;
-  state: LessonQuestionState;
-}): LessonQuestionState {
-  if (
-    (state.activeQuestionId !== null && state.activeQuestionId !== action.questionId) ||
-    state.questions.find((question) => question.id === action.questionId)?.status === "completed"
-  ) {
-    return state;
-  }
-
-  const status = action.type === "answerCompleted" ? "completed" : "failed";
-
-  return {
-    ...state,
-    activeQuestionId: null,
-    answerError:
-      action.type === "answerFailed"
-        ? { questionId: action.questionId, reason: action.reason }
-        : null,
-    questions: updateQuestionById({
-      questionId: action.questionId,
-      questions: state.questions,
-      update: (question) => updateAnswerStatus({ question, status }),
-    }),
-  };
-}
-
 export function lessonQuestionReducer(
   state: LessonQuestionState,
   action: LessonQuestionAction,
@@ -234,14 +144,19 @@ export function lessonQuestionReducer(
     return reduceLessonQuestionThreadAction({ action, state });
   }
 
+  if (isLessonQuestionAnswerAction(action)) {
+    return reduceLessonQuestionAnswerAction({ action, state });
+  }
+
   switch (action.type) {
     case "open":
       return {
         ...state,
         context: action.context,
-        draft: isSameDraftContext({ current: state.context, next: action.context })
-          ? state.draft
-          : "",
+        draft:
+          action.keepDraft || isSameDraftContext({ current: state.context, next: action.context })
+            ? state.draft
+            : "",
         isOpen: true,
         revealedQuestionId: null,
       };
@@ -263,13 +178,6 @@ export function lessonQuestionReducer(
       return reduceQuestionCreated({ question: action.question, state });
     case "questionCreateFailed":
       return { ...state, error: "create", isCreating: false, requestError: action.reason };
-    case "answerStarted":
-      return reduceAnswerStarted({ action, state: { ...state, requestError: null } });
-    case "answerChunkReceived":
-      return reduceAnswerChunk({ action, state });
-    case "answerCompleted":
-    case "answerFailed":
-      return reduceAnswerFinished({ action, state });
     case "memoryUpdated":
       return {
         ...state,

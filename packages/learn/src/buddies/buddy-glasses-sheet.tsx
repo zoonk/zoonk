@@ -46,7 +46,7 @@ export function BuddyGlassesSheet({
 
         <DrawerContent className="flex flex-col gap-3">
           {failed && (
-            <p className="text-destructive text-sm" role="alert">
+            <p className="text-destructive-text text-sm" role="alert">
               {t("That didn't save. Try again in a moment.")}
             </p>
           )}

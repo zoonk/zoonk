@@ -3,6 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type InlineMarkup } from "@zoonk/utils/inline-markup";
 import { Fragment } from "react";
 import { RichTable } from "../_components/rich-table";
+import { RichTextBlocks } from "../rich-text/rich-text-blocks";
 import { LessonVisual } from "../visuals/lesson-visual";
 import { type ItemTextBlock, parseItemLine, parseItemText } from "./_utils/item-text";
 import { ItemPicture, type ItemPictureData } from "./item-picture";
@@ -90,6 +91,14 @@ export function ItemText({ className, text }: { className?: string; text: string
   );
 }
 
+/**
+ * A question's command, the same on every screen that asks one (a checkpoint, a mock, a test-out,
+ * a practice): 19px, a little heavier than body text and tight, so it reads as the screen's one
+ * question without shouting.
+ */
+export const QUESTION_TEXT_CLASS =
+  "text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-balance";
+
 /** One line of item text, such as a question's command or a statement, with its emphasis. */
 export function ItemLine({ text }: { text: string }) {
   return <InlineMarkupView segments={parseItemLine(text)} />;
@@ -118,4 +127,15 @@ export function ItemSupport({
       <LessonVisual visual={visual} />
     </>
   );
+}
+
+/** A question stem with paragraphs and tables, outside inline labels and answer options. */
+export function ItemStem({
+  text,
+  heading = false,
+}: {
+  text: string;
+  heading?: false | "h1" | "h2";
+}) {
+  return <RichTextBlocks paragraphTag={heading || "p"} text={text} />;
 }

@@ -130,7 +130,7 @@ async function proposeForGoal({
  * hour a day", "no studying on Saturdays", "the exam moved to January 24"): the learner's words,
  * as the conversation made them clear, read into the same changes the plan's controls make. The
  * change never applies here: it's stored as a proposal with its effect, tied to the answer, and
- * waits for the learner's tap (Apply or Not now) in the conversation, on Today or on the Journey.
+ * waits for the learner's tap (Apply or Not now) in the conversation, on Today or on the Plan.
  * A change that would leave the plan as it is is never offered (`unchanged`), so the buddy says so;
  * parts of the words no change covers come back as `leftOut`, so the buddy answers those too; and
  * a change that moves an exam off the day its notice sets carries that day (`officialDate`). What

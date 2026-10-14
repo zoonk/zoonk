@@ -4,12 +4,12 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted, useFormatter } from "next-intl";
 import { useLessonQuestionController } from "./lesson-question-provider";
 
-/** A question to start with, with the icon that says what it's about and a stable `id`. */
-export type TutorSuggestion = { icon: React.ReactNode; id: string; label: string };
+/** A question to start with, and a stable `id`. */
+export type TutorSuggestion = { id: string; label: string };
 
 /**
- * The questions to start with, as chips right above the composer: one row that scrolls sideways on
- * phones, wrapping from `lg`.
+ * The questions to start with, as small chips right above the composer, wrapping to a second line
+ * when they don't fit, so none is cut at the screen's edge. Each keeps a 44px target.
  */
 export function Suggestions({
   onSend,
@@ -21,19 +21,15 @@ export function Suggestions({
   const t = useExtracted();
 
   return (
-    <ul
-      aria-label={t("Suggestions")}
-      className="-mx-4 flex scrollbar-none gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
-    >
+    <ul aria-label={t("Suggestions")} className="flex flex-wrap gap-1.5">
       {suggestions.map((suggestion) => (
-        <li className="shrink-0" key={suggestion.id}>
+        <li className="min-w-0" key={suggestion.id}>
           <button
-            className="bg-background hover:bg-muted/60 focus-visible:ring-ring/50 flex h-11 items-center gap-2 rounded-full border pr-4 pl-2 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] **:data-[slot=kind-tile]:size-7 **:data-[slot=kind-tile]:rounded-full"
+            className="text-muted-foreground ring-input hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area bg-background relative flex h-6.5 max-w-full items-center rounded-[0.375rem] px-2.5 text-xs font-medium ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
             onClick={() => onSend(suggestion.label)}
             type="button"
           >
-            {suggestion.icon}
-            {suggestion.label}
+            <span className="truncate">{suggestion.label}</span>
           </button>
         </li>
       ))}
@@ -64,12 +60,9 @@ function useDayLabel() {
   };
 }
 
+/** A day's name between stretches of the conversation, as a quiet section label. */
 function DayLabel({ children }: { children: string }) {
-  return (
-    <p className="text-muted-foreground text-center text-xs font-medium first-letter:uppercase">
-      {children}
-    </p>
-  );
+  return <p className="text-label text-center">{children}</p>;
 }
 
 /** Whether two moments fall on the same calendar day, in the learner's clock. */
@@ -91,12 +84,19 @@ export function TurnDay({ date, previous }: { date: Date; previous: Date | null 
   return <DayLabel>{dayLabel(date)}</DayLabel>;
 }
 
-/** The day above the buddy's hello: the first message's, or today in a new conversation. */
+/**
+ * The day above the buddy's hello, once the conversation goes back further than today: its first
+ * message's day. A conversation that's all from today needs no day.
+ */
 export function FirstDay() {
   const dayLabel = useDayLabel();
   const now = useMountTime();
   const { state } = useLessonQuestionController();
   const first = state.questions[0];
 
-  return <DayLabel>{dayLabel(first ? new Date(first.createdAt) : now)}</DayLabel>;
+  if (!first || isSameDay(new Date(first.createdAt), now)) {
+    return null;
+  }
+
+  return <DayLabel>{dayLabel(new Date(first.createdAt))}</DayLabel>;
 }

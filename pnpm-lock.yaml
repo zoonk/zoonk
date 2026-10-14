@@ -619,6 +619,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/player':
+        specifier: workspace:*
+        version: link:../../packages/player
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -1482,10 +1485,22 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: 0.9.0
         version: 0.9.0
+      mdast-util-from-markdown:
+        specifier: 2.1.0
+        version: 2.1.0(supports-color@10.2.2)
+      mdast-util-gfm:
+        specifier: 3.1.0
+        version: 3.1.0(supports-color@10.2.2)
+      micromark-extension-gfm:
+        specifier: 3.0.0
+        version: 3.0.0
       negotiator:
         specifier: 1.1.0
         version: 1.1.0
     devDependencies:
+      '@types/mdast':
+        specifier: 4.0.4
+        version: 4.0.4
       '@types/negotiator':
         specifier: 0.6.5
         version: 0.6.5

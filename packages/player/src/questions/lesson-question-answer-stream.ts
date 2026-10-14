@@ -2,11 +2,13 @@ import {
   LESSON_QUESTION_MEMORY_PART,
   LESSON_QUESTION_PLAN_CHANGE_PART,
   LESSON_QUESTION_REPLACED_CHANGES_PART,
+  LESSON_QUESTION_SAVED_ANSWER_PART,
   LESSON_QUESTION_TOOL_OFFER_PART,
   type LessonQuestionMemoryChange,
   type TutorToolOffer,
   lessonQuestionMemoryChangesSchema,
   replacedPlanChangesSchema,
+  savedAnswerSchema,
   tutorToolOfferSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
@@ -65,6 +67,8 @@ type AnswerStreamHandlers = {
   onToolOffer: (offer: TutorToolOffer) => void;
   /** The server sends `finish` once the answer is saved; memory changes may still follow. */
   onSaved: () => void;
+  /** A buddy answer as it was saved, its links checked, just before `finish`. */
+  onSavedAnswer: (answer: string) => void;
 };
 
 /**
@@ -76,9 +80,20 @@ function readDataPart({
   onMemory,
   onPlanChange,
   onPlanChangesReplaced,
+  onSavedAnswer,
   onToolOffer,
 }: { chunk: UIMessageChunk } & AnswerStreamHandlers) {
   if (!("data" in chunk)) {
+    return;
+  }
+
+  if (chunk.type === LESSON_QUESTION_SAVED_ANSWER_PART) {
+    const saved = savedAnswerSchema.safeParse(chunk.data);
+
+    if (saved.success) {
+      onSavedAnswer(saved.data.answer);
+    }
+
     return;
   }
 
@@ -164,6 +179,7 @@ export async function streamLessonQuestionAnswerRequest({
   onPlanChange,
   onPlanChangesReplaced,
   onSaved,
+  onSavedAnswer,
   onToolOffer,
   questionId,
 }: {
@@ -172,6 +188,7 @@ export async function streamLessonQuestionAnswerRequest({
   onPlanChange: (change: PlanChangeView) => void;
   onPlanChangesReplaced: (changeIds: string[]) => void;
   onSaved: () => void;
+  onSavedAnswer: (answer: string) => void;
   onToolOffer: (offer: TutorToolOffer) => void;
   questionId: string;
 }): Promise<LessonQuestionApiResult<{ memoryChanges: LessonQuestionMemoryChange[] }>> {
@@ -217,6 +234,7 @@ export async function streamLessonQuestionAnswerRequest({
         saved = true;
         onSaved();
       },
+      onSavedAnswer,
       onToolOffer,
       reader: stream.getReader(),
     }),

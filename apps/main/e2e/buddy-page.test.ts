@@ -6,6 +6,7 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -22,12 +23,16 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { openAs } from "./study-day";
+import { captureMissionEnding } from "./mission-ending-captures";
+import { createStudyDay, openAs, saveMissions } from "./study-day";
 import { fulfillTutorAnswer, toProposal } from "./tutor-answer";
 
 const STUDY_SECONDS = 600;
 const FULL_MEAL_DAYS = [1, 2];
 const SATURDAY = 6;
+
+/** A phone, where the buddy's day is one line beside its name that opens a sheet. */
+const PHONE = { height: 812, width: 390 };
 
 async function readGlasses(userId: string) {
   const buddy = await readBuddy(userId);
@@ -159,7 +164,7 @@ async function createAllMissionsLearner() {
   return user;
 }
 
-/** Opens the tiles under the buddy's name: its Energy and today's missions, in a sheet. */
+/** Opens the buddy's day from the line beside its name: its Energy and today's missions, in a sheet. */
 async function openBuddyToday(page: Page, buddy: string) {
   await page
     .getByRole("main")
@@ -176,6 +181,8 @@ type BuddyAnswer = {
   planChange?: PlanChangeView;
   /** Earlier proposals this answer's change replaced, as the API sends them. */
   replaced?: string[];
+  /** The answer as the API saved it, its links checked (`data-saved-answer`). */
+  saved?: string;
   toolOffer?: TutorToolOffer;
 };
 
@@ -185,7 +192,19 @@ type BuddyAnswer = {
  * order, with the plan change it proposed or the app tool it offered as the API sends them. The API's own tests cover how
  * answers are written and saved.
  */
-async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
+async function stubBuddy({
+  answers,
+  missionMoment = null,
+  onQuestionCreated,
+  page,
+}: {
+  answers: BuddyAnswer[];
+  /** What asking does to the day's missions, as the API says when the question is created. */
+  missionMoment?: MissionMomentView | null;
+  /** Persists a transport fixture's mission receipt so the real day read agrees with the chat. */
+  onQuestionCreated?: (question: LessonQuestionResource) => Promise<void>;
+  page: Page;
+}) {
   const asked: { question: string }[] = [];
   const queue = [...answers];
 
@@ -213,7 +232,8 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
       updatedAt: now,
     };
 
-    await route.fulfill({ json: question, status: 201 });
+    await onQuestionCreated?.(question);
+    await route.fulfill({ json: { ...question, missionMoment }, status: 201 });
   });
 
   await page.route("**/v1/questions/*/answers", async (route) => {
@@ -225,6 +245,9 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
         ? [{ data: { ids: next.replaced }, type: "data-plan-changes-replaced" as const }]
         : []),
       ...(next.toolOffer ? [{ data: next.toolOffer, type: "data-tool-offer" as const }] : []),
+      ...(next.saved === undefined
+        ? []
+        : [{ data: { answer: next.saved }, type: "data-saved-answer" as const }]),
     ];
 
     await fulfillTutorAnswer(route, next.answer, parts);
@@ -234,11 +257,12 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
 }
 
 test.describe("Buddy tab", () => {
-  test("keeps the buddy's day to two tiles: Energy opening its page and missions in a sheet, glasses and the rest in its menu, and studying wakes it", async ({
+  test("on a phone keeps the buddy's day to one line beside its name, opening Energy and the missions in a sheet, glasses and the rest in its menu, and studying wakes it", async ({
     browser,
   }) => {
     const user = await createBuddyLearner();
     const page = await openAs(browser, user);
+    await page.setViewportSize(PHONE);
     const main = page.getByRole("main");
     await stubBuddy({ answers: [], page });
 
@@ -252,17 +276,15 @@ test.describe("Buddy tab", () => {
     await expect(
       page
         .getByRole("navigation", { name: "Learning tabs" })
-        .getByRole("link", { name: /^Zu\s*1 of 3 missions today$/u }),
+        .getByRole("link", { name: /^Zu\s*1 of 2 missions today$/u }),
     ).toHaveAttribute("aria-current", "page");
 
     // Before a day of study has passed there's no Energy to show: no empty meter, just when it starts.
-    // Its tile still opens the Energy page; the missions tile opens the buddy's day.
-    await expect(main.getByRole("link", { exact: true, name: "Energy" })).toHaveAttribute(
-      "href",
-      "/energy",
-    );
+    // The line beside the buddy's name says so with the missions, and opens the buddy's day.
+    await expect(
+      main.getByRole("button", { name: /^Energy\s*Not yet\s*1 of 2 missions$/u }),
+    ).toBeVisible();
 
-    await expect(main.getByRole("button", { name: "1 of 3 missions" })).toBeVisible();
     const first = await openBuddyToday(page, "Zu");
     await expect(first.getByRole("link", { name: /^Energy/u })).toHaveCount(0);
 
@@ -285,9 +307,9 @@ test.describe("Buddy tab", () => {
 
     await page.reload();
 
-    const energyTile = main.getByRole("link", { name: /^Energy \d+%$/u });
-    await expect(energyTile).toHaveAttribute("href", "/energy");
-    await expect(main.getByRole("button", { name: "1 of 3 missions" })).toBeVisible();
+    await expect(
+      main.getByRole("button", { name: /^Energy\s*\d+%\s*1 of 2 missions$/u }),
+    ).toBeVisible();
 
     const today = await openBuddyToday(page, "Zu");
     const energy = today.getByRole("link", { name: /^Energy/u });
@@ -296,18 +318,25 @@ test.describe("Buddy tab", () => {
     await expect(energy).toHaveAttribute("href", "/energy");
 
     const missions = today.getByRole("region", { name: "Today's missions" });
-    await expect(missions.getByText("1 of 3")).toBeVisible();
+    await expect(missions).toContainText("1/2");
 
-    // A mission done says nothing more than its check; one to do says what's left.
+    // A mission to do opens where it's done and says what's left; one done is only its check.
+    await expect(
+      missions.getByRole("listitem").filter({ hasText: /^Do a new lesson/u }),
+    ).toHaveText("Do a new lesson, done");
+
     await expect(missions.getByRole("listitem")).toHaveText([
-      /^Review\s*0 of 1 reviews\s*To do$/u,
-      /^Something new\s*Done$/u,
-      /^Fix a mistake\s*Nothing due today\.\s*To do$/u,
+      /^Review, go to today's review\s*Quick review$/u,
+      "Do a new lesson, done",
     ]);
 
     await expect(
-      missions.getByText("+50 Brain Power for finishing all three missions."),
-    ).toBeVisible();
+      missions.getByRole("button", { name: /^Review\b.*go to today's review/u }),
+    ).toBeEnabled();
+
+    await expect(missions.getByRole("button", { name: /^Do a new lesson/u })).toHaveCount(0);
+
+    await expect(missions.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
 
     await expectAccessibleScreen(page, "the buddy's day");
 
@@ -333,7 +362,7 @@ test.describe("Buddy tab", () => {
 
     // Locked pairs say how they're earned and how far along the learner is.
     await expect(
-      sheet.getByRole("radio", { name: /Cat-eye\s*2 of 7 days with all three missions/u }),
+      sheet.getByRole("radio", { name: /Cat-eye\s*2 of 7 days with every mission done/u }),
     ).toBeDisabled();
 
     await expect(
@@ -373,34 +402,253 @@ test.describe("Buddy tab", () => {
 
     await expect(awake.getByText(/took a nap/u)).toHaveCount(0);
 
-    // The Energy tile opens the Energy page, from the keyboard too.
-    await page.keyboard.press("Escape");
-    await expect(awake).toBeHidden();
-    await energyTile.focus();
+    // Energy in the buddy's day opens the Energy page, from the keyboard too.
+    await awake.getByRole("link", { name: /^Energy/u }).focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/energy$/u);
     await expect(page.getByRole("heading", { level: 1, name: "Energy" })).toBeVisible();
     await page.context().close();
   });
 
-  test("all three missions done says so, and missions wait for a session that doesn't exist yet", async ({
+  test("says in the conversation when asking completed the day's last mission, with the +50", async ({
+    browser,
+  }) => {
+    const user = await createBuddyLearner();
+
+    const session = await prisma.studySession.findFirstOrThrow({
+      orderBy: { createdAt: "desc" },
+      where: { localDate: toUTCMidnight(new Date()), userId: user.id },
+    });
+
+    await saveMissions(session.id, [
+      { anchor: {}, kind: "askBuddy", opens: { kind: "buddy" }, total: 1 },
+    ]);
+
+    await prisma.studySession.update({
+      data: { startedAt: new Date() },
+      where: { id: session.id },
+    });
+
+    const [thread, before] = await Promise.all([
+      prisma.lessonQuestionThread.create({
+        data: { goalId: session.goalId, kind: "plan", userId: user.id },
+      }),
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await stubBuddy({
+      answers: [{ answer: "Good question." }],
+      missionMoment: {
+        completed: ["askBuddy"],
+        fullMeal: { bonus: 50, paid: true },
+        missions: [{ done: 1, kind: "askBuddy", status: "done", total: 1 }],
+      },
+      onQuestionCreated: async (question) => {
+        const source = { id: question.id, kind: "buddyQuestion" };
+        const now = new Date(question.createdAt);
+
+        // The API transport is stubbed, so persist its receipt before the real day refresh reads it.
+        await prisma.$transaction(async (tx) => {
+          await tx.lessonQuestion.create({
+            data: {
+              answer: "Good question.",
+              contextKind: "plan",
+              contextSnapshot: {},
+              createdAt: now,
+              id: question.id,
+              question: question.question,
+              requestFingerprint: question.id,
+              requestId: randomUUID(),
+              status: "completed",
+              threadId: thread.id,
+            },
+          });
+
+          await tx.studySession.update({
+            data: {
+              fullMealAt: now,
+              missions: {
+                picks: [
+                  {
+                    anchor: {},
+                    completedBy: source,
+                    done: 1,
+                    kind: "askBuddy",
+                    opens: { kind: "buddy" },
+                    total: 1,
+                  },
+                ],
+                version: 1,
+              },
+              startSnapshot: {
+                fullMealReward: {
+                  after: Number(before.totalBrainPower) + 50,
+                  before: Number(before.totalBrainPower),
+                },
+                fullMealSource: source,
+              },
+            },
+            where: { id: session.id },
+          });
+
+          await tx.userProgress.update({
+            data: { totalBrainPower: { increment: 50 } },
+            where: { userId: user.id },
+          });
+
+          await tx.dailyProgress.upsert({
+            create: {
+              brainPowerEarned: 50,
+              date: session.localDate,
+              dayOfWeek: session.localDate.getUTCDay(),
+              userId: user.id,
+            },
+            update: { brainPowerEarned: { increment: 50 } },
+            where: { userDate: { date: session.localDate, userId: user.id } },
+          });
+        });
+      },
+      page,
+    });
+
+    await page.goto("/buddy");
+    const conversation = page.getByRole("region", { name: "Conversation with Zu" });
+    const day = page.getByRole("complementary", { name: "Zu today" });
+
+    await expect(day.getByRole("region", { name: "Today's missions" })).toContainText(
+      "Ask Zu something",
+    );
+
+    await expect(
+      page
+        .getByRole("navigation", { name: "Learning tabs" })
+        .getByRole("link", { name: /^Zu\s*0 of 1 missions today$/u }),
+    ).toBeVisible();
+
+    await conversation.getByRole("textbox", { name: "Message Zu" }).fill("Why does this work?");
+    await conversation.getByRole("button", { name: "Send" }).click();
+
+    const moment = conversation;
+    await expect(moment).toContainText("Mission done: Ask Zu something");
+    await expect(moment).toContainText("from today's missions");
+    await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+
+    await expect(
+      conversation.getByRole("button", { exact: true, name: "+50 Brain Power" }),
+    ).toHaveCount(1);
+
+    const missions = day.getByRole("region", { name: "Missions done" });
+    await expect(missions).toContainText("Ask Zu something");
+    await expect(missions).toContainText("1/1");
+    await expect(missions).toContainText("You earned +50 Brain Power.");
+    await expect(missions.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+
+    await expect(
+      page
+        .getByRole("navigation", { name: "Learning tabs" })
+        .getByRole("link", { name: /^Zu\s*1 of 1 missions today$/u }),
+    ).toBeVisible();
+
+    await expect(
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ totalBrainPower: before.totalBrainPower + 50n });
+
+    await captureMissionEnding(page, test.info(), "buddy");
+    await page.context().close();
+  });
+
+  test("names the learner's own buddy in the conversation's moment, and keeps it with its goal", async ({
+    browser,
+  }) => {
+    const { goal: first, user } = await createGoalLearner();
+    const second = await goalFixture({ timezone: "UTC", title: "Learn to cook", userId: user.id });
+
+    await Promise.all([
+      planFixture({ goalId: first.id }),
+      planFixture({ goalId: second.id }),
+      learningProfileFixture({
+        activeGoalId: first.id,
+        buddyKind: "beep",
+        buddyName: "Pip",
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+
+    await stubBuddy({
+      answers: [{ answer: "Good question." }],
+      missionMoment: {
+        completed: ["askBuddy"],
+        fullMeal: { bonus: 50, paid: false },
+        missions: [
+          { done: 1, kind: "askBuddy", status: "done", total: 1 },
+          { done: 0, kind: "review", status: "todo", total: 1 },
+        ],
+      },
+      page,
+    });
+
+    await page.goto("/buddy");
+    const conversation = page.getByRole("region", { name: "Conversation with Pip" });
+    await conversation.getByRole("textbox", { name: "Message Pip" }).fill("Why does this work?");
+    await conversation.getByRole("button", { name: "Send" }).click();
+
+    const moment = conversation.locator("[data-slot=mission-moment]");
+    await expect(moment).toContainText("Mission done: Ask Pip something");
+    await expect(moment).toContainText("1 of 2 · Left: Review");
+
+    // Another goal's conversation never shows this goal's moment.
+    await page.getByRole("button", { name: /Current goal: /u }).click();
+    await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
+    await expect(page.getByRole("button", { name: /Current goal: Learn to cook/u })).toBeVisible();
+    await expect(page.locator("[data-slot=mission-moment]")).toHaveCount(0);
+    await page.context().close();
+  });
+
+  test("on a laptop keeps the buddy's day beside the conversation: Energy, the missions done and the buddy, and missions wait for a session that doesn't exist yet", async ({
     browser,
   }) => {
     const fed = await createAllMissionsLearner();
     const page = await openAs(browser, fed);
+    const main = page.getByRole("main");
     await stubBuddy({ answers: [], page });
 
     await page.goto("/buddy");
 
-    await expect(
-      page.getByRole("main").getByRole("button", { name: /3 of 3 missions$/u }),
-    ).toBeVisible();
+    // The day sits beside the conversation, so the line that opens its sheet on a phone is gone.
+    const day = main.getByRole("complementary", { name: "Zu today" });
+    await expect(day).toBeVisible();
+    await expect(main.getByRole("button", { name: /missions$/iu })).toBeHidden();
 
-    const fedToday = await openBuddyToday(page, "Zu");
-    const missions = fedToday.getByRole("region", { name: "Today's missions" });
+    // The conversation keeps a comfortable line instead of stretching across the screen.
+    const conversation = main.getByRole("region", { name: "Conversation with Zu" });
+    const width = await conversation.evaluate((element) => element.getBoundingClientRect().width);
+    expect(width).toBeLessThanOrEqual(720);
 
-    await expect(missions.getByText("3 of 3")).toBeVisible();
-    await expect(missions.getByText("All three missions done: +50 Brain Power")).toBeVisible();
+    // Every mission done: the card says so and the reward lights up.
+    const missions = day.getByRole("region", { name: "Missions done" });
+    await expect(missions).toContainText("3/3");
+    await expect(missions).toContainText("You earned +50 Brain Power.");
+    await expect(missions.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+
+    // The buddy's own rows: what it remembers and the week, a tap away.
+    await expect(day.getByRole("link", { name: /^What Zu remembers/u })).toHaveAttribute(
+      "href",
+      "/settings/memory",
+    );
+
+    await expect(day.getByRole("link", { name: "Weekly summary" })).toHaveAttribute(
+      "href",
+      "/logbook",
+    );
+
+    // On a laptop the conversation is ready to type into.
+    await expect(conversation.getByRole("textbox", { name: "Message Zu" })).toBeFocused();
+    await expectAccessibleScreen(page, "the buddy tab beside its day");
     await page.context().close();
 
     // Reading the buddy never builds today's session, so the missions say when they start.
@@ -411,18 +659,239 @@ test.describe("Buddy tab", () => {
     await stubBuddy({ answers: [], page: fresh });
     await fresh.goto("/buddy");
 
-    const freshToday = await openBuddyToday(fresh, "Otto");
-
     await expect(
-      freshToday
-        .getByRole("region", { name: "Today's missions" })
+      fresh
+        .getByRole("complementary", { name: "Otto today" })
         .getByText("Today's missions start with today's session."),
     ).toBeVisible();
 
     await fresh.context().close();
   });
 
-  test("a learner without a buddy talks to a plain one, picks a buddy from the tab, then renames it", async ({
+  test("on a phone says what each mission still asks, asks the buddy in its own composer, and keeps a new learner's first steps under the missions", async ({
+    browser,
+  }) => {
+    const { goal, session, user } = await createStudyDay({ buddy: true });
+    const chapterId = randomUUID();
+    const patternId = randomUUID();
+    const planItemId = randomUUID();
+
+    await Promise.all([
+      studySessionBlockFixture({
+        estimatedMinutes: 5,
+        kind: "checkpoint",
+        payload: {
+          checkpoint: {
+            kind: "boss",
+            mock: false,
+            passMark: 4,
+            phase: 1,
+            rematch: false,
+            timeLimitMinutes: null,
+          },
+          itemIds: [],
+          planItemId,
+          title: "Percentages",
+        },
+        position: 3,
+        sessionId: session.id,
+      }),
+      saveMissions(session.id, [
+        { anchor: {}, firstStep: true, kind: "askBuddy", opens: { kind: "buddy" }, total: 1 },
+        {
+          anchor: { chapterId },
+          detail: { chapterTitle: "Arriving" },
+          kind: "call",
+          opens: { chapterId, kind: "call" },
+          total: 1,
+        },
+        {
+          anchor: { patternId },
+          detail: { patternTitle: "Past simple with did" },
+          kind: "pattern",
+          opens: { kind: "pattern", patternId },
+          total: 1,
+        },
+        { anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 },
+        {
+          anchor: { blockKind: "checkpoint", planItemId },
+          detail: { minutes: 5, title: "Percentages" },
+          kind: "challenge",
+          total: 1,
+        },
+      ]),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize(PHONE);
+    const asked = await stubBuddy({ answers: [], page });
+    await page.goto("/buddy");
+
+    // Each mission says what it still asks and about how long, in one line; the Trickster says
+    // what he waits for.
+    const sheet = await openBuddyToday(page, "Zu");
+    const missions = sheet.getByRole("region", { name: "Today's missions" });
+
+    await expect(missions.getByRole("listitem")).toHaveText([
+      /^Ask Zu something, write your question\s*Anything about today's lessons\s·\s~2\smin$/u,
+      /^Have a call, choose a call\s*Quick call · Arriving\s·\s~2\smin$/u,
+      /^Practice a pattern, go to the pattern\s*Past simple with did\s·\s~3\smin$/u,
+      /^Pronunciation, go to pronunciation practice\s*Due today\s·\s~3\smin$/u,
+      /^Take on the Trickster, after today's lessons\s*After today's lessons\s·\s5\smin$/u,
+    ]);
+
+    await expect(missions.getByRole("link", { name: /^Have a call\b/u })).toHaveAttribute(
+      "href",
+      `/content/units/${chapterId}`,
+    );
+
+    // A new learner's first steps sit under the missions: the ones the day offers or that are
+    // there any time open where they're done, and the rest say when they come.
+    const steps = sheet.getByRole("region", { name: "First steps" });
+    await expect(steps).toContainText("0/4");
+
+    await expect(steps.getByRole("listitem")).toHaveText([
+      /^Finish your first lesson, go to today's new lesson\s*Anytime$/u,
+      /^Do your first review, go to today's review\s*Anytime$/u,
+      /^Fix your first mistake\s*The day after your first mistake$/u,
+      /^Ask Zu something, write your question\s*One of today's missions$/u,
+    ]);
+
+    await expect(
+      steps
+        .getByRole("listitem")
+        .filter({ hasText: /^Fix your first mistake/u })
+        .getByRole("button"),
+    ).toHaveCount(0);
+
+    await expectAccessibleScreen(page, "the buddy's day with first steps");
+    await missions.screenshot({ path: test.info().outputPath("buddy-day-missions-phone.png") });
+    await steps.screenshot({ path: test.info().outputPath("buddy-day-first-steps-phone.png") });
+
+    // Asking the buddy from its own day is the composer right there: it takes focus inside the
+    // tap itself (when a phone raises its keyboard), the sheet closes onto it, and nothing is
+    // asked until the learner sends.
+    const focusedByTap = page.evaluate(
+      () =>
+        new Promise<string>((resolve) => {
+          globalThis.addEventListener(
+            "click",
+            () => resolve(document.activeElement?.tagName ?? ""),
+            { once: true },
+          );
+        }),
+    );
+
+    await missions.getByRole("button", { name: /^Ask Zu something\b/u }).click();
+    await expect(focusedByTap).resolves.toBe("TEXTAREA");
+    await expect(sheet).toBeHidden();
+    await expect(page.getByRole("textbox", { name: "Message Zu" })).toBeFocused();
+    expect(asked).toStrictEqual([]);
+
+    // A lesson finished checks its step off; nothing else changes.
+    await learningEventFixture({ startedAt: new Date(), userId: user.id });
+    await page.reload();
+
+    const later = await openBuddyToday(page, "Zu");
+    const after = later.getByRole("region", { name: "First steps" });
+    await expect(after).toContainText("1/4");
+
+    await expect(after.getByRole("listitem").first()).toHaveText("Finish your first lesson, done");
+    await page.keyboard.press("Escape");
+
+    // The last steps done today: the list stays, every step checked, and says so for the day.
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId: user.id },
+    });
+
+    await Promise.all([
+      learningEventFixture({ kind: "review", startedAt: new Date(), userId: user.id }),
+      mistakeFixture({ fixedAt: new Date(), status: "fixed", userId: user.id }),
+      prisma.lessonQuestion.create({
+        data: {
+          contextKind: "plan",
+          contextSnapshot: {},
+          question: "What should I study first?",
+          requestFingerprint: `first-steps-${user.id}`,
+          requestId: randomUUID(),
+          threadId: thread.id,
+        },
+      }),
+    ]);
+
+    await page.reload();
+
+    const lastSheet = await openBuddyToday(page, "Zu");
+    const finished = lastSheet.getByRole("region", { name: "First steps" });
+
+    await expect(finished).toContainText("4/4");
+    await expect(finished.getByText("You've tried everything your plan uses.")).toBeVisible();
+    await expect(finished.getByRole("listitem").filter({ hasText: /, done$/u })).toHaveCount(4);
+    await finished.screenshot({ path: test.info().outputPath("first-steps-finished-phone.png") });
+    await page.context().close();
+  });
+
+  test("a learner without a goal tells the buddy what they want to learn, and their plan's setup opens on it", async ({
+    userWithoutProgress: page,
+  }) => {
+    const goal = `understand quantum physics ${randomUUID().slice(0, 8)}`;
+
+    await page.goto("/buddy");
+    const main = page.getByRole("main");
+
+    // No dead end: the buddy says what it does with a goal and takes one right here.
+    await expect(main.getByText(/What do you want to learn, and by when\?/u)).toBeVisible();
+    await expect(main.getByRole("list", { name: "Examples" }).getByRole("button")).toHaveCount(3);
+    await expectAccessibleScreen(page, "the buddy without a goal");
+
+    await main.getByRole("button", { exact: true, name: "Understand quantum physics" }).click();
+
+    await expect(main.getByRole("textbox", { name: "Your goal" })).toHaveValue(
+      "Understand quantum physics",
+    );
+
+    await expect(page).toHaveURL(/\/buddy$/u);
+
+    await main.getByRole("textbox", { name: "Your goal" }).fill(goal);
+    await main.getByRole("button", { name: /^Build my plan/u }).click();
+
+    await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(goal)}`);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(goal);
+  });
+
+  test("on a wide screen the buddy's day stays beside a readable thread and the composer opens focused", async ({
+    browser,
+  }) => {
+    const user = await createBuddyLearner();
+    const page = await openAs(browser, user);
+
+    try {
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await stubBuddy({ answers: [], page });
+      await page.goto("/buddy");
+
+      const thread = page.getByRole("region", { name: "Conversation with Zu" });
+      const day = page.getByRole("complementary", { name: "Zu today" });
+      await expect(thread).toBeVisible();
+      await expect(day).toBeVisible();
+      await expect(day.getByRole("region", { name: "Today's missions" })).toBeVisible();
+
+      await expect(day.getByRole("link", { name: /^What Zu remembers/u })).toHaveAttribute(
+        "href",
+        "/settings/memory",
+      );
+
+      await expect(thread.getByRole("textbox", { name: "Message Zu" })).toBeFocused();
+
+      const [threadBox, dayBox] = await Promise.all([thread.boundingBox(), day.boundingBox()]);
+      expect(threadBox!.width).toBeLessThanOrEqual(720);
+      expect(threadBox!.x + threadBox!.width).toBeLessThan(dayBox!.x);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a learner starts with Zu, chooses a buddy from the tab, then renames it", async ({
     browser,
   }) => {
     const { user } = await createGoalLearner();
@@ -432,14 +901,14 @@ test.describe("Buddy tab", () => {
 
     await page.goto("/buddy");
 
-    // Until one is picked, the buddy is just "Buddy", and the conversation already works.
-    await expect(main.getByRole("heading", { level: 1, name: "Buddy" })).toBeVisible();
-    await expect(main.getByText(/^Hi! I'm your AI study buddy\./u)).toBeVisible();
+    // Until a choice is saved, Zu is the buddy, and the conversation already works.
+    await expect(main.getByRole("heading", { level: 1, name: "Zu" })).toBeVisible();
+    await expect(main.getByText(/^Hi! I'm Zu, your AI study buddy\./u)).toBeVisible();
 
     const tabs = page.getByRole("navigation", { name: "Learning tabs" });
-    await expect(tabs.getByRole("link", { name: "Buddy" })).toHaveAttribute("aria-current", "page");
+    await expect(tabs.getByRole("link", { name: "Zu" })).toHaveAttribute("aria-current", "page");
 
-    await main.getByRole("button", { name: /^Pick your buddy/u }).click();
+    await main.getByRole("button", { name: /^Choose your buddy/u }).click();
 
     const editor = page.getByRole("dialog", { name: "Your buddy" });
     await expect(editor.getByRole("radio", { name: /Zu/u })).toBeChecked();
@@ -451,7 +920,7 @@ test.describe("Buddy tab", () => {
 
     await expect(main.getByRole("heading", { level: 1, name: "Bolt" })).toBeVisible();
     await expect(tabs.getByRole("link", { name: "Bolt" })).toHaveAttribute("aria-current", "page");
-    await expect(main.getByRole("button", { name: /^Pick your buddy/u })).toHaveCount(0);
+    await expect(main.getByRole("button", { name: /^Choose your buddy/u })).toHaveCount(0);
 
     await expect
       .poll(() => readBuddy(user.id))
@@ -543,6 +1012,7 @@ test.describe("Buddy tab", () => {
         defaultMinutes: 2,
         limit: null,
         minutes: [1, 2, 3, 5],
+        paused: false,
         plusMinutes: [],
       };
 
@@ -609,7 +1079,7 @@ test.describe("Buddy tab", () => {
 
       await expect(focus.getByRole("link", { name: "Choose" })).toHaveAttribute(
         "href",
-        "/journey?focus=choose",
+        "/plan?focus=choose",
       );
 
       await ask("I want to practice speaking for my interview");
@@ -774,11 +1244,44 @@ test.describe("Buddy tab", () => {
 
       await expect(essay.getByRole("link", { name: "Open" })).toHaveAttribute(
         "href",
-        "/journey/redacao",
+        "/plan/redacao",
       );
 
       await expectAccessibleScreen(page, "the buddy's feature cards");
     });
+  });
+
+  test("the buddy's answer links where it sends the learner, and the link opens there", async ({
+    browser,
+  }) => {
+    const user = await createBuddyLearner();
+    const page = await openAs(browser, user);
+
+    await stubBuddy({
+      answers: [
+        {
+          answer: "Open [your mistakes notebook](/mistakes), not [this site](https://example.com).",
+          saved: "Open [your mistakes notebook](/mistakes), not this site.",
+        },
+      ],
+      page,
+    });
+
+    await page.goto("/buddy");
+    const conversation = page.getByRole("region", { name: "Conversation with Zu" });
+
+    await conversation.getByRole("textbox", { name: "Message Zu" }).fill("Where are my mistakes?");
+    await conversation.getByRole("button", { name: "Send" }).click();
+
+    // The answer links only what the app gave it; anything else reads as its words.
+    const notebook = conversation.getByRole("link", { name: "your mistakes notebook" });
+    await expect(notebook).toHaveAttribute("href", "/mistakes");
+    await expect(conversation.getByText("not this site.")).toBeVisible();
+    await expect(conversation.getByRole("link", { name: "this site" })).toHaveCount(0);
+
+    await notebook.click();
+    await expect(page).toHaveURL(/\/mistakes$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Mistakes notebook" })).toBeVisible();
   });
 
   test("the buddy answers a doubt and proposes a plan change that applies only on the learner's tap", async ({
@@ -812,7 +1315,7 @@ test.describe("Buddy tab", () => {
       await page.goto("/buddy");
 
       const conversation = page.getByRole("region", { name: "Conversation with Otto" });
-      await expect(conversation.getByText(/^Hi! I'm Otto, your AI tutor\./u)).toBeVisible();
+      await expect(conversation.getByText(/^Hi! I'm Otto, your AI study buddy\./u)).toBeVisible();
 
       // Three ways to start, sent with one tap.
       const suggestions = conversation.getByRole("list", { name: "Suggestions" });
@@ -835,15 +1338,37 @@ test.describe("Buddy tab", () => {
       expect(await readChangeStatus(change.id)).toBe("proposed");
       await expectAccessibleScreen(page, "the buddy's conversation");
 
+      const sessionSelect = {
+        blocks: {
+          orderBy: { position: "asc" },
+          select: { id: true, lessonId: true, position: true, startedAt: true, status: true },
+        },
+        id: true,
+        plannedMinutes: true,
+        startedAt: true,
+        status: true,
+      } as const;
+
+      const sessionBefore = await prisma.studySession.findFirstOrThrow({
+        orderBy: { localDate: "desc" },
+        select: sessionSelect,
+        where: { goalId: user.goalId },
+      });
+
       await card.getByRole("button", { name: "Apply" }).click();
 
-      // The answer shows where the buttons were, and focus stays on the card.
-      await expect(card.getByRole("status")).toHaveText(
-        "It's in your plan, and today's session follows it.",
-      );
+      // A future rest day leaves this session as it was; the card never claims it changed today.
+      await expect(card.getByRole("status")).toHaveText("Your plan follows it from now on.");
 
       await expect(card).toBeFocused();
       await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
+
+      await expect(
+        prisma.studySession.findUniqueOrThrow({
+          select: sessionSelect,
+          where: { id: sessionBefore.id },
+        }),
+      ).resolves.toStrictEqual(sessionBefore);
 
       await expect
         .poll(async () => {
@@ -852,10 +1377,12 @@ test.describe("Buddy tab", () => {
         })
         .toBe(0);
 
-      // While it's the plan's latest change, it can be undone right there.
+      // While it's the plan's latest change, it can be undone right there: the card asks again,
+      // as it did before Apply.
       await card.getByRole("button", { name: "Undo" }).click();
-      await expect(card.getByRole("status")).toHaveText("Undone. Your plan is back as it was.");
-      await expect.poll(() => readChangeStatus(change.id)).toBe("undone");
+      await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(card).toBeFocused();
+      await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
     });
   });
 

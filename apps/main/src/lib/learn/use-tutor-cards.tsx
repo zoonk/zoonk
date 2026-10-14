@@ -1,6 +1,6 @@
 "use client";
 
-import { answerPlanChangeAction } from "@/app/[lang]/(learn)/journey/journey-actions";
+import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
@@ -10,13 +10,14 @@ import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "@zoonk/learn/tutor-cards";
 import { useMemo } from "react";
+import { useTutorAppLinks } from "./use-tutor-app-links";
 
 /**
- * Where each feature the buddy offers opens. Choosing where to focus is the Journey with its
+ * Where each feature the buddy offers opens. Choosing where to focus is the Plan with its
  * "Choose where to focus" sheet open; a written test is its subject's page.
  */
 const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
-  chooseFocus: "/journey?focus=choose",
+  chooseFocus: "/plan?focus=choose",
   chooseMock: MOCK_ENTRY_HREFS.choose,
   course: ({ brandSlug, slug }) => getCourseHref({ brandSlug, courseSlug: slug }),
   logbook: "/logbook",
@@ -25,12 +26,12 @@ const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
   pronunciation: "/pronunciation",
   startGoal: getGoalStartHref,
   stats: "/stats",
-  subject: (key) => `/journey/${key}`,
+  subject: (key) => `/plan/${key}`,
 };
 
 /**
  * How the buddy's cards work for the goal it tutors, on its tab and on every screen it's asked
- * from: a plan change is answered as the Journey answers one, then the page reads itself again;
+ * from: a plan change is answered as the Plan answers one, then the page reads itself again;
  * a feature opens where main shows it.
  */
 export function useTutorCardActions(goalId: string): TutorCardActions {
@@ -60,13 +61,18 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
   );
 }
 
+/** The buddy's cards on a screen inside a goal, with how its answers link the app there. */
+export type MainTutorCards = TutorCards & { appLinks: ReturnType<typeof useTutorAppLinks> };
+
 /**
  * The buddy's cards under its answers on a screen inside the goal it tutors (a chapter, a lesson,
- * a mock); none without a goal, whose answers never carry one. The lesson player isn't a learn
- * screen, so each card brings main's learn links and analytics with it.
+ * a mock), and how those answers link the app (`useTutorAppLinks`); none without a goal, whose
+ * answers never carry one. The lesson player isn't a learn screen, so each card brings main's
+ * learn links and analytics with it.
  */
-export function useTutorCards(goalId: string | null): TutorCards | null {
+export function useTutorCards(goalId: string | null): MainTutorCards | null {
   const actions = useTutorCardActions(goalId ?? "");
+  const appLinks = useTutorAppLinks(goalId ?? "");
 
   return useMemo(() => {
     if (!goalId) {
@@ -76,6 +82,7 @@ export function useTutorCards(goalId: string | null): TutorCards | null {
     const cards = getTutorCards(actions);
 
     return {
+      appLinks,
       renderPlanChange: (input) => (
         <MainLearnProvider>{cards.renderPlanChange(input)}</MainLearnProvider>
       ),
@@ -83,5 +90,5 @@ export function useTutorCards(goalId: string | null): TutorCards | null {
         <MainLearnProvider>{cards.renderToolOffer(offer)}</MainLearnProvider>
       ),
     };
-  }, [actions, goalId]);
+  }, [actions, appLinks, goalId]);
 }

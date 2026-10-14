@@ -4,10 +4,12 @@ import { Buddy } from "@zoonk/ui/components/buddy";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
 import { useBuddyName } from "./use-buddy-name";
 
@@ -17,10 +19,13 @@ const BUDDY_NAME_MAX_LENGTH = 24;
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 
 /** How a buddy looks right now: it grows with the belt and glows with Energy. */
-export type BuddyLook = { beltColor: BeltColor; energy: number | null };
+export type BuddyLook = { beltColor: BeltColor; energy: number | null; studiedToday?: boolean };
 
-const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-2xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]";
+/** A buddy option as a card, picked as every pick is: the blue line on its tint. */
+const OPTION_CLASS = cn(
+  "border-border has-focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]",
+  CHOICE_CARD_PICKED_CLASS,
+);
 
 function BuddyOption({
   choice,
@@ -43,6 +48,7 @@ function BuddyOption({
         expression="happy"
         glasses={choice.kind === kind ? choice.glasses : "round"}
         kind={kind}
+        studiedToday={look.studiedToday}
       />
       <span className="text-base font-semibold">{name}</span>
       <span className="text-muted-foreground text-xs">
@@ -53,7 +59,7 @@ function BuddyOption({
 }
 
 /**
- * Choosing a buddy: Zu, Noodle, Beep or Otto, and a name. Onboarding and Appearance share it.
+ * Choosing a buddy: Zu, Noodle, Beep or Otto, and a name. Onboarding and Preferences share it.
  * An empty name keeps the buddy's own name in each language.
  */
 export function BuddyPicker({

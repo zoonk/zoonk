@@ -7,10 +7,10 @@ import { getExtracted } from "next-intl/server";
 
 /**
  * The tutor's suggestions for a lesson's screens, worded once for every app, in one catalog: the
- * chips of the lesson payload (main's lesson page and the API's lesson), the home page's preview
- * and the question the API stores when one is tapped all read these words.
+ * chips of the lesson payload (main's lesson page and the API's lesson) and the question the API
+ * stores when one is tapped both read these words.
  */
-export async function wordTutorSuggestionLabels(
+async function wordTutorSuggestionLabels(
   language: string,
 ): Promise<Record<LessonScreenSuggestion, string>> {
   const t = await getExtracted({

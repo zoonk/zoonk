@@ -17,17 +17,12 @@ export const BUDDY_GLASSES: BuddyGlasses[] = [
   "monocle",
 ];
 
-function NamedBuddy({ buddy }: { buddy: Pick<LearnBuddy, "kind" | "name"> }) {
-  return useBuddyName(buddy);
-}
-
 /**
- * What the buddy's tab is called: the buddy's name, or "Buddy" before one is picked. Links back to
+ * What the buddy's tab is called: the buddy's own name or its custom name. Links back to
  * that tab say it the same way.
  */
 export function BuddyTabName({ buddy }: { buddy: Pick<LearnBuddy, "kind" | "name"> | null }) {
-  const t = useExtracted();
-  return buddy ? <NamedBuddy buddy={buddy} /> : t("Buddy");
+  return useBuddyName(buddy);
 }
 
 export function BuddyTagline({ kind }: { kind: BuddyKind }) {
@@ -85,6 +80,31 @@ export function BuddyGlassesName({ glasses }: { glasses: BuddyGlasses }) {
   }
 }
 
+/**
+ * What the buddy wears, as a phrase that stands on its own after its stage ("Baby · Round
+ * glasses"), where the pair's bare name (`BuddyGlassesName`, the picker's) would say nothing.
+ */
+export function BuddyGlassesWorn({ glasses }: { glasses: BuddyGlasses }) {
+  const t = useExtracted();
+
+  switch (glasses) {
+    case "star":
+      return t("Star glasses");
+    case "aviator":
+      return t("Aviator glasses");
+    case "catEye":
+      return t("Cat-eye glasses");
+    case "retro":
+      return t("Retro glasses");
+    case "monocle":
+      return t("A monocle");
+    case "round":
+      return t("Round glasses");
+    default:
+      return t("Round glasses");
+  }
+}
+
 /** Every pair says upfront how it's earned: nothing is random and nothing is sold. */
 export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
   const t = useExtracted();
@@ -95,7 +115,7 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
     case "aviator":
       return t("Finish your first weekly challenge");
     case "catEye":
-      return t("Finish all three missions on 7 days");
+      return t("Finish every mission on 7 different days");
     case "retro":
       return t("Finish 50 reviews");
     case "monocle":

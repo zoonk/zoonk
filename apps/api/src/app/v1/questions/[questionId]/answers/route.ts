@@ -20,10 +20,14 @@ import {
   failLessonQuestionAnswer,
   rememberLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
-import { LESSON_QUESTION_MEMORY_PART } from "@zoonk/core/lesson-questions/contract";
+import {
+  LESSON_QUESTION_MEMORY_PART,
+  LESSON_QUESTION_SAVED_ANSWER_PART,
+} from "@zoonk/core/lesson-questions/contract";
 import { type MemoryChange } from "@zoonk/core/memory/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { replaceEmDashes } from "@zoonk/utils/string";
 import {
   type UIMessageChunk,
   consumeStream,
@@ -63,14 +67,17 @@ type Confirm = () => string | null;
 
 /**
  * The answer with the run that wrote it: the model that actually answered and its prompt. An
- * answer whose model only acted (a card, a button) and wrote nothing says so (`confirmation`).
+ * answer whose model only acted (a card, a button) and wrote nothing says so (`confirmation`). A
+ * buddy answer, confirmation included, keeps only the links it was given (`keepLinks`).
  */
 async function getLessonQuestionAnswerCompletion({
   answer,
   confirm,
+  keepLinks,
 }: {
   answer: AnswerGeneration;
   confirm: Confirm;
+  keepLinks: AnswerRun["keepLinks"];
 }): Promise<{ completion: LessonQuestionAnswerCompletion; confirmation: string | null }> {
   const [finalStep, steps] = await Promise.all([
     answer.generation.finalStep,
@@ -90,7 +97,7 @@ async function getLessonQuestionAnswerCompletion({
 
   return {
     completion: {
-      answer: text,
+      answer: keepLinks ? keepLinks(text) : text,
       finishReason: finalStep.finishReason,
       generatedAt: provenance.generatedAt,
       model: provenance.model,
@@ -102,24 +109,29 @@ async function getLessonQuestionAnswerCompletion({
   };
 }
 
-/** Saves the answer and returns the confirmation it wrote for a model that only acted, if any. */
+/**
+ * Saves the answer and returns it as saved (without the em dashes the app never shows, as
+ * `completeLessonQuestionAnswer` saves it) with the confirmation it wrote for a model that only
+ * acted, if any.
+ */
 async function finishLessonQuestionAnswer({
-  answer,
   confirm,
+  run,
   target,
 }: {
-  answer: AnswerGeneration;
   confirm: Confirm;
+  run: AnswerRun;
   target: AnswerTarget;
-}): Promise<string | null> {
+}): Promise<{ confirmation: string | null; saved: string }> {
   try {
     const { completion, confirmation } = await getLessonQuestionAnswerCompletion({
-      answer,
+      answer: run.answer,
       confirm,
+      keepLinks: run.keepLinks,
     });
 
     await persistLessonQuestionAnswer({ completion, target });
-    return confirmation;
+    return { confirmation, saved: replaceEmDashes(completion.answer) };
   } catch (error) {
     logError("[Lesson Question Answer Error]", {
       questionId: target.questionId,
@@ -184,7 +196,9 @@ function enqueueConfirmation({
  * tells the client the answer is done: the learner can ask again while memory learns from the
  * exchange, whose changes follow as one data part for "Memory updated" with undo. A failed save
  * errors the stream before `finish`, so the client offers a retry. An answer whose model only
- * acted gets its confirmation as its words before `finish`.
+ * acted gets its confirmation as its words before `finish`. A buddy answer then comes once more as
+ * it was saved, its links checked, which the client shows in place of what streamed: only that
+ * text links the app.
  */
 function streamGeneratedAnswer({
   confirm,
@@ -200,14 +214,14 @@ function streamGeneratedAnswer({
   return run.chunks.pipeThrough(toClientChunks(run)).pipeThrough(
     new TransformStream<UIMessageChunk, UIMessageChunk>({
       async flush(controller) {
-        const confirmation = await finishLessonQuestionAnswer({
-          answer: run.answer,
-          confirm,
-          target,
-        });
+        const { confirmation, saved } = await finishLessonQuestionAnswer({ confirm, run, target });
 
         if (confirmation) {
           enqueueConfirmation({ confirmation, controller });
+        }
+
+        if (run.keepLinks) {
+          controller.enqueue({ data: { answer: saved }, type: LESSON_QUESTION_SAVED_ANSWER_PART });
         }
 
         heldBack.forEach((chunk) => controller.enqueue(chunk));

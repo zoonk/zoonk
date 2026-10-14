@@ -1,5 +1,6 @@
 "use client";
 
+import { DEFAULT_BUDDY } from "@zoonk/core/profile/default-buddy";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
@@ -25,8 +26,9 @@ export type LearnBuddy = {
  * playful name (the brain is Noodle in English and Cuca in Portuguese), which
  * the style guides keep in their glossaries.
  */
-export function useBuddyName({ kind, name }: Pick<LearnBuddy, "kind" | "name">): string {
-  const t = useExtracted();
+export function useBuddyName(buddy: Pick<LearnBuddy, "kind" | "name"> | null): string {
+  const t = useExtracted("buddyNames");
+  const { kind, name } = buddy ?? DEFAULT_BUDDY;
 
   if (name) {
     return name;
@@ -44,4 +46,9 @@ export function useBuddyName({ kind, name }: Pick<LearnBuddy, "kind" | "name">):
     default:
       return t("Zu");
   }
+}
+
+/** Hosts without a learner profile draw the same default buddy, before progress has started. */
+export function resolveLearnBuddy(buddy: LearnBuddy | null): LearnBuddy {
+  return buddy ?? { ...DEFAULT_BUDDY, beltColor: "white", energy: null };
 }

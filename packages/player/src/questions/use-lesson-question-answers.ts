@@ -89,6 +89,7 @@ export function useLessonQuestionAnswers({
         onPlanChangesReplaced: (changeIds) =>
           dispatchToSession({ changeIds, type: "planChangesReplaced" }),
         onSaved: () => dispatchToSession({ questionId, type: "answerCompleted" }),
+        onSavedAnswer: (answer) => dispatchToSession({ answer, questionId, type: "answerSaved" }),
         onToolOffer: (offer) => dispatchToSession({ offer, questionId, type: "toolOffered" }),
         questionId,
       });
@@ -125,7 +126,7 @@ export function useLessonQuestionAnswers({
         !canAskQuestions ||
         state.activeQuestionId ||
         !question ||
-        question.status !== "failed" ||
+        (question.status !== "failed" && question.status !== "pending") ||
         hasOtherAnswerInProgress({ questionId, questions: state.questions })
       ) {
         return;

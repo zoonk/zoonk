@@ -1,7 +1,6 @@
 "use client";
 
-import { safeAsync } from "@zoonk/utils/error";
-import { type Dispatch, useEffect, useRef } from "react";
+import { type Dispatch, useEffect } from "react";
 import { type LessonQuestionConnection, getLessonQuestionRequest } from "./lesson-question-api";
 import {
   getLessonQuestionPollDelay,
@@ -68,8 +67,8 @@ function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
 
 /**
  * While the conversation is on screen (`isShown`: an open sheet, or a page), a question waiting
- * for its answer gets one, and an answer being written by a stream this page no longer reads (a
- * dropped connection, a reload) is followed until it's done.
+ * for its answer or being written elsewhere is followed with read-only status requests. A pending
+ * answer never starts from this effect; the learner can ask for it with Get answer.
  */
 export function useLessonQuestionRecovery({
   connection,
@@ -77,66 +76,26 @@ export function useLessonQuestionRecovery({
   dispatch,
   isShown,
   state,
-  streamAnswer,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   isShown: boolean;
   state: LessonQuestionState;
-  streamAnswer: (questionId: string) => Promise<void>;
 }) {
-  const resumedPendingQuestionIds = useRef(new Set<string>());
   const pendingQuestionId = getPendingQuestionId(state.questions);
   const runningQuestionId = getRunningQuestionId(state.questions);
-  const hasRunningQuestion = runningQuestionId !== null;
+
+  const remoteQuestionId =
+    state.activeQuestionId === null ? (runningQuestionId ?? pendingQuestionId) : null;
 
   useEffect(() => {
-    if (
-      !canAskQuestions ||
-      !isShown ||
-      !pendingQuestionId ||
-      state.activeQuestionId ||
-      state.isCreating ||
-      hasRunningQuestion ||
-      resumedPendingQuestionIds.current.has(pendingQuestionId)
-    ) {
-      return;
-    }
-
-    const questionId = pendingQuestionId;
-    resumedPendingQuestionIds.current.add(questionId);
-
-    async function resumePendingQuestion() {
-      const { error } = await safeAsync(() => streamAnswer(questionId));
-      resumedPendingQuestionIds.current.delete(questionId);
-
-      if (error) {
-        dispatch({ questionId, reason: { kind: "unknown" }, type: "answerFailed" });
-      }
-    }
-
-    void resumePendingQuestion();
-  }, [
-    dispatch,
-    hasRunningQuestion,
-    canAskQuestions,
-    isShown,
-    pendingQuestionId,
-    state.activeQuestionId,
-    state.isCreating,
-    streamAnswer,
-  ]);
-
-  const remoteRunningQuestionId = state.activeQuestionId === null ? runningQuestionId : null;
-
-  useEffect(() => {
-    if (!canAskQuestions || !isShown || !remoteRunningQuestionId) {
+    if (!canAskQuestions || !isShown || !remoteQuestionId) {
       return;
     }
 
     const abortController = new AbortController();
-    const questionId = remoteRunningQuestionId;
+    const questionId = remoteQuestionId;
     const startedAt = Date.now();
 
     async function pollAnswerStatus(attempt: number) {
@@ -192,5 +151,5 @@ export function useLessonQuestionRecovery({
     return () => {
       abortController.abort();
     };
-  }, [connection, canAskQuestions, dispatch, isShown, remoteRunningQuestionId]);
+  }, [connection, canAskQuestions, dispatch, isShown, remoteQuestionId]);
 }

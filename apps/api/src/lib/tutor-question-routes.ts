@@ -93,7 +93,10 @@ export function tutorQuestionRoutes<TPath>({
       return accessError(result.status);
     }
 
-    return NextResponse.json(result.question, { status: 201 });
+    return NextResponse.json(
+      { ...result.question, missionMoment: result.missionMoment },
+      { status: 201 },
+    );
   }
 
   return { GET: withApiErrorBoundary(getQuestions), POST: withApiErrorBoundary(postQuestion) };

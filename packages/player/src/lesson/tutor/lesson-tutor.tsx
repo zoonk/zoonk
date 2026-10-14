@@ -1,24 +1,52 @@
 "use client";
 
 import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
+import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
-import { createContext, use, useMemo } from "react";
+import { createContext, use, useMemo, useState } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
-import { LessonQuestionSheet } from "../../questions/lesson-question-panel";
+import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
+import { LessonQuestionDrawer } from "../../questions/lesson-question-panel";
 import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "../../questions/lesson-question-provider";
+import { type OfferedSuggestion } from "../../questions/lesson-question-state";
+import { isSameDraftContext } from "../../questions/lesson-question-state-helpers";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonInteractionProvider } from "../lesson-player-interaction";
 import { type LessonTutorConfig } from "./lesson-tutor-context";
+import { TutorQuote } from "./tutor-quote";
+
+/**
+ * Where the conversation shows: a drawer over the lesson on phones and tablets in portrait, or
+ * docked in the lesson's aside from `lg`, beside the screen it's about. Chosen when it opens.
+ */
+type TutorPresentation = "dock" | "drawer";
 
 /** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
 type LessonBuddyTutor = {
-  identity: TutorIdentity;
   /**
-   * Opens the questions sheet about where the learner is, with one of the lesson's `suggestions`
-   * ready to send, in the words its chip reads.
+   * Sends a question about where the learner is from the lesson's aside (its composer or a
+   * suggestion), and shows the conversation there.
+   */
+  ask: (question: OfferedSuggestion) => void;
+  /** Back to the lesson from the conversation docked in the aside. */
+  close: () => void;
+  /** Where the learner is, as the tutor sees it: the screen in view, or the answer just checked. */
+  context: LessonQuestionContext;
+  /**
+   * The conversation shows in the aside, beside the lesson, whose keys keep working; a drawer over
+   * the lesson pauses them instead.
+   */
+  docked: boolean;
+  identity: TutorIdentity;
+  /** The host's links (a sign-up, plans), for the conversation wherever it shows. */
+  navigation: LessonQuestionNavigation;
+  /**
+   * Opens the conversation about where the learner is, docked in the aside on a wide screen and in
+   * a drawer otherwise, with one of the lesson's `suggestions` ready to send, in the words its chip
+   * reads.
    */
   open: (suggestion?: LessonScreenSuggestion) => void;
 };
@@ -51,19 +79,41 @@ function useTutorContext(): LessonQuestionContext {
 function TutorInteraction({
   children,
   identity,
+  navigation,
 }: {
   children: React.ReactNode;
   identity: TutorIdentity;
+  navigation: LessonQuestionNavigation;
 }) {
   const controller = useLessonQuestionController();
   const activeContext = useTutorContext();
-  const { chooseSuggestion, open, suggestions } = controller;
+  const asideShown = useTaskAsideShown();
+  const [presentation, setPresentation] = useState<TutorPresentation>("drawer");
+  const { chooseSuggestion, close, open, state, suggestions } = controller;
+  const askAbout = controller.ask;
+  const docked = state.isOpen && presentation === "dock";
+  const inDrawer = state.isOpen && presentation === "drawer";
 
-  const buddy = useMemo(
+  const buddy = useMemo<LessonBuddyTutor>(
     () => ({
+      ask: ({ question, suggestion }) => {
+        // The conversation shows in the aside, about the screen in view; a draft in the aside's
+        // composer is the learner's, so it stays until it's sent.
+        if (!docked || !isSameDraftContext({ current: state.context, next: activeContext })) {
+          setPresentation("dock");
+          open(activeContext, { keepDraft: true });
+        }
+
+        void askAbout({ context: activeContext, question, suggestion });
+      },
+      close,
+      context: activeContext,
+      docked,
       identity,
-      open: (suggestion?: LessonScreenSuggestion) => {
-        open(activeContext);
+      navigation,
+      open: (suggestion) => {
+        setPresentation(asideShown ? "dock" : "drawer");
+        open(activeContext, { keepDraft: asideShown });
         const offered = suggestions.find(({ id }) => id === suggestion);
 
         if (offered) {
@@ -71,14 +121,30 @@ function TutorInteraction({
         }
       },
     }),
-    [activeContext, chooseSuggestion, identity, open, suggestions],
+    [
+      activeContext,
+      askAbout,
+      asideShown,
+      chooseSuggestion,
+      close,
+      docked,
+      identity,
+      navigation,
+      open,
+      state.context,
+      suggestions,
+    ],
   );
 
   return (
     <LessonTutorContext value={buddy}>
-      <LessonInteractionProvider tutorOpen={controller.state.isOpen}>
-        {children}
-      </LessonInteractionProvider>
+      <LessonInteractionProvider tutorOpen={inDrawer}>{children}</LessonInteractionProvider>
+      <LessonQuestionDrawer
+        identity={identity}
+        navigation={navigation}
+        open={inDrawer}
+        quote={<TutorQuote />}
+      />
     </LessonTutorContext>
   );
 }
@@ -110,16 +176,17 @@ function LessonTutorHost({
       }}
       target={target}
     >
-      <TutorInteraction identity={identity}>{children}</TutorInteraction>
-      <LessonQuestionSheet identity={identity} navigation={tutor.navigation} />
+      <TutorInteraction identity={identity} navigation={tutor.navigation}>
+        {children}
+      </TutorInteraction>
     </LessonQuestionHostProvider>
   );
 }
 
 /**
- * The tutor in the step: the questions sheet, asked about the screen in view or the answer just
- * checked, and pausing the lesson's keys while it's open. Without a tutor from the host, the lesson
- * plays without one.
+ * The tutor in the step: the conversation about the screen in view or the answer just checked,
+ * in a drawer that pauses the lesson's keys, or docked in the lesson's aside from `lg`. Without a
+ * tutor from the host, the lesson plays without one.
  */
 export function LessonTutor({
   children,
@@ -137,7 +204,7 @@ export function LessonTutor({
 
 /**
  * The learner's buddy in the lesson, to ask about where they are; null when the lesson has no
- * tutor (visitors and guests).
+ * tutor.
  */
 export function useLessonBuddy(): LessonBuddyTutor | null {
   return use(LessonTutorContext);

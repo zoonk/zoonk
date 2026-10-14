@@ -8,9 +8,11 @@ enum LessonScreenSuggestion {
 
 /// A learner's questions to the tutor about one thing, named by `kind`: a Library lesson, a Library
 /// chapter, a goal (`plan`: the conversation with the buddy about the goal, its subject and its plan,
-/// where plan changes are proposed by talking) or a finished mock. One thread per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
-/// from before learning v2 have none left); plan and mock threads belong to the learner's own goal
-/// and mock and go with them.
+/// where plan changes are proposed by talking), a subject of a goal's syllabus (`subject`: by its goal
+/// and its key there), a question of the item bank asked in a session or practice (`item`) or a
+/// finished mock. One thread per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
+/// from before learning v2 have none left); plan, subject and mock threads belong to the learner's own
+/// goal and mock and go with them.
 model LessonQuestionThread {
   id              String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String           @map("user_id") @db.Uuid
@@ -21,7 +23,13 @@ model LessonQuestionThread {
   chapterId       String?          @map("chapter_id") @db.Uuid
   chapter         Chapter?         @relation(fields: [chapterId], references: [id], onDelete: SetNull)
   goalId          String?          @map("goal_id") @db.Uuid
-  goal            Goal?            @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goal            Goal?            @relation("GoalQuestionThreads", fields: [goalId], references: [id], onDelete: Cascade)
+  subjectGoalId   String?          @map("subject_goal_id") @db.Uuid
+  subjectGoal     Goal?            @relation("SubjectQuestionThreads", fields: [subjectGoalId], references: [id], onDelete: Cascade)
+  /// The subject's key in its goal's syllabus, stable within it.
+  subjectKey      String?          @map("subject_key")
+  itemId          String?          @map("item_id") @db.Uuid
+  item            Item?            @relation(fields: [itemId], references: [id], onDelete: SetNull)
   mockExamId      String?          @map("mock_exam_id") @db.Uuid
   mockExam        MockExam?        @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
   createdAt       DateTime         @default(now()) @map("created_at")
@@ -32,9 +40,13 @@ model LessonQuestionThread {
   @@unique([userId, chapterId], name: "userChapterQuestionThread")
   @@unique([userId, goalId], name: "userGoalQuestionThread")
   @@unique([userId, mockExamId], name: "userMockQuestionThread")
+  @@unique([userId, subjectGoalId, subjectKey], name: "userSubjectQuestionThread")
+  @@unique([userId, itemId], name: "userItemQuestionThread")
   @@index([libraryLessonId])
   @@index([chapterId])
   @@index([goalId])
+  @@index([subjectGoalId])
+  @@index([itemId])
   @@index([mockExamId])
   @@map("lesson_question_threads")
 }

@@ -1,10 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type APIResponse, request } from "@playwright/test";
+import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
 import {
   type LessonScreenSuggestion,
+  createdLessonQuestionSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { syllabusViewSchema } from "@zoonk/core/view-models/syllabus/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import {
@@ -13,15 +16,17 @@ import {
   planFixture,
   planItemFixture,
 } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   catalogCourseFixture,
   privateCourseFixture,
 } from "@zoonk/testing/fixtures/library-courses";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
-import { createBearerLearner } from "./helpers/bearer";
+import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { createExamGoal } from "./helpers/exams";
 
 const SUGGESTION = "Explain it more simply";
@@ -44,7 +49,7 @@ function ask({
 
 async function readCreated(response: APIResponse) {
   expect(response.status(), await response.text()).toBe(201);
-  return lessonQuestionResourceSchema.parse(await response.json());
+  return createdLessonQuestionSchema.parse(await response.json());
 }
 
 /** A learn goal whose plan teaches one skill, so the plan is built and can be asked about. */
@@ -61,6 +66,46 @@ async function createPlannedGoal(userId: string) {
     skillId: skill.id,
     titleSnapshot: "Scientific notation",
   });
+
+  return goal;
+}
+
+/** A goal whose plan has two modules, each a chapter: its syllabus lists them as subjects. */
+async function createModulesGoal(userId: string) {
+  const [goal, research, figma, interview, prototype] = await Promise.all([
+    goalFixture({ title: "Become a UX designer", userId }),
+    libraryChapterFixture({ title: "User interviews" }),
+    libraryChapterFixture({ title: "Prototypes in Figma" }),
+    skillFixture({ name: "Run a user interview" }),
+    skillFixture({ name: "Prototype a flow" }),
+  ]);
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Foundations" }],
+      skills: [
+        {
+          area: "User research",
+          lessons: 1,
+          name: interview.name,
+          phase: 0,
+          skillId: interview.id,
+        },
+        { area: "Prototyping", lessons: 1, name: prototype.name, phase: 0, skillId: prototype.id },
+      ],
+    },
+  });
+
+  await Promise.all([
+    planItemFixture({
+      chapterId: research.id,
+      planId: plan.id,
+      position: 0,
+      skillId: interview.id,
+    }),
+    planItemFixture({ chapterId: figma.id, planId: plan.id, position: 1, skillId: prototype.id }),
+  ]);
 
   return goal;
 }
@@ -94,6 +139,8 @@ test.describe("Tutor threads beyond lessons", () => {
     const paths = [
       `/v1/chapters/${id}/questions`,
       `/v1/goals/${id}/plan/questions`,
+      `/v1/goals/${id}/subjects/law/questions`,
+      `/v1/items/${id}/questions`,
       `/v1/mocks/${id}/questions`,
     ];
 
@@ -216,6 +263,136 @@ test.describe("Tutor threads beyond lessons", () => {
     });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("asks about a subject of the learner's own goal only", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "tutor-subject" }),
+      createBearerLearner({ baseURL, prefix: "tutor-subject-other" }),
+    ]);
+
+    const goal = await createModulesGoal(userId);
+    const syllabus = await api.get(`/v1/goals/${goal.id}/syllabus`);
+    const { subjects } = syllabusViewSchema.parse(await syllabus.json());
+
+    expect(subjects.map((subject) => subject.key)).toStrictEqual(["user-research", "prototyping"]);
+    const path = `/v1/goals/${goal.id}/subjects/user-research/questions`;
+
+    // Opening the conversation reads it: nothing is there before the first question.
+    const empty = await api.get(path);
+    await expect(empty.json()).resolves.toBeNull();
+
+    const [created, mismatched, unknown, hidden] = await Promise.all([
+      ask({ api, context: { kind: "subject" }, path, question: "What's left to study here?" }),
+      ask({ api, context: { kind: "plan" }, path }),
+      ask({
+        api,
+        context: { kind: "subject" },
+        path: `/v1/goals/${goal.id}/subjects/not-a-subject/questions`,
+      }),
+      ask({ api: other.api, context: { kind: "subject" }, path }),
+    ]);
+
+    const question = await readCreated(created);
+
+    expect(question).toMatchObject({ context: { kind: "subject" }, status: "pending" });
+
+    expect([mismatched.status(), unknown.status(), hidden.status()]).toStrictEqual([422, 404, 404]);
+
+    const thread = await api.get(path);
+
+    expect(lessonQuestionThreadResponseSchema.parse(await thread.json())).toMatchObject({
+      questions: [{ id: question.id }],
+    });
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("asks about a question of the item bank, never while it's on a mock being sat", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "tutor-item" });
+    const blockId = await createMockBlock({ api, userId });
+    const mockPath = `/v1/mocks/${blockId}`;
+
+    const started = await api.post(`${mockPath}/starts`, { data: { timeZone: "UTC" } });
+    expect(started.status()).toBe(204);
+
+    const mock = await prisma.mockExam.findFirstOrThrow({ where: { blockId, userId } });
+    const [itemId] = mockConditionsSchema.parse(mock.conditions).sections[0]?.itemIds ?? [];
+    const path = `/v1/items/${itemId}/questions`;
+    const context = { answered: false, kind: "item" };
+
+    // No help with an exam that's still running, even asked about its question elsewhere.
+    const [running, runningThread] = await Promise.all([
+      ask({ api, context, path }),
+      api.get(path),
+    ]);
+
+    expect([running.status(), runningThread.status()]).toStrictEqual([404, 404]);
+
+    const submitted = await api.post(`${mockPath}/sections/0/submissions`, {
+      data: { timeZone: "UTC" },
+    });
+
+    expect(submitted.status(), await submitted.text()).toBe(200);
+
+    const [question, foreignBlock] = await Promise.all([
+      ask({ api, context, path, question: "What is this question asking?" }).then(readCreated),
+      ask({ api, context: { ...context, blockId: randomUUID() }, path }),
+    ]);
+
+    expect(question.context).toStrictEqual({ kind: "item" });
+    expect(foreignBlock.status()).toBe(422);
+
+    await api.dispose();
+  });
+
+  test("keeps private items owner-only and requires owned practice evidence without a block", async () => {
+    const [owner, other, guest] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "private-item-owner" }),
+      createBearerLearner({ baseURL, prefix: "private-item-other" }),
+      createGuest(baseURL),
+    ]);
+
+    try {
+      await Promise.all([createPlannedGoal(owner.userId), createPlannedGoal(other.userId)]);
+      const skill = await skillFixture({ ownerId: owner.userId, visibility: "private" });
+      const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
+      const path = `/v1/items/${item.id}/questions`;
+      const context = { answered: false, kind: "item" };
+
+      // Legacy learner records do not grant access to another owner's private Library content.
+      await Promise.all(
+        [owner.userId, other.userId, guest.userId].map((userId) =>
+          mistakeFixture({ itemId: item.id, skillId: skill.id, userId }),
+        ),
+      );
+
+      await readCreated(await ask({ api: owner.api, context, path }));
+      const ownerThread = await owner.api.get(path);
+
+      expect(ownerThread.status()).toBe(200);
+
+      const refused = await Promise.all(
+        [other.api, guest.guestApi].flatMap((api) => [api.get(path), ask({ api, context, path })]),
+      );
+
+      expect(refused.map((response) => response.status())).toStrictEqual([404, 404, 404, 404]);
+
+      const publicSkill = await skillFixture();
+      const unseen = await itemFixture({ content: choiceItemContent(), skillId: publicSkill.id });
+      const unseenPath = `/v1/items/${unseen.id}/questions`;
+
+      // Another learner's practice history does not authorize this learner's no-block context.
+      await mistakeFixture({ itemId: unseen.id, skillId: publicSkill.id, userId: owner.userId });
+      const missingEvidence = await ask({ api: other.api, context, path: unseenPath });
+
+      expect(missingEvidence.status()).toBe(422);
+
+      await mistakeFixture({ itemId: unseen.id, skillId: publicSkill.id, userId: other.userId });
+      await readCreated(await ask({ api: other.api, context, path: unseenPath }));
+    } finally {
+      await Promise.all([owner.api.dispose(), other.api.dispose(), guest.guestApi.dispose()]);
+    }
   });
 
   test("asks about a mock only once it's finished", async () => {

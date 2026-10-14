@@ -5,7 +5,8 @@ import { useExtracted } from "next-intl";
 
 /**
  * Undoes the plan change a result just made (lessons a test-out skipped, the focus a test set),
- * right where it was made; says so when it can't.
+ * right where it was made: a quiet text action under the result's main one, on the column's left
+ * edge; says so when it can't.
  */
 export function UndoButton({
   failed,
@@ -21,11 +22,17 @@ export function UndoButton({
   return (
     <>
       {failed && (
-        <p className="text-destructive text-center text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("That didn't go through. Try again in a moment.")}
         </p>
       )}
-      <Button className="w-full" disabled={pending} onClick={onUndo} size="lg" variant="ghost">
+      <Button
+        className="text-muted-foreground hover:text-foreground self-start px-0 underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
+        disabled={pending}
+        onClick={onUndo}
+        size="lg"
+        variant="ghost"
+      >
         {t("Undo")}
       </Button>
     </>

@@ -1,21 +1,18 @@
 import "server-only";
-import {
-  type PlanItemReason,
-  type PlanScopeContext,
-} from "@zoonk/ai/tasks/lessons/question-context";
-import { type Goal, type PlanItemKind, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type PlanScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
+import { type Goal, prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
+import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getLibraryCourse } from "../../library/courses/get-library-course";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { getGoalPlan } from "../../plans/get-goal-plan";
-import { type PlanItemView, type PlanView } from "../../plans/plan-view-contract";
-import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
+import { type PlanView } from "../../plans/plan-view-contract";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
-import { readBlockPayload } from "../../sessions/block-payload";
-import { getBlockReason } from "./block-reason";
 import { loadGoalCutoff } from "./goal-cutoff";
+import { loadPlanDayContext, toChallengeLink, toPlusMark } from "./plan-day-context";
 
 /** "What comes next" covers the next few study days of the week. */
 const NEXT_DAYS = 3;
@@ -32,93 +29,17 @@ const PHASE_CHAPTERS_AHEAD = 8;
 const RECENT_MISTAKES = 3;
 const MAX_MISTAKE_TEXT = 300;
 
-type SessionBlock = StudySessionBlock & { lesson: { title: string } | null };
-
-type PlanScopeItem = NonNullable<PlanScopeContext["today"]>["items"][number];
-
-function toSessionItem(block: SessionBlock): PlanScopeItem {
-  const payload = readBlockPayload(block);
-
-  return {
-    canDo: block.canDo,
-    kind: block.kind,
-    minutes: block.estimatedMinutes,
-    reason: getBlockReason(block),
-    status: block.status,
-    title: block.lesson?.title ?? payload.title ?? payload.capsules[0]?.title ?? null,
-  };
-}
-
-const PLAN_ITEM_REASONS: Record<PlanItemKind, PlanItemReason> = {
-  boss: "checkpoint",
-  chapter: "newSkill",
-  checkpoint: "checkpoint",
-  lesson: "newSkill",
-  mock: "checkpoint",
-  review: "reviewDue",
-};
-
-/**
- * A mock exam the learner's plan doesn't include stays on its day, marked: features are never
- * hidden, so the buddy can say it comes with Plus when asked about it, and that the day is a full
- * review of every topic instead.
- */
-function toPlusMark(item: Pick<PlanItemView, "kind" | "requiresPlus">) {
-  return item.kind === "mock" && item.requiresPlus ? { plusRequired: true as const } : {};
-}
-
-function toPlanItem(item: PlanItemView): PlanScopeItem {
-  return {
-    canDo: null,
-    kind: item.kind,
-    minutes: item.minutes,
-    reason: PLAN_ITEM_REASONS[item.kind],
-    status: item.status,
-    title: item.title,
-    ...toPlusMark(item),
-  };
-}
-
-/** Today's session once the learner opened it; until then, what the plan gives the day. */
-async function loadToday({
-  goal,
-  plan,
-}: {
-  goal: Goal;
-  plan: PlanView;
-}): Promise<PlanScopeContext["today"] | null> {
-  const day = plan.week.days.find((candidate) => candidate.state === "today");
-
-  if (!day) {
-    return null;
-  }
-
-  const session = await prisma.studySession.findUnique({
-    include: {
-      blocks: { include: { lesson: { select: { title: true } } }, orderBy: { position: "asc" } },
-    },
-    where: {
-      userGoalDate: { goalId: goal.id, localDate: fromIsoDate(day.date), userId: goal.userId },
-    },
-  });
-
-  if (session && session.blocks.length > 0) {
-    return { date: day.date, items: session.blocks.map(toSessionItem), source: "session" };
-  }
-
-  return { date: day.date, items: day.items.map((item) => toPlanItem(item)), source: "plan" };
-}
-
 function toStatus(status: PlanStatus | null): PlanScopeContext["status"] {
   if (!status) {
     return null;
   }
 
   return {
+    challenges: status.kind === "challengesLeft" ? status.challenges : null,
     days: "days" in status ? status.days : null,
     extraMinutesPerDay: status.kind === "behind" ? status.extraMinutesPerDay : null,
     kind: status.kind,
-    lessons: status.kind === "behind" ? status.lessons : null,
+    lessons: status.kind === "behind" || status.kind === "pastDate" ? status.lessons : null,
     options: status.kind === "needsAdjusting" ? status.options : [],
   };
 }
@@ -157,7 +78,12 @@ function toNextDays(plan: PlanView): PlanScopeContext["next"] {
       date: day.date,
       items: day.items
         .slice(0, NEXT_DAY_ITEMS)
-        .map((item) => ({ kind: item.kind, title: item.title, ...toPlusMark(item) })),
+        .map((item) => ({
+          kind: item.kind,
+          link: toChallengeLink(item),
+          title: item.title,
+          ...toPlusMark(item),
+        })),
       moreItems: Math.max(0, day.items.length - NEXT_DAY_ITEMS),
     }));
 }
@@ -316,7 +242,18 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
  * shaped the plan, their latest mistakes, the course it's built from, and for an exam what its
  * notice says. Null for a goal without a plan.
  */
-export async function buildPlanContextSnapshot(goal: Goal): Promise<PlanScopeContext | null> {
+export async function buildPlanContextSnapshot(
+  goal: Goal,
+  {
+    conversation = false,
+  }: {
+    /**
+     * The buddy's own conversation about the goal, not a screen of it: only there may answers link
+     * what acts on the open goal (see `LinkScope`).
+     */
+    conversation?: boolean;
+  } = {},
+): Promise<PlanScopeContext | null> {
   const result = await getGoalPlan(goal.id);
 
   if (result.status !== "ready") {
@@ -329,15 +266,19 @@ export async function buildPlanContextSnapshot(goal: Goal): Promise<PlanScopeCon
 
   const { plan } = result;
 
-  const [course, today, mistakes, exam, cutoff] = await Promise.all([
+  const activeGoalId = conversation ? await findActiveGoalId(goal.userId) : null;
+  const scope = { activeGoal: activeGoalId === goal.id };
+
+  const [course, day, mistakes, exam, cutoff] = await Promise.all([
     loadCourse({ goal, plan }),
-    loadToday({ goal, plan }),
+    loadPlanDayContext({ goal, plan, scope }),
     loadRecentMistakes(goal),
     loadExamNoticeFacts(goal),
     loadGoalCutoff(goal),
   ]);
 
   return {
+    ...day,
     course,
     estimate: { endDate: plan.estimate.endDate, remainingHours: plan.estimate.remainingHours },
     exam,
@@ -347,9 +288,9 @@ export async function buildPlanContextSnapshot(goal: Goal): Promise<PlanScopeCon
     next: toNextDays(plan),
     phase: toPhase(plan),
     scope: { kind: "plan" },
+    ...(scope.activeGoal && { selectedGoal: true as const }),
     setup: toSetup(plan),
     status: toStatus(plan.status),
-    today,
     version: 1,
   };
 }

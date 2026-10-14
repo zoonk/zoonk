@@ -95,7 +95,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
   return (
     <section
       aria-label={set.title ?? t("Shared text")}
-      className="bg-muted/50 flex flex-col gap-3 rounded-2xl p-4"
+      className="border-border flex flex-col gap-3 border-l-2 pl-4 lg:group-data-aside/task:border-l-0 lg:group-data-aside/task:pl-0"
     >
       <SetPlace set={set} />
       {set.title && <h3 className="font-semibold">{set.title}</h3>}
@@ -137,13 +137,15 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
 }
 
 /**
- * The text, case, chart or recording a set's questions share, above each of them. A text shows
- * whole, except a long one on a phone or tablet right after another question on it (`continued`):
- * the learner just read it, so it shows its start, with a button to read it all again. A wide
- * screen has room for the whole text next to nothing else, so it never folds there. A recording
- * plays in its own player, with the exam's play limit kept across the set's questions and the
- * questions to read first (`questions`), and shows its transcript once they're answered
- * (`transcript`, from the last answer's feedback, or the view after a reload).
+ * The text, case, chart or recording a set's questions share, above each of them. A text sits flat
+ * on the page behind a left hairline, as a quote does, and with nothing around it beside the
+ * question in a task's aside from `lg`. It shows whole, except a long one on a phone or tablet
+ * right after another question on it (`continued`): the learner just read it, so it shows its
+ * start, with a button to read it all again. A wide screen has room for the whole text next to
+ * nothing else, so it never folds there. A recording plays in its own player, with the exam's play
+ * limit kept across the set's questions and the questions to read first (`questions`), and shows
+ * its transcript once they're answered (`transcript`, from the last answer's feedback, or the view
+ * after a reload).
  */
 export function ItemSetStimulus({
   continued = false,
