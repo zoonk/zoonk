@@ -1,11 +1,17 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
 import { StudyBlockKind, StudyBlockStatus, StudyFreshStart, StudySessionStatus } from "@zoonk/db";
+import { formatDuration } from "@zoonk/utils/duration";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
+import { checkpointAnsweredQuestionsSchema, studyCheckpointSchema } from "./checkpoint-evidence";
 import { emptyDaySchema, examTomorrowSchema, lessonsComingSchema } from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockQuestionSchema } from "./study-block-question";
+
+const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
+const EXAMPLE_DAILY_MINUTES = 15;
+const EXAMPLE_WEEKLY_MINUTES = 105;
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
 const idSchema = z.uuid();
@@ -15,33 +21,17 @@ const hyperdriveSchema = z.object({
   streak: z.number().int().min(0),
 });
 
-const checkpointSchema = z
-  .object({
-    kind: z
-      .enum(["boss", "finalBoss", "weekly"])
-      .meta({
-        description:
-          "A phase boss, the final boss that closes the plan, or the weekly Big Challenge",
-      }),
-    mock: z
-      .boolean()
-      .meta({ description: "An exam's weekly mock, which feeds the estimated score" }),
-    passMark: z
-      .number()
-      .int()
-      .min(0)
-      .meta({ description: "Right answers needed to win: seven of ten" }),
-    phase: z.number().int().min(0).nullable(),
-    rematch: z.boolean().meta({ description: "A boss lost on an earlier day, back again" }),
-    timeLimitMinutes: z.number().int().min(0).nullable(),
-  })
-  .meta({ id: "StudyCheckpoint" });
-
 export const studyBlockSchema = z
   .object({
     answered: z.number().int().min(0),
     brainPower: z.number().int().min(0).meta({ description: "Brain Power the block earned" }),
     canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
+    canTestOut: z
+      .boolean()
+      .meta({
+        description:
+          "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter",
+      }),
     capsules: z.array(
       z.object({
         format: z.enum(["rapidFire", "matchPairs", "swipe"]),
@@ -55,7 +45,7 @@ export const studyBlockSchema = z
     chapterId: idSchema
       .nullable()
       .meta({ description: "A chapter whose lesson is written just in time" }),
-    checkpoint: checkpointSchema.nullable(),
+    checkpoint: studyCheckpointSchema.nullable(),
     estimatedBrainPower: z.number().int().min(0),
     estimatedMinutes: z.number().int().min(0),
     extra: z.boolean().meta({ description: 'A "10 more minutes" block after the day\'s session' }),
@@ -97,6 +87,13 @@ export const studyBlockSchema = z
           "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
       }),
     title: z.string().nullable(),
+    waitReason: z
+      .enum(["lessons", "challenge"])
+      .nullable()
+      .meta({
+        description:
+          "Why a phase challenge waits: earlier lessons or an earlier phase challenge in this session are still pending or active. Completed or skipped work releases it. Null for blocks that can open in any order, including lessons, review, practice, the weekly challenge and mocks",
+      }),
     weakest: z
       .boolean()
       .meta({
@@ -149,55 +146,100 @@ export const studySessionResponseSchema = z
     examTomorrow: examTomorrowSchema,
     extraTime: extraTimeSchema,
     freshStart: z.enum(StudyFreshStart).nullable(),
-    fullMeal: z.object({ bonus: z.number().int(), earned: z.boolean(), ready: z.boolean() }),
+    fullMeal: z
+      .object({ bonus: z.number().int(), earned: z.boolean(), ready: z.boolean() })
+      .meta({
+        description:
+          "The completion bonus for every offered mission: 50 Brain Power whether one, two or three were possible, or 0 when missions is empty. Ready means at least one mission was offered and all are done, counting completions from any supported source. Earned means any goal already paid the bonus for this learner-local date. Payment is once per learner-local day across goals.",
+      }),
     goalId: idSchema.nullable(),
     hyperdrive: hyperdriveSchema,
     id: idSchema,
     lessonsComing: lessonsComingSchema,
     localDate: logicalDateSchema,
     minutes: z.object({
-      dailyGoal: z.number().int().min(0),
+      dailyGoal: z
+        .number()
+        .nonnegative()
+        .meta({
+          description: `The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example ${formatDuration({ locale: "en", totalSeconds: EXAMPLE_FUNDED_DAILY_MINUTES * 60 })}.`,
+          examples: [EXAMPLE_DAILY_MINUTES],
+        }),
       done: z.number().int().min(0),
       planned: z.number().int().min(0),
     }),
-    missions: z.array(missionSchema),
+    missions: z
+      .array(missionSchema)
+      .meta({
+        description:
+          "Zero to three achievable missions picked and saved when the day's session is built, ordered as Remember, New, Use. Reads update progress without adding or swapping missions. An unfinished mission whose planned anchor was removed is dropped; completed missions stay. A rebuild before any work starts or finishes may pick again. A session still running after midnight keeps its original missions until it ends.",
+      }),
     nextBlockId: idSchema.nullable(),
     pauseSuggested: z.boolean(),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
     status: z.enum(StudySessionStatus),
-    week: z.object({
-      days: z.array(
-        z.object({
-          date: logicalDateSchema,
-          goalMinutes: z
+    week: z
+      .object({
+        days: z.array(
+          z.object({
+            date: logicalDateSchema,
+            goalMinutes: z
+              .number()
+              .min(0)
+              .meta({
+                description:
+                  "What the learner's plans give the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                examples: [EXAMPLE_DAILY_MINUTES],
+              }),
+            hitGoal: z.boolean(),
+            isToday: z.boolean(),
+            kind: z
+              .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
+              .meta({
+                description:
+                  "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
+              }),
+            minutes: z.number().int().min(0),
+            studied: z.boolean().meta({ description: "Any study counts, partial days included" }),
+          }),
+        ),
+        daysHitGoal: z.number().int().min(0),
+        studyDays: z
+          .number()
+          .int()
+          .min(0)
+          .meta({ description: "Days of the week with a time goal" }),
+        time: z.object({
+          studiedMinutes: z
             .number()
             .int()
             .min(0)
             .meta({
-              description: "What the learner's plans give the day; 0 on a day without study",
+              description:
+                "Actual recorded study seconds this week, summed before rounding down to minutes",
             }),
-          hitGoal: z.boolean(),
-          isToday: z.boolean(),
-          kind: z
-            .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
+          targetMinutes: z
+            .number()
+            .min(0)
             .meta({
               description:
-                "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day outside their plans (before they began or after their date)",
+                "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+              examples: [EXAMPLE_WEEKLY_MINUTES],
             }),
-          minutes: z.number().int().min(0),
-          studied: z.boolean().meta({ description: "Any study counts, partial days included" }),
         }),
-      ),
-      daysHitGoal: z.number().int().min(0),
-      studyDays: z.number().int().min(0).meta({ description: "Days of the week with a time goal" }),
-    }),
+      })
+      .meta({
+        description:
+          "The week containing the session's localDate on session reads. Today returns the current learner-local week, even when a session carries over midnight with its original localDate",
+      }),
   })
   .meta({ id: "StudySession" });
 
 export const studyBlockDetailResponseSchema = z
   .object({
+    answeredQuestions: checkpointAnsweredQuestionsSchema,
     block: studyBlockSchema,
     hints: z.boolean().meta({ description: "False in checkpoints: a duel without hints" }),
     questions: z.array(studyBlockQuestionSchema),
@@ -231,6 +273,15 @@ export const studyAnswerFeedbackResponseSchema = z
     isCorrect: z.boolean(),
     mistakeFixed: z.boolean(),
     pauseSuggested: z.boolean(),
+    reinforcementLessons: z
+      .number()
+      .int()
+      .min(0)
+      .nullable()
+      .meta({
+        description:
+          "Actual available reinforcement lessons for the checkpoint's misses, using the same selection as the rematch scheduler; null for other blocks",
+      }),
     savedToNotebook: z.boolean(),
     transcript: listeningTranscriptSchema.meta({
       description:
@@ -239,7 +290,10 @@ export const studyAnswerFeedbackResponseSchema = z
     trap: z
       .string()
       .nullable()
-      .meta({ description: "In a trap drill, the trap the question set, named after the answer" }),
+      .meta({
+        description:
+          "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
+      }),
     workedSteps: z
       .array(z.string())
       .meta({

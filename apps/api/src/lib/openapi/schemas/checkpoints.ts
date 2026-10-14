@@ -2,7 +2,13 @@ import { CHALLENGE_STATUSES, type ChallengeView } from "@zoonk/core/checkpoints/
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { BuddyGlasses } from "@zoonk/db";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
+import {
+  checkpointEndedWithoutQuestionsSchema,
+  checkpointKindSchema,
+  checkpointPhaseSchema,
+} from "./checkpoint-evidence";
 import { mockLeftOutSchema } from "./mock-left-out";
 import {
   logicalDateSchema,
@@ -10,14 +16,6 @@ import {
   studyBlockSchema,
 } from "./study-sessions";
 import { mockWrittenPartsSchema } from "./weekly-challenge";
-
-const phaseSchema = z
-  .object({ index: z.number().int().min(0), name: z.string() })
-  .meta({ id: "CheckpointPhase" });
-
-const kindSchema = z
-  .enum(["boss", "finalBoss", "weekly"])
-  .meta({ description: "A phase boss, the final boss or the weekly Big Challenge" });
 
 const rewardSchema = z
   .object({
@@ -39,17 +37,26 @@ const rewardSchema = z
 
 export const checkpointResponseSchema = z
   .object({
+    answeredQuestions: studyBlockDetailResponseSchema.shape.answeredQuestions,
     blockId: z.uuid(),
     checklist: z
       .array(z.enum(EXAM_DAY_CHECKLIST))
       .meta({ description: "Before a mock: keys to rehearse exam day, ticked off on the device" }),
-    kind: kindSchema,
+    endedWithoutQuestions: checkpointEndedWithoutQuestionsSchema,
+    kind: checkpointKindSchema,
     mock: z.boolean().meta({ description: "An exam's weekly mock, in the exam's conditions" }),
-    nextPhase: phaseSchema
+    nextPhase: checkpointPhaseSchema
       .nullable()
       .meta({ description: "The phase after this one, which a lost boss never locks" }),
-    passMark: z.number().int().min(0).meta({ description: "Right answers needed to win" }),
-    phase: phaseSchema.nullable(),
+    passMark: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "Right answers needed to win. A boss's duel is over once it's decided, won when they're reached (his shield breaks) or lost when its misses leave too few questions to reach them: ask no more questions and finish its block, the questions left unasked. A weekly challenge asks every question",
+      }),
+    phase: checkpointPhaseSchema.nullable(),
     planItemId: z
       .uuid()
       .nullable()
@@ -59,7 +66,10 @@ export const checkpointResponseSchema = z
       .number()
       .int()
       .min(0)
-      .meta({ description: "Short lessons on what a lost duel missed, before the rematch" }),
+      .meta({
+        description:
+          "Actual available lessons for this duel's misses, selected by the rematch scheduler; 0 before any misses or when none are available",
+      }),
     rematch: z.boolean().meta({ description: "A boss lost on an earlier day, back again" }),
     result: z
       .object({
@@ -103,7 +113,32 @@ export const challengeResponseSchema = z
       .meta({
         description: "Today's block for it, or the last one it was played in; null before its day",
       }),
-    call: z.boolean().meta({ description: "A language goal's boss: the unit's live call" }),
+    call: z
+      .object({
+        goals: z
+          .array(
+            z.object({
+              description: z
+                .string()
+                .meta({ description: "Why or how, in the learner's language" }),
+              label: z.string().meta({ description: "What to get across, in `targetLanguage`" }),
+            }),
+          )
+          .nullable()
+          .meta({ description: "What to get across; null until the unit's call is written" }),
+        level: z.enum(CEFR_LEVELS).meta({ description: "The level the learner speaks at now" }),
+        minutes: z.number().int().min(0).meta({ description: "Minutes of talk" }),
+        targetLanguage: z.string().meta({ description: "The language the call is in" }),
+        title: z
+          .string()
+          .nullable()
+          .meta({ description: "The call's name; null until the unit's call is written" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "A language goal's phase or final boss: the unit's live call, which asks no questions (`questions` is 0). Free learners see the same call with `locked` true; null for every other challenge",
+      }),
     canMove: z
       .boolean()
       .meta({
@@ -116,7 +151,7 @@ export const challengeResponseSchema = z
       .min(0)
       .meta({
         description:
-          "About how long it takes: for a mock, learners' real pace on the exam's mocks (never more than `minutes`), the exam's own pace until that's known; `minutes` otherwise",
+          "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise. Display minutes as the canonical mock duration: it is the real time limit funded by the plan, even when the learner may finish early.",
       }),
     examName: z.string().nullable(),
     fullLength: z
@@ -126,8 +161,14 @@ export const challengeResponseSchema = z
           "A mock the length of the real exam; a short one is half of it. False outside mocks",
       }),
     goalId: z.uuid(),
-    kind: kindSchema,
+    kind: checkpointKindSchema,
     leftOut: mockLeftOutSchema,
+    locked: z
+      .boolean()
+      .meta({
+        description:
+          "The learner needs Plus to start this challenge. Its content and completed feedback remain visible; an unfinished challenge has `status` `plusRequired`, and a completed language challenge keeps `status` `done` with `locked` true after Plus lapses. Starting rechecks the subscription",
+      }),
     minutes: z
       .number()
       .int()
@@ -142,11 +183,12 @@ export const challengeResponseSchema = z
       .min(0)
       .nullable()
       .meta({
-        description: "Right answers that win a boss; a weekly challenge pays for finishing",
+        description:
+          "Right answers that win a boss, or for a call the goals got across (null until its call is written); a weekly challenge pays for finishing",
       }),
-    phase: phaseSchema.nullable(),
+    phase: checkpointPhaseSchema.nullable(),
     planItemId: z.uuid(),
-    questions: z.number().int().min(0),
+    questions: z.number().int().min(0).meta({ description: "0 for a call, which asks none" }),
     recordings: z
       .number()
       .int()
@@ -159,7 +201,10 @@ export const challengeResponseSchema = z
       .number()
       .int()
       .min(0)
-      .meta({ description: "Short lessons on what a lost duel missed, before its new try" }),
+      .meta({
+        description:
+          "Actual available lessons for the last lost duel's misses, selected by the rematch scheduler; 0 before a loss or when none are available",
+      }),
     rematch: z.boolean().meta({ description: "A boss lost on an earlier day, back again" }),
     result: checkpointResponseSchema.shape.result.meta({
       description:
@@ -186,11 +231,25 @@ export const challengeResponseSchema = z
       .enum(CHALLENGE_STATUSES)
       .meta({
         description:
-          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it)",
+          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it: the next one has it); queued (a phase challenge whose lessons are done, after one still to win: it comes in the session after that one is won)",
       }),
     timeZone: z.string().nullable(),
     title: z.string(),
     today: logicalDateSchema.meta({ description: "The learner's today, to say when it is" }),
+    topics: z
+      .array(
+        z.object({
+          name: z.string(),
+          subject: z
+            .string()
+            .nullable()
+            .meta({ description: "Its subject's short name; null for a goal of one subject" }),
+        }),
+      )
+      .meta({
+        description:
+          "What its questions ask about, in plan order: once its block is built, the topics of the questions it asks; before that, the topics a boss's questions will come from, as the plan sets them (none for the weekly challenge). Empty for a mock, which lists its sections, and a language goal's call",
+      }),
     written: mockWrittenPartsSchema,
     wrongPenalty: z
       .number()

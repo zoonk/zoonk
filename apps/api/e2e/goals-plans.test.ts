@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planChangedSinceSchema } from "@zoonk/core/plans/changed-since-contract";
+import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import { planTimeAdviceSchema } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -26,6 +27,7 @@ import {
   planLinkResponseSchema,
   planResponseSchema,
 } from "../src/lib/openapi/schemas/plans";
+import { goalPreparationResponseSchema } from "../src/lib/openapi/schemas/preparation";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
@@ -133,17 +135,48 @@ test.describe("Goals and plans API", () => {
       apiContext.patch(`/v1/goals/${goalId}`, { data: { title: "x" } }),
       apiContext.get(`/v1/goals/${goalId}/plan`),
       apiContext.get(`/v1/goals/${goalId}/plan/time-advice`),
+      apiContext.get(`/v1/goals/${goalId}/plan/resume-preview`),
       apiContext.get(`/v1/goals/${goalId}/plan/changed-since?since=${new Date().toISOString()}`),
       apiContext.post(`/v1/goals/${goalId}/plan/changes`, {
         data: { operations: [{ kind: "setDailyMinutes", minutes: 20 }] },
       }),
-      apiContext.patch(`/v1/goals/${goalId}/plan/changes/${randomUUID()}`, {
+      apiContext.post(`/v1/goals/${goalId}/plan/changes/${randomUUID()}`, {
         data: { status: "undone" },
       }),
       apiContext.post(`/v1/plan-links/${randomUUID()}/goals`, { data: { dailyMinutes: 20 } }),
     ]);
 
     expect(responses.map((response) => response.status())).toStrictEqual(responses.map(() => 401));
+    await apiContext.dispose();
+  });
+
+  test("refuses a newly supplied past date without creating a goal or plan", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "past-new-goal",
+    });
+
+    const targetDate = new Date().toISOString().slice(0, 10);
+
+    const response = await apiContext.post("/v1/goals", {
+      data: {
+        dailyMinutes: 15,
+        goals: [{ kind: "learn", language: "en", prompt: "Algebra", targetDate, title: "Algebra" }],
+        timeZone: "UTC",
+      },
+    });
+
+    expect(response.status()).toBe(422);
+
+    expect(await response.json()).toMatchObject({
+      error: {
+        code: "TARGET_DATE_OUT_OF_RANGE",
+        details: [{ bound: "earliest", path: ["goals", 0, "targetDate"] }],
+      },
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.plan.count({ where: { goal: { userId: user.id } } })).resolves.toBe(0);
     await apiContext.dispose();
   });
 
@@ -200,6 +233,108 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("reads finished pace in plan and preparation responses", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL: process.env.E2E_BASE_URL ?? "",
+      prefix: "plan-finished-status",
+    });
+
+    const { goal, plan } = await createPlannedGoal(user.id);
+
+    await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
+
+    const [planResponse, preparationResponse] = await Promise.all([
+      apiContext.get(`/v1/goals/${goal.id}/plan`),
+      apiContext.get(`/v1/goals/${goal.id}/preparation`),
+    ]);
+
+    const [planView, preparation] = await Promise.all([
+      readBody({ response: planResponse, schema: planResponseSchema }),
+      readBody({ response: preparationResponse, schema: goalPreparationResponseSchema }),
+    ]);
+
+    expect(planView).toMatchObject({
+      end: { kind: "finished" },
+      pastDateOffer: null,
+      status: { kind: "finished" },
+    });
+
+    expect(preparation.status).toStrictEqual({ kind: "finished" });
+    await apiContext.dispose();
+  });
+
+  // Lucas's date came with lessons left: his plan read "ended". It keeps going: the plan offers the
+  // change that does it, which clients send back as it is.
+  test("offers the change that keeps a plan going once its date came with lessons left", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL: process.env.E2E_BASE_URL ?? "",
+      prefix: "plan-past-date",
+    });
+
+    const { goal, plan } = await createPlannedGoal(user.id);
+    const today = Math.floor(Date.now() / DAY_MS) * DAY_MS;
+    const date = new Date(today - 3 * DAY_MS);
+
+    // Four lessons studied before the date; the new day's settling set the rest aside.
+    await Promise.all([
+      prisma.goal.update({ data: { targetDate: date }, where: { id: goal.id } }),
+      prisma.planItem.updateMany({
+        data: { scheduledFor: new Date(today - 4 * DAY_MS), status: "skipped" },
+        where: { planId: plan.id, position: { gte: LESSONS_PER_DAY } },
+      }),
+      prisma.planItem.updateMany({
+        data: { scheduledFor: new Date(today - 5 * DAY_MS), status: "done" },
+        where: { planId: plan.id, position: { lt: LESSONS_PER_DAY } },
+      }),
+    ]);
+
+    const left = LESSONS - LESSONS_PER_DAY;
+
+    const [planView, preparation] = await Promise.all([
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+        schema: planResponseSchema,
+      }),
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/preparation`),
+        schema: goalPreparationResponseSchema,
+      }),
+    ]);
+
+    expect(planView).toMatchObject({ end: null, status: { kind: "pastDate", lessons: left } });
+    expect(preparation.status).toStrictEqual({ kind: "pastDate", lessons: left });
+
+    const offer = planView.pastDateOffer;
+    const [operation] = offer?.operations ?? [];
+    const todayIso = new Date(today).toISOString().slice(0, 10);
+
+    const targetDate = operation?.kind === "setTargetDate" ? operation.targetDate : null;
+
+    expect(offer?.effect.lessonsAdded).toBe(left);
+    expect(targetDate && targetDate > todayIso).toBe(true);
+
+    const changed = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
+        data: { operations: offer?.operations ?? [] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    expect(changed.status).toBe("applied");
+
+    const after = await readBody({
+      response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+      schema: planResponseSchema,
+    });
+
+    expect(after.status?.kind).not.toBe("pastDate");
+    expect(after.pastDateOffer).toBeNull();
+
+    expect(after.schedule.targetDate).toBe(targetDate);
+
+    await apiContext.dispose();
+  });
+
   test("reads and edits a plan, and undoes the change", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -241,9 +376,28 @@ test.describe("Goals and plans API", () => {
     expect(after.phases[0]?.lessonsTotal).toBe(LESSONS);
     expect(after.changes[0]).toMatchObject({ id: changed.change?.id, seen: false });
 
+    const savedChange = await prisma.planChange.findUniqueOrThrow({
+      where: { id: changed.change?.id },
+    });
+
+    const [readDecision, oldDecision] = await Promise.all([
+      apiContext.get(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`),
+      apiContext.patch(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
+        data: { status: "undone" },
+      }),
+    ]);
+
+    expect([readDecision.status(), oldDecision.status()]).toStrictEqual([405, 405]);
+
+    const untouched = await prisma.planChange.findUniqueOrThrow({
+      where: { id: changed.change?.id },
+    });
+
+    expect(untouched).toStrictEqual(savedChange);
+
     // "Got it" only marks it read: it stays applied and can still be undone.
     const seen = await readBody({
-      response: await apiContext.patch(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
         data: { status: "seen" },
       }),
       schema: planChangeSchema,
@@ -252,7 +406,7 @@ test.describe("Goals and plans API", () => {
     expect(seen).toMatchObject({ canUndo: true, seen: true, status: "applied" });
 
     const undone = await readBody({
-      response: await apiContext.patch(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
         data: { status: "undone" },
       }),
       schema: planChangeSchema,
@@ -260,14 +414,13 @@ test.describe("Goals and plans API", () => {
 
     expect(undone).toMatchObject({ canUndo: false, status: "undone" });
 
-    const again = await apiContext.patch(
-      `/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`,
-      { data: { status: "undone" } },
-    );
+    const again = await apiContext.post(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
+      data: { status: "undone" },
+    });
 
     expect(again.status()).toBe(409);
 
-    const seenAfterUndo = await apiContext.patch(
+    const seenAfterUndo = await apiContext.post(
       `/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`,
       { data: { status: "seen" } },
     );
@@ -341,10 +494,32 @@ test.describe("Goals and plans API", () => {
 
     expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate });
     expect(advice.recommendedMinutes).toBeGreaterThan(12);
+    expect(advice.numbers).not.toBeNull();
+    expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
-    await expect(readBody({ response: plan, schema: planResponseSchema })).resolves.toMatchObject({
+    expect(advice.numbers?.coverage).toMatchObject({
+      basis: "graphSized",
+      coveredShare: advice.coveredShare,
+      measure: "goal",
+      scope: "selectedCurriculum",
+    });
+
+    expect(advice.numbers?.scheduledMinutes).toBe(
+      Object.values(advice.numbers!.workload).reduce((sum, minutes) => sum + minutes, 0),
+    );
+
+    const visiblePlan = await readBody({ response: plan, schema: planResponseSchema });
+
+    expect(visiblePlan).toMatchObject({
       feasibility: { recommendedMinutes: advice.recommendedMinutes },
     });
+
+    expect(visiblePlan.numbers?.context).toEqual(advice.numbers?.context);
+    expect(visiblePlan.numbers?.coverage?.coveredShare).toBe(visiblePlan.feasibility?.coveredShare);
+
+    expect(visiblePlan.numbers?.scheduledMinutes).toBe(
+      Object.values(visiblePlan.numbers!.workload).reduce((sum, minutes) => sum + minutes, 0),
+    );
 
     await expect(
       readBody({ response: weekdays, schema: planTimeAdviceSchema }),
@@ -356,6 +531,57 @@ test.describe("Goals and plans API", () => {
     ).resolves.toMatchObject({ ready: true });
 
     expect([invalid.status(), tooLong.status(), hidden.status()]).toStrictEqual([400, 400, 404]);
+
+    // The time question's estimate: what the time a day the learner looks at covers by the date,
+    // all of it at the time recommended, and never another time recommended.
+    const [atRecommended, atLeast, tooMuch] = await Promise.all([
+      apiContext.get(
+        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${advice.recommendedMinutes}`,
+      ),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=5`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=999`),
+    ]);
+
+    await expect(
+      readBody({ response: atRecommended, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ coveredShare: 1, recommendedMinutes: advice.recommendedMinutes });
+
+    const least = await readBody({ response: atLeast, schema: planTimeAdviceSchema });
+
+    expect(least.coveredShare).toBeLessThan(1);
+    expect(least.recommendedMinutes).toBe(advice.recommendedMinutes);
+    expect(tooMuch.status()).toBe(400);
+
+    /** The first day rests: its budget must use the scalar that accepting the weekend saves. */
+    const weekday = new Date().getUTCDay();
+    const studyDays = [0, 6].filter((day) => day !== weekday);
+
+    const weekendOnly = await readBody({
+      response: await apiContext.get(
+        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=240&studyDays=${studyDays.join(",")}&weekendMinutes=5`,
+      ),
+      schema: planTimeAdviceSchema,
+    });
+
+    expect(weekendOnly).toMatchObject({ maximum: null, recommendedMinutes: null });
+    expect(weekendOnly.coveredShare).toBeLessThan(1);
+
+    await expect(
+      readBody({
+        response: await apiContext.patch(`/v1/goals/${goal.id}`, {
+          data: { dailyMinutes: 240, studyDays, timeZone: "UTC", weekendMinutes: 5 },
+        }),
+        schema: goalUpdateResponseSchema,
+      }),
+    ).resolves.toMatchObject({ goal: { dailyMinutes: 5 } });
+
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+        schema: planResponseSchema,
+      }),
+    ).resolves.toMatchObject({ feasibility: { coveredShare: weekendOnly.coveredShare } });
+
     await apiContext.dispose();
   });
 
@@ -429,11 +655,15 @@ test.describe("Goals and plans API", () => {
       goal: { dailyMinutes: 30, title: "Markets" },
     });
 
-    const [read, hidden, hiddenPlan, pastDate] = await Promise.all([
+    // A plan reaches 3,650 days ahead: eleven years is past it.
+    const tooFar = `${new Date().getUTCFullYear() + 11}-01-01`;
+
+    const [read, hidden, hiddenPlan, pastDate, farDate] = await Promise.all([
       apiContext.get(`/v1/goals/${goal.id}`),
       apiContext.get(`/v1/goals/${other.goal.id}`),
       apiContext.get(`/v1/goals/${other.goal.id}/plan`),
       apiContext.patch(`/v1/goals/${goal.id}`, { data: { targetDate: "2020-01-01" } }),
+      apiContext.patch(`/v1/goals/${goal.id}`, { data: { targetDate: tooFar } }),
     ]);
 
     await expect(readBody({ response: read, schema: goalSchema })).resolves.toMatchObject({
@@ -443,6 +673,68 @@ test.describe("Goals and plans API", () => {
     expect(hidden.status()).toBe(404);
     expect(hiddenPlan.status()).toBe(404);
     expect(pastDate.status()).toBe(422);
+    expect(farDate.status()).toBe(422);
+
+    await expect(farDate.json()).resolves.toMatchObject({
+      error: {
+        code: "TARGET_DATE_OUT_OF_RANGE",
+        details: [{ bound: "latest", path: ["targetDate"] }],
+      },
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("previews resuming a paused goal before the learner resumes it", async () => {
+    const [{ apiContext, user }, stranger] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "goals-resume" }),
+      userFixture(),
+    ]);
+
+    const [{ goal, plan }, other] = await Promise.all([
+      createPlannedGoal(user.id),
+      createPlannedGoal(stranger.id),
+    ]);
+
+    const preview = async () =>
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan/resume-preview`),
+        schema: planChangePreviewSchema,
+      });
+
+    await apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "paused" } });
+
+    // Resumed the day it paused, the plan stays as it is.
+    await expect(preview()).resolves.toMatchObject({ ready: true, unchanged: true });
+
+    // Days went by while it was paused: their lessons are now on days past.
+    const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
+
+    await Promise.all(
+      items.map((item) =>
+        prisma.planItem.update({
+          data: { scheduledFor: new Date((item.scheduledFor?.getTime() ?? 0) - 3 * DAY_MS) },
+          where: { id: item.id },
+        }),
+      ),
+    );
+
+    await expect(preview()).resolves.toMatchObject({
+      effect: expect.any(Object),
+      ready: true,
+      unchanged: false,
+    });
+
+    const [resumed, hidden] = await Promise.all([
+      apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "active" } }),
+      apiContext.get(`/v1/goals/${other.goal.id}/plan/resume-preview`),
+    ]);
+
+    await expect(
+      readBody({ response: resumed, schema: goalUpdateResponseSchema }),
+    ).resolves.toMatchObject({ change: { kind: "resumed" }, goal: { status: "active" } });
+
+    expect(hidden.status()).toBe(404);
     await apiContext.dispose();
   });
 

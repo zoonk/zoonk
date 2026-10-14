@@ -4,6 +4,8 @@ import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { ownLevelSchema } from "@zoonk/core/learner/placement/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planCourseSchema } from "@zoonk/core/plans/course-contract";
+import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
+import { planNumbersSchema } from "@zoonk/core/plans/numbers-contract";
 import { type OwnLevelChange } from "@zoonk/core/plans/own-level-contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "@zoonk/core/plans/tools-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
@@ -14,6 +16,8 @@ import { noSittingSchema, noticeDaySchema } from "./notice-dates";
 import { planAreaSchema } from "./plan-areas";
 import { planBasesSchema } from "./plan-bases";
 import { planFeasibilitySchema } from "./plan-feasibility";
+import { planMockScheduleSchema } from "./plan-mock-schedule";
+import { planFitOfferSchema, planPastDateOfferSchema } from "./plan-offers";
 import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
@@ -26,7 +30,7 @@ const planItemSchema = z
     id: z.uuid(),
     kind: z.enum(PlanItemKind),
     lessonId: z.uuid().nullable(),
-    minutes: z.int().nullable(),
+    minutes: z.number().nullable(),
     requiresPlus: z
       .boolean()
       .meta({ description: "Free exam plans cover the first week and no mock exams" }),
@@ -80,7 +84,8 @@ const planDaySchema = z
   .object({
     date: isoDateSchema,
     items: z.array(planItemSchema),
-    minutes: z.int().min(0),
+    minutes: z.number().nonnegative(),
+    mockFunding: mockFundingSchema.nullable(),
     state: z.enum(["done", "missed", "rest", "today", "upcoming"]),
   })
   .meta({ id: "PlanDay" });
@@ -113,20 +118,16 @@ export const planResponseSchema = z
     end: z
       .object({
         kind: z
-          .enum(["ended", "finished"])
+          .literal("finished")
           .meta({
             description:
-              "`finished`: every lesson was studied or tested out; celebrate it. `ended`: some were set aside (missed days the plan couldn't fit back, or its date came); never celebrate it as finished, say how many stayed out",
+              "Every lesson was studied or tested out and every required phase challenge won; Free language plans can finish with their Plus call challenges still locked",
           }),
-        setAsideLessons: z
-          .int()
-          .min(0)
-          .meta({ description: "The lessons set aside; 0 when finished" }),
       })
       .nullable()
       .meta({
         description:
-          "Nothing of the plan is left to do: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Null while something is",
+          "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`, see `pastDateOffer`) and required challenges too (status `challengesLeft`)",
       }),
     estimate: z.object({
       endDate: isoDateSchema.nullable(),
@@ -144,6 +145,12 @@ export const planResponseSchema = z
       }),
     examDocument: examDocumentSchema,
     feasibility: planFeasibilitySchema.nullable(),
+    fitOffer: planFitOfferSchema,
+    fundedMocks: z
+      .array(planItemSchema)
+      .describe(
+        "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
+      ),
     goalId: z.uuid(),
     notice: z
       .enum(["reading", "usual"])
@@ -152,9 +159,11 @@ export const planResponseSchema = z
         description:
           "An exam plan built before research read the exam's notice: reading while the reveal waits for that reading; usual once the wait ended without it (the plan follows the exam's usual structure and the reading arrives as a change to apply); null otherwise",
       }),
+    numbers: planNumbersSchema.nullable(),
     ownLevel: ownLevelSchema
       .nullable()
       .meta({ description: "The level the learner gave; null when they didn't say" }),
+    pastDateOffer: planPastDateOfferSchema,
     phases: z.array(planPhaseSchema),
     planId: z.uuid(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
@@ -168,6 +177,7 @@ export const planResponseSchema = z
             "The exam plan studies everything: what doesn't fit before the exam goes on after it (`setFullCourse`); the exam keeps its date. False for other goals, which study everything without a date",
         }),
       lightWeeks: z.array(z.object({ endDate: isoDateSchema, startDate: isoDateSchema })),
+      mocks: planMockScheduleSchema,
       nextSitting: isoDateSchema
         .nullable()
         .meta({

@@ -3,11 +3,13 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
 } from "@zoonk/auth/username-rules";
+import { missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { createOpenAPIDocument } from "./create-document";
 import { openAPIDocument } from "./document";
 import { serializedStepSchema } from "./schemas/language-exercise";
+import { buddyStatusResponseSchema } from "./schemas/milestones";
 import {
   chapterCompletionResponseSchema,
   courseCompletionResponseSchema,
@@ -17,6 +19,25 @@ import {
 const UUID = "00000000-0000-4000-8000-000000000001";
 const DOCUMENTED_METHODS = ["delete", "get", "patch", "post", "put"] as const;
 
+const BUDDY_RESPONSE = {
+  belt: {
+    bpPerLevel: 100,
+    bpToNextLevel: 100,
+    color: "white",
+    isMaxLevel: false,
+    level: 0,
+    progressInLevel: 0,
+    totalBrainPower: 0,
+  },
+  buddy: { glasses: "round", kind: "zu", name: null, picked: false },
+  energy: { current: null, state: "napping", studiedToday: false },
+  glasses: [],
+  nextStage: null,
+  stage: "baby",
+  thisWeek: { fixes: 0, newIdeas: 0, reviews: 0 },
+  today: null,
+};
+
 const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createEmailSignInCode", path: "/email-sign-in-codes" },
   { method: "post", operationId: "createAppleSession", path: "/sessions/apple" },
@@ -24,6 +45,7 @@ const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createEmailCodeSession", path: "/sessions/email-code" },
   { method: "post", operationId: "createGoogleSession", path: "/sessions/google" },
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
+  { method: "get", operationId: "listCourseCategoryCounts", path: "/catalog/categories" },
   { method: "get", operationId: "listCourses", path: "/courses" },
   { method: "get", operationId: "getCourse", path: "/courses/{courseId}" },
   { method: "get", operationId: "listCourseChapters", path: "/courses/{courseId}/chapters" },
@@ -266,7 +288,11 @@ describe("OpenAPI document", () => {
   it("documents native session endpoint security", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
-    expect(document.paths["/email-sign-in-codes"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/email-sign-in-codes"]?.post?.security).toStrictEqual([
+      {},
+      { bearerAuth: [] },
+    ]);
+
     expect(document.paths["/email-sign-in-codes"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/sessions/apple"]?.post?.security).toStrictEqual([]);
     expect(document.paths["/sessions/apple"]?.post?.responses).toHaveProperty("403");
@@ -638,6 +664,71 @@ describe("OpenAPI document", () => {
 });
 
 describe("OpenAPI response schemas", () => {
+  it("keeps minimal mission responses compatible with older clients", () => {
+    const mission = { done: 0, kind: "review", status: "nothingToday", total: 0 };
+
+    expect(missionSchema.parse(mission)).toStrictEqual(mission);
+  });
+
+  it.each([
+    { blockId: UUID, kind: "block" },
+    { kind: "mistakesPractice" },
+    { kind: "pattern", patternId: UUID },
+    { kind: "pronunciation" },
+    { chapterId: UUID, kind: "call" },
+    { kind: "buddy" },
+    { areaId: UUID, kind: "areaPractice" },
+    { kind: "mockChooser" },
+  ])("preserves the mission target and presentation data for $kind", (opens) => {
+    const mission = {
+      detail: {
+        areaTitle: "Reading",
+        chapterTitle: "The chapter",
+        count: 2,
+        minutes: 4,
+        patternTitle: "A pattern",
+        rematch: true,
+        title: "The block",
+      },
+      done: 0,
+      firstStep: true,
+      kind: "challenge",
+      opens,
+      status: "todo",
+      total: 1,
+    };
+
+    expect(missionSchema.parse(mission)).toStrictEqual(mission);
+  });
+
+  it("keeps buddy responses compatible when first steps are absent or retired", () => {
+    expect(buddyStatusResponseSchema.parse(BUDDY_RESPONSE)).toStrictEqual(BUDDY_RESPONSE);
+
+    const retired = { ...BUDDY_RESPONSE, firstSteps: null };
+
+    expect(buddyStatusResponseSchema.parse(retired)).toStrictEqual(retired);
+  });
+
+  it("preserves first-step progress and targets in the buddy response", () => {
+    const buddy = {
+      ...BUDDY_RESPONSE,
+      firstSteps: {
+        done: 1,
+        steps: [
+          { kind: "somethingNew", status: "done" },
+          { kind: "review", opens: { blockId: UUID, kind: "block" }, status: "today" },
+          { kind: "mock", opens: { kind: "mockChooser" }, status: "available" },
+          { kind: "challenge", status: "later", when: { date: "2026-10-19", kind: "challenge" } },
+          { kind: "essay", status: "later", when: { kind: "essay" } },
+          { kind: "fixMistake", status: "later", when: { kind: "mistake" } },
+        ],
+        total: 6,
+      },
+    };
+
+    expect(buddyStatusResponseSchema.parse(buddy)).toStrictEqual(buddy);
+  });
+
   it.each([
     { completed: false, hasStarted: false, type: "empty" },
     {

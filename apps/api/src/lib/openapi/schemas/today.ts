@@ -1,5 +1,6 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
+import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { examMomentSchema } from "./exams";
@@ -32,7 +33,10 @@ export const todayResponseSchema = z
         .int()
         .min(0)
         .nullable()
-        .meta({ description: "Whole days until the goal's date; null for a goal without one" }),
+        .meta({
+          description:
+            "Whole days until the goal's date, 0 on the day itself; null for a goal without one and once its date passed",
+        }),
       id: z.uuid(),
       kind: z.enum(GoalKind),
       targetDate: logicalDateSchema.nullable(),
@@ -47,6 +51,11 @@ export const todayResponseSchema = z
         description:
           "Where each lesson of the day's learn blocks stands; a stop still being written says so. Follow one with `/v1/library/lessons/{lessonId}/readiness`",
       }),
+    mockFunding: mockFundingSchema
+      .nullable()
+      .describe(
+        "Exact saved contribution explaining a lighter study day; null on unrelated days, the mock's own day, and welcome-back sessions, which already explain the lighter day.",
+      ),
     planChange: planChangeSchema
       .extend({
         chapterTitle: z
@@ -60,20 +69,49 @@ export const todayResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic change of the last day (a rebalance, missed days, a test-out) until it's marked seen. Answer it with PATCH /v1/goals/{goalId}/plan/changes/{changeId}",
+          "The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic change of the last day (a rebalance, missed days, a test-out, an estimateUpdated whose net lesson count changed by more than one as the plan adapted to pace data or written lessons) until it's marked seen. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
       }),
     progress: z
-      .object({
-        status: planStatusSchema.nullable(),
-        value: z.number().min(0).max(1).meta({ description: "Preparation, from 0 to 1" }),
-        weekGain: z
-          .number()
-          .meta({
-            description: "Preparation gained since the start of the learner's week (Monday)",
-          }),
-      })
+      .discriminatedUnion("measure", [
+        z.object({
+          measure: z.literal("preparation").meta({ description: "An exam goal" }),
+          status: planStatusSchema.nullable(),
+          value: z.number().min(0).max(1).meta({ description: "Preparation, from 0 to 1" }),
+          weekGain: z
+            .number()
+            .meta({
+              description: "Preparation gained since the start of the learner's week (Monday)",
+            }),
+        }),
+        z.object({
+          lessons: z
+            .object({
+              done: z.number().int().min(0).meta({ description: "Studied or skipped as known" }),
+              today: z
+                .number()
+                .int()
+                .min(0)
+                .meta({
+                  description:
+                    "The plan's lessons today's session still holds, each once and only while still to do (one finished in another goal's session no longer counts): what today adds to `done`",
+                }),
+              total: z.number().int().min(0),
+            })
+            .meta({ description: "The syllabus's `lessons`: its subjects in the plan, added up" }),
+          measure: z.literal("lessons").meta({ description: "Any goal that isn't an exam" }),
+          status: planStatusSchema.nullable(),
+          value: z
+            .number()
+            .min(0)
+            .max(1)
+            .meta({ description: "Progress: `lessons.done` of `lessons.total`, from 0 to 1" }),
+        }),
+      ])
       .nullable()
-      .meta({ description: "Where the plan stands, with preparation and this week's gain" }),
+      .meta({
+        description:
+          "Where the plan stands, in the goal's one measure: an exam's preparation with this week's gain, or any other goal's lessons (a language goal shows its level instead, from its Today view). Null for a quick explanation",
+      }),
     session: studySessionResponseSchema,
     shortPlan: todayShortPlanSchema,
     studiedToday: z
