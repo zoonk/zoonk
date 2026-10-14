@@ -5,13 +5,14 @@ export type LearnerRevisionTransaction = Pick<TransactionClient, "$executeRaw" |
 
 /**
  * Raises the input version of every plan these learners' goals have, locking the plans in id
- * order first. Learner writers lock plans, then learner rows, then their own rows, so two of them
- * wait for each other instead of deadlocking. Core's writers and auth's guest link share it.
+ * order first, and returns the plans it marked. Learner writers lock plans, then learner rows,
+ * then their own rows, so two of them wait for each other instead of deadlocking. Core's writers
+ * and auth's guest link share it.
  */
 export async function markPlanInputsChanged(
   tx: LearnerRevisionTransaction,
   { userIds }: { userIds: readonly string[] },
-): Promise<void> {
+): Promise<string[]> {
   const plans = await tx.$queryRaw<{ id: string }[]>`
     SELECT plan.id FROM plans AS plan
     JOIN goals AS goal ON goal.id = plan.goal_id
@@ -19,10 +20,14 @@ export async function markPlanInputsChanged(
     ORDER BY plan.id FOR UPDATE OF plan
   `;
 
+  const planIds = plans.map((plan) => plan.id);
+
   await tx.$executeRaw`
     UPDATE plans SET input_version = input_version + 1
-    WHERE id = ANY(${plans.map((plan) => plan.id)}::uuid[])
+    WHERE id = ANY(${planIds}::uuid[])
   `;
+
+  return planIds;
 }
 
 /** Raises the revision clients compare to know a learner's summary changed. */

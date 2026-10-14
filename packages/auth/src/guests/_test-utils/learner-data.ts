@@ -61,7 +61,8 @@ export async function createLesson() {
 /**
  * Gives a learner one row of everything a guest can create: a goal with its plan, a typed goal
  * not confirmed yet, a skill, an answer, a memory, votes, a milestone, a day of stats, usage, an AI
- * call, a practice conversation, a mistake pattern, a mock and an exam result, and a profile.
+ * call and its evaluation, a practice conversation, a mistake pattern, a mock and an exam result,
+ * and a profile.
  */
 export async function seedLearnerData({
   brainPower,
@@ -147,6 +148,21 @@ export async function seedLearnerData({
       data: { conditions: {}, goalId: goal.id, sectionStartedAt: STUDY_DAY, userId },
     }),
     prisma.examResult.create({ data: { examName: "Test exam", goalId: goal.id, userId } }),
+    prisma.evaluationRun.create({
+      data: {
+        answers: [],
+        contentScope: "personal",
+        goalId: goal.id,
+        inputHash: contentId,
+        latencyMs: 1000,
+        model: "test-model",
+        promptVersion: "test",
+        requestedModel: "test-model",
+        runId: `test-run-${contentId}`,
+        task: "test-task",
+        userId,
+      },
+    }),
     prisma.userProgress.update({ data: { totalBrainPower: brainPower }, where: { userId } }),
   ]);
 
@@ -178,6 +194,7 @@ export async function countLearnerRows(userId: string) {
     prisma.mistakePattern.count(byUser),
     prisma.mockExam.count(byUser),
     prisma.examResult.count(byUser),
+    prisma.evaluationRun.count(byUser),
   ]);
 
   const [
@@ -197,6 +214,7 @@ export async function countLearnerRows(userId: string) {
     patterns,
     mocks,
     examResults,
+    evaluations,
   ] = counts;
 
   return {
@@ -205,6 +223,7 @@ export async function countLearnerRows(userId: string) {
     conversations,
     days,
     drafts,
+    evaluations,
     events,
     examResults,
     feedback,

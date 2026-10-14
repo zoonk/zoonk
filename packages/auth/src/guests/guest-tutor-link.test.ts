@@ -21,29 +21,68 @@ const NEWEST = new Date("2026-09-03T00:00:00Z");
 /** A turn with the tutor, answered from the screen's shared answer like a guest's can be. */
 function askTutor({
   createdAt,
+  libraryStepId,
   question,
   requestId = randomUUID(),
+  status = "completed",
   threadId,
 }: {
   createdAt: Date;
+  /** The screen asked about; none for a question about the whole lesson. */
+  libraryStepId?: string;
   question: string;
   requestId?: string;
+  status?: "completed" | "failed" | "pending" | "running";
   threadId: string;
 }) {
   return prisma.lessonQuestion.create({
     data: {
-      answer: `About: ${question}`,
+      answer: status === "completed" ? `About: ${question}` : null,
       contextKind: "lesson",
       contextSnapshot: {},
       createdAt,
+      libraryStepId,
       question,
       requestFingerprint: `fingerprint:${question}`,
       requestId,
-      status: "completed",
+      status,
       threadId,
       updatedAt: createdAt,
     },
   });
+}
+
+/** Both sides' threads about one new lesson, and two of its screens. */
+async function createSameLessonThreads({
+  accountUserId,
+  guestUserId,
+}: {
+  accountUserId: string;
+  guestUserId: string;
+}) {
+  const lesson = await createLesson();
+  const thread = { kind: "lesson" as const, libraryLessonId: lesson.id };
+  const provenance = { model: "test-model", promptVersion: "test", runId: `test-run-${lesson.id}` };
+
+  const [accountThread, guestThread, ...steps] = await Promise.all([
+    prisma.lessonQuestionThread.create({ data: { ...thread, userId: accountUserId } }),
+    prisma.lessonQuestionThread.create({ data: { ...thread, userId: guestUserId } }),
+    ...[0, 1].map((position) =>
+      prisma.step.create({
+        data: { ...provenance, content: {}, kind: "explanation", lessonId: lesson.id, position },
+      }),
+    ),
+  ]);
+
+  return { accountThread, guestThread, steps };
+}
+
+function readStatuses(questionIds: string[]) {
+  return Promise.all(
+    questionIds.map((id) =>
+      prisma.lessonQuestion.findUniqueOrThrow({ select: { status: true }, where: { id } }),
+    ),
+  );
 }
 
 describe("guest tutor link", () => {
@@ -238,5 +277,84 @@ describe("guest tutor link", () => {
       ...guestQuestion,
       threadId: accountThread.id,
     });
+  });
+
+  it("keeps one unanswered turn open per screen in a joined thread so none waits on another", async () => {
+    const [account, guest] = await Promise.all([
+      createExistingAccount({ createdAt: OLDER }),
+      signInAsGuest(),
+    ]);
+
+    const learners = { accountUserId: account.userId, guestUserId: guest.guestId };
+
+    const [answeringLesson, waitingLesson] = await Promise.all([
+      createSameLessonThreads(learners),
+      createSameLessonThreads(learners),
+    ]);
+
+    const [firstScreen, secondScreen] = answeringLesson.steps;
+
+    // The account's answer about the first screen is being written: it stays, and so does its
+    // turn about the second screen; the guest's unanswered turns about the first screen close.
+    const answering = await Promise.all([
+      askTutor({
+        createdAt: OLDER,
+        libraryStepId: firstScreen?.id,
+        question: "Guest, failed",
+        status: "failed",
+        threadId: answeringLesson.guestThread.id,
+      }),
+      askTutor({
+        createdAt: NEWER,
+        libraryStepId: firstScreen?.id,
+        question: "Account, answering",
+        status: "running",
+        threadId: answeringLesson.accountThread.id,
+      }),
+      askTutor({
+        createdAt: NEWER,
+        libraryStepId: secondScreen?.id,
+        question: "Account, another screen",
+        status: "pending",
+        threadId: answeringLesson.accountThread.id,
+      }),
+      askTutor({
+        createdAt: NEWEST,
+        libraryStepId: firstScreen?.id,
+        question: "Guest, waiting",
+        status: "pending",
+        threadId: answeringLesson.guestThread.id,
+      }),
+    ]);
+
+    // Nothing is being written about the lesson: its latest turn stays, the account's older closes.
+    const waiting = await Promise.all([
+      askTutor({
+        createdAt: OLDER,
+        question: "Account, failed",
+        status: "failed",
+        threadId: waitingLesson.accountThread.id,
+      }),
+      askTutor({
+        createdAt: NEWER,
+        question: "Guest, waiting",
+        status: "pending",
+        threadId: waitingLesson.guestThread.id,
+      }),
+    ]);
+
+    await signInWithPassword({ email: account.email, headers: guest.headers });
+
+    await expect(readStatuses(answering.map((question) => question.id))).resolves.toStrictEqual([
+      { status: "completed" },
+      { status: "running" },
+      { status: "pending" },
+      { status: "completed" },
+    ]);
+
+    await expect(readStatuses(waiting.map((question) => question.id))).resolves.toStrictEqual([
+      { status: "completed" },
+      { status: "pending" },
+    ]);
   });
 });

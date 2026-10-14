@@ -38,6 +38,41 @@ function findSameSubjectThreads({ guestUserId, transaction, userId }: GuestLinkC
 }
 
 /**
+ * A conversation answers the unfinished turns about one screen one at a time, oldest first, so a
+ * joined thread keeps one open per screen: the account's turn being answered, else the latest.
+ * The others close unanswered ("No answer available") and can be asked again, instead of two
+ * turns each waiting for the other. Turns about other screens stay as they are.
+ */
+async function closeExtraUnfinishedTurns({
+  accountThreadIds,
+  guestThreadIds,
+  transaction,
+}: Pick<GuestLinkContext, "transaction"> & {
+  accountThreadIds: string[];
+  guestThreadIds: string[];
+}) {
+  await transaction.$executeRaw`
+    WITH pair AS (
+      SELECT * FROM unnest(${guestThreadIds}::uuid[], ${accountThreadIds}::uuid[]) AS pair(guest_thread_id, account_thread_id)
+    ),
+    unfinished AS (
+      SELECT question.id, question.status, question.created_at, question.library_step_id,
+        pair.account_thread_id, question.thread_id = pair.account_thread_id AS on_account
+      FROM lesson_questions AS question
+      JOIN pair ON question.thread_id IN (pair.guest_thread_id, pair.account_thread_id)
+      WHERE question.status <> 'completed'
+    ),
+    kept AS (
+      SELECT DISTINCT ON (account_thread_id, library_step_id) id FROM unfinished
+      ORDER BY account_thread_id, library_step_id,
+        (on_account AND status = 'running') DESC, created_at DESC, id DESC
+    )
+    UPDATE lesson_questions SET status = 'completed'
+    WHERE id IN (SELECT id FROM unfinished) AND id NOT IN (SELECT id FROM kept)
+  `;
+}
+
+/**
  * Joins each guest thread's questions to the account's thread about the same thing, in time order
  * with their ids kept. Request ids only dedupe one client's retries of a turn, so a guest question
  * reusing one the account's thread holds gets a new id, and the account's keeps answering it.
@@ -50,6 +85,7 @@ async function joinSameSubjectThreads({
   const accountThreadIds = pairs.map((pair) => pair.accountThreadId);
 
   await lockThreads({ threadIds: accountThreadIds, transaction });
+  await closeExtraUnfinishedTurns({ accountThreadIds, guestThreadIds, transaction });
 
   await transaction.$executeRaw`
     UPDATE lesson_questions AS question SET request_id = uuidv7()

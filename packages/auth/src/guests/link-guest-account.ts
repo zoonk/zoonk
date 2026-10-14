@@ -15,20 +15,57 @@ import { moveTutorThreads } from "./_utils/move-tutor-threads";
 /** Retry rolled-back transaction conflicts from competing writers without repeating external effects. */
 const TRANSFER_ATTEMPTS = 3;
 
-/** Another link moved the guest first: roll back this one's marks, since it changed nothing. */
-class GuestAlreadyLinkedError extends Error {
-  constructor() {
-    super("The guest was already linked");
-    this.name = "GuestAlreadyLinkedError";
+/**
+ * Rolls a link back with its marks. `alreadyLinked`: another link moved the guest first, so this
+ * one changed nothing. `plansChanged`: another link moved a goal into the account while this one
+ * waited for its row, and this one's merge changes that plan's inputs too, so it starts over to
+ * mark it.
+ */
+class LinkRollbackError extends Error {
+  readonly reason: "alreadyLinked" | "plansChanged";
+
+  constructor(reason: LinkRollbackError["reason"]) {
+    super(`Guest link rolled back: ${reason}`);
+    this.name = "LinkRollbackError";
+    this.reason = reason;
   }
 }
 
+function isLinkRollbackError(error: unknown, reason: LinkRollbackError["reason"]) {
+  return error instanceof LinkRollbackError && error.reason === reason;
+}
+
 /**
- * Worth a retry from the start: a competing writer's conflict, or a tutor thread the account
- * started about the same thing mid-move (a unique key), which the retry joins instead.
+ * Worth a retry from the start: a competing writer's conflict, plans another link moved in, or a
+ * tutor thread the account started about the same thing mid-move (a unique key), which the retry
+ * joins instead.
  */
 function isRetryableTransferError(error: unknown) {
-  return isPrismaTransactionConflictError(error) || isPrismaUniqueConstraintError(error);
+  return (
+    isLinkRollbackError(error, "plansChanged") ||
+    isPrismaTransactionConflictError(error) ||
+    isPrismaUniqueConstraintError(error)
+  );
+}
+
+/**
+ * Marks the account's summary and every plan the move feeds as changed, before any domain lock:
+ * the plans (the account's and the guest's, which read the merged skills and evidence), then the
+ * account, in the order every learner writer locks them.
+ */
+async function markAccountChanged({ guestUserId, transaction, userId }: GuestLinkContext) {
+  const userIds = [userId, guestUserId];
+  const markedPlanIds = new Set(await markPlanInputsChanged(transaction, { userIds }));
+  await markLearnerRevision(transaction, { userId });
+
+  const plans = await transaction.plan.findMany({
+    select: { id: true },
+    where: { goal: { userId: { in: userIds } } },
+  });
+
+  if (plans.some((plan) => !markedPlanIds.has(plan.id))) {
+    throw new LinkRollbackError("plansChanged");
+  }
 }
 
 /** Rows with no per-learner unique key move as they are, including private content below its course. */
@@ -48,6 +85,7 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
     transaction.learningEvent.updateMany({ data: toAccount, where: fromGuest }),
     transaction.feedback.updateMany({ data: toAccount, where: fromGuest }),
     transaction.aiCall.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.evaluationRun.updateMany({ data: toAccount, where: fromGuest }),
     transaction.languageConversation.updateMany({ data: toAccount, where: fromGuest }),
     transaction.mistakePattern.updateMany({ data: toAccount, where: fromGuest }),
     transaction.mockExam.updateMany({ data: toAccount, where: fromGuest }),
@@ -66,7 +104,8 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
  * goals typed and how they were understood, sessions, attempts, mistakes and their patterns,
  * skills, memory and its insights, conversations with the tutor and in the language, mocks and
  * exam results, feedback, stats, language evidence, words and pronunciation reviews, example
- * lines, usage, AI calls (so the account's spend counts them) and private content. It runs in one
+ * lines, usage, AI calls (so the account's spend counts them) and their evaluation records, and
+ * private content. It runs in one
  * transaction, so a failure leaves the guest untouched and the sign-in can be retried.
  */
 async function moveGuestData({
@@ -82,13 +121,7 @@ async function moveGuestData({
     prisma.$transaction(async (transaction) => {
       const context = { guestUserId, transaction, userId };
 
-      /**
-       * The account's summary changes, and so do the inputs of every plan the move feeds: the
-       * account's and the guest's, which read the merged skills and evidence. Mark them before any
-       * domain lock, plans then the account, in the order every learner writer locks them.
-       */
-      await markPlanInputsChanged(transaction, { userIds: [userId, guestUserId] });
-      await markLearnerRevision(transaction, { userId });
+      await markAccountChanged(context);
 
       /** Serialize account merges, acquiring the home lock before any user FK lock like writers do. */
       await lockCourseHome({ homeId: userId, transaction });
@@ -105,7 +138,7 @@ async function moveGuestData({
     `;
 
       if (guests.length === 0) {
-        throw new GuestAlreadyLinkedError();
+        throw new LinkRollbackError("alreadyLinked");
       }
 
       await moveTutorThreads(context);
@@ -128,7 +161,7 @@ async function moveGuestData({
     }),
   );
 
-  if (!result.error || result.error instanceof GuestAlreadyLinkedError) {
+  if (!result.error || isLinkRollbackError(result.error, "alreadyLinked")) {
     return;
   }
 

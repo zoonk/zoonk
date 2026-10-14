@@ -85,6 +85,7 @@ describe("guest accounts", () => {
       conversations: 1,
       days: 1,
       drafts: 1,
+      evaluations: 1,
       events: 1,
       examResults: 1,
       feedback: 1,
@@ -173,6 +174,7 @@ describe("guest accounts", () => {
       conversations: 2,
       days: 1,
       drafts: 2,
+      evaluations: 2,
       examResults: 2,
       goals: 2,
       milestones: 1,
@@ -278,5 +280,47 @@ describe("guest accounts", () => {
     await writing.held;
     await linking;
     await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
+  });
+
+  it("marks a plan another link moved into the account while this one waited", async () => {
+    const [account, ...guests] = await Promise.all([
+      createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
+      signInAsGuest(),
+      signInAsGuest(),
+    ]);
+
+    const goals = await Promise.all(guests.map((guest) => createGoal(guest.guestId)));
+    const goalIds = goals.map((goal) => goal.id);
+    await Promise.all(goalIds.map((goalId) => prisma.plan.create({ data: { goalId } })));
+    const before = await readMarks({ goalIds, userId: account.userId });
+
+    // A writer holds the account, so both links read their plans before either moves its own.
+    const writing = await holdTransaction(
+      (transaction) =>
+        transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
+    );
+
+    const linking = Promise.all(
+      guests.map((guest) => signInWithPassword({ email: account.email, headers: guest.headers })),
+    );
+
+    try {
+      await waitForBlocked({ blocker: writing.blocker, count: 2 });
+    } finally {
+      writing.release();
+    }
+
+    await writing.held;
+    await linking;
+    const after = await readMarks({ goalIds, userId: account.userId });
+
+    // The first link's plan is marked again by the second, which merges into it too.
+    expect(after.learnerRevision).toBe(before.learnerRevision + 2n);
+
+    expect(
+      after.plans
+        .map((plan, index) => plan.inputVersion - (before.plans[index]?.inputVersion ?? 0))
+        .toSorted((first, second) => first - second),
+    ).toStrictEqual([1, 2]);
   });
 });
