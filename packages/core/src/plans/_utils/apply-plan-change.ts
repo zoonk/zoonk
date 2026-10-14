@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import {
   type OfficialExamDate,
   findOfficialDateConflict,
@@ -10,7 +10,7 @@ import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
 import { type PlanChangeRefusal } from "../planner/plan-operations";
-import { type PlanGraph, type PlanState } from "../planner/plan-state";
+import { type PlanGraph } from "../planner/plan-state";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { type ComputedChange, computeChange } from "./compute-change";
 import { followPlanToday } from "./follow-plan-today";
@@ -22,9 +22,11 @@ import {
   parsePlanChangePayload,
   toPlanChangePayload,
 } from "./plan-change-payload";
-import { type PlanContext, getStateTargetDate } from "./plan-context";
+import { type PlanContext } from "./plan-context";
+import { writePlanMetadata } from "./plan-metadata-write";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { type PlanChangeRecord, commitPlan, revalidatePlanTags } from "./replan";
+import { savePlanState } from "./save-plan-state";
 import { getAskedAreas } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
@@ -68,22 +70,6 @@ export function isPlanReady(context: Pick<PlanContext, "state">): boolean {
   return context.state.graph.skills.length > 0;
 }
 
-/**
- * Saves a new state without planning: the goal's time and the settings, so the plan is built from
- * them when it is, or keeps them for the next run when they move no lesson.
- */
-async function saveStateOnly({ context, state }: { context: PlanContext; state: PlanState }) {
-  await prisma.$transaction([
-    prisma.goal.update({
-      data: { dailyMinutes: state.goal.dailyMinutes, targetDate: getStateTargetDate(state) },
-      where: { id: context.goal.id },
-    }),
-    prisma.plan.update({ data: { settings: state.settings }, where: { id: context.plan.id } }),
-  ]);
-
-  revalidatePlanTags(context.goal.userId);
-}
-
 type ChangeRequest = {
   context: PlanContext;
   /** Other writes that must land with the change, such as ending the plan setup task it is. */
@@ -119,19 +105,21 @@ export async function replaceWaitingProposals({
   operations,
   planId,
   source,
+  tx,
 }: {
   applied: boolean;
   except?: string | null;
   operations: readonly PlanOperation[];
   planId: string;
   source: PlanChangeSource;
+  tx: TransactionClient;
 }): Promise<string[]> {
   const newer = new Set([
     ...getChangeLevers({ operations, source }),
     ...(applied ? APPLIED_LEVERS : []),
   ]);
 
-  const waiting = await prisma.planChange.findMany({
+  const waiting = await tx.planChange.findMany({
     select: { id: true, payload: true },
     where: { planId, status: "proposed", ...(except ? { id: { not: except } } : {}) },
   });
@@ -143,7 +131,7 @@ export async function replaceWaitingProposals({
   });
 
   if (replaced.length > 0) {
-    await prisma.planChange.updateMany({
+    await tx.planChange.updateMany({
       data: { status: "replaced" },
       where: { id: { in: replaced }, status: "proposed" },
     });
@@ -163,6 +151,8 @@ async function commitEdit({
   reason,
   source,
 }: ChangeRequest & { change: ComputedChange }): Promise<AppliedChange> {
+  let replaced: string[] = [];
+
   const changeId = await commitPlan({
     change: {
       kind: "edited",
@@ -173,22 +163,21 @@ async function commitEdit({
     },
     computed,
     context,
-    extraWrites,
+    extraWrites: async (tx) => {
+      await extraWrites?.(tx);
+
+      replaced = await replaceWaitingProposals({
+        applied: true,
+        operations,
+        planId: context.plan.id,
+        source,
+        tx,
+      });
+    },
   });
 
   if (followToday) {
     await followPlanToday({ changeId, context });
-  }
-
-  const replaced = await replaceWaitingProposals({
-    applied: true,
-    operations,
-    planId: context.plan.id,
-    source,
-  });
-
-  if (replaced.length > 0) {
-    revalidatePlanTags(context.goal.userId);
   }
 
   await askPhaseDatesAfterChange({
@@ -215,7 +204,8 @@ async function computeRequest({
   }
 
   if (!isPlanReady(context)) {
-    await saveStateOnly({ context, state: result.state });
+    await savePlanState({ context, state: result.state });
+    revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
 
@@ -245,7 +235,8 @@ async function computeRequest({
   // quick lesson for a base whose core the learner studied re-planned the day and let cell theory
   // go for work missed days had set aside.
   if (change.unchanged && operations.every((operation) => operation.kind === "setBaseChoices")) {
-    await saveStateOnly({ context, state: result.state });
+    await savePlanState({ context, state: result.state });
+    revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
 
@@ -381,39 +372,44 @@ export async function proposeChange({
     return commitEdit({ change, context, extraWrites, operations, provenance, reason, source });
   }
 
-  const proposal = await prisma.$transaction(async (tx) => {
-    const created = await tx.planChange.create({
-      data: {
-        kind: "edited",
-        payload: toPlanChangePayload({
-          effect: change.effect,
-          noticeEdition: notice?.edition ?? null,
-          noticeGraph: notice?.graph ?? null,
-          noticeId: notice?.noticeId ?? null,
-          officialDate,
-          operations: [...operations],
-          source,
-        }),
+  const proposal = await writePlanMetadata({
+    plan: context.plan,
+    write: async (tx) => {
+      const created = await tx.planChange.create({
+        data: {
+          kind: "edited",
+          payload: toPlanChangePayload({
+            effect: change.effect,
+            noticeEdition: notice?.edition ?? null,
+            noticeGraph: notice?.graph ?? null,
+            noticeId: notice?.noticeId ?? null,
+            officialDate,
+            operations: [...operations],
+            source,
+          }),
+          planId: context.plan.id,
+          reason,
+          status: "proposed",
+          ...provenance,
+        },
+      });
+
+      await extraWrites?.(tx);
+
+      const replaced = await replaceWaitingProposals({
+        applied: false,
+        except: created.id,
+        operations,
         planId: context.plan.id,
-        reason,
-        status: "proposed",
-        ...provenance,
-      },
-    });
+        source,
+        tx,
+      });
 
-    await extraWrites?.(tx);
-    return created;
-  });
-
-  const replaced = await replaceWaitingProposals({
-    applied: false,
-    except: proposal.id,
-    operations,
-    planId: context.plan.id,
-    source,
+      return { id: created.id, replaced };
+    },
   });
 
   revalidatePlanTags(context.goal.userId);
 
-  return { changeId: proposal.id, replaced, status: "proposed" };
+  return { changeId: proposal.id, replaced: proposal.replaced, status: "proposed" };
 }

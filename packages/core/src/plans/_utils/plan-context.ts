@@ -17,7 +17,13 @@ export type PlanContext = {
   items: ExistingPlanItem[];
   plan: Pick<
     Plan,
-    "coveredShare" | "estimateHours" | "id" | "inputsKey" | "noticeWaitUntil" | "version"
+    | "coveredShare"
+    | "estimateHours"
+    | "id"
+    | "inputsKey"
+    | "inputVersion"
+    | "noticeWaitUntil"
+    | "version"
   >;
   phases: ReturnType<typeof parsePlanPhases>;
   state: PlanState;
@@ -94,6 +100,7 @@ export async function loadPlanContext({
       coveredShare: plan.coveredShare,
       estimateHours: plan.estimateHours,
       id: plan.id,
+      inputVersion: plan.inputVersion,
       inputsKey: plan.inputsKey,
       noticeWaitUntil: plan.noticeWaitUntil,
       version: plan.version,

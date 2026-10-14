@@ -19,26 +19,31 @@ export async function refreshPlanAroundSession({
   goalId,
   pace,
   revalidation = "now",
+  retryOnConflict = true,
   settleOnly = pace === "saved",
 }: {
   goalId: string | null;
   /** `sampled` once a session ended (the learner's progress); `saved` otherwise. */
   pace: "sampled" | "saved";
   revalidation?: PlanTagRevalidation;
+  retryOnConflict?: boolean;
   /** Only settle what earlier days left: building a day, unless an answer told the plan more. */
   settleOnly?: boolean;
-}): Promise<void> {
+}): Promise<boolean> {
   if (!goalId) {
-    return;
+    return false;
   }
 
-  const { error } = await safeAsync(() =>
-    refreshGoalPlan({ goalId, pace, revalidation, settleOnly }),
+  const { data, error } = await safeAsync(() =>
+    refreshGoalPlan({ goalId, pace, retryOnConflict, revalidation, settleOnly }),
   );
 
   if (error) {
     logError(`Could not refresh the plan of goal ${goalId}.`, error);
+    return false;
   }
+
+  return data.status === "refreshed" || data.status === "unchanged";
 }
 
 /**

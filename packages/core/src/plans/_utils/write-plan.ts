@@ -1,6 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
+import { markPlanWrite } from "./mark-plan-write";
 import { type PlanContext } from "./plan-context";
 import { getGoalUpdate } from "./plan-unchanged";
 import { type SavedPlanItem, savePlanItems } from "./save-plan-items";
@@ -50,7 +51,11 @@ export async function writePlan({
       settings: plan.state.settings,
       version: { increment: 1 },
     },
-    where: { id: context.plan.id, version: context.plan.version },
+    where: {
+      id: context.plan.id,
+      inputVersion: context.plan.inputVersion,
+      version: context.plan.version,
+    },
   });
 
   if (count === 0) {
@@ -91,8 +96,16 @@ export async function savePlanInputsKey({
   graph: PlanState["graph"];
   inputsKey: string;
 }): Promise<void> {
-  await prisma.plan.updateMany({
-    data: { graph, inputsKey },
-    where: { id: context.plan.id, version: context.plan.version },
+  await prisma.$transaction(async (tx) => {
+    const marked = await markPlanWrite(tx, context.plan);
+
+    const { count } = await tx.plan.updateMany({
+      data: { graph, inputsKey },
+      where: { id: marked.id, inputVersion: marked.inputVersion, version: marked.version },
+    });
+
+    if (count === 0) {
+      throw new PlanConflictError();
+    }
   });
 }

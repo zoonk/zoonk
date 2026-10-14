@@ -16,6 +16,7 @@ import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { planPhaseDatesMove } from "./moved-phase-dates";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
+import { writePlanMetadata } from "./plan-metadata-write";
 import { type ComputedPlan, type PlanTagRevalidation, revalidatePlanTags } from "./replan";
 import { getChangePlanning } from "./steered-areas";
 
@@ -149,13 +150,26 @@ export async function withdrawUnneededPhaseDatesProposal({
     return;
   }
 
-  const { count } = await prisma.planChange.updateMany({
-    data: { status: "replaced" },
+  const waiting = await prisma.planChange.findMany({
+    select: { id: true },
     where: {
       payload: { equals: PHASE_DATES_SOURCE, path: ["source"] },
       planId: context.plan.id,
       status: "proposed",
     },
+  });
+
+  if (waiting.length === 0) {
+    return;
+  }
+
+  const { count } = await writePlanMetadata({
+    plan: context.plan,
+    write: (tx) =>
+      tx.planChange.updateMany({
+        data: { status: "replaced" },
+        where: { id: { in: waiting.map((change) => change.id) }, status: "proposed" },
+      }),
   });
 
   if (count > 0 && revalidation === "now") {
@@ -180,6 +194,7 @@ export async function updatePhaseDatesProposal({
   pace,
   planning,
   revalidation,
+  writeVersion = context.plan,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
@@ -189,6 +204,8 @@ export async function updatePhaseDatesProposal({
   /** How a learner's change planned `computed`, right after it (see `askPhaseDatesAfterChange`). */
   planning?: ChangePlanning;
   revalidation: PlanTagRevalidation;
+  /** The committed plan's version when the proposal was computed from its preceding context. */
+  writeVersion?: PlanContext["plan"];
 }): Promise<void> {
   const [moved, earlier] = await Promise.all([
     findMovedPhaseDates({ computed, context, mode, pace, planning }),
@@ -216,29 +233,31 @@ export async function updatePhaseDatesProposal({
     return;
   }
 
-  await prisma.$transaction([
-    prisma.planChange.updateMany({
-      data: { status: "replaced" },
-      where: { id: { in: stale }, status: "proposed" },
-    }),
-    ...(proposes
-      ? [
-          prisma.planChange.create({
-            data: {
-              kind: "edited",
-              payload: toPlanChangePayload({
-                effect,
-                operations: [{ kind: "fitPhaseDates" }],
-                source: PHASE_DATES_SOURCE,
-              }),
-              planId: context.plan.id,
-              reason: "",
-              status: "proposed",
-            },
-          }),
-        ]
-      : []),
-  ]);
+  await writePlanMetadata({
+    plan: writeVersion,
+    write: async (tx) => {
+      await tx.planChange.updateMany({
+        data: { status: "replaced" },
+        where: { id: { in: stale }, status: "proposed" },
+      });
+
+      if (proposes) {
+        await tx.planChange.create({
+          data: {
+            kind: "edited",
+            payload: toPlanChangePayload({
+              effect,
+              operations: [{ kind: "fitPhaseDates" }],
+              source: PHASE_DATES_SOURCE,
+            }),
+            planId: context.plan.id,
+            reason: "",
+            status: "proposed",
+          },
+        });
+      }
+    },
+  });
 
   if (revalidation === "now") {
     revalidatePlanTags(context.goal.userId);
@@ -278,5 +297,10 @@ export async function askPhaseDatesAfterChange({
     pace: "saved",
     planning: { bringBackSetAside, state: computed.state, todayExceptAreas },
     revalidation: "now",
+    writeVersion: {
+      ...context.plan,
+      inputVersion: context.plan.inputVersion + 1,
+      version: context.plan.version + 1,
+    },
   });
 }

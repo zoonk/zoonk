@@ -37,7 +37,17 @@ function toRebalanceAreas({
   }));
 }
 
-async function rebalance({ goalId, now, userId }: { goalId: string; now: Date; userId: string }) {
+async function rebalance({
+  goalId,
+  now,
+  retryOnConflict,
+  userId,
+}: {
+  goalId: string;
+  now: Date;
+  retryOnConflict: boolean;
+  userId: string;
+}) {
   const plan = await prisma.plan.findUnique({
     select: { graph: true, id: true, settings: true },
     where: { goalId },
@@ -77,6 +87,7 @@ async function rebalance({ goalId, now, userId }: { goalId: string; now: Date; u
       goalId,
       operations: [{ areas: focus, kind: "focusAreas" }],
       reason: REBALANCE_NOTE,
+      retryOnConflict,
       source: REBALANCE_SOURCE,
     });
   }
@@ -90,17 +101,19 @@ async function rebalance({ goalId, now, userId }: { goalId: string; now: Date; u
 export async function rebalancePlanAfterSession({
   goalId,
   now = new Date(),
+  retryOnConflict = true,
   userId,
 }: {
   goalId: string | null;
   now?: Date;
+  retryOnConflict?: boolean;
   userId: string;
 }): Promise<void> {
   if (!goalId) {
     return;
   }
 
-  const { error } = await safeAsync(() => rebalance({ goalId, now, userId }));
+  const { error } = await safeAsync(() => rebalance({ goalId, now, retryOnConflict, userId }));
 
   if (error) {
     logError(`Could not rebalance the plan of goal ${goalId}.`, error);

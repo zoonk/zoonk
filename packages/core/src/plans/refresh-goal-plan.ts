@@ -98,7 +98,18 @@ async function settleLeftWork({
     revalidation,
   });
 
-  await updatePhaseDatesProposal({ computed, context, mode: "forced", pace, revalidation });
+  await updatePhaseDatesProposal({
+    computed,
+    context,
+    mode: "forced",
+    pace,
+    revalidation,
+    writeVersion: {
+      ...context.plan,
+      inputVersion: context.plan.inputVersion + 1,
+      version: context.plan.version + 1,
+    },
+  });
 
   return { status: "refreshed" };
 }
@@ -195,6 +206,7 @@ export async function refreshGoalPlan({
   goalId,
   pace = "saved",
   revalidation = "now",
+  retryOnConflict = true,
   settleOnly = false,
 }: {
   goalId: string;
@@ -202,6 +214,8 @@ export async function refreshGoalPlan({
   pace?: "sampled" | "saved";
   /** Building a day while a page renders can't clear caches, and has none to clear. */
   revalidation?: PlanTagRevalidation;
+  /** Deferred work stops on a lost CAS; the next learner action owns recovery. */
+  retryOnConflict?: boolean;
   /**
    * Building a day only settles what earlier days left: opening the app with nothing new changes
    * nothing. Planned again from its own output, a plan isn't always laid out the same way, and a
@@ -210,7 +224,7 @@ export async function refreshGoalPlan({
    */
   settleOnly?: boolean;
 }): Promise<PlanRefreshResult> {
-  return withPlanRetry(async () => {
+  const refresh = async (): Promise<PlanRefreshResult> => {
     const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
     if (!goal) {
@@ -259,8 +273,21 @@ export async function refreshGoalPlan({
     // Moving the dates is planned from the day the run planned from, to compare: from today, whose
     // time was still open, a career plan's lessons fit before their challenges, and Today asked
     // nothing while the plan held them after (career 2131).
-    await updatePhaseDatesProposal({ computed, context: planned, mode, pace, revalidation });
+    await updatePhaseDatesProposal({
+      computed,
+      context: planned,
+      mode,
+      pace,
+      revalidation,
+      writeVersion: {
+        ...context.plan,
+        inputVersion: context.plan.inputVersion + 1,
+        version: context.plan.version + (unchanged ? 0 : 1),
+      },
+    });
 
     return { status: unchanged ? "unchanged" : "refreshed" };
-  });
+  };
+
+  return retryOnConflict ? withPlanRetry(refresh) : refresh();
 }

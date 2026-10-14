@@ -216,6 +216,11 @@ export async function bringBackMissedLessons({
       mode: "forced",
       pace: "saved",
       revalidation: "now",
+      writeVersion: {
+        ...context.plan,
+        inputVersion: context.plan.inputVersion + 1,
+        version: context.plan.version + 1,
+      },
     });
   });
 }

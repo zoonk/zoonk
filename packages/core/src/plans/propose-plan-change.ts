@@ -19,16 +19,19 @@ export async function proposePlanChange({
   operations,
   provenance = null,
   reason,
+  retryOnConflict = true,
   source,
 }: {
   goalId: string;
   operations: readonly PlanOperation[];
   provenance?: PlanChangeRecord["provenance"];
   reason: string;
+  /** Background work yields to a winning write rather than recomputing alternatives. */
+  retryOnConflict?: boolean;
   /** Who suggests it, such as "memory" or "preparation". */
   source: string;
 }): Promise<PlanProposalResult> {
-  return withPlanRetry(async () => {
+  const propose = async (): Promise<PlanProposalResult> => {
     const goal = await prisma.goal.findUnique({ where: { id: goalId } });
     const context = goal ? await loadPlanContext({ goal }) : null;
 
@@ -37,5 +40,7 @@ export async function proposePlanChange({
     }
 
     return proposeChange({ context, operations, provenance, reason, source });
-  });
+  };
+
+  return retryOnConflict ? withPlanRetry(propose) : propose();
 }

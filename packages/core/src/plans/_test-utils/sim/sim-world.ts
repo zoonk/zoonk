@@ -140,6 +140,7 @@ export function toSimContext(world: SimWorld): PlanContext {
       coveredShare: world.plan.coveredShare,
       estimateHours: null,
       id: "sim-plan",
+      inputVersion: 0,
       inputsKey: world.plan.inputsKey ?? null,
       noticeWaitUntil: null,
       version: world.plan.version,

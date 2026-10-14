@@ -28,6 +28,7 @@ import { choosePlanSettings } from "./choose-plan-pace";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
+import { markPlanWrite } from "./mark-plan-write";
 import { listRequestedMoveDates } from "./missing-weekly-move";
 import {
   type PlanChangeKind,
@@ -330,7 +331,7 @@ export async function commitPlan({
 
   const changeId = await prisma.$transaction(async (tx) => {
     await writePlan({
-      context,
+      context: { ...context, plan: await markPlanWrite(tx, context.plan) },
       plan: {
         coveredShare: computed.feasibility.deadline ? computed.feasibility.coveredShare : null,
         estimateHours: built.estimate.totalMinutes / MINUTES_PER_HOUR,

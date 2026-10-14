@@ -49,8 +49,8 @@ async function acceptProposal({ change, context }: Decision) {
     change: null,
     computed,
     context,
-    extraWrites: (tx) =>
-      tx.planChange.update({
+    extraWrites: async (tx) => {
+      await tx.planChange.update({
         data: {
           payload: toPlanChangePayload({
             ...payload,
@@ -61,23 +61,21 @@ async function acceptProposal({ change, context }: Decision) {
           status: "applied",
         },
         where: { id: change.id },
-      }),
+      });
+
+      await replaceWaitingProposals({
+        applied: true,
+        except: change.id,
+        operations: payload.operations,
+        planId: context.plan.id,
+        source: payload.source,
+        tx,
+      });
+    },
     restorable: change.id,
   });
 
   await followPlanToday({ changeId: change.id, context });
-
-  const replaced = await replaceWaitingProposals({
-    applied: true,
-    except: change.id,
-    operations: payload.operations,
-    planId: context.plan.id,
-    source: payload.source,
-  });
-
-  if (replaced.length > 0) {
-    revalidatePlanTags(context.goal.userId);
-  }
 
   await askPhaseDatesAfterChange({
     bringBackSetAside: bringsBackSetAside,

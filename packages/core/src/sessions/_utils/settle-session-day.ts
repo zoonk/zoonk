@@ -1,5 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { after } from "next/server";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { scheduleMemoryAfterSession } from "../../memory/after-session";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
@@ -52,6 +54,8 @@ async function completeIfFinished({
   const end = await measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId });
 
   const completed = await prisma.$transaction(async (tx) => {
+    await markLearnerChanged(tx, { planInputs: session.goalId !== null, userId });
+
     await tx.$queryRaw`
       SELECT id FROM study_sessions WHERE id = ${session.id}::uuid FOR NO KEY UPDATE
     `;
@@ -106,14 +110,24 @@ async function completeIfFinished({
     trackSessionCompleted({ ...session, ...completed.session });
   }
 
-  await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
-
   // Memory and the rebalance read a session once, when it first ended or was first stopped: what
   // came after is in the week the next session's read measures.
   if (!completed.session.endedAt && !completed.session.stoppedAt) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
-    await rebalancePlanAfterSession({ goalId: session.goalId, userId });
   }
+
+  after(async () => {
+    const refreshed = await refreshPlanAroundSession({
+      goalId: session.goalId,
+      pace: "sampled",
+      retryOnConflict: false,
+      revalidation: "skip",
+    });
+
+    if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
+      await rebalancePlanAfterSession({ goalId: session.goalId, retryOnConflict: false, userId });
+    }
+  });
 
   return true;
 }
