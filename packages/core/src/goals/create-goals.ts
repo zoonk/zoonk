@@ -5,14 +5,13 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
-import { getCertificateLanguage } from "../exams/language-exam";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
-import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
-import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { toIsoDate } from "../plans/planner/plan-calendar";
 import { assertTargetDates } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
+import { createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
 import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-contract";
@@ -28,23 +27,6 @@ export type GoalCreateResult =
   | { refused: GoalRefusal[]; status: "refused" }
   | { status: "invalidReference" }
   | { status: "unauthorized" };
-
-/** Study days become a weekly shape with rest days at zero; every day needs no shape. */
-function getWeekdayMinutes({
-  dailyMinutes,
-  studyDays,
-}: {
-  dailyMinutes: number;
-  studyDays?: number[];
-}) {
-  if (!studyDays || new Set(studyDays).size === DAYS_PER_WEEK) {
-    return null;
-  }
-
-  return Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
-    studyDays.includes(weekday) ? dailyMinutes : 0,
-  );
-}
 
 /** Exams and courses a goal points at must exist, and a private one must be the learner's. */
 async function hasValidReferences({ goals, userId }: { goals: GoalDraft[]; userId: string }) {
@@ -101,58 +83,6 @@ function assignDailyMinutes(input: GoalCreateInput): number[] {
 
     return goal.dailyMinutes ?? split[sharedBefore.length] ?? input.dailyMinutes;
   });
-}
-
-/**
- * Creates one goal and its empty plan. An exam goal learns the language its notice says the exam
- * tests (`testedLanguage`), else the one onboarding read, else the one a certificate's name gives.
- */
-async function createGoal({
-  dailyMinutes,
-  draft,
-  id,
-  input,
-  testedLanguage,
-  userId,
-}: {
-  dailyMinutes: number;
-  draft: GoalDraft;
-  id: string;
-  input: GoalCreateInput;
-  testedLanguage: string | null;
-  userId: string;
-}): Promise<void> {
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
-
-  await prisma.$transaction([
-    prisma.goal.create({
-      data: {
-        dailyMinutes,
-        details: draft.details ?? {},
-        examBlueprintId: draft.examBlueprintId ?? null,
-        id,
-        kind: draft.kind,
-        language: draft.language,
-        primaryCourseId: draft.primaryCourseId ?? null,
-        prompt: draft.prompt,
-        studyTime: input.studyTime ?? null,
-        targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
-        targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
-        timezone: input.timeZone ?? null,
-        title: draft.title,
-        userId,
-      },
-    }),
-    prisma.plan.create({
-      data: {
-        goalId: id,
-        settings: {
-          startDate: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
-          weekdayMinutes: getWeekdayMinutes({ dailyMinutes, studyDays: input.studyDays }),
-        },
-      },
-    }),
-  ]);
 }
 
 /**
@@ -216,12 +146,13 @@ export async function createGoals(
     return { status: "unauthorized" };
   }
 
-  // A goal that replaces one carries that goal's date, which isn't a new one.
-  if (!replacesGoalId) {
+  const userId = session.user.id;
+  const replacing = await isOwnGoal({ goalId: replacesGoalId, userId });
+
+  // Only an owned replacement carries an accepted date; every other request creates a new goal.
+  if (!replacing) {
     assertNewGoalDates(input);
   }
-
-  const userId = session.user.id;
 
   if (!(await hasValidReferences({ goals: input.goals, userId }))) {
     return { status: "invalidReference" };
@@ -229,10 +160,7 @@ export async function createGoals(
 
   const minutes = assignDailyMinutes(input);
 
-  const [replacing, testedLanguages] = await Promise.all([
-    isOwnGoal({ goalId: replacesGoalId, userId }),
-    loadTestedLanguages(input.goals),
-  ]);
+  const testedLanguages = await loadTestedLanguages(input.goals);
 
   /** One at a time, so each claim counts the goals created before it. */
   const results = await input.goals.reduce<Promise<{ ids: string[]; refused: GoalRefusal[] }>>(
@@ -280,11 +208,7 @@ export async function createGoals(
 
   const activeGoalId = await chooseActiveGoalId({ input, mainId, userId });
 
-  await prisma.userLearningProfile.upsert({
-    create: { activeGoalId, userId },
-    update: { activeGoalId },
-    where: { userId },
-  });
+  await selectCreatedGoal({ activeGoalId, userId });
 
   revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
 
