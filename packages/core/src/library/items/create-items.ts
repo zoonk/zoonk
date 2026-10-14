@@ -1,5 +1,7 @@
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/schemas";
 import { type Item, prisma } from "@zoonk/db";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { type ImageAnalytics } from "../media/_utils/plan-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
@@ -55,6 +57,13 @@ async function storeBatch({
     if (existing.length > 0 || entries.length === 0) {
       return existing;
     }
+
+    const planIds = await resolvePlanInputDependents(transaction, {
+      blueprintIds: shared.examBlueprintId ? [shared.examBlueprintId] : [],
+      skillIds: [skillId],
+    });
+
+    await markPlansChanged(transaction, { planIds });
 
     return transaction.item.createManyAndReturn({
       data: entries.map(({ item, mediaAssetId }) => ({
@@ -144,8 +153,8 @@ async function drawPictures({
  * A workflow step can retry after its insert committed, so a run that already
  * stored items for this skill in this format returns them instead of storing
  * copies (one run can write a skill's questions in several formats). This is
- * an internal workflow bridge: items are shared Library content and no
- * learner's data is written.
+ * an internal workflow bridge: items are shared Library content. Each new batch
+ * invalidates its dependent plans in the same transaction; retries change nothing.
  */
 export async function createItems({
   analytics,
