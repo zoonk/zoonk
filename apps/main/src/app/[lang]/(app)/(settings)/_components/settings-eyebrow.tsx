@@ -1,0 +1,20 @@
+import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
+import { getSession } from "@zoonk/core/users/session";
+import { getExtracted } from "next-intl/server";
+
+/**
+ * Whose settings these are, over the section's title: the account's email, and "Plus" when that's
+ * the plan. A guest or a visitor has no account to name.
+ */
+export async function SettingsEyebrow() {
+  const t = await getExtracted();
+  const [session, allowance] = await Promise.all([getSession(), getAllowance()]);
+
+  if (!session || session.user.isAnonymous) {
+    return null;
+  }
+
+  return allowance?.tier === "plus"
+    ? t("{email} · Plus", { email: session.user.email })
+    : session.user.email;
+}

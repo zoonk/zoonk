@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { getGoalStartHref } from "@/lib/public/public-hrefs";
+import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { useCallback } from "react";
 import { answerSuggestedGoalAction } from "./suggested-goal-actions";
@@ -9,8 +9,9 @@ import { answerSuggestedGoalAction } from "./suggested-goal-actions";
 type SuggestedGoalAnswer = { status: "accepted" | "dismissed"; suggestion: SuggestedGoalView };
 
 /**
- * Records the answer to a suggested goal. Accepting opens onboarding with the course's title as the
- * goal. Dismissing stays on Today, or opens onboarding when the learner has no goal yet
+ * Records the answer to a suggested goal. Accepting opens the course's start, where the learner
+ * picks up the course they were taking, or onboarding with its title once nobody can start that
+ * course (as the saved answer says, not the card, which may be older). Dismissing stays on Today, or opens onboarding when the learner has no goal yet
  * (`hasGoal: false`), since Today has nothing else to show them.
  */
 export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
@@ -18,14 +19,19 @@ export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
 
   return useCallback(
     async ({ status, suggestion }: SuggestedGoalAnswer): Promise<boolean> => {
-      const saved = await answerSuggestedGoalAction({ status, suggestionId: suggestion.id });
+      const answered = await answerSuggestedGoalAction({ status, suggestionId: suggestion.id });
 
-      if (!saved) {
+      if (!answered) {
         return false;
       }
 
       if (status === "accepted") {
-        router.push(getGoalStartHref(suggestion.title));
+        router.push(
+          answered.courseId
+            ? getCourseStartHref({ courseId: answered.courseId })
+            : getGoalStartHref(answered.title),
+        );
+
         return true;
       }
 

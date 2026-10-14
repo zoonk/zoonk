@@ -27,11 +27,13 @@ export function StatusMessage({
         className,
       )}
     >
-      <span className="bg-muted text-foreground flex size-16 items-center justify-center rounded-2xl [&_svg]:size-7">
+      <span className="bg-muted text-foreground flex size-16 items-center justify-center rounded-xl [&_svg]:size-7">
         {icon}
       </span>
 
-      <h1 className="mt-6 text-3xl font-bold tracking-tight text-balance sm:text-4xl">{title}</h1>
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        {title}
+      </h1>
 
       <p className="text-muted-foreground mt-3 text-base leading-relaxed text-pretty sm:text-lg">
         {description}

@@ -24,7 +24,12 @@ async function toChallengeDestination({
   if (waiting && block.planItemId) {
     const call = await openLanguageCheckpointCall(block.id);
 
-    if (call.status === "notLanguage") {
+    if (call.status === "earlierFirst") {
+      return { kind: "today" };
+    }
+
+    // A language goal's call the learner's plan leaves to Plus opens on its intro too, locked.
+    if (call.status === "notLanguage" || call.status === "plusRequired") {
       return { kind: "challenge", planItemId: block.planItemId, sessionId };
     }
   }
@@ -47,7 +52,7 @@ async function isLessonReady(lessonId: string | null): Promise<boolean> {
  * Starts a block and says where it's played. Checkpoints and mocks start on their own screen, and a
  * lesson that isn't ready isn't started: the learner's browser asks for it right away (so the
  * answer, including a refusal, reaches the screen), then the session screen shows the wait or why
- * it can't be written now, with a ready block to do meanwhile. Every block opened gets the rest of
+ * it can't be written now, with a ready block to do meanwhile. Other blocks opened get the rest of
  * the session and the next study day written in the background.
  */
 export async function openStudyBlock({
@@ -59,16 +64,34 @@ export async function openStudyBlock({
   sessionId: string;
   timeZone: string;
 }): Promise<StudyDestination | null> {
+  if (block.kind === "learn" && !(await isLessonReady(block.lessonId))) {
+    if (!block.lessonId) {
+      // A plan placeholder has no browser generation endpoint until preparation picks its lesson.
+      prepareStudySession(sessionId);
+      return { blockId: block.id, kind: "session" };
+    }
+
+    /** Preparation would compete with the browser's request and hide its refusal or use its allowance. */
+    return { blockId: block.id, kind: "unwrittenLesson", lessonId: block.lessonId };
+  }
+
   prepareStudySession(sessionId);
 
   if (block.kind === "checkpoint") {
-    return toChallengeDestination({ block, sessionId });
-  }
+    if (block.status === "active") {
+      const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
-  if (block.kind === "learn" && !(await isLessonReady(block.lessonId))) {
-    return block.lessonId
-      ? { kind: "unwrittenLesson", lessonId: block.lessonId }
-      : { kind: "session" };
+      // Started while the plan had Plus: its intro says what Plus unlocks now.
+      if (resumed.status === "plusRequired" && block.planItemId) {
+        return { kind: "challenge", planItemId: block.planItemId, sessionId };
+      }
+
+      if (resumed.status !== "ready") {
+        return null;
+      }
+    }
+
+    return toChallengeDestination({ block, sessionId });
   }
 
   const started = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
@@ -91,5 +114,5 @@ export async function openStudyBlock({
 
   return block.kind === "learn" && block.lessonId
     ? { kind: "lesson", lessonId: block.lessonId, sessionId }
-    : { kind: "session" };
+    : { blockId: block.id, kind: "session" };
 }

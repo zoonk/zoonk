@@ -47,10 +47,15 @@ export async function getCategoryMeta(params: { category: CourseCategory }) {
   };
 }
 
-/** A category page's headline, like "Science courses". */
-export async function getCategoryTitle(category: CourseCategory) {
+/**
+ * Every category page's headline, like "Courses in Science", which reads right for every category,
+ * by its key: the catalog's header follows the chosen category without waiting.
+ */
+export async function getCategoryTitles(): Promise<Record<string, string>> {
   const t = await getExtracted();
-  const label = await getCategoryLabel(category);
+  const categories = await getCategories();
 
-  return t("{category} courses", { category: label });
+  return Object.fromEntries(
+    categories.map(({ key, label }) => [key, t("Courses in {category}", { category: label })]),
+  );
 }

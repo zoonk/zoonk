@@ -4,7 +4,7 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
-import { LessonMoment } from "@zoonk/learn/session/lesson-moment";
+import { LessonMoment, LessonMomentHeader } from "@zoonk/learn/session/lesson-moment";
 import { type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { useMemo } from "react";
 
@@ -12,14 +12,14 @@ type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 
 /**
  * A lesson played as one of today's blocks: the session's completion moment, whose Continue opens
- * the next block. The session's progress shows there, never under the player's header, so the
- * lesson keeps one bar. Null for a lesson on its own.
+ * the next block, under the session's header (the day as one segment per block) in place of the
+ * lesson's once the lesson is saved, like between every other block. Null for a lesson on its own.
  */
 export function useLessonSessionSlots({
   session,
 }: {
   session: LessonSessionContext | null;
-}): Pick<LessonPlayerSlots, "completion"> | null {
+}): Pick<LessonPlayerSlots, "completion" | "completionHeader"> | null {
   const navigation = useStudyNavigation(session?.id ?? "");
   const startTestOut = useStartTestOut();
 
@@ -46,6 +46,13 @@ export function useLessonSessionSlots({
           />
         </MainLearnProvider>
       ),
+      // Until the lesson is saved there's no moment yet, and the lesson's header stays.
+      completionHeader: ({ completion }) =>
+        completion.result?.studyBlock ? (
+          <MainLearnProvider>
+            <LessonMomentHeader completion={completion} exitHref="/today" />
+          </MainLearnProvider>
+        ) : null,
     };
   }, [navigation, session, startTestOut]);
 }

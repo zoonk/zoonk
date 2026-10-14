@@ -9,5 +9,5 @@ import { resetPostHogUser } from "./posthog";
  */
 export async function logout() {
   await resetPostHogUser();
-  authLogout();
+  await authLogout();
 }

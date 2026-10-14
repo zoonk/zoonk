@@ -1,7 +1,8 @@
-import { type APIResponse, type BrowserContext, type Page } from "@playwright/test";
+import { type APIResponse, type BrowserContext } from "@playwright/test";
 import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "@zoonk/core/auth/ott/state";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
+import { mockCentralAuthTransport } from "./auth-transport";
 import { expect, test } from "./fixtures";
 
 /**
@@ -33,26 +34,15 @@ function getRequiredSearchParam({ name, url }: { name: string; url: string }): s
 }
 
 /**
- * Opens a login page and reads the central-auth URL it went to, with central auth stood in for, and
+ * Opens a login route without following it to central auth, reads where it sends the browser, and
  * checks the login state in its callback is the one `/login` bound to this browser's cookie.
  */
-async function startLogin({
-  authUrls,
-  context,
-  page,
-  path,
-}: {
-  authUrls: string[];
-  context: BrowserContext;
-  page: Page;
-  path: string;
-}) {
-  const before = authUrls.length;
+async function startLogin({ context, path }: { context: BrowserContext; path: string }) {
+  const response = await context.request.get(path, { maxRedirects: 0 });
 
-  await page.goto(path);
-  await expect.poll(() => authUrls.length).toBe(before + 1);
+  expect(response.status()).toBe(307);
 
-  const authUrl = authUrls.at(-1) ?? "";
+  const authUrl = getRedirectLocation(response);
   const callbackUrl = getRequiredSearchParam({ name: "redirectTo", url: authUrl });
   const state = getRequiredSearchParam({ name: "state", url: callbackUrl });
   const cookies = await context.cookies(getBaseURL());
@@ -97,43 +87,72 @@ function expectAuthErrorRedirect(response: APIResponse): void {
 test.describe("Auth Callback", () => {
   test("starts login in the page's language with a state-bound return path, never an unsafe one", async ({
     context,
-    page,
   }) => {
-    const authUrls: string[] = [];
     const nextPath = "/b/ai/c/course/ch/chapter/l/lesson";
     const unsafeNextPath = String.raw`/\\evil.example/path`;
 
-    // The login state comes from `getRandomValues`, so it starts where `randomUUID` is missing.
-    await page.addInitScript(() => {
-      Object.defineProperty(globalThis.crypto, "randomUUID", { value: undefined });
-    });
-
-    await page.route("**/auth/login**", async (route) => {
-      authUrls.push(route.request().url());
-      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
-    });
-
-    const localized = await startLogin({ authUrls, context, page, path: "/pt/login" });
+    // Without a page to go back to, sign-in opens Today, in the page's language.
+    const localized = await startLogin({ context, path: "/pt/login" });
     expect(localized.authUrl.searchParams.get("locale")).toBe("pt");
+    expect(localized.authUrl.searchParams.get("error")).toBeNull();
+    expect(localized.callbackUrl.searchParams.get("next")).toBe("/pt/today");
 
     const returning = await startLogin({
-      authUrls,
       context,
-      page,
-      path: `/login?next=${encodeURIComponent(nextPath)}`,
+      path: `/pt/login?next=${encodeURIComponent(nextPath)}`,
     });
 
     expect(returning.callbackUrl.searchParams.get("next")).toBe(nextPath);
 
     // A backslash-based network-path return target is dropped.
     const unsafe = await startLogin({
-      authUrls,
       context,
-      page,
-      path: `/login?next=${encodeURIComponent(unsafeNextPath)}`,
+      path: `/pt/login?next=${encodeURIComponent(unsafeNextPath)}`,
     });
 
-    expect(unsafe.callbackUrl.searchParams.get("next")).toBeNull();
+    expect(unsafe.callbackUrl.searchParams.get("next")).toBe("/pt/today");
+  });
+
+  test("a sign-in the callback couldn't finish starts again for the same page, saying so", async ({
+    browser,
+  }) => {
+    const baseURL = getBaseURL();
+    const ctx = await browser.newContext({ baseURL });
+    const state = await createLoginState({ baseURL, context: ctx });
+
+    const failed = await ctx.request.get(
+      `/auth/callback?state=${encodeURIComponent(state)}&token=invalid-token-abc&next=${encodeURIComponent("/level")}`,
+      { maxRedirects: 0 },
+    );
+
+    expect(getRedirectLocation(failed)).toBe("/login?error=auth&next=%2Flevel");
+
+    const again = await startLogin({ context: ctx, path: getRedirectLocation(failed) });
+    expect(again.authUrl.searchParams.get("error")).toBe("expired");
+    expect(again.callbackUrl.searchParams.get("next")).toBe("/level");
+
+    await ctx.close();
+  });
+
+  test("a real login link opens the auth form with one document request", async ({
+    context,
+    page,
+  }) => {
+    const loginRequests: string[] = [];
+    await mockCentralAuthTransport(page);
+    await page.goto("/plan");
+
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname === "/login") {
+        loginRequests.push(request.resourceType());
+      }
+    });
+
+    await page.getByRole("main").getByRole("link", { exact: true, name: "Log in" }).click();
+    await expect(page.getByLabel("Email")).toBeVisible();
+    expect(loginRequests).toEqual(["document"]);
+    const cookies = await context.cookies(getBaseURL());
+    expect(cookies.some((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE)).toBe(true);
   });
 
   test("signs in on a valid token and opens the learner's home", async ({ browser }) => {
@@ -149,8 +168,9 @@ test.describe("Auth Callback", () => {
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
     );
 
-    // Home sends a learner without a goal to Today, which asks them to start one.
-    await page.waitForURL(/\/start$/u);
+    // Home sends a learner without a goal to Today, which asks them to start one right there.
+    await page.waitForURL(/\/today$/u);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
 
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { email: user.email } });

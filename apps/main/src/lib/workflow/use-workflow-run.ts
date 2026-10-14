@@ -154,6 +154,13 @@ export function useWorkflowRun({
     },
     onError: () => dispatch({ type: "connectionLost" }),
     onMessage: (message) => dispatch({ kind, message, type: "event" }),
+    onOpen: (response) => {
+      const serverNow = Date.parse(response.headers.get("date") ?? "");
+
+      if (Number.isFinite(serverNow)) {
+        dispatch({ offsetMs: Date.now() - serverNow, type: "serverClock" });
+      }
+    },
     resumeKey: runId,
   });
 
@@ -190,5 +197,12 @@ export function useWorkflowRun({
     return state.failure ? () => void startAgain() : undefined;
   }
 
-  return { failure: state.failure, retry: getRetry(), status, steps: state.steps };
+  return {
+    clockOffsetMs: state.clockOffsetMs ?? undefined,
+    failure: state.failure,
+    retry: getRetry(),
+    status,
+    stepTimes: state.stepTimes,
+    steps: state.steps,
+  };
 }

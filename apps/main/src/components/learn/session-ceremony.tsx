@@ -1,6 +1,6 @@
 "use client";
 
-import { saveBuddyAction } from "@/app/[lang]/(settings)/settings/appearance/actions";
+import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony";
 import { markMilestoneShownAction } from "./milestone-actions";
@@ -24,11 +24,7 @@ export function SessionCeremony({
       milestone={milestone}
       onClose={onClose}
       onShown={markMilestoneShownAction}
-      onWearGlasses={
-        buddy
-          ? (glasses) => saveBuddyAction({ glasses, kind: buddy.kind, name: buddy.name })
-          : undefined
-      }
+      onWearGlasses={(glasses) => saveBuddyAction({ glasses, kind: buddy.kind, name: buddy.name })}
     />
   );
 }

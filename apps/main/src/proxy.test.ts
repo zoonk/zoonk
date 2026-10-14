@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { ACCOUNT_MARKER_COOKIE } from "@zoonk/auth/cookies";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { API_URL } from "@zoonk/utils/url";
@@ -79,125 +78,6 @@ describe("catalog locale routing", () => {
   });
 });
 
-describe("home page for learners and guests", () => {
-  const SESSION = "better-auth.session_token=token.signature";
-  const ACCOUNT = `${SESSION}; ${ACCOUNT_MARKER_COOKIE}=1`;
-
-  it.each([
-    ["/", "https://www.zoonk.com/today"],
-    ["/pt", "https://www.zoonk.com/pt/today"],
-    ["/de/", "https://www.zoonk.com/de/today"],
-  ])("sends an account's session from %s to Today", async (path, location) => {
-    const response = await proxy(
-      new NextRequest(`https://www.zoonk.com${path}`, { headers: { cookie: ACCOUNT } }),
-    );
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe(location);
-  });
-
-  it("recognizes the secure session cookie", async () => {
-    const response = await proxy(
-      new NextRequest("https://www.zoonk.com/", {
-        headers: {
-          cookie: `__Secure-better-auth.session_token=token.signature; ${ACCOUNT_MARKER_COOKIE}=1`,
-        },
-      }),
-    );
-
-    expect(response.headers.get("location")).toBe("https://www.zoonk.com/today");
-  });
-
-  it("keeps a guest on the home page, where they can continue where they left off", async () => {
-    const response = await proxy(
-      new NextRequest("https://www.zoonk.com/pt", {
-        headers: { "accept-language": "pt-BR", cookie: SESSION },
-      }),
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("location")).toBeNull();
-  });
-
-  it("renders the visitor home page without a session, even with a stale account marker", async () => {
-    const visitor = await proxy(
-      new NextRequest("https://www.zoonk.com/", { headers: { "accept-language": "en-US" } }),
-    );
-
-    const staleMarker = await proxy(
-      new NextRequest("https://www.zoonk.com/", {
-        headers: { "accept-language": "en-US", cookie: `${ACCOUNT_MARKER_COOKIE}=1` },
-      }),
-    );
-
-    expect(visitor.status).toBe(200);
-    expect(visitor.headers.get("location")).toBeNull();
-    expect(staleMarker.status).toBe(200);
-    expect(staleMarker.headers.get("location")).toBeNull();
-  });
-
-  it("leaves other pages alone for learners", async () => {
-    const response = await proxy(
-      new NextRequest("https://www.zoonk.com/courses", {
-        headers: { "accept-language": "en-US", cookie: ACCOUNT },
-      }),
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("location")).toBeNull();
-  });
-});
-
-describe("pricing for visitors and learners", () => {
-  const SESSION_COOKIE = "better-auth.session_token=token.signature";
-
-  it.each([
-    ["/pricing", "https://www.zoonk.com/subscription"],
-    ["/pt/pricing", "https://www.zoonk.com/pt/subscription"],
-    ["/pricing/?ref=home", "https://www.zoonk.com/subscription?ref=home"],
-  ])("sends a request with a session from %s to the subscription page", async (path, location) => {
-    const response = await proxy(
-      new NextRequest(`https://www.zoonk.com${path}`, { headers: { cookie: SESSION_COOKIE } }),
-    );
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe(location);
-  });
-
-  it.each([
-    ["/subscription", "https://www.zoonk.com/pricing"],
-    ["/de/subscription", "https://www.zoonk.com/de/pricing"],
-    ["/subscription?ref=email", "https://www.zoonk.com/pricing?ref=email"],
-  ])("sends a visitor from %s to the public pricing page", async (path, location) => {
-    const response = await proxy(
-      new NextRequest(`https://www.zoonk.com${path}`, { headers: { "accept-language": "en-US" } }),
-    );
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe(location);
-  });
-
-  it("renders the public pricing page for a visitor", async () => {
-    const response = await proxy(
-      new NextRequest("https://www.zoonk.com/pricing", { headers: { "accept-language": "en-US" } }),
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("location")).toBeNull();
-  });
-
-  it("renders the subscription page for a learner", async () => {
-    const response = await proxy(
-      new NextRequest("https://www.zoonk.com/subscription", {
-        headers: { "accept-language": "en-US", cookie: SESSION_COOKIE },
-      }),
-    );
-
-    expect(response.status).toBe(200);
-    expect(response.headers.get("location")).toBeNull();
-  });
-});
-
 /** A brand course, published or not, and its public path. */
 async function createCourse({ isPublished }: { isPublished: boolean }) {
   const organization = await organizationFixture({ kind: "brand" });
@@ -230,7 +110,7 @@ describe("catalog pages that don't exist", () => {
 
     for (const response of responses) {
       expect(response.headers.get("x-middleware-rewrite")).toBe(
-        "https://www.zoonk.com/pt/_not-found",
+        "https://www.zoonk.com/pt/_catalog-not-found",
       );
       // The 404 page reads the visitor's language from the header the locale middleware sets.
       expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
@@ -252,13 +132,21 @@ describe("catalog pages that don't exist", () => {
     expect(navigation.headers.get("x-middleware-rewrite")).toBeNull();
   });
 
-  it("gives an unknown category the 404 page in the visitor's language", async () => {
-    const [unknown, known] = await Promise.all([
+  it("gives an unknown category, or a path under a category, the 404 page in the visitor's language", async () => {
+    const [unknown, deeper, known] = await Promise.all([
       proxy(new NextRequest("https://www.zoonk.com/de/courses/not-a-category")),
+      proxy(new NextRequest("https://www.zoonk.com/de/courses/science/an-old-course")),
       proxy(new NextRequest("https://www.zoonk.com/de/courses/science")),
     ]);
 
-    expect(unknown.headers.get("x-middleware-rewrite")).toBe("https://www.zoonk.com/de/_not-found");
+    expect(unknown.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/de/_catalog-not-found",
+    );
+
+    expect(deeper.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/de/_catalog-not-found",
+    );
+
     expect(known.headers.get("x-middleware-rewrite")).toBeNull();
   });
 });

@@ -9,6 +9,7 @@ import {
   type GenerationFailure,
   type GenerationRun,
   type GenerationStepState,
+  type GenerationStepTimes,
 } from "@zoonk/learn/generation/run";
 
 /** Lost connections in a row, without a single event between them, before the learner is told. */
@@ -23,6 +24,12 @@ const MAX_RECONNECT_DELAY_MS = 16_000;
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
 
 export type WorkflowRunState = {
+  /**
+   * This device's clock minus the server's, from the stream's `Date` header as it opened, so the
+   * phase running now is timed on the server's clock, as its events are. A replayed event can't
+   * tell it: it arrives long after its time.
+   */
+  clockOffsetMs: number | null;
   /** Each new connection gets its own number, so the events URL changes and a fresh one opens. */
   connection: number;
   failure: GenerationFailure | null;
@@ -37,10 +44,13 @@ export type WorkflowRunState = {
   /** Runs that failed and were started again: their ids are no longer followed. */
   replaced: string[];
   steps: Partial<Record<string, GenerationStepState>>;
+  /** When the run reported each step, on the server's clock. */
+  stepTimes: Partial<Record<string, GenerationStepTimes>>;
 };
 
 export type WorkflowRunAction =
   | { kind: GenerationKind; message: StepStreamMessage; type: "event" }
+  | { offsetMs: number; type: "serverClock" }
   | { runId: string | null; type: "polled" }
   | { status: RunStatus; type: "runStatus" }
   | { type: "connectionLost" }
@@ -50,6 +60,7 @@ export type WorkflowRunAction =
   | { runIds: string[]; type: "restart" };
 
 export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
+  clockOffsetMs: null,
   connection: 0,
   failure: null,
   joined: null,
@@ -58,6 +69,7 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   ready: false,
   reconnectIn: null,
   replaced: [],
+  stepTimes: {},
   steps: {},
 };
 
@@ -70,13 +82,32 @@ function getReconnectDelay(lostConnections: number): number {
   return Math.min(1000 * 2 ** lostConnections, MAX_RECONNECT_DELAY_MS);
 }
 
+/** A step keeps the first time it reported each state: a replayed event never moves it. */
+function recordStepTime(
+  state: WorkflowRunState,
+  message: StepStreamMessage & { status: GenerationStepState },
+): WorkflowRunState["stepTimes"] {
+  const times = state.stepTimes[message.step] ?? {};
+
+  if (message.at === undefined || times[message.status] !== undefined) {
+    return state.stepTimes;
+  }
+
+  return { ...state.stepTimes, [message.step]: { ...times, [message.status]: message.at } };
+}
+
 /** A step keeps its furthest state: a replayed "started" never undoes a "completed". */
 function recordStep(
   state: WorkflowRunState,
   message: StepStreamMessage & { status: GenerationStepState },
 ): WorkflowRunState {
   const status = state.steps[message.step] === "completed" ? "completed" : message.status;
-  return { ...state, steps: { ...state.steps, [message.step]: status } };
+
+  return {
+    ...state,
+    stepTimes: recordStepTime(state, message),
+    steps: { ...state.steps, [message.step]: status },
+  };
 }
 
 function applyEvent({
@@ -90,6 +121,7 @@ function applyEvent({
 }): WorkflowRunState {
   // Any event proves the connection works.
   const connected = { ...state, lostConnections: 0 };
+
   const meaning = getStepMeaning({ kind, status: message.status, step: message.step });
 
   if (isSettled(state)) {
@@ -159,6 +191,8 @@ export function workflowRunReducer(
   switch (action.type) {
     case "event":
       return applyEvent({ kind: action.kind, message: action.message, state });
+    case "serverClock":
+      return { ...state, clockOffsetMs: action.offsetMs };
     case "polled":
       return {
         ...state,

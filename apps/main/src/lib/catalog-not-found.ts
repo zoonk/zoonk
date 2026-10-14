@@ -11,13 +11,17 @@ const COURSE_PATH = new RegExp(
   "u",
 );
 
-const CATEGORY_PATH = new RegExp(`^${LOCALE_PREFIX}/courses/(?<category>[^/]+)/?$`, "u");
+/** A category's page, or any path under one, where no page exists (such as an old course link). */
+const CATEGORY_PATH = new RegExp(
+  `^${LOCALE_PREFIX}/courses/(?<category>[^/]+)(?<deeper>/[^/].*)?/?$`,
+  "u",
+);
 
 /**
- * A path no route matches, so Next.js answers with the app's 404 page (`app/global-not-found.tsx`)
- * and a 404 status. Folders starting with `_` are never routes.
+ * The catalog's always-404 page (`(catalog)/%5Fcatalog-not-found`): a real 404 status, with the
+ * catalog's not-found message inside the app's frame.
  */
-const NOT_FOUND_PATH = "_not-found";
+const NOT_FOUND_PATH = "_catalog-not-found";
 
 /**
  * Client navigations and prefetches carry the `RSC` header; they show the in-app not-found page,
@@ -57,7 +61,8 @@ async function getMissingCatalogLocale(pathname: string): Promise<string | null>
   const category = CATEGORY_PATH.exec(pathname)?.groups;
 
   if (category?.category) {
-    return isValidCategory(category.category) ? null : (category.locale ?? DEFAULT_LOCALE);
+    const exists = !category.deeper && isValidCategory(category.category);
+    return exists ? null : (category.locale ?? DEFAULT_LOCALE);
   }
 
   const course = COURSE_PATH.exec(pathname)?.groups;
@@ -72,9 +77,10 @@ async function getMissingCatalogLocale(pathname: string): Promise<string | null>
 
 /**
  * Answers a page load of a course, chapter or lesson URL whose course doesn't exist, or of a
- * category that doesn't exist, with a real 404 instead of a page that only says so: those pages
- * stream before they know. It keeps `localized`'s headers (the visitor's language and cookie), so
- * the 404 page speaks the visitor's language. Null when the page exists.
+ * category that doesn't exist (or a path under one), with a real 404 inside the catalog instead of
+ * a page that only says so: those pages stream before they know. It keeps `localized`'s headers
+ * (the visitor's language and cookie), so the 404 page speaks the visitor's language. Null when
+ * the page exists.
  */
 export async function getCatalogNotFound({
   localized,

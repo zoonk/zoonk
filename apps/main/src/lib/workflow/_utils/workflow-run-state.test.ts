@@ -38,6 +38,20 @@ describe(workflowRunReducer, () => {
     expect(state.ready).toBe(false);
   });
 
+  it("keeps when each step first reported each state, and the server's clock as the stream opened", () => {
+    const state = run([
+      { offsetMs: 1500, type: "serverClock" },
+      event({ at: 1000, status: "started", step: "understandGoal" }),
+      event({ at: 8000, status: "completed", step: "understandGoal" }),
+      // Replayed after a reconnect: the step keeps its first time.
+      event({ at: 9000, status: "started", step: "understandGoal" }),
+      event({ status: "started", step: "saveSkills" }),
+    ]);
+
+    expect(state.stepTimes).toStrictEqual({ understandGoal: { completed: 8000, started: 1000 } });
+    expect(state.clockOffsetMs).toBe(1500);
+  });
+
   it("is ready once the step that ends the kind's wait finished", () => {
     const started = run([event({ status: "started", step: "createPlan" })]);
     const finished = run([event({ status: "completed", step: "createPlan" })], started);

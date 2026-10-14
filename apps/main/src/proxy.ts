@@ -1,12 +1,13 @@
-import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { hasSessionCookie } from "@zoonk/auth/cookies";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { proxyApiRequest } from "./lib/api-proxy";
 import { getCatalogNotFound } from "./lib/catalog-not-found";
-import { getSessionRedirect } from "./lib/session-redirects";
 
 const localizedMiddleware = createMiddleware(routing);
+const HOME_PATH = new RegExp(`^/(?:${SUPPORTED_LOCALES.join("|")})?$`, "u");
 
 const CATALOG_PATH = new RegExp(
   `^/(?:(?:${SUPPORTED_LOCALES.join("|")})/)?b/[^/]+/c/[^/]+(?:/|$)`,
@@ -14,8 +15,6 @@ const CATALOG_PATH = new RegExp(
 );
 
 /**
- * Learners with an account skip the visitor home page, anyone with a session skips pricing, and
- * visitors skip the app's subscription page, all before the page renders.
  * Course editions have their own slugs. UI-language variants of the same slug
  * are not translated editions, so next-intl's automatic alternates do not apply.
  * Once the language is settled, a course or category that doesn't exist gets a real 404.
@@ -25,13 +24,29 @@ export default async function proxy(request: NextRequest) {
     return proxyApiRequest(request);
   }
 
-  const sessionRedirect = getSessionRedirect(request);
-
-  if (sessionRedirect) {
-    return NextResponse.redirect(sessionRedirect);
-  }
-
   const response = localizedMiddleware(request);
+
+  /**
+   * Resolve the home page's language before sending a session browser to Today, in one hop and
+   * before rendering. The cookie is only a routing hint; Today checks the session itself.
+   */
+  if (HOME_PATH.test(request.nextUrl.pathname) && hasSessionCookie(request.cookies)) {
+    const resolvedUrl = new URL(
+      response.headers.get("location") ??
+        response.headers.get("x-middleware-rewrite") ??
+        request.url,
+    );
+
+    const prefix = resolvedUrl.pathname.replace(/\/$/u, "");
+    resolvedUrl.pathname = `${prefix === `/${DEFAULT_LOCALE}` ? "" : prefix}/today`;
+    const redirect = NextResponse.redirect(resolvedUrl);
+
+    for (const cookie of response.cookies.getAll()) {
+      redirect.cookies.set(cookie);
+    }
+
+    return redirect;
+  }
 
   if (CATALOG_PATH.test(request.nextUrl.pathname)) {
     response.headers.delete("link");

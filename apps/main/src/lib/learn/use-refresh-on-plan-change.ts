@@ -8,7 +8,7 @@ import { hasPlanChangedAction } from "./plan-changes-action";
  * What a tab waiting on lessons does every few seconds (its `refresh` while they're written): it
  * asks whether what the page watches (`watch`: the goal's plan, or today's session too) or their
  * lessons changed since the page was read (`readAt`) and reads the page again only then. Asking
- * costs a few small queries, where reading the Journey or Today costs a couple hundred.
+ * costs a few small queries, where reading the Plan or Today costs a couple hundred.
  */
 export function useRefreshOnPlanChange({
   goalId,

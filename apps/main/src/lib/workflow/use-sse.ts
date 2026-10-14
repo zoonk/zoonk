@@ -7,7 +7,8 @@ import { getWorkflowAuthHeaders } from "./auth-headers";
 /**
  * Reads a durable workflow stream as server-sent events. A new `url` opens a new connection that
  * resumes after the last event read, so reconnecting never replays handled events; a new
- * `resumeKey` (another run) starts from that run's first event.
+ * `resumeKey` (another run) starts from that run's first event. `onOpen` gets each connection's
+ * response once it's open, before its events.
  */
 export function useSSE<T>(
   url: string | null,
@@ -15,13 +16,15 @@ export function useSSE<T>(
     onComplete?: () => void;
     onError?: (error: Error) => void;
     onMessage: (data: T) => void;
+    onOpen?: (response: Response) => void;
     resumeKey?: string | null;
   },
 ) {
   const cursor = useRef<{ index: number; key: string | null }>({ index: 0, key: null });
-  const { onComplete, onError, onMessage, resumeKey = null } = options;
+  const { onComplete, onError, onMessage, onOpen, resumeKey = null } = options;
 
   const onMessageEvent = useEffectEvent((data: T) => onMessage(data));
+  const onOpenEvent = useEffectEvent((response: Response) => onOpen?.(response));
   const onCompleteEvent = useEffectEvent(() => onComplete?.());
   const onErrorEvent = useEffectEvent((error: Error) => onError?.(error));
 
@@ -48,6 +51,7 @@ export function useSSE<T>(
           return;
         }
 
+        onOpenEvent(response);
         const reader = response.body?.getReader();
 
         if (!reader) {

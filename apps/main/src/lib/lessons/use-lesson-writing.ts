@@ -1,7 +1,7 @@
 "use client";
 
 import { type LessonWritingAnswer, askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
-import { useEffect, useEffectEvent, useReducer } from "react";
+import { useReducer, useRef } from "react";
 
 /**
  * Where asking for the lesson stands: `idle` until a visitor asks for it, `requesting` while the
@@ -23,36 +23,38 @@ function writingReducer(state: WritingState, action: WritingAction): WritingStat
 }
 
 /**
- * "Never a dead end" for a lesson that isn't written yet: it asks for the lesson (on open when
- * there's a session, after "Start this lesson" for a visitor, so a page load alone never makes a
- * guest or writes a lesson) and says which run writes it, for the wait to follow. `attempt` counts
+ * Asks for writing only from the learner's action, or follows the run handed over by the click
+ * that opened this page. Loading or mounting the wait never starts AI work. `attempt` counts
  * the learner's own requests, so each one gets a fresh wait. `restart` asks again from a failed
  * run's wait and returns the new run's id (null when the request didn't go through).
  */
 export function useLessonWriting({
-  hasSession,
+  initialRequest,
   lessonId,
 }: {
-  hasSession: boolean;
+  initialRequest: LessonRequest;
   lessonId: string;
 }) {
   const [{ attempt, request }, dispatch] = useReducer(writingReducer, {
     attempt: 0,
-    request: { status: hasSession ? "requesting" : "idle" },
+    request: initialRequest,
   });
 
-  const ask = useEffectEvent(async () => {
-    dispatch({ request: await askToWriteLesson(lessonId), type: "answered" });
-  });
+  const requesting = useRef(false);
 
-  useEffect(() => {
-    if (request.status === "requesting") {
-      void ask();
+  async function requestAgain() {
+    if (requesting.current) {
+      return;
     }
-  }, [request.status]);
 
-  function requestAgain() {
+    requesting.current = true;
     dispatch({ type: "ask" });
+
+    try {
+      dispatch({ request: await askToWriteLesson(lessonId), type: "answered" });
+    } finally {
+      requesting.current = false;
+    }
   }
 
   async function restart(): Promise<string | null | undefined> {

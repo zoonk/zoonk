@@ -1,5 +1,6 @@
 "use server";
 
+import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { answerStudyQuestion } from "@zoonk/core/sessions/answer";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
@@ -8,7 +9,9 @@ import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
 import { finishStudyBlock } from "@zoonk/core/sessions/finish-block";
 import { getStudySession } from "@zoonk/core/sessions/get";
+import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
+import { getTodayView } from "@zoonk/core/view-models/today/get";
 import {
   type StudyAnswerOutcome,
   type StudyFinishOutcome,
@@ -28,6 +31,11 @@ const sessionInputSchema = z.object({
 });
 
 const blockInputSchema = sessionInputSchema.extend({ blockId: z.uuid() });
+
+const missionInputSchema = z.object({
+  blockId: z.uuid(),
+  timeZone: z.string().refine(isValidTimeZone),
+});
 
 type SessionInput = z.infer<typeof sessionInputSchema>;
 type BlockInput = z.infer<typeof blockInputSchema>;
@@ -99,6 +107,101 @@ export async function openStudyBlockAction(input: BlockInput): Promise<StudyDest
 
   if (error) {
     logError("[openStudyBlockAction] Failed to open a block:", error);
+    return null;
+  }
+
+  return result;
+}
+
+/**
+ * Opens the block of today's session a mission or a first step opens (its `opens`), from its chip
+ * on Today or its row in the buddy's day, started like a block the learner picks. Only a block of
+ * the learner's own session today that can start now opens: null for one that isn't (a chip read
+ * before the day changed: the block finished, skipped, gone or waiting for the lessons before it),
+ * so the host reads the day again instead.
+ */
+export async function openMissionAction(
+  input: z.infer<typeof missionInputSchema>,
+): Promise<StudyDestination | null> {
+  const parsed = missionInputSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  const { blockId, timeZone } = parsed.data;
+
+  const { data: result, error } = await safeAsync(async () => {
+    const today = await getTodayView({});
+
+    if (today.status !== "ready") {
+      return null;
+    }
+
+    const { session } = today.today;
+
+    const block = session.blocks.find(
+      (candidate) =>
+        candidate.id === blockId &&
+        (candidate.status === "pending" || candidate.status === "active") &&
+        candidate.waitReason === null,
+    );
+
+    if (!block) {
+      return null;
+    }
+
+    const destination = await openStudyBlock({ block, sessionId: session.id, timeZone });
+
+    // A block finished on another device between this read and its start goes to the session
+    // screen without a block of its own (`blockFinished`): nothing opened, so the host reads again.
+    return destination?.kind === "session" && !destination.blockId ? null : destination;
+  });
+
+  if (error) {
+    logError("[openMissionAction] Failed to open a mission:", error);
+    return null;
+  }
+
+  return result;
+}
+
+/** A wait becoming ready only opens what was written; it never requests more AI work. */
+export async function openWrittenLessonAction(input: BlockInput): Promise<StudyDestination | null> {
+  const parsed = blockInputSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  const { data: result, error } = await safeAsync(async () => {
+    const { blockId, sessionId, timeZone } = parsed.data;
+    const session = await getStudySession({ input: { timeZone }, sessionId });
+
+    const block =
+      session.status === "ready"
+        ? session.session.blocks.find((candidate) => candidate.id === blockId)
+        : null;
+
+    if (block?.kind !== "learn" || !block.lessonId) {
+      return null;
+    }
+
+    const state = await getLessonGenerationState(block.lessonId);
+
+    if (state?.status !== "ready") {
+      return null;
+    }
+
+    const started = await startStudyBlock({ blockId, input: { timeZone }, sessionId });
+
+    return started.status === "ready"
+      ? ({ kind: "lesson", lessonId: block.lessonId, sessionId } satisfies StudyDestination)
+      : null;
+  });
+
+  if (error) {
+    logError("[openWrittenLessonAction] Failed to open the written lesson:", error);
     return null;
   }
 

@@ -4,6 +4,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
+  courseBandsFixture,
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
@@ -64,6 +65,8 @@ async function createPublicLesson() {
   ]);
 
   await Promise.all([
+    // The course's later bands are written too, so the guest's start plans from this outline.
+    courseBandsFixture({ courseId: course.id, levels: ["intermediate", "advanced"] }),
     courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: nextLesson.id, position: 1 }),
@@ -98,6 +101,7 @@ async function createPublicLesson() {
   ]);
 
   return {
+    chapter,
     course,
     lessonId: lesson.id,
     lessonPath: `/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
@@ -214,7 +218,7 @@ test.describe("A visitor from a public lesson page", () => {
     await prisma.goal.update({
       data: {
         details: {
-          answered: ["level", "schedule", "age", "memory", "buddy", "placement"],
+          answered: ["targetDate", "level", "schedule", "age", "memory", "buddy", "placement"],
           courseStart: { chapterId: null },
         },
       },
@@ -222,12 +226,16 @@ test.describe("A visitor from a public lesson page", () => {
     });
 
     await page.goto(`/start/${goalId}`);
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+
+    // The plan holds the whole course: its beginner chapter's phase first, then its later bands.
+    await expect(page.getByRole("region", { name: "Phases" })).toBeVisible();
+
     await page.getByRole("link", { name: "Start" }).click();
     await expect(page).toHaveURL(/\/today$/u);
 
     // The lesson they just finished isn't asked again: the day starts with the one after it.
-    const next = page.locator('[data-slot="today-next"]').getByRole("heading", { level: 3 });
-    await expect(next).toHaveText(nextLesson.title);
+    const next = page.locator('[data-slot="today-next"]');
+    await expect(next).toContainText(nextLesson.title);
   });
 });
