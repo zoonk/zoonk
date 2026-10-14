@@ -1,5 +1,11 @@
 import "server-only";
-import { type GenerationStatus, type Goal, type PlanItem, prisma } from "@zoonk/db";
+import {
+  type GenerationStatus,
+  type Goal,
+  type PlanItem,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 import { isExamSchedule } from "../../plans/planner/plan-queue";
 
@@ -26,9 +32,11 @@ function isStandIn(item: Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "ski
  * exam's study days each open with their own subject, so then the next item starts a new day.
  */
 async function loadNextStandIn({
+  client,
   goal,
   localDate,
 }: {
+  client: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   localDate: Date;
 }): Promise<Pick<PlanItem, "skillId">[]> {
@@ -39,12 +47,12 @@ async function loadNextStandIn({
   const plan = { goalId: goal.id };
 
   const [last, next] = await Promise.all([
-    prisma.planItem.findFirst({
+    client.planItem.findFirst({
       orderBy: [{ scheduledFor: "desc" }, { position: "desc" }],
       select: { kind: true },
       where: { plan, scheduledFor: { lte: localDate }, status: "todo" },
     }),
-    prisma.planItem.findFirst({
+    client.planItem.findFirst({
       orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
       select: { chapterId: true, kind: true, lessonId: true, skillId: true },
       where: { plan, scheduledFor: { gt: localDate }, status: "todo" },
@@ -56,14 +64,16 @@ async function loadNextStandIn({
 
 /** The skills of the stand-ins that take the day's time: those due by it, and the next one. */
 async function loadDayStandInSkills({
+  client,
   goal,
   localDate,
 }: {
+  client: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   localDate: Date;
 }): Promise<string[]> {
   const [due, next] = await Promise.all([
-    prisma.planItem.findMany({
+    client.planItem.findMany({
       select: { skillId: true },
       where: {
         ...STAND_IN,
@@ -72,7 +82,7 @@ async function loadDayStandInSkills({
         status: "todo",
       },
     }),
-    loadNextStandIn({ goal, localDate }),
+    loadNextStandIn({ client, goal, localDate }),
   ]);
 
   return [...due, ...next].flatMap((item) => (item.skillId ? [item.skillId] : []));
@@ -87,16 +97,18 @@ async function loadDayStandInSkills({
  * writing.
  */
 export async function isDayAwaitingOutlines({
+  client = prisma,
   goal,
   localDate,
 }: {
+  client?: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate">;
   /** The learner-local date of the day, as a UTC-midnight label. */
   localDate: Date;
 }): Promise<boolean> {
   const [skillIds, plan] = await Promise.all([
-    loadDayStandInSkills({ goal, localDate }),
-    prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
+    loadDayStandInSkills({ client, goal, localDate }),
+    client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
   ]);
 
   if (!plan || skillIds.length === 0) {
@@ -110,7 +122,7 @@ export async function isDayAwaitingOutlines({
     ...new Set(skillIds.flatMap((skillId) => courseOf.get(skillId) ?? goal.primaryCourseId ?? [])),
   ];
 
-  const outlining = await prisma.course.count({
+  const outlining = await client.course.count({
     where: { id: { in: courseIds }, outlineStatus: { in: OUTLINING } },
   });
 

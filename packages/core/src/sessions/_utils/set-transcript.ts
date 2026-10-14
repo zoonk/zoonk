@@ -4,18 +4,21 @@ import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
 import { type ListeningSetView } from "../../library/listening/listening-set-view";
 
 /**
- * A recording's transcript once the answer just given completes its questions in the block: before,
- * the script would answer them; after, it shows what was misheard. Null for a question on its own,
- * a text's or a chart's set, and a recording with questions still to answer.
+ * A recording's transcript once the answer just given completes its questions in the block, or
+ * decides a boss's duel, won or lost (`duelOver`), which ends it with any left unasked: before, the
+ * script would answer them; after, it shows what was misheard. Null for a question on its own, a text's or a
+ * chart's set, and a recording with questions still to answer.
  */
 export async function loadAnsweredTranscript({
   blockItemIds,
+  duelOver,
   itemId,
   sessionId,
   setId,
   userId,
 }: {
   blockItemIds: readonly string[];
+  duelOver: boolean;
   itemId: string;
   sessionId: string;
   setId: string | null;
@@ -40,7 +43,7 @@ export async function loadAnsweredTranscript({
     }),
   ]);
 
-  if (row?.set?.kind !== "audio" || answers.length < asked) {
+  if (row?.set?.kind !== "audio" || (!duelOver && answers.length < asked)) {
     return null;
   }
 

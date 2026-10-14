@@ -150,6 +150,8 @@ describe("today's session when the plan changes", () => {
       sessionId: before.id,
     });
 
+    const picksBefore = await prisma.studySession.findUniqueOrThrow({ where: { id: before.id } });
+
     const changed = await changeGoalPlan({
       goalId: goal.id,
       input: { operations: [{ kind: "setDailyMinutes", minutes: 5 }], timeZone: "UTC" },
@@ -161,6 +163,12 @@ describe("today's session when the plan changes", () => {
     expect(after.id).toBe(before.id);
     expect(after.blocks[0]).toMatchObject({ id: first?.id, status: "active" });
     expect(after.minutes.planned).toBeLessThan(before.minutes.planned);
+    const picksAfter = await prisma.studySession.findUniqueOrThrow({ where: { id: after.id } });
+    expect(picksAfter.missions).toStrictEqual(picksBefore.missions);
+
+    expect(
+      after.missions.every((mission) => before.missions.some((pick) => pick.kind === mission.kind)),
+    ).toBe(true);
 
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(1);
   });

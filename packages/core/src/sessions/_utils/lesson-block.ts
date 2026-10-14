@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { getString } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
@@ -64,8 +65,8 @@ export async function findLessonFinish({
 
   const since = block.startedAt ?? getStartOfLocalDay({ localDate: session.localDate, timeZone });
 
-  return prisma.learningEvent.findFirst({
-    orderBy: { endedAt: "desc" },
+  const query = {
+    orderBy: { endedAt: "desc" as const },
     where: {
       AND: [
         {
@@ -80,7 +81,29 @@ export async function findLessonFinish({
       kind: { in: ["lesson", "review"] },
       userId,
     },
+  } satisfies Parameters<typeof prisma.learningEvent.findFirst>[0];
+
+  const bound = await prisma.learningEvent.findFirst({
+    ...query,
+    where: {
+      ...query.where,
+      AND: [
+        ...query.where.AND,
+        { contentIds: { equals: block.id, path: ["studySessionBlockId"] } },
+      ],
+    },
   });
+
+  // Focused completions bind their exact block atomically; an unrelated replay cannot finish it.
+  if (bound) {
+    return bound;
+  }
+
+  const legacy = await prisma.learningEvent.findMany(query);
+
+  return (
+    legacy.find((event) => getString(event.contentIds, "studySessionBlockId") === null) ?? null
+  );
 }
 
 /**

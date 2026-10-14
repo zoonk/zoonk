@@ -5,7 +5,11 @@ import { isDrillQuestion, listDrillableMistakes } from "../../exams/listening/li
 import { type GoalSkillNode, getSkillOwners } from "../../learner/_utils/goal-skill-graph";
 import { getFieldRank, getItemAudienceFilter } from "../../library/items/item-field";
 import { findTeachingLessonIds } from "../../mistakes/drill-lessons";
-import { selectMistakeDrill, selectMistakesToPractice } from "../../mistakes/mistake-drills";
+import {
+  isMistakeSkill,
+  selectMistakeDrill,
+  selectMistakesToPractice,
+} from "../../mistakes/mistake-drills";
 import { type BlockDrill } from "../block-payload";
 import { loadLastAnswers } from "./load-review-capsules";
 import { QUESTION_ITEM_FORMATS, hasTraps, parseSessionItem } from "./session-items";
@@ -15,22 +19,6 @@ const MISTAKE_POOL = 50;
 
 /** One mistake a day makes the "fix a mistake" mission; the notebook holds the rest. */
 const DAILY_MISTAKE_DRILLS = 1;
-
-/** Whether a question is on the mistake's skill, or on the goal skill it counts for. */
-function isMistakeSkill({
-  itemSkillId,
-  mistakeSkillId,
-  ownerOf,
-}: {
-  itemSkillId: string;
-  mistakeSkillId: string | null;
-  ownerOf: ReadonlyMap<string, string>;
-}): boolean {
-  return (
-    mistakeSkillId !== null &&
-    (itemSkillId === mistakeSkillId || itemSkillId === ownerOf.get(mistakeSkillId))
-  );
-}
 
 /**
  * Today's "fix a mistake": the oldest open mistake on the goal's skills from an earlier day, with

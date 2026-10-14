@@ -1,6 +1,7 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { finishLearningEvent, startLearningEvent } from "../../stats/record-learning-event";
+import { BRAIN_POWER_BONUS } from "../brain-power";
 import { type StudySessionRow } from "./study-session-access";
 
 function sessionRowWhere({ sessionId, userId }: { sessionId: string; userId: string }) {
@@ -20,6 +21,7 @@ export function recordSessionStart(
   { now, session, timeZone }: { now: Date; session: StudySessionRow; timeZone: string },
 ) {
   return startLearningEvent(tx, {
+    brainPower: session.fullMealAt === null ? 0 : BRAIN_POWER_BONUS.fullMeal,
     contentIds: { studySessionId: session.id },
     goalId: session.goalId,
     kind: "session",

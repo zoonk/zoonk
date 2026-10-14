@@ -15,6 +15,7 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { answerStudyQuestion } from "./answer-study-question";
+import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
@@ -137,6 +138,56 @@ describe("placement in the first week's sessions", () => {
     const questions = block.status === "ready" ? block.detail.questions : [];
 
     expect(questions[0]).toMatchObject({ itemId: placementItemId, placement: true });
+  });
+
+  it("counts the first week's placement review as a mission before and after finishing it", async () => {
+    const { goal, placementItemId } = await setup();
+    const today = await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });
+
+    expect(today).toMatchObject({
+      session: {
+        missions: expect.arrayContaining([
+          expect.objectContaining({ done: 0, kind: "review", status: "todo", total: 1 }),
+        ]),
+      },
+      status: "ready",
+    });
+
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+
+    await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { dontKnow: true },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
+      completion: {
+        missions: expect.arrayContaining([
+          expect.objectContaining({ done: 1, kind: "review", status: "done", total: 1 }),
+        ]),
+      },
+      status: "ready",
+    });
+
+    await expect(
+      getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE }),
+    ).resolves.toMatchObject({
+      session: {
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ id: blockId, kind: "review", status: "completed" }),
+        ]),
+        missions: expect.arrayContaining([
+          expect.objectContaining({ done: 1, kind: "review", status: "done", total: 1 }),
+        ]),
+      },
+      status: "ready",
+    });
   });
 
   it("asks an exam that judges assertions its own true/false question before multiple choice", async () => {

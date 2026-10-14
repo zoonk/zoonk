@@ -105,3 +105,21 @@ export async function findCarriedOverSession({
 
   return previous && isCarriedOver({ now, session: previous, timeZone }) ? previous : null;
 }
+
+/** Whether the learner already started the new day's session (on another screen or device). */
+export async function hasStartedDay({
+  goalId,
+  localDate,
+  userId,
+}: {
+  goalId: string | null;
+  localDate: Date;
+  userId: string;
+}) {
+  const started = await prisma.studySession.findFirst({
+    select: { id: true },
+    where: { goalId, localDate, startedAt: { not: null }, userId },
+  });
+
+  return started !== null;
+}

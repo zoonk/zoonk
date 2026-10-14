@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { io } from "next/cache";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getPlanExamPrep } from "../../entitlements/limits";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
@@ -25,6 +26,8 @@ export async function loadExamPrepAccess({
 }): Promise<ExamPrepAccess> {
   const viewer = goal.kind === "exam" ? await getEntitlementViewer() : null;
   const zone = getAnswerTimeZone({ goal, timeZone });
+
+  await io();
 
   return getExamPrepAccess({
     examPrep: viewer ? getPlanExamPrep(viewer.tier) : null,

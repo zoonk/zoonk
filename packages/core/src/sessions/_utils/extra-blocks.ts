@@ -13,6 +13,7 @@ import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { loadExamPrepAccess } from "./plus-only-lessons";
 import { takePracticeQuestions } from "./practice-sets";
+import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -217,7 +218,7 @@ export async function withExtraStudyCheck({
 }
 
 /**
- * Serializes bonus blocks for one session: the session row stays locked while the caller checks
+ * Serializes bonus blocks for one session: the queue stays locked while the caller checks
  * what's there and adds a block, so two taps at once (two areas, or "10 more minutes" twice) see
  * each other's block and never count past the daily cap. The callback gets the session with its
  * blocks read under the lock.
@@ -230,16 +231,13 @@ export async function withSessionAppendLock<TResult>({
   session: StudySessionRow;
 }): Promise<TResult> {
   return prisma.$transaction(async (transaction) => {
-    await transaction.$queryRaw`
-      SELECT "id" FROM "study_sessions" WHERE "id" = ${session.id}::uuid FOR UPDATE
-    `;
+    const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });
 
-    const blocks = await transaction.studySessionBlock.findMany({
-      orderBy: { position: "asc" },
-      where: { sessionId: session.id },
-    });
+    if (!locked) {
+      throw new Error("The study session no longer exists.");
+    }
 
-    return run({ session: { ...session, blocks }, transaction });
+    return run({ session: locked, transaction });
   });
 }
 

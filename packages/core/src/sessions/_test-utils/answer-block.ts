@@ -3,15 +3,18 @@ import { type StudyAnswerResult } from "../contract";
 import { getStudyBlock } from "../get-study-block";
 
 /**
- * Answers every question of a block with the same option, one after another like a learner does,
- * so Hyperdrive and the notebook see them in order. Option 0 is right in the session fixtures.
+ * Answers every question of a block (its first `count` with one) with the same option, one after
+ * another like a learner does, so Hyperdrive and the notebook see them in order. Option 0 is right
+ * in the session fixtures.
  */
 export async function answerBlockInOrder({
   blockId,
+  count,
   optionIndex = 0,
   sessionId,
 }: {
   blockId: string;
+  count?: number;
   optionIndex?: number;
   sessionId: string;
 }): Promise<StudyAnswerResult[]> {
@@ -21,8 +24,9 @@ export async function answerBlockInOrder({
     throw new Error("Expected the block's questions");
   }
 
-  return detail.detail.questions.reduce<Promise<StudyAnswerResult[]>>(
-    async (previous, question) => {
+  return detail.detail.questions
+    .slice(0, count)
+    .reduce<Promise<StudyAnswerResult[]>>(async (previous, question) => {
       const results = await previous;
 
       const result = await answerStudyQuestion({
@@ -36,7 +40,5 @@ export async function answerBlockInOrder({
       });
 
       return [...results, result];
-    },
-    Promise.resolve([]),
-  );
+    }, Promise.resolve([]));
 }

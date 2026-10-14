@@ -74,11 +74,11 @@ describe("ending a session", () => {
       userId: user.id,
     });
 
-    // One mission done (nothing was due or needed fixing): no bonus for all three.
+    // The day's only offered mission is done, so it earns the full completion bonus.
     expect(moment).toMatchObject({
       blockId: first?.id,
-      brainPower: 40,
-      fullMeal: { paid: false },
+      brainPower: 90,
+      fullMeal: { bonus: 50, paid: true },
       sessionBar: { completed: 1, total: session.blocks.length },
       sessionCompleted: false,
     });
@@ -152,14 +152,14 @@ describe("ending a session", () => {
       "pending",
     ]);
 
-    // Nothing was due and nothing needed fixing: one mission done, so no bonus for all three.
+    // No reviews or fixes were possible; the completed lesson earns the full mission bonus.
     expect(stopped.summary).toMatchObject({
       belt: { after: { color: "yellow" }, before: { color: "white" }, colorChanged: true },
-      brainPower: 40,
+      brainPower: 90,
       capsulesSealed: [{ lessonId: lessons[0]?.id, title: "Lesson 1" }],
       extraTime: { available: false, reason: "sessionNotFinished" },
       finished: false,
-      fullMeal: false,
+      fullMeal: true,
       minutes: 2,
       status: "active",
       tomorrow: { title: "Lesson 2" },
@@ -176,6 +176,47 @@ describe("ending a session", () => {
     await expect(
       startStudyBlock({ blockId: second?.id ?? "", input: {}, sessionId: session.id }),
     ).resolves.toMatchObject({ status: "ready" });
+  });
+
+  // Pedro's summary said "Preparation 4%" while his Plan counted his lessons.
+  it("says how a goal without an exam moved in its plan's lessons, from the session's start", async () => {
+    const user = await userFixture();
+    const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
+
+    await prisma.plan.update({
+      data: {
+        graph: {
+          phases: [{ name: "Basics" }],
+          skills: fixture.skills.map((skill) => ({
+            lessons: 1,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+          })),
+        },
+      },
+      where: { id: fixture.plan.id },
+    });
+
+    mockSession(user.id);
+    const today = await getTodayStudySession({ goalId: fixture.goal.id });
+    const first = today.status === "ready" ? today.session.blocks[0] : undefined;
+    const sessionId = today.status === "ready" ? today.session.id : "";
+
+    await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId });
+
+    // The block's lesson is finished: its plan item is done.
+    await prisma.planItem.update({
+      data: { completedAt: new Date(), status: "done" },
+      where: { id: fixture.planItems[0]?.id ?? "" },
+    });
+
+    const stopped = await stopStudySession({ input: {}, sessionId });
+
+    expect(stopped.status === "ready" && stopped.summary.progress).toStrictEqual({
+      after: 1 / 3,
+      before: 0,
+    });
   });
 
   it("keeps the summary as the session ended, and counts the day it was finished", async () => {
@@ -248,6 +289,12 @@ describe("ending a session", () => {
     const later = await getStudySessionSummary({ input: {}, sessionId: today.session.id });
 
     expect(ended.status === "ready" && ended.summary.belt).toBeTruthy();
+    // An exam reads its preparation, never its lessons.
+    expect(ended.status === "ready" && ended.summary.progress).toStrictEqual({
+      after: null,
+      before: null,
+    });
+
     expect(later).toStrictEqual(ended);
 
     // The time the session took is the time its lesson took, in its summary and its ledger row.

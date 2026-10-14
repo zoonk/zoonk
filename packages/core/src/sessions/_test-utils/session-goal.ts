@@ -108,13 +108,13 @@ export function dueSkillFixture({
   });
 }
 
-/** Adds a plan item after the plan's lessons (a boss, mock or weekly checkpoint). */
+/** Adds a checkpoint due on the fixture's day; explicit null represents an unscheduled one. */
 export function checkpointItemFixture({
   kind,
   phase = 0,
   planId,
   position,
-  scheduledFor = null,
+  scheduledFor = SESSION_TODAY,
 }: {
   kind: PlanItem["kind"];
   phase?: number;

@@ -1,48 +1,10 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { finishExplanations } from "../goals/_utils/finish-explanations";
-import { isCurrentSession } from "./_utils/current-session";
+import { findDayLessonBlock } from "./_utils/day-lesson-block";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./_utils/plan-items";
-import { STUDY_SESSION_INCLUDE } from "./_utils/study-session-access";
 import { type StudyBlockCompletion } from "./completion-contract";
 import { finishLessonBlock } from "./finish-study-block";
-
-/**
- * The learn block of the learner's day for a lesson: in today's session or the one they're still
- * in from before midnight, the block they opened first, or the one already done when the same
- * finish is settled again (a retried completion gets its moment back).
- */
-async function findDayLessonBlock({
-  lessonId,
-  timeZone,
-  userId,
-}: {
-  lessonId: string;
-  timeZone: string;
-  userId: string;
-}) {
-  const now = new Date();
-  const today = getDateInTimeZone({ date: now, timeZone });
-
-  const blocks = await prisma.studySessionBlock.findMany({
-    include: { session: { include: STUDY_SESSION_INCLUDE } },
-    orderBy: [{ completedAt: { nulls: "first", sort: "desc" } }, { position: "asc" }],
-    where: {
-      kind: "learn",
-      lessonId,
-      session: { localDate: { in: [today, new Date(today.getTime() - MS_PER_DAY)] }, userId },
-      status: { in: ["active", "pending", "completed"] },
-    },
-  });
-
-  const current = blocks.filter((block) =>
-    isCurrentSession({ now, session: block.session, timeZone }),
-  );
-
-  return current.find((block) => block.status === "active") ?? current[0] ?? null;
-}
 
 /**
  * What a finished lesson means for the learner's plan and day, called by the lesson player's
@@ -56,10 +18,12 @@ async function findDayLessonBlock({
  * Internal: the lesson player's completion derives `userId` from the session first.
  */
 export async function settleFinishedLesson({
+  blockId,
   lessonId,
   timeZone,
   userId,
 }: {
+  blockId?: string;
   lessonId: string;
   timeZone: string;
   userId: string;
@@ -71,7 +35,7 @@ export async function settleFinishedLesson({
   scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
 
   const [found] = await Promise.all([
-    findDayLessonBlock({ lessonId, timeZone, userId }),
+    findDayLessonBlock({ blockId, lessonId, timeZone, userId }),
     finishExplanations({ lessonId, userId }),
   ]);
 

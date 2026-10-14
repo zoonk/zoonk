@@ -366,7 +366,7 @@ describe("falling behind", () => {
     expect((behind?.fittingDate ?? "") > "2020-10-09").toBe(true);
 
     // The plan moved after the morning's settle (lessons written, a session ended): Rafaela's
-    // card said "about 54%" while her Journey said "about 55%".
+    // card said "about 54%" while her Plan said "about 55%".
     const payload = isJsonObject(change.payload) ? change.payload : {};
 
     await prisma.planChange.update({

@@ -60,13 +60,13 @@ describe("a lesson played as a session block", () => {
 
     expect(outcome).toMatchObject({
       completion: {
-        // A right first answer (x1) and the first-completion bonus. Nothing was due and nothing
-        // needed fixing, so one mission was done: no bonus for all three.
+        // The lesson earns its own points; completing the day's only offered mission also pays
+        // the full completion bonus through the study block.
         brainPower: 2 + 10,
         studyBlock: {
           blockId: block?.id,
-          brainPower: 2 + 10,
-          fullMeal: { paid: false },
+          brainPower: 2 + 10 + 50,
+          fullMeal: { bonus: 50, paid: true },
           sessionBar: { completed: 1, total: 1 },
           sessionCompleted: true,
         },

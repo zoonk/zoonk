@@ -93,7 +93,7 @@ async function playLesson({
   });
 
   await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
-    completion: { brainPower: LESSON_POWER, fullMeal: { paid: false } },
+    completion: { brainPower: LESSON_POWER + BRAIN_POWER_BONUS.fullMeal, fullMeal: { paid: true } },
     status: "ready",
   });
 }
@@ -105,7 +105,7 @@ async function playPractice({ blockId, sessionId }: { blockId: string; sessionId
   expect(answers[0]).toMatchObject({ feedback: { mistakeFixed: true }, status: "ready" });
 
   await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
-    completion: { fullMeal: { paid: true }, sessionCompleted: true },
+    completion: { fullMeal: { paid: false }, sessionCompleted: true },
     status: "ready",
   });
 }
@@ -120,7 +120,7 @@ describe("study session blocks", () => {
     vi.useRealTimers();
   });
 
-  it("plays capsules, a lesson and a mistake fix into a full meal paid once", async () => {
+  it("pays a short day's review and lesson missions once, then finishes its mistake practice", async () => {
     const { lessons, mistake, session, user } = await setup();
     const [review, learn, practice] = session.blocks.map((block) => block.id);
 
