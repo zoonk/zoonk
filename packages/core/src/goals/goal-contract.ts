@@ -65,7 +65,13 @@ export const goalDraftSchema = z
       .min(1)
       .max(MAX_PROMPT_LENGTH)
       .meta({ description: "What the learner typed" }),
-    targetDate: z.iso.date().optional(),
+    targetDate: z.iso
+      .date()
+      .optional()
+      .meta({
+        description:
+          "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+      }),
     targetLanguage: languageSchema.optional().meta({ description: "The language being learned" }),
     title: z.string().trim().min(1).max(MAX_TITLE_LENGTH),
   })
@@ -115,7 +121,14 @@ export const goalUpdateInputSchema = z
       .meta({ description: "Pause, resume, archive or complete the goal" }),
     studyDays: studyDaysSchema.optional(),
     studyTime: studyTimeSchema.nullable().optional(),
-    targetDate: z.iso.date().nullable().optional(),
+    targetDate: z.iso
+      .date()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The goal's new deadline, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE). The goal's current date, even a passed one, can be sent again",
+      }),
     timeZone: timeZoneSchema.optional(),
     title: z.string().trim().min(1).max(MAX_TITLE_LENGTH).optional(),
     weekendMinutes: dailyMinutesSchema
@@ -148,7 +161,7 @@ export type GoalView = {
     ready: boolean;
     currentPhase: number | null;
     endDate: string | null;
-    /** Lessons studied, as the Journey's phases count them (`countLessonProgress`). */
+    /** Lessons studied, as the Plan's phases count them (`countLessonProgress`). */
     lessonsDone: number;
     /** Every lesson the plan teaches but those tested out. */
     lessonsTotal: number;

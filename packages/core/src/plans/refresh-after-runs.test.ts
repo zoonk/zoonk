@@ -244,6 +244,7 @@ describe("a session whose slower pace no longer fits this week", () => {
       "2020-10-01": 1,
       "2020-10-02": 1,
       "2020-10-03": 1,
+      "2020-10-04": 1,
     });
   });
 });

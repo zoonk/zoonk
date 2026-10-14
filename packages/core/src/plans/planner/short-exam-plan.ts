@@ -99,14 +99,24 @@ export function isLightDayBefore({
 
 export function mockEvent({
   date,
+  fullLength,
   minutes,
   replacesDay,
 }: {
   date: Date;
+  /** An exam's scheduled mock: all of its exam day, or half of it. Absent on a class test's. */
+  fullLength?: boolean;
   minutes: number;
   replacesDay: boolean;
 }): FixedEvent {
-  return { key: `mock:${toIsoDate(date)}`, kind: "mock", minutes, replacesDay, title: "" };
+  return {
+    key: `mock:${toIsoDate(date)}`,
+    kind: "mock",
+    minutes,
+    ...(fullLength === undefined ? {} : { mock: { fullLength } }),
+    replacesDay,
+    title: "",
+  };
 }
 
 function reviewEvent({ date, minutes }: { date: Date; minutes: number }): FixedEvent {
@@ -147,7 +157,7 @@ export function getShortExamEvents({
   shortMockMinutes: number | null;
 }): FixedEvent[] {
   if (isFirstPracticeDay && !shortMockMinutes) {
-    return [mockEvent({ date, minutes: mockMinutes, replacesDay: true })];
+    return [mockEvent({ date, fullLength: false, minutes: mockMinutes, replacesDay: true })];
   }
 
   if (isOnlyDay) {

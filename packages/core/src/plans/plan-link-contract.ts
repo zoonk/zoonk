@@ -12,7 +12,13 @@ const MAX_TITLE_LENGTH = 120;
 export const planLinkStartInputSchema = goalCreateInputSchema
   .pick({ dailyMinutes: true, studyDays: true, studyTime: true, timeZone: true })
   .extend({
-    targetDate: z.iso.date().optional().meta({ description: "The learner's own date, if any" }),
+    targetDate: z.iso
+      .date()
+      .optional()
+      .meta({
+        description:
+          "The learner's own date, if any: a day after their today, and at most 3,650 days after it (a later one is refused with 422 TARGET_DATE_OUT_OF_RANGE)",
+      }),
     title: z.string().trim().min(1).max(MAX_TITLE_LENGTH).optional(),
   })
   .strict()

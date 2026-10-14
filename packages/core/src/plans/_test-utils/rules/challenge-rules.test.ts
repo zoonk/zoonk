@@ -44,7 +44,7 @@ function moveFirstEnd({
   });
 }
 
-/** A learn phase with a name of its own, as the Journey shows it. */
+/** A learn phase with a name of its own, as the Plan shows it. */
 function namedPhase({ end, name, start }: { end: number; name: string; start: number }) {
   return { ...rulePhase({ end, start }), name };
 }

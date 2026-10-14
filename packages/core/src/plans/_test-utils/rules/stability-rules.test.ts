@@ -85,10 +85,29 @@ describe("R5 every change is recorded and said", () => {
     ).toStrictEqual([]);
   });
 
-  it("flags a topic that leaves the plan silently (Lucas's ecology topic)", () => {
-    expect(
-      checkChangesSaid(ruleContext({ after: withoutEcologia, before: withEcologia })),
-    ).toMatchObject([{ details: { topics: ["Natureza|ecologia"] }, rule: "R5" }]);
+  it.each(["refresh", "session", "outlinesLanded"] as const)(
+    "keeps a one-lesson automatic change quiet (%s)",
+    (kind) => {
+      expect(
+        checkChangesSaid(
+          ruleContext({ after: withoutEcologia, before: withEcologia, event: { kind } }),
+        ),
+      ).toStrictEqual([]);
+    },
+  );
+
+  it("flags a topic that leaves silently when more than one lesson moves", () => {
+    const before = rulePlan({
+      items: [
+        ...withEcologia.items,
+        ruleLesson({ day: 2, lessonId: "ecologia-2", skillId: "ecologia" }),
+      ],
+      skills,
+    });
+
+    expect(checkChangesSaid(ruleContext({ after: withoutEcologia, before }))).toMatchObject([
+      { details: { topics: ["Natureza|ecologia"] }, rule: "R5" },
+    ]);
   });
 
   it("flags a missed day's change that says the plan covers less without naming the topic", () => {
@@ -148,11 +167,17 @@ describe("R5 every change is recorded and said", () => {
 
     const unnamed = ruleChange({ effect: {}, kind: "coverageChanged", source: "system" });
 
-    expect(checkChangesSaid(ruleContext({ after, before, changes: [named] }))).toStrictEqual([]);
+    expect(
+      checkChangesSaid(
+        ruleContext({ after, before, changes: [named], event: { kind: "placement" } }),
+      ),
+    ).toStrictEqual([]);
 
-    expect(checkChangesSaid(ruleContext({ after, before, changes: [unnamed] }))).toMatchObject([
-      { details: { topics: ["Research|surveys"] }, rule: "R5" },
-    ]);
+    expect(
+      checkChangesSaid(
+        ruleContext({ after, before, changes: [unnamed], event: { kind: "placement" } }),
+      ),
+    ).toMatchObject([{ details: { topics: ["Research|surveys"] }, rule: "R5" }]);
   });
 
   it("flags a topic that comes in silently after placement", () => {

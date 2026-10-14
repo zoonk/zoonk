@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -11,6 +12,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
@@ -18,6 +20,7 @@ import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
+import { isResearchedCourseStart } from "./goal-research";
 import { findCourseGoalStart, startCourseGoal } from "./start-course-goal";
 
 /**
@@ -76,10 +79,11 @@ async function createChapter({
 }
 
 /**
- * A published course outlined in two bands: Overview with two chapters (the first closes with a
- * challenge through the skill only it is tagged with) and Beginner with one.
+ * A published course outlined in two bands so far: Overview with two chapters (the first closes
+ * with a challenge through the skill only it is tagged with) and Beginner with one. Its
+ * intermediate and advanced bands aren't written yet.
  */
-const ROBOTICS_OUTLINE: ChapterSpec[] = [
+const PARTIAL_ROBOTICS_OUTLINE: ChapterSpec[] = [
   {
     lessons: [["Sensors"], ["Motors"], []],
     level: "overview",
@@ -88,6 +92,13 @@ const ROBOTICS_OUTLINE: ChapterSpec[] = [
   },
   { lessons: [["Control loops"], ["Feedback"]], level: "overview", title: "How robots decide" },
   { lessons: [["Kinematics"]], level: "beginner", title: "Moving an arm" },
+];
+
+/** The same course with every band of its path to mastery written. */
+const ROBOTICS_OUTLINE: ChapterSpec[] = [
+  ...PARTIAL_ROBOTICS_OUTLINE,
+  { lessons: [["Path planning"]], level: "intermediate", title: "Planning a route" },
+  { lessons: [["Robot learning"]], level: "advanced", title: "Robots that learn" },
 ];
 
 /** A published course nobody outlined: enough wherever the outline is never read. */
@@ -101,15 +112,25 @@ async function outlinedCourse(
 ) {
   const course = await publicCourse(attrs);
 
-  const names = ["Sensors", "Motors", "Build a robot", "Control loops", "Feedback", "Kinematics"];
+  const names = [
+    "Sensors",
+    "Motors",
+    "Build a robot",
+    "Control loops",
+    "Feedback",
+    "Kinematics",
+    "Path planning",
+    "Robot learning",
+  ];
+
   const created = await Promise.all(names.map((name) => skillFixture({ name })));
   const skills = new Map(created.map((skill) => [skill.name, skill.id]));
 
   const chapters = await Promise.all(
-    specs.map((spec) =>
+    specs.map((spec, index) =>
       createChapter({
         courseId: course.id,
-        position: spec.level === "overview" ? specs.indexOf(spec) : 0,
+        position: specs.slice(0, index).filter((other) => other.level === spec.level).length,
         skills,
         spec,
       }),
@@ -156,7 +177,7 @@ describe(startCourseGoal, () => {
         details: { courseStart: { chapterId: null } },
         isActive: true,
         kind: "learn",
-        plan: { phaseCount: 2, ready: true },
+        plan: { phaseCount: 4, ready: true },
         primaryCourseId: course.id,
         prompt: "Robotics",
         title: "Robotics",
@@ -174,9 +195,20 @@ describe(startCourseGoal, () => {
         "Lesson on Control loops",
         "Lesson on Feedback",
         "Lesson on Kinematics",
+        "Lesson on Path planning",
+        "Lesson on Robot learning",
       ],
-      phases: ["Overview", "Beginner"],
-      skills: ["Sensors", "Motors", "Build a robot", "Control loops", "Feedback", "Kinematics"],
+      phases: ["Overview", "Beginner", "Intermediate", "Advanced"],
+      skills: [
+        "Sensors",
+        "Motors",
+        "Build a robot",
+        "Control loops",
+        "Feedback",
+        "Kinematics",
+        "Path planning",
+        "Robot learning",
+      ],
     });
   });
 
@@ -219,6 +251,7 @@ describe(startCourseGoal, () => {
       outlinedCourse({}, [
         ...ROBOTICS_OUTLINE.slice(0, 2),
         { lessons: [["Kinematics", "Motors"]], level: "beginner", title: "Moving an arm" },
+        ...ROBOTICS_OUTLINE.slice(3),
       ]),
       userFixture(),
     ]);
@@ -235,11 +268,19 @@ describe(startCourseGoal, () => {
       "Challenge: What robots are made of",
       "Lesson on Control loops",
       "Lesson on Feedback",
+      "Lesson on Path planning",
+      "Lesson on Robot learning",
     ]);
   });
 
+  // A chapter start is the learner's own choice of where to begin, so it plans from the chapters
+  // the course has even while later bands are still unwritten.
   it("starts the plan at a chapter, leaving the chapters before it out", async () => {
-    const [{ chapters, course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
+    const [{ chapters, course }, user] = await Promise.all([
+      outlinedCourse({}, PARTIAL_ROBOTICS_OUTLINE),
+      userFixture(),
+    ]);
+
     const decisions = chapters[1]?.id ?? "";
     mockSession(user.id);
 
@@ -249,11 +290,20 @@ describe(startCourseGoal, () => {
     });
 
     expect(result).toMatchObject({
-      goal: { dailyMinutes: 30, details: { courseStart: { chapterId: decisions } } },
+      goal: {
+        dailyMinutes: 30,
+        details: { courseStart: { chapterId: decisions, dailyMinutes: 30 } },
+      },
       status: "created",
     });
 
     const goalId = result.status === "created" ? result.goal.id : "";
+
+    // The time question opens on the time the course's page had, not one from the goal's size.
+    await expect(getOnboarding({ goalId })).resolves.toMatchObject({
+      onboarding: { examDays: null, recommendedMinutes: 30 },
+    });
+
     const plan = await readPlan(goalId);
 
     expect(plan.phases).toStrictEqual(["Overview", "Beginner"]);
@@ -311,7 +361,7 @@ describe(startCourseGoal, () => {
 
     const goal = await goalFixture({
       details: {
-        answered: ["level", "schedule", "age", "memory", "buddy", "placement"],
+        answered: ["targetDate", "level", "schedule", "age", "memory", "buddy", "placement"],
         courseStart: { chapterId: null },
       },
       primaryCourseId: course.id,
@@ -341,7 +391,7 @@ describe(startCourseGoal, () => {
     });
 
     const plan = await readPlan(result.status === "created" ? result.goal.id : "");
-    expect(plan.phases).toStrictEqual(["Visão geral", "Iniciante"]);
+    expect(plan.phases).toStrictEqual(["Visão geral", "Iniciante", "Intermediário", "Avançado"]);
   });
 
   it("leaves a course nobody outlined yet to the goal's first run", async () => {
@@ -367,6 +417,169 @@ describe(startCourseGoal, () => {
       hasPlanGraph: false,
       startedCourse: { id: course.id, ownerId: null, title: "Astronomy" },
     });
+  });
+
+  // The second learner on a course one goal outlined only in part got a plan of the bands that
+  // existed, so the levels the first learner skipped never reached them.
+  it("leaves a later learner's plan to the goal's own graph while the course misses a level", async () => {
+    const [{ course }, user] = await Promise.all([
+      outlinedCourse({}, PARTIAL_ROBOTICS_OUTLINE),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: { level: "basic" } });
+    const goalId = result.status === "created" ? result.goal.id : "";
+
+    expect(result).toMatchObject({
+      goal: { plan: { ready: false }, primaryCourseId: course.id },
+      status: "created",
+    });
+
+    await expect(prisma.planItem.count({ where: { plan: { goalId } } })).resolves.toBe(0);
+
+    await expect(loadGoalCurriculumInputs(goalId)).resolves.toMatchObject({
+      hasPlanGraph: false,
+      startedCourse: { id: course.id, ownerId: null, title: "Robotics" },
+    });
+  });
+
+  // A band whose chapters teach nothing yet made a phase of its own: a checkpoint with nothing to
+  // check.
+  it("makes phases only of the bands that teach something", async () => {
+    const [{ chapters, course }, user] = await Promise.all([
+      outlinedCourse({}, [
+        ...PARTIAL_ROBOTICS_OUTLINE,
+        { lessons: [], level: "intermediate", title: "Planning a route" },
+      ]),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({
+      courseId: course.id,
+      input: { chapterId: chapters[0]?.id ?? "" },
+    });
+
+    const plan = await readPlan(result.status === "created" ? result.goal.id : "");
+    expect(plan.phases).toStrictEqual(["Overview", "Beginner"]);
+  });
+
+  it.each(["running", "failed"] as const)(
+    "leaves the plan to the goal's run while the course's outline is %s",
+    async (outlineStatus) => {
+      const [{ course }, user] = await Promise.all([
+        outlinedCourse({ outlineStatus }),
+        userFixture(),
+      ]);
+
+      mockSession(user.id);
+
+      const result = await startCourseGoal({ courseId: course.id, input: {} });
+
+      expect(result).toMatchObject({ goal: { plan: { ready: false } }, status: "created" });
+    },
+  );
+
+  // A chapter is placed before its lessons are saved: one whose lessons never landed doesn't teach
+  // its part of the band.
+  it("leaves the plan to the goal's run while a chapter's lessons haven't landed", async () => {
+    const [{ course }, user] = await Promise.all([
+      outlinedCourse({}, [
+        ...ROBOTICS_OUTLINE,
+        { lessons: [], level: "advanced", title: "Robots that see" },
+      ]),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: {} });
+
+    expect(result).toMatchObject({ goal: { plan: { ready: false } }, status: "created" });
+  });
+
+  // An exam course's stored exam names what the course spans: an outline that teaches only part of
+  // it gave the learner a plan with the rest of the exam missing.
+  it.each([
+    ["teaches every skill its exam gives it", ["Sensors", "Kinematics"], "course", true],
+    [
+      "misses a skill its exam gives it",
+      ["Sensors", "Kinematics", "Path planning"],
+      "course",
+      false,
+    ],
+    // A graph of one course often names no course: its skills are still this course's to teach.
+    ["misses a skill its exam names for no course", ["Sensors", "Path planning"], "none", false],
+    // An exam course its graph names nowhere is the whole exam (pt ENEM's gives every skill to a
+    // subject course): the whole graph is what it spans.
+    ["teaches the whole exam its graph gives other courses", ["Sensors"], "other", true],
+    [
+      "misses a skill of the whole exam its graph gives other courses",
+      ["Sensors", "Path planning"],
+      "other",
+      false,
+    ],
+  ] as const)(
+    "plans an exam course from its outline only when it %s",
+    async (_label, examSkills, attribution, ready) => {
+      const [{ course, skills }, user, blueprint] = await Promise.all([
+        outlinedCourse({ format: "exam" }, PARTIAL_ROBOTICS_OUTLINE),
+        userFixture(),
+        examBlueprintFixture({ name: "Robotics exam" }),
+      ]);
+
+      await prisma.examSkillGraph.create({
+        data: {
+          examBlueprintId: blueprint.id,
+          generatedAt: NOW,
+          graph: {
+            phases: [{ milestone: null, name: "Exam" }],
+            skills: examSkills.map((name) => ({
+              area: null,
+              ...(attribution === "none"
+                ? {}
+                : { courseIds: [attribution === "course" ? course.id : randomUUID()] }),
+              lessons: 1,
+              name,
+              phase: 0,
+              skillId: skills.get(name) ?? "",
+              weight: null,
+            })),
+          },
+          model: "test",
+          primaryCourseId: course.id,
+          promptVersion: "test",
+          runId: randomUUID(),
+        },
+      });
+
+      mockSession(user.id);
+
+      const result = await startCourseGoal({ courseId: course.id, input: {} });
+
+      expect(result).toMatchObject({
+        goal: { examBlueprintId: blueprint.id, kind: "exam", plan: { ready } },
+        status: "created",
+      });
+    },
+  );
+
+  it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
+    const [course, user] = await Promise.all([
+      publicCourse({ format: "exam", title: "OAB" }),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: {} });
+    const goal = result.status === "created" ? result.goal : null;
+
+    expect(goal).toMatchObject({ examBlueprintId: null, kind: "exam", primaryCourseId: course.id });
+    expect(goal && isResearchedCourseStart(goal)).toBe(true);
   });
 
   it("only lets the owner start a private course, and nobody an unlisted one", async () => {
@@ -397,6 +610,40 @@ describe(startCourseGoal, () => {
       { status: "created" },
     );
   });
+
+  it.each([false, true])(
+    "rejects another learner's private start without writes (published: %s)",
+    async (isPublished) => {
+      const [owner, other] = await Promise.all([userFixture(), userFixture()]);
+      const course = await courseFixture({ isPublished, userId: owner.id, visibility: "private" });
+
+      mockSession(other.id);
+
+      await expect(
+        startCourseGoal({ courseId: course.id, input: { level: "basic" } }),
+      ).resolves.toStrictEqual({ status: "notFound" });
+
+      await expect(startCourseGoal({ courseId: randomUUID(), input: {} })).resolves.toStrictEqual({
+        status: "notFound",
+      });
+
+      mockGuestSession(other.id);
+
+      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toStrictEqual({
+        status: "notFound",
+      });
+
+      await expect(prisma.goal.count({ where: { userId: other.id } })).resolves.toBe(0);
+      await expect(prisma.plan.count({ where: { goal: { userId: other.id } } })).resolves.toBe(0);
+
+      mockSession(owner.id);
+
+      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+        goal: { primaryCourseId: course.id },
+        status: "created",
+      });
+    },
+  );
 
   it("refuses a chapter from another course", async () => {
     const [course, other, user] = await Promise.all([

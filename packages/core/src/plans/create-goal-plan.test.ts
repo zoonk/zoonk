@@ -688,7 +688,7 @@ describe(getGoalPlan, () => {
 
   /*
    * A plan's numbers used to be read at a pace sampled again on every read from other learners'
-   * recent lessons, so the plan reveal and the Journey, minutes apart, said different times for the
+   * recent lessons, so the plan reveal and the Plan, minutes apart, said different times for the
    * same plan. A read takes the pace the plan was saved with; only planning again takes a new one.
    */
   it("reads the plan at the pace it was saved with, however others' lessons went since", async () => {

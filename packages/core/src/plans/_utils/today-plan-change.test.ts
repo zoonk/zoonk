@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import {
   goalFixture,
   planChangeFixture,
@@ -106,6 +107,51 @@ describe(loadTodayPlanChange, () => {
     });
   });
 
+  // Lucas's Today, the day after his date: the settling that set aside what the date left said "11
+  // topics no longer fit by your date" over phase ends moved into the past. Today's day line says
+  // the date came and how the plan keeps going (status `pastDate`).
+  it("leaves a settling made once the goal's date came to the day line", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      targetDate: new Date("2026-10-04T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planChangeFixture({
+      createdAt: hoursAgo(2),
+      kind: "missedDays",
+      payload: {
+        behind: null,
+        days: 3,
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 0,
+          lessonsRemoved: 6,
+          topicsLeftOut: [{ area: "Física", topics: ["Incerteza"] }],
+        },
+        source: "system",
+      },
+      planId: plan.id,
+      status: "applied",
+    });
+
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
+
+    // Before its date the same settling is news.
+    const ahead = await prisma.goal.update({
+      data: { targetDate: new Date("2026-10-20T00:00:00Z") },
+      where: { id: goal.id },
+    });
+
+    await expect(loadTodayPlanChange({ goal: ahead, now: NOW })).resolves.toMatchObject({
+      kind: "missedDays",
+    });
+  });
+
   // Missed days and a pause that leave topics out of the plan are news, even on track: Today names
   // the topics they move.
   it.each(["missedDays", "resumed"] as const)(
@@ -152,6 +198,37 @@ describe(loadTodayPlanChange, () => {
     },
   );
 
+  it.each([
+    { added: 0, removed: 0 },
+    { added: 0, removed: 1 },
+    { added: 1, removed: 0 },
+    { added: 4, removed: 4 },
+  ])(
+    "keeps a legacy small estimate notice quiet ($added added, $removed removed)",
+    async ({ added, removed }) => {
+      const { goal, plan } = await setup();
+
+      await planChangeFixture({
+        createdAt: hoursAgo(1),
+        kind: "estimateUpdated",
+        payload: {
+          effect: {
+            endDateAfter: null,
+            endDateBefore: null,
+            lessonsAdded: added,
+            lessonsRemoved: removed,
+            topicsLeftOut: [{ area: "Science", topics: ["Ecology"] }],
+          },
+          source: "system",
+        },
+        planId: plan.id,
+        status: "applied",
+      });
+
+      await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
+    },
+  );
+
   it("carries the newest automatic change of the last day until it's seen", async () => {
     const { goal, plan } = await setup();
 
@@ -167,7 +244,8 @@ describe(loadTodayPlanChange, () => {
         planId: plan.id,
         status: "applied",
       }),
-      // The learner's own edit, a sharper estimate and an older change say nothing new.
+      // The learner's own edit, a closer estimate with no reason to say and an older change say
+      // nothing new.
       planChangeFixture({
         createdAt: hoursAgo(2),
         kind: "edited",

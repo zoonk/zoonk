@@ -28,7 +28,7 @@ async function readPhases(planId: string): Promise<Phase[]> {
 /*
  * Walk: Ana moved ENEM from 400 days away to 36, two weeks into her foundations. The exam's
  * phases were laid out again from the plan's start, so her foundations had ended two days earlier
- * with 4 of their lessons done, and Journey showed them finished.
+ * with 4 of their lessons done, and Plan showed them finished.
  */
 describe("an exam moved closer while the learner is in a phase", () => {
   beforeEach(() => {

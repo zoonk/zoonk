@@ -50,7 +50,7 @@ export async function loadChapterTaughtLessons({
   /** The courses the goal learns its skills in; skills left out take chapters from any course. */
   skillCourses?: SkillCourses;
   skillIds: readonly string[];
-  userId: string;
+  userId: string | null;
   /** Chapter challenges are for learn goals; exam and language plans leave them out. */
   withChallenges: boolean;
   /** False for an exam answered without tools: chapters that need one teach beyond it. */

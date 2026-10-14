@@ -39,7 +39,17 @@ function firstPart(exam: ListeningExam) {
 }
 
 /** A stored set of the exam's first part with one question; voiced unless said otherwise. */
-async function partSet({ exam, voiced = true }: { exam: ListeningExam; voiced?: boolean }) {
+async function partSet({
+  createdAt,
+  exam,
+  id,
+  voiced = true,
+}: {
+  createdAt?: Date;
+  exam: ListeningExam;
+  id?: string;
+  voiced?: boolean;
+}) {
   const [skill, media] = await Promise.all([skillFixture(), voiced ? mediaAssetFixture() : null]);
 
   const set = await listeningSetFixture({
@@ -48,7 +58,9 @@ async function partSet({ exam, voiced = true }: { exam: ListeningExam; voiced?: 
       scriptLanguage: exam.scriptLanguage,
       task: firstPart(exam).task,
     },
+    createdAt,
     examBlueprintId: exam.blueprintId,
+    id,
     mediaAssetId: media?.id ?? null,
   });
 
@@ -183,8 +195,8 @@ describe(pickListeningSets, () => {
   it("plays unheard sets first, oldest first, then the one heard longest ago, and asks for more", async () => {
     const { goal, user } = await listeningGoalFixture();
     const exam = await loadExam(goal.id);
-    const older = await partSet({ exam });
-    const newer = await partSet({ exam });
+    const older = await partSet({ createdAt: new Date("2026-09-01T10:00:00Z"), exam });
+    const newer = await partSet({ createdAt: new Date("2026-09-02T10:00:00Z"), exam });
 
     const pick = () =>
       pickListeningSets({
@@ -212,6 +224,34 @@ describe(pickListeningSets, () => {
     });
 
     await expect(pick()).resolves.toMatchObject([{ needsSet: true, setId: newer.set.id }, {}]);
+  });
+
+  it("breaks tied creation dates by ID for unheard sets and tied last answers", async () => {
+    const { goal, user } = await listeningGoalFixture();
+    const exam = await loadExam(goal.id);
+    const createdAt = new Date("2026-09-01T10:00:00Z");
+    const uniqueId = randomUUID();
+    const higher = await partSet({ createdAt, exam, id: `f${uniqueId.slice(1)}` });
+    const lower = await partSet({ createdAt, exam, id: `0${uniqueId.slice(1)}` });
+
+    const pick = () =>
+      pickListeningSets({
+        examBlueprintId: exam.blueprintId,
+        parts: exam.parts,
+        scriptLanguage: exam.scriptLanguage,
+        userId: user.id,
+      });
+
+    await expect(pick()).resolves.toMatchObject([{ needsSet: false, setId: lower.set.id }, {}]);
+
+    const answeredAt = new Date("2026-10-01T10:00:00Z");
+
+    await Promise.all([
+      attemptFixture({ answeredAt, itemId: higher.item.id, userId: user.id }),
+      attemptFixture({ answeredAt, itemId: lower.item.id, userId: user.id }),
+    ]);
+
+    await expect(pick()).resolves.toMatchObject([{ needsSet: true, setId: lower.set.id }, {}]);
   });
 
   it("voices a set whose voicing failed before writing another", async () => {

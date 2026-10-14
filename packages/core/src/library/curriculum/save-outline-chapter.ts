@@ -198,6 +198,21 @@ async function linkChapterGoalSkills({
   });
 }
 
+/** A chapter belongs to one area only when every tagged skill identifies that same area. */
+function getChapterArea({
+  chapter,
+  goalSkills,
+}: {
+  chapter: OutlineChapter;
+  goalSkills: readonly GoalSkillRef[];
+}): string | null {
+  const areas = new Set(
+    chapter.skillKeys.map((key) => goalSkills.find((skill) => skill.key === key)?.area ?? null),
+  );
+
+  return areas.size === 1 ? [...areas][0] || null : null;
+}
+
 /**
  * Puts one chapter of a course outline in the Library: the chapter itself (or the one identity
  * search found teaching the same scope), its place in the course's level band, the goal skills
@@ -225,6 +240,7 @@ export async function saveOutlineChapter({
 
   await Promise.all([
     attachChapterToCourse({
+      area: getChapterArea({ chapter, goalSkills: context.goalSkills }),
       chapterId,
       courseId: context.courseId,
       level: context.level,

@@ -238,7 +238,7 @@ describe("plan changes", () => {
   });
 
   // Pedro asked his buddy to add starting with little money: the change planned today again from
-  // scratch, so his session swapped its lesson for the earlier phase's, and his Journey went back a
+  // scratch, so his session swapped its lesson for the earlier phase's, and his Plan went back a
   // phase. A topic the learner adds comes after today's lessons, as its card says.
   it("keeps today's lessons when the learner adds a topic", async () => {
     const { goal, library, plan } = await setup();

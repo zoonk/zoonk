@@ -65,7 +65,11 @@ export async function wasLastDayStudied(
   );
 }
 
-/** Today's latest settling of what earlier days left (see `refreshGoalPlan`), or null. */
+/**
+ * Today's latest settling of what earlier days left, or null: a new day's (see `refreshGoalPlan`),
+ * or a goal's back from a pause, which planned the paused days' lessons first itself (see
+ * `computeResumedPlan`), so the day doesn't settle them again as missed days.
+ */
 async function loadTodaySettle(context: Pick<PlanContext, "plan" | "timeZone" | "today">) {
   const settled = await prisma.planChange.findFirst({
     orderBy: { createdAt: "desc" },
@@ -74,7 +78,7 @@ async function loadTodaySettle(context: Pick<PlanContext, "plan" | "timeZone" | 
       createdAt: {
         gte: getStartOfLocalDay({ localDate: context.today, timeZone: context.timeZone }),
       },
-      kind: "missedDays",
+      kind: { in: ["missedDays", "resumed"] },
       planId: context.plan.id,
     },
   });

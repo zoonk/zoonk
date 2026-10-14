@@ -57,7 +57,7 @@ describe(getKeptExamWindows, () => {
   /*
    * Walk: Ana moved ENEM from 400 days away to 36, two weeks into her foundations. Laid out from
    * the plan's start, the foundations ended two days earlier with 4 of its lessons done, and
-   * Journey showed it finished.
+   * Plan showed it finished.
    */
   it("keeps the phase the learner is in open when a new date would end it before today", () => {
     const windows = getKeptExamWindows({

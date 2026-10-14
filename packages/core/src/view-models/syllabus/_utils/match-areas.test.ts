@@ -29,7 +29,7 @@ describe(matchAreasToSubjects, () => {
     ).toStrictEqual(new Map([["Math", 1]]));
   });
 
-  // Dele's DELE B2 graph wrote one Spanish subject in Portuguese, and the Journey showed it twice.
+  // Dele's DELE B2 graph wrote one Spanish subject in Portuguese, and the Plan showed it twice.
   it("matches an area the graph wrote in another language's spelling of the subject", () => {
     const subjects = [
       { name: "Comprensión de lectura" },

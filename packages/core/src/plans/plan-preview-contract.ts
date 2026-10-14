@@ -30,7 +30,10 @@ export const planChangePreviewSchema = z
           }),
       })
       .nullable()
-      .meta({ description: "What the learner's time would cover; null while it's being built" }),
+      .meta({
+        description:
+          "What the learner's time would cover; null while it's being built, and for a resume that keeps the plan as it is",
+      }),
     ready: z
       .boolean()
       .meta({ description: "False while the plan is being built: ask again in a few seconds" }),

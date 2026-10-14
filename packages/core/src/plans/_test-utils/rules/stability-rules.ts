@@ -1,3 +1,4 @@
+import { SMALL_CHANGE_LESSONS } from "../../planner/plan-change-thresholds";
 import {
   type RuleContext,
   type RuleEvent,
@@ -13,6 +14,7 @@ import {
   listMissingItems,
   listMissingKeys,
   listPlannedTopics,
+  sumTodoLessons,
   toAreaTopicKey,
   toDay,
 } from "./rule-items";
@@ -54,13 +56,10 @@ function hasAppliedCard(context: RuleContext): boolean {
 }
 
 /**
- * R5. Every change is recorded and said: any step (placement, a session, a new day, a refresh, a
- * learner's change) that changes which notice topics the plan teaches records a change naming
- * each topic that leaves or comes in, a missed day's included (saying the plan covers less isn't
- * naming them). A goal whose graph maps no notice topics names the skills instead (see
- * `getSkillTopics`). A learner's change with a card is R3's. A tested-out item keeps a topic in
- * the plan but never brings one in: a skill out for time that a right answer settles gets a
- * tested-out stand-in so no re-plan brings it back, and its test-out announces that.
+ * R5. Changes name the topics they move, including placement, missed days, and learner actions.
+ * Automatic re-estimates after a session, refresh, or written lessons stay quiet when the net
+ * seen lesson count moves by at most the shared threshold. Tested-out items keep their topics
+ * in the plan; their test-out announces what was skipped. A learner's applied card is R3's.
  */
 export function checkChangesSaid(context: RuleContext): RuleViolation[] {
   const { after, before, event } = context;
@@ -74,6 +73,22 @@ export function checkChangesSaid(context: RuleContext): RuleViolation[] {
     (event.kind === "learnerChange" && event.setBack)
   ) {
     return [];
+  }
+
+  if (SYSTEM_EVENTS.has(event.kind) || event.kind === "session") {
+    // Progress already settled these items before the automatic refresh compares its saved count.
+    const settled = new Set(
+      after.items
+        .filter((item) => item.status === "done" || item.status === "testedOut")
+        .map((item) => getRuleItemKey(item)),
+    );
+
+    const stillToDo = before.items.filter((item) => !settled.has(getRuleItemKey(item)));
+    const net = sumTodoLessons(after.items) - sumTodoLessons(stillToDo);
+
+    if (Math.abs(net) <= SMALL_CHANGE_LESSONS) {
+      return [];
+    }
   }
 
   const [was, now] = [listPlannedTopics(before), listPlannedTopics(after)];

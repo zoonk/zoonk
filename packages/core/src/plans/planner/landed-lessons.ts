@@ -31,7 +31,7 @@ export type LandedUnits = ReadonlyMap<string, readonly QueueUnit[]>;
  * the ones its cut left out, which an OAB plan's day-one landing read as written since. It does
  * when the run's only news is its lessons (`heldSkillsLand`): then they're its next chapter. A
  * lesson the plan holds keeps the chapter it holds it in, which a landing's outline can place it
- * in too.
+ * in too. A stand-in after the exam doesn't land: no day before it holds its time.
  */
 export function findLanding(input: BuildPlanInput): Landing | null {
   const planned = new Set(input.items.flatMap((item) => item.lessonId ?? []));
@@ -42,9 +42,19 @@ export function findLanding(input: BuildPlanInput): Landing | null {
       : input.items.flatMap((item) => (item.lessonId && item.skillId ? [item.skillId] : [])),
   );
 
+  // A stand-in after the exam, in a plan that goes on past it (see `continueAfterExam`), holds no
+  // time the plan's days before the exam lay out: its lessons are planned there as any others.
+  const { targetDate } = input.goal;
+
+  const isAfterExam = (item: (typeof input.items)[number]) =>
+    targetDate !== null && item.scheduledFor !== null && item.scheduledFor > targetDate;
+
   const standIns = new Set(
     input.items.flatMap((item) =>
-      item.status === "todo" && isStandInItem(item) && !written.has(item.skillId ?? "")
+      item.status === "todo" &&
+      isStandInItem(item) &&
+      !written.has(item.skillId ?? "") &&
+      !isAfterExam(item)
         ? [item.skillId ?? ""]
         : [],
     ),

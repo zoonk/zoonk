@@ -206,7 +206,24 @@ describe("an adult's exam plan after placement", () => {
       lessonsOn({ date: toIsoDate(new Date(time ?? 0)), items: plan.items }),
     );
 
-    expect(days.every((day) => runsOf(day).length <= 2)).toBe(true);
+    // Two subjects a day, in a block each; a subject that runs out of lessons gives the rest of its
+    // day to the next one due (see `fillRest`), so a third block only follows subjects that end.
+    const lessonDays = plan.items.flatMap((item) =>
+      item.kind === "lesson" && item.status === "todo" && item.scheduledFor
+        ? [{ area: areaOf(item), date: toIsoDate(item.scheduledFor) }]
+        : [],
+    );
+
+    const endsOn = (area: string, date: string) =>
+      lessonDays.every((lesson) => lesson.area !== area || lesson.date <= date);
+
+    expect(
+      studyDays.every((time, index) => {
+        const date = toIsoDate(new Date(time ?? 0));
+        const runs = runsOf(days[index] ?? []);
+        return runs.length <= 2 || runs.slice(0, -1).every((area) => endsOn(area, date));
+      }),
+    ).toBe(true);
 
     const firstWeek = ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"];
 

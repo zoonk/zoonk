@@ -95,11 +95,20 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
 
     expect(countOutcomeLessons(settled)).toBe(14);
 
-    const challengeDays = settled.items.flatMap((item) =>
-      item.kind === "boss" && item.scheduledFor ? [[item.phase, item.scheduledFor]] : [],
-    );
+    // Each kept end holds its challenge unless the missed day pushed a lesson it tests onto that day
+    // or later: then the challenge comes the study day after it (see `keepPhaseEnd`), never before.
+    for (const [phase, end] of phaseEnds) {
+      const boss = settled.items.find((item) => item.kind === "boss" && item.phase === phase);
 
-    expect(challengeDays).toStrictEqual(expect.arrayContaining([...phaseEnds]));
+      const last = settled.items
+        .filter((item) => item.kind === "lesson" && item.phase <= phase && item.scheduledFor)
+        .reduce((latest, item) => Math.max(latest, item.scheduledFor?.getTime() ?? 0), 0);
+
+      const held = last < end.getTime();
+      const day = boss?.scheduledFor?.getTime();
+
+      expect(day).toBe(held ? end.getTime() : addDays(new Date(last), 1).getTime());
+    }
   });
 });
 

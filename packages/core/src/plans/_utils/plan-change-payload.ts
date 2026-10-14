@@ -6,11 +6,11 @@ import { planGraphSchema } from "../planner/plan-state";
 /**
  * What happened to a plan. `edited`: the learner or a proposal changed how it's shaped (undoable).
  * `testedOut`: placement or a test-out skipped lessons (undoable). `missedDays`: lessons earlier
- * days left came first and the rest moved forward. `estimateUpdated`: the pace estimate got more
- * precise. `resumed`: a paused goal started again from today. `relearn`: a miss in practice on a
+ * days left came first and the rest moved forward. `estimateUpdated`: the lesson count changed
+ * by more than the shared threshold as pace data or written lessons changed its estimates.
+ * `resumed`: a paused goal started again from today. `relearn`: a miss in practice on a
  * topic the learner was taken to know brought its lessons back (`effect.topicsAdded` names it).
- * `coverageChanged`: planned again as lessons were written or the learner studied, the plan
- * teaches other topics by its date (`effect.topicsLeftOut` and `effect.topicsAdded` name them).
+ * `coverageChanged`: placement answers changed which topics fit by the date (`effect.topicsLeftOut` and `effect.topicsAdded` name them).
  */
 const PLAN_CHANGE_KINDS = [
   "coverageChanged",
@@ -106,17 +106,23 @@ const planChangePayloadSchema = z.object({
     .default(null),
   /**
    * For `missedDays`: the plan items earlier days left, which the new day settled first: while they
-   * aren't done, the learner is catching up (see `loadCatchUpItems`). For `relearn`: the lessons a
-   * miss brought back, which later runs that day keep first too (see `loadPlanCarryOver`).
+   * aren't done, the learner is catching up (see `loadCatchUpItems`). For `resumed`: those a pause
+   * left, which the resume settled first the same way, without being behind. For `relearn`: the
+   * lessons a miss brought back, which later runs that day keep first too (see `loadPlanCarryOver`).
    */
   carriedItemIds: z.array(z.string()).default([]),
   /** For `missedDays`: the earlier days that left lessons, now first on the plan. */
   days: z.int().nullable().default(null),
   effect: planEffectSchema.nullable().default(null),
   /**
+   * The change waited for the learner's OK and they applied it (a proposal): undoing it puts it
+   * back to waiting, as it was before Apply (see `undoChange`).
+   */
+  fromProposal: z.boolean().default(false),
+  /**
    * For `testedOut`: the lessons it skipped as every screen counts them (`countLessons`, a stand-in
    * the lessons the plan taught in its place), so Today's "We skipped 235 lessons you already know"
-   * adds up with the Journey's subjects. Null on changes saved before it was kept: one per item.
+   * adds up with the Plan's subjects. Null on changes saved before it was kept: one per item.
    */
   lessonsSkipped: z.int().min(0).nullable().default(null),
   /**

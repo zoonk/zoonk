@@ -116,6 +116,8 @@ async function setup(
   const [missed, frequent, ordinary, studied] = library.skills as [Skill, Skill, Skill, Skill];
 
   const { goal, plan } = await unplannedGoalFixture({
+    // PostgreSQL's default clock is real; the free week must start on this fixture's frozen day.
+    createdAt: TODAY,
     dailyMinutes,
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
@@ -549,6 +551,7 @@ describe("a free learner's known topic after the exam plan's first week", () => 
     );
 
     expect(kinds).not.toContain("practice");
+    expect(kinds).not.toContain("checkpoint");
     expect(itemsOf(ordinary).some((item) => asked.has(item.id))).toBe(true);
 
     // The syllabus says so: a known topic comes back in the reviews, not in practice.

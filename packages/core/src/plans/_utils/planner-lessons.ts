@@ -29,7 +29,7 @@ async function loadLessons({
 }: {
   skillCourses: SkillCourses;
   skillIds: string[];
-  userId: string;
+  userId: string | null;
   /** False for an exam answered without tools: lessons only chapters that need one hold stay out. */
   withToolChapters: boolean;
 }): Promise<PlannerLesson[]> {
@@ -51,6 +51,7 @@ async function loadLessons({
               chapterId: true,
               position: true,
             },
+            where: { chapter: libraryRowsVisibleTo(userId) },
           },
           createdAt: true,
           estimatedMinutes: true,
@@ -143,7 +144,7 @@ export async function loadSkillLessons({
   /** The courses the goal learns its skills in; skills left out take lessons from any course. */
   skillCourses?: SkillCourses;
   skillIds: string[];
-  userId: string;
+  userId: string | null;
 }): Promise<PlannerLesson[]> {
   const withToolChapters = await goalUsesTools(goal);
 
@@ -176,7 +177,7 @@ async function withGoalCourse({
   primaryCourseId: string | null;
   skillCourses: SkillCourses;
   skillIds: string[];
-  userId: string;
+  userId: string | null;
 }): Promise<SkillCourses> {
   const unlisted = skillIds.filter((skillId) => !skillCourses.has(skillId));
 
@@ -222,7 +223,7 @@ export async function loadGoalPlannerLessons({
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
-  userId: string;
+  userId: string | null;
 }): Promise<PlannerLesson[]> {
   const skillIds = graph.skills.map((skill) => skill.skillId);
 

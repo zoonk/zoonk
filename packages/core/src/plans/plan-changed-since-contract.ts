@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * What a screen waiting on lessons watches: the plan alone (the Journey), or the plan and the
+ * What a screen waiting on lessons watches: the plan alone (the Plan), or the plan and the
  * recent sessions too (Today).
  */
 export const planWatchSchema = z

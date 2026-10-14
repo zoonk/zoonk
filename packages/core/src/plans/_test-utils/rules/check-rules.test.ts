@@ -46,7 +46,6 @@ describe(checkRules, () => {
     });
 
     expect(checkRules(context).map((violation) => violation.rule)).toStrictEqual([
-      "R5",
       "R14",
       "R21",
       "R27",

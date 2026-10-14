@@ -88,7 +88,7 @@ describe(chooseBases, () => {
 
   it("brings in more of what the exam asks most with the time a quick lesson frees", () => {
     expect(keptTopics(examInput({ choice: null, dailyMinutes: 5 }))).toStrictEqual(["a", "d"]);
-    expect(keptTopics(examInput({ choice: null, dailyMinutes: 6 }))).toStrictEqual(["a", "b", "d"]);
+    expect(keptTopics(examInput({ choice: null, dailyMinutes: 8 }))).toStrictEqual(["a", "b", "d"]);
 
     // The first topic cut fits in part, from its base on.
     expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 5 }))).toStrictEqual([
@@ -97,12 +97,17 @@ describe(chooseBases, () => {
       "d",
     ]);
 
-    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 6 }))).toStrictEqual([
+    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 8 }))).toStrictEqual([
       "a",
       "b",
       "c",
       "d",
     ]);
+
+    // Six minutes covers only part of the selected eight-lesson base, not another third of it.
+    const partial = examInput({ choice: null, dailyMinutes: 6 });
+    expect(baseMinutes(partial)).toBeLessThan(32);
+    expect(keptTopics(partial)).toStrictEqual(["a", "d"]);
   });
 
   it("studies a base in depth with the time everything else leaves", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { choosePace, isMorePrecise } from "./plan-pace";
+import { choosePace } from "./plan-pace";
 
 describe(choosePace, () => {
   it("uses the learner's own pace once they finished enough lessons, more of it as they finish more", () => {
@@ -49,16 +49,5 @@ describe(choosePace, () => {
     expect(choosePace({ course: null, own: { count: 9, ratio: 7 }, typical: null }).factor).toBe(
       2.5,
     );
-  });
-});
-
-describe(isMorePrecise, () => {
-  it("is true only when the pace comes from a closer source than before", () => {
-    const own = { factor: 1, source: "own" } as const;
-    const course = { factor: 1, source: "course" } as const;
-
-    expect(isMorePrecise({ next: own, previous: course })).toBe(true);
-    expect(isMorePrecise({ next: course, previous: own })).toBe(false);
-    expect(isMorePrecise({ next: own, previous: null })).toBe(false);
   });
 });

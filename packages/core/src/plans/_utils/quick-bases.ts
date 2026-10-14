@@ -40,7 +40,10 @@ export async function loadQuickBaseLessons(
   }
 
   const refs = await findQuickLessons({ skillIds });
-  return new Map([...refs].map((entry) => toPlannerLesson(entry)));
+
+  return new Map(
+    [...refs].toSorted(([a], [b]) => a.localeCompare(b)).map((entry) => toPlannerLesson(entry)),
+  );
 }
 
 /**

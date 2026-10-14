@@ -18,6 +18,7 @@ import { loadSkillAreas } from "./_utils/mock-candidates";
 import { buildMockConditions } from "./_utils/mock-conditions";
 import { loadMockEssayItems, loadMockEssayViews } from "./_utils/mock-essays";
 import { loadMockItems, toMockQuestionView } from "./_utils/mock-items";
+import { loadMockMissionMoment } from "./_utils/mock-mission-moment";
 import { getSectionPlace } from "./_utils/mock-navigation";
 import { countFinishedMocksBefore } from "./_utils/mock-number";
 import { listSectionPlays } from "./_utils/mock-plays";
@@ -163,7 +164,7 @@ function getStatus(mock: MockSitting | null): MockView["status"] {
     return "ready";
   }
 
-  return mock.status === "finished" ? "finished" : "running";
+  return mock.status === "active" ? "running" : mock.status;
 }
 
 async function loadFinished({
@@ -253,7 +254,7 @@ function describeOwner({
  * One of the learner's mock exams, by the id it opens by (its session block's, or its own for a
  * mock taken any time): the exam's conditions before it starts, the running section with its
  * deadline and drafts (never the answers), and after it, what it showed with the questions to
- * review.
+ * review. One whose time ran out while the learner was away is `expired`, with nothing to show.
  */
 export async function getMock(blockId: string): Promise<MockViewResult> {
   const found = await findOwnedMock(blockId);
@@ -271,13 +272,14 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
   const breakUntil =
     running && running.sectionStartedAt.getTime() > Date.now() ? running.sectionStartedAt : null;
 
-  const [number, current, finished, canMove, typed, speaking] = await Promise.all([
+  const [number, current, finished, canMove, typed, speaking, missionMoment] = await Promise.all([
     getMockNumber(owned),
     running && !breakUntil ? loadCurrentSection({ areas, mock: running }) : null,
     loadFinished({ areas, conditions, owned }),
     canMoveMock(owned),
     loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
     loadMockSpeaking(conditions),
+    loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
   ]);
 
   return {
@@ -295,6 +297,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       examQuestions: conditions.examQuestions,
       fullLength: conditions.fullLength,
       minutes: conditions.sections.reduce((sum, section) => sum + section.minutes, 0),
+      missionMoment,
       mistakes: finished.mistakes,
       number,
       planItemId: owned.payload.planItemId,

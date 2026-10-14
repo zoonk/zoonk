@@ -179,9 +179,11 @@ describe("an area the learner wants less of", () => {
     );
   });
 
+  // 12 minutes a day fit 15 lessons by the exam. At 10, funding the mock without the teaching its
+  // phase challenge tests leaves room for 14, and both plans keep the same seven of Math there.
   it("gives an exam's subject fewer of its lessons when time is short", () => {
     const short = {
-      dailyMinutes: 10,
+      dailyMinutes: 12,
       kind: "exam" as const,
       targetDate: fromIsoDate("2026-10-20"),
     };

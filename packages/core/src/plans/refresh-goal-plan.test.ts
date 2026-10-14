@@ -136,6 +136,10 @@ describe(refreshGoalPlan, () => {
 
     expect(after.phases).not.toStrictEqual([]);
     expect(lessons.map((item) => item.scheduledFor !== null)).toStrictEqual([true, true, true]);
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "estimateUpdated", planId: plan.id } }),
+    ).resolves.toBe(0);
   });
 
   it("keeps the chapter an unstarted lesson teaches from when the refresh moves it", async () => {
@@ -354,8 +358,8 @@ describe("test-outs on the plan", () => {
     expect(todoLessonIds).toContain(outlined[1]?.id);
   });
 
-  // Juliana's Today said "We skipped 49 lessons you already know" while her Journey's subjects
-  // added up to 235: the change counted rows, a stand-in as one, and the Journey its lessons.
+  // Juliana's Today said "We skipped 49 lessons you already know" while her Plan's subjects
+  // added up to 235: the change counted rows, a stand-in as one, and the Plan its lessons.
   it("counts a skip's lessons as the Journey does, and its undo forgets what it only assumed", async () => {
     const user = await userFixture();
 

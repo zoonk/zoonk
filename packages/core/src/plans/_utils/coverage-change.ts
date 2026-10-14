@@ -6,13 +6,7 @@ import { getSeenEffect } from "./seen-effect";
 /** A plain note for logs and admin; the apps say the change from its kind and topics. */
 const COVERAGE_NOTE = "Planned again, the plan teaches other topics by its date.";
 
-/**
- * A run the learner didn't ask for that changes which of the notice's topics the plan teaches says
- * so: lessons written longer or shorter than planned, the pace the learner's progress sets, or what
- * placement found, move what fits by the date, and Lucas's "Origin and evolution" left his plan
- * after his first lesson without a word. Today names the topics (`effect.topicsLeftOut`,
- * `effect.topicsAdded`). Null when every topic stays.
- */
+/** Placement's answers changed which topics fit; its notice names what moved. */
 export function getCoverageChange({
   computed,
   context,

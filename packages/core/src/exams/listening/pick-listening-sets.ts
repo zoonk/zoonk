@@ -92,7 +92,7 @@ export async function pickListeningSets({
   return Promise.all(
     parts.map(async (part) => {
       const sets = await prisma.itemSet.findMany({
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
         select: {
           id: true,
           items: {

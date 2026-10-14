@@ -8,7 +8,8 @@ import { type SyllabusItem } from "./syllabus-input";
  * A lesson tested out covers every skill it teaches: the ones its lesson names and, for a chapter
  * an outline tagged with several skills, all of them (the planner settles them all; see
  * `getSettledSkillIds`). A covered skill with no lesson of its own in the plan gets the tested-out
- * lesson as its own too, so its topics read as known, never as out of the plan.
+ * lesson as its own too (the same plan item), so its topics read as known, never as out of the
+ * plan; the goal's lessons count the item once (see `getSubjectProgress`).
  */
 export async function withTestedOutSkills({
   graphSkillIds,

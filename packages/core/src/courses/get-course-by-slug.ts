@@ -8,7 +8,11 @@ import { decodeRouteParam } from "../navigation/decode-route-param";
  * Caches one normalized public course route and tags the resolved resource so
  * route misses and course updates can both be invalidated precisely.
  */
-async function getCachedCourse(params: { brandSlug: string; courseSlug: string }) {
+async function getCachedCourse(params: {
+  brandSlug: string;
+  courseSlug: string;
+  version: string | null;
+}) {
   "use cache";
   cacheTag(getCourseRouteCacheTag(params));
 
@@ -25,12 +29,29 @@ async function getCachedCourse(params: { brandSlug: string; courseSlug: string }
 }
 
 /**
- * Loads the public course identified by the brand and course slugs used in
- * catalog routes. Normalizing before the cached boundary makes encoded and
- * decoded versions of the same route share one cache entry.
+ * Includes the fresh version check in runtime prefetches and same-request reuse. Keeping it
+ * private makes each new request check writes from apps whose tag expiry cannot reach this cache.
+ */
+async function getCurrentCourse(params: { brandSlug: string; courseSlug: string }) {
+  "use cache: private";
+
+  const current = await prisma.course.findFirst({
+    select: { id: true, updatedAt: true },
+    where: getCourseRouteWhere(params),
+  });
+
+  return getCachedCourse({
+    ...params,
+    version: current ? `${current.id}:${current.updatedAt.getTime()}` : null,
+  });
+}
+
+/**
+ * Loads the public course identified by the brand and course slugs used in catalog routes.
+ * Normalizing before both cache boundaries lets encoded and decoded routes share their entries.
  */
 export async function getCourse(params: { brandSlug: string; courseSlug: string }) {
-  return getCachedCourse({
+  return getCurrentCourse({
     brandSlug: decodeRouteParam(params.brandSlug),
     courseSlug: decodeRouteParam(params.courseSlug),
   });

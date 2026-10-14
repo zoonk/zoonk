@@ -27,7 +27,7 @@ function getSteeredAreas(operations: readonly PlanOperation[]): string[] | null 
  * The areas whose lessons today plans again after a change (see `CarryOver`): the ones a change of
  * focus gives less time to (see `getSteeredAreas`), and none for a change that only adds topics,
  * whose lessons come after today's, from the day its card says. Planned again from scratch, Pedro's
- * added topic swapped today's lesson for the earlier phase's, and his Journey went back a phase.
+ * added topic swapped today's lesson for the earlier phase's, and his Plan went back a phase.
  * Null for any other change, which plans today again from scratch.
  */
 export function getTodayExceptAreas(operations: readonly PlanOperation[]): string[] | null {
@@ -45,12 +45,19 @@ export function getTodayExceptAreas(operations: readonly PlanOperation[]): strin
  * after it is planned the same way, to compare (see `askPhaseDatesAfterChange`): planned with
  * today's time open again, it fitted a phase's lessons before its challenge, so Today didn't ask
  * while the plan the change saved held two of them after it (career 2107).
+ * A weekly-event move alone keeps every shown phase end and leaves work set aside out of the plan.
  */
 export function getChangePlanning(operations: readonly PlanOperation[]) {
+  // Moving one weekly event isn't permission to change the phase dates, including the last one,
+  // or bring unrelated work back. A faster learner's replan could otherwise end before the move.
+  const movesWeeklyOnly =
+    operations.length > 0 && operations.every((operation) => operation.kind === "moveWeeklyEvent");
+
   return {
-    bringBackSetAside: true,
-    keepPhaseDates: getSteeredAreas(operations) !== null,
-    mode: "forced" as const,
+    bringBackSetAside: !movesWeeklyOnly,
+    keepLastPhaseDate: movesWeeklyOnly,
+    keepPhaseDates: movesWeeklyOnly || getSteeredAreas(operations) !== null,
+    mode: movesWeeklyOnly ? ("automatic" as const) : ("forced" as const),
     todayExceptAreas: getTodayExceptAreas(operations),
   };
 }

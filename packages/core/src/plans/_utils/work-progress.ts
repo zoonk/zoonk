@@ -34,7 +34,7 @@ type CountedLesson = Pick<
 >;
 
 /**
- * Lessons as every screen counts them, a phase's on the Journey and a plan's in the goal list: the
+ * Lessons as every screen counts them, a phase's on the Plan and a plan's in the goal list: the
  * ones studied, of every lesson the plan teaches but those tested out (off the plan, shown apart as
  * known). A stand-in counts the lessons the plan teaches in its place (`countItemLessons`).
  */

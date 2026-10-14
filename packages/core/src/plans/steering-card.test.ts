@@ -80,8 +80,10 @@ describe("a change of where to focus on a plan short on time", () => {
   // doesn't name, from 40 to 44 lessons, and the card said nothing (R2). Ethics already had every
   // lesson in, so the time strategy freed went to criminal procedure too.
   it("names on the card a subject it doesn't name whose lessons move by more than rounding", async () => {
+    // 25 minutes: at 20, each phase's 15-minute challenge and the weekly mock's funding (C2) left
+    // the plan only every area's core, with no depth for less exam strategy to give criminal law.
     const { after, before, result } = await changeShortExam({
-      dailyMinutes: 12,
+      dailyMinutes: 25,
       operations: [
         { areas: ["Ética"], kind: "focusAreas" },
         { areas: ["Estratégia"], kind: "reduceAreas" },
@@ -90,6 +92,8 @@ describe("a change of where to focus on a plan short on time", () => {
 
     const [was = 0, now = 0] = [before.get("Penal"), after.get("Penal")];
 
+    expect(before.get("Ética")).toBe(4);
+    expect(after.get("Ética")).toBe(4);
     expect(now - was).toBeGreaterThan(2);
 
     expect(result).toMatchObject({
@@ -103,7 +107,7 @@ describe("a change of where to focus on a plan short on time", () => {
   // which shares some of its depth with the area added beside it.
   it("applies an area added beside one focused before, the card naming what the earlier one gives", async () => {
     const { after, before, result } = await changeShortExam({
-      dailyMinutes: 15,
+      dailyMinutes: 20,
       operations: [{ areas: ["Penal", "Estratégia"], kind: "focusAreas" }],
       settings: { focusAreas: ["Penal"] },
     });

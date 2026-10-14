@@ -8,6 +8,7 @@ import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../../language/conversations/c
 import { listKnownSkillIds } from "../../../learner/placement/placement-known";
 import { getLessonLookahead, pickDayLessons } from "../../../sessions/_utils/day-lessons";
 import { getGoalDayMinutes } from "../../../sessions/_utils/day-minutes";
+import { markLessonsAroundChallenges } from "../../../sessions/_utils/lessons-before-challenges";
 import { getSkippedSkillIds } from "../../../sessions/_utils/review-skills";
 import { MIN_BLOCK_MINUTES } from "../../../sessions/session-builder";
 import { daysBetween, toIsoDate } from "../../planner/plan-calendar";
@@ -86,9 +87,10 @@ function listLessonMinutes(world: SimWorld): Map<string, number> {
 /**
  * The lessons a session build takes (`buildSessionBlocks`): the plan's next ones
  * (`pickDayLessons`, as many as the day looks ahead) the day doesn't hold yet, while they fit
- * `budget`, and on a challenge's first duel only those the plan has before the day's last one
- * (`markLessonsBeforeChallenges`). None on a review day or once a free exam plan's first days are
- * over. The library has no questions, so no reviews or practice take time from lessons.
+ * `budget`, and on a challenge's first duel only those the plan has before the day's last one or
+ * after it by today (`markLessonsAroundChallenges`). None on a review day or once a free exam
+ * plan's first days are over. The library has no questions, so no reviews or practice take time
+ * from lessons.
  */
 function takeSessionLessons({
   bosses,
@@ -112,7 +114,6 @@ function takeSessionLessons({
     return [];
   }
 
-  const lastBoss = Math.max(-1, ...bosses.map((boss) => boss.position));
   const heldIds = new Set(held);
 
   const { learnItems } = pickDayLessons({
@@ -128,9 +129,18 @@ function takeSessionLessons({
     },
   });
 
-  const lessons = learnItems
-    .slice(0, getLessonLookahead(getDayMinutes(world)))
-    .filter((item) => !firstDuel || item.position < lastBoss)
+  // The day's challenges as the session duels them, its lessons marked around them.
+  const marked = markLessonsAroundChallenges({
+    checkpoints: bosses.map((boss) => ({ kind: "boss", planItemId: boss.id, rematch: false })),
+    items: plan.items,
+    lessons: learnItems
+      .slice(0, getLessonLookahead(getDayMinutes(world)))
+      .map((item) => ({ ...item, planItemId: item.id })),
+    today,
+  });
+
+  const lessons = marked
+    .filter((item) => !firstDuel || item.beforeChallenge || item.afterChallenge)
     .flatMap((item) => (item.lessonId && !heldIds.has(item.lessonId) ? [item.lessonId] : []));
 
   const minutes = listLessonMinutes(world);
@@ -293,7 +303,7 @@ function findSessionBosses(world: Pick<SimWorld, "inputs" | "plan" | "today">) {
 
 /**
  * The first boss the learner reached, then any later phase's whose day came too, earlier phase
- * first (`findSessionBosses` in load-boss.ts).
+ * first (`findSessionBosses` in boss-reached.ts).
  */
 function findBosses(items: SimPlan["items"], today: Date) {
   const first = findReachedBoss(items, today);

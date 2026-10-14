@@ -7,7 +7,20 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
+import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getPlanTabView } from "./get-plan-view";
+
+/** Each phase's state on the active goal's plan. */
+async function readStates() {
+  const result = await getPlanTabView();
+  return result.status === "ready" ? result.view.plan.phases.map((phase) => phase.state) : [];
+}
+
+/** The pace on the active goal's plan. */
+async function readStatus() {
+  const result = await getPlanTabView();
+  return result.status === "ready" ? result.view.plan.status : null;
+}
 
 describe(getPlanTabView, () => {
   it("reads the active goal's plan with the goal's header", async () => {
@@ -133,6 +146,84 @@ describe(getPlanTabView, () => {
         },
       },
     });
+  });
+
+  /*
+   * Pedro finished his plan, yet its last phase still read as the one he was in, "until Oct 29":
+   * once nothing is left, no phase is current. One whose challenge is still ahead stays current.
+   */
+  it("marks no phase current once nothing is left, but keeps one whose challenge waits", async () => {
+    const { goal, plan } = await signedInCourseGoal({
+      statuses: ["done", "testedOut", "done", "done"],
+    });
+
+    await expect(readStates()).resolves.toStrictEqual(["done", "done"]);
+
+    await prisma.planItem.updateMany({
+      data: { status: "skipped" },
+      where: { planId: plan.id, position: 3 },
+    });
+
+    // Without a date, only a lesson the Library couldn't write is set aside: nothing is left.
+    await expect(readStates()).resolves.toStrictEqual(["done", "done"]);
+
+    // With one, missed days set it aside: it's still the learner's to study.
+    await prisma.goal.update({
+      data: { targetDate: new Date("2099-01-01T00:00:00.000Z") },
+      where: { id: goal.id },
+    });
+
+    await expect(readStates()).resolves.toStrictEqual(["done", "unfinished"]);
+
+    await planItemFixture({ kind: "boss", phase: 1, planId: plan.id, titleSnapshot: "Challenge" });
+    await expect(readStates()).resolves.toStrictEqual(["done", "current"]);
+  });
+
+  /*
+   * Pedro finished his plan two weeks early, and its pace read "Ahead · 13 days ahead" beside "You
+   * finished your plan". Lucas's date came with a lesson set aside: his plan read "Ended". Finished
+   * comes from the work completed, and a date that came with lessons left never ends the plan.
+   */
+  it("reads finished pace from the work completed, and past its date with lessons left", async () => {
+    const { goal, plan } = await signedInCourseGoal({ statuses: ["done", "done", "done", "done"] });
+    const today = new Date();
+
+    const items = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { planId: plan.id },
+    });
+
+    await Promise.all(
+      items.map((item, index) =>
+        prisma.planItem.update({
+          data: {
+            scheduledFor: new Date(
+              Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + 5 + index),
+            ),
+          },
+          where: { id: item.id },
+        }),
+      ),
+    );
+
+    await expect(readStatus()).resolves.toStrictEqual({ kind: "finished" });
+
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { status: "skipped" },
+        where: { planId: plan.id, position: 3 },
+      }),
+      prisma.goal.update({
+        data: {
+          targetDate: new Date(
+            Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
+          ),
+        },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    await expect(readStatus()).resolves.toStrictEqual({ kind: "pastDate", lessons: 1 });
   });
 
   it("says when there's no goal, no session or someone else's goal", async () => {

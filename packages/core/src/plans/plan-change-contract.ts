@@ -83,14 +83,19 @@ export const planChangeSchema = z
       .int()
       .nullable()
       .meta({ description: "For missedDays: the earlier days that left lessons, now first" }),
-    effect: planEffectSchema.nullable(),
+    effect: planEffectSchema
+      .nullable()
+      .meta({
+        description:
+          "A proposal on Today is previewed against the current plan before Apply is offered, and Today carries none whose preview would change nothing. Null when the plan is not ready or its operations cannot apply; never offer Apply without an effect",
+      }),
     examDocument: examDocumentSchema,
     id: z.uuid(),
     kind: z
       .string()
       .meta({
         description:
-          "edited, testedOut, missedDays, estimateUpdated, resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (planned again as lessons were written or the learner studied, the plan teaches other topics by its date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
+          "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one; say the count change and that the plan now allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
       }),
     lessonsSkipped: z
       .int()
@@ -130,7 +135,7 @@ export const planChangeSchema = z
       .enum(PLAN_CHANGE_STATUSES)
       .meta({
         description:
-          "proposed waits for the learner's answer; replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, so it can't be applied",
+          "proposed waits for the learner's answer, and waits again after they apply it and undo it; undone: the learner undid a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied",
       }),
     todaySession: z
       .enum(["changed", "unchanged"])

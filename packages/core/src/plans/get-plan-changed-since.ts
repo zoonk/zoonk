@@ -18,10 +18,10 @@ export type PlanChangedSinceResult =
   | { status: "notFound" | "unauthorized" };
 
 /**
- * Whether what Today and the Journey show while lessons are being written changed since they read
+ * Whether what Today and the Plan show while lessons are being written changed since they read
  * it (`since`, milliseconds since the epoch: the screen's read time): the goal's plan (a re-plan
  * brings in the lessons the Library wrote), one of its items or an item's lesson, and, watching
- * `today` (the Journey shows only the plan), a recent session, one of its stops or a stop's lesson.
+ * `today` (the Plan shows only the plan), a recent session, one of its stops or a stop's lesson.
  * A screen waiting on lessons asks this every few seconds and reads itself again only when it says
  * so, instead of reading everything each time. Never cached: it's the poll.
  */

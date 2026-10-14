@@ -22,7 +22,7 @@ async function readChapter(chapterId: string) {
 
 describe("the lesson up next", () => {
   // Pedro's Today opened "Where a share's price comes from", of his second phase, while his
-  // Journey and the first phase's chapter page marked the first phase's chapter as up next.
+  // Plan and the first phase's chapter page marked the first phase's chapter as up next.
   it("is the lesson Today opens, on the Journey and on the chapters' pages, even in the next phase", async () => {
     freezeClock();
 

@@ -11,8 +11,8 @@ async function readPlan() {
 }
 
 describe("the plan's course", () => {
-  it("says which course the plan is built from, and is finished once every lesson was studied or tested out, only ended with one set aside", async () => {
-    const { course, items, organization } = await signedInCourseGoal({
+  it("says which course the plan is built from, and is finished once every lesson was studied or tested out, never with one set aside by a date that came", async () => {
+    const { course, goal, items, organization } = await signedInCourseGoal({
       statuses: ["done", "todo", "todo", "todo"],
     });
 
@@ -42,11 +42,19 @@ describe("the plan's course", () => {
 
     await setStatuses(["done", "testedOut", "testedOut", "done"]);
     const finished = await readPlan();
-    expect(finished?.end).toStrictEqual({ kind: "finished", setAsideLessons: 0 });
+    expect(finished?.end).toStrictEqual({ kind: "finished" });
 
-    await setStatuses(["done", "skipped", "testedOut", "done"]);
-    const ended = await readPlan();
-    expect(ended?.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
+    await Promise.all([
+      setStatuses(["done", "skipped", "testedOut", "done"]),
+      prisma.goal.update({
+        data: { targetDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    const left = await readPlan();
+    expect(left?.end).toBeNull();
+    expect(left?.status).toStrictEqual({ kind: "pastDate", lessons: 1 });
   });
 
   it("has no levels or public page for a private course", async () => {

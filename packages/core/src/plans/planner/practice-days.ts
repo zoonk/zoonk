@@ -1,5 +1,5 @@
 import { toIsoDate } from "./plan-calendar";
-import { type PlanDay, type ScheduledEvent } from "./schedule-units";
+import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
 
 /** A day lessons could use that comes after the plan's last lesson. */
 export function isSpareDay({
@@ -26,18 +26,29 @@ export function addPracticeDays({
   days,
   events,
   lastLessonDate,
+  units = [],
 }: {
   days: readonly PlanDay[];
   events: readonly ScheduledEvent[];
   /** The plan's last lesson; null when none is left, so every open day practices. */
   lastLessonDate: Date | null;
+  /** What the run scheduled: a phase's challenge after the last lesson takes its day's time. */
+  units?: readonly ScheduledUnit[];
 }): ScheduledEvent[] {
   const taken = new Set(events.map((event) => event.date.getTime()));
 
-  const practice = days.flatMap((day): ScheduledEvent[] => {
-    const { minutes, phase } = day.shape;
+  // A phase's challenge leading a day after the last lesson leaves practice only what's left of it.
+  const used = units.reduce(
+    (sums, unit) =>
+      sums.set(unit.date.getTime(), (sums.get(unit.date.getTime()) ?? 0) + unit.studyMinutes),
+    new Map<number, number>(),
+  );
 
-    if (!isSpareDay({ day, lastLessonDate }) || taken.has(day.date.getTime())) {
+  const practice = days.flatMap((day): ScheduledEvent[] => {
+    const { phase } = day.shape;
+    const minutes = day.shape.minutes - (used.get(day.date.getTime()) ?? 0);
+
+    if (!isSpareDay({ day, lastLessonDate }) || taken.has(day.date.getTime()) || minutes <= 0) {
       return [];
     }
 

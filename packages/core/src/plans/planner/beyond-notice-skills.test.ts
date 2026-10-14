@@ -133,7 +133,7 @@ describe("an exam subject with a skill beyond the notice", () => {
   });
 
   it("cuts a base beyond the notice before any topic the notice names, even studied in depth", () => {
-    const base = tiInput({ days: 20, minutes: 30 });
+    const base = tiInput({ days: 20, minutes: 35 });
     const baseChoices = [{ choice: "deep" as const, skillId: "formats" }];
 
     const input = {
@@ -150,5 +150,16 @@ describe("an exam subject with a skill beyond the notice", () => {
     expect(count("formats")).toBeLessThan(26);
     expect(count("formats")).toBeGreaterThanOrEqual(9);
     expect(count("metadata")).toBe(9);
+  });
+
+  it("keeps the selected essential base whole before the topic that builds on it", () => {
+    const items = lessonsOf(tiInput({ days: 20, minutes: 30 }), ["formats", "metadata"]);
+
+    expect(items.filter((item) => item.skillId === "formats")).toHaveLength(9);
+    expect(items.filter((item) => item.skillId === "metadata").length).toBeGreaterThan(3);
+
+    expect(positionOf(items, "formats", "last")).toBeLessThan(
+      positionOf(items, "metadata", "first"),
+    );
   });
 });

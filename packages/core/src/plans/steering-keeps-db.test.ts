@@ -4,7 +4,9 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getChallenge } from "../checkpoints/get-challenge";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
@@ -25,12 +27,11 @@ describe("asking to move the phase dates a run keeps", () => {
   });
 
   /*
-   * R40 (career seed 2131): a session's new pace laid the rest of the week out from the next day,
-   * and Today's proposal to move the phase dates was planned again from today, whose time was still
-   * open. There the lessons fit before their challenge with the same end, so the run asked nothing,
-   * while the plan it saved held the challenge before its lessons.
+   * A slower session must move the challenge after its tested teaching, planned from the next day
+   * as its run was. The zero-net applied notice says which shown end moved, instead of leaving an
+   * optional proposal and a challenge before its lessons.
    */
-  it("asks to move a phase's end after a slower session, planned from the next day as its run was", async () => {
+  it("moves a phase's end after a slower session and names the applied change", async () => {
     const user = await userFixture();
 
     const library = await planLibraryFixture({
@@ -45,6 +46,11 @@ describe("asking to move the phase dates a run keeps", () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(
+      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
+    ).resolves.toMatchObject({ scheduledFor: new Date("2020-10-01") });
+
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
     mockSession(user.id);
     await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
@@ -73,11 +79,47 @@ describe("asking to move the phase dates a run keeps", () => {
       where: { planId: plan.id, status: "proposed" },
     });
 
-    expect(
-      proposals.map((proposal) => parsePlanChangePayload(proposal.payload).effect?.phaseEnds),
-    ).toStrictEqual([
-      [{ after: expect.any(String), before: "2020-10-01", lessonsFirst: true, name: "Basics" }],
-    ]);
+    expect(proposals).toStrictEqual([]);
+
+    const boss = await prisma.planItem.findFirstOrThrow({
+      where: { kind: "boss", phase: 0, planId: plan.id },
+    });
+
+    expect(boss.scheduledFor).toStrictEqual(new Date("2020-10-02"));
+
+    await expect(
+      getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
+    ).resolves.toMatchObject({
+      challenge: { date: "2020-10-02", planItemId: boss.id, status: "upcoming" },
+      status: "ready",
+    });
+
+    const applied = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "estimateUpdated", planId: plan.id, status: "applied" },
+    });
+
+    const phaseEnds = [
+      { after: "2020-10-02", before: "2020-10-01", lessonsFirst: true, name: "Basics" },
+    ];
+
+    const payload = parsePlanChangePayload(applied.payload);
+    expect(payload.source).toBe("system");
+    expect(payload.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
+    expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
+
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+      today: {
+        planChange: {
+          canUndo: false,
+          effect: { lessonsAdded: 0, lessonsRemoved: 0, phaseEnds },
+          id: applied.id,
+          kind: "estimateUpdated",
+          source: "system",
+          status: "applied",
+        },
+      },
+    });
   });
 
   /*

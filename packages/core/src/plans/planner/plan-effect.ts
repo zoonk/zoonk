@@ -1,11 +1,12 @@
 import { getSkillArea } from "./graph-areas";
 import { type NextMockMove } from "./next-mock-move";
 import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
 import { type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type SkillMinutes } from "./skill-minutes";
 
-type EffectItem = Pick<
+export type EffectItem = Pick<
   PlannedItem,
   "chapterId" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId" | "status"
 > & { id: string | null };
@@ -115,10 +116,6 @@ export type PlanEffect = {
   topicsLeftOut?: AreaTopics[];
   weeklyEvents?: WeeklyEventMove;
 };
-
-/** A change is small when it moves at most one lesson and the end date by at most a day. */
-const SMALL_CHANGE_LESSONS = 1;
-const SMALL_CHANGE_DAYS = 1;
 
 /**
  * A lesson item is one lesson; a stand-in counts the lessons it plans: the whole skill when no

@@ -7,7 +7,10 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getChallenge } from "../checkpoints/get-challenge";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -218,11 +221,26 @@ async function readProposedMoves(planId: string) {
   return { moves: payload?.effect.phaseEnds ?? [], proposal };
 }
 
+async function expectChallengeDate({ date, planId }: { date: string; planId: string }) {
+  const boss = await prisma.planItem.findFirstOrThrow({
+    where: { kind: "boss", phase: 0, planId },
+  });
+
+  expect(boss.scheduledFor).toStrictEqual(new Date(date));
+
+  await expect(
+    getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
+  ).resolves.toMatchObject({
+    challenge: { date, planItemId: boss.id, status: "upcoming" },
+    status: "ready",
+  });
+}
+
 /*
- * The plan's phase dates are what the learner saw on the plan's reveal and then on Journey. Lessons
+ * The plan's phase dates are what the learner saw on the plan's reveal and then on Plan. Lessons
  * the Library writes later take a little more or less time than the plan estimated; a system
  * refresh puts them in the plan without moving those dates, and absorbs the difference inside the
- * phase. Pass 8: Marcos's reveal said his first phase ends Oct 23 and Journey, minutes later, Oct 22.
+ * phase. Pass 8: Marcos's reveal said his first phase ends Oct 23 and Plan, minutes later, Oct 22.
  */
 describe("phase dates through system refreshes", () => {
   beforeEach(() => {
@@ -284,33 +302,63 @@ describe("phase dates through system refreshes", () => {
     expect(last && end && last <= end).toBe(true);
   });
 
-  // A change of focus keeps the phase ends the learner sees, so the challenge still came before the
-  // lessons it tests, and the change took Today's card offering to move its end with it (career
-  // 1230, 2107): Today asks again right away.
-  it("asks again to move a phase's end after a change of focus that keeps it before its lessons", async () => {
-    const { goal, outline, plan } = await setup({ targetDate: FAR });
+  // A focus must move an unsafe held end after its tested teaching, and its applied change names
+  // the mandatory move instead of leaving an optional proposal with an unsafe challenge.
+  it("moves an unsafe phase end after a focus and names the applied move", async () => {
+    const { goal, library, outline, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
+    expect(ends[0]).toBe("2020-10-07");
 
     await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
 
     const before = await readProposedMoves(plan.id);
 
-    await changeGoalPlan({
+    const changed = await changeGoalPlan({
       goalId: goal.id,
       input: { operations: [{ areas: ["Projects"], kind: "reduceAreas" }], timeZone: "UTC" },
     });
 
-    await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
-
-    const { moves, proposal } = await readProposedMoves(plan.id);
-
     expect(before.moves).toHaveLength(1);
-    expect(proposal?.id).not.toBe(before.proposal?.id);
 
-    expect(moves).toStrictEqual([
-      { after: expect.any(String), before: ends[0], lessonsFirst: true, name: "Basics" },
-    ]);
+    if (changed.status !== "applied" || !changed.change) {
+      throw new Error("Expected the actual focus change");
+    }
+
+    const phaseEnds = [
+      { after: "2020-10-15", before: "2020-10-07", lessonsFirst: true, name: "Basics" },
+    ];
+
+    expect(changed.change.effect?.phaseEnds).toStrictEqual(phaseEnds);
+    const applied = await prisma.planChange.findUniqueOrThrow({ where: { id: changed.change.id } });
+    expect(applied).toMatchObject({ kind: "edited", status: "applied" });
+    const payload = parsePlanChangePayload(applied.payload);
+    expect(payload.source).toBe("learner");
+    expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: before.proposal?.id ?? "" } }),
+    ).resolves.toMatchObject({ status: "replaced" });
+
+    const [end] = await readPhaseEnds(plan.id);
+    expect(end).toBe("2020-10-15");
+
+    await expect(
+      readLastLessonDay({ phase: 0, planId: plan.id, skills: library.graph.skills }),
+    ).resolves.toBe("2020-10-14");
+
+    await expect(
+      prisma.planItem.count({
+        where: {
+          kind: "lesson",
+          planId: plan.id,
+          skillId: { in: library.skills.slice(0, 2).map((skill) => skill.id) },
+        },
+      }),
+    ).resolves.toBe(14);
+
+    await expectChallengeDate({ date: "2020-10-15", planId: plan.id });
   });
 
   // The same with a first phase that ends this week: a system refresh keeps this week as the
@@ -464,12 +512,12 @@ describe("phase dates through system refreshes", () => {
     await expect(readProposals(plan.id)).resolves.toHaveLength(0);
   });
 
-  // A shown end never moves without the learner (R6). The day the first phase ends turns into one
-  // the learner gives no time (set in the settings alone here: the learner's own change of rest
-  // days plans the dates again): the challenge stays on it, and Today offers to move the dates.
-  it("keeps a phase's end on a day with no study time and proposes moving the dates", async () => {
+  // A rest day must not leave the held challenge before its teaching. The plan moves it to the
+  // next study day and Today names that applied move, even when the lesson count is unchanged.
+  it("moves an unsafe phase end after a rest day and shows its applied notice", async () => {
     const { goal, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
+    expect(ends[0]).toBe("2020-10-07");
     const restDay = new Date(`${ends[0]}T00:00:00Z`).getUTCDay();
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const settings = saved.settings as Record<string, unknown>;
@@ -490,17 +538,36 @@ describe("phase dates through system refreshes", () => {
     const [endAfter] = await readPhaseEnds(plan.id);
     const [challenge] = await readChallengeDates(plan.id);
 
-    expect(endAfter).toBe(ends[0]);
-    expect(challenge).toBe(ends[0]);
+    expect(endAfter).toBe("2020-10-09");
+    expect(challenge).toBe("2020-10-09");
+    await expect(readProposals(plan.id)).resolves.toHaveLength(0);
 
-    const [proposal, ...others] = await readProposals(plan.id);
+    const applied = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "estimateUpdated", planId: plan.id, status: "applied" },
+    });
 
-    expect(others).toHaveLength(0);
+    const phaseEnds = [
+      { after: "2020-10-09", before: "2020-10-07", lessonsFirst: true, name: "Basics" },
+    ];
 
-    expect(proposal?.payload).toMatchObject({
-      effect: { lessonsAdded: 0, phaseEnds: [{ before: ends[0], name: "Basics", restDay: true }] },
-      operations: [{ kind: "fitPhaseDates" }],
-      source: "phaseDates",
+    const payload = parsePlanChangePayload(applied.payload);
+    expect(payload.source).toBe("system");
+    expect(payload.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
+    expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
+    await expectChallengeDate({ date: "2020-10-09", planId: plan.id });
+
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+      today: {
+        planChange: {
+          canUndo: false,
+          effect: { lessonsAdded: 0, lessonsRemoved: 0, phaseEnds },
+          id: applied.id,
+          kind: "estimateUpdated",
+          source: "system",
+          status: "applied",
+        },
+      },
     });
   });
 
@@ -549,7 +616,7 @@ describe("phase dates through system refreshes", () => {
   it("moves only the ends the proposal named, to the days it said, when the learner applies it", async () => {
     vi.setSystemTime(new Date("2020-09-30T12:00:00Z"));
 
-    const { ends, goal, plan } = await setupRestingEnd({ lessons: 12 });
+    const { ends, goal, plan } = await setupRestingEnd({ lessons: 8 });
 
     await refreshGoalPlan({ goalId: goal.id });
 

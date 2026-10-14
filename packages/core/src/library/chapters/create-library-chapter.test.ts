@@ -94,6 +94,7 @@ describe(attachChapterToCourse, () => {
     const [course, chapter] = await Promise.all([courseFixture(), libraryChapterFixture()]);
 
     await attachChapterToCourse({
+      area: "Math",
       chapterId: chapter.id,
       courseId: course.id,
       level: "beginner",
@@ -107,7 +108,7 @@ describe(attachChapterToCourse, () => {
       position: 2,
     });
 
-    expect(moved).toMatchObject({ level: "intermediate", position: 2 });
+    expect(moved).toMatchObject({ area: "Math", level: "intermediate", position: 2 });
     await expect(prisma.courseChapter.count({ where: { courseId: course.id } })).resolves.toBe(1);
 
     expect(revalidateTag).toHaveBeenCalledWith(getCourseCurriculumCacheTag(course.id), {

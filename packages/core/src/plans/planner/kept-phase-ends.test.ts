@@ -84,16 +84,17 @@ describe(keepPhaseEnds, () => {
     const ends = new Map([[1, today]]);
     const scheduled = scheduleUnits({ days, units: keepPhaseEnds({ days, ends, units }) });
 
+    // Held on its end, phase 1's challenge would test lessons a and b before they're taught: the
+    // end isn't kept (see `keepPhaseEnd`), and it comes the study day after them, after phase 0's.
     expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
       ["boss:0", "2026-10-27"],
-      ["boss:1", "2026-10-27"],
       ["lesson:a", "2026-10-28"],
       ["lesson:b", "2026-10-28"],
+      ["boss:1", "2026-10-29"],
     ]);
 
-    expect(listStrainedEnds({ days, ends, units: scheduled.units })).toStrictEqual([
-      { phase: 1, resting: false, room: "2026-10-28" },
-    ]);
+    // Not kept, it strains no end; its move is told as one before its lessons (`listEndsBeforeLessons`).
+    expect(listStrainedEnds({ days, ends, units: scheduled.units })).toStrictEqual([]);
   });
 
   // A missed day left two earlier phases' challenges undone (career 1027, R39): only the last of
@@ -110,12 +111,14 @@ describe(keepPhaseEnds, () => {
     const ends = new Map([[2, today]]);
     const scheduled = scheduleUnits({ days, units: keepPhaseEnds({ days, ends, units }) });
 
+    // Still in phase order, each after the lessons it tests: phase 2's, with no study day left after
+    // lesson b, right after it on the last day (see `placeBoss`).
     expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
       ["boss:0", "2026-10-27"],
-      ["boss:1", "2026-10-27"],
-      ["boss:2", "2026-10-27"],
       ["lesson:a", "2026-10-28"],
-      ["lesson:b", "2026-10-28"],
+      ["boss:1", "2026-10-29"],
+      ["lesson:b", "2026-10-29"],
+      ["boss:2", "2026-10-29"],
     ]);
   });
 
@@ -136,11 +139,12 @@ describe(keepPhaseEnds, () => {
     const kept = keepPhaseEnds({ days: roomy, ends: new Map([[1, today]]), units });
     const scheduled = scheduleUnits({ days: roomy, units: kept });
 
+    // The half-studied day's challenge first; its own after the lessons it tests, not held before them.
     expect(scheduled.units.map((entry) => [entry.key, toIsoDate(entry.date)])).toStrictEqual([
       ["boss:0", "2026-10-27"],
-      ["boss:1", "2026-10-27"],
       ["lesson:a", "2026-10-28"],
       ["lesson:b", "2026-10-28"],
+      ["boss:1", "2026-10-29"],
     ]);
   });
 

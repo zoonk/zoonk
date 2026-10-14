@@ -9,11 +9,13 @@ import { assertPlacementVisibility } from "../_utils/placement-visibility";
  * the same chapter again moves it, so retried workflow steps stay idempotent.
  */
 export async function attachChapterToCourse({
+  area,
   chapterId,
   courseId,
   level,
   position,
 }: {
+  area?: string | null;
   chapterId: string;
   courseId: string;
   level: CourseLevel;
@@ -30,8 +32,8 @@ export async function attachChapterToCourse({
   });
 
   const placement = await prisma.courseChapter.upsert({
-    create: { chapterId, courseId, level, position },
-    update: { level, position },
+    create: { area, chapterId, courseId, level, position },
+    update: { area, level, position },
     where: { courseId_chapterId: { chapterId, courseId } },
   });
 
