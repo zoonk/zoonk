@@ -92,6 +92,7 @@ describe("a phase checkpoint's challenge", () => {
     const intro = await challengeOf(boss.id);
 
     expect(intro).toMatchObject({
+      blockId: null,
       canMove: false,
       goalId: goal.id,
       kind: "boss",
@@ -104,17 +105,26 @@ describe("a phase checkpoint's challenge", () => {
       today: "2026-09-30",
     });
 
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
     const started = await startChallenge({ input: {}, planItemId: boss.id });
 
+    if (started.status !== "ready") {
+      throw new Error(`Expected Start to persist the challenge, got ${started.status}`);
+    }
+
     expect(started).toMatchObject({
-      destination: { blockId: intro.blockId, kind: "checkpoint" },
+      destination: { blockId: expect.any(String), kind: "checkpoint" },
       status: "ready",
     });
 
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({ status: "started" });
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      blockId: started.destination.blockId,
+      status: "started",
+    });
 
     await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: intro.blockId ?? "" } }),
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: started.destination.blockId } }),
     ).resolves.toMatchObject({ status: "active" });
   });
 

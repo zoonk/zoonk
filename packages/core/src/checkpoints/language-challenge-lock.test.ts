@@ -173,10 +173,18 @@ describe("language challenges are Plus only", () => {
     async (started) => {
       const { boss, goal, user } = await reachedLanguageChallenge({ dailyMinutes: 6, plus: true });
       const intro = await challengeOf(boss.id);
+      expect(intro.blockId).toBeNull();
+      await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
-      if (started) {
-        await startChallenge({ input: {}, planItemId: boss.id });
-      }
+      // Intro is read-only; the day-opening POST creates the pending call, or Start activates it.
+      const opened = started
+        ? await startChallenge({ input: {}, planItemId: boss.id })
+        : await getTodayStudySession({ goalId: goal.id });
+
+      expect(opened.status).toBe("ready");
+
+      const scheduled = await challengeOf(boss.id);
+      expect(scheduled.blockId).not.toBeNull();
 
       await prisma.subscription.updateMany({
         data: { status: "canceled" },
@@ -184,7 +192,7 @@ describe("language challenges are Plus only", () => {
       });
 
       await expect(challengeOf(boss.id)).resolves.toMatchObject({
-        blockId: intro.blockId,
+        blockId: scheduled.blockId,
         call: { targetLanguage: "en" },
         locked: true,
         questions: 0,
@@ -196,7 +204,7 @@ describe("language challenges are Plus only", () => {
       });
 
       const savedBlock = await prisma.studySessionBlock.findUniqueOrThrow({
-        where: { id: intro.blockId! },
+        where: { id: scheduled.blockId! },
       });
 
       await expect(
@@ -208,7 +216,7 @@ describe("language challenges are Plus only", () => {
 
       expect(
         after.status === "ready" &&
-          after.session.blocks.some((block) => block.id === intro.blockId),
+          after.session.blocks.some((block) => block.id === scheduled.blockId),
       ).toBe(false);
 
       // The frame's "Continue" goes on with the day without the locked call.

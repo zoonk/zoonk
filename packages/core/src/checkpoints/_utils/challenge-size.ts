@@ -162,12 +162,18 @@ async function loadPreviewMockSize({
 }
 
 /**
- * A checkpoint's questions: its block's, or about ten before its day and while its block waits
+ * A checkpoint's questions: its saved or preview payload's, or about ten before its day and while its block waits
  * for the questions it starts by writing (`getPlannedQuestions`). A started one asks what the bank
  * still holds of them (`countAskableQuestions`), as its duel does.
  */
-async function loadCheckpointSize(block: ChallengeBlock | null): Promise<ChallengeSize> {
-  const payload = block ? readBlockPayload(block) : null;
+async function loadCheckpointSize({
+  block,
+  planned,
+}: {
+  block: ChallengeBlock | null;
+  planned?: PlannedBlock | null;
+}): Promise<ChallengeSize> {
+  const payload = block ? readBlockPayload(block) : planned?.payload;
   const itemIds = payload?.itemIds ?? [];
 
   if (block?.status === "active") {
@@ -179,7 +185,7 @@ async function loadCheckpointSize(block: ChallengeBlock | null): Promise<Challen
     );
   }
 
-  return getCheckpointSize(block ? getPlannedQuestions(itemIds.length) : CHECKPOINT_QUESTIONS);
+  return getCheckpointSize(payload ? getPlannedQuestions(itemIds.length) : CHECKPOINT_QUESTIONS);
 }
 
 function getCheckpointSize(questions: number): ChallengeSize {
@@ -225,9 +231,9 @@ export function loadChallengeSize({
     return CALL_SIZE;
   }
 
-  return challenge.item.kind === "boss" && !block
+  return challenge.item.kind === "boss" && !block && !planned
     ? loadPlannedBossSize(challenge)
-    : loadCheckpointSize(block);
+    : loadCheckpointSize({ block, planned });
 }
 
 /**

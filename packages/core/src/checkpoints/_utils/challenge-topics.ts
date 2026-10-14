@@ -4,7 +4,8 @@ import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getSkippedSkillIds } from "../../sessions/_utils/review-skills";
-import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
+import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
+import { type PlannedBlock } from "../../sessions/session-builder";
 import { loadSkillSubjects } from "../../view-models/syllabus/_utils/load-syllabus";
 import { type ChallengeTopic } from "../challenge-contract";
 import { getBossQuestionSkills, getBossSize } from "../checkpoint-minutes";
@@ -69,8 +70,7 @@ export async function planBossSize(
  * The skills of the questions a built block asks, in its skills' order; its skills while its
  * questions are still to be written.
  */
-async function loadBlockSkillIds(block: ChallengeBlock): Promise<string[]> {
-  const payload = readBlockPayload(block);
+async function loadPayloadSkillIds(payload: BlockPayload): Promise<string[]> {
   const itemIds = getBlockItemIds(payload);
 
   if (itemIds.length === 0) {
@@ -89,17 +89,23 @@ async function loadBlockSkillIds(block: ChallengeBlock): Promise<string[]> {
 /**
  * The skills a duel asks: its questions', once the session built its block; before that, a phase
  * checkpoint's as the plan sets them, which its questions will come from. The week's challenge
- * asks the week's skills, unknown before its block.
+ * asks the week's skills from its saved or preview payload.
  */
 async function loadAskedSkillIds({
   block,
   challenge,
+  planned,
 }: {
   block: ChallengeBlock | null;
   challenge: OwnedChallenge;
+  planned?: PlannedBlock | null;
 }): Promise<string[]> {
   if (block) {
-    return loadBlockSkillIds(block);
+    return loadPayloadSkillIds(readBlockPayload(block));
+  }
+
+  if (planned) {
+    return loadPayloadSkillIds(planned.payload);
   }
 
   return challenge.item.kind === "boss" ? planBossSkillIds(challenge) : [];
@@ -123,16 +129,18 @@ async function nameSkills(skillIds: readonly string[]): Promise<Map<string, stri
 export async function loadChallengeTopics({
   block,
   challenge,
+  planned,
 }: {
   block: ChallengeBlock | null;
   challenge: OwnedChallenge;
+  planned?: PlannedBlock | null;
 }): Promise<ChallengeTopic[]> {
   if (challenge.item.kind === "mock" || isLanguageCall(challenge)) {
     return [];
   }
 
   const [skillIds, subjects] = await Promise.all([
-    loadAskedSkillIds({ block, challenge }),
+    loadAskedSkillIds({ block, challenge, planned }),
     loadSkillSubjects(challenge.goal),
   ]);
 

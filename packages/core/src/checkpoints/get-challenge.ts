@@ -127,11 +127,13 @@ function getChallengePassMark({
   block,
   call,
   kind,
+  planned,
   questions,
 }: {
   block: ChallengeBlock | null;
   call: ChallengeCall | null;
   kind: CheckpointKind;
+  planned?: PlannedBlock | null;
   questions: number;
 }): number | null {
   if (kind === "weekly") {
@@ -142,7 +144,7 @@ function getChallengePassMark({
     return call.goals === null ? null : getPassMark(call.goals.length);
   }
 
-  const payload = block ? readBlockPayload(block) : null;
+  const payload = block ? readBlockPayload(block) : planned?.payload;
   return payload?.checkpoint ? getAskablePassMark({ payload, questions }) : getPassMark(questions);
 }
 
@@ -178,7 +180,8 @@ async function readTodayBlockStatus({
 
 /**
  * A due challenge can be offered before the learner opens the day. Its queue is checked in
- * memory; only the Start POST may create the session and its blocks.
+ * memory; once the day exists its saved blocks are authoritative, just as they are for Start.
+ * Only the Start POST may create the session and its blocks.
  */
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, timeZone, today, userId } = challenge;
@@ -186,11 +189,17 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const due = timing === "nextSession" && item.status === "todo";
   const plusRequired = await needsPlus(challenge);
 
-  const block = await findChallengeBlock({ challenge });
+  const [block, savedDay] = await Promise.all([
+    findChallengeBlock({ challenge }),
+    prisma.studySession.findUnique({
+      where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
+    }),
+  ]);
+
   const todayBlock = getTodayBlock({ block, today });
 
   const upcomingBlock =
-    !todayBlock && due && !plusRequired && goal.status === "active"
+    !savedDay && due && !plusRequired && goal.status === "active"
       ? buildSessionBlocks(
           await loadSessionBuildInput({
             goal,
@@ -274,7 +283,7 @@ export async function getChallenge({
     kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
     loadMilestoneCounts(userId),
     loadRecordings({ block: previewBlock, isMock, planned: upcomingBlock }),
-    loadChallengeTopics({ block: previewBlock, challenge }),
+    loadChallengeTopics({ block: previewBlock, challenge, planned: upcomingBlock }),
     loadChallengeCall({ blockId, challenge }),
   ]);
 
@@ -301,6 +310,7 @@ export async function getChallenge({
         block: previewBlock,
         call,
         kind,
+        planned: upcomingBlock,
         questions: size.questions,
       }),
       phase: findPhase(challenge),
