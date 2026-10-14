@@ -1,5 +1,7 @@
 "use client";
 
+import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -11,15 +13,19 @@ const PRACTICE_TITLE_ID = "today-practice-title";
 /**
  * What the learner can practice whenever they want, beyond the day's session: a mock exam or a
  * language goal's exam-style speaking (each marked Plus when the plan doesn't include it) and the
- * mistakes notebook. The section leaves itself out when none has anything to offer.
+ * mistakes notebook. Under 72rem only: from there the sidebar's study links and the command
+ * palette hold the same ways in, so the aside stays glanceable. The section leaves itself out when
+ * none has anything to offer.
  */
 export function TodayPractice({
+  className,
   mistakes,
   mockEntry,
   speakingEntry,
 }: {
+  className?: string;
   /** Open entries in the mistakes notebook. */
-  mistakes: number;
+  mistakes: MistakeAvailability;
   mockEntry: React.ReactNode;
   speakingEntry: React.ReactNode;
 }) {
@@ -29,7 +35,8 @@ export function TodayPractice({
   return (
     <PageSection
       aria-labelledby={PRACTICE_TITLE_ID}
-      className="has-[[data-slot=list-group]:empty]:hidden"
+      className={cn("has-[[data-slot=list-group]:empty]:hidden min-[72rem]:hidden", className)}
+      data-slot="today-practice"
     >
       <PageSectionHeader>
         <PageSectionTitle id={PRACTICE_TITLE_ID}>{t("Practice anytime")}</PageSectionTitle>
@@ -38,7 +45,7 @@ export function TodayPractice({
       <ListGroup>
         {mockEntry}
         {speakingEntry}
-        <MistakesRow count={mistakes} href={actions.mistakesHref} />
+        <MistakesRow availability={mistakes} href={actions.mistakesHref} />
       </ListGroup>
     </PageSection>
   );

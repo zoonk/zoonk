@@ -68,11 +68,9 @@ export function getEarnedGlasses(counts: MilestoneCounts): MilestoneAward[] {
 export function getCrossedMilestones({
   after,
   before,
-  hasBuddy,
 }: {
   after: number;
   before: number;
-  hasBuddy: boolean;
 }): MilestoneAward[] {
   const from = BELT_COLORS_ORDER.indexOf(calculateBeltLevel(before).color);
   const to = BELT_COLORS_ORDER.indexOf(calculateBeltLevel(after).color);
@@ -81,7 +79,7 @@ export function getCrossedMilestones({
   return crossed.flatMap((color, index) => {
     const previous = BELT_COLORS_ORDER[from + index] ?? color;
     const stage = getBuddyStage(color);
-    const grew = hasBuddy && stage !== getBuddyStage(previous);
+    const grew = stage !== getBuddyStage(previous);
     const belt: MilestoneAward = { key: color, kind: "belt" };
 
     return grew ? [belt, { key: stage, kind: "buddyStage" }] : [belt];

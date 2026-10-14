@@ -2,25 +2,27 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useRef, useState, useTransition } from "react";
-import { KindTile } from "../_components/kind-tile";
+import { type ReactNode, useState, useTransition } from "react";
 import {
-  NoticeCardActions,
-  NoticeCardContent,
-  NoticeCardDescription,
-  NoticeCardLeading,
-  NoticeCardTitle,
-} from "../_components/notice-card";
-import { SURFACE_CLASS } from "../_components/surface";
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionLinkAction,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLearnAnalytics } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { useFittingDateText } from "../plan/plan-coverage";
 import { useAppliedLine } from "../plan/use-change-sentence";
 import { MovedTopicsLine } from "./moved-topics-line";
@@ -37,7 +39,7 @@ type Option = Choice | "focus" | "studyEverything";
 const NAMED_TOPICS = 2;
 
 /**
- * "At 2h a day, your plan now covers 39% of the exam, down from 48%.": what the missed days did,
+ * "At 2 hr a day, your plan now covers 39% of the exam, down from 48%.": what the missed days did,
  * in one sentence. What each choice covers goes on the choice itself, so the card never reads
  * three percentages in a row.
  */
@@ -63,8 +65,8 @@ function useBehindSentence() {
 }
 
 /**
- * "Study 4h a day · about 64%": more time a day with what it covers by the date, the same share
- * the Journey says for it; "everything in depth" when that time covers it all.
+ * "Study 4 hr a day · about 64%": more time a day with what it covers by the date, the same share
+ * the Plan says for it; "everything in depth" when that time covers it all.
  */
 function useMoreTimeLabel() {
   const t = useExtracted();
@@ -128,29 +130,23 @@ function BehindChoices({
   const moreTimeLabel = useMoreTimeLabel();
   const { actions, today } = useTodayScreen();
   const { order, primary } = getOptionOrder({ behind, returnDay: isWelcomeBackDay(today.session) });
-  const variant = (option: Option) => (option === primary ? "default" : "ghost");
+  const variant = (option: Option) => (option === primary ? "default" : "outline");
 
   const choiceButton = (choice: Choice, label: string) => (
-    <Button
+    <SuggestionAction
       disabled={isPending}
-      focusableWhenDisabled
       key={choice}
       onClick={() => choose(choice)}
-      size="sm"
       variant={variant(choice)}
     >
       {label}
-    </Button>
+    </SuggestionAction>
   );
 
   const link = (option: Option, href: string, label: string) => (
-    <LearnLink
-      className={buttonVariants({ size: "sm", variant: variant(option) })}
-      href={href}
-      key={option}
-    >
+    <SuggestionLinkAction href={href} key={option} variant={variant(option)}>
       {label}
-    </LearnLink>
+    </SuggestionLinkAction>
   );
 
   const options: Record<Option, ReactNode> = {
@@ -171,7 +167,10 @@ function BehindChoices({
       link("studyEverything", actions.studyEverythingHref, t("Study everything")),
   };
 
-  return <NoticeCardActions>{order.map((option) => options[option])}</NoticeCardActions>;
+  // The main choice leads, so it's the sheet's widest answer and the panel's first.
+  const sorted = primary ? [primary, ...order.filter((option) => option !== primary)] : order;
+
+  return <SuggestionActions>{sorted.map((option) => options[option])}</SuggestionActions>;
 }
 
 /** What the learner's choice changes in the plan: more time a day, or the date moved; nothing kept. */
@@ -208,9 +207,9 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
   const fittingDateText = useFittingDateText();
   const appliedLine = useAppliedLine();
   const { actions } = useTodayScreen();
-  const notice = useRef<HTMLElement>(null);
   const [answer, setAnswer] = useState<Answer>(null);
   const [isPending, startTransition] = useTransition();
+  const answered = answer !== null && !("failed" in answer);
 
   const choose = (choice: Choice) =>
     startTransition(async () => {
@@ -226,13 +225,12 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
         actions.decidePlanChange({ changeId: change.id, status: "seen" }),
       );
 
-      if (!applied && !seen) {
+      if (!seen) {
         setAnswer({ failed: true });
         return;
       }
 
       setAnswer(applied?.data ? { applied: applied.data } : { kept: true });
-      notice.current?.focus();
 
       analytics.track({
         name: "Plan Edited",
@@ -240,49 +238,51 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
       });
     });
 
-  return (
-    <section
-      aria-label={t("Plan change")}
-      className={cn(
-        SURFACE_CLASS,
-        "focus-visible:ring-ring/50 flex items-start gap-3 p-4 outline-none focus-visible:ring-[3px]",
-      )}
-      data-slot="today-plan-change"
-      ref={notice}
-      tabIndex={-1}
-    >
-      <NoticeCardLeading>
-        <KindTile icon={CalendarClockIcon} kind="lesson" size="sm" />
-      </NoticeCardLeading>
+  const result =
+    answer && "applied" in answer
+      ? appliedLine(answer.applied.todaySession)
+      : t("Noted. You keep your time, with less depth where it counts least.");
 
-      <NoticeCardContent>
-        <NoticeCardTitle>{sentence(behind)}</NoticeCardTitle>
+  return (
+    <Suggestion
+      answered={answered}
+      data-slot="today-plan-change"
+      label={t("Plan change")}
+      mark={<CalendarClockIcon />}
+    >
+      <SuggestionLine>
+        {answered ? (
+          <SuggestionResult>{result}</SuggestionResult>
+        ) : (
+          <>
+            <SuggestionSummary>{sentence(behind)}</SuggestionSummary>
+            <SuggestionOpen />
+          </>
+        )}
+      </SuggestionLine>
+
+      <SuggestionContent>
+        <SuggestionHeader>{sentence(behind)}</SuggestionHeader>
         {behind.fittingDate && (
-          <NoticeCardDescription>
+          <SuggestionDescription>
             {fittingDateText({
               dailyMinutes: behind.currentMinutes,
               fittingDate: behind.fittingDate,
             })}
-          </NoticeCardDescription>
+          </SuggestionDescription>
         )}
         <MovedTopicsLine change={change} named={NAMED_TOPICS} />
 
-        {answer && !("failed" in answer) ? (
-          <p className="mt-2.5 text-sm font-medium" role="status">
-            {"applied" in answer
-              ? appliedLine(answer.applied.todaySession)
-              : t("Noted. You keep your time, with less depth where it counts least.")}
-          </p>
+        {answered ? (
+          <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <BehindChoices behind={behind} choose={choose} isPending={isPending} />
         )}
 
         {answer && "failed" in answer && (
-          <p className="text-destructive mt-2 text-sm" role="alert">
-            {t("We couldn't save that. Try again.")}
-          </p>
+          <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>
         )}
-      </NoticeCardContent>
-    </section>
+      </SuggestionContent>
+    </Suggestion>
   );
 }

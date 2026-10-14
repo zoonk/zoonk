@@ -3,34 +3,25 @@
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { REBALANCE_SOURCE } from "@zoonk/core/preparation/rebalance";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  CalendarClockIcon,
-  FastForwardIcon,
-  FileClockIcon,
-  type LucideIcon,
-  RefreshCwIcon,
-  RotateCcwIcon,
-  ScaleIcon,
-} from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { KindTile } from "../_components/kind-tile";
+import { useState, useTransition } from "react";
 import {
-  NoticeCardActions,
-  NoticeCardContent,
-  NoticeCardDescription,
-  NoticeCardLeading,
-  NoticeCardTitle,
-} from "../_components/notice-card";
-import { SURFACE_CLASS } from "../_components/surface";
-import { BuddyArt } from "../buddies/buddy-art";
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
-import { PhaseEndMoves } from "../plan/phase-end-moves";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
   useAppliedLine,
   useKeepOfficialDateLabel,
@@ -38,49 +29,20 @@ import {
 } from "../plan/use-change-sentence";
 import { useProposalEffectText } from "../plan/use-effect-text";
 import { ListeningBasicsLine, MovedTopicsLines } from "./moved-topics-line";
-import { useTodayChangeSentence } from "./today-change-sentence";
+import { getChangeMark } from "./today-change-mark";
+import { useTodayChangeSentence, useTodayCountsByDate } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
+import { AdjustPlanLink } from "./today-plan-change-actions";
 
 type Change = NonNullable<TodayView["planChange"]>;
 type Decision = PlanChangeDecisionInput["status"];
-type AnswerState = { answer: Decision; answered: PlanChangeView } | { failed: true } | null;
-
-/** The icons of the changes that have one of their own; the rest share the plan's. */
-const KIND_ICONS: Partial<Record<string, LucideIcon>> = {
-  missedDays: CalendarClockIcon,
-  relearn: RotateCcwIcon,
-  testedOut: FastForwardIcon,
-};
-
-function getChangeIcon(change: Change) {
-  if (change.source === NOTICE_SOURCE) {
-    return FileClockIcon;
-  }
-
-  return (
-    KIND_ICONS[change.kind] ?? (change.source === REBALANCE_SOURCE ? ScaleIcon : RefreshCwIcon)
-  );
-}
-
-/**
- * Who brings the change, beside its words: the buddy's face for a suggestion (it's the one who
- * proposes), the notice's or the change's own icon otherwise.
- */
-function ChangeLeading({ change }: { change: Change }) {
-  const { buddy } = useTodayScreen();
-
-  if (change.status === "proposed" && change.source !== NOTICE_SOURCE) {
-    return <BuddyArt buddy={buddy} className="size-10" />;
-  }
-
-  return <KindTile icon={getChangeIcon(change)} kind="lesson" size="sm" />;
-}
+type Answered = { answer: Decision; answered: PlanChangeView };
 
 /**
  * The notice's title: what kind of change it is, before the sentence that says what it does. A
- * change the exam's notice brings says so in its own sentence ("The exam notice says…"),
- * so that sentence is the title.
+ * change the exam's notice brings says so in its own sentence ("The exam notice says…"), so that
+ * sentence is the title.
  */
 function useChangeTitle() {
   const t = useExtracted();
@@ -91,7 +53,7 @@ function useChangeTitle() {
     }
 
     if (change.status === "proposed") {
-      return t("A suggestion for your plan");
+      return t("Plan suggestion");
     }
 
     if (change.kind === "testedOut") {
@@ -103,19 +65,32 @@ function useChangeTitle() {
 }
 
 /**
- * What a change does to the plan, said as the Journey says its end: "Adds 6 lessons." Today's
- * other notices that change the plan say it the same way.
+ * What a change does to the plan, in words over its diff: what the diff can't say (the lessons it
+ * leaves out by name, the topics, its end as the Plan says it), then the diff, which leads with the
+ * lessons it leaves out or adds (fewer or more of them without a date they count against,
+ * `byDate`). Today's other notices that change the plan say it the same way.
  */
-export function ProposalEffect({ change }: { change: Pick<PlanChangeView, "effect"> }) {
+export function ProposalEffect({
+  byDate = true,
+  change,
+}: {
+  byDate?: boolean;
+  change: Pick<PlanChangeView, "effect">;
+}) {
   const proposalEffectText = useProposalEffectText();
   const { planEnd, today } = useTodayScreen();
   const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
-  const effect = proposalEffectText(change, { endDate: planEnd, targetDate });
+
+  const effect = proposalEffectText(
+    change,
+    { endDate: planEnd, targetDate },
+    { besideDiff: true, byDate },
+  );
 
   return (
     <>
-      {effect && <NoticeCardDescription>{effect}</NoticeCardDescription>}
-      <PhaseEndMoves effect={change.effect} />
+      {effect && <SuggestionDescription>{effect}</SuggestionDescription>}
+      <PlanEffectDiff byDate={byDate} effect={change.effect} />
     </>
   );
 }
@@ -125,7 +100,7 @@ function useAnsweredText(change: Change) {
   const t = useExtracted();
   const appliedLine = useAppliedLine();
 
-  return ({ answer, answered }: { answer: Decision; answered: PlanChangeView }): string => {
+  return ({ answer, answered }: Answered): string => {
     switch (answer) {
       case "applied":
         return appliedLine(answered.todaySession);
@@ -166,51 +141,51 @@ function ChangeActions({
     proposal && (change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE);
 
   return (
-    <NoticeCardActions>
-      <Button
-        disabled={disabled}
-        focusableWhenDisabled
-        onClick={() => onAnswer(proposal ? "applied" : "seen")}
-        size="sm"
-      >
-        {overridesNotice && t("Use my date anyway")}
-        {proposal && !overridesNotice && t("Apply")}
-        {!proposal && t("Got it")}
-      </Button>
+    <SuggestionActions>
+      {(!proposal || change.effect !== null) && (
+        <SuggestionAction
+          disabled={disabled}
+          onClick={() => onAnswer(proposal ? "applied" : "seen")}
+        >
+          {overridesNotice && t("Use my date anyway")}
+          {proposal && !overridesNotice && t("Apply")}
+          {!proposal && t("Got it")}
+        </SuggestionAction>
+      )}
+
+      <AdjustPlanLink change={change} />
 
       {(proposal || change.canUndo) && (
-        <Button
+        <SuggestionAction
           disabled={disabled}
-          focusableWhenDisabled
           onClick={() => onAnswer(proposal ? "declined" : "undone")}
-          size="sm"
-          variant="ghost"
+          variant="outline"
         >
           {keepsMine && !overridesNotice && t("Keep mine")}
           {overridesNotice && keepOfficialDate(change.examDocument)}
           {proposal && !keepsMine && !overridesNotice && t("Not now")}
           {!proposal && t("Undo")}
-        </Button>
+        </SuggestionAction>
       )}
-    </NoticeCardActions>
+    </SuggestionActions>
   );
 }
 
 /**
- * Answers the change in place: the buttons give way to what the answer did, and focus stays on the
- * notice so the keyboard doesn't lose its place.
+ * Answers the change in place; the suggestion then says what the answer did. An answer that didn't
+ * save keeps the last one on screen (an applied change whose Undo failed stays applied). Undoing
+ * an applied suggestion gives the suggestion back (`change`), waiting for an answer as before
+ * Apply, even when Today opened on it already applied: Ana undid resting on Saturdays and read
+ * "Undone" with no way back to it until she reloaded.
  */
-function useAnswer({
-  change,
-  notice,
-}: {
-  change: Change;
-  notice: React.RefObject<HTMLElement | null>;
-}) {
+function useAnswer(opened: Change) {
   const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
-  const [state, setState] = useState<AnswerState>(null);
+  const [answered, setAnswered] = useState<Answered | null>(null);
+  const [restored, setRestored] = useState<Change | null>(null);
+  const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const change = restored ?? opened;
 
   const answer = (status: Decision) => {
     startTransition(async () => {
@@ -218,40 +193,71 @@ function useAnswer({
         actions.decidePlanChange({ changeId: change.id, status }),
       );
 
-      setState(saved ? { answer: status, answered: saved } : { failed: true });
+      setFailed(!saved);
 
       if (!saved) {
         return;
       }
 
-      notice.current?.focus();
-
-      if (status !== "seen") {
-        const kind = change.status === "proposed" ? "proposal" : `undo:${change.kind}`;
-        analytics.track({ name: "Plan Edited", properties: { change_kind: `today:${kind}` } });
+      if (saved.status === "proposed") {
+        setRestored({ ...saved, chapterTitle: opened.chapterTitle });
+        setAnswered(null);
+      } else {
+        setAnswered({ answer: status, answered: saved });
       }
+
+      if (status === "seen") {
+        return;
+      }
+
+      const kind =
+        change.status === "proposed" && status !== "undone" ? "proposal" : `undo:${change.kind}`;
+
+      analytics.track({ name: "Plan Edited", properties: { change_kind: `today:${kind}` } });
     });
   };
 
-  return { answer, isPending, state };
+  return { answer, answered, change, failed, isPending };
 }
 
 /**
- * Every proposal waits for its own answer: once this one is answered, the next one still waiting
- * (from the buddy, the exam's notice or the plan) comes up when the learner asks for it.
+ * After the answer: "Next suggestion" when another proposal still waits, else Undo while the
+ * applied change can still be undone.
  */
-function NextSuggestion({ onNext }: { onNext: () => void }) {
+function AfterAnswer({
+  answer,
+  isPending,
+  onNext,
+  state,
+}: {
+  answer: (status: Decision) => void;
+  isPending: boolean;
+  onNext: (() => void) | null;
+  state: Answered;
+}) {
   const t = useExtracted();
 
-  return (
-    <Button onClick={onNext} size="sm" variant="outline">
-      {t("Next suggestion")}
-    </Button>
-  );
+  if (onNext) {
+    return (
+      <SuggestionAction onClick={onNext} variant="outline">
+        {t("Next suggestion")}
+      </SuggestionAction>
+    );
+  }
+
+  if (state.answer === "applied" && state.answered.canUndo) {
+    return (
+      <SuggestionAction disabled={isPending} onClick={() => answer("undone")} variant="outline">
+        {t("Undo")}
+      </SuggestionAction>
+    );
+  }
+
+  return null;
 }
 
 function PlanChangeNotice({
-  change,
+  change: opened,
   focusOnMount = false,
   onNext,
 }: {
@@ -264,67 +270,60 @@ function PlanChangeNotice({
   const t = useExtracted();
   const sentence = useTodayChangeSentence();
   const changeTitle = useChangeTitle();
+  const { answer, answered, change, failed, isPending } = useAnswer(opened);
   const answeredText = useAnsweredText(change);
   const officialDate = useOfficialDateLine()(change);
-  const notice = useRef<HTMLElement>(null);
-  const { answer, isPending, state } = useAnswer({ change, notice });
+  const byDate = useTodayCountsByDate()(change);
   const proposal = change.status === "proposed";
   const title = changeTitle(change);
+  const result = answered ? answeredText(answered) : null;
 
-  useEffect(() => {
-    if (focusOnMount) {
-      notice.current?.focus();
-    }
-  }, [focusOnMount]);
+  const after = answered && (
+    <AfterAnswer answer={answer} isPending={isPending} onNext={onNext} state={answered} />
+  );
 
   return (
-    <section
-      aria-label={proposal ? t("Suggested change") : t("Plan change")}
-      className={cn(
-        SURFACE_CLASS,
-        "focus-visible:ring-ring/50 flex items-start gap-3 p-4 outline-none focus-visible:ring-[3px]",
-      )}
+    <Suggestion
+      answered={answered?.answer ?? false}
       data-slot="today-plan-change"
-      ref={notice}
-      tabIndex={-1}
+      focusOnMount={focusOnMount}
+      label={proposal ? t("Suggested change") : t("Plan change")}
+      mark={getChangeMark(change)}
     >
-      <NoticeCardLeading>
-        <ChangeLeading change={change} />
-      </NoticeCardLeading>
-
-      <NoticeCardContent>
-        {title ? (
-          <>
-            <NoticeCardTitle>{title}</NoticeCardTitle>
-            <NoticeCardDescription>{sentence(change)}</NoticeCardDescription>
-            {change.kind === "testedOut" && <MovedTopicsLines change={change} />}
-          </>
+      <SuggestionLine>
+        {result ? (
+          <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <NoticeCardTitle>{sentence(change)}</NoticeCardTitle>
+          <SuggestionSummary>{sentence(change)}</SuggestionSummary>
         )}
-        <ListeningBasicsLine change={change} />
-        {proposal && <ProposalEffect change={change} />}
-        {!proposal && <PhaseEndMoves effect={change.effect} />}
-        {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
+        {result ? after : <SuggestionOpen />}
+      </SuggestionLine>
 
-        {state && "answer" in state ? (
-          <div className="mt-2.5 flex flex-col items-start gap-2">
-            <p className="text-sm font-medium" role="status">
-              {answeredText(state)}
-            </p>
-            {onNext && <NextSuggestion onNext={onNext} />}
-          </div>
+      <SuggestionContent>
+        <SuggestionHeader>{title || sentence(change)}</SuggestionHeader>
+        {title && <SuggestionDescription>{sentence(change)}</SuggestionDescription>}
+        {change.kind === "testedOut" && <MovedTopicsLines change={change} />}
+        <ListeningBasicsLine change={change} />
+        {/* A closer estimate names the lessons that no longer fit, as a proposal does. */}
+        {proposal || change.kind === "estimateUpdated" ? (
+          <ProposalEffect byDate={byDate} change={change} />
+        ) : (
+          <PlanEffectDiff byDate={byDate} effect={change.effect} />
+        )}
+        {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
+
+        {result ? (
+          <>
+            <SuggestionResult>{result}</SuggestionResult>
+            {after && <SuggestionActions>{after}</SuggestionActions>}
+          </>
         ) : (
           <ChangeActions change={change} disabled={isPending} onAnswer={answer} />
         )}
 
-        {state && "failed" in state && (
-          <p className="text-destructive mt-2 text-sm" role="alert">
-            {t("We couldn't save that. Try again.")}
-          </p>
-        )}
-      </NoticeCardContent>
-    </section>
+        {failed && <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>}
+      </SuggestionContent>
+    </Suggestion>
   );
 }
 

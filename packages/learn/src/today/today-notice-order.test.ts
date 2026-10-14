@@ -201,7 +201,12 @@ describe(pickTodayNotice, () => {
   });
 
   it("offers a course from before goals only when nothing else needs saying", () => {
-    const suggestedGoal = { id: "suggestion", status: "pending" as const, title: "Physics" };
+    const suggestedGoal = {
+      courseId: null,
+      id: "suggestion",
+      status: "pending" as const,
+      title: "Physics",
+    };
 
     expect(pick({ view: { suggestedGoal } })).toBe("suggestedGoal");
 

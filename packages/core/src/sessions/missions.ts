@@ -1,26 +1,45 @@
-/**
- * The day's three missions come from the session itself: review (open today's capsules), something
- * new (finish the new lesson) and fix a mistake. Doing all three pays a bonus, always +50 Brain
- * Power (`fullMeal` in code). They renew at the learner's local midnight because each session
- * belongs to one local day.
- */
-type MissionKind = "review" | "somethingNew" | "fixMistake";
+import { BRAIN_POWER_BONUS } from "./brain-power";
+import { type MissionDetail, type MissionKind, type MissionOpens } from "./missions/catalog";
 
 /**
- * `nothingToday` is honest: nothing was due or saved, which is a good thing, not a failure. It
- * isn't done either: only missions actually done count, and pay the bonus.
+ * Today's achievable missions: finish the planned reviews, finish one new lesson, or fix a ready
+ * mistake. Only available kinds are offered. Finishing all offered missions pays +50 Brain Power,
+ * whether one, two or three were possible; an empty day offers no bonus.
+ */
+
+/**
+ * `nothingToday` remains in the transport type for older clients; current mission selection never
+ * returns it. Unavailable kinds are omitted rather than presented as work the learner cannot do.
  */
 type MissionStatus = "done" | "nothingToday" | "todo";
 
-export type Mission = { done: number; kind: MissionKind; status: MissionStatus; total: number };
+export type Mission = {
+  done: number;
+  kind: MissionKind;
+  status: MissionStatus;
+  total: number;
+  opens?: MissionOpens;
+  detail?: MissionDetail;
+  firstStep?: boolean;
+  /**
+   * About how many minutes a mission still to do asks: its unfinished blocks' planned minutes, or
+   * an estimate for work outside the day's blocks. Absent once done.
+   */
+  minutes?: number;
+  /**
+   * Why the block it opens can't start yet (`getBlockWait`): a phase's challenge waits for the
+   * day's lessons before it, or for the challenge before it.
+   */
+  waitReason?: "challenge" | "lessons";
+};
 
 export type MissionInput = {
   /** Mistakes from earlier days the learner could fix today, and how many they fixed today. */
   fix: { available: boolean; fixedToday: number };
   /** New lessons in today's session and how many were finished. */
   learn: { completed: number; lessons: number };
-  /** Capsules due today and how many were opened. */
-  review: { capsules: number; opened: number };
+  /** Review blocks in today's session and how many were finished. */
+  review: { blocks: number; completed: number };
 };
 
 function toMission({
@@ -31,9 +50,9 @@ function toMission({
   done: number;
   kind: MissionKind;
   total: number;
-}): Mission {
+}): Mission | null {
   if (total === 0) {
-    return { done: 0, kind, status: "nothingToday", total: 0 };
+    return null;
   }
 
   return { done: Math.min(done, total), kind, status: done >= total ? "done" : "todo", total };
@@ -43,11 +62,16 @@ export function getMissions({ fix, learn, review }: MissionInput): Mission[] {
   const fixTotal = fix.available || fix.fixedToday > 0 ? 1 : 0;
 
   return [
-    toMission({ done: review.opened, kind: "review", total: review.capsules }),
+    toMission({ done: review.completed, kind: "review", total: review.blocks }),
     // Finishing one new lesson feeds the mission; later lessons are more of the same meal.
     toMission({ done: learn.completed, kind: "somethingNew", total: Math.min(1, learn.lessons) }),
     toMission({ done: fix.fixedToday, kind: "fixMistake", total: fixTotal }),
-  ];
+  ].filter((mission) => mission !== null);
+}
+
+/** Fewer possible missions never reduce the completion bonus; no missions means no bonus. */
+export function getMissionBonus(missions: readonly Mission[]): number {
+  return missions.length > 0 ? BRAIN_POWER_BONUS.fullMeal : 0;
 }
 
 /** How many of the day's missions the learner actually did; one with nothing due isn't one. */
@@ -55,10 +79,7 @@ export function countDoneMissions(missions: readonly Pick<Mission, "status">[]):
   return missions.filter((mission) => mission.status === "done").length;
 }
 
-/**
- * All three missions actually done, which pays the bonus. A day with nothing to review or fix
- * doesn't: Pedro's first 74-second lesson paid it, and "all three missions" wasn't true.
- */
+/** Every offered mission actually done; a day with none never earns the completion bonus. */
 export function isFullMeal(missions: readonly Mission[]): boolean {
   return missions.length > 0 && countDoneMissions(missions) === missions.length;
 }

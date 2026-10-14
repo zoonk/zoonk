@@ -2,6 +2,7 @@ import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
 import { CHECKPOINT_LEDGER_KINDS } from "../checkpoints/_utils/checkpoint-results";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
+import { type BrainPowerReward } from "./milestone-reward";
 import {
   type MilestoneAward,
   type MilestoneCounts,
@@ -58,23 +59,23 @@ export async function loadMilestoneCounts(userId: string): Promise<MilestoneCoun
 export async function awardMilestones({
   badges = [],
   brainPower,
+  brainPowerRewards = [],
   userId,
 }: {
   badges?: readonly MilestoneAward[];
   /** Brain Power before and after the activity, to find belts crossed. */
   brainPower: { after: number; before: number } | null;
+  /** Separately paid rewards retain their own intervals, including across account linking. */
+  brainPowerRewards?: readonly BrainPowerReward[];
   userId: string;
 }): Promise<Milestone[]> {
-  const [counts, profile] = await Promise.all([
-    loadMilestoneCounts(userId),
-    prisma.userLearningProfile.findUnique({ select: { buddyKind: true }, where: { userId } }),
-  ]);
+  const counts = await loadMilestoneCounts(userId);
 
   const awards = [
     ...getEarnedGlasses(counts),
-    ...(brainPower
-      ? getCrossedMilestones({ ...brainPower, hasBuddy: Boolean(profile?.buddyKind) })
-      : []),
+    ...[...(brainPower ? [brainPower] : []), ...brainPowerRewards].flatMap((reward) =>
+      getCrossedMilestones(reward),
+    ),
     ...badges,
   ];
 

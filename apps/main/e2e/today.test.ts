@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -11,6 +12,7 @@ import {
   planItemFixture,
   suggestedGoalFixture,
 } from "@zoonk/testing/fixtures/goals";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -32,6 +34,7 @@ import {
   carryLessons,
   createStudyDay,
   openAs,
+  saveMissions,
   writeStudyLesson,
 } from "./study-day";
 
@@ -41,6 +44,77 @@ const WRITING_REFRESH_MS = 5000;
 /** The welcome back says how long the lighter day takes: "lighter" beside 12 activities said nothing. */
 const WELCOME_BACK = /^Welcome back! Today is lighter, about .+, so it's easy to pick up again\.$/u;
 const DAYS_PER_WEEK = 7;
+
+test("keeps a phase challenge waiting for today's lessons while a later lesson can open first", async ({
+  browser,
+}) => {
+  const { lesson, session, user } = await createStudyDay();
+
+  const challenge = await studySessionBlockFixture({
+    estimatedMinutes: 5,
+    kind: "checkpoint",
+    payload: {
+      checkpoint: {
+        kind: "boss",
+        mock: false,
+        passMark: 4,
+        phase: 1,
+        rematch: false,
+        timeLimitMinutes: null,
+      },
+      itemIds: [],
+      title: "Percentages",
+    },
+    position: 3,
+    sessionId: session.id,
+  });
+
+  const page = await openAs(browser, user);
+  await page.goto("/today");
+  const card = page.getByRole("region", { name: "Today's session" });
+  const row = card.getByRole("listitem").filter({ hasText: "Phase challenge" });
+  await expect(row).toContainText("Percentages · after today's lessons");
+  await expect(row.getByRole("button")).toHaveCount(0);
+  await expect(card.getByRole("button", { exact: true, name: "Phase challenge" })).toHaveCount(0);
+  await page.screenshot({ fullPage: true, path: test.info().outputPath("today-wait-desktop.png") });
+
+  // Picking a later learn block remains allowed even while the earlier review is unfinished.
+  await card
+    .getByRole("button", { exact: true, name: `${LESSON_TITLE}, counts toward a mission` })
+    .click();
+
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+
+  await expect
+    .poll(async () => {
+      const block = await prisma.studySessionBlock.findFirstOrThrow({
+        where: { kind: "learn", sessionId: session.id },
+      });
+
+      return block.status;
+    })
+    .toBe("active");
+
+  await expect(
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: challenge.id } }),
+  ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+  await expect(
+    prisma.studySessionBlock.findFirstOrThrow({ where: { kind: "review", sessionId: session.id } }),
+  ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+  await page.goto("/today");
+  await expect(row).toContainText("after today's lessons");
+  await expect(row.getByRole("button")).toHaveCount(0);
+  await page.setViewportSize({ height: 844, width: 390 });
+  await expect(row).toBeVisible();
+  await page.screenshot({ fullPage: true, path: test.info().outputPath("today-wait-phone.png") });
+  await page.context().close();
+});
+
+/** A goal past its onboarding questions: only its plan is left to build. */
+const PAST_THE_QUESTIONS = { answered: [...ONBOARDING_QUESTIONS, "buddy", "placement"] };
 
 async function readGoalStatus(goalId: string) {
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
@@ -109,8 +183,207 @@ test.describe("Today", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: "What you already know" })).toBeVisible();
+    const placement = card.getByRole("listitem").filter({ hasText: "What you already know" });
+    await expect(placement).toHaveAttribute("aria-current", "step");
     await expect(card.getByText("Quick review")).toHaveCount(0);
+
+    const missions = page.getByRole("region", { name: "Today's missions" });
+    const reviewMission = missions.getByRole("button", { name: /^Review\b/u });
+    await expect(reviewMission).toBeEnabled();
+
+    await reviewMission.click();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "What you already know" }),
+    ).toBeVisible();
+
+    async function answerPlacement(question: string) {
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`^${question}`, "u") }),
+      ).toBeVisible();
+
+      await page.getByRole("button", { name: "I don't know yet" }).click();
+      await expect(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+      await page.keyboard.press("Enter");
+    }
+
+    await answerPlacement("Capsule one");
+    await answerPlacement("Capsule two");
+    await expect(page.getByRole("heading", { exact: true, name: "Review done" })).toBeVisible();
+
+    // The block's moment says which mission it completed and what's left.
+    const moment = page.locator("[data-slot=mission-moment]");
+    await expect(moment).toContainText("Mission done: Review");
+    await expect(moment).toContainText("1 of 2 · Left: Do a new lesson");
+
+    await page.goto("/today");
+    await expect(missions).toContainText("Review, done");
+    await page.goto("/buddy");
+
+    const buddyMissions = page.getByRole("region", { name: "Today's missions" });
+
+    // Done there too, and no longer something to open.
+    await expect(buddyMissions.getByRole("listitem").filter({ hasText: /^Review/u })).toHaveText(
+      "Review, done",
+    );
+
+    await expect(buddyMissions.getByRole("button", { name: /^Review\b/u })).toHaveCount(0);
+
+    await page.context().close();
+  });
+
+  // Ana's next day: "Quick review · 13 min" isn't quick.
+  test("opens a mission where it's done: the day's new lesson, even before its review", async ({
+    browser,
+  }) => {
+    const { lesson, user } = await createStudyDay();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const missions = page.getByRole("region", { name: "Today's missions" });
+
+    await missions
+      .getByRole("button", { name: /^Do a new lesson\b.*go to today's new lesson\b/u })
+      .click();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+    await page.context().close();
+  });
+
+  test("a mission whose block finished on another device doesn't open it again: Today shows it done", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const missions = page.getByRole("region", { name: "Today's missions" });
+    const review = missions.getByRole("button", { name: /^Review\b/u });
+    await expect(review).toBeVisible();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { completedAt: new Date(), status: "completed" },
+      where: { kind: "review", sessionId: session.id },
+    });
+
+    await review.click();
+
+    await expect(missions.getByRole("listitem").filter({ hasText: /^Review/u })).toHaveText(
+      "Review, done",
+    );
+
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.context().close();
+  });
+
+  test("opens each mission where it's done, and a challenge waiting for today's lessons opens nothing yet", async ({
+    browser,
+  }) => {
+    const { goal, session, user } = await createStudyDay({ buddy: true });
+    const chapterId = randomUUID();
+    const patternId = randomUUID();
+    const planItemId = randomUUID();
+
+    await Promise.all([
+      studySessionBlockFixture({
+        estimatedMinutes: 5,
+        kind: "checkpoint",
+        payload: {
+          checkpoint: {
+            kind: "boss",
+            mock: false,
+            passMark: 4,
+            phase: 1,
+            rematch: false,
+            timeLimitMinutes: null,
+          },
+          itemIds: [],
+          planItemId,
+          title: "Percentages",
+        },
+        position: 3,
+        sessionId: session.id,
+      }),
+      saveMissions(session.id, [
+        { anchor: {}, kind: "askBuddy", opens: { kind: "buddy" }, total: 1 },
+        {
+          anchor: { chapterId },
+          detail: { chapterTitle: "Arriving" },
+          kind: "call",
+          opens: { chapterId, kind: "call" },
+          total: 1,
+        },
+        {
+          anchor: { patternId },
+          detail: { patternTitle: "Past simple with did" },
+          kind: "pattern",
+          opens: { kind: "pattern", patternId },
+          total: 1,
+        },
+        { anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 },
+        {
+          anchor: { blockKind: "checkpoint", planItemId },
+          detail: { minutes: 5, title: "Percentages" },
+          kind: "challenge",
+          total: 1,
+        },
+      ]),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    // Each one opens the place it's done in: the buddy, the unit's calls, the pattern, the
+    // words to say again. A call or a question only opens its screen; the learner starts it.
+    const missions = page.getByRole("region", { name: "Today's missions" });
+
+    await expect(
+      missions.getByRole("link", { name: /^Ask Zu something\b.*go to Zu\b/u }),
+    ).toHaveAttribute("href", "/buddy");
+
+    await expect(
+      missions.getByRole("link", { name: /^Have a call\b.*choose a call\b/u }),
+    ).toHaveAttribute("href", `/content/units/${chapterId}`);
+
+    await expect(
+      missions.getByRole("link", { name: /^Practice a pattern\b.*go to the pattern\b/u }),
+    ).toHaveAttribute("href", `/pattern/${patternId}`);
+
+    await expect(
+      missions.getByRole("link", { name: /^Pronunciation\b.*go to pronunciation practice\b/u }),
+    ).toHaveAttribute("href", `/pronunciation?goal=${goal.id}`);
+
+    // The Trickster waits for the day's lessons, as his row in the day does: nothing to open yet.
+    const challenge = missions.getByRole("listitem").filter({ hasText: /^Take on the Trickster/u });
+
+    await expect(challenge).toHaveText(
+      /^Take on the Trickster, after today's lessons\s*After today's lessons\s·\s5\smin$/u,
+    );
+
+    await expect(challenge.getByRole("button")).toHaveCount(0);
+    await expect(challenge.getByRole("link")).toHaveCount(0);
+    await missions.screenshot({ path: test.info().outputPath("today-missions-desktop.png") });
+
+    await missions.getByRole("link", { name: /^Ask Zu something\b/u }).click();
+    await expect(page).toHaveURL(/\/buddy$/u);
+    await page.context().close();
+  });
+
+  test("calls a review quick only while it takes a few minutes", async ({ browser }) => {
+    const { session, user } = await createStudyDay();
+
+    await prisma.studySessionBlock.updateMany({
+      data: { estimatedMinutes: 13 },
+      where: { kind: "review", sessionId: session.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    await expect(card.getByRole("listitem").first()).toHaveText(/^Reviews.*13\smin$/u);
+    await expect(card.getByText("Quick review")).toHaveCount(0);
+    await page.context().close();
   });
 
   test("shows the countdown, the next block with one Start, one notice and the week", async ({
@@ -125,20 +398,19 @@ test.describe("Today", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Today" })).toBeVisible();
     await expect(page.getByRole("main").getByText(`${DAYS_TO_EXAM} days left`)).toBeVisible();
 
-    // How prepared the learner is lives in the Journey; Today says where the plan stands.
-    await expect(page.getByText(/preparation/u)).toHaveCount(0);
-
-    // The card leads with the next block and one Start; the blocks after it are in sight under
-    // it, each with its minutes. No minutes line of its own.
+    // The session leads with the next block and one Start; every block is in sight with its minutes.
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByText(/^\d+ of \d+ min$/u)).toHaveCount(0);
-    await expect(card.getByRole("heading", { name: "Quick review" })).toBeVisible();
-    await expect(card.getByRole("button", { name: /^Start/u })).toBeVisible();
+    await expect(card.getByRole("heading", { name: "Preparation" })).toHaveCount(0);
+    await expect(card.getByText(/^\d+ of \d+\smin$/u)).toHaveCount(0);
+    await expect(card.getByRole("button", { name: /^Start/u })).toHaveCount(1);
 
     await expect(card.getByRole("list").getByRole("listitem")).toHaveText([
+      /^Quick review/u,
       /^Discounts/u,
       /^Mixed/u,
     ]);
+
+    await expect(card.getByRole("listitem").nth(0)).toHaveAttribute("aria-current", "step");
 
     // With the whole day in sight, there's nothing more to open.
     await expect(card.getByRole("button", { name: /^See today's/u })).toHaveCount(0);
@@ -146,10 +418,12 @@ test.describe("Today", () => {
     // One notice at a time: the welcome back explains the lighter day; the course from before
     // goals waits for a day with nothing else to say.
     await expect(page.getByText(WELCOME_BACK)).toBeVisible();
-    await expect(page.getByRole("complementary", { name: "Suggested goal" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Suggested goal" })).toHaveCount(0);
 
-    // The missions live on the buddy's tab and in the summary, not on Today.
-    await expect(page.getByText(/Missions/u)).toHaveCount(0);
+    // Today keeps the missions together in one card, the same as on the buddy's tab.
+    const missions = page.getByRole("region", { name: "Today's missions" });
+
+    await expect(missions.getByRole("listitem")).toHaveText([/^Review/u, /^Do a new lesson/u]);
 
     // A new goal's week never opens with missed days, nor with rest days nobody chose: the days
     // before it existed are before the plan, and the days still ahead are planned.
@@ -215,17 +489,66 @@ test.describe("Today", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: LESSON_TITLE })).toBeVisible();
+    const next = card.getByRole("listitem").filter({ hasText: LESSON_TITLE });
+    await expect(next).toHaveAttribute("aria-current", "step");
     await expect(card.getByText("Already know this?")).toBeVisible();
     await card.getByRole("button", { name: "Take the test" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/test-out/${chapter.id}\\?session=1$`, "u"));
-    await expect(page.getByRole("link", { name: "Close" })).toHaveAttribute("href", /\/today$/u);
+    await expect(page.getByRole("link", { name: "Leave" })).toHaveAttribute("href", /\/today$/u);
 
     // Back on Today, the test is offered again instead of still opening.
     await page.goBack();
     await expect(card.getByRole("button", { name: "Take the test" })).toBeEnabled();
     await expect(card.getByText("Opening the test…")).toHaveCount(0);
+    await page.context().close();
+  });
+
+  test("a chapter failed today is offered again only after studying one of its lessons", async ({
+    browser,
+  }) => {
+    const { goal, lesson, session, user } = await createStudyDay({ reviewDone: true });
+    const chapter = await libraryChapterFixture();
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { lessonId: lesson.id, sessionId: session.id },
+    });
+
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { chapterId: chapter.id },
+        where: { lessonId: lesson.id, plan: { goalId: goal.id } },
+      }),
+      prisma.studySessionBlock.update({
+        data: { payload: { ...(block.payload as object), chapterId: chapter.id } },
+        where: { id: block.id },
+      }),
+      learningEventFixture({
+        contentIds: { chapterId: chapter.id },
+        correctAnswers: 1,
+        goalId: goal.id,
+        incorrectAnswers: 7,
+        kind: "questions",
+        lessonKind: "testOut",
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+    const card = page.getByRole("region", { name: "Today's session" });
+
+    await expect(card.getByRole("listitem").filter({ hasText: LESSON_TITLE })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
+
+    await expect(card.getByText("Already know this?")).toHaveCount(0);
+    await expect(card.getByRole("button", { name: "Take the test" })).toHaveCount(0);
+
+    await learningEventFixture({ contentIds: { lessonId: lesson.id }, userId: user.id });
+    await page.reload();
+    await expect(card.getByRole("button", { name: "Take the test" })).toBeVisible();
     await page.context().close();
   });
 
@@ -237,6 +560,11 @@ test.describe("Today", () => {
     const card = page.getByRole("region", { name: "Today's session" });
     const start = card.getByRole("button", { name: /^Start/u });
     await expect(start).toBeVisible();
+
+    const title = card.getByRole("heading", { level: 1, name: "Today" });
+    const segments = card.getByRole("img", { name: /^\d+ of \d+ done$/u });
+    const placed = () => Promise.all([title.boundingBox(), segments.boundingBox()]);
+    const before = await placed();
 
     // The server takes a few seconds to open the next step.
     await page.route("**/today", async (route) => {
@@ -251,6 +579,10 @@ test.describe("Today", () => {
 
     await start.click();
     await expect(card.getByRole("status")).toHaveText("Opening your next step…");
+
+    // It says so in the day's own line, under the button: the title and the day stay put.
+    expect(await placed()).toEqual(before);
+
     await expect(page).not.toHaveURL(/\/today$/u, { timeout: SLOW_OPEN_MS + 10_000 });
 
     await page.context().close();
@@ -293,8 +625,8 @@ test.describe("Today", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const suggestion = page.getByRole("complementary", { name: "Suggested goal" });
-    await expect(suggestion.getByText("Continue Spanish?")).toBeVisible();
+    const suggestion = page.getByRole("region", { name: "Suggested goal" });
+    await expect(suggestion.getByRole("heading", { name: "Continue Spanish?" })).toBeVisible();
     await expect(suggestion.getByText("Build a plan in 1 minute.")).toBeVisible();
 
     await suggestion.getByRole("button", { name: "Not now" }).click();
@@ -303,18 +635,18 @@ test.describe("Today", () => {
     await page.context().close();
   });
 
-  test("keeps a long day short: the next block, with the whole day one tap away", async ({
+  test("shows the whole day on a wide screen and folds long queues on a phone", async ({
     browser,
   }) => {
-    const { session, user } = await createStudyDay();
+    const { lesson, session, user } = await createStudyDay();
 
-    // A re-planned day full of short lessons: the review and the lesson are done.
+    // A re-planned day full of short lessons: the first three blocks are done.
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "completed" },
-        where: { position: { in: [0, 1] }, sessionId: session.id },
+        where: { position: { in: [0, 1, 2] }, sessionId: session.id },
       }),
-      ...[1, 2, 3, 4, 5].map((number) =>
+      ...Array.from({ length: 9 }, (_, index) => index + 1).map((number) =>
         studySessionBlockFixture({
           canDo: `You'll practice part ${number}`,
           estimatedMinutes: 3,
@@ -329,37 +661,54 @@ test.describe("Today", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    // What's done is the bar's progress; what's next is the one block on the card, and the next
-    // few after it are in sight under it. A day of reviews, practice and lessons isn't "8 lessons".
+    // The wide queue keeps every block, including what's done; the segments report the same day.
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByText("8 activities", { exact: true })).toBeVisible();
-    await expect(card.getByRole("heading", { name: "Mixed practice" })).toBeVisible();
-    await expect(card.getByText("Quick review")).toBeHidden();
-    await expect(card.getByRole("button", { name: /^Continue/u })).toBeVisible();
-
-    await expect(card.getByRole("list").getByRole("listitem")).toHaveText([
-      /^Short lesson 1/u,
-      /^Short lesson 2/u,
-      /^Short lesson 3/u,
-    ]);
-
-    // From the keyboard too: the last row opens the whole day in place, done blocks checked.
-    await tabTo(page, card.getByRole("button", { name: /^See today's \d+ activities/u }));
-    await page.keyboard.press("Enter");
-
     const day = card.getByRole("list").getByRole("listitem");
-    await expect(day).toHaveCount(8);
-    await expect(day.first()).toHaveText(/^Quick review, done/u);
-    await expect(day.nth(2)).toHaveAttribute("aria-current", "step");
-    await expect(day.last()).toContainText("Short lesson 5");
+    await expect(card.getByRole("img", { name: "3 of 12 done" })).toBeVisible();
+    await expect(day).toHaveCount(12);
+    await expect(day.nth(0)).toHaveText(/^Quick review\s*, done/u);
+    await expect(day.nth(3)).toHaveAttribute("aria-current", "step");
+    await expect(day.nth(3)).toContainText("Short lesson 1");
+    await expect(day.nth(11)).toContainText("Short lesson 9");
+    await expect(card.getByRole("button", { name: /^Continue/u })).toBeVisible();
+    await expect(card.getByRole("button", { name: /^\+\d+ more/u })).toHaveCount(0);
 
+    await page.setViewportSize({ height: 844, width: 390 });
+    await expect(day).toHaveCount(7);
+    await expect(day.nth(0)).toHaveAttribute("aria-current", "step");
+    await expect(day.nth(6)).toContainText("Short lesson 7");
+
+    // From the keyboard too: the done fold opens three finished rows and closes them again.
+    const doneFold = card.getByRole("button", {
+      name: new RegExp(`^3 done\\s+${lesson.estimatedMinutes + 4} min$`, "u"),
+    });
+
+    await expect(doneFold).toHaveAttribute("aria-expanded", "false");
+    await tabTo(page, doneFold);
     await page.keyboard.press("Enter");
-    await expect(card.getByText("Short lesson 5")).toBeHidden();
+    await expect(doneFold).toHaveAttribute("aria-expanded", "true");
+    await expect(day).toHaveCount(10);
+    await expect(day.nth(0)).toHaveText(/^Quick review\s*, done/u);
+    await page.keyboard.press("Enter");
+    await expect(doneFold).toHaveAttribute("aria-expanded", "false");
+    await expect(day).toHaveCount(7);
+
+    // The upcoming fold reveals only the two lessons beyond the six after the next block.
+    const moreFold = card.getByRole("button", { name: /^\+2 more\s+6 min$/u });
+    await expect(moreFold).toHaveAttribute("aria-expanded", "false");
+    await tabTo(page, moreFold);
+    await page.keyboard.press("Enter");
+    await expect(moreFold).toHaveAttribute("aria-expanded", "true");
+    await expect(day).toHaveCount(9);
+    await expect(day.nth(8)).toContainText("Short lesson 9");
+    await page.keyboard.press("Enter");
+    await expect(moreFold).toHaveAttribute("aria-expanded", "false");
+    await expect(card.getByText("Short lesson 9")).toBeHidden();
     await expect(page).toHaveURL(/\/today$/u);
     await page.context().close();
   });
 
-  test("ends the day with the buddy cheering, what changed and 10 more minutes", async ({
+  test("ends the day with its completed queue, what changed and 10 more minutes", async ({
     browser,
   }) => {
     const { session, user } = await createStudyDay({ buddy: true });
@@ -380,8 +729,17 @@ test.describe("Today", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: "Today's session is complete" })).toBeVisible();
-    await expect(card.locator("[data-slot=buddy]")).toHaveAttribute("data-buddy", "zu");
+
+    await expect(
+      card.getByRole("status").filter({ hasText: "Today's session is complete." }),
+    ).toBeVisible();
+
+    await expect(card.getByRole("listitem")).toHaveText([
+      /^Quick review\s*, done/u,
+      /^Discounts in your head\s*, skipped/u,
+      /^Mixed practice\s*, done/u,
+    ]);
+
     await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toBeVisible();
     await expectAccessibleScreen(page, "Today once the day is done");
 
@@ -425,14 +783,21 @@ test.describe("Today after days away", () => {
       await expect(card.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
       await expectAccessibleScreen(page, "Today after days away");
 
-      // The Journey still says honestly what those days left.
-      await page.goto("/journey");
-      await expect(page.getByRole("main").getByText(/\d+ lessons? to catch up/u)).toBeVisible();
+      // The Plan still says honestly what those days left, under its pace (drawn once per
+      // viewport: a tile in the column, a number in the aside).
+      await page.goto("/plan");
+
+      await expect(
+        page
+          .getByRole("main")
+          .getByText(/\d+ lessons? to catch up/u)
+          .filter({ visible: true }),
+      ).toBeVisible();
     });
   });
 
   // Rafaela back after a month read "You're behind", three percentages and a wall of topics
-  // before her greeting, with "Study 4h a day" as the main action.
+  // before her greeting, with "Study 4 hr a day" as the main action.
   test("greets a learner back before falling behind's card, which says it in one sentence and asks for no more hours first", async ({
     browser,
   }) => {
@@ -482,7 +847,9 @@ test.describe("Today after days away", () => {
     await expect(card.getByText(WELCOME_BACK)).toBeVisible();
 
     await expect(
-      note.getByText("At 2h a day, your plan now covers 39% of the exam, down from 48%."),
+      note.getByRole("heading", {
+        name: "At 2 hr a day, your plan now covers 39% of the exam, down from 48%.",
+      }),
     ).toBeVisible();
 
     await expect(
@@ -496,14 +863,14 @@ test.describe("Today after days away", () => {
     expect(cardBox?.y ?? Infinity).toBeLessThan(noteBox?.y ?? 0);
 
     // Each choice says what it buys, and more hours isn't the main action on the day she's back.
-    await expect(note.locator("a, button")).toHaveText([
+    await expect(note.getByRole("link").or(note.getByRole("button"))).toHaveText([
       "Choose where to focus",
       "Keep my time",
-      "Study 4h a day · about 54%",
+      "Study 4 hr a day · about 54%",
       "Study everything",
     ]);
 
-    await expect(note.getByRole("button", { name: "Study 4h a day · about 54%" })).toHaveCSS(
+    await expect(note.getByRole("button", { name: "Study 4 hr a day · about 54%" })).toHaveCSS(
       "background-color",
       "rgba(0, 0, 0, 0)",
     );
@@ -536,7 +903,10 @@ test.describe("Today after days away", () => {
       await page.goto("/today");
 
       const card = page.getByRole("region", { name: "Today's session" });
-      await expect(card.getByRole("heading", { name: "No study planned today" })).toBeVisible();
+
+      await expect(
+        card.getByRole("status").filter({ hasText: "No study planned today." }),
+      ).toContainText("Welcome back! Today is a rest day in your plan, so enjoy it.");
 
       await expect(
         card.getByText("Welcome back! Today is a rest day in your plan, so enjoy it."),
@@ -562,7 +932,15 @@ test.describe("Today after days away", () => {
     const card = page.getByRole("region", { name: "Today's session" });
     await expect(card.getByText("2 more lessons to catch up come first tomorrow.")).toBeVisible();
     await card.getByRole("button", { name: "Catch up today · +6 min" }).click();
-    await expect(card.getByText("See today's 5 activities")).toBeVisible();
+
+    await expect(card.getByRole("listitem")).toHaveText([
+      /^Quick review/u,
+      /^Discounts in your head/u,
+      /^Mixed practice/u,
+      /^Missed lesson 1/u,
+      /^Missed lesson 2/u,
+    ]);
+
     await expect(card.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
 
     // Six take 18 minutes, nearly two of his days: the next days take them, with no button.
@@ -605,8 +983,8 @@ test.describe("Today without a session to start", () => {
     const card = page.getByRole("region", { name: "Today's session" });
 
     await expect(
-      card.getByRole("heading", { name: "Getting today's lessons ready…" }),
-    ).toBeVisible();
+      card.getByRole("status").filter({ hasText: "Getting today's lessons ready…" }),
+    ).toContainText("They show up here on their own.");
 
     await expect(card.getByText("Today's session is complete")).toHaveCount(0);
     await expect(card.getByRole("link", { name: /See what changed/u })).toHaveCount(0);
@@ -647,7 +1025,11 @@ test.describe("Today without a session to start", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: "No study planned today" })).toBeVisible();
+
+    await expect(
+      card.getByRole("status").filter({ hasText: "No study planned today." }),
+    ).toContainText("Enjoy your day off!");
+
     await expect(card.getByText("Enjoy your day off!")).toBeVisible();
     await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
     await page.context().close();
@@ -670,7 +1052,8 @@ test.describe("Today without a session to start", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: "Quick review" })).toBeVisible();
+    const reviewRow = card.getByRole("listitem").filter({ hasText: "Quick review" });
+    await expect(reviewRow).toHaveAttribute("aria-current", "step");
 
     await expect(
       card.getByText(/^No reviews due today · \d+ questions? on your weakest topics$/u),
@@ -704,7 +1087,13 @@ test.describe("Today without a session to start", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByRole("heading", { name: "Nothing new for today" })).toBeVisible();
+
+    await expect(
+      card.getByRole("status").filter({ hasText: "Nothing new for today." }),
+    ).toContainText("You've done every lesson in your plan, or already know it.");
+
+    // No practiceable content exists yet: a button here would lead to nothing to study.
+    await expect(card.getByRole("button", { name: /^Practice for \d+ minutes$/u })).toHaveCount(0);
     await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
     await expect(card.getByText("Today's session is complete")).toHaveCount(0);
 
@@ -743,11 +1132,14 @@ test.describe("Today without a session to start", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Bake sourdough bread is on pause" }),
-    ).toBeVisible();
+    // Today keeps its frame: its title, and one line saying the goal is paused.
+    await expect(page.getByRole("heading", { level: 1, name: "Today" })).toBeVisible();
 
-    await page.getByRole("button", { name: "Resume" }).click();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
+    ).toContainText("Nothing is planned until you resume it.");
+
+    await page.getByRole("button", { name: "Resume Bake sourdough bread" }).click();
 
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
 
@@ -861,9 +1253,6 @@ async function createDayWithLessonsComing() {
 /** The narrowest phone the app is laid out for. */
 const NARROW_PHONE_WIDTH = 320;
 
-/** A section title's height on two lines (20px type on a 28px line). */
-const TWO_TITLE_LINES = 56;
-
 test.describe("Today while some of its lessons are still being outlined", () => {
   // Carla's Today said 7 lessons and her session opened with 15: the rest landed in between,
   // unannounced. The day says more are coming, keeps what it showed and adds them at its end.
@@ -879,15 +1268,16 @@ test.describe("Today while some of its lessons are still being outlined", () => 
     const card = page.getByRole("region", { name: "Today's session" });
     const coming = card.getByText("1 lesson so far · more as you go");
     await expect(coming).toBeVisible();
-    await expect(card.getByText(LESSON_TITLE).first()).toBeVisible();
+    await expect(card.getByRole("listitem")).toHaveText([new RegExp(`^${LESSON_TITLE}`, "u")]);
 
     // On a narrow phone the line goes under the title instead of squeezing it to a word a line.
     const [title, line] = await Promise.all([
-      card.getByRole("heading", { name: "Today's session" }).boundingBox(),
+      card.getByRole("heading", { level: 1, name: "Today" }).boundingBox(),
       coming.boundingBox(),
     ]);
 
-    expect(title?.height).toBeLessThan(TWO_TITLE_LINES);
+    expect(title).not.toBeNull();
+    expect((title?.x ?? 0) + (title?.width ?? 0)).toBeLessThanOrEqual(NARROW_PHONE_WIDTH);
     expect(line?.y).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0));
     expect((line?.x ?? 0) + (line?.width ?? 0)).toBeLessThanOrEqual(NARROW_PHONE_WIDTH);
 
@@ -906,17 +1296,87 @@ test.describe("Today while some of its lessons are still being outlined", () => 
     ]);
 
     await page.clock.fastForward(WRITING_REFRESH_MS);
-    await expect(card.getByText("2 lessons", { exact: true })).toBeVisible();
+
+    await expect(card.getByRole("listitem")).toHaveText([
+      new RegExp(`^${LESSON_TITLE}`, "u"),
+      /^Fractions on a number line/u,
+    ]);
+
     await expect(card.getByText(/more as you go/u)).toHaveCount(0);
-    await expect(card.getByText(LESSON_TITLE).first()).toBeVisible();
+    await expect(card.getByRole("listitem").nth(0)).toHaveAttribute("aria-current", "step");
     await page.context().close();
   });
 });
 
 test.describe("Today without a day to show", () => {
-  test("sends a learner without a goal to set one", async ({ userWithoutProgress }) => {
+  test("lets a learner without a goal start one right on Today", async ({
+    userWithoutProgress,
+  }) => {
     await userWithoutProgress.goto("/today");
-    await expect(userWithoutProgress).toHaveURL(/\/start$/u);
+
+    // Today keeps its own title; the start form is its section, on the page's edges.
+    await expect(userWithoutProgress).toHaveURL(/\/today$/u);
+
+    await expect(
+      userWithoutProgress.getByRole("heading", { level: 1, name: "Today" }),
+    ).toBeVisible();
+
+    await expect(userWithoutProgress.getByRole("heading", { name: "Start a goal" })).toBeVisible();
+    await expect(userWithoutProgress.getByRole("textbox", { name: "I want to" })).toBeVisible();
+
+    // On a wide screen the examples to start from sit in Today's aside, beside the form; on a
+    // phone they follow the form.
+    const example = userWithoutProgress.getByRole("button", { name: /^Play the guitar/u });
+    const aside = userWithoutProgress.getByRole("complementary", { name: "Getting started" });
+
+    await userWithoutProgress.setViewportSize({ height: 900, width: 1440 });
+    await expect(example).toHaveCount(1);
+    await expect(aside.getByRole("button", { name: /^Play the guitar/u })).toBeVisible();
+    await expect(aside.getByRole("heading", { name: "How it works" })).toBeVisible();
+
+    await userWithoutProgress.setViewportSize({ height: 844, width: 390 });
+    await expect(example).toHaveCount(1);
+    await expect(aside).toBeHidden();
+  });
+
+  test("sends a learner without a goal from a goal's tab to Today to start one", async ({
+    userWithoutProgress,
+  }) => {
+    await userWithoutProgress.goto("/mistakes");
+
+    await userWithoutProgress.getByRole("main").getByRole("link", { name: "Start a goal" }).click();
+
+    await expect(userWithoutProgress).toHaveURL(/\/today$/u);
+    await expect(userWithoutProgress.getByRole("heading", { name: "Start a goal" })).toBeVisible();
+  });
+
+  // Sam came for one question and only search found it again: Today offers it first.
+  test("offers an unfinished quick explanation before starting a goal", async ({ browser }) => {
+    const user = await createE2EUser(getBaseURL());
+
+    const goal = await goalFixture({
+      details: { question: "what does 'the market is up 2%' mean?" },
+      kind: "explain",
+      timezone: "UTC",
+      title: "What 'the market is up 2%' means",
+      userId: user.id,
+    });
+
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const explanation = page.getByRole("region", { name: "Your quick explanation" });
+    await expect(explanation).toContainText("What 'the market is up 2%' means");
+
+    await expect(explanation.getByRole("link", { name: "Continue explanation" })).toHaveAttribute(
+      "href",
+      `/explain/${goal.id}`,
+    );
+
+    await expect(page.getByRole("heading", { name: "Start a goal" })).toBeVisible();
+    await page.context().close();
   });
 
   test("welcomes a returning learner back to their last course", async ({ browser }) => {
@@ -927,12 +1387,12 @@ test.describe("Today without a day to show", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: "Welcome back" })).toBeVisible();
 
-    const card = page.getByRole("complementary", { name: "Suggested goal" });
+    const card = page.getByRole("region", { name: "Suggested goal" });
     await expect(card.getByText("Continue Physics?")).toBeVisible();
     await card.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(/\/start\?goal=Physics$/u);
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue("Physics");
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("Physics");
 
     await expect
       .poll(async () => {
@@ -944,11 +1404,38 @@ test.describe("Today without a day to show", () => {
     await page.context().close();
   });
 
+  // Marcos accepted "Continue Spanish?" and landed on a blank "I want to" form with the word
+  // "Spanish", a different path from the course he was taking.
+  test("opens the start of the course a returning learner was taking, while it exists", async ({
+    browser,
+  }) => {
+    const [user, course] = await Promise.all([
+      createE2EUser(getBaseURL()),
+      courseFixture({
+        isPublished: true,
+        slug: `e2e-spanish-${randomUUID().slice(0, 8)}`,
+        title: "Spanish",
+        visibility: "public",
+      }),
+    ]);
+
+    await suggestedGoalFixture({ courseId: course.id, title: "Spanish", userId: user.id });
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Suggested goal" });
+    await card.getByRole("button", { name: "Build my plan" }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}$`, "u"));
+    await page.context().close();
+  });
+
   test("follows the plan being built and opens the day on its own", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
     const runId = `e2e-today-${randomUUID()}`;
 
     const goal = await goalFixture({
+      details: PAST_THE_QUESTIONS,
       generationRunId: runId,
       timezone: "UTC",
       title: "Quantum physics",
@@ -1008,6 +1495,7 @@ test.describe("Today without a day to show", () => {
     const runId = `e2e-today-${randomUUID()}`;
 
     const goal = await goalFixture({
+      details: PAST_THE_QUESTIONS,
       generationRunId: runId,
       timezone: "UTC",
       title: "Quantum physics",
@@ -1057,8 +1545,11 @@ test.describe("Today without a day to show", () => {
 
     await page.goto("/session");
 
-    await expect(page.getByText("0 of 1 done · more as you go")).toBeVisible();
-    await expect(page.getByText(LESSON_TITLE).first()).toBeVisible();
+    await expect(
+      page.getByRole("progressbar", { name: "0 of 1 done · more as you go" }),
+    ).toHaveAttribute("aria-valuenow", "0");
+
+    await expect(page.getByRole("heading", { level: 2, name: LESSON_TITLE })).toBeVisible();
     await page.context().close();
   });
 });

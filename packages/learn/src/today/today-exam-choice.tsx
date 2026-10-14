@@ -1,25 +1,29 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { KindTile } from "../_components/kind-tile";
 import {
-  NoticeCard,
-  NoticeCardActions,
-  NoticeCardContent,
-  NoticeCardLeading,
-  NoticeCardTitle,
-} from "../_components/notice-card";
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
-import { ExamChoiceQuestion } from "../plan/plan-exam-choices";
-import { PlanFailedMessage } from "../plan/plan-failed-message";
 import { useChangeSentence } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { ProposalEffect } from "./today-plan-change";
+
+type ExamChoice = NonNullable<ReturnType<typeof useTodayScreen>["today"]["examChoice"]>;
 
 /** Runs one of the notice's saves with a pending state and a failure flag. */
 function useSave() {
@@ -46,6 +50,56 @@ function useSave() {
   return { failed, isPending, save };
 }
 
+/** The question, one answer per option: until the learner picks, the plan studies none. */
+function ChoiceQuestion({
+  choice,
+  failed,
+  isPending,
+  onPick,
+}: {
+  choice: ExamChoice;
+  failed: boolean;
+  isPending: boolean;
+  onPick: (input: { group: string; subject: string }) => void;
+}) {
+  const t = useExtracted();
+  const question = t("{group}: which one will you take?", { group: choice.group });
+
+  return (
+    <>
+      <SuggestionLine>
+        <SuggestionSummary>{question}</SuggestionSummary>
+        <SuggestionOpen>{t("Choose")}</SuggestionOpen>
+      </SuggestionLine>
+
+      <SuggestionContent>
+        <SuggestionHeader>{question}</SuggestionHeader>
+        <SuggestionDescription>
+          {t("Until you pick, your plan leaves {group} out.", { group: choice.group })}
+        </SuggestionDescription>
+
+        {/* Equal options, so one under the other in their order, never one as the main answer. */}
+        <SuggestionActions className="flex-col items-stretch">
+          {choice.options.map((option) => (
+            <SuggestionAction
+              disabled={isPending}
+              key={option.name}
+              onClick={() => onPick({ group: choice.group, subject: option.name })}
+              variant="outline"
+            >
+              {option.shortName ?? option.name}
+            </SuggestionAction>
+          ))}
+        </SuggestionActions>
+
+        {failed && (
+          <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
+        )}
+      </SuggestionContent>
+    </>
+  );
+}
+
 /** What the pick did, where its question was, with Undo, which asks again. */
 function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: () => void }) {
   const t = useExtracted();
@@ -56,49 +110,46 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
   const undo = () =>
     save(() => actions.decidePlanChange({ changeId: change.id, status: "undone" }), onUndone);
 
+  const undoButton = change.canUndo && (
+    <SuggestionAction disabled={isPending} onClick={undo} variant="outline">
+      {t("Undo")}
+    </SuggestionAction>
+  );
+
   return (
-    <NoticeCard>
-      <NoticeCardLeading>
-        <KindTile icon={SignpostIcon} kind="lesson" size="sm" />
-      </NoticeCardLeading>
-      <NoticeCardContent role="status">
-        <NoticeCardTitle>{sentence(change)}</NoticeCardTitle>
+    <>
+      <SuggestionLine>
+        <SuggestionResult>{sentence(change)}</SuggestionResult>
+        {undoButton}
+      </SuggestionLine>
+
+      <SuggestionContent>
+        <SuggestionResult>{sentence(change)}</SuggestionResult>
         <ProposalEffect change={change} />
-        {change.canUndo && (
-          <NoticeCardActions>
-            <Button
-              disabled={isPending}
-              focusableWhenDisabled
-              onClick={undo}
-              size="sm"
-              variant="outline"
-            >
-              {t("Undo")}
-            </Button>
-          </NoticeCardActions>
+        {undoButton && <SuggestionActions>{undoButton}</SuggestionActions>}
+        {failed && (
+          <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
         )}
-        {failed && <PlanFailedMessage />}
-      </NoticeCardContent>
-    </NoticeCard>
+      </SuggestionContent>
+    </>
   );
 }
 
 /**
  * An exam choice the learner left for later ("Decide later" in onboarding), asked on Today, where
  * they study: until they pick, the plan studies none of its options (Ana, 15 days in, had no
- * foreign language, and only the plan's pages said so). The pick then says what it did in place.
+ * foreign language, and only the plan's pages said so). The pick then says what it did in place,
+ * with Undo, which asks again.
  */
 export function TodayExamChoice() {
+  const t = useExtracted();
   const { actions, today } = useTodayScreen();
   const analytics = useLearnAnalytics();
   const [picked, setPicked] = useState<PlanChangeView | null>(null);
   const { failed, isPending, save } = useSave();
+  const choice = today.examChoice;
 
-  if (picked) {
-    return <ChoicePicked change={picked} onUndone={() => setPicked(null)} />;
-  }
-
-  if (!today.examChoice) {
+  if (!picked && !choice) {
     return null;
   }
 
@@ -112,11 +163,19 @@ export function TodayExamChoice() {
     );
 
   return (
-    <ExamChoiceQuestion
-      choice={today.examChoice}
-      failed={failed}
-      isPending={isPending}
-      onPick={pick}
-    />
+    <Suggestion
+      answered={picked ? picked.id : false}
+      data-slot="exam-choice-notice"
+      label={t("Exam choice")}
+      mark={<SignpostIcon />}
+    >
+      {picked ? (
+        <ChoicePicked change={picked} onUndone={() => setPicked(null)} />
+      ) : (
+        choice && (
+          <ChoiceQuestion choice={choice} failed={failed} isPending={isPending} onPick={pick} />
+        )
+      )}
+    </Suggestion>
   );
 }

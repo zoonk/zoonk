@@ -32,6 +32,19 @@ function weekDay(offset: number, hour = 10) {
 }
 
 describe(awardMilestones, () => {
+  it("awards the default buddy's growth before a choice is saved", async () => {
+    const user = await userFixture();
+
+    const awards = await awardMilestones({
+      brainPower: { after: 7600, before: 7400 },
+      userId: user.id,
+    });
+
+    expect(awards).toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ key: "young", kind: "buddyStage" })]),
+    );
+  });
+
   it("awards glasses from the ledger and belts crossed now, each once", async () => {
     const user = await userFixture();
 
@@ -255,6 +268,17 @@ async function energyOf() {
 }
 
 describe(getBuddyStatus, () => {
+  it("shows Zu before the learner saves a buddy choice", async () => {
+    freezeClock();
+    const user = await userFixture();
+    mockSession(user.id);
+
+    await expect(getBuddyStatus({ timeZone: "UTC" })).resolves.toMatchObject({
+      buddy: { buddy: { glasses: "round", kind: "zu", name: null, picked: false } },
+      status: "ready",
+    });
+  });
+
   it("shows the buddy's Energy, how far the next stage is and the glasses", async () => {
     freezeClock();
 
@@ -274,7 +298,7 @@ describe(getBuddyStatus, () => {
     expect(result).toMatchObject({
       buddy: {
         belt: { color: "yellow", level: 5, totalBrainPower: 4550 },
-        buddy: { glasses: "round", kind: "zu", name: "Zu" },
+        buddy: { glasses: "round", kind: "zu", name: "Zu", picked: true },
         energy: { current: 12, state: "napping", studiedToday: false },
         nextStage: { belt: "orange", brainPowerToGo: 2950, stage: "young" },
         stage: "baby",
@@ -353,11 +377,7 @@ describe(getBuddyStatus, () => {
       buddy: {
         today: {
           fullMeal: { bonus: 50, earned: false },
-          missions: [
-            { kind: "review", status: "nothingToday" },
-            { kind: "somethingNew", status: "done" },
-            { kind: "fixMistake", status: "nothingToday" },
-          ],
+          missions: [{ kind: "somethingNew", status: "done" }],
         },
       },
       status: "ready",

@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
 import { type TodayHostNotices, useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
@@ -37,10 +38,9 @@ function useShownNotice(picked: TodayNoticeKind | null): TodayNoticeKind | null 
   return shown ?? picked;
 }
 
-/** The one notice Today shows, the most important one. */
-export function TodayNotice() {
-  const { notices, today } = useTodayScreen();
-  const kind = useShownNotice(pickTodayNotice({ host: toHostState(notices), today }));
+/** The notice of a kind: Today's own, or the one the host drew. */
+function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
+  const { notices } = useTodayScreen();
 
   switch (kind) {
     case "exam":
@@ -66,4 +66,19 @@ export function TodayNotice() {
     default:
       return null;
   }
+}
+
+/**
+ * The one notice Today shows, the most important one, as a `Suggestion`: a line under the day on
+ * a phone or a tablet, a panel in the aside from 72rem. Its slot leaves no gap when there's none.
+ */
+export function TodayNotice({ className }: { className?: string }) {
+  const { notices, today } = useTodayScreen();
+  const kind = useShownNotice(pickTodayNotice({ host: toHostState(notices), today }));
+
+  return (
+    <div className={cn("flex flex-col empty:hidden", className)} data-slot="today-notice">
+      <NoticeOfKind kind={kind} />
+    </div>
+  );
 }

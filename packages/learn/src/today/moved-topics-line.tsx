@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { NoticeCardDescription } from "../_components/notice-card";
+import { SuggestionDescription } from "../_components/suggestion";
 import {
   useListeningBasicsLine,
   useTopicsMovedLines,
@@ -10,7 +10,7 @@ import {
 
 /**
  * The notice topics a change the learner didn't make moved into or out of the plan, as a line of
- * its card: "Genetics no longer fits by your date." Covering less, or skipping lessons, names what
+ * its notice: "Genetics no longer fits by your date." Covering less, or skipping lessons, names what
  * leaves and comes in; a card already long names fewer of them (`named`). Nothing when it moved
  * none.
  */
@@ -22,7 +22,7 @@ export function MovedTopicsLine({
   named?: number;
 }) {
   const sentence = useTopicsMovedSentence()(change, { named });
-  return sentence ? <NoticeCardDescription>{sentence}</NoticeCardDescription> : null;
+  return sentence ? <SuggestionDescription>{sentence}</SuggestionDescription> : null;
 }
 
 /**
@@ -33,7 +33,7 @@ export function MovedTopicsLine({
 export function MovedTopicsLines({ change }: { change: Pick<PlanChangeView, "effect"> }) {
   const lines = useTopicsMovedLines()(change);
 
-  return lines.map((line) => <NoticeCardDescription key={line}>{line}</NoticeCardDescription>);
+  return lines.map((line) => <SuggestionDescription key={line}>{line}</SuggestionDescription>);
 }
 
 /**
@@ -44,5 +44,5 @@ export function MovedTopicsLines({ change }: { change: Pick<PlanChangeView, "eff
  */
 export function ListeningBasicsLine({ change }: { change: Pick<PlanChangeView, "effect"> }) {
   const line = useListeningBasicsLine()(change);
-  return line ? <NoticeCardDescription>{line}</NoticeCardDescription> : null;
+  return line ? <SuggestionDescription>{line}</SuggestionDescription> : null;
 }

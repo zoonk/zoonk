@@ -2,7 +2,7 @@
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted, useFormatter } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import {
   ListRow,
   ListRowContent,
@@ -30,12 +30,13 @@ function isFullReview(challenge: Challenge): boolean {
   return challenge.kind === "mock" && challenge.access === "plusRequired";
 }
 
-export function getChallengeKind(challenge: Challenge): "challenge" | "mock" | "review" {
-  if (isFullReview(challenge)) {
-    return "review";
-  }
-
+/** The week's event as its dot shows it, wherever it's offered: a mock exam or the challenge. */
+export function getChallengeEventKind(challenge: Pick<Challenge, "kind">): "challenge" | "mock" {
   return challenge.kind === "mock" ? "mock" : "challenge";
+}
+
+export function getChallengeKind(challenge: Challenge): "challenge" | "mock" | "review" {
+  return isFullReview(challenge) ? "review" : getChallengeEventKind(challenge);
 }
 
 /** "mock exam", "weekly challenge" or "full review", as a day of the week is named. */
@@ -58,6 +59,20 @@ export function useWeekdayLabel() {
 }
 
 /**
+ * A row under the days: the kind's dot, its name and, quieter under it, when and how much
+ * ("Sunday · 90 questions"). Under the name, as every row has it: after it, on one line, the
+ * aside's column cut "Weekly challenge · Sunday · 10 q…" in both languages.
+ */
+function ChallengeLine({ facts, name }: { facts: string; name: string }) {
+  return (
+    <ListRowContent>
+      <ListRowTitle>{name}</ListRowTitle>
+      <ListRowDescription>{facts}</ListRowDescription>
+    </ListRowContent>
+  );
+}
+
+/**
  * A free plan's full review under the days: what the day is, when, and what it asks. It isn't a
  * page of its own: the day's session holds it.
  */
@@ -67,21 +82,19 @@ function FullReviewRow({ date }: { date: Date }) {
 
   return (
     <ListRow className="border-t">
-      <ListRowLeading>
-        <KindTile kind="review" size="sm" />
+      <ListRowLeading className="w-3 justify-center">
+        <KindDot kind="review" />
       </ListRowLeading>
-      <ListRowContent className="min-h-13 py-2.5">
-        <ListRowTitle>{t("Full review")}</ListRowTitle>
-        <ListRowDescription>
-          {[weekdayLabel(date), t("every topic, your weakest first")].join(" · ")}
-        </ListRowDescription>
-      </ListRowContent>
+      <ChallengeLine
+        facts={[weekdayLabel(date), t("every topic, your weakest first")].join(" · ")}
+        name={t("Full review")}
+      />
     </ListRow>
   );
 }
 
 /**
- * The week's challenge under the days: its name, then its day, questions and time; the row opens
+ * The week's challenge under the days: its name over its day, questions and time; the row opens
  * its intro. A free plan's mock day is its full review.
  */
 export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: Date }) {
@@ -105,13 +118,10 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
 
   return (
     <ListRowLink className="border-t" href={actions.challengeHref(challenge.planItemId)}>
-      <ListRowLeading>
-        <KindTile kind={challenge.kind === "mock" ? "mock" : "challenge"} size="sm" />
+      <ListRowLeading className="w-3 justify-center">
+        <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
-      <ListRowContent className="min-h-13 py-2.5">
-        <ListRowTitle>{name}</ListRowTitle>
-        <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
-      </ListRowContent>
+      <ChallengeLine facts={facts.join(" · ")} name={name} />
     </ListRowLink>
   );
 }

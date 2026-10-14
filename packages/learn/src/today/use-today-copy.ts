@@ -4,6 +4,7 @@ import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
+import { type DayState, getDayState, getSessionState } from "./today-day-state";
 
 /** The session's day as the learner reads it: "Wednesday, October 7". */
 export function useTodayDate(): string {
@@ -12,9 +13,9 @@ export function useTodayDate(): string {
 
   return format.dateTime(today.session.localDate, {
     day: "numeric",
-    month: "long",
+    month: "short",
     timeZone: "UTC",
-    weekday: "long",
+    weekday: "short",
   });
 }
 
@@ -22,7 +23,7 @@ const NO_BREAK_SPACE = "\u00A0";
 
 /**
  * A return after a break: Today opens with the greeting and the lighter day, and leaves the rest
- * (the notice, how far behind the plan is) after them or to the Journey.
+ * (the notice, how far behind the plan is) after them or to the Plan.
  */
 export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart">): boolean {
   return session.freshStart === "welcomeBack";
@@ -57,35 +58,32 @@ export function useFreshStartText(): string | null {
   }
 }
 
-type SessionDay = Pick<
-  TodayView["session"],
-  "blocks" | "dailyLimit" | "emptyDay" | "minutes" | "nextBlockId"
->;
-
-/**
- * Where the day stands, for the main button and the done state. A day with no blocks is a rest
- * day (the plan gives it no time), a day whose lessons are still being outlined, which fills in on
- * its own (`waiting`), or a day the plan has nothing new for: every lesson done or one the learner
- * already knows (`ahead`). None of them is a finished session.
- */
-export function getSessionState(session: SessionDay) {
-  const empty = session.blocks.length === 0;
-  const limitReached = session.dailyLimit?.reached === true;
-  const studyDay = empty && !limitReached && session.minutes.dailyGoal > 0;
-
-  return {
-    ahead: studyDay && session.emptyDay !== "lessonsComing",
-    done: !empty && session.nextBlockId === null,
-    limitReached,
-    rest: empty && !limitReached && session.minutes.dailyGoal === 0,
-    started: session.blocks.some((block) => block.status !== "pending"),
-    waiting: studyDay && session.emptyDay === "lessonsComing",
-  };
-}
-
 export function useSessionState() {
   const { today } = useTodayScreen();
   return getSessionState(today.session);
+}
+
+export function useDayState(): DayState {
+  const { today } = useTodayScreen();
+  return getDayState(today.session);
+}
+
+type PastDate = Extract<
+  NonNullable<NonNullable<TodayView["progress"]>["status"]>,
+  { kind: "pastDate" }
+>;
+
+/**
+ * The goal's date came with lessons left, and today has nothing planned (its time is over): the
+ * day's line says so and its action opens the Plan, whose slot keeps the plan going. Null on any
+ * other day, and on one whose session still has blocks to go on with or is done.
+ */
+export function useTodayPastDate(): PastDate | null {
+  const { today } = useTodayScreen();
+  const state = useDayState();
+  const status = today.progress?.status;
+
+  return status?.kind === "pastDate" && (state === "rest" || state === "ahead") ? status : null;
 }
 
 type StopLesson = { kind: string; lessonId: string | null };

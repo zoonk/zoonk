@@ -38,22 +38,16 @@ describe(getEarnedGlasses, () => {
 
 describe(getCrossedMilestones, () => {
   it("celebrates a new belt and the buddy growing only when crossed now", () => {
-    expect(getCrossedMilestones({ after: 7600, before: 7400, hasBuddy: true })).toStrictEqual([
+    expect(getCrossedMilestones({ after: 7600, before: 7400 })).toStrictEqual([
       { key: "orange", kind: "belt" },
       { key: "young", kind: "buddyStage" },
     ]);
 
-    expect(getCrossedMilestones({ after: 2600, before: 2400, hasBuddy: true })).toStrictEqual([
+    expect(getCrossedMilestones({ after: 2600, before: 2400 })).toStrictEqual([
       { key: "yellow", kind: "belt" },
     ]);
 
-    expect(getCrossedMilestones({ after: 7600, before: 7500, hasBuddy: true })).toStrictEqual([]);
-  });
-
-  it("gives learners without a buddy the belt without a buddy stage", () => {
-    expect(getCrossedMilestones({ after: 7600, before: 7400, hasBuddy: false })).toStrictEqual([
-      { key: "orange", kind: "belt" },
-    ]);
+    expect(getCrossedMilestones({ after: 7600, before: 7500 })).toStrictEqual([]);
   });
 });
 

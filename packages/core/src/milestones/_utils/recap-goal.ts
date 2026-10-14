@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { isPhaseFinished } from "../../plans/_utils/plan-phase-views";
+import { isPhaseFinished } from "../../plans/_utils/phase-states";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 
 /**

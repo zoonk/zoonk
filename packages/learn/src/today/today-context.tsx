@@ -6,7 +6,9 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { createContext, use } from "react";
 import { type TestOutStart } from "../_components/test-out-start-link";
+import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type MissionLinks } from "../missions/mission-links";
 
 /**
  * How Today acts, supplied by the host. `continueSession` starts the next block and opens it
@@ -57,6 +59,13 @@ export type TodayActions = {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
   }) => Promise<PlanChangeView | null>;
+  /** Where today's missions open, from their card: one of the day's blocks, or a place of its own. */
+  missionLinks: MissionLinks;
+  /**
+   * Opens one block of today's session from its row, in any order (`continueSession` opens the
+   * next one); resolves to whether it opened.
+   */
+  openBlock: (blockId: string) => Promise<boolean>;
   /** Where the mistakes notebook opens, from "Practice anytime". */
   mistakesHref: string;
   /**
@@ -95,11 +104,15 @@ export const NO_TODAY_HOST_NOTICES: TodayHostNotices = {
 
 type TodayScreenValue = {
   actions: TodayActions;
-  /** The learner's buddy, who cheers a finished day; null until they pick one. */
+  /** The learner's Brain Power so far, said when the missions' reward is tapped; null if unknown. */
+  brainPower: number | null;
+  /** The learner's buddy, who quizzes on a day with nothing new; null resolves to the default. */
   buddy: LearnBuddy | null;
+  /** Today's missions, atop the aside; null before today's session exists. */
+  missions: BuddyToday | null;
   notices: TodayHostNotices;
   /**
-   * The plan's estimated end ("YYYY-MM-DD"), the one the Journey shows, so a proposed change says
+   * The plan's estimated end ("YYYY-MM-DD"), the one the Plan shows, so a proposed change says
    * its new end the same way; null when the host didn't read it (a plan with a date never says it).
    */
   planEnd: string | null;

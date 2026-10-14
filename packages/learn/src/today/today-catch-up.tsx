@@ -3,14 +3,9 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { useFormatDuration } from "../_utils/time-format";
 import { type StudyBlock } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
-
-/** "4 min". */
-function useMinutes() {
-  const t = useExtracted();
-  return (minutes: number) => t("{minutes} min", { minutes: String(minutes) });
-}
 
 /** A block that catches up on lessons earlier days left. */
 export function useIsCatchingUp() {
@@ -24,13 +19,13 @@ export function useIsCatchingUp() {
  * Lessons earlier days left that today's normal time doesn't fit: they come first on the next
  * days, and while they take about one more day's time (`offered`), one tap adds them to today and
  * the learner is back on pace once they're done. More than that only says the next days take them,
- * so nobody is offered "+712 min". The day before an exam has no next day for them: they're there
- * if the learner has time today, and it says nothing when they don't fit. Offered while the day is
- * underway and after it's done.
+ * so nobody is offered "+11 hr 52 min". The day before an exam has no next day for them: they're
+ * there if the learner has time today, and it says nothing when they don't fit. Offered while the
+ * day is underway and after it's done, as one quiet line under the day.
  */
 export function CatchUpLater() {
   const t = useExtracted();
-  const formatMinutes = useMinutes();
+  const formatDuration = useFormatDuration();
   const { actions, today } = useTodayScreen();
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -43,7 +38,7 @@ export function CatchUpLater() {
 
   if (!later.offered) {
     return (
-      <p className="text-muted-foreground border-t pt-4 text-sm" data-slot="today-catch-up">
+      <p className="text-muted-foreground text-[0.8125rem] leading-snug" data-slot="today-catch-up">
         {t(
           "{lessons, plural, one {Your next days start with the # lesson left to catch up.} other {Your next days start with the # lessons left to catch up.}}",
           { lessons: later.lessons },
@@ -58,8 +53,8 @@ export function CatchUpLater() {
     });
 
   return (
-    <div className="flex flex-col gap-2 border-t pt-4" data-slot="today-catch-up">
-      <p className="text-muted-foreground text-sm">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2" data-slot="today-catch-up">
+      <p className="text-muted-foreground text-[0.8125rem] leading-snug">
         {examTomorrow
           ? t(
               "{lessons, plural, one {You can still catch up on # lesson today, if you have time.} other {You can still catch up on # lessons today, if you have time.}}",
@@ -72,18 +67,17 @@ export function CatchUpLater() {
       </p>
 
       <Button
-        className="self-start"
         disabled={isPending}
         focusableWhenDisabled
         onClick={catchUp}
         size="sm"
         variant="outline"
       >
-        {t("Catch up today · +{time}", { time: formatMinutes(later.minutes) })}
+        {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
       </Button>
 
       {failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text basis-full text-sm" role="alert">
           {t("We couldn't add them. Try again.")}
         </p>
       )}

@@ -1,12 +1,22 @@
 "use client";
 
 import { type MemoryInsightView } from "@zoonk/core/memory/contract";
-import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, LightbulbIcon, ListPlusIcon } from "lucide-react";
+import { LightbulbIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
-import { SURFACE_CLASS } from "../_components/surface";
+import {
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
 import { useAppliedLine } from "../plan/use-change-sentence";
 import { useProposalEffectText } from "../plan/use-effect-text";
@@ -21,18 +31,16 @@ const ANALYTICS_KIND = {
   tip: "tip",
 } as const satisfies Record<MemoryInsightView["kind"], string>;
 
-function InsightIcon({ kind }: { kind: MemoryInsightView["kind"] }) {
-  const className = "size-4.5";
-
-  if (kind === "planChange") {
-    return <ListPlusIcon aria-hidden="true" className={className} />;
+/**
+ * An insight's mark: the amber sparkle when it suggests something (a gap to add, a better study
+ * time), a lightbulb for a tip, the list's mark for a lesson already added.
+ */
+function insightMark(insight: MemoryInsightView): React.ReactNode {
+  if (insight.kind === "tip") {
+    return <LightbulbIcon />;
   }
 
-  if (kind === "scheduleIdea") {
-    return <CalendarClockIcon aria-hidden="true" className={className} />;
-  }
-
-  return <LightbulbIcon aria-hidden="true" className={className} />;
+  return insight.planChange?.status === "applied" ? <ListPlusIcon /> : undefined;
 }
 
 /** The two answers an insight offers, in words that say what each one does. */
@@ -91,15 +99,13 @@ function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["plan
     return null;
   }
 
-  return <p className="text-muted-foreground text-sm">{effect}</p>;
+  return <SuggestionDescription>{effect}</SuggestionDescription>;
 }
 
-function InsightBody({ insight }: { insight: MemoryInsightView }) {
-  const t = useExtracted();
+/** Answers the insight; the suggestion then says what the answer did. */
+function useInsightAnswer(insight: MemoryInsightView) {
   const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
-  const choices = useInsightChoices(insight);
-  const answeredText = useAnsweredText(insight);
   const [state, setState] = useState<InsightState>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -117,42 +123,79 @@ function InsightBody({ insight }: { insight: MemoryInsightView }) {
     });
   };
 
-  if (state && "answer" in state) {
-    return (
-      <p className="text-muted-foreground text-sm" role="status">
-        {answeredText(state.answer)}
-      </p>
-    );
-  }
+  return { answer, isPending, state };
+}
+
+/** The insight's answers, each saying what it does. */
+function InsightActions({
+  insight,
+  isPending,
+  onAnswer,
+}: {
+  insight: MemoryInsightView;
+  isPending: boolean;
+  onAnswer: (status: InsightAnswer) => void;
+}) {
+  const choices = useInsightChoices(insight);
 
   return (
-    <>
-      <p className="text-sm leading-relaxed">{insight.message}</p>
-      <InsightPlanEffect planChange={insight.planChange} />
+    <SuggestionActions>
+      <SuggestionAction disabled={isPending} onClick={() => onAnswer("accepted")}>
+        {choices.accept}
+      </SuggestionAction>
 
-      <div className="flex flex-wrap gap-2">
-        <Button disabled={isPending} onClick={() => answer("accepted")} size="sm" variant="outline">
-          {choices.accept}
-        </Button>
-
-        {choices.dismiss && (
-          <Button
-            disabled={isPending}
-            onClick={() => answer("dismissed")}
-            size="sm"
-            variant="ghost"
-          >
-            {choices.dismiss}
-          </Button>
-        )}
-      </div>
-
-      {state && "failed" in state && (
-        <p className="text-destructive text-sm" role="alert">
-          {t("We couldn't save that. Try again.")}
-        </p>
+      {choices.dismiss && (
+        <SuggestionAction
+          disabled={isPending}
+          onClick={() => onAnswer("dismissed")}
+          variant="outline"
+        >
+          {choices.dismiss}
+        </SuggestionAction>
       )}
-    </>
+    </SuggestionActions>
+  );
+}
+
+function InsightNotice({ insight }: { insight: MemoryInsightView }) {
+  const t = useExtracted();
+  const answeredText = useAnsweredText(insight);
+  const { answer, isPending, state } = useInsightAnswer(insight);
+  const result = state && "answer" in state ? answeredText(state.answer) : null;
+
+  return (
+    <Suggestion
+      answered={result !== null}
+      label={t("From your recent answers")}
+      mark={insightMark(insight)}
+    >
+      <SuggestionLine>
+        {result ? (
+          <SuggestionResult>{result}</SuggestionResult>
+        ) : (
+          <>
+            <SuggestionSummary>{insight.message}</SuggestionSummary>
+            <SuggestionOpen />
+          </>
+        )}
+      </SuggestionLine>
+
+      <SuggestionContent>
+        <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
+        <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
+        <InsightPlanEffect planChange={insight.planChange} />
+
+        {result ? (
+          <SuggestionResult>{result}</SuggestionResult>
+        ) : (
+          <InsightActions insight={insight} isPending={isPending} onAnswer={answer} />
+        )}
+
+        {state && "failed" in state && (
+          <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>
+        )}
+      </SuggestionContent>
+    </Suggestion>
   );
 }
 
@@ -176,7 +219,6 @@ function useShownInsight(insight: MemoryInsightView | null): MemoryInsightView |
  * schedule idea. It leaves Today once answered.
  */
 export function TodayInsight() {
-  const t = useExtracted();
   const analytics = useLearnAnalytics();
   const { today } = useTodayScreen();
   const insight = useShownInsight(today.insight);
@@ -194,17 +236,5 @@ export function TodayInsight() {
     return null;
   }
 
-  return (
-    <aside
-      aria-label={t("From your recent answers")}
-      className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}
-    >
-      <p className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
-        <InsightIcon kind={insight.kind} />
-        {t("From your recent answers")}
-      </p>
-
-      <InsightBody insight={insight} />
-    </aside>
-  );
+  return <InsightNotice insight={insight} key={insight.id} />;
 }
