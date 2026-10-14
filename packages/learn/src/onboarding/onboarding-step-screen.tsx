@@ -14,12 +14,12 @@ import {
   type RevealedPlan,
 } from "./onboarding-actions";
 import { BuddyStep } from "./steps/buddy-step";
+import { DateStep } from "./steps/date-step";
 import { ExamChoiceStep } from "./steps/exam-choice-step";
 import { readLevelChoice } from "./steps/level-choices";
 import { PlacementStep } from "./steps/placement-step";
 import { PlanReveal } from "./steps/plan-reveal";
 import {
-  DateStep,
   type ExamTarget,
   FollowUpsStep,
   LevelStep,
@@ -120,7 +120,14 @@ function QuestionStepScreen({
         />
       );
     case "targetDate":
-      return <DateStep {...props} />;
+      return (
+        <DateStep
+          {...props}
+          exam={view.examDays}
+          initialDate={view.goal.targetDate}
+          subject={subject}
+        />
+      );
     case "followUps":
       return <FollowUpsStep {...props} questions={view.followUps} />;
     case "examChoice":
@@ -184,6 +191,7 @@ export function OnboardingStepScreen({
           dated={view.goal.targetDate !== null || view.goal.kind === "exam"}
           exam={view.goal.kind === "exam"}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
+          goal={view.goal}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
         />

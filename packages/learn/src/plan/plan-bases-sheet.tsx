@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
+import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -12,17 +12,18 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { safeAsync } from "@zoonk/utils/error";
 import { LayersIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useBasesEffectLines } from "./plan-bases-effect";
 import { type BaseChoice, BaseGroup } from "./plan-bases-group";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
+import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
 import { useAdviceText, useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
 import { usePlanChange } from "./use-plan-change";
+import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
 type Choices = ReadonlyMap<string, BaseChoice>;
 
@@ -37,53 +38,43 @@ function followsRecommendation(bases: PlanBasesView, choices: Choices): boolean 
   return bases.items.every((item) => choices.get(item.skillId) === bases.recommended);
 }
 
-/** A preview read for the choices `key` stands for; null when it couldn't be read. */
-type PreviewRead = { key: string; value: PlanChangePreview | null };
-
 /**
- * What the choices would do, planned as saving them would, before the learner saves: the lessons
- * and topics that come in or leave, when the lessons end, and what the time then covers. Read
- * again a moment after each tap.
+ * The current choices' computed effect; older reads leave Save disabled. The wait and the request
+ * follow the choices and the plan's content (`usePreviewBase`): a refresh that delivers the same
+ * plan again neither cancels them nor starts them over.
  */
 function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
-  const { actions } = usePlanScreen();
-  const [preview, setPreview] = useState<PreviewRead | null>(null);
-
-  // The key stands for the choices: a new array with the same choices plans nothing new.
+  const { plan } = usePlanScreen();
+  const base = usePreviewBase();
+  const { preview, requestPreview, setPreview } = usePlanPreview();
+  const operations: LearnerPlanOperation[] = [{ choices: changed, kind: "setBaseChoices" }];
   const key = JSON.stringify(changed);
 
-  const load = useEffectEvent(() =>
-    safeAsync(() => actions.preview([{ choices: changed, kind: "setBaseChoices" }])),
-  );
+  const load = useEffectEvent((revision: object) => {
+    if (revision === base) {
+      return requestPreview(operations);
+    }
+  });
+
+  const cancel = useEffectEvent(setPreview);
 
   useEffect(() => {
     if (key === "[]") {
       return;
     }
 
-    let current = true;
-
-    const timer = setTimeout(async () => {
-      const { data } = await load();
-
-      if (current) {
-        setPreview({ key, value: data ?? null });
-      }
-    }, PREVIEW_DELAY_MS);
+    const timer = setTimeout(() => void load(base), PREVIEW_DELAY_MS);
 
     return () => {
-      current = false;
       clearTimeout(timer);
+      cancel();
     };
-  }, [key]);
+  }, [key, base]);
 
-  if (changed.length === 0) {
-    return { loading: false, preview: null };
-  }
-
-  return preview?.key === key
-    ? { loading: false, preview: preview.value }
-    : { loading: true, preview: null };
+  return {
+    preview: currentPlanPreview({ operations, plan, state: preview }),
+    retry: () => void requestPreview(operations),
+  };
 }
 
 /** Under the choices: what they'd do, then Save. */
@@ -92,16 +83,31 @@ function BasesFooter({
   failed,
   isPending,
   onSave,
+  onRetry,
+  preview,
 }: {
   changed: { choice: BaseChoice; skillId: string }[];
   failed: boolean;
   isPending: boolean;
   onSave: () => void;
+  onRetry: () => void;
+  preview: PlanPreviewState;
 }) {
   const t = useExtracted();
   const effectLines = useBasesEffectLines();
-  const { loading, preview } = usePreview(changed);
-  const lines = preview?.ready ? effectLines({ ...preview, ready: true }) : [];
+  const saveButton = useRef<HTMLButtonElement>(null);
+  const loading = preview.status === "idle" || preview.status === "loading";
+
+  // Try again gives way to the check: the keyboard waits on Save, which opens once it's done.
+  const retry = () => {
+    onRetry();
+    saveButton.current?.focus();
+  };
+
+  const lines =
+    preview.status === "ready" && !preview.preview.unchanged
+      ? effectLines({ ...preview.preview, ready: true })
+      : [];
 
   return (
     <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
@@ -112,12 +118,29 @@ function BasesFooter({
           className="text-muted-foreground flex flex-col gap-1 text-sm text-pretty aria-busy:opacity-60"
         >
           {loading && <p>{t("Checking what changes…")}</p>}
-          {!loading && lines.length === 0 && <p>{t("Your plan stays as it is.")}</p>}
-          {!loading && lines.map((line) => <p key={line}>{line}</p>)}
+          {preview.status === "failed" && (
+            <>
+              <p>{t("We couldn't check what changes.")}</p>
+              <Button className="self-start" onClick={retry} size="sm" variant="outline">
+                {t("Try again")}
+              </Button>
+            </>
+          )}
+          {preview.status === "ready" && preview.preview.unchanged && (
+            <p>{t("Your plan stays as it is.")}</p>
+          )}
+          {lines.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
         </div>
       )}
 
-      <Button disabled={isPending || changed.length === 0} focusableWhenDisabled onClick={onSave}>
+      <Button
+        disabled={isPending || changed.length === 0 || preview.status !== "ready"}
+        focusableWhenDisabled
+        onClick={onSave}
+        ref={saveButton}
+      >
         {t("Save choices")}
       </Button>
 
@@ -138,19 +161,25 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
 
-  if (outcome?.status === "applied" && outcome.change) {
-    return <PlanChangeApplied change={outcome.change} icon={LayersIcon} onDone={onDone} />;
-  }
-
   const changed = bases.items.flatMap((item) => {
     const choice = draft.get(item.skillId) ?? item.choice;
     return choice === item.choice ? [] : [{ choice, skillId: item.skillId }];
   });
 
+  const { preview, retry } = usePreview(changed);
+
+  if (outcome?.status === "applied" && outcome.change) {
+    return <PlanChangeApplied change={outcome.change} icon={LayersIcon} onDone={onDone} />;
+  }
+
   const areas = Map.groupBy(bases.items, (item) => item.area);
 
-  const save = () =>
-    change([{ choices: changed, kind: "setBaseChoices" }], (saved) => {
+  const save = () => {
+    if (isPending || preview.status !== "ready" || changed.length === 0) {
+      return;
+    }
+
+    void change(preview.operations, (saved) => {
       if (saved?.status === "applied" && !saved.change) {
         onDone();
         return;
@@ -158,6 +187,7 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 
       setOutcome(saved);
     });
+  };
 
   const choose = (skillIds: string[], choice: BaseChoice) =>
     setDraft(new Map([...draft, ...skillIds.map((skillId) => [skillId, choice] as const)]));
@@ -168,7 +198,7 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   return (
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
-        <div className="bg-muted/60 flex flex-col items-start gap-2 rounded-2xl p-4 text-sm">
+        <div className="bg-muted/60 flex flex-col items-start gap-2 rounded-xl p-4 text-sm">
           <p className="text-pretty">{adviceText(bases)}</p>
           {!followsRecommendation(bases, draft) && (
             <Button onClick={recommend} size="sm" variant="secondary">
@@ -195,7 +225,9 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
         changed={changed}
         failed={failed}
         isPending={isPending}
-        onSave={() => void save()}
+        onRetry={retry}
+        onSave={save}
+        preview={preview}
       />
     </>
   );

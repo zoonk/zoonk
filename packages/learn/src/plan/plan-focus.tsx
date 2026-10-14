@@ -15,8 +15,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, CrosshairIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import { LearnLink } from "../learn-link";
+import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { PlanBases } from "./plan-bases";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
@@ -24,8 +25,9 @@ import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 
 const AREA_ROW_CLASS = cn(
-  "border-border bg-card flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none",
-  "hover:bg-muted/60 has-data-checked:border-foreground has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+  "border-border bg-card flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none",
+  "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+  CHOICE_CARD_PICKED_CLASS,
 );
 
 type PlanArea = ReturnType<typeof usePlanScreen>["plan"]["areas"][number];
@@ -65,13 +67,13 @@ function FocusTestLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      className="bg-muted/60 hover:bg-muted focus-visible:ring-ring/50 flex min-h-16 items-center gap-3 rounded-2xl p-3 transition-colors outline-none focus-visible:ring-[3px]"
+      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 rounded-option flex min-h-14 items-center gap-3 px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
       href={href}
     >
-      <KindTile icon={CrosshairIcon} kind="challenge" />
+      <KindDot kind="challenge" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="font-medium">{t("Take a short test")}</span>
-        <span className="text-muted-foreground text-sm">{t("Your answers choose for you")}</span>
+        <span className="text-sm font-medium">{t("Take a short test")}</span>
+        <span className="text-muted-foreground text-xs">{t("Your answers choose for you")}</span>
       </span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
     </LearnLink>
@@ -156,7 +158,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
         {unchanged && (
-          <p className="bg-muted/60 rounded-2xl p-4 text-sm text-pretty" role="status">
+          <p className="bg-muted/60 rounded-xl p-4 text-sm text-pretty" role="status">
             {unchanged === "alreadyIn"
               ? t("Nothing changed: {areas} already have every lesson in your plan.", {
                   areas: names,
@@ -264,6 +266,17 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Opens the screen's "Where to focus" sheet (see `ChooseFocusHost`). */
+export function useChooseFocus(): () => void {
+  const open = use(ChooseFocusContext);
+
+  if (!open) {
+    throw new Error("ChooseFocus must be used within ChooseFocusHost");
+  }
+
+  return open;
+}
+
 /**
  * "Choose where to focus", for a plan whose time doesn't cover everything in depth: it opens the
  * screen's sheet (see `ChooseFocusHost`) with the plan's subjects, so the learner says which ones
@@ -272,11 +285,7 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
  */
 export function ChooseFocus({ variant = "outline" }: { variant?: "ghost" | "outline" }) {
   const t = useExtracted();
-  const open = use(ChooseFocusContext);
-
-  if (!open) {
-    throw new Error("ChooseFocus must be used within ChooseFocusHost");
-  }
+  const open = useChooseFocus();
 
   return (
     <Button className="self-start" onClick={open} size="sm" type="button" variant={variant}>

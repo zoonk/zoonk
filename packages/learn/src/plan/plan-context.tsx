@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
-import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanChangeView, type PlanScreenView } from "@zoonk/core/plans/view-contract";
 import { createContext, use, useCallback, useEffect, useRef } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 
@@ -49,7 +49,7 @@ export type PlanActions = {
   }) => Promise<boolean>;
 };
 
-/** The buddy's conversation, by its tab's link and the buddy that answers (null before one). */
+/** The buddy's conversation, by its tab's link and its identity; null uses the default buddy. */
 export type PlanTutor = { buddy: Pick<LearnBuddy, "kind" | "name"> | null; href: string };
 
 /** The goal as the plan's screens name it. */
@@ -63,7 +63,7 @@ type PlanScreenValue = {
    * their own words go; hosts without the buddy's conversation leave it out.
    */
   tutor?: PlanTutor;
-  plan: PlanView;
+  plan: PlanScreenView;
   /**
    * The focus test's page on the host, where answers choose where the plan's depth goes; hosts
    * without it leave it out, and only choosing by hand is offered.
@@ -93,7 +93,7 @@ type PlanScreenContextValue = PlanScreenValue & {
   keepFocus: (target?: FocusTarget) => void;
 };
 
-type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
+type Saving = { control: Element | null; plan: PlanScreenView; target?: FocusTarget };
 
 const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
@@ -110,7 +110,7 @@ function findFallback(target?: FocusTarget): HTMLElement | null {
   return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
 
-function useKeepFocus(plan: PlanView) {
+function useKeepFocus(plan: PlanScreenView) {
   const saving = useRef<Saving | null>(null);
 
   // The saved plan arrives as a new view model, in the same render that removes the control.

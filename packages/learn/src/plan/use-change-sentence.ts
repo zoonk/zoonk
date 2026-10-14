@@ -58,6 +58,33 @@ function useFollowsNoticeSentence() {
     );
 }
 
+/**
+ * Says what a waiting change sets where its sentence would say it happened ("Daily time changed to
+ * 40 min."): "Daily time: 40 min." The buddy's card read "Daily time changed to 40 min." before
+ * Marcos had said yes. Null for an operation whose sentence holds before and after.
+ */
+function useProposedOperationSentence() {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+  const formatDuration = useFormatDuration();
+
+  return function proposedOperationSentence(operation: PlanOperation): string | null {
+    if (operation.kind === "setDailyMinutes") {
+      return t("Daily time: {time}.", { time: formatDuration(operation.minutes) });
+    }
+
+    if (operation.kind === "moveWeeklyEvent") {
+      return t("Weekly challenge: {date}.", { date: formatDate(operation.to, "long") });
+    }
+
+    const date =
+      (operation.kind === "setTargetDate" || operation.kind === "setNoticeDate") &&
+      operation.targetDate;
+
+    return date ? t("Goal date: {date}.", { date: formatDate(date, "long") }) : null;
+  };
+}
+
 /** Says one operation the way the learner would: "Light week from Oct 12". */
 function useOperationSentence() {
   const t = useExtracted();
@@ -136,6 +163,8 @@ function useOperationSentence() {
         return toolSentence(operation.tools);
       case "fitPhaseDates":
         return t("Your phase dates moved, so more lessons fit before your goal's date.");
+      case "fitLessons":
+        return t("The lessons your time fits come into your plan.");
       case "setExamChoice":
         return t("Your plan studies {subject} for {group}.", {
           group: operation.group,
@@ -216,14 +245,15 @@ export function useAppliedLine() {
  * The one sentence that announces a change. Proposals and AI edits carry their own sentence;
  * the app says the rest from what changed, so nothing is ever silent.
  */
-export function useChangeSentence() {
+export function useChangeSentence({ targetDate = null }: { targetDate?: string | null } = {}) {
   const t = useExtracted();
   const format = useFormatter();
   const shortList = useShortList();
   const operationSentence = useOperationSentence();
+  const proposedSentence = useProposedOperationSentence();
   const noticeSentence = useNoticeSentence();
   const coverageSentence = useCoverageSentence();
-  const systemSentence = useSystemChangeSentence();
+  const systemSentence = useSystemChangeSentence({ targetDate });
   const phaseDatesSentence = usePhaseDatesSentence();
 
   return (change: PlanChangeView): string => {
@@ -262,7 +292,11 @@ export function useChangeSentence() {
       systemSentence(change) ??
       (change.operations.length > 0
         ? change.operations
-            .map((operation) => operationSentence(operation, change.examDocument))
+            .map(
+              (operation) =>
+                (change.status === "proposed" && proposedSentence(operation)) ||
+                operationSentence(operation, change.examDocument),
+            )
             .join(" ")
         : coverageSentence(change))
     );

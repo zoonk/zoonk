@@ -4,26 +4,14 @@ import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models
 import { hasSubjectPages } from "@zoonk/core/view-models/syllabus/subject-pages";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import {
-  LIST_GROUP_CLASS,
-  ListRowContent,
-  ListRowLeading,
-  ListRowLink,
-  ListRowTitle,
-  ListRowTrailing,
-} from "../_components/list-group";
-import { Meter, MeterFill } from "../_components/meter";
-import {
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionLabel,
-  PageSectionTitle,
-} from "../_components/page";
+import { Fragment } from "react";
+import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
+import { LIST_GROUP_CLASS, ListRowLink, ListRowTrailing } from "../_components/list-group";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
-import { SubjectIcon } from "./subject-icon";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
-import { useSubjectProgress } from "./use-subject-progress";
+import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
 
 const SECTION_TITLE_ID = "journey-syllabus-title";
 
@@ -35,17 +23,13 @@ export function hasSyllabusSection(syllabus: SyllabusView | null): syllabus is S
   return syllabus !== null && hasSubjectPages({ goalKind: syllabus.goal.kind, syllabus });
 }
 
-/** "What's on the exam" for a notice, "Subjects" for an exam without one, "Modules" otherwise. */
+/** "Subjects" for an exam, "Modules" for a plan's own areas. */
 function useSectionTitle(syllabus: SyllabusView): string {
   const t = useExtracted();
-
-  if (syllabus.kind === "notice") {
-    return t("What's on the exam");
-  }
-
   return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
 }
 
+/** "5 subjects · 46 topics": what the list holds, in the note under it. */
 function useSectionCount(syllabus: SyllabusView): string {
   const t = useExtracted();
   const subjects = syllabus.subjects.filter((subject) => subject.source === "notice").length;
@@ -79,48 +63,84 @@ function useSectionCount(syllabus: SyllabusView): string {
 }
 
 /**
- * One subject: its icon, its name as the notice writes it, how far the learner is in it (what they
- * know already apart), and its questions on the exam when they're known.
+ * A subject's columns, as wide as the list allows: on a phone (a narrow list) its name over a bar
+ * as wide as the row; from a tablet one line, the name, its bar and its share in columns every
+ * row shares; where the list is wide enough, its questions on the exam before the bar.
+ */
+const ROW_GRID_CLASS = cn(
+  "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3",
+  "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-0",
+  "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
+);
+
+/**
+ * What the rows' bars measure, beside the section's name: an exam's subjects read their
+ * preparation, as the number above them does; another goal's modules, their lessons studied, known
+ * and still new.
+ */
+function BarsMeaning({ syllabus }: { syllabus: SyllabusView }) {
+  const t = useExtracted();
+
+  if (syllabus.goal.kind !== "exam") {
+    return <CoverageLegend />;
+  }
+
+  return (
+    <span className="text-muted-foreground text-[0.71875rem]" data-slot="bars-meaning">
+      {t("Preparation")}
+    </span>
+  );
+}
+
+/** The share at the row's end, in one width so the shares line up. */
+const SHARE_CLASS = "w-10 justify-end";
+
+/**
+ * One subject on one row: its name as the notice writes it (whole in its tooltip where the line
+ * cuts it), its questions on the exam where there's room, its bar and its share at the end (an
+ * exam subject's preparation, a module's lessons studied or known). One the plan leaves out says
+ * so where its bar would be, with its preparation at the end when the goal still counts it (the
+ * exam tests it): the goal's number is its subjects together, and read beside fewer of them it
+ * sat under every one.
  */
 function SubjectRow({ href, subject }: { href: string; subject: SyllabusSubject }) {
   const t = useExtracted();
+  const formatShare = useFormatProgressShare();
   const progress = useSubjectProgress()(subject);
   const notPlanned = subject.notPlannedReason !== null;
-
-  // A written test (an essay) has no questions to count.
-  const questions =
-    subject.questions !== null &&
-    subject.questions > 0 &&
-    t("{count, plural, one {# question} other {# questions}}", { count: subject.questions });
+  const share = progress.bar ? getSubjectShare(progress.bar) : subject.preparation;
 
   return (
     <ListRowLink href={href}>
-      <ListRowLeading>
-        <SubjectIcon imageUrl={subject.imageUrl} />
-      </ListRowLeading>
-
-      <ListRowContent className="gap-1.5">
-        <ListRowTitle className={cn("line-clamp-2", notPlanned && "text-muted-foreground")}>
-          {subject.name}
-        </ListRowTitle>
-
-        <span className="flex items-center gap-2.5">
-          {progress.share !== null && (
-            <Meter className="h-1 max-w-28 flex-1">
-              <MeterFill className="bg-success" share={progress.share} />
-            </Meter>
+      <span className={ROW_GRID_CLASS}>
+        <span
+          className={cn(
+            "text-sm leading-snug font-medium text-pretty @lg/subjects:truncate",
+            notPlanned && "text-muted-foreground",
           )}
-          <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-            {progress.label}
-          </span>
+          title={subject.name}
+        >
+          {subject.name}
         </span>
 
-        {progress.known && (
-          <span className="text-muted-foreground text-xs tabular-nums">{progress.known}</span>
-        )}
-      </ListRowContent>
+        <span className="text-muted-foreground hidden text-right font-mono text-xs whitespace-nowrap tabular-nums @2xl/subjects:block">
+          {subject.questions !== null &&
+            subject.questions > 0 &&
+            t("{count, plural, one {# question} other {# questions}}", {
+              count: subject.questions,
+            })}
+        </span>
 
-      {questions && <ListRowTrailing className="text-xs">{questions}</ListRowTrailing>}
+        {progress.bar ? (
+          <CoverageBar {...progress.bar} />
+        ) : (
+          <span className="text-muted-foreground text-xs">{progress.label}</span>
+        )}
+      </span>
+
+      <ListRowTrailing className={SHARE_CLASS}>
+        {share !== null && formatShare(share)}
+      </ListRowTrailing>
     </ListRowLink>
   );
 }
@@ -129,6 +149,10 @@ function getGroupId(index: number): string {
   return `${SECTION_TITLE_ID}-group-${index}`;
 }
 
+/**
+ * A group's name as a row of the list, between its hairlines: the notice's own group ("Basic
+ * knowledge (P1)"), or "Beyond the notice" for the plan's own areas.
+ */
 function GroupHeading({
   document,
   fromMaterial,
@@ -146,13 +170,22 @@ function GroupHeading({
     return null;
   }
 
-  return <PageSectionLabel id={id}>{name}</PageSectionLabel>;
+  return (
+    <h3
+      className="text-muted-foreground flex min-h-9 items-center pt-2 text-xs font-medium"
+      id={id}
+    >
+      {name}
+    </h3>
+  );
 }
 
 /**
- * The structure of the goal on the Journey: an exam's subjects as its notice lists them (grouped
- * as it groups them, the plan's own extras last) or the plan's modules, each a row with its icon,
- * name and progress, opening the subject's page with its topics and chapters.
+ * The structure of the goal on the Plan: an exam's subjects as its notice lists them (grouped as
+ * it groups them, the plan's own extras last) or the plan's modules, one list of rows in columns
+ * (see `SubjectRow`), each opening the subject's page with its topics and chapters. What the bars
+ * measure sits beside the section's name; what the list counts and where its numbers come from go
+ * in one note under it.
  */
 export function SyllabusSection({
   subjectHref,
@@ -166,35 +199,38 @@ export function SyllabusSection({
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
-    <PageSection aria-labelledby={SECTION_TITLE_ID} data-slot="syllabus">
+    <PageSection
+      aria-labelledby={SECTION_TITLE_ID}
+      className="@container/subjects"
+      data-slot="syllabus"
+    >
       <PageSectionHeader>
         <PageSectionTitle id={SECTION_TITLE_ID}>{title}</PageSectionTitle>
-        <PageSectionDetail>{count}</PageSectionDetail>
+        <BarsMeaning syllabus={syllabus} />
       </PageSectionHeader>
 
-      {groups.map((group, index) => (
-        <div className="flex flex-col gap-2" key={group.extra ? "extra" : (group.name ?? "all")}>
-          <GroupHeading
-            document={syllabus.examDocument}
-            fromMaterial={syllabus.fromMaterial}
-            group={group}
-            id={getGroupId(index)}
-          />
+      <div className={LIST_GROUP_CLASS}>
+        {groups.map((group, index) => (
+          <Fragment key={group.extra ? "extra" : (group.name ?? "all")}>
+            <GroupHeading
+              document={syllabus.examDocument}
+              fromMaterial={syllabus.fromMaterial}
+              group={group}
+              id={getGroupId(index)}
+            />
 
-          <ul
-            aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
-            className={LIST_GROUP_CLASS}
-          >
-            {group.subjects.map((subject) => (
-              <li key={subject.key}>
-                <SubjectRow href={subjectHref(subject.key)} subject={subject} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+            <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
+              {group.subjects.map((subject) => (
+                <li key={subject.key}>
+                  <SubjectRow href={subjectHref(subject.key)} subject={subject} />
+                </li>
+              ))}
+            </ul>
+          </Fragment>
+        ))}
+      </div>
 
-      <QuestionsSourceNote source={syllabus.questionsSource} />
+      <QuestionsSourceNote lead={count} source={syllabus.questionsSource} />
       <CourseWeightsNote subjects={syllabus.subjects} weights={syllabus.courseWeights} />
     </PageSection>
   );

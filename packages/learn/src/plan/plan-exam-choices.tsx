@@ -2,31 +2,37 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { Button } from "@zoonk/ui/components/button";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { KindTile } from "../_components/kind-tile";
 import {
-  NoticeCard,
-  NoticeCardActions,
-  NoticeCardContent,
-  NoticeCardDescription,
-  NoticeCardLeading,
-  NoticeCardTitle,
-} from "../_components/notice-card";
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
-import { PlanChangeSummary } from "./plan-change-applied";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 import { PlanFailedMessage } from "./plan-failed-message";
-import { useUndoChange } from "./use-undo-change";
-
-/** Options share the row but never squeeze a label onto two lines; they wrap instead. */
-const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm";
+import { PLAN_OPTION_CLASS } from "./plan-option-styles";
+import {
+  SlotContent,
+  type SlotItem,
+  SlotUndo,
+  usePlanSuggestionSlot,
+  useSlotAnswer,
+  useSlotAnswered,
+} from "./plan-suggestion-context";
+import { useChangeSentence } from "./use-change-sentence";
 
 /**
  * Saves a pick with a pending state and a failure flag, like the plan's other controls. The change
@@ -86,7 +92,7 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
         value={choice.subject ?? ""}
       >
         {choice.options.map((option) => (
-          <RadioGroupOption className={OPTION_CLASS} key={option.name}>
+          <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>
             <RadioGroupItem value={option.name} />
             {option.shortName ?? option.name}
           </RadioGroupOption>
@@ -117,108 +123,73 @@ export function PlanExamChoices() {
 }
 
 /**
- * One of the exam's choices the learner hasn't picked yet, as a question: one tap per option. The
- * Journey and Today ask it the same way, each saving the pick with its own actions (`onPick`).
- */
-export function ExamChoiceQuestion({
-  choice,
-  failed,
-  isPending,
-  onPick,
-}: {
-  choice: ExamChoiceView;
-  failed: boolean;
-  isPending: boolean;
-  onPick: (input: { group: string; subject: string }) => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <NoticeCard data-slot="exam-choice-notice">
-      <NoticeCardLeading>
-        <KindTile icon={SignpostIcon} kind="lesson" size="sm" />
-      </NoticeCardLeading>
-      <NoticeCardContent>
-        <NoticeCardTitle>
-          {t("{group}: which one will you take?", { group: choice.group })}
-        </NoticeCardTitle>
-        <NoticeCardDescription>
-          {t("Until you pick, your plan leaves {group} out.", { group: choice.group })}
-        </NoticeCardDescription>
-        <NoticeCardActions>
-          {choice.options.map((option) => (
-            <Button
-              disabled={isPending}
-              focusableWhenDisabled
-              key={option.name}
-              onClick={() => onPick({ group: choice.group, subject: option.name })}
-              size="sm"
-              variant="secondary"
-            >
-              {option.shortName ?? option.name}
-            </Button>
-          ))}
-        </NoticeCardActions>
-        {failed && <PlanFailedMessage />}
-      </NoticeCardContent>
-    </NoticeCard>
-  );
-}
-
-/** The question on the Journey: the pick is the plan editor's latest change too. */
-function ChoiceQuestion({
-  choice,
-  onPicked,
-}: {
-  choice: ExamChoiceView;
-  onPicked: (change: PlanChangeView) => void;
-}) {
-  const { choose, failed, isPending } = useExamChoice({ onChange: onPicked });
-
-  return (
-    <ExamChoiceQuestion choice={choice} failed={failed} isPending={isPending} onPick={choose} />
-  );
-}
-
-/** What a pick did, where its question was, with Undo while it's the plan's latest change. */
-function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: () => void }) {
-  const t = useExtracted();
-  const { failed, isPending, undo } = useUndoChange({ change, onUndone });
-
-  return (
-    <NoticeCard className="flex-col">
-      <PlanChangeSummary change={change} icon={SignpostIcon} />
-      {change.canUndo && (
-        <Button
-          className="self-start"
-          disabled={isPending}
-          focusableWhenDisabled
-          onClick={undo}
-          size="sm"
-          variant="outline"
-        >
-          {t("Undo")}
-        </Button>
-      )}
-      {failed && <PlanFailedMessage />}
-    </NoticeCard>
-  );
-}
-
-/**
- * The exam's choices the learner hasn't picked yet, asked on the plan's page until they do, since
+ * One of the exam's choices the learner hasn't picked yet, in the Plan's slot until they do, since
  * the plan studies none of a choice's options before (Ana, 15 days in, had no foreign language,
- * and only the editor said so). The pick then says what it did in the question's place.
+ * and only the editor said so): one tap per option. The pick then says what it did in its place,
+ * with Undo while it's the plan's latest change.
  */
-export function ExamChoiceNotices() {
-  const { plan } = usePlanScreen();
-  const [picked, setPicked] = useState<PlanChangeView | null>(null);
+export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
+  const t = useExtracted();
+  const sentence = useChangeSentence();
+  const { setResult } = usePlanSuggestionSlot();
+  const answer = useSlotAnswer(item);
+  const answered = useSlotAnswered(item);
+  const { choice } = item;
+  const title = t("{group}: which one will you take?", { group: choice.group });
 
-  if (picked) {
-    return <ChoicePicked change={picked} onUndone={() => setPicked(null)} />;
-  }
+  const { choose, failed, isPending } = useExamChoice({
+    onChange: (change) => setResult({ change, item, text: sentence(change) }),
+  });
 
-  return plan.examChoices
-    .filter((choice) => !choice.subject)
-    .map((choice) => <ChoiceQuestion choice={choice} key={choice.group} onPicked={setPicked} />);
+  const undo = answer && <SlotUndo item={item} />;
+
+  return (
+    <Suggestion answered={answered} label={title} mark={<SignpostIcon />}>
+      <SuggestionLine>
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            {undo}
+          </>
+        ) : (
+          <>
+            <SuggestionSummary>{title}</SuggestionSummary>
+            <SuggestionOpen>{t("Choose")}</SuggestionOpen>
+          </>
+        )}
+      </SuggestionLine>
+
+      <SlotContent>
+        <SuggestionHeader>{title}</SuggestionHeader>
+
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            <SuggestionActions>{undo}</SuggestionActions>
+          </>
+        ) : (
+          <>
+            <SuggestionDescription>
+              {t("Until you pick, your plan leaves {group} out.", { group: choice.group })}
+            </SuggestionDescription>
+            <SuggestionActions>
+              {choice.options.map((option) => (
+                <SuggestionAction
+                  disabled={isPending}
+                  key={option.name}
+                  onClick={() => choose({ group: choice.group, subject: option.name })}
+                  variant="outline"
+                >
+                  {option.shortName ?? option.name}
+                </SuggestionAction>
+              ))}
+            </SuggestionActions>
+            {failed && (
+              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
+            )}
+          </>
+        )}
+      </SlotContent>
+    </Suggestion>
+  );
 }

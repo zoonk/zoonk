@@ -4,23 +4,13 @@ import {
   type OnboardingAnswerInput,
   type OnboardingPurpose,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { Input } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import {
-  BriefcaseBusinessIcon,
-  HistoryIcon,
-  LayersIcon,
-  PencilLineIcon,
-  RouteIcon,
-  TelescopeIcon,
-} from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useState } from "react";
 import { type Choice, ChoiceList } from "../choice-list";
 import { type LevelChoice, LevelChoiceList, toLevelAnswer } from "./level-choices";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
+import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 type StepProps = {
   onAnswer: (input: OnboardingAnswerInput) => void;
@@ -33,40 +23,35 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   const t = useExtracted();
   const [purpose, setPurpose] = useState<OnboardingPurpose | null>(null);
 
+  const { pick, submit } = useAdvanceOnPick({
+    answer: (picked: OnboardingPurpose) => onAnswer({ purpose: picked, question: "purpose" }),
+    pending,
+  });
+
   const choices: Choice<OnboardingPurpose>[] = [
     {
       description: t("The big ideas, no formulas"),
-      icon: <TelescopeIcon />,
       label: t("Get an overview"),
       value: "overview",
     },
     {
       description: t("From the basics to advanced"),
-      icon: <LayersIcon />,
       label: t("Understand it in depth"),
       value: "deep",
     },
-    {
-      description: t("Apply it to real projects"),
-      icon: <BriefcaseBusinessIcon />,
-      label: t("Use it at work"),
-      value: "work",
-    },
+    { description: t("Apply it to real projects"), label: t("Use it at work"), value: "work" },
     {
       description: t("Get ready for a new role"),
-      icon: <RouteIcon />,
       label: t("Change careers"),
       value: "careerChange",
     },
     {
       description: t("Pick up what you left behind"),
-      icon: <HistoryIcon />,
       label: t("Refresh what I studied"),
       value: "refresh",
     },
     {
       description: t("Tell us later, in your own words"),
-      icon: <PencilLineIcon />,
       label: t("Something else"),
       value: "other",
     },
@@ -77,7 +62,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       canContinue={purpose !== null}
       description={t("Pick what motivates you most.")}
       subject={subject}
-      onContinue={() => purpose && onAnswer({ purpose, question: "purpose" })}
+      onContinue={() => purpose && submit(purpose)}
       pending={pending}
       title={t("What do you want from it?")}
     >
@@ -85,6 +70,8 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
         choices={choices}
         label={t("What you want from it")}
         onChange={setPurpose}
+        onPick={pick}
+        readOnly={pending}
         value={purpose}
       />
     </StepForm>
@@ -103,16 +90,21 @@ export function LevelStep({
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
+  const { pick, submit } = useAdvanceOnPick({
+    answer: (picked: LevelChoice) => onAnswer({ level: toLevelAnswer(picked), question: "level" }),
+    pending,
+  });
+
   return (
     <StepForm
       canContinue={level !== null}
       description={t("It only changes where your plan starts.")}
       subject={subject}
-      onContinue={() => level && onAnswer({ level: toLevelAnswer(level), question: "level" })}
+      onContinue={() => level && submit(level)}
       pending={pending}
       title={t("How much do you already know?")}
     >
-      <LevelChoiceList onChange={setLevel} value={level} />
+      <LevelChoiceList onChange={setLevel} onPick={pick} readOnly={pending} value={level} />
     </StepForm>
   );
 }
@@ -232,43 +224,6 @@ export function FollowUpsStep({
           value={answers[index] ?? ""}
         />
       ))}
-    </StepForm>
-  );
-}
-
-/**
- * A deadline is optional: without one, the learner studies everything at their own pace and the
- * plan shows when each milestone arrives.
- */
-export function DateStep({ onAnswer, pending }: Omit<StepProps, "subject">) {
-  const t = useExtracted();
-  const inputId = useId();
-  const [date, setDate] = useState("");
-  const today = useMountTime().toISOString().slice(0, 10);
-
-  return (
-    <StepForm
-      canContinue={date > today}
-      description={t(
-        "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-      )}
-      onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
-      onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
-      pending={pending}
-      skipLabel={t("No date, study everything")}
-      title={t("Is there a date you're aiming for?")}
-    >
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={inputId}>{t("Date")}</Label>
-        <Input
-          className="h-12 text-base"
-          id={inputId}
-          min={today}
-          onChange={(event) => setDate(event.target.value)}
-          type="date"
-          value={date}
-        />
-      </div>
     </StepForm>
   );
 }

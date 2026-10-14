@@ -42,6 +42,16 @@ export function usePlanCoverage() {
   };
 }
 
+/**
+ * Whether the learner's own time already covers the whole goal by its date (`timeCovers`): what
+ * the plan still leaves out comes at their time then (the plan's `fitOffer`), never as another
+ * daily time.
+ */
+export function useTimeEnough(): boolean {
+  const { plan } = usePlanScreen();
+  return plan.feasibility?.timeCovers ?? false;
+}
+
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
 type CoveredProps = Pick<Coverage, "coreFits" | "coveredShare" | "deepensMostAsked" | "measure">;
@@ -150,14 +160,12 @@ export function TargetSentence({ target }: { target: CoverageTarget }) {
  * One tap to the earliest date the learner's time covers everything by (see `usePlanCoverage`);
  * the plan re-plans from today and shows it. `onSwitched` hears when the move was saved.
  */
-function MoveDateSwitch({
+export function MoveDateSwitch({
   fittingDate,
   onSwitched,
-  variant,
 }: {
   fittingDate: string;
   onSwitched?: () => void;
-  variant: "outline" | "secondary";
 }) {
   const t = useExtracted();
   const { change, failed, isPending } = usePlanChange();
@@ -177,78 +185,9 @@ function MoveDateSwitch({
         focusableWhenDisabled
         onClick={() => void moveDate()}
         size="sm"
-        variant={variant}
+        variant="outline"
       >
         {t("Move your date to cover everything")}
-      </Button>
-      {failed && <PlanFailedMessage />}
-    </>
-  );
-}
-
-/**
- * The one tap a plan that doesn't cover its goal offers: moving the date, when no daily time
- * covers it by then, else switching to the time that covers more. Nothing when neither applies.
- */
-export function CoverageAction({
-  coverage,
-  onSwitched,
-  variant = "outline",
-}: {
-  coverage: Coverage;
-  onSwitched?: () => void;
-  variant?: "outline" | "secondary";
-}) {
-  if (coverage.fittingDate) {
-    return (
-      <MoveDateSwitch
-        fittingDate={coverage.fittingDate}
-        onSwitched={onSwitched}
-        variant={variant}
-      />
-    );
-  }
-
-  return coverage.target ? (
-    <CoverageSwitch onSwitched={onSwitched} target={coverage.target} variant={variant} />
-  ) : null;
-}
-
-/**
- * One tap to the daily time worth switching to; the plan re-plans from today and shows it.
- * `onSwitched` hears when the switch was saved.
- */
-function CoverageSwitch({
-  onSwitched,
-  target,
-  variant = "outline",
-}: {
-  onSwitched?: () => void;
-  target: CoverageTarget;
-  variant?: "outline" | "secondary";
-}) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const { change, failed, isPending } = usePlanChange();
-
-  const switchTime = () =>
-    change([{ kind: "setDailyMinutes", minutes: target.dailyMinutes }], (outcome) => {
-      if (outcome?.status === "applied") {
-        onSwitched?.();
-      }
-    });
-
-  return (
-    <>
-      <Button
-        className="self-start"
-        disabled={isPending}
-        focusableWhenDisabled
-        onClick={() => void switchTime()}
-        size="sm"
-        variant={variant}
-      >
-        {t("Switch to {time} a day", { time: formatDuration(target.dailyMinutes) })}
       </Button>
       {failed && <PlanFailedMessage />}
     </>

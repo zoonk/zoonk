@@ -1,8 +1,8 @@
 "use client";
 
+import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { toLocalIsoDate, useFormatGoalDate } from "../_utils/iso-date";
@@ -13,9 +13,13 @@ import { FullCourseSwitch, useFullCourse } from "./plan-full-course";
 import { StudyEverything } from "./study-everything";
 import { usePlanChange } from "./use-plan-change";
 
-/** The plan's date has to be after today: a plan counts down to a day still ahead. */
-function getTomorrow(): string {
-  return toLocalIsoDate(new Date(Date.now() + MS_PER_DAY));
+/**
+ * The days the plan's date can take: after today, since a plan counts down to a day still ahead,
+ * and no later than a plan reaches (see `getTargetDateBounds`). A day past it is the browser's to
+ * explain when the learner saves, as the picker greys it out.
+ */
+function getDateBounds() {
+  return getTargetDateBounds(toLocalIsoDate(new Date()));
 }
 
 /**
@@ -82,9 +86,9 @@ export function PlanDate() {
   };
 
   const note = noteFor({ isExam: goal.kind === "exam", namedMonth, targetDate });
-  const tomorrow = getTomorrow();
+  const bounds = getDateBounds();
   // A month's first day is a day of its own once the learner picks it.
-  const canSave = value !== "" && (namedMonth || value !== targetDate) && value >= tomorrow;
+  const canSave = value !== "" && (namedMonth || value !== targetDate) && value >= bounds.min;
 
   return (
     <div className="flex flex-col gap-2">
@@ -113,7 +117,8 @@ export function PlanDate() {
           className="max-w-48"
           disabled={isPending}
           id={inputId}
-          min={tomorrow}
+          max={bounds.max}
+          min={bounds.min}
           onChange={(event) => setValue(event.target.value)}
           type="date"
           value={value}

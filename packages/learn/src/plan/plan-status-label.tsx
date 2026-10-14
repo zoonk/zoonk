@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
 export type PlanStatus = NonNullable<PlanView["status"]>;
@@ -11,9 +10,11 @@ export type PlanStatus = NonNullable<PlanView["status"]>;
  * earlier days left, until they're done), "2 days behind". Each is the learner's pace against
  * their plan, never whether the plan reaches the goal, which the plan's notice says (Marcos read
  * "On track" beside a plan covering 49% of his goal). Being behind is a count to catch up on,
- * never a judgment.
+ * never a judgment. A plan with every lesson and challenge done is finished, never days ahead of
+ * dates it no longer needs; one with every lesson done says the challenges left; one whose date
+ * came with lessons left is past its date, never "ended".
  */
-function usePlanStatusText() {
+export function usePlanStatusText() {
   const t = useExtracted();
 
   return (status: PlanStatus): string => {
@@ -26,10 +27,18 @@ function usePlanStatusText() {
               lessons: status.lessons,
             })
           : t("{days, plural, one {One day behind} other {# days behind}}", { days: status.days });
+      case "challengesLeft":
+        return t("{count, plural, one {# challenge left} other {# challenges left}}", {
+          count: status.challenges,
+        });
+      case "finished":
+        return t("Plan finished");
       case "needsAdjusting":
         return t("Needs adjusting");
       case "onTrack":
         return t("Keeping pace");
+      case "pastDate":
+        return t("Past your date");
       default:
         return t("Keeping pace");
     }
@@ -37,25 +46,34 @@ function usePlanStatusText() {
 }
 
 /**
- * Being behind is a calm, neutral fact: an orange "127 lessons to catch up" read as an alarm to a
- * learner just back from a break, while the plan already spreads them over the next days. A plan
- * that no longer fits says so in red, and its notice asks what to do.
+ * A plan whose date came with lessons left, as the Plan's slot titles it ("Your date came with 12
+ * lessons left") and as a sentence for Today and "Your pace"; an exam's date is the exam's: "12
+ * lessons were left before your exam". Never "ended": the plan keeps them until the learner
+ * adjusts it.
  */
-const DOT_CLASSES: Record<PlanStatus["kind"], string> = {
-  ahead: "bg-success",
-  behind: "bg-muted-foreground/60",
-  needsAdjusting: "bg-destructive",
-  onTrack: "bg-success",
-};
+export function usePastDateText() {
+  const t = useExtracted();
 
-/** A dot and the status in words. Screen readers hear it as one status line. */
-export function PlanStatusLabel({ className, status }: { className?: string; status: PlanStatus }) {
-  const statusText = usePlanStatusText();
-
-  return (
-    <span className={cn("inline-flex items-center gap-1.5 text-sm font-medium", className)}>
-      <span aria-hidden="true" className={cn("size-2 rounded-full", DOT_CLASSES[status.kind])} />
-      {statusText(status)}
-    </span>
-  );
+  return ({ isExam, lessons }: { isExam: boolean; lessons: number }) =>
+    isExam
+      ? {
+          sentence: t(
+            "{count, plural, one {# lesson was left before your exam.} other {# lessons were left before your exam.}}",
+            { count: lessons },
+          ),
+          title: t(
+            "{count, plural, one {# lesson was left before your exam} other {# lessons were left before your exam}}",
+            { count: lessons },
+          ),
+        }
+      : {
+          sentence: t(
+            "{count, plural, one {Your date came with # lesson left.} other {Your date came with # lessons left.}}",
+            { count: lessons },
+          ),
+          title: t(
+            "{count, plural, one {Your date came with # lesson left} other {Your date came with # lessons left}}",
+            { count: lessons },
+          ),
+        };
 }

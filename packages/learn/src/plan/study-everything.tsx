@@ -10,7 +10,6 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { cn } from "@zoonk/ui/lib/utils";
 import { LibraryBigIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useState } from "react";
@@ -144,10 +143,9 @@ export function useStudyEverything(): (course: FullCourse) => void {
 
 /**
  * "Study everything", next to more time a day and choosing where to focus, for a plan whose time
- * doesn't cover its goal by its date: it opens the sheet that says when the learner would finish
- * everything at their time (an exam's after the exam, which keeps its date) before they choose it.
- * An exam's says so under its name, so it doesn't read like the time that covers everything by the
- * exam beside it.
+ * doesn't cover its goal by its date: one small button on the notice's line of answers, opening
+ * the sheet that says when the learner would finish everything at their time (an exam's after the
+ * exam, which keeps its date) before they choose it.
  */
 export function StudyEverything({ course }: { course: FullCourse }) {
   const t = useExtracted();
@@ -155,18 +153,13 @@ export function StudyEverything({ course }: { course: FullCourse }) {
 
   return (
     <Button
-      className={cn("self-start", course.isExam && "h-auto min-h-8 flex-col gap-0 py-1")}
+      className="self-start"
       onClick={() => open(course)}
       size="sm"
       type="button"
       variant="ghost"
     >
       {t("Study everything")}
-      {course.isExam && (
-        <span className="text-muted-foreground text-xs font-normal">
-          {t("Keeps going after the exam")}
-        </span>
-      )}
     </Button>
   );
 }

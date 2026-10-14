@@ -4,15 +4,43 @@ import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract"
 import { useExtracted } from "next-intl";
 
 /**
- * How far a subject is, in one phrase and as a share for its bar (null: no bar to draw), from what
- * the learner studied. The bar is always the subject's lessons studied, so it moves with every
- * lesson; a topic is ticked only once all its lessons are. `known`: what they skipped because they
- * showed they know it, apart, so taking that credit back never lowers what they studied.
+ * A subject's bar, in its goal's one measure: an exam subject's preparation (`studied`, nothing
+ * `known`), or another goal's lessons as shares of its size: the ones studied, and apart the ones
+ * skipped because the learner showed they know them.
  */
-export type SubjectProgress = { known: string | null; label: string; share: number | null };
+export type SubjectBar = { known: number; studied: number };
 
-function lessonShare(subject: SyllabusSubject): number {
-  return subject.lessonsTotal > 0 ? subject.lessonsDone / subject.lessonsTotal : 0;
+/**
+ * How far a subject is, in one phrase and as shares for its bar (null: no bar to draw). An exam's
+ * subject reads its preparation, on the same scale as the goal's number above it. Another goal's
+ * module reads its lessons studied, so it moves with every lesson, with the ones skipped as known
+ * beside them, so taking that credit back never lowers what they studied; a topic is ticked only
+ * once all its lessons are. `known`: what they skipped because they showed they know it.
+ */
+export type SubjectProgress = { bar: SubjectBar | null; known: string | null; label: string };
+
+/** The subject's bar in its goal's measure (see `SubjectBar`). */
+export function getSubjectBar(subject: SyllabusSubject): SubjectBar {
+  if (subject.preparation !== null) {
+    return { known: 0, studied: subject.preparation };
+  }
+
+  if (subject.lessonsTotal === 0) {
+    return { known: 0, studied: 0 };
+  }
+
+  return {
+    known: subject.lessonsKnown / subject.lessonsTotal,
+    studied: subject.lessonsDone / subject.lessonsTotal,
+  };
+}
+
+/**
+ * The share beside a subject's bar, wherever its row is (the Plan's subjects, Today's aside, its
+ * page): an exam subject's preparation, or another goal's lessons studied or known of its size.
+ */
+export function getSubjectShare(bar: SubjectBar): number {
+  return Math.min(1, Math.max(0, bar.studied + bar.known));
 }
 
 /**
@@ -54,37 +82,37 @@ export function useSubjectProgress() {
     const total = subject.topics.length;
 
     if (subject.notPlannedReason) {
-      return { known: null, label: t("Not in your plan"), share: null };
+      return { bar: null, known: null, label: t("Not in your plan") };
     }
 
     const known = knownLine(subject);
 
     if (total > 0 && subject.topicsStudied !== null) {
       return {
+        bar: getSubjectBar(subject),
         known,
         label: t(
           "{total, plural, one {{done, number} of # topic} other {{done, number} of # topics}}",
           { done: subject.topicsStudied, total },
         ),
-        share: lessonShare(subject),
       };
     }
 
     if (total > 0) {
       return {
+        bar: getSubjectBar(subject),
         known,
         label: t("{total, plural, one {# topic} other {# topics}}", { total }),
-        share: lessonShare(subject),
       };
     }
 
     return {
+      bar: getSubjectBar(subject),
       known,
       label: t(
         "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}",
         { done: subject.lessonsDone, total: subject.lessonsTotal },
       ),
-      share: lessonShare(subject),
     };
   };
 }
