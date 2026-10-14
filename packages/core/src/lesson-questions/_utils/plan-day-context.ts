@@ -14,7 +14,7 @@ import {
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PlanItemView, type PlanView } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
+import { isCatchingUp, loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { loadStudySessionView } from "../../sessions/_utils/load-session-view";
 import { findSavedDaySession } from "../../sessions/_utils/saved-day-session";
 import { type StudyBlockView, type StudySessionView } from "../../sessions/_utils/session-view";
@@ -37,6 +37,7 @@ type PlanScopeItem = NonNullable<PlanScopeContext["today"]>["items"][number];
 export type LinkScope = { activeGoal: boolean };
 
 const TODAY_LINK = { kind: "page", page: "today" } as const satisfies TutorLink;
+const PLAN_LINK = { kind: "page", page: "plan" } as const satisfies TutorLink;
 
 /**
  * Where a block of the learner's day opens: itself, as Today opens it, while it's still to do and
@@ -76,11 +77,14 @@ export type SavedDay = {
 
 function toSessionItem({
   block,
+  catchUpItems,
   day,
   scope,
   shown,
 }: {
   block: StudySessionBlock;
+  /** The lessons earlier days left (`loadCatchUpItems`). */
+  catchUpItems: readonly PlanItem[];
   day: SavedDay;
   scope: LinkScope;
   /** The block as Today shows it. */
@@ -88,7 +92,7 @@ function toSessionItem({
 }): PlanScopeItem {
   const payload = readBlockPayload(block);
   const lessonTitle = block.lessonId ? day.lessonTitles.get(block.lessonId) : undefined;
-  const catchingUp = day.view.catchUp?.blockIds.includes(block.id) ?? false;
+  const catchingUp = isCatchingUp({ block, items: catchUpItems });
 
   return {
     canDo: block.canDo,
@@ -171,10 +175,12 @@ export async function loadSavedDay(goal: Goal): Promise<SavedDay | null> {
 
 /** Today's session once it's built, as Today shows it; until then, what the plan gives the day. */
 function toToday({
+  catchUpItems,
   day,
   plan,
   scope,
 }: {
+  catchUpItems: readonly PlanItem[];
   day: SavedDay | null;
   plan: PlanView;
   scope: LinkScope;
@@ -186,7 +192,7 @@ function toToday({
       date: toIsoDate(day.session.localDate),
       items: day.session.blocks.flatMap((block) => {
         const view = shown.get(block.id);
-        return view ? [toSessionItem({ block, day, scope, shown: view })] : [];
+        return view ? [toSessionItem({ block, catchUpItems, day, scope, shown: view })] : [];
       }),
       source: "session",
     };
@@ -199,33 +205,41 @@ function toToday({
     : null;
 }
 
-/** Today's block that teaches a lesson earlier days left, when the day holds it. */
+/**
+ * Today's block that teaches a lesson earlier days left, as Today shows it, when the day holds it:
+ * by the same rule Today's catching up reads (`isCatchingUp`), on any day, a welcome back's
+ * lighter day too, whose view says nothing about catching up.
+ */
 function findCatchUpBlock({ day, item }: { day: SavedDay | null; item: PlanItem }) {
-  const catchUpIds = new Set(day?.view.catchUp?.blockIds);
-
-  return day?.view.blocks.find(
-    (block) =>
-      catchUpIds.has(block.id) &&
-      (block.planItemId === item.id ||
-        (item.lessonId !== null && block.lessonId === item.lessonId)),
-  );
+  const held = day?.session.blocks.find((block) => isCatchingUp({ block, items: [item] }));
+  return held ? day?.view.blocks.find((block) => block.id === held.id) : undefined;
 }
 
-/** Where a lesson earlier days left opens: today's block that holds it, or else Today. */
+/**
+ * Where a lesson earlier days left opens: today's block that holds it; otherwise Today when it
+ * offers adding them to today, and the Plan when the next days open with them (Today doesn't show
+ * them then, the Plan's days do).
+ */
 function toCatchUpLink({
   block,
   day,
+  offeredToday,
   scope,
 }: {
   block: StudyBlockView | undefined;
   day: SavedDay | null;
+  offeredToday: boolean;
   scope: LinkScope;
 }): TutorLink | null {
   if (block && day) {
     return toBlockLink({ block, current: day.view.current, scope });
   }
 
-  return scope.activeGoal ? TODAY_LINK : null;
+  if (!scope.activeGoal) {
+    return null;
+  }
+
+  return offeredToday ? TODAY_LINK : PLAN_LINK;
 }
 
 /** The lessons earlier days left, as the buddy reads them (see `loadCatchUp`). */
@@ -236,8 +250,8 @@ export type CatchUpLessons = NonNullable<PlanScopeContext["catchUp"]> & {
 
 /**
  * The lessons earlier days left, from the same rows the plan's status counts (`loadCatchUpItems`):
- * the first `limit` by title, each linked to today's block when the day holds it, and to Today
- * otherwise, where the day either offers catching up (`offeredToday`) or the next days open with
+ * the first `limit` by title, each linked to today's block when the day holds it; otherwise to
+ * Today when it offers catching up (`offeredToday`), or to the Plan, whose next days open with
  * them. No original day: the plan keeps only that earlier days left them. A free exam plan past
  * its first week has none, as its status says. The context names the first few; the buddy's
  * `catchUp` lookup names more.
@@ -245,24 +259,27 @@ export type CatchUpLessons = NonNullable<PlanScopeContext["catchUp"]> & {
 export async function loadCatchUp({
   day,
   goal,
+  items,
   limit = CATCH_UP_LESSONS,
   plan,
   scope,
 }: {
   day: SavedDay | null;
   goal: Goal;
+  /** The lessons earlier days left, when the caller read them already. */
+  items?: readonly PlanItem[];
   limit?: number;
   plan: PlanView;
   scope: LinkScope;
 }): Promise<CatchUpLessons | null> {
-  // A free exam plan past its first week has no new lessons, so nothing to catch up on.
-  const items = plan.access.freeWeekOver ? [] : await loadCatchUpItems(goal.id);
+  const left = items ?? (await loadCatchUpLessons({ goal, plan }));
 
-  if (items.length === 0) {
+  if (left.length === 0) {
     return null;
   }
 
-  const shown = items.slice(0, limit);
+  const shown = left.slice(0, limit);
+  const offeredToday = day?.view.catchUp?.later.offered ?? false;
 
   return {
     lessons: shown.map((item) => {
@@ -270,14 +287,19 @@ export async function loadCatchUp({
 
       return {
         inToday: Boolean(block),
-        link: toCatchUpLink({ block, day, scope }),
+        link: toCatchUpLink({ block, day, offeredToday, scope }),
         title: item.titleSnapshot,
       };
     }),
-    more: items.length - shown.length,
-    offeredToday: day?.view.catchUp?.later.offered ?? false,
-    total: items.length,
+    more: left.length - shown.length,
+    offeredToday,
+    total: left.length,
   };
+}
+
+/** The lessons earlier days left; none on a free exam plan past its first week, which has no new lessons. */
+async function loadCatchUpLessons({ goal, plan }: { goal: Goal; plan: PlanView }) {
+  return plan.access.freeWeekOver ? [] : loadCatchUpItems(goal.id);
 }
 
 /**
@@ -357,11 +379,15 @@ export async function loadPlanDayContext({
   plan: PlanView;
   scope: LinkScope;
 }): Promise<Pick<PlanScopeContext, "catchUp" | "challenges" | "today">> {
-  const [day, challenges] = await Promise.all([loadSavedDay(goal), loadChallenges({ goal, plan })]);
+  const [day, challenges, catchUpItems] = await Promise.all([
+    loadSavedDay(goal),
+    loadChallenges({ goal, plan }),
+    loadCatchUpLessons({ goal, plan }),
+  ]);
 
   return {
-    catchUp: toContextCatchUp(await loadCatchUp({ day, goal, plan, scope })),
+    catchUp: toContextCatchUp(await loadCatchUp({ day, goal, items: catchUpItems, plan, scope })),
     challenges,
-    today: toToday({ day, plan, scope }),
+    today: toToday({ catchUpItems, day, plan, scope }),
   };
 }

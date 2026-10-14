@@ -55,7 +55,7 @@ export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[
 }
 
 /** Whether a day's block is one of the lessons earlier days left. */
-function isCatchingUp({
+export function isCatchingUp({
   block,
   items,
 }: {

@@ -23,6 +23,9 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 
 const TODAY_LINK = { kind: "page", page: "today" };
 
+/** Where a lesson earlier days left opens when Today doesn't offer it: the Plan's next days. */
+const PLAN_LINK = { kind: "page", page: "plan" };
+
 type LearnerSpec = {
   /** The goal is the one the app has open, so the buddy may link what acts on it. */
   active?: boolean;
@@ -124,7 +127,7 @@ describe("the plan the buddy looks up", () => {
   });
 
   describe("catchUp", () => {
-    it("lists every lesson earlier days left in the plan's order, linked to Today, and only the learner's own", async () => {
+    it("lists every lesson earlier days left in the plan's order, linked to the Plan's days, and only the learner's own", async () => {
       const [learner, other] = await Promise.all([
         plannedLearner({ behind: 3 }),
         plannedLearner({ behind: 3 }),
@@ -138,7 +141,7 @@ describe("the plan the buddy looks up", () => {
       expect(found).toStrictEqual({
         lessons: learner.carried.map((item) => ({
           inToday: false,
-          link: TODAY_LINK,
+          link: PLAN_LINK,
           title: item.titleSnapshot,
         })),
         more: 0,
@@ -200,7 +203,7 @@ describe("the plan the buddy looks up", () => {
       expect(found.status === "found" && found.what === "catchUp" && found.lessons).toStrictEqual(
         carried
           .slice(0, 30)
-          .map((item) => ({ inToday: false, link: TODAY_LINK, title: item.titleSnapshot })),
+          .map((item) => ({ inToday: false, link: PLAN_LINK, title: item.titleSnapshot })),
       );
     });
 

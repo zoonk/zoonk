@@ -99,10 +99,11 @@ describe("the plan the buddy reads", () => {
 
     expect(plan.selectedGoal).toBe(true);
 
+    // Today doesn't offer catching up today: the next days open with them, as the Plan shows.
     expect(plan.catchUp).toStrictEqual({
       lessons: learner.carried.map((item) => ({
         inToday: false,
-        link: { kind: "page", page: "today" },
+        link: { kind: "page", page: "plan" },
         title: item.titleSnapshot,
       })),
       offeredToday: false,
@@ -150,6 +151,44 @@ describe("the plan the buddy reads", () => {
     expect(plan.today).toMatchObject({
       items: [{ catchUp: true, link: blockLink, title: first.titleSnapshot }],
       source: "session",
+    });
+  });
+
+  it("finds a lesson earlier days left in a welcome back's day, whose view says nothing about catching up", async () => {
+    const { carried, goal, user } = await learnerBehind();
+    const [first] = carried;
+
+    if (!first) {
+      throw new Error("Expected a carried lesson");
+    }
+
+    const session = await studySessionFixture({
+      freshStart: "welcomeBack",
+      goalId: goal.id,
+      localDate: toUTCMidnight(new Date()),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "learn",
+      lessonId: first.lessonId,
+      payload: { planItemId: first.id },
+      position: 0,
+      sessionId: session.id,
+    });
+
+    const { snapshot } = await askAboutPlan({ goalId: goal.id, userId: user.id });
+    const plan = readPlanSnapshot(snapshot);
+    const blockLink = { blockId: block.id, kind: "block" };
+
+    expect(plan.catchUp?.lessons[0]).toStrictEqual({
+      inToday: true,
+      link: blockLink,
+      title: first.titleSnapshot,
+    });
+
+    expect(plan.today).toMatchObject({
+      items: [{ catchUp: true, link: blockLink, title: first.titleSnapshot }],
     });
   });
 
