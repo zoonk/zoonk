@@ -26,15 +26,22 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
+/**
+ * A menu whose items are prefetching links keeps them mounted while closed (`keepMounted`): an item
+ * that closes the menu would otherwise unmount its link before the router reads it, and the
+ * navigation would lose what the link prefetched.
+ */
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
   collisionPadding,
+  keepMounted,
   side = "bottom",
   sideOffset = 4,
   className,
   ...props
 }: MenuPrimitive.Popup.Props &
+  Pick<MenuPrimitive.Portal.Props, "keepMounted"> &
   Pick<
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "collisionPadding" | "side" | "sideOffset"
@@ -42,7 +49,7 @@ function DropdownMenuContent({
   const ref = useHideElement<HTMLDivElement>();
 
   return (
-    <MenuPrimitive.Portal ref={ref}>
+    <MenuPrimitive.Portal keepMounted={keepMounted} ref={ref}>
       <MenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

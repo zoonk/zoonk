@@ -115,7 +115,7 @@ export function UserDropdownMenu({
   ];
 
   return (
-    <DropdownMenuContent align={align} className="w-64" side={side}>
+    <DropdownMenuContent align={align} className="w-64" keepMounted side={side}>
       {summary && status === "account" && <AccountIdentity summary={summary} />}
       <SearchDropdownItem />
       <MenuGroup items={places} />
