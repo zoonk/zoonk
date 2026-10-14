@@ -9,7 +9,9 @@ import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure"
 import { countPlannedQuestions, outlineMock } from "../../exams/mocks/mock-plan";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { findScheduledMock } from "../../plans/planner/mock-identity";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
 import { getTestSkillIds } from "../../sessions/_utils/review-skills";
 import { MIN_CHECKPOINT_QUESTIONS } from "../checkpoint-rules";
@@ -53,9 +55,16 @@ export async function loadMockCard({
     : null;
 
   // The mock asks every topic of the test, as its session does (see `loadSessionWeeklyChallenge`).
+  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
+  const identity = findScheduledMock({
+    date: toIsoDate(date),
+    funding: parsePlanSettings(goalPlan?.settings).mockFunding,
+  });
+
   const planned = await planWeeklyMock({
     essays,
     goal,
+    identity,
     skillIds: getTestSkillIds({
       graph: parsePlanGraph(goalPlan?.graph),
       planSkillIds: skills.map((skill) => skill.id),
@@ -73,7 +82,14 @@ export async function loadMockCard({
   const plan =
     !isAhead && countPlannedQuestions(planned) >= MIN_CHECKPOINT_QUESTIONS
       ? planned
-      : outlineMock({ day: planned.day, essays, fullLength: planned.fullLength, structure });
+      : outlineMock({
+          // A scheduled mock keeps its real time limit on its card too (see `getMockClock`).
+          clock: identity ? planned.minutes : undefined,
+          day: planned.day,
+          essays,
+          fullLength: planned.fullLength,
+          structure,
+        });
 
   return {
     conditions: toMockConditions({ plan, structure, typed }),

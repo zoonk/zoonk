@@ -1,10 +1,11 @@
-import "server-only";
 import { type ExamEdition } from "../../../library/exams/blueprint-contract";
+import "server-only";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
+import { loadScheduledMock } from "./scheduled-mock";
 
 /**
  * When the real exam starts on the day a mock copies: the start time of that exam day, or of the
@@ -35,12 +36,20 @@ export async function buildMockConditions(
   const { blueprint, goal, payload, sessionDate, structure, userId } = owned;
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
+  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
+  const identity = await loadScheduledMock({
+    date: sessionDate,
+    goalId: goal?.id ?? null,
+    planItemId: payload.planItemId,
+  });
+
   const plan = await planWeeklyMock({
     goal: {
       examBlueprintId: goal?.examBlueprintId ?? null,
       id: goal?.id ?? null,
       targetDate: goal?.targetDate ?? null,
     },
+    identity,
     itemIds: payload.itemIds,
     skillIds: payload.skillIds,
     structure,

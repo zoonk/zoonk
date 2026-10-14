@@ -1,11 +1,13 @@
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
+import { displayWeightSchema } from "../../exams/display-weight-contract";
 import { examDocumentSchema } from "../../exams/exam-document";
 import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-contract";
 import { passMarksSchema } from "../../library/exams/pass-marks";
 import { writtenPracticeSchema } from "../../plans/written-practice-contract";
 
 const countSchema = z.int().min(0);
+const shareSchema = z.number().min(0).max(1);
 const isoDateSchema = z.iso.date();
 
 /**
@@ -132,6 +134,7 @@ const syllabusSubjectSchema = z
         description:
           "Every chapter of the plan in this subject: the ones done, then in the order the plan studies them next",
       }),
+    displayWeight: displayWeightSchema,
     group: z
       .string()
       .nullable()
@@ -153,8 +156,15 @@ const syllabusSubjectSchema = z
     }),
     lessonsTotal: countSchema.meta({
       description:
-        "Its size: each skill's lessons in the plan, never fewer than the skill graph sizes it, so progress moves only with the learner's own work, not when the plan cuts, restores or sets lessons aside",
+        "Its size: the lessons the plan teaches in it, studied, known, to do or set aside (a plan without a date leaves out the ones the Library couldn't write), so finishing the plan reads 100%. Changing the learner's time or date changes what the plan holds, and so this; never `lessonsDone`",
     }),
+    mastery: z
+      .object({ answered: countSchema, correct: countSchema })
+      .nullable()
+      .meta({
+        description:
+          "An exam subject's first answers to questions never seen before that say how well it's known, once it has the few its `preparation` needs to count mastery: show as \"6 of 8 right\". Null before, while its preparation counts no mastery yet: say it shows after a few practice questions. Null too whenever `preparation` is null",
+      }),
     matrix: z
       .array(z.string())
       .meta({
@@ -166,13 +176,16 @@ const syllabusSubjectSchema = z
       .nullable()
       .meta({ description: "The next day the plan studies it; null once done or out of the plan" }),
     notPlannedReason: notPlannedReasonSchema,
+    preparation: shareSchema
+      .nullable()
+      .meta({
+        description:
+          "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. Show it as the subject's number and bar, with `mastery` saying how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too: show the number muted beside why it's out, with no bar. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
+      }),
     questions: countSchema
       .nullable()
       .meta({ description: "Questions on it in the exam, when the notice says" }),
-    share: z
-      .number()
-      .min(0)
-      .max(1)
+    share: shareSchema
       .nullable()
       .meta({
         description: "Its share of the exam: the notice's weight, or its share of the questions",
@@ -250,6 +263,19 @@ export const syllabusViewSchema = z
         description:
           "Where a `known` topic comes back to be confirmed: `practice`, or `reviews` for a free exam plan past its first week, whose practice is Plus (the quick review asks it then)",
       }),
+    lessons: z
+      .object({
+        done: countSchema.meta({ description: "Studied or skipped as known" }),
+        known: countSchema.meta({
+          description:
+            "Of `done`, the ones skipped because the learner showed they know them, each counted once even when it shows in several subjects; the rest were studied",
+        }),
+        total: countSchema,
+      })
+      .meta({
+        description:
+          "The lessons of the subjects in the plan (`notPlannedReason` null), added up: a goal that isn't an exam reads its progress as `done` of `total`, the same as its subjects' bars, so it reads 100% once every lesson of the plan is studied or known (with its phases' challenges won, the plan's status is then `finished`)",
+      }),
     noticeUrl: z
       .string()
       .nullable()
@@ -273,9 +299,7 @@ export const syllabusViewSchema = z
     topicCount: countSchema,
     topicsMapped: z
       .boolean()
-      .meta({
-        description: "The plan says which skills teach which topic, so topics have a status",
-      }),
+      .describe("The plan says which skills teach which topic, so topics have a status"),
     writtenPractice: writtenPracticeSchema
       .nullable()
       .meta({

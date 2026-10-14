@@ -12,13 +12,13 @@ import { applyChangeNow, isPlanReady } from "../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { toPlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { type PlanContext, loadPlanContext } from "../plans/_utils/plan-context";
-import { commitPlan, computePlan, withPlanRetry } from "../plans/_utils/replan";
-import { withSeenTopics } from "../plans/_utils/seen-effect";
-import { type LearnerPlanOperation } from "../plans/plan-contract";
+import { commitPlan, withPlanRetry } from "../plans/_utils/replan";
+import { computeResumedPlan } from "../plans/_utils/resumed-plan";
 import { type PlanChangeView } from "../plans/plan-view-contract";
-import { getWeekdayMinutes } from "../plans/planner/plan-calendar";
+import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanOperationError } from "../plans/planner/plan-operations";
-import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { getScheduleOperations } from "../plans/planner/schedule-operations";
+import { assertTargetDates } from "../plans/target-date-range";
 import { findActiveGoalLimit, moveActiveGoalAway } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
@@ -34,95 +34,29 @@ export type GoalUpdateResult =
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
 
-const SATURDAY = 6;
-const SUNDAY = 0;
-
 /**
- * Study days become rest days at 0 minutes, and new study days get the daily time. A weekend time
- * goes to Saturday and Sunday when they're study days.
+ * A goal back from a pause keeps its plan, or starts it again from today when the pause left
+ * lessons behind (see `computeResumedPlan`): the paused days aren't missed days.
  */
-function getStudyDayOperations({
-  context,
-  input,
-}: {
-  context: PlanContext;
-  input: GoalUpdateInput;
-}) {
-  const { studyDays, weekendMinutes } = input;
-
-  if (!studyDays && weekendMinutes === undefined) {
-    return [];
-  }
-
-  const calendar = {
-    dailyMinutes: context.state.goal.dailyMinutes,
-    weekdayMinutes: context.state.settings.weekdayMinutes,
-  };
-
-  const weekdays = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) => weekday);
-  const current = (weekday: number) => getWeekdayMinutes({ calendar, weekday });
-
-  const studies = (weekday: number) =>
-    studyDays ? studyDays.includes(weekday) : current(weekday) > 0;
-
-  const rest = weekdays.filter((weekday) => !studies(weekday) && current(weekday) > 0);
-  const added = weekdays.filter((weekday) => studies(weekday) && current(weekday) === 0);
-  const minutes = input.dailyMinutes ?? context.state.goal.dailyMinutes;
-
-  const weekend =
-    weekendMinutes === undefined ? [] : [SUNDAY, SATURDAY].filter((weekday) => studies(weekday));
-
-  return [
-    rest.length > 0 && { kind: "setWeekdayMinutes" as const, minutes: 0, weekdays: rest },
-    added.length > 0 && { kind: "setWeekdayMinutes" as const, minutes, weekdays: added },
-    weekend.length > 0 && {
-      kind: "setWeekdayMinutes" as const,
-      minutes: weekendMinutes ?? minutes,
-      weekdays: weekend,
-    },
-  ].filter((operation) => operation !== false);
-}
-
-/** What the update changes about the learner's time and date, as plan operations. */
-function getScheduleOperations({
-  context,
-  input,
-}: {
-  context: PlanContext;
-  input: GoalUpdateInput;
-}): LearnerPlanOperation[] {
-  const { goal } = context.state;
-
-  return [
-    input.dailyMinutes !== undefined &&
-      input.dailyMinutes !== goal.dailyMinutes && {
-        kind: "setDailyMinutes" as const,
-        minutes: input.dailyMinutes,
-      },
-    ...getStudyDayOperations({ context, input }),
-    input.targetDate !== undefined &&
-      input.targetDate !== goal.targetDate && {
-        kind: "setTargetDate" as const,
-        targetDate: input.targetDate,
-      },
-  ].filter((operation) => operation !== false);
-}
-
-/** A goal back from a pause starts again from today: the paused days aren't missed days. */
 async function resumePlan(context: PlanContext): Promise<string | null> {
-  const computed = await computePlan({ context, mode: "forced" });
+  const resumed = await computeResumedPlan(context);
+
+  if (!resumed) {
+    return null;
+  }
 
   return commitPlan({
     change: {
       kind: "resumed",
       payload: toPlanChangePayload({
-        effect: withSeenTopics({ computed, shown: context.items }),
+        carriedItemIds: resumed.carriedItemIds,
+        effect: resumed.effect,
         source: "system",
       }),
       reason: RESUMED_NOTE,
       status: "applied",
     },
-    computed,
+    computed: resumed.computed,
     context,
   });
 }
@@ -130,7 +64,23 @@ async function resumePlan(context: PlanContext): Promise<string | null> {
 async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput }) {
   return withPlanRetry(async () => {
     const context = await loadPlanContext({ goal, timeZone: input.timeZone });
-    const operations = context ? getScheduleOperations({ context, input }) : [];
+
+    // Checked against the plan's own today and date, before anything is planned or saved.
+    if (context) {
+      assertTargetDates({
+        latestOnly: true,
+        targets: [
+          {
+            current: context.state.goal.targetDate,
+            path: ["targetDate"],
+            targetDate: input.targetDate,
+          },
+        ],
+        today: toIsoDate(context.today),
+      });
+    }
+
+    const operations = context ? getScheduleOperations({ input, state: context.state }) : [];
 
     if (!context || operations.length === 0) {
       const isResuming = input.status === "active" && goal.status === "paused";

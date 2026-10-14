@@ -1,4 +1,8 @@
-import { type CourseLevel } from "@zoonk/db";
+import { type CourseFormat, type CourseLevel } from "@zoonk/db";
+import { type CourseOutlineChapter, toCoursePlanGraph } from "../../goals/_utils/course-plan-graph";
+import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
+import { type PlanGraph } from "../../plans/planner/plan-state";
+import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
@@ -24,6 +28,91 @@ export function pinGraphToCourse({
     ...graph,
     courses: [{ key, levels, title: course.title }],
     skills: graph.skills.map((skill) => ({ ...skill, course: key })),
+  };
+}
+
+/**
+ * An exam's stored graph (`ExamSkillGraph`) as a goal started from its course plans from it
+ * (`findReusableCurriculum`), the same as `pinGraphToCourse` pins a graph the goal writes: only the
+ * part of the exam the course teaches (`getExamCourseSkills`, which its full outline teaches too),
+ * every skill learned in that course, one skill learned in several courses is one, a skill with no
+ * area takes the course's title, and the options of the exam's choices are back in the graph (the
+ * learner's pick sets the others aside again). Phases with none of those skills go; sizes,
+ * weights, outcomes and topics stay.
+ */
+export function pinPlanGraphToCourse({
+  chapters = [],
+  course,
+  graph,
+}: {
+  chapters?: readonly CourseOutlineChapter[];
+  course: Pick<StartedCourse, "id" | "title"> & { format: CourseFormat };
+  graph: PlanGraph;
+}): PlanGraph {
+  const skills = getExamCourseSkills({ course, examGraph: graph });
+
+  // A phase none of the course's skills is in is another course's: its checkpoint would check nothing.
+  const phaseIndexes = [...new Set(skills.map((skill) => skill.phase))].toSorted((a, b) => a - b);
+  const phases = phaseIndexes.map((index) => graph.phases[index] ?? { milestone: null, name: "" });
+
+  const pinned = skills
+    .filter(
+      (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
+    )
+    .map(({ area, lessons, name, outcome, phase, skillId, topics = [], weight }) => ({
+      area: area || course.title,
+      courseIds: [course.id],
+      lessons,
+      name,
+      ...(outcome ? { outcome } : {}),
+      phase: phaseIndexes.indexOf(phase),
+      skillId,
+      ...(topics.length > 0 ? { topics } : {}),
+      weight,
+    }));
+
+  const outlined = toCoursePlanGraph({
+    chapters,
+    course: { ...course, language: "en" },
+    examGraph: graph,
+    startChapterId: null,
+  });
+
+  const present = new Set(pinned.map((skill) => skill.skillId));
+  const areas = [...new Set(pinned.flatMap((skill) => skill.area ?? []))];
+
+  const matches = matchAreasToSubjects({
+    areas: outlined.skills.flatMap((skill) => skill.area ?? []),
+    subjects: areas.map((name) => ({ name })),
+  });
+
+  // An earlier outline may teach more specific skills than the reused graph names. Keep its
+  // real lessons in their published exam area before that area's work still to be outlined.
+  const additions = outlined.skills.flatMap((skill) => {
+    const area = areas[matches.get(skill.area ?? "") ?? -1];
+    const anchor = pinned.find((item) => item.area === area);
+
+    return !present.has(skill.skillId) && area && anchor
+      ? [{ ...skill, area, phase: anchor.phase, weight: skill.weight ?? anchor.weight }]
+      : [];
+  });
+
+  const firstInArea = new Set<string>();
+
+  const withOutline = pinned.flatMap((skill) => {
+    const area = skill.area ?? "";
+
+    if (firstInArea.has(area)) {
+      return [skill];
+    }
+
+    firstInArea.add(area);
+    return [...additions.filter((item) => item.area === area), skill];
+  });
+
+  return {
+    phases: phases.map((phase) => ({ milestone: phase.milestone ?? "", name: phase.name })),
+    skills: withOutline,
   };
 }
 

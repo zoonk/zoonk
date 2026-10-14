@@ -1,6 +1,5 @@
 import "server-only";
 import { type PlanItem } from "@zoonk/db";
-import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
@@ -16,10 +15,11 @@ import { getFreshStart } from "../fresh-start";
 import { getPracticeShare } from "../practice-share";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { loadDayCapsules } from "./day-capsules";
+import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
 import { LEARN_KINDS, getLessonLookahead, pickDayLessons } from "./day-lessons";
 import { loadDayPlan } from "./day-plan";
 import { getExamPrepAccess } from "./exam-access";
-import { markLessonsBeforeChallenges } from "./lessons-before-challenges";
+import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadMistakeDrills } from "./load-mistake-drills";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
@@ -217,7 +217,8 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    loadSessionBosses({
+    loadDayBosses({
+      access,
       examBlueprintId: goal.examBlueprintId,
       goalKind: goal.kind,
       graphSkills: plan.graph.skills,
@@ -253,17 +254,15 @@ export async function loadSessionBuildInput(
 
   const lessons = [
     ...toAlphabetLessons(alphabet),
-    ...markLessonsBeforeChallenges({
+    ...markLessonsAroundChallenges({
       checkpoints: boss.checkpoints,
       items: plan.items,
       lessons: planLessons,
+      today: localDate,
     }),
   ];
 
-  const checkpoints =
-    boss.checkpoints.length > 0
-      ? boss.checkpoints
-      : [weekly.checkpoint].filter((entry) => entry !== null);
+  const checkpoints = listDayCheckpoints({ access, boss, weekly });
 
   const checkpointItems = new Set(checkpoints.flatMap((checkpoint) => checkpoint.itemIds));
 

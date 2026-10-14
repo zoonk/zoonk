@@ -12,13 +12,18 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag, getCourseRouteCacheTag } from "../../cache/tags";
+import { loadCourseOutline } from "../../goals/_utils/course-outline";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import {
   getCandidateIds,
@@ -287,6 +292,94 @@ describe(saveOutlineChapter, () => {
     vi.resetAllMocks();
     mockSearchTerms([uniqueWord()]);
     mockDecision(null);
+  });
+
+  it("keeps a published chapter's tagged area when the active exam graph no longer has its skill", async () => {
+    const [course, originalSkill, currentSkill, blueprint] = await Promise.all([
+      courseFixture({ format: "exam", isPublished: true, visibility: "public" }),
+      skillFixture(),
+      skillFixture(),
+      examBlueprintFixture(),
+    ]);
+
+    const saved = await saveOutlineChapter({
+      chapter: outlineChapter({
+        lessons: [outlineLesson(`Practice ${uniqueWord()}`, [originalSkill.name])],
+        skillKeys: ["original"],
+        title: `Percentages ${uniqueWord()}`,
+      }),
+      courseId: course.id,
+      goalSkills: [
+        { ...originalSkill, area: "Math", key: "original" },
+        { ...currentSkill, area: "Humanities", key: "untagged" },
+      ],
+      level: "beginner",
+      position: 0,
+      provenance,
+      scope,
+      workflowRunId: randomUUID(),
+    });
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: blueprint.id,
+        graph: {
+          phases: [{ milestone: null, name: "Current graph" }],
+          skills: [
+            {
+              area: "Humanities",
+              lessons: 1,
+              name: currentSkill.name,
+              phase: 0,
+              skillId: currentSkill.id,
+              weight: null,
+            },
+          ],
+        },
+        primaryCourseId: course.id,
+        ...provenance,
+      },
+    });
+
+    await expect(loadCourseOutline({ courseId: course.id, userId: null })).resolves.toMatchObject([
+      { area: "Math", chapterId: saved.chapterId, tags: [{ id: originalSkill.id }] },
+    ]);
+
+    await expect(
+      prisma.courseChapter.findUniqueOrThrow({
+        where: { courseId_chapterId: { chapterId: saved.chapterId, courseId: course.id } },
+      }),
+    ).resolves.toMatchObject({ area: "Math" });
+  });
+
+  it.each([
+    ["two tagged areas", ["Math", "Humanities"]],
+    ["a tagged skill without an area", ["Math", null]],
+    ["no known tagged areas", [null, null]],
+  ])("leaves a chapter's area unknown with %s", async (_scenario, areas) => {
+    const [course, first, second] = await Promise.all([
+      courseFixture(),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    await saveOutlineChapter({
+      chapter: outlineChapter({ skillKeys: ["first", "second"], title: `Math ${uniqueWord()}` }),
+      courseId: course.id,
+      goalSkills: [
+        { ...first, area: areas[0], key: "first" },
+        { ...second, area: areas[1], key: "second" },
+      ],
+      level: "beginner",
+      position: 0,
+      provenance,
+      scope,
+      workflowRunId: randomUUID(),
+    });
+
+    await expect(loadCourseOutline({ courseId: course.id, userId: null })).resolves.toMatchObject([
+      { area: null },
+    ]);
   });
 
   it("writes the chapter, its place, the goal skills it teaches, its tools and every lesson with its skills", async () => {

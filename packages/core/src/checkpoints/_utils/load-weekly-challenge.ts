@@ -1,12 +1,13 @@
-import "server-only";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
+import { loadScheduledMock } from "../../exams/mocks/_utils/scheduled-mock";
 import { getPlannedItemIds } from "../../exams/mocks/mock-plan";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PlannedCheckpoint } from "../../sessions/session-builder";
+import { getCheckpointMinutes } from "../checkpoint-minutes";
 import {
-  CHECKPOINT_MINUTES_PER_QUESTION,
   MIN_CHECKPOINT_QUESTIONS,
   getPassMark,
   getPlannedQuestions,
@@ -36,18 +37,22 @@ export function findNextWeeklyItem(items: readonly PlanItem[]): PlanItem | undef
  */
 async function loadMockItems({
   goal,
+  planItemId,
   skillIds,
   structure,
   today,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
+  planItemId: string;
   skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
   userId: string;
 }) {
-  const plan = await planWeeklyMock({ goal, skillIds, structure, today, userId });
+  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
+  const identity = await loadScheduledMock({ date: today, goalId: goal.id, planItemId });
+  const plan = await planWeeklyMock({ goal, identity, skillIds, structure, today, userId });
 
   return {
     itemIds: getPlannedItemIds(plan),
@@ -107,7 +112,7 @@ export async function loadMixedItems({
 
   return {
     itemIds,
-    minutes: getPlannedQuestions(itemIds.length) * CHECKPOINT_MINUTES_PER_QUESTION,
+    minutes: getCheckpointMinutes(getPlannedQuestions(itemIds.length)),
     timeLimitMinutes: null,
     writable: weekSkills.length > 0,
   };
@@ -168,7 +173,14 @@ export async function loadSessionWeeklyChallenge({
   // A mock's missing questions are written by its own start (`requestMockQuestions`).
   const { writable, ...picked } = isMock
     ? {
-        ...(await loadMockItems({ goal, skillIds: asked, structure, today, userId })),
+        ...(await loadMockItems({
+          goal,
+          planItemId: item.id,
+          skillIds: asked,
+          structure,
+          today,
+          userId,
+        })),
         writable: false,
       }
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });

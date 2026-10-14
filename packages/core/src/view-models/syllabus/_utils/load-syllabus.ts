@@ -4,6 +4,7 @@ import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
 import { listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
+import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
@@ -38,7 +39,6 @@ const itemSelect = {
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
     area: getSkillArea({ graph, skill }),
-    lessons: skill.lessons,
     name: skill.name,
     skillId: skill.skillId,
     topics: skill.topics ?? [],
@@ -166,8 +166,11 @@ async function loadChapterTitles(items: readonly SyllabusItem[]): Promise<Map<st
  * its lessons in plan order, their chapters' titles and each area's course. Null without a plan.
  */
 export async function loadSyllabusInput(
-  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "userId"> &
-    Partial<Pick<Goal, "details" | "targetDate">>,
+  goal: Pick<
+    Goal,
+    "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "targetDate" | "userId"
+  > &
+    Partial<Pick<Goal, "details">>,
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
     prisma.plan.findUnique({
@@ -225,6 +228,10 @@ export async function loadSyllabusInput(
   return {
     areaCourses,
     chapterTitles,
+    deadline: hasPlanDeadline({
+      studiesPastTarget: goal.kind === "exam" && settings.fullCourse,
+      targetDate: goal.targetDate,
+    }),
     items,
     knownSkillIds: listKnownSkills({
       events: claimEvents,
@@ -238,7 +245,7 @@ export async function loadSyllabusInput(
     skippedBaseIds,
     taughtSkillIds,
     writtenPractice: getWrittenPracticeView({
-      goal: { createdAt: goal.createdAt, kind: goal.kind, targetDate: goal.targetDate ?? null },
+      goal: { createdAt: goal.createdAt, kind: goal.kind, targetDate: goal.targetDate },
       graph,
       settings,
     }),

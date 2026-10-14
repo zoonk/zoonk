@@ -1,7 +1,12 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type PlanGraph } from "../../plans/planner/plan-state";
+import { loadCourseExam } from "../../goals/_utils/course-exam";
+import { loadCourseOutline } from "../../goals/_utils/course-outline";
+import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
+import { joinOptionSkills } from "../../plans/planner/option-skills";
+import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
+import { pinPlanGraphToCourse } from "./course-start-graph";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
@@ -110,13 +115,43 @@ export async function saveExamSkillGraph({
 }
 
 /**
+ * The exam whose shared graph a goal plans from: its shared exam (`findSharedExam`), or for a goal
+ * started from a public course, the exam that course is (`loadCourseExam`, which linked the goal
+ * to it), so its learner plans from the exam's graph in that course. A goal started from a private
+ * course, or a course of another exam, writes its own. Null otherwise.
+ */
+async function findReusableExam({
+  inputs,
+  scope,
+}: {
+  inputs: SharedInputs;
+  scope: CurriculumScope;
+}): Promise<string | null> {
+  const { startedCourse } = inputs;
+
+  const examBlueprintId = await findSharedExam({
+    inputs: { ...inputs, startedCourse: null },
+    scope,
+  });
+
+  if (!examBlueprintId || !startedCourse) {
+    return examBlueprintId;
+  }
+
+  const exam = startedCourse.ownerId === null ? await loadCourseExam(startedCourse.id) : null;
+  return exam?.blueprint.id === examBlueprintId ? examBlueprintId : null;
+}
+
+/**
  * The exam's shared curriculum (`ExamSkillGraph`) for a goal whose graph is the exam's
- * (`findSharedExam`), to plan from instead of writing a skill graph again, whatever prompt version
+ * (`findReusableExam`), to plan from instead of writing a skill graph again, whatever prompt version
  * wrote it: a prompt change never rewrites an exam's graph on its own, only an admin's reset does.
  * Its skills and courses are already in the Library, outlined and often written, so the plan,
  * placement's questions and the first lessons come in seconds, at no cost. Whatever level either
- * learner gave, which decides where each starts, not the graph. Null when the exam has none, or
- * one in a private course.
+ * learner gave, which decides where each starts, not the graph. A goal started from the exam's
+ * course learns its part of the exam in that course (`pinPlanGraphToCourse`), as a graph it wrote
+ * would be, so its outline is written there; it never becomes the exam's graph (`saveExamSkillGraph`). Null
+ * when the exam has none, or one in a private course.
  *
  * This is a workflow bridge: the goal comes from the run its learner's request started.
  */
@@ -127,7 +162,7 @@ export async function findReusableCurriculum({
   inputs: SharedInputs;
   scope: CurriculumScope;
 }): Promise<ReusableCurriculum | null> {
-  const examBlueprintId = await findSharedExam({ inputs, scope });
+  const examBlueprintId = await findReusableExam({ inputs, scope });
 
   const stored = examBlueprintId
     ? await prisma.examSkillGraph.findUnique({ where: { examBlueprintId } })
@@ -137,8 +172,33 @@ export async function findReusableCurriculum({
     return null;
   }
 
+  const { startedCourse } = inputs;
+  const graph = parsePlanGraph(stored.graph);
+  const courseIds = joinOptionSkills(graph).skills.flatMap((skill) => skill.courseIds ?? []);
+
+  const course = startedCourse && {
+    ...startedCourse,
+    ...(await prisma.course.findUniqueOrThrow({
+      select: { format: true },
+      where: { id: startedCourse.id },
+    })),
+  };
+
+  // A course of the exam the graph gives no skill learns nothing from it: its goal writes its own.
+  const teachesNothing = course && getExamCourseSkills({ course, examGraph: graph }).length === 0;
+
+  if (teachesNothing || !(await hasOnlySharedCourses([...new Set(courseIds)]))) {
+    return null;
+  }
+
   const curriculum = await buildPlanSkillGraph({
-    graph: stored.graph,
+    graph: course
+      ? pinPlanGraphToCourse({
+          chapters: await loadCourseOutline({ courseId: course.id, userId: null }),
+          course,
+          graph,
+        })
+      : graph,
     plannedAt: stored.generatedAt,
     provenance: {
       generatedAt: stored.generatedAt.toISOString(),
@@ -148,9 +208,7 @@ export async function findReusableCurriculum({
     },
   });
 
-  if (!curriculum || !(await hasOnlySharedCourses(Object.values(curriculum.courseIdsByKey)))) {
-    return null;
-  }
-
-  return { ...curriculum, primaryCourseId: stored.primaryCourseId };
+  return curriculum
+    ? { ...curriculum, primaryCourseId: startedCourse?.id ?? stored.primaryCourseId }
+    : null;
 }

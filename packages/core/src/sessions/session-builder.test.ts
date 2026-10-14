@@ -188,6 +188,42 @@ describe(buildSessionBlocks, () => {
     ]);
   });
 
+  // A challenge leads the day after the lessons it tests, and the plan's next lessons follow it
+  // there: the chapter's next lesson a learner was promised for that day left Today with the
+  // challenge alone. Lessons of later days still wait.
+  it("follows a first duel with the lessons its plan has after it on its day", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      lessons: [
+        { ...lesson("l1", 5), beforeChallenge: true },
+        { ...lesson("l2", 5), afterChallenge: true },
+        lesson("l3", 5),
+      ],
+    });
+
+    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["review", null],
+      ["learn", "l1"],
+      ["practice", null],
+      ["checkpoint", null],
+      ["learn", "l2"],
+    ]);
+  });
+
+  it("gives the lessons before and after a first duel one budget, in plan order", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      lessons: [
+        { ...lesson("l1", 10), beforeChallenge: true },
+        { ...lesson("l2", 10), afterChallenge: true },
+      ],
+    });
+
+    expect(blocks.map((block) => block.lessonId).filter(Boolean)).toStrictEqual(["l1"]);
+  });
+
   it("never holds new lessons back on a rematch, so a lost boss locks nothing", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,

@@ -1,9 +1,11 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { loadDayPlanVersion } from "./_utils/day-plan-version";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
-import { loadDayPlanVersion } from "./_utils/refresh-day-session";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./_utils/study-session-access";
+import { loadDayMissionFacts } from "./missions/day-facts";
+import { pickMissions } from "./missions/pick-missions";
 import { buildSessionBlocks } from "./session-builder";
 
 type SessionDay = {
@@ -41,6 +43,8 @@ export async function ensureStudySession(day: SessionDay): Promise<StudySessionR
   const planVersion = await loadDayPlanVersion(day);
   const input = await loadSessionBuildInput({ ...day, now: new Date() });
   const { blocks, plannedMinutes } = buildSessionBlocks(input);
+  const facts = await loadDayMissionFacts({ ...day, blocks, plannedMinutes });
+  const missions = { picks: pickMissions(facts), version: 1 };
 
   await prisma.$transaction(async (tx) => {
     const { count } = await tx.studySession.createMany({
@@ -49,6 +53,7 @@ export async function ensureStudySession(day: SessionDay): Promise<StudySessionR
           freshStart: input.freshStart,
           goalId: day.goal.id,
           localDate: day.localDate,
+          missions,
           planVersion,
           plannedMinutes,
           userId: day.userId,

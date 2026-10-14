@@ -1,6 +1,7 @@
 import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
+import { type DuelMarks, keepDuelLessons, splitAtDuel } from "./_utils/lessons-before-challenges";
 import { takePracticeQuestions } from "./_utils/practice-sets";
 import {
   type BlockCapsule,
@@ -9,7 +10,7 @@ import {
   type BlockPayload,
   toBlockPayload,
 } from "./block-payload";
-import { takeCapsules } from "./capsules";
+import { takeReviewCapsules } from "./capsules";
 import { getLightMinutes } from "./fresh-start";
 import { countFullReviewQuestions, isFullReview, isFullReviewDay } from "./full-review";
 
@@ -22,8 +23,11 @@ export const MIN_BLOCK_MINUTES = 3;
 /** Fresh starts carry no backlog: reviews take half their usual share of the day. */
 const FRESH_START_REVIEW_FACTOR = 0.5;
 
-/** A lesson or chapter from the plan, ready to become a learn block. */
-export type PlannedLesson = {
+/**
+ * A lesson or chapter from the plan, ready to become a learn block, with where the plan has it
+ * around the day's first duel (see `markLessonsAroundChallenges`).
+ */
+export type PlannedLesson = DuelMarks & {
   canDo: string | null;
   chapterId: string | null;
   lessonId: string | null;
@@ -33,11 +37,6 @@ export type PlannedLesson = {
   planSkillId: string | null;
   skillIds: string[];
   title: string;
-  /**
-   * The plan has it before a challenge the day asks (a phase's last lessons can share its
-   * challenge's day): it comes first even on a first duel's day (see `getNewLessons`).
-   */
-  beforeChallenge?: boolean;
 };
 
 export type PlannedCheckpoint = BlockCheckpoint & {
@@ -81,7 +80,7 @@ export type SessionBuildInput = {
   produce: PlannedProduce | null;
   /** The share of the day for mixed practice, from `getPracticeShare` (practice-share.ts). */
   practiceShare: number;
-  /** Two short lessons before a boss rematch. */
+  /** Up to two available lessons before a boss rematch. */
   reinforcement: PlannedLesson[];
   /**
    * The goal's skills, on a day whose mock the learner's plan doesn't include (a free plan's): the
@@ -289,9 +288,9 @@ function fillReview({
   const review =
     fillsDay &&
     buildReviewBlock({
-      capsules: takeCapsules({
+      capsules: takeReviewCapsules({
         capsules: input.capsules,
-        maxQuestions: Math.floor(left / MINUTES_PER_REVIEW) - input.placementItemIds.length,
+        room: Math.floor(left / MINUTES_PER_REVIEW) - input.placementItemIds.length,
       }),
       input,
     });
@@ -317,16 +316,11 @@ function isReviewDay(input: SessionBuildInput): boolean {
 }
 
 /**
- * New lessons wait on the day of a first duel (practice prepares for it), on a review day and
- * after a free exam trial. The lessons the plan has before the duel come first all the same: a
- * challenge comes after the lessons it tests (R40). A rematch never holds them back: losing a boss
- * never locks the next phase.
+ * New lessons wait on a review day and after a free exam trial; on a first duel's day, only the
+ * plan's lessons around it come (see `keepDuelLessons`).
  */
 function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  const firstDuel = input.checkpoints.some((entry) => entry.kind !== "weekly" && !entry.rematch);
-  const due = firstDuel ? input.lessons.filter((lesson) => lesson.beforeChallenge) : input.lessons;
-
-  return input.examTrialEnded || isReviewDay(input) ? [] : due;
+  return input.examTrialEnded || isReviewDay(input) ? [] : keepDuelLessons(input);
 }
 
 /**
@@ -358,8 +352,8 @@ function getPracticeMinutes({
 
 /**
  * Builds one day's session in the session shape: an easy start (capsules), the hard part in the
- * middle (new lessons, then mixed practice with mistake drills first), and the checkpoints last.
- * It fits the day's minutes: reviews take their share, checkpoints take what they need, mixed
+ * middle (new lessons, then mixed practice with mistake drills first), and the checkpoints last,
+ * but for the lessons the plan has after a first duel on its day, which follow it. It fits the day's minutes: reviews take their share, checkpoints take what they need, mixed
  * practice gets its growing share (as far as it has questions), and lessons fill the rest in plan
  * order. A welcome back is lighter, a full review asks every skill whatever the day's time, and
  * the learner's daily limit caps it.
@@ -375,16 +369,19 @@ export function buildSessionBlocks(input: SessionBuildInput): {
   }
 
   const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;
+  const checkpoints = input.examTrialEnded ? [] : input.checkpoints;
+  const checkpointMinutes = checkpoints.reduce((total, entry) => total + entry.minutes, 0);
 
-  const capsules = takeCapsules({
+  // The checkpoints' time is the day's first: reviews take their share of what they leave.
+  const capsules = takeReviewCapsules({
     capsules: input.capsules,
     maxQuestions: Math.floor((budget * REVIEW_SHARE_OF_DAY * reviewFactor) / MINUTES_PER_REVIEW),
+    room:
+      Math.floor((budget - checkpointMinutes) / MINUTES_PER_REVIEW) - input.placementItemIds.length,
   });
 
   const review = buildReviewBlock({ capsules, input });
 
-  const checkpoints = input.examTrialEnded ? [] : input.checkpoints;
-  const checkpointMinutes = checkpoints.reduce((total, entry) => total + entry.minutes, 0);
   const base = (review?.estimatedMinutes ?? 0) + checkpointMinutes;
 
   const produce = toProduceBlock({
@@ -419,11 +416,12 @@ export function buildSessionBlocks(input: SessionBuildInput): {
   });
 
   const learnMinutes = getLessonMinutes([...reinforcement, ...lessons]);
+  const { after, before } = splitAtDuel(lessons);
 
   const built = [
     review,
     ...reinforcement.map((lesson) => toLessonBlock(lesson, true)),
-    ...lessons.map((lesson) => toLessonBlock(lesson, false)),
+    ...before.map((lesson) => toLessonBlock(lesson, false)),
     buildPracticeBlock({
       drills: input.drills,
       fullReviewSkillIds: input.fullReviewSkillIds,
@@ -435,6 +433,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     }),
     produce,
     ...checkpoints.map((checkpoint) => buildCheckpointBlock(checkpoint)),
+    ...after.map((lesson) => toLessonBlock(lesson, false)),
   ].filter((block) => block !== null);
 
   const blocks = fillReview({ blocks: built, budget, input });

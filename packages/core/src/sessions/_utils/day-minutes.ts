@@ -6,7 +6,7 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 /**
  * The minutes a goal's plan gives one learner-local date: the weekday's time (rest days are 0,
  * except the plan's first day), halved in a light week, a short review the day before an exam and
- * nothing from the exam on. The session builds the day from it, so the plan and Today always agree.
+ * nothing from the exam on, and the time the day's phase checkpoints take past it, as they run whole. The session builds the day from it, so the plan and Today always agree.
  */
 export function getGoalDayMinutes({
   date,
@@ -24,6 +24,7 @@ export function getGoalDayMinutes({
     calendar: getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings }),
     date,
     exam: getExamDayRules({ isExam: goal.kind === "exam", settings }),
+    overflow: settings.checkpointOverflow,
     targetDate: goal.targetDate,
   });
 }

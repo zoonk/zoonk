@@ -1,10 +1,16 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import {
+  arePhaseChallengesRequired,
+  withoutLockedPhaseChallenges,
+} from "../../checkpoints/_utils/phase-challenge-access";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
+import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { hasSameContent } from "./day-block-content";
+import { loadDayPlanVersion, loadPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
-import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -19,41 +25,13 @@ export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
-/** The version of the goal's plan a day is built from; null for a goal without a plan. */
-async function loadPlanVersion(goalId: string): Promise<number | null> {
-  const plan = await prisma.plan.findUnique({ select: { version: true }, where: { goalId } });
-  return plan?.version ?? null;
-}
-
-/** What a day still waiting on outlines records instead of its plan's version (see below). */
-const AWAITING_OUTLINES_VERSION = 0;
-
-/**
- * The plan version a day records once built or refreshed: the plan's, so the day isn't read
- * again until the plan changes; or, while it holds time for lessons still being outlined
- * (`isDayAwaitingOutlines`), one older than any plan's, so every read checks it again until they
- * land or nobody is writing them anymore, and the day fills up then.
- */
-export async function loadDayPlanVersion({
-  goal,
-  localDate,
-}: {
-  goal: Goal;
-  localDate: Date;
-}): Promise<number | null> {
-  const [planVersion, awaiting] = await Promise.all([
-    loadPlanVersion(goal.id),
-    isDayAwaitingOutlines({ goal, localDate }),
-  ]);
-
-  return planVersion !== null && awaiting ? AWAITING_OUTLINES_VERSION : planVersion;
-}
-
 /**
  * A day holds one review, one practice and one essay; lessons can be many, and so can challenges
  * (each one due today, see `loadSessionBosses`).
  */
-const ONE_PER_DAY = new Set<StudySessionBlock["kind"]>(["practice", "produce", "review"]);
+export const ONE_PER_DAY: ReadonlySet<StudySessionBlock["kind"]> = new Set<
+  StudySessionBlock["kind"]
+>(["practice", "produce", "review"]);
 
 /** The blocks a learner's change keeps: those they started or finished. */
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
@@ -161,60 +139,6 @@ async function planRestOfDay({
   return blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind));
 }
 
-/** What a block holds, to tell a rebuild that changes nothing from one that does. */
-function getContent({
-  anyOrder,
-  block,
-}: {
-  anyOrder: boolean;
-  block: Pick<PlannedBlock, "estimatedMinutes" | "kind" | "lessonId" | "payload">;
-}) {
-  const itemIds = getBlockItemIds(block.payload);
-
-  return [
-    block.kind,
-    block.lessonId,
-    block.estimatedMinutes,
-    ...(anyOrder ? itemIds.toSorted() : itemIds),
-  ].join(":");
-}
-
-/**
- * Whether the rest of the day comes out as it was. In a day underway, the same questions in
- * another order are the same day: practice ranks them again from the answers the learner gave
- * since it opened. A day nobody started is built again whole, and a change of focus puts the
- * topics it asks for first (Pedro's class test eve).
- */
-function hasSameContent({
-  anyOrder,
-  planned,
-  replaced,
-}: {
-  anyOrder: boolean;
-  planned: readonly PlannedBlock[];
-  replaced: readonly StudySessionBlock[];
-}): boolean {
-  return (
-    planned.length === replaced.length &&
-    planned.every((block, index) => {
-      const current = replaced[index];
-
-      return (
-        current !== undefined &&
-        getContent({ anyOrder, block }) ===
-          getContent({
-            anyOrder,
-            block: {
-              ...current,
-              estimatedMinutes: current.estimatedMinutes ?? 0,
-              payload: readBlockPayload(current),
-            },
-          })
-      );
-    })
-  );
-}
-
 function hasSameBlocks({
   locked,
   read,
@@ -237,7 +161,13 @@ function hasSameBlocks({
  * meanwhile, the day stays as it was. The session records the plan version it now follows either
  * way, so a day that already follows the plan isn't checked again until the plan changes.
  */
-async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<DaySessionRefresh> {
+async function replaceNotStartedBlocks({
+  day,
+  keepCompleted = false,
+}: {
+  day: DaySession;
+  keepCompleted?: boolean;
+}): Promise<DaySessionRefresh> {
   const { session } = day;
   const kept = getKeptBlocks(session.blocks);
   const keptIds = new Set(kept.map((block) => block.id));
@@ -246,8 +176,21 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const planned = await planRestOfDay({ day, kept });
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
+  const facts = await loadRebuildMissionFacts({
+    blocks: planned,
+    goal: day.goal,
+    kept: kept.length,
+    session,
+    timeZone: day.timeZone,
+    unchanged,
+  });
+
   return withSessionAppendLock({
     run: async ({ session: locked, transaction }) => {
+      if (keepCompleted && locked.status === "completed") {
+        return "kept";
+      }
+
       if (!hasSameBlocks({ locked: locked.blocks, read: session.blocks })) {
         return "kept";
       }
@@ -258,6 +201,13 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
       }
 
       const firstPosition = Math.max(-1, ...kept.map((block) => block.position)) + 1;
+
+      const missions = await rebuildMissions({
+        client: transaction,
+        facts,
+        session: locked,
+        timeZone: day.timeZone,
+      });
 
       await transaction.studySessionBlock.deleteMany({
         where: { id: { in: replaced.map((block) => block.id) }, status: "pending" },
@@ -272,12 +222,13 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
       });
 
       // A finished day the change gives more to do opens again, as "10 more minutes" does.
-      const reopens = session.status === "completed" && planned.length > 0;
+      const reopens = locked.status === "completed" && planned.length > 0;
 
       await transaction.studySession.update({
         data: {
           planVersion,
           plannedMinutes: getKeptMinutes(kept) + sumMinutes(planned),
+          ...(missions && { missions }),
           ...(reopens && { status: "active" }),
         },
         where: { id: session.id },
@@ -328,14 +279,24 @@ export async function followPlanChangeToday({
  * day's time, so a first day that opened short (its lessons still being outlined) fills up without
  * moving anything the learner has seen.
  */
-async function appendNewLessons({ day }: { day: DaySession }): Promise<void> {
+async function appendNewLessons({
+  day,
+  kept = day.session.blocks,
+}: {
+  day: DaySession;
+  kept?: readonly StudySessionBlock[];
+}): Promise<void> {
   const { session } = day;
   const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
-  const planned = await planRestOfDay({ day, kept: session.blocks });
+  const planned = await planRestOfDay({ day, kept });
   const lessons = planned.filter((block) => block.kind === "learn");
 
   await withSessionAppendLock({
     run: async ({ session: locked, transaction }) => {
+      if (locked.status === "completed") {
+        return;
+      }
+
       if (!hasSameBlocks({ locked: locked.blocks, read: session.blocks })) {
         return;
       }
@@ -388,15 +349,28 @@ export async function refreshDayFromPlan({
     return session;
   }
 
-  const planVersion = await loadPlanVersion(goal.id);
+  const planVersion = await loadPlanVersion({ client: prisma, goalId: goal.id });
 
-  if (planVersion === null || session.planVersion === null || planVersion <= session.planVersion) {
+  const kept = withoutLockedPhaseChallenges({
+    blocks: session.blocks,
+    phaseChallengesRequired: await arePhaseChallengesRequired({
+      goalKind: goal.kind,
+      userId: session.userId,
+    }),
+  });
+
+  if (
+    (planVersion === null || session.planVersion === null || planVersion <= session.planVersion) &&
+    kept.length === session.blocks.length
+  ) {
     return session;
   }
 
   const day = { goal, session, timeZone };
 
-  await (session.blocks.length > 0 ? appendNewLessons({ day }) : replaceNotStartedBlocks({ day }));
+  await (session.blocks.length > 0
+    ? appendNewLessons({ day, kept })
+    : replaceNotStartedBlocks({ day, keepCompleted: true }));
 
   return prisma.studySession.findUniqueOrThrow({
     include: STUDY_SESSION_INCLUDE,

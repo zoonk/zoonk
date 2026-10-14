@@ -1,6 +1,7 @@
-import { CourseLevel } from "@zoonk/db";
+import { CourseLevel } from "@zoonk/db/enums";
 import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
+import { getChapterAreaFromEvidence } from "./chapter-area-evidence";
 
 const LEVEL_ORDER = Object.values(CourseLevel);
 
@@ -46,10 +47,13 @@ type OutlineSkill = { id: string; name: string };
 
 /** One chapter of a course's outline, as the plan reads it. */
 export type CourseOutlineChapter = {
+  /** The area's name captured when this course chapter was published, if known. */
+  area?: string | null;
   chapterId: string;
   level: CourseLevel;
   /** The chapter's plannable lessons in order (a challenge included), each with its skills. */
   lessons: OutlineSkill[][];
+  lessonIds: string[];
   position: number;
   /** The skill-graph skills a course outline tagged the chapter with. */
   tags: OutlineSkill[];
@@ -131,29 +135,54 @@ function toChapterSkills({
 export function toCoursePlanGraph({
   chapters,
   course,
+  examGraph = null,
   startChapterId,
 }: {
   chapters: readonly CourseOutlineChapter[];
   course: { id: string; language: string; title: string };
+  examGraph?: PlanGraph | null;
   startChapterId: string | null;
 }): PlanGraph {
   const ordered = chapters.toSorted(compareChapters);
   const planned = sliceFromChapter({ chapters: ordered, startChapterId });
-  const levels = [...new Set(planned.map((chapter) => chapter.level))];
   const ownTags = findOwnTags(ordered);
   const lessonCounts = countSkillLessons(planned);
+
+  // A band whose chapters teach nothing yet is no phase: its checkpoint would have nothing to check.
+  const levels = [
+    ...new Set(
+      planned
+        .filter((chapter) => toChapterSkills({ chapter, lessonCounts, ownTags }).length > 0)
+        .map((chapter) => chapter.level),
+    ),
+  ];
+
   const names = LEVEL_PHASE_NAMES[getSupportedLocaleFromLanguage(course.language)];
+  const examSkills = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill]));
+  const skillAreas = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill.area]));
+
+  function getExamSkill(chapter: CourseOutlineChapter, skillId: string) {
+    return (
+      examSkills.get(skillId) ??
+      (getChapterAreaFromEvidence({ chapter, skillAreas })
+        ? chapter.tags.map((tag) => examSkills.get(tag.id)).find(Boolean)
+        : undefined)
+    );
+  }
 
   const skills = planned.flatMap((chapter) =>
     toChapterSkills({ chapter, lessonCounts, ownTags }).map(
       ({ lessons, skill }): PlanGraphSkill => ({
-        area: course.title,
+        area: chapter.area ?? getExamSkill(chapter, skill.id)?.area ?? course.title,
         courseIds: [course.id],
         lessons: Math.max(1, lessons),
         name: skill.name,
+        outcome: getExamSkill(chapter, skill.id)?.outcome,
+        outlined: true,
         phase: levels.indexOf(chapter.level),
         skillId: skill.id,
-        weight: null,
+        topics: getExamSkill(chapter, skill.id)?.topics,
+        weight: getExamSkill(chapter, skill.id)?.weight ?? null,
       }),
     ),
   );

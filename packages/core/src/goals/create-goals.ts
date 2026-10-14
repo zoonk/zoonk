@@ -11,6 +11,7 @@ import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { assertTargetDates } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
@@ -180,6 +181,23 @@ async function isOwnGoal({ goalId, userId }: { goalId?: string; userId: string }
 }
 
 /**
+ * Refuses a new goal's date outside the supported range (see `assertTargetDates`), counted from the
+ * learner's own today, before anything is claimed or created.
+ */
+function assertNewGoalDates(input: GoalCreateInput): void {
+  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+
+  assertTargetDates({
+    latestOnly: false,
+    targets: input.goals.map((goal, index) => ({
+      path: ["goals", index, "targetDate"],
+      targetDate: goal.targetDate,
+    })),
+    today: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
+  });
+}
+
+/**
  * Creates the learner's goals from onboarding with an empty plan the planner fills. Each goal is
  * claimed against the learner's plan first (free learners follow one active goal), and the ones
  * allowed are created even when a later one isn't. The first new goal becomes the one the tabs
@@ -196,6 +214,11 @@ export async function createGoals(
 
   if (!session) {
     return { status: "unauthorized" };
+  }
+
+  // A goal that replaces one carries that goal's date, which isn't a new one.
+  if (!replacesGoalId) {
+    assertNewGoalDates(input);
   }
 
   const userId = session.user.id;

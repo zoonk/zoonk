@@ -88,6 +88,15 @@ export function getAnsweredQuestions(details: Record<string, unknown>): string[]
     : [];
 }
 
+/** An explicit no-deadline course answer stays undated when its exam notice is read again. */
+export function isCourseDateSkipped(goal: Pick<StepGoal, "details" | "targetDate">): boolean {
+  return (
+    goal.targetDate === null &&
+    readCourseStart(goal.details) !== null &&
+    getAnsweredQuestions(goal.details).includes("targetDate")
+  );
+}
+
 /**
  * Whether the learner still has placement ahead: they haven't ended it, and they'll take it (see
  * `isPlacementSkipped`: a learner starting from nothing has nothing to place, and one who started
@@ -113,8 +122,8 @@ export function getFollowUpQuestions(details: Record<string, unknown>): string[]
 
 /**
  * A course the learner started from its page already says what they'll learn, how deep and in
- * what order, so only their level and time are left to ask; a chapter start also said where they
- * begin, so their time is all.
+ * what order, so only their level, optional date and time are left to ask, plus any exam choices;
+ * a chapter start also said where they begin, so it skips their level.
  */
 function isAskedAtCourseStart({
   courseStart,
@@ -123,7 +132,12 @@ function isAskedAtCourseStart({
   courseStart: CourseStart;
   question: OnboardingQuestion;
 }): boolean {
-  return question === "schedule" || (question === "level" && courseStart.chapterId === null);
+  return (
+    question === "schedule" ||
+    question === "targetDate" ||
+    question === "examChoice" ||
+    (question === "level" && courseStart.chapterId === null)
+  );
 }
 
 /** Whether each question applies to this goal and the goal doesn't already answer it. */
@@ -145,7 +159,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     case "target":
       return kind === "exam" && !hasExamTarget(details);
     case "targetDate":
-      return goal.targetDate === null && (kind !== "exam" || isClassTest(details));
+      return isDateMissing(goal);
     case "followUps":
       return getFollowUpQuestions(details).length > 0;
     case "examChoice":
@@ -157,6 +171,14 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     default:
       return false;
   }
+}
+
+/** A course's notice date is a default: only a learner answer removes its date question. */
+function isDateMissing(goal: StepGoal): boolean {
+  return (
+    readCourseStart(goal.details) !== null ||
+    (goal.targetDate === null && (goal.kind !== "exam" || isClassTest(goal.details)))
+  );
 }
 
 function picksBuddy({ answered, profile }: { answered: Set<string>; profile: StepProfile }) {

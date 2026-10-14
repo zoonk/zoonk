@@ -147,7 +147,7 @@ export function capReviewDay({
 }
 
 /** The capsules whose questions fit `maxQuestions`, most urgent first; at least the first one. */
-export function takeCapsules<T extends { itemIds: readonly string[] }>({
+function takeCapsules<T extends { itemIds: readonly string[] }>({
   capsules,
   maxQuestions,
 }: {
@@ -161,4 +161,27 @@ export function takeCapsules<T extends { itemIds: readonly string[] }>({
 
     return index === 0 || questions <= maxQuestions;
   });
+}
+
+/**
+ * The due capsules a review asks: as many as its share (`maxQuestions`) and the day's room for
+ * questions (`room`, what its fixed work leaves) hold, the first one whatever the share, and none
+ * when even the first doesn't fit the room: it waits for a day with time for it.
+ */
+export function takeReviewCapsules<T extends { itemIds: readonly string[] }>({
+  capsules,
+  maxQuestions = Number.POSITIVE_INFINITY,
+  room,
+}: {
+  capsules: readonly T[];
+  maxQuestions?: number;
+  room: number;
+}): T[] {
+  const first = capsules[0];
+
+  if (!first || first.itemIds.length > room) {
+    return [];
+  }
+
+  return takeCapsules({ capsules, maxQuestions: Math.min(maxQuestions, room) });
 }

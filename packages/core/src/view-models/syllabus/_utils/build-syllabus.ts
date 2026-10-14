@@ -1,6 +1,13 @@
+import { withinLessonScope } from "../../../plans/_utils/plan-end";
 import { countItemLessons } from "../../../plans/_utils/stand-in-lessons";
 import { findUpNextItem } from "../../../plans/_utils/up-next-item";
-import { type SyllabusSubject, type SyllabusView } from "../syllabus-contract";
+import { getSubjectMastery, getSubjectPreparation } from "../../../preparation/section-preparation";
+import {
+  type NotPlannedReason,
+  type SyllabusSubject,
+  type SyllabusView,
+} from "../syllabus-contract";
+import { getDisplayWeights } from "./display-weights";
 import { getSubjectProgress } from "./subject-progress";
 import {
   buildChapters,
@@ -9,7 +16,7 @@ import {
   getItemAreas,
   withoutKey,
 } from "./syllabus-chapters";
-import { type SyllabusInput } from "./syllabus-input";
+import { type SyllabusInput, type SyllabusItem } from "./syllabus-input";
 import { draftSubjects, getShortName, listAreas, toKeys } from "./syllabus-subjects";
 import {
   buildTopic,
@@ -17,6 +24,78 @@ import {
   namesAnyTopic,
   withHeadingStatuses,
 } from "./syllabus-topics";
+
+/**
+ * The lessons of the subjects in the plan, together: what a goal that isn't an exam reads as its
+ * progress, so the whole reads as its subjects' bars and 100% once the plan is finished (both count
+ * the plan's lessons, see `isInLessonScope`). Each plan item counts once, though a tested-out
+ * lesson shows in every subject whose skills it covers.
+ */
+function sumPlannedLessons({
+  itemArea,
+  items,
+  subjects,
+}: {
+  itemArea: (item: SyllabusItem) => string | null;
+  items: readonly SyllabusItem[];
+  subjects: readonly SyllabusSubject[];
+}): SyllabusView["lessons"] {
+  const planned = new Set(
+    subjects.flatMap((subject) => (subject.notPlannedReason ? [] : subject.areas)),
+  );
+
+  const { lessonsDone, lessonsKnown, lessonsTotal } = getSubjectProgress(
+    items.filter((item) => planned.has(itemArea(item) ?? "")),
+  );
+
+  return { done: lessonsDone + lessonsKnown, known: lessonsKnown, total: lessonsTotal };
+}
+
+/** Why a subject can be out of the plan while the exam still tests it, so the goal counts it. */
+const COUNTED_OUT = new Set<NotPlannedReason>(["pastBasics", "skippedBase", "time"]);
+
+/**
+ * An exam subject's preparation by its sections, and the answers that back it (other goals read
+ * lessons; nothing without sections). One in the plan the goal measures none of reads as nothing
+ * prepared yet, not as unmeasured. One out of the plan keeps its number only while the goal's
+ * counts it (left out for time, its basics passed, its bases skipped), read from its sections that
+ * weigh in the goal, so the goal's number reads as the subjects it lists: Ana's 14% sat under
+ * every subject she saw. One the learner took out, nothing teaches yet, or that weighs nothing has
+ * none, whatever they studied of it before.
+ */
+function measureSubject({
+  areas,
+  notPlannedReason,
+  sections,
+}: {
+  areas: readonly string[];
+  notPlannedReason: NotPlannedReason | null;
+  sections: SyllabusInput["sections"];
+}): Pick<SyllabusSubject, "mastery" | "preparation"> {
+  if (!sections) {
+    return { mastery: null, preparation: null };
+  }
+
+  if (!notPlannedReason) {
+    return {
+      mastery: getSubjectMastery({ areas, sections }),
+      preparation: getSubjectPreparation({ areas, sections }) ?? 0,
+    };
+  }
+
+  const counted = COUNTED_OUT.has(notPlannedReason)
+    ? sections.filter((section) => areas.includes(section.section) && section.weight > 0)
+    : [];
+
+  if (counted.length === 0) {
+    return { mastery: null, preparation: null };
+  }
+
+  return {
+    mastery: getSubjectMastery({ areas, sections: counted }),
+    preparation: getSubjectPreparation({ areas, sections: counted }),
+  };
+}
 
 /**
  * A goal's structure in the learner's terms: an exam's notice subjects with their topics in its
@@ -31,11 +110,12 @@ export function buildSyllabus(
   const {
     areaCourses,
     chapterTitles,
-    items,
+    deadline = true,
     knownSkillIds,
     notice,
     outlinedUntil,
     pastBasicsSkillIds,
+    sections = null,
     skills,
     skippedAreas,
     skippedBaseIds,
@@ -43,8 +123,12 @@ export function buildSyllabus(
     todayBlocks = [],
   } = input;
 
+  // Everything here counts the lessons the plan's number and "finished" count.
+  const items = withinLessonScope({ deadline, items: input.items });
+
   const areas = listAreas(skills);
   const { drafts, kind } = draftSubjects({ areas, notice });
+  const displayWeights = getDisplayWeights(drafts);
   const mapped = kind === "notice" && skills.some((skill) => skill.topics.length > 0);
   const itemArea = getItemAreas({ items, skills });
   const skillNames = new Map(skills.map((skill) => [skill.skillId, skill.name]));
@@ -52,12 +136,6 @@ export function buildSyllabus(
   const nextKey = next ? chapterKeyOf(next) : null;
   const keys = toKeys(drafts.map((draft) => draft.name));
   const lessonsOf = countItemLessons;
-
-  const settledSkillIds = new Set([
-    ...knownSkillIds,
-    ...pastBasicsSkillIds,
-    ...(skippedBaseIds ?? []),
-  ]);
 
   const subjects = drafts.map((draft, index): SyllabusSubject => {
     const own = items.filter((item) => draft.areas.includes(itemArea(item) ?? ""));
@@ -100,22 +178,28 @@ export function buildSyllabus(
 
     const topics = withHeadingStatuses(built);
 
+    const notPlannedReason = getNotPlannedReason({
+      hasItems: own.length > 0,
+      hasSkills: ownSkills.length > 0,
+      known: ownSkills.every((skill) => knownSkillIds.has(skill.skillId)),
+      skipped,
+    });
+
+    const measured = measureSubject({ areas: draft.areas, notPlannedReason, sections });
+
     return {
       areas: draft.areas,
       chapters: chapters.map((chapter) => withoutKey(chapter)),
+      displayWeight: displayWeights[index] ?? null,
       group: draft.group,
       imageUrl: draft.areas.map((area) => areaCourses.get(area)?.imageUrl).find(Boolean) ?? null,
       key: keys[index] ?? draft.name,
-      ...getSubjectProgress({ items: own, settledSkillIds, skills: ownSkills }),
+      ...getSubjectProgress(own),
+      ...measured,
       matrix: [...(draft.matrix ?? [])],
       name: draft.name,
       nextDate: getEarliestTodoDate(own),
-      notPlannedReason: getNotPlannedReason({
-        hasItems: own.length > 0,
-        hasSkills: ownSkills.length > 0,
-        known: ownSkills.every((skill) => knownSkillIds.has(skill.skillId)),
-        skipped,
-      }),
+      notPlannedReason,
       questions: draft.questions,
       share: draft.share,
       shortName: getShortName({ areaCourses, draft }),
@@ -135,6 +219,7 @@ export function buildSyllabus(
     courseWeights: fromNotice?.courseWeights ?? null,
     fromMaterial: fromNotice?.fromMaterial ?? false,
     kind,
+    lessons: sumPlannedLessons({ itemArea, items, subjects }),
     noticeUrl: fromNotice?.url ?? null,
     passMarks: fromNotice?.passMarks ?? null,
     questionsSource: fromNotice?.questionsSource ?? null,

@@ -3,14 +3,14 @@ import { type CourseLevel, prisma } from "@zoonk/db";
 import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
-import { type GoalSkillGraph } from "./save-goal-skills";
+import { type PlannedSkillGraph } from "./goal-plan-graph";
 
-type GraphSkill = GoalSkillGraph["skills"][number];
+type GraphSkill = PlannedSkillGraph["skills"][number];
 
 /** The skill graph a stored plan stands for, and the Library ids its keys are. */
 export type PlanSkillGraph = {
   courseIdsByKey: Record<string, string>;
-  graph: GoalSkillGraph;
+  graph: PlannedSkillGraph;
   idsByKey: Record<string, string>;
   /** When the plan was built: research that started later never shaped it. */
   plannedAt: Date | null;
@@ -53,9 +53,11 @@ function toGraphSkills({
     level: row?.level ?? "beginner",
     name: skill.name,
     outcome: skill.outcome ?? false,
+    ...(skill.outlined ? { outlined: true } : {}),
     phase: skill.phase + 1,
     prerequisites: prerequisites.get(skill.skillId) ?? [],
     topics: skill.topics ?? [],
+    ...(skill.topics ? {} : { topicsUnknown: true }),
   }));
 }
 

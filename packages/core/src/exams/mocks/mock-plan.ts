@@ -1,4 +1,5 @@
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
+import { fitToClock } from "./mock-clock-fit";
 import {
   DEFAULT_SECTION_QUESTIONS,
   getDaySections,
@@ -128,6 +129,7 @@ export function getPace(structure: ExamStructure | null): number {
 export function planMock({
   adaptive,
   candidates,
+  clock,
   essays = [],
   fullLength,
   listening = new Map(),
@@ -138,6 +140,11 @@ export function planMock({
 }: {
   adaptive: boolean;
   candidates: readonly MockCandidate[];
+  /**
+   * A scheduled mock's real time limit (see `getMockClock`): it runs that long whatever questions
+   * the bank has for it, each section on its own share of it; the learner may finish early.
+   */
+  clock?: number;
   /** The exam's essays a full-length mock's written parts may ask, in the order to ask them. */
   essays?: readonly MockEssayCandidate[];
   fullLength: boolean;
@@ -190,7 +197,14 @@ export function planMock({
 
       if (recordings) {
         const plan = planListeningSection({ pace, pool: recordings, section, wanted });
-        return { ...state, plans: [...state.plans, plan] };
+
+        // A scheduled mock's listening runs its share of the clock, whatever recordings it has.
+        const timed =
+          clock === undefined
+            ? plan
+            : { ...plan, minutes: sectionMinutes({ pace, picked: wanted, section }) };
+
+        return { ...state, plans: [...state.plans, timed] };
       }
 
       if (section.kind === "speaking") {
@@ -218,7 +232,11 @@ export function planMock({
         ...toSectionRules(section),
         essays: [],
         itemIds: picked,
-        minutes: sectionMinutes({ pace, picked: questions, section }),
+        minutes: sectionMinutes({
+          pace,
+          picked: clock === undefined ? questions : wanted,
+          section,
+        }),
         name: getSectionName({ allSections, byArea, section }),
         questions,
         routing,
@@ -236,18 +254,24 @@ export function planMock({
         used: new Set([...state.used, ...reserved]),
       };
     },
-    { formatsWanted: {}, plans: [], used: new Set() },
+    // A recording's questions are its listening section's, never another section's.
+    {
+      formatsWanted: {},
+      plans: [],
+      used: new Set([...listening.values()].flat().map((candidate) => candidate.itemId)),
+    },
   );
 
   const written = withWrittenParts({ day, essays, fullLength, sections: planned.plans, structure });
 
-  const plans = written.sections.filter((plan) => asksAnything(plan));
+  const asked = written.sections.filter((plan) => asksAnything(plan));
+  const plans = clock === undefined ? asked : fitToClock({ clock, sections: asked });
 
   return {
     day,
     formatsWanted: planned.formatsWanted,
     fullLength,
-    minutes: plans.reduce((sum, plan) => sum + plan.minutes, 0),
+    minutes: clock ?? plans.reduce((sum, plan) => sum + plan.minutes, 0),
     reused: countReused({ candidates, sections: plans }),
     sections: plans,
     written: written.written,
@@ -261,6 +285,7 @@ export function planMock({
  * is still filling up.
  */
 export function outlineMock({
+  clock,
   day: requestedDay,
   essays = [],
   fullLength,
@@ -268,8 +293,9 @@ export function outlineMock({
   speaking = false,
   structure,
 }: {
+  /** A scheduled mock's real time limit (see `planMock`). */
+  clock?: number;
   day?: number | null;
-  /** The exam's essays a full-length mock's written parts may ask (see `planMock`). */
   essays?: readonly MockEssayCandidate[];
   fullLength: boolean;
   /** The listening sections that have recordings to play, by name (see `planMock`). */
@@ -319,7 +345,7 @@ export function outlineMock({
   return {
     day,
     fullLength,
-    minutes: sections.reduce((sum, section) => sum + section.minutes, 0),
+    minutes: clock ?? sections.reduce((sum, section) => sum + section.minutes, 0),
     reused: 0,
     sections,
     written,
@@ -327,9 +353,48 @@ export function outlineMock({
 }
 
 /**
- * How long the goal's weekly mock takes, for the plan to reserve the day: half the first exam day
- * on regular weeks; the whole day in the final stretch, its written test with a time of its own
- * included (a full mock asks it), as the real exam's day runs.
+ * How long a scheduled mock takes, the one clock its plan, ledger and session read: one exam day
+ * (`day`, as the blueprint numbers its days; null for an exam without days), half of it on
+ * regular weeks and all of it on a full day, its written test with a time of its own included (a
+ * full mock asks it), as the real exam's day runs.
+ */
+export function getMockClock({
+  day,
+  fullLength,
+  structure,
+}: {
+  day: number | null;
+  fullLength: boolean;
+  structure: ExamStructure | null;
+}): number {
+  // The real exam day plays its listening too, whether its recordings are in the bank yet or not.
+  const listening = new Set(
+    (structure?.mock?.sections ?? []).flatMap((section) =>
+      section.day === day && section.kind === "listening" ? [section.name] : [],
+    ),
+  );
+
+  const outline = outlineMock({ day, fullLength, listening, structure });
+
+  return outline.written
+    .filter((part) => !part.asked)
+    .reduce((sum, part) => sum + (part.minutes ?? 0), outline.minutes);
+}
+
+/** Each exam day's mock clock, in the order mocks take turns: half the day, and all of it. */
+export function listMockClocks(
+  structure: ExamStructure | null,
+): { day: number | null; fullMinutes: number; minutes: number }[] {
+  return getMockDays(structure).map((day) => ({
+    day,
+    fullMinutes: getMockClock({ day, fullLength: true, structure }),
+    minutes: getMockClock({ day, fullLength: false, structure }),
+  }));
+}
+
+/**
+ * How long the goal's weekly mock takes on its first exam day (see `getMockClock`): what sizes the
+ * plan's time before a scheduled mock has a day of its own.
  */
 export function getWeeklyMockMinutes({
   fullLength,
@@ -338,11 +403,7 @@ export function getWeeklyMockMinutes({
   fullLength: boolean;
   structure: ExamStructure | null;
 }): number {
-  const outline = outlineMock({ fullLength, structure });
-
-  return outline.written
-    .filter((part) => !part.asked)
-    .reduce((sum, part) => sum + (part.minutes ?? 0), outline.minutes);
+  return getMockClock({ day: getMockDays(structure)[0] ?? null, fullLength, structure });
 }
 
 /** Every question a mock reserves, routed modules' both sets included. */

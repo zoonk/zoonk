@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type GoalKind, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getWeeklyChallenge } from "../../checkpoints/get-weekly-challenge";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
@@ -22,6 +23,7 @@ import {
   type TodayPlanChangeView,
   loadTodayPlanChange,
 } from "../../plans/_utils/today-plan-change";
+import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { type PlanStatus } from "../../preparation/plan-status";
@@ -30,11 +32,18 @@ import { type StudySessionView } from "../../sessions/_utils/session-view";
 import { resolveTodaySession } from "../../sessions/_utils/today-session";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { getSession } from "../../users/get-session";
+import { getOnboarding } from "../onboarding/get-onboarding";
+import { getSyllabusView } from "../syllabus/get-syllabus-view";
+import { getLessonShare } from "../syllabus/lesson-share";
+import { loadDayMockFunding } from "./_utils/load-mock-funding";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
   dateEstimated: boolean;
-  /** Whole days until the goal's date, counted from the session's local day; null without a date. */
+  /**
+   * Whole days until the goal's date, counted from the session's local day; null without a date
+   * and once it passed.
+   */
   daysLeft: number | null;
   id: string;
   kind: GoalKind;
@@ -42,8 +51,20 @@ type TodayGoal = {
   title: string;
 };
 
-/** The learner's pace ("Keeping pace"), with preparation and this week's gain for other screens. */
-type TodayProgress = { status: PlanStatus | null; value: number; weekGain: number };
+/**
+ * The learner's pace ("Keeping pace") and where the goal stands, in one measure per goal: an
+ * exam's preparation, with what it gained this week; any other goal's lessons studied or skipped
+ * as known, of its plan's (the Plan's subjects added up, so finishing every one reads 100%).
+ */
+type TodayProgress =
+  | { measure: "preparation"; status: PlanStatus | null; value: number; weekGain: number }
+  | {
+      /** `today`: the plan's lessons today's session still holds (see `countLessonsLeftToday`). */
+      lessons: { done: number; today: number; total: number };
+      measure: "lessons";
+      status: PlanStatus | null;
+      value: number;
+    };
 
 /** The week's checkpoint under the week row: "Sunday: mock exam · 2h 30m, timed". */
 type TodayWeeklyChallenge = {
@@ -77,6 +98,8 @@ export type TodayView = {
    * instead of opening to a wait. A block whose lesson isn't picked yet has no entry.
    */
   lessonStatus: Record<string, LessonGenerationState["status"]>;
+  /** Exact saved contribution explaining a lighter day; null without funding or on welcome back. */
+  mockFunding: MockFundingView | null;
   /**
    * The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic
    * change of the last day (a rebalance, missed days, a test-out) until the learner says "Got it".
@@ -105,8 +128,14 @@ export type TodayViewResult =
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
+/**
+ * Whole days until the goal's date: 0 on the day itself, and null without one or once it passed,
+ * when there's nothing left to count down to (Lucas's Today said "The day is here" every day after
+ * his).
+ */
 function getDaysLeft({ localDate, targetDate }: { localDate: Date; targetDate: Date | null }) {
-  return targetDate ? Math.max(0, daysBetween(localDate, targetDate)) : null;
+  const days = targetDate ? daysBetween(localDate, targetDate) : -1;
+  return days >= 0 ? days : null;
 }
 
 /** Whether the learner studied today, on this goal or another. */
@@ -119,15 +148,95 @@ async function hasStudiedOn({ localDate, userId }: { localDate: Date; userId: st
   return (today?.timeSpentSeconds ?? 0) > 0;
 }
 
+/**
+ * The plan's lessons studied or known, for a goal measured in lessons (see `TodayProgress`): not an
+ * exam, nor a quick explanation, which has no plan.
+ */
+async function loadLessons({ goalId, kind }: { goalId: string; kind: GoalKind }) {
+  if (kind === "exam" || kind === "explain") {
+    return null;
+  }
+
+  const result = await getSyllabusView({ goalId });
+
+  if (result.status !== "ready") {
+    return null;
+  }
+
+  const { done, total } = result.syllabus.lessons;
+  return { done, total };
+}
+
 /** Everything around the session reads the goal the session belongs to. */
-async function loadAroundSession({ goalId, timeZone }: { goalId: string; timeZone?: string }) {
-  const [preparation, insight, challenge] = await Promise.all([
+async function loadAroundSession({
+  goalId,
+  kind,
+  timeZone,
+}: {
+  goalId: string;
+  kind: GoalKind;
+  timeZone?: string;
+}) {
+  const [preparation, lessons, insight, challenge] = await Promise.all([
     getGoalPreparation(goalId),
+    loadLessons({ goalId, kind }),
     getCurrentMemoryInsight({ goalId }),
     getWeeklyChallenge({ goalId, timeZone }),
   ]);
 
-  return { challenge, insight, preparation };
+  return { challenge, insight, lessons, preparation };
+}
+
+/** Where the goal stands, in its measure (see `TodayProgress`); null for a quick explanation. */
+function toTodayProgress({
+  lessons,
+  lessonsToday,
+  preparation,
+}: Pick<Awaited<ReturnType<typeof loadAroundSession>>, "lessons" | "preparation"> & {
+  lessonsToday: number;
+}): TodayProgress | null {
+  if (preparation.status !== "ready") {
+    return null;
+  }
+
+  const { status, value, weekGain } = preparation.preparation;
+
+  if (!lessons) {
+    return { measure: "preparation", status, value, weekGain };
+  }
+
+  return {
+    lessons: { ...lessons, today: lessonsToday },
+    measure: "lessons",
+    status,
+    value: getLessonShare(lessons),
+  };
+}
+
+/**
+ * The plan's lessons today's session still holds, as they add to its progress: each plan item once
+ * (a bonus copy of a lesson is the same lesson), and only while it's still to do, so a lesson
+ * finished elsewhere (another goal's session sharing it, a copy already done) no longer counts.
+ */
+async function countLessonsLeftToday(session: StudySessionView): Promise<number> {
+  const planItemIds = [
+    ...new Set(
+      session.blocks.flatMap((block) =>
+        block.kind === "learn" &&
+        !block.reinforcement &&
+        block.planItemId &&
+        (block.status === "pending" || block.status === "active")
+          ? [block.planItemId]
+          : [],
+      ),
+    ),
+  ];
+
+  if (planItemIds.length === 0) {
+    return 0;
+  }
+
+  return prisma.planItem.count({ where: { id: { in: planItemIds }, status: "todo" } });
 }
 
 /** The day's session for the screen, with what Today reads from the session's day. */
@@ -140,7 +249,11 @@ async function loadSessionDay({
   goal: Goal;
   userId: string;
 }) {
-  const studySession = await loadStudySessionView({ ...day, userId });
+  const studySession = await loadStudySessionView({
+    ...day,
+    userId,
+    weekDate: getDateInTimeZone({ date: new Date(), timeZone: day.timeZone }),
+  });
 
   const lessonIds = studySession.blocks.flatMap((block) =>
     block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
@@ -254,14 +367,31 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
     return { goal: { id, kind, title }, status: "preparing" };
   }
 
+  if (session.user.isAnonymous) {
+    const onboarding = await getOnboarding({ goalId });
+
+    // A course's default plan can be ready before its guest has finished answering.
+    if (
+      onboarding.status === "ready" &&
+      onboarding.onboarding.steps.some((step) => step !== "plan")
+    ) {
+      return { goal: { id, kind, title }, status: "preparing" };
+    }
+  }
+
   // Building the day can move the plan first (see `ensureStudySession`), so the reads around the
   // session start once the day is resolved. None of them reads the session, so they load while
   // the session is read for the screen.
   const day = await resolveTodaySession({ goal: owned.goal, timeZone: input.timeZone, userId });
 
+  const mockFunding =
+    day.session.freshStart === "welcomeBack"
+      ? null
+      : await loadDayMockFunding({ goal: owned.goal, localDate: day.session.localDate });
+
   const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
-    loadAroundSession({ goalId, timeZone: input.timeZone }),
+    loadAroundSession({ goalId, kind: owned.goal.kind, timeZone: input.timeZone }),
     getCurrentSuggestedGoal(),
     loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
     loadGoalDateKind(owned.goal),
@@ -269,7 +399,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
-  const { preparation } = around;
+  const lessonsToday = around.lessons ? await countLessonsLeftToday(studySession) : 0;
 
   return {
     status: "ready",
@@ -288,15 +418,9 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
       lessonStatus: Object.fromEntries(
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
+      mockFunding,
       planChange,
-      progress:
-        preparation.status === "ready"
-          ? {
-              status: preparation.preparation.status,
-              value: preparation.preparation.value,
-              weekGain: preparation.preparation.weekGain,
-            }
-          : null,
+      progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,
       shortPlan,
       studiedToday: studied || studySession.minutes.done > 0,

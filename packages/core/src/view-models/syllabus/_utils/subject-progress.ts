@@ -1,45 +1,40 @@
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { type WorkProgress, getWorkProgress } from "../../../plans/_utils/work-progress";
-import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
+import { type SyllabusItem } from "./syllabus-input";
+
+/**
+ * Each plan item once: a tested-out lesson stands for every skill it covers as the same item (see
+ * `withTestedOutSkills`), for their topics, and is still one lesson.
+ */
+export function uniquePlanItems(items: readonly SyllabusItem[]): SyllabusItem[] {
+  return [...new Map(items.map((item) => [item.id, item])).values()];
+}
 
 function sumWithProgress(items: readonly SyllabusItem[], progress: WorkProgress): number {
   return countLessons(items.filter((item) => getWorkProgress(item.status) === progress));
 }
 
 /**
- * A subject's lessons the learner studied, of its size, so its progress moves only with their own
- * work: each skill counts its lessons in the plan whatever their status, never fewer than the graph
- * sizes it, so a plan that cuts its depth for time, sets some aside or brings them back leaves the
- * share as it was (Ana's bars moved when she changed her time and date). The ones they tested out
- * of count apart (`lessonsKnown`): a miss that takes that credit back never lowers what they
- * studied (Sofia's "25 of 255" read 0 after her first mock). A skill the learner knows or passed
- * over, with no lessons in the plan, isn't left to study; lessons without a skill of the subject
- * count as the plan has them.
+ * Lessons the learner studied, of the ones the plan teaches (the plan's lesson scope, see
+ * `isInLessonScope`), in a subject or the whole goal, so finishing the plan reads 100%, as
+ * "Finished" says: a plan that cut depth to fit its date read "Finished" at 19 of its graph's 28
+ * lessons. What the plan holds is what the learner chose (their time and date), so changing those
+ * changes the size; lessons set aside stay in it until studied. Each plan item counts once: a
+ * tested-out lesson that stands for each skill it covers (see `withTestedOutSkills`) made a
+ * subject read 2 of 3 for 1 of 2. The ones they tested out of count apart (`lessonsKnown`): a miss
+ * that takes that credit back never lowers what they studied (Sofia's "25 of 255" read 0 after
+ * her first mock).
  */
-export function getSubjectProgress({
-  items,
-  settledSkillIds,
-  skills,
-}: {
-  items: readonly SyllabusItem[];
-  /** Skills the learner knows or passed over (a base skipped, basics they're past). */
-  settledSkillIds: ReadonlySet<string>;
-  skills: readonly SyllabusSkill[];
-}): { lessonsDone: number; lessonsKnown: number; lessonsTotal: number } {
-  const bySkill = Map.groupBy(items, (item) => item.skillId ?? "");
-  const own = new Set(skills.map((skill) => skill.skillId));
-
-  const sized = skills.reduce((total, skill) => {
-    const planned = countLessons(bySkill.get(skill.skillId) ?? []);
-    const settled = planned === 0 && settledSkillIds.has(skill.skillId);
-    return settled ? total : total + Math.max(skill.lessons ?? 0, planned);
-  }, 0);
-
-  const unsized = items.filter((item) => !item.skillId || !own.has(item.skillId));
+export function getSubjectProgress(items: readonly SyllabusItem[]): {
+  lessonsDone: number;
+  lessonsKnown: number;
+  lessonsTotal: number;
+} {
+  const unique = uniquePlanItems(items);
 
   return {
-    lessonsDone: sumWithProgress(items, "studied"),
-    lessonsKnown: sumWithProgress(items, "testedOut"),
-    lessonsTotal: sized + countLessons(unsized),
+    lessonsDone: sumWithProgress(unique, "studied"),
+    lessonsKnown: sumWithProgress(unique, "testedOut"),
+    lessonsTotal: countLessons(unique),
   };
 }

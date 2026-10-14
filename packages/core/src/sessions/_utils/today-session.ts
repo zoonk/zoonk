@@ -1,30 +1,12 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { moveGoalTimeZone } from "../../learner/_utils/goal-time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { ensureStudySession } from "../ensure-study-session";
-import { findCarriedOverSession } from "./current-session";
+import { findCarriedOverSession, hasStartedDay } from "./current-session";
 import { refreshDayFromPlan } from "./refresh-day-session";
 import { type StudySessionRow } from "./study-session-access";
-
-/** Whether the learner already started the new day's session (on another screen or device). */
-async function hasStartedDay({
-  goalId,
-  localDate,
-  userId,
-}: {
-  goalId: string;
-  localDate: Date;
-  userId: string;
-}) {
-  const started = await prisma.studySession.findFirst({
-    select: { id: true },
-    where: { goalId, localDate, startedAt: { not: null }, userId },
-  });
-
-  return started !== null;
-}
 
 /**
  * The learner's day for an active goal they own: the goal in the day's zone, since a learner who

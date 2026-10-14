@@ -7,6 +7,7 @@ import {
 import { getWorkProgress, isWorkFinished } from "../../../plans/_utils/work-progress";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type SyllabusChapter } from "../syllabus-contract";
+import { uniquePlanItems } from "./subject-progress";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 
 /** A chapter with the key its lessons are grouped by, so topics can point at it. */
@@ -91,7 +92,7 @@ export function buildChapters({
   const keys = [...new Set(items.map((item) => chapterKeyOf(item)))];
 
   const sum = (list: readonly SyllabusItem[]) =>
-    list.reduce((total, item) => total + lessonsOf(item), 0);
+    uniquePlanItems(list).reduce((total, item) => total + lessonsOf(item), 0);
 
   const chapters = keys.flatMap((key): UnnumberedChapter[] => {
     const inChapter = items.filter((item) => chapterKeyOf(item) === key);

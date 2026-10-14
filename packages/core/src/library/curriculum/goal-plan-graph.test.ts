@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { toGoalPlanGraph } from "./goal-plan-graph";
+import { type PlannedSkillGraph, toGoalPlanGraph } from "./goal-plan-graph";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-function graphSkill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: string }) {
+function graphSkill(overrides: Partial<PlannedSkillGraph["skills"][number]> & { key: string }) {
   return {
     area: "",
     course: "math",
@@ -121,6 +121,74 @@ describe(toGoalPlanGraph, () => {
     expect(result.skills.map((skill) => [skill.skillId, skill.outcome])).toStrictEqual([
       ["skill-r", true],
       ["skill-p", true],
+    ]);
+  });
+
+  it("keeps a skill outlined only when every copy the Library merged into it is", () => {
+    const outlined: PlannedSkillGraph = {
+      ...graph,
+      skills: [
+        graphSkill({ key: "intro", outlined: true }),
+        graphSkill({ key: "intro-twin" }),
+        graphSkill({ key: "vectors", outlined: true }),
+        graphSkill({ course: "physics", key: "vectors-physics", outlined: true }),
+        graphSkill({ key: "forces" }),
+      ],
+    };
+
+    const result = toGoalPlanGraph({
+      courseIdsByKey: { math: "course-math", physics: "course-physics" },
+      graph: outlined,
+      idsByKey: {
+        forces: "skill-f",
+        intro: "skill-i",
+        "intro-twin": "skill-i",
+        vectors: "skill-v",
+        "vectors-physics": "skill-v",
+      },
+    });
+
+    expect(result.skills.map((skill) => [skill.skillId, skill.outlined])).toStrictEqual([
+      ["skill-i", undefined],
+      ["skill-v", true],
+      ["skill-f", undefined],
+    ]);
+  });
+
+  it("keeps an outlined skill's topics declared empty apart from unknown ones, also when merged", () => {
+    const outlined: PlannedSkillGraph = {
+      ...graph,
+      skills: [
+        graphSkill({ key: "none", outlined: true }),
+        graphSkill({ key: "unknown", outlined: true, topicsUnknown: true }),
+        graphSkill({ key: "listed", outlined: true, topicsUnknown: true }),
+        graphSkill({ key: "listed-twin", outlined: true, topics: ["Funções"] }),
+        graphSkill({ key: "mixed", outlined: true }),
+        graphSkill({ key: "mixed-twin", outlined: true, topicsUnknown: true }),
+        graphSkill({ key: "ai" }),
+      ],
+    };
+
+    const result = toGoalPlanGraph({
+      courseIdsByKey: { math: "course-math" },
+      graph: outlined,
+      idsByKey: {
+        ai: "skill-a",
+        listed: "skill-l",
+        "listed-twin": "skill-l",
+        mixed: "skill-m",
+        "mixed-twin": "skill-m",
+        none: "skill-n",
+        unknown: "skill-u",
+      },
+    });
+
+    expect(result.skills.map((skill) => [skill.skillId, skill.topics])).toStrictEqual([
+      ["skill-n", []],
+      ["skill-u", undefined],
+      ["skill-l", ["Funções"]],
+      ["skill-m", undefined],
+      ["skill-a", undefined],
     ]);
   });
 });

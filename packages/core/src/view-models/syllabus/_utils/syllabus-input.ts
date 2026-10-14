@@ -4,6 +4,7 @@ import { type TopicFrequencySource } from "../../../library/exams/topic-frequenc
 import { type TodayLearnBlock } from "../../../plans/_utils/up-next-item";
 import { type ExistingPlanItem } from "../../../plans/planner/plan-items";
 import { type WrittenPractice } from "../../../plans/written-practice-contract";
+import { type SectionPreparation } from "../../../preparation/section-preparation";
 import { type SyllabusView } from "../syllabus-contract";
 
 /** A subject as the exam's notice lists it, with its share of the exam worked out. */
@@ -38,8 +39,6 @@ export type NoticeSubject = {
 /** A skill of the plan's graph, with its area as the planner reads it and the topics it teaches. */
 export type SyllabusSkill = {
   area: string;
-  /** The graph's size for it: what a plan item standing in for its unwritten lessons stands for. */
-  lessons?: number;
   name: string;
   skillId: string;
   topics: readonly string[];
@@ -67,6 +66,12 @@ export type AreaCourse = { imageUrl: string | null; title: string };
 export type SyllabusInput = {
   areaCourses: ReadonlyMap<string, AreaCourse>;
   chapterTitles: ReadonlyMap<string, string>;
+  /**
+   * The plan's lessons must fit by a date (see `hasPlanDeadline`); without one, the lessons it set
+   * aside are ones the Library couldn't write, out of its lessons (see `isInLessonScope`). True by
+   * default.
+   */
+  deadline?: boolean;
   /** The plan's lessons in plan order. */
   items: readonly SyllabusItem[];
   notice: {
@@ -94,6 +99,11 @@ export type SyllabusInput = {
    * with harder lessons (see `getPastBasicsSkillIds`).
    */
   pastBasicsSkillIds: ReadonlySet<string>;
+  /**
+   * An exam goal's preparation by section of its skill graph (`GoalPreparation.sections`), which
+   * gives each subject its own; absent for other goals, measured in lessons.
+   */
+  sections?: readonly SectionPreparation[] | null;
   skills: readonly SyllabusSkill[];
   skippedAreas: readonly string[];
   /** Bases the learner chose to skip (see `PlanSettings.baseChoices`). */

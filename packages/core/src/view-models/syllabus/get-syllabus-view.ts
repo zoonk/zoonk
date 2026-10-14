@@ -7,6 +7,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getOutlinedUntil } from "../../plans/_utils/stand-in-lessons";
+import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { loadTodayLearnBlocks } from "../_utils/today-lesson-order";
@@ -43,6 +44,20 @@ async function getKnownTopicsReturn({
   return access.trialEnded ? "reviews" : "practice";
 }
 
+/**
+ * An exam goal's preparation by section, which gives each subject its own number on the goal's
+ * scale. The page's own preparation read, so the Plan and Today measure it once. Other goals are
+ * measured in lessons.
+ */
+async function loadSections(goal: Pick<Goal, "id" | "kind">) {
+  if (goal.kind !== "exam") {
+    return null;
+  }
+
+  const result = await getGoalPreparation(goal.id);
+  return result.status === "ready" ? result.preparation.sections : null;
+}
+
 export type SyllabusViewResult =
   | { status: "noGoal" | "notFound" | "unauthorized" }
   | { status: "ready"; syllabus: SyllabusView };
@@ -70,9 +85,10 @@ export async function getSyllabusView(
     cacheTag(getExamBlueprintCacheTag(goal.examBlueprintId));
   }
 
-  const [syllabusInput, todayBlocks] = await Promise.all([
+  const [syllabusInput, todayBlocks, sections] = await Promise.all([
     loadSyllabusInput(goal),
     loadTodayLearnBlocks(goal),
+    loadSections(goal),
   ]);
 
   if (!syllabusInput) {
@@ -88,7 +104,12 @@ export async function getSyllabusView(
       examDocument: getExamDocument(goal),
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
       knownTopicsReturn: await getKnownTopicsReturn({ goal, timeZone, today }),
-      ...buildSyllabus({ ...syllabusInput, outlinedUntil: getOutlinedUntil(today), todayBlocks }),
+      ...buildSyllabus({
+        ...syllabusInput,
+        outlinedUntil: getOutlinedUntil(today),
+        sections,
+        todayBlocks,
+      }),
     },
   };
 }

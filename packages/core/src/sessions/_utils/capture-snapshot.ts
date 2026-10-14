@@ -1,12 +1,17 @@
 import "server-only";
-import { type MasteryState, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
-import { getPreparationComponents, getPreparationValue } from "../../preparation/preparation-math";
+import { measurePreparation } from "../../preparation/section-preparation";
 import { projectPersistedEnergy } from "../../progress/energy";
+import { loadGoalLessons } from "../../view-models/syllabus/_utils/load-goal-lessons";
+import { getLessonShare } from "../../view-models/syllabus/lesson-share";
 import { type SessionSnapshot, type SessionState } from "./session-snapshot";
 
-/** A goal's preparation and each of its skills' state at one moment. */
+/**
+ * A goal's preparation, its progress when it's measured in lessons (see `loadGoalLessons`) and
+ * each of its skills' state at one moment.
+ */
 async function measureGoal({
   goalId,
   now,
@@ -15,18 +20,20 @@ async function measureGoal({
   goalId: string | null;
   now: Date;
   userId: string;
-}): Promise<{ preparation: number | null; skillStates: Record<string, MasteryState> }> {
+}): Promise<Pick<SessionState, "preparation" | "progress" | "skillStates">> {
   if (!goalId) {
-    return { preparation: null, skillStates: {} };
+    return { preparation: null, progress: null, skillStates: {} };
   }
 
-  const inputs = await loadPreparationInputs({ goalId, now, userId });
+  const [inputs, lessons] = await Promise.all([
+    loadPreparationInputs({ goalId, now, userId }),
+    loadGoalLessons(goalId),
+  ]);
 
   return {
     preparation:
-      inputs.skills.length > 0
-        ? getPreparationValue(getPreparationComponents({ ...inputs, asOf: now }))
-        : null,
+      inputs.skills.length > 0 ? measurePreparation({ ...inputs, asOf: now }).value : null,
+    progress: lessons && lessons.total > 0 ? getLessonShare(lessons) : null,
     skillStates: Object.fromEntries(inputs.skills.map((skill) => [skill.skillId, skill.state])),
   };
 }

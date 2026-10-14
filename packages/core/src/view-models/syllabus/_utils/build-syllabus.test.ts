@@ -10,11 +10,12 @@ const CONSTITUTIONAL =
 
 const PROCESS = "Processo Legislativo e Regimento Interno da Câmara dos Deputados";
 
+/** A plan item of its own, as every row of the plan is: counts read each one once. */
 function lesson(
   attrs: Partial<SyllabusItem> & Pick<SyllabusItem, "chapterId" | "skillId">,
 ): SyllabusItem {
   return {
-    id: `item-${attrs.skillId}-${attrs.chapterId}`,
+    id: crypto.randomUUID(),
     kind: "lesson",
     lessonId: `lesson-${attrs.skillId}-${attrs.chapterId}`,
     phase: 0,
@@ -137,14 +138,8 @@ function ethicsProgress(status: SyllabusItem["status"]) {
     notice: null,
     pastBasicsSkillIds: new Set(),
     skills: [
-      {
-        area: "Ética",
-        lessons: 1,
-        name: "Aplicar o Código de Ética",
-        skillId: "s-ethics",
-        topics: [],
-      },
-      { area: "Ética", lessons: 24, name: "Aplicar o Estatuto", skillId: "s-statute", topics: [] },
+      { area: "Ética", name: "Aplicar o Código de Ética", skillId: "s-ethics", topics: [] },
+      { area: "Ética", name: "Aplicar o Estatuto", skillId: "s-statute", topics: [] },
     ],
     skippedAreas: [],
   }).subjects.map((subject) => [subject.lessonsDone, subject.lessonsKnown, subject.lessonsTotal]);
@@ -512,9 +507,6 @@ describe(buildSyllabus, () => {
           skillId: "s-ortho",
         }),
       ],
-      skills: input.skills.map((skill) =>
-        skill.skillId === "s-ortho" ? { ...skill, lessons: 12 } : skill,
-      ),
       taughtSkillIds: new Set(["s-ortho"]),
     };
 
@@ -783,7 +775,7 @@ describe(buildSyllabus, () => {
     );
   });
 
-  // Sofia's OAB plan named the ethics subject "Professional Ethics", the notice's short name: Journey
+  // Sofia's OAB plan named the ethics subject "Professional Ethics", the notice's short name: Plan
   // showed the exam's heaviest subject as out of her plan and her ethics lessons beyond the notice.
   it("puts an area named by a subject's short name in that subject", () => {
     const ethics =
@@ -958,14 +950,13 @@ describe(buildSyllabus, () => {
   });
 
   /*
-   * Carla's Journey read "User research · 3 of 169 lessons" next to "Prototyping and usability
+   * Carla's Plan read "User research · 3 of 169 lessons" next to "Prototyping and usability
    * testing · 0 of 6 lessons": the second module's lessons weren't written yet, and each item
    * standing in for a skill's lessons counted as one.
    */
   it("counts an item standing in for a skill's unwritten lessons as the lessons it plans", () => {
     // The plan, short on time, teaches 4 of the interviews' 11 lessons left and 9 of prototyping's
-    // 30. A module's size is its skills' lessons, never fewer than the graph sizes them, so its
-    // progress doesn't move when the plan cuts or restores them (Ana's walk).
+    // 30. A module's size is the lessons the plan teaches in it, so finishing them reads 100%.
     const syllabus = buildSyllabus({
       areaCourses: new Map(),
       chapterTitles: new Map(),
@@ -980,14 +971,12 @@ describe(buildSyllabus, () => {
       skills: [
         {
           area: "Pesquisa com usuários",
-          lessons: 12,
           name: "Conduzir entrevistas",
           skillId: "s-interview",
           topics: [],
         },
         {
           area: "Prototipação e testes de usabilidade",
-          lessons: 30,
           name: "Montar protótipos interativos",
           skillId: "s-prototype",
           topics: [],
@@ -999,25 +988,27 @@ describe(buildSyllabus, () => {
     expect(
       syllabus.subjects.map((subject) => [subject.key, subject.lessonsDone, subject.lessonsTotal]),
     ).toStrictEqual([
-      ["pesquisa-com-usuarios", 1, 12],
-      ["prototipacao-e-testes-de-usabilidade", 0, 30],
+      ["pesquisa-com-usuarios", 1, 5],
+      ["prototipacao-e-testes-de-usabilidade", 0, 9],
     ]);
   });
 
   /*
-   * Walk: Ana's subject bars moved when she changed her time and date, without studying. The
-   * plan's cuts, restores and set-asides change what it holds, never what she did.
+   * A plan that cut depth to fit its date read "Finished" at 19 of its graph's 28 lessons. A
+   * subject's size is the lessons the plan teaches in it, so the plan's cuts and restores change
+   * its size, never what the learner did, and finishing the plan reads 100%.
    */
-  it("moves a subject's progress only with the learner's own work", () => {
+  it("sizes a subject by the lessons the plan teaches, never moving what the learner did", () => {
     const skills = [
-      { area: "Matemática", lessons: 6, name: "Usar porcentagens", skillId: "s-pct", topics: [] },
-      { area: "Matemática", lessons: 4, name: "Ler gráficos", skillId: "s-chart", topics: [] },
+      { area: "Matemática", name: "Usar porcentagens", skillId: "s-pct", topics: [] },
+      { area: "Matemática", name: "Ler gráficos", skillId: "s-chart", topics: [] },
     ];
 
-    const progress = (items: SyllabusItem[]) =>
+    const progress = (items: SyllabusItem[], deadline?: boolean) =>
       buildSyllabus({
         areaCourses: new Map(),
         chapterTitles: new Map(),
+        deadline,
         items,
         knownSkillIds: new Set(),
         notice: null,
@@ -1036,27 +1027,89 @@ describe(buildSyllabus, () => {
     const pct = (index: number) =>
       lesson({ chapterId: "ch-pct", lessonId: `pct-${index}`, skillId: "s-pct" });
 
-    const whole = progress([
-      done,
-      ...[2, 3, 4, 5, 6].map((index) => pct(index)),
-      lesson({ chapterId: null, lessonId: null, lessons: 4, skillId: "s-chart" }),
-    ]);
+    expect(
+      progress([
+        done,
+        ...[2, 3, 4, 5, 6].map((index) => pct(index)),
+        lesson({ chapterId: null, lessonId: null, lessons: 4, skillId: "s-chart" }),
+      ]),
+    ).toStrictEqual([[1, 10]]);
 
     // Less time: the plan cut three of the percentages' lessons and half the charts' stand-in, and
-    // set one aside.
-    const cut = progress([
+    // set one aside, which stays the learner's to study.
+    const cut = [
       done,
       pct(2),
-      { ...pct(3), status: "skipped" },
+      { ...pct(3), status: "skipped" as const },
       lesson({ chapterId: null, lessonId: null, lessons: 2, skillId: "s-chart" }),
-    ]);
+    ];
 
-    expect(whole).toStrictEqual([[1, 10]]);
-    expect(cut).toStrictEqual(whole);
+    expect(progress(cut)).toStrictEqual([[1, 5]]);
+
+    // A plan without a date only sets aside a lesson the Library couldn't write: not one to study.
+    expect(progress(cut, false)).toStrictEqual([[1, 4]]);
   });
 
   /*
-   * Sofia's Journey read "25 of 255 lessons" in Ethics, then "0 of 255" after her first full mock:
+   * A tested-out lesson also stands for each other skill its chapter teaches (the same plan item),
+   * so those skills' topics read as known: counted twice, a subject read 2 of 3 lessons for 1 of 2
+   * (code review). Each subject it covers shows it; the goal counts it once.
+   */
+  it("counts a tested-out lesson that stands for two skills once", () => {
+    const known = lesson({
+      chapterId: "ch-pct",
+      lessonId: "pct-1",
+      skillId: "s-pct",
+      status: "testedOut",
+    });
+
+    const read = (chartArea: string) =>
+      buildSyllabus({
+        areaCourses: new Map(),
+        chapterTitles: new Map(),
+        items: [
+          known,
+          { ...known, skillId: "s-chart" },
+          lesson({ chapterId: "ch-pct", lessonId: "pct-2", skillId: "s-pct" }),
+        ],
+        knownSkillIds: new Set(),
+        notice: null,
+        pastBasicsSkillIds: new Set(),
+        skills: [
+          { area: "Matemática", name: "Usar porcentagens", skillId: "s-pct", topics: [] },
+          { area: chartArea, name: "Ler gráficos", skillId: "s-chart", topics: [] },
+        ],
+        skippedAreas: [],
+      });
+
+    const together = read("Matemática");
+
+    expect(together.lessons).toStrictEqual({ done: 1, known: 1, total: 2 });
+    expect(together.subjects.map((subject) => subject.lessonsTotal)).toStrictEqual([2]);
+
+    expect(
+      together.subjects[0]?.chapters.map(({ lessonsDone, lessonsTotal }) => [
+        lessonsDone,
+        lessonsTotal,
+      ]),
+    ).toStrictEqual([[1, 2]]);
+
+    const apart = read("Gráficos");
+
+    // Each subject shows it as known, but the goal's known lessons count it once, so a card that
+    // draws studied and known apart never takes one studied lesson for a second known one.
+    expect(apart.lessons).toStrictEqual({ done: 1, known: 1, total: 2 });
+
+    expect(
+      apart.subjects.map((subject) => [subject.lessonsKnown, subject.lessonsTotal]),
+    ).toStrictEqual([
+      [1, 2],
+      [1, 1],
+    ]);
+  });
+
+  /*
+   * Sofia's Plan read "25 of 255 lessons" in Ethics, then "0 of 255" after her first full mock:
    * a miss there took back her placement's test-out credit. What she studied counts as done; what
    * she tested out of shows apart, so taking it back never lowers what she did.
    */
@@ -1068,7 +1121,7 @@ describe(buildSyllabus, () => {
   });
 
   it("marks a chapter done only by lessons the learner showed they know as known", () => {
-    const skill = { area: "Ética", lessons: 2, topics: [] };
+    const skill = { area: "Ética", topics: [] };
 
     const syllabus = buildSyllabus({
       areaCourses: new Map(),
@@ -1223,7 +1276,7 @@ describe(buildSyllabus, () => {
   });
 
   // Ana takes English: the notice counts its 5 questions inside the languages area's 45, and her
-  // plan studies it in an area of its own. The Journey listed it as a sixth subject.
+  // plan studies it in an area of its own. The Plan listed it as a sixth subject.
   it("shows the option a learner picked inside the subject the notice counts it in, never as a subject of its own", () => {
     const languages = "Linguagens, Códigos e suas Tecnologias";
     const english = "Língua Inglesa";
@@ -1312,5 +1365,136 @@ describe(buildSyllabus, () => {
 
     // Today labels its lessons with the subject it's part of.
     expect(getSkillSubjects(input).get("s-english")).toBe("Linguagens");
+  });
+});
+
+/** What the syllabus says of the law subject, among ethics's and its sections. */
+function readLaw({
+  items,
+  lawWeight,
+  skippedAreas = [],
+}: {
+  items: SyllabusItem[];
+  lawWeight: number;
+  skippedAreas?: string[];
+}) {
+  const syllabus = buildSyllabus({
+    areaCourses: new Map(),
+    chapterTitles: new Map(),
+    items,
+    knownSkillIds: new Set(),
+    notice: null,
+    pastBasicsSkillIds: new Set(),
+    sections: [
+      { mastery: null, preparation: 0.1, section: "Ética", weight: 1 - lawWeight },
+      {
+        mastery: { answered: 8, correct: 6 },
+        preparation: 0.4,
+        section: "Direito",
+        weight: lawWeight,
+      },
+    ],
+    skills: [
+      { area: "Ética", name: "Aplicar o Código de Ética", skillId: "s-ethics", topics: [] },
+      { area: "Direito", name: "Situar a Constituição", skillId: "s-law", topics: [] },
+    ],
+    skippedAreas,
+  });
+
+  const law = syllabus.subjects.find((subject) => subject.name === "Direito");
+  return { mastery: law?.mastery, preparation: law?.preparation, reason: law?.notPlannedReason };
+}
+
+/** A notice subject of five questions, part of another when `partOf` names it. */
+function noticeSubjectOf(name: string, partOf: string | null, share: number) {
+  return {
+    group: null,
+    name,
+    partOf,
+    questions: 5,
+    share,
+    shortName: null,
+    topics: [],
+    writtenTasks: [],
+  };
+}
+
+/*
+ * An exam subject the plan leaves out shows its preparation only while the goal's number counts
+ * it, so the number explains the whole (code review of plan-polish): a subject the learner took
+ * out, kept in the goal's sections by the lessons they finished before, showed a score beside
+ * "Not in your plan"; and one whose sections weigh nothing in the goal showed one too.
+ */
+describe("an exam subject out of the plan", () => {
+  const ethics = lesson({ chapterId: "ch-ethics", skillId: "s-ethics" });
+  const lawDone = lesson({ chapterId: "ch-law", skillId: "s-law", status: "done" });
+
+  it("shows its preparation while the goal counts it: left out for time", () => {
+    expect(readLaw({ items: [ethics], lawWeight: 0.3 })).toStrictEqual({
+      mastery: { answered: 8, correct: 6 },
+      preparation: 0.4,
+      reason: "time",
+    });
+  });
+
+  it("shows none when its sections weigh nothing in the goal", () => {
+    expect(readLaw({ items: [ethics], lawWeight: 0 })).toStrictEqual({
+      mastery: null,
+      preparation: null,
+      reason: "time",
+    });
+  });
+
+  // Ana's languages area left out for time gathers English, which weighs nothing in her goal:
+  // its answers showed as the left-out subject's "6 of 8 right" (code review, round 2).
+  it("reads its preparation and mastery only from the sections the goal counts", () => {
+    const languages = "Linguagens, Códigos e suas Tecnologias";
+    const english = "Língua Inglesa";
+
+    const syllabus = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map(),
+      items: [lesson({ chapterId: "ch-math", skillId: "s-math" })],
+      knownSkillIds: new Set(),
+      notice: {
+        courseWeights: null,
+        fromMaterial: false,
+        passMarks: null,
+        questionsSource: null,
+        subjects: [
+          noticeSubjectOf(languages, null, 0.5),
+          noticeSubjectOf(english, languages, 0),
+          noticeSubjectOf("Matemática", null, 0.5),
+        ],
+        url: null,
+      },
+      pastBasicsSkillIds: new Set(),
+      sections: [
+        { mastery: null, preparation: 0.2, section: "Linguagens", weight: 0.5 },
+        { mastery: { answered: 8, correct: 6 }, preparation: 0.6, section: english, weight: 0 },
+        { mastery: null, preparation: 0.1, section: "Matemática", weight: 0.5 },
+      ],
+      skills: [
+        { area: "Linguagens", name: "Interpretar textos", skillId: "s-texts", topics: [] },
+        { area: english, name: "Ler textos em inglês", skillId: "s-english", topics: [] },
+        { area: "Matemática", name: "Usar proporções", skillId: "s-math", topics: [] },
+      ],
+      skippedAreas: [],
+    });
+
+    const left = syllabus.subjects.find((subject) => subject.name === languages);
+
+    expect(left).toMatchObject({
+      areas: ["Linguagens", english],
+      mastery: null,
+      notPlannedReason: "time",
+      preparation: 0.2,
+    });
+  });
+
+  it("shows none once the learner took it out, whatever they studied of it", () => {
+    expect(
+      readLaw({ items: [ethics, lawDone], lawWeight: 0.3, skippedAreas: ["Direito"] }),
+    ).toStrictEqual({ mastery: null, preparation: null, reason: "skipped" });
   });
 });
