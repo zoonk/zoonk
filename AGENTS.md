@@ -21,6 +21,21 @@
 - Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
 - Don't patch dependencies unless explicitly requested. If a library bug is discovered, report it instead and figure out a workaround we can use in the meantime.
 
+## Agent orchestration
+
+Use supported subagents and cross-provider orchestration when available. Discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. Resolve the latest Claude Opus and GPT Sol from the live catalog (currently Opus 5.5 and GPT-6.1-Sol); map effort names to supported equivalents. Existing approval and verification rules still apply.
+
+- **Design:** UI and UX work, including UI elements, layouts, and interactions, is design work. Use Opus with extra-high reasoning for small tweaks and max reasoning for design reviews, large changes, or new feature design.
+- **Copywriting:** Prefer Opus with extra-high reasoning.
+- **Marketing:** Prefer Opus with extra-high reasoning for marketing, landing pages, motion videos, and animation.
+- **Computer use:** Prefer GPT Sol through Codex with medium reasoning.
+- **Code review:** Use GPT Sol with extra-high reasoning.
+- **Small code changes:** Use GPT Sol with medium reasoning.
+- **Architecture:** Have GPT Sol and Opus, both at extra-high reasoning, exchange proposals, objections, and revisions until they agree on the best approach. Relay their responses if direct communication is unavailable. Opus may then implement at medium effort, but GPT Sol must review at extra-high reasoning before committing or opening a PR.
+- **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits.
+- **Usage limits:** Recheck quotas periodically, at task boundaries, and when a provider is limited. If its reset is less than 15 minutes away, waiting is acceptable; otherwise transfer unfinished work to an eligible provider with quota. Include the brief, decisions, changed files, verification, and open issues in the handoff; stop the original task to avoid duplicate work. Keep checking so available providers take over work blocked by longer resets.
+- **Opus fallback:** If no Opus provider is available, use GPT Sol for design at the prescribed effort. Track the pending design review and have Opus review at max effort as soon as it becomes available again.
+
 ## Architecture shared by all workspaces
 
 - Put reusable business rules, authorization, persistence, and orchestration in `@zoonk/core`. Apps own delivery: HTTP parsing/serialization, UI composition, translations, URLs, metadata, and presentation fallbacks. Do not add framework abstraction until another framework is adopted.
@@ -45,6 +60,8 @@
 ## Task-specific guidance
 
 Read the scoped `AGENTS.md` files governing paths you change, including when working from the repository root. Read shared guides only when the task matches their scope; this index is not a required reading list for every edit.
+
+Use the shared [Eloqnt style guides](packages/i18n/.eloqnt/styleguide.md) for recurring Zoonk tone and terminology choices; put locale-specific choices in `styleguide.<locale>.md`. Keep them brief and self-contained: Eloqnt supplies translation best practices, so avoid generic i18n rules and one-off copy fixes. For example, `goal → meta` belongs in the Portuguese glossary; lists of ordinary UI translations like “Save”, “Cancel”, and “Next”, or tutorials on ICU plurals, do not.
 
 | Task                                                            | Guidance                                                                           |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
