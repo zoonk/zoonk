@@ -12,6 +12,7 @@ import {
   type ClaimLessonQuestionAnswerInput,
   claimAnswerInTransaction,
 } from "./_utils/answer-claim";
+import { loadLearnerNames } from "./_utils/learner-names";
 import { lessonQuestionResourceOmit } from "./_utils/question-resource";
 import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
 import { findTutorMemory, markTutorMemoryUsed, rememberTutorExchange } from "./_utils/tutor-memory";
@@ -173,11 +174,10 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   const { contextSnapshot, goalId, priorTurns, question, questionId, revision } = claimed.claim;
 
-  const tutor = await claimTutorAnswer({
-    question: claimed.claim,
-    subject: access.subject,
-    userId,
-  });
+  const [tutor, learnerNames] = await Promise.all([
+    claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
+    loadLearnerNames(userId),
+  ]);
 
   if (tutor.status !== "ready") {
     return { decision: tutor, status: "usageRefused" as const };
@@ -190,6 +190,8 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
       analytics: getAnswerAnalytics({ goalId, userId }),
       contextSnapshot,
       learnerMemory,
+      /** Only for the buddy's web search to keep out of what it sends (see `loadLearnerNames`). */
+      learnerNames,
       priorTurns,
       question,
       questionId,

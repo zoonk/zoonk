@@ -1,6 +1,5 @@
 import "server-only";
 import { generateText, isStepCount, streamText } from "ai";
-import { zoonkGateway } from "../../../gateway";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration, startTaskGeneration } from "../../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../../provenance/task-provenance";
@@ -26,6 +25,7 @@ import mockScreenPrompt from "./goal-tutor-mock.prompt.md";
 import { type GoalTutorLinks, formatGoalTutorPageGuide } from "./goal-tutor-pages";
 import { shouldSearchFirst } from "./goal-tutor-search";
 import subjectScreenPrompt from "./goal-tutor-subject.prompt.md";
+import { SEARCH_DEADLINE_MS, createSearchWebTool } from "./goal-tutor-web-search";
 import systemPrompt from "./goal-tutor.prompt.md";
 
 /**
@@ -46,12 +46,13 @@ const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-sonnet-5.5"
 const GOAL_TUTOR_TASK = "goal-tutor";
 
 /**
- * A lookup of the learner's data the context doesn't show, a round of card tools (a plan change,
- * an app tool), the answer that says it, and room for one more round when the model offers an app
- * tool after the change, or again after a change that showed no card (`changeFirst`): at most four
- * steps. A search runs inside a step, on the gateway.
+ * A search, a lookup of the learner's data the context doesn't show, a round of card tools (a plan
+ * change, an app tool), the answer that says it, and room for one more round when the model offers
+ * an app tool after the change, or again after a change that showed no card (`changeFirst`): at
+ * most five steps. A search is a step of its own: its tool runs in the app, which builds what it
+ * sends.
  */
-const MAX_STEPS = 4;
+const MAX_STEPS = 5;
 
 /**
  * A search finds a current source for a fact that changes over time (case law, a recent law, an
@@ -60,14 +61,12 @@ const MAX_STEPS = 4;
  * ruling changed (STF, ADI 1194) and answered from outdated law, so a classifier
  * (`shouldSearchFirst`) makes the first step search; with it, the buddy searched both law cases
  * and not a question about the plan, and answered all three right (eval, 7 Oct 2026). Each search
- * adds the gateway's Parallel fee, about $0.005, to the message. The tool isn't named
- * `web_search`: through the gateway, OpenAI reads a required tool by that name as its own built-in
- * search and rejects the request ("Tool choice 'web_search_preview' not found").
+ * adds to the message the gateway's Parallel fee, about $0.005, and the small call that makes it.
+ * The model only proposes the queries: what goes out holds none of the learner's data
+ * (`createSearchWebTool`).
  */
 const SEARCH_TOOL = "searchWeb";
 const LOOKUP_TOOL = "lookUp";
-const SEARCH_RESULTS = 5;
-const SEARCH_CHARACTERS_PER_RESULT = 1500;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty goal tutor answer";
 
 type GoalTutorInput = {
@@ -75,6 +74,11 @@ type GoalTutorInput = {
   contextSnapshot: PlanScopeContext;
   /** Facts the learner shared before (their goals, routine, how they learn), when memory is on. */
   learnerMemory?: readonly string[];
+  /**
+   * The names the learner goes by (their account's name, username, email's local part, their
+   * buddy's): never sent to a web search, and never in the model's context.
+   */
+  learnerNames?: readonly string[];
   /**
    * How the host links its own pages and what the context and lookups point at: the buddy links
    * only what it's given, copied as it reads it.
@@ -95,34 +99,38 @@ export type GenerateGoalTutorAnswerParams = GoalTutorInput & {
 };
 
 function createTools({
+  analytics,
+  contextSnapshot,
+  learnerMemory,
+  learnerNames,
   links,
   lookUp,
   offerAppTool,
   proposePlanChange,
-}: Pick<GoalTutorInput, "links" | "lookUp" | "offerAppTool" | "proposePlanChange">) {
+}: GoalTutorInput) {
   return {
-    [SEARCH_TOOL]: zoonkGateway.tools.parallelSearch({
-      excerpts: { maxCharsPerResult: SEARCH_CHARACTERS_PER_RESULT },
-      maxResults: SEARCH_RESULTS,
-      mode: "agentic",
-    }),
+    [SEARCH_TOOL]: createSearchWebTool({ analytics, contextSnapshot, learnerMemory, learnerNames }),
     ...createCardTools({ offerAppTool, proposePlanChange }),
     [LOOKUP_TOOL]: createLookUpTool({ links, lookUp }),
   };
 }
 
-/** Only a lookup has a deadline: the card tools wait for core, whose result the card shows. */
-const TOOL_TIMEOUT = { tools: { lookUpMs: LOOKUP_DEADLINE_MS } };
+/**
+ * A lookup and a search have deadlines, past which the buddy answers without them; the card tools
+ * wait for core, whose result the card shows.
+ */
+const TOOL_TIMEOUT = { tools: { lookUpMs: LOOKUP_DEADLINE_MS, searchWebMs: SEARCH_DEADLINE_MS } };
 
 /**
- * The first step searches when the question rests on facts that change (`shouldSearchFirst`);
- * the gateway runs the search and the model answers from it in the same step. After a round of
- * tools, the next step says what the card or button shows and answers the rest of the message,
- * and may still offer an app tool after a change; the last step only answers, so a message never
- * ends on tool calls. Every step sends the same tools and thinking, which a provider's cache keys
- * on, so a later step reads the whole request before it from the cache; except that once a step
- * looked up the learner's data, the steps after it can't search, so nothing it found goes into a
- * search query (a mitigation: the context and earlier answers still reach the model that searches).
+ * The first step searches when the question rests on facts that change (`shouldSearchFirst`),
+ * and the next one answers from what it found. After a round of tools, the next step says what the
+ * card or button shows and answers the rest of the message, and may still offer an app tool after
+ * a change; the last step only answers, so a message never ends on tool calls. Every step sends
+ * the same tools and thinking, which a provider's cache keys on, so a later step reads the whole
+ * request before it from the cache; except that the steps after a search or a lookup can't search.
+ * One search per message, with a query for the provision and one for the rulings, keeps the wait
+ * and the fee to one search. After a lookup, the search's own rules keep what it found out of what
+ * it sends, and this keeps the model from even proposing it.
  */
 function createPrepareStep({
   searchFirst,
@@ -146,11 +154,13 @@ function createPrepareStep({
       return { toolChoice: { toolName: SEARCH_TOOL, type: "tool" } as const };
     }
 
-    const lookedUp = steps.some((step) =>
-      step.toolCalls.some((call) => call.toolName === LOOKUP_TOOL),
+    const searchedOrLookedUp = steps.some((step) =>
+      step.toolCalls.some((call) => call.toolName === SEARCH_TOOL || call.toolName === LOOKUP_TOOL),
     );
 
-    return lookedUp ? { activeTools: toolNames.filter((name) => name !== SEARCH_TOOL) } : {};
+    return searchedOrLookedUp
+      ? { activeTools: toolNames.filter((name) => name !== SEARCH_TOOL) }
+      : {};
   };
 }
 
@@ -231,7 +241,7 @@ function createGenerationOptions({
       })
     : Promise.resolve(false);
 
-  const tools = createTools(input);
+  const tools = createTools({ ...input, analytics });
 
   return {
     instructions: getSystemPrompt(input),
@@ -296,11 +306,14 @@ export async function generateGoalTutorAnswer({
     throw new Error(EMPTY_ANSWER_MESSAGE);
   }
 
-  // What the buddy searched for, so evals see when it looked a fact up.
+  // What actually went out to the search provider, so evals see when the buddy looked a fact up
+  // and with which words.
   const searches = result.steps.flatMap((step) =>
-    step.toolCalls
-      .filter((call) => call.toolName === SEARCH_TOOL)
-      .map((call) => JSON.stringify(call.input)),
+    step.staticToolResults.flatMap((toolResult) =>
+      toolResult.toolName === SEARCH_TOOL && toolResult.output.status === "found"
+        ? toolResult.output.searched.map((searched) => JSON.stringify(searched))
+        : [],
+    ),
   );
 
   return {

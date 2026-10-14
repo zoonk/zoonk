@@ -301,6 +301,27 @@ describe("the buddy on a screen inside a goal", () => {
     });
   });
 
+  it("gives the buddy's search the names the learner goes by, to keep them out of what it sends", async () => {
+    const user = await userFixture({
+      email: `ana.lima.${randomUUID()}@zoonk.test`,
+      name: "Ana Lima",
+    });
+
+    const { chapter } = await plannedGoal(user.id);
+
+    await learningProfileFixture({ buddyName: "Zu", userId: user.id });
+    mockSession(user.id);
+
+    const { claim } = await askAndClaim({
+      context: { kind: "chapter" },
+      target: { chapterId: chapter.id, kind: "chapter" },
+    });
+
+    expect(claim.learnerNames).toStrictEqual(
+      expect.arrayContaining(["Ana Lima", user.email.split("@")[0], "Zu"]),
+    );
+  });
+
   it("marks the words of the learner's own private chapter as theirs, never a public chapter's", async () => {
     const user = await userFixture();
     const { chapter } = await plannedGoal(user.id);

@@ -6,6 +6,7 @@ import { TEST_TUTOR_LINKS } from "../_test-utils/tutor-links";
 import { generateGoalTutorAnswer } from "./goal-tutor";
 import { LOOKUP_DEADLINE_MS } from "./goal-tutor-lookup";
 import { formatGoalTutorPageGuide } from "./goal-tutor-pages";
+import { SEARCH_DEADLINE_MS } from "./goal-tutor-web-search";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -16,6 +17,7 @@ vi.mock("./goal-tutor-lesson.prompt.md", () => ({ default: "Don't give the answe
 vi.mock("./goal-tutor-mock.prompt.md", () => ({ default: "Read the mock's result." }));
 vi.mock("./goal-tutor-subject.prompt.md", () => ({ default: "Read the subject." }));
 vi.mock("./goal-tutor-item.prompt.md", () => ({ default: "Read the question." }));
+vi.mock("./goal-tutor-web-search.prompt.md", () => ({ default: "Search these queries." }));
 vi.mock("./goal-tutor-search", () => ({ shouldSearchFirst: vi.fn(async () => false) }));
 
 vi.mock("../../../gateway", () => ({
@@ -50,9 +52,10 @@ function planContext(kind: string): PlanScopeContext {
   };
 }
 
-function answer(text: string) {
+function answer(text: string, staticToolResults: unknown[] = []) {
   const result = createGenerateTextResult(null, "openai/gpt-6-luna");
-  return { ...result, steps: [{ ...result.finalStep, text, toolCalls: [] }] } as typeof result;
+  const step = { ...result.finalStep, staticToolResults, text, toolCalls: [] };
+  return { ...result, steps: [step] } as typeof result;
 }
 
 async function getInstructions(
@@ -130,11 +133,13 @@ describe(generateGoalTutorAnswer, () => {
     await expect(readPagesPrompt()).resolves.toContain("- /settings: ");
   });
 
-  it("waits for a lookup only until its deadline and leaves room for a lookup, a card and the answer", async () => {
+  it("waits for a lookup and a search only until their deadlines and leaves room for a search, a lookup, a card and the answer", async () => {
     await getInstructions("learn");
     const options = vi.mocked(generateText).mock.lastCall?.[0];
 
-    expect(options?.timeout).toStrictEqual({ tools: { lookUpMs: LOOKUP_DEADLINE_MS } });
+    expect(options?.timeout).toStrictEqual({
+      tools: { lookUpMs: LOOKUP_DEADLINE_MS, searchWebMs: SEARCH_DEADLINE_MS },
+    });
 
     const prepareStep = options?.prepareStep;
 
@@ -143,21 +148,47 @@ describe(generateGoalTutorAnswer, () => {
         NonNullable<typeof prepareStep>
       >[0]);
 
-    await expect(step(2)).resolves.toStrictEqual({});
-    await expect(step(3)).resolves.toStrictEqual({ toolChoice: "none" });
+    await expect(step(3)).resolves.toStrictEqual({});
+    await expect(step(4)).resolves.toStrictEqual({ toolChoice: "none" });
   });
 
-  it("can't search in the steps after it looked up the learner's data", async () => {
+  it("records what went out to the search, not what the model proposed", async () => {
+    const searched = { objective: "Fontes atuais.", search_queries: ["ADI 1194 STF"] };
+
+    vi.mocked(generateText).mockResolvedValueOnce(
+      answer("Sure.", [
+        { output: { status: "nothingToSearch" }, toolName: "searchWeb" },
+        { output: { results: [], searched: [searched], status: "found" }, toolName: "searchWeb" },
+      ]),
+    );
+
+    const { data } = await generateGoalTutorAnswer({
+      contextSnapshot: planContext("exam"),
+      links: TEST_TUTOR_LINKS,
+      lookUp: vi.fn(),
+      offerAppTool: vi.fn(),
+      priorTurns: [],
+      proposePlanChange: vi.fn(),
+      question: "A cláusula ainda vale?",
+    });
+
+    expect(data.searches).toStrictEqual([JSON.stringify(searched)]);
+  });
+
+  it("can't search in the steps after it searched or looked up the learner's data", async () => {
     await getInstructions("learn");
     const prepareStep = vi.mocked(generateText).mock.lastCall?.[0].prepareStep;
 
-    const afterLookUp = await prepareStep?.({
-      stepNumber: 1,
-      steps: [{ toolCalls: [{ toolName: "lookUp" }] }],
-    } as unknown as Parameters<NonNullable<typeof prepareStep>>[0]);
+    const after = (toolName: string) =>
+      prepareStep?.({
+        stepNumber: 1,
+        steps: [{ toolCalls: [{ toolName }] }],
+      } as unknown as Parameters<NonNullable<typeof prepareStep>>[0]);
 
-    expect(afterLookUp).toStrictEqual({
-      activeTools: ["offerAppTool", "proposePlanChange", "lookUp"],
-    });
+    const withoutSearch = { activeTools: ["offerAppTool", "proposePlanChange", "lookUp"] };
+
+    await expect(after("lookUp")).resolves.toStrictEqual(withoutSearch);
+    await expect(after("searchWeb")).resolves.toStrictEqual(withoutSearch);
+    await expect(after("offerAppTool")).resolves.toStrictEqual({});
   });
 });

@@ -178,6 +178,7 @@ function startGoalTutorAnswer({
     analytics: { ...claim.analytics, contentScope: "personal" },
     contextSnapshot,
     learnerMemory: claim.learnerMemory,
+    learnerNames: claim.learnerNames,
     links,
     lookUp,
     offerAppTool,
