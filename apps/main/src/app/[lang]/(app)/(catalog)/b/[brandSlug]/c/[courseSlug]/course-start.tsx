@@ -1,5 +1,5 @@
 import { CourseGoalSwitch } from "@/components/catalog/course-progress";
-import { NoAccountNote } from "@/components/public/no-account-note";
+import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { StartBlock, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { Variant } from "@/components/public/variant-switch";
@@ -61,7 +61,7 @@ export async function CourseStart({
   return (
     <StartBlock
       className={cn(tryId && "sm:flex-col sm:items-start sm:gap-3", className)}
-      note={<NoAccountNote>{t("Start free, no account needed.")}</NoAccountNote>}
+      note={<NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>}
     >
       {tryId ? (
         <div className="flex flex-col gap-3 sm:flex-row">

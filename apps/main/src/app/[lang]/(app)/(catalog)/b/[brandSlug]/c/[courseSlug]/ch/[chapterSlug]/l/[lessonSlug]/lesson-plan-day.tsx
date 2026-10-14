@@ -1,6 +1,6 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { NoAccountNote } from "@/components/public/no-account-note";
+import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { ProductWindow } from "@/components/public/product-window";
 import { StartBlock } from "@/components/public/public-start";
 import { StartPlanLink } from "@/components/public/start-plan-link";
@@ -106,7 +106,7 @@ export async function LessonPlanDay({
 
       <StartBlock
         className="mt-1 sm:mt-1"
-        note={<NoAccountNote>{t("Start free, no account needed.")}</NoAccountNote>}
+        note={<NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>}
       >
         <StartPlanLink chapterId={number > 1 ? chapter.id : null} courseId={course.id} secondary />
       </StartBlock>

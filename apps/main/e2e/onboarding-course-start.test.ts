@@ -605,7 +605,9 @@ test.describe("Starting a course from its page", () => {
     await expect(page.getByRole("button", { name: "Build my plan" })).toHaveCount(0);
 
     // Signed in, they have an account already: no note about starting without one.
-    await expect(page.getByRole("main").getByText("Start free, no account needed.")).toHaveCount(0);
+    await expect(
+      page.getByRole("main").getByText("Start free, no account needed.").filter({ visible: true }),
+    ).toHaveCount(0);
 
     await expect(
       prisma.goal.count({ where: { primaryCourseId: course.id, userId: noProgressUser.id } }),

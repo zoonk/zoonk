@@ -6,7 +6,7 @@ import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
-import { NoAccountNote } from "@/components/public/no-account-note";
+import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { StartBlock } from "@/components/public/public-start";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
@@ -50,7 +50,7 @@ async function ChapterStart({
       className={className}
       note={
         hasLesson ? (
-          <NoAccountNote>{t("Start free, no account needed.")}</NoAccountNote>
+          <NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>
         ) : (
           t("Start here and Zoonk writes its lessons for your level.")
         )

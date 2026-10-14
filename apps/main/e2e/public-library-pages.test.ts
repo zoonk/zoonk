@@ -781,7 +781,10 @@ test.describe("public Library chapter and course pages", () => {
     await expect(sidebar.getByRole("link", { name: "Start a goal" })).toBeVisible();
     await expect(page.getByRole("link", { exact: true, name: "Zoonk" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Log in" })).toHaveCount(0);
-    await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+
+    await expect(
+      page.getByText("Start free, no account needed.").filter({ visible: true }),
+    ).toHaveCount(0);
 
     await page.getByRole("button", { name: "Course options" }).click();
     await expect(page.getByRole("menu").getByRole("menuitemcheckbox")).toHaveCount(0);
@@ -790,7 +793,11 @@ test.describe("public Library chapter and course pages", () => {
 
     await page.goto(chapterPath);
     await expect(page.getByRole("button", { name: "Chapter options" })).toBeVisible();
-    await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+
+    await expect(
+      page.getByText("Start free, no account needed.").filter({ visible: true }),
+    ).toHaveCount(0);
+
     await page.getByRole("button", { name: "Chapter options" }).click();
 
     await expect(page.getByRole("menu").getByRole("menuitem")).toHaveText(["Report a problem"]);

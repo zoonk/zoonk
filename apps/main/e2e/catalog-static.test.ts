@@ -12,6 +12,8 @@ import { expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
 
 const PROGRESS_PATH = /\/api\/learner\/courses\/[^/]+\/progress/u;
+const SUMMARY_PATH = /\/api\/learner\/summary/u;
+const NO_ACCOUNT_NOTE = "Start free, no account needed.";
 
 /** A test-owned course with one chapter whose one lesson is written, so each page has a question. */
 async function createStaticCourse() {
@@ -49,11 +51,11 @@ async function startLessonRun({
   ]);
 }
 
-/** Holds a page's progress reads until `release`, so the page is measured before and after. */
-async function holdProgressReads(page: Page) {
+/** Holds a page's reads of `url` until `release`, so the page is measured before and after. */
+async function holdReads(page: Page, url: RegExp) {
   const held = Promise.withResolvers<null>();
 
-  await page.route(PROGRESS_PATH, async (route) => {
+  await page.route(url, async (route) => {
     const response = await route.fetch();
     await held.promise;
     await route.fulfill({ response });
@@ -117,9 +119,10 @@ async function measureTryCard({
   try {
     await startLesson?.(user.id);
 
-    const { release } = await holdProgressReads(page);
+    const { release } = await holdReads(page, PROGRESS_PATH);
+    const asked = page.waitForRequest(PROGRESS_PATH);
     await page.goto(coursePath);
-    await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+    await asked;
 
     const card = getTryCard(page);
     const before = await card.boundingBox();
@@ -139,6 +142,37 @@ async function measureTryCard({
   }
 }
 
+/**
+ * A course page's hero for someone with a session, as it painted (their learner summary held, so
+ * only the session hint speaks) and again once the summary answers: its box and whether the
+ * no-account note shows.
+ */
+async function measureHero({
+  coursePath,
+  page,
+  title,
+}: {
+  coursePath: string;
+  page: Page;
+  title: string;
+}) {
+  const { release } = await holdReads(page, SUMMARY_PATH);
+  await page.goto(coursePath);
+
+  const hero = page.getByRole("region", { exact: true, name: title });
+  const note = hero.getByText(NO_ACCOUNT_NOTE);
+  await expect(hero.getByRole("link", { name: "Build my plan" })).toBeVisible();
+
+  const painted = { box: await hero.boundingBox(), note: await note.isVisible() };
+
+  // The page reads the learner's course bits once the summary has answered and rendered.
+  const known = page.waitForRequest(PROGRESS_PATH);
+  release();
+  await known;
+
+  return { known: { box: await hero.boundingBox(), note: await note.isVisible() }, painted };
+}
+
 test.describe("catalog pages and the learner's own bits", () => {
   // The page is the same for everyone: what's personal is read in the browser after it shows. A
   // server render that read the learner (their goal on the course) would put "Continue your plan"
@@ -154,14 +188,14 @@ test.describe("catalog pages and the learner's own bits", () => {
       const served = await getServedText(page, coursePath);
 
       expect(served).toContain("Build my plan");
-      expect(served).toContain("Start free, no account needed.");
+      expect(served).toContain(NO_ACCOUNT_NOTE);
       expect(served).not.toContain("Continue your plan");
 
       await page.goto(coursePath);
 
       await expect(page.getByRole("link", { name: "Continue your plan" })).toHaveCount(2);
       await expect(page.getByRole("link", { name: "Build my plan" })).toHaveCount(0);
-      await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+      await expect(page.getByText(NO_ACCOUNT_NOTE).filter({ visible: true })).toHaveCount(0);
     } finally {
       await context.close();
     }
@@ -175,7 +209,7 @@ test.describe("catalog pages and the learner's own bits", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
-    await expect(page.getByText("Start free, no account needed.").first()).toBeVisible();
+    await expect(page.getByText(NO_ACCOUNT_NOTE).first()).toBeVisible();
     expect(reads).toStrictEqual([]);
   });
 
@@ -192,7 +226,7 @@ test.describe("catalog pages and the learner's own bits", () => {
 
       await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
       await expect(page.getByRole("link", { name: "Continue your plan" })).toHaveCount(0);
-      await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+      await expect(page.getByText(NO_ACCOUNT_NOTE).filter({ visible: true })).toHaveCount(0);
 
       // The hero, the closing and the question share one read.
       expect(reads).toHaveLength(1);
@@ -319,7 +353,7 @@ test.describe("catalog pages and the learner's own bits", () => {
     await startLessonRun({ lessonId: lesson.id, stepId: steps[0]!.id, userId: user.id });
 
     try {
-      const { release } = await holdProgressReads(page);
+      const { release } = await holdReads(page, PROGRESS_PATH);
       await page.goto(lessonPath);
       await expect(page.getByText("No sign-up needed.", { exact: false })).toBeVisible();
 
@@ -334,6 +368,40 @@ test.describe("catalog pages and the learner's own bits", () => {
     }
   });
 
+  test("an account never sees the no-account note, and its line stays so the hero doesn't move", async ({
+    browser,
+  }) => {
+    const { course, coursePath } = await createStaticCourse();
+    const { context, page } = await openAsLearner(browser);
+
+    try {
+      const { known, painted } = await measureHero({ coursePath, page, title: course.title });
+
+      expect(painted.note).toBe(false);
+      expect(known.note).toBe(false);
+      expect(known.box).toStrictEqual(painted.box);
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("a guest gets the no-account note once the summary says so, in the line it kept", async ({
+    browser,
+  }) => {
+    const { course, coursePath } = await createStaticCourse();
+    const { context, page } = await openAsGuest(browser);
+
+    try {
+      const { known, painted } = await measureHero({ coursePath, page, title: course.title });
+
+      expect(painted.note).toBe(false);
+      expect(known.note).toBe(true);
+      expect(known.box).toStrictEqual(painted.box);
+    } finally {
+      await context.close();
+    }
+  });
+
   test("a guest keeps the no-account note and the visitor's ways in", async ({ browser }) => {
     const { coursePath } = await createStaticCourse();
     const { context, page } = await openAsGuest(browser);
@@ -343,7 +411,7 @@ test.describe("catalog pages and the learner's own bits", () => {
       await page.waitForLoadState("networkidle");
 
       await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
-      await expect(page.getByText("Start free, no account needed.").first()).toBeVisible();
+      await expect(page.getByText(NO_ACCOUNT_NOTE).first()).toBeVisible();
     } finally {
       await context.close();
     }
