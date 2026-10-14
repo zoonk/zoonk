@@ -6,10 +6,11 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../plans/planner/plan-state";
+import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
-import { ensureStudySession } from "../sessions/ensure-study-session";
+import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-builder";
 import { type BossTiming, getBossTimings } from "./_utils/boss-reached";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { loadChallengeCall } from "./_utils/challenge-call";
@@ -176,8 +177,8 @@ async function readTodayBlockStatus({
 }
 
 /**
- * Where the challenge stands today. On its day, today's session is planned first (as Today plans
- * it), so the intro says exactly what it asks, or that the day was planned without it.
+ * A due challenge can be offered before the learner opens the day. Its queue is checked in
+ * memory; only the Start POST may create the session and its blocks.
  */
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, timeZone, today, userId } = challenge;
@@ -185,22 +186,57 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const due = timing === "nextSession" && item.status === "todo";
   const plusRequired = await needsPlus(challenge);
 
-  if (due && !plusRequired && goal.status === "active") {
-    await ensureStudySession({ goal, localDate: today, timeZone, userId });
-  }
-
   const block = await findChallengeBlock({ challenge });
   const todayBlock = getTodayBlock({ block, today });
+
+  const upcomingBlock =
+    !todayBlock && due && !plusRequired && goal.status === "active"
+      ? buildSessionBlocks(
+          await loadSessionBuildInput({
+            goal,
+            localDate: today,
+            now: new Date(),
+            timeZone,
+            userId,
+          }),
+        ).blocks.find((candidate) => candidate.payload.planItemId === item.id)
+      : null;
 
   const status = getChallengeStatus({
     due,
     itemStatus: item.status,
     plusRequired,
     queued: timing === "queued",
-    todayBlockStatus: await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
+    todayBlockStatus: upcomingBlock
+      ? "pending"
+      : await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
   });
 
-  return { block, plusRequired, status, todayBlock };
+  return {
+    plusRequired,
+    previewBlock: upcomingBlock ? null : block,
+    status,
+    todayBlock,
+    upcomingBlock,
+  };
+}
+
+function loadRecordings({
+  block,
+  isMock,
+  planned,
+}: {
+  block: ChallengeBlock | null;
+  isMock: boolean;
+  planned: PlannedBlock | null | undefined;
+}) {
+  if (isMock || (!block && !planned)) {
+    return 0;
+  }
+
+  return countBlockRecordings(
+    block ? readBlockPayload(block).itemIds : (planned?.payload.itemIds ?? []),
+  );
 }
 
 /**
@@ -225,17 +261,20 @@ export async function getChallenge({
   const { goal, item, today, userId } = challenge;
   const kind = getKind(challenge);
   const isMock = item.kind === "mock";
-  const { block, plusRequired, status, todayBlock } = await loadChallengeDay(challenge);
-  const blockId = getOpenBlockId({ block, todayBlock });
+
+  const { plusRequired, previewBlock, status, todayBlock, upcomingBlock } =
+    await loadChallengeDay(challenge);
+
+  const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
   const [size, canMoveIt, lastResult, counts, recordings, topics, call] = await Promise.all([
-    loadChallengeSize({ block, challenge }),
+    loadChallengeSize({ block: previewBlock, challenge, planned: upcomingBlock }),
     // A mock the plan doesn't include has no day of its own to move.
     status !== "plusRequired" && canMove({ challenge, todayBlock }),
     kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
     loadMilestoneCounts(userId),
-    isMock || !block ? 0 : countBlockRecordings(readBlockPayload(block).itemIds),
-    loadChallengeTopics({ block, challenge }),
+    loadRecordings({ block: previewBlock, isMock, planned: upcomingBlock }),
+    loadChallengeTopics({ block: previewBlock, challenge }),
     loadChallengeCall({ blockId, challenge }),
   ]);
 
@@ -258,7 +297,12 @@ export async function getChallenge({
       mock: isMock,
       netScored: size.netScored,
       number: size.number,
-      passMark: getChallengePassMark({ block, call, kind, questions: size.questions }),
+      passMark: getChallengePassMark({
+        block: previewBlock,
+        call,
+        kind,
+        questions: size.questions,
+      }),
       phase: findPhase(challenge),
       planItemId: item.id,
       questions: size.questions,
@@ -274,7 +318,7 @@ export async function getChallenge({
       // The exam's real start time when it has one, else the time the learner's own words gave.
       startTime: size.startTime ?? goal.studyTime,
       status: getAvailableChallengeStatus({
-        block,
+        block: previewBlock,
         call,
         isMock,
         questions: size.questions,

@@ -1,13 +1,17 @@
 import "server-only";
+import { buildMockConditions } from "../../exams/mocks/_utils/mock-conditions";
 import { countFinishedMocksBefore } from "../../exams/mocks/_utils/mock-number";
 import { loadMockPace } from "../../exams/mocks/_utils/mock-pace";
+import { getAskedItemIds } from "../../exams/mocks/_utils/mock-sections";
+import { loadAskedTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { getMock } from "../../exams/mocks/get-mock";
-import { readMockWrittenParts } from "../../exams/mocks/mock-left-out";
+import { listSatMockLeftOut, readMockWrittenParts } from "../../exams/mocks/mock-left-out";
 import { estimateMockMinutes } from "../../exams/mocks/mock-options";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { countAskableQuestions } from "../../sessions/_utils/askable-questions";
 import { readBlockPayload } from "../../sessions/block-payload";
+import { type PlannedBlock } from "../../sessions/session-builder";
 import { type ChallengeSection, type ChallengeView } from "../challenge-contract";
 import { getCheckpointMinutes } from "../checkpoint-minutes";
 import { CHECKPOINT_QUESTIONS, getPlannedQuestions } from "../checkpoint-rules";
@@ -34,9 +38,11 @@ type ChallengeSize = {
 async function loadMockSize({
   block,
   challenge,
+  planned,
 }: {
   block: ChallengeBlock | null;
   challenge: OwnedChallenge;
+  planned?: PlannedBlock | null;
 }): Promise<ChallengeSize> {
   const [fixed, pace] = await Promise.all([
     block ? getMock(block.id) : null,
@@ -70,6 +76,10 @@ async function loadMockSize({
     };
   }
 
+  if (planned) {
+    return loadPreviewMockSize({ challenge, pace, planned });
+  }
+
   const { goal, item, today } = challenge;
 
   const [card, finished] = await Promise.all([
@@ -95,6 +105,59 @@ async function loadMockSize({
     startTime: card.startTime,
     timeZone: card.startTime ? card.timeZone : null,
     written: card.conditions.written,
+  };
+}
+
+/** The unstarted intro reads the same conditions that Start will persist, without inventing a block. */
+async function loadPreviewMockSize({
+  challenge,
+  pace,
+  planned,
+}: {
+  challenge: OwnedChallenge;
+  pace: Awaited<ReturnType<typeof loadMockPace>>;
+  planned: PlannedBlock;
+}): Promise<ChallengeSize> {
+  const { goal, today, userId } = challenge;
+  const structure = goal.examBlueprint ? readBlueprintContent(goal.examBlueprint).structure : null;
+
+  const conditions = await buildMockConditions({
+    blueprint: goal.examBlueprint,
+    goal,
+    payload: planned.payload,
+    sessionDate: today,
+    structure,
+    userId,
+  });
+
+  const [finished, typed] = await Promise.all([
+    countFinishedMocksBefore({ goalId: goal.id }),
+    loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
+  ]);
+
+  const minutes = conditions.sections.reduce((sum, section) => sum + section.minutes, 0);
+  const questions = conditions.sections.reduce((sum, section) => sum + section.questions, 0);
+
+  return {
+    estimatedMinutes: estimateMockMinutes({ minutes, pace, questions }),
+    fullLength: conditions.fullLength,
+    leftOut: listSatMockLeftOut({ conditions, structure, typed }),
+    minutes,
+    netScored: conditions.scoring === "net",
+    number: finished + 1,
+    questions,
+    sections: conditions.sections.flatMap(
+      ({ minutes: time, name, questions: count, tools }, index) =>
+        count > 0 ? [{ index, minutes: time, name, questions: count, tools: tools ?? null }] : [],
+    ),
+    startTime: conditions.startTime,
+    timeZone: conditions.startTime ? conditions.timeZone : null,
+    written: readMockWrittenParts({
+      day: conditions.day,
+      essays: conditions.sections.reduce((sum, section) => sum + section.essays.length, 0),
+      fullLength: conditions.fullLength,
+      structure,
+    }),
   };
 }
 
@@ -148,12 +211,14 @@ const CALL_SIZE: ChallengeSize = {
 export function loadChallengeSize({
   block,
   challenge,
+  planned,
 }: {
   block: ChallengeBlock | null;
   challenge: OwnedChallenge;
+  planned?: PlannedBlock | null;
 }): ChallengeSize | Promise<ChallengeSize> {
   if (challenge.item.kind === "mock") {
-    return loadMockSize({ block, challenge });
+    return loadMockSize({ block, challenge, planned });
   }
 
   if (isLanguageCall(challenge)) {
