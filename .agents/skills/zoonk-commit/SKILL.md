@@ -9,9 +9,9 @@ metadata:
 
 # Commit and PR wording
 
-Follow the repository's local-review and explicit-commit boundary. Drafting a message does not authorize a commit or push. An authorized PR uses one commit; never amend or force-push.
+Commit each change's own files as it lands. Stage only that change's paths; never use `git add -A`, `git add .`, or `git commit -a` on a shared tree. Before committing, check the path list and diff for secrets, `.env*`, keys, logs, and temporary or scratch files. Never amend, force-push, or use `--no-verify`. Push only when asked.
 
-Before an authorized commit, opening a PR, or marking it ready for review, complete the [root commit and PR verification gate](../../../AGENTS.md#commit-and-pr-verification-gate). This includes the full local PR and `main` quality checks, including Main and API E2E, and applies again before every new commit on an existing PR. Include the final results in the PR's verification section.
+Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. The full [root PR verification gate](../../../AGENTS.md#pr-verification-gate) applies only before opening a PR (including a draft), marking it ready for review, or merging it. It includes the full local PR and `main` quality checks, including Main and API E2E. Include the final results in the PR's verification section.
 
 Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
 

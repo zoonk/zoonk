@@ -4,7 +4,7 @@ Read the relevant section when starting local services, signing in, or choosing 
 
 ## Commands
 
-Run commands from the repository root using `mise x -- pnpm ...` in this environment. Read package scripts to select supported commands. These are a menu for checks during implementation; before committing or handing off a PR, the [root commit and PR verification gate](../../AGENTS.md#commit-and-pr-verification-gate) requires the full PR and `main` CI quality checks:
+Run commands from the repository root using `mise x -- pnpm ...` in this environment. Read package scripts to select supported commands. Commits require the change's relevant checks and reported results. Before opening a PR (including a draft), marking it ready for review, or merging it, the [root PR verification gate](../../AGENTS.md#pr-verification-gate) requires the full PR and `main` CI quality checks:
 
 | Change                            | Relevant checks                                                                                          |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
