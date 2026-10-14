@@ -472,7 +472,12 @@ struct AccountDeletionView: View {
 
   /// Requests the initial or replacement proof without discarding a still-usable code when the mail request itself fails.
   private func sendEmailCode() async {
-    let didSendCode = await session.sendEmailCode(email: normalizedEmail)
+    guard
+      session.account?.user.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        == normalizedEmail
+    else { return }
+
+    let didSendCode = await session.sendAccountDeletionEmailCode()
 
     guard didSendCode else {
       return

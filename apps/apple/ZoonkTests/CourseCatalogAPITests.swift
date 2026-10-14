@@ -22,9 +22,11 @@ final class CourseCatalogAPITests: XCTestCase {
             "data": [
               {
                 "description": "Understand the night sky.",
+                "estimatedMinutes": 45,
                 "id": "00000000-0000-7000-8000-000000000002",
                 "imageUrl": "https://cdn.zoonk.test/course.png",
                 "language": "en",
+                "lessonCount": 3,
                 "organization": {
                   "id": "00000000-0000-7000-8000-000000000001",
                   "logo": "https://cdn.zoonk.test/organization.png",

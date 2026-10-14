@@ -458,7 +458,7 @@ private final class ProgressAccountAPIStub: AccountAPIClient, @unchecked Sendabl
     account
   }
 
-  func sendEmailCode(email: String) async throws {
+  func sendEmailCode(email: String, token: String?) async throws {
     throw AccountAPIError.invalidResponse
   }
 

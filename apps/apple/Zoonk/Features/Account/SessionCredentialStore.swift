@@ -107,6 +107,10 @@ struct SessionCredentialStore: SessionCredentialStoring {
 final class InMemorySessionCredentialStore: SessionCredentialStoring {
   private var token: String?
 
+  init(token: String? = nil) {
+    self.token = token
+  }
+
   /// Keeps UI tests isolated from the simulator's real Keychain and from any iCloud account signed into the host.
   func delete() throws {
     token = nil
