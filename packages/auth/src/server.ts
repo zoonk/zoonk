@@ -21,7 +21,7 @@ import {
   IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
 } from "./config";
-import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
+import { ensureUserProgressAfterAuthCreate, reportSignUpAfterAuthCreate } from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
@@ -30,6 +30,7 @@ import { accessGuardsPlugin } from "./plugins/access-guards";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
+import { nameProviderAccount } from "./provider-username";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
@@ -52,7 +53,18 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
-    user: { create: { after: ensureUserProgressAfterAuthCreate, before: guardUserCreation } },
+    user: {
+      create: {
+        after: async (user, context) => {
+          await ensureUserProgressAfterAuthCreate(user, context);
+          await reportSignUpAfterAuthCreate(user, context);
+        },
+        before: async (user, context) => {
+          await guardUserCreation(user, context);
+          return nameProviderAccount(user, context);
+        },
+      },
+    },
   },
   hooks: { before: validateEmailBeforeOTP },
   session: {

@@ -95,13 +95,14 @@ describe("current user", () => {
   describe(suggestCurrentUsername, () => {
     it("suggests a free username from the email to an account without one", async () => {
       const prefix = `setup${randomUUID().slice(0, 8)}`;
-      const user = await userFixture({ email: `${prefix}@zoonk.test`, name: "" });
-      await prisma.user.update({ data: { username: null }, where: { id: user.id } });
-      mockSession(user.id);
 
-      vi.mocked(auth.api.isUsernameAvailable).mockImplementation(async (request) => ({
-        available: request?.body.username !== prefix,
-      }));
+      const [user, other] = await Promise.all([
+        userFixture({ email: `${prefix}@zoonk.test`, name: "" }),
+        userFixture({ email: `${prefix}@other.test` }),
+      ]);
+
+      await prisma.user.update({ data: { username: prefix }, where: { id: other.id } });
+      mockSession(user.id);
 
       await expect(suggestCurrentUsername()).resolves.toMatch(new RegExp(`^${prefix}_\\d+$`, "u"));
 
@@ -115,7 +116,6 @@ describe("current user", () => {
       mockSession(user.id);
 
       await expect(suggestCurrentUsername()).resolves.toBe(username);
-      expect(auth.api.isUsernameAvailable).not.toHaveBeenCalled();
     });
 
     it("suggests nothing without a session", async () => {

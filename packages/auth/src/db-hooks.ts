@@ -1,9 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { type BetterAuthOptions } from "better-auth/types";
-
-type UserCreateAfterHook = NonNullable<
-  NonNullable<NonNullable<BetterAuthOptions["databaseHooks"]>["user"]>["create"]
->["after"];
+import { reportSignUp } from "./sign-up-events";
+import { type UserCreateAfterHook } from "./user-create-hooks";
 
 /**
  * Better Auth owns account creation, but learner stats live in our app schema.
@@ -16,4 +13,16 @@ export const ensureUserProgressAfterAuthCreate: UserCreateAfterHook = async (use
     update: {},
     where: { userId: user.id },
   });
+};
+
+/**
+ * A sign-up is the account being created, whatever creates it: a guest's own row isn't one, and
+ * signing in again never creates another, so analytics hear of each account once.
+ */
+export const reportSignUpAfterAuthCreate: UserCreateAfterHook = async (user) => {
+  if (user.isAnonymous === true) {
+    return;
+  }
+
+  await reportSignUp({ userId: user.id });
 };

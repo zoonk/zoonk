@@ -1,11 +1,5 @@
-import { type BetterAuthOptions } from "better-auth/types";
 import { assertSignUpEmailAllowed } from "../email-signup-policy";
-
-type UserCreateBeforeHook = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<BetterAuthOptions["databaseHooks"]>["user"]>["create"]
-  >["before"]
->;
+import { type UserCreateBeforeHook } from "../user-create-hooks";
 
 /**
  * Guards every new account, whatever sign-up method creates it, with the email policy. Guest users

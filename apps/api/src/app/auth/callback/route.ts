@@ -1,9 +1,6 @@
-import { trackAuthCompleted } from "@/lib/server-track-events";
-import { getAuthError } from "@zoonk/auth/errors";
+import { trackSignInCompleted } from "@/lib/server-track-events";
 import { getRouterPayloadFallback } from "@zoonk/core/navigation/document-route";
-import { suggestCurrentUsername, updateCurrentUser } from "@zoonk/core/users/current";
 import { getSession } from "@zoonk/core/users/session";
-import { safeAsync } from "@zoonk/utils/error";
 import { MAIN_URL } from "@zoonk/utils/url";
 import { getLocale } from "next-intl/server";
 import { type NextRequest } from "next/server";
@@ -19,31 +16,6 @@ const MAIN_APP_LOGIN_URL = new URL("/login", MAIN_URL).toString();
 
 const UNTRUSTED_ORIGIN_PATH = "/auth/untrusted-origin";
 
-/**
- * A new account the provider already named (Google, Apple) gets a username made from its email
- * instead of a screen asking for one; it can change both in its profile. False sends it to the
- * setup screen: no name yet (an email sign-up), or the username was taken in the meantime.
- */
-async function nameNewAccount({ name }: { name: string }): Promise<boolean> {
-  const username = name ? await suggestCurrentUsername() : null;
-
-  if (!username) {
-    return false;
-  }
-
-  const { error } = await safeAsync(() => updateCurrentUser({ input: { username } }));
-
-  if (!error) {
-    return true;
-  }
-
-  if (getAuthError(error)?.code === "USERNAME_IS_ALREADY_TAKEN") {
-    return false;
-  }
-
-  throw error;
-}
-
 function redirectTo(location: string): Response {
   return new Response(null, {
     headers: { "Cache-Control": "no-store", Location: location },
@@ -53,9 +25,12 @@ function redirectTo(location: string): Response {
 
 /**
  * Where a finished sign-in goes, answered as redirects before anything renders, so the screen the
- * learner pressed Continue on stays until the app it goes back to opens: the profile setup for a
- * new account without a name, otherwise the app that asked (`redirectTo`) with a one-time token for
- * this session. Opened by the router (the setup's redirect), it runs as a document load instead.
+ * learner pressed Continue on stays until the app it goes back to opens: the profile setup for an
+ * account without a name or username, otherwise the app that asked (`redirectTo`) with a one-time
+ * token for this session. Opened by the router (the setup's redirect), it runs as a document load
+ * instead. A GET writes nothing of the account's: Google and Apple accounts get their username as
+ * they're created, the setup saves the rest, and "Sign Up Completed" goes out when the account is
+ * created, so opening this again only hands the session over again.
  */
 export async function GET(request: NextRequest) {
   const routerFallback = getRouterPayloadFallback(request);
@@ -78,14 +53,8 @@ export async function GET(request: NextRequest) {
     return redirectTo(UNTRUSTED_ORIGIN_PATH);
   }
 
-  const locale = await getLocale();
-
   if (!session.user.username || !session.user.name) {
-    await trackAuthCompleted({ action: "sign-up", locale, userId: session.user.id });
-
-    if (!(await nameNewAccount({ name: session.user.name }))) {
-      return redirectTo(getSetupHref(redirectTarget));
-    }
+    return redirectTo(getSetupHref(redirectTarget));
   }
 
   if (!redirectTarget) {
@@ -98,7 +67,7 @@ export async function GET(request: NextRequest) {
     return redirectTo(UNTRUSTED_ORIGIN_PATH);
   }
 
-  await trackAuthCompleted({ action: "sign-in", locale, userId: session.user.id });
+  await trackSignInCompleted({ locale: await getLocale(), userId: session.user.id });
 
   return redirectTo(handoff.url);
 }

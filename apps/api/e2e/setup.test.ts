@@ -75,13 +75,15 @@ test.describe("Profile Setup Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("an account that already has a name skips the setup, with a username from its email", async ({
+  test("revisiting the callback writes nothing; a named account without a username confirms one on the setup", async ({
     page,
   }) => {
     const prefix = `e2enamed${Date.now()}`;
     const email = `${prefix}@zoonk.test`;
+    const callback = `/auth/callback?redirectTo=${encodeURIComponent(REDIRECT_URL)}`;
+    const unnamed = { displayUsername: null, name: "Named Learner", username: null };
 
-    // As Google or Apple leave a new account: named, without a username.
+    // Named, without a username: a native sign-up that left its setup, or one whose username was taken.
     await prisma.user.create({ data: { email, emailVerified: true, name: "Named Learner" } });
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
@@ -90,19 +92,47 @@ test.describe("Profile Setup Flow", () => {
     await page.waitForURL(/\/auth\/otp/u);
 
     const otp = await getOTPForEmail(email);
+    await page.getByRole("textbox", { name: "Code from the email" }).fill(otp ?? "");
+    await page.waitForURL(/\/auth\/setup/u);
 
-    const redirectPromise = page.waitForRequest((req) => {
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
+      unnamed,
+    );
+
+    // Opening the callback again only sends the account back to its setup.
+    await page.goto(callback);
+    await page.waitForURL(/\/auth\/setup/u);
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
+      unnamed,
+    );
+
+    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toHaveValue(
+      "Named Learner",
+    );
+
+    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
+
+    const handoff = page.waitForRequest((req) => {
       const url = req.url();
       return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
     });
 
-    await page.getByRole("textbox", { name: "Code from the email" }).fill(otp ?? "");
-    await redirectPromise;
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await handoff;
 
-    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject({
-      name: "Named Learner",
-      username: prefix,
-    });
+    const saved = await prisma.user.findUniqueOrThrow({ where: { email } });
+    expect(saved).toMatchObject({ name: "Named Learner", username: prefix });
+
+    // A finished account opening the callback again is handed over again, and nothing changes.
+    const again = await page.request.get(callback, { maxRedirects: 0 });
+    const location = new URL(again.headers().location ?? "", REDIRECT_URL);
+
+    expect(again.status()).toBe(307);
+    expect(`${location.origin}${location.pathname}`).toBe(REDIRECT_URL);
+    expect(location.searchParams.get("token")).toBeTruthy();
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toStrictEqual(saved);
 
     await cleanupVerifications(email);
   });

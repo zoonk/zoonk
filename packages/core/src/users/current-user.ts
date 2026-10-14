@@ -1,7 +1,7 @@
 import "server-only";
-import { randomInt } from "node:crypto";
 import { auth } from "@zoonk/auth";
-import { normalizeUsername, suggestUsername } from "@zoonk/auth/username-rules";
+import { findAvailableUsername } from "@zoonk/auth/available-username";
+import { normalizeUsername } from "@zoonk/auth/username-rules";
 import { type User, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { headers } from "next/headers";
@@ -147,42 +147,10 @@ export async function getUsernameAvailability(username: string) {
   return { isAvailable: result.available, username: normalizedUsername };
 }
 
-const USERNAME_SUFFIX_TRIES = 3;
-const USERNAME_SUFFIX_RANGE = 10_000;
-
-/** A short random number for a username whose plain version is taken. */
-function getUsernameSuffix(): string {
-  return String(randomInt(USERNAME_SUFFIX_RANGE));
-}
-
-/**
- * The first free username built from the email: its plain name part, or that with a few random
- * numbers. The later update stays authoritative if another account takes it in between.
- */
-async function findAvailableUsername(email: string): Promise<string> {
-  const candidates = [
-    suggestUsername({ email }),
-    ...Array.from({ length: USERNAME_SUFFIX_TRIES }, () =>
-      suggestUsername({ email, suffix: getUsernameSuffix() }),
-    ),
-  ];
-
-  const availability = await Promise.all(
-    candidates.map((candidate) => getUsernameAvailability(candidate)),
-  );
-
-  const available = availability.find((result) => result.isAvailable);
-
-  if (!available) {
-    throw new Error("No available username for this account");
-  }
-
-  return available.username;
-}
-
 /**
  * The username a new account's setup starts from: the one it has, or a free one made from its
- * email, so the learner only types one when they want another. Null without a session.
+ * email, so the learner only types one when they want another. Null without a session, or when
+ * every username made from the email is taken.
  */
 export async function suggestCurrentUsername(): Promise<string | null> {
   const session = await getSession();
