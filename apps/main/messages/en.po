@@ -42,11 +42,9 @@ msgstr "Home page"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 #: src/components/catalog/catalog-not-found.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"

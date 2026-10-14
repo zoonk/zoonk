@@ -60,14 +60,13 @@ export function LearnSidebarSearch({
   );
 }
 
-type SidebarMenu = "courses" | "exam" | "mindMaps" | "mistakes" | "speaking" | "stats";
+type SidebarMenu = "exam" | "mindMaps" | "mistakes" | "speaking" | "stats";
 
 /**
- * Pages a shortcut also stands for, at their own addresses: a catalog course's pages (`/b/…`), the
- * exam's mock chooser and each statistic's page.
+ * Pages a shortcut also stands for, at their own addresses: the exam's mock chooser and each
+ * statistic's page.
  */
 const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
-  courses: ["/b"],
   exam: ["/mock/new"],
   stats: [
     getMenu("activity").url,

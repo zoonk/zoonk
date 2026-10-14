@@ -61,8 +61,8 @@ function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
 
 /**
  * `/start` while it loads, in the shape of its first screen: its question and line in their own
- * words, the goal's field (the words over its buttons on a phone), the examples and the way to the
- * courses, with how it works in the page's aside from 72rem.
+ * words, the goal's field (the words over its buttons on a phone) and the examples, with how it
+ * works in the page's aside from 72rem.
  */
 export function StartEntrySkeleton() {
   const t = useExtracted();
@@ -84,8 +84,6 @@ export function StartEntrySkeleton() {
             <Skeleton className="h-3 w-20" />
             <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
           </div>
-
-          <Skeleton className="h-5 w-32" />
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>

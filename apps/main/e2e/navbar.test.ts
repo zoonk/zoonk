@@ -39,12 +39,11 @@ test.describe("Catalog chrome", () => {
 
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
-    // The sidebar says where the learner is: the catalog is one of its places.
     await expect(
       page
         .getByRole("complementary", { name: "Sidebar" })
         .getByRole("link", { name: "Explore courses" }),
-    ).toHaveAttribute("aria-current", "page");
+    ).toHaveCount(0);
 
     const tabs = page.getByRole("navigation", { name: "Learning tabs" }).first();
     await tabs.getByRole("link", { name: /Today/u }).click();
@@ -53,7 +52,7 @@ test.describe("Catalog chrome", () => {
 });
 
 test.describe("User menu - Account", () => {
-  test("says whose account it is and holds search, statistics, the catalog, settings and the way out; settings keep the app's sidebar and lead back", async ({
+  test("says whose account it is and holds search, statistics, settings and the way out; settings keep the app's sidebar and lead back", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -65,14 +64,7 @@ test.describe("User menu - Account", () => {
 
     await expect(page.getByRole("menu")).toContainText(noProgressUser.email);
 
-    await expect(items).toHaveText([
-      /^Search/u,
-      /^Statistics/u,
-      "Explore courses",
-      "Settings",
-      "Help",
-      "Log out",
-    ]);
+    await expect(items).toHaveText([/^Search/u, /^Statistics/u, "Settings", "Help", "Log out"]);
 
     await page.getByRole("menuitem", { name: "Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
@@ -161,14 +153,7 @@ test.describe("User menu - Account", () => {
 
     const items = await openUserMenu(page);
 
-    await expect(items).toHaveText([
-      /^Search/u,
-      /^Statistics/u,
-      "Explore courses",
-      "Settings",
-      "Help",
-      "Log out",
-    ]);
+    await expect(items).toHaveText([/^Search/u, /^Statistics/u, "Settings", "Help", "Log out"]);
 
     await page.getByRole("menuitem", { name: "Search or ask…" }).click();
 
@@ -205,7 +190,6 @@ test.describe("User menu - Guest", () => {
     await expect(items).toHaveText([
       /^Search/u,
       /^Statistics/u,
-      "Explore courses",
       "Pricing",
       "Settings",
       "Help",

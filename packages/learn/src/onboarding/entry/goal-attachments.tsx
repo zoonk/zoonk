@@ -157,7 +157,6 @@ export function AttachableGoalEntry({
       canSubmitEmpty={attached.length > 0 && intent !== null}
       defaultGoal={defaultGoal}
       error={error}
-      exploreHref={routes.explore}
       fromSharedPlan={fromSharedPlan}
       notice={notice}
       onAttach={() => setOpen((previous) => !previous)}

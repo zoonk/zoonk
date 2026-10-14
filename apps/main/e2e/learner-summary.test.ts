@@ -404,7 +404,9 @@ test.describe("learner summary", () => {
     await expect(accountRow(page, second.name)).toBeVisible();
 
     // Back on the catalog, which reads nothing itself, the old read finally answers.
-    await sidebar(page).getByRole("link", { name: "Explore courses" }).click();
+    const catalogPalette = await openPaletteWithKeyboard(page);
+    await catalogPalette.getByRole("combobox").fill("Explore courses");
+    await catalogPalette.getByRole("option", { name: /^Explore courses/u }).click();
     await page.waitForURL(/\/courses$/u);
 
     held.resolve(true);
@@ -480,7 +482,9 @@ test.describe("learner summary", () => {
     const page = await openAs(context, "/today");
 
     await expect(sidebar(page).getByRole("link", { name: /missions today/u })).toBeVisible();
-    await sidebar(page).getByRole("link", { name: "Explore courses" }).click();
+    const catalogPalette = await openPaletteWithKeyboard(page);
+    await catalogPalette.getByRole("combobox").fill("Explore courses");
+    await catalogPalette.getByRole("option", { name: /^Explore courses/u }).click();
     await page.waitForURL(/\/courses$/u);
 
     // The learner logs out in another tab.

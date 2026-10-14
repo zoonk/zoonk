@@ -80,7 +80,6 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
 
 export const WEB_ONBOARDING_ROUTES: OnboardingRoutes = {
   course: getCourseHref,
-  explore: "/courses",
   focusTest: (goalId) => `/focus-test?goal=${goalId}`,
   mock: (mockId) => `/mock/${mockId}`,
   placementMock: (goalId) => `/mock/placement/${goalId}`,
