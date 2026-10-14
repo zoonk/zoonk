@@ -24,6 +24,7 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
+      MAIN_PERF_GATES: "true"
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -84,5 +85,9 @@ jobs:
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e
 
-      - name: Run E2E tests
+      - name: Test performance gates
+        run: pnpm test:deploy scripts/perf
+
+      # The supervisor times build:e2e and gates its artifacts before starting Playwright.
+      - name: Build, check performance budgets, and run E2E tests
         run: pnpm e2e:main --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=2

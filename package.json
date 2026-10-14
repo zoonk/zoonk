@@ -37,6 +37,8 @@
     "lint:fix": "oxlint --fix --deny-warnings .",
     "openapi:check": "pnpm --filter api openapi:check",
     "openapi:generate": "pnpm --filter api openapi:generate",
+    "perf:build-metrics": "node scripts/perf/check-build-metrics.mts",
+    "perf:check": "node scripts/perf/check-route-js.mts",
     "start": "turbo start",
     "preview": "node scripts/deploy/request-preview.mts",
     "stripe:listen": "node scripts/dev/stripe-listen.mts",

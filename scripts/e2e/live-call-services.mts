@@ -22,14 +22,16 @@ process.env.LIVE_CALL_TEST_PROVIDER_URL = bridge.url;
 
 async function run({
   args,
+  command = "pnpm",
   environment = process.env,
 }: {
   args: string[];
+  command?: string;
   environment?: NodeJS.ProcessEnv;
 }): Promise<boolean> {
   const result = await runForegroundCommand({
     args,
-    command: "pnpm",
+    command,
     currentDirectory: repository,
     environment,
   });
@@ -73,7 +75,7 @@ async function runMain() {
       await writeFile(environmentPath, `${content.trimEnd()}\nNEXT_PUBLIC_API_URL=${api.url}\n`);
     }
 
-    if (!(await run({ args: ["--filter", "main", "build:e2e"] }))) {
+    if (!(await buildMain())) {
       return;
     }
 
@@ -87,6 +89,24 @@ async function runMain() {
       await api.close();
     }
   }
+}
+
+/** CI measures the same build it tests, then gates its artifacts before opening the browser. */
+async function buildMain(): Promise<boolean> {
+  if (process.env.MAIN_PERF_GATES !== "true") {
+    return run({ args: ["--filter", "main", "build:e2e"] });
+  }
+
+  const metrics = resolve(repository, "apps/main/.next-e2e-build-time.txt");
+
+  const built = await run({
+    args: ["-v", "-o", metrics, "pnpm", "--filter", "main", "build:e2e"],
+    command: "/usr/bin/time",
+  });
+
+  await run({ args: ["perf:build-metrics", "--metrics", metrics] });
+
+  return built && run({ args: ["perf:check"] });
 }
 
 try {
