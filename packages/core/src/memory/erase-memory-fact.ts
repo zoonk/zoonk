@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAdminAccess } from "../users/get-admin-access";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { findHistoryIds } from "./_utils/memory-writes";
@@ -10,6 +11,11 @@ import { findHistoryIds } from "./_utils/memory-writes";
 export type MemoryFactEraseResult =
   | { erased: number; status: "erased" }
   | { status: "forbidden" | "notFound" | "unauthorized" };
+
+/** A concurrent erasure must roll back this call's revision and cleanup. */
+class MemoryFactUnavailableError extends Error {
+  override name = "MemoryFactUnavailableError";
+}
 
 /**
  * Erases one learner fact for a support request, together with the older facts it replaced and the
@@ -28,28 +34,55 @@ export async function eraseMemoryFactForSupport(factId: string): Promise<MemoryF
     return { status: "notFound" };
   }
 
-  const result = await prisma.$transaction(async (transaction) => {
-    const fact = await transaction.memoryFact.findUnique({ where: { id: factId } });
+  const result = await prisma
+    .$transaction(async (transaction) => {
+      const fact = await transaction.memoryFact.findUnique({
+        select: { userId: true },
+        where: { id: factId },
+      });
 
-    if (!fact) {
-      return null;
-    }
+      if (!fact) {
+        return null;
+      }
 
-    const historyIds = await findHistoryIds({
-      factId,
-      status: fact.status === "deleted" ? "deleted" : "superseded",
-      transaction,
+      await markLearnerChanged(transaction, { planInputs: false, userId: fact.userId });
+
+      /** The plain owner lookup can predate a competing delete; choose history after admission. */
+      const current = await transaction.memoryFact.findUnique({
+        select: { status: true },
+        where: { id: factId },
+      });
+
+      if (!current) {
+        throw new MemoryFactUnavailableError();
+      }
+
+      const historyIds = await findHistoryIds({
+        factId,
+        status: current.status === "deleted" ? "deleted" : "superseded",
+        transaction,
+      });
+
+      const [{ count }] = await Promise.all([
+        transaction.memoryFact.deleteMany({
+          where: { id: { in: [factId, ...historyIds] }, userId: fact.userId },
+        }),
+        forgetExampleLines({ client: transaction, userId: fact.userId }),
+      ]);
+
+      if (count === 0) {
+        throw new MemoryFactUnavailableError();
+      }
+
+      return { erased: count, userId: fact.userId };
+    })
+    .catch((error: unknown) => {
+      if (error instanceof MemoryFactUnavailableError) {
+        return null;
+      }
+
+      throw error;
     });
-
-    const [{ count }] = await Promise.all([
-      transaction.memoryFact.deleteMany({
-        where: { id: { in: [factId, ...historyIds] }, userId: fact.userId },
-      }),
-      forgetExampleLines({ client: transaction, userId: fact.userId }),
-    ]);
-
-    return { erased: count, userId: fact.userId };
-  });
 
   if (!result) {
     return { status: "notFound" };

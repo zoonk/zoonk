@@ -2,6 +2,7 @@ import "server-only";
 import { type MemoryFact, type TransactionClient, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getSession } from "../users/get-session";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
@@ -155,8 +156,15 @@ export async function undoMemoryChanges(input: MemoryUndoInput): Promise<MemoryU
 
   const userId = session.user.id;
 
+  if (input.changes.length === 0) {
+    return { removedFactIds: [], restored: [], status: "undone" };
+  }
+
   const result = await prisma
-    .$transaction((transaction) => undoInOrder({ changes: input.changes, transaction, userId }))
+    .$transaction(async (transaction) => {
+      await markLearnerChanged(transaction, { planInputs: false, userId });
+      return undoInOrder({ changes: input.changes, transaction, userId });
+    })
     .catch((error: unknown) => {
       if (error instanceof MemoryUndoConflictError) {
         return null;

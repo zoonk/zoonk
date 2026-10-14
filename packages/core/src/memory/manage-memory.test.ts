@@ -9,7 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getMemoryCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
@@ -22,7 +22,9 @@ import { updateMemorySettings } from "./update-memory-settings";
 
 const DAY_MS = 86_400_000;
 const MAX_LEARNER_REVISION = 9_223_372_036_854_775_807n;
-const CONCURRENT_PAIRS = 20;
+const TOTAL_PAIRS = 20;
+/** Eight transactions leave room in the ten-connection pool for post-commit queries. */
+const CONCURRENT_PAIRS = 4;
 
 /** Observe the real waiting lock, rather than guessing when a write reached the revision row. */
 async function waitForBlockedBy(holderPID: number): Promise<void> {
@@ -117,11 +119,15 @@ describe(updateMemorySettings, () => {
       });
     });
 
-    const pid = await locked.promise;
-    const memory = updateMemorySettings({ enabled: false });
-    const settled = Promise.allSettled([first, memory]);
+    let settled: Promise<unknown> = Promise.allSettled([first]);
+    let memory: ReturnType<typeof updateMemorySettings> | undefined;
+
+    void first.catch((error: unknown) => locked.reject(error));
 
     try {
+      const pid = await locked.promise;
+      memory = updateMemorySettings({ enabled: false });
+      settled = Promise.allSettled([first, memory]);
       await waitForBlockedBy(pid);
     } finally {
       resume.resolve(null);
@@ -213,11 +219,15 @@ describe(updateMemoryFact, () => {
       await tx.memoryFact.update({ data: { status: "deleted" }, where: { id: fact.id } });
     });
 
-    const pid = await locked.promise;
-    const memory = updateMemoryFact({ factId: fact.id, input: { statement: "Changed" } });
-    const settled = Promise.allSettled([first, memory]);
+    let settled: Promise<unknown> = Promise.allSettled([first]);
+    let memory: ReturnType<typeof updateMemoryFact> | undefined;
+
+    void first.catch((error: unknown) => locked.reject(error));
 
     try {
+      const pid = await locked.promise;
+      memory = updateMemoryFact({ factId: fact.id, input: { statement: "Changed" } });
+      settled = Promise.allSettled([first, memory]);
       await waitForBlockedBy(pid);
     } finally {
       resume.resolve(null);
@@ -384,14 +394,22 @@ describe("memory and answer transaction lock order", () => {
           userId: user.id,
         });
 
-      const writes = Array.from({ length: CONCURRENT_PAIRS }, (_, index) =>
-        index % 2 === 0 ? [saveMemory(), saveAnswer()] : [saveAnswer(), saveMemory()],
-      ).flat();
+      for (let start = 0; start < TOTAL_PAIRS; start += CONCURRENT_PAIRS) {
+        const writes = Array.from(
+          { length: Math.min(CONCURRENT_PAIRS, TOTAL_PAIRS - start) },
+          (_, offset) =>
+            (start + offset) % 2 === 0
+              ? [saveMemory(), saveAnswer()]
+              : [saveAnswer(), saveMemory()],
+        ).flat();
 
-      try {
-        await Promise.all(writes);
-      } finally {
-        await Promise.allSettled(writes);
+        try {
+          // oxlint-disable-next-line eslint/no-await-in-loop -- Bound concurrent admission to the real pool, keeping every pair concurrent.
+          await Promise.all(writes);
+        } finally {
+          // oxlint-disable-next-line eslint/no-await-in-loop -- Drain every started leaf before a failure can leave the test.
+          await Promise.allSettled(writes);
+        }
       }
 
       await expect(learnerRevision(user.id)).resolves.toBe(40n);
@@ -500,6 +518,7 @@ describe(undoMemoryChanges, () => {
 
     const memory = await getCurrentUserMemory();
     expect(memory?.facts.map((fact) => fact.statement)).toStrictEqual(["Wants Medicine"]);
+    await expect(learnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("undoes nothing when one change can't be undone anymore", async () => {
@@ -522,10 +541,12 @@ describe(undoMemoryChanges, () => {
 
     const untouched = await prisma.memoryFact.findUniqueOrThrow({ where: { id: added.id } });
     expect(untouched.status).toBe("active");
+    await expect(learnerRevision(user.id)).resolves.toBe(0n);
+    expect(revalidateTag).not.toHaveBeenCalled();
   });
 
   it("never touches another learner's facts", async () => {
-    const [owner] = await Promise.all([userFixture(), useLearner()]);
+    const [owner, learner] = await Promise.all([userFixture(), useLearner()]);
     const theirs = await memoryFactFixture({ userId: owner.id });
 
     await expect(
@@ -534,6 +555,71 @@ describe(undoMemoryChanges, () => {
 
     const untouched = await prisma.memoryFact.findUniqueOrThrow({ where: { id: theirs.id } });
     expect(untouched.status).toBe("active");
+    await expect(learnerRevision(owner.id)).resolves.toBe(0n);
+    await expect(learnerRevision(learner.id)).resolves.toBe(0n);
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("bumps a guest once when several added facts are taken back", async () => {
+    const guest = await userFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
+    mockGuestSession(guest.id);
+
+    const facts = await Promise.all([
+      memoryFactFixture({ userId: guest.id }),
+      memoryFactFixture({ userId: guest.id }),
+    ]);
+
+    await expect(
+      undoMemoryChanges({
+        changes: facts.map((fact) => ({ factId: fact.id, previousFactId: null })),
+      }),
+    ).resolves.toMatchObject({ status: "undone" });
+
+    await expect(learnerRevision(guest.id)).resolves.toBe(1n);
+
+    await expect(
+      prisma.memoryFact.count({ where: { status: "deleted", userId: guest.id } }),
+    ).resolves.toBe(2);
+  });
+
+  it("leaves facts untouched when the undo revision cannot advance", async () => {
+    const user = await useLearner();
+    const fact = await memoryFactFixture({ userId: user.id });
+
+    await prisma.user.update({
+      data: { learnerRevision: MAX_LEARNER_REVISION },
+      where: { id: user.id },
+    });
+
+    await expect(
+      undoMemoryChanges({ changes: [{ factId: fact.id, previousFactId: null }] }),
+    ).rejects.toThrow("bigint out of range");
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+    ).resolves.toMatchObject({ deletedAt: null, status: "active" });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(MAX_LEARNER_REVISION);
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("does not bump an empty undo or an unauthenticated attempt", async () => {
+    const user = await useLearner();
+
+    await expect(undoMemoryChanges({ changes: [] })).resolves.toStrictEqual({
+      removedFactIds: [],
+      restored: [],
+      status: "undone",
+    });
+
+    mockSession(null);
+
+    await expect(undoMemoryChanges({ changes: [] })).resolves.toStrictEqual({
+      status: "unauthorized",
+    });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(0n);
   });
 });
 
