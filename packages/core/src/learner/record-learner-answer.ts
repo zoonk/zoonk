@@ -15,6 +15,7 @@ import { fixMistakesAnsweredRight } from "../mistakes/fix-mistakes";
 import { type MistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { type MistakeCauseRequest, recordMistake } from "../mistakes/record-mistake";
 import { createLearnerAttempt } from "./_utils/create-learner-attempt";
+import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
 import { type SkillReview, getAnswerEvents } from "./answer-events";
 import { type GradedAnswer } from "./answer-rating";
@@ -281,9 +282,10 @@ export function publishLearnerAnswer({
 
 /** The answer and its notebook outcome commit together; checkpoints supply their own transaction. */
 export async function recordLearnerAnswer(input: LearnerAnswer): Promise<RecordedLearnerAnswer> {
-  const { events, recorded } = await prisma.$transaction((transaction) =>
-    persistLearnerAnswer({ input, transaction }),
-  );
+  const { events, recorded } = await prisma.$transaction(async (transaction) => {
+    await markLearnerChanged(transaction, { planInputs: true, userId: input.userId });
+    return persistLearnerAnswer({ input, transaction });
+  });
 
   publishLearnerAnswer({ events, userId: input.userId });
 

@@ -1,5 +1,6 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
@@ -46,43 +47,72 @@ type RunSource = {
   userId: string;
 };
 
+/** A competing start won; roll back this transaction's revision before resuming its run. */
+class ResumableLessonRunError extends Error {
+  readonly run: LearningEvent;
+
+  constructor(run: LearningEvent) {
+    super("The lesson already has an open run");
+    this.name = "ResumableLessonRunError";
+    this.run = run;
+  }
+}
+
 /**
  * Opens the run in the ledger with `endedAt` null, so a lesson started and never finished still
  * counts against the completion rate. The goal is the one the tabs show, and a lesson played as a
  * session block keeps the session, so its answers count toward it.
  */
 async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
-  const goalId = await findActiveGoalId(userId);
+  const [goalId, existing] = await Promise.all([
+    findActiveGoalId(userId),
+    findResumableRun(prisma, { lessonId: lesson.id, now: new Date(), userId }),
+  ]);
 
-  return prisma.$transaction(async (tx) => {
-    await lockLessonRuns(tx, { lessonId: lesson.id, userId });
+  if (existing) {
+    return { isNew: false, run: existing };
+  }
 
-    const now = new Date();
-    const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
+  const claimed = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId });
+      await lockLessonRuns(tx, { lessonId: lesson.id, userId });
 
-    if (resumable) {
-      return { isNew: false, run: resumable };
-    }
+      const now = new Date();
+      const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
 
-    await markLearnerChanged(tx, { planInputs: true, userId });
+      if (resumable) {
+        throw new ResumableLessonRunError(resumable);
+      }
 
-    const run = await startLearningEvent(tx, {
-      contentIds: {
-        lessonId: lesson.id,
-        ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
-        ...(studySessionId && { studySessionId }),
-      },
-      goalId,
-      kind: "lesson",
-      lessonKind: LIBRARY_LESSON_KIND,
-      startedAt: now,
-      timeZone,
-      titleSnapshot: lesson.title,
-      userId,
-    });
+      const run = await startLearningEvent(tx, {
+        contentIds: {
+          lessonId: lesson.id,
+          ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
+          ...(studySessionId && { studySessionId }),
+        },
+        goalId,
+        kind: "lesson",
+        lessonKind: LIBRARY_LESSON_KIND,
+        startedAt: now,
+        timeZone,
+        titleSnapshot: lesson.title,
+        userId,
+      });
 
-    return { isNew: true, run };
-  });
+      return { isNew: true, run };
+    }),
+  );
+
+  if (claimed.error instanceof ResumableLessonRunError) {
+    return { isNew: false, run: claimed.error.run };
+  }
+
+  if (claimed.error) {
+    throw claimed.error;
+  }
+
+  return claimed.data;
 }
 
 /** The lesson's answers this run continues from: its own and its unfinished earlier sittings'. */
