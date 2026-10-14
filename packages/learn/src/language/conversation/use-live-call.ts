@@ -15,12 +15,7 @@ import {
 } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { getCallEndsAt } from "./call-deadline";
-import {
-  type LiveCallSession,
-  createLiveCallSession,
-  openCallAudio,
-  watchConnection,
-} from "./live-call-session";
+import { type LiveCallSession } from "./live-call-session";
 import {
   type CallConnectionActions,
   type ConversationConnection,
@@ -36,7 +31,7 @@ import {
 } from "./use-call-controls";
 import { type CallLength, useCallClock, useOpeningCue } from "./use-call-cues";
 import { useCallEvents } from "./use-call-events";
-import { useCallMicrophone } from "./use-call-microphone";
+import { type CallAudio, openCallAudio, useCallMicrophone } from "./use-call-microphone";
 import { useCallObjectives } from "./use-objective-checks";
 
 /**
@@ -76,6 +71,44 @@ const noSubscription = () => () => {
 };
 
 const emptySnapshot = () => EMPTY_STATE;
+
+/**
+ * The realtime client (the AI SDK's session and GPT-Live's events) loads for a call, when it
+ * starts or as the learner reaches for Start, not with the intro. A load that failed is null.
+ */
+export function loadLiveCallSession() {
+  return import("./live-call-session").catch(() => null);
+}
+
+/**
+ * What a call needs before it's reserved, since the server's deadline starts when it is: the
+ * microphone first, so the permission prompt never takes time from the call (a blocked one still
+ * sends silence), and the realtime client loaded meanwhile, usually already in from the learner
+ * reaching for Start. Null when the start was cancelled meanwhile; `live` is null when the client
+ * didn't load.
+ */
+async function openCall({
+  isCurrent,
+  keepAudio,
+}: {
+  isCurrent: () => boolean;
+  keepAudio: (audio: CallAudio) => boolean;
+}) {
+  const live = loadLiveCallSession();
+  const audio = await openCallAudio();
+
+  if (!isCurrent()) {
+    audio.stop();
+    return null;
+  }
+
+  if (!keepAudio(audio)) {
+    return null;
+  }
+
+  const loaded = await live;
+  return isCurrent() ? { audio, live: loaded } : null;
+}
 
 function toConnectionError(
   status: Exclude<ConversationConnection["status"], "ready">,
@@ -262,19 +295,19 @@ export function useLiveCall({
 
       setPhase("connecting");
 
-      // The microphone comes first: the server's deadline starts when the call is reserved, so the
-      // permission prompt never takes time from the call. A blocked microphone still sends silence.
-      const audio = await openCallAudio();
+      const opened = await openCall({ isCurrent, keepAudio });
 
-      if (!isCurrent()) {
-        audio.stop();
+      if (!opened) {
         return;
       }
 
-      if (!keepAudio(audio)) {
+      // A realtime client that didn't load can't connect.
+      if (!opened.live) {
+        fail("connect");
         return;
       }
 
+      const { audio, live } = opened;
       const answer = await reserve({ isCurrent, takeover });
 
       // The start was cancelled meanwhile; a reservation it got was ended, so it never connects.
@@ -287,6 +320,7 @@ export function useLiveCall({
         return;
       }
 
+      const { createLiveCallSession, watchConnection } = live;
       const { setup } = answer;
 
       const length: CallLength = {

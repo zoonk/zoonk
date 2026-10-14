@@ -14,6 +14,7 @@ import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
+import { loadLiveCallSession } from "./use-live-call";
 
 /**
  * Before the call, on the page: how long it lasts and the level it's written for, its title and
@@ -49,6 +50,11 @@ export function ConversationIntro({
   );
 }
 
+/** Reaching for Start loads the call's realtime client, so the call connects as soon as before. */
+function preloadLiveCall() {
+  void loadLiveCallSession();
+}
+
 function CallIntroFooter({ locked, onStart }: { locked: boolean; onStart: () => void }) {
   const t = useExtracted();
 
@@ -62,7 +68,11 @@ function CallIntroFooter({ locked, onStart }: { locked: boolean; onStart: () => 
   }
 
   return (
-    <TaskActions>
+    <TaskActions
+      onFocus={preloadLiveCall}
+      onPointerDown={preloadLiveCall}
+      onPointerEnter={preloadLiveCall}
+    >
       <TaskMainButton onClick={onStart}>
         <PhoneIcon aria-hidden="true" />
         {t("Start the call")}

@@ -3,7 +3,8 @@
 import { type LanguageConversationCompletionInput } from "@zoonk/core/language/conversations/contract";
 import { formatTypedReplyCue } from "@zoonk/core/language/conversations/live-call-cues";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
-import { type LiveCallSession, sendLiveCallCue, setLiveCallMuted } from "./live-call-session";
+import { sendLiveCallCue, setLiveCallMuted } from "./live-call-commands";
+import { type LiveCallSession } from "./live-call-session";
 import {
   type TranscriptTurn,
   addTypedReply,

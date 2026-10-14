@@ -1,9 +1,49 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type openCallAudio } from "./live-call-session";
 
-type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
+function stopTracks(stream: MediaStream) {
+  for (const track of stream.getTracks()) {
+    track.stop();
+  }
+}
+
+/**
+ * The learner's microphone, or silence when it's blocked. A GPT-Live session only moves on while
+ * audio streams in, so a call the learner types in still sends silence.
+ */
+export async function openCallAudio(): Promise<{
+  blocked: boolean;
+  stop: () => void;
+  stream: MediaStream;
+}> {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    return { blocked: false, stop: () => stopTracks(stream), stream };
+  } catch {
+    const context = new AudioContext();
+    const silence = context.createConstantSource();
+    const destination = context.createMediaStreamDestination();
+    silence.offset.value = 0;
+    silence.connect(destination);
+    silence.start();
+
+    return {
+      blocked: true,
+      // The call stops its audio when it fails, ends and closes: only the first stop closes it.
+      stop: () => {
+        stopTracks(destination.stream);
+
+        if (context.state !== "closed") {
+          void context.close().catch(() => null);
+        }
+      },
+      stream: destination.stream,
+    };
+  }
+}
+
+export type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
 
 /**
  * The call's microphone: open for the whole call, closed when the call fails or ends and when the

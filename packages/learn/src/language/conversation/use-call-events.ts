@@ -3,7 +3,8 @@
 import { LIVE_CALL_NO_BACKEND_CUE } from "@zoonk/core/language/conversations/live-call-cues";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 import { type RefObject, useCallback } from "react";
-import { type LiveCallSession, sendLiveCallCue } from "./live-call-session";
+import { sendLiveCallCue } from "./live-call-commands";
+import { type LiveCallSession } from "./live-call-session";
 import { type TranscriptTurn, addTranscriptFragment } from "./live-call-transcript";
 import { type LiveCallPhase } from "./use-call-controls";
 import { type CallLength } from "./use-call-cues";

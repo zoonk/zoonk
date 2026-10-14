@@ -7,7 +7,8 @@ import {
   formatOpeningCue,
 } from "@zoonk/core/language/conversations/live-call-cues";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type LiveCallSession, sendLiveCallCue } from "./live-call-session";
+import { sendLiveCallCue } from "./live-call-commands";
+import { type LiveCallSession } from "./live-call-session";
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;

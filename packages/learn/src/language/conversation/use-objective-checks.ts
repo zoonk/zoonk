@@ -6,7 +6,8 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { formatObjectivesProgressCue } from "@zoonk/core/language/conversations/live-call-cues";
 import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type LiveCallSession, sendLiveCallCue } from "./live-call-session";
+import { sendLiveCallCue } from "./live-call-commands";
+import { type LiveCallSession } from "./live-call-session";
 
 /** The character's answer has settled once its transcript stays quiet this long. */
 const REPLY_SETTLED_MS = 1500;
