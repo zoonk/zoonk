@@ -8,6 +8,7 @@ import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
+import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
 import { findExamFacts } from "./exam-facts";
 
@@ -133,6 +134,8 @@ async function toGoalView({
   // Another learner's research may already know the target's last cut-off: a read, never a lookup.
   const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
 
+  const understoodDate = goal.targetDate ?? exam?.targetDate ?? undefined;
+
   return {
     cutoff,
     draft: {
@@ -141,7 +144,12 @@ async function toGoalView({
       kind: goal.kind,
       language,
       prompt: context.goal,
-      targetDate: goal.targetDate ?? exam?.targetDate ?? undefined,
+      // A date past what a plan reaches can't be the plan's: the card leaves it out, and onboarding
+      // asks for one.
+      targetDate:
+        understoodDate && understoodDate <= getTargetDateBounds(today).max
+          ? understoodDate
+          : undefined,
       targetLanguage: goal.targetLanguage,
       title: goal.title,
     },

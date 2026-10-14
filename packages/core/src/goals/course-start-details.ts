@@ -1,7 +1,11 @@
 import { isJsonObject } from "@zoonk/utils/json";
 
-/** A goal started from a Library course's page (or one of its chapters), in the goal's details. */
-export type CourseStart = { chapterId: string | null };
+/**
+ * A goal started from a Library course's page (or one of its chapters), in the goal's details:
+ * the chapter it starts at, and the time a day the course's page had picked (`dailyMinutes`),
+ * which onboarding's time question opens on; absent when the start came without one.
+ */
+export type CourseStart = { chapterId: string | null; dailyMinutes?: number };
 
 /**
  * The course start a goal records: onboarding asks nothing the course already answers, and a
@@ -15,5 +19,8 @@ export function readCourseStart(details: Record<string, unknown>): CourseStart |
     return null;
   }
 
-  return { chapterId: typeof start.chapterId === "string" ? start.chapterId : null };
+  return {
+    chapterId: typeof start.chapterId === "string" ? start.chapterId : null,
+    ...(typeof start.dailyMinutes === "number" && { dailyMinutes: start.dailyMinutes }),
+  };
 }

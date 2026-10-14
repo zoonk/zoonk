@@ -1,6 +1,8 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { getSession } from "../../users/get-session";
+import { readLiveCallAdmission } from "../conversations/_utils/live-call-policy";
 import { findExamSpeakingSetup, hasSpeakingAccess } from "./_utils/exam-speaking-setup";
 import { loadSpeakingSection } from "./_utils/load-speaking-section";
 import { type WrittenExamTask, writeExamTask } from "./_utils/write-exam-task";
@@ -9,7 +11,7 @@ import { type SpeakingTaskFormat } from "./speaking-format";
 
 export type StartSpeakingSectionResult =
   | { section: SpeakingSectionView; status: "ready" }
-  | { status: "notLanguage" | "plusRequired" | "unauthorized" };
+  | { status: "callsPaused" | "notLanguage" | "plusRequired" | "unauthorized" };
 
 /**
  * Starts a whole speaking paper for the learner's goal, as a mock exam's speaking section: every
@@ -39,6 +41,10 @@ export async function startSpeakingSection({
 
   if (!(await hasSpeakingAccess())) {
     return { status: "plusRequired" };
+  }
+
+  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+    return { status: "callsPaused" };
   }
 
   const { format, goal } = setup;

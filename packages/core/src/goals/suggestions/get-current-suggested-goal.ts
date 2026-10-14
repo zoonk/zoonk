@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
+import { suggestedGoalViewSelect, toSuggestedGoalView } from "./_utils/suggested-goal-view";
 import { type SuggestedGoalView } from "./suggested-goal-contract";
 
 /**
@@ -20,9 +21,11 @@ export async function getCurrentSuggestedGoal(): Promise<SuggestedGoalView | nul
 
   cacheTag(getGoalsCacheTag(session.user.id));
 
-  return prisma.suggestedGoal.findFirst({
+  const suggestion = await prisma.suggestedGoal.findFirst({
     orderBy: [{ lastActiveAt: "desc" }, { id: "asc" }],
-    select: { id: true, status: true, title: true },
+    select: suggestedGoalViewSelect,
     where: { status: "pending", userId: session.user.id },
   });
+
+  return suggestion && toSuggestedGoalView(suggestion);
 }

@@ -4,7 +4,6 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
 import {
   isDrillQuestion,
-  listDrillableMistakes,
   loadLearnerListeningSkillIds,
   loadListeningSkillIds,
 } from "../exams/listening/listening-skills";
@@ -15,7 +14,7 @@ import {
   parseChoiceItem,
   toQuestionView,
 } from "../learner/_utils/choice-items";
-import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
+import { getSkillOwners, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { getGoalField, getItemAudienceFilter } from "../library/items/item-field";
@@ -26,14 +25,18 @@ import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
 import { type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
-import { type DrillView, selectMistakeDrill, selectMistakesToPractice } from "./mistake-drills";
+import { getMistakePracticeBefore } from "./mistake-availability";
+import {
+  type DrillView,
+  isMistakeSkill,
+  selectMistakeDrill,
+  selectMistakesToPractice,
+} from "./mistake-drills";
+import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 /** One tap of "Practice mistakes" is a short session: five mistakes, each with its drill. */
 const PRACTICE_SIZE = 5;
-
-/** Open mistakes considered for one practice session, oldest first. */
-const PRACTICE_POOL = 100;
 
 type MistakePracticeEntry = {
   cause: Mistake["cause"];
@@ -60,6 +63,7 @@ async function resolveScope({ goalId, userId }: { goalId: string | undefined; us
     return {
       goal: null,
       listeningSkillIds: await loadLearnerListeningSkillIds(userId),
+      ownerOf: new Map<string, string>(),
       skillIds: null,
     };
   }
@@ -70,18 +74,41 @@ async function resolveScope({ goalId, userId }: { goalId: string | undefined; us
     return null;
   }
 
-  const [skillIds, listeningSkillIds] = await Promise.all([
-    loadGoalSkillIds(goalId),
+  const [plan, listeningSkillIds] = await Promise.all([
+    loadGoalPlan(goalId),
     loadListeningSkillIds(goalId),
   ]);
 
-  return { goal: owned.goal, listeningSkillIds, skillIds };
+  // The goal's skills and the finer ones their lessons teach, where lesson misses land, each
+  // drilled with its own questions or its goal skill's, as Today's practice does.
+  const ownerOf = getSkillOwners(plan.skills);
+
+  return { goal: owned.goal, listeningSkillIds, ownerOf, skillIds: [...ownerOf.keys()] };
+}
+
+/**
+ * The skills practice draws from: the goal's (null for every skill), or for "Practice this skill"
+ * that one skill, when it's in the goal's.
+ */
+function getPracticeSkillIds({
+  scopeSkillIds,
+  skillId,
+}: {
+  scopeSkillIds: string[] | null;
+  skillId: string | undefined;
+}): string[] | null {
+  if (!skillId) {
+    return scopeSkillIds;
+  }
+
+  return !scopeSkillIds || scopeSkillIds.includes(skillId) ? [skillId] : [];
 }
 
 async function loadDrillMaterial({
   examBlueprintId,
   field,
   mistakes,
+  ownerOf,
   userId,
 }: {
   /** The goal's exam: other exams' questions stay out, apart from the mistakes' own. */
@@ -89,11 +116,15 @@ async function loadDrillMaterial({
   /** The goal's field: other fields' questions stay out, apart from the mistakes' own. */
   field: string | null;
   mistakes: readonly Mistake[];
+  /** The goal skill each finer skill counts for, whose questions drill it too. */
+  ownerOf: ReadonlyMap<string, string>;
   userId: string;
 }) {
   const skillIds = [
     ...new Set(mistakes.map((mistake) => mistake.skillId).filter((id) => id !== null)),
   ];
+
+  const questionSkillIds = [...new Set(skillIds.flatMap((id) => [id, ownerOf.get(id) ?? id]))];
 
   const [items, lessons] = await Promise.all([
     prisma.item.findMany({
@@ -101,7 +132,7 @@ async function loadDrillMaterial({
       orderBy: { id: "asc" },
       where: {
         format: { in: [...GRADABLE_ITEM_FORMATS] },
-        skillId: { in: skillIds },
+        skillId: { in: questionSkillIds },
         ...getItemAudienceFilter({
           examBlueprintId,
           field,
@@ -129,7 +160,8 @@ async function loadDrillMaterial({
 /**
  * Builds "Practice mistakes": up to five open mistakes (oldest first, one per skill first, none from
  * today), each with a drill chosen by its cause and the questions to answer, the original one
- * first. Answers go to `answerMistakePractice`.
+ * first; "Practice this skill" (`skillId`) takes them from one skill. Answers go to
+ * `answerMistakePractice`.
  */
 export async function getMistakePractice(
   input: MistakePracticeInput,
@@ -154,18 +186,27 @@ export async function getMistakePractice(
   await io();
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
+  const skillIds = getPracticeSkillIds({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
+
   const open = await prisma.mistake.findMany({
     orderBy: { createdAt: "asc" },
-    take: PRACTICE_POOL,
     where: {
+      createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
       status: "open",
       userId,
-      ...(scope.skillIds ? { skillId: { in: scope.skillIds } } : {}),
+      ...(skillIds ? { skillId: { in: skillIds } } : {}),
     },
   });
 
   const { listeningSkillIds } = scope;
-  const drillable = await listDrillableMistakes({ listeningSkillIds, mistakes: open });
+
+  const drillable = await filterMistakesWithPracticeMaterial({
+    examBlueprintId: scope.goal?.examBlueprintId ?? null,
+    field: getGoalField(scope.goal?.details),
+    listeningSkillIds,
+    mistakes: open,
+    ownerOf: scope.ownerOf,
+  });
 
   const selected = selectMistakesToPractice({
     limit: PRACTICE_SIZE,
@@ -180,14 +221,18 @@ export async function getMistakePractice(
     examBlueprintId: scope.goal?.examBlueprintId ?? null,
     field: getGoalField(scope.goal?.details),
     mistakes: selected,
+    ownerOf: scope.ownerOf,
     userId,
   });
 
   const drills = selected.map((mistake) => {
     const skillItems = choices.filter(
       (item) =>
-        item.skillId === mistake.skillId &&
-        isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
+        isMistakeSkill({
+          itemSkillId: item.skillId,
+          mistakeSkillId: mistake.skillId,
+          ownerOf: scope.ownerOf,
+        }) && isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
     );
 
     const drill = selectMistakeDrill({

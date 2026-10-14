@@ -1,4 +1,5 @@
 import { type BuddyKind } from "@zoonk/utils/buddy";
+import { type MissionKind } from "../sessions/missions/catalog";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
 
 /**
@@ -128,12 +129,16 @@ type LearningEvents = {
   "Test-out Taken": { chapter_id: string; passed: boolean; score: number };
   /**
    * A new question to the tutor: about a lesson (all of it, one screen or the learner's answer), a
-   * chapter, the learner's plan, a mock they finished or their own material (one question can cover
+   * chapter, the learner's plan, a subject of their goal (by its key in the goal's syllabus), a
+   * question of a session or practice (by its item), a mock
+   * they finished or their own material (one question can cover
    * several of the files, links or text they added, so it names none).
    */
   "Tutor Asked":
     | { chapter_id: string; scope: "chapter" }
     | { goal_id: string; scope: "plan" }
+    | { goal_id: string; scope: "subject"; subject_key: string }
+    | { item_id: string; scope: "item" }
     | { lesson_id: string; scope: "answer" | "lesson" | "screen" }
     | { mock_id: string; scope: "mock" }
     | { scope: "material" };
@@ -158,7 +163,7 @@ type MechanicsEvents = {
   "Hyperdrive Reached": { multiplier: number };
   "Logbook Viewed": NoProperties;
   "Milestone Earned": { key: string; milestone: "badge" | "belt" | "glasses" | "buddy_stage" };
-  "Mission Completed": { full_meal: boolean; mission: "fix" | "new" | "review" };
+  "Mission Completed": { full_meal: boolean; mission: MissionKind | "fix" | "new" };
 };
 
 type SettingsEvents = { "Memory Turned Off": NoProperties; "Plan Edited": { change_kind: string } };

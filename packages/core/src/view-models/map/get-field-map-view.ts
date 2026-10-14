@@ -1,8 +1,10 @@
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
-import { isPlanOver } from "../../plans/_utils/plan-end";
+import { isPlanFinished } from "../../plans/_utils/plan-end";
 import { loadGoalMap } from "../_utils/goal-map";
 import { listFadingSkills } from "../_utils/group-skills";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
@@ -22,7 +24,7 @@ function isRefreshGoal(details: unknown): boolean {
  * The map of the field for a goal (the active goal by default): every skill of the plan as a node
  * with its mastery and prerequisites, grouped by chapter,
  * phase and course, with where the learner is now. It leads with what's fading for refresh goals,
- * shows the course and its levels, and, once the plan is done, what to study next. Drawn by code
+ * shows the course and its levels, and, once the plan is finished, what to study next. Drawn by code
  * from the skill graph, never as a picture.
  */
 export async function getFieldMapView(
@@ -57,7 +59,16 @@ export async function getFieldMapView(
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
-      next: isPlanOver(map.items) ? buildStudyNext({ course, courses, goalKind: goal.kind }) : null,
+      next: isPlanFinished({
+        goalKind: goal.kind,
+        items: map.items,
+        phaseChallengesRequired: map.phaseChallengesRequired,
+        studiesPastTarget: goal.kind === "exam" && map.fullCourse,
+        targetDate: goal.targetDate,
+        today: getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
+      })
+        ? buildStudyNext({ course, courses, goalKind: goal.kind })
+        : null,
       phases: map.phases,
       refresh: { emphasized: isRefreshGoal(goal.details), skills: listFadingSkills(skills) },
     },

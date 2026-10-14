@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  MIN_PATTERN_ANSWERS,
   getScorePerformance,
   getStrongestScorePerformance,
   getWeeklyScorePerformance,
@@ -32,14 +33,46 @@ describe(getStrongestScorePerformance, () => {
     };
 
     const perfect = {
-      correctAnswers: 1,
+      correctAnswers: 10,
       incorrectAnswers: 0,
       key: "perfect",
+      score: 100,
+      totalAnswers: 10,
+    };
+
+    expect(getStrongestScorePerformance([highVolume, perfect])).toStrictEqual(perfect);
+  });
+
+  it("leaves out groups with fewer answers than the minimum", () => {
+    const lucky = {
+      correctAnswers: 1,
+      incorrectAnswers: 0,
+      key: "lucky",
       score: 100,
       totalAnswers: 1,
     };
 
-    expect(getStrongestScorePerformance([highVolume, perfect])).toStrictEqual(perfect);
+    const steady = {
+      correctAnswers: 7,
+      incorrectAnswers: 3,
+      key: "steady",
+      score: 70,
+      totalAnswers: MIN_PATTERN_ANSWERS,
+    };
+
+    expect(getStrongestScorePerformance([lucky, steady])).toStrictEqual(steady);
+  });
+
+  it("names none while no group has the minimum", () => {
+    const almost = {
+      correctAnswers: MIN_PATTERN_ANSWERS - 1,
+      incorrectAnswers: 0,
+      key: "almost",
+      score: 100,
+      totalAnswers: MIN_PATTERN_ANSWERS - 1,
+    };
+
+    expect(getStrongestScorePerformance([almost])).toBeNull();
   });
 
   it("uses answer volume when scores are equal", () => {

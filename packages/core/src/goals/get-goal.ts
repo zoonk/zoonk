@@ -1,6 +1,10 @@
 import "server-only";
 import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
+import {
+  getGoalsCacheTag,
+  getLearningProfileCacheTag,
+  getUserSubscriptionCacheTag,
+} from "../cache/tags";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
@@ -19,7 +23,11 @@ export async function getGoal(goalId: string): Promise<GoalResult> {
     return owned;
   }
 
-  cacheTag(getGoalsCacheTag(owned.userId), getLearningProfileCacheTag(owned.userId));
+  cacheTag(
+    getGoalsCacheTag(owned.userId),
+    getLearningProfileCacheTag(owned.userId),
+    getUserSubscriptionCacheTag(owned.userId),
+  );
 
   const activeGoalId = await findActiveGoalId(owned.userId);
   const [goal] = await loadGoalViews({ activeGoalId, goals: [owned.goal] });

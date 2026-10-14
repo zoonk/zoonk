@@ -1,4 +1,7 @@
+import { prisma } from "@zoonk/db";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -102,6 +105,81 @@ describe(listCurrentUserMistakes, () => {
 
     expect(result.status === "ready" && result.mistakes.map((mistake) => mistake.id)).toStrictEqual(
       [inGoal.id],
+    );
+  });
+
+  it("lists and counts a miss on a finer skill that one of the goal's lessons teaches", async () => {
+    const user = await userFixture();
+
+    const { goal, planItems } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1],
+      userId: user.id,
+    });
+
+    // The plan's skill is taught by a lesson whose own skill is finer: its misses land there.
+    const [finer, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: finer.id }),
+      prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: planItems[0]?.id } }),
+    ]);
+
+    mockSession(user.id);
+    const miss = await mistakeFixture({ skillId: finer.id, userId: user.id });
+
+    const result = await listCurrentUserMistakes(query({ goalId: goal.id }));
+
+    expect(result.status === "ready" && result.mistakes.map((mistake) => mistake.id)).toStrictEqual(
+      [miss.id],
+    );
+
+    expect(result.status === "ready" && result.counts.open).toBe(1);
+  });
+
+  it("names the lesson each mistake opens: where it was made, else one teaching its skill", async () => {
+    const [user, owner, skill, untaught] = await Promise.all([
+      userFixture(),
+      userFixture(),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    const [madeIn, teaching, hidden] = await Promise.all([
+      libraryLessonFixture({ title: "Discounts" }),
+      libraryLessonFixture({ title: "Percentages" }),
+      libraryLessonFixture({ ownerId: owner.id, visibility: "private" }),
+    ]);
+
+    const step = await libraryStepFixture({ lessonId: madeIn.id, skillId: skill.id });
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: hidden.id, skillId: skill.id }),
+      lessonSkillFixture({ lessonId: teaching.id, skillId: skill.id }),
+    ]);
+
+    mockSession(user.id);
+
+    const [onScreen, inPractice, withoutLesson] = await Promise.all([
+      mistakeFixture({ skillId: skill.id, stepId: step.id, userId: user.id }),
+      mistakeFixture({ skillId: skill.id, userId: user.id }),
+      mistakeFixture({ skillId: untaught.id, userId: user.id }),
+    ]);
+
+    const result = await listCurrentUserMistakes(query());
+
+    const lessons = new Map(
+      result.status === "ready"
+        ? result.mistakes.map((mistake) => [mistake.id, mistake.lesson])
+        : [],
+    );
+
+    expect(lessons).toStrictEqual(
+      new Map([
+        [onScreen.id, { id: madeIn.id, title: "Discounts" }],
+        [inPractice.id, { id: teaching.id, title: "Percentages" }],
+        [withoutLesson.id, null],
+      ]),
     );
   });
 

@@ -6,6 +6,7 @@ import {
   getLearnerModelCacheTag,
   getLearningProfileCacheTag,
   getUserProgressCacheTag,
+  getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
@@ -36,6 +37,7 @@ export async function resolveViewGoal(goalId?: string): Promise<ViewGoalResult> 
     getLearnerModelCacheTag(userId),
     getLearningProfileCacheTag(userId),
     getUserProgressCacheTag(userId),
+    getUserSubscriptionCacheTag(userId),
   );
 
   const id = goalId ?? (await findActiveGoalId(userId));

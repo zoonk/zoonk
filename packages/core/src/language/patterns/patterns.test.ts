@@ -150,15 +150,17 @@ describe("mistake patterns", () => {
       status: "ready",
     });
 
+    const requestId = crypto.randomUUID();
+
     const invalid = await practiceMistakePattern({
-      input: { answers: ["since"], timeZone: "America/Sao_Paulo" },
+      input: { answers: ["since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
     });
 
     expect(invalid).toStrictEqual({ status: "invalid" });
 
     const result = await practiceMistakePattern({
-      input: { answers: ["since", "since"], timeZone: "America/Sao_Paulo" },
+      input: { answers: ["since", "since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
     });
 

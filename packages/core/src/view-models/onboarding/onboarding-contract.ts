@@ -181,7 +181,10 @@ export const onboardingDraftEditSchema = z
         value: z.iso
           .date()
           .nullable()
-          .meta({ description: "The learner's own deadline; null brings back the exam's dates" }),
+          .meta({
+            description:
+              "The learner's own deadline; null brings back the exam's dates. From the learner's today (an earlier one is refused with 422) to at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+          }),
       })
       .strict(),
     z
@@ -249,6 +252,12 @@ export type OnboardingView = {
    */
   examChoices: ExamChoiceView[];
   /**
+   * The days of the exam's next sitting for a goal started from a public exam course, the first
+   * being the date its plan aims for unless the learner gives another, and whether they're
+   * estimated before the notice is out; null for other goals.
+   */
+  examDays: { days: string[]; estimated: boolean } | null;
+  /**
    * An exam's subjects from its stored notice, for the level question and before placement: the
    * notice's name (what `knownSubjects` sends back) and what learners call it when that's long.
    * Empty for other goals.
@@ -270,9 +279,10 @@ export type OnboardingView = {
    */
   libraryCourse: OnboardingLibraryCourse | null;
   /**
-   * The daily minutes the time question starts on, from how big the goal is (a public exam asks
-   * for more than a subject) and how soon its (or its exam's) date is. Only a starting pick: the
-   * plan says what the time covers once it's built.
+   * The daily minutes the time question starts on: the time a day a course's page had picked when
+   * the goal started there, otherwise from how big the goal is (a public exam asks for more than a
+   * subject) and how soon its (or its exam's) date is. Only a starting pick: the plan says what
+   * the time covers once it's built, and the question never moves the pick by itself.
    */
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */
@@ -337,7 +347,18 @@ export const onboardingAnswerInputSchema = z
       .strict(),
     z.object({ question: z.literal("reason"), reason: nullableAnswer }).strict(),
     z.object({ question: z.literal("target"), target: nullableAnswer }).strict(),
-    z.object({ question: z.literal("targetDate"), targetDate: z.iso.date().nullable() }).strict(),
+    z
+      .object({
+        question: z.literal("targetDate"),
+        targetDate: z.iso
+          .date()
+          .nullable()
+          .meta({
+            description:
+              "The learner's deadline, or null for none: after their today (an earlier one is refused with 422) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+          }),
+      })
+      .strict(),
     z
       .object({ answers: z.array(nullableAnswer).max(2), question: z.literal("followUps") })
       .strict(),

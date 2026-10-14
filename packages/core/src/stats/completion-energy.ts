@@ -3,6 +3,12 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { projectPersistedEnergy } from "../progress/energy";
 
 /**
+ * Locks the owner before progress, matching guest linking's user-before-learner-row order.
+ * The key-share lock lets other completions queue on progress but holds off ownership transfer
+ * and deletion until settlement commits. If linking got the owner first, settlement waits and
+ * its progress insert fails the user FK after deletion, rolling back without counting anything.
+ * Call this before taking other learner-row locks in the settlement transaction.
+ *
  * Serializes a learner's Energy updates before capturing the completion time.
  * Capturing the clock after the lock keeps lastActiveAt monotonic even when two
  * requests entered the transaction in the opposite order. The row is created
@@ -18,6 +24,13 @@ export async function getCompletionEnergyContext({
   transaction: TransactionClient;
   userId: string;
 }): Promise<{ completedAt: Date; completionDate: Date; currentEnergy: number }> {
+  await transaction.$queryRaw`
+    SELECT "id"
+    FROM "users"
+    WHERE "id" = ${userId}::uuid
+    FOR KEY SHARE
+  `;
+
   await transaction.userProgress.createMany({ data: [{ userId }], skipDuplicates: true });
 
   await transaction.$queryRaw`

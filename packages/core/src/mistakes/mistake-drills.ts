@@ -133,6 +133,26 @@ export function selectMistakeDrill({
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
 
 /**
+ * Whether a question is on the mistake's skill, or on the goal skill it counts for: a goal skill's
+ * lessons usually teach finer skills, where their screens' misses land (`getSkillOwners`), and the
+ * bank's questions are on the goal skill.
+ */
+export function isMistakeSkill({
+  itemSkillId,
+  mistakeSkillId,
+  ownerOf,
+}: {
+  itemSkillId: string;
+  mistakeSkillId: string | null;
+  ownerOf: ReadonlyMap<string, string>;
+}): boolean {
+  return (
+    mistakeSkillId !== null &&
+    (itemSkillId === mistakeSkillId || itemSkillId === ownerOf.get(mistakeSkillId))
+  );
+}
+
+/**
  * Picks the mistakes for "Practice mistakes": oldest first, one per skill before a second from the
  * same skill, and none made today, since fixing a mistake means getting it right on a later day.
  */

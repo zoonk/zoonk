@@ -1,5 +1,6 @@
 import "server-only";
 import { type OnboardingDraft, prisma } from "@zoonk/db";
+import { assertTargetDates } from "../../plans/target-date-range";
 import { getSession } from "../../users/get-session";
 import {
   findDraftGoalId,
@@ -34,11 +35,25 @@ async function applyEdit({
     return { status: "conflict" };
   }
 
-  const revised = await reviseUnderstanding({
-    edit,
-    today: getLearnerToday(draft.timeZone),
-    understanding,
-  });
+  const today = getLearnerToday(draft.timeZone);
+
+  // A deadline past what a plan reaches is refused before the card is saved; a past one is
+  // `invalid`, as it always was.
+  if (edit.field === "targetDate") {
+    assertTargetDates({
+      latestOnly: true,
+      targets: [
+        {
+          current: understanding.goals[edit.goal]?.draft.targetDate,
+          path: ["value"],
+          targetDate: edit.value,
+        },
+      ],
+      today,
+    });
+  }
+
+  const revised = await reviseUnderstanding({ edit, today, understanding });
 
   if (!revised) {
     return { status: "invalid" };

@@ -68,14 +68,14 @@ describe(getScorePatterns, () => {
       ledgerRow({
         correctAnswers: 1,
         hour: 3,
-        incorrectAnswers: 1,
+        incorrectAnswers: 0,
         localDate: "2026-01-15",
         userId,
       }),
       ledgerRow({
-        correctAnswers: 2,
+        correctAnswers: 9,
         hour: 9,
-        incorrectAnswers: 0,
+        incorrectAnswers: 3,
         localDate: "2026-01-15",
         userId,
       }),
@@ -119,9 +119,10 @@ describe(getScorePatterns, () => {
           userId: user.id,
         },
         {
-          correctAnswers: 2,
+          correctAnswers: 9,
           date: new Date("2026-01-05T00:00:00.000Z"),
           dayOfWeek: 1,
+          incorrectAnswers: 3,
           userId: user.id,
         },
         {
@@ -143,16 +144,17 @@ describe(getScorePatterns, () => {
 
     expect(result?.weekdays).toStrictEqual([
       { correctAnswers: 1, dayOfWeek: 0, incorrectAnswers: 1, score: 50, totalAnswers: 2 },
-      { correctAnswers: 2, dayOfWeek: 1, incorrectAnswers: 0, score: 100, totalAnswers: 2 },
+      { correctAnswers: 9, dayOfWeek: 1, incorrectAnswers: 3, score: 75, totalAnswers: 12 },
       { correctAnswers: 1, dayOfWeek: 2, incorrectAnswers: 0, score: 100, totalAnswers: 1 },
     ]);
 
     expect(result?.times).toStrictEqual([
-      { correctAnswers: 1, incorrectAnswers: 1, period: 0, score: 50, totalAnswers: 2 },
-      { correctAnswers: 2, incorrectAnswers: 0, period: 1, score: 100, totalAnswers: 2 },
+      { correctAnswers: 1, incorrectAnswers: 0, period: 0, score: 100, totalAnswers: 1 },
+      { correctAnswers: 9, incorrectAnswers: 3, period: 1, score: 75, totalAnswers: 12 },
       { correctAnswers: 1, incorrectAnswers: 1, period: 2, score: 50, totalAnswers: 2 },
     ]);
 
+    // One right answer is 100%, but too few answers to count: the strongest has enough of them.
     expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
     expect(result?.strongestTime).toStrictEqual(result?.times[1]);
   });
@@ -238,8 +240,9 @@ describe(getScorePatterns, () => {
       { correctAnswers: 3, incorrectAnswers: 0, period: 3, score: 100, totalAnswers: 3 },
     ]);
 
-    expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
-    expect(result?.strongestTime).toStrictEqual(result?.times[1]);
+    // A few answers each: too few to name a strongest day or part of the day.
+    expect(result?.strongestWeekday).toBeNull();
+    expect(result?.strongestTime).toBeNull();
   });
 
   it("counts a session's answers once, from its lessons and blocks", async () => {

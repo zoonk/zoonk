@@ -59,17 +59,25 @@ export function getCombinedScorePerformance(
 }
 
 /**
- * Picks the strongest observed group by accuracy first and answer volume
- * second. No sample threshold is hidden here because the UI presents the count
- * beside every percentage.
+ * The fewest answers a weekday or a part of the day needs before it can be called the strongest:
+ * with fewer, one lucky answer (a single right answer is 100%) would read as a pattern. Learners
+ * see this number where no group is named yet.
+ */
+export const MIN_PATTERN_ANSWERS = 10;
+
+/**
+ * Picks the strongest group by accuracy first and answer volume second, among the groups with
+ * enough answers to count (`MIN_PATTERN_ANSWERS`); null while none has.
  */
 export function getStrongestScorePerformance<T extends ScorePerformance>(
   rows: readonly T[],
 ): T | null {
   return (
-    rows.toSorted(
-      (first, second) => second.score - first.score || second.totalAnswers - first.totalAnswers,
-    )[0] ?? null
+    rows
+      .filter((row) => row.totalAnswers >= MIN_PATTERN_ANSWERS)
+      .toSorted(
+        (first, second) => second.score - first.score || second.totalAnswers - first.totalAnswers,
+      )[0] ?? null
   );
 }
 

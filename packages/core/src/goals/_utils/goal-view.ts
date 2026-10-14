@@ -1,7 +1,8 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { PHASE_WORK_KINDS } from "../../plans/_utils/plan-phase-views";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { PHASE_WORK_KINDS } from "../../plans/_utils/phase-states";
 import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
@@ -28,12 +29,34 @@ export async function loadCurrentPhases(
 ): Promise<Map<string, number | null>> {
   const planIds = plans.map((plan) => plan.id);
 
+  const language = await prisma.plan.findMany({
+    include: { goal: true },
+    where: { goal: { kind: "language" }, id: { in: planIds } },
+  });
+
+  const access = await Promise.all(
+    language.map(async (plan) => ({
+      id: plan.id,
+      required: await arePhaseChallengesRequired({
+        goalKind: plan.goal.kind,
+        userId: plan.goal.userId,
+      }),
+    })),
+  );
+
+  const locked = access.filter((plan) => !plan.required).map((plan) => plan.id);
+
   const [withItems, left] = await Promise.all([
     prisma.planItem.groupBy({ by: ["planId"], where: { planId: { in: planIds } } }),
     prisma.planItem.groupBy({
       _min: { phase: true },
       by: ["planId"],
-      where: { kind: { in: [...PHASE_WORK_KINDS] }, planId: { in: planIds }, status: "todo" },
+      where: {
+        NOT: { kind: "boss", planId: { in: locked } },
+        kind: { in: [...PHASE_WORK_KINDS] },
+        planId: { in: planIds },
+        status: "todo",
+      },
     }),
   ]);
 

@@ -3,6 +3,7 @@ import { type UsageDecision } from "../contract";
 import { MIN_CALL_SECONDS, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { getCallHold, getCallTimeLeft } from "./evaluate-usage";
+import { findPlanChallengeCall } from "./plan-challenge-call";
 import { countUsage } from "./usage-counts";
 import { getUsagePeriodStarts } from "./usage-periods";
 
@@ -43,6 +44,21 @@ export async function holdCallTimeAgain({
 
   const ran = getCallSecondsRun({ now, record });
 
+  const challenge =
+    viewer.tier === "plus"
+      ? await findPlanChallengeCall({
+          client: transaction,
+          conversationId: record.targetId,
+          userId: viewer.userId,
+        })
+      : null;
+
+  const requested = challenge ? Math.min(seconds, Math.max(0, challenge.seconds - ran)) : seconds;
+
+  if (requested === 0) {
+    return { heldSeconds: 0, status: "allowed" };
+  }
+
   const counts = await countUsage({
     client: transaction,
     kind: record.kind,
@@ -67,7 +83,7 @@ export async function holdCallTimeAgain({
     };
   }
 
-  const hold = getCallHold({ left, seconds });
+  const hold = getCallHold({ left, seconds: requested });
   const total = ran + hold.heldSeconds;
 
   await transaction.usageRecord.update({

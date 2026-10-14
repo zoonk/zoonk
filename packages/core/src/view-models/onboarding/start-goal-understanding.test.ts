@@ -110,6 +110,50 @@ describe(startGoalUnderstanding, () => {
     });
   });
 
+  it("leaves a date past what a plan reaches off the card, so onboarding asks for one", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const year = new Date().getUTCFullYear();
+    // A plan reaches 3,650 days: two years ahead fits, eleven doesn't.
+    const dates = [`${year + 2}-03-31`, `${year + 11}-03-31`];
+
+    const words = dates.map((targetDate) => uniqueGoal(`learn quantum physics by ${targetDate}`));
+
+    await Promise.all(
+      dates.map((targetDate, index) =>
+        goalUnderstandingFixture({
+          goal: words[index] ?? "",
+          result: {
+            followUps: [],
+            goals: [
+              {
+                kind: "learn",
+                ownLevel: "none",
+                purpose: "overview",
+                subject: "Quantum physics",
+                targetDate,
+                title: "Understand quantum physics",
+              },
+            ],
+            route: "goals",
+          },
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const results = await Promise.all(
+      words.map((goal) => startGoalUnderstanding({ goal, language: "en", timeZone: "UTC" })),
+    );
+
+    const cards = results.map((result) => {
+      const understanding = result.status === "understood" ? result.draft.understanding : null;
+      return understanding?.status === "goals" ? understanding.goals[0]?.draft : null;
+    });
+
+    expect(cards.map((draft) => draft?.targetDate)).toStrictEqual([dates[0], undefined]);
+  });
+
   it("gives an exam the dates of the year named, with the notice they came from", async () => {
     const user = await userFixture();
     mockSession(user.id);

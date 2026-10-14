@@ -1,8 +1,18 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { z } from "zod";
 import { MAX_DAILY_LIMIT_MINUTES, MIN_DAILY_LIMIT_MINUTES } from "./daily-limit";
+import { type ResolvedBuddy } from "./default-buddy";
 
 const BUDDY_NAME_MAX_LENGTH = 24;
+
+export const learningBuddySchema = z
+  .object({
+    glasses: z.enum(BuddyGlasses).meta({ description: "The buddy's glasses" }),
+    kind: z.enum(BuddyKind).meta({ description: "Which buddy" }),
+    name: z.string().nullable().meta({ description: "Custom name, or null for the buddy's own" }),
+    picked: z.boolean().meta({ description: "True when the learner saved a buddy choice" }),
+  })
+  .meta({ description: "The chosen buddy, or Zu with round glasses by default", id: "Buddy" });
 
 const buddyInputSchema = z
   .object({
@@ -38,7 +48,7 @@ export const learningProfileUpdateSchema = z
     buddy: buddyInputSchema
       .nullable()
       .optional()
-      .meta({ description: "The learner's buddy, or null to remove it" }),
+      .meta({ description: "The learner's buddy choice, or null to return to the default buddy" }),
     dailyLimitMinutes: z
       .int()
       .min(MIN_DAILY_LIMIT_MINUTES)
@@ -63,7 +73,7 @@ export type LearningProfileView = {
   availableGlasses: BuddyGlasses[];
   /** The learner's own daily study limit in minutes, or null for none. */
   dailyLimitMinutes: number | null;
-  buddy: { glasses: BuddyGlasses; kind: BuddyKind; name: string | null } | null;
+  buddy: ResolvedBuddy;
   /** On until the learner turns them off in Appearance. */
   soundsEnabled: boolean;
 };

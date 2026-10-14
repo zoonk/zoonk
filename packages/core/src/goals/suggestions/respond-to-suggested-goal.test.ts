@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { suggestedGoalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -48,7 +49,7 @@ describe(respondToSuggestedGoal, () => {
       respondToSuggestedGoal({ input: { status: "accepted" }, suggestionId: physics.id }),
     ).resolves.toStrictEqual({
       status: "updated",
-      suggestedGoal: { id: physics.id, status: "accepted", title: "Physics" },
+      suggestedGoal: { courseId: null, id: physics.id, status: "accepted", title: "Physics" },
     });
 
     await expect(
@@ -56,6 +57,7 @@ describe(respondToSuggestedGoal, () => {
     ).resolves.toMatchObject({ respondedAt: expect.any(Date), status: "accepted" });
 
     await expect(getCurrentSuggestedGoal()).resolves.toStrictEqual({
+      courseId: null,
       id: chemistry.id,
       status: "pending",
       title: "Chemistry",
@@ -76,6 +78,49 @@ describe(respondToSuggestedGoal, () => {
     );
 
     await expect(getCurrentSuggestedGoal()).resolves.toBeNull();
+  });
+
+  // Marcos accepted "Continue Spanish?" and got onboarding for the typed words "Spanish", which
+  // could plan him a different course than the one he was taking.
+  it("points to the course the learner was taking while anyone can still start it", async () => {
+    const user = await userFixture();
+
+    const [spanish, retired] = await Promise.all([
+      courseFixture({ isPublished: true, title: "Spanish", visibility: "public" }),
+      courseFixture({ isPublished: false, title: "Retired" }),
+    ]);
+
+    const [current, unpublished] = await Promise.all([
+      suggestedGoalFixture({ courseId: spanish.id, title: "Spanish", userId: user.id }),
+      suggestedGoalFixture({
+        courseId: retired.id,
+        lastActiveAt: new Date(Date.now() - DAY_MS),
+        title: "Retired",
+        userId: user.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getCurrentSuggestedGoal()).resolves.toStrictEqual({
+      courseId: spanish.id,
+      id: current.id,
+      status: "pending",
+      title: "Spanish",
+    });
+
+    await expect(
+      respondToSuggestedGoal({ input: { status: "accepted" }, suggestionId: current.id }),
+    ).resolves.toStrictEqual({
+      status: "updated",
+      suggestedGoal: { courseId: spanish.id, id: current.id, status: "accepted", title: "Spanish" },
+    });
+
+    // A course nobody can start anymore opens onboarding with its title instead.
+    await expect(getCurrentSuggestedGoal()).resolves.toMatchObject({
+      courseId: null,
+      id: unpublished.id,
+    });
   });
 
   it("never answers another learner's suggestion", async () => {

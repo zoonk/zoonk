@@ -1,5 +1,5 @@
 import { type MistakeCauseInput } from "@zoonk/ai/tasks/v2/mistakes/cause";
-import { type Mistake, prisma } from "@zoonk/db";
+import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
 import { type MistakeSnapshot } from "./mistake-snapshot";
 
@@ -9,7 +9,12 @@ export type MistakeCauseRequest = { input: MistakeCauseInput; mistakeId: string;
 type MistakeTarget = { itemId: string | null; stepId: string | null };
 
 /** The open entry for the same question, so answering it wrong again doesn't add a duplicate. */
-function findOpenMistake({ itemId, stepId, userId }: MistakeTarget & { userId: string }) {
+function findOpenMistake({
+  itemId,
+  stepId,
+  transaction,
+  userId,
+}: MistakeTarget & { transaction: TransactionClient; userId: string }) {
   const targets = [itemId ? { itemId } : null, stepId ? { stepId } : null].filter(
     (target) => target !== null,
   );
@@ -18,7 +23,7 @@ function findOpenMistake({ itemId, stepId, userId }: MistakeTarget & { userId: s
     return null;
   }
 
-  return prisma.mistake.findFirst({ where: { OR: targets, status: "open", userId } });
+  return transaction.mistake.findFirst({ where: { OR: targets, status: "open", userId } });
 }
 
 function toCauseInput({
@@ -48,32 +53,51 @@ function toCauseInput({
  * after the response so answering never waits on a model. A question already open in the notebook
  * keeps its entry.
  */
-export async function recordMistake({
-  attemptId,
-  itemId,
-  language,
-  signals,
-  skillId,
-  snapshot,
-  stepId,
-  userId,
-}: MistakeTarget & {
-  attemptId: string;
-  language: string;
-  signals: MistakeSignals;
-  skillId: string | null;
-  snapshot: MistakeSnapshot;
-  userId: string;
-}): Promise<{ causeRequest: MistakeCauseRequest | null; mistake: Mistake }> {
-  const existing = await findOpenMistake({ itemId, stepId, userId });
+export async function recordMistake(
+  {
+    attemptId,
+    itemId,
+    language,
+    practicedMistakeId,
+    signals,
+    skillId,
+    snapshot,
+    stepId,
+    userId,
+  }: MistakeTarget & {
+    attemptId: string;
+    language: string;
+    practicedMistakeId?: string | null;
+    signals: MistakeSignals;
+    skillId: string | null;
+    snapshot: MistakeSnapshot;
+    userId: string;
+  },
+  transaction: TransactionClient = prisma,
+): Promise<{ causeRequest: MistakeCauseRequest | null; mistake: Mistake }> {
+  const cause = inferMistakeCause(signals);
+  const unknownGap = signals.dontKnow && cause === "gap";
+
+  // An explicit unknown is evidence of a gap, including when a drill targets a different question.
+  const target =
+    unknownGap && practicedMistakeId
+      ? await transaction.mistake.findFirst({ where: { id: practicedMistakeId, userId } })
+      : null;
+
+  const existing = target ?? (await findOpenMistake({ itemId, stepId, transaction, userId }));
 
   if (existing) {
-    return { causeRequest: null, mistake: existing };
+    const mistake = unknownGap
+      ? await transaction.mistake.update({
+          data: { cause: "gap", fixedAt: null, status: "open" },
+          where: { id: existing.id },
+        })
+      : existing;
+
+    return { causeRequest: null, mistake };
   }
 
-  const cause = inferMistakeCause(signals);
-
-  const mistake = await prisma.mistake.create({
+  const mistake = await transaction.mistake.create({
     data: { attemptId, cause, itemId, skillId, snapshot, stepId, userId },
   });
 

@@ -89,8 +89,8 @@ export const speakingPaperViewSchema = z
   .object({
     ...paperFields,
     access: z
-      .enum(["open", "plusRequired"])
-      .meta({ description: "Speaking tasks come with Plus; free learners see them locked" }),
+      .enum(["open", "plusRequired", "callsPaused"])
+      .meta({ description: "Speaking tasks require Plus and live-call admission" }),
     minutes: minutesSchema.meta({ description: "The paper's official speaking time" }),
     prepMinutes: z.number(),
     prepTasks: z

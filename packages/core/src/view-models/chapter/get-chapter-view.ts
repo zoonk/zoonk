@@ -3,6 +3,8 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -84,7 +86,7 @@ export async function getChapterView({
 
   const access = await loadExamPrepAccess({ goal });
 
-  const [studied, openMistakes, plusOnlyLessonIds] = await Promise.all([
+  const [studied, openMistakes, plusOnlyLessonIds, blockedTestOutChapters] = await Promise.all([
     loadStudiedSkills({ skillIds, userId: goal.userId }),
     prisma.mistake.count({
       where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },
@@ -93,6 +95,13 @@ export async function getChapterView({
       access,
       goalId: goal.id,
       lessonIds: lessons.map((lesson) => lesson.id),
+      userId: goal.userId,
+    }),
+    loadBlockedTestOutChapters({
+      chapterIds: [chapterId],
+      goalId: goal.id,
+      now: new Date(),
+      timeZone: getAnswerTimeZone({ goal }),
       userId: goal.userId,
     }),
   ]);
@@ -125,7 +134,10 @@ export async function getChapterView({
       skills: area.skills,
       summaries: buildChapterSummaries({ lessons, states: lessonStates }),
       // The test-out comes with Plus on the same rule (`isTestOutPlusOnly`).
-      testOut: { plusRequired: access.trialEnded },
+      testOut: {
+        available: area.state !== "done" && !blockedTestOutChapters.has(chapterId),
+        plusRequired: access.trialEnded,
+      },
     },
     status: "ready",
   };

@@ -3,9 +3,13 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type ProgressLock, applySessionProgress } from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
+import { type MissionMomentView } from "../sessions/completion-contract";
+import { withActivityMissionMoment } from "../sessions/missions/activity-mission-result";
+import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
@@ -24,9 +28,14 @@ import { type MistakePracticeFinishInput } from "./contract";
 type MistakePracticeSummary = {
   brainPower: number;
   correct: number;
+  /** The missions the run completed, for the end of its screen; null when it completed none. */
+  missionMoment: MissionMomentView | null;
   seconds: number;
   total: number;
 };
+
+/** The run's own totals, before the missions it completed are known. */
+type PracticeRunTotals = Omit<MistakePracticeSummary, "missionMoment">;
 
 export type FinishMistakePracticeResult =
   | { result: MistakePracticeSummary; status: "ready" }
@@ -87,7 +96,7 @@ type WriteRunInput = Omit<SettleInput, "answers"> & {
 async function writeRun(
   tx: TransactionClient,
   { fresh, goalId, lock, run, runAnswers, timeZone, userId }: WriteRunInput,
-): Promise<MistakePracticeSummary> {
+): Promise<{ result: PracticeRunTotals; runId: string }> {
   const totals = getRunTotals({ answers: runAnswers, endedAt: lock.completedAt });
   const correct = fresh.filter((answer) => answer.isCorrect).length;
   const incorrect = fresh.length - correct;
@@ -115,6 +124,13 @@ async function writeRun(
     incorrectAnswers: totals.total - totals.correct,
   };
 
+  const result = {
+    brainPower: (run?.brainPower ?? 0) + brainPower,
+    correct: totals.correct,
+    seconds: (run?.seconds ?? 0) + seconds,
+    total: totals.total,
+  };
+
   if (run) {
     await tx.learningEvent.update({
       data: {
@@ -125,27 +141,24 @@ async function writeRun(
       },
       where: { id: run.id },
     });
-  } else {
-    await recordLearningEvent(tx, {
-      ...MISTAKE_PRACTICE_EVENT,
-      ...counts,
-      brainPower,
-      energyDelta,
-      goalId,
-      seconds,
-      startedAt: totals.startedAt,
-      timeZone,
-      titleSnapshot: null,
-      userId,
-    });
+
+    return { result, runId: run.id };
   }
 
-  return {
-    brainPower: (run?.brainPower ?? 0) + brainPower,
-    correct: totals.correct,
-    seconds: (run?.seconds ?? 0) + seconds,
-    total: totals.total,
-  };
+  const event = await recordLearningEvent(tx, {
+    ...MISTAKE_PRACTICE_EVENT,
+    ...counts,
+    brainPower,
+    energyDelta,
+    goalId,
+    seconds,
+    startedAt: totals.startedAt,
+    timeZone,
+    titleSnapshot: null,
+    userId,
+  });
+
+  return { result, runId: event.id };
 }
 
 /**
@@ -177,11 +190,12 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
           seconds: run?.seconds ?? 0,
           total: (run?.correctAnswers ?? 0) + (run?.incorrectAnswers ?? 0),
         },
+        runId: run?.id ?? null,
       };
     }
 
-    const result = await writeRun(tx, { ...input, fresh, lock, run, runAnswers });
-    return { counted: true, result };
+    const recorded = await writeRun(tx, { ...input, fresh, lock, run, runAnswers });
+    return { counted: true, ...recorded };
   });
 }
 
@@ -214,12 +228,22 @@ export async function finishMistakePractice(
     return { status: "invalid" };
   }
 
-  const { counted, result } = await settlePracticeRun({
+  const timeZone = goal
+    ? getAnswerTimeZone({ goal, timeZone: input.timeZone })
+    : await getLearnerTimeZone({ timeZone: input.timeZone, userId });
+
+  const { counted, result, runId } = await settlePracticeRun({
     answers,
     goalId: goal?.id ?? null,
-    timeZone: getAnswerTimeZone({ goal, timeZone: input.timeZone }),
+    timeZone,
     userId,
   });
+
+  const source = runId ? { id: runId, kind: "mistakePractice" } : null;
+
+  if (source) {
+    await settleLearnerMissions({ source, timeZone, userId });
+  }
 
   if (counted) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
@@ -238,5 +262,8 @@ export async function finishMistakePractice(
     });
   }
 
-  return { result, status: "ready" };
+  return {
+    result: await withActivityMissionMoment({ result, source, timeZone, userId }),
+    status: "ready",
+  };
 }

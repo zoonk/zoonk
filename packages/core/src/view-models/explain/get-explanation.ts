@@ -81,10 +81,13 @@ async function findExplanationLessonId(goalId: string): Promise<string | null> {
 /**
  * A quick explanation for one of the learner's questions: about five short screens and one
  * check, then the "Now you know" recap and "Want to go further?" into the subject's Overview
- * course and related questions. While the explanation is being written, it says so. Uncached: the
- * page asks again until it's ready.
+ * course and related questions. While the explanation is being written, it says so. Private
+ * cached, so Today's link that prefetches it opens it at once; the page reads itself again when it
+ * shows an old copy, and asks again until it's ready.
  */
 export async function getExplanation({ goalId }: { goalId: string }): Promise<ExplanationResult> {
+  "use cache: private";
+
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready" || owned.goal.kind !== "explain") {

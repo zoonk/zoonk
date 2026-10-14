@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AllowanceLimit } from "../../../entitlements/contract";
+import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
 import { type SpeakingFormat, type SpeakingTaskFormat } from "../speaking-format";
 import { getSpeakingTask } from "../speaking-formats";
 import {
@@ -17,7 +18,7 @@ const SECONDS_PER_MINUTE = 60;
 export type StartExamTaskResult =
   | { conversationId: string; status: "ready" }
   | { limit: AllowanceLimit; status: "limitReached" }
-  | { status: "notFound" | "notLanguage" | "plusRequired" };
+  | { status: "callsPaused" | "notFound" | "notLanguage" | "plusRequired" };
 
 function isCardFor({
   format,
@@ -92,6 +93,10 @@ export async function startExamTask({
 
   if (!(await hasSpeakingAccess())) {
     return { status: "plusRequired" };
+  }
+
+  if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
+    return { status: "callsPaused" };
   }
 
   const short = await findShortCallTime(taskFormat.minutes.min * SECONDS_PER_MINUTE);

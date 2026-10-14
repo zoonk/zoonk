@@ -8,10 +8,10 @@ const countSchema = z.int().min(0);
 const progressStateSchema = z.enum(["done", "current", "upcoming"]);
 
 const phaseStateSchema = z
-  .enum(["done", "unfinished", "current", "upcoming"])
+  .enum(["done", "unfinished", "current", "upcoming", "leftOut"])
   .meta({
     description:
-      "`current` is the earliest phase with work left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done",
+      "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done. `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done",
   });
 
 export const mapSkillSchema = z
@@ -100,7 +100,7 @@ export const fieldMapViewSchema = z
       .nullable()
       .meta({
         description:
-          "What to study next, once nothing of the plan is left to do: finished, or ended with lessons set aside (see the plan's `end`)",
+          "What to study next, once the plan is finished: every lesson studied or tested out and every phase's challenge won (the plan's `end` is `finished`). Null before",
       }),
     phases: z.array(mapPhaseSchema),
     refresh: z

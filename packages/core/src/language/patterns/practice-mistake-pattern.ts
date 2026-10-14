@@ -6,23 +6,29 @@ import { getUserProgressCacheTag } from "../../cache/tags";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
+import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
+import { settleLearnerMissions } from "../../sessions/missions/settle-learner-missions";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { recordLearningEvent } from "../../stats/record-learning-event";
 import { getSession } from "../../users/get-session";
 import { findOwnedPattern } from "./get-mistake-pattern";
-import { type MistakePatternPracticeInput } from "./pattern-contract";
+import {
+  type MistakePatternPracticeInput,
+  type MistakePatternPracticeResult,
+} from "./pattern-contract";
 
 /** A three-minute drill, counted as its answers' time in today's totals. */
 const DRILL_SECONDS = 180;
 
 export type PracticeMistakePatternResult =
-  | { result: { brainPower: number; correct: number; total: number }; status: "ready" }
+  | { result: MistakePatternPracticeResult; status: "ready" }
   | { status: "invalid" | "notFound" | "unauthorized" };
 
 /**
  * Finishes the three-minute drill of a pattern: each answer is checked against the drill, the drill
  * pays Brain Power like any practice (less when repeated) and counts toward today, and the pattern
- * leaves Today once practiced.
+ * leaves Today once practiced. The same drill sent again (`requestId`, a retry after a lost
+ * response) returns what it already counted.
  */
 export async function practiceMistakePattern({
   input,
@@ -68,8 +74,25 @@ export async function practiceMistakePattern({
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;
 
-  await prisma.$transaction(async (tx) => {
+  const counted = await prisma.$transaction(async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
+
+    // The progress lock serializes a double submit: the second one finds the first's row. The id
+    // names this pattern's drill; another pattern sent with it is its own drill.
+    const earlier = await tx.learningEvent.findFirst({
+      where: {
+        AND: [
+          { contentIds: { equals: input.requestId, path: ["patternDrillId"] } },
+          { contentIds: { equals: row.id, path: ["mistakePatternId"] } },
+        ],
+        userId,
+      },
+    });
+
+    if (earlier) {
+      return { event: earlier, retry: true };
+    }
+
     const energyDelta = getAnswersEnergyDelta({ correct, incorrect });
 
     await applySessionProgress(tx, {
@@ -85,9 +108,9 @@ export async function practiceMistakePattern({
       userId,
     });
 
-    await recordLearningEvent(tx, {
+    const recorded = await recordLearningEvent(tx, {
       brainPower,
-      contentIds: { mistakePatternId: row.id },
+      contentIds: { mistakePatternId: row.id, patternDrillId: input.requestId },
       correctAnswers: correct,
       endedAt: lock.completedAt,
       energyDelta,
@@ -106,17 +129,37 @@ export async function practiceMistakePattern({
       data: { practicedAt: lock.completedAt },
       where: { id: row.id },
     });
+
+    return { event: recorded, retry: false };
   });
+
+  const { event } = counted;
+  const source = { id: event.id, kind: "patternDrill" };
+  await settleLearnerMissions({ source, timeZone, userId });
 
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
-  await trackLearnerEvents({
-    events: [
-      { name: "Mistake Pattern Practiced", properties: { correct, questions: verdicts.length } },
-    ],
-    goalId: row.goalId,
-    userId,
-  });
+  if (!counted.retry) {
+    await trackLearnerEvents({
+      events: [
+        { name: "Mistake Pattern Practiced", properties: { correct, questions: verdicts.length } },
+      ],
+      goalId: row.goalId,
+      userId,
+    });
+  }
 
-  return { result: { brainPower, correct, total: verdicts.length }, status: "ready" };
+  return {
+    result: await withActivityMissionMoment({
+      result: {
+        brainPower: event.brainPower,
+        correct: event.correctAnswers,
+        total: event.correctAnswers + event.incorrectAnswers,
+      },
+      source,
+      timeZone,
+      userId,
+    }),
+    status: "ready",
+  };
 }

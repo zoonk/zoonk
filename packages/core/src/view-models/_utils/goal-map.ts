@@ -1,19 +1,26 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
+import { findPlanPhase } from "../../plans/_utils/phase-states";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
-import { parsePlanPhases } from "../../plans/planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase } from "../map/map-contract";
 import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
 import { loadTodayLearnBlocks } from "./today-lesson-order";
 
 /** The goal's skills as the maps draw them, grouped by chapter and phase, in plan order. */
 export type GoalMap = {
+  phaseChallengesRequired: boolean;
   areas: MapArea[];
   /** Every course the plan's chapters sit in, the one each chapter shows under first. */
   courseIds: string[];
+  /** The plan studies everything, an exam's going on after it (see `PlanSettings.fullCourse`). */
+  fullCourse: boolean;
   /** The plan's items with the skills each teaches, for chapter pages. */
   items: MapItem[];
   phases: MapPhase[];
@@ -54,17 +61,20 @@ async function loadPlanRows(goalId: string) {
           kind: true,
           lessonId: true,
           phase: true,
+          scheduledFor: true,
           status: true,
         },
       },
       phases: true,
+      settings: true,
     },
     where: { goalId },
   });
 
   return {
     items: plan?.items ?? [],
-    phaseNames: parsePlanPhases(plan?.phases).map((phase) => phase.name),
+    phases: parsePlanPhases(plan?.phases),
+    settings: parsePlanSettings(plan?.settings),
   };
 }
 
@@ -101,9 +111,10 @@ async function loadAreaDetails({
 export async function loadGoalMap({
   goal,
 }: {
-  goal: Pick<Goal, "id" | "primaryCourseId" | "timezone" | "userId">;
+  goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "timezone" | "userId">;
 }): Promise<GoalMap> {
   const now = new Date();
+  const today = getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
 
   const [graph, rows, todayBlocks] = await Promise.all([
     readGoalPlan(goal.id),
@@ -163,11 +174,34 @@ export async function loadGoalMap({
 
   const items = rows.items.map((item) => ({ ...item, skillIds: itemSkills.get(item.id) ?? [] }));
 
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    userId: goal.userId,
+  });
+
+  // An exam the learner goes on studying after has no deadline (see `isPlanFinished`).
+  const studiesPastTarget = goal.kind === "exam" && rows.settings.fullCourse;
+
   const built = buildGoalMapAreas({
     areaDetails,
     items,
     nodes,
-    phaseNames: rows.phaseNames,
+    phases: rows.phases,
+    progress: {
+      currentPhase: findPlanPhase({
+        goal,
+        items,
+        phaseChallengesRequired,
+        phases: rows.phases,
+        settings: rows.settings,
+        today,
+      }),
+      goalKind: goal.kind,
+      phaseChallengesRequired,
+      studiesPastTarget,
+      targetDate: goal.targetDate,
+      today,
+    },
     todayBlocks,
   });
 
@@ -176,5 +210,12 @@ export async function loadGoalMap({
     return [area.courseId ?? [], details?.courseIds ?? []].flat();
   });
 
-  return { ...built, courseIds: [...new Set(courseIds)], items, todayBlocks };
+  return {
+    ...built,
+    courseIds: [...new Set(courseIds)],
+    fullCourse: rows.settings.fullCourse,
+    items,
+    phaseChallengesRequired,
+    todayBlocks,
+  };
 }

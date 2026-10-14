@@ -1,7 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
+import {
+  getGoalsCacheTag,
+  getLearningProfileCacheTag,
+  getUserSubscriptionCacheTag,
+} from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
@@ -24,7 +28,11 @@ export async function listCurrentUserGoals(): Promise<GoalList | null> {
 
   const userId = session.user.id;
 
-  cacheTag(getGoalsCacheTag(userId), getLearningProfileCacheTag(userId));
+  cacheTag(
+    getGoalsCacheTag(userId),
+    getLearningProfileCacheTag(userId),
+    getUserSubscriptionCacheTag(userId),
+  );
 
   const [goals, activeGoalId] = await Promise.all([
     prisma.goal.findMany({

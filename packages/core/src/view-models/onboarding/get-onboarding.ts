@@ -3,9 +3,11 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
+import { getExamCalendarDay, getPlanExamDays } from "../../exams/_utils/plan-exam-days";
 import { listExamChoiceViews, toChosenStructure } from "../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
+import { loadCourseExam } from "../../goals/_utils/course-exam";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -19,7 +21,12 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "./onboarding-contract";
-import { getFollowUpQuestions, getOnboardingSteps, isClassTest } from "./onboarding-steps";
+import {
+  getFollowUpQuestions,
+  getOnboardingSteps,
+  isClassTest,
+  isCourseDateSkipped,
+} from "./onboarding-steps";
 
 export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
@@ -100,6 +107,33 @@ async function findExamNotice({
   };
 }
 
+/**
+ * The next sitting of the public exam an exam goal's course links to, which the date question
+ * leads with: the same source as the start's default date and the days the course's page counts
+ * down to.
+ */
+async function findCourseExamDays(goal: {
+  kind: string;
+  primaryCourseId: string | null;
+}): Promise<OnboardingView["examDays"]> {
+  const exam =
+    goal.kind === "exam" && goal.primaryCourseId
+      ? await loadCourseExam(goal.primaryCourseId)
+      : null;
+
+  if (!exam) {
+    return null;
+  }
+
+  const { edition } = exam.blueprint;
+  const { today } = getExamCalendarDay({ edition, now: new Date() });
+  const found = getPlanExamDays({ details: {}, edition, goalDate: null, today });
+
+  return found.days.length > 0
+    ? { days: found.days.map((day) => day.date), estimated: found.estimated }
+    : null;
+}
+
 const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
 
 /** Goals the Library can already teach: a subject or an exam, not a language pair. */
@@ -147,7 +181,7 @@ async function findLibraryCourse({
 
 /**
  * The rest of onboarding for a goal the learner just created: the goal and the screens still ahead
- * (only unanswered questions, then the buddy when the profile lacks one, placement and the plan).
+ * (only unanswered questions, then the buddy choice when none was saved, placement and the plan).
  * Uncached: every answer changes it.
  */
 export async function getOnboarding({ goalId }: { goalId: string }): Promise<OnboardingResult> {
@@ -160,11 +194,12 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   const { goal, userId } = owned;
   const details = isJsonObject(goal.details) ? goal.details : {};
 
-  const [profile, activeGoalId, goalIds, notice] = await Promise.all([
+  const [profile, activeGoalId, goalIds, notice, examDays] = await Promise.all([
     findLearningProfileView(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds({ details, goalId, userId }),
     findExamNotice({ examBlueprintId: goal.examBlueprintId, goalId }),
+    findCourseExamDays(goal),
   ]);
 
   const earlierGoals = await prisma.goal.count({ where: { id: { notIn: goalIds }, userId } });
@@ -182,7 +217,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
       kind: goal.kind,
       targetDate: view.targetDate,
     },
-    profile: { hasBuddy: profile.buddy !== null, hasEarlierGoals: earlierGoals > 0 },
+    profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },
   });
 
   const today = toIsoDate(
@@ -190,7 +225,9 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   );
 
   // A goal started from a course's page is already built from that course.
-  const libraryCourse = readCourseStart(details)
+  const courseStart = readCourseStart(details);
+
+  const libraryCourse = courseStart
     ? null
     : await findLibraryCourse({
         goal,
@@ -199,28 +236,36 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
           typeof details.subject === "string" && details.subject ? details.subject : goal.title,
       });
 
+  const targetDate = isCourseDateSkipped({ details, targetDate: view.targetDate })
+    ? null
+    : (view.targetDate ?? notice.examDate);
+
   return {
     onboarding: {
       examChoices: notice.choices,
+      examDays,
       examSubjects: notice.subjects,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
       goal: view,
       goalIds,
       libraryCourse,
-      recommendedMinutes: getRecommendedMinutes({
-        size: getGoalSize({
-          hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
-          isClassTest: isClassTest(details) || notice.fromMaterial,
-          kind: goal.kind,
-          purpose: details.purpose,
-          targetDate: view.targetDate ?? notice.examDate,
-          targetPosition: details.targetPosition,
+      // The time a day the course's page had picked stays the learner's until they change it.
+      recommendedMinutes:
+        courseStart?.dailyMinutes ??
+        getRecommendedMinutes({
+          size: getGoalSize({
+            hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
+            isClassTest: isClassTest(details) || notice.fromMaterial,
+            kind: goal.kind,
+            purpose: details.purpose,
+            targetDate,
+            targetPosition: details.targetPosition,
+            today,
+          }),
+          targetDate,
           today,
         }),
-        targetDate: view.targetDate ?? notice.examDate,
-        today,
-      }),
       steps,
     },
     status: "ready",

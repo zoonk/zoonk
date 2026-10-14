@@ -7,6 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
+import { isInputRangeError } from "../../plans/target-date-range";
 import { type GoalUnderstandingView } from "./onboarding-contract";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
 
@@ -113,14 +114,16 @@ describe(reviseOnboardingDraft, () => {
   it("keeps the learner's own deadline in place of the exam's dates, and null brings them back", async () => {
     const { draft } = await setup();
 
+    const ownDate = `${new Date().getUTCFullYear() + 2}-09-30`;
+
     const own = readCard(
       await reviseOnboardingDraft({
         draftId: draft.id,
-        edit: { field: "targetDate", goal: 0, value: "2099-09-30" },
+        edit: { field: "targetDate", goal: 0, value: ownDate },
       }),
     );
 
-    expect(own.goals[0]?.draft.targetDate).toBe("2099-09-30");
+    expect(own.goals[0]?.draft.targetDate).toBe(ownDate);
 
     const cleared = readCard(
       await reviseOnboardingDraft({
@@ -166,6 +169,19 @@ describe(reviseOnboardingDraft, () => {
 
     expect(card.schedule).toMatchObject({ studyTime: "07:30", studyTimeNote: null });
     expect(card.goals.every((goal) => !("studyTimeNote" in (goal.draft.details ?? {})))).toBe(true);
+  });
+
+  it("refuses a deadline past what a plan reaches before the card is saved", async () => {
+    const { draft } = await setup();
+    // A plan reaches 3,650 days from today: eleven years is past it.
+    const value = `${new Date().getUTCFullYear() + 11}-01-01`;
+
+    await expect(
+      reviseOnboardingDraft({ draftId: draft.id, edit: { field: "targetDate", goal: 1, value } }),
+    ).rejects.toSatisfy(isInputRangeError);
+
+    const stored = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
+    expect(stored.updatedAt).toStrictEqual(draft.updatedAt);
   });
 
   it("refuses fixes that don't apply to the goal", async () => {

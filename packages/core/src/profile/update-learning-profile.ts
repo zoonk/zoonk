@@ -4,6 +4,7 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { findLearningProfileView, listAvailableGlasses } from "./_utils/learning-profile-view";
+import { DEFAULT_BUDDY } from "./default-buddy";
 import {
   type LearningProfileUpdateInput,
   type LearningProfileView,
@@ -20,11 +21,11 @@ function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
   }
 
   if (buddy === null) {
-    return { buddyGlasses: "round" as const, buddyKind: null, buddyName: null };
+    return { buddyGlasses: DEFAULT_BUDDY.glasses, buddyKind: null, buddyName: null };
   }
 
   return {
-    buddyGlasses: buddy.glasses ?? "round",
+    buddyGlasses: buddy.glasses ?? DEFAULT_BUDDY.glasses,
     buddyKind: buddy.kind,
     buddyName: buddy.name ?? null,
   };

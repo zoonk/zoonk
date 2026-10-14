@@ -36,10 +36,10 @@ describe(getCurrentUserProgress, () => {
       }),
       dailyProgressFixtureMany([
         {
-          correctAnswers: 3,
+          correctAnswers: 9,
           date: CURRENT_DATE,
           energyAtEnd: 80,
-          incorrectAnswers: 1,
+          incorrectAnswers: 3,
           staticCompleted: 1,
           timeSpentSeconds: 120,
           userId: user.id,
@@ -53,10 +53,10 @@ describe(getCurrentUserProgress, () => {
       activity: { learningDays: 1, totalLearningSeconds: 120, totalLessonCompletions: 0 },
       energy: { currentEnergy: 80 },
       level: { level: 8, totalBrainPower: 15_000 },
-      score: { correctAnswers: 3, incorrectAnswers: 1, score: 75, totalAnswers: 4 },
+      score: { correctAnswers: 9, incorrectAnswers: 3, score: 75, totalAnswers: 12 },
       scorePatterns: {
         strongestTime: null,
-        strongestWeekday: { correctAnswers: 3, incorrectAnswers: 1, score: 75, totalAnswers: 4 },
+        strongestWeekday: { correctAnswers: 9, incorrectAnswers: 3, score: 75, totalAnswers: 12 },
       },
     });
 

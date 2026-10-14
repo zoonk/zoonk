@@ -1,0 +1,72 @@
+import { prisma } from "@zoonk/db";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it, vi } from "vitest";
+import { mockGuestSession } from "../../_test-utils/mock-session";
+import { getGoalPlanScreen } from "../../plans/get-goal-plan";
+import { sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import { getTodayView } from "../today/get-today-view";
+import { getOnboarding } from "./get-onboarding";
+
+/** The transient planner bug was repaired by its owner. Inject only its read failure; goal,
+ * plan, answers, resume and session persistence use the real database. */
+vi.mock("../../plans/get-goal-plan", () => ({
+  getGoalPlanScreen: vi
+    .fn()
+    .mockRejectedValue(new Error("The plan's bosses didn't settle in 5 passes.")),
+}));
+
+describe("recovering a guest's failed date screen", () => {
+  it("keeps the failed date step and answers, and refuses to create Today's default session", async () => {
+    const user = await userFixture();
+
+    const { goal } = await sessionGoalFixture({
+      goal: { dailyMinutes: 30, kind: "exam", targetDate: new Date("2026-11-08T00:00:00Z") },
+      lessons: 1,
+      userId: user.id,
+    });
+
+    const details = {
+      answered: ["level"],
+      courseStart: { chapterId: null, dailyMinutes: 30 },
+      level: "basic",
+    };
+
+    await prisma.goal.update({ data: { details }, where: { id: goal.id } });
+    mockGuestSession(user.id);
+
+    // The old route read the planner alongside the unanswered date and showed its error boundary.
+    await expect(getGoalPlanScreen(goal.id)).rejects.toThrow(
+      "The plan's bosses didn't settle in 5 passes.",
+    );
+
+    const onboarding = await getOnboarding({ goalId: goal.id });
+    expect(onboarding.status === "ready" && onboarding.onboarding.steps[0]).toBe("targetDate");
+
+    await expect(getTodayView({})).resolves.toMatchObject({
+      goal: { id: goal.id, kind: "exam", title: goal.title },
+      status: "preparing",
+    });
+
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 30,
+      details,
+      targetDate: goal.targetDate,
+    });
+
+    // Once the remaining questions were answered, the same guest can begin the day.
+    await prisma.goal.update({
+      data: {
+        details: {
+          ...details,
+          answered: ["level", "targetDate", "buddy", "placement", "schedule"],
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await expect(getTodayView({})).resolves.toMatchObject({ status: "ready" });
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(1);
+  });
+});

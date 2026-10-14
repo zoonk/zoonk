@@ -70,7 +70,7 @@ export const chapterViewSchema = z
         .min(0)
         .meta({
           description:
-            "Open mistakes on the chapter's skills; practice them with `POST /v1/goals/{goalId}/area-practice` and the chapter id as `areaId`",
+            "Open mistakes on the chapter's skills, including today's entries; correction availability comes from the mistakes notebook and its practice capability",
         }),
     }),
     skills: z.array(mapSkillSchema).meta({ description: "The chapter's map, in plan order" }),
@@ -78,6 +78,12 @@ export const chapterViewSchema = z
       .array(z.object({ ideas: z.array(z.string()), lessonId: z.uuid(), title: z.string() }))
       .meta({ description: "Summary cards of the chapter's finished lessons, in lesson order" }),
     testOut: z.object({
+      available: z
+        .boolean()
+        .meta({
+          description:
+            "Offer the test while the chapter has lessons left, unless it was failed today without a lesson studied in it since; it becomes available again on the next learner-local day",
+        }),
       plusRequired: z
         .boolean()
         .meta({

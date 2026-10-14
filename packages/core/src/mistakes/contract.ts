@@ -5,6 +5,23 @@ import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
 
+export const mistakeAvailabilitySchema = z.object({
+  ready: z
+    .number()
+    .int()
+    .min(0)
+    .meta({
+      description: "Open mistakes from earlier learner-local days, available to practice now",
+    }),
+  tomorrow: z
+    .number()
+    .int()
+    .min(0)
+    .meta({ description: "Open mistakes from today, available on the next learner-local day" }),
+});
+
+export type MistakeAvailability = z.infer<typeof mistakeAvailabilitySchema>;
+
 export const mistakeListInputSchema = z
   .object({
     cause: z.enum(["gap", "misread", "trap", "time", "guess"] satisfies MistakeCause[]).optional(),
@@ -13,6 +30,7 @@ export const mistakeListInputSchema = z
     offset: z.coerce.number().int().min(0).default(0),
     skillId: z.uuid().optional(),
     status: z.enum(["open", "fixed"] satisfies MistakeStatus[]).optional(),
+    timeZone: answerTimeZoneSchema,
   })
   .strict();
 
@@ -21,6 +39,12 @@ export type MistakeListInput = z.infer<typeof mistakeListInputSchema>;
 export const mistakePracticeInputSchema = z
   .object({
     goalId: z.uuid().optional().meta({ description: "Only mistakes on this goal's skills" }),
+    skillId: z
+      .uuid()
+      .optional()
+      .meta({
+        description: "Only this skill's mistakes (\"Practice this skill\"), within the goal's",
+      }),
     timeZone: answerTimeZoneSchema,
   })
   .strict();

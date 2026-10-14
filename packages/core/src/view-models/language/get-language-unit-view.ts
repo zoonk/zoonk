@@ -8,6 +8,8 @@ import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadLanguageUnits } from "../../language/units/language-units";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
@@ -117,15 +119,25 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const [units, level, grammarTips, words, mistakes, pronunciation, order] = await Promise.all([
-    goal ? loadLanguageUnits(goal) : [],
-    getSpeakingLevel({ goal, targetLanguage, userId }),
-    loadGrammarTips(lessonIds),
-    loadUnitWords(lessonIds),
-    loadUnitMistakes({ lessonIds, userId }),
-    loadDuePronunciation({ language: targetLanguage, userId }),
-    loadLessonOrder({ goal, lessonIds }),
-  ]);
+  const [units, level, grammarTips, words, mistakes, pronunciation, order, blockedTestOutChapters] =
+    await Promise.all([
+      goal ? loadLanguageUnits(goal) : [],
+      getSpeakingLevel({ goal, targetLanguage, userId }),
+      loadGrammarTips(lessonIds),
+      loadUnitWords(lessonIds),
+      loadUnitMistakes({ lessonIds, userId }),
+      loadDuePronunciation({ language: targetLanguage, userId }),
+      loadLessonOrder({ goal, lessonIds }),
+      goal
+        ? loadBlockedTestOutChapters({
+            chapterIds: [chapter.id],
+            goalId: goal.id,
+            now: new Date(),
+            timeZone: getAnswerTimeZone({ goal }),
+            userId,
+          })
+        : new Set<string>(),
+    ]);
 
   const unit = units.find((candidate) => candidate.chapterId === chapter.id);
 
@@ -155,6 +167,8 @@ export async function getLanguageUnitView({
   return {
     status: "ready",
     unit: {
+      canTestOut:
+        Boolean(goal) && done.size < lessonIds.length && !blockedTestOutChapters.has(chapter.id),
       conversation: await loadPracticeCall({ chapterId: chapter.id, level }),
       goalId: goal?.id ?? null,
       grammarTips,

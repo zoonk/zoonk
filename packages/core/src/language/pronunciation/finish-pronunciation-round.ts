@@ -6,6 +6,8 @@ import { getUserProgressCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
+import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
+import { settleLearnerMissions } from "../../sessions/missions/settle-learner-missions";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { recordLearningEvent } from "../../stats/record-learning-event";
 import { getSession } from "../../users/get-session";
@@ -39,7 +41,7 @@ function getRoundSeconds(answers: readonly RoundAnswer[]): number {
 
 function toRoundResult(
   event: Pick<LearningEvent, "brainPower" | "correctAnswers" | "incorrectAnswers">,
-): PronunciationRoundResult {
+): Omit<PronunciationRoundResult, "missionMoment"> {
   return {
     brainPower: event.brainPower,
     correct: event.correctAnswers,
@@ -146,7 +148,18 @@ export async function finishPronunciationRound({
     });
   });
 
+  const source = { id: roundId, kind: "pronunciationRound" };
+  await settleLearnerMissions({ source, timeZone, userId });
+
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
-  return { result: toRoundResult(event), status: "ready" };
+  return {
+    result: await withActivityMissionMoment({
+      result: toRoundResult(event),
+      source,
+      timeZone,
+      userId,
+    }),
+    status: "ready",
+  };
 }

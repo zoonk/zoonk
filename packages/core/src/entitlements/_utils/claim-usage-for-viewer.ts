@@ -1,14 +1,11 @@
-import { type UsageKind, prisma, sql } from "@zoonk/db";
+import { type UsageKind, prisma } from "@zoonk/db";
+import { type LiveCallReservationResult } from "../../language/conversations/live-call-contract";
 import { type UsageDecision } from "../contract";
-import { getEstimatedCostMicros } from "../limits";
-import { holdCallTimeAgain } from "./call-time";
+import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
-import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
-import { claimGuestSpend } from "./guest-spend-budget";
-import { countUsage } from "./usage-counts";
-
-/** Namespaces the per-learner advisory lock so it never collides with other locks. */
-const USAGE_LOCK_NAMESPACE = 51_873;
+import { refreshLiveCallViewer } from "./live-call-viewer";
+import { LiveCallReservationRefusedError, reserveLiveCall } from "./reserve-live-call";
+import { lockUsageForViewer } from "./usage-lock";
 
 /**
  * Counts and records one use in a transaction that holds a per-learner lock, so two tabs starting
@@ -36,67 +33,49 @@ export async function claimUsageForViewer({
   viewer: EntitlementViewer;
 }): Promise<UsageDecision> {
   return prisma.$transaction(async (transaction) => {
-    await transaction.$queryRaw(
-      sql`SELECT pg_advisory_xact_lock(${USAGE_LOCK_NAMESPACE}::int, hashtext(${viewer.userId}))::text`,
-    );
+    await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-    const existing = await transaction.usageRecord.findUnique({
-      where: { userUsageTarget: { kind, targetId, userId: viewer.userId } },
+    return claimUsageInTransaction({
+      generated,
+      kind,
+      now,
+      seconds,
+      targetId,
+      transaction,
+      viewer,
     });
-
-    if (existing) {
-      return seconds === undefined
-        ? { status: "allowed" }
-        : holdCallTimeAgain({ now, record: existing, seconds, transaction, viewer });
-    }
-
-    const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });
-
-    const hold =
-      seconds === undefined
-        ? null
-        : getCallHold({
-            left: getCallTimeLeft({
-              kind,
-              tier: viewer.tier,
-              usedThisMonth: counts.secondsThisMonth,
-              usedToday: counts.secondsToday,
-            }),
-            seconds,
-          });
-
-    const held = hold?.heldSeconds ?? 0;
-    const costMicros = getEstimatedCostMicros({ generated, kind, seconds: held });
-    const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
-
-    if (decision.status !== "allowed") {
-      return decision;
-    }
-
-    const takesGuestBudget = viewer.isGuest && costMicros > 0;
-
-    if (takesGuestBudget && !(await claimGuestSpend({ costMicros, now, transaction }))) {
-      return { status: "signUpRequired" };
-    }
-
-    await transaction.usageRecord.create({
-      data: {
-        costMicros,
-        createdAt: now,
-        generated,
-        kind,
-        seconds: held,
-        targetId,
-        userId: viewer.userId,
-      },
-    });
-
-    if (!hold) {
-      return decision;
-    }
-
-    return hold.shortenedBy
-      ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
-      : { ...decision, heldSeconds: held };
   });
+}
+
+/** One atomic minute, money, slot, attempt and free-day claim under the entitlement lock. */
+export async function claimLiveCallUsageForViewer(input: {
+  conversationId: string;
+  now: Date;
+  requestId: string;
+  viewer: EntitlementViewer;
+}): Promise<LiveCallReservationResult> {
+  try {
+    return await prisma.$transaction(async (transaction) => {
+      await lockUsageForViewer({ transaction, userId: input.viewer.userId });
+
+      const viewer = await refreshLiveCallViewer({
+        isGuest: input.viewer.isGuest,
+        now: input.now,
+        transaction,
+        userId: input.viewer.userId,
+      });
+
+      if (!viewer) {
+        return { status: "unauthorized" as const };
+      }
+
+      return reserveLiveCall({ ...input, transaction, viewer });
+    });
+  } catch (error) {
+    if (error instanceof LiveCallReservationRefusedError) {
+      return error.result;
+    }
+
+    throw error;
+  }
 }

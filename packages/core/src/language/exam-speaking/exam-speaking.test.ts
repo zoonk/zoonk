@@ -7,8 +7,14 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import sharp from "sharp";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
+import {
+  cleanupTestCalls,
+  connectTestCall,
+  setupTestCalls,
+  testCallCompletionInput,
+} from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
@@ -121,12 +127,9 @@ async function startTask({ goalId, task }: { goalId: string; task: string }) {
   return started.conversationId;
 }
 
-/** Connecting (which claims call time, tested with the calls) is when a call starts. */
+/** Starts an actual provider session through the public reserve and SDP boundaries. */
 async function connect(conversationId: string) {
-  await prisma.languageConversation.update({
-    data: { startedAt: new Date() },
-    where: { id: conversationId },
-  });
+  await connectTestCall(conversationId);
 }
 
 async function readView(conversationId: string) {
@@ -141,6 +144,10 @@ async function readView(conversationId: string) {
 
 describe("exam speaking tasks", () => {
   beforeEach(async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+    await setupTestCalls();
+
     const photo = await sharp({
       create: { background: "#88aacc", channels: 3, height: 4, width: 6 },
     })
@@ -163,6 +170,8 @@ describe("exam speaking tasks", () => {
     storeBlobUploads({ url: PHOTO_URL });
     gradeAt(2);
   });
+
+  afterEach(cleanupTestCalls);
 
   it("starts a DELE B2 task with its card, the AI as its examiner and the exam's own timing", async () => {
     const { goal } = await deleLearner();
@@ -306,7 +315,10 @@ describe("exam speaking tasks", () => {
     const conversationId = await startTask({ goalId: goal.id, task: "t3" });
     await connect(conversationId);
 
-    const completed = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const completed = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(completed.status).toBe("completed");
 
@@ -355,7 +367,11 @@ describe("exam speaking tasks", () => {
 
     const first = await startTask({ goalId: goal.id, task: "t3" });
     await connect(first);
-    await completeLanguageConversation({ conversationId: first, input: COMPLETION });
+
+    await completeLanguageConversation({
+      conversationId: first,
+      input: testCallCompletionInput(first, COMPLETION),
+    });
 
     // The first try ended earlier; the second one, below the level on every criterion, is the last.
     await prisma.languageConversation.update({
@@ -366,7 +382,11 @@ describe("exam speaking tasks", () => {
     gradeAt(1);
     const second = await startTask({ goalId: goal.id, task: "t3" });
     await connect(second);
-    await completeLanguageConversation({ conversationId: second, input: COMPLETION });
+
+    await completeLanguageConversation({
+      conversationId: second,
+      input: testCallCompletionInput(second, COMPLETION),
+    });
 
     const paper = await loadSpeakingPaper({ access: "open", goal });
     const byKey = new Map(paper?.tasks.map((task) => [task.key, task]));
@@ -427,7 +447,11 @@ describe("exam speaking tasks", () => {
 
     const conversationId = await startTask({ goalId: goal.id, task: "t1" });
     await connect(conversationId);
-    await completeLanguageConversation({ conversationId, input: COMPLETION });
+
+    await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     await expect(
       prisma.languageSkillLevel.findFirst({
@@ -461,16 +485,16 @@ describe("exam speaking tasks", () => {
       ["t3", "ready"],
     ]);
 
-    await Promise.all(
-      section.tasks.map(async (task) => {
-        await connect(task.conversationId);
+    for (const task of section.tasks) {
+      // oxlint-disable-next-line eslint/no-await-in-loop -- One learner can hold only one active voice session.
+      await connect(task.conversationId);
 
-        await completeLanguageConversation({
-          conversationId: task.conversationId,
-          input: COMPLETION,
-        });
-      }),
-    );
+      // oxlint-disable-next-line eslint/no-await-in-loop -- Finish this task before reserving the next learner session.
+      await completeLanguageConversation({
+        conversationId: task.conversationId,
+        input: testCallCompletionInput(task.conversationId, COMPLETION),
+      });
+    }
 
     const finished = await getSpeakingSection(section.id);
 
@@ -516,16 +540,16 @@ describe("exam speaking tasks", () => {
       userPrompt: "",
     }));
 
-    await Promise.all(
-      started.section.tasks.map(async (task) => {
-        await connect(task.conversationId);
+    for (const task of started.section.tasks) {
+      // oxlint-disable-next-line eslint/no-await-in-loop -- One learner can hold only one active voice session.
+      await connect(task.conversationId);
 
-        await completeLanguageConversation({
-          conversationId: task.conversationId,
-          input: { ...COMPLETION, spokenSeconds: 0 },
-        });
-      }),
-    );
+      // oxlint-disable-next-line eslint/no-await-in-loop -- Finish this task before reserving the next learner session.
+      await completeLanguageConversation({
+        conversationId: task.conversationId,
+        input: testCallCompletionInput(task.conversationId, { ...COMPLETION, spokenSeconds: 0 }),
+      });
+    }
 
     await expect(getSpeakingSection(started.section.id)).resolves.toMatchObject({
       section: { estimate: { complete: false, high: null, low: null, typed: true } },

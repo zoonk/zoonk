@@ -112,6 +112,15 @@ describe(getOnboardingSteps, () => {
     expect(withTarget).toStrictEqual(["level", "placement", "schedule", "plan"]);
   });
 
+  it("keeps a typed exam's populated notice date without asking for it", () => {
+    expect(
+      getOnboardingSteps({
+        goal: { details: { level: "none" }, kind: "exam", targetDate: "2027-01-31" },
+        profile: SET_UP_PROFILE,
+      }),
+    ).toStrictEqual(["schedule", "plan"]);
+  });
+
   it("asks only for the target the exam has: a position for a civil service exam, nothing for a pass", () => {
     // A civil service exam that named its position, one that didn't, and the OAB, which is only passed.
     expect(examSteps({ examTarget: "position", targetPosition: "Agente" })).not.toContain("target");
@@ -202,13 +211,13 @@ describe(getOnboardingSteps, () => {
     ).not.toContain("buddy");
   });
 
-  it("asks a course start only for the level and time, then places the learner in the course", () => {
+  it("asks a course start for its optional date, level and time, then places the learner", () => {
     const steps = getOnboardingSteps({
       goal: { details: { courseStart: { chapterId: null } }, kind: "learn", targetDate: null },
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "buddy", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["targetDate", "level", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {
@@ -217,10 +226,46 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["targetDate", "level", "placement", "schedule", "plan"]);
   });
 
-  it("asks a chapter start only for the learner's time: they chose where to begin", () => {
+  it.each(["exam", "learn", "language"] as const)(
+    "asks the learner starting a %s course to answer its populated default date",
+    (kind) => {
+      expect(
+        getOnboardingSteps({
+          goal: {
+            details: { answered: ["level"], courseStart: { chapterId: null }, level: "none" },
+            kind,
+            targetDate: "2027-01-31",
+          },
+          profile: SET_UP_PROFILE,
+        }),
+      ).toStrictEqual(["targetDate", "schedule", "plan"]);
+    },
+  );
+
+  it.each(["2027-01-31", null])(
+    "skips an exam course's date question once its date %s is answered",
+    (targetDate) => {
+      expect(
+        getOnboardingSteps({
+          goal: {
+            details: {
+              answered: ["targetDate", "level"],
+              courseStart: { chapterId: null },
+              level: "none",
+            },
+            kind: "exam",
+            targetDate,
+          },
+          profile: SET_UP_PROFILE,
+        }),
+      ).toStrictEqual(["schedule", "plan"]);
+    },
+  );
+
+  it("asks a chapter start for its optional date and time: they chose where to begin", () => {
     const steps = getOnboardingSteps({
       goal: {
         details: { courseStart: { chapterId: "0190c9e2-8f1a-7000-8000-000000000001" } },
@@ -230,14 +275,14 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["schedule", "plan"]);
+    expect(steps).toStrictEqual(["targetDate", "schedule", "plan"]);
   });
 
   it("skips placement for a course start from scratch, like any goal", () => {
     const steps = getOnboardingSteps({
       goal: {
         details: {
-          answered: ["level", "schedule"],
+          answered: ["targetDate", "level", "schedule"],
           courseStart: { chapterId: null },
           level: "none",
         },
@@ -248,6 +293,20 @@ describe(getOnboardingSteps, () => {
     });
 
     expect(steps).toStrictEqual(["plan"]);
+  });
+
+  it("keeps an exam course's unanswered exam choices in onboarding", () => {
+    expect(
+      getOnboardingSteps({
+        goal: {
+          details: { courseStart: { chapterId: null }, level: "none" },
+          hasUnpickedChoice: true,
+          kind: "exam",
+          targetDate: "2027-01-31",
+        },
+        profile: SET_UP_PROFILE,
+      }),
+    ).toStrictEqual(["targetDate", "examChoice", "schedule", "plan"]);
   });
 
   it("has no screens for a quick explanation", () => {

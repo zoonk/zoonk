@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
@@ -42,6 +43,34 @@ function patternFixture({
 }
 
 describe("a language unit's page", () => {
+  it("waits after a failed unit test until a lesson in that unit is studied", async () => {
+    freezeClock();
+    const { goal, lessons, renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const failedAt = new Date(Date.now() - 60_000);
+
+    await learningEventFixture({
+      contentIds: { chapterId: renting.id },
+      correctAnswers: 1,
+      endedAt: failedAt,
+      goalId: goal.id,
+      incorrectAnswers: 7,
+      kind: "questions",
+      lessonKind: "testOut",
+      userId: user.id,
+    });
+
+    await expect(getLanguageUnitView({ chapterId: renting.id })).resolves.toMatchObject({
+      unit: { canTestOut: false },
+    });
+
+    await learningEventFixture({ contentIds: { lessonId: lessons[2]?.id }, userId: user.id });
+
+    await expect(getLanguageUnitView({ chapterId: renting.id })).resolves.toMatchObject({
+      unit: { canTestOut: true },
+    });
+  });
+
   it("lists its lessons with their minutes and whether they're written, and keeps the summaries the finished ones left", async () => {
     const { items, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);

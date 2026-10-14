@@ -6,9 +6,9 @@ import {
   loadLanguageSkillLevels,
 } from "../../language/levels/language-skill-levels";
 import { getOverallLevel } from "../../language/levels/skill-level-rules";
-import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
+import { loadTodayPattern } from "./_utils/today-pattern";
 import { type LanguageTodayView } from "./language-view-contract";
 
 export type LanguageTodayViewResult =
@@ -36,7 +36,7 @@ export async function getLanguageTodayView(
 
   const [levels, pattern, pronunciation, speaking] = await Promise.all([
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
-    findFreshMistakePattern({ language: goal.targetLanguage, userId }),
+    loadTodayPattern({ goal, userId }),
     loadDuePronunciation({ language: goal.targetLanguage, userId }),
     loadSpeakingPaperEntry({ goal }),
   ]);

@@ -4,7 +4,7 @@ import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { getLearningProfile } from "./get-learning-profile";
 import { updateLearningProfile } from "./update-learning-profile";
@@ -26,15 +26,39 @@ describe(updateLearningProfile, () => {
     });
   });
 
-  it("starts with no buddy, only the buddy's own glasses and sounds on", async () => {
-    await useLearner();
+  it("starts with Zu without saving a buddy choice", async () => {
+    const user = await useLearner();
 
     await expect(getLearningProfile()).resolves.toStrictEqual({
       activeGoalId: null,
       availableGlasses: ["round"],
-      buddy: null,
+      buddy: { glasses: "round", kind: "zu", name: null, picked: false },
       dailyLimitMinutes: null,
       soundsEnabled: true,
+    });
+
+    await expect(
+      prisma.userLearningProfile.findUnique({ where: { userId: user.id } }),
+    ).resolves.toBeNull();
+  });
+
+  it("keeps the default buddy when only other settings were saved", async () => {
+    await useLearner();
+    await updateLearningProfile({ soundsEnabled: false });
+
+    await expect(getLearningProfile()).resolves.toMatchObject({
+      buddy: { glasses: "round", kind: "zu", name: null, picked: false },
+      soundsEnabled: false,
+    });
+  });
+
+  it("gives a guest the same default buddy", async () => {
+    const user = await userFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockGuestSession(user.id);
+
+    await expect(getLearningProfile()).resolves.toMatchObject({
+      buddy: { glasses: "round", kind: "zu", name: null, picked: false },
     });
   });
 
@@ -68,7 +92,7 @@ describe(updateLearningProfile, () => {
       profile: {
         activeGoalId: goal.id,
         availableGlasses: ["round"],
-        buddy: { glasses: "round", kind: "noodle", name: "Nodo" },
+        buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
         dailyLimitMinutes: null,
         soundsEnabled: true,
       },
@@ -77,11 +101,15 @@ describe(updateLearningProfile, () => {
 
     expect(revalidateTag).toHaveBeenCalledWith(getLearningProfileCacheTag(user.id), { expire: 0 });
 
+    await expect(getLearningProfile()).resolves.toMatchObject({
+      buddy: { glasses: "round", kind: "noodle", name: "Nodo", picked: true },
+    });
+
     await updateLearningProfile({ buddy: { kind: "zu" } });
 
     await expect(getLearningProfile()).resolves.toMatchObject({
       activeGoalId: goal.id,
-      buddy: { kind: "zu", name: null },
+      buddy: { kind: "zu", name: null, picked: true },
     });
   });
 
@@ -101,7 +129,7 @@ describe(updateLearningProfile, () => {
     });
 
     await expect(updateLearningProfile({ buddy: null })).resolves.toMatchObject({
-      profile: { buddy: null },
+      profile: { buddy: { glasses: "round", kind: "zu", name: null, picked: false } },
     });
   });
 

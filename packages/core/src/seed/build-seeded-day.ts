@@ -1,9 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type SeededToday } from "@zoonk/db/seed/v2";
+import { loadDayPlanVersion } from "../sessions/_utils/day-plan-version";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
-import { loadDayPlanVersion } from "../sessions/_utils/refresh-day-session";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { getBlockItemIds } from "../sessions/block-payload";
 import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-builder";

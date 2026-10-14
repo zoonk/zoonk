@@ -19,6 +19,15 @@ export async function settleCallTime({
   now: Date;
   userId: string;
 }): Promise<void> {
+  /** Server connection settlement owns new calls; legacy records retain their original behavior. */
+  const connection = await prisma.liveCallConnection.findFirst({
+    where: { conversationId, userId },
+  });
+
+  if (connection) {
+    return;
+  }
+
   const record = await prisma.usageRecord.findUnique({
     where: { userUsageTarget: { kind: "conversation", targetId: conversationId, userId } },
   });
@@ -29,21 +38,17 @@ export async function settleCallTime({
 
   const seconds = getCallSecondsRun({ now, record });
 
+  const costMicros = getEstimatedCostMicros({
+    generated: record.generated,
+    kind: record.kind,
+    seconds,
+  });
+
   if (seconds === record.seconds) {
     return;
   }
 
-  await prisma.usageRecord.update({
-    data: {
-      costMicros: getEstimatedCostMicros({
-        generated: record.generated,
-        kind: record.kind,
-        seconds,
-      }),
-      seconds,
-    },
-    where: { id: record.id },
-  });
+  await prisma.usageRecord.update({ data: { costMicros, seconds }, where: { id: record.id } });
 
   revalidateCacheTags([getAllowanceCacheTag(userId)]);
 }

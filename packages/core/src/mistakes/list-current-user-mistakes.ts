@@ -1,19 +1,31 @@
 import "server-only";
 import { type Mistake, type MistakeCause, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readGoalPlan } from "../learner/_utils/read-goal-plan";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
-import { type MistakeListInput } from "./contract";
+import { type MistakeAvailability, type MistakeListInput } from "./contract";
+import { loadMistakePracticeAvailability } from "./mistake-availability";
+import { type MistakeLesson, findMistakeLessons } from "./mistake-lessons";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 type MistakeEntry = Pick<
   Mistake,
   "cause" | "createdAt" | "fixedAt" | "id" | "itemId" | "status"
-> & { skill: { id: string; name: string } | null; snapshot: MistakeSnapshot };
+> & {
+  /** The lesson "Open the lesson" opens (see `findMistakeLessons`); null when there's none. */
+  lesson: MistakeLesson | null;
+  /** Open and made on an earlier local day; today's mistakes return tomorrow. */
+  practiceAvailable: boolean;
+  /** This open mistake has practice material and becomes available on the next local day. */
+  practiceAvailableTomorrow: boolean;
+  skill: { id: string; name: string } | null;
+  snapshot: MistakeSnapshot;
+};
 
 /** Counts for the filters, over everything in scope before filtering by cause or status. */
 type MistakeCounts = {
@@ -24,6 +36,7 @@ type MistakeCounts = {
 
 export type CurrentUserMistakes =
   | {
+      availability: MistakeAvailability;
       counts: MistakeCounts;
       hasMore: boolean;
       mistakes: MistakeEntry[];
@@ -43,8 +56,10 @@ async function getScopeSkillIds(input: MistakeListInput): Promise<string[] | nul
     return null;
   }
 
+  // A goal skill's lessons usually teach finer skills, where their screens' misses land
+  // (`memberSkillIds`): the notebook lists those with the goal's own, as Today's practice drills them.
   const plan = await readGoalPlan(input.goalId);
-  return plan.skills.map((skill) => skill.id);
+  return [...new Set(plan.skills.flatMap((skill) => skill.memberSkillIds))];
 }
 
 async function countMistakes(where: {
@@ -77,7 +92,7 @@ async function countMistakes(where: {
 /**
  * Lists the learner's mistakes notebook, newest first, filterable by goal (subject), skill, cause
  * and status, with counts for the filter chips. Each entry keeps its own snapshot, so it stays
- * readable after the question changes.
+ * readable after the question changes, and names the lesson to go back to.
  */
 export async function listCurrentUserMistakes(
   input: MistakeListInput,
@@ -102,9 +117,19 @@ export async function listCurrentUserMistakes(
   const skillIds = await getScopeSkillIds(input);
   const scope = { userId, ...(skillIds ? { skillId: { in: skillIds } } : {}) };
 
-  const [rows, counts, structure] = await Promise.all([
+  const timeZone = getAnswerTimeZone({
+    goal: owned?.status === "ready" ? owned.goal : null,
+    timeZone: input.timeZone,
+  });
+
+  const localDate = getDateInTimeZone({ date: new Date(), timeZone });
+
+  const [rows, counts, structure, practiceAvailability] = await Promise.all([
     prisma.mistake.findMany({
-      include: { skill: { select: { id: true, name: true } } },
+      include: {
+        skill: { select: { id: true, name: true } },
+        step: { select: { lessonId: true } },
+      },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       skip: input.offset,
       take: input.limit + 1,
@@ -112,23 +137,35 @@ export async function listCurrentUserMistakes(
     }),
     countMistakes(scope),
     owned ? loadExamStructure(owned.goal) : null,
+    loadMistakePracticeAvailability({
+      goalId: input.goalId,
+      localDate,
+      skillIds,
+      timeZone,
+      userId,
+    }),
   ]);
 
+  const page = rows.slice(0, input.limit);
+  const lessons = await findMistakeLessons({ mistakes: page, userId });
+
   return {
+    availability: practiceAvailability.availability,
     counts,
     hasMore: rows.length > input.limit,
-    mistakes: rows
-      .slice(0, input.limit)
-      .map((row) => ({
-        cause: row.cause,
-        createdAt: row.createdAt,
-        fixedAt: row.fixedAt,
-        id: row.id,
-        itemId: row.itemId,
-        skill: row.skill,
-        snapshot: readMistakeSnapshot(row.snapshot),
-        status: row.status,
-      })),
+    mistakes: page.map((row) => ({
+      cause: row.cause,
+      createdAt: row.createdAt,
+      fixedAt: row.fixedAt,
+      id: row.id,
+      itemId: row.itemId,
+      lesson: lessons.get(row.id) ?? null,
+      practiceAvailable: practiceAvailability.readyIds.has(row.id),
+      practiceAvailableTomorrow: practiceAvailability.tomorrowIds.has(row.id),
+      skill: row.skill,
+      snapshot: readMistakeSnapshot(row.snapshot),
+      status: row.status,
+    })),
     status: "ready",
     trueFalseLabels: getTrueFalseLabels(structure),
   };

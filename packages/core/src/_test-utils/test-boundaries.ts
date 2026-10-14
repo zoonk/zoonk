@@ -95,7 +95,11 @@ export const boundaries = {
   "@zoonk/ai/tasks/v2/language/explain-spoken-answer": { explainSpokenAnswer: vi.fn() },
   "@zoonk/ai/tasks/v2/language/language-lesson": { generateLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/v2/language/level-test-bank": { generateLevelTestBank: vi.fn() },
-  "@zoonk/ai/tasks/v2/language/live-conversation-token": { createLiveConversationToken: vi.fn() },
+  "@zoonk/ai/tasks/v2/language/live-call-session": {
+    closeLiveCallSession: vi.fn(),
+    createLiveCallSession: vi.fn(),
+    isLiveCallAvailable: vi.fn(),
+  },
   "@zoonk/ai/tasks/v2/language/mistake-pattern": { findMistakePattern: vi.fn() },
   "@zoonk/ai/tasks/v2/language/speaking-mock-scenario": { generateSpeakingMockScenario: vi.fn() },
   "@zoonk/ai/tasks/v2/language/speaking-mock-score": { scoreSpeakingMock: vi.fn() },
@@ -147,6 +151,20 @@ export async function resetBoundaries(): Promise<void> {
     if (vi.isMockFunction(fn)) {
       fn.mockReset();
     }
+  });
+
+  const liveCall = boundaries["@zoonk/ai/tasks/v2/language/live-call-session"];
+  liveCall.isLiveCallAvailable.mockReturnValue(true);
+
+  liveCall.createLiveCallSession.mockImplementation(async () => ({
+    sdp: "test-answer",
+    sessionId: `session-${crypto.randomUUID()}`,
+  }));
+
+  liveCall.closeLiveCallSession.mockResolvedValue({
+    reason: "close_requested",
+    seconds: 15,
+    status: "closed",
   });
 
   nextServer.connection.mockResolvedValue(null);

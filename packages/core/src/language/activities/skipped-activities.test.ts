@@ -5,8 +5,9 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
+import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { changeLanguageActivity, getLanguageActivitySettings } from "./skipped-activities";
+import { getLanguageActivitySettings } from "./skipped-activities";
 
 const TIME_ZONE = "UTC";
 
@@ -46,17 +47,16 @@ async function startAndComplete(lessonId: string) {
 
 describe("skipping language activities", () => {
   it("leaves writing out of the plan until it's brought back", async () => {
-    const { plan, user } = await languageLessonSetup();
+    const { goal, plan, user } = await languageLessonSetup();
     mockSession(user.id);
 
     await expect(getLanguageActivitySettings({ targetLanguage: "en" })).resolves.toStrictEqual({
       skipped: [],
     });
 
-    const skipped = await changeLanguageActivity({
-      activity: "writing",
-      skip: true,
-      targetLanguage: "en",
+    const skipped = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ activities: ["writing"], kind: "skipActivities" }] },
     });
 
     expect(skipped.status).toBe("applied");
@@ -64,7 +64,10 @@ describe("skipping language activities", () => {
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(parsePlanSettings(saved.settings).skippedActivities).toStrictEqual(["writing"]);
 
-    await changeLanguageActivity({ activity: "writing", skip: false, targetLanguage: "en" });
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ activities: ["writing"], kind: "restoreActivities" }] },
+    });
 
     await expect(getLanguageActivitySettings({ targetLanguage: "en" })).resolves.toStrictEqual({
       skipped: [],
@@ -72,12 +75,15 @@ describe("skipping language activities", () => {
   });
 
   it("finishes a language lesson without its writing screens once writing is skipped", async () => {
-    const { lesson, user } = await languageLessonSetup();
+    const { goal, lesson, user } = await languageLessonSetup();
     mockSession(user.id);
 
     await expect(startAndComplete(lesson.id)).resolves.toStrictEqual({ status: "invalid" });
 
-    await changeLanguageActivity({ activity: "writing", skip: true, targetLanguage: "en" });
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ activities: ["writing"], kind: "skipActivities" }] },
+    });
 
     await expect(startAndComplete(lesson.id)).resolves.toMatchObject({ status: "completed" });
   });
@@ -87,9 +93,5 @@ describe("skipping language activities", () => {
     mockSession(user.id);
 
     await expect(getLanguageActivitySettings({ targetLanguage: "ja" })).resolves.toBeNull();
-
-    await expect(
-      changeLanguageActivity({ activity: "speaking", skip: true, targetLanguage: "ja" }),
-    ).resolves.toStrictEqual({ status: "noGoal" });
   });
 });

@@ -56,13 +56,16 @@ export const languageProgressViewSchema = z
         description:
           "The exam whose speaking mock the goal offers (IELTS or TOEFL iBT, POST /v1/language-conversations with kind speakingMock); null when none",
       }),
+    speakingMockPaused: z
+      .boolean()
+      .meta({ description: "The speaking mock cannot start while live calls are paused" }),
     target: levelTargetSchema,
   })
   .meta({ id: "LanguageProgress" });
 
 export type LanguageProgressView = z.infer<typeof languageProgressViewSchema>;
 
-export const LANGUAGE_MISTAKE_SKILLS = ["words", "listening", "speaking", "writing"] as const;
+const LANGUAGE_MISTAKE_SKILLS = ["words", "listening", "speaking", "writing"] as const;
 
 export type LanguageMistakeSkill = (typeof LANGUAGE_MISTAKE_SKILLS)[number];
 
@@ -109,6 +112,12 @@ export const practiceCallSchema = z
     minutes: z
       .array(z.int())
       .meta({ description: "The lengths that fit what's left of the learner's call time" }),
+    paused: z
+      .boolean()
+      .meta({
+        description:
+          "Calls are currently paused for this learner; show this before choosing a call length",
+      }),
     plusMinutes: z
       .array(z.int())
       .meta({ description: "Longer lengths that come with Plus, shown locked with the Plus mark" }),
@@ -117,6 +126,12 @@ export const practiceCallSchema = z
 
 export const languageUnitViewSchema = z
   .object({
+    canTestOut: z
+      .boolean()
+      .meta({
+        description:
+          "Offer the unit's chapter test while lessons remain, unless it was failed today without a lesson studied in this unit since; available again on the next learner-local day",
+      }),
     conversation: practiceCallSchema,
     goalId: z.uuid().nullable(),
     grammarTips: z.array(z.object({ text: z.string(), title: z.string() })),
@@ -192,7 +207,7 @@ export const languageTodayViewSchema = z
       .meta({ description: "Mispronounced words due to be said again today" }),
     speaking: z
       .object({
-        access: z.enum(["open", "plusRequired"]),
+        access: z.enum(["open", "plusRequired", "callsPaused"]),
         title: z.string().meta({ description: 'The paper\'s exam and level, "B1 Preliminary"' }),
       })
       .nullable()

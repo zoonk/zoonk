@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
+import { suggestedGoalViewSelect, toSuggestedGoalView } from "./_utils/suggested-goal-view";
 import { type SuggestedGoalAnswerInput, type SuggestedGoalView } from "./suggested-goal-contract";
 
 export type SuggestedGoalAnswerResult =
@@ -12,8 +13,8 @@ export type SuggestedGoalAnswerResult =
 
 /**
  * The learner's answer to a suggested goal on Today. Accepting only records the answer: the apps
- * then open onboarding with the course's title, where the goal is really made. Each suggestion is
- * answered once.
+ * then open the course's start (or onboarding with its title, once nobody can start the course),
+ * where the goal is really made. Each suggestion is answered once.
  */
 export async function respondToSuggestedGoal({
   input,
@@ -40,7 +41,7 @@ export async function respondToSuggestedGoal({
   });
 
   const suggestion = await prisma.suggestedGoal.findFirst({
-    select: { id: true, status: true, title: true },
+    select: suggestedGoalViewSelect,
     where: { id: suggestionId, userId },
   });
 
@@ -54,5 +55,5 @@ export async function respondToSuggestedGoal({
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
 
-  return { status: "updated", suggestedGoal: suggestion };
+  return { status: "updated", suggestedGoal: await toSuggestedGoalView(suggestion) };
 }

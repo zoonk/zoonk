@@ -38,7 +38,7 @@ export function getTestStart(goal: Pick<Goal, "details">): number {
   return parseCefrScore(readGoalDetails(goal).level) ?? DEFAULT_START;
 }
 
-function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
+export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
   const parsed = levelTestProgressSchema.safeParse(readGoalDetails(goal).levelTest);
   return parsed.success ? parsed.data : { answers: [], counted: 0, speaking: null };
 }

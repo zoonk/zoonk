@@ -174,6 +174,46 @@ describe(writeAiCalls, () => {
 
     await expect(findRun(call.provenance.runId)).resolves.toMatchObject({ costUsd: null });
   });
+
+  it("keeps mixed-step attribution and adds the already-priced task cost once in spend totals", async () => {
+    const user = await userFixture();
+    const standard = generation({ context: { distinctId: user.id } });
+
+    const mixed = generation({
+      context: { distinctId: user.id },
+      provenance: {
+        ...generation().provenance,
+        costUsd: 0.0028,
+        model: "openai/gpt-6-luna, google/gemini-3.8-flash",
+        provider: "gateway, vertex",
+        serviceTier: "mixed",
+        usage: { inputTokens: 2000, outputTokens: 1000, totalTokens: 3000 },
+      },
+    });
+
+    await writeAiCalls([toAiCallRow(mixed), toAiCallRow(standard)]);
+
+    await expect(findRun(mixed.provenance.runId)).resolves.toMatchObject({
+      costUsd: 0.0028,
+      inputTokens: 2000,
+      model: mixed.provenance.model,
+      outputTokens: 1000,
+      provider: mixed.provenance.provider,
+      serviceTier: "mixed",
+    });
+
+    /** Admin spend totals sum these ledger columns without re-pricing the joined model field. */
+    const totals = await prisma.aiCall.aggregate({
+      _count: { id: true },
+      _sum: { costUsd: true, inputTokens: true, outputTokens: true },
+      where: { userId: user.id },
+    });
+
+    expect(totals._count.id).toBe(2);
+    expect(totals._sum.costUsd).toBeCloseTo(0.007, 10);
+    expect(totals._sum.inputTokens).toBe(3000);
+    expect(totals._sum.outputTokens).toBe(1300);
+  });
 });
 
 describe(registerAiCallLog, () => {

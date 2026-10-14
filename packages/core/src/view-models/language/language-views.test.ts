@@ -6,9 +6,10 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { setupTestCalls } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { mockSession } from "../../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "./get-language-progress-view";
 import { getLanguageTodayView } from "./get-language-today-view";
 import { getLanguageUnitView } from "./get-language-unit-view";
@@ -29,6 +30,8 @@ async function finishArriving({ items }: { items: { id: string }[] }) {
 }
 
 describe("language view models", () => {
+  beforeAll(setupTestCalls);
+
   it("shows levels since the level test and can-dos", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
@@ -261,6 +264,18 @@ describe("language view models", () => {
         unit: { levelRange: "A1–A2", position: 2, title: "Alugando um apartamento" },
         words: { count: 0 },
       },
+    });
+  });
+
+  it("keeps the free-account recovery for a guest instead of claiming a global pause", async () => {
+    const { renting, user } = await languageGoalFixture();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+    mockGuestSession(user.id);
+    const result = await getLanguageUnitView({ chapterId: renting.id });
+
+    expect(result).toMatchObject({
+      status: "ready",
+      unit: { conversation: { limit: { period: "total", tier: "guest" }, paused: false } },
     });
   });
 

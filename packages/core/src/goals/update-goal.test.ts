@@ -6,8 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
+import { keptEndPlanFixture, readPlan } from "../plans/_test-utils/kept-end-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { loadCatchUpItems } from "../sessions/_utils/catch-up";
 import { updateGoal } from "./update-goal";
 
 /**
@@ -134,6 +137,48 @@ describe(updateGoal, () => {
     });
 
     expect(first.scheduledFor?.toISOString().slice(0, 10)).toBe("2020-10-06");
+  });
+
+  // Marcos paused by mistake and resumed a minute later: planned again from today, his second
+  // phase lost three lessons and five days without a word. A pause that left nothing behind keeps
+  // the plan he saw.
+  it("keeps the plan as the learner saw it when the pause left nothing behind", async () => {
+    const { goal, plan, user } = await keptEndPlanFixture();
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    const shown = await readPlan(plan.id);
+    const { version } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await updateGoal({ goalId: goal.id, input: { status: "paused" } });
+    vi.setSystemTime(new Date(MONDAY.getTime() + 60_000));
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { status: "active" } }),
+    ).resolves.toMatchObject({ change: null, goal: { status: "active" }, status: "updated" });
+
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      version,
+    });
+  });
+
+  // Marcos came back after four paused days: the plan put their lessons first, then his Plan said
+  // "Behind: do first the 2 lessons left behind". Paused days aren't missed days.
+  it("puts the paused days' lessons first without calling the learner behind", async () => {
+    const { goal, plan, user } = await keptEndPlanFixture();
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+    await updateGoal({ goalId: goal.id, input: { status: "paused" } });
+
+    vi.setSystemTime(new Date("2020-10-01T12:00:00Z"));
+    await updateGoal({ goalId: goal.id, input: { status: "active" } });
+    await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+
+    await expect(
+      prisma.planChange.count({ where: { kind: "missedDays", planId: plan.id } }),
+    ).resolves.toBe(0);
+
+    await expect(loadCatchUpItems(goal.id)).resolves.toStrictEqual([]);
   });
 
   it("moves the tabs to another active goal when the shown one is archived", async () => {

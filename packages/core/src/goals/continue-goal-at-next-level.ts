@@ -1,9 +1,11 @@
 import "server-only";
 import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadPlanCourse } from "../plans/_utils/plan-course";
-import { isPlanOver } from "../plans/_utils/plan-end";
+import { isPlanFinished } from "../plans/_utils/plan-end";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { trackGoalReached } from "./_utils/track-goal-reached";
 import { createGoals } from "./create-goals";
@@ -67,11 +69,26 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
   const { goal } = owned;
 
   const items = await prisma.planItem.findMany({
-    select: { chapterId: true, kind: true, lessonId: true, status: true },
+    select: { chapterId: true, kind: true, lessonId: true, scheduledFor: true, status: true },
     where: { plan: { goalId } },
   });
 
-  if (!isPlanOver(items)) {
+  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+
+  const phaseChallengesRequired = await arePhaseChallengesRequired({
+    goalKind: goal.kind,
+    userId: owned.userId,
+  });
+
+  if (
+    !isPlanFinished({
+      goalKind: goal.kind,
+      items,
+      phaseChallengesRequired,
+      targetDate: goal.targetDate,
+      today,
+    })
+  ) {
     return { status: "notFinished" };
   }
 

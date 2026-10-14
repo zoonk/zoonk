@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
+import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
 
 const MAX_DRILL_QUESTIONS = 10;
 const MAX_DRILL_ANSWER_LENGTH = 200;
@@ -42,6 +43,12 @@ export const mistakePatternPracticeInputSchema = z
       .array(z.string().max(MAX_DRILL_ANSWER_LENGTH))
       .max(MAX_DRILL_QUESTIONS)
       .meta({ description: "The option chosen for each drill question, in order" }),
+    requestId: z
+      .uuid()
+      .meta({
+        description:
+          "The drill's own id, made when it starts. Sending the same pattern's drill again with it (a retry) returns what it already counted instead of counting it twice.",
+      }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()
@@ -50,5 +57,12 @@ export const mistakePatternPracticeInputSchema = z
 export type MistakePatternPracticeInput = z.infer<typeof mistakePatternPracticeInputSchema>;
 
 export const mistakePatternPracticeResultSchema = z
-  .object({ brainPower: z.int().min(0), correct: z.int().min(0), total: z.int().min(0) })
+  .object({
+    brainPower: activityBrainPowerSchema,
+    correct: z.int().min(0),
+    missionMoment: missionMomentSchema.nullable(),
+    total: z.int().min(0),
+  })
   .meta({ id: "MistakePatternPracticeResult" });
+
+export type MistakePatternPracticeResult = z.infer<typeof mistakePatternPracticeResultSchema>;

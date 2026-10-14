@@ -79,7 +79,7 @@ function buildItemArea({ chapterId, map }: { chapterId: string; map: GoalMap }) 
 
 /**
  * A chapter of the goal's plan as its page shows it, numbered in plan order, or null when the plan
- * doesn't have it. Every chapter a plan item points at has a page, so each row of the Journey opens
+ * doesn't have it. Every chapter a plan item points at has a page, so each row of the Plan opens
  * one.
  */
 export function findChapterArea({

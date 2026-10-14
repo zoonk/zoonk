@@ -6,7 +6,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageUnitView } from "./get-language-unit-view";
-import { LANGUAGE_MISTAKE_SKILLS } from "./language-view-contract";
+import { type LanguageMistakeSkill } from "./language-view-contract";
 
 const snapshot = (format: string, question: string) => ({ answer: "x", format, question });
 
@@ -76,7 +76,9 @@ describe("a language unit's mistakes", () => {
       Object.fromEntries(mistakes.map((mistake) => [mistake.question, mistake.skill])),
     ).toStrictEqual({ "About a text": "words", "In a lesson": "writing", "In a review": "words" });
 
-    const byFilter = LANGUAGE_MISTAKE_SKILLS.map(
+    const skills = ["words", "listening", "speaking", "writing"] satisfies LanguageMistakeSkill[];
+
+    const byFilter = skills.map(
       (skill) => mistakes.filter((mistake) => mistake.skill === skill).length,
     );
 

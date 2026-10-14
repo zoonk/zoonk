@@ -26,29 +26,21 @@ const CALL_SECOND_COST_MICROS = CALL_MINUTE_COST_MICROS / SECONDS_PER_MINUTE;
 /** The checks of what was said during a call and its feedback, whatever its length. */
 const CALL_CHECKS_COST_MICROS = 10_000;
 
-/**
- * What one minute of call time can cost at most: a one-minute call (a unit's call at A1 and A2)
- * that runs to its end, its goodbye past the end (the app hangs up 10 seconds later, which the
- * call time doesn't count) and its checks. Longer calls cost less a minute.
- */
-const CALL_GOODBYE_SECONDS = 10;
+/** Budgeted transport overhead, separate from the learner's practice allowance. */
+export const LIVE_CALL_GRACE_SECONDS = 15;
+const LIVE_CALL_CLOSE_ALLOWANCE_SECONDS = 15;
+export const LIVE_CALL_INITIALIZATION_SECONDS = 15;
+export const LIVE_CALL_ATTEMPTS_PER_CONVERSATION = 6;
+export const LIVE_CALL_ATTEMPTS_PER_DAY = 30;
+export const LIVE_CALL_HEALTH_THRESHOLD_MS = 300_000;
 
 const WORST_CALL_MINUTE_COST_MICROS =
   CALL_MINUTE_COST_MICROS +
-  CALL_GOODBYE_SECONDS * CALL_SECOND_COST_MICROS +
+  (LIVE_CALL_GRACE_SECONDS + LIVE_CALL_CLOSE_ALLOWANCE_SECONDS) * CALL_SECOND_COST_MICROS +
   CALL_CHECKS_COST_MICROS;
 
-/** The most Plus's calls may cost in a month: Plus is $19, and calls are its costliest feature. */
-const PLUS_CALL_BUDGET_MICROS_A_MONTH = 6_000_000;
-
-/**
- * Call time. Calls are paid by the minute, so the caps are time, not a number of calls. A unit's
- * call runs 1 to 4 minutes and a practice call or a speaking mock up to 5. A day: Plus's 20 minutes
- * fit a day of heavy speaking practice (a unit's call, two practice calls and a mock); the free
- * plan's 2 fit one short call, to try speaking. A month: Plus's calls stay within their budget even
- * when every call is a minute long (87 minutes, about $5.95), and the free plan's 5 minutes cost at
- * most about $0.35. Learners never see these numbers, only that Plus has higher call limits.
- */
+/** Admission budget, including every reconnect; actual overrun is still recorded. */
+const PLUS_CALL_BUDGET_MICROS_A_MONTH = 7_400_000;
 const FREE_CALL_MINUTES_A_DAY = 2;
 const PLUS_CALL_MINUTES_A_DAY = 20;
 const FREE_CALL_MINUTES_A_MONTH = 5;
@@ -56,6 +48,27 @@ const FREE_CALL_MINUTES_A_MONTH = 5;
 const PLUS_CALL_MINUTES_A_MONTH = Math.floor(
   PLUS_CALL_BUDGET_MICROS_A_MONTH / WORST_CALL_MINUTE_COST_MICROS,
 );
+
+export function getCallMonthlyBudgetMicros(tier: EntitlementTier): number {
+  if (tier === "plus") {
+    return PLUS_CALL_BUDGET_MICROS_A_MONTH;
+  }
+
+  return tier === "free" ? FREE_CALL_MINUTES_A_MONTH * WORST_CALL_MINUTE_COST_MICROS : 0;
+}
+
+export function getLiveCallCostMicros(seconds: number): number {
+  return (
+    CALL_CHECKS_COST_MICROS +
+    Math.ceil(Math.max(LIVE_CALL_INITIALIZATION_SECONDS, seconds) * CALL_SECOND_COST_MICROS)
+  );
+}
+
+export function getLiveCallReservationMicros(seconds: number): number {
+  return getLiveCallCostMicros(
+    seconds + LIVE_CALL_GRACE_SECONDS + LIVE_CALL_CLOSE_ALLOWANCE_SECONDS,
+  );
+}
 
 /** A call shorter than this isn't worth starting: with less call time left, calls wait for more. */
 export const MIN_CALL_SECONDS = SECONDS_PER_MINUTE;

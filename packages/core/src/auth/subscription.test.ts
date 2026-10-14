@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as nextCache from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
 import { getActiveSubscription, hasActiveSubscription } from "./subscription";
@@ -77,6 +78,48 @@ describe(getActiveSubscription, () => {
 
     await expect(getActiveSubscription()).resolves.toBeNull();
     await expect(hasActiveSubscription()).resolves.toBe(false);
+  });
+
+  it("checks Apple expiry at the request's instant, after an IO suspension", async () => {
+    const user = await authenticateFixtureUser();
+    const beforeRequest = new Date("2026-10-13T12:00:00Z");
+
+    await prisma.subscription.create({
+      data: {
+        periodEnd: new Date("2026-10-13T12:01:00Z"),
+        plan: "plus",
+        provider: "apple",
+        providerSubscriptionId: `request-apple-${user.id}`,
+        referenceId: user.id,
+        status: "active",
+        userId: user.id,
+      },
+    });
+
+    const entered = Promise.withResolvers<null>();
+    const request = Promise.withResolvers<null>();
+    /** The real DB stays in use; only Next's request boundary has no request in Vitest. */
+    const boundary = vi.spyOn(nextCache, "io").mockImplementationOnce(async () => {
+      entered.resolve(null);
+      await request.promise;
+    });
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(beforeRequest);
+
+    try {
+      const access = hasActiveSubscription();
+      await Promise.race([entered.promise, access]);
+
+      vi.setSystemTime(new Date("2026-10-13T12:02:00Z"));
+      request.resolve(null);
+
+      await expect(access).resolves.toBe(false);
+    } finally {
+      request.resolve(null);
+      boundary.mockRestore();
+      vi.useRealTimers();
+    }
   });
 
   it("never returns another learner's subscription", async () => {

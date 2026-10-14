@@ -387,9 +387,11 @@ describe("onboarding a new goal", () => {
     const [goal] = await createGoal();
     const goalId = goal?.id ?? "";
 
+    const targetDate = `${new Date().getUTCFullYear() + 2}-03-31`;
+
     const dated = await answerOnboardingQuestion({
       goalId,
-      input: { question: "targetDate", targetDate: "2099-03-31" },
+      input: { question: "targetDate", targetDate },
     });
 
     const scheduled = await answerOnboardingQuestion({
@@ -407,7 +409,7 @@ describe("onboarding a new goal", () => {
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
 
     expect(saved).toMatchObject({ dailyMinutes: 45, timezone: "America/Sao_Paulo" });
-    expect(saved.targetDate?.toISOString().slice(0, 10)).toBe("2099-03-31");
+    expect(saved.targetDate?.toISOString().slice(0, 10)).toBe(targetDate);
   });
 
   it("gives weekends their own time: more on Saturday, Sunday off", async () => {

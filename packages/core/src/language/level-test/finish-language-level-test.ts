@@ -1,14 +1,20 @@
 import "server-only";
-import { type LanguageSkill, prisma } from "@zoonk/db";
+import { type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
-import { recordAnsweredActivity } from "../../stats/record-answered-activity";
+import { type ProgressLock } from "../../sessions/_utils/session-progress";
+import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
+import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
-import { getTestStart, loadLevelTestContext } from "./_utils/level-test-state";
+import {
+  getTestStart,
+  loadLevelTestContext,
+  readLevelTestProgress,
+} from "./_utils/level-test-state";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
   type LevelTestScores,
@@ -55,14 +61,18 @@ async function saveSkillLevels({
 async function recordTestActivity({
   bank,
   goalId,
+  lock,
   progress,
   timeZone,
+  transaction,
   userId,
 }: {
   bank: LevelTestBank;
   goalId: string;
+  lock: ProgressLock;
   progress: LevelTestProgress;
   timeZone: string;
+  transaction: TransactionClient;
   userId: string;
 }) {
   const fresh = progress.answers.slice(progress.counted);
@@ -75,7 +85,7 @@ async function recordTestActivity({
     bank.questions.map((question) => [question.id, question.answerIndex]),
   );
 
-  await recordAnsweredActivity({
+  await settleAnsweredActivity(transaction, {
     answers: fresh.map((answer) => ({
       durationMs: answer.durationMs,
       isCorrect: answer.answerIndex !== null && rightAnswers.get(answer.id) === answer.answerIndex,
@@ -83,6 +93,7 @@ async function recordTestActivity({
     contentIds: {},
     goalId,
     lessonKind: "levelTest",
+    lock,
     timeZone,
     userId,
   });
@@ -104,7 +115,7 @@ export async function finishLanguageLevelTest(
     return context;
   }
 
-  const { bank, owned, progress } = context;
+  const { bank, owned } = context;
 
   if (!bank) {
     return { status: "notReady" };
@@ -112,24 +123,52 @@ export async function finishLanguageLevelTest(
 
   const { goal, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal });
-  const scores = getLevelTestScores({ bank, progress, start: getTestStart(goal) });
-  const labels = toLevelLabels(scores);
 
-  await Promise.all([
-    saveSkillLevels({ language: goal.targetLanguage, scores, userId }),
-    prisma.goal.update({
+  const { progress, scores } = await prisma.$transaction(async (transaction) => {
+    const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
+
+    /** Read the marker after serialization, so finishes that already read context cannot count twice. */
+    await transaction.$queryRaw`
+      SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE
+    `;
+
+    const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
+
+    const currentProgress = readLevelTestProgress(current);
+
+    const currentScores = getLevelTestScores({
+      bank,
+      progress: currentProgress,
+      start: getTestStart(current),
+    });
+
+    await recordTestActivity({
+      bank,
+      goalId: goal.id,
+      lock,
+      progress: currentProgress,
+      timeZone,
+      transaction,
+      userId,
+    });
+
+    await transaction.goal.update({
       data: {
         details: {
-          ...readGoalDetails(goal),
-          level: formatCefrScore(getOverallScore(scores)),
-          levelTest: { ...progress, counted: progress.answers.length },
-          skillLevels: labels,
+          ...readGoalDetails(current),
+          level: formatCefrScore(getOverallScore(currentScores)),
+          levelTest: { ...currentProgress, counted: currentProgress.answers.length },
+          skillLevels: toLevelLabels(currentScores),
         },
       },
       where: { id: goal.id },
-    }),
-    recordTestActivity({ bank, goalId: goal.id, progress, timeZone, userId }),
-  ]);
+    });
+
+    return { progress: currentProgress, scores: currentScores };
+  });
+
+  /** Linking merges skill rows before progress; never hold progress while waiting for those rows. */
+  await saveSkillLevels({ language: goal.targetLanguage, scores, userId });
 
   revalidateCacheTags([getGoalsCacheTag(userId), getUserProgressCacheTag(userId)]);
 

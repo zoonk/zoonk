@@ -47,17 +47,31 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
   });
 
   await prisma.$transaction(async (tx) => {
+    if (lesson) {
+      /** Queue changes lock blocks before goals, in id order. */
+      const blocks = await tx.$queryRaw<{ id: string }[]>`
+        SELECT block.id FROM study_session_blocks AS block
+        JOIN study_sessions AS session ON session.id = block.session_id
+        WHERE block.lesson_id = ${lesson.id}::uuid AND block.status = 'pending'
+          AND session.goal_id = ${goal.id}::uuid AND session.user_id = ${userId}::uuid
+        ORDER BY block.id FOR UPDATE OF block
+      `;
+
+      await tx.studySessionBlock.updateMany({
+        data: { status: "skipped" },
+        where: {
+          id: { in: blocks.map((block) => block.id) },
+          lessonId: lesson.id,
+          session: { goalId: goal.id, userId },
+          status: "pending",
+        },
+      });
+    }
+
     await tx.goal.update({
       data: { details: { ...details, [ALPHABET_INTRO_DETAIL]: "skipped" } },
       where: { id: goal.id },
     });
-
-    if (lesson) {
-      await tx.studySessionBlock.updateMany({
-        data: { status: "skipped" },
-        where: { lessonId: lesson.id, session: { goalId: goal.id, userId }, status: "pending" },
-      });
-    }
   });
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);

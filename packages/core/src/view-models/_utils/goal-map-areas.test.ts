@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { findCurrentPhase } from "../../plans/_utils/plan-phase-views";
+import { findCurrentPhase } from "../../plans/_utils/phase-states";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
 
@@ -41,17 +41,34 @@ function lesson({
     kind: "lesson",
     lessonId: written ? randomUUID() : null,
     phase,
+    scheduledFor: null,
     skillIds: [],
     status,
   };
 }
 
-function build(items: MapItem[], todayBlocks: TodayLearnBlock[] = []) {
+const PHASES = [
+  { kind: "learn" as const, name: "Basics" },
+  { kind: "learn" as const, name: "Practice" },
+];
+
+function build(
+  items: MapItem[],
+  {
+    targetDate = null,
+    todayBlocks = [],
+  }: { targetDate?: Date | null; todayBlocks?: TodayLearnBlock[] } = {},
+) {
   return buildGoalMapAreas({
     areaDetails: new Map(),
     items,
     nodes: [node({ areaId: "phase:0", phase: 0 }), node({ areaId: "phase:1", phase: 1 })],
-    phaseNames: ["Basics", "Practice"],
+    phases: PHASES,
+    progress: {
+      currentPhase: findCurrentPhase({ items, phaseCount: PHASES.length }),
+      goalKind: "learn",
+      targetDate,
+    },
     todayBlocks,
   });
 }
@@ -72,7 +89,7 @@ describe(buildGoalMapAreas, () => {
   it("puts the learner where the lesson Today opens next is, even in the next phase", () => {
     const ahead = lesson({ phase: 1 });
     const items = [lesson({ phase: 0 }), ahead];
-    const map = build(items, [{ lessonId: ahead.lessonId, planItemId: ahead.id }]);
+    const map = build(items, { todayBlocks: [{ lessonId: ahead.lessonId, planItemId: ahead.id }] });
 
     expect(map.upNextItemId).toBe(ahead.id);
     expect(map.phases.map((phase) => phase.state)).toStrictEqual(["current", "upcoming"]);
@@ -80,22 +97,33 @@ describe(buildGoalMapAreas, () => {
   });
 
   // Missed days set the first phase's last lesson aside: the plan moves on, but neither the phase
-  // nor its chapter reads as done.
+  // nor its chapter reads as done. Only a plan with a date sets lessons aside for missed days.
   it("never reads a phase or chapter whose lessons were set aside as done", () => {
-    const map = build([
-      lesson({ phase: 0, status: "done" }),
-      lesson({ phase: 0, status: "skipped" }),
-      lesson({ phase: 1 }),
-    ]);
+    const map = build(
+      [
+        lesson({ phase: 0, status: "done" }),
+        lesson({ phase: 0, status: "skipped" }),
+        lesson({ phase: 1 }),
+      ],
+      { targetDate: new Date("2030-01-01T00:00:00Z") },
+    );
 
     expect(map.phases.map((phase) => phase.state)).toStrictEqual(["unfinished", "current"]);
     expect(map.areas.find((area) => area.phase === 0)?.state).toBe("upcoming");
   });
 
-  it("keeps the last phase current once everything is done, as Plan does", () => {
+  // Pedro's finished plan kept its last phase "current" on the map while his Plan read it done.
+  it("reads every phase done once everything is done, as Plan does", () => {
     const map = build([lesson({ phase: 0, status: "done" }), lesson({ phase: 1, status: "done" })]);
 
-    expect(map.phases.map((phase) => phase.state)).toStrictEqual(["done", "current"]);
+    expect(map.phases.map((phase) => phase.state)).toStrictEqual(["done", "done"]);
     expect(map.areas.some((area) => area.current)).toBe(false);
+  });
+
+  // Lucas's date left his second phase out of the plan: the map read it as ahead of him.
+  it("says a phase the plan holds nothing of is left out", () => {
+    const map = build([lesson({ phase: 0 })]);
+
+    expect(map.phases.map((phase) => phase.state)).toStrictEqual(["current", "leftOut"]);
   });
 });

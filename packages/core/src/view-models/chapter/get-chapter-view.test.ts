@@ -122,6 +122,20 @@ describe(getChapterView, () => {
     expect(view?.counts).toMatchObject({ learning: 1, new: 1, total: 2 });
   });
 
+  it("marks the first lesson next in an unstarted upcoming chapter", async () => {
+    const { chapters, lessons } = await signedInCourseGoal();
+
+    const result = await getChapterView({ chapterId: chapters[1]?.id ?? "" });
+    const view = result.status === "ready" ? result.chapter : null;
+
+    expect(view?.chapter.state).toBe("upcoming");
+
+    expect(view?.lessons.map((lesson) => [lesson.lessonId, lesson.state])).toStrictEqual([
+      [lessons[2]?.id, "next"],
+      [lessons[3]?.id, "upcoming"],
+    ]);
+  });
+
   // Missed days set a lesson of the first chapter aside: it isn't done, and neither is its chapter.
   it("never marks a lesson set aside, or its chapter, as done", async () => {
     const { chapters, lessons } = await signedInCourseGoal({

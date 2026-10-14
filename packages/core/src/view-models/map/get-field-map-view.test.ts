@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -176,5 +177,39 @@ describe(getFieldMapView, () => {
 
     // A chapter that's also in another course stays with the plan's own course on the map.
     expect(map?.areas.map((area) => area.courseId)).toStrictEqual([course.id, course.id]);
+  });
+
+  // Lucas's plan, a day past his date with lessons set aside, offered "Continue at Beginner" over
+  // the lessons he never studied.
+  it("suggests nothing next while lessons are left past the plan's date", async () => {
+    const { goal } = await signedInCourseGoal({ statuses: ["done", "done", "done", "skipped"] });
+
+    await prisma.goal.update({
+      data: { targetDate: new Date(Date.now() - 2 * MS_PER_DAY) },
+      where: { id: goal.id },
+    });
+
+    const result = await getFieldMapView({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.map.next).toBeNull();
+  });
+
+  // An exam studied past its date has no deadline: what it set aside, the Library couldn't write.
+  it("suggests what's next once an exam studied past its date is finished", async () => {
+    const { goal, plan } = await signedInCourseGoal({
+      statuses: ["done", "done", "done", "skipped"],
+    });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { kind: "exam", targetDate: new Date(Date.now() - 2 * MS_PER_DAY) },
+        where: { id: goal.id },
+      }),
+      prisma.plan.update({ data: { settings: { fullCourse: true } }, where: { id: plan.id } }),
+    ]);
+
+    const result = await getFieldMapView({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.map.next).not.toBeNull();
   });
 });

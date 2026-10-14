@@ -87,6 +87,67 @@ function readRunAnswerIds(event: Pick<LearningEvent, "contentIds">): string[] {
   return typeof answerIds === "string" ? answerIds.split(ANSWER_ID_SEPARATOR) : [];
 }
 
+function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
+  if (typeof answer !== "object" || answer === null || Array.isArray(answer)) {
+    return [];
+  }
+
+  if (answer.dontKnow === true || !Array.isArray(answer.fixedMistakeIds)) {
+    return [];
+  }
+
+  return answer.fixedMistakeIds.filter((id): id is string => typeof id === "string");
+}
+
+/**
+ * Only server-recorded corrections from this ledger's answers can claim a notebook mission.
+ * A reopened or subsequently corrected entry no longer proves this run's current contribution.
+ */
+export async function hasPracticeRunCorrection({
+  from,
+  runId,
+  through,
+  tx,
+  userId,
+}: {
+  from: Date;
+  runId: string;
+  through: Date;
+  tx: TransactionClient;
+  userId: string;
+}): Promise<boolean> {
+  const run = await tx.learningEvent.findFirst({
+    select: { contentIds: true },
+    where: { id: runId, lessonKind: MISTAKE_PRACTICE_LEDGER_KIND, userId },
+  });
+
+  if (!run) {
+    return false;
+  }
+
+  const answers = await tx.attempt.findMany({
+    select: { answer: true, answeredAt: true },
+    where: {
+      answeredAt: { gte: from, lte: through },
+      id: { in: readRunAnswerIds(run) },
+      isCorrect: true,
+      stepId: null,
+      studySessionId: null,
+      userId,
+    },
+  });
+
+  const corrections = answers.flatMap((answer) =>
+    readFixedMistakeIds(answer.answer).map((id) => ({ fixedAt: answer.answeredAt, id })),
+  );
+
+  if (corrections.length === 0) {
+    return false;
+  }
+
+  return (await tx.mistake.count({ where: { OR: corrections, status: "fixed", userId } })) > 0;
+}
+
 export function toRunContentIds(answers: readonly PracticeAnswer[]): Record<string, string> {
   return { answerIds: answers.map((answer) => answer.id).join(ANSWER_ID_SEPARATOR) };
 }

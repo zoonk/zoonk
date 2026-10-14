@@ -142,7 +142,7 @@ function getDetailChanges({
 /** The schedule and date answers change the plan itself, so they go through the goal's update. */
 function getScheduleChanges(input: OnboardingAnswerInput): Omit<GoalUpdateInput, "details"> {
   if (input.question === "targetDate") {
-    return input.targetDate ? { targetDate: input.targetDate } : {};
+    return { targetDate: input.targetDate };
   }
 
   if (input.question === "schedule") {

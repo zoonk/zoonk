@@ -325,7 +325,7 @@ describe(listCurrentUserGoals, () => {
   });
 
   // The goal list counted every lesson not left to do as done, so lessons set aside after missed
-  // days read as studied. It counts as the Journey's phases do: lessons studied, of every lesson
+  // days read as studied. It counts as the Plan's phases do: lessons studied, of every lesson
   // the plan teaches (a stand-in's saved size) but the ones tested out.
   it("counts the plan's lessons as the Journey does, never a lesson set aside as done", async () => {
     const user = await useLearner();

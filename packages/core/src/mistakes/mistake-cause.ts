@@ -2,6 +2,7 @@ import { type MasteryState, type MistakeCause } from "@zoonk/db";
 
 /** What code can read from a wrong answer before any model looks at it. */
 export type MistakeSignals = {
+  dontKnow?: boolean;
   durationMs: number;
   /** The question as the learner saw it, to estimate how long reading it takes. */
   questionText: string;
@@ -65,6 +66,10 @@ function getSkillStanding(signals: MistakeSignals): "mixed" | "strong" | "weak" 
 export function inferMistakeCause(signals: MistakeSignals): MistakeCause | null {
   if (signals.timeLimitMs && signals.durationMs >= signals.timeLimitMs) {
     return "time";
+  }
+
+  if (signals.dontKnow) {
+    return "gap";
   }
 
   if (signals.durationMs < estimateReadingMs(signals.questionText) * GUESS_READING_SHARE) {

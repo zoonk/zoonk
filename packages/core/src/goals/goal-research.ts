@@ -10,3 +10,15 @@ import { type GoalKind } from "@zoonk/db";
 export function isResearchedGoalKind(kind: GoalKind): boolean {
   return kind === "exam" || kind === "learn";
 }
+
+/**
+ * A course start that research still has to read: an exam course with no stored exam yet (one from
+ * before the Library), whose notice research finds, as it does for a typed exam goal. Any other
+ * course start comes with what it needs, so nothing waits for research.
+ */
+export function isResearchedCourseStart(goal: {
+  examBlueprintId: string | null;
+  kind: GoalKind;
+}): boolean {
+  return goal.kind === "exam" && !goal.examBlueprintId;
+}

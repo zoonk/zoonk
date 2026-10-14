@@ -3,10 +3,16 @@ import { z } from "zod";
 
 /**
  * A course the learner was taking before goals existed, offered on Today as a goal to plan
- * ("Continue Physics? Build a plan in 1 minute"). `title` is the course's title, which onboarding
- * opens with as the goal.
+ * ("Continue Physics? Build a plan in 1 minute"). Accepting opens that course's start, or onboarding
+ * with its `title` as the goal once nobody can start the course anymore.
  */
-export type SuggestedGoalView = { id: string; status: SuggestedGoalStatus; title: string };
+export type SuggestedGoalView = {
+  /** The course to start on accepting, while anyone can still start it; null opens onboarding. */
+  courseId: string | null;
+  id: string;
+  status: SuggestedGoalStatus;
+  title: string;
+};
 
 export const suggestedGoalAnswerSchema = z
   .object({

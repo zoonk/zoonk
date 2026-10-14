@@ -1,7 +1,8 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
+import { DEFAULT_BUDDY, resolveProfileBuddy } from "../default-buddy";
 import { type LearningProfileView } from "../learning-profile-contract";
 
-const STARTER_GLASSES = BuddyGlasses.round;
+const STARTER_GLASSES = DEFAULT_BUDDY.glasses;
 
 /** Round comes with every buddy; other frames are earned as glasses milestones keyed by the frame. */
 export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses[]> {
@@ -17,7 +18,7 @@ export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses
   );
 }
 
-/** A learner without a saved profile has no buddy yet. */
+/** A learner without a saved choice gets the default buddy. */
 function toLearningProfileView({
   availableGlasses,
   profile,
@@ -28,9 +29,7 @@ function toLearningProfileView({
   return {
     activeGoalId: profile?.activeGoalId ?? null,
     availableGlasses,
-    buddy: profile?.buddyKind
-      ? { glasses: profile.buddyGlasses, kind: profile.buddyKind, name: profile.buddyName }
-      : null,
+    buddy: resolveProfileBuddy(profile),
     dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
   };

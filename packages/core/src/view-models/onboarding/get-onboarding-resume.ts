@@ -1,7 +1,8 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { connection } from "next/server";
+import { io } from "next/cache";
+import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { type LearningProfileView } from "../../profile/learning-profile-contract";
@@ -19,7 +20,7 @@ const RECENT_DRAFTS = 5;
 
 type ResumeGoal = Pick<
   Goal,
-  "createdAt" | "details" | "id" | "kind" | "status" | "targetDate" | "title"
+  "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "status" | "targetDate" | "title"
 >;
 
 type ResumeDraft = {
@@ -61,7 +62,7 @@ function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: Resume
  * Whether a goal's onboarding still has screens before the plan: the plan's reveal, with its
  * "Start day 1", is where onboarding ends. Questions have no onboarding.
  */
-function isInOnboarding({
+async function isInOnboarding({
   goal,
   goals,
   profile,
@@ -69,17 +70,23 @@ function isInOnboarding({
   goal: ResumeGoal;
   goals: ResumeGoal[];
   profile: LearningProfileView;
-}): boolean {
+}): Promise<boolean> {
   const onboardingId = readOnboardingId(goal);
+
+  const choices = await loadExamChoiceViews({
+    choices: await loadExamChoices(goal.id),
+    examBlueprintId: goal.examBlueprintId,
+  });
 
   const steps = getOnboardingSteps({
     goal: {
       details: readDetails(goal),
+      hasUnpickedChoice: choices.some((choice) => choice.subject === null),
       kind: goal.kind,
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },
     profile: {
-      hasBuddy: profile.buddy !== null,
+      hasBuddy: profile.buddy.picked,
       hasEarlierGoals: goals.some(
         (other) =>
           other.id !== goal.id &&
@@ -95,7 +102,7 @@ function isInOnboarding({
  * A draft only counts when it's newer than every goal: a draft left for a goal created later was
  * set aside. Then the newest goal (questions aside) while its onboarding runs, else the day.
  */
-function toResume({
+async function toResume({
   draft,
   goals,
   profile,
@@ -103,7 +110,7 @@ function toResume({
   draft: ResumeDraft | null;
   goals: ResumeGoal[];
   profile: LearningProfileView;
-}): OnboardingResumeView | null {
+}): Promise<OnboardingResumeView | null> {
   const [newest] = goals;
 
   if (draft && (!newest || draft.updatedAt > newest.createdAt)) {
@@ -113,7 +120,7 @@ function toResume({
   const activeGoals = goals.filter((goal) => goal.status === "active");
   const latest = activeGoals.find((goal) => goal.kind !== "explain");
 
-  if (latest && isInOnboarding({ goal: latest, goals, profile })) {
+  if (latest && (await isInOnboarding({ goal: latest, goals, profile }))) {
     return { goalId: latest.id, kind: "goal", title: latest.title };
   }
 
@@ -123,11 +130,11 @@ function toResume({
 /**
  * What a returning visitor, guest or learner should continue: a goal they typed but haven't
  * confirmed yet, their newest goal while its onboarding hasn't reached the plan, or their day when
- * they have an active goal. Null when there's nothing to continue. Read at request time, never in a
- * prefetch: every step changes it.
+ * they have an active goal. Null when there's nothing to continue. Fresh at request time unless
+ * the caller caches its complete display view for prefetching; every step changes it.
  */
 export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
-  await connection();
+  await io();
   const session = await getSession();
 
   if (!session) {
@@ -148,6 +155,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
       select: {
         createdAt: true,
         details: true,
+        examBlueprintId: true,
         id: true,
         kind: true,
         status: true,
@@ -160,7 +168,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
   ]);
 
   return {
-    resume: toResume({ draft: findOpenDraft({ drafts, goals }), goals, profile }),
+    resume: await toResume({ draft: findOpenDraft({ drafts, goals }), goals, profile }),
     status: "ready",
   };
 }
