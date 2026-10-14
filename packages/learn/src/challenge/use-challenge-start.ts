@@ -13,7 +13,8 @@ import { type ChallengeActions } from "./challenge-context";
  */
 const START_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
-type StartProblem = "dailyLimitReached" | "failed" | null;
+/** Why Start didn't open it; `plusRequired`: the plan left it to Plus since the intro opened. */
+type StartProblem = "dailyLimitReached" | "failed" | "plusRequired" | null;
 
 export type ChallengeStartState = {
   busy: boolean;

@@ -6,7 +6,6 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { MovedScreen } from "../_components/moved-screen";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { TaskFrame } from "../shell/task-frame";
@@ -17,27 +16,13 @@ import {
   type ChallengeWriting,
   useChallengeScreen,
 } from "./challenge-context";
-import { ChallengeFooter, MoveFailed } from "./challenge-footer";
-import { ChallengeIntro } from "./challenge-intro";
+import { ChallengeFooter } from "./challenge-footer";
+import { ChallengeIntro, useChallengeIntroAside } from "./challenge-intro";
+import { ChallengeMovedScreen } from "./challenge-moved-screen";
 import { useChallengeMove } from "./use-challenge-move";
 import { useChallengeStart } from "./use-challenge-start";
 
 export type { ChallengeActions, ChallengeWriting } from "./challenge-context";
-
-/** Right after "Move to Monday": the challenge's new day, with an undo while the plan allows it. */
-function ChallengeMovedScreen({ changeId }: { changeId: string }) {
-  const { challenge, hrefs, move } = useChallengeScreen();
-
-  return (
-    <MovedScreen
-      date={challenge.date ?? challenge.today}
-      error={<MoveFailed />}
-      exitHref={hrefs.exit}
-      onUndo={() => void move.undo(changeId)}
-      pending={move.pending}
-    />
-  );
-}
 
 /**
  * The questions Start asked for, being written: the run's progress in place of the intro, and the
@@ -49,14 +34,24 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
 
   return (
     <TaskFrame exitHref={hrefs.exit}>
-      <div className="flex flex-1 flex-col pt-2 lg:justify-center-safe">
-        <GenerationWait kind="challengeQuestions" run={run}>
-          <GenerationTimelineTitle>{t("Getting your challenge ready")}</GenerationTimelineTitle>
-          <GenerationTimelineDescription>
-            {t("We're writing its questions. It starts here when they're ready.")}
-          </GenerationTimelineDescription>
-        </GenerationWait>
-      </div>
+      <GenerationWait kind="challengeQuestions" run={run}>
+        <GenerationTimelineTitle>{t("Getting your challenge ready")}</GenerationTimelineTitle>
+        <GenerationTimelineDescription>
+          {t("We're writing its questions. It starts here when they're ready.")}
+        </GenerationTimelineDescription>
+      </GenerationWait>
+    </TaskFrame>
+  );
+}
+
+/** The intro in the task's chrome, its aside from `lg`, and the challenge's actions in the bar. */
+function ChallengeIntroScreen() {
+  const { hrefs } = useChallengeScreen();
+  const aside = useChallengeIntroAside();
+
+  return (
+    <TaskFrame aside={aside} closeOnEscape exitHref={hrefs.exit} footer={<ChallengeFooter />}>
+      <ChallengeIntro />
     </TaskFrame>
   );
 }
@@ -89,13 +84,7 @@ export function ChallengeScreen({
     <ChallengeProvider value={{ challenge, hrefs, move, start, writing }}>
       {movedBy && <ChallengeMovedScreen changeId={movedBy} />}
       {!movedBy && writing?.kind === "writing" && <ChallengeWritingScreen run={writing.run} />}
-      {!movedBy && writing?.kind !== "writing" && (
-        <TaskFrame closeOnEscape exitHref={hrefs.exit} footer={<ChallengeFooter />}>
-          <div className="flex flex-col gap-6 pt-2">
-            <ChallengeIntro />
-          </div>
-        </TaskFrame>
-      )}
+      {!movedBy && writing?.kind !== "writing" && <ChallengeIntroScreen />}
     </ChallengeProvider>
   );
 }

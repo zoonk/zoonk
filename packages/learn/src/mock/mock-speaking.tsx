@@ -13,15 +13,18 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { DoneMark } from "../_components/status-mark";
+import { TaskActions } from "../_components/task-layout";
 import { useTaskMinutes } from "../language/exam-speaking/speaking-task-row";
 import { LearnLink } from "../learn-link";
+import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { TaskMainButton } from "../shell/task-frame";
+import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
-import { ClockTitle } from "./mock-runner-view";
 
 type SpeakingTask = SpeakingSectionView["tasks"][number];
 
@@ -33,17 +36,17 @@ function SpeakingTaskRow({ number, task }: { number: number; task: SpeakingTask 
   const done = task.status === "completed";
 
   return (
-    <li className="flex items-center gap-3 rounded-2xl border p-4">
+    <li className="flex items-center gap-3 py-2.75">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground font-mono text-xs tabular-nums">
           {t("Task {number, number} · {time}", { number, time: minutes(task.minutes) })}
         </p>
-        <p className="font-medium text-pretty">{task.name}</p>
+        <p className="text-sm leading-snug font-medium text-pretty">{task.name}</p>
       </div>
 
       {done ? (
-        <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-sm">
-          <CheckIcon aria-hidden="true" className="size-4" />
+        <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 text-sm">
+          <DoneMark />
           {t("Done")}
         </span>
       ) : (
@@ -74,7 +77,7 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
           : t("Every task is done. Hand in this section to go on.")}
       </p>
 
-      <ol className="flex flex-col gap-2">
+      <ol className={LIST_GROUP_CLASS}>
         {paper.tasks.map((task, index) => (
           <SpeakingTaskRow key={task.key} number={index + 1} task={task} />
         ))}
@@ -84,8 +87,9 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
 }
 
 /**
- * Handing the speaking section in with tasks still to do can't be undone, so it's confirmed first:
- * the paper's estimate needs every task.
+ * Handing the speaking section in can't be undone, so it's confirmed first, Enter included: with
+ * tasks still to do, that the paper's estimate needs every one; with all of them done, that they
+ * can't be done again in this mock.
  */
 function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   const t = useExtracted();
@@ -96,13 +100,15 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   return (
     <>
       <MockStepStatus />
-      <TaskMainButton
-        busy={runner.busy === "submit"}
-        disabled={runner.pending}
-        onClick={() => (left > 0 ? setConfirming(true) : void runner.submitSection())}
-      >
-        {label}
-      </TaskMainButton>
+      <TaskActions>
+        <TaskMainButton
+          busy={runner.busy === "submit"}
+          disabled={runner.pending}
+          onClick={() => setConfirming(true)}
+        >
+          {label}
+        </TaskMainButton>
+      </TaskActions>
 
       <AlertDialog onOpenChange={setConfirming} open={confirming}>
         <AlertDialogContent>
@@ -111,10 +117,12 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
               {isLast ? t("Hand in the mock exam?") : t("Hand in this section?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t(
-                "{count, plural, one {# task isn't done,} other {# tasks aren't done,}} so this paper gets no estimate. After this, you can't do them in this mock.",
-                { count: left },
-              )}
+              {left > 0
+                ? t(
+                    "{count, plural, one {# task isn't done,} other {# tasks aren't done,}} so this paper gets no estimate. After this, you can't do them in this mock.",
+                    { count: left },
+                  )
+                : t("Every task is done. After this, you can't do them again in this mock.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -134,23 +142,12 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   );
 }
 
-/**
- * The mock's speaking section: the exam's speaking paper, each task a live call with an examiner
- * the app stands in for. Its cards are written when the learner starts the section, so a mock
- * handed in before it never pays for them. The section's clock runs through the calls, as the
- * exam's does, and handing it in moves on; tasks not done count as not done.
- */
-export function MockSpeakingView() {
+function SpeakingScreen({ deadline, section: index }: { deadline: string; section: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const { current, sections, speaking } = runner.view;
-
-  if (!current) {
-    return null;
-  }
-
-  const section = sections[current.section];
-  const isLast = current.section === sections.length - 1;
+  const { sections, speaking } = runner.view;
+  const section = sections[index];
+  const isLast = index === sections.length - 1;
   const starting = runner.busy === "startSpeaking";
 
   const footer = speaking ? (
@@ -159,24 +156,24 @@ export function MockSpeakingView() {
       left={speaking.tasks.filter((task) => task.status !== "completed").length}
     />
   ) : (
-    <TaskMainButton
-      busy={starting}
-      disabled={runner.pending}
-      onClick={() => void runner.startSpeaking()}
-    >
-      {starting ? t("Writing your task cards…") : t("Start the speaking part")}
-    </TaskMainButton>
+    <>
+      <MockStepStatus />
+      <TaskActions>
+        <TaskMainButton
+          busy={starting}
+          disabled={runner.pending}
+          onClick={() => void runner.startSpeaking()}
+        >
+          {starting ? t("Writing your task cards…") : t("Start the speaking part")}
+        </TaskMainButton>
+      </TaskActions>
+    </>
   );
 
   return (
-    <MockFrame footer={footer} headerTitle={<ClockTitle deadline={current.deadline} />}>
+    <MockFrame footer={footer} headerTitle={<ClockTitle deadline={deadline} />}>
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <MicIcon aria-hidden="true" className="text-muted-foreground size-5 shrink-0" />
-          <h2 className="text-lg font-semibold text-balance">
-            {section?.name ?? speaking?.paper ?? t("Speaking")}
-          </h2>
-        </div>
+        <h2 className={QUESTION_TEXT_CLASS}>{section?.name ?? speaking?.paper ?? t("Speaking")}</h2>
 
         {speaking ? (
           <SpeakingPaper paper={speaking} />
@@ -190,4 +187,17 @@ export function MockSpeakingView() {
       </div>
     </MockFrame>
   );
+}
+
+/**
+ * The mock's speaking section: the exam's speaking paper, each task a live call with an examiner
+ * the app stands in for. Its cards are written when the learner starts the section, so a mock
+ * handed in before it never pays for them. The section's clock runs through the calls, as the
+ * exam's does, and handing it in moves on; tasks not done count as not done.
+ */
+export function MockSpeakingView() {
+  const { runner } = useMockScreen();
+  const { current } = runner.view;
+
+  return current ? <SpeakingScreen deadline={current.deadline} section={current.section} /> : null;
 }

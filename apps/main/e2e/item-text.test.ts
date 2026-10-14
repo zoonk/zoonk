@@ -12,7 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { ANSWERED } from "./onboarding-fixtures";
-import { openAs } from "./study-day";
+import { openAs, pickAndCheck } from "./study-day";
 
 /**
  * A data question stored the way item writers wrote them in Sep 2026: its data as a GFM pipe table
@@ -253,7 +253,7 @@ test("practice feedback shows quoted words in italics, never underscores", async
   const page = await openAs(browser, user);
   await page.goto("/session");
   await page.getByRole("button", { name: /^Start/u }).click();
-  await page.getByRole("button", { name: /^True/u }).click();
+  await pickAndCheck(page, /^True/u);
 
   const feedback = page.getByRole("region", { name: "Answer feedback" });
   await expect(feedback.locator("em", { hasText: "Em breve" })).toBeVisible();

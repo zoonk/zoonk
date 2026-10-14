@@ -2,12 +2,14 @@
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowDownRightIcon, ArrowUpRightIcon } from "lucide-react";
+import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon, TrophyIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { PageSectionLabel } from "../_components/page";
+import { Meter, MeterFill } from "../_components/meter";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
-import { Surface } from "../_components/surface";
+import { StatTile, StatTiles } from "../_components/stat-tile";
 import { useMockShapeLabel } from "../mock/mock-labels";
+import { findBestArea } from "./best-area";
 import { useExamScreen } from "./exam-context";
 import {
   ProgressLineChart,
@@ -21,6 +23,8 @@ type ProgressMock = Progress["mocks"][number];
 type SubjectTrend = Progress["subjects"][number];
 
 const TITLE_ID = "exam-progress-title";
+
+const PERCENT = 100;
 
 const SAMPLE_MOCKS = 6;
 const SAMPLE_FIRST = 30;
@@ -108,7 +112,7 @@ function SubjectChange({ change }: { change: number | null }) {
   const Icon = change !== null && change < 0 ? ArrowDownRightIcon : ArrowUpRightIcon;
 
   return (
-    <span className="flex w-12 items-center justify-end gap-0.5 text-sm font-medium tabular-nums">
+    <span className="flex w-12 items-center justify-end gap-0.5 font-mono text-xs font-medium tabular-nums">
       {change !== null && change !== 0 && (
         <Icon aria-hidden="true" className="text-muted-foreground size-3.5" />
       )}
@@ -120,30 +124,44 @@ function SubjectChange({ change }: { change: number | null }) {
   );
 }
 
-function SubjectRow({ trend }: { trend: SubjectTrend }) {
+/**
+ * A subject's latest share, with its line and its change since the first mock once some subject
+ * has them: before that, a one-dot line and a dash on every row would say nothing.
+ */
+function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean }) {
   const latest = trend.percents.at(-1) ?? 0;
 
   return (
     <li className="flex min-h-11 items-center gap-3">
-      <span className="min-w-0 flex-1 py-1.5 text-[0.9375rem] leading-snug text-pretty">
+      <span className="min-w-0 flex-1 py-2.5 text-sm leading-snug font-medium text-pretty">
         {trend.name}
       </span>
-      <Sparkline values={trend.percents} />
-      <span className="w-10 text-right text-sm tabular-nums">{`${latest}%`}</span>
-      <SubjectChange change={trend.change} />
+      {trends ? (
+        <Sparkline values={trend.percents} />
+      ) : (
+        <Meter className="bg-surface-3 h-1 w-20 rounded-[2px] sm:w-36">
+          <MeterFill className="bg-success rounded-[2px]" share={latest / PERCENT} />
+        </Meter>
+      )}
+      <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>
+      {trends && <SubjectChange change={trend.change} />}
     </li>
   );
 }
 
 /**
- * The latest mock over the exam (all of it, half of it, the plan's own or a starting point) as the
- * block's big number, with what it measures: one subject's few questions never stand for the
- * exam. A subject's own mock leads only when there's no other, named with its subject.
+ * The progress in two numbers: the latest mock over the exam (all of it, half of it, the plan's own
+ * or a starting point) with what it measures (one subject's few questions never stand for the
+ * exam; a subject's own mock leads only when there's no other, named with its subject) and its
+ * change since the first, and the subject that went best in it. How many mocks were taken is the
+ * section's count.
  */
-function LatestScore({ progress }: { progress: Progress }) {
+function ProgressTiles({ progress }: { progress: Progress }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
   const shapeLabel = useMockShapeLabel();
+  const first = progress.mocks[0];
+  const best = findBestArea(progress.subjects);
 
   const latest =
     progress.mocks.findLast((mock) => mock.shape?.kind !== "area") ?? progress.mocks.at(-1);
@@ -159,15 +177,37 @@ function LatestScore({ progress }: { progress: Progress }) {
     .filter(Boolean)
     .join(" · ");
 
+  const change = first && progress.mocks.length > 1 ? latest.percent - first.percent : null;
+
   return (
-    <p className="flex flex-col">
-      <span className="text-3xl font-bold tracking-tight">{`${latest.percent}%`}</span>
-      <span className="text-muted-foreground text-xs">
-        {exam.scoring.method === "net"
-          ? t("Net score in {mock}", { mock: name })
-          : t("Right answers in {mock}", { mock: name })}
-      </span>
-    </p>
+    <StatTiles>
+      <StatTile
+        detail={
+          <>
+            {exam.scoring.method === "net"
+              ? t("Net score in {mock}", { mock: name })
+              : t("Right answers in {mock}", { mock: name })}
+            {change !== null && (
+              <span className={cn("block", change > 0 && "text-success-text")}>
+                {t("{change} since the first", { change: formatChange(change) })}
+              </span>
+            )}
+          </>
+        }
+        icon={<TimerIcon />}
+        label={t("Latest mock")}
+        value={`${latest.percent}%`}
+      />
+      {best && (
+        <StatTile
+          detail={best.name}
+          icon={<TrophyIcon />}
+          label={t("Best area")}
+          tone="success"
+          value={`${best.percent}%`}
+        />
+      )}
+    </StatTiles>
   );
 }
 
@@ -178,10 +218,12 @@ function ProgressCard({ progress }: { progress: Progress }) {
   const line = useProgressLine(progress);
   const first = progress.mocks[0];
   const latest = progress.mocks.at(-1);
+  // A subject's change needs two mocks asking enough new questions of it.
+  const trends = progress.subjects.some((trend) => trend.change !== null);
 
   return (
-    <Surface className="flex flex-col gap-4 p-4">
-      <LatestScore progress={progress} />
+    <div className="flex flex-col gap-4">
+      <ProgressTiles progress={progress} />
 
       {first && latest && progress.mocks.length > 1 && (
         <ProgressLineChart
@@ -195,20 +237,20 @@ function ProgressCard({ progress }: { progress: Progress }) {
         />
       )}
 
-      <p className="text-sm text-pretty">{line}</p>
-
       {progress.subjects.length > 0 && (
         <ul
           aria-label={t("By subject")}
-          className="border-border flex flex-col border-t pt-2"
+          className="flex flex-col [&>li+li]:border-t"
           data-slot="subject-trends"
         >
           {progress.subjects.map((trend) => (
-            <SubjectRow key={trend.name} trend={trend} />
+            <SubjectRow key={trend.name} trend={trend} trends={trends} />
           ))}
         </ul>
       )}
-    </Surface>
+
+      <p className="text-muted-foreground text-[0.8125rem] text-pretty">{line}</p>
+    </div>
   );
 }
 
@@ -220,7 +262,7 @@ function LockedProgress() {
   const t = useExtracted();
 
   return (
-    <Surface className="flex flex-col gap-3 p-4" data-slot="locked-progress">
+    <div className="flex flex-col gap-3" data-slot="locked-progress">
       <div className="flex items-start justify-between gap-3">
         <p className="text-muted-foreground text-sm text-pretty">
           {t("Each mock's score over time, and how each subject is going.")}
@@ -228,14 +270,15 @@ function LockedProgress() {
         <PlusMark />
       </div>
       <SampleProgressChart values={SAMPLE} />
-    </Surface>
+    </div>
   );
 }
 
 /**
- * How the learner's mocks went over time, in the mocks' section: the latest score, each mock's
- * score as a line, one plain line about what improved and what still needs work, and each subject's
- * trend. With Plus only; without it, shown locked. Nothing before the first mock.
+ * How the learner's mocks went, under its own header: the latest score and the best subject as two
+ * numbers, each mock's score as a line once there are two, each subject's score (a bar, or its
+ * trend once mocks show one), and under them one plain line about what improved and what still
+ * needs work. With Plus only; without it, shown locked. Nothing before the first mock.
  */
 export function ExamMockProgress() {
   const t = useExtracted();
@@ -246,9 +289,11 @@ export function ExamMockProgress() {
   }
 
   return (
-    <section aria-labelledby={TITLE_ID} className="flex flex-col gap-2">
-      <PageSectionLabel id={TITLE_ID}>{t("Your progress")}</PageSectionLabel>
+    <PageSection aria-labelledby={TITLE_ID}>
+      <PageSectionHeader>
+        <PageSectionTitle id={TITLE_ID}>{t("How your mocks went")}</PageSectionTitle>
+      </PageSectionHeader>
       {exam.progress ? <ProgressCard progress={exam.progress} /> : <LockedProgress />}
-    </section>
+    </PageSection>
   );
 }

@@ -1,11 +1,10 @@
 "use client";
 
 import { type DayBeforePlan, type ExamMomentView } from "@zoonk/core/exams/view/contract";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { SURFACE_CLASS } from "../_components/surface";
 import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
@@ -110,7 +109,8 @@ function useMomentCopy(moment: Moment): { body: string; title: string } | null {
 
 /**
  * The exam's moment: the final stretch, the light day before with what to have ready, the exam
- * day, and after it, "How did it go?" until the official result is in. Calm, and never a promise.
+ * day, and after it, "How did it go?" until the official result is in. Calm, flat on the page with
+ * a quiet icon, and never a promise.
  */
 export function ExamMomentCard({ href, moment }: { href: string | null; moment: Moment }) {
   const t = useExtracted();
@@ -125,19 +125,19 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
   const showDay = moment.day && moment.stage !== "afterExam";
 
   return (
-    <section
-      aria-label={copy.title}
-      className={cn(SURFACE_CLASS, "flex flex-col gap-4 p-5")}
-      data-slot="exam-moment"
-    >
+    <section aria-label={copy.title} className="flex flex-col gap-4" data-slot="exam-moment">
       <div className="flex items-start gap-3">
-        <LineMarker aria-hidden="true">
-          <Icon className="text-muted-foreground size-5" />
-        </LineMarker>
+        <span aria-hidden="true" className="flex h-5 shrink-0 items-center">
+          <Icon className="text-muted-foreground size-4" />
+        </span>
         <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="font-semibold">{copy.title}</h2>
-          {showDay && moment.day && <p className="text-sm font-medium">{dayText(moment.day)}</p>}
-          <p className="text-muted-foreground text-sm leading-relaxed">{copy.body}</p>
+          <h2 className="text-[0.9375rem] font-medium">{copy.title}</h2>
+          {showDay && moment.day && (
+            <p className="font-mono text-[0.8125rem] font-medium tabular-nums">
+              {dayText(moment.day)}
+            </p>
+          )}
+          <p className="text-muted-foreground text-[0.8125rem] leading-snug">{copy.body}</p>
         </div>
       </div>
 
@@ -145,7 +145,7 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
 
       {href && (
         <LearnLink
-          className="text-foreground w-fit text-sm font-medium underline underline-offset-4"
+          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
           href={href}
         >
           {moment.stage === "afterExam" ? t("Add your result") : t("See your exam")}

@@ -61,12 +61,12 @@ test.describe("Exam year", () => {
   }) => {
     const page = await openExamScreen({ browser, examYear: 2100 });
 
-    // Its first day as a calendar page, the days in its line of facts, and the note that they're
-    // estimated: the countdown says it too.
-    await expect(page.getByRole("heading", { level: 1, name: "About the exam" })).toBeVisible();
-    const facts = page.getByText(/November 14, 2100 and November 21, 2100/u);
-    await expect(facts).toBeVisible();
-    await expect(facts).toContainText(/About [\d,]+ days left/u);
+    // The exam's name over its days in its line of facts, which says they're estimated, with the
+    // note beside the page: the countdown over the name says it too.
+    await expect(page.getByRole("heading", { level: 1, name: "ENEM" })).toBeVisible();
+    await expect(page.getByText(/Nov 14, 2100 and Nov 21, 2100/u)).toBeVisible();
+    await expect(page.getByText("estimated from past editions", { exact: true })).toBeVisible();
+    await expect(page.getByText(/^Exam · ~[\d,]+ days left$/u)).toBeVisible();
     await expect(page.getByText(ESTIMATE_NOTE)).toBeVisible();
 
     await page.context().close();

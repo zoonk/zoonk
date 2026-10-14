@@ -1,11 +1,16 @@
 "use client";
 
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
+import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
+import { TaskActions } from "../_components/task-layout";
 import { TaskMainButton } from "../shell/task-frame";
 import { MockBreak } from "./mock-break";
+import { useRefreshPastMockDeadline } from "./mock-clock";
 import { type MockActions, type MockHrefs, MockProvider, useMockScreen } from "./mock-context";
-import { MockFrame, MockStepStatus } from "./mock-frame";
+import { MockExpired } from "./mock-expired";
+import { MockEyebrow, MockFrame, MockStepStatus } from "./mock-frame";
 import { MockResultView } from "./mock-result-view";
 import { MockRunnerView } from "./mock-runner-view";
 import { MockSpeakingView } from "./mock-speaking";
@@ -18,7 +23,10 @@ export type {
   MockPlayOutcome,
 } from "./mock-context";
 
-/** Every section was handed in but grading didn't finish: one tap grades it now. */
+/**
+ * Every section was handed in but grading didn't finish (the tab closed first): one line says it's
+ * in, and one tap grades it now.
+ */
 function MockGrading() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -28,20 +36,63 @@ function MockGrading() {
       footer={
         <>
           <MockStepStatus />
-          <TaskMainButton
-            busy={runner.busy === "finish"}
-            disabled={runner.pending}
-            onClick={() => void runner.finish()}
-          >
-            {runner.busy === "finish" ? t("Grading…") : t("See how it went")}
-          </TaskMainButton>
+          <TaskActions>
+            <TaskMainButton
+              busy={runner.busy === "finish"}
+              disabled={runner.pending}
+              onClick={() => void runner.finish()}
+            >
+              {runner.busy === "finish" ? t("Grading…") : t("See how it went")}
+            </TaskMainButton>
+          </TaskActions>
         </>
       }
     >
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">{t("Mock exam handed in")}</h1>
-        <p className="text-muted-foreground">{t("Your answers are saved.")}</p>
-      </div>
+      <StepTitle>{t("Mock exam handed in")}</StepTitle>
+    </MockFrame>
+  );
+}
+
+/**
+ * A clock never starts grading: time closes the answers, and the learner hands them in. It says
+ * the answers are saved only when they are; the bar says what isn't.
+ */
+function MockTimeUp() {
+  const t = useExtracted();
+  const { actions, runner } = useMockScreen();
+  const isLast = runner.view.current?.section === runner.view.sections.length - 1;
+  const handingIn = runner.busy === "submit";
+  const action = isLast ? t("See how it went") : t("Continue");
+  useRefreshPastMockDeadline({ deadline: runner.view.current?.deadline, refresh: actions.refresh });
+
+  return (
+    <MockFrame
+      footer={
+        <>
+          <MockStepStatus />
+          <TaskActions>
+            <TaskMainButton
+              busy={handingIn}
+              disabled={runner.pending}
+              onClick={() => void runner.submitSection()}
+            >
+              {handingIn ? t("Handing in…") : action}
+            </TaskMainButton>
+          </TaskActions>
+        </>
+      }
+    >
+      <StepCard>
+        <TimerOffIcon aria-hidden="true" className="text-muted-foreground size-6" />
+
+        <StepHeader>
+          <MockEyebrow />
+          <StepTitle>{t("Time's up")}</StepTitle>
+          {runner.saveStatus === "saved" && (
+            <StepDetail>{t("Your answers so far are saved.")}</StepDetail>
+          )}
+        </StepHeader>
+      </StepCard>
     </MockFrame>
   );
 }
@@ -50,12 +101,20 @@ function MockStage() {
   const { runner } = useMockScreen();
   const { view } = runner;
 
+  if (view.status === "expired") {
+    return <MockExpired />;
+  }
+
   if (view.status === "finished") {
     return <MockResultView />;
   }
 
   if (view.breakUntil && !view.current) {
     return <MockBreak until={view.breakUntil} />;
+  }
+
+  if (view.current && runner.timeUp) {
+    return <MockTimeUp />;
   }
 
   if (view.current?.kind === "speaking") {

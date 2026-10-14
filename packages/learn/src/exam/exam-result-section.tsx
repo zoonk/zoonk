@@ -10,16 +10,21 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { SURFACE_CLASS } from "../_components/surface";
+import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { useExamScreen } from "./exam-context";
 
 const PASSED_VALUES = ["yes", "no", "unknown"] as const;
 
 type Passed = (typeof PASSED_VALUES)[number];
 
-/** Options share the row but never squeeze a label ("Noch nicht") onto two lines; they wrap instead. */
-const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm";
+/**
+ * Options share the row but never squeeze a label ("Noch nicht") onto two lines; they wrap instead.
+ * Picked as every pick is: the blue line on its tint.
+ */
+const OPTION_CLASS = cn(
+  "border-border flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm",
+  CHOICE_CARD_PICKED_CLASS,
+);
 
 function toPassed(value: Passed): boolean | null {
   if (value === "unknown") {
@@ -69,7 +74,7 @@ function ReportedResult() {
   return (
     <p className="flex items-start gap-2 text-sm" role="status">
       <LineMarker aria-hidden="true">
-        <CircleCheckIcon className="text-success size-4" />
+        <CircleCheckIcon className="text-success-text size-4" />
       </LineMarker>
       {result.score === null
         ? t("Result saved. Thank you for telling us.")
@@ -116,12 +121,9 @@ export function ExamResultSection() {
   }
 
   return (
-    <section
-      aria-labelledby="exam-result-title"
-      className={cn(SURFACE_CLASS, "flex flex-col gap-4 p-5")}
-    >
+    <section aria-labelledby="exam-result-title" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="font-semibold" id="exam-result-title">
+        <h2 className="text-[0.9375rem] font-medium" id="exam-result-title">
           {t("How did it go?")}
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -194,7 +196,7 @@ export function ExamResultSection() {
         </fieldset>
 
         {status === "error" && (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive-text text-sm" role="alert">
             {t("That didn't go through. Try again in a moment.")}
           </p>
         )}

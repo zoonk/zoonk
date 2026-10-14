@@ -165,21 +165,12 @@ test.describe("Statements", () => {
       .getByRole("button", { exact: true, name: "Entregar" })
       .click();
 
-    // The result says one thing per step; the questions to review open from its last step.
-    const seeQuestion = page.getByText("Veja a pergunta", { exact: true });
-
-    await expect(async () => {
-      if (!(await seeQuestion.isVisible())) {
-        await page.getByRole("button", { exact: true, name: "Continuar" }).click();
-      }
-
-      await expect(seeQuestion).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await seeQuestion.click();
+    // At desktop width the missed statement is reviewed on the score's page.
     const review = page.getByRole("listitem").filter({ hasText: "First statement" });
 
-    await expect(review.getByRole("definition")).toHaveText(["Errado", "Certo"]);
+    await expect(review.getByRole("radio")).toHaveText([/Errado/u, /Certo/u]);
+    await expect(review.getByRole("radio", { name: /Errado/u })).toBeDisabled();
+    await expect(review.getByRole("radio", { name: /Certo/u })).toBeDisabled();
     await page.context().close();
   });
 });

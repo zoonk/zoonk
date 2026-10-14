@@ -5,6 +5,7 @@ import { type ExamDay } from "@zoonk/core/exams/view/contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatTimeOfDay } from "../_utils/time-format";
+import { useFormatPlanDate } from "../plan/plan-date-text";
 
 /** The real exam day's checklist, in the learner's words. */
 export function useExamChecklistLabel() {
@@ -48,4 +49,16 @@ export function useExamDayText() {
 
     return t("{date} · {time}", { date, time: formatTimeOfDay(day.startTime) });
   };
+}
+
+/**
+ * "Sun, Nov 14": an exam day by the Plan's date rule (its year beyond the next twelve months),
+ * short enough to share a row with its length or its questions.
+ */
+export function useExamDayDate() {
+  const formatDate = useFormatIsoDate();
+  const formatPlanDate = useFormatPlanDate();
+
+  return (isoDate: string): string =>
+    `${formatDate(isoDate, "weekdayShort")}, ${formatPlanDate(isoDate)}`;
 }

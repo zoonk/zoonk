@@ -55,8 +55,8 @@ export function MovesNote() {
 }
 
 /**
- * A question's own clock: when it runs out, the next question opens, or after the last one the
- * section is handed in, as an exam that times each question does.
+ * A question's own clock, inline in the line under the header: when it runs out, the next
+ * question opens, or after the last one the answers close until the learner hands the section in.
  */
 function ItemCountdown({ seconds }: { seconds: number }) {
   const t = useExtracted();
@@ -66,16 +66,7 @@ function ItemCountdown({ seconds }: { seconds: number }) {
   const remaining = Math.max(0, clock.start + seconds * MS_PER_SECOND - clock.now);
   const done = useRef(false);
 
-  const moveOn = useEffectEvent(() => {
-    const total = runner.view.current?.questions.length ?? 0;
-
-    if (runner.position >= total - 1) {
-      void runner.submitSection();
-      return;
-    }
-
-    runner.go(runner.position + 1);
-  });
+  const moveOn = useEffectEvent(() => runner.timeOutQuestion());
 
   useEffect(() => {
     const timer = setInterval(
@@ -94,12 +85,12 @@ function ItemCountdown({ seconds }: { seconds: number }) {
   }, [remaining]);
 
   return (
-    <p className="text-foreground flex items-center gap-1.5 font-medium">
+    <span className="text-foreground flex items-center gap-1 font-mono font-medium tabular-nums">
       <TimerIcon aria-hidden="true" className="size-3.5 shrink-0" />
-      <span aria-label={t("Time left for this question")} className="tabular-nums" role="timer">
+      <span aria-label={t("Time left for this question")} role="timer">
         {formatClock(remaining)}
       </span>
-    </p>
+    </span>
   );
 }
 

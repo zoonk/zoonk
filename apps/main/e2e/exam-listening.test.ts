@@ -14,7 +14,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { RECORDING_MS, toneUrl } from "./listening-audio";
-import { openAs } from "./study-day";
+import { openAs, pickAndCheck } from "./study-day";
 
 /** Two questions on the booking call, in the order the recording answers them. */
 const QUESTIONS = [
@@ -136,7 +136,7 @@ test.describe("Exam listening in practice", () => {
 
     // The learner answers along: the recording keeps playing through the feedback and the next
     // question, as in the exam.
-    await page.getByRole("button", { name: "The small hall" }).click();
+    await pickAndCheck(page, "The small hall");
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await expect(page.getByRole("region", { name: "Transcript" })).toBeHidden();
     await page.getByRole("button", { name: /^Continue/u }).click();
@@ -158,7 +158,7 @@ test.describe("Exam listening in practice", () => {
     await expect(questionsButton).toHaveAttribute("aria-expanded", "false");
 
     // The last answer brings the transcript and free replays.
-    await page.getByRole("button", { name: "Thursday" }).click();
+    await pickAndCheck(page, "Thursday");
     await expect(feedback.getByText("Correct!")).toBeVisible();
 
     const transcript = page.getByRole("region", { name: "Transcript" });

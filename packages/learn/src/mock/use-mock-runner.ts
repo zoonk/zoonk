@@ -6,6 +6,7 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useEffectEvent, useState } from "react";
 import { useLearnAnalytics } from "../learn-context";
+import { useIsSectionExpired } from "./mock-clock";
 import {
   type MockActions,
   type MockEssayGradingStatus,
@@ -13,8 +14,9 @@ import {
   type MockRunner,
   type MockStep,
 } from "./mock-context";
+import { isSavedQuestionExpired } from "./mock-deadline";
 import { getSectionMoves } from "./section-moves";
-import { useMockDrafts } from "./use-mock-drafts";
+import { isDraftAnswered, useMockDrafts } from "./use-mock-drafts";
 
 /**
  * Handing a section in and scoring the mock are database work of a second or two (no model
@@ -80,57 +82,15 @@ async function countPlay({
   return outcome.status === "counted";
 }
 
-/**
- * The started mock from the learner's side: answering and flagging (saved as drafts), moving
- * through the section, handing it in (or letting the clock do it) and seeing the result. Each step
- * takes the mock as the server returns it, so the screen always matches what's stored.
- */
-export function useMockRunner({
+/** Essay scoring has its own wait and retry state, independent of question movement. */
+function useEssayGrading({
   actions,
-  initial,
+  setView,
 }: {
   actions: MockActions;
-  initial: MockView;
-}): MockRunner {
-  const analytics = useLearnAnalytics();
-  const [view, setView] = useState(initial);
-  const [position, setPosition] = useState(initial.current?.resume ?? 0);
-  // The furthest question opened, and the questions the review changed, in the running section.
-  const [reached, setReached] = useState(initial.current?.resume ?? 0);
-  const [changed, setChanged] = useState<readonly number[]>([]);
-  const [pending, setPending] = useState(false);
-  const [busy, setBusy] = useState<MockStep | null>(null);
-  const [error, setError] = useState(false);
+  setView: (view: MockView) => void;
+}) {
   const [essayGrading, setEssayGrading] = useState<MockEssayGradingStatus>("idle");
-  const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
-  const drafts = useMockDrafts({ save: actions.answer, view: initial });
-  const questions = view.current?.questions ?? [];
-  const question = questions[position];
-  const shownItemId = question?.itemId;
-  const changesLeft = view.current?.changesLeft ?? null;
-
-  const moves = getSectionMoves({
-    changed,
-    changesLeft: changesLeft === null ? null : Math.max(0, changesLeft - changed.length),
-    navigation: view.sections.find((section) => section.status === "current")?.navigation ?? null,
-    reached,
-    total: questions.length,
-  });
-
-  // A question's clock starts when it appears, whether by moving to it or a new section.
-  const showQuestion = useEffectEvent((itemId: string) => {
-    drafts.show(itemId);
-
-    if (moves.forwardOnly) {
-      drafts.visit(itemId);
-    }
-  });
-
-  useEffect(() => {
-    if (shownItemId) {
-      showQuestion(shownItemId);
-    }
-  }, [shownItemId]);
 
   async function gradeEssays() {
     setEssayGrading("grading");
@@ -150,6 +110,103 @@ export function useMockRunner({
     setView(outcome.mock);
     setEssayGrading(outcome.status === "limitReached" ? "limitReached" : "idle");
   }
+
+  return { essayGrading, gradeEssays };
+}
+
+function hasExpiredFinalQuestion(view: MockView): boolean {
+  const current = view.current;
+
+  const navigation = view.sections.find(
+    (section) => section.index === current?.section,
+  )?.navigation;
+
+  return isSavedQuestionExpired({
+    drafts: current?.drafts ?? [],
+    itemId: current?.questions.at(-1)?.itemId,
+    seconds: navigation?.itemSeconds ?? null,
+  });
+}
+
+/** Stops a question's saved duration when time replaces it with the hand-in screen. */
+function useShownQuestion({
+  currentItemId,
+  drafts,
+  forwardOnly,
+  shownItemId,
+}: {
+  currentItemId?: string;
+  drafts: ReturnType<typeof useMockDrafts>;
+  forwardOnly: boolean;
+  shownItemId?: string;
+}) {
+  const synchronize = useEffectEvent((itemId: string | undefined) => {
+    if (itemId) {
+      drafts.show(itemId);
+
+      if (forwardOnly) {
+        drafts.visit(itemId);
+      }
+
+      return;
+    }
+
+    if (currentItemId) {
+      drafts.leave(currentItemId);
+    }
+  });
+
+  useEffect(() => synchronize(shownItemId), [shownItemId]);
+}
+
+/**
+ * The started mock from the learner's side: answering and flagging (saved as drafts), moving
+ * through the section, handing it in (or letting the clock do it) and seeing the result. Each step
+ * takes the mock as the server returns it, so the screen always matches what's stored.
+ */
+export function useMockRunner({
+  actions,
+  initial,
+}: {
+  actions: MockActions;
+  initial: MockView;
+}): MockRunner {
+  const analytics = useLearnAnalytics();
+  const [view, setView] = useState(initial);
+  const [position, setPosition] = useState(initial.current?.resume ?? 0);
+  // The furthest question opened, and the questions the review changed, in the running section.
+  const [reached, setReached] = useState(initial.current?.resume ?? 0);
+  const [changed, setChanged] = useState<readonly number[]>([]);
+  const [pending, setPending] = useState(false);
+  const [questionTimeUp, setQuestionTimeUp] = useState(() => hasExpiredFinalQuestion(initial));
+  const sectionTimeUp = useIsSectionExpired(view.current?.deadline);
+  const timeUp = sectionTimeUp || questionTimeUp;
+  const [busy, setBusy] = useState<MockStep | null>(null);
+  const [error, setError] = useState(false);
+  const { essayGrading, gradeEssays } = useEssayGrading({ actions, setView });
+  const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
+  const drafts = useMockDrafts({ save: actions.answer, view: initial });
+  const questions = view.current?.questions ?? [];
+  const question = questions[position];
+  const shownItemId = timeUp ? undefined : question?.itemId;
+  const changesLeft = view.current?.changesLeft ?? null;
+
+  const moves = getSectionMoves({
+    answered: Boolean(question && isDraftAnswered(drafts.drafts[question.itemId])),
+    changed,
+    changesLeft: changesLeft === null ? null : Math.max(0, changesLeft - changed.length),
+    navigation: view.sections.find((section) => section.status === "current")?.navigation ?? null,
+    position,
+    reached,
+    total: questions.length,
+  });
+
+  useShownQuestion({
+    currentItemId: question?.itemId,
+    drafts,
+    forwardOnly: moves.forwardOnly,
+    shownItemId,
+  });
 
   async function step(kind: MockStep, request: () => Promise<MockView | null>) {
     setPending(true);
@@ -189,27 +246,40 @@ export function useMockRunner({
     setPosition(next.current?.resume ?? 0);
     setReached(next.current?.resume ?? 0);
     setChanged([]);
+    setQuestionTimeUp(false);
     setView(next);
 
-    // Handing the mock in grades its essays right away, while the objective result shows.
-    if (next.status === "finished" && view.status !== "finished" && hasPendingEssays(next)) {
+    // An explicit hand-in grades essays right away, while the objective result shows.
+    if (
+      (kind === "submit" || kind === "finish") &&
+      next.status === "finished" &&
+      view.status !== "finished" &&
+      hasPendingEssays(next)
+    ) {
       void gradeEssays();
     }
   }
 
-  function go(target: number) {
-    const clamped = Math.min(Math.max(0, target), Math.max(0, questions.length - 1));
-
-    if (!moves.canOpen(clamped)) {
+  function move(target: number, timedOut: boolean) {
+    if (pending || timeUp || (timedOut && moves.itemSeconds === null)) {
       return;
     }
 
-    if (question && clamped !== position) {
+    if (timedOut && target === questions.length) {
+      setQuestionTimeUp(true);
+      return;
+    }
+
+    if (!(timedOut ? moves.canOpenAfterTimeout(target) : moves.canOpen(target))) {
+      return;
+    }
+
+    if (question && target !== position) {
       drafts.leave(question.itemId);
     }
 
-    setPosition(clamped);
-    setReached((current) => Math.max(current, clamped));
+    setPosition(target);
+    setReached((current) => Math.max(current, target));
   }
 
   /**
@@ -217,7 +287,7 @@ export function useMockRunner({
    * review, changing a left-behind answer uses one of its changes, once per question.
    */
   function canAnswer(next: MockAnswer | null): boolean {
-    if (!question || !moves.canChange(position)) {
+    if (!question || timeUp || !moves.canChange(position)) {
       return false;
     }
 
@@ -242,19 +312,23 @@ export function useMockRunner({
     busy,
     drafts: drafts.drafts,
     endBreak: () => step("endBreak", actions.endBreak),
-    error: error || drafts.failed,
+    error,
     essayGrading,
     finish: () => step("finish", actions.finish),
-    go,
+    go: (target) => move(target, false),
     gradeEssays,
     moves,
     pending,
     play: (setId) => countPlay({ play: actions.play, setId, setView }),
     position,
+    retrySaves: drafts.retry,
+    saveStatus: drafts.saveStatus,
     savesInFlight: drafts.inFlight,
     slow,
     startSpeaking: () => step("startSpeaking", actions.startSpeaking),
     submitSection: () => step("submit", () => actions.submit(view.current?.section ?? 0)),
+    timeOutQuestion: () => move(position + 1, true),
+    timeUp,
     toggleFlag: () => question && drafts.toggleFlag(question.itemId),
     view,
     write: (next) => {

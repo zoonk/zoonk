@@ -7,13 +7,13 @@ import {
   MOCK_MINUTES,
   THIN_CHECKPOINT,
   createCheckpointLearner,
-  createUpcomingBoss,
   playDuel,
   starShownAt,
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
+import { createUpcomingBoss } from "./upcoming-checkpoint-fixture";
 import { type StreamEvent, followRun } from "./generation-run";
-import { continueToLastStep, nextStep, stepDots } from "./result-steps";
+import { asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
 
 async function planItemStatus(id: string) {
@@ -22,6 +22,144 @@ async function planItemStatus(id: string) {
 }
 
 test.describe("Checkpoints", () => {
+  test("a duel whose questions vanished ends without judging the learner", async ({ browser }) => {
+    const { block, boss, items, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 720, width: 390 });
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page.getByRole("radio", { name: "Right answer" })).toBeVisible();
+    await prisma.item.deleteMany({ where: { id: { in: items.map((item) => item.id) } } });
+    await page.getByRole("radio", { name: "Right answer" }).click();
+    await page.getByRole("button", { name: "Confirm" }).click();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "The questions were removed" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    await expect(page.getByRole("meter", { name: "The Trickster's shield" })).toHaveCount(0);
+    await expect(page.getByText("Brain Power", { exact: true })).toHaveCount(0);
+
+    await page.screenshot({
+      path: "/tmp/zoonk-review/round-am/challenge-recovery-empty-phone.png",
+    });
+
+    await page.getByRole("button", { name: "See how it went" }).click();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "The questions were removed" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    await page.reload();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "The questions were removed" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+
+    await expect(page.getByText("You beat the Trickster!", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("Not this time", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("Brain Power", { exact: true })).toHaveCount(0);
+    await expectAccessibleScreen(page, "an empty challenge ended without a verdict");
+    await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+        return saved.status;
+      })
+      .toBe("skipped");
+
+    await page.getByRole("link", { exact: true, name: "Continue" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.context().close();
+  });
+
+  test("a decided duel stays lost when an answered question disappears before finishing", async ({
+    browser,
+  }) => {
+    const { block, boss, items, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await playDuel(page, { answer: "Wrong answer", passMark: CHECKPOINT_PASS_MARK, until: 1 });
+    await page.getByRole("radio", { name: "Wrong answer" }).click();
+    await page.getByRole("button", { name: "Confirm" }).click();
+
+    await expect(page.getByRole("status")).toHaveText(/^Not quite\s*His shield held this time\./u);
+
+    await prisma.item.delete({ where: { id: items[0]?.id } });
+    await page.reload();
+    await expect(page.getByRole("status")).toHaveText(/^His shield held this time\./u);
+    await expect(page.getByRole("radio")).toHaveCount(0);
+    await page.getByRole("button", { name: "See how it went" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await expect(page.getByText("0 of 2 right", { exact: true })).toBeVisible();
+    await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+        return saved.status;
+      })
+      .toBe("completed");
+
+    await page.context().close();
+  });
+
+  for (const outcome of [
+    {
+      answer: "Right answer",
+      heading: "You beat the Trickster!",
+      kind: "won",
+      score: "5 of 5 right",
+    },
+    { answer: "Wrong answer", heading: "Not this time", kind: "lost", score: "0 of 2 right" },
+  ] as const) {
+    test(`a reopened ${outcome.kind} duel keeps its earned score after every question is deleted`, async ({
+      browser,
+    }) => {
+      const { boss, items, user } = await createCheckpointLearner();
+      const page = await openAs(browser, user);
+      await page.goto(`/challenge/${boss.id}`);
+      await page.getByRole("button", { exact: true, name: "Start" }).click();
+      await playDuel(page, { answer: outcome.answer, passMark: CHECKPOINT_PASS_MARK });
+      await expect(page.getByText(outcome.score, { exact: true })).toBeVisible();
+      await prisma.item.deleteMany({ where: { id: { in: items.map((item) => item.id) } } });
+      await page.reload();
+      await expect(page.getByRole("heading", { level: 1, name: outcome.heading })).toBeVisible();
+      await expect(page.getByText(outcome.score, { exact: true })).toBeVisible();
+      await expect(page.getByText(/right to win/u)).toHaveCount(0);
+      await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
+
+      await page.screenshot({
+        path: `/tmp/zoonk-review/round-am/challenge-recovery-${outcome.kind}-desktop.png`,
+      });
+
+      await page.context().close();
+    });
+  }
+
   test("the Trickster's checkpoint says what it asks before its day, without a way to start it yet", async ({
     browser,
   }) => {
@@ -63,41 +201,69 @@ test.describe("Checkpoints", () => {
       page.getByText(`${CHECKPOINT_PASS_MARK} right to win`, { exact: true }),
     ).toBeVisible();
 
+    // What he'll ask beside the intro: the topics of the duel's questions.
+    await expect(page.getByRole("complementary", { name: "What he'll ask" })).toBeVisible();
+    await expect(page.getByText(/^Discounts /u)).toBeVisible();
+    await expect(page.getByText(/^Ratios /u)).toBeVisible();
+
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
 
-    const shield = page.getByRole("meter", { name: "The Trickster's shield" });
+    const duelAside = page.getByRole("complementary", { name: "Phase 1 challenge" });
+    const shield = duelAside.getByRole("meter", { name: "The Trickster's shield" });
     await expect(shield).toHaveAttribute("aria-valuemax", String(CHECKPOINT_PASS_MARK));
     await expect(shield).toHaveAttribute("aria-valuenow", "0");
     await expectAccessibleScreen(page, "the Trickster's duel");
 
-    await playDuel(page);
+    // Pedro's won challenge kept asking after his shield broke. It breaks at the fifth right
+    // answer of six, and the duel ends there, won, the question left never asked.
+    await playDuel(page, { until: CHECKPOINT_PASS_MARK - 1 });
+    await expect(duelAside.getByText("2 questions left")).toBeVisible();
 
-    // The result says one thing at a time: how it went, what it earned, then the next phase.
+    await page.getByRole("radio", { name: "Right answer" }).click();
+    await page.getByRole("button", { name: "Confirm" }).click();
+    await expect(shield).toHaveAttribute("aria-valuenow", String(CHECKPOINT_PASS_MARK));
+    await expect(duelAside.getByText(/questions? left/u)).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
+
+    await expect(page.getByRole("status")).toHaveText(
+      /^Correct!\s*His shield is broken\. You won!$/u,
+    );
+
+    await page.getByRole("button", { name: "See how it went" }).click();
+
+    // The desktop result shows the outcome and answers, with rewards and the next phase beside it.
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeVisible();
 
     await expect(
-      page.getByText(`${CHECKPOINT_QUESTIONS} of ${CHECKPOINT_QUESTIONS} right`),
+      page.getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_PASS_MARK} right`),
     ).toBeVisible();
 
-    await expect(stepDots(page)).toHaveAttribute("aria-label", "Step 1 of 3");
     await expectAccessibleScreen(page, "a checkpoint's result");
 
-    await nextStep(page);
-    await expect(page.getByRole("heading", { level: 1, name: /Brain Power$/u })).toBeVisible();
-    await expect(page.getByText("Phase 1 complete")).toBeVisible();
-    await expect(page.getByText("Trap hunter badge")).toBeVisible();
+    const details = page.getByRole("complementary", { name: "Phase 1 challenge" });
+    await expect(details.getByText("Brain Power", { exact: true })).toBeVisible();
+    await expect(details.getByText(/^\+[\d,]+$/u)).toBeVisible();
+    await expect(details.getByText("Phase 1 complete")).toBeVisible();
+    await expect(details.getByText("Trap hunter badge")).toBeVisible();
 
-    await nextStep(page);
-    await expect(page.getByText("Next phase", { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1, name: "Practice" })).toBeVisible();
+    await expect(details.getByRole("heading", { name: "Next phase" })).toBeVisible();
+    await expect(details.getByText("Practice", { exact: true })).toBeVisible();
 
-    // The answers and their traps wait behind a link, in a sheet that Escape closes.
+    const review = page.getByRole("region", { name: "The answers" });
+    await expect(review.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_PASS_MARK);
+
+    await expect(review.getByText("Your answer", { exact: true })).toHaveCount(
+      CHECKPOINT_PASS_MARK,
+    );
+
+    // On a phone, those answers wait in a sheet that Escape closes.
+    await page.setViewportSize({ height: 720, width: 390 });
     await page.getByRole("button", { name: "Review the answers" }).click();
     const answers = page.getByRole("dialog", { name: "The answers" });
-    await expect(answers.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_QUESTIONS);
+    await expect(answers.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_PASS_MARK);
     await page.keyboard.press("Escape");
     await expect(answers).toBeHidden();
 
@@ -114,7 +280,7 @@ test.describe("Checkpoints", () => {
     ).toBeVisible();
 
     await expect(
-      page.getByText(`${CHECKPOINT_QUESTIONS} of ${CHECKPOINT_QUESTIONS} right`),
+      page.getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_PASS_MARK} right`),
     ).toBeVisible();
 
     await expect(page.getByText(`${CHECKPOINT_PASS_MARK} right to win`)).toHaveCount(0);
@@ -128,46 +294,92 @@ test.describe("Checkpoints", () => {
     await page.context().close();
   });
 
-  test("not passing costs nothing: a new try tomorrow, and the next phase open", async ({
-    browser,
-  }) => {
-    const { block, boss, user } = await createCheckpointLearner();
-    const page = await openAs(browser, user);
+  // The mirror of a won duel: Pedro's lost challenge kept asking, still promising its prize.
+  for (const lessons of [0, 1, 2]) {
+    test(`a lost duel promises its ${lessons} actual reinforcement lessons and leaves the next phase open`, async ({
+      browser,
+    }) => {
+      const { block, boss, user } = await createCheckpointLearner({
+        reinforcementLessons: lessons,
+      });
 
-    await page.goto(`/challenge/${boss.id}`);
-    await page.getByRole("button", { name: "Start" }).click();
-    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
-    await playDuel(page, { answer: "Wrong answer" });
+      const page = await openAs(browser, user);
 
-    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+      await page.goto(`/challenge/${boss.id}`);
+      await page.getByRole("button", { name: "Start" }).click();
+      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
 
-    await expect(
-      page.getByText(`0 of ${CHECKPOINT_QUESTIONS} right. Winning takes 5.`),
-    ).toBeVisible();
+      // Five right of six win it: one miss leaves them all to get.
+      const duelAside = page.getByRole("complementary", { name: "Phase 1 challenge" });
+      await playDuel(page, { answer: "Wrong answer", until: 1 });
+      await expect(duelAside.getByText("5 questions left", { exact: true })).toBeVisible();
+      await expect(duelAside.getByText("Winning", { exact: true })).toBeVisible();
 
-    // A new try, and the next phase named: nothing is locked.
-    await nextStep(page);
-    await expect(page.getByRole("heading", { level: 1, name: "New try tomorrow" })).toBeVisible();
-    await expect(page.getByText("The next phase, Practice, is already open.")).toBeVisible();
-    await expect(page.getByText("Trap hunter badge")).toHaveCount(0);
+      // The second miss decides it: nothing more is asked, or promised.
+      await page.getByRole("radio", { name: "Wrong answer" }).click();
+      await page.getByRole("button", { name: "Confirm" }).click();
 
-    await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+      const verdict = page.getByRole("status");
 
-    // Its intro says so too, and opens how it went.
-    await page.goto(`/challenge/${boss.id}`);
+      const rematch =
+        lessons === 0
+          ? "New try tomorrow. Nothing is lost."
+          : `New try tomorrow, after ${lessons} short ${lessons === 1 ? "lesson" : "lessons"}. Nothing is lost.`;
 
-    await expect(
-      page.getByText("New try tomorrow, after 2 short lessons. Nothing is lost."),
-    ).toBeVisible();
+      await expect(verdict).toContainText(rematch);
+      await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
+      await expect(duelAside.getByText(/questions? left$/u)).toHaveCount(0);
+      await expect(duelAside.getByText(/to go$/u)).toHaveCount(0);
+      await expect(duelAside.getByText("Winning", { exact: true })).toHaveCount(0);
 
-    await page.getByRole("link", { name: "See how it went" }).click();
-    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
-    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
-    await nextStep(page);
-    await expect(page.getByRole("heading", { level: 1, name: "New try tomorrow" })).toBeVisible();
+      await expect(verdict).toHaveText(`Not quiteHis shield held this time. ${rematch}`);
 
-    await page.context().close();
-  });
+      // Reloaded before moving on, the duel stays over: it says how it ended, never a blank page.
+      await page.reload();
+      await expect(page.getByRole("status")).toContainText(rematch);
+      await expect(page.getByRole("radio")).toHaveCount(0);
+
+      await page.getByRole("button", { name: "See how it went" }).click();
+      await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+      await expect(page.getByText("0 of 2 right", { exact: true })).toBeVisible();
+
+      // What winning took, of all six: "2 asked, 5 to win" alone would read as out of reach.
+      await expect
+        .soft(
+          page
+            .getByRole("main")
+            .getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_QUESTIONS} right to win`),
+        )
+        .toBeVisible();
+
+      // A new try, and the next phase named: nothing is locked.
+      const details = page.getByRole("complementary", { name: "Phase 1 challenge" });
+      await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
+
+      const reinforcement =
+        lessons === 0
+          ? "Nothing is lost."
+          : `After ${lessons} short ${lessons === 1 ? "lesson" : "lessons"} on what tripped you up. Nothing is lost.`;
+
+      await expect(details.getByText(reinforcement, { exact: true })).toBeVisible();
+      await expect(details.getByText("The next phase, Practice, is already open.")).toBeVisible();
+      await expect(page.getByText("Trap hunter badge")).toHaveCount(0);
+
+      await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+
+      // Its intro says so too, and opens how it went.
+      await page.goto(`/challenge/${boss.id}`);
+
+      await expect(page.getByText(rematch, { exact: true })).toBeVisible();
+
+      await page.getByRole("link", { name: "See how it went" }).click();
+      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+      await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+      await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
+
+      await page.context().close();
+    });
+  }
 
   test("the week's mock says when, how long and its one rule, and starts from its intro", async ({
     browser,
@@ -185,8 +397,9 @@ test.describe("Checkpoints", () => {
       page.getByText(`${CHECKPOINT_QUESTIONS} questions`, { exact: true }),
     ).toBeVisible();
 
-    // About how long it takes: the exam's pace until learners' own is known.
-    await expect(page.getByText(`About ${MOCK_MINUTES} min`, { exact: true })).toBeVisible();
+    // The mock's real clock is the same number the learner reserves in the plan.
+    await expect(page.getByText(`${MOCK_MINUTES} min`, { exact: true })).toBeVisible();
+    await expect(page.getByRole("main")).not.toContainText(`About ${MOCK_MINUTES} min`);
 
     await expect(
       page.getByText("Your result only shows at the end, like on exam day."),
@@ -249,7 +462,7 @@ test.describe("A challenge whose questions aren't written yet", () => {
 
     // No tap: it opens once its questions exist.
     await expect(
-      page.getByText(`Question 1 of ${THIN_CHECKPOINT.questions}`, { exact: true }),
+      page.getByRole("progressbar", { name: `Question 1 of ${THIN_CHECKPOINT.questions}` }),
     ).toBeVisible();
 
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
@@ -281,7 +494,7 @@ test.describe("A challenge whose questions aren't written yet", () => {
     await writeQuestions(1);
     events.push({ status: "completed", step: "challengeQuestionsReady" });
 
-    await expect(page.getByText("Question 1 of 6", { exact: true })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Question 1 of 6" })).toBeAttached();
     await page.context().close();
   });
 
@@ -308,7 +521,7 @@ test.describe("A challenge whose questions aren't written yet", () => {
 
     events.push({ reason: "aiGenerationFailed", status: "error", step: "workflowError" });
 
-    await expect(page.getByText("Question 1 of 6", { exact: true })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Question 1 of 6" })).toBeAttached();
     await page.context().close();
   });
 
@@ -345,24 +558,16 @@ test.describe("A checkpoint from today's session", () => {
 
     await page.goto("/today");
 
-    // Taps work once the page hydrates, so a first tap retries until the screen changes.
-    await expect(async () => {
-      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
-
-      await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"), {
-        timeout: 1000,
-      });
-    }).toPass({ timeout: 10_000 });
+    await page.getByRole("button", { name: /^Start session/u }).click();
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"));
 
     // One tap on Start opens the duel, never this intro again with a Continue to tap (the block's
     // page redirected Today's tap here, and the router kept that redirect for its address).
-    await expect(async () => {
-      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
-      await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
-        timeout: 5000,
-      });
-    }).toPass({ timeout: 15_000 });
+    await expect(
+      page.getByRole("progressbar", { name: `Question 1 of ${CHECKPOINT_QUESTIONS}` }),
+    ).toBeAttached();
 
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
     await page.context().close();
@@ -387,38 +592,36 @@ test.describe("A checkpoint from today's session", () => {
     await expect(async () => {
       await page.keyboard.press("Enter");
 
-      await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
-        timeout: 1000,
-      });
+      await expect(
+        page.getByRole("progressbar", { name: `Question 1 of ${CHECKPOINT_QUESTIONS}` }),
+      ).toBeAttached({ timeout: 1000 });
     }).toPass({ timeout: 5000 });
 
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
 
-    await playDuel(page, { keyboard: true });
+    await playDuel(page, { keyboard: true, passMark: CHECKPOINT_PASS_MARK });
 
-    // Enter goes through the result's steps, then on to the session.
+    // Enter leaves the single-screen result for the session.
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeVisible();
 
-    await continueToLastStep(page, { keyboard: true });
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
     await page.keyboard.press("Enter");
 
     // The checkpoint was the day's only block, so the session shows the day's summary.
     await expect(page).toHaveURL(/\/session$/u);
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
-
-    // Winning the first checkpoint earned the Star glasses: their own moment, before the last step.
-    await continueToLastStep(page, { keyboard: true });
+    // Winning the first checkpoint earned the Star glasses: their moment opens over the summary,
+    // and Enter puts them on.
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
-    await expect(ceremony.getByRole("button", { name: "Continue" })).toBeFocused();
+    await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(ceremony).toBeHidden();
     await expect.poll(() => starShownAt(user.id)).not.toBeNull();
 
     // The step under it takes the focus, and Enter finishes the day.
-    await expect(page.getByRole("button", { name: "Finish" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
 
@@ -449,6 +652,8 @@ test.describe("Move to Monday", () => {
 
     const page = await openAs(browser, user);
 
+    // Opened from Today, so Back has a page to return to.
+    await page.goto("/today");
     await page.goto(`/challenge/${boss.id}`);
     const move = page.getByRole("button", { name: "Move to Monday" });
     await expect(move).toBeVisible();
@@ -457,6 +662,12 @@ test.describe("Move to Monday", () => {
 
     await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
     await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
+      "href",
+      "/today",
+    );
+
     await expect.poll(() => blockStatus(block.id)).toBe("skipped");
 
     // A dated plan item is a new one on its new day: the page follows it.
@@ -470,6 +681,92 @@ test.describe("Move to Monday", () => {
     await expect(page).not.toHaveURL(/moved=/u);
     await expect.poll(() => blockStatus(block.id)).toBe("pending");
 
+    // The move and its undo each replaced the page they left, whose plan item is gone, so Back
+    // returns to Today instead of opening a challenge that no longer exists.
+    await page.goBack();
+    await expect(page).toHaveURL(/\/today$/u);
+
     await page.context().close();
+  });
+
+  test("moving Lucas's future weekly challenge confirms its next Monday and preserves Tricksters, with Undo", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { day: 19, persona: "buddy" }, async ({ page, user }) => {
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+
+      const weekly = await prisma.planItem.findFirstOrThrow({
+        orderBy: { scheduledFor: "desc" },
+        where: { kind: "checkpoint", planId: plan.id, status: "todo" },
+      });
+
+      const before = await prisma.planItem.findMany({
+        orderBy: { phase: "asc" },
+        where: { kind: "boss", planId: plan.id },
+      });
+
+      const weeklyBefore = await challengeDays(plan.id);
+
+      const from = weekly.scheduledFor;
+
+      if (!from) {
+        throw new Error("Expected Lucas's future weekly challenge date");
+      }
+
+      const monday = new Date(from);
+      monday.setUTCDate(monday.getUTCDate() + ((8 - monday.getUTCDay()) % 7 || 7));
+
+      await page.goto(`/challenge/${weekly.id}`);
+      await page.getByRole("button", { name: "Move to Monday" }).click();
+
+      // It names the weekday, the one "Move to Monday" promised, with the date.
+      const date = new Intl.DateTimeFormat("en", {
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+        weekday: "long",
+      }).format(monday);
+
+      await expect(page.getByRole("heading", { name: `Moved to ${date}` })).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
+      await expectAccessibleScreen(page, "the moved weekly challenge confirmation");
+
+      const moved = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "checkpoint", planId: plan.id, scheduledFor: monday, status: "todo" },
+      });
+
+      await expect(page).toHaveURL(new RegExp(`/challenge/${moved.id}\\?moved=`, "u"));
+
+      const after = await prisma.planItem.findMany({
+        orderBy: { phase: "asc" },
+        where: { kind: "boss", planId: plan.id },
+      });
+
+      expect(after.map((item) => [item.id, item.scheduledFor, item.status])).toStrictEqual(
+        before.map((item) => [item.id, item.scheduledFor, item.status]),
+      );
+
+      // The move leaves other weeks as shown, including a current week with no weekly challenge.
+      const weeklyAfter = await challengeDays(plan.id);
+
+      expect(weeklyAfter.filter((day) => day !== monday.toISOString().slice(0, 10))).toStrictEqual(
+        weeklyBefore.filter((day) => day !== from.toISOString().slice(0, 10)),
+      );
+
+      await page.getByRole("button", { exact: true, name: "Undo" }).click();
+
+      await expect(
+        page.getByRole("heading", { exact: true, name: "Weekly challenge" }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("button", { name: "Move to Monday" })).toBeVisible();
+      await expect(page).not.toHaveURL(/moved=/u);
+
+      const restored = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "checkpoint", planId: plan.id, scheduledFor: from, status: "todo" },
+      });
+
+      await expect(page).toHaveURL(new RegExp(`/challenge/${restored.id}$`, "u"));
+    });
   });
 });

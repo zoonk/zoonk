@@ -210,7 +210,8 @@ export function ExamScoringSection() {
         <PageSectionTitle id={SCORING_TITLE_ID}>{t("How the score works")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ListGroup>
+      {/* The page's one panel: a self-contained explainer beside the exam's lists. */}
+      <ListGroup variant="panel">
         {rule && <ScoringRuleRow rule={rule} />}
         <NoticeScaleRow />
         <PassMarksRow />

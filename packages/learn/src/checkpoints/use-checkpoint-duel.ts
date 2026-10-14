@@ -21,6 +21,7 @@ import {
 export type CheckpointActions = {
   answer: (input: { answer: CheckpointAnswer; durationMs: number; itemId: string }) => Promise<{
     isCorrect: boolean;
+    reinforcementLessons: number | null;
     /** A recording's transcript, on the answer that finishes its questions. */
     transcript: ListeningSetView["transcript"];
   } | null>;
@@ -94,7 +95,8 @@ export function useCheckpointDuel({
 
   async function finish() {
     dispatch({ type: "pending" });
-    const completion = await actions.finish();
+    // A request that didn't get through reads as failed, with Try again, never as stuck.
+    const completion = await actions.finish().catch(() => null);
 
     if (!completion) {
       dispatch({ error: "finish", type: "failed" });
@@ -108,17 +110,21 @@ export function useCheckpointDuel({
   async function confirm() {
     const question = getCurrentQuestion({ checkpoint, state });
 
-    if (!question || !state.selected || state.pending || state.feedback) {
+    const answer = state.selected;
+
+    if (!question || !answer || state.pending || state.feedback) {
       return;
     }
 
-    dispatch({ type: "pending" });
+    dispatch({ answer, type: "confirm" });
 
-    const result = await actions.answer({
-      answer: state.selected,
-      durationMs: Math.min(MAX_ANSWER_MS, shownAt.current ? Date.now() - shownAt.current : 0),
-      itemId: question.itemId,
-    });
+    const result = await actions
+      .answer({
+        answer,
+        durationMs: Math.min(MAX_ANSWER_MS, shownAt.current ? Date.now() - shownAt.current : 0),
+        itemId: question.itemId,
+      })
+      .catch(() => null);
 
     if (!result) {
       dispatch({ error: "answer", type: "failed" });
@@ -131,6 +137,7 @@ export function useCheckpointDuel({
       isCorrect: result.isCorrect,
       itemId: question.itemId,
       recording: setId && result.transcript ? { setId, transcript: result.transcript } : null,
+      reinforcementLessons: result.reinforcementLessons,
       type: "answered",
     });
   }

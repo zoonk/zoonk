@@ -3,8 +3,9 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { ScaleIcon, TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { StepCard, StepRow, StepRows, StepTitle } from "../_components/step-card";
+import { StepRow, StepRows } from "../_components/step-card";
 import { useMockScreen } from "./mock-context";
+import { ResultSection } from "./mock-result-section";
 
 type Area = MockResult["areas"][number];
 
@@ -34,7 +35,7 @@ function Insight({
     <StepRow className="items-start">
       <Icon aria-hidden="true" className="text-muted-foreground mt-0.5" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h2 className="font-semibold">{title}</h2>
+        <h3 className="font-semibold">{title}</h3>
         <div className="text-muted-foreground flex flex-col gap-1">{children}</div>
       </div>
     </StepRow>
@@ -54,11 +55,14 @@ function TimingInsight({ result }: { result: MockResult }) {
     <Insight icon={TimerIcon} title={t("Timing")}>
       {slowest && (
         <p>
-          {t("{seconds} seconds per {area} question. Aim for {target} or less.", {
-            area: slowest.name,
-            seconds: String(slowest.secondsPerQuestion),
-            target: String(Math.round(slowest.targetSecondsPerQuestion ?? 0)),
-          })}
+          {t(
+            "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less.",
+            {
+              area: slowest.name,
+              seconds: slowest.secondsPerQuestion,
+              target: String(Math.round(slowest.targetSecondsPerQuestion ?? 0)),
+            },
+          )}
         </p>
       )}
       {result.unansweredAtTimeout > 0 && (
@@ -148,7 +152,10 @@ export function useHasInsights(): boolean {
   );
 }
 
-/** What the mock showed beyond the score, only what's worth changing: pace, consistency, blanks. */
+/**
+ * What the mock showed beyond the score, as rows under each area's: only what's worth changing
+ * (pace, consistency, blanks).
+ */
 export function MockResultInsights() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -159,13 +166,12 @@ export function MockResultInsights() {
   }
 
   return (
-    <StepCard>
-      <StepTitle>{t("What the mock exam showed")}</StepTitle>
+    <ResultSection title={t("What the mock exam showed")}>
       <StepRows>
         <TimingInsight result={result} />
         <ConsistencyInsight result={result} />
         <CalibrationInsight result={result} />
       </StepRows>
-    </StepCard>
+    </ResultSection>
   );
 }

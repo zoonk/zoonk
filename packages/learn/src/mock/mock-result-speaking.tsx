@@ -4,7 +4,6 @@ import { type SpeakingSectionView } from "@zoonk/core/language/exam-speaking/con
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
 import {
   StepCard,
   StepDetail,
@@ -134,7 +133,6 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
 
   return (
     <StepCard>
-      <KindTile kind="conversation" size="lg" />
       <StepHeader>
         <StepEyebrow>{paper.paper}</StepEyebrow>
         <StepTitle>{title}</StepTitle>

@@ -1,20 +1,21 @@
 "use client";
 
-import {
-  GenerationTimelineDescription,
-  GenerationTimelineTitle,
-} from "@zoonk/ui/components/generation-timeline";
-import { EyeOffIcon } from "lucide-react";
+import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Callout } from "../_components/callout";
-import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
+import { type HelpLimit } from "../_components/help-limit-notice";
+import {
+  LIST_GROUP_CLASS,
+  ListRowContent,
+  ListRowDescription,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
 import { PlusNotice } from "../_components/plus-lock";
-import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
-import { GenerationWait } from "../generation/generation-wait";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
-import { TaskFrame } from "../shell/task-frame";
+import { CHOICE_ROW_CLASS } from "../onboarding/choice-list";
 
 /**
  * The picked mock can ask only part of its questions now, and nothing more can be written for it:
@@ -43,15 +44,84 @@ export type MockChooserStatus =
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
   | { kind: "refused"; limit: HelpLimit };
 
-/** The one rule that changes how to take it, as on exam day. */
-export function ResultRule() {
-  const t = useExtracted();
+/** One mock (or length) to pick: its name, what it covers under it, and its size at its end. */
+export type MockChoice<Value extends string> = {
+  description?: string;
+  label: string;
+  /** The size in the mono face ("90 q · ~4h 42m"). */
+  trailing?: string;
+  value: Value;
+};
+
+/**
+ * One mock from a short list, as flat rows with hairlines between them, like every list: the name,
+ * what it covers in a quiet line and its size in the mono face at the end. The picked row is
+ * highlighted a little past the column with a check, and a tap anywhere on a row picks it. On a
+ * phone the size goes under the name, which then keeps the row's width instead of wrapping word by
+ * word. One radio group for assistive tech; number keys pick from it, unless another list on the
+ * screen owns them (`numberKeys`).
+ */
+export function MockChoiceRows<Value extends string>({
+  choices,
+  label,
+  numberKeys = true,
+  onChange,
+  value,
+}: {
+  choices: readonly MockChoice<Value>[];
+  label: string;
+  numberKeys?: boolean;
+  onChange: (value: Value) => void;
+  value: Value | null;
+}) {
+  const pickAt = (index: number) => {
+    const choice = choices[index];
+
+    if (choice) {
+      onChange(choice.value);
+    }
+  };
+
+  useNumberKeys({ count: choices.length, enabled: numberKeys, onPick: pickAt });
 
   return (
-    <Callout>
-      <EyeOffIcon aria-hidden="true" />
-      <p>{t("Your result only shows at the end, like on exam day.")}</p>
-    </Callout>
+    <RadioGroup
+      aria-label={label}
+      className={cn(LIST_GROUP_CLASS, "gap-0")}
+      onValueChange={(next) => pickAt(choices.findIndex((choice) => choice.value === next))}
+      value={value}
+    >
+      {choices.map((choice) => (
+        <RadioGroupOption
+          className={cn(
+            CHOICE_ROW_CLASS,
+            "font-normal max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-0",
+          )}
+          data-highlighted={choice.value === value || undefined}
+          key={choice.value}
+        >
+          <ListRowContent className={cn(choice.trailing && "max-sm:min-h-0 max-sm:pb-0")}>
+            <ListRowTitle>{choice.label}</ListRowTitle>
+            {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+          </ListRowContent>
+
+          {choice.trailing && (
+            <ListRowTrailing className="max-sm:col-start-1 max-sm:self-start max-sm:pt-px max-sm:pb-2.75">
+              {choice.trailing}
+            </ListRowTrailing>
+          )}
+
+          {/* The pick is the row's highlight and its check; the radio itself stays unseen. */}
+          <span
+            aria-hidden="true"
+            className="flex size-4 shrink-0 self-center max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1"
+          >
+            <CheckIcon className="text-selected hidden size-4 group-has-data-checked/choice:block" />
+          </span>
+          <RadioGroupItem className="sr-only" value={choice.value} />
+        </RadioGroupOption>
+      ))}
+    </RadioGroup>
   );
 }
 
@@ -70,87 +140,5 @@ export function MockPlusNotice({ placement = false }: { placement?: boolean }) {
         ? t("Mock exams come with Plus. Without it, the quick questions find your starting point.")
         : t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
     </PlusNotice>
-  );
-}
-
-function useFailureText() {
-  const t = useExtracted();
-
-  return (reason: Extract<MockChooserStatus, { kind: "failed" }>["reason"]): string =>
-    reason === "notEnoughQuestions"
-      ? t("There aren't enough questions for this mock yet. Try the full exam or another subject.")
-      : t("We couldn't start the mock. Try again.");
-}
-
-/** How much of the picked mock is ready, and when more can be written, before it starts. */
-function ShortNotice({ status }: { status: MockShortStatus }) {
-  const t = useExtracted();
-  const duration = useFormatDuration();
-
-  const size = {
-    questions: status.questions,
-    time: duration(status.minutes),
-    total: status.examQuestions,
-  };
-
-  return (
-    <p className="text-muted-foreground text-center text-sm text-balance" role="status">
-      {t(
-        "{questions, plural, one {# of the {total, number} questions is ready now} other {# of the {total, number} questions are ready now}}, so this mock takes about {time}.",
-        size,
-      )}{" "}
-      {status.limit === "day" && t("More can be written for your mocks tomorrow.")}
-      {status.limit === "month" && t("More can be written for your mocks next month.")}
-      {status.limit !== "day" &&
-        status.limit !== "month" &&
-        t("The question bank doesn't have more new ones for it yet.")}
-    </p>
-  );
-}
-
-/** What stops the mock now, said under the options with the way out. */
-export function ChooserProblem({ status }: { status: MockChooserStatus }) {
-  const failureText = useFailureText();
-  const routes = useLearnRoutes();
-
-  if (status.kind === "short") {
-    return <ShortNotice status={status} />;
-  }
-
-  if (status.kind === "failed") {
-    return (
-      <p className="text-destructive text-center text-sm" role="alert">
-        {failureText(status.reason)}
-      </p>
-    );
-  }
-
-  if (status.kind === "refused") {
-    return <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />;
-  }
-
-  return null;
-}
-
-/** While the picked mock's questions are written: the run's progress, and that it starts here. */
-export function MockWriting({ exitHref, run }: { exitHref: string; run: GenerationRun }) {
-  const t = useExtracted();
-
-  return (
-    <TaskFrame exitHref={exitHref} exitToApp>
-      <div className="flex flex-1 flex-col justify-center">
-        <GenerationWait kind="mockQuestions" run={run}>
-          {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
-          <GenerationTimelineTitle render={<h1 />}>
-            {t("Preparing your mock exam")}
-          </GenerationTimelineTitle>
-          <GenerationTimelineDescription>
-            {t(
-              "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-            )}
-          </GenerationTimelineDescription>
-        </GenerationWait>
-      </div>
-    </TaskFrame>
   );
 }

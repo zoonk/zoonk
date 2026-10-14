@@ -5,33 +5,28 @@ import {
   type MockOptionsView,
   type PlacementMockLength,
 } from "@zoonk/core/exams/mocks/contract";
-import { EyeOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { Callout } from "../_components/callout";
-import { KindTile } from "../_components/kind-tile";
+import { type ReactNode, useState } from "react";
+import { DetailAsideSection, DetailContent } from "../_components/detail-page";
 import { SectionLabel } from "../_components/section-label";
-import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
-import { ChoiceList } from "../onboarding/choice-list";
-import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import {
-  ChooserProblem,
-  type MockChooserStatus,
-  MockPlusNotice,
+  ChooserHeader,
+  ChooserLayout,
+  ChooserPlusLink,
+  ChooserRefusal,
+  ChooserStartButton,
   MockWriting,
-  ResultRule,
-} from "./mock-chooser-parts";
-import { MockLeftOutNote } from "./mock-notes";
+} from "./mock-chooser-page";
+import { MockChoiceRows, type MockChooserStatus, MockPlusNotice } from "./mock-chooser-parts";
+import { ChooserPicked, type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
 import {
   useMockOptionDetail,
   useMockOptionName,
+  useMockOptionSize,
   usePlacementLengthChoices,
 } from "./mock-option-labels";
-import { MockSizeNote } from "./mock-size-note";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
-
-type MockChooserHrefs = { exit: string; plus: string };
 
 /** What Start asks for: one of the goal's options, or a diagnostic mock in a length. */
 export type MockStart =
@@ -52,10 +47,12 @@ function useMockChoices({
 }) {
   const name = useMockOptionName();
   const detail = useMockOptionDetail();
+  const size = useMockOptionSize();
 
   return options.map((option) => ({
-    description: detail({ option, severalDays }),
+    description: detail({ option, severalDays }) || undefined,
     label: name({ option, severalDays }),
+    trailing: size(option),
     value: getMockOptionKey(option),
   }));
 }
@@ -67,22 +64,23 @@ function useMockChoices({
 function MockOptionLists({
   onPick,
   picked,
+  severalDays,
   view,
 }: {
   onPick: (key: string) => void;
   picked: string;
+  severalDays: boolean;
   view: MockOptionsView;
 }) {
   const t = useExtracted();
-  const severalDays = view.options.filter((option) => option.kind === "full").length > 1;
   const exam = view.options.filter((option) => option.kind !== "area");
   const subjects = view.options.filter((option) => option.kind === "area");
   const examChoices = useMockChoices({ options: exam, severalDays });
   const subjectChoices = useMockChoices({ options: subjects, severalDays });
 
   return (
-    <div className="flex flex-col gap-5">
-      <ChoiceList
+    <div className="flex flex-col gap-6">
+      <MockChoiceRows
         choices={examChoices}
         label={t("The exam")}
         onChange={onPick}
@@ -90,9 +88,9 @@ function MockOptionLists({
       />
 
       {subjectChoices.length > 0 && (
-        <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-2">
+        <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
           <SectionLabel id="mock-subjects-title">{t("One subject")}</SectionLabel>
-          <ChoiceList
+          <MockChoiceRows
             choices={subjectChoices}
             label={t("One subject")}
             numberKeys={false}
@@ -106,18 +104,21 @@ function MockOptionLists({
 }
 
 /**
- * "Take a mock exam", whenever the learner wants: the exam's name, the mocks to pick from with
- * their honest size and time (the full exam is picked to start), the one rule, and Start. A mock
- * the bank is short of has its questions written first, while the screen says so. Without Plus,
- * the options show with what it would take.
+ * "Take a mock exam", whenever the learner wants, as a page of the app's frame: the exam's name,
+ * the one rule, and Start beside them (Enter starts the picked mock), the mocks to pick from with
+ * their honest size and time (the full exam is picked to start), and the picked one in the page's
+ * aside from 72rem, with how the last mock went. A mock the bank is short of has its questions
+ * written first, while the page says so. Without Plus, the options show with what it would take.
  */
 function PracticeChooser({
+  bar,
   busy,
   hrefs,
   onStart,
   status,
   view,
 }: {
+  bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;
   onStart: (start: MockStart) => void;
@@ -128,6 +129,8 @@ function PracticeChooser({
   const [first] = view.options;
   const [picked, setPicked] = useState(first ? getMockOptionKey(first) : "");
   const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
+  // An exam of several days names each day's mocks by their day.
+  const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   const open = view.access === "open";
   // How much of the picked mock is ready; picking another one starts over.
   const short = status.kind === "short" && status.optionKey === picked ? status : null;
@@ -136,15 +139,16 @@ function PracticeChooser({
     status.kind === "short" && !short ? { kind: "choosing" } : status;
 
   return (
-    <TaskFrame
-      closeOnEscape
-      exitHref={hrefs.exit}
-      exitToApp
-      footer={
-        <>
-          <ChooserProblem status={shown} />
-          {open ? (
-            <TaskMainButton
+    <ChooserLayout
+      aside={
+        option && <PickedMock hrefs={hrefs} option={option} severalDays={severalDays} view={view} />
+      }
+      bar={bar}
+    >
+      <ChooserHeader
+        action={
+          open ? (
+            <ChooserStartButton
               busy={busy}
               disabled={!option}
               onClick={() => option && onStart({ option, purpose: "practice" })}
@@ -156,52 +160,40 @@ function PracticeChooser({
                   count: short.questions,
                 })}
               {!busy && !short && t("Start")}
-            </TaskMainButton>
+            </ChooserStartButton>
           ) : (
-            <TaskMainLink href={hrefs.plus}>{t("See Plus")}</TaskMainLink>
-          )}
-        </>
-      }
-    >
-      <StepCard className="gap-3 py-6">
-        <KindTile kind="mock" size="lg" />
-        <StepHeader>
-          <StepEyebrow>{view.examName}</StepEyebrow>
-          <StepTitle>{t("Take a mock exam")}</StepTitle>
-          <StepDetail>{t("Pick how much of the exam to take now.")}</StepDetail>
-        </StepHeader>
-      </StepCard>
+            <ChooserPlusLink href={hrefs.plus} />
+          )
+        }
+        detail={
+          open
+            ? t("Your result only shows at the end, like on exam day.")
+            : t("Pick how much of the exam to take now.")
+        }
+        eyebrow={view.examName}
+        status={shown}
+        title={t("Take a mock exam")}
+      />
 
-      <MockOptionLists onPick={setPicked} picked={picked} view={view} />
-      <div className="-mt-2 flex flex-col gap-1 px-1">
-        {first && (
-          <MockSizeNote
-            document={view.examDocument}
-            size={{ minutes: first.minutes, questions: first.questions }}
-            source={view.sizeSource}
-          />
-        )}
-        {/* The picked mock's own: a subject's leaves out less than the whole day. Half of a day
-            already says "objective part only" beside it. */}
-        {option && (
-          <MockLeftOutNote
-            leftOut={option.leftOut.filter((part) => part.part !== "writtenInFull")}
-          />
-        )}
-      </div>
-
-      {open ? <ResultRule /> : <MockPlusNotice />}
-    </TaskFrame>
+      <DetailContent>
+        <ChooserRefusal status={shown} />
+        <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
+        {!open && <MockPlusNotice />}
+      </DetailContent>
+    </ChooserLayout>
   );
 }
 
 /**
- * A diagnostic mock in onboarding instead of the quick questions: what it is (the exam's format,
- * and the plan starts from its answers), how long, as one choice of a few lengths with their
- * questions and how fine a starting point each sets (the suggested one picked), that stopping
- * midway keeps what was answered, and Start. Without Plus, the lengths show with what it takes.
+ * A diagnostic mock in onboarding instead of the quick questions, as a page of the app's frame:
+ * what it is (the exam's format, and the plan starts from its answers) with Start beside it, how
+ * long, as one choice of a few lengths with their questions and how fine a starting point each sets
+ * (the suggested one picked), and that stopping midway keeps what was answered; from 72rem the
+ * picked length's size and subjects in the page's aside. Without Plus, the lengths show with what
+ * it takes.
  */
 function PlacementChooser({
+  bar,
   busy,
   hrefs,
   onStart,
@@ -209,6 +201,7 @@ function PlacementChooser({
   status,
   view,
 }: {
+  bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;
   onStart: (start: MockStart) => void;
@@ -219,58 +212,76 @@ function PlacementChooser({
   const t = useExtracted();
   const choices = usePlacementLengthChoices(placement);
   const [length, setLength] = useState<PlacementMockLength>(placement.recommended);
+  const picked = placement.options.find((option) => option.length === length) ?? null;
+  const pickedChoice = choices.find((choice) => choice.value === length);
   const open = view.access === "open";
 
   return (
-    <TaskFrame
-      closeOnEscape
-      exitHref={hrefs.exit}
-      footer={
-        <>
-          <ChooserProblem status={status} />
-          {open ? (
-            <TaskMainButton busy={busy} onClick={() => onStart({ length, purpose: "placement" })}>
-              {busy ? t("Getting it ready…") : t("Start the mock exam")}
-            </TaskMainButton>
-          ) : (
-            <TaskMainLink href={hrefs.plus}>{t("See Plus")}</TaskMainLink>
-          )}
-        </>
+    <ChooserLayout
+      aside={
+        picked && (
+          <DetailAsideSection
+            title={pickedChoice?.label ?? t("The picked mock exam")}
+            titleId="mock-chooser-picked-title"
+          >
+            <ChooserPicked asks={{ names: picked.areas, title: t("Subjects") }} size={picked} />
+          </DetailAsideSection>
+        )
       }
+      // A narrower screen has each length's size on its row: the aside would only repeat it.
+      asideClassName="hidden min-[72rem]:flex"
+      bar={bar}
     >
-      <StepCard className="gap-3 py-6">
-        <KindTile kind="mock" size="lg" />
-        <StepHeader>
-          <StepEyebrow>{view.examName}</StepEyebrow>
-          <StepTitle>{t("A mock exam to find your level")}</StepTitle>
-          <StepDetail>{t("In the exam's format. Your plan starts from your answers.")}</StepDetail>
-        </StepHeader>
-      </StepCard>
+      <ChooserHeader
+        action={
+          open ? (
+            <ChooserStartButton
+              busy={busy}
+              onClick={() => onStart({ length, purpose: "placement" })}
+            >
+              {busy ? t("Getting it ready…") : t("Start the mock exam")}
+            </ChooserStartButton>
+          ) : (
+            <ChooserPlusLink href={hrefs.plus} />
+          )
+        }
+        detail={t("In the exam's format. Your plan starts from your answers.")}
+        eyebrow={view.examName}
+        status={status}
+        title={t("A mock exam to find your level")}
+      />
 
-      <ChoiceList choices={choices} label={t("How long")} onChange={setLength} value={length} />
+      <DetailContent>
+        <ChooserRefusal status={status} />
+        <MockChoiceRows
+          choices={choices}
+          label={t("How long")}
+          onChange={setLength}
+          value={length}
+        />
 
-      {open ? (
-        <Callout>
-          <EyeOffIcon aria-hidden="true" />
-          <p>
+        {open ? (
+          <p className="text-muted-foreground text-[0.8125rem] leading-5">
             {t(
               "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
             )}
           </p>
-        </Callout>
-      ) : (
-        <MockPlusNotice placement />
-      )}
-    </TaskFrame>
+        ) : (
+          <MockPlusNotice placement />
+        )}
+      </DetailContent>
+    </ChooserLayout>
   );
 }
 
 /**
- * Taking a mock any time, or (`placement`) a diagnostic mock as placement in onboarding. The host
+ * Taking a mock any time, or (`placement`) a diagnostic mock as placement in onboarding, as a page
+ * of the app's frame under the host's bar (`bar`); the mock itself runs full screen. The host
  * starts the picked mock (`onStart`), follows the run writing its questions when the bank is short
  * (`status`), and says why it couldn't start.
  */
 export function MockChooserScreen({
+  bar,
   busy,
   hrefs,
   onStart,
@@ -278,6 +289,8 @@ export function MockChooserScreen({
   status,
   view,
 }: {
+  /** The page's bar (`LearnPageBar`), with the way back to where the chooser was opened. */
+  bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;
   onStart: (start: MockStart) => void;
@@ -286,12 +299,13 @@ export function MockChooserScreen({
   view: MockOptionsView;
 }) {
   if (status.kind === "writing") {
-    return <MockWriting exitHref={hrefs.exit} run={status.run} />;
+    return <MockWriting bar={bar} run={status.run} />;
   }
 
   if (placement && view.placement) {
     return (
       <PlacementChooser
+        bar={bar}
         busy={busy}
         hrefs={hrefs}
         onStart={onStart}
@@ -303,6 +317,13 @@ export function MockChooserScreen({
   }
 
   return (
-    <PracticeChooser busy={busy} hrefs={hrefs} onStart={onStart} status={status} view={view} />
+    <PracticeChooser
+      bar={bar}
+      busy={busy}
+      hrefs={hrefs}
+      onStart={onStart}
+      status={status}
+      view={view}
+    />
   );
 }

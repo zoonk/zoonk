@@ -137,18 +137,17 @@ test.describe("Exam answer formats in practice", () => {
     await expect(page.getByText("Select all that apply.", { exact: true })).toBeVisible();
     const check = page.getByRole("button", { name: /^Check/u });
     await expect(check).toBeDisabled();
-    await page.getByRole("button", { name: "4 g a day" }).click();
-
-    await expect(page.getByRole("button", { name: "4 g a day" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    await page.getByRole("checkbox", { name: "4 g a day" }).click();
+    await expect(page.getByRole("checkbox", { name: "4 g a day" })).toBeChecked();
 
     await check.click();
     await expect(feedback.getByText("Not quite")).toBeVisible();
-    // Both right options are marked, the one missed included.
-    await expect(page.getByRole("button", { name: /Safe.*Right answer/u })).toBeDisabled();
-    await expect(page.getByRole("button", { name: /4 g a day.*Right answer/u })).toBeVisible();
+    // The missed right option says Correct; the picked one keeps its Your answer label.
+    await expect(page.getByRole("checkbox", { name: /Safe.*Correct/u })).toBeDisabled();
+    const pickedAnswer = page.getByRole("checkbox", { name: "4 g a day Your answer" });
+    await expect(pickedAnswer).toBeVisible();
+    await expect(pickedAnswer).toBeChecked();
+    await expect(pickedAnswer).toBeDisabled();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     // A typed word is accepted as typed, ignoring case and the full stop.
@@ -161,16 +160,16 @@ test.describe("Exam answer formats in practice", () => {
     // An order: tap the steps in order; a tapped step can be taken out again.
     await expect(page.getByRole("heading", { name: /^Mitosis/u })).toBeVisible();
     await expect(page.getByText("Tap the steps in order.")).toBeVisible();
-    const metaphase = page.getByRole("button", { name: "Metaphase" });
+    const metaphase = page.getByRole("checkbox", { name: "Metaphase" });
     await metaphase.click();
-    await expect(metaphase).toHaveAttribute("aria-pressed", "true");
+    await expect(metaphase).toBeChecked();
     await metaphase.click();
-    await expect(metaphase).toHaveAttribute("aria-pressed", "false");
+    await expect(metaphase).not.toBeChecked();
 
-    await page.getByRole("button", { name: "Prophase" }).click();
-    await page.getByRole("button", { name: "Metaphase" }).click();
-    await page.getByRole("button", { name: "Anaphase" }).click();
-    await page.getByRole("button", { name: "Telophase" }).click();
+    await page.getByRole("checkbox", { name: "Prophase" }).click();
+    await page.getByRole("checkbox", { name: "Metaphase" }).click();
+    await page.getByRole("checkbox", { name: "Anaphase" }).click();
+    await page.getByRole("checkbox", { name: "Telophase" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Correct!")).toBeVisible();
 

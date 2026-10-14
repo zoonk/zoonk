@@ -70,6 +70,13 @@ describe(createDuelState, () => {
     expect(resumed).toMatchObject({ phase: "duel", verdicts: { a: true } });
     expect(createDuelState(checkpoint({ status: "completed" })).phase).toBe("result");
   });
+
+  it("opens a checkpoint set aside after its questions were removed on its result", () => {
+    expect(
+      createDuelState(checkpoint({ endedWithoutQuestions: true, questions: [], status: "skipped" }))
+        .phase,
+    ).toBe("result");
+  });
 });
 
 describe(checkpointDuelReducer, () => {
@@ -85,11 +92,13 @@ describe(checkpointDuelReducer, () => {
       isCorrect: false,
       itemId: "a",
       recording: null,
+      reinforcementLessons: 1,
       type: "answered",
     });
 
     expect(answered).toMatchObject({
       feedback: { answer: { selectedIndex: 1 }, isCorrect: false, itemId: "a" },
+      reinforcementLessons: 1,
       selected: null,
     });
 
@@ -107,8 +116,95 @@ describe(checkpointDuelReducer, () => {
     expect(getDuelScore({ checkpoint: view, state: next })).toStrictEqual({
       answered: 1,
       correct: 0,
+      decision: null,
+      done: false,
+      questions: 3,
+    });
+  });
+
+  // Pedro's won challenge kept asking: the shield broke at question 7 with 3 questions left.
+  it("ends a boss's duel once the shield breaks, and only a boss's", () => {
+    const right = { blank: false, isCorrect: true };
+    const questions = [question("a", right), question("b"), question("c")];
+    const boss = checkpoint({ questions });
+
+    const confirmed = checkpointDuelReducer(createDuelState(boss), {
+      answer: { selectedIndex: 0 },
+      type: "confirm",
+    });
+
+    const winning = checkpointDuelReducer(confirmed, {
+      isCorrect: true,
+      itemId: "b",
+      recording: null,
+      reinforcementLessons: 1,
+      type: "answered",
+    });
+
+    // The winning answer's verdict stays in view; moving on asks nothing more.
+    expect(getCurrentQuestion({ checkpoint: boss, state: winning })?.itemId).toBe("b");
+
+    expect(getDuelScore({ checkpoint: boss, state: winning })).toMatchObject({
+      decision: "won",
+      done: true,
+    });
+
+    const after = checkpointDuelReducer(winning, { type: "next" });
+    expect(getCurrentQuestion({ checkpoint: boss, state: after })).toBeNull();
+
+    // The week's challenge pays for finishing it: it asks the rest.
+    const weekly = checkpoint({ kind: "weekly", questions });
+    const weeklyAfter = checkpointDuelReducer(winning, { type: "next" });
+
+    expect(getDuelScore({ checkpoint: weekly, state: weeklyAfter })).toMatchObject({
+      decision: null,
       done: false,
     });
+
+    expect(getCurrentQuestion({ checkpoint: weekly, state: weeklyAfter })?.itemId).toBe("c");
+  });
+
+  // The mirror: Pedro's lost challenge kept asking, still promising its prize.
+  it("ends a boss's duel once it can't be won anymore, and only a boss's", () => {
+    const wrong = { blank: false, isCorrect: false };
+    const questions = [question("a", wrong), question("b"), question("c")];
+    const boss = checkpoint({ questions });
+    const missedOne = createDuelState(boss);
+
+    // One miss of three leaves the two right answers that win it.
+    expect(getDuelScore({ checkpoint: boss, state: missedOne })).toMatchObject({
+      decision: null,
+      done: false,
+    });
+
+    const losing = checkpointDuelReducer(
+      checkpointDuelReducer(missedOne, { answer: { selectedIndex: 1 }, type: "confirm" }),
+      { isCorrect: false, itemId: "b", recording: null, reinforcementLessons: 1, type: "answered" },
+    );
+
+    // The losing answer's verdict stays in view; moving on asks nothing more.
+    expect(getCurrentQuestion({ checkpoint: boss, state: losing })?.itemId).toBe("b");
+
+    expect(getDuelScore({ checkpoint: boss, state: losing })).toStrictEqual({
+      answered: 2,
+      correct: 0,
+      decision: "lost",
+      done: true,
+      questions: 3,
+    });
+
+    const after = checkpointDuelReducer(losing, { type: "next" });
+    expect(getCurrentQuestion({ checkpoint: boss, state: after })).toBeNull();
+
+    // The week's challenge pays for finishing it: it asks the rest.
+    const weekly = checkpoint({ kind: "weekly", questions });
+
+    expect(getDuelScore({ checkpoint: weekly, state: after })).toMatchObject({
+      decision: null,
+      done: false,
+    });
+
+    expect(getCurrentQuestion({ checkpoint: weekly, state: after })?.itemId).toBe("c");
   });
 
   it("keeps a recording's transcript from the answer that finished its questions", () => {
@@ -123,6 +219,7 @@ describe(checkpointDuelReducer, () => {
       isCorrect: true,
       itemId: "a",
       recording: { setId: "recording", transcript },
+      reinforcementLessons: 0,
       type: "answered",
     });
 
@@ -141,9 +238,63 @@ describe(checkpointDuelReducer, () => {
         isCorrect: true,
         itemId: "b",
         recording: null,
+        reinforcementLessons: 1,
         type: "answered",
       }).transcripts,
     ).toStrictEqual({ recording: transcript });
+  });
+
+  it("grades the confirmed pick, which can't change while it's on its way", () => {
+    const picked = checkpointDuelReducer(createDuelState(checkpoint()), {
+      answer: { selectedIndex: 1 },
+      type: "select",
+    });
+
+    const confirmed = checkpointDuelReducer(picked, {
+      answer: { selectedIndex: 1 },
+      type: "confirm",
+    });
+
+    // A tap on another option while the answer is graded does nothing.
+    const tapped = checkpointDuelReducer(confirmed, {
+      answer: { selectedIndex: 2 },
+      type: "select",
+    });
+
+    expect(tapped).toMatchObject({ pending: true, selected: { selectedIndex: 1 } });
+
+    const answered = checkpointDuelReducer(tapped, {
+      isCorrect: true,
+      itemId: "a",
+      recording: null,
+      reinforcementLessons: 1,
+      type: "answered",
+    });
+
+    expect(answered).toMatchObject({
+      confirmed: null,
+      feedback: { answer: { selectedIndex: 1 }, isCorrect: true, itemId: "a" },
+      pending: false,
+    });
+  });
+
+  it("keeps the pick after a failed answer, so Try again sends it again", () => {
+    const picked = checkpointDuelReducer(createDuelState(checkpoint()), {
+      answer: { selectedIndex: 0 },
+      type: "select",
+    });
+
+    const failed = checkpointDuelReducer(
+      checkpointDuelReducer(picked, { answer: { selectedIndex: 0 }, type: "confirm" }),
+      { error: "answer", type: "failed" },
+    );
+
+    expect(failed).toMatchObject({
+      confirmed: null,
+      error: "answer",
+      pending: false,
+      selected: { selectedIndex: 0 },
+    });
   });
 
   it("keeps the state and reports a failed request so the learner can try again", () => {
@@ -156,6 +307,35 @@ describe(checkpointDuelReducer, () => {
 });
 
 describe(getDuelScore, () => {
+  it("keeps an answered question's verdict when its content was removed", () => {
+    const view = checkpoint({
+      answeredQuestions: [
+        { isCorrect: false, itemId: "removed" },
+        { isCorrect: false, itemId: "b" },
+      ],
+      passMark: 5,
+      questions: [
+        question("b", { blank: false, isCorrect: false }),
+        question("c"),
+        question("d"),
+        question("e"),
+        question("f"),
+      ],
+    });
+
+    const state = createDuelState(view);
+
+    expect(getDuelScore({ checkpoint: view, state })).toStrictEqual({
+      answered: 2,
+      correct: 0,
+      decision: "lost",
+      done: true,
+      questions: 6,
+    });
+
+    expect(getCurrentQuestion({ checkpoint: view, state })).toBeNull();
+  });
+
   it("is done once every question has a verdict", () => {
     const view = checkpoint({
       questions: [
@@ -167,7 +347,9 @@ describe(getDuelScore, () => {
     expect(getDuelScore({ checkpoint: view, state: createDuelState(view) })).toStrictEqual({
       answered: 2,
       correct: 2,
+      decision: "won",
       done: true,
+      questions: 2,
     });
   });
 });

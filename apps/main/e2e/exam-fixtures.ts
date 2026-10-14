@@ -142,7 +142,8 @@ async function answerMockQuestion(
 ) {
   await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
-  const heading = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
+  const main = page.getByRole("main");
+  const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
   const answer = answers.get(heading.trim());
   const isFirst = number === 1;
 

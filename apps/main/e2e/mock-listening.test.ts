@@ -9,7 +9,6 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { expect, test } from "./fixtures";
 import { RECORDING_MS, toneUrl } from "./listening-audio";
-import { continueToLastStep } from "./result-steps";
 import { openAs } from "./study-day";
 
 /** The listening section's two recordings, each played once with two questions on it. */
@@ -151,7 +150,7 @@ test.describe("Mock listening sections", () => {
 
     // The full mock asks the listening section: it's not among what mocks leave out.
     await page.goto("/mock/new");
-    await expect(page.getByRole("radio", { name: /^Full exam 7 questions/u })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /^Full exam\b.*7 q/u })).toBeVisible();
     await expect(page.getByText(/isn't in mocks yet/u)).toBeHidden();
     await page.getByRole("button", { name: "Start" }).click();
 
@@ -188,19 +187,16 @@ test.describe("Mock listening sections", () => {
     await expect(page.getByText("Question 1 of 2 on this recording")).toBeVisible();
     await expect(recording.getByRole("button", { name: "Play the recording" })).toBeEnabled();
 
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in this section" }).click();
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+    await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 
     await expect(page.getByText(/^Question 5 of 7 · Reading/u)).toBeVisible();
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in the mock exam" }).click();
+    await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
-    await continueToLastStep(page);
-    await page.getByRole("button", { name: /^See the \d+ questions$/u }).click();
-    const review = page.getByRole("dialog", { name: "Questions to review" });
+    const review = page.getByRole("region", { name: "Questions to review" });
     const transcript = review.getByRole("region", { name: "Transcript" }).first();
 
     await transcript.getByRole("button", { name: "Transcript" }).click();

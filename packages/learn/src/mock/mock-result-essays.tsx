@@ -5,7 +5,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
 import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
 import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
@@ -24,7 +23,7 @@ function PendingState() {
 
   if (status === "grading") {
     return (
-      <p className="text-muted-foreground flex flex-col items-center gap-2 text-sm" role="status">
+      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
         <Spinner aria-hidden="true" />
         {isSlow
           ? t("Still grading. This is taking longer than usual.")
@@ -42,7 +41,7 @@ function PendingState() {
   return (
     <>
       <StepDetail role={status === "idle" ? undefined : "alert"}>{line}</StepDetail>
-      <Button onClick={() => void runner.gradeEssays()} variant="outline">
+      <Button onClick={() => void runner.gradeEssays()} size="sm" variant="outline">
         {t("Grade it")}
       </Button>
     </>
@@ -58,7 +57,6 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
 
   return (
     <StepCard>
-      <KindTile kind="essay" size="lg" />
       <StepHeader>
         {eyebrow && <StepEyebrow>{eyebrow}</StepEyebrow>}
         <StepTitle>{writingName(runner.view.essayRubric ?? "custom")}</StepTitle>

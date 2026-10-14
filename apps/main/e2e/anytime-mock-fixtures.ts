@@ -23,6 +23,7 @@ import {
 import { ANSWERED } from "./onboarding-fixtures";
 
 const SHORT_ID_LENGTH = 6;
+const LOWERCASE_A_CODE_POINT = 97;
 const QUESTIONS_PER_SKILL = 4;
 const SKILLS_PER_AREA = 2;
 
@@ -68,7 +69,12 @@ export async function createAnytimeMockLearner({
   /** The exam day ends with a discursive test, which its full mock asks (`WRITTEN_STRUCTURE`). */
   written?: boolean;
 }) {
-  const id = randomUUID().slice(0, SHORT_ID_LENGTH);
+  // Numeric-only random suffixes are grouped by Markdown, which changes the fixture lookup key.
+  const id = randomUUID()
+    .slice(0, SHORT_ID_LENGTH)
+    .replaceAll(/[0-9a-f]/gu, (digit) =>
+      String.fromCodePoint(LOWERCASE_A_CODE_POINT + Number.parseInt(digit, 16)),
+    );
 
   const [user, blueprint, skills] = await Promise.all([
     createE2EUser(getBaseURL()),
@@ -211,6 +217,7 @@ export async function answerMockQuestions({
   knows: (question: Question) => boolean;
   page: Page;
 }) {
+  const main = page.getByRole("main");
   const counter = await page.getByText(/^Question \d+ of \d+/u).textContent();
   const groups = /^Question (?<first>\d+) of (?<total>\d+)/u.exec(counter ?? "")?.groups;
   const first = Number(groups?.first ?? 1);
@@ -221,9 +228,14 @@ export async function answerMockQuestions({
     // oxlint-disable-next-line no-await-in-loop -- A mock is answered one question at a time.
     await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
+    const title = main.getByRole("heading", { level: 2 });
+    // Wait for the question title before selecting its fixture answer.
+    // oxlint-disable-next-line no-await-in-loop -- Each question must be ready before answering it.
+    await expect(title).not.toBeEmpty();
     // oxlint-disable-next-line no-await-in-loop -- The question on screen decides the answer.
-    const heading = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
+    const heading = (await title.textContent()) ?? "";
     const question = answers.get(heading.trim());
+    expect(question, `No fixture answer for the visible question: ${heading}`).toBeDefined();
 
     // oxlint-disable-next-line no-await-in-loop -- One answer, then the next question.
     await page
@@ -285,12 +297,14 @@ export async function answerFormatsMock({
   answers: Map<string, Question>;
   page: Page;
 }) {
+  const main = page.getByRole("main");
+
   for (let number = 1; number <= FORMATS_QUESTIONS; number += 1) {
     // oxlint-disable-next-line no-await-in-loop -- A mock is answered one question at a time.
     await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
     // oxlint-disable-next-line no-await-in-loop -- The question on screen decides the answer.
-    const heading = ((await page.getByRole("heading", { level: 2 }).textContent()) ?? "").trim();
+    const heading = ((await main.getByRole("heading", { level: 2 }).textContent()) ?? "").trim();
 
     // oxlint-disable-next-line no-await-in-loop -- One answer, then the next question.
     await answerFormatQuestion({ answers, heading, page });

@@ -6,14 +6,87 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useId } from "react";
+import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemLine, ItemText } from "../questions/item-text";
+import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
+import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { WorkedSteps, useAnswerText } from "../session/question-block/question-feedback";
 import { useCheckpointScreen } from "./checkpoint-context";
+import { getReviewedOptions } from "./review-options";
 
 type ReviewedAnswer = NonNullable<StudyBlockCompletionView["checkpoint"]>["answers"][number];
+
+/** The answers explained now that the duel is over, the traps included; none when reopened later. */
+export function useReviewedAnswers(): ReviewedAnswer[] {
+  const { duel } = useCheckpointScreen();
+  return duel.state.completion?.checkpoint?.answers ?? [];
+}
+
+/**
+ * A choice question's right option and the learner's pick, drawn as the options were in the duel
+ * (same numbers), with "Your answer" and "Correct" on them; a number or typed words say the right
+ * answer in a line instead.
+ */
+function ReviewAnswer({
+  answer,
+  question,
+}: {
+  answer: ReviewedAnswer;
+  question: CheckpointQuestion;
+}) {
+  const t = useExtracted();
+  const { answersGiven, checkpoint } = useCheckpointScreen();
+  const { answerLabel } = useTrueFalseLabels(checkpoint.trueFalseLabels);
+  const answerText = useAnswerText(checkpoint.trueFalseLabels);
+
+  const labels =
+    question.format === "trueFalse"
+      ? [answerLabel(true), answerLabel(false)]
+      : (question.options ?? []);
+
+  const options = getReviewedOptions({
+    correctAnswer: answer.correctAnswer,
+    given: answersGiven[answer.itemId] ?? null,
+    isCorrect: answer.isCorrect,
+    optionCount: labels.length,
+  });
+
+  if (options && options.length > 0) {
+    return (
+      <AnswerOptionGroup>
+        {options.map((option) => (
+          <AnswerOption
+            disabled
+            key={option.index}
+            marker={option.index + 1}
+            picked={option.picked}
+            result={option.result}
+          >
+            <ItemLine text={labels[option.index] ?? ""} />
+          </AnswerOption>
+        ))}
+      </AnswerOptionGroup>
+    );
+  }
+
+  const rightAnswer = answerText({ answer: answer.correctAnswer, question });
+
+  if (!rightAnswer) {
+    return null;
+  }
+
+  return (
+    <p className="text-sm">
+      <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
+      <span className={cn(question.format === "numeric" && "font-mono tabular-nums")}>
+        {rightAnswer}
+      </span>
+    </p>
+  );
+}
 
 function ReviewItem({
   answer,
@@ -23,56 +96,47 @@ function ReviewItem({
   question: CheckpointQuestion;
 }) {
   const t = useExtracted();
-  const { checkpoint } = useCheckpointScreen();
-  const answerText = useAnswerText(checkpoint.trueFalseLabels);
-  const rightAnswer = answerText({ answer: answer.correctAnswer, question });
 
   return (
-    <li className="border-border flex items-start gap-3 border-b py-4 last:border-b-0">
-      <LineMarker>
-        <span
-          className={cn(
-            "flex size-6 items-center justify-center rounded-full",
-            answer.isCorrect ? "bg-success/15 text-success" : "bg-muted text-muted-foreground",
-          )}
-        >
+    <li className="border-border flex flex-col gap-3 border-b py-4 first:pt-0 last:border-b-0">
+      <div className="flex items-start gap-3">
+        {/* The verdict as a plain glyph in its color, as the feedback panel's: no tinted badge. */}
+        <LineMarker className={answer.isCorrect ? "text-success-text" : "text-destructive-text"}>
           {answer.isCorrect ? (
-            <CheckIcon aria-label={t("Right")} className="size-4" role="img" />
+            <CheckIcon aria-label={t("Correct")} className="size-4" role="img" />
           ) : (
-            <XIcon aria-label={t("Not this time")} className="size-4" role="img" />
+            <XIcon aria-label={t("Not quite")} className="size-4" role="img" />
           )}
-        </span>
-      </LineMarker>
+        </LineMarker>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="font-medium">
-          <ItemLine text={question.question} />
-        </p>
-        {rightAnswer && (
-          <p className="text-sm">
-            <span className="text-muted-foreground">{t("Answer:")}</span> {rightAnswer}
-          </p>
-        )}
+        <div className="min-w-0 flex-1 font-medium text-pretty">
+          <ItemStem text={question.question} />
+        </div>
+
+        {/* The duel has no hints or menus; its questions are voted on here, once it's over. */}
+        <ContentVoteMenu
+          label={t("Question options")}
+          screen="checkpoint-review"
+          target={{ contentId: answer.itemId, contentKind: "item" }}
+          votes={false}
+        />
+      </div>
+
+      <div className="flex flex-col gap-3 pl-7">
+        <ReviewAnswer answer={answer} question={question} />
         {answer.explanation && (
           <ItemText className="text-muted-foreground text-sm" text={answer.explanation} />
         )}
         {!answer.isCorrect && <WorkedSteps steps={answer.workedSteps} />}
       </div>
-
-      {/* The duel has no hints or menus; its questions are voted on here, once it's over. */}
-      <ContentVoteMenu
-        label={t("Question options")}
-        screen="checkpoint-review"
-        target={{ contentId: answer.itemId, contentKind: "item" }}
-        votes={false}
-      />
     </li>
   );
 }
 
 /**
  * The recordings a listening phase's boss played, now with their transcripts and free replays, so
- * the learner hears what they missed.
+ * the learner hears what they missed. One whose questions were never asked (the duel was won
+ * before them) wasn't played, so it isn't here.
  */
 function ReviewRecordings() {
   const { checkpoint, duel } = useCheckpointScreen();
@@ -80,7 +144,9 @@ function ReviewRecordings() {
   const sets = [
     ...new Map(
       checkpoint.questions.flatMap((question) =>
-        question.set?.listening ? [[question.set.id, question.set] as const] : [],
+        question.set?.listening && duel.state.verdicts[question.itemId] !== undefined
+          ? [[question.set.id, question.set] as const]
+          : [],
       ),
     ).values(),
   ];
@@ -96,21 +162,13 @@ function ReviewRecordings() {
   ));
 }
 
-/**
- * Now that the duel is over, each question's right answer and why, the traps included: one text
- * link away, in a sheet, so the result reads first.
- */
-export function CheckpointReviewSheet() {
-  const t = useExtracted();
-  const { checkpoint, duel } = useCheckpointScreen();
-  const answers = duel.state.completion?.checkpoint?.answers ?? [];
-
-  if (answers.length === 0) {
-    return null;
-  }
+/** Each question with the learner's answer, the right one and why, the traps included. */
+function ReviewList() {
+  const { checkpoint } = useCheckpointScreen();
+  const answers = useReviewedAnswers();
 
   return (
-    <DetailsDrawer label={t("Review the answers")} title={t("The answers")}>
+    <div className="flex flex-col gap-4">
       <ReviewRecordings />
       <ol className="flex flex-col">
         {answers.map((answer) => {
@@ -123,6 +181,32 @@ export function CheckpointReviewSheet() {
           ) : null;
         })}
       </ol>
+    </div>
+  );
+}
+
+/** The answers on the result's page itself, under the outcome, where a wide screen has the room. */
+export function CheckpointReviewSection() {
+  const t = useExtracted();
+  const titleId = useId();
+
+  return (
+    <section aria-labelledby={titleId} className="flex w-full flex-col gap-3">
+      <h2 className="text-label" id={titleId}>
+        {t("The answers")}
+      </h2>
+      <ReviewList />
+    </section>
+  );
+}
+
+/** On a phone, the answers wait in a sheet, opened beside Continue, so the result reads first. */
+export function CheckpointReviewDrawer() {
+  const t = useExtracted();
+
+  return (
+    <DetailsDrawer label={t("Review the answers")} title={t("The answers")} trigger="secondary">
+      <ReviewList />
     </DetailsDrawer>
   );
 }

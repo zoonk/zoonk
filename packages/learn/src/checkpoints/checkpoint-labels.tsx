@@ -1,9 +1,7 @@
 "use client";
 
 import { type CheckpointPhase, type CheckpointView } from "@zoonk/core/checkpoints/contract";
-import { useExtracted, useFormatter } from "next-intl";
-
-type CheckpointKind = CheckpointView["kind"];
+import { useExtracted } from "next-intl";
 
 /** Phases count from one for people. */
 export function phaseNumber(checkpoint: Pick<CheckpointView, "phase">): string | null {
@@ -32,30 +30,4 @@ export function useCheckpointEyebrow(checkpoint: Pick<CheckpointView, "kind" | "
   }
 
   return phase ? t("Phase {phase} challenge", { phase }) : t("Phase challenge");
-}
-
-/** What a checkpoint is worth, said before it starts: a boss pays when won, a weekly one when done. */
-export function useCheckpointWorth({
-  brainPower,
-  kind,
-  phase,
-}: {
-  brainPower: number;
-  kind: CheckpointKind;
-  phase: CheckpointPhase | null;
-}): string {
-  const t = useExtracted();
-  const format = useFormatter();
-  const points = format.number(brainPower);
-
-  if (kind === "weekly") {
-    return t("Finishing adds {points} Brain Power.", { points });
-  }
-
-  return phase
-    ? t("Winning adds {points} Brain Power and completes phase {phase}.", {
-        phase: String(phase.index + 1),
-        points,
-      })
-    : t("Winning adds {points} Brain Power.", { points });
 }

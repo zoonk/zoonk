@@ -31,7 +31,7 @@ const FOREIGN = "Língua Estrangeira";
 const ENGLISH = "Língua Inglesa";
 const SPANISH = "Língua Espanhola";
 
-/** Every onboarding screen before the plan, so the goal has its Journey. */
+/** Every onboarding screen before the plan, so the goal has its Plan. */
 const ALL_ANSWERED = [...ONBOARDING_QUESTIONS, "buddy", "placement"];
 
 async function loadPicks(goalId: string): Promise<unknown> {
@@ -40,8 +40,8 @@ async function loadPicks(goalId: string): Promise<unknown> {
 }
 
 async function openEditor(page: Page) {
-  await page.goto("/journey");
-  await expect(page.getByRole("heading", { name: "Journey" })).toBeVisible();
+  await page.goto("/plan");
+  await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
   await page.getByRole("button", { name: "Adjust plan" }).click();
   return page.getByRole("dialog", { name: "Adjust your plan" });
 }
@@ -147,7 +147,7 @@ async function createLanguageLearner() {
     userId: user.id,
   });
 
-  // A plan already laid out once, so the Journey opens.
+  // A plan already laid out once, so the Plan opens.
   const plan = await planFixture({
     goalId: goal.id,
     graph: { phases: [{ milestone: null, name: LANGUAGES }], skills },
@@ -214,6 +214,93 @@ test.describe("Exam choices", () => {
     await expect
       .poll(() => loadPicks(goal.id))
       .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
+
+    const level = page.getByRole("heading", { name: "Which subjects do you already know well?" });
+    await expect(level).toBeVisible();
+    await expect(page.getByRole("img", { name: /^Step 3 of \d+$/u })).toBeVisible();
+
+    await page.reload();
+    await expect(level).toBeVisible();
+    await expect(page.getByRole("img", { name: /^Step 3 of \d+$/u })).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Back" }).click();
+    await expect(question).toBeVisible();
+    await expect(options.getByRole("radio", { name: /Espanhol/u })).toBeChecked();
+  });
+
+  test("number keys pick on the screen that follows an answer, while that answer finishes saving", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await createChoiceGoal(noProgressUser.id);
+
+    // The target question comes first: the choice screen shows as soon as its answer is saved.
+    await prisma.goal.update({
+      data: { details: { examName: "ENEM", examTarget: "admission" } },
+      where: { id: goal.id },
+    });
+
+    await page.goto(`/start/${goal.id}`);
+
+    await expect(
+      page.getByRole("heading", { name: "Which course and score are you aiming for?" }),
+    ).toBeVisible();
+
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
+    await expect(page.getByRole("heading", { name: "Which one will you take?" })).toBeVisible();
+
+    // An ENEM learner pressed 1 for English right away, and nothing was picked.
+    await page.keyboard.press("1");
+
+    await expect
+      .poll(() => loadPicks(goal.id))
+      .toStrictEqual([{ group: FOREIGN, subject: ENGLISH }]);
+  });
+
+  test("going back while an answer is still saving waits for it, instead of taking a pick that can't save", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await createChoiceGoal(noProgressUser.id);
+
+    await prisma.goal.update({
+      data: { details: { examName: "ENEM", examTarget: "admission" } },
+      where: { id: goal.id },
+    });
+
+    await page.goto(`/start/${goal.id}`);
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
+    await expect(page.getByRole("heading", { name: "Which one will you take?" })).toBeVisible();
+
+    // The language's answer is held on its way to the server.
+    const held: (() => void)[] = [];
+
+    await page.route(`**/start/${goal.id}`, async (route) => {
+      if (route.request().method() === "POST" && route.request().headers()["next-action"]) {
+        await new Promise<void>((release) => {
+          held.push(release);
+        });
+      }
+
+      await route.fallback();
+    });
+
+    await page.keyboard.press("2");
+    await expect.poll(() => held.length).toBe(1);
+
+    // Back while it saves: the screen there waits too, so nothing picked on it is lost.
+    await page.getByRole("button", { exact: true, name: "Back" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Which course and score are you aiming for?" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeDisabled();
+
+    held.forEach((release) => release());
+
+    await expect
+      .poll(() => loadPicks(goal.id))
+      .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
   });
 
   test("an ENEM learner who takes English switches to Spanish in the plan, and the exam shows Spanish, not English", async ({
@@ -248,9 +335,9 @@ test.describe("Exam choices", () => {
       await page.keyboard.press("Escape");
       await expect(editor).toBeHidden();
 
-      // What's on the exam: the languages area the notice counts her language in, never the
-      // language as a subject of its own, and never as an area beyond the notice.
-      const syllabus = page.getByRole("region", { name: "What's on the exam" });
+      // The subjects: the languages area the notice counts her language in, never the language as
+      // a subject of its own, and never as an area beyond the notice.
+      const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
       const languages = syllabus.getByRole("link", { name: /Linguagens/u });
 
       await expect(languages).toHaveCount(1);
@@ -268,35 +355,46 @@ test.describe("Exam choices", () => {
     });
   });
 
-  test("a learner who decided later is asked on the Journey, and the pick says what it did", async ({
+  test("a learner who decided later is asked on the Plan, and the pick says what it did", async ({
     browser,
   }) => {
     const { areaOf, goal, user } = await createLanguageLearner();
     const page = await openAs(browser, user);
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    // The plan studies no foreign language until she picks: the Journey asks, not only the editor.
-    const question = page
-      .locator('[data-slot="exam-choice-notice"]')
-      .filter({ hasText: `${FOREIGN}: which one will you take?` });
+    // The plan studies no foreign language until she picks: the Plan's one suggestion asks, not
+    // only the editor. It asks first, before saying that the rest of her plan is done: a plan that
+    // leaves a subject out isn't finished yet.
+    const question = page.getByRole("region", { name: `${FOREIGN}: which one will you take?` });
+    const spanish = question.getByRole("button", { exact: true, name: "Espanhol" });
 
     await expect(question).toContainText(`Until you pick, your plan leaves ${FOREIGN} out.`);
-    await question.getByRole("button", { exact: true, name: "Espanhol" }).click();
+    await spanish.click();
 
+    // The pick says what it did where the options were, with a way back.
     await expect(
-      page.getByRole("status").filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
+      question
+        .getByRole("status")
+        .filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
     ).toBeVisible();
 
-    await expect(question).toBeHidden();
+    await expect(spanish).toHaveCount(0);
 
     await expect
       .poll(() => loadPlannedAreas({ areaOf, goalId: goal.id }))
       .toStrictEqual([SPANISH, LANGUAGES].toSorted());
 
-    // Undo asks again.
-    await page.getByRole("button", { exact: true, name: "Undo" }).click();
-    await expect(question).toBeVisible();
+    // Undo asks again right away: the plan is back as it was, the question with it.
+    await question.getByRole("button", { exact: true, name: "Undo" }).click();
     await expect.poll(() => loadPicks(goal.id)).toStrictEqual([]);
+    await expect(spanish).toBeVisible({ timeout: 15_000 });
+    await expect(question).toBeFocused();
+
+    await spanish.click();
+
+    await expect
+      .poll(() => loadPicks(goal.id))
+      .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
 
     await page.context().close();
   });
@@ -360,17 +458,19 @@ test.describe("Exam choices", () => {
       .poll(() => loadPlannedAreas({ areaOf, goalId: goal.id }))
       .toStrictEqual([SPANISH, LANGUAGES].toSorted());
 
-    // The syllabus counts Spanish's topic inside the languages area, and lists no language apart.
+    // The subjects list no language apart, and the languages area counts Spanish's topic.
     await page.keyboard.press("Escape");
-    const syllabus = page.getByRole("region", { name: "What's on the exam" });
-
-    await expect(syllabus.getByRole("link", { name: /^Linguagens/u })).toContainText(
-      "0 of 2 topics",
-    );
+    const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
 
     await expect(
       syllabus.getByRole("link", { name: /Espanhol|Inglês|Língua Espanhola|Língua Inglesa/u }),
     ).toHaveCount(0);
+
+    await syllabus.getByRole("link", { name: /^Linguagens/u }).click();
+
+    await expect(page.getByRole("region", { name: "Topics in the notice" })).toContainText(
+      "0 of 2 topics",
+    );
 
     // Changing her mind swaps the languages' lessons.
     const again = await openEditor(page);

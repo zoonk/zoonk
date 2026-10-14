@@ -85,11 +85,12 @@ test.describe("Exam date", () => {
     const page = await context.newPage();
     await page.goto("/exam");
 
-    await expect(page.getByRole("heading", { level: 1, name: "About the exam" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: blueprint.name })).toBeVisible();
 
     // Her month, as a month: no weekday or day she never gave, and no "past editions" estimate.
-    const facts = page.getByText(new RegExp(`^December ${year} · About [\\d,]+ days left$`, "u"));
-    await expect(facts).toBeVisible();
+    // The days left count to it, as about that many.
+    await expect(page.getByText(`December ${year}`, { exact: true })).toBeVisible();
+    await expect(page.getByText(/^Exam · ~[\d,]+ days left$/u)).toBeVisible();
     await expect(page.getByText(/past editions/u)).toHaveCount(0);
 
     const offer = page.getByText(`The exam notice says ${longDate(noticeDay)}.`, { exact: true });
@@ -99,9 +100,10 @@ test.describe("Exam date", () => {
 
     await expect(offer).toBeHidden();
 
-    await expect(
-      page.getByText(new RegExp(`November 8, ${year} · [\\d,]+ days left$`, "u")),
-    ).toBeVisible();
+    // The notice's day, with its weekday (its year beyond the next twelve months, as every date on
+    // the Plan), and the days left to it exactly.
+    await expect(page.getByText(new RegExp(`^\\w+, Nov 8(, ${year})?$`, "u"))).toBeVisible();
+    await expect(page.getByText(/^Exam · [\d,]+ days left$/u)).toBeVisible();
 
     await expect.poll(() => readTargetDate(goal.id)).toBe(noticeDay);
 
@@ -234,8 +236,13 @@ test.describe("Exam date", () => {
         where: { id: user.goalId },
       });
 
-      await page.goto("/journey");
-      await page.getByRole("button", { name: "Adjust plan" }).click();
+      // Her date is one of her plan's settings beside it: a tap opens the editor at it.
+      await page.goto("/plan");
+
+      await page
+        .getByRole("region", { exact: true, name: "Your plan" })
+        .getByRole("button", { name: /^Exam date/u })
+        .click();
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const date = editor.getByLabel("Exam date");
@@ -260,7 +267,7 @@ test.describe("Exam date", () => {
     });
   });
 
-  test("the Journey says the month the learner named, never a day in it", async ({ browser }) => {
+  test("the Plan says the month the learner named, never a day in it", async ({ browser }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       // She said a month about two months away; the notice sets the exam weeks before it.
       const noticeDay = isoDaysFromNow(20);
@@ -289,18 +296,36 @@ test.describe("Exam date", () => {
         year: "numeric",
       }).format(monthStart);
 
-      await page.goto("/journey");
+      // The Plan writes a date it knows only to the month as "~Dec", heard "About Dec".
+      const shortMonth = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" }).format(
+        monthStart,
+      );
 
-      await expect(page.getByText(`${goal.title} · ${month}`, { exact: true })).toBeVisible();
+      await page.goto("/plan");
+
+      // Her month as her exam's date, among her plan's settings and at the end of her path, and
+      // the days left to it as about that many.
+      const examDate = page
+        .getByRole("region", { exact: true, name: "Your plan" })
+        .getByRole("button", { name: `Exam date About ${shortMonth}` });
+
+      await expect(examDate).toBeVisible();
 
       await expect(
-        page.getByRole("list", { name: "Your journey" }).getByText(month, { exact: true }),
+        page
+          .getByRole("region", { name: "Next on your path" })
+          .getByRole("link", { name: `${goal.title} About ${shortMonth}` }),
+      ).toBeVisible();
+
+      await expect(
+        page.getByText(new RegExp(`^${goal.title} · ~[\\d,]+ days left`, "u")),
       ).toBeVisible();
 
       await expect(page.getByText(/About \w+ 1\b/u)).toHaveCount(0);
 
-      // The plan editor keeps it a month too: no day she never chose in the date field.
-      await page.getByRole("button", { name: "Adjust plan" }).click();
+      // The plan editor, opened at her date, keeps it a month too: no day she never chose in the
+      // date field.
+      await examDate.click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const date = editor.getByLabel("Exam date");
 
@@ -330,8 +355,10 @@ test.describe("Exam date", () => {
     await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) =>
       route.fulfill({
         json: {
+          coveredShare: null,
           maximum: null,
           measure: "goal",
+          numbers: null,
           ready: true,
           recommendedMinutes: 60,
           targetDate: "2099-12-01",
@@ -344,7 +371,7 @@ test.describe("Exam date", () => {
     await page.getByRole("button", { name: "Start from zero" }).click();
 
     await expect(
-      page.getByText("To study everything in depth by December 2099, we recommend 1h a day."),
+      page.getByText("To study everything in depth by December 2099, we recommend 1 hr a day."),
     ).toBeVisible();
   });
 });

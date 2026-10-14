@@ -4,7 +4,7 @@ import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import {
   ListRowContent,
   ListRowDescription,
@@ -58,7 +58,7 @@ export function MockEntryRow({
     return (
       <ListRowLink href={hrefs.mock(view.running.id)}>
         <ListRowLeading>
-          <KindTile kind="mock" />
+          <KindDot kind="mock" />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{t("Continue your mock exam")}</ListRowTitle>
@@ -71,7 +71,7 @@ export function MockEntryRow({
   return (
     <ListRowLink href={hrefs.choose}>
       <ListRowLeading>
-        <KindTile kind="mock" />
+        <KindDot kind="mock" />
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>

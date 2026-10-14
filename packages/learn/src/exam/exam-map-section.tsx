@@ -42,7 +42,7 @@ function TopicRow({ showFrequency, topic }: { showFrequency: boolean; topic: Top
         {topic.appearances === null ? (
           showFrequency && <FrequencyChip frequency={topic.frequency} />
         ) : (
-          <span className="text-muted-foreground tabular-nums">
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
             {t("{count, plural, one {# time} other {# times}}", { count: topic.appearances })}
           </span>
         )}
@@ -100,7 +100,9 @@ function SubjectRow({
           </ListRowContent>
           <ListRowTrailing>
             {showFrequency && <FrequencyChip frequency={subject.frequency} />}
-            {subjectWeight && <span className="whitespace-nowrap">{subjectWeight}</span>}
+            {subjectWeight && (
+              <span className="font-mono text-xs whitespace-nowrap">{subjectWeight}</span>
+            )}
           </ListRowTrailing>
           <ChevronDownIcon
             aria-hidden="true"
@@ -129,7 +131,7 @@ const getGroupId = (index: number) => `exam-map-group-${index}`;
 /**
  * What's on the exam, as a short list: each of the notice's subjects with its weight, in the
  * notice's groups ("Basic knowledge (P1)") when it has them, and its topics one tap away with
- * how often the board asks them. How ready the learner is in each lives on the Journey.
+ * how often the board asks them. How ready the learner is in each lives on the Plan.
  */
 export function ExamMapSection() {
   const t = useExtracted();

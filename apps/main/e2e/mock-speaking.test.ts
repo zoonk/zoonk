@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
-import { CHARACTER_REPLY, answerLiveCalls } from "./live-gateway";
+import { CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
 import { openAs } from "./study-day";
 
 const SPEAKING = "Prueba 4: Expresión e interacción orales";
@@ -151,7 +152,7 @@ async function createSpeakingMock({
     },
   });
 
-  return { calls, mock, user };
+  return { calls, goal, mock, user };
 }
 
 test.describe("Mock speaking sections", () => {
@@ -209,13 +210,20 @@ test.describe("Mock speaking sections", () => {
     );
   });
 
-  test("a task's call goes back to the mock when it ends, with its feedback kept for after the mock", async ({
+  test("a task's call goes back to the mock when it ends, with its feedback and missions said after the mock", async ({
     browser,
   }) => {
-    const { calls, mock, user } = await createSpeakingMock();
+    const { calls, goal, mock, user } = await createSpeakingMock();
+
+    await studySessionFixture({
+      goalId: goal.id,
+      missions: { picks: [{ anchor: {}, kind: "call", total: 1 }], version: 1 },
+      userId: user.id,
+    });
+
     const page = await openAs(browser, user);
 
-    await answerLiveCalls(page, "answers");
+    const peer = await answerLiveCalls(page, "answers");
     await page.goto(`/mock/${mock.id}`);
     await page.getByRole("listitem").nth(1).getByRole("link", { name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${calls[1]?.id}\\?mock=`, "u"));
@@ -223,21 +231,62 @@ test.describe("Mock speaking sections", () => {
     await page.getByRole("button", { name: "Start the call" }).click();
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Me parece una buena idea.");
     await page.keyboard.press("Enter");
+    const transcript = page.getByRole("log", { name: "Conversation" });
+    await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
 
-    await expect(
-      page.getByRole("log", { name: "Conversation" }).getByText(CHARACTER_REPLY),
-    ).toBeVisible();
+    // Speaking in it makes the call count as the day's last mission.
+    await peer.emit({
+      delta: " Creo que es la mejor propuesta.",
+      end_ms: 3000,
+      start_ms: 1000,
+      type: "session.input_transcript.delta",
+    });
 
+    await expect(transcript.getByText("Creo que es la mejor propuesta.")).toBeVisible();
     await page.getByRole("button", { exact: true, name: "End" }).click();
 
     // No feedback mid-mock, as on exam day: the saved call opens the mock again.
     await expect(page).toHaveURL(new RegExp(`/mock/${mock.id}$`, "u"));
     await expect(page.getByText(/1 task left\.$/u)).toBeVisible();
     await expect(page.getByRole("listitem").nth(1)).toContainText("Done");
+    const moment = page.locator("[data-slot=mission-moment]");
+    await expect(moment).toHaveCount(0);
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: calls[1]?.id } }),
     ).resolves.toMatchObject({ status: "completed" });
+
+    // Once the mock is over, its result says what the call did to the day's missions, read from
+    // what the call's end recorded, so a reload says it too.
+    await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+
+    const expectCallMission = async () => {
+      await expect(page.getByRole("heading", { level: 1, name: "No estimate" })).toBeVisible();
+      await expect(moment).toContainText("Mission done: Have a call");
+      await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+      await expect(moment).toContainText("from today's missions");
+    };
+
+    await expectCallMission();
+    await page.reload();
+    await expectCallMission();
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("full-mock-call-mission-390.png"),
+    });
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("full-mock-call-mission-1440.png"),
+    });
 
     await page.context().close();
   });
@@ -250,7 +299,18 @@ test.describe("Mock speaking sections", () => {
     const done = page.getByText("Every task is done. Hand in this section to go on.");
 
     await expect(done).toBeVisible();
+    await expect(page.getByRole("button", { name: "Hand in the mock exam" })).toBeEnabled();
+    await page.keyboard.press("Enter");
+    const confirm = page.getByRole("alertdialog", { name: "Hand in the mock exam?" });
+
+    await expect(
+      confirm.getByText("Every task is done. After this, you can't do them again in this mock."),
+    ).toBeVisible();
+
+    await confirm.getByRole("button", { name: "Keep going" }).click();
+    await expect(done).toBeVisible();
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+    await confirm.getByRole("button", { name: "Hand in" }).click();
 
     await expect(page.getByRole("heading", { level: 1, name: "No estimate" })).toBeVisible();
 

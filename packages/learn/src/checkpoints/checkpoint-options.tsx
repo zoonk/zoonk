@@ -2,8 +2,7 @@
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { CheckIcon } from "lucide-react";
-import { ANSWER_LETTERS, AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
+import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { ItemLine } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useCheckpointScreen } from "./checkpoint-context";
@@ -23,20 +22,34 @@ function isPicked({ answer, index }: { answer: CheckpointAnswer | null; index: n
   return "isTrue" in answer && answer.isTrue === (index === 0);
 }
 
+/** How the learner's pick turned out, once it has its verdict. */
+function getPickResult(verdict: Verdict) {
+  if (!verdict) {
+    return null;
+  }
+
+  return verdict.isCorrect ? "right" : "wrong";
+}
+
 function toAnswer({ format, index }: { format: CheckpointQuestion["format"]; index: number }) {
   return format === "trueFalse" ? { isTrue: index === 0 } : { selectedIndex: index };
 }
 
 /**
- * A checkpoint question's options with number-key shortcuts. After an answer the pick stays
- * marked, with a check when it was right; a wrong pick never reveals the right one until the end.
+ * A checkpoint question's options, numbered like a lesson's and picked with the same number keys.
+ * They lock from Confirm (`locked`, while the answer is graded) through the verdict, so the pick on
+ * screen is the one graded. After an answer the pick turns green or red ("Your answer"); a wrong
+ * pick never reveals the right one until the end.
  */
 export function CheckpointOptions({
+  locked,
   onSelect,
   question,
   selected,
   verdict,
 }: {
+  /** The answer is on its way to be graded: the pick can't change. */
+  locked: boolean;
   onSelect: (answer: CheckpointAnswer | null) => void;
   question: CheckpointQuestion;
   selected: CheckpointAnswer | null;
@@ -44,7 +57,7 @@ export function CheckpointOptions({
 }) {
   const { checkpoint } = useCheckpointScreen();
   const { answerLabel } = useTrueFalseLabels(checkpoint.trueFalseLabels);
-  const isLocked = verdict !== null;
+  const isLocked = locked || verdict !== null;
 
   const labels =
     question.format === "trueFalse"
@@ -67,15 +80,17 @@ export function CheckpointOptions({
     <AnswerOptionGroup>
       {labels.map((label, index) => {
         const picked = isPicked({ answer: selected, index });
-        const pickedRight = picked && verdict?.isCorrect === true;
+        const result = picked ? getPickResult(verdict) : null;
 
         return (
           <AnswerOption
+            aria-keyshortcuts={String(index + 1)}
             disabled={isLocked}
             key={label}
-            marker={pickedRight ? <CheckIcon /> : ANSWER_LETTERS[index]}
+            marker={index + 1}
             onClick={() => pick(index)}
             picked={picked}
+            result={result}
           >
             <ItemLine text={label} />
           </AnswerOption>

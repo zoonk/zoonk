@@ -11,8 +11,8 @@ import {
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
 import { useExtracted } from "next-intl";
-import { useSectionCounts } from "./mock-answer-sheet";
 import { useMockScreen } from "./mock-context";
+import { useSectionCounts } from "./mock-section-counts";
 
 /** What's still open in the section: blank and flagged questions, or that every one is answered. */
 function useQuestionsLeftOpen(): string {
@@ -60,7 +60,7 @@ function useLeftOpen(): string {
 
 /**
  * Handing a section in can't be undone, so it's confirmed first with what's still open. The clock
- * running out hands it in without asking, as on exam day.
+ * running out closes the answers and shows a direct hand-in action.
  */
 export function MockHandInDialog({
   onOpenChange,

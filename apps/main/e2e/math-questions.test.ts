@@ -14,8 +14,7 @@ import {
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { playDuel } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
-import { continueToLastStep } from "./result-steps";
-import { openAs } from "./study-day";
+import { checkWithEnter, openAs } from "./study-day";
 
 const SAVED_REASON = "That's what you save. You pay what's left after it.";
 
@@ -188,9 +187,10 @@ test.describe("Math problems", () => {
     await page.goto("/session");
     await page.getByRole("button", { name: /^Start/u }).click();
 
-    // Number keys pick options in a choice question.
+    // Number keys pick options in a choice question, and Enter checks.
     await expect(page.getByRole("heading", { name: /^Warm-up/u })).toBeVisible();
     await page.keyboard.press("1");
+    await checkWithEnter(page);
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await page.keyboard.press("Enter");
 
@@ -210,8 +210,11 @@ test.describe("Math problems", () => {
 
     // Answering with the discount instead of the price paid.
     const jacket = await readNumbers(page, "Jacket");
+
+    // Check waits for a number; Enter in the field says how to write one.
     await field.fill("abc");
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
+    await page.keyboard.press("Enter");
     await expect(page.getByText("Type a number, like 2.5.")).toBeVisible();
 
     await field.fill(String(jacket.saved));
@@ -220,8 +223,7 @@ test.describe("Math problems", () => {
     await expect(feedback.getByText("Not quite")).toBeVisible();
     await expect(feedback.getByText(`Right answer: ${reais(jacket.paid)}`)).toBeVisible();
     await expect(feedback.getByText(SAVED_REASON)).toBeVisible();
-    await expect(feedback.getByText("How to solve it")).toBeVisible();
-
+    // How to solve it, as a diff of the worked steps.
     await expect(
       feedback.getByRole("listitem").filter({ hasText: `= ${jacket.paid}` }),
     ).toBeVisible();
@@ -236,13 +238,17 @@ test.describe("Math problems", () => {
   test("a boss asks a math problem without hints, then shows the way", async ({ browser }) => {
     const { block, user } = await createMathBoss();
     const page = await openAs(browser, user);
-    const firstQuestion = page.getByText(`Question 1 of ${MIN_CHECKPOINT_QUESTIONS}`);
+
+    const firstQuestion = page.getByRole("progressbar", {
+      name: `Question 1 of ${MIN_CHECKPOINT_QUESTIONS}`,
+    });
+
     await page.goto(`/checkpoint/${block.id}`);
 
     // Keys work once the page hydrates, so the first press retries until the duel opens.
     await expect(async () => {
       await page.keyboard.press("Enter");
-      await expect(firstQuestion).toBeVisible({ timeout: 1000 });
+      await expect(firstQuestion).toBeAttached({ timeout: 1000 });
     }).toPass({ timeout: 5000 });
 
     const boss = await readNumbers(page, "Boss");
@@ -250,25 +256,24 @@ test.describe("Math problems", () => {
     await page.keyboard.type(String(boss.saved));
     await page.keyboard.press("Enter");
 
-    await expect(page.getByRole("status")).toHaveText("Not this one. You'll see why at the end.");
+    await expect(page.getByRole("status")).toHaveText(/^Not quite\s*You'll see why at the end\.$/u);
 
     await expect(page.getByText(SAVED_REASON)).toHaveCount(0);
     await page.keyboard.press("Enter");
 
-    // The rest of the duel, missed too.
+    // Missed again, it can't be won anymore: the duel ends there.
     await playDuel(page, {
       answer: "Wrong answer",
       from: 2,
       keyboard: true,
+      passMark: getPassMark(MIN_CHECKPOINT_QUESTIONS),
       total: MIN_CHECKPOINT_QUESTIONS,
     });
 
-    // The result's last step has the answers, with the worked steps, behind a link.
+    // The desktop result shows the answers and worked steps inline.
     await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
-    await continueToLastStep(page);
-    await page.getByRole("button", { name: "Review the answers" }).click();
 
-    const answers = page.getByRole("dialog", { name: "The answers" });
+    const answers = page.getByRole("region", { name: "The answers" });
     await expect(answers.getByText(`Answer: ${reais(boss.paid)}`)).toBeVisible();
     await expect(answers.getByText(SAVED_REASON)).toBeVisible();
     await expect(answers.getByText(`/100) = ${boss.paid}`)).toBeVisible();

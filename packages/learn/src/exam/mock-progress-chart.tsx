@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
+import { kindTextClass } from "../_components/kind-tile";
 
 /** One mock on the chart: its score, and what its readout says about it. */
 export type ProgressPoint = { detail: string; key: string; label: string; value: number };
@@ -11,8 +12,8 @@ const TOP = 100;
 /** Below 0 (a net score), the axis steps down by this much, so its ticks stay round. */
 const NEGATIVE_STEP = 50;
 
-/** The mocks' color, one step that clears 3:1 on the card in light and in dark. */
-const MOCK_MARK_CLASS = "text-orange-600";
+/** The mock kind's color, as on its dot, AA on the card in light and in dark. */
+const MOCK_MARK_CLASS = kindTextClass("mock");
 
 /** The axis' lowest value: 0, or a round step below the lowest score when a net score went under. */
 function getChartFloor(values: readonly number[]): number {
@@ -146,12 +147,12 @@ function ActiveReadout({ point, x, y }: { point: ProgressPoint; x: number; y: nu
       <span
         aria-hidden="true"
         className={cn(
-          "bg-foreground text-background pointer-events-none absolute z-10 flex w-max max-w-56 -translate-y-[calc(100%+0.75rem)] flex-col rounded-2xl px-3 py-1.5 text-xs",
+          "bg-foreground text-background pointer-events-none absolute z-10 flex w-max max-w-56 -translate-y-[calc(100%+0.75rem)] flex-col rounded-lg px-3 py-1.5 text-xs",
           readoutAlign(x),
         )}
         style={{ left: `${x}%`, top: `${y}%` }}
       >
-        <span className="font-semibold tabular-nums">{point.label}</span>
+        <span className="font-mono font-medium tabular-nums">{point.label}</span>
         <span className="opacity-80">{point.detail}</span>
       </span>
     </>
@@ -191,7 +192,7 @@ export function ProgressLineChart({
       <div className="flex gap-2">
         <div
           aria-hidden="true"
-          className="text-muted-foreground flex h-32 w-9 shrink-0 flex-col justify-between text-right text-[0.6875rem] leading-none tabular-nums"
+          className="text-muted-foreground flex h-32 w-9 shrink-0 flex-col justify-between text-right font-mono text-[0.6875rem] leading-none tabular-nums"
         >
           {ticks.map((tick) => (
             <span className="-translate-y-1/2 first:translate-y-0 last:translate-y-0" key={tick}>
@@ -240,7 +241,7 @@ export function ProgressLineChart({
 
       <div
         aria-hidden="true"
-        className="text-muted-foreground flex justify-between pl-11 text-[0.6875rem]"
+        className="text-muted-foreground flex justify-between pl-11 font-mono text-[0.6875rem]"
       >
         <span>{first}</span>
         <span>{latest}</span>

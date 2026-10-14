@@ -107,9 +107,10 @@ function ListeningQuestionList({
 
   return (
     <Fold
-      label={t("Questions on this recording ({count, number})", {
-        count: questions.prompts.length,
-      })}
+      label={t(
+        "{count, plural, =0 {Questions on this recording (#)} one {Question on this recording (#)} other {Questions on this recording (#)}}",
+        { count: questions.prompts.length },
+      )}
       onToggle={onToggle}
       open={open}
     >

@@ -5,7 +5,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { DAYS_TO_TEST, createClassTestDays, dayFromToday } from "./short-exam-fixtures";
-import { openAs } from "./study-day";
+import { checkWithEnter, openAs } from "./study-day";
 
 /**
  * A class test three days away, read from the learner's slides: the plan goes day by day (the
@@ -37,15 +37,12 @@ function isThisWeek(date: Date): boolean {
   return mondayFirst + daysAway < DAYS_PER_WEEK;
 }
 
-/** A day as the exam page writes its next mock's: "Tuesday, October 13". */
-function longDay(date: Date): string {
-  const monthDay = new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  }).format(date);
+/** A day as the exam page writes its next mock's, at the row's end: "Tue, Oct 13". */
+function mockRowDay(date: Date): string {
+  const format = (options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat("en", { timeZone: "UTC", ...options }).format(date);
 
-  return `${weekday(date)}, ${monthDay}`;
+  return `${format({ weekday: "short" })}, ${format({ day: "numeric", month: "short" })}`;
 }
 
 /**
@@ -73,7 +70,7 @@ async function expectMockShown(page: Page, mockDay: Date) {
   await page.goto("/exam");
 
   await expect(
-    page.getByRole("link", { name: new RegExp(`${longDay(mockDay)}\\b`, "u") }),
+    page.getByRole("link", { name: new RegExp(`${mockRowDay(mockDay)}\\b`, "u") }),
   ).toBeVisible();
 }
 
@@ -160,14 +157,16 @@ test.describe("A class test days away", () => {
 
     await page.goto("/today");
 
-    await expect(page.getByText("Day 1 of 3 · Exam map and gaps")).toBeVisible();
+    const session = page.getByRole("region", { name: "Today's session" });
+    await expect(session.getByText("Day 1 of 3", { exact: true })).toBeVisible();
+    await expect(session.getByText("Exam map and gaps", { exact: true })).toBeVisible();
 
     await expectMockShown(page, mockDay);
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    // Its phases are its days, the last one with the short mock.
+    // A plan without subject pages keeps every phase with its days in the path.
     const days = page
-      .getByRole("list", { name: "Your journey" })
+      .getByRole("list", { name: "Your path" })
       .getByRole("listitem")
       .filter({ hasText: /Days? \d+(?: to \d+)? of 3/u });
 
@@ -192,15 +191,23 @@ test.describe("A class test days away", () => {
 
     // The plan is built when Today first opens.
     await page.goto("/today");
-    await expect(page.getByText("Day 1 of 3 · Exam map and gaps")).toBeVisible();
+    const session = page.getByRole("region", { name: "Today's session" });
+    await expect(session.getByText("Day 1 of 3", { exact: true })).toBeVisible();
+    await expect(session.getByText("Exam map and gaps", { exact: true })).toBeVisible();
 
     await page.goto(`/start/${goal.id}`);
 
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
-    await page.getByRole("button", { name: /^3 topics from your material/u }).click();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "See topics" }).click();
 
     const structure = page.getByRole("dialog", { name: "What you'll study" });
-    await expect(structure.getByText("Krebs cycle", { exact: true })).toBeVisible();
+
+    await expect(structure.getByRole("listitem")).toHaveText([
+      "Enzymes",
+      "Glycolysis",
+      "Krebs cycle",
+    ]);
+
     await expect(page.getByText(/notice/iu)).toHaveCount(0);
 
     await page.keyboard.press("Escape");
@@ -230,7 +237,11 @@ test.describe("A class test days away", () => {
     await expect(moment.getByText(/prepared for this/u)).toHaveCount(0);
 
     const session = page.getByRole("region", { name: "Today's session" });
-    await expect(session.getByRole("heading", { name: "Full review" })).toBeVisible();
+
+    await expect(session.getByRole("listitem").filter({ hasText: "Full review" })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
 
     await expect(
       session.getByText(/questions? on every topic, your weakest first$/u),
@@ -247,7 +258,10 @@ test.describe("A class test days away", () => {
 
     // The plan is built when Today first opens.
     await page.goto("/today");
-    await expect(page.getByText(/^Biochemistry test is tomorrow/u).first()).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { name: "Biochemistry test is tomorrow" }),
+    ).toBeVisible();
 
     await page.goto("/exam");
 
@@ -281,13 +295,18 @@ test.describe("A class test days away", () => {
     const session = page.getByRole("region", { name: "Today's session" });
     const catchUp = page.getByText(CATCH_UP_TODAY);
 
-    await expect(session.getByRole("heading", { name: "Full review" })).toBeVisible();
+    await expect(session.getByRole("listitem").filter({ hasText: "Full review" })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
+
     await expect(catchUp).toBeVisible();
     await expect(page.getByText(/come first tomorrow/u)).toHaveCount(0);
 
     await session.getByRole("button", { name: /^Start/u }).click();
     await expect(page.getByRole("heading", { name: /^Test question/u })).toBeVisible();
     await page.keyboard.press("2");
+    await checkWithEnter(page);
 
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect(feedback.getByText("Saved to your mistakes")).toBeVisible();

@@ -4,6 +4,7 @@ import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/a
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { createContext, use } from "react";
+import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
 
 /**
@@ -38,6 +39,8 @@ export type MockActions = {
   gradeEssays: () => Promise<MockEssayGrading | null>;
   /** Counts a play of a listening section's recording as it starts; null when it didn't go through. */
   play: (setId: string) => Promise<MockPlayOutcome | null>;
+  /** Re-reads the screen through a GET when its deadline may now be abandoned. Never scores it. */
+  refresh?: () => void;
   /**
    * Starts the running speaking section: its paper's cards are written (or the ones already
    * written come back); the mock as it stands, with `speaking`.
@@ -55,10 +58,12 @@ export type MockEssayGradingStatus = "failed" | "grading" | "idle" | "limitReach
 export type MockPlanOffer = "focus" | "skip";
 
 /**
- * Where the screen leads: out, back to the day, to practicing the mistakes, and to a speaking
- * task's live call, which comes back to the mock.
+ * Where the screen leads: out, back to the day, to the mistakes in the notebook, to a speaking
+ * task's live call, which comes back to the mock, and to a new mock once its time ran out while the
+ * learner was away (`again`: the plan's mock's challenge, or the goal's mocks).
  */
 export type MockHrefs = {
+  again: string;
   continue: string;
   exit: string;
   mistakes: string;
@@ -74,6 +79,7 @@ export type MockRunner = {
   /** The step on its way, so its button says what's happening. */
   busy: MockStep | null;
   drafts: Record<string, MockDraft>;
+  /** The last step (handing in, the break, grading) didn't go through. */
   error: boolean;
   /** Where grading the finished mock's essays stands. */
   essayGrading: MockEssayGradingStatus;
@@ -92,13 +98,21 @@ export type MockRunner = {
    */
   play: (setId: string) => Promise<boolean>;
   position: number;
-  /** The answers still being saved, which leaving waits for so none is lost; null when none is. */
-  savesInFlight: () => Promise<void> | null;
+  /** Sends the answers waiting after a failed request now. */
+  retrySaves: () => void;
+  /** Where the answers' saves stand, so the bar says when one isn't stored (`DraftSaveStatus`). */
+  saveStatus: DraftSaveStatus;
+  /** The answers still being saved, which leaving waits for a moment; null when none is. */
+  savesInFlight: () => Promise<unknown> | null;
   /** The step on its way is taking longer than usual. */
   slow: boolean;
   /** Starts the running speaking section's paper (see `MockActions.startSpeaking`). */
   startSpeaking: () => Promise<void>;
   submitSection: () => Promise<void>;
+  /** The current question clock expired: advance without requiring an answer. */
+  timeOutQuestion: () => void;
+  /** The section or its last question ran out of time; answers close until explicit hand-in. */
+  timeUp: boolean;
   toggleFlag: () => void;
   view: MockView;
   /**

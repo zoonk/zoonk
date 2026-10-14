@@ -7,7 +7,7 @@ import {
 } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
-import { type Choice } from "../onboarding/choice-list";
+import { type MockChoice } from "./mock-chooser-parts";
 
 /**
  * A mock's name as the learner picks it: the full exam (one of its days, when it has several),
@@ -32,31 +32,21 @@ export function useMockOptionName() {
 }
 
 /**
- * What a mock asks and how long it takes, honestly: the papers it covers when it leaves one out
- * ("Listening and Reading" without IELTS's Speaking), its questions (and a full mock's written
- * part) and about how long learners take on them, the day's subjects for a day of an exam of
- * several, and when the day's written part is left out.
+ * What a mock covers, honestly, under its name: the papers it covers when it leaves one out
+ * ("Listening and Reading" without IELTS's Speaking), a full mock's written part beside its
+ * questions ("+ Essay"), the day's subjects for a day of an exam of several, and when the day's
+ * written part is left out. Its size is the row's own (`useMockOptionSize`).
  */
 export function useMockOptionDetail() {
   const t = useExtracted();
   const format = useFormatter();
-  const duration = useFormatDuration();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
-    const time = duration(option.estimatedMinutes);
-
-    // A full mock's written part comes with its questions: "90 questions + Essay".
-    const size =
+    // A full mock's written part comes with its questions: "+ Essay".
+    const written =
       option.written.length > 0
-        ? t("{count, plural, one {# question} other {# questions}} + {written} · about {time}", {
-            count: option.questions,
-            time,
-            written: format.list(option.written, { type: "conjunction" }),
-          })
-        : t("{count, plural, one {# question} other {# questions}} · about {time}", {
-            count: option.questions,
-            time,
-          });
+        ? `+ ${format.list(option.written, { type: "conjunction" })}`
+        : null;
 
     const subjects =
       severalDays && option.kind !== "area" && option.areas.length > 0
@@ -67,8 +57,23 @@ export function useMockOptionDetail() {
     // The papers it covers already say the written part isn't one of them.
     const objective = option.objectiveOnly && !covers ? t("objective part only") : null;
 
-    return [covers, subjects, size, objective].filter(Boolean).join(" · ");
+    return [covers, subjects, written, objective].filter(Boolean).join(" · ");
   };
+}
+
+/**
+ * A mock's size at its row's end, in the mono face: its questions and about how long learners take
+ * on them ("90 q · ~4h 42m").
+ */
+export function useMockOptionSize() {
+  const t = useExtracted();
+  const duration = useFormatDuration();
+
+  return (option: Pick<MockOptionView, "estimatedMinutes" | "questions">): string =>
+    t("{count} q · ~{time}", {
+      count: String(option.questions),
+      time: duration(option.estimatedMinutes),
+    });
 }
 
 /**
@@ -98,8 +103,8 @@ function usePlacementPrecision() {
 }
 
 /**
- * A diagnostic mock's lengths as one choice: about how long, its questions and how fine, with the
- * suggested one (the quick check) saying so.
+ * A diagnostic mock's lengths as one choice: about how long, how fine (under it) and its questions
+ * (at its end), with the suggested one (the quick check) saying so.
  */
 export function usePlacementLengthChoices({
   options,
@@ -107,7 +112,7 @@ export function usePlacementLengthChoices({
 }: {
   options: readonly PlacementMockOptionView[];
   recommended: PlacementMockLength;
-}): Choice<PlacementMockLength>[] {
+}): MockChoice<PlacementMockLength>[] {
   const t = useExtracted();
   const duration = useFormatDuration();
   const precision = usePlacementPrecision();
@@ -116,11 +121,12 @@ export function usePlacementLengthChoices({
     const time = duration(option.estimatedMinutes);
 
     return {
-      description: `${t("{count, plural, one {# question} other {# questions}}", { count: option.questions })} · ${precision(option)}`,
+      description: precision(option),
       label:
         option.length === recommended
           ? t("About {time} (recommended)", { time })
           : t("About {time}", { time }),
+      trailing: t("{count} q", { count: String(option.questions) }),
       value: option.length,
     };
   });

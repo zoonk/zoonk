@@ -4,13 +4,18 @@ import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { useExtracted } from "next-intl";
 import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatTimeOfDay } from "../_utils/time-format";
+import { useExamDayDate } from "../exam/exam-labels";
 
 const DAYS_IN_A_WEEK = 7;
 
-/** "Today", "Tomorrow", "Sunday" within the week, or the date further away. */
+/**
+ * "Today", "Tomorrow", "Sunday" within the week, or the date further away as the exam page and
+ * the Plan write it ("Sun, Nov 8").
+ */
 function useChallengeDay(today: string) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const formatDay = useExamDayDate();
 
   return (isoDate: string): string => {
     const days = daysBetween(today, isoDate);
@@ -23,7 +28,7 @@ function useChallengeDay(today: string) {
       return t("Tomorrow");
     }
 
-    return days < DAYS_IN_A_WEEK ? formatDate(isoDate, "weekday") : formatDate(isoDate, "long");
+    return days < DAYS_IN_A_WEEK ? formatDate(isoDate, "weekday") : formatDay(isoDate);
   };
 }
 

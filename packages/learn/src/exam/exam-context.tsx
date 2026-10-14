@@ -21,7 +21,7 @@ export type ExamActions = {
 };
 
 /**
- * Where the screen links: back to the Journey, a scheduled mock's intro (its plan item's
+ * Where the screen links: back to the Plan, a scheduled mock's intro (its plan item's
  * challenge), a finished speaking task's result and a finished mock's result (by the id it opens
  * by).
  */

@@ -1,160 +1,130 @@
 "use client";
 
+import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  FlagIcon,
-  HistoryIcon,
-  LockIcon,
-  PencilRulerIcon,
-} from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { formatClock } from "../_utils/clock";
-import { MockAnswerSheet, useSectionCounts } from "./mock-answer-sheet";
+import { useState } from "react";
+import { TaskHeaderProgress } from "../_components/task-header";
+import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import {
+  MockAnswerSheet,
+  MockQuestionMap,
+  SheetLegend,
+  useMockSheetAside,
+} from "./mock-answer-sheet";
+import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
+import { FLAG_KEY, countLetteredOptions, isFlagKeyFree } from "./mock-keys";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
-import { useMockShortLine } from "./mock-notes";
-import { MockQuestionCard, MockRecording } from "./mock-question";
-import { isDraftAnswered } from "./use-mock-drafts";
+import { getSectionPlace } from "./mock-place";
+import { MockQuestionCard, MockRecording, useQuestionPlace } from "./mock-question";
+import { useSectionCounts } from "./mock-section-counts";
 
-const TICK_MS = 1000;
 const PERCENT = 100;
 
-/** The section's clock, ticking every second. When it reaches zero, the section is handed in. */
-function useSectionClock(deadline: string) {
-  const { runner } = useMockScreen();
-  const [now, setNow] = useState(() => Date.now());
-  const remaining = Math.max(0, new Date(deadline).getTime() - now);
-  const handedIn = useRef<string | null>(null);
-  const handIn = useEffectEvent(() => void runner.submitSection());
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), TICK_MS);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Once per section: a failed hand-in shows its error instead of retrying every second.
-  useEffect(() => {
-    if (remaining === 0 && handedIn.current !== deadline) {
-      handedIn.current = deadline;
-      handIn();
-    }
-  }, [deadline, remaining]);
-
-  return remaining;
-}
-
 /**
- * The task header's title, like every full-screen task's: the mock is the page's heading, and its
- * quiet line is the section's clock. A timer isn't a live region, so it never reads every second.
+ * Where the learner is in the section, under the header: the in-column bar of questions answered,
+ * then one mono line with the question's subject on the left (after the mock's name on a phone,
+ * whose header shows the clock) and its place in the section on the right, counted like the bar,
+ * the question's own clock beside it where the exam times each one. Screen readers hear the
+ * question by its number on the answer sheet.
  */
-export function ClockTitle({ deadline }: { deadline: string }) {
+function RunnerProgress({ question }: { question: MockQuestion }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  const remaining = useSectionClock(deadline);
+  const counts = useSectionCounts();
   const title = useMockTitle();
+  const place = useQuestionPlace(question);
+
+  const inSection = getSectionPlace({
+    position: runner.position,
+    questions: runner.view.current?.questions ?? [],
+  });
 
   return (
-    <div className="flex min-w-0 shrink flex-col items-center text-center">
-      <h1 className="text-foreground text-sm leading-5 font-medium">{title(runner.view)}</h1>
-      {/* The server renders the clock a moment before the browser takes over. */}
-      <p
-        aria-label={t("Time left")}
-        className="text-foreground text-base leading-5 font-semibold tabular-nums"
-        role="timer"
-        suppressHydrationWarning
+    <>
+      <TaskHeaderProgress
+        label={t("Questions answered in this section")}
+        value={counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0}
+      />
+      <div
+        className="text-muted-foreground max-w-column mx-auto flex w-full items-center justify-between gap-3 px-4 pt-1.5 pb-1 font-mono text-xs tabular-nums"
+        data-slot="mock-meta"
       >
-        {formatClock(remaining)}
-      </p>
-    </div>
+        <span aria-hidden="true" className="min-w-0 truncate">
+          <span className="lg:hidden">
+            {title(runner.view)}
+            {question.area && " · "}
+          </span>
+          {question.area}
+        </span>
+        <span className="flex shrink-0 items-center gap-3">
+          <ItemClock />
+          <span aria-hidden="true">
+            {inSection
+              ? t("{number} of {total}", {
+                  number: String(inSection.number),
+                  total: String(inSection.total),
+                })
+              : t("Written part")}
+          </span>
+        </span>
+        <span className="sr-only">{place}</span>
+      </div>
+    </>
   );
 }
 
+/**
+ * Flag the question to come back to it: a secondary beside Next, amber while it's flagged. F flags
+ * it too, its keycap on the button where there's a keyboard, unless the question has an option F,
+ * which keeps its letter.
+ */
 function FlagButton() {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
 
+  const keyFree =
+    question !== undefined &&
+    isFlagKeyFree(countLetteredOptions({ question, scoring: runner.view.scoring }));
+
+  const toggleByKey = () => {
+    if (!keyFree) {
+      return false;
+    }
+
+    runner.toggleFlag();
+  };
+
+  const screenKey = { mode: "none", screen: true } as const;
+
+  // Caps Lock sends the capital.
+  useKeyboardCallback(FLAG_KEY, toggleByKey, screenKey);
+  useKeyboardCallback(FLAG_KEY.toUpperCase(), toggleByKey, screenKey);
+
   return (
     <Button
+      aria-keyshortcuts={keyFree ? FLAG_KEY.toUpperCase() : undefined}
       aria-pressed={flagged}
-      className={cn(flagged && "text-warning")}
+      className={cn("shrink-0", flagged && "border-warning text-warning hover:text-warning")}
       onClick={runner.toggleFlag}
-      size="sm"
+      size="xl"
       variant="outline"
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
       {t("Flag")}
+      {keyFree && <ShortcutKbd>{FLAG_KEY.toUpperCase()}</ShortcutKbd>}
     </Button>
-  );
-}
-
-function NextLabel({ isLast, label }: { isLast: boolean; label: string }) {
-  const t = useExtracted();
-
-  if (isLast) {
-    return label;
-  }
-
-  return (
-    <>
-      {t("Next")}
-      <ChevronRightIcon aria-hidden="true" />
-    </>
-  );
-}
-
-/**
- * The question's own clock where the exam times each one, what may be used in the section and how
- * it moves, as the notice says them, the mock's rule in a quiet line, and when it asks questions
- * the learner answered before (the bank had no new ones left), a line saying how many, so the
- * score reads right.
- */
-function RunnerNotes() {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const reused = runner.view.reusedQuestions;
-  const short = useMockShortLine(runner.view);
-  const tools = runner.view.sections.find((section) => section.status === "current")?.tools;
-
-  return (
-    <div className="text-muted-foreground flex flex-col items-center gap-1 text-center text-xs">
-      <ItemClock />
-      {/* What the notice lets learners use in this section, as on the exam's cover page. */}
-      {tools && (
-        <p className="text-balance">
-          <PencilRulerIcon
-            aria-hidden="true"
-            className="mr-1.5 inline size-3.5 align-[-0.1875rem]"
-          />
-          {tools}
-        </p>
-      )}
-      <MovesNote />
-      <p className="flex items-center gap-1.5">
-        <LockIcon aria-hidden="true" className="size-3.5 shrink-0" />
-        {t("No feedback until the end, just like on exam day.")}
-      </p>
-      {short && <p className="text-balance">{short}</p>}
-      {reused > 0 && (
-        <p className="text-balance">
-          <HistoryIcon aria-hidden="true" className="mr-1.5 inline size-3.5 align-[-0.1875rem]" />
-          {t(
-            "{count, plural, one {# question repeats.} other {# questions repeat, missed ones first.}}",
-            { count: reused },
-          )}
-        </p>
-      )}
-    </div>
   );
 }
 
@@ -164,9 +134,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   const total = runner.view.current?.questions.length ?? 0;
   const isLastQuestion = runner.position >= total - 1;
   const isLastSection = runner.view.sections.at(-1)?.status === "current";
-  const itemId = runner.view.current?.questions[runner.position]?.itemId ?? "";
-  // A section that asks for an answer before moving on keeps Next until there is one.
-  const waiting = runner.moves.mustAnswer && !isDraftAnswered(runner.drafts[itemId]);
+  const waiting = !runner.moves.canAdvance;
 
   function next() {
     if (waiting) {
@@ -183,7 +151,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 
   const screenKey = { mode: "none", screen: true } as const;
 
-  // Enter moves on after a number key picked an answer; handing in stays a deliberate click.
+  // Enter moves on after a key picked an answer; handing in stays a deliberate click.
   useEnterKey(() => runner.go(runner.position + 1), {
     enabled: !isLastQuestion && !runner.pending && !waiting,
   });
@@ -198,65 +166,72 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   return (
     <>
       <MockStepStatus />
-      <RunnerNotes />
-      <div className="flex items-center gap-2">
+      <TaskActions>
+        <FlagButton />
         <Button
-          aria-label={t("Previous")}
-          className="w-14 shrink-0 px-0"
-          disabled={
-            runner.position === 0 || runner.pending || !runner.moves.canOpen(runner.position - 1)
-          }
-          onClick={() => runner.go(runner.position - 1)}
-          size="xl"
-          variant="outline"
-        >
-          <ChevronLeftIcon aria-hidden="true" />
-        </Button>
-        <Button
-          className={cn("flex-1", handingIn && "disabled:opacity-100")}
+          aria-keyshortcuts={isLastQuestion ? undefined : "Enter ArrowRight"}
+          className={cn(TASK_MAIN_ACTION_CLASS, handingIn && "disabled:opacity-100")}
           disabled={runner.pending || waiting}
           onClick={next}
           size="xl"
         >
           {handingIn && <Spinner aria-hidden="true" />}
-          {handingIn ? t("Handing in…") : <NextLabel isLast={isLastQuestion} label={nextLabel} />}
+          {handingIn && t("Handing in…")}
+          {!handingIn && isLastQuestion && nextLabel}
+          {!handingIn && !isLastQuestion && (
+            <>
+              {t("Next")}
+              <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            </>
+          )}
         </Button>
-        <MockAnswerSheet onHandIn={onHandIn} />
-      </div>
+      </TaskActions>
     </>
   );
 }
 
 /**
  * The running section, like the exam room: the clock, one question at a time with no feedback,
- * a flag to come back to it, the answer sheet to jump around, and handing the section in after
- * saying what's still blank or flagged.
+ * Flag and Next at the thumb, and the answer sheet to jump around, read the section's notes and
+ * hand it in after saying what's still blank or flagged. On a phone the sheet's row of the
+ * question sits under it and the whole sheet opens from the header; from `lg` the sheet is the
+ * aside, clock on top. When the clock runs out, answers close and hand-in waits for a click.
  */
+function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+  const [confirming, setConfirming] = useState(false);
+  const handIn = () => setConfirming(true);
+  const sheet = useMockSheetAside({ deadline, onHandIn: handIn });
+
+  return (
+    <MockFrame
+      aside={sheet}
+      footer={<RunnerFooter onHandIn={handIn} />}
+      headerEnd={<MockAnswerSheet onHandIn={handIn} />}
+      headerTitle={<ClockTitle clockBeside deadline={deadline} />}
+      progress={{ bar: <RunnerProgress question={question} /> }}
+    >
+      <MockRecording key={question.set?.id ?? "none"} question={question} />
+      <MockQuestionCard key={question.itemId} question={question} />
+      <div className="flex flex-col gap-2.5">
+        <MockQuestionMap className="lg:hidden" />
+        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
+          <SheetLegend className="lg:hidden" />
+          <MovesNote />
+        </div>
+      </div>
+      <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
+    </MockFrame>
+  );
+}
+
 export function MockRunnerView() {
-  const t = useExtracted();
   const { runner } = useMockScreen();
   const { current } = runner.view;
-  const counts = useSectionCounts();
-  const [confirming, setConfirming] = useState(false);
   const question = current?.questions[runner.position];
 
   if (!current || !question) {
     return null;
   }
 
-  return (
-    <MockFrame
-      footer={<RunnerFooter onHandIn={() => setConfirming(true)} />}
-      headerEnd={<FlagButton />}
-      headerTitle={<ClockTitle deadline={current.deadline} />}
-      progress={{
-        label: t("Questions answered in this section"),
-        value: counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0,
-      }}
-    >
-      <MockRecording key={question.set?.id ?? "none"} question={question} />
-      <MockQuestionCard key={question.itemId} question={question} />
-      <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
-    </MockFrame>
-  );
+  return <RunnerScreen deadline={current.deadline} question={question} />;
 }

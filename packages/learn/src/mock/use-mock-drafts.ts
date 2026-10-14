@@ -1,24 +1,27 @@
 "use client";
 
 import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/answer-contract";
+import { isMockAnswerPresent } from "@zoonk/core/exams/mocks/answer-presence";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
-import { useRef, useState } from "react";
+import { settleWithin } from "@zoonk/utils/timeout";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
 
 type Drafts = Record<string, MockDraft>;
 
 /** Typing is saved this long after the learner stops, and whenever they leave the question. */
 const TEXT_SAVE_DELAY_MS = 1500;
 
+/**
+ * Leaving waits this long at most for answers still going out, so ✕ always leaves, even with the
+ * connection down (the bar already says what isn't saved).
+ */
+const LEAVE_WAIT_MS = 5000;
+
 /** Whether a draft holds an answer: a pick, a number, or some text. */
 export function isDraftAnswered(draft: MockDraft | undefined): boolean {
-  const answer = draft?.answer ?? null;
-
-  if (answer === null) {
-    return false;
-  }
-
-  return "text" in answer ? answer.text.trim().length > 0 : true;
+  return isMockAnswerPresent(draft?.answer);
 }
 
 function toDrafts(view: MockView): Drafts {
@@ -42,27 +45,34 @@ export function useMockDrafts({
   view: MockView;
 }) {
   const [drafts, setDrafts] = useState<Drafts>(() => toDrafts(view));
-  const [failed, setFailed] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<DraftSaveStatus>("saved");
   const shown = useRef<{ at: number; itemId: string } | null>(null);
   // What was typed since its last save (an essay, a word, a number), saved once typing pauses.
   const unsavedText = useRef<MockDraft | null>(null);
   const textTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Saves go out one after another, so an older draft never lands after a newer one.
-  const queue = useRef<Promise<void>>(Promise.resolve());
-  const inFlight = useRef(0);
+  // Saves go out one after another and a failed one is tried again before the rest, so an older
+  // draft never lands after a newer one and none is dropped. The host keeps `save` stable.
+  const queue = useMemo(
+    () =>
+      createDraftSaveQueue<MockDraft>({
+        keyOf: (draft) => draft.itemId,
+        onStatus: setSaveStatus,
+        save,
+      }),
+    [save],
+  );
+
+  // The connection coming back sends what's waiting at once instead of after the next wait.
+  useEffect(() => {
+    const retry = () => queue.retryNow();
+    globalThis.addEventListener("online", retry);
+    return () => globalThis.removeEventListener("online", retry);
+  }, [queue]);
 
   function persist(draft: MockDraft) {
     setDrafts((current) => ({ ...current, [draft.itemId]: draft }));
-    inFlight.current += 1;
-
-    queue.current = queue.current.then(async () => {
-      try {
-        setFailed(!(await save(draft)));
-      } finally {
-        inFlight.current -= 1;
-      }
-    });
+    queue.add(draft);
   }
 
   function saveText() {
@@ -93,16 +103,24 @@ export function useMockDrafts({
     answer: (itemId: string, answer: MockAnswer | null) =>
       persist({ ...withTimeSpent(itemId), answer }),
     drafts,
-    failed,
-    /** Waits for every save, so handing a section in never loses the last answer. */
+    /** Waits for every save, retries included, so handing a section in never loses an answer. */
     flush: () => {
       saveText();
-      return queue.current;
+      return queue.idle();
     },
-    /** The saves still going out, which leaving waits for; null when none is. */
+    /**
+     * The saves still going out, which leaving waits for (a moment at most, trying the waiting ones
+     * again first); null when none is.
+     */
     inFlight: () => {
       saveText();
-      return inFlight.current > 0 ? queue.current : null;
+
+      if (!queue.isBusy()) {
+        return null;
+      }
+
+      queue.retryNow();
+      return settleWithin({ ms: LEAVE_WAIT_MS, request: () => queue.idle() });
     },
     /** A question leaves the screen: its time so far (and what was typed) is saved with it. */
     leave: (itemId: string) => {
@@ -110,12 +128,17 @@ export function useMockDrafts({
         unsavedText.current = null;
         saveText();
         persist(withTimeSpent(itemId));
+        shown.current = null;
       }
     },
     reset: (next: MockView) => {
       shown.current = null;
       setDrafts(toDrafts(next));
     },
+    /** Sends the answers waiting after a failed request now, from the bar's "Retry". */
+    retry: () => queue.retryNow(),
+    /** Where the answers' saves stand, for the bar to say so (see `DraftSaveStatus`). */
+    saveStatus,
     /** A question appears: its clock starts. */
     show: (itemId: string) => {
       shown.current = { at: Date.now(), itemId };

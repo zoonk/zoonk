@@ -1,10 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
+import { expectCallClock } from "./call-clock";
 import { type Page, expect, test } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
-import { CHARACTER_REPLY, answerLiveCalls } from "./live-gateway";
+import { CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
 import { nextStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -123,11 +125,11 @@ async function expectDeleTasks(page: Page) {
   await expect(speaking.getByRole("listitem")).toHaveText([
     // The exam's 20 minutes of preparation cover Tasks 1 and 2 together.
     new RegExp(
-      `^1${TASK_ONE}With an examiner \\(AI\\) · 6–7 min · 20 min to prepare tasks 1 and 2`,
+      `^1${TASK_ONE}With an examiner \\(AI\\) · 6–7\\smin · 20\\smin to prepare tasks 1 and 2`,
       "u",
     ),
-    /^2Tarea 2: Describir una situación imaginada .*With an examiner \(AI\) · 5–6 min · 20 min to prepare tasks 1 and 2/u,
-    /^3Tarea 3: Opinar sobre los datos de una encuestaWith an examiner \(AI\) · 3–4 min/u,
+    /^2Tarea 2: Describir una situación imaginada .*With an examiner \(AI\) · 5–6\smin · 20\smin to prepare tasks 1 and 2/u,
+    /^3Tarea 3: Opinar sobre los datos de una encuestaWith an examiner \(AI\) · 3–4\smin/u,
   ]);
 
   return speaking;
@@ -148,8 +150,7 @@ test.describe("Exam speaking tasks", () => {
     const waiting = await createTaskOne({ finished: false, goalId: goal.id, userId: user.id });
     const page = await openAs(browser, user);
 
-    // The call's stand-in answers WebSockets the page opens after it loads with the route.
-    await answerLiveCalls(page, "answers");
+    const peer = await answerLiveCalls(page, "answers");
     await page.goto("/exam");
     const speaking = await expectDeleTasks(page);
 
@@ -201,17 +202,17 @@ test.describe("Exam speaking tasks", () => {
     // The exam's preparation runs on its own clock; nothing is charged before the call.
     await expect(
       page.getByText(
-        "The exam gives 20 min to prepare tasks 1 and 2 together, about 10 for this one.",
+        "The exam gives 20 min to prepare tasks 1 and 2 together, about 10 min for this one.",
       ),
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Start preparing" }).click();
-    await expect(page.getByRole("timer")).toContainText(/^Preparing: (?:10:00|9:5\d) left/u);
+    await expect(page.getByRole("timer")).toHaveText(/^Preparation\s*(?:10:00|9:5\d)$/u);
     await expect(page.getByRole("timer")).toBeFocused();
 
     // The clock keeps running through a reload (a locked phone, a slip of the finger).
     await page.reload();
-    await expect(page.getByRole("timer")).toContainText(/^Preparing: 9:[45]\d left/u);
+    await expect(page.getByRole("timer")).toHaveText(/^Preparation\s*9:[45]\d$/u);
     await expect(page.getByRole("button", { name: "Start again" })).toBeVisible();
     await expectAccessibleScreen(page, "an exam task's card");
 
@@ -227,8 +228,14 @@ test.describe("Exam speaking tasks", () => {
       CARD.prompts,
     );
 
-    await expect(page.getByRole("list", { name: "Goals of the call" })).toHaveCount(0);
-    await expect(page.getByText(/^0:0\d \/ 7:00$/u)).toBeVisible();
+    await expect(page.getByRole("region", { name: "Goals of the call" })).toHaveCount(0);
+
+    await expectCallClock({
+      allowanceSeconds: 420,
+      conversationId: waiting.id,
+      getStartedAt: peer.getStartedAt,
+      page,
+    });
 
     await page
       .getByRole("textbox", { name: "Type your reply" })
@@ -271,6 +278,65 @@ test.describe("Exam speaking tasks", () => {
     await expect(
       prisma.languageConversation.count({ where: { goalId: goal.id, kind: "examSpeaking" } }),
     ).resolves.toBe(1);
+
+    await page.context().close();
+  });
+
+  test("a task whose call completes the day's last mission says so on its result, with the +50", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createDeleLearner({ plus: true });
+
+    const [waiting] = await Promise.all([
+      createTaskOne({ finished: false, goalId: goal.id, userId: user.id }),
+      studySessionFixture({
+        goalId: goal.id,
+        missions: { picks: [{ anchor: {}, kind: "call", total: 1 }], version: 1 },
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const peer = await answerLiveCalls(page, "answers");
+    await page.goto(`/conversation/${waiting.id}?from=exam`);
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    const transcript = page.getByRole("log", { name: "Conversation" });
+    await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+
+    // A call counts as the mission once the learner speaks in it (typed replies aren't speaking).
+    await peer.emit({
+      delta: " Creo que la mejor es la primera.",
+      end_ms: 3000,
+      start_ms: 1000,
+      type: "session.input_transcript.delta",
+    });
+
+    await expect(transcript.getByText("Creo que la mejor es la primera.")).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "End" }).click();
+
+    // No model grades in tests, so the task has no estimate; what it did to the missions still shows.
+    await expect(page.getByRole("heading", { name: "This task has no estimate" })).toBeVisible();
+    const moment = page.locator("[data-slot=mission-moment]");
+    await expect(moment).toContainText("Mission done: Have a call");
+    await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+    await expect(moment).toContainText("from today's missions");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("exam-call-mission-390.png"),
+    });
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("exam-call-mission-1440.png"),
+    });
 
     await page.context().close();
   });
@@ -418,9 +484,8 @@ test.describe("Exam speaking tasks", () => {
     await page.goto("/exam");
     const speaking = await expectDeleTasks(page);
 
-    await expect(
-      speaking.getByRole("listitem").filter({ hasText: "Available with Plus" }),
-    ).toHaveCount(3);
+    // One notice above the tasks says what Plus unlocks; the rows themselves carry no mark.
+    await expect(speaking.getByText("Available with Plus")).toHaveCount(1);
 
     // A locked task opens in place all the same, with what it's rated on and nothing to start.
     await speaking.getByRole("button", { name: new RegExp(TASK_ONE, "u") }).click();
@@ -442,6 +507,7 @@ test.describe("Exam speaking tasks", () => {
     // Plus opens from here and its way back returns here, not to the settings it sits under.
     await speaking.getByRole("link", { name: "See Plus" }).click();
     await expect(page).toHaveURL(/\/subscription$/u);
+    await page.setViewportSize({ height: 844, width: 390 });
     await page.getByRole("link", { exact: true, name: "Back" }).click();
     await expect(page).toHaveURL(/\/exam$/u);
 
@@ -455,6 +521,7 @@ test.describe("Exam speaking tasks", () => {
     const { user } = await createLanguageLearner();
 
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 844, width: 390 });
     await page.goto("/today");
 
     const practice = page.getByRole("region", { name: "Practice anytime" });
@@ -474,15 +541,14 @@ test.describe("Exam speaking tasks", () => {
 
     const paper = page.getByRole("region", { name: "Tasks" });
     await expect(paper.getByText("Part 3: Collaborative task")).toBeVisible();
-    await expect(paper.getByText(/^With another candidate \(AI\) · 3–4 min$/u)).toBeVisible();
+    await expect(paper.getByText(/^With another candidate \(AI\) · 3–4\smin$/u)).toBeVisible();
 
-    await expect(
-      paper.getByRole("listitem").filter({ hasText: "Available with Plus" }),
-    ).toHaveCount(4);
+    await expect(paper.getByText("Available with Plus")).toHaveCount(1);
 
     // The level sheet leads to the same page.
-    await page.goto("/journey");
-    await page.getByRole("button", { name: /^Your level/u }).click();
+    await page.goto("/plan");
+
+    await page.getByRole("button", { name: /^Level/u }).click();
 
     await expect(
       page

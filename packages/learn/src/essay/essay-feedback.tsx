@@ -3,10 +3,9 @@
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleIcon, LightbulbIcon } from "lucide-react";
+import { CheckIcon, CircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
-import { KindTile } from "../_components/kind-tile";
 import { Meter, MeterFill } from "../_components/meter";
 import {
   StepCard,
@@ -42,6 +41,11 @@ function hasMissingElements(grade: Grade): boolean {
 
 type Criterion = Grade["criteria"][number];
 
+/** A number in a sentence, in the mono face like every number. */
+function renderMono(chunks: React.ReactNode) {
+  return <span className="font-mono tabular-nums">{chunks}</span>;
+}
+
 /**
  * A criterion's score as its row says it, out of its maximum: an official rubric's own points
  * (ENEM's 200, OAB's sections), and a custom rubric's equal share on the total's scale, so a
@@ -63,7 +67,11 @@ function toShownScore({
   return { max: total.maxScore, score: (criterion.score / criterion.maxScore) * total.maxScore };
 }
 
-function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
+/**
+ * Each criterion's score as a flat row, a meter and its mono score; the one to work on next stands
+ * out (its name heavier, its meter amber). The grade's first step and the rewrite's aside use it.
+ */
+export function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
   const formatScore = useFormatScore();
@@ -83,7 +91,7 @@ function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
             <Meter className="w-16 shrink-0 sm:w-20">
               <MeterFill className={isNext ? "bg-warning" : undefined} share={share} />
             </Meter>
-            <span className="shrink-0 text-right font-medium whitespace-nowrap tabular-nums">
+            <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums">
               {t("{score} of {max}", {
                 max: formatScore(shown.max),
                 score: formatScore(shown.score),
@@ -108,7 +116,6 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
   if (grade.zeroReason === "tooShort") {
     return (
       <StepCard>
-        <KindTile kind="essay" size="lg" />
         <StepHeader>
           <StepTitle>{t("Too short to grade")}</StepTitle>
           <StepDetail>{t("Write the whole essay, then send it again.")}</StepDetail>
@@ -119,9 +126,8 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
 
   return (
     <StepCard>
-      <KindTile kind="essay" size="lg" />
       <StepHeader>
-        <StepTitle className="flex flex-col items-center gap-1.5">
+        <StepTitle className="flex flex-col items-start gap-1.5">
           <StepTitleLabel>{writingName(rubric)}</StepTitleLabel>
           <StepTitleNumber>
             {t("{low}–{high}", {
@@ -130,8 +136,11 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
             })}
           </StepTitleNumber>
         </StepTitle>
-        <StepDetail>
-          {t("Estimated score, from 0 to {max}", { max: formatScore(grade.total.maxScore) })}
+        <StepDetail className="text-sm">
+          {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
+            max: formatScore(grade.total.maxScore),
+            mono: renderMono,
+          })}
         </StepDetail>
       </StepHeader>
       <CriteriaRows grade={grade} rubric={rubric} />
@@ -150,7 +159,6 @@ function NothingLeftComment() {
 
   return (
     <StepCard>
-      <KindTile icon={CheckIcon} kind="essay" size="lg" />
       <StepHeader>
         <StepEyebrow>{t("Next step")}</StepEyebrow>
         <StepTitle>{t("Nothing left to work on")}</StepTitle>
@@ -173,13 +181,10 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   const criterion = grade.criteria.find((item) => item.id === nextStep.criterionId);
 
   return (
-    <StepCard className="items-stretch text-left">
-      <KindTile className="self-center" icon={LightbulbIcon} kind="essay" size="lg" />
+    <StepCard className="items-stretch">
       <StepHeader>
         <StepEyebrow>{t("Next step")}</StepEyebrow>
-        <StepTitle className="text-center">
-          {criterion ? criterionName(criterion) : t("What to rewrite")}
-        </StepTitle>
+        <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
       </StepHeader>
 
       {criterion?.quote && (
@@ -197,24 +202,27 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   );
 }
 
-/** ENEM's five elements of an intervention proposal, when the proposal misses any. */
-function InterventionElements({ grade }: { grade: Grade }) {
+/**
+ * ENEM's five elements of an intervention proposal, under the next step when the proposal misses
+ * any: the ones there checked, the missing ones open.
+ */
+function ProposalElements({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const elementName = useInterventionElementName();
   const elements = grade.enemInterventionElements;
 
-  if (!elements) {
+  if (!elements || !hasMissingElements(grade)) {
     return null;
   }
 
   return (
-    <StepCard>
-      <StepTitle>{t("The five elements of the proposal")}</StepTitle>
+    <section className="flex w-full flex-col gap-1">
+      <h2 className="text-label">{t("The five elements of the proposal")}</h2>
       <StepRows>
         {ELEMENTS.map((key) => (
           <StepRow key={key}>
             {elements[key] ? (
-              <CheckIcon aria-hidden="true" className="text-success" />
+              <CheckIcon aria-hidden="true" className="text-success-text" />
             ) : (
               <CircleIcon aria-hidden="true" className="text-muted-foreground" />
             )}
@@ -225,87 +233,100 @@ function InterventionElements({ grade }: { grade: Grade }) {
           </StepRow>
         ))}
       </StepRows>
-    </StepCard>
+    </section>
   );
 }
 
-/** Every criterion's comment, with the passage it's about, one text link away. */
-function CriterionComments({ grade }: { grade: Grade }) {
-  const t = useExtracted();
-  const criterionName = useCriterionName();
-
-  return (
-    <DetailsDrawer label={t("See comments on every criterion")} title={t("Comments")}>
-      <ul className="flex flex-col gap-4">
-        {grade.criteria.map((criterion) => (
-          <li className="flex flex-col gap-1 text-sm" key={criterion.id}>
-            <p className="font-semibold">{criterionName(criterion)}</p>
-            {criterion.quote && (
-              <blockquote className="text-muted-foreground border-l-2 pl-3 italic">
-                {criterion.quote}
-              </blockquote>
-            )}
-            <p>{criterion.comment}</p>
-          </li>
-        ))}
-      </ul>
-    </DetailsDrawer>
-  );
-}
-
-/** Once graded, going on without rewriting stays one quiet tap away. */
-export function FinishEssayButton({ variant = "ghost" }: { variant?: "ghost" | "outline" }) {
-  const t = useExtracted();
-  const { failed, finish, pending } = useFinishEssay();
-
+/** The grade's second step: the one next step, then the proposal's missing elements (ENEM). */
+function NextStep({ grade }: { grade: Grade }) {
   return (
     <>
-      {failed && (
-        <p className="text-destructive text-center text-sm" role="alert">
-          {t("That didn't go through. Try again in a moment.")}
-        </p>
-      )}
-      <Button
-        className="w-full"
-        disabled={pending}
-        onClick={() => void finish()}
-        size="lg"
-        variant={variant}
-      >
-        {t("Continue")}
-      </Button>
+      <NextStepComment grade={grade} />
+      <ProposalElements grade={grade} />
     </>
   );
 }
 
+/** Every criterion's comment, with the passage of the text it's about. */
+function CriterionComments({ grade }: { grade: Grade }) {
+  const criterionName = useCriterionName();
+
+  return (
+    <ul className="flex flex-col gap-4">
+      {grade.criteria.map((criterion) => (
+        <li className="flex flex-col gap-1 text-sm" key={criterion.id}>
+          <p className="font-semibold">{criterionName(criterion)}</p>
+          {criterion.quote && (
+            <blockquote className="text-muted-foreground border-border border-l-2 pl-3 italic">
+              {criterion.quote}
+            </blockquote>
+          )}
+          <p className="text-pretty">{criterion.comment}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
- * A graded draft, one thing at a time: the estimated range with each criterion, the one next step
- * with the learner's own words, and ENEM's five proposal elements when any is missing. Rewriting
- * is then the main action; every criterion's comment waits behind a link.
+ * A graded draft, one thing at a time: the estimated range with each criterion, then the one next
+ * step with the learner's own words and ENEM's five proposal elements when any is missing.
+ * Rewriting is then the main action, with skipping the rewrite (going on with the session) beside
+ * it, so Continue only ever means the next step. Every criterion's comment is one link away on a
+ * phone, and beside the grade in the aside from `lg`.
  */
 export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite: () => void }) {
   const t = useExtracted();
   const { hrefs } = useEssayScreen();
+  const finishing = useFinishEssay();
   const tooShort = grade.zeroReason === "tooShort";
 
-  const items: StepsItem[] = [
-    { content: <GradeStep grade={grade} />, id: "grade" },
-    !tooShort && { content: <NextStepComment grade={grade} />, id: "nextStep" },
-    !tooShort &&
-      hasMissingElements(grade) && {
-        content: <InterventionElements grade={grade} />,
-        id: "elements",
-      },
-  ].filter((item) => item !== false);
+  const skip = (
+    <Button
+      className="shrink-0"
+      disabled={finishing.pending}
+      onClick={() => void finishing.finish()}
+      size="xl"
+      variant="outline"
+    >
+      {t("Skip the rewrite")}
+    </Button>
+  );
+
+  const items: StepsItem[] = tooShort
+    ? [{ action: skip, content: <GradeStep grade={grade} />, id: "grade" }]
+    : [
+        { content: <GradeStep grade={grade} />, id: "grade" },
+        { action: skip, content: <NextStep grade={grade} />, id: "nextStep" },
+      ];
 
   return (
     <Steps
+      aside={
+        tooShort
+          ? null
+          : {
+              children: <CriterionComments grade={grade} />,
+              label: t("Comments"),
+              title: t("Comments"),
+            }
+      }
       exitHref={hrefs.exit}
       finalAction={<TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>}
       finalOptions={
         <>
-          <FinishEssayButton />
-          {!tooShort && <CriterionComments grade={grade} />}
+          {finishing.failed && (
+            <p className="text-destructive-text text-sm" role="alert">
+              {t("That didn't go through. Try again in a moment.")}
+            </p>
+          )}
+          {!tooShort && (
+            <div className="flex flex-col lg:hidden">
+              <DetailsDrawer label={t("See comments on every criterion")} title={t("Comments")}>
+                <CriterionComments grade={grade} />
+              </DetailsDrawer>
+            </div>
+          )}
         </>
       }
       items={items}

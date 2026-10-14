@@ -5,12 +5,14 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { interleave } from "@zoonk/utils/interleave";
 
 const SKILL_NAMES = ["Discounts", "Ratios"];
 const QUESTIONS_PER_SKILL = 3;
@@ -131,11 +133,14 @@ function toPayload({
 export async function createCheckpointLearner({
   kind = "boss",
   planned = false,
+  reinforcementLessons = 0,
   thin = false,
 }: {
   kind?: CheckpointKind;
   /** The planner owns the plan and today holds the week's challenge, so it can move. */
   planned?: boolean;
+  /** Available lessons for a loss; two also interleave the missed skills. */
+  reinforcementLessons?: number;
   thin?: boolean;
 } = {}) {
   const [{ goal, user }, skills] = await Promise.all([
@@ -173,12 +178,24 @@ export async function createCheckpointLearner({
     studySessionFixture({ goalId: goal.id, userId: user.id }),
   ]);
 
+  await Promise.all(
+    skills.slice(0, reinforcementLessons).map(async (skill) => {
+      const lesson = await libraryLessonFixture();
+      await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+    }),
+  );
+
+  const orderedItems =
+    reinforcementLessons === 2
+      ? interleave(skills.map((skill) => items.filter((item) => item.skillId === skill.id)))
+      : items;
+
   const block = await studySessionBlockFixture({
     estimatedMinutes: thin ? THIN_CHECKPOINT.minutes : CHECKPOINT_MINUTES,
     kind: "checkpoint",
     payload: toPayload({
       bossId: boss.id,
-      itemIds: items.map((item) => item.id),
+      itemIds: orderedItems.map((item) => item.id),
       kind,
       passMark: thin ? THIN_CHECKPOINT.passMark : CHECKPOINT_PASS_MARK,
       skillIds: skills.map((skill) => skill.id),
@@ -204,50 +221,22 @@ export async function createCheckpointLearner({
         ),
     );
 
-  return { block, boss, plan, user, writeQuestions };
+  return { block, boss, items: orderedItems, plan, user, writeQuestions };
 }
 
-const DAYS_TO_BOSS = 3;
-
-/**
- * A phase checkpoint a few days away, with a lesson before it in its phase still to do and the next
- * phase after it: its intro says what it asks, and it opens on its day.
- */
-export async function createUpcomingBoss() {
-  const { goal, user } = await createGoalLearner();
-
-  const plan = await planFixture({
-    goalId: goal.id,
-    phases: [{ name: "Basics" }, { name: "Practice" }],
-  });
-
-  const [boss] = await Promise.all([
-    planItemFixture({
-      kind: "boss",
-      phase: 0,
-      planId: plan.id,
-      position: 1,
-      scheduledFor: new Date(toUTCMidnight(new Date()).getTime() + DAYS_TO_BOSS * MS_PER_DAY),
-      titleSnapshot: "",
-    }),
-    ...[0, 1].map((phase) =>
-      planItemFixture({
-        kind: "lesson",
-        phase,
-        planId: plan.id,
-        position: phase * 2,
-        titleSnapshot: phase === 0 ? "Discounts" : "Ratios",
-      }),
-    ),
-  ]);
-
-  return { boss, user };
-}
+/** A task's main action is 44px tall wherever its bar puts it. */
+const MAIN_ACTION_PX = 44;
 
 const DUEL_VERDICTS = {
-  "Right answer": "Right!",
-  "Wrong answer": "Not this one. You'll see why at the end.",
+  "Right answer": "Correct!",
+  "Wrong answer": /^Not quite\s*You'll see why at the end\.$/u,
 } as const;
+
+/**
+ * The answer that decides a boss's duel ends it: the right one that breaks the Trickster's shield,
+ * or the miss after which it can't break anymore (their lines: `checkpoints.test.ts`).
+ */
+const DECIDING_VERDICTS = { "Right answer": /^Correct!/u, "Wrong answer": /^Not quite/u } as const;
 
 type DuelAnswer = keyof typeof DUEL_VERDICTS;
 
@@ -255,35 +244,72 @@ async function answerDuelQuestion(
   page: Page,
   {
     answer,
+    isLast,
     keyboard,
     number,
+    decides,
     total,
-  }: { answer: DuelAnswer; keyboard: boolean; number: number; total: number },
+  }: {
+    answer: DuelAnswer;
+    decides: boolean;
+    isLast: boolean;
+    keyboard: boolean;
+    number: number;
+    total: number;
+  },
 ) {
   const verdict = page.getByRole("status");
-  await expect(page.getByText(`Question ${number} of ${total}`)).toBeVisible();
+  const said = decides ? DECIDING_VERDICTS[answer] : DUEL_VERDICTS[answer];
+
+  await expect(
+    page.getByRole("progressbar", { name: `Question ${number} of ${total}` }),
+  ).toBeAttached();
 
   if (keyboard) {
     // The options keep their order: the right answer is the first.
     await page.keyboard.press(answer === "Right answer" ? "1" : "2");
     await expect(page.getByRole("radio", { name: answer })).toHaveAttribute("aria-checked", "true");
     await page.keyboard.press("Enter");
-    await expect(verdict).toHaveText(DUEL_VERDICTS[answer]);
+    await expect(verdict).toHaveText(said);
     await page.keyboard.press("Enter");
     return;
   }
 
-  const isLast = number === total;
   await page.getByRole("radio", { name: answer }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(verdict).toHaveText(DUEL_VERDICTS[answer]);
+
+  // The main action keeps its 44px however the bar lays it out.
+  const confirm = page.getByRole("button", { name: "Confirm" });
+  const confirmBox = await confirm.boundingBox();
+  expect(confirmBox?.height).toBe(MAIN_ACTION_PX);
+  await confirm.click();
+  await expect(verdict).toHaveText(said);
   await page.getByRole("button", { name: isLast ? "See how it went" : "Next" }).click();
 }
 
+/** The question that decides a boss's duel answered all the same way, or null without its pass mark. */
+function getDecidingQuestion({
+  answer,
+  passMark,
+  total,
+}: {
+  answer: DuelAnswer;
+  passMark?: number;
+  total: number;
+}): number | null {
+  if (passMark === undefined) {
+    return null;
+  }
+
+  return answer === "Right answer" ? passMark : total - passMark + 1;
+}
+
 /**
- * Answers every question of a running duel with the same option, reading each verdict before
- * moving on. By keyboard, a number key picks the option and Enter confirms, then moves on. `from`
- * skips the questions a test answered itself; `total` is the duel's length (the fixtures' six).
+ * Answers a running duel's questions with the same option, reading each verdict before moving on.
+ * By keyboard, a number key picks the option and Enter confirms, then moves on. `from` skips the
+ * questions a test answered itself, the same way; `total` is the duel's length (the fixtures'
+ * six). A boss's duel ends once it's decided: with its `passMark`, right answers end it when they
+ * reach it (his shield breaks), and misses once too few questions are left to reach it; without,
+ * every question is asked. `until` stops after that question, for a test to answer the rest itself.
  */
 export async function playDuel(
   page: Page,
@@ -291,12 +317,31 @@ export async function playDuel(
     answer = "Right answer",
     from = 1,
     keyboard = false,
+    passMark,
     total = CHECKPOINT_QUESTIONS,
-  }: { answer?: DuelAnswer; from?: number; keyboard?: boolean; total?: number } = {},
+    until,
+  }: {
+    answer?: DuelAnswer;
+    from?: number;
+    keyboard?: boolean;
+    passMark?: number;
+    total?: number;
+    until?: number;
+  } = {},
 ) {
-  for (let number = from; number <= total; number += 1) {
+  const decidedAt = getDecidingQuestion({ answer, passMark, total });
+  const end = decidedAt ?? total;
+
+  for (let number = from; number <= (until ?? end); number += 1) {
     // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
-    await answerDuelQuestion(page, { answer, keyboard, number, total });
+    await answerDuelQuestion(page, {
+      answer,
+      decides: number === decidedAt,
+      isLast: number === end,
+      keyboard,
+      number,
+      total,
+    });
   }
 }
 

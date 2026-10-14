@@ -7,6 +7,10 @@ import { type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
  * asks for an answer before moving on, and `itemSeconds` gives each question its own clock.
  */
 export type SectionMoves = {
+  /** Whether the current answer permits advancing or handing in. */
+  canAdvance: boolean;
+  /** A question clock may open only the immediate next question without an answer. */
+  canOpenAfterTimeout: (position: number) => boolean;
   /** Whether a question can change its answer now: one left behind can't, but in the review. */
   canChange: (position: number) => boolean;
   /** Whether a question can be opened now: the next one only, in a forward-only section. */
@@ -21,12 +25,16 @@ export type SectionMoves = {
 };
 
 export function getSectionMoves({
+  answered,
   changed,
   changesLeft,
   navigation,
+  position,
   reached,
   total,
 }: {
+  answered: boolean;
+  position: number;
   /** The questions the review changed already, which change again without using another. */
   changed: readonly number[];
   changesLeft: number | null;
@@ -39,11 +47,19 @@ export function getSectionMoves({
   const reviewing = forwardOnly && navigation?.answerChanges !== null && reached >= total - 1;
   const changes = reviewing ? changesLeft : null;
 
+  const canAdvance = !navigation?.mustAnswer || answered || (reviewing && position < reached);
+
+  const canReach = (target: number) =>
+    target >= 0 &&
+    target < total &&
+    (!forwardOnly || reviewing || target === reached || target === reached + 1);
+
   return {
-    canChange: (position) =>
-      !forwardOnly || position >= reached || changed.includes(position) || (changes ?? 0) > 0,
-    canOpen: (position) =>
-      !forwardOnly || reviewing || position === reached || position === reached + 1,
+    canAdvance,
+    canChange: (target) =>
+      !forwardOnly || target >= reached || changed.includes(target) || (changes ?? 0) > 0,
+    canOpen: (target) => canReach(target) && (target === position || canAdvance),
+    canOpenAfterTimeout: (target) => target === position + 1 && canReach(target),
     changesLeft: changes,
     forwardOnly,
     itemSeconds: reviewing ? null : (navigation?.itemSeconds ?? null),

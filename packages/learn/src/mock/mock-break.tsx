@@ -1,13 +1,23 @@
 "use client";
 
-import { CoffeeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import {
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowDescription,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
+import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
+import { TaskActions } from "../_components/task-layout";
 import { formatClock } from "../_utils/clock";
 import { useFormatDuration } from "../_utils/time-format";
 import { TaskMainButton } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
+import { SheetSections, hasSeveralSections } from "./mock-sheet-sections";
 
 const TICK_MS = 1000;
 
@@ -36,8 +46,11 @@ function useBreakLeft(until: string): number {
 }
 
 /**
- * The break the notice gives between two sections, like the real exam's: its time left, the
- * section that comes next with its time and what may be used in it, and starting it early.
+ * The break the notice gives between two sections, like the real exam's, straight on the page:
+ * its time left big in the mono face, the section that comes next as one row (what may be used in
+ * it under its name, its time in the mono face at its end), and starting it early. From `lg` the
+ * sitting's sections are beside it, the ones handed in and the one next, as the answer sheet
+ * lists them.
  */
 export function MockBreak({ until }: { until: string }) {
   const t = useExtracted();
@@ -48,45 +61,59 @@ export function MockBreak({ until }: { until: string }) {
 
   return (
     <MockFrame
+      aside={
+        hasSeveralSections(runner.view.sections)
+          ? {
+              children: <SheetSections titled={false} />,
+              label: t("Sections"),
+              title: t("Sections"),
+            }
+          : null
+      }
       footer={
         <>
           <MockStepStatus />
-          <TaskMainButton
-            busy={runner.busy === "endBreak"}
-            disabled={runner.pending}
-            onClick={() => void runner.endBreak()}
-          >
-            {t("Start the next section")}
-          </TaskMainButton>
+          <TaskActions>
+            <TaskMainButton
+              busy={runner.busy === "endBreak"}
+              disabled={runner.pending}
+              onClick={() => void runner.endBreak()}
+            >
+              {t("Start the next section")}
+            </TaskMainButton>
+          </TaskActions>
         </>
       }
     >
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
-        <CoffeeIcon aria-hidden="true" className="text-muted-foreground size-8" />
-        <h1 className="text-2xl font-bold">{t("Break")}</h1>
-        {/* The server renders the clock a moment before the browser takes over. */}
-        <p
-          aria-label={t("Break time left")}
-          className="text-4xl font-semibold tabular-nums"
-          role="timer"
-          suppressHydrationWarning
-        >
-          {formatClock(remaining)}
-        </p>
-        <p className="text-muted-foreground text-balance">
-          {t("The next section starts on its own when the break ends.")}
-        </p>
+      <StepCard>
+        <StepHeader>
+          <h1 className="text-label">{t("Break")}</h1>
+          {/* The server renders the clock a moment before the browser takes over. */}
+          <p
+            aria-label={t("Break time left")}
+            className="font-mono text-5xl font-medium tracking-[-0.04em] tabular-nums"
+            role="timer"
+            suppressHydrationWarning
+          >
+            {formatClock(remaining)}
+          </p>
+          <StepDetail>{t("The next section starts on its own when the break ends.")}</StepDetail>
+        </StepHeader>
+
         {next && (
-          <div className="bg-muted/50 flex w-full flex-col gap-1 rounded-2xl px-4 py-3 text-sm">
-            <p className="font-medium">
-              {next.name
-                ? t("Next: {name} · {time}", { name: next.name, time: duration(next.minutes) })
-                : t("Next section · {time}", { time: duration(next.minutes) })}
-            </p>
-            {next.tools && <p className="text-muted-foreground">{next.tools}</p>}
-          </div>
+          <ListGroup className="border-border w-full border-y">
+            <ListRow>
+              <ListRowContent>
+                <ListRowTitle>
+                  {next.name ? t("Next: {name}", { name: next.name }) : t("Next section")}
+                </ListRowTitle>
+                {next.tools && <ListRowDescription>{next.tools}</ListRowDescription>}
+              </ListRowContent>
+              <ListRowTrailing>{duration(next.minutes)}</ListRowTrailing>
+            </ListRow>
+          </ListGroup>
         )}
-      </div>
+      </StepCard>
     </MockFrame>
   );
 }

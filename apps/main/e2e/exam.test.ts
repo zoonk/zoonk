@@ -14,7 +14,8 @@ import {
 import { createApFreeResponseDay, createSatExamAfterMock } from "./exam-scale-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { continueToLastStep, continueToStep, nextStep } from "./result-steps";
+import { captureMissionEnding } from "./mission-ending-captures";
+import { nextStep, stepDots } from "./result-steps";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
 import { openAs } from "./study-day";
 
@@ -48,6 +49,14 @@ async function holdServerActions(page: Page, matches: (body: string) => boolean)
   };
 }
 
+/** The Plan's first number, preparation, as the aside draws it at the tests' desktop width. */
+function preparationNumber(page: Page) {
+  return page
+    .locator('[data-slot="journey-standing"]')
+    .filter({ visible: true })
+    .getByRole("button", { name: /^Preparation/u });
+}
+
 /** Phone widths a result's header must fit, from small to large. */
 const PHONE_WIDTHS = [360, 390, 430];
 
@@ -58,11 +67,13 @@ const PHONE_WIDTHS = [360, 390, 430];
 async function expectDotsClearOfAsk(page: Page) {
   const size = page.viewportSize() ?? { height: 844, width: 1280 };
   const dots = page.locator('[data-slot="step-dots"]');
-  const ask = page.getByRole("button", { name: "Ask Buddy about this mock exam" });
+  const ask = page.getByRole("button", { name: "Ask Zu about this mock exam" });
 
   for (const width of PHONE_WIDTHS) {
     // oxlint-disable-next-line no-await-in-loop -- One width at a time, on the same page.
     await page.setViewportSize({ height: 844, width });
+    // oxlint-disable-next-line no-await-in-loop -- Resizing switches the result to phone steps.
+    await expect(dots).toBeVisible();
     // oxlint-disable-next-line no-await-in-loop -- Measured after each resize.
     const [dotsBox, askBox] = await Promise.all([dots.boundingBox(), ask.boundingBox()]);
 
@@ -128,15 +139,23 @@ test.describe("Exam goal", () => {
       await expect(page.getByText(/^Question 1 of \d+/u)).toBeVisible();
 
       // No tutor while the mock is running.
-      await expect(
-        page.getByRole("button", { name: "Ask Buddy about this mock exam" }),
-      ).toBeHidden();
+      await expect(page.getByRole("button", { name: "Ask Zu about this mock exam" })).toBeHidden();
 
       const flag = page.getByRole("button", { name: "Flag" });
       await flag.click();
       await expect(flag).toHaveAttribute("aria-pressed", "true");
 
-      // The answer sheet says it opens a dialog, and focus comes back to it when the dialog closes.
+      // At desktop width the sheet stays beside the question, with its count and jump buttons.
+      const wideSheet = page.getByRole("complementary", { name: "Answer sheet" });
+      await expect(wideSheet.getByText(/0 answered · 1 flagged/u)).toBeVisible();
+      await expect(page.getByRole("button", { name: "Answer sheet" })).toBeHidden();
+      await wideSheet.getByRole("button", { exact: true, name: "Question 2" }).click();
+      await expect(page.getByText(/^Question 2 of \d+/u)).toBeVisible();
+      await page.keyboard.press("ArrowLeft");
+
+      // On a phone the sheet opens a drawer, and closing it brings focus back to its trigger.
+      const size = page.viewportSize() ?? { height: 720, width: 1280 };
+      await page.setViewportSize({ height: 844, width: 390 });
       const answerSheet = page.getByRole("button", { name: "Answer sheet" });
       await expect(answerSheet).toHaveAttribute("aria-haspopup", "dialog");
       await answerSheet.click();
@@ -151,6 +170,7 @@ test.describe("Exam goal", () => {
 
       await page.keyboard.press("ArrowLeft");
       await expect(page.getByText(/^Question 1 of \d+/u)).toBeVisible();
+      await page.setViewportSize(size);
 
       // The mock flags the first question as it's played, so the flag comes off first.
       await flag.click();
@@ -178,8 +198,7 @@ test.describe("Exam goal", () => {
       await expectAccessibleScreen(page, "handing a mock in");
       await confirm.getByRole("button", { name: "Hand in" }).click();
 
-      // The result one thing at a time. First, the score: a range labeled as an estimate, never a
-      // single number.
+      // The score is a range labeled as an estimate, with its breakdown and review on the page.
       await expect(
         page.getByRole("heading", { level: 1, name: /^Mock exam 2 done\s*\d+–\d+$/u }),
       ).toBeVisible();
@@ -189,37 +208,36 @@ test.describe("Exam goal", () => {
       await expectDotsClearOfAsk(page);
 
       // One score per area of the exam day, each named once; never the day's name for an area.
-      await nextStep(page);
-      await expect(page.getByRole("heading", { level: 1, name: "By area" })).toBeVisible();
-      await expect(page.getByText("Matemática", { exact: true })).toBeVisible();
-      await expect(page.getByText("Ciências da Natureza", { exact: true })).toBeVisible();
+      const areas = page.getByRole("region", { name: "By area" });
+      await expect(areas.getByRole("heading", { level: 2, name: "By area" })).toBeVisible();
+      await expect(areas.getByText("Matemática", { exact: true })).toBeVisible();
+      await expect(areas.getByText("Ciências da Natureza", { exact: true })).toBeVisible();
 
       await expect(
         page.getByText("Ciências da Natureza e Matemática", { exact: true }),
       ).toHaveCount(0);
 
-      // How preparation moved, then the one thing to do now: the mistake, with the questions behind
-      // a link and going on with the day as the quiet option.
-      await continueToStep(page, /^\d+% → \d+%$/u);
-      await expect(page.getByText("Your preparation", { exact: true })).toBeVisible();
-      await continueToLastStep(page);
+      // Preparation and the next action stay in the aside, while the question is reviewed inline.
+      const after = page.getByRole("complementary", { name: "After this mock exam" });
+      await expect(after.getByText(/^\d+% → \d+%$/u)).toBeVisible();
+      await expect(after.getByRole("heading", { name: "Your preparation" })).toBeVisible();
+      await expect(after.getByText("1 mistake to review", { exact: true })).toBeVisible();
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: "1 mistake to review" }),
-      ).toBeVisible();
+      // Its mistakes are reviewed in the notebook now; practice brings them back from tomorrow.
+      await expect(page.getByRole("link", { name: "Review the mistake" })).toHaveAttribute(
+        "href",
+        /\/mistakes$/u,
+      );
 
-      await expect(page.getByRole("link", { name: "Review the mistake" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Continue today's session" })).toBeVisible();
 
-      await page.getByRole("button", { name: "See the question" }).click();
-      const review = page.getByRole("dialog", { name: "Questions to review" });
-      await expect(review.getByText("Right answer")).toBeVisible();
-      await page.keyboard.press("Escape");
-      await expect(review).toBeHidden();
+      const review = page.getByRole("region", { name: "Questions to review" });
+      await expect(review.getByRole("radio", { name: /Correct$/u })).toBeVisible();
+      await expect(review.getByRole("radio", { name: /Your answer$/u })).toBeVisible();
 
       // Once it's handed in, "Ask" is about the mock as a whole.
       await askSuggestion({
-        ask: "Ask Buddy about this mock exam",
+        ask: "Ask Zu about this mock exam",
         description: "Ask questions about this mock exam",
         page,
         suggestion: "What should I practice first?",
@@ -235,9 +253,9 @@ test.describe("Exam goal", () => {
         },
       ]);
 
-      // The estimate lives behind the Journey's number; the exam's page says what's on it.
-      await page.goto("/journey");
-      await page.locator('[data-slot="journey-hero"]').click();
+      // The estimate lives behind the Plan's number; the exam's page says what's on it.
+      await page.goto("/plan");
+      await preparationNumber(page).click();
 
       await expect(
         page
@@ -247,33 +265,138 @@ test.describe("Exam goal", () => {
       ).toBeVisible();
 
       await page.keyboard.press("Escape");
-      await page.getByRole("button", { name: "Journey options" }).click();
+      await page.getByRole("button", { name: "Plan options" }).click();
       await page.getByRole("menuitem", { name: "About the exam" }).click();
       await expect(page).toHaveURL(/\/exam$/u);
 
-      await expect(page.getByRole("heading", { level: 1, name: "About the exam" })).toBeVisible();
+      // The page is named after the exam, with its days left over the name.
+      await expect(page.getByRole("heading", { level: 1, name: "ENEM" })).toBeVisible();
 
       await expect(
         page
           .getByRole("main")
           .getByText(/\d+ days? left/u)
-          .filter({ visible: true }),
+          .filter({ visible: true })
+          .first(),
       ).toBeVisible();
 
       await expect(page.getByText(/^Estimated score/u)).toBeHidden();
 
-      // The exam day by day, as its notice sets it out: each day's date and time over its parts.
+      // The exam day by day, as its notice sets it out, beside the page: each day's date and
+      // length over what it holds.
       const days = page.getByRole("region", { name: "The two days" });
       await expect(days).toContainText("180 questions");
-      await expect(days.getByText(/^Day 1 · November \d+(?:, \d{4})? · 5h 30m$/u)).toBeVisible();
+      const firstDay = days.getByRole("listitem").first();
 
-      await expect(days.getByRole("list", { name: /^Day 1/u }).getByRole("listitem")).toHaveText([
-        /^Linguagens, Ciências Humanas e redação\s*90 questions$/u,
-      ]);
+      await expect(firstDay.getByText("Day 1", { exact: true })).toBeVisible();
+      await expect(firstDay.getByText(/^[A-Z][a-z]+, Nov \d+(?:, \d{4})?$/u)).toBeVisible();
+      await expect(firstDay.getByText("5 hr 30 min", { exact: true })).toBeVisible();
+
+      await expect(
+        firstDay.getByText("Linguagens, Ciências Humanas e redação · 90 questions", {
+          exact: true,
+        }),
+      ).toBeVisible();
 
       await expect(page.getByRole("link", { name: /^Mock exam 2/u })).toBeVisible();
       await expect(page.getByRole("link", { name: /^Mock exam 1/u })).toBeVisible();
       await expectAccessibleScreen(page, "the exam page");
+    });
+  });
+
+  // Ana handed a math mock in with most of it blank, and its result said only "230–390", nothing
+  // of what she answered. An estimated score now shows the answers it comes from, as a net score's
+  // tiles do: right, wrong and blank. The mock was her last mission of the day, so its result says
+  // so with the day's bonus, on a reload too.
+  test("an estimated score shows the right, wrong and blank answers it comes from, and the mission it completed", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const mock = await addTodayMock({ goalId: user.goalId, userId: user.id });
+
+      const block = await prisma.studySessionBlock.findUniqueOrThrow({
+        where: { id: mock.blockId },
+      });
+
+      // Taking the mock is the day's only mission.
+      await prisma.studySession.update({
+        data: {
+          missions: {
+            picks: [
+              {
+                anchor: { blockKind: "checkpoint", planItemId: mock.planItemId },
+                kind: "mock",
+                total: 1,
+              },
+            ],
+            version: 1,
+          },
+        },
+        where: { id: block.sessionId },
+      });
+
+      const answer = async (pick: "right" | "wrong") => {
+        const question = await page
+          .getByRole("main")
+          .getByRole("heading", { level: 2 })
+          .textContent();
+
+        const answers = mock.answers.get(question?.trim() ?? "");
+
+        await page.getByRole("radio", { name: answers?.[pick] }).click();
+        await page.getByRole("button", { name: "Next" }).click();
+      };
+
+      await page.goto(`/mock/${mock.blockId}`);
+      await page.getByRole("button", { name: "Start the mock exam" }).click();
+
+      await expect(page.getByText(/^Question 1 of 6/u)).toBeVisible();
+      await answer("wrong");
+      await expect(page.getByText(/^Question 2 of 6/u)).toBeVisible();
+      await answer("right");
+      await expect(page.getByText(/^Question 3 of 6/u)).toBeVisible();
+
+      // Handed in early, from the answer sheet.
+      await page
+        .getByRole("complementary", { name: "Answer sheet" })
+        .getByRole("button", { exact: true, name: "Hand in" })
+        .click();
+
+      await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+
+      const heading = page.getByRole("heading", {
+        level: 1,
+        name: /^Mock exam 2 done\s*\d+–\d+$/u,
+      });
+
+      await expect(heading).toBeVisible();
+
+      const tiles = page.locator('[data-slot="stat-tile"]').filter({ visible: true });
+
+      await expect(tiles).toHaveText([/^Right\s*1$/u, /^Wrong\s*1$/u, /^Blank\s*4$/u]);
+
+      await expect(
+        page.getByText("Blank answers count as wrong, as on exam day.", { exact: true }),
+      ).toBeVisible();
+
+      const expectMissionDone = async () => {
+        await expect(page.getByText("Mission done: Take the mock")).toBeVisible();
+        await expect(page.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+        await expect(page.getByText("from today's missions")).toBeVisible();
+      };
+
+      await expectMissionDone();
+
+      // The result reads what handing it in recorded, so a reload says the same.
+      await page.reload();
+      await expect(heading).toBeVisible();
+      await expectMissionDone();
+
+      await expect(
+        prisma.studySession.findUniqueOrThrow({ where: { id: block.sessionId } }),
+      ).resolves.toMatchObject({ fullMealAt: expect.any(Date) });
+
+      await captureMissionEnding(page, test.info(), "mock");
     });
   });
 
@@ -295,8 +418,8 @@ test.describe("Exam goal", () => {
       const grading = await holdServerActions(page, (body) => body.includes(draft));
       await page.goto(`/essay/${essay.blockId}`);
 
-      // The grade in steps: the estimated range with each criterion, the next step, the proposal's
-      // missing elements, then rewriting.
+      // The grade in two steps: the estimated range with each criterion, then the next step and
+      // the proposal's missing elements together, followed by rewriting.
       await expect(
         page.getByRole("heading", { level: 1, name: /^Your essay\s*660–740$/u }),
       ).toBeVisible();
@@ -320,12 +443,11 @@ test.describe("Exam goal", () => {
       ).toBeVisible();
 
       await expect(page.getByText("Say by what means the proposal will work.")).toBeVisible();
-      await nextStep(page);
       await expect(page.getByText("By what means, missing")).toBeAttached();
 
       // Rewriting keeps the next step in view, over the draft to rework.
-      await page.getByRole("button", { name: "Rewrite" }).click();
-      await expect(page.getByText("Essay · ENEM rubric")).toBeVisible();
+      await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
+      await expect(page.getByRole("complementary", { name: "Essay · ENEM rubric" })).toBeVisible();
       await expect(page.getByText("Next step: Intervention proposal")).toBeVisible();
 
       const rewrite = page.getByLabel("Rewrite what needs work");
@@ -372,8 +494,63 @@ test.describe("Exam goal", () => {
       await expect(send).toBeEnabled();
       await expect(rewrite).toHaveValue(draft);
 
-      await page.getByRole("button", { name: "Continue" }).click();
+      await page.getByRole("button", { name: "Skip the rewrite" }).click();
       await expect(page).not.toHaveURL(/\/essay\//u);
+    });
+  });
+
+  test("an essay being written stays on the device, and leaving with it unsent asks first", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const essay = await addGradedEssay({ goalId: user.goalId, userId: user.id });
+      const text = "Minha nova versão começa pela proposta de intervenção, com o agente e o meio.";
+
+      await page.goto(`/essay/${essay.blockId}`);
+      // The grade's steps are read once they show.
+      await expect(stepDots(page)).toBeVisible();
+      await nextStep(page);
+      await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
+
+      const rewrite = page.getByLabel("Rewrite what needs work");
+
+      // Rewrite mounted through React's action; its graded text and word count prove the writer is ready.
+      const gradedText = await rewrite.inputValue();
+      expect(gradedText).not.toBe("");
+
+      await expect(
+        page.getByText(`${gradedText.trim().split(/\s+/u).length} words`, { exact: true }),
+      ).toBeVisible();
+
+      await rewrite.fill(text);
+      await expect(rewrite).toHaveValue(text);
+      await expect(page.getByText("14 words", { exact: true })).toBeVisible();
+
+      // A reload loses nothing: the text comes back on the next Rewrite.
+      await page.reload();
+      await expect(stepDots(page)).toBeVisible();
+      await nextStep(page);
+      await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
+      await expect(rewrite).toHaveValue(text);
+      await expect(page.getByText("14 words", { exact: true })).toBeVisible();
+
+      // Leaving with the text unsent asks first; keeping on writing keeps it.
+      await page.getByRole("link", { name: "Leave" }).click();
+      const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
+      await expect(leave).toBeVisible();
+      await leave.getByRole("button", { name: "Keep writing" }).click();
+      await expect(rewrite).toHaveValue(text);
+
+      await page.getByRole("link", { name: "Leave" }).click();
+      await leave.getByRole("button", { name: "Leave" }).click();
+      await expect(page).not.toHaveURL(/\/essay\//u);
+
+      await page.goto(`/essay/${essay.blockId}`);
+      await expect(stepDots(page)).toBeVisible();
+      await nextStep(page);
+      await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
+      await expect(rewrite).toHaveValue(text);
+      await expect(page.getByText("14 words", { exact: true })).toBeVisible();
     });
   });
 
@@ -393,7 +570,7 @@ test.describe("Exam goal", () => {
             nativeLanguage: "pt",
             ownLevel: "basic",
             subject: "English",
-            targetDate: "2099-03-31",
+            targetDate: `${new Date().getUTCFullYear() + 3}-03-31`,
             targetLanguage: "en",
             title: "Learn English",
           },
@@ -404,8 +581,8 @@ test.describe("Exam goal", () => {
     });
 
     await page.goto("/start");
-    await page.getByRole("textbox", { name: "Your goal" }).fill(goal);
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await page.getByRole("button", { name: "Build my plan" }).click();
     await page.getByRole("button", { name: "Looks right" }).click();
 
     await expect(page.getByRole("heading", { name: "Why are you learning it?" })).toBeVisible();
@@ -448,7 +625,7 @@ test.describe("Exam goal", () => {
         page.getByRole("heading", { level: 1, name: "Nothing left to work on" }),
       ).toBeVisible();
 
-      await page.getByRole("button", { name: "Rewrite" }).click();
+      await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
 
       await expect(
         page.getByText("Every criterion has full marks in this estimate."),
@@ -475,8 +652,12 @@ test.describe("Exam goal", () => {
     await nextStep(page);
     await expect(page.getByRole("heading", { level: 1, name: "(c) Explanation" })).toBeVisible();
 
-    await page.getByRole("button", { name: "Rewrite" }).click();
-    await expect(page.getByText("Free response · AP scoring guidelines")).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
+
+    await expect(
+      page.getByRole("complementary", { name: "Free response · AP scoring guidelines" }),
+    ).toBeVisible();
+
     await page.context().close();
   });
 
@@ -495,9 +676,9 @@ test.describe("Exam goal", () => {
     await page.reload();
     await expect(page.getByText("Result saved: 1350. Thank you for telling us.")).toBeVisible();
 
-    // The estimate, on the exam's own scale, sits behind the Journey's number.
-    await page.goto("/journey");
-    await page.locator('[data-slot="journey-hero"]').click();
+    // The estimate, on the exam's own scale, sits behind the Plan's number.
+    await page.goto("/plan");
+    await preparationNumber(page).click();
 
     await expect(
       page
@@ -528,8 +709,9 @@ test.describe("Exam goal", () => {
     ).toBeVisible();
 
     // Statements are judged right or wrong, as the exam prints them, never true or false.
-    await expect(page.getByRole("button", { name: /^True/u })).toBeHidden();
-    await page.getByRole("button", { name: /^Right/u }).click();
+    await expect(page.getByRole("radio", { name: /^True/u })).toBeHidden();
+    await page.getByRole("radio", { name: /^Right/u }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await expect(feedback.getByText(QUOTED_STATEMENT_CITATION)).toBeVisible();
     await expect(page.getByText("net 1")).toBeVisible();
@@ -537,7 +719,8 @@ test.describe("Exam goal", () => {
 
     // Left blank: it cancels nothing, reads as left blank (not as a mistake) and isn't saved as one.
     await expect(page.getByText(/^Second statement/u)).toBeVisible();
-    await page.getByRole("button", { name: "Leave blank" }).click();
+    await page.getByRole("radio", { name: "Leave blank" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Left blank")).toBeVisible();
     await expect(feedback.getByText("Not quite")).toBeHidden();
     await expect(feedback.getByText(/Saved to your mistakes/u)).toBeHidden();
@@ -550,15 +733,18 @@ test.describe("Exam goal", () => {
     await expect(page.getByText("0 wrong")).toBeVisible();
     await expect(page.getByText("net 1")).toBeVisible();
 
-    // Wrong on a right statement: the net drops back to zero.
-    await page.getByRole("button", { name: /^Wrong/u }).click();
-    await expect(feedback.getByText("Right answer: Right")).toBeVisible();
+    // Wrong on a right statement: the net drops back to zero, and the options show the right
+    // answer beside the pick.
+    await page.getByRole("radio", { name: /^Wrong/u }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(page.getByRole("radio", { name: /^Right.*Correct$/u })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /^Wrong.*Your answer$/u })).toBeVisible();
     await expect(page.getByText("net 0")).toBeVisible();
     await page.keyboard.press("Enter");
 
     // The day's only block ends on the summary, led by the net score.
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
-    await expect(page.getByText("Net score 0", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+    await expect(page.getByText("net 0", { exact: true })).toBeVisible();
     await page.context().close();
   });
 });

@@ -1,8 +1,9 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
 import {
+  CURRENT_ROW_CLASS,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -11,19 +12,21 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { StatusMark } from "../_components/status-mark";
 import { useExamScreen } from "./exam-context";
+import { useExamDayDate } from "./exam-labels";
 
 /**
- * The next weekly mock exam as a row of the mocks' list, one tap from its intro, when one is coming:
- * half the exam (as the chooser names it) on regular weeks, the full exam in the final stretch, its
- * day and questions under it and "Next" at its end. Without Plus it's there all the same, marked
- * Plus in place of "Next" (two marks squeezed its name at 390), and its intro says what Plus
- * unlocks.
+ * The next weekly mock exam as a row of the mocks' list, one tap from its intro, when one is
+ * coming: half the exam (as the chooser names it) on regular weeks, the full exam in the final
+ * stretch, its questions under it and its day at the row's end, as the taken ones' results are.
+ * It's highlighted as the list's next one (`current`, the caller marking its item `aria-current`)
+ * unless a mock the learner left running comes first. Without Plus it's there all the same, marked
+ * Plus beside its name, and its intro says what Plus unlocks.
  */
-export function ExamNextMock() {
+export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+  const dayDate = useExamDayDate();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -31,32 +34,24 @@ export function ExamNextMock() {
     return null;
   }
 
-  const questions = t("{count, plural, one {# question} other {# questions}}", {
-    count: next.questions,
-  });
-
   return (
-    <ListRowLink href={hrefs.challenge(next.planItemId)}>
+    <ListRowLink
+      className={cn(current && CURRENT_ROW_CLASS)}
+      href={hrefs.challenge(next.planItemId)}
+    >
       <ListRowLeading>
-        <KindTile kind="mock" />
+        <StatusMark status={current ? "next" : "todo"} />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle>{next.fullLength ? t("Full exam") : t("Half the exam")}</ListRowTitle>
+        <ListRowTitle className="flex items-center gap-2">
+          {next.fullLength ? t("Full exam") : t("Half the exam")}
+          {exam.mocksRequirePlus && <PlusMark />}
+        </ListRowTitle>
         <ListRowDescription>
-          {next.date
-            ? `${formatDate(next.date, "weekday")}, ${formatDate(next.date, "long")} · ${questions}`
-            : questions}
+          {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
         </ListRowDescription>
       </ListRowContent>
-      <ListRowTrailing>
-        {exam.mocksRequirePlus ? (
-          <PlusMark />
-        ) : (
-          <span className="bg-muted text-muted-foreground inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold">
-            {t("Up next")}
-          </span>
-        )}
-      </ListRowTrailing>
+      {next.date && <ListRowTrailing>{dayDate(next.date)}</ListRowTrailing>}
     </ListRowLink>
   );
 }
