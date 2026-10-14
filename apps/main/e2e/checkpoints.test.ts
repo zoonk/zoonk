@@ -11,10 +11,10 @@ import {
   starShownAt,
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
-import { createUpcomingBoss } from "./upcoming-checkpoint-fixture";
 import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
+import { createUpcomingBoss } from "./upcoming-checkpoint-fixture";
 
 async function planItemStatus(id: string) {
   const item = await prisma.planItem.findUniqueOrThrow({ where: { id } });

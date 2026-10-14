@@ -4,9 +4,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudyBlock } from "../session/session-types";
+import { DAY_SEGMENTS_CLASS, DaySegment, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
-import { DAY_SEGMENTS_CLASS, DaySegment, type DaySegmentState } from "./day-segments";
 import { isFinished } from "./today-queue";
 import { useSessionState } from "./use-today-copy";
 

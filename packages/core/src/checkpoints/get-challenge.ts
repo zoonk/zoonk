@@ -273,7 +273,13 @@ export async function getChallenge({
       sections: size.sections,
       // The exam's real start time when it has one, else the time the learner's own words gave.
       startTime: size.startTime ?? goal.studyTime,
-      status: getAvailableChallengeStatus({ block, call, isMock, questions: size.questions, status }),
+      status: getAvailableChallengeStatus({
+        block,
+        call,
+        isMock,
+        questions: size.questions,
+        status,
+      }),
       timeZone: size.startTime ? size.timeZone : null,
       title: item.titleSnapshot,
       today: toIsoDate(today),

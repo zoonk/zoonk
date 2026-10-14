@@ -1,5 +1,6 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
 import { type Subscription } from "@zoonk/db";
+import { CHIP_CLASS } from "@zoonk/learn/chip";
 import {
   Page,
   PageHeader,
@@ -10,7 +11,6 @@ import {
   PageSubtitle,
   PageTitle,
 } from "@zoonk/learn/page";
-import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
