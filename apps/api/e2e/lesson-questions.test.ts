@@ -45,11 +45,7 @@ function ask({
 }
 
 async function askQuestion(input: Parameters<typeof ask>[0]) {
-  return readBody({
-    response: await ask(input),
-    schema: createdLessonQuestionSchema,
-    status: 201,
-  });
+  return readBody({ response: await ask(input), schema: createdLessonQuestionSchema, status: 201 });
 }
 
 /**
