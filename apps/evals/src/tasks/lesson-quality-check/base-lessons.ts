@@ -45,6 +45,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context: null,
           image: null,
           kind: "check",
@@ -87,6 +88,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context:
             "Ana visits a church in Lisbon. Its doorway has a round arch set in thick walls.",
           image: null,
@@ -178,6 +180,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context: "O núcleo atrai o elétron para perto.",
           image: null,
           kind: "check",
@@ -221,6 +224,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context: "Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».",
           image: null,
           kind: "check",
@@ -252,6 +256,7 @@ export const BASE_LESSONS = {
         },
         {
           acceptedAnswers: [],
+          basis: null,
           context:
             "Um celular é feito de átomos que não desabam sobre seus núcleos. Uma pessoa imagina os elétrons como bolinhas prestes a cair.",
           keyPoints: [
@@ -299,6 +304,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context:
             "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
           image: null,
@@ -379,6 +385,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context:
             "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
           correctReason:
@@ -459,6 +466,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context:
             "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
           correctReason:
@@ -509,6 +517,7 @@ export const BASE_LESSONS = {
           question: "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?",
         },
         {
+          basis: null,
           context:
             "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
           correctReason:
@@ -611,6 +620,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context: null,
           correctReason: "You start at {start} °C and move {rise} degrees up.",
           kind: "mathCheck",
@@ -662,6 +672,7 @@ export const BASE_LESSONS = {
         },
         {
           acceptedAnswers: [],
+          basis: null,
           context: null,
           keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
           kind: "typedAnswer",
@@ -670,6 +681,7 @@ export const BASE_LESSONS = {
           visual: null,
         },
         {
+          basis: null,
           context:
             "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
           image: null,

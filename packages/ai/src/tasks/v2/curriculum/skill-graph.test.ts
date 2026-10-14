@@ -62,6 +62,7 @@ function answer(output: unknown) {
     model: { modelId: MODEL, provider: "gateway" },
     providerMetadata: {},
     response: { modelId: MODEL },
+    usage,
   };
 
   return { finalStep: step, output, steps: [step], usage };
@@ -261,6 +262,27 @@ describe(generateSkillGraph, () => {
 
     expect(portuguese).toHaveLength(6);
     expect(portuguese.every((skill) => skill.prerequisites.length === 0)).toBe(true);
+  });
+
+  it("keeps a graph whose phase is titled like one of its skills instead of drafting it again", async () => {
+    vi.mocked(generateText).mockReset();
+
+    vi.mocked(generateText).mockResolvedValue(
+      answer({
+        ...WHOLE_GRAPH,
+        phases: [{ milestone: "Entender o português", title: "Entender português" }],
+      }) as never,
+    );
+
+    const { data } = await generateSkillGraph({
+      goal: "Entender textos",
+      goalKind: "learn",
+      language: "pt",
+      purpose: "overview",
+    });
+
+    expect(generateText).toHaveBeenCalledOnce();
+    expect(data.phases.map((phase) => phase.title)).toStrictEqual(["Entender português"]);
   });
 
   it("repairs em dashes, Markdown and a skill written twice in code, and reports them", async () => {

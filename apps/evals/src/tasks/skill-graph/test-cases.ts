@@ -337,7 +337,7 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics
       - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information
       - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism
-      - The honest size is hundreds of hours (roughly 300 to 600); phases like "math", "calculus and linear algebra", "classical physics", "quantum mechanics", "advanced topics" are sensible
+      - The honest size is hundreds of hours (roughly 300 to 600); phases that move from the math physics uses through calculus, linear algebra and classical physics to quantum mechanics and its advanced topics are sensible
       - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills
 
       ${SHARED_EXPECTATIONS}
@@ -561,6 +561,30 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       goal: "Aprender inglés para trabajar en un hotel en Londres",
       goalKind: "language",
       language: "es",
+      ownLevel: "basic",
+      targetLanguage: "en",
+    },
+  },
+  {
+    // Marcos, Oct 2026: his plan's phases were named like the situations they teach ("Alugando um
+    // apartamento"), so an open phase showed its name again over the unit of that name.
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Language goal for a move abroad with a partner: skills are real situations with can-dos for the move and the first months there, such as immigration and arrival, renting a home, opening a bank account and getting a phone plan, the doctor and the pharmacy, work, neighbors and making friends
+      - Ordered by CEFR level from A2 toward B1+ (beginner then intermediate); the learner says they're at A2, so the path doesn't start at the alphabet or greetings
+      - Grammar lives inside situations, not as standalone grammar skills
+      - The course is English itself, titled in Portuguese ("Inglês")
+      - Each phase's title names a stage of the move in a few words, different from every other phase's title, and never one of the situations it teaches: a phase titled "Alugando um apartamento" over the skill "Alugar um apartamento" is the failure this case guards against
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-language-english-moving-abroad",
+    userInput: {
+      context:
+        "Vou me mudar para Toronto daqui a 6 meses com a minha esposa. Acho que estou no A2: leio razoavelmente, mas travo para falar e entender.",
+      goal: "Falar inglês para a mudança para Toronto",
+      goalKind: "language",
+      language: "pt",
       ownLevel: "basic",
       targetLanguage: "en",
     },

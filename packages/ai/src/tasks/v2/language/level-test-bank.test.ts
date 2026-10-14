@@ -41,6 +41,7 @@ function writeLevel(level: string) {
     model: { modelId: MODEL, provider: "gateway" },
     providerMetadata: { gateway: { cost: "0.05" } },
     response: { modelId: MODEL },
+    usage,
   };
 
   return {

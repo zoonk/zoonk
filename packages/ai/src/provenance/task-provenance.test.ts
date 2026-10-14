@@ -15,18 +15,23 @@ const usage: LanguageModelUsage = {
   totalTokens: 15,
 };
 
-function createStep(gateway?: ProviderMetadata[string]) {
+function createStep(gateway?: ProviderMetadata[string], stepUsage = usage) {
   return {
     model: { modelId: "openai/gpt-6-luna", provider: "gateway" },
     providerMetadata: gateway === undefined ? undefined : { gateway },
     response: { modelId: "openai/gpt-6-luna" },
+    usage: stepUsage,
   };
 }
 
 function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
   return buildTaskProvenance({
     generatedAt: "2026-09-26T12:00:00.000Z",
-    generation: { finalStep: steps.at(-1) ?? createStep(), steps, usage },
+    generation: {
+      finalStep: steps.at(-1) ?? createStep(),
+      steps,
+      usage: sumLanguageModelUsage(steps.map((step) => step.usage)),
+    },
     latencyMs: 10,
     promptVersion: "version",
     runId: "run-1",
@@ -34,6 +39,88 @@ function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
 }
 
 describe(buildTaskProvenance, () => {
+  it("prices each step at its served model and tier while keeping aggregate usage", () => {
+    const stepUsage: LanguageModelUsage = {
+      inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 1000 },
+      inputTokens: 1000,
+      outputTokenDetails: { reasoningTokens: 0, textTokens: 500 },
+      outputTokens: 500,
+      totalTokens: 1500,
+    };
+
+    const provenance = buildWithSteps([
+      createStep({ serviceTier: "flex" }, stepUsage),
+      createStep(
+        {
+          routing: {
+            finalProvider: "vertex",
+            modelAttempts: [{ canonicalSlug: "google/gemini-3.8-flash", success: true }],
+          },
+        },
+        stepUsage,
+      ),
+    ]);
+
+    // Luna flex: $0.000175; Gemini standard: $0.002625.
+    expect(provenance.costUsd).toBeCloseTo(0.0028, 10);
+    expect(provenance.model).toBe("openai/gpt-6-luna, google/gemini-3.8-flash");
+    expect(provenance.provider).toBe("gateway, vertex");
+    expect(provenance.serviceTier).toBe("mixed");
+    expect(provenance.requestedModel).toBe("openai/gpt-6-luna");
+
+    expect(provenance.usage).toMatchObject({
+      inputTokens: 2000,
+      outputTokens: 1000,
+      totalTokens: 3000,
+    });
+  });
+
+  it("prices mixed models correctly regardless of which model answers last", () => {
+    const stepUsage: LanguageModelUsage = {
+      ...usage,
+      inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 0, noCacheTokens: 1000 },
+      inputTokens: 1000,
+      outputTokenDetails: { reasoningTokens: 0, textTokens: 500 },
+      outputTokens: 500,
+      totalTokens: 1500,
+    };
+
+    const luna = createStep(undefined, stepUsage);
+
+    const gemini = createStep(
+      { routing: { modelAttempts: [{ canonicalSlug: "google/gemini-3.8-flash", success: true }] } },
+      stepUsage,
+    );
+
+    // Luna standard: $0.00035; Gemini standard: $0.002625.
+    expect(buildWithSteps([luna, gemini]).costUsd).toBeCloseTo(0.002975, 10);
+    expect(buildWithSteps([gemini, luna]).costUsd).toBeCloseTo(0.002975, 10);
+  });
+
+  it("prices different tiers independently even when the model stays the same", () => {
+    const provenance = buildWithSteps([
+      createStep({ serviceTier: "flex" }),
+      createStep(),
+      createStep({ serviceTier: "flex" }),
+    ]);
+
+    expect(provenance.costUsd).toBeCloseTo(7e-6, 10);
+    expect(provenance.model).toBe("openai/gpt-6-luna");
+    expect(provenance.serviceTier).toBe("mixed");
+  });
+
+  it("leaves the total unknown if any step ran on an unpriced model", () => {
+    const provenance = buildWithSteps([
+      createStep({
+        routing: { modelAttempts: [{ canonicalSlug: "unpriced/model", success: true }] },
+      }),
+      createStep(),
+    ]);
+
+    expect(provenance.costUsd).toBeUndefined();
+    expect(provenance.model).toBe("unpriced/model, openai/gpt-6-luna");
+  });
+
   it("prices the call from its usage, whatever the gateway billed for our own key", () => {
     const provenance = buildWithSteps([createStep({ cost: "0" })]);
 

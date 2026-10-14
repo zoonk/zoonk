@@ -86,6 +86,46 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
     ),
   },
   {
+    // The filler goes from the sentence the calculation quotes, so its quote follows the new words.
+    expected: { screens: [1, 3] },
+    id: "en-temperature-basis-follows",
+    userInput: toInput(
+      temperature,
+      withScreens(temperature, {
+        1: {
+          exampleLineIdea: null,
+          explore: null,
+          image: {
+            alt: "A thermometer with an arrow going up past zero.",
+            prompt: "A thermometer from −5 °C to 5 °C.",
+          },
+          kind: "explanation",
+          text: "It's important to note that a rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+          title: "Up is up, even below zero",
+          visual: null,
+        },
+        3: {
+          ...mathCheck,
+          basis: { quote: "a rise always moves **up** the thermometer.", screen: 2 },
+          math: {
+            ...mathCheck.math,
+            steps: [
+              { expression: null, text: "Start at {start} °C and move {rise} degrees up." },
+              { expression: null, text: "You land on {result} °C." },
+            ],
+          },
+        },
+      }),
+      [
+        {
+          problem: 'Uses filler ("it\'s important to note"); cut it and say the idea directly.',
+          screen: 1,
+        },
+        { problem: "Step 2 shows {result} without an expression.", screen: 3 },
+      ],
+    ),
+  },
+  {
     expected: { screens: [5] },
     id: "en-temperature-activity-answer",
     userInput: toInput(
@@ -127,6 +167,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
       temperature,
       withScreens(temperature, {
         7: {
+          basis: null,
           context:
             "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
           image: {

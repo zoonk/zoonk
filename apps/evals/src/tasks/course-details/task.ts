@@ -9,7 +9,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const courseDetailsTask: Task<CourseDetailsParams, CourseDetails, CourseDetailsExpected> = {
   description:
-    "Write a shared course's public page from its outline: description, landing copy (value, audience, outcomes, uses) and 1 or 2 catalog categories",
+    "Write a shared course's public page from its outline: description, landing copy (the promise, audience and outcomes) and 1 or 2 catalog categories",
   generate: generateCourseDetails,
   id: "course-details",
   name: "Course Details",

@@ -36,11 +36,21 @@ export function normalizeDraft({ params, raw }: { params: DraftParams; raw: RawS
 type GraphDraft = ReturnType<typeof normalizeDraft>;
 
 /**
+ * Problems code finds that a new draft isn't worth: a skill beyond the notice that opens a subject
+ * is the planner's to rank after the notice's (coverage may still place it in the notice), and a
+ * phase titled like what it teaches would cost a whole new graph for one name (over a chapter of
+ * that name, the plan names the phase by its place). Evals still count both.
+ */
+const KEPT_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
+  "offNoticeFirst",
+  "repeatedPhaseName",
+]);
+
+/**
  * What code finds in a normalized graph that only a model can fix (`findSkillGraphProblems`): a
  * chain too deep or in a textbook's order, unfinished text, or Markdown no repair could take out.
  * Normalization already broke loops, merged skills written twice and took em dashes and Markdown
- * out, and a skill beyond the notice that opens a subject is the planner's to rank after the
- * notice's (coverage may still place it in the notice).
+ * out, and some problems aren't worth a new draft (`KEPT_CODES`).
  */
 export function findRedraftProblems({
   data,
@@ -53,7 +63,7 @@ export function findRedraftProblems({
     exam: params.goalKind === "exam",
     phases: data.phases,
     skills: data.skills,
-  }).filter((problem) => problem.code !== "offNoticeFirst");
+  }).filter((problem) => !KEPT_CODES.has(problem.code));
 }
 
 type GraphFrame = Pick<RawSkillGraph, "courses" | "phases">;

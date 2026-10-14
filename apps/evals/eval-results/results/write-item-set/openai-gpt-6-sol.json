@@ -5,167 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Solving from the stimulus supports the first option in all three questions: workshops promote informed decisions, repair should not disregard risks and appropriate disposal, and guidance can remain useful without a successful repair. No second option is defensible in context. Each answer connects to the text's particular argument or episode, and all three evidence passages are copied verbatim. No wrong-key, ambiguity, or multiple-stimulus-independent-question cap is triggered.",
-          "score": 9,
-          "label": "Right keys that need the stimulus",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The short report-like text, everyday environmental theme, clear commands, and five options per question fit the requested ENEM-style learning set. The questions address central idea, language choice, and an example's argumentative contribution. However, the final question provides only shallow inference practice, and several distractors are conspicuously absolute or weakly connected to plausible textual misreadings. These reduce assessment realism without making the whole set out of place.",
-          "score": 8,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "stimulus",
-          "reasoning": "The stimulus is coherent, natural Brazilian Portuguese, with a clear progression across three contrasting workshop experiences and no em dashes. It attributes itself to no real author, outlet, book, or study and supplies no invented statistics. The named cities function as settings for the original narrative rather than as sources or subjects of unsupported factual generalizations. Explanations and misconception labels are in Portuguese and accurately reference the text.",
-          "score": 10,
-          "label": "Original, clear stimulus",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3161,
-          "outputTokens": 1209,
-          "reasoningTokens": 661
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The inference demand is weak: the Igor question largely restates the explicit conclusion that the visit helped him evaluate his next step. Some distractors are less convincing as reading mistakes, especially the same-day replacement requirement in question 2, which has no textual foothold. Repeated absolute claims also make elimination easier than the intended intermediate reading level suggests.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make one question require a genuinely unstated conclusion supported by multiple details. Replace the arbitrary deadline distractor with a plausible misinterpretation of the battery episode, and make incorrect alternatives less dependent on conspicuous absolutes.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "One ENEM Linguagens set in Brazilian Portuguese: an original text (a chronicle, an opinion piece or a report, never attributed to a real author or outlet) and 3 multiple-choice questions with 5 options each that need it: its main idea, an inference and the effect of a language choice. Distractors come from reading mistakes. Every question's evidence is copied from the text.",
-        "id": "pt-enem-linguagens-texto-tres-questoes-1",
-        "userInput": {
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "format": "multipleChoice",
-          "language": "pt",
-          "questionCount": 3,
-          "skills": [
-            {
-              "description": "Identificar a tese ou a ideia central de um texto argumentativo ou jornalístico.",
-              "level": "intermediate",
-              "name": "Ideia central do texto"
-            },
-            {
-              "description": "Inferir informações implícitas e o efeito de sentido de escolhas linguísticas.",
-              "level": "intermediate",
-              "name": "Inferência e efeitos de sentido"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
-          "reasoning": "Independent judgments are: Question 1 is TRUE on an observational reading but NOT GIVEN on a causal reading; Question 2 is FALSE because discrepancies continued every week; Question 3 is NOT GIVEN because comparative late-return rates are absent; Question 4 is FALSE because Maya explicitly imposed a staffing condition. All questions require passage-specific information. Question 1 nevertheless permits a second defensible answer, triggering the maximum score of 6.",
-          "score": 6,
-          "label": "Right keys that need the stimulus",
-          "weight": 35
-        },
-        {
-          "categoryId": "examRealism",
-          "reasoning": "The approximately 290-word passage meets the requested length, and the four questions use exactly TRUE, FALSE, NOT GIVEN in the required order with fixedOrder true. Reduction versus elimination, missing return-rate information, and a reversed condition are credible IELTS reading distinctions. The case-study register is suitable for this shortened set, although the named-person navigation and largely direct paraphrases provide limited advanced-level challenge. The set is not sufficiently out of place to trigger the score cap.",
-          "score": 8,
-          "label": "Exam realism",
-          "weight": 35
-        },
-        {
-          "categoryId": "stimulus",
-          "reasoning": "The passage is clear, natural English with an appropriate report-like register and no em dashes. It makes no claim to reproduce a real source and does not identify its trial as a real published study. The evidence excerpts are copied from the passage, and explanations and misconceptions are in English and grounded in its content. No source-attribution, fabrication, or unnatural-writing cap is triggered.",
-          "score": 9,
-          "label": "Original, clear stimulus",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 5 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2968,
-          "outputTokens": 1108,
-          "reasoningTokens": 510
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Question 1 has a consequential causal ambiguity. The passage establishes that members found tools faster during the trial but leaves the cause uncertain. Saying \"Caleb's trial improved the speed\" can assert that the intervention caused the improvement, making NOT GIVEN defensible alongside the intended TRUE. The explanation acknowledges uncertainty without removing it from the statement.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The questions offer limited challenge for the specified advanced skill: named individuals direct learners to individual paragraphs, and most judgments depend on close paraphrases or conspicuous absolute wording rather than substantial interpretation.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Rewrite Question 1 as an observation, such as \"During the trial, members found tools faster while the number available for loan remained unchanged.\" Expand Question 3's evidence to include the sentence distinguishing collection waits from borrowing duration, and Question 4's evidence to identify the task referenced by \"that task.\"",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "One IELTS Academic Reading set in English: an original academic passage of 250 to 350 words and 4 True/False/Not Given statements, each a multiple-choice question whose options are exactly TRUE, FALSE and NOT GIVEN in that order with fixedOrder true, including at least one NOT GIVEN whose key is right because the passage doesn't say. Evidence is copied from the passage.",
-        "id": "en-ielts-academic-true-false-not-given-1",
-        "userInput": {
-          "examFormat": {
-            "name": "IELTS Academic Reading",
-            "optionCount": 3,
-            "style": "A long academic passage followed by question groups; True/False/Not Given statements are answered with the same three options in that order: TRUE if the statement agrees with the passage, FALSE if it contradicts it, NOT GIVEN if the passage doesn't say."
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "questionCount": 4,
-          "skills": [
-            {
-              "description": "Tell whether a statement agrees with, contradicts or isn't covered by an academic text.",
-              "level": "advanced",
-              "name": "Identifying information (True/False/Not Given)"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "keys",
           "reasoning": "Independent assessment yields Certo, Errado, Certo, Errado, matching every supplied key. Annulment for illegality generally has retroactive effects; revocation does not remedy illegality; the valid safety order binds without consent; and imperativity does not authorize direct seizure of bank funds. However, items 2 and 4 are answerable from their false general propositions alone, and item 1 states its decisive factual premise. The explicit cap of 7 for several stimulus-independent questions applies.",
           "score": 7,
           "label": "Right keys that need the stimulus",
@@ -246,21 +85,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All three keys follow uniquely from the stimulus. Friction on A is 4 N, giving initial acceleration (40−12−4)/6 = 4 m/s² and tension 24 N. B reaches the floor after 1 s with speed 4 m/s; A then decelerates at 8 m/s² for 0.5 s, giving 1.5 s total. A travels another 1 m, so friction dissipates 12 J overall and B's collision dissipates 32 J, totaling 44 J. Each question requires stimulus-specific information, and no alternative option is defensible.",
+          "reasoning": "All three marked answers follow from the stimulus and are uniquely defensible. The central argument concerns adapting returns to people's routines; changing payment alone would leave the Saturday/Sunday mismatch unresolved; and 'pequeno desvio' understates the reversal from adapting people to the system to adapting the system to people. Each question requires textual information, and every evidence excerpt is copied exactly. No score cap applies.",
           "score": 10,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The shared mechanics setup, concise English, three single-answer questions, four options each, and physically motivated distractors fit the requested format. The time and energy questions integrate the two motion stages successfully. However, the tension question remains a standard textbook coupled-body exercise, weakening the expressly required JEE Advanced difficulty in every question. This difficulty mismatch limits exam realism to 7.",
-          "score": 7,
+          "reasoning": "The short, contextualized opinion-style text and three five-option questions fit the requested ENEM Linguagens set. The questions address distinct reading operations, and distractors generally reflect identifiable misreadings. However, several extreme or plainly contradictory alternatives make the set easier and less discriminating than a strong intermediate ENEM exercise. The set does not look out of place overall, so the out-of-place cap does not apply.",
+          "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The stimulus is a clear, self-contained hypothetical experiment with no claimed real source or invented real-world facts. It supplies consistent SI quantities, explicitly describes the inelastic stop and slack string, and provides everything needed through A's first turning point. The language is natural, contains no em dashes, and the English explanations connect the distractors to specific physical mistakes.",
+          "reasoning": "The text is clear, natural Brazilian Portuguese, with an everyday situation and a coherent argument. Its setting is explicitly fictional; it neither claims a real source nor invents facts about real entities. There are no em dashes. Reasons and misconception labels are in Portuguese and consistently refer to the stimulus. No applicable cap or concrete stimulus weakness is evident.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -278,23 +117,164 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3315,
-          "outputTokens": 1397,
-          "reasoningTokens": 833
+          "inputTokens": 3274,
+          "outputTokens": 764,
+          "reasoningTokens": 228
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The Newton's-laws question falls short of the requested consistently JEE Advanced-level challenge. It is a routine, single-stage rough-incline pulley calculation; asking for tension 'immediately before' impact does not make the floor or stage transition relevant. The other two questions meaningfully combine stages, but the expectations require that level of integration in every question.",
-          "kind": "majorErrors",
-          "score": 7
+          "conclusion": "Some distractors are too easy to dismiss for an intermediate ENEM set. In question 1, abandoning reuse unless it eliminates all disposables is an extreme position; in question 2, the supposed impossibility of reusing the pots contradicts the initiative's basic premise. These options represent reading mistakes, but provide limited discrimination.",
+          "kind": "minorErrors",
+          "score": 8.5
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Strengthen the force question by making its answer depend on another stage or a constraint change, rather than merely calculating the constant pre-impact tension. Preserve the existing numerical consistency and misconception-based distractors.",
+          "conclusion": "Replace the weakest distractors with closer misreadings of the text, such as confusing the number of disposables avoided with the main criterion for success, or confusing expanded return locations with expanded return times. Preserve the current distinction between main idea, inference, and language effect.",
           "kind": "potentialImprovements",
           "score": 9
         }
+      ],
+      "testCase": {
+        "expectations": "One ENEM Linguagens set in Brazilian Portuguese: an original text (a chronicle, an opinion piece or a report, never attributed to a real author or outlet) and 3 multiple-choice questions with 5 options each that need it: its main idea, an inference and the effect of a language choice. Distractors come from reading mistakes. Every question's evidence is copied from the text.",
+        "id": "pt-enem-linguagens-texto-tres-questoes-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "questionCount": 3,
+          "skills": [
+            {
+              "description": "Identificar a tese ou a ideia central de um texto argumentativo ou jornalístico.",
+              "level": "intermediate",
+              "name": "Ideia central do texto"
+            },
+            {
+              "description": "Inferir informações implícitas e o efeito de sentido de escolhas linguísticas.",
+              "level": "intermediate",
+              "name": "Inferência e efeitos de sentido"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "The passage supports all four judgments: TRUE, FALSE, NOT GIVEN, TRUE. Recording explicitly began before the intervention; the larger increase occurred beside the inlet; battery losses are not broken down by station; and increased calling does not establish increased juvenile survival. The NOT GIVEN item genuinely concerns missing information. Each question requires passage-specific information, and no competing answer is defensible.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The 334-word academic passage meets the requested length and supports exactly four IELTS-style True/False/Not Given statements. Every question uses TRUE, FALSE, NOT GIVEN in that order with fixedOrder true. The questions test chronology, comparison, an unspecified detail, and a supported inference. Incorrect judgments reflect plausible reading errors, including reversing a comparison and confusing missing information with contradiction.",
+          "score": 10,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The passage is clear, natural English with an appropriate academic register and no em dashes. Its setting is explicitly fictional, and it neither claims a real source nor presents invented findings about identifiable real entities. All evidence excerpts are copied from the passage. Reasons and misconceptions are in English and accurately explain the relevant textual support or absence of information.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2990,
+          "outputTokens": 1264,
+          "reasoningTokens": 862
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "One IELTS Academic Reading set in English: an original academic passage of 250 to 350 words and 4 True/False/Not Given statements, each a multiple-choice question whose options are exactly TRUE, FALSE and NOT GIVEN in that order with fixedOrder true, including at least one NOT GIVEN whose key is right because the passage doesn't say. Evidence is copied from the passage.",
+        "id": "en-ielts-academic-true-false-not-given-1",
+        "userInput": {
+          "examFormat": {
+            "name": "IELTS Academic Reading",
+            "optionCount": 3,
+            "style": "A long academic passage followed by question groups; True/False/Not Given statements are answered with the same three options in that order: TRUE if the statement agrees with the passage, FALSE if it contradicts it, NOT GIVEN if the passage doesn't say."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "questionCount": 4,
+          "skills": [
+            {
+              "description": "Tell whether a statement agrees with, contradicts or isn't covered by an academic text.",
+              "level": "advanced",
+              "name": "Identifying information (True/False/Not Given)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three keys follow uniquely from the stimulus. Friction is 4 N, giving coupled acceleration 8/3 m/s² and tension 44/3 N; the perpendicular string forces therefore require an axle force of 44√2/3 N. A reaches the floor event at √8 m/s and the spring at √6 m/s, so the intervening time is √8 − √6 seconds. Its 12 J at spring contact gives 10x² + 4x = 12, hence x = (√31 − 1)/5 m. Every question requires stimulus-specific information, and the speeds and energies agree across stages.",
+          "score": 10,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The concise shared mechanics setup supports exactly three single-answer questions with four options each. Each targets a distinct requested skill and requires multiple steps: coupled Newton equations followed by a vector resultant, motion across two acceleration regimes, and staged energy accounting followed by spring compression against friction. These are appropriate paragraph-based JEE Advanced tasks rather than direct substitutions. Every distractor corresponds to an identifiable calculation or modeling mistake, and its explanation accurately describes that mistake.",
+          "score": 10,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The setup is self-contained, naturally written in English, and presented without real-source attribution or invented claims about real entities. Numerical data use SI units, and the floor impact, retained speed, slack string, and continuing friction are specified clearly enough to determine all subsequent motion. There are no em dashes. The English explanations and misconception labels connect directly to the setup and the relevant physical errors.",
+          "score": 10,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3195,
+          "outputTokens": 639,
+          "reasoningTokens": 155
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "One JEE Advanced paragraph-based physics set in English: one original experiment or setup (for example blocks on an incline joined over a pulley, then sliding onto a spring), stated once with every number the questions need, in SI units, and 3 single-answer multiple-choice questions with 4 options, one per skill (kinematics, Newton's laws, work and energy), each needing a different part of the setup. Every key follows from the stated numbers, the numbers agree across the questions (a speed one question computes is the speed the next one uses), and each wrong option comes from a real mistake (time to a mark instead of between marks, net force taken as friction, friction left out of an energy balance). Difficulty matches JEE Advanced's own paragraph questions, not a textbook's: each question needs several steps that combine at least two ideas (a result from one stage of the setup feeding the next, or two laws applied together), so no question is a single formula with numbers stated next to each other.",

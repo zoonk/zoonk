@@ -12,6 +12,8 @@ import systemPrompt from "./explain-wrong-answer.prompt.md";
 /**
  * Made once per mistake and shared, so quality wins: in the eval (6 cases,
  * Sep 2026) Sol scored 9.63 at 2.2s p50, Luna 9.33 and Gemini 3.8 Flash 9.02.
+ * On 8 cases (13 Oct 2026) Sol 9.69 at 2.8s p50, GPT-6.1 Sol 9.78 at 6.6s and
+ * Gemini 4 Argon 9.63 at 4.1s: within noise, so the fastest stays.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;

@@ -77,6 +77,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { kinds: ["weakCheck", "level"], screen: 2, verdict: "fail" },
     id: "pt-finalidades-oab-exam-prep-absurd-option",
     userInput: plant(EXAM_PREP_BASE_LESSON, 2, {
+      basis: null,
       context:
         "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
       image: null,
@@ -151,6 +152,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { verdict: "pass" },
     id: "en-temperature-numbered-picture-clean",
     userInput: plant(temperature, 8, {
+      basis: null,
       context:
         "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
       image: {
@@ -356,6 +358,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
     id: "en-temperature-mismatched-reason",
     userInput: plant(temperature, 8, {
+      basis: null,
       context:
         "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
       image: null,
@@ -389,6 +392,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { kinds: ["unclear", "incorrect"], screen: 8, verdict: "fail" },
     id: "en-temperature-data-disagrees-with-options",
     userInput: plant(temperature, 8, {
+      basis: null,
       context:
         "Five weather stations logged the dawn temperature and the rise forecast for the day:\n\n| Station | Dawn | Rise |\n|---|---:|---:|\n| A | −6 °C | 9 degrees |\n| B | −4 °C | 3 degrees |\n| C | −2 °C | 1 degree |\n| D | −5 °C | 3 degrees |\n| E | −8 °C | 2 degrees |",
       image: null,
@@ -460,6 +464,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
     id: "en-temperature-two-right-options",
     userInput: plant(temperature, 8, {
+      basis: null,
       context:
         "It's −3 °C in Denver, and the forecast says it will warm up 5 degrees. Maya says the thermometer will read 8 °C.",
       image: null,

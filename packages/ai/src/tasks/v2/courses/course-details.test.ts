@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { generateCourseDetails } from "./course-details";
+import { generateCourseDetails, getCourseDetailsPromptVersion } from "./course-details";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -59,5 +59,40 @@ describe(generateCourseDetails, () => {
     expect(systemPrompt).not.toContain("languages");
     expect(userPrompt).toContain("TARGET_LANGUAGE: Español de España");
     expect(userPrompt).toContain("- [overview] Antibodies: How antibodies find germs");
+  });
+
+  it("asks each language for the verb form its course pages list outcomes in", async () => {
+    const forms = await Promise.all(
+      ["en", "pt-BR", "de"].map(async (language) => {
+        const { userPrompt } = await generateCourseDetails({
+          chapters,
+          courseTitle: "Immunology",
+          language,
+        });
+
+        return /VERB_FORM: (?<form>.+)/u.exec(userPrompt)?.groups?.form;
+      }),
+    );
+
+    expect(forms).toStrictEqual([
+      "the verb's base form at the start",
+      "the infinitive at the start",
+      "an infinitive phrase with the verb at the end, as German learning goals are written",
+    ]);
+  });
+
+  it("records the deployed selection version across languages while varying per-call input", async () => {
+    const results = await Promise.all(
+      ["en", "pt", "es", "fr"].map((language) =>
+        generateCourseDetails({ chapters, courseTitle: "Immunology", language }),
+      ),
+    );
+
+    expect(results.map((result) => result.provenance.promptVersion)).toStrictEqual(
+      Array.from({ length: 4 }, () => getCourseDetailsPromptVersion()),
+    );
+
+    expect(new Set(results.map((result) => result.systemPrompt)).size).toBe(1);
+    expect(new Set(results.map((result) => result.userPrompt)).size).toBe(4);
   });
 });

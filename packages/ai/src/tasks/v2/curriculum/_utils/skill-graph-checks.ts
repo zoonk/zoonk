@@ -21,6 +21,7 @@ type SkillGraphProblemCode =
   | "nearDuplicate"
   | "offNoticeFirst"
   | "placeholder"
+  | "repeatedPhaseName"
   | "textbookChain";
 
 /**
@@ -278,12 +279,49 @@ function findNearDuplicates(skills: readonly CheckedGraphSkill[]): SkillGraphPro
   );
 }
 
+type GraphPhase = { milestone: string; title: string };
+
+/**
+ * A phase titled like an earlier phase, a skill or an area, compared by their words
+ * (`toSkillNameKey`). A phase's title names its stage of the path; the learner sees what it
+ * teaches under it, so a title that names one of those shows the same name twice (Marcos's
+ * "Alugando um apartamento" over the unit of that name, Oct 2026).
+ */
+function findRepeatedPhaseNames({
+  phases,
+  skills,
+}: {
+  phases: readonly GraphPhase[];
+  skills: readonly CheckedGraphSkill[];
+}): SkillGraphProblem[] {
+  const taught = new Map([
+    ...skills.map((skill) => [toSkillNameKey(skill.area), `the area "${skill.area}"`] as const),
+    ...skills.map((skill) => [toSkillNameKey(skill.name), `the skill "${skill.name}"`] as const),
+  ]);
+
+  return phases.flatMap((phase, index) => {
+    const key = toSkillNameKey(phase.title);
+    const earlier = phases.findIndex((other) => toSkillNameKey(other.title) === key);
+    const repeated = earlier < index ? `phase ${earlier + 1}` : taught.get(key);
+
+    return key && repeated
+      ? [
+          {
+            code: "repeatedPhaseName" as const,
+            keys: [],
+            problem: `Phase ${index + 1} is titled "${phase.title}", like ${repeated}; title the stage of the path, not something it teaches.`,
+          },
+        ]
+      : [];
+  });
+}
+
 /** Em dashes, unfinished text and Markdown in the names, descriptions and phases learners read. */
 function findWritingProblems({
   phases,
   skills,
 }: {
-  phases: readonly { milestone: string; title: string }[];
+  phases: readonly GraphPhase[];
   skills: readonly CheckedGraphSkill[];
 }): SkillGraphProblem[] {
   const texts = [
@@ -309,9 +347,9 @@ function findWritingProblems({
 /**
  * What code can verify in a skill graph, in the order skills are taught: no prerequisite loops,
  * no chain deeper than a learner can follow, no exam subject chained in a textbook's order, no
- * exam subject opening beyond its notice, no skill written twice under other words and no em
- * dash, unfinished text or Markdown in what learners read. `exam` is whether the graph follows an
- * exam's notice.
+ * exam subject opening beyond its notice, no skill written twice under other words, no phase
+ * titled like another phase or like what it teaches, and no em dash, unfinished text or Markdown
+ * in what learners read. `exam` is whether the graph follows an exam's notice.
  */
 export function findSkillGraphProblems({
   exam,
@@ -319,7 +357,7 @@ export function findSkillGraphProblems({
   skills,
 }: {
   exam: boolean;
-  phases: readonly { milestone: string; title: string }[];
+  phases: readonly GraphPhase[];
   skills: readonly CheckedGraphSkill[];
 }): SkillGraphProblem[] {
   const graph: Graph = new Map(skills.map((skill) => [skill.key, skill]));
@@ -330,6 +368,7 @@ export function findSkillGraphProblems({
     ...(exam ? findTextbookChains(graph) : []),
     ...(exam ? findOffNoticeFirst(skills) : []),
     ...findNearDuplicates(skills),
+    ...findRepeatedPhaseNames({ phases, skills }),
     ...findWritingProblems({ phases, skills }),
   ];
 }

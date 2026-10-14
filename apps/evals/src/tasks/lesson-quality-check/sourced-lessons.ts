@@ -41,6 +41,7 @@ const taxDeadlines: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context: null,
       image: null,
       kind: "check",
@@ -70,6 +71,7 @@ const taxDeadlines: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Jamal freelances in Denver. On April 8, 2026 his receipts are still in a shoebox, but he knows he'll owe about $1,200.",
       image: null,
@@ -131,6 +133,7 @@ const estabilidade: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context: null,
       image: null,
       kind: "check",
@@ -170,6 +173,7 @@ const estabilidade: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Lúcia é servidora estável da prefeitura de Recife. O chefe dela acha que ela cometeu uma falta grave.",
       image: null,

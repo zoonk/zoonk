@@ -23,6 +23,15 @@ function codes(skills: CheckedGraphSkill[], exam = true) {
   return findSkillGraphProblems({ exam, phases, skills }).map((problem) => problem.code);
 }
 
+/** What the checks find in phases with these titles. */
+function phaseProblems(titles: string[], skills: CheckedGraphSkill[]) {
+  return findSkillGraphProblems({
+    exam: false,
+    phases: titles.map((title) => ({ milestone: "Do it", title })),
+    skills,
+  }).map(({ code, keys, problem }) => ({ code, keys, problem }));
+}
+
 describe(findSkillGraphProblems, () => {
   it("passes a graph with hard dependencies, notice topics first and distinct names", () => {
     expect(
@@ -100,6 +109,42 @@ describe(findSkillGraphProblems, () => {
         skill({ key: "c", name: "Ler **tabelas", topics: ["3 Tabelas"] }),
       ]),
     ).toStrictEqual(["emDash", "placeholder", "markdown"]);
+  });
+
+  it("finds a phase named like another phase, a skill or an area instead of its own stage", () => {
+    const skills = [
+      skill({ area: "Inglês", key: "aluguel", name: "Alugar um apartamento" }),
+      skill({ area: "Inglês", key: "banco", name: "Abrir uma conta no banco", phase: 2 }),
+    ];
+
+    // Marcos's plan, Oct 2026: a phase named like the situation it teaches.
+    expect(phaseProblems(["Chegando ao Canadá", "alugar o Apartamento!"], skills)).toStrictEqual([
+      {
+        code: "repeatedPhaseName",
+        keys: [],
+        problem:
+          'Phase 2 is titled "alugar o Apartamento!", like the skill "Alugar um apartamento"; title the stage of the path, not something it teaches.',
+      },
+    ]);
+
+    expect(
+      phaseProblems(["Inglês", "Primeiros passos", "Primeiros  passos"], skills),
+    ).toStrictEqual([
+      {
+        code: "repeatedPhaseName",
+        keys: [],
+        problem:
+          'Phase 1 is titled "Inglês", like the area "Inglês"; title the stage of the path, not something it teaches.',
+      },
+      {
+        code: "repeatedPhaseName",
+        keys: [],
+        problem:
+          'Phase 3 is titled "Primeiros  passos", like phase 2; title the stage of the path, not something it teaches.',
+      },
+    ]);
+
+    expect(phaseProblems(["Chegando ao Canadá", "Vida no dia a dia"], skills)).toStrictEqual([]);
   });
 
   it("names the skills each problem is about, and none for a problem in the phases", () => {

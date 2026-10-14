@@ -17,7 +17,12 @@ import {
 import { getReadingReasoning } from "./reading-reasoning";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 
-/** The `extract-exam-blueprint` eval on 5 real notices: Flash 32/32 facts, Sol 30/32, Opus 28/32. */
+/**
+ * The `extract-exam-blueprint` eval on 5 real notices: Flash 32/32 facts, Sol 30/32, Opus 28/32.
+ * On 23 cases (13 Oct 2026), on the 21 both read to the end: Flash 9.65, Gemini 4 Argon 9.82 (never
+ * lower on a case), p50 141 s and 116 s, at $74 and $136 per 1,000 readings, Argon's doubling on
+ * 1 Dec 2026. Both stopped on recitation (Flash once, Argon twice), which falls back to Sol.
+ */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
 

@@ -104,6 +104,18 @@ describe(computeCallCostUsd, () => {
     );
   });
 
+  it("doubles Gemini 4 Argon's launch price from 1 December 2026, on every tier", () => {
+    // $2 in, $10 out a million until 30 November 2026, then $4 and $20; flex is half of either.
+    const usage = { inputTokens: MILLION, outputTokens: MILLION / 10 };
+    const model = "google/gemini-4-argon";
+    const launch = new Date("2026-11-30T23:00:00Z");
+    const after = new Date("2026-12-01T00:00:00Z");
+
+    expect(computeCallCostUsd({ at: launch, model, usage })).toBeCloseTo(2 + 1);
+    expect(computeCallCostUsd({ at: after, model, usage })).toBeCloseTo(4 + 2);
+    expect(computeCallCostUsd({ at: after, model, serviceTier: "flex", usage })).toBeCloseTo(2 + 1);
+  });
+
   it("prices an image at the size it was drawn when the model prices sizes apart", () => {
     // Nano Banana 2.1: $1.50 per million text tokens in, $0.0336 a 1K image, $0.0504 a 2K one.
     const model = "google/gemini-nano-banana-2.1";

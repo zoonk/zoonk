@@ -1,5 +1,7 @@
 import "server-only";
 import { COURSE_CATEGORIES, type CourseCategory } from "@zoonk/utils/categories";
+import { type SupportedLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { normalizeString } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
 import { z } from "zod";
@@ -11,10 +13,11 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import promptTemplate from "./course-details.prompt.md";
 
 /**
- * From the course-details eval (6 cases in English and Portuguese, code checks
- * then Astra judge, 27 Sep 2026): Luna scored 9.71 (EN 9.83, PT 9.59) at
- * $0.41 per 1,000 courses, p50 5.5s. It's the cheapest candidate, so nothing
- * cheaper was run; fallbacks come from other families.
+ * From the course-details eval (10 cases in English and Portuguese, code checks
+ * then Astra judge with a plain-promise criterion, 14 Oct 2026): Luna scored
+ * 9.37 and 9.39 over two runs (EN 9.51 and 9.55, PT 9.23 and 9.23) at about
+ * $0.61 per 1,000 courses. It's the cheapest candidate, so nothing cheaper was
+ * run; fallbacks come from other families.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
@@ -23,6 +26,11 @@ const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"]
 const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter((category) => category !== "languages");
 
 const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
+
+/** The same rendered prompt hash the details writer records, without generating anything. */
+export function getCourseDetailsPromptVersion(): string {
+  return getPromptVersion({ systemPrompt });
+}
 
 /** How many items each list on the course page shows at most, and how many categories a course has. */
 const LIMITS = { audience: 5, categories: 2, outcomes: 6 } as const;
@@ -67,6 +75,19 @@ function formatChapters(chapters: readonly DetailsChapter[]): string {
         .join("");
 }
 
+/**
+ * How a course page in each language words what the learner will be able to do. An imperative
+ * reads as an instruction to the visitor, so Romance languages take the infinitive and German an
+ * infinitive phrase with the verb last, as its learning goals are written.
+ */
+const OUTCOME_VERB_FORMS: Record<SupportedLocale, string> = {
+  de: "an infinitive phrase with the verb at the end, as German learning goals are written",
+  en: "the verb's base form at the start",
+  es: "the infinitive at the start",
+  fr: "the infinitive at the start",
+  pt: "the infinitive at the start",
+};
+
 function buildUserPrompt(params: CourseDetailsParams): string {
   const targetLanguage = params.targetLanguage
     ? getPromptLanguageName({ language: params.targetLanguage, userLanguage: params.language })
@@ -74,6 +95,7 @@ function buildUserPrompt(params: CourseDetailsParams): string {
 
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    VERB_FORM: ${OUTCOME_VERB_FORMS[getSupportedLocaleFromLanguage(params.language)]}
     COURSE_TITLE: ${params.courseTitle}
     TARGET_LANGUAGE: ${targetLanguage}
     CHAPTERS: ${formatChapters(params.chapters)}

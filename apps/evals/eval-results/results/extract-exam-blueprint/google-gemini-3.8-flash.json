@@ -4,254 +4,113 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 29/29",
+          "conclusion": "Facts kept 11/13 (read 12). passages found 47/47. readings 1, problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 9.507692307692308
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 29/29",
+          "conclusion": "Facts kept 11/13 (read 12). passages found 47/47. readings 1, problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.507692307692308
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 29/29",
+          "conclusion": "Facts kept 11/13 (read 12). passages found 47/47. readings 1, problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.507692307692308
         }
       ],
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-06-14", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-06-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-07-06", "dateKind": "results", "kind": "date" }
-          ]
-        },
-        "id": "bac-2027-1",
-        "language": "fr",
-        "userInput": {
-          "documents": [
-            { "title": "Dates du bac 2027", "url": "https://www.letudiant.fr/bac/date-du-bac.html" }
-          ],
-          "exam": "Baccalauréat général 2027"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 24/24",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 24/24",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 24/24",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "date": "2027-04-27", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-05-05", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-04-30", "dateKind": "exam", "kind": "date" }
-          ]
-        },
-        "id": "abitur-bayern-2027-1",
-        "language": "de",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Prüfungen und Zeugnisse (Termine)",
-              "url": "https://www.km.bayern.de/termine/pruefungen-und-zeugnisse"
-            }
-          ],
-          "exam": "Abitur Bayern 2027"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 17/17",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 17/17",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 17/17",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 120 },
-            { "kind": "section", "minutes": 30, "questions": 50 },
-            { "kind": "section", "minutes": 29, "questions": 47 },
-            { "kind": "section", "minutes": 23, "questions": 12 },
-            { "kind": "section", "minutes": 8, "questions": 11 }
-          ]
-        },
-        "id": "toefl-ibt-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "title": "TOEFL iBT Test Content and Structure",
-              "url": "https://www.ets.org/toefl/test-takers/ibt/about/content.html"
-            }
-          ],
-          "exam": "TOEFL iBT"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "format": "shortAnswer", "kind": "format" },
-            { "format": "essay", "kind": "format" }
-          ]
-        },
-        "id": "pt-class-notes-biologia-celular-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
-              "title": "Resumo pra prova de biologia"
-            }
-          ],
-          "exam": "Prova de biologia (1º ano), a célula"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "majorErrors",
-          "score": 8.4
-        },
-        {
-          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "minorErrors",
-          "score": 8.4
-        },
-        {
-          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "potentialImprovements",
-          "score": 8.4
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
+            { "kind": "questionCount", "value": 180 },
+            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "subject", "name": "Linguagens", "questions": 45 },
+            { "kind": "subject", "name": "Matemática", "questions": 45 },
+            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
             { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" }
-          ]
-        },
-        "id": "en-class-notes-ap-biology-unit-2-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
-              "title": "Unit 2 review"
-            }
-          ],
-          "exam": "AP Biology unit 2 test"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
-          "kind": "majorErrors",
-          "score": 9.644444444444446
-        },
-        {
-          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
-          "kind": "minorErrors",
-          "score": 9.644444444444446
-        },
-        {
-          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
-          "kind": "potentialImprovements",
-          "score": 9.644444444444446
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "section", "minutes": 300, "questions": 80 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "kind": "scoring", "method": "raw" },
+            { "format": "essay", "kind": "format" },
+            { "kind": "scoring", "method": "itemResponseTheory" },
+            { "kind": "timeLimit", "minutes": 330 },
             { "kind": "timeLimit", "minutes": 300 },
-            { "date": "2026-06-01", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-06-08", "dateKind": "registrationEnd", "kind": "date" },
-            { "date": "2026-09-06", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-10-18", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-12-03", "dateKind": "results", "kind": "date" }
+            { "kind": "testedLanguage", "language": null }
           ]
         },
-        "id": "oab-47-1",
+        "id": "enem-2026-1",
         "language": "pt",
         "userInput": {
           "documents": [
             {
-              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
-              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
             }
           ],
-          "exam": "47º Exame de Ordem Unificado (OAB)"
+          "exam": "ENEM"
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "conclusion": "Facts kept 8/11 (read 8). passages found 76/76. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "majorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 76/76. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "minorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 76/76. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "potentialImprovements",
+          "score": 9.127272727272729
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 150 },
+            { "kind": "section", "questions": 35 },
+            { "kind": "section", "questions": 45 },
+            { "kind": "section", "questions": 70 },
+            { "format": "trueFalse", "kind": "format" },
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "kind": "wrongPenalty", "value": 1 },
+            { "kind": "timeLimit", "minutes": 240 },
+            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
+            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
+          ]
+        },
+        "id": "tcdf-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
+            }
+          ],
+          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. readings 1, problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. readings 1, problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. readings 1, problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -306,17 +165,62 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "conclusion": "Facts kept 8/9 (read 8). passages found 48/48. readings 1, problems left 0. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "majorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 8). passages found 48/48. readings 1, problems left 0. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "minorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 8). passages found 48/48. readings 1, problems left 0. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "potentialImprovements",
+          "score": 9.644444444444446
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "section", "minutes": 300, "questions": 80 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "kind": "scoring", "method": "raw" },
+            { "kind": "timeLimit", "minutes": 300 },
+            { "date": "2026-06-01", "dateKind": "registrationStart", "kind": "date" },
+            { "date": "2026-06-08", "dateKind": "registrationEnd", "kind": "date" },
+            { "date": "2026-09-06", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-10-18", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-12-03", "dateKind": "results", "kind": "date" }
+          ]
+        },
+        "id": "oab-47-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 50/50. readings 1, problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "conclusion": "Facts kept 10/10 (read 10). passages found 50/50. readings 1, problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "conclusion": "Facts kept 10/10 (read 10). passages found 50/50. readings 1, problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -352,17 +256,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 46/46. readings 1, problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 46/46. readings 1, problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 46/46. readings 1, problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -402,193 +306,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "conclusion": "Facts kept 7/8 (read 8). passages found 33/33. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
           "kind": "majorErrors",
-          "score": 9.2
+          "score": 9.600000000000001
         },
         {
-          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "conclusion": "Facts kept 7/8 (read 8). passages found 33/33. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
           "kind": "minorErrors",
-          "score": 9.2
+          "score": 9.600000000000001
         },
         {
-          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "conclusion": "Facts kept 7/8 (read 8). passages found 33/33. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\"}",
           "kind": "potentialImprovements",
-          "score": 9.2
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "choice", "options": ["Historia de España", "Filosofía"] },
-            {
-              "kind": "choice",
-              "options": ["alemán", "francés", "inglés", "italiano", "portugués"]
-            }
-          ]
-        },
-        "id": "pau-spain-ciencias-1",
-        "language": "es",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Real Decreto 534/2024 (prueba de acceso a la universidad), texto consolidado",
-              "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2024-11858"
-            }
-          ],
-          "exam": "Prueba de Acceso a la Universidad (PAU), modalidad de Ciencias y Tecnología"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "subject", "name": "Língua Inglesa" },
-            { "kind": "choice", "options": ["Espanhola", "Francesa"] }
-          ]
-        },
-        "id": "cacd-2025-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "text": "EDITAL Nº 1, DE 14 DE MAIO DE 2025. CONCURSO DE ADMISSÃO À CARREIRA DE DIPLOMATA.\n\nO concurso será realizado em duas fases, ambas de responsabilidade do Cebraspe: Primeira Fase: prova objetiva, constituída de questões do tipo CERTO ou ERRADO de Língua Portuguesa, História do Brasil, História Mundial, Geografia, Língua Inglesa, Política Internacional, Economia e Direito, de caráter eliminatório; Segunda Fase: provas escritas de Língua Portuguesa, Língua Inglesa, História do Brasil, Política Internacional, Geografia, Economia, Direito e um idioma adicional (Língua Espanhola ou Língua Francesa), de caráter eliminatório e classificatório.\n\nNo sistema de inscrição, o candidato deverá optar pela cidade de provas e pelo idioma adicional (Língua Espanhola ou Língua Francesa) para as provas escritas da Segunda Fase.\n\nA Segunda Fase consistirá das seguintes provas escritas: Prova | Duração | Tipo | Pontuação máxima. Língua Inglesa | 4 horas | Redação sobre tema geral, com extensão mínima de 65 linhas e máxima de 70 linhas | 70,00; Elaboração de um resumo, com extensão mínima de 15 linhas e máxima de 30 linhas | 30,00. Língua Espanhola | 4 horas | Elaboração de resumo, em espanhol, a partir de texto escrito em Língua Espanhola, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o espanhol, com extensão mínima de 30 e máximo de 60 linhas. | 100,00. Língua Francesa | 4 horas | Elaboração de resumo, em francês, a partir de texto escrito em Língua Francesa, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o francês, com extensão mínima de 30 e máximo de 60 linhas. | 100,00.",
-              "title": "Edital nº 1, de 14 de maio de 2025 (CACD 2025, Instituto Rio Branco)"
-            }
-          ],
-          "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
-          "kind": "majorErrors",
-          "score": 9.127272727272729
-        },
-        {
-          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
-          "kind": "minorErrors",
-          "score": 9.127272727272729
-        },
-        {
-          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
-          "kind": "potentialImprovements",
-          "score": 9.127272727272729
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 150 },
-            { "kind": "section", "questions": 35 },
-            { "kind": "section", "questions": 45 },
-            { "kind": "section", "questions": 70 },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "wrongPenalty", "value": 1 },
-            { "kind": "timeLimit", "minutes": 240 },
-            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
-          ]
-        },
-        "id": "tcdf-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
-              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
-            }
-          ],
-          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.600000000000001
         }
       ],
       "testCase": {
@@ -624,19 +354,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "conclusion": "Facts kept 5/7 (read 5). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}",
           "kind": "majorErrors",
-          "score": 9.542857142857143
+          "score": 9.085714285714285
         },
         {
-          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "conclusion": "Facts kept 5/7 (read 5). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}",
           "kind": "minorErrors",
-          "score": 9.542857142857143
+          "score": 9.085714285714285
         },
         {
-          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "conclusion": "Facts kept 5/7 (read 5). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}; {\"kind\":\"tools\",\"mentions\":\"calculator\"}",
           "kind": "potentialImprovements",
-          "score": 9.542857142857143
+          "score": 9.085714285714285
         }
       ],
       "testCase": {
@@ -671,108 +401,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
-          "kind": "majorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
-          "kind": "minorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
-          "kind": "potentialImprovements",
-          "score": 9.2
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "testedLanguage", "language": "en" },
-            { "kind": "scale", "max": 90, "min": 10 },
-            { "format": "multipleChoice", "kind": "format", "select": "all" },
-            {
-              "format": "multipleChoice",
-              "kind": "format",
-              "partialCredit": "plusMinus",
-              "select": "all"
-            }
-          ]
-        },
-        "id": "pte-academic-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            { "title": "PTE Academic", "url": "https://www.pearsonpte.com/pte-academic" },
-            {
-              "title": "PTE Academic test format: Listening",
-              "url": "https://www.pearsonpte.com/pte-academic/test-format/listening"
-            }
-          ],
-          "exam": "PTE Academic"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
-          "kind": "majorErrors",
-          "score": 9.146666666666667
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
-          "kind": "minorErrors",
-          "score": 9.146666666666667
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
-          "kind": "potentialImprovements",
-          "score": 9.146666666666667
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "format": "multipleChoice", "kind": "format", "select": "all" },
-            {
-              "format": "multipleChoice",
-              "kind": "format",
-              "partialCredit": "perOption",
-              "select": "all"
-            },
-            { "entry": "decimals", "format": "numeric", "kind": "format" },
-            { "format": "numeric", "kind": "format", "share": 0.25 }
-          ]
-        },
-        "id": "jee-advanced-2026-paper-1-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "title": "JEE (Advanced) 2026 Paper 1 (English)",
-              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
-            }
-          ],
-          "exam": "JEE Advanced 2026"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "conclusion": "Facts kept 6/7 (read 7). passages found 65/65. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
           "kind": "majorErrors",
           "score": 9.542857142857143
         },
         {
-          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "conclusion": "Facts kept 6/7 (read 7). passages found 65/65. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
           "kind": "minorErrors",
           "score": 9.542857142857143
         },
         {
-          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "conclusion": "Facts kept 6/7 (read 7). passages found 65/65. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
           "kind": "potentialImprovements",
           "score": 9.542857142857143
         }
@@ -809,63 +448,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 44/44. readings 1, problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 44/44. readings 1, problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 44/44. readings 1, problems left 0",
           "kind": "potentialImprovements",
           "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "date": "2027-04-02", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-05-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-07-09", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-10-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-11-13", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-10", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "testedLanguage", "language": "es" }
-          ]
-        },
-        "id": "dele-b2-sittings-1",
-        "language": "es",
-        "userInput": {
-          "documents": [
-            { "title": "Cuándo es el DELE", "url": "https://examenes.cervantes.es/es/dele/cuando" },
-            {
-              "title": "Guía de examen DELE B2",
-              "url": "https://examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf"
-            }
-          ],
-          "exam": "DELE B2"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
-          "kind": "majorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
-          "kind": "minorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
-          "kind": "potentialImprovements",
-          "score": 9.2
         }
       ],
       "testCase": {
@@ -909,17 +504,187 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 35/35. readings 1, problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 35/35. readings 1, problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 35/35. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "testedLanguage", "language": "en" },
+            { "kind": "scale", "max": 90, "min": 10 },
+            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "partialCredit": "plusMinus",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "pte-academic-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            { "title": "PTE Academic", "url": "https://www.pearsonpte.com/pte-academic" },
+            {
+              "title": "PTE Academic test format: Listening",
+              "url": "https://www.pearsonpte.com/pte-academic/test-format/listening"
+            }
+          ],
+          "exam": "PTE Academic"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 17/18. readings 2, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "majorErrors",
+          "score": 9.155555555555555
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 17/18. readings 2, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "minorErrors",
+          "score": 9.155555555555555
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 17/18. readings 2, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "potentialImprovements",
+          "score": 9.155555555555555
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "partialCredit": "perOption",
+              "select": "all"
+            },
+            { "entry": "decimals", "format": "numeric", "kind": "format" },
+            { "format": "numeric", "kind": "format", "share": 0.25 }
+          ]
+        },
+        "id": "jee-advanced-2026-paper-1-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "JEE (Advanced) 2026 Paper 1 (English)",
+              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
+            }
+          ],
+          "exam": "JEE Advanced 2026"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/5 (read 4). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":30,\"questions\":50}; {\"kind\":\"section\",\"minutes\":29,\"questions\":47}; {\"kind\":\"section\",\"minutes\":23,\"questions\":12}; {\"kind\":\"section\",\"minutes\":8,\"questions\":11}",
+          "kind": "majorErrors",
+          "score": 7.44
+        },
+        {
+          "conclusion": "Facts kept 1/5 (read 4). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":30,\"questions\":50}; {\"kind\":\"section\",\"minutes\":29,\"questions\":47}; {\"kind\":\"section\",\"minutes\":23,\"questions\":12}; {\"kind\":\"section\",\"minutes\":8,\"questions\":11}",
+          "kind": "minorErrors",
+          "score": 7.44
+        },
+        {
+          "conclusion": "Facts kept 1/5 (read 4). passages found 18/18. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":30,\"questions\":50}; {\"kind\":\"section\",\"minutes\":29,\"questions\":47}; {\"kind\":\"section\",\"minutes\":23,\"questions\":12}; {\"kind\":\"section\",\"minutes\":8,\"questions\":11}",
+          "kind": "potentialImprovements",
+          "score": 7.44
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 120 },
+            { "kind": "section", "minutes": 30, "questions": 50 },
+            { "kind": "section", "minutes": 29, "questions": 47 },
+            { "kind": "section", "minutes": 23, "questions": 12 },
+            { "kind": "section", "minutes": 8, "questions": 11 }
+          ]
+        },
+        "id": "toefl-ibt-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "TOEFL iBT Test Content and Structure",
+              "url": "https://www.ets.org/toefl/test-takers/ibt/about/content.html"
+            }
+          ],
+          "exam": "TOEFL iBT"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "subject", "name": "Língua Inglesa" },
+            { "kind": "choice", "options": ["Espanhola", "Francesa"] }
+          ]
+        },
+        "id": "cacd-2025-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "EDITAL Nº 1, DE 14 DE MAIO DE 2025. CONCURSO DE ADMISSÃO À CARREIRA DE DIPLOMATA.\n\nO concurso será realizado em duas fases, ambas de responsabilidade do Cebraspe: Primeira Fase: prova objetiva, constituída de questões do tipo CERTO ou ERRADO de Língua Portuguesa, História do Brasil, História Mundial, Geografia, Língua Inglesa, Política Internacional, Economia e Direito, de caráter eliminatório; Segunda Fase: provas escritas de Língua Portuguesa, Língua Inglesa, História do Brasil, Política Internacional, Geografia, Economia, Direito e um idioma adicional (Língua Espanhola ou Língua Francesa), de caráter eliminatório e classificatório.\n\nNo sistema de inscrição, o candidato deverá optar pela cidade de provas e pelo idioma adicional (Língua Espanhola ou Língua Francesa) para as provas escritas da Segunda Fase.\n\nA Segunda Fase consistirá das seguintes provas escritas: Prova | Duração | Tipo | Pontuação máxima. Língua Inglesa | 4 horas | Redação sobre tema geral, com extensão mínima de 65 linhas e máxima de 70 linhas | 70,00; Elaboração de um resumo, com extensão mínima de 15 linhas e máxima de 30 linhas | 30,00. Língua Espanhola | 4 horas | Elaboração de resumo, em espanhol, a partir de texto escrito em Língua Espanhola, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o espanhol, com extensão mínima de 30 e máximo de 60 linhas. | 100,00. Língua Francesa | 4 horas | Elaboração de resumo, em francês, a partir de texto escrito em Língua Francesa, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o francês, com extensão mínima de 30 e máximo de 60 linhas. | 100,00.",
+              "title": "Edital nº 1, de 14 de maio de 2025 (CACD 2025, Instituto Rio Branco)"
+            }
+          ],
+          "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. readings 2, problems left 1",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. readings 2, problems left 1",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. readings 2, problems left 1",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -949,19 +714,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "conclusion": "Facts kept 8/9 (read 8). passages found 54/54. readings 1, problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Direito\",\"questions\":30}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 9.68
         },
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "conclusion": "Facts kept 8/9 (read 8). passages found 54/54. readings 1, problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Direito\",\"questions\":30}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.68
         },
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "conclusion": "Facts kept 8/9 (read 8). passages found 54/54. readings 1, problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Direito\",\"questions\":30}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.68
         }
       ],
       "testCase": {
@@ -993,6 +758,242 @@
             }
           ],
           "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 49/49. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 49/49. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 49/49. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "choice", "options": ["Historia de España", "Filosofía"] },
+            {
+              "kind": "choice",
+              "options": ["alemán", "francés", "inglés", "italiano", "portugués"]
+            }
+          ]
+        },
+        "id": "pau-spain-ciencias-1",
+        "language": "es",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Real Decreto 534/2024 (prueba de acceso a la universidad), texto consolidado",
+              "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2024-11858"
+            }
+          ],
+          "exam": "Prueba de Acceso a la Universidad (PAU), modalidad de Ciencias y Tecnología"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 95/100. readings 2, problems left 1",
+          "kind": "majorErrors",
+          "score": 9.96
+        },
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 95/100. readings 2, problems left 1",
+          "kind": "minorErrors",
+          "score": 9.96
+        },
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 95/100. readings 2, problems left 1",
+          "kind": "potentialImprovements",
+          "score": 9.96
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "date": "2027-04-02", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-05-22", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-07-09", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-10-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-11-13", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-02-10", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "testedLanguage", "language": "es" }
+          ]
+        },
+        "id": "dele-b2-sittings-1",
+        "language": "es",
+        "userInput": {
+          "documents": [
+            { "title": "Cuándo es el DELE", "url": "https://examenes.cervantes.es/es/dele/cuando" },
+            {
+              "title": "Guía de examen DELE B2",
+              "url": "https://examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf"
+            }
+          ],
+          "exam": "DELE B2"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 22/22. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 22/22. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 22/22. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "date": "2027-04-27", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-05-05", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-04-30", "dateKind": "exam", "kind": "date" }
+          ]
+        },
+        "id": "abitur-bayern-2027-1",
+        "language": "de",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Prüfungen und Zeugnisse (Termine)",
+              "url": "https://www.km.bayern.de/termine/pruefungen-und-zeugnisse"
+            }
+          ],
+          "exam": "Abitur Bayern 2027"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 35/35. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 35/35. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 35/35. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "date": "2027-06-14", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-06-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-07-06", "dateKind": "results", "kind": "date" }
+          ]
+        },
+        "id": "bac-2027-1",
+        "language": "fr",
+        "userInput": {
+          "documents": [
+            { "title": "Dates du bac 2027", "url": "https://www.letudiant.fr/bac/date-du-bac.html" }
+          ],
+          "exam": "Baccalauréat général 2027"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 5/5. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 5/5. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 5/5. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "shortAnswer", "kind": "format" },
+            { "format": "essay", "kind": "format" }
+          ]
+        },
+        "id": "pt-class-notes-biologia-celular-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 10/10. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 10/10. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 10/10. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" }
+          ]
+        },
+        "id": "en-class-notes-ap-biology-unit-2-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test"
         }
       }
     }

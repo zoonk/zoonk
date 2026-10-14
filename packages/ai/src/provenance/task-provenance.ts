@@ -10,10 +10,10 @@ type TaskUsage = CallUsage & { totalTokens?: number; reasoningTokens?: number };
  * `model`, `promptVersion`, `runId` and `generatedAt`; analytics uses the rest.
  */
 export type TaskProvenance = {
-  /** The model that actually answered, which is a fallback model when the requested one failed. */
+  /** Every model that answered, including fallbacks, joined when different steps used different models. */
   model: string;
   requestedModel: string;
-  /** The provider that served the call, such as `vertex` for a Google model. */
+  /** Every provider that served the call, joined when steps used different providers. */
   provider: string;
   promptVersion: string;
   runId: string;
@@ -25,7 +25,7 @@ export type TaskProvenance = {
   costUsd?: number;
   /** AI Gateway's list-price estimate, a cross-check for `costUsd`; unknown off the gateway. */
   gatewayCostUsd?: number;
-  /** `flex` or `priority` when one of those tiers served the call; the standard tier is unset. */
+  /** `mixed` for steps served at different tiers; a call entirely at the standard tier leaves this unset. */
   serviceTier?: string;
   /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
   credential?: string;
@@ -37,6 +37,7 @@ type GenerationStep = {
   model: { modelId: string; provider: string };
   providerMetadata: ProviderMetadata | undefined;
   response: { modelId: string };
+  usage: LanguageModelUsage;
 };
 
 /** The parts of a `generateText` result or a `streamText` end event that provenance reads. */
@@ -142,14 +143,44 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
   };
 }
 
+/** Price each successful step independently: fallbacks, tiers and context lengths can differ. */
+function priceStep(step: GenerationStep) {
+  const gateway = readGatewayMetadata(step.providerMetadata);
+  const model = gateway.servedModel ?? step.response.modelId;
+
+  return {
+    costUsd: computeCallCostUsd({
+      model,
+      serviceTier: gateway.serviceTier,
+      usage: toTaskUsage(step.usage),
+    }),
+    gatewayCostUsd: gateway.costUsd,
+    model,
+    provider: gateway.servedProvider ?? step.model.provider,
+    serviceTier: gateway.serviceTier,
+  };
+}
+
+/** The ledger's tier label fits its ten-character field; prices still use each step's actual tier. */
+function getServedServiceTier(tiers: readonly (string | undefined)[]): string | undefined {
+  const distinct = new Set(tiers.map((tier) => tier ?? "standard"));
+
+  if (distinct.size > 1) {
+    return "mixed";
+  }
+
+  const [tier] = distinct;
+  return tier === "standard" ? undefined : tier;
+}
+
 /**
  * Builds provenance from a finished generation. The model that ran can't come
  * from `response.modelId`: the gateway's `doGenerate` replaces the response
  * metadata with headers and body, so the AI SDK falls back to the requested
  * model id even when a fallback model answered. AI Gateway's routing metadata
  * names the model that answered; `response.modelId` is only the fallback for
- * providers that don't report routing. The cost is priced from the usage at the
- * tier that served the call, since with our own provider keys the gateway bills
+ * providers that don't report routing. Each step is priced from its own usage,
+ * served model and tier, since with our own provider keys the gateway bills
  * nothing; its list-price estimate is kept beside it as a cross-check.
  */
 export function buildTaskProvenance({
@@ -167,23 +198,23 @@ export function buildTaskProvenance({
 }): TaskProvenance {
   const { finalStep } = generation;
   const gateway = readGatewayMetadata(finalStep.providerMetadata);
-  const model = gateway.servedModel ?? finalStep.response.modelId;
+  const steps = generation.steps.map(priceStep);
+  const costs = steps.map((step) => step.costUsd);
   const usage = toTaskUsage(generation.usage);
 
   return {
-    costUsd: computeCallCostUsd({ model, serviceTier: gateway.serviceTier, usage }),
+    /** A partial sum would hide unpriced steps from the ledger's unknown-cost count. */
+    costUsd: costs.some((cost) => cost === undefined) ? undefined : sumKnown(costs),
     credential: gateway.credential,
-    gatewayCostUsd: sumKnown(
-      generation.steps.map((step) => readGatewayMetadata(step.providerMetadata).costUsd),
-    ),
+    gatewayCostUsd: sumKnown(steps.map((step) => step.gatewayCostUsd)),
     generatedAt,
     latencyMs,
-    model,
+    model: joinDistinct(steps.map((step) => step.model)),
     promptVersion,
-    provider: gateway.servedProvider ?? finalStep.model.provider,
+    provider: joinDistinct(steps.map((step) => step.provider)),
     requestedModel: finalStep.model.modelId,
     runId,
-    serviceTier: gateway.serviceTier,
+    serviceTier: getServedServiceTier(steps.map((step) => step.serviceTier)),
     usage,
   };
 }

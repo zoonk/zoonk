@@ -121,7 +121,7 @@ export function ReviewPdfExport({
         </p>
 
         {error && (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive-text text-sm" role="alert">
             {error}
           </p>
         )}

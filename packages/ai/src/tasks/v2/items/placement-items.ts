@@ -24,7 +24,9 @@ import taskPrompt from "./placement-items.prompt.md";
  * its skill's quick one, three false Cebraspe assertions and a duplicated accepted answer (the
  * prompt now rules these out), and one wrong distractor reason. The two cheapest, on 4 cases
  * (7 Oct 2026): Luna 7.96 and Claude Haiku 5.5 7.46 (one set failed) against Sol's 8.90, at $2 and
- * $2.50 per 1,000 runs against $40.
+ * $2.50 per 1,000 runs against $40. On all 10 cases (13 Oct 2026): Sol 8.93 and 8.92 in two runs at
+ * 48 s p50; GPT-6.1 Sol 9.09, within that noise, at 95 s p50, which the learner waiting on the
+ * first batch would feel; Gemini 4 Argon 8.18 (correctness 7.4: wrong keys and legal slips).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;

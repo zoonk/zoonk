@@ -75,6 +75,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": null,
                 "correctReason": "You start at {start} °C and move {rise} degrees up.",
                 "kind": "mathCheck",
@@ -132,6 +133,7 @@
               },
               {
                 "acceptedAnswers": [],
+                "basis": null,
                 "context": null,
                 "keyPoints": [
                   "Going up 3 degrees reaches zero",
@@ -143,6 +145,270 @@
                 "visual": null
               },
               {
+                "basis": null,
+                "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+                "image": null,
+                "kind": "check",
+                "options": [
+                  {
+                    "isCorrect": true,
+                    "picture": null,
+                    "reason": "Six degrees reach zero and three more go above it.",
+                    "text": "3 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "That's what you get by moving down 9 degrees instead of up.",
+                    "text": "−15 °C"
+                  },
+                  {
+                    "isCorrect": false,
+                    "picture": null,
+                    "reason": "You added the numbers without their signs: the start is below zero.",
+                    "text": "15 °C"
+                  }
+                ],
+                "question": "What will the thermometer show?",
+                "visual": null
+              }
+            ],
+            "summary": [
+              "A rise moves up the thermometer, even below zero.",
+              "Count up to zero first, then the degrees above it."
+            ]
+          },
+          "level": "beginner",
+          "problems": [
+            {
+              "problem": "Uses filler (\"it's important to note\"); cut it and say the idea directly.",
+              "screen": 1
+            },
+            { "problem": "Step 2 shows {result} without an expression.", "screen": 3 }
+          ],
+          "spec": {
+            "canDo": "Work out a temperature after it rises across zero",
+            "description": "Add a rise to a temperature below zero, the way thermometers do.",
+            "estimatedMinutes": 4,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Guess the temperature after a 5 degree rise from −3 °C.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A rise moves up the thermometer, even below zero: from −3 °C, 3 degrees reach zero.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "A thermometer from −5 °C to 5 °C with an arrow going up."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "From −3 °C, rise 5 degrees: climb to zero, then keep going.",
+                "kind": "workedExample",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Calculate a rise from −4 °C; tempting wrong answer: subtracting.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Zero is just a mark on the way up: count to zero, then past it.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": "numberLine",
+                "brief": "Move the dot from −3 °C by two rises and read the noon temperature.",
+                "kind": "activity",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Explain in your own words why −3 + 5 is 2.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A winter morning in Chicago warming up 9 degrees from −6 °C.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A rise adds to the temperature, even when it starts below zero.",
+                "example": "−3 °C plus a 5 degree rise is 2 °C.",
+                "hard": true,
+                "name": "Add a rise to a temperature below zero",
+                "topic": "Temperature changes",
+                "useCase": "Reading a weather forecast."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Temperature changes across zero"
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Every problem's screen was rewritten and the lesson passes the code checks.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "screens": [1, 3] },
+        "id": "en-temperature-basis-follows-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why. Check kinds this template supports: numeric.",
+              "id": "numberLine",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"moves\":{\"minItems\":1,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"by\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"by\"],\"additionalProperties\":false}},\"start\":{\"type\":\"number\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\",\"max\",\"min\",\"moves\",\"start\",\"step\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"numberLine\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ],
+          "chapterTitle": "Negative numbers",
+          "courseTitle": "Everyday math",
+          "language": "en",
+          "lesson": {
+            "screens": [
+              {
+                "image": null,
+                "kind": "hookGuess",
+                "options": [
+                  { "isCorrect": true, "text": "2 °C" },
+                  { "isCorrect": false, "text": "8 °C" },
+                  { "isCorrect": false, "text": "−8 °C" }
+                ],
+                "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "visual": null
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": {
+                  "alt": "A thermometer with an arrow going up past zero.",
+                  "prompt": "A thermometer from −5 °C to 5 °C."
+                },
+                "kind": "explanation",
+                "text": "It's important to note that a rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
+                "title": "Up is up, even below zero",
+                "visual": null
+              },
+              {
+                "image": null,
+                "kind": "workedExample",
+                "problem": "It's −3 °C and the temperature rises 5 degrees. What's the new temperature?",
+                "result": "It's 2 °C: two degrees above zero.",
+                "steps": [
+                  { "math": "-3 + 3 = 0", "text": "First climb to zero: that takes 3 degrees." },
+                  {
+                    "math": "0 + 2 = 2",
+                    "text": "Two degrees of the rise are left, so keep going up."
+                  }
+                ],
+                "title": "From −3 °C, up 5 degrees",
+                "visual": null
+              },
+              {
+                "basis": { "quote": "a rise always moves **up** the thermometer.", "screen": 2 },
+                "context": null,
+                "correctReason": "You start at {start} °C and move {rise} degrees up.",
+                "kind": "mathCheck",
+                "math": {
+                  "answer": 3,
+                  "commonMistakes": [
+                    {
+                      "expression": "rise - start",
+                      "misconception": "Subtracts the negative start",
+                      "reason": "You took the start away instead of adding the rise to it."
+                    },
+                    {
+                      "expression": "start - rise",
+                      "misconception": "Moves down instead of up",
+                      "reason": "A rise moves up the thermometer, not down."
+                    }
+                  ],
+                  "solution": "start + rise",
+                  "steps": [
+                    {
+                      "expression": null,
+                      "text": "Start at {start} °C and move {rise} degrees up."
+                    },
+                    { "expression": null, "text": "You land on {result} °C." }
+                  ],
+                  "tolerance": { "kind": "absolute", "value": 0 },
+                  "unit": "°C",
+                  "variables": [
+                    {
+                      "max": -1,
+                      "min": -10,
+                      "name": "start",
+                      "step": 1,
+                      "unit": "°C",
+                      "value": -4
+                    },
+                    { "max": 15, "min": 2, "name": "rise", "step": 1, "unit": "°C", "value": 7 }
+                  ]
+                },
+                "question": "At 6 am it was {start} °C. By noon it warmed up {rise} degrees. What's the temperature now?"
+              },
+              {
+                "exampleLineIdea": null,
+                "explore": null,
+                "image": null,
+                "kind": "explanation",
+                "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+                "title": "Zero is a stop, not a wall",
+                "visual": null
+              },
+              {
+                "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}",
+                "kind": "activity",
+                "template": "numberLine"
+              },
+              {
+                "acceptedAnswers": [],
+                "basis": null,
+                "context": null,
+                "keyPoints": [
+                  "Going up 3 degrees reaches zero",
+                  "The last 2 degrees go above zero"
+                ],
+                "kind": "typedAnswer",
+                "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "visual": null
+              },
+              {
+                "basis": null,
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
                 "image": null,
                 "kind": "check",
@@ -335,6 +601,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": null,
                 "correctReason": "You start at {start} °C and move {rise} degrees up.",
                 "kind": "mathCheck",
@@ -391,6 +658,7 @@
               },
               {
                 "acceptedAnswers": [],
+                "basis": null,
                 "context": null,
                 "keyPoints": [
                   "Going up 3 degrees reaches zero",
@@ -402,6 +670,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
                 "image": null,
                 "kind": "check",
@@ -590,6 +859,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": null,
                 "correctReason": "You start at {start} °C and move {rise} degrees up.",
                 "kind": "mathCheck",
@@ -646,6 +916,7 @@
               },
               {
                 "acceptedAnswers": [],
+                "basis": null,
                 "context": null,
                 "keyPoints": [
                   "Going up 3 degrees reaches zero",
@@ -657,6 +928,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
                 "image": {
                   "alt": "A thermometer from −10 °C to 10 °C with three numbered marks.",
@@ -820,6 +1092,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
                 "image": null,
                 "kind": "check",
@@ -890,6 +1163,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
                 "correctReason": "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas.",
                 "kind": "mathCheck",
@@ -987,6 +1261,7 @@
                 "visual": null
               },
               {
+                "basis": null,
                 "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
                 "correctReason": "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas.",
                 "kind": "mathCheck",
@@ -1064,6 +1339,7 @@
                 "question": "Quanto tempo {maquinasNovas} máquinas levam para fazer {pecasNovas} peças?"
               },
               {
+                "basis": null,
                 "context": "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
                 "correctReason": "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas.",
                 "kind": "mathCheck",

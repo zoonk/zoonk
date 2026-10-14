@@ -22,7 +22,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   de: {
     place: "Germany",
     money: "euro, written 1.234,56 €",
-    formats: "1.234,56; dates as 27.09.2026; 24-hour clock (14:30 Uhr); metric units and °C",
+    formats:
+      "1.234,56 (inside LaTeX math, 1.234{,}56); dates as 27.09.2026; 24-hour clock (14:30 Uhr); metric units and °C",
     names: "Mia, Ben, Emma, Paul, Hannah, Leon, Sophie, Finn, Lena, Jonas",
     places:
       "Berlin, Hamburg, München, Köln, Frankfurt, Stuttgart, Düsseldorf, Leipzig, Dresden, Hannover; the Bäckerei, the Supermarkt, the S-Bahn and U-Bahn, the Deutsche Bahn",
@@ -53,7 +54,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   es: {
     place: "Spain",
     money: "euro, written 1.234,56 € (the symbol after the number)",
-    formats: "1.234,56; dates as 27/09/2026; 24-hour clock (14:30); metric units and °C",
+    formats:
+      "1.234,56 (inside LaTeX math, 1.234{,}56); dates as 27/09/2026; 24-hour clock (14:30); metric units and °C",
     names: "Lucía, Hugo, Martina, Pablo, Sofía, Daniel, Carmen, Javier, Paula, Álvaro",
     places:
       "Madrid, Barcelona, Valencia, Sevilla, Zaragoza, Málaga, Bilbao, Valladolid, Palma, Las Palmas; the bar de la esquina, the mercado, the metro, Renfe and the AVE",
@@ -69,7 +71,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   fr: {
     place: "France",
     money: "euro, written 1 234,56 € (a space between thousands, the symbol after the number)",
-    formats: "1 234,56; dates as 27/09/2026; 24-hour clock (14 h 30); metric units and °C",
+    formats:
+      "1 234,56 (inside LaTeX math, 1\\,234{,}56); dates as 27/09/2026; 24-hour clock (14 h 30); metric units and °C",
     names: "Léa, Lucas, Emma, Hugo, Chloé, Louis, Inès, Gabriel, Camille, Nathan",
     places:
       "Paris, Lyon, Marseille, Toulouse, Lille, Bordeaux, Nantes, Strasbourg, Nice, Rennes; the boulangerie, the marché, the métro, the SNCF and the TGV",
@@ -84,7 +87,8 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
   pt: {
     place: "Brazil",
     money: "Brazilian real, written R$ 1.234,56",
-    formats: "1.234,56; dates as 27/09/2026; 24-hour clock (14h30); metric units and °C",
+    formats:
+      "1.234,56 (inside LaTeX math, 1.234{,}56); dates as 27/09/2026; 24-hour clock (14h30); metric units and °C",
     names: "Ana, João, Maria, Pedro, Juliana, Lucas, Camila, Gabriel, Beatriz, Rafael",
     places:
       "São Paulo, Rio de Janeiro, Belo Horizonte, Salvador, Recife, Fortaleza, Brasília, Curitiba, Porto Alegre, Manaus; the padaria, the feira, the supermercado, the ônibus and the metrô",

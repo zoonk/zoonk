@@ -32,7 +32,7 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
  */
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
   "anthropic/claude-opus-5.5",
-  "google/gemini-3.1-pro-preview",
+  "google/gemini-4-argon",
   "openai/gpt-6-astra",
 ];
 

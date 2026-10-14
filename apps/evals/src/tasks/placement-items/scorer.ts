@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ai/tasks/v2/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
+import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 
 type PlacementItemsCase = Pick<
@@ -17,7 +18,8 @@ type RoleCheck = { passing: GeneratedItem[]; problems: string[]; wanted: number 
 
 /**
  * One skill's questions in one role, checked the way production checks them before storing, with
- * the em dashes storing them takes out of our own wording.
+ * the em dashes storing them takes out of our own wording and numbers written the way the
+ * language doesn't (`findNumberFormatFlaws`), which phase challenges show as written.
  */
 function checkRole({
   format,
@@ -39,6 +41,7 @@ function checkRole({
     problems: [
       ...checkItem({ expectedFormat: format, item, language, optionCount }),
       ...findOwnEmDashes(item),
+      ...findNumberFormatFlaws({ language, value: item }),
     ].map((problem) => `${label} ${index + 1}: ${problem}`),
   }));
 

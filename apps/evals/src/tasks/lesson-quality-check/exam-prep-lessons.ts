@@ -24,6 +24,7 @@ const lesson: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
       image: null,
@@ -81,6 +82,7 @@ const lesson: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Thaís vê processos parados e afirma que a OAB só pode cobrar rapidez da Justiça se também provar que alguma lei foi aplicada incorretamente.",
       image: null,
@@ -128,6 +130,7 @@ const lesson: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Murilo lê que a OAB atua com exclusividade na seleção de advogados. Ele conclui que ela não pode defender os direitos humanos de quem não é advogado.",
       image: null,
@@ -166,6 +169,7 @@ const lesson: WrittenLesson = {
       visual: null,
     },
     {
+      basis: null,
       context:
         "Em Belém, Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; assumir o julgamento de recursos atrasados.",
       image: null,

@@ -8,6 +8,7 @@ import { EXAM_PREP_LESSON, QUESTION_FIRST_EXAM_LESSON } from "./exam-prep-lesson
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
+import { SCIENTIFIC_NOTATION_SPEC } from "./number-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
 import { SOURCED_LESSONS } from "./sourced-lesson-specs";
 import { VISUAL_LESSON_SPECS } from "./visual-lesson-specs";
@@ -36,6 +37,7 @@ const SHARED_EXPECTATIONS = `
   - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on
   - Charts and timelines in \`visual\` are drawn by the app from their data; judge whether the data is right and matches the text
   - An explanation's \`explore\` is a template the app draws under the text with nothing asked, its fields as JSON in \`content\`; judge whether its fields are right and match the text
+  - A question's \`basis\` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides
   - Don't evaluate JSON formatting
 `;
 
@@ -614,5 +616,25 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-precisao-sensores",
     userInput: toInput(WALK_LESSONS["pt-precisao-sensores"]),
+  },
+  {
+    // Production lessons (13 Oct 2026) wrote "0,30 \times 0,20" in LaTeX math, which shows as a
+    // list ("0, 30"); code checks every number for the language's format.
+    expectations: `
+      - MUST be in Brazilian Portuguese, for intermediate learners, explanation first
+      - Every number is written the Brazilian way: a decimal comma (3,844), thousands grouped with a dot (384.400; 203.000.000 or 203 milhões), and inside LaTeX math the decimal comma braced (3{,}844 \\times 10^{5}) so it reads as one number
+      - The form a × 10ⁿ, with a from 1 to less than 10, is explained by counting how far the comma moves and which way, for large and small numbers
+      - Worked examples and checks have the planned numbers and exponents right, and the checks use the planned traps (a decimal outside 1 to 10, the exponent's sign flipped, exponents multiplied instead of added)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-notacao-cientifica-numbers",
+    userInput: toInput({
+      chapterTitle: "Potências e notação científica",
+      courseTitle: "Matemática",
+      language: "pt",
+      level: "intermediate",
+      spec: SCIENTIFIC_NOTATION_SPEC,
+    }),
   },
 ];

@@ -14,7 +14,8 @@ export type CourseDetailsExpected = { categories?: string[] };
 /** The page's limits, from the prompt: short enough to read at a glance. */
 const MAX_DESCRIPTION_SENTENCES = 3;
 const MAX_DESCRIPTION_LENGTH = 420;
-const MAX_VALUE_LENGTH = 200;
+/** The promise sits under the course's name: two lines on a wide screen, three on a phone. */
+const MAX_PROMISE_LENGTH = 160;
 const LIST_SIZES = { audience: [3, 5], outcomes: [4, 6] } as const;
 const MAX_CATEGORIES = 2;
 
@@ -70,6 +71,7 @@ function checkCategories({
 function checkText(details: CourseDetails): string[] {
   const { description, landingPage } = details;
   const sentences = countSentences(description);
+  const promise = landingPage.valueProposition;
   const allText = JSON.stringify(details);
 
   return [
@@ -77,14 +79,14 @@ function checkText(details: CourseDetails): string[] {
       `The description has ${sentences} sentences; it needs 1 to 3.`,
     description.length > MAX_DESCRIPTION_LENGTH &&
       `The description is ${description.length} characters; keep it under ${MAX_DESCRIPTION_LENGTH}.`,
-    (!landingPage.valueProposition || landingPage.valueProposition.length > MAX_VALUE_LENGTH) &&
-      "The value proposition is missing or longer than one short sentence.",
+    (!promise || promise.length > MAX_PROMISE_LENGTH || countSentences(promise) > 1) &&
+      `The promise (valueProposition) is missing or longer than one short sentence of ${MAX_PROMISE_LENGTH} characters.`,
     allText.includes("—") && "The copy uses an em dash.",
   ].filter((problem) => typeof problem === "string");
 }
 
 /**
- * The parts the page relies on: the description's length, the value proposition, each list's
+ * The parts the page relies on: the description's length, the promise, each list's
  * size, the categories (valid, one or two, and a primary domain) and no em dashes. The judge sees
  * the whole output; code checks carry their own share of the score.
  */
@@ -122,25 +124,31 @@ const COURSE_DETAILS_SCORE_CATEGORIES = defineScoreCategories([
     expectations: `Audit whether the copy fits this course: the description says what the subject is and what the course covers, naming real parts of the subject that the CHAPTERS and the course title imply, and describes the whole course rather than only the chapters written so far. Outcomes are concrete, observable abilities a learner of this course would build. Penalize generic education copy that would fit any course, outcomes that are topics instead of abilities, and claims about content the course clearly doesn't cover. Score at most 8 when two or more items are generic; at most 7 when the description or most outcomes could belong to any course.`,
     id: "fit",
     label: "Fit and specificity",
-    weight: 35,
+    weight: 30,
   },
   {
     expectations: `Audit honesty. Nothing promises a pass, score, admission, certificate, license, job, salary or fluency by a date; nothing mentions duration, prices or access rules; no inflated claims ("master", "become an expert", "everything you need"). For regulated professions (medicine, nursing, law, finance and the like), no field implies the course qualifies someone to practice, diagnose, treat, prescribe, represent clients or give professional advice: it frames study, understanding or working with professionals. Hobbies and pop culture get personal, creative and cultural uses, not careers. Score at most 6 for any promise of a result or a practice claim in a regulated field; at most 8 for one inflated claim or a career framing on a hobby.`,
     id: "honesty",
     label: "Honest claims",
-    weight: 30,
+    weight: 25,
+  },
+  {
+    expectations: `Audit the promise (\`landingPage.valueProposition\`, the first line under the course's name) and the outcomes (the page's "What you'll be able to do") as a visitor from a search reads them at the course's starting level. The course title and the first band of CHAPTERS set that level: a "from scratch" title or an overview or beginner band means someone who has never studied the subject; a title naming an advanced or professional level means someone who already uses the field's common terms. The promise is one short sentence that opens with what the learner will be able to do, a concrete result they'd recognize from everyday life, work, study or the exam, not the subject's definition, the course's process, a list of topics or an opener like "You'll be able to" or "Você poderá" before the result. The promise and every outcome use words that visitor already knows: a term the course teaches (an equation, a model, a named law, field jargon) appears only as what it lets the learner do. Penalize abstract verbs and nouns ("apply models", "relate concepts", "analyze processes", "assessed criteria") where a concrete action fits; "understand" and its equivalents count as abstract in the promise and the outcomes, unless understanding is the ability itself (a language learner following what they hear or read). Don't penalize terms the course's audience already uses or the subject's own name, and don't reward vagueness: plain words still say something specific. Score at most 5 when the promise is technical or abstract for the course's level; at most 7 when the promise is plain but doesn't open with the result, or when two or more outcomes use words the visitor wouldn't know; at most 8 for one such outcome or a stiff, wordy promise. Check the mood too: in Portuguese, Spanish and French the promise and outcomes start with the infinitive ("Explicar por que…"), in German they're infinitive phrases with the verb last, and English uses the base form ("Explain why…"). An imperative aimed at the visitor ("Explique…", "Resolva…", "Erkläre…") reads as an exam instruction, not an ability they'll have: score at most 7 when a non-English promise is imperative, and at most 8 when non-English outcomes are.`,
+    id: "promise",
+    label: "Plain, outcome-first promise",
+    weight: 20,
   },
   {
     expectations: `Audit the audience. Audience items are specific fit statements a person recognizes (a role, a goal or a situation), not labels like "anyone interested". Language courses focus on communicating in real situations, travel, study, work and culture. Score at most 8 when two items are vague labels; at most 7 when most are.`,
     id: "audience",
     label: "Audience",
-    weight: 15,
+    weight: 10,
   },
   {
-    expectations: `Audit the language and style. Every field is in the requested language variant (US English, Brazilian Portuguese), including audience nouns, with natural phrasing rather than translation; plain words a beginner understands; no "learn", "understand", "explore", "introduction to", "basics of" or their equivalents; no hype. Score at most 6 when fields are in the wrong language; at most 8 for a few stiff, jargon-heavy or banned phrasings.`,
+    expectations: `Audit the language and style. Every field is in the requested language variant (US English, Brazilian Portuguese), including audience nouns, with natural phrasing rather than translation; plain words in the description and the audience (the promise and outcomes are judged on their own); no "learn", "explore", "introduction to", "basics of" or their equivalents; no hype. "Understand" and its equivalents are allowed in the audience and the description, and judged only under the promise, so don't penalize them here. Score at most 6 when fields are in the wrong language; at most 8 for a few stiff, jargon-heavy or banned phrasings.`,
     id: "language",
     label: "Language and style",
-    weight: 20,
+    weight: 15,
   },
 ]);
 

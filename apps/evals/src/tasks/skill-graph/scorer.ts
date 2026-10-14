@@ -30,6 +30,7 @@ const CHECKS: readonly GraphCheck[] = [
   "textbookChain",
   "offNoticeFirst",
   "nearDuplicate",
+  "repeatedPhaseName",
   "writing",
 ];
 
@@ -40,10 +41,10 @@ function toCheck(code: SkillGraphProblem["code"]): GraphCheck {
 /**
  * The checks production runs on every graph it writes (a graph with problems is written once more
  * and the better one kept): no prerequisite loops, no chain too deep or in a textbook's order, no
- * exam subject opening beyond its notice, no skill written twice and no em dash, Markdown or
- * placeholder in what learners read. What production repaired in code (a loop broken, a skill
- * written twice merged, em dashes and Markdown taken out) still counts against the model. The
- * judge sees the whole graph.
+ * exam subject opening beyond its notice, no skill written twice, no phase titled like another
+ * phase, a skill or an area, and no em dash, Markdown or placeholder in what learners read. What
+ * production repaired in code (a loop broken, a skill written twice merged, em dashes and Markdown
+ * taken out) still counts against the model. The judge sees the whole graph.
  */
 function checkGraph(output: string, input: SkillGraphParams): CodeCheckResult {
   const graph = JSON.parse(output) as SkillGraphOutput;

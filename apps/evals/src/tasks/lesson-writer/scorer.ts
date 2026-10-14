@@ -4,26 +4,33 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { checkWrittenLesson } from "@zoonk/core/library/quality/code-checks";
 import { checkLessonPrograms } from "@zoonk/core/library/quality/program-checks";
+import { findQuestionBases } from "@zoonk/core/library/steps/question-bases";
+import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { findEmDashes } from "@zoonk/utils/text-flaws";
 import { LESSON_WRITER_SCORE_CATEGORIES } from "./score-categories";
 
-/**
- * Em dashes the writer used, which production takes out of every screen before storing it
- * (`replaceEmDashes`), so the lesson reads with commas where the writer meant a dash.
- */
-function findLessonEmDashes(lesson: WrittenLesson): { problem: string; screen: number | null }[] {
+/** What `find` reports on each screen, and on the summary card as the lesson's own. */
+function findInLesson({
+  find,
+  lesson,
+}: {
+  find: (value: unknown) => string[];
+  lesson: WrittenLesson;
+}): { problem: string; screen: number | null }[] {
   return [
     ...lesson.screens.flatMap((screen, index) =>
-      findEmDashes(screen).map((problem) => ({ problem, screen: index })),
+      find(screen).map((problem) => ({ problem, screen: index })),
     ),
-    ...findEmDashes(lesson.summary).map((problem) => ({ problem, screen: null })),
+    ...find(lesson.summary).map((problem) => ({ problem, screen: null })),
   ];
 }
 
 /**
  * Runs the code half of the quality gate production runs, including running
- * the code in code activities, and finds the em dashes production rewrites:
- * each screen is one part, plus the summary card.
+ * the code in code activities, finds the em dashes production rewrites, numbers
+ * written the way the lesson's language doesn't (`findNumberFormatFlaws`) and the
+ * question bases whose quote isn't on the screen they name, which production
+ * leaves out (`findQuestionBases`): each screen is one part, plus the summary card.
  * The judge sees the whole lesson, since a lesson is only published whole, and
  * the pass rate is scored on its own.
  */
@@ -46,7 +53,12 @@ async function checkLesson(
   const problems = [
     ...result.problems,
     ...(await checkLessonPrograms(result.screens)),
-    ...findLessonEmDashes(lesson),
+    ...findInLesson({ find: findEmDashes, lesson }),
+    ...findInLesson({
+      find: (value) => findNumberFormatFlaws({ language: input.language, value }),
+      lesson,
+    }),
+    ...findQuestionBases({ lesson, screens: result.screens }).problems,
   ];
 
   const failingScreens = new Set(problems.map((problem) => problem.screen ?? -1));

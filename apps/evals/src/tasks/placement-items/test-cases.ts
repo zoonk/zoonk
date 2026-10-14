@@ -79,6 +79,38 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
+    // Pedro's phase challenge (13 Oct 2026) showed "40000000 ações … 12500": placement writes the
+    // challenge's questions, so code checks every number for the language's format.
+    expectations: `Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes) and one typed question with checkable key points. Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't give away the multiple-choice one's answer.`,
+    id: "pt-enem-placement-large-numbers",
+    userInput: {
+      ...PLACEMENT_COUNTS,
+      examFormat: ENEM,
+      language: "pt",
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Calcular que porcentagem uma parte representa de um total na casa dos milhares ou dos milhões.",
+          level: "intermediate",
+          name: "Porcentagem de uma parte em um total grande",
+        },
+        {
+          description:
+            "Ler, escrever e comparar números na casa dos milhões e dos bilhões, como populações e orçamentos públicos.",
+          level: "beginner",
+          name: "Leitura e comparação de números grandes",
+        },
+        {
+          description:
+            "Calcular valores por pessoa, como gasto ou consumo per capita, dividindo um total grande pela população e arredondando o resultado.",
+          level: "intermediate",
+          name: "Valores per capita com decimais",
+        },
+      ],
+    },
+  },
+  {
     // Helena's placement (ENEM, Oct 2026): a sound answer to "what check would you recommend?" was
     // graded wrong for not naming elimination, a second technique its key points demanded.
     expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: one ENEM-style multiple-choice question and one typed question with checkable key points, both set in a situation during the exam. The typed question asks how to handle a question in the exam, and its key points say what any sound answer does: a question asking for a check or a strategy accepts any sound one, so no key point demands one particular technique among several (eliminating options, rereading the command, skipping and coming back) on top of another that does the same job. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,

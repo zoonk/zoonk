@@ -35,6 +35,10 @@ import { buildSkillGraphSystemPrompt } from "./skill-graph-system-prompt";
  * classification of living beings), and a plan short on time pays for every prerequisite of a
  * topic it keeps; with hard dependencies only, Sol's ENEM sciences graph gave ecology none, kept
  * equations before stoichiometry and kept heat and electricity off mechanics (9 Oct: 7.9).
+ * Phases were titled for what they teach (the judge flagged 16 of 16 cases; UX's last phase was
+ * its area's name), so an open phase repeated a chapter's name over it. Titled for the learner's
+ * stage, with no first person or gendered word, 4 cases kept one or two such titles and none
+ * repeated a skill or area (13 Oct: 8.73 against 8.66).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;

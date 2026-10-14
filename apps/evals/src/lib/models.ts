@@ -48,6 +48,7 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "anthropic/claude-haiku-4.5", name: "claude-haiku-4.5" },
   { id: "deepseek/deepseek-v4-pro", name: "deepseek-v4-pro" },
   { id: "deepseek/deepseek-v4-flash", name: "deepseek-v4-flash" },
+  { id: "google/gemini-4-argon", name: "gemini-4-argon" },
   { id: "google/gemini-3.8-flash", name: "gemini-3.8-flash" },
   { id: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite" },
   { id: "google/gemini-3.1-pro-preview", name: "gemini-3.1-pro" },

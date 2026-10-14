@@ -120,6 +120,18 @@ const activityScreen = z.object({
   content: z.string(),
 });
 
+/**
+ * The sentence of an earlier reading screen (a hook's text, an explanation or a worked example)
+ * that decides a question's right answer: that screen's number and the sentence copied exactly,
+ * so the app can mark it beside a wrong answer; or null. Code drops one whose quote isn't on that
+ * screen. Only the lesson writer and its fix pass write it: a variant sees one screen alone.
+ */
+const basis = z.object({ screen: z.number().int(), quote: z.string() }).nullable();
+
+const checkScreenWithBasis = checkScreen.extend({ basis });
+const mathCheckScreenWithBasis = mathCheckScreen.extend({ basis });
+const typedAnswerScreenWithBasis = typedAnswerScreen.extend({ basis });
+
 /* oxlint-enable eslint/sort-keys */
 
 /** One schema per written kind, so variants can ask for exactly the kind they rewrite. */
@@ -139,9 +151,9 @@ export const writtenScreenSchema = z.union([
   hookTextScreen,
   explanationScreen,
   workedExampleScreen,
-  checkScreen,
-  mathCheckScreen,
-  typedAnswerScreen,
+  checkScreenWithBasis,
+  mathCheckScreenWithBasis,
+  typedAnswerScreenWithBasis,
   activityScreen,
 ]);
 

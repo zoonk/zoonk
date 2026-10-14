@@ -118,8 +118,8 @@ export const getScoreClassName = (score: number) => {
   const isGoodScore = score >= GOOD_SCORE;
 
   return cn({
-    "text-destructive": isBadScore,
-    "text-success": isGoodScore,
+    "text-destructive-text": isBadScore,
+    "text-success-text": isGoodScore,
     "text-warning": isAverageScore,
   });
 };

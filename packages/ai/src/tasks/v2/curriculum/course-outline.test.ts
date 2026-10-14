@@ -67,6 +67,7 @@ function answer(output: unknown) {
     model: { modelId: MODEL, provider: "gateway" },
     providerMetadata: {},
     response: { modelId: MODEL },
+    usage,
   };
 
   return { finalStep: step, output, steps: [step], usage };
