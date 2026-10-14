@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted, useLocale } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
+import { Suspense } from "react";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
 
@@ -42,30 +43,39 @@ function revealChip(chip: HTMLAnchorElement | null) {
 /** The list's rows while they load, each its own width. */
 const LIST_SKELETON_WIDTHS = ["w-10", "w-14", "w-20", "w-24", "w-16", "w-20", "w-14", "w-24"];
 
+type CategoryNavProps = {
+  categories: CategoryLink[];
+  /**
+   * The open category, null on the catalog's own page; left out while it's only known once its
+   * page opens, when no link is marked.
+   */
+  openCategory?: string | null;
+  total: number;
+};
+
 /**
  * "All" first, then the categories that have courses in the reader's language, in its alphabetical
  * order: an empty one would only lead to "Start a goal", which the goal box above already offers.
  * One opened from a link stays listed while it's the page, so the list always says where it is.
  */
-function useCategoryLinks({ categories, total }: { categories: CategoryLink[]; total: number }) {
+function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps) {
   const t = useExtracted();
   const locale = useLocale();
-  const segment = useSelectedLayoutSegment();
 
   return [
     {
       courseCount: total,
-      current: segment === null,
+      current: openCategory === null,
       href: "/courses" as const,
       key: "all",
       label: t("All"),
     },
     ...categories
-      .filter((category) => category.courseCount > 0 || category.key === segment)
+      .filter((category) => category.courseCount > 0 || category.key === openCategory)
       .toSorted((a, b) => a.label.localeCompare(b.label, locale))
       .map((category) => ({
         courseCount: category.courseCount,
-        current: segment === category.key,
+        current: openCategory === category.key,
         href: `/courses/${category.key}` as const,
         key: category.key,
         label: category.label,
@@ -73,14 +83,9 @@ function useCategoryLinks({ categories, total }: { categories: CategoryLink[]; t
   ];
 }
 
-/**
- * The catalog's categories, one tap to filter it: under `lg` a row of chips that scrolls sideways
- * (faded at its end, with arrows only for a mouse), from `lg` a list beside the courses, as Linear
- * lists its views, each with its number of courses and the chosen one on a soft fill.
- */
-export function CategoryNav({ categories, total }: { categories: CategoryLink[]; total: number }) {
+function CategoryNavView(props: CategoryNavProps) {
   const t = useExtracted();
-  const links = useCategoryLinks({ categories, total });
+  const links = useCategoryLinks(props);
 
   return (
     <>
@@ -133,6 +138,26 @@ export function CategoryNav({ categories, total }: { categories: CategoryLink[];
         </ul>
       </nav>
     </>
+  );
+}
+
+function OpenCategoryNav(props: Omit<CategoryNavProps, "openCategory">) {
+  const openCategory = useSelectedLayoutSegment();
+  return <CategoryNavView {...props} openCategory={openCategory} />;
+}
+
+/**
+ * The catalog's categories, one tap to filter it: under `lg` a row of chips that scrolls sideways
+ * (faded at its end, with arrows only for a mouse), from `lg` a list beside the courses, as Linear
+ * lists its views, each with its number of courses and the chosen one on a soft fill. A category's
+ * page is a dynamic route, so the chosen one is marked in its own `Suspense`: the shell shared by
+ * every category draws the links unmarked.
+ */
+export function CategoryNav(props: Omit<CategoryNavProps, "openCategory">) {
+  return (
+    <Suspense fallback={<CategoryNavView {...props} />}>
+      <OpenCategoryNav {...props} />
+    </Suspense>
   );
 }
 
