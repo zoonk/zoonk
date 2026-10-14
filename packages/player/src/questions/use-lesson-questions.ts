@@ -7,11 +7,13 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
+import { preloadTutorCards } from "@zoonk/learn/tutor-cards";
 import { useCallback, useEffect, useRef } from "react";
 import { type LessonQuestionConnection } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionState, type OfferedSuggestion } from "./lesson-question-state";
+import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 import { useLessonQuestionAnswers } from "./use-lesson-question-answers";
 import { useLessonQuestionRecovery } from "./use-lesson-question-recovery";
 import {
@@ -135,8 +137,24 @@ export function useLessonQuestions({
     }
   }, [activeContext, canAskQuestions, loadThread, preload]);
 
+  // A conversation with answers (read ahead for the screen in view, or on the page) gets their
+  // renderer, the math or diagrams they draw and the cards under them, before the learner opens it.
+  // A conversation that is the page loads the renderer at once, so a later answer draws at once.
+  useEffect(() => {
+    const answers = state.questions.flatMap(({ answer }) => (answer ? [answer] : []));
+
+    if (answers.length > 0 || (page && canAskQuestions)) {
+      preloadTutorMarkdown(answers);
+    }
+
+    if (state.questions.some(({ planChange, toolOffer }) => planChange || toolOffer)) {
+      preloadTutorCards();
+    }
+  }, [canAskQuestions, page, state.questions]);
+
   const open = useCallback(
     (context: LessonQuestionContext, { keepDraft = false }: { keepDraft?: boolean } = {}) => {
+      preloadTutorMarkdown();
       dispatchToContext({ action: { context, keepDraft, type: "open" }, context });
 
       const scope = getLessonQuestionScope(context);

@@ -3,8 +3,9 @@ import {
   type PlayableLibraryLesson,
   type PlayableTeachingStepOf,
 } from "@zoonk/core/lesson-player/contract";
+import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
 import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
-import { type ReactNode } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 import { vi } from "vitest";
 import {
   LessonPlayerProvider,
@@ -129,35 +130,40 @@ export function renderLessonPlayer({
   adapters,
   children = <LessonPlayerShell />,
   lesson,
+  mathMarkup = {},
   voice = speechClips().voice,
   ...props
 }: Partial<Omit<LessonPlayerProviderProps, "children" | "lesson">> & {
   children?: ReactNode;
   lesson: PlayableLibraryLesson;
+  /** The lesson's formulas as the host's server drew them (`collectMathMarkup`). */
+  mathMarkup?: ComponentProps<typeof MathMarkupProvider>["markup"];
   voice?: VoiceText;
 }) {
   const onExit = vi.fn();
 
   const view = render(
-    <SpeechPlayerProvider voice={voice}>
-      <LessonPlayerProvider
-        adapters={adapters ?? buildAdapters(lesson)}
-        lesson={lesson}
-        linkComponent={TestLink}
-        onExit={onExit}
-        routes={{
-          exit: "/",
-          exitTo: null,
-          nextLesson: null,
-          signUp: "/login",
-          upgrade: "/subscription",
-        }}
-        viewer={{ hasSession: true }}
-        {...props}
-      >
-        {children}
-      </LessonPlayerProvider>
-    </SpeechPlayerProvider>,
+    <MathMarkupProvider markup={mathMarkup}>
+      <SpeechPlayerProvider voice={voice}>
+        <LessonPlayerProvider
+          adapters={adapters ?? buildAdapters(lesson)}
+          lesson={lesson}
+          linkComponent={TestLink}
+          onExit={onExit}
+          routes={{
+            exit: "/",
+            exitTo: null,
+            nextLesson: null,
+            signUp: "/login",
+            upgrade: "/subscription",
+          }}
+          viewer={{ hasSession: true }}
+          {...props}
+        >
+          {children}
+        </LessonPlayerProvider>
+      </SpeechPlayerProvider>
+    </MathMarkupProvider>,
     { reactStrictMode: true },
   );
 

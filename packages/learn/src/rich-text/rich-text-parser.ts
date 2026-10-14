@@ -137,6 +137,11 @@ function parseMarkup(text: string): RichInlineSegment[] {
   );
 }
 
+/** One line of lesson text (a question, an option, a label): its line breaks read as spaces. */
+export function toOneLine(text: string): string {
+  return text.replaceAll(/\s*\n\s*/gu, " ");
+}
+
 /**
  * Parses one line: math first (so emphasis markers never touch LaTeX), then inline code (so its
  * punctuation stays literal), then bold and italics.

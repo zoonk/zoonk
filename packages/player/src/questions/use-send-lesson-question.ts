@@ -14,6 +14,7 @@ import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionState, type OfferedSuggestion } from "./lesson-question-state";
 import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
+import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
 type PendingQuestionCreateRequest = {
   input: Omit<CreateLessonQuestionInput, "requestId">;
@@ -114,6 +115,8 @@ export function useSendLessonQuestion({
       }
 
       createRequestsInFlight.current.add(scope);
+      // The answer's renderer loads while the question is sent and the answer is written.
+      preloadTutorMarkdown();
       dispatch({ type: "questionCreateStarted" });
 
       const request = getQuestionCreateRequest({

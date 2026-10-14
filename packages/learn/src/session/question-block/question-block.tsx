@@ -8,6 +8,7 @@ import { TaskActionBar, TaskBody } from "../../_components/task-layout";
 import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
 import { type QuestionTutor } from "../../questions/question-tutor";
+import { usePreloadMath } from "../../rich-text/use-preload-math";
 import { OpenNextStep } from "../open-next-step";
 import { SessionFrame } from "../session-frame";
 import { SessionHeader } from "../session-header";
@@ -236,6 +237,7 @@ export function QuestionBlock({
 }) {
   const blockTitle = useBlockTitle();
   const run = useQuestionBlock({ actions, detail });
+  usePreloadMath(detail);
   const { phase } = run.state;
   const { question } = run;
   const blockDrill = useBlockDrill({ detail, index: run.state.index });

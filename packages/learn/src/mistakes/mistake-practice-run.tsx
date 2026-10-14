@@ -11,6 +11,7 @@ import { TaskActionBar, TaskBody, getTaskAsideRootProps } from "../_components/t
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
+import { usePreloadMath } from "../rich-text/use-preload-math";
 import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
@@ -209,6 +210,7 @@ export function MistakePracticeRun({
   const t = useExtracted();
   const run = useMistakePractice({ actions, practice });
   const { phase } = run.state;
+  usePreloadMath(practice);
 
   // The aside is there while a question is, never beside the run's end.
   const asideStep = phase.kind === "ending" || phase.kind === "ended" ? null : run.step;

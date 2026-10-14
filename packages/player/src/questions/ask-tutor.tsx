@@ -15,14 +15,32 @@ import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "./lesson-question-provider";
+import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
 type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
 
-/** The drawer brings the Markdown renderer with it, so a screen loads it once the learner asks. */
+const loadDrawer = () => import("./lesson-question-panel");
+
+/** A screen loads the drawer once the learner asks, and the answers' renderer with it. */
 const LessonQuestionDrawer = lazy(async () => {
-  const panel = await import("./lesson-question-panel");
+  const panel = await loadDrawer();
   return { default: panel.LessonQuestionDrawer };
 });
+
+/**
+ * Pointing at "Ask" (or focusing it, or pressing it) starts loading the drawer and the answers'
+ * renderer, so the conversation opens without waiting for them.
+ */
+function preloadDrawer() {
+  loadDrawer().catch(() => null);
+  preloadTutorMarkdown();
+}
+
+const PRELOAD_ON_INTENT = {
+  onFocus: preloadDrawer,
+  onPointerDown: preloadDrawer,
+  onPointerEnter: preloadDrawer,
+};
 
 function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: string }) {
   const t = useExtracted();
@@ -63,7 +81,7 @@ function AskTutorRow({
   const label = useAskLabel({ kind, name: identity.name });
 
   return (
-    <ListRowButton onClick={() => open({ kind })}>
+    <ListRowButton {...PRELOAD_ON_INTENT} onClick={() => open({ kind })}>
       <ListRowLeading>
         <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
           {identity.avatar}
@@ -94,6 +112,7 @@ function AskTutorButton({
 
   return (
     <Button
+      {...PRELOAD_ON_INTENT}
       aria-label={label}
       className={cn("pl-1.5", inTask && "max-sm:size-9 max-sm:px-0")}
       onClick={() => open({ kind })}

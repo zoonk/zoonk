@@ -1,4 +1,5 @@
-import { renderToString } from "katex";
+import { useMathMarkup } from "#math-renderer";
+import { Suspense } from "react";
 
 /**
  * A run of lesson text with one formatting primitive. `marked` runs are a sentence the screen
@@ -13,27 +14,32 @@ export type RichInlineSegment = (
   | { kind: "text"; text: string }
 ) & { marked?: boolean };
 
-/**
- * Some structured AI responses include JSON-escaped LaTeX commands as literal
- * learner text, such as `\\rightarrow`. KaTeX expects `\rightarrow`, so the
- * player accepts that common over-escaped shape at render time.
- */
-function normalizeLatexCommands(text: string) {
-  return text.replaceAll(/\\\\[A-Za-z]+/gu, (escapedCommand) => escapedCommand.slice(1));
+type MathSegment = Extract<RichInlineSegment, { kind: "displayMath" | "math" }>;
+
+function mathClassName(segment: MathSegment) {
+  return segment.kind === "displayMath" ? "my-3 block overflow-x-auto" : undefined;
 }
 
-/**
- * Renders LaTeX through KaTeX with errors kept inline. AI-generated formulas
- * should never crash the player, and visible fallback text makes bad formulas
- * reviewable instead of invisible.
- */
-function renderMathToHtml({ displayMode, text }: { displayMode: boolean; text: string }) {
-  return renderToString(normalizeLatexCommands(text), {
-    displayMode,
-    output: "mathml",
-    throwOnError: false,
-    trust: false,
-  });
+/** A formula as written, where KaTeX isn't here yet (or couldn't load). */
+function MathSource({ segment }: { segment: MathSegment }) {
+  return <span className={mathClassName(segment)}>{segment.text}</span>;
+}
+
+/** A formula drawn as MathML by KaTeX: on the server, or in the browser only for screens with math. */
+function MathView({ segment }: { segment: MathSegment }) {
+  const markup = useMathMarkup({ displayMode: segment.kind === "displayMath", text: segment.text });
+
+  if (markup === null) {
+    return <MathSource segment={segment} />;
+  }
+
+  return (
+    <span
+      className={mathClassName(segment)}
+      // eslint-disable-next-line react/no-danger -- KaTeX returns escaped MathML with trust disabled, which lets formulas render without allowing AI-provided HTML.
+      dangerouslySetInnerHTML={{ __html: markup }}
+    />
+  );
 }
 
 function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
@@ -54,17 +60,12 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
   }
 
   if (segment.kind === "math" || segment.kind === "displayMath") {
+    // Its own boundary: hydration keeps the server's drawing while KaTeX loads, and only a formula
+    // drawn before it arrived shows as written meanwhile (screens with math preload it).
     return (
-      <span
-        className={segment.kind === "displayMath" ? "my-3 block overflow-x-auto" : undefined}
-        // eslint-disable-next-line react/no-danger -- KaTeX returns escaped MathML with trust disabled, which lets formulas render without allowing AI-provided HTML.
-        dangerouslySetInnerHTML={{
-          __html: renderMathToHtml({
-            displayMode: segment.kind === "displayMath",
-            text: segment.text,
-          }),
-        }}
-      />
+      <Suspense fallback={<MathSource segment={segment} />}>
+        <MathView segment={segment} />
+      </Suspense>
     );
   }
 

@@ -13,8 +13,10 @@ import {
 } from "@zoonk/ui/components/empty";
 import { MessageScrollerContent, MessageScrollerItem } from "@zoonk/ui/components/message-scroller";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { OnDemandWaitContext } from "@zoonk/ui/lib/on-demand";
 import { MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { Suspense, useState } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
@@ -155,15 +157,36 @@ function GuestThread() {
   );
 }
 
-export function QuestionThread({
+/**
+ * The answers' renderer loads with the first conversation that has any (usually ahead of time, see
+ * `preloadTutorMarkdown`). Until it and the answers' math or diagrams are here, the thread keeps
+ * its loading look rather than showing raw Markdown. Once shown it never goes back to it: answers
+ * that change later (a new one, earlier ones) draw as soon as they can.
+ */
+function WaitForFirstShow({
+  children,
+  questions,
+}: {
+  children: React.ReactNode;
+  questions: LessonQuestionController["state"]["questions"];
+}) {
+  // The questions it opened with; null once they change, which means the thread has shown.
+  const [firstQuestions, setFirstQuestions] = useState<typeof questions | null>(questions);
+
+  if (firstQuestions && firstQuestions !== questions) {
+    setFirstQuestions(null);
+  }
+
+  return <OnDemandWaitContext value={firstQuestions === questions}>{children}</OnDemandWaitContext>;
+}
+
+/** The thread's questions and answers, with the way to earlier ones. */
+function ThreadTurns({
   controller,
   identity,
-  isAuthenticated,
 }: {
   controller: LessonQuestionController;
-  /** The buddy who answers, by face and name. */
   identity: TutorIdentity;
-  isAuthenticated: boolean;
 }) {
   const t = useExtracted();
   const { renderPlanChange, renderToolOffer } = useLessonQuestionNavigation();
@@ -173,39 +196,6 @@ export function QuestionThread({
   const answerInProgressCount = state.questions.filter((question) =>
     isLessonQuestionAnswerInProgress(question),
   ).length;
-
-  if (!isAuthenticated) {
-    return (
-      <ThreadViewport>
-        <GuestThread />
-      </ThreadViewport>
-    );
-  }
-
-  if (state.loadStatus === "loading") {
-    return <ThreadViewportSkeleton />;
-  }
-
-  if (state.error === "load") {
-    return (
-      <ThreadViewport>
-        <ThreadLoadError error={state.requestError} onRetry={() => void controller.load()} />
-      </ThreadViewport>
-    );
-  }
-
-  if (state.questions.length === 0) {
-    return (
-      <ThreadViewport>
-        <EmptyThread
-          context={state.context}
-          identity={identity}
-          lessonSuggestions={getQuestionLimit(state) ? null : controller.suggestions}
-          onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
-        />
-      </ThreadViewport>
-    );
-  }
 
   return (
     <ThreadViewport
@@ -264,5 +254,59 @@ export function QuestionThread({
         ))}
       </MessageScrollerContent>
     </ThreadViewport>
+  );
+}
+
+export function QuestionThread({
+  controller,
+  identity,
+  isAuthenticated,
+}: {
+  controller: LessonQuestionController;
+  /** The buddy who answers, by face and name. */
+  identity: TutorIdentity;
+  isAuthenticated: boolean;
+}) {
+  const { state } = controller;
+
+  if (!isAuthenticated) {
+    return (
+      <ThreadViewport>
+        <GuestThread />
+      </ThreadViewport>
+    );
+  }
+
+  if (state.loadStatus === "loading") {
+    return <ThreadViewportSkeleton />;
+  }
+
+  if (state.error === "load") {
+    return (
+      <ThreadViewport>
+        <ThreadLoadError error={state.requestError} onRetry={() => void controller.load()} />
+      </ThreadViewport>
+    );
+  }
+
+  if (state.questions.length === 0) {
+    return (
+      <ThreadViewport>
+        <EmptyThread
+          context={state.context}
+          identity={identity}
+          lessonSuggestions={getQuestionLimit(state) ? null : controller.suggestions}
+          onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
+        />
+      </ThreadViewport>
+    );
+  }
+
+  return (
+    <Suspense fallback={<ThreadViewportSkeleton />}>
+      <WaitForFirstShow questions={state.questions}>
+        <ThreadTurns controller={controller} identity={identity} />
+      </WaitForFirstShow>
+    </Suspense>
   );
 }

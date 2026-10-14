@@ -1,5 +1,5 @@
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
-import { markRichInline, parseRichInline } from "@zoonk/learn/rich-text/parser";
+import { markRichInline, parseRichInline, toOneLine } from "@zoonk/learn/rich-text/parser";
 import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
 import { useLocale } from "next-intl";
 
@@ -24,7 +24,7 @@ function typeset({
  */
 export function LessonRichText({ mark, text }: { mark?: string | null; text: string }) {
   const locale = useLocale();
-  const parsed = parseRichInline(text.replaceAll(/\s*\n\s*/gu, " "));
+  const parsed = parseRichInline(toOneLine(text));
   const segments = mark ? markRichInline(parsed, mark) : parsed;
 
   return <RichInlineSegments segments={typeset({ locale, segments })} />;

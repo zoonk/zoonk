@@ -3,6 +3,7 @@
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffect, useEffectEvent, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { UserNameProvider } from "../user-name-context";
@@ -180,6 +181,7 @@ export function LessonPlayerProvider({
   });
 
   useAbandonTracking({ state, track });
+  usePreloadMath(lesson.steps);
   const screen = useMemo(() => getLessonScreen(state), [state]);
   const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 

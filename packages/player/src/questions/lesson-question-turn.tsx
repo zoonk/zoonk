@@ -20,8 +20,9 @@ import { useExtracted } from "next-intl";
 import { useMemo } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage, toHelpLimit } from "./lesson-question-errors";
-import { LessonQuestionMarkdown, type TutorAnswerLinks } from "./lesson-question-markdown";
+import { LessonQuestionMarkdown } from "./lesson-question-markdown";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
+import { type TutorAnswerLinks } from "./tutor-markdown";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function QuestionContextLabel({ context }: { context: LessonQuestionContextSummary }) {

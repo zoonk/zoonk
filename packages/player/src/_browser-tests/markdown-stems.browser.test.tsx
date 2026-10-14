@@ -1,3 +1,4 @@
+import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
@@ -63,5 +64,28 @@ Which sensor has more readings?`),
       await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     });
+  });
+
+  it("draws a lesson's formulas as its server drew them, on every screen", async () => {
+    const drawn = '<math data-drawn="server"><mi>v</mi></math>';
+
+    const lesson = buildLesson([
+      check("Which choice fits the orbit?"),
+      check(String.raw`At what speed \(v\) does it stay up?`),
+    ]);
+
+    // The server's drawing, marked so the screen shows it wasn't drawn again in the browser.
+    const keys = Object.keys(collectMathMarkup(lesson));
+    renderLessonPlayer({ lesson, mathMarkup: Object.fromEntries(keys.map((key) => [key, drawn])) });
+
+    await page
+      .getByRole("radio", { name: "Where the electron is most likely to be found" })
+      .click();
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect.element(page.getByRole("heading", { name: /At what speed/u })).toBeVisible();
+    expect(document.querySelectorAll('math[data-drawn="server"]')).toHaveLength(1);
   });
 });

@@ -18,6 +18,8 @@ import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getLessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
+import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
+import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -216,8 +218,11 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     notFound();
   }
 
+  // Every screen's formulas drawn here, so the player shows them without loading KaTeX.
+  const mathMarkup = collectMathMarkup(played?.lesson);
+
   return (
-    <>
+    <MathMarkupProvider markup={mathMarkup}>
       {result.status === "ready" && isGuest && (
         <GuestLessonPlayer
           challengeTeam={challengeTeam}
@@ -258,7 +263,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           result={result}
         />
       )}
-    </>
+    </MathMarkupProvider>
   );
 }
 

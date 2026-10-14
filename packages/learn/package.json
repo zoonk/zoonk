@@ -2,6 +2,12 @@
   "name": "@zoonk/learn",
   "private": true,
   "type": "module",
+  "imports": {
+    "#math-renderer": {
+      "browser": "./src/rich-text/math-renderer.browser.ts",
+      "default": "./src/rich-text/math-renderer.ts"
+    }
+  },
   "exports": {
     "./answer-option": "./src/_components/answer-option.tsx",
     "./answer-tone": "./src/_components/answer-tone.ts",
@@ -127,6 +133,9 @@
     "./visual": "./src/visuals/lesson-visual.tsx",
     "./rich-text": "./src/rich-text/rich-text-blocks.tsx",
     "./rich-text/inline": "./src/rich-text/rich-inline-segments.tsx",
+    "./rich-text/math": "./src/rich-text/math-markup.ts",
+    "./rich-text/math-provider": "./src/rich-text/math-markup-context.tsx",
+    "./rich-text/preload-math": "./src/rich-text/use-preload-math.ts",
     "./rich-text/parser": "./src/rich-text/rich-text-parser.ts",
     "./rich-text/typography": "./src/rich-text/rich-text-typography.ts"
   },

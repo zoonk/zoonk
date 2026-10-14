@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Page, type Route } from "@playwright/test";
+import { type Page, type Request, type Route } from "@playwright/test";
 import {
   type CreateLessonQuestionInput,
   type LessonQuestionContextSummary,
@@ -22,6 +22,13 @@ const FORMATTED_ANSWER = [
   "$$\nv = \\sqrt{\\frac{GM}{r}}\n$$",
   "```mermaid\nflowchart TD\n  accTitle: How an orbit forms\n  accDescr: Gravity and forward motion produce an orbit.\n  A[Gravity] --> B[Orbit]\n  C[Forward motion] --> B\n```",
 ].join("\n\n");
+
+/** How long no script loads before the page counts as done loading what it reads ahead. */
+const SCRIPTS_SETTLED_MS = 1000;
+
+function isScript(request: Request) {
+  return request.url().includes("/_next/static/chunks/");
+}
 
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
 
@@ -388,10 +395,37 @@ test("renders preloaded Markdown immediately while optional scripts load", async
     page,
   });
 
+  const scripts = { inFlight: 0, lastActivity: Date.now() };
+
+  page.on("request", (request) => {
+    if (isScript(request)) {
+      scripts.inFlight += 1;
+      scripts.lastActivity = Date.now();
+    }
+  });
+
+  const settle = (request: Request) => {
+    if (isScript(request)) {
+      scripts.inFlight -= 1;
+      scripts.lastActivity = Date.now();
+    }
+  };
+
+  page.on("requestfinished", settle);
+  page.on("requestfailed", settle);
+
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
   await expect.poll(() => api.completedGetRequests).toBe(1);
+  scripts.lastActivity = Date.now();
   await expect(page.getByRole("button", { name: "Ask Zu" })).toBeVisible();
+
+  // A thread read ahead with answers loads their renderer and math as it arrives, before the
+  // learner asks: hold scripts only once none has loaded for a while since it arrived.
+  await expect
+    .poll(() => scripts.inFlight === 0 && Date.now() - scripts.lastActivity > SCRIPTS_SETTLED_MS)
+    .toBe(true);
+
   const releaseScripts = Promise.withResolvers<null>();
   const errors: Error[] = [];
   page.on("pageerror", (error) => errors.push(error));

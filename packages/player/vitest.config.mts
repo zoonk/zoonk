@@ -78,6 +78,19 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
 };
 
 export default defineConfig({
+  /**
+   * Dependencies only code loaded on demand imports (the tutor's Markdown, KaTeX): bundled up
+   * front, since one found mid-run makes Vite reload the page under a test.
+   */
+  optimizeDeps: {
+    include: [
+      "@streamdown/math",
+      "@streamdown/mermaid",
+      "@zoonk/ui > @base-ui/react/alert-dialog",
+      "katex",
+      "streamdown",
+    ],
+  },
   plugins: [react()],
   resolve: {
     alias: {
