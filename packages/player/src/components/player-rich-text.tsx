@@ -1,9 +1,9 @@
 "use client";
 
+import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { useReplaceName } from "../user-name-context";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
-import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
 
 const MATH_DELIMITERS = [
   { close: "\\\\)", kind: "math" as const, open: "\\\\(" },

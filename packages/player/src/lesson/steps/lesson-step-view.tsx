@@ -14,11 +14,13 @@ import { SummaryStepView } from "./summary-step";
 import { TypedAnswerStepView } from "./typed-answer-step";
 import { WorkedExampleStepView } from "./worked-example-step";
 
-/** Screens that show their own verdict (activities, challenges and today's inline exercises). */
+/**
+ * Screens that show their own verdict: activities, challenges, and match columns, which are only
+ * done once every pair is matched.
+ */
 const OWN_RESULT_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "activity",
   "challenge",
-  "fillBlank",
   "matchColumns",
 ]);
 

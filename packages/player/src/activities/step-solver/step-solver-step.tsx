@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -28,8 +29,8 @@ function StepMarker({
       aria-hidden="true"
       className={cn(
         "z-10 flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
-        status === "done" && !isFirstPickWrong && "bg-success text-background",
-        status === "done" && isFirstPickWrong && "bg-destructive text-background",
+        status === "done" && !isFirstPickWrong && "bg-success-text text-background",
+        status === "done" && isFirstPickWrong && "bg-destructive-text text-background",
         status === "current" && "bg-primary text-primary-foreground",
         status === "later" &&
           "border-border bg-background text-muted-foreground border-2 border-dashed",
@@ -52,7 +53,7 @@ function StepWork({ maxValue, step }: { maxValue: number; step: SolverStep }) {
       : Math.max((Math.abs(step.value) / maxValue) * PERCENT, BAR_MIN_PERCENT);
 
   return (
-    <div className="bg-muted/60 flex flex-col gap-2 rounded-2xl p-3">
+    <div className="bg-muted/60 flex flex-col gap-2 rounded-xl p-3">
       <div aria-hidden="true" className="flex items-center gap-2">
         <div className="bg-viz-accent-soft h-7 rounded-lg" style={{ width: `${width}%` }} />
         <span className="text-viz-accent shrink-0 text-sm font-semibold tabular-nums">
@@ -103,7 +104,7 @@ export function StepSolverStep({
       <StepMarker index={index} isFirstPickWrong={isChecked && isFirstPickWrong} status={status} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
-        <p
+        <div
           className={cn(
             "text-base font-semibold",
             status === "later" && "text-muted-foreground font-normal",
@@ -112,11 +113,13 @@ export function StepSolverStep({
           {status === "done" && correct ? (
             <LessonRichText text={correct.text} />
           ) : (
-            <LessonRichText text={step.prompt} />
+            <RichTextBlocks text={step.prompt} />
           )}
-        </p>
+        </div>
 
-        {status === "done" && <p className="text-muted-foreground text-sm">{step.prompt}</p>}
+        {status === "done" && (
+          <RichTextBlocks className="text-muted-foreground text-sm" text={step.prompt} />
+        )}
 
         {status === "current" && !isChecked && (
           <ActivitySelectGrid label={step.prompt}>
@@ -136,7 +139,7 @@ export function StepSolverStep({
 
         {status === "current" && lastWrong && (
           <p aria-live="polite" className="text-sm leading-snug">
-            <span className="text-destructive font-semibold">{t("Not quite:")}</span>{" "}
+            <span className="text-destructive-text font-semibold">{t("Not quite:")}</span>{" "}
             {lastWrong.reason}
           </p>
         )}
@@ -145,7 +148,8 @@ export function StepSolverStep({
           <>
             <StepWork maxValue={maxValue} step={step} />
             <p className="text-sm leading-snug">
-              <span className="text-success font-semibold">{t("Right:")}</span> {correct.reason}
+              <span className="text-success-text font-semibold">{t("Right:")}</span>{" "}
+              {correct.reason}
             </p>
           </>
         )}

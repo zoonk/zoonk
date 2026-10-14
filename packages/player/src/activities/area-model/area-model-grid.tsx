@@ -205,7 +205,7 @@ export function AreaGrid({
                 {showsLabel && (
                   <text
                     className={cn(
-                      "fill-foreground font-bold tabular-nums",
+                      "fill-foreground font-semibold tabular-nums",
                       cellTextClass(cellWidth, cellHeight),
                     )}
                     dominantBaseline="middle"

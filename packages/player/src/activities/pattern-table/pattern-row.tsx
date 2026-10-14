@@ -35,13 +35,13 @@ function CheckedBlank({
 
   return (
     <span className="flex flex-wrap items-baseline gap-x-2">
-      <span className={cn(isRight ? "text-success" : "text-destructive line-through")}>
+      <span className={cn(isRight ? "text-success-text" : "text-destructive-text line-through")}>
         {stem}
         <b className="font-semibold">{chosen ?? ""}</b>
       </span>
 
       {!isRight && expected && (
-        <span className="text-success">
+        <span className="text-success-text">
           <span className="sr-only">{`${t("Correct answer:")} `}</span>
           {stem}
           <b className="font-semibold">{expected}</b>

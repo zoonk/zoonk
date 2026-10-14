@@ -10,7 +10,7 @@ function textOf(side: readonly MatchCard[], id: string | undefined): string {
 
 function ResultRow({ children, why }: { children: React.ReactNode; why: string | null }) {
   return (
-    <li className="bg-background rounded-2xl border px-3 py-2.5 text-sm leading-snug">
+    <li className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug">
       <p>{children}</p>
       {why && (
         <p className="text-muted-foreground mt-0.5">

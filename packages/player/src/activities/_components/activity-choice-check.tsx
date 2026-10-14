@@ -10,31 +10,10 @@ import { type ActivityPhase } from "../activity-renderer";
 import { ActivityCheckQuestion } from "./activity-check-question";
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
-type ChoiceOption = ChoiceCheck["options"][number];
-
-function optionResult({
-  isChecked,
-  option,
-  selectedId,
-}: {
-  isChecked: boolean;
-  option: ChoiceOption;
-  selectedId: string | null;
-}): "correct" | "incorrect" | null {
-  if (!isChecked) {
-    return null;
-  }
-
-  if (option.isCorrect) {
-    return "correct";
-  }
-
-  return option.id === selectedId ? "incorrect" : null;
-}
-
 /**
  * A question about what the learner saw on the canvas, answered with the player's option cards
- * (number keys pick an option). After the check, the right option and a wrong pick are marked.
+ * (number keys pick an option). After the check, only the right option and a wrong pick stay,
+ * marked.
  */
 export function ActivityChoiceCheck({
   answer,
@@ -66,16 +45,14 @@ export function ActivityChoiceCheck({
 
       <PlayerChoiceSceneOptions
         ariaLabel={check.question}
-        keyboardEnabled={!isChecked}
+        isChecked={isChecked}
         onSelect={handleSelect}
         options={check.options.map((option) => ({
           content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
-          disabled: isChecked,
-          isDimmed: !isChecked && selectedId !== null && selectedId !== option.id,
-          isSelected: selectedId === option.id,
+          isCorrect: option.isCorrect,
           key: option.id,
-          resultState: optionResult({ isChecked, option, selectedId }),
         }))}
+        selectedKey={selectedId}
       />
     </div>
   );

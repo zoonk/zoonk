@@ -164,10 +164,10 @@ export function MatchPairsActivity({
       </div>
 
       {miss && (
-        <div className="bg-destructive/10 flex gap-2.5 rounded-2xl px-3.5 py-3 text-sm leading-snug">
-          <CircleX aria-hidden="true" className="text-destructive mt-0.5 size-4 shrink-0" />
+        <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
+          <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
           <p>
-            <span className="text-destructive font-semibold">{t("Not quite:")}</span>{" "}
+            <span className="text-destructive-text font-semibold">{t("Not quite:")}</span>{" "}
             {miss.reason ? (
               <LessonRichText text={miss.reason} />
             ) : (

@@ -32,7 +32,7 @@ function CheckedCell({
   return (
     <div
       className={cn(
-        "bg-background flex flex-col items-center justify-center gap-0.5 rounded-2xl border px-1",
+        "bg-background flex flex-col items-center justify-center gap-0.5 rounded-xl border px-1",
         isCompact ? "min-h-11 py-1" : "min-h-18 py-2",
         learner !== null && !isWrong && "border-success/60",
         isWrong && "border-destructive/60 bg-destructive/5",
@@ -47,7 +47,7 @@ function CheckedCell({
       <Trait traits={traits} value={expected} />
 
       {isWrong && (
-        <span className="text-destructive text-xs line-through">
+        <span className="text-destructive-text text-xs line-through">
           <span className="sr-only">{t("Your answer:")} </span>
           {learner}
         </span>
@@ -84,7 +84,7 @@ function CellButton({
       aria-label={value ? undefined : t("Square {number}, {row} and {column}: empty", place)}
       aria-pressed={isActive}
       className={cn(
-        "bg-background focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 rounded-2xl border outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
+        "bg-background focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 rounded-xl border outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
         isCompact ? "min-h-11" : "min-h-18",
         !value && "border-dashed",
         isActive && "border-viz-accent ring-viz-accent/25 ring-4",

@@ -49,7 +49,7 @@ function SlotButton({
     <button
       aria-pressed={isActive}
       className={cn(
-        "focus-visible:ring-ring/50 flex min-h-11 w-full items-center gap-3 rounded-2xl border px-2.5 py-1.5 text-left text-sm outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow,background-color]",
+        "focus-visible:ring-ring/50 flex min-h-11 w-full items-center gap-3 rounded-xl border px-2.5 py-1.5 text-left text-sm outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow,background-color]",
         !name && !isActive && "border-dashed",
         name && "bg-background hover:bg-accent",
         isActive && "border-viz-accent bg-viz-accent-soft/40 ring-viz-accent/20 ring-2",
@@ -92,14 +92,14 @@ function CheckedSlot({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1 rounded-2xl border px-2.5 py-2 text-sm",
+        "flex flex-col gap-1 rounded-xl border px-2.5 py-2 text-sm",
         correct ? "border-success/50 bg-success/5" : "border-destructive/50 bg-destructive/5",
       )}
     >
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <SpotNumber number={slot.number} state={state} />
         {correct && <span className="font-medium">{slot.label}</span>}
-        {correct && <Check aria-hidden="true" className="text-success size-4" />}
+        {correct && <Check aria-hidden="true" className="text-success-text size-4" />}
 
         {!correct && name && (
           <span className="text-muted-foreground line-through">
@@ -109,7 +109,7 @@ function CheckedSlot({
         )}
 
         {!correct && (
-          <span className="text-success font-medium">
+          <span className="text-success-text font-medium">
             <span className="sr-only">{t("Correct answer:")} </span>
             {slot.label}
           </span>

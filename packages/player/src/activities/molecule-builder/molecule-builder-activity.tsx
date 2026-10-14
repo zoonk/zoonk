@@ -134,13 +134,13 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
         )}
       </div>
 
-      <div className="bg-background/60 rounded-2xl bg-[radial-gradient(var(--border)_1px,transparent_1.2px)] bg-size-[18px_18px]">
+      <div className="bg-background/60 rounded-xl bg-[radial-gradient(var(--border)_1px,transparent_1.2px)] bg-size-[18px_18px]">
         <MoleculeCanvas
           atomLabel={(atom) =>
-            t("{atom}: {used} of {valence} bonds", {
+            t("{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}", {
               atom: nameOf(atom),
               used: String(bondsUsed(build, atom.id)),
-              valence: String(valenceOf(atom.element)),
+              valence: valenceOf(atom.element),
             })
           }
           build={build}

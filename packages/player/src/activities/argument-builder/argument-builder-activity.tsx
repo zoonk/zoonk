@@ -95,7 +95,7 @@ export function ArgumentBuilderActivity({
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <ActivityDragDrop onDrop={handleDrop}>
         <div className="flex flex-col gap-2">
-          <section aria-label={t("Claim")} className="bg-viz-accent-soft rounded-2xl px-3.5 py-3">
+          <section aria-label={t("Claim")} className="bg-viz-accent-soft rounded-xl px-3.5 py-3">
             <p className="text-viz-accent text-xs font-semibold">{t("Claim")}</p>
             <p className="mt-0.5 text-base leading-snug font-medium">
               <LessonRichText text={fields.claim} />

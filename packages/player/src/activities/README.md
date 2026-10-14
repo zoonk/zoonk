@@ -26,7 +26,7 @@ type ActivityStepProps = {
 };
 ```
 
-It renders, top to bottom: a badge naming what the learner does, the prompt (an `h2`, whose id labels the canvas), the canvas inside `Suspense` with a skeleton, the data note (the cited source, or "Example numbers, not real data"), and the check area:
+It renders, top to bottom: a neutral chip naming what the learner does (its verb's icon and words, no color), the prompt (an `h2`, whose id labels the canvas), the canvas inside `Suspense` with a skeleton, the data note (the cited source, or "Example numbers, not real data"), and the check area:
 
 - `choice`: the question and the player's option cards under the canvas (number keys pick an option). The canvas is free exploration and never answers. Templates registered with `checkFirst` (predict first, then see) put the options above the canvas instead.
 - `numeric`: the question and a number input. The canvas produces the number as the learner moves (`onAnswerChange({ kind: "numeric", value })`) and the input shows it; typing is the keyboard and screen reader alternative. A renderer may leave the number to the input when drawing it would give the answer away (the area model shows its parts, and the learner adds them).
@@ -89,6 +89,6 @@ A renderer draws the canvas only. It reads `content.check.kind` to know whether 
 
 - Accessible: every interaction has a keyboard path, visible focus, labels and spoken values, 44px touch targets, text of at least 12px, and a text alternative. Nothing is drag only.
 - Reduced motion: use `motion-safe:` for transitions, so animations become instant changes.
-- Colors: semantic tokens only (`viz-accent`, `viz-highlight`, `viz-secondary` and their `-soft` fills for data; `success`, `destructive`, `muted-foreground`, `border` for the rest). They follow light and dark on their own. Pictures with natural colors (diagram tones, atoms in the molecule builder) are the exception, with contrast checked for both themes.
+- Colors: semantic tokens only (`viz-accent`, teal for what the learner moves; `viz-highlight`, amber for a target or a prize, never red; `viz-secondary`, fuchsia for a second series; never blue or violet, which mean the learner's own pick and Brain Power; and their `-soft` fills for data; `success`, `destructive`, `muted-foreground`, `border` for the rest). They follow light and dark on their own. Pictures with natural colors (diagram tones, atoms in the molecule builder) are the exception, with contrast checked for both themes.
 - Formulas run through core's expression evaluator, never `eval`. Computed answers come from core's template hooks (`getActivityTemplate(id).computeValue` / `computeExpected`), so the canvas can't disagree with grading.
 - Copy through `useExtracted`, no literals in JSX, no em dashes.

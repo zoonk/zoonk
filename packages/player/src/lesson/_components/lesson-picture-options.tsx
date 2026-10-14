@@ -17,26 +17,6 @@ type PictureOption = {
   text: string;
 };
 
-function resultOf({
-  isChecked,
-  option,
-  selectedId,
-}: {
-  isChecked: boolean;
-  option: PictureOption;
-  selectedId: string | null;
-}) {
-  if (!isChecked) {
-    return null;
-  }
-
-  if (option.isCorrect) {
-    return "correct" as const;
-  }
-
-  return option.id === selectedId ? ("incorrect" as const) : null;
-}
-
 /**
  * One option's picture: drawn, still on its way, or (when its drawing failed) what it looks like
  * in words, so the question can still be answered. Its name shows once the answer is checked.
@@ -94,7 +74,7 @@ function PictureOptionContent({
 /**
  * A question whose options are pictures, to tell separate things apart by how they look: two to
  * a row, with number-key shortcuts. Each is named by what it looks like until the answer is
- * checked; then every option shows its name, and the pick and the right one are marked.
+ * checked; then only the right one and a wrong pick stay, marked and named.
  */
 export function LessonPictureOptions({
   isChecked,
@@ -123,23 +103,16 @@ export function LessonPictureOptions({
 
   return (
     <PlayerChoiceSceneOptions
-      keyboardEnabled={!isLocked}
+      isChecked={isChecked}
+      isLocked={isLocked}
       layout="grid"
       onSelect={handleSelect}
-      options={options.map((option) => {
-        const resultState = resultOf({ isChecked, option, selectedId });
-
-        return {
-          content: <PictureOptionContent isChecked={isChecked} option={option} step={step} />,
-          disabled: isLocked,
-          isDimmed: isChecked
-            ? resultState === null
-            : selectedId !== null && selectedId !== option.id,
-          isSelected: selectedId === option.id,
-          key: option.id,
-          resultState,
-        };
-      })}
+      options={options.map((option) => ({
+        content: <PictureOptionContent isChecked={isChecked} option={option} step={step} />,
+        isCorrect: option.isCorrect,
+        key: option.id,
+      }))}
+      selectedKey={selectedId}
     />
   );
 }

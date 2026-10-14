@@ -34,24 +34,27 @@ export function SqlResult({
     : undefined;
 
   return (
-    <div className={cn("flex flex-col gap-1.5", isStale && "opacity-60")}>
-      <ActivityCanvasLabel className="font-medium" role="status">
-        {result.columns.length === 0
-          ? t("The query ran but didn't return a table. Use SELECT to get rows.")
-          : t(
-              "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}",
-              { count: result.rows.length },
-            )}
-      </ActivityCanvasLabel>
+    <div className="flex flex-col gap-1.5">
+      {/* Only the old rows dim; the line saying what to do stays readable. */}
+      <div className={cn("flex flex-col gap-1.5", isStale && "opacity-60")}>
+        <ActivityCanvasLabel className="font-medium" role="status">
+          {result.columns.length === 0
+            ? t("The query ran but didn't return a table. Use SELECT to get rows.")
+            : t(
+                "{count, plural, =0 {Your result has no rows} one {Your result: # row} other {Your result: # rows}}",
+                { count: result.rows.length },
+              )}
+        </ActivityCanvasLabel>
 
-      {result.columns.length > 0 && (
-        <SqlRowsTable
-          caption={t("Your result")}
-          columns={result.columns}
-          rowStates={rowStates}
-          rows={result.rows}
-        />
-      )}
+        {result.columns.length > 0 && (
+          <SqlRowsTable
+            caption={t("Your result")}
+            columns={result.columns}
+            rowStates={rowStates}
+            rows={result.rows}
+          />
+        )}
+      </div>
 
       {isStale && (
         <p className="text-muted-foreground text-xs">

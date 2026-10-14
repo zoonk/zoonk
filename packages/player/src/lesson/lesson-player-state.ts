@@ -1,4 +1,8 @@
-import { type LessonStepCheckResult, type LessonSupport } from "@zoonk/core/lesson-player/contract";
+import {
+  type LessonPicture,
+  type LessonStepCheckResult,
+  type LessonSupport,
+} from "@zoonk/core/lesson-player/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { orderLessonOpening } from "./_utils/lesson-opening";
 import {
@@ -45,7 +49,10 @@ export type LessonPlayerState = {
   checkFailed: boolean;
   /** Why it wasn't graded, when it wasn't the connection. It clears with the next check or screen. */
   checkIssue: CheckIssue | null;
-  completion: LessonPlayerCompletionState | null;
+  completion:
+    | LessonPlayerCompletionState
+    | { result: null; status: "ready"; testedOut: boolean }
+    | null;
   /** The first verdict on each answerable screen, which is what the lesson counts. */
   firstVerdicts: Record<string, boolean>;
   /** Questions answered after "Explain first", so memory rates them as helped. */
@@ -57,10 +64,12 @@ export type LessonPlayerState = {
    */
   misses: { skillId: string | null; stepId: string }[];
   /**
-   * A language answer was wrong and the learner gets to fix it before the answer shows, or an
-   * answer never reached the server and the lesson came back to its screen to finish.
+   * A language answer was wrong and the learner gets to fix it before the answer shows, an answer
+   * never reached the server and the lesson came back to its screen to finish, a question left
+   * out while its picture was missing came back once the picture was ready, or "Can't write now"
+   * left the lesson's writing out and the screen after it says so.
    */
-  notice: "answerNotSaved" | "selfCorrect" | null;
+  notice: "answerNotSaved" | "pictureReady" | "selfCorrect" | "writingSkipped" | null;
   phase: LessonPlayerPhase;
   position: number;
   queue: string[];
@@ -78,11 +87,15 @@ export type LessonPlayerState = {
   reviewing: boolean;
   /** Language answers that already had their one chance to self-correct. */
   selfCorrected: string[];
+  /** Writing left out of this sitting only, without an answer verdict or a plan preference. */
+  skippedWritingStepIds: string[];
   startedAt: number;
   stepStartedAt: number;
   steps: Record<string, PlayableLibraryStep>;
   /** How the lesson opens for this learner, kept so starting over opens the same way. */
   support: LessonSupport | null;
+  /** Screens whose required pictures were lost, retained when the server resyncs this run. */
+  unavailableStepIds: string[];
 };
 
 export type LessonPlayerAction =
@@ -90,7 +103,7 @@ export type LessonPlayerAction =
   | { counts: boolean; result: LessonStepResult; stepId: string; type: "checkResolved" }
   | { result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
-  | { kinds: PlayableLibraryStep["kind"][]; type: "skipKinds" }
+  | { kinds: PlayableLibraryStep["kind"][]; stepIds?: string[]; type: "skipKinds" }
   | { stepIds: string[]; type: "skipSteps" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
@@ -99,9 +112,16 @@ export type LessonPlayerAction =
       hyperdrive: LessonRunHyperdrive;
       runId: string;
       startedAt: string;
+      optionalStepIds?: string[];
       type: "runStarted";
     }
-  | { answers: LessonRunAnswers; type: "runResynced" }
+  | {
+      answers: LessonRunAnswers;
+      optionalStepIds?: string[];
+      pictures?: LessonPicture[];
+      runId?: string;
+      type: "runResynced";
+    }
   | { issue?: CheckIssue; stepId: string; type: "checkFailed" }
   | { stepId: string; type: "checkStarted" }
   | { type: "completionFailed" }
@@ -123,13 +143,13 @@ export function createInitialState(
     answers: {},
     checkFailed: false,
     checkIssue: null,
-    completion: null,
+    completion: queue.length === 0 ? { result: null, status: "ready", testedOut: false } : null,
     firstVerdicts: {},
     helped: [],
     lessonId: lesson.id,
     misses: [],
     notice: null,
-    phase: "playing",
+    phase: queue.length === 0 ? "completed" : "playing",
     position: 0,
     queue: orderLessonOpening({ queue, steps, support }),
     quickCheck: null,
@@ -139,10 +159,12 @@ export function createInitialState(
     reviewing: false,
     run: { status: "idle" },
     selfCorrected: [],
+    skippedWritingStepIds: [],
     startedAt: now,
     stepStartedAt: now,
     steps,
     support,
+    unavailableStepIds: [],
   };
 }
 

@@ -64,7 +64,7 @@ export function LessonStepImage({
     <Image
       alt={image.alt}
       className={cn(
-        "bg-muted/40 mx-auto block h-auto w-auto max-w-full rounded-2xl object-contain",
+        "bg-muted/40 mx-auto block h-auto w-auto max-w-full rounded-xl object-contain",
         PICTURE_FRAME_CLASS[frame],
         className,
       )}

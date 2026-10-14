@@ -1,5 +1,5 @@
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 const QUESTION_CLASS = "text-base leading-snug font-semibold";
 
@@ -16,21 +16,9 @@ export function ActivityCheckQuestion({
   className?: string;
   htmlFor?: string;
 }) {
-  if (htmlFor) {
-    return (
-      <label
-        className={cn(QUESTION_CLASS, className)}
-        data-slot="activity-check-question"
-        htmlFor={htmlFor}
-      >
-        <LessonRichText text={children} />
-      </label>
-    );
-  }
-
   return (
-    <p className={cn(QUESTION_CLASS, className)} data-slot="activity-check-question">
-      <LessonRichText text={children} />
-    </p>
+    <div className={cn(QUESTION_CLASS, className)} data-slot="activity-check-question">
+      <RichTextBlocks htmlFor={htmlFor} paragraphTag={htmlFor ? "label" : "p"} text={children} />
+    </div>
   );
 }

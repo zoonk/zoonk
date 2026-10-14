@@ -6,7 +6,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useLessonPlayer } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
 
@@ -27,7 +27,10 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
     return (
       <p
         aria-live="polite"
-        className={cn("text-xs", state.checkFailed ? "text-destructive" : "text-muted-foreground")}
+        className={cn(
+          "text-xs",
+          state.checkFailed ? "text-destructive-text" : "text-muted-foreground",
+        )}
         id={id}
       >
         {state.checkFailed
@@ -58,12 +61,15 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
  * It stays editable after a failed check, so nothing typed is lost.
  */
 export function LessonAnswerField({
+  autoFocusOnPointer = false,
   isLocked,
   isNumber = false,
   label,
   onChange,
   value,
 }: {
+  /** Takes focus when it appears, with a mouse or trackpad; a phone waits for a tap. */
+  autoFocusOnPointer?: boolean;
   isLocked: boolean;
   isNumber?: boolean;
   label: string;
@@ -73,6 +79,13 @@ export function LessonAnswerField({
   const t = useExtracted();
   const hintId = useId();
   const { actions, screen } = useLessonPlayer();
+  const fieldRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
+      fieldRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
+    }
+  }, [autoFocusOnPointer]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
@@ -94,7 +107,7 @@ export function LessonAnswerField({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" ref={fieldRef}>
       {isNumber ? (
         <Input
           aria-describedby={hintId}

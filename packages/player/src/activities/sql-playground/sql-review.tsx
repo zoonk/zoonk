@@ -91,7 +91,7 @@ export function SqlReview({
         <ul className="flex flex-col gap-2">
           {content.fields.mistakes.map((item) => (
             <li
-              className="bg-background rounded-2xl border px-3 py-2.5 text-sm leading-snug"
+              className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug"
               key={item.mistake}
             >
               <p className="font-medium">
@@ -110,7 +110,7 @@ export function SqlReview({
           <ActivityCanvasLabel className="font-medium">
             {t("A query that works")}
           </ActivityCanvasLabel>
-          <div className="bg-background rounded-2xl border px-3 py-2.5">
+          <div className="bg-background rounded-xl border px-3 py-2.5">
             <ActivityCodeListing code={solution} label={t("A query that works")} language="sql" />
           </div>
         </div>

@@ -66,6 +66,45 @@ function letter({
 }
 
 describe("language lesson screens", () => {
+  it("can't write now skips every remaining writing screen and finishes without checking them", async () => {
+    const first = teachingStep("typedAnswer");
+    const second = teachingStep("typedAnswer");
+
+    const lesson = buildLesson(
+      [first, teachingStep("explanation"), second, teachingStep("summary")],
+      { language: "pt", targetLanguage: "en" },
+    );
+
+    const adapters = buildAdapters(lesson);
+    const { unmount } = renderLessonPlayer({ adapters, lesson });
+
+    await page.getByRole("button", { name: "Can't write now" }).click();
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+    // The screen after it says the whole lesson is free of writing, and the keyboard stays in the
+    // lesson instead of falling back to the page with the button that left.
+    const notice = page.getByRole("status").filter({ hasText: "No more writing in this lesson." });
+    await expect.element(notice).toBeVisible();
+    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+    await expect.element(notice).not.toBeInTheDocument();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
+
+    expect(adapters.completeLesson).toHaveBeenCalledWith({
+      runId: expect.any(String),
+      skippedWritingStepIds: [first.id, second.id],
+    });
+
+    // A new sitting asks for writing again; temporary skips never become a preference.
+    unmount();
+    renderLessonPlayer({ lesson });
+    await expect.element(page.getByRole("button", { name: "Can't write now" })).toBeVisible();
+  });
+
   it("builds sentences from the word bank, fixes a blank once and writes a sentence", async () => {
     const writing = teachingStep("typedAnswer");
 
@@ -92,7 +131,7 @@ describe("language lesson screens", () => {
       lesson,
     });
 
-    await expect.element(page.getByText("Translate this sentence:")).toBeVisible();
+    await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
     await pickWords(["How", "much", "is", "the", "rent?"]);
 
     // The sentence is whole, so a word tapped after it stays in the bank.
@@ -220,5 +259,42 @@ describe("language lesson screens", () => {
     // Matching gives feedback pair by pair, so Check moves straight on.
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
+
+  it("marks a language question's right answer and a wrong pick, like every question", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson(
+        [languageStep("multipleChoice"), languageStep("translation"), teachingStep("summary")],
+        { language: "pt", targetLanguage: "en" },
+      ),
+    });
+
+    await page.getByRole("radio", { name: "An orbit" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Not quite")).toBeVisible();
+
+    // The header's segment for a language question turns red, like any question's.
+    expect(document.querySelector<HTMLElement>("[data-segment]")?.dataset.segment).toBe("wrong");
+
+    await expect
+      .element(page.getByRole("radio", { name: "An orbit" }))
+      .toMatchTextContent(/Your answer/u);
+
+    await expect
+      .element(page.getByRole("radio", { name: "A cloud" }))
+      .toMatchTextContent(/Correct/u);
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    // A right pick stays on its own, marked; the other words step aside for the result.
+    await page.getByRole("radio", { name: /^rent/iu }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Correct!")).toBeVisible();
+    await expectCount(page.getByRole("radio"), 1);
+
+    // The right pick is the learner's own: "Your answer", in green, under "Correct!".
+    await expect
+      .element(page.getByRole("radio", { name: /^rent/iu }))
+      .toMatchTextContent(/Your answer/u);
   });
 });

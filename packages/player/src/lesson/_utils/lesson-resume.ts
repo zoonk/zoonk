@@ -109,7 +109,7 @@ export function resumeLesson(
   if (position >= queue.length) {
     return {
       ...resumed,
-      completion: { result: null, status: "saving", testedOut: false },
+      completion: { result: null, status: "ready", testedOut: false },
       phase: "completed",
       position: queue.length - 1,
     };

@@ -21,8 +21,8 @@ export function SpotNumber({
         state === "empty" && "bg-background text-foreground ring-foreground/70 ring-2 ring-inset",
         state === "filled" && "bg-foreground text-background",
         state === "active" && "bg-viz-accent text-background ring-viz-accent/30 scale-110 ring-4",
-        state === "correct" && "bg-success text-background",
-        state === "incorrect" && "bg-destructive text-white",
+        state === "correct" && "bg-success-text text-background",
+        state === "incorrect" && "bg-destructive-text text-white",
         className,
       )}
     >

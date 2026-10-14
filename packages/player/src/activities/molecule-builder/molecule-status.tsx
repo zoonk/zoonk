@@ -53,8 +53,8 @@ export function MoleculeStatus({
       <p
         className={cn(
           state.tone === "muted" && "text-muted-foreground",
-          state.tone === "destructive" && "text-destructive font-medium",
-          state.tone === "success" && "text-success font-medium",
+          state.tone === "destructive" && "text-destructive-text font-medium",
+          state.tone === "success" && "text-success-text font-medium",
         )}
       >
         {state.text}

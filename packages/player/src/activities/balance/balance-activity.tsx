@@ -118,16 +118,16 @@ function BlockBalance({
 
       <p
         aria-hidden="true"
-        className="flex items-center justify-center gap-3 text-2xl font-bold tabular-nums"
+        className="flex items-center justify-center gap-3 font-mono text-2xl font-medium tabular-nums"
       >
         <span>{sides.left}</span>
-        <span className={cn(tilt !== 0 && "text-destructive")}>{relation}</span>
+        <span className={cn(tilt !== 0 && "text-destructive-text")}>{relation}</span>
         <span>{sides.right}</span>
       </p>
 
       {tilt !== 0 && hint && (
         <p aria-live="polite" className="text-sm leading-snug">
-          <span className="text-destructive font-semibold">{t("Not quite:")}</span> {hint}
+          <span className="text-destructive-text font-semibold">{t("Not quite:")}</span> {hint}
         </p>
       )}
 

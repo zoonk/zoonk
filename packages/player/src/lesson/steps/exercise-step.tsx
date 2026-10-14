@@ -1,5 +1,6 @@
 "use client";
 
+import { TaskAsideContent } from "@zoonk/learn/task-layout";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AlphabetStep } from "../../components/alphabet-step";
 import { FillBlankStep } from "../../components/fill-blank-step";
@@ -11,7 +12,11 @@ import { TranslationStep } from "../../components/translation-step";
 import { VocabularyStep } from "../../components/vocabulary-step";
 import { type SelectedAnswer, type StepResult } from "../../step-answer";
 import { useLessonPlayerConfig } from "../lesson-player-context";
-import { type LessonPlayerAnswer, type PlayableLanguageStep } from "../lesson-player-types";
+import {
+  type LessonPlayerAnswer,
+  type PlayableLanguageStep,
+  type PlayableWordHints,
+} from "../lesson-player-types";
 import { type LessonStepViewProps } from "./lesson-step-view-props";
 import { WordHints } from "./word-hints";
 
@@ -32,6 +37,11 @@ function isExerciseAnswer(
 
 function toSelectedAnswer(answer: LessonPlayerAnswer | undefined): SelectedAnswer | undefined {
   return answer && isExerciseAnswer(answer) ? answer : undefined;
+}
+
+/** A word's notes worth showing: how it's used, or how it's said. */
+function hasWordHints(hints: PlayableWordHints | null): hints is PlayableWordHints {
+  return Boolean(hints?.note) || Boolean(hints?.pronunciationTip);
 }
 
 /** A lesson in the learner's own language (English for English readers) defines its words. */
@@ -80,7 +90,12 @@ export function ExerciseStepView({
     case "vocabulary":
       return (
         <VocabularyStep step={exercise}>
-          {step.wordHints && <WordHints hints={step.wordHints} />}
+          {hasWordHints(step.wordHints) && (
+            // How the word is used and said, beside the word from `lg`.
+            <TaskAsideContent>
+              <WordHints hints={step.wordHints} />
+            </TaskAsideContent>
+          )}
         </VocabularyStep>
       );
     case "fillBlank":
@@ -90,11 +105,11 @@ export function ExerciseStepView({
     case "matchColumns":
       return <MatchColumnsStep {...shared} />;
     case "multipleChoice":
-      return <MultipleChoiceStep {...shared} />;
+      return <MultipleChoiceStep {...shared} result={stepResult} />;
     case "reading":
       return <ReadingStep {...shared} result={stepResult} />;
     case "translation":
-      return <TranslationStep {...shared} definesWords={definesWords} />;
+      return <TranslationStep {...shared} definesWords={definesWords} result={stepResult} />;
     default:
       return null;
   }

@@ -12,6 +12,7 @@ import {
 } from "../_components/activity-code";
 import { type ProgramRun, runProgram } from "../_sandbox/run-program";
 import { SandboxRunBar } from "../_sandbox/sandbox-run-bar";
+import { useEditorRun } from "../_sandbox/use-editor-run";
 import { useSandboxRuntime } from "../_sandbox/use-sandbox-runtime";
 import { highlightCode } from "../_utils/highlight-code";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -52,8 +53,8 @@ export function CodeRunnerActivity({
   const runtime = useSandboxRuntime(fields.language);
   const [edits, setEdits] = useState<Record<number, string>>({});
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
-  const [isRunning, setIsRunning] = useState(false);
-  const [isStale, setIsStale] = useState(false);
+  const editorRun = useEditorRun();
+  const { isRunning, isStale } = editorRun;
   // Explored, the program starts solved: there's nothing to fix, only code to run and change.
   const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
   const lines = program.split("\n");
@@ -72,33 +73,40 @@ export function CodeRunnerActivity({
       return;
     }
 
-    setIsRunning(true);
+    const revision = editorRun.start();
+
+    if (revision === null) {
+      return;
+    }
+
     const result = await runProgram({ code: program, language: fields.language });
+    const status = editorRun.finish(revision);
+
+    if (status === "cancelled") {
+      return;
+    }
+
     setRun(result);
-    setIsStale(false);
-    setIsRunning(false);
 
     onAnswerChange(
-      result.stop === "unavailable" ? null : { kind: "output", output: result.output },
+      status !== "current" || result.stop === "unavailable"
+        ? null
+        : { kind: "output", output: result.output },
     );
   }
 
   function edit(lineNumber: number, value: string) {
     setEdits((current) => ({ ...current, [lineNumber]: value }));
 
-    if (run) {
-      setIsStale(true);
-      onAnswerChange(null);
-    }
+    editorRun.edit();
+    onAnswerChange(null);
   }
 
   function reset() {
     setEdits({});
 
-    if (run) {
-      setIsStale(true);
-      onAnswerChange(null);
-    }
+    editorRun.edit();
+    onAnswerChange(null);
   }
 
   const yours = new Intl.ListFormat(locale, { style: "long", type: "conjunction" }).format(
@@ -107,7 +115,7 @@ export function CodeRunnerActivity({
 
   return (
     <ActivityCanvas className="gap-3" labelId={labelId}>
-      <div className="bg-background flex flex-col gap-2 rounded-3xl border px-3 pt-3 pb-3.5">
+      <div className="bg-background flex flex-col gap-2 rounded-2xl border px-3 pt-3 pb-3.5">
         <div className="flex items-center justify-between gap-3 px-1.5">
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}
@@ -187,17 +195,13 @@ export function CodeRunnerActivity({
 
       <ActivityTextAlternative>
         {isExploring
-          ? t("A {language} program of {count} lines. Run it to see what it prints.", {
-              count: String(lines.length),
-              language: runtimeName,
-            })
+          ? t(
+              "A {language} program of {count, plural, one {# line} other {# lines}}. Run it to see what it prints.",
+              { count: lines.length, language: runtimeName },
+            )
           : t(
-              "A {language} program of {count} lines. Edit your lines, run it, and compare its output with the expected output: {expected}",
-              {
-                count: String(lines.length),
-                expected: fields.expectedOutput,
-                language: runtimeName,
-              },
+              "A {language} program of {count, plural, one {# line} other {# lines}}. Edit your lines, run it, and compare its output with the expected output: {expected}",
+              { count: lines.length, expected: fields.expectedOutput, language: runtimeName },
             )}
       </ActivityTextAlternative>
     </ActivityCanvas>

@@ -20,7 +20,9 @@ function MarkedSample({ result, shouldMatch }: { result: SampleResult; shouldMat
       <mark
         className={cn(
           "rounded px-px",
-          shouldMatch ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
+          shouldMatch
+            ? "bg-success/10 text-success-text"
+            : "bg-destructive/10 text-destructive-text",
         )}
       >
         {sample.slice(match.start, match.end)}
@@ -53,12 +55,12 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
 
       <span aria-hidden="true" className="ml-auto flex shrink-0 items-center gap-1.5">
         {!result.passes && (
-          <span className="text-destructive font-sans text-xs font-medium">{status}</span>
+          <span className="text-destructive-text font-sans text-xs font-medium">{status}</span>
         )}
         {result.passes ? (
-          <Check className="text-success size-[18px]" />
+          <Check className="text-success-text size-[18px]" />
         ) : (
-          <X className="text-destructive size-[18px]" />
+          <X className="text-destructive-text size-[18px]" />
         )}
       </span>
     </li>
@@ -92,7 +94,9 @@ export function RegexSampleList({
           <p
             className={cn(
               "text-xs tabular-nums",
-              passing === samples.length ? "text-muted-foreground" : "text-destructive font-medium",
+              passing === samples.length
+                ? "text-muted-foreground"
+                : "text-destructive-text font-medium",
             )}
           >
             {t("{passing} of {total} pass", {

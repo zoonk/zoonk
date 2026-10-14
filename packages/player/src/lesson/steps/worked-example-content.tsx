@@ -1,10 +1,12 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
-import { RichInlineSegments } from "../../components/rich-inline-segments";
-import { LessonRichTextBlocks } from "../_components/lesson-rich-text";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
@@ -18,15 +20,16 @@ function WorkedExampleLine({
 }) {
   return (
     <li className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 flex gap-3">
+      {/* A step's number in the mono face, as the recap beside a question numbers it. */}
       <span
         aria-hidden="true"
-        className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums"
+        className="text-muted-foreground w-4 shrink-0 pt-0.5 font-mono text-sm leading-relaxed tabular-nums sm:text-base"
       >
         {number}
       </span>
       {/* Full width on every step, so each formula centers on the same axis. */}
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
-        <LessonRichTextBlocks text={step.text} />
+        <RichTextBlocks text={step.text} />
         {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
       </div>
     </li>
@@ -74,8 +77,11 @@ export function WorkedExampleContent({
   const endRef = useNewestStepInView(revealed);
 
   return (
-    <div className="flex w-full flex-col gap-5" data-slot="worked-example">
-      <LessonRichTextBlocks className="text-lg leading-relaxed sm:text-xl" text={content.problem} />
+    <div className="flex w-full flex-col gap-5 lg:max-w-xl" data-slot="worked-example">
+      <RichTextBlocks
+        className="text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6]"
+        text={content.problem}
+      />
       {figure}
 
       <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">
@@ -86,13 +92,11 @@ export function WorkedExampleContent({
         })}
       </ol>
 
+      {/* The example's answer on a quiet panel: green and red only say right and wrong. */}
       {isDone && (
-        <div className="border-success/40 bg-success/5 flex flex-col gap-1 rounded-2xl border p-4">
-          <p className="text-success text-sm font-semibold">{t("Result")}</p>
-          <LessonRichTextBlocks
-            className="text-base leading-relaxed sm:text-lg"
-            text={content.result}
-          />
+        <div className={cn(SURFACE_CLASS, "flex flex-col gap-1 p-4")}>
+          <p className="text-muted-foreground text-sm font-medium">{t("Result")}</p>
+          <RichTextBlocks className="text-base leading-relaxed sm:text-lg" text={content.result} />
         </div>
       )}
 

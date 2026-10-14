@@ -14,11 +14,13 @@ import {
 import { SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { type StepResult } from "../step-answer";
 import { RomanizationText } from "./romanization-text";
+import { WORD_CHIP_CLASS } from "./word-bank-option-content";
 
 export type PlacedWord = WordBankOption & { id: string };
 
@@ -69,14 +71,11 @@ function PlacedWordTile({
       {...listeners}
       aria-label={ariaLabel}
       className={cn(
-        "border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
-        hasResult && "pointer-events-none",
-        !hasResult &&
-          "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-        !hasResult && "touch-none select-none",
+        WORD_CHIP_CLASS,
+        hasResult ? "pointer-events-none" : "hover:bg-muted/60 touch-none select-none",
         isDragging && "opacity-30",
-        resultState === "correct" && "bg-success/5 text-success border-transparent",
-        resultState === "incorrect" && "bg-destructive/5 text-destructive border-transparent",
+        resultState === "correct" && ANSWER_TONE.right,
+        resultState === "incorrect" && ANSWER_TONE.wrong,
       )}
       disabled={hasResult}
       onClick={onClick}
@@ -91,9 +90,10 @@ function PlacedWordTile({
   );
 }
 
+/** The word under the finger while it's dragged: lifted by a firm line, not a shadow. */
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
-    <div className="bg-background border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base shadow-md">
+    <div className={cn(WORD_CHIP_CLASS, "bg-background ring-foreground")}>
       <span>{option.word}</span>
       <RomanizationText>{option.romanization}</RomanizationText>
     </div>
@@ -160,11 +160,11 @@ export function ArrangeWordsAnswerArea({
       <SortableContext items={itemIds} strategy={rectSortingStrategy}>
         <div
           aria-label={t("Your answer")}
-          className="border-border/40 flex min-h-16 flex-wrap gap-2 border-b pb-3"
+          className="border-border flex min-h-16 flex-wrap gap-2 border-b pb-3"
           role="group"
         >
           {placedWords.length === 0 ? (
-            <p className="text-muted-foreground text-sm">{t("Tap words to build your answer")}</p>
+            <p className="text-muted-foreground text-sm">{t("Pick words to build your answer")}</p>
           ) : (
             placedWords.map((option, index) => (
               <PlacedWordTile

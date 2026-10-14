@@ -15,10 +15,10 @@ type ArcState = LinkResult["state"] | "pending" | "made";
 const ARC_STATES: readonly ArcState[] = ["correct", "incorrect", "made", "missed", "pending"];
 
 const ARC_CLASS: Record<ArcState, string> = {
-  correct: "text-success",
-  incorrect: "text-destructive",
+  correct: "text-success-text",
+  incorrect: "text-destructive-text",
   made: "text-viz-highlight",
-  missed: "text-success/70",
+  missed: "text-success-text/70",
   pending: "text-viz-highlight/70",
 };
 

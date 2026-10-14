@@ -79,7 +79,7 @@ export function ChallengeIntro({
 
       <section
         aria-labelledby="challenge-mission"
-        className="border-border flex w-full flex-col gap-2 rounded-2xl border p-4 shadow-xs"
+        className="border-border flex w-full flex-col gap-2 rounded-xl border p-4"
         data-slot="challenge-mission"
       >
         <ChallengeLabel as="h3" id="challenge-mission">

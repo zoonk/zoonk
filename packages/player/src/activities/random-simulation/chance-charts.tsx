@@ -2,6 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import {
   ActivityPlot,
   ActivityPlotAxisX,
@@ -50,8 +51,10 @@ function Bars({
 }
 
 /**
- * How often each outcome came up, with the outcomes that count as a hit highlighted. The axis
- * uses every run, so bars grow in place while the simulation fills in.
+ * How often each outcome came up, with the outcomes that count as a hit highlighted (amber, "look
+ * here", never the red of wrong). The axis uses every run, so bars grow in place while the
+ * simulation fills in. With only two outcomes (one trial a run: a prize or none) a 0 and a 1 say
+ * nothing, so each bar says whether it's the hit the chart's label names: "No" and "Yes".
  */
 export function OutcomeHistogram({
   allOutcomes,
@@ -62,9 +65,11 @@ export function OutcomeHistogram({
   isHit: (outcome: number) => boolean;
   shownOutcomes: readonly number[];
 }) {
+  const t = useExtracted();
   const format = useFormatNumber();
   const all = outcomeCounts(allOutcomes);
   const [first, last] = [all[0]?.outcome ?? 0, all.at(-1)?.outcome ?? 1];
+  const binary = last - first === 1;
   const shown = outcomeCounts(shownOutcomes).filter((bar) => bar.count > 0);
   const hitTicks = all.filter((bar) => isHit(bar.outcome)).map((bar) => bar.outcome);
   const ticks = [...new Set([first, last, ...(hitTicks.length === 1 ? hitTicks : [])])];
@@ -77,7 +82,16 @@ export function OutcomeHistogram({
       yDomain={[0, Math.max(...all.map((bar) => bar.count), 1)]}
     >
       <Bars bars={shown} isHit={isHit} />
-      <ActivityPlotAxisX format={(value) => format(value)} ticks={ticks} />
+      <ActivityPlotAxisX
+        format={(value) => {
+          if (!binary) {
+            return format(value);
+          }
+
+          return isHit(value) ? t("Yes") : t("No");
+        }}
+        ticks={binary ? [first, last] : ticks}
+      />
     </ActivityPlot>
   );
 }

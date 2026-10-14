@@ -53,7 +53,7 @@ function PanItems({
         <g key={`${bag.x}-${bag.y}`} transform={`translate(${bag.x} ${-bag.y})`}>
           <path className="fill-viz-accent" d={BAG_PATH} />
           <text
-            className="fill-background text-sm font-bold"
+            className="fill-background text-sm font-semibold"
             textAnchor="middle"
             x={BAG_SYMBOL_X}
             y={BAG_SYMBOL_Y}
@@ -80,7 +80,7 @@ function PanItems({
         <g transform={`translate(${layout.weight.x} ${-layout.weight.y})`}>
           <rect className="fill-viz-highlight" height={WEIGHT_HEIGHT} rx={6} width={WEIGHT_WIDTH} />
           <text
-            className="fill-background text-sm font-bold"
+            className="fill-background text-sm font-semibold"
             textAnchor="middle"
             x={WEIGHT_WIDTH / 2}
             y={WEIGHT_HEIGHT / 2 + WEIGHT_TEXT_OFFSET}

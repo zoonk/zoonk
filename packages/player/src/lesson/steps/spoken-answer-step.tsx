@@ -19,24 +19,40 @@ import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props"
 import { useCantTalkNow } from "./use-cant-talk-now";
 
 const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
 
+/** A recording's length the way a timer shows it: 0:07, 1:12. */
+function formatSeconds(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
+  const seconds = totalSeconds % SECONDS_PER_MINUTE;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+/** The sentence to say, on the page under the prompt, with its reading and meaning under it. */
 function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   const { romanization, targetText, translation } = step.content;
   // A lesson in the learner's own language has nothing to translate.
   const showsTranslation = translation && translation.trim() !== targetText.trim();
 
   return (
-    <div className="bg-muted/50 flex flex-col gap-1 rounded-2xl p-4">
-      <p className="text-2xl font-semibold tracking-tight sm:text-3xl" lang={step.content.language}>
+    <div className="flex flex-col gap-1">
+      <p
+        className="text-2xl leading-tight font-[560] tracking-[-0.02em]"
+        lang={step.content.language}
+      >
         {targetText}
       </p>
-      {romanization && <p className="text-muted-foreground text-base">{romanization}</p>}
-      {showsTranslation && <p className="text-muted-foreground text-base">{translation}</p>}
+      {romanization && <p className="text-muted-foreground text-sm">{romanization}</p>}
+      {showsTranslation && <p className="text-muted-foreground text-sm">{translation}</p>}
     </div>
   );
 }
 
-/** The microphone button. `onBlocked` hears when the browser or the learner blocks the microphone. */
+/**
+ * "Record", an outline button like every other in the lesson; while recording it gets a firm ring
+ * and counts the seconds, and a tap stops and checks. `onBlocked` hears when the browser or the
+ * learner blocks the microphone.
+ */
 function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
@@ -52,7 +68,7 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   const seconds = Math.floor(recorder.elapsedMs / MS_PER_SECOND);
 
   const startRecording = async () => {
-    if (!(await recorder.start())) {
+    if ((await recorder.start()) === false) {
       onBlocked();
     }
   };
@@ -63,7 +79,9 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   });
 
   const noSpeech = useNoSpeechMessage();
-  const issue = recorder.status === "idle" ? state.checkIssue : null;
+  // While the microphone opens, Record waits and the line under it stays, so nothing jumps.
+  const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
+  const issue = isIdle ? state.checkIssue : null;
   const limit = issue?.status === "noSpeech" ? null : issue;
 
   function getIdleHint() {
@@ -81,34 +99,37 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-start gap-2">
       <Button
         aria-pressed={isRecording}
-        className={cn("size-20 rounded-full", isRecording && "motion-safe:animate-pulse")}
+        className={cn(isRecording && "border-foreground ring-foreground ring-[0.5px]")}
+        disabled={recorder.status === "acquiring"}
+        focusableWhenDisabled
         onClick={isRecording ? recorder.stop : () => void startRecording()}
-        size="icon-lg"
-        variant={isRecording ? "destructive" : "default"}
+        size="lg"
+        variant="outline"
       >
-        {isRecording ? (
-          <SquareIcon aria-hidden="true" className="size-7" />
-        ) : (
-          <MicIcon aria-hidden="true" className="size-8" />
+        {isRecording ? <SquareIcon aria-hidden="true" /> : <MicIcon aria-hidden="true" />}
+        {isRecording ? t("Stop") : t("Record")}
+        {isRecording && (
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
+            {formatSeconds(seconds)}
+          </span>
         )}
-        <span className="sr-only">{isRecording ? t("Stop and check") : t("Start speaking")}</span>
       </Button>
 
-      <div aria-live="polite" className="flex flex-col items-center">
+      <div aria-live="polite" className="flex flex-col">
         {limit ? (
-          <LessonHelpLimitNotice className="items-center text-center" limit={limit} />
+          <LessonHelpLimitNotice limit={limit} />
         ) : (
           <p
             className={cn(
-              "text-muted-foreground text-center text-sm",
-              state.checkFailed && recorder.status === "idle" && "text-destructive",
+              "text-muted-foreground text-sm",
+              state.checkFailed && isIdle && "text-destructive-text",
             )}
           >
-            {recorder.status === "idle" && getIdleHint()}
-            {isRecording && t("Listening… {seconds}s. Tap to stop.", { seconds: String(seconds) })}
+            {isIdle && getIdleHint()}
+            {isRecording && t("Listening… Tap Stop to check.")}
           </p>
         )}
       </div>
@@ -209,7 +230,7 @@ function ModeSwitch({
   if (mode === "listen") {
     return (
       <Button
-        className="w-fit self-center"
+        className="w-fit"
         onClick={() => switchTo({ cantTalk: false, prefersTyping: false })}
         size="sm"
         variant="ghost"
@@ -223,7 +244,7 @@ function ModeSwitch({
   if (canListen && mode === "speak") {
     return (
       <Button
-        className="w-fit self-center"
+        className="w-fit"
         onClick={() => switchTo({ cantTalk: true, prefersTyping: false })}
         size="sm"
         variant="ghost"
@@ -236,7 +257,7 @@ function ModeSwitch({
 
   return (
     <Button
-      className="w-fit self-center"
+      className="w-fit"
       onClick={() => switchTo({ cantTalk: false, prefersTyping: mode === "speak" })}
       size="sm"
       variant="ghost"
@@ -276,12 +297,14 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
       {answerMode.mode === "type" ? (
         <>
           {answerMode.micBlocked && !isLocked && (
-            <p className="text-muted-foreground text-center text-sm" role="status">
+            <p className="text-muted-foreground text-sm" role="status">
               {t("The microphone is blocked. Type your answer instead.")}
             </p>
           )}
 
+          {/* Replacing Record after a blocked microphone, the field takes Record's focus. */}
           <LessonAnswerField
+            autoFocusOnPointer={answerMode.micBlocked}
             isLocked={isLocked}
             label={step.content.prompt}
             onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}

@@ -32,7 +32,7 @@ export function SamplingExpectedSpread({ content }: { content: Content }) {
   }));
 
   return (
-    <div className="bg-background flex flex-col gap-2 rounded-2xl border px-4 py-3 text-sm">
+    <div className="bg-background flex flex-col gap-2 rounded-xl border px-4 py-3 text-sm">
       <p className="font-medium">{t("What the math says")}</p>
 
       <ul className="flex flex-col gap-1 tabular-nums">

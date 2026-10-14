@@ -53,11 +53,11 @@ function keyedYear({
 
 function ResultIcon({ result }: { result: TrackEvent["result"] }) {
   if (result === "correct") {
-    return <Check aria-hidden="true" className="text-success size-4 shrink-0" />;
+    return <Check aria-hidden="true" className="text-success-text size-4 shrink-0" />;
   }
 
   return result === "incorrect" ? (
-    <X aria-hidden="true" className="text-destructive size-4 shrink-0" />
+    <X aria-hidden="true" className="text-destructive-text size-4 shrink-0" />
   ) : null;
 }
 
@@ -121,7 +121,7 @@ export function EventCard({
           : formatYear(event.guess)
       }
       className={cn(
-        "bg-background focus-visible:ring-ring/50 absolute right-0 flex min-h-11 -translate-y-1/2 items-center gap-2 rounded-2xl border px-3 py-1.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[top] motion-safe:duration-300",
+        "bg-background focus-visible:ring-ring/50 absolute right-0 flex min-h-11 -translate-y-1/2 items-center gap-2 rounded-xl border px-3 py-1.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[top] motion-safe:duration-300",
         isMovable && "border-viz-accent cursor-grab touch-none shadow-sm active:cursor-grabbing",
         event.result === "incorrect" && "border-destructive/60",
         event.result === "correct" && "border-success/60",

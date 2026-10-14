@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { type ExampleLine, type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, languageStep, teachingStep } from "../preview/preview-steps";
 
@@ -21,7 +23,7 @@ function verdict(text: string) {
 }
 
 describe("lesson screens", () => {
-  it("shows the lesson's minutes and keeps its summary card in the screen's menu", async () => {
+  it("keeps the header to one row and its summary card in the screen's menu", async () => {
     renderLessonPlayer({
       lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
         estimatedMinutes: 4,
@@ -31,8 +33,9 @@ describe("lesson screens", () => {
 
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
 
-    // The header has the lesson's title and minutes.
-    await expect.element(page.getByText("4 min", { exact: true })).toBeVisible();
+    // The header is one row: close, the lesson's title and the menu, without its minutes.
+    await expect.element(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect.element(page.getByText("4 min", { exact: true })).not.toBeInTheDocument();
 
     await page.getByRole("button", { name: "Screen options" }).click();
     await page.getByRole("menuitem", { name: "Lesson summary" }).click();
@@ -158,9 +161,10 @@ describe("lesson screens", () => {
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Almost there")).toBeVisible();
 
-    await expect
-      .element(page.getByRole("status").getByRole("listitem").first())
-      .toHaveTextContent("Your answer: It show Correct answer: It shows");
+    // The mistake as a diff: what they wrote, then its right form.
+    const corrections = page.getByRole("status").getByRole("listitem");
+    await expect.element(corrections.nth(0)).toMatchTextContent("Your answer: It show");
+    await expect.element(corrections.nth(1)).toMatchTextContent("Correct answer: It shows");
 
     await expect.element(page.getByText("2 of 2 key points")).toBeVisible();
     await expect.element(page.getByText("Missing:")).not.toBeInTheDocument();
@@ -182,7 +186,7 @@ describe("lesson screens", () => {
     await expect.element(page.getByText("r", { exact: true })).toHaveProperty("tagName", "CODE");
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    await expect.element(page.getByText("Translate:", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
     await page.getByRole("radio", { name: "Rent" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
@@ -204,7 +208,7 @@ describe("lesson screens", () => {
       }),
     });
 
-    await expect.element(page.getByText("Translate:", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
     await expect.element(page.getByText("as colunas", { exact: true })).toBeVisible();
     await expect.element(page.getByText(/phrase/iu)).not.toBeInTheDocument();
   });
@@ -222,7 +226,7 @@ describe("lesson screens", () => {
 
     await expect.element(page.getByText("Which one means this?", { exact: true })).toBeVisible();
     await expect.element(page.getByText(rent.translation, { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Translate:", { exact: true })).not.toBeInTheDocument();
+    await expect.element(page.getByText("Translate", { exact: true })).not.toBeInTheDocument();
     await page.getByRole("radio", { name: "Rent" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
@@ -287,10 +291,13 @@ describe("lesson screens", () => {
 
     // The server writes a lesson's lines together, each a different moment, or none.
     const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(
-      ({ stepId }) => Promise.resolve(lines[stepId] ?? null),
+      ({ stepId }) => Promise.resolve({ canRequest: false, line: lines[stepId] ?? null }),
     );
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { getExampleLine }), lesson });
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { getExampleLine, requestExampleLine: vi.fn() }),
+      lesson,
+    });
 
     const example = page.getByRole("complementary", { name: "Your example" });
 
@@ -301,8 +308,257 @@ describe("lesson screens", () => {
     await expect.element(example).toHaveTextContent(lines[interest.id] ?? "");
     await page.getByRole("button", { name: /^Next/u }).click();
 
+    // Written as none: nothing shows, and there's nothing to ask for.
     await expect.element(page.getByText("Markups", { exact: true })).toBeVisible();
     await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: markup.id }));
     await expect.element(example).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { name: "Show an example from my life" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("offers no example to a learner who shares nothing it could be written from", async () => {
+    const step = explanationStep({
+      exampleLineSlot: { idea: "A discount." },
+      text: "A discount lowers the price.",
+    });
+
+    const lesson = buildLesson([step]);
+
+    const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(() =>
+      Promise.resolve({ canRequest: false, line: null }),
+    );
+
+    const requestExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>();
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { getExampleLine, requestExampleLine }),
+      lesson,
+    });
+
+    await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: step.id }));
+    await expect.element(page.getByText("A discount lowers the price.")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Show an example from my life" }))
+      .not.toBeInTheDocument();
+
+    expect(requestExampleLine).not.toHaveBeenCalled();
+  });
+
+  it.each(
+    [390, 820, 1180, 1440].flatMap((width) => [
+      { colorScheme: "light" as const, width },
+      { colorScheme: "dark" as const, width },
+    ]),
+  )(
+    "reads on entry and writes only on request at $width in $colorScheme",
+    async ({ colorScheme, width }) => {
+      await atViewport({ height: 900, width }, () =>
+        onDevice({ colorScheme }, async () => {
+          const discount = explanationStep({
+            exampleLineSlot: { idea: "A discount." },
+            text: "A discount lowers the price.",
+            title: "Discounts",
+          });
+
+          const interest = explanationStep({
+            exampleLineSlot: { idea: "An installment payment." },
+            text: "Interest adds to the price.",
+            title: "Interest",
+          });
+
+          const lesson = buildLesson([discount, interest]);
+
+          const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(() =>
+            Promise.resolve({ canRequest: true, line: null }),
+          );
+
+          const requestExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>(
+            () =>
+              Promise.resolve({
+                canRequest: false,
+                line: "Your R$ 40 kit costs R$ 30 after a 25% discount.",
+              }),
+          );
+
+          renderLessonPlayer({
+            adapters: buildAdapters(lesson, { getExampleLine, requestExampleLine }),
+            lesson,
+          });
+
+          const offer = page.getByRole("button", { name: "Show an example from my life" });
+
+          await expect.element(offer).toBeVisible();
+          expect(getExampleLine).toHaveBeenCalledWith({ stepId: discount.id });
+          expect(requestExampleLine).not.toHaveBeenCalled();
+          await offer.click();
+
+          await expect
+            .element(page.getByRole("complementary", { name: "Your example" }))
+            .toHaveTextContent("Your R$40 kit costs R$30 after a 25% discount.");
+
+          expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: discount.id });
+
+          await page.getByRole("button", { name: /^Next/u }).click();
+          await expect.element(page.getByText("Interest", { exact: true })).toBeVisible();
+          await expect.element(offer).toBeVisible();
+
+          await expect
+            .element(page.getByRole("complementary", { name: "Your example" }))
+            .not.toBeInTheDocument();
+
+          expect(getExampleLine).toHaveBeenCalledWith({ stepId: interest.id });
+          expect(requestExampleLine).toHaveBeenCalledOnce();
+          await page.getByRole("button", { name: /^Continue/u }).click();
+        }),
+      );
+    },
+  );
+
+  it("says so when nothing the learner shared fits, without offering it again", async () => {
+    const step = explanationStep({
+      exampleLineSlot: { idea: "A discount." },
+      text: "A discount lowers the price.",
+    });
+
+    const lesson = buildLesson([step]);
+
+    const requestExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>(() =>
+      Promise.resolve({ canRequest: false, line: null }),
+    );
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, {
+        getExampleLine: () => Promise.resolve({ canRequest: true, line: null }),
+        requestExampleLine,
+      }),
+      lesson,
+    });
+
+    await page.getByRole("button", { name: "Show an example from my life" }).click();
+
+    await expect
+      .element(page.getByRole("status"))
+      .toHaveTextContent("Nothing you've shared fits this idea.");
+
+    await expect
+      .element(page.getByRole("button", { name: "Show an example from my life" }))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    expect(requestExampleLine).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the offer when a request doesn't go through, so the learner can ask again", async () => {
+    const step = explanationStep({
+      exampleLineSlot: { idea: "A discount." },
+      text: "A discount lowers the price.",
+    });
+
+    const lesson = buildLesson([step]);
+
+    const requestExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>(() =>
+      Promise.resolve(null),
+    );
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, {
+        getExampleLine: () => Promise.resolve({ canRequest: true, line: null }),
+        requestExampleLine,
+      }),
+      lesson,
+    });
+
+    await page.getByRole("button", { name: "Show an example from my life" }).click();
+
+    await expect
+      .element(page.getByRole("status"))
+      .toHaveTextContent("No example is available right now.");
+
+    await expect
+      .element(page.getByRole("button", { name: "Show an example from my life" }))
+      .toBeEnabled();
+
+    expect(requestExampleLine).toHaveBeenCalledOnce();
+  });
+
+  it("keeps navigation available while an example request is pending", async () => {
+    const first = explanationStep({
+      exampleLineSlot: { idea: "A discount." },
+      text: "A discount lowers the price.",
+    });
+
+    const second = explanationStep({
+      exampleLineSlot: { idea: "Interest." },
+      text: "Interest adds to the price.",
+    });
+
+    const lesson = buildLesson([first, second]);
+    const pending = Promise.withResolvers<ExampleLine | null>();
+
+    const requestExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>(
+      () => pending.promise,
+    );
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, {
+        getExampleLine: () => Promise.resolve({ canRequest: true, line: null }),
+        requestExampleLine,
+      }),
+      lesson,
+    });
+
+    await page.getByRole("button", { name: "Show an example from my life" }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: "Writing your example…" }))
+      .toBeDisabled();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByText("Interest adds to the price.")).toBeVisible();
+    pending.resolve({ canRequest: false, line: "The first screen's delayed example." });
+
+    await expect
+      .element(page.getByRole("button", { name: "Show an example from my life" }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByText("The first screen's delayed example."))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: first.id });
+  });
+
+  it("lists a short story's screens beside them on a wide screen, the one in view marked", async () => {
+    const lesson = buildLesson([
+      explanationStep({ text: "Water molecules spin.", title: "Molecules that spin" }),
+      explanationStep({ text: "Spinning makes heat.", title: "From spin to heat" }),
+      teachingStep("check"),
+    ]);
+
+    // A quick explanation asks for its outline; other lessons keep the aside for the buddy.
+    renderLessonPlayer({ lesson, outline: true });
+
+    const outline = page
+      .getByRole("complementary", { name: "Help with this screen" })
+      .getByRole("list", { name: "Outline" });
+
+    const row = (title: string) => outline.getByRole("listitem").filter({ hasText: title });
+
+    await expect.element(row("Molecules that spin")).toHaveAttribute("aria-current", "step");
+    await expect.element(outline.getByText("1 quick question at the end")).toBeVisible();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(row("From spin to heat")).toHaveAttribute("aria-current", "step");
+    await expect.element(row("Molecules that spin")).not.toHaveAttribute("aria-current");
+    await expect.element(row("Molecules that spin").getByText(", read")).toBeInTheDocument();
+
+    // The question at the end shows the last screen it's about instead.
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(outline).not.toBeInTheDocument();
+    await expect.element(page.getByText("From the lesson")).toBeVisible();
   });
 });

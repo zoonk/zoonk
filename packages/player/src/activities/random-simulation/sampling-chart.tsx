@@ -58,7 +58,7 @@ function TruthLine({ label, truth }: { label: string; truth: number }) {
         strokeWidth={1.5}
       />
       <text
-        className="fill-foreground text-xs font-bold"
+        className="fill-foreground text-xs font-semibold"
         textAnchor="middle"
         x={x.toPixel(truth)}
         y={top - TRUTH_LABEL_OFFSET}

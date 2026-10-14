@@ -12,6 +12,7 @@ import {
 } from "../_components/activity-code";
 import { type QueryResult, type QueryRun, runQuery } from "../_sandbox/run-query";
 import { SandboxRunBar } from "../_sandbox/sandbox-run-bar";
+import { useEditorRun } from "../_sandbox/use-editor-run";
 import { useSandboxRuntime } from "../_sandbox/use-sandbox-runtime";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -57,8 +58,8 @@ export function SqlPlaygroundActivity({
   const runtime = useSandboxRuntime("sql");
   const [query, setQuery] = useState(phase === "explore" ? fields.solution : "");
   const [state, setState] = useState<QueryState>(() => stateFromAnswer(answer));
-  const [isRunning, setIsRunning] = useState(false);
-  const [isStale, setIsStale] = useState(false);
+  const editorRun = useEditorRun();
+  const { isRunning, isStale } = editorRun;
   const expectedRows = expectedInteraction(expected, "rows");
   const result = state?.status === "done" ? state.result : null;
 
@@ -67,10 +68,8 @@ export function SqlPlaygroundActivity({
   function change(next: string) {
     setQuery(next);
 
-    if (state) {
-      setIsStale(true);
-      onAnswerChange(null);
-    }
+    editorRun.edit();
+    onAnswerChange(null);
   }
 
   const { fieldRef, insert } = useInsertSnippet({ onChange: change, value: query });
@@ -92,14 +91,28 @@ export function SqlPlaygroundActivity({
       return;
     }
 
-    setIsRunning(true);
+    const revision = editorRun.start();
+
+    if (revision === null) {
+      return;
+    }
+
     const run = await runQuery({ query, tables: fields.tables });
-    setIsRunning(false);
-    setIsStale(false);
+    const status = editorRun.finish(revision);
+
+    if (status === "cancelled") {
+      return;
+    }
 
     if (run.status === "done") {
       setState(run);
-      onAnswerChange({ columns: run.result.columns, kind: "rows", rows: run.result.rows });
+
+      onAnswerChange(
+        status === "current"
+          ? { columns: run.result.columns, kind: "rows", rows: run.result.rows }
+          : null,
+      );
+
       return;
     }
 
@@ -153,7 +166,7 @@ export function SqlPlaygroundActivity({
       )}
 
       {state?.status === "error" && !isStale && (
-        <p className="text-destructive font-mono text-sm" role="status">
+        <p className="text-destructive-text font-mono text-sm" role="status">
           {state.message}
         </p>
       )}

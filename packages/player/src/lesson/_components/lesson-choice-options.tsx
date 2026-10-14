@@ -8,38 +8,21 @@ import { LessonRichText } from "./lesson-rich-text";
 
 type ChoiceOption = { id: string; isCorrect: boolean; text: string };
 
-function getResultState({
-  isChecked,
-  option,
-  selectedId,
-}: {
-  isChecked: boolean;
-  option: ChoiceOption;
-  selectedId: string | null;
-}) {
-  if (!isChecked) {
-    return null;
-  }
-
-  if (option.isCorrect) {
-    return "correct" as const;
-  }
-
-  return option.id === selectedId ? ("incorrect" as const) : null;
-}
-
 /**
- * The options of a check or a guess, with number-key shortcuts. Once checked they lock, the pick
- * and the right option are marked, and the rest fade, so the result reads at a glance.
+ * The options of a check or a guess, with number-key shortcuts. Once checked they lock and only
+ * the right option and a wrong pick stay, marked, so the result reads at a glance; a guess's pick
+ * stays neutral, since a guess is never wrong.
  */
 export function LessonChoiceOptions({
   isChecked,
+  isGuess = false,
   isLocked,
   onSelect,
   options,
   selectedId,
 }: {
   isChecked: boolean;
+  isGuess?: boolean;
   isLocked: boolean;
   onSelect: (optionId: string | null) => void;
   options: readonly ChoiceOption[];
@@ -57,26 +40,20 @@ export function LessonChoiceOptions({
 
   return (
     <PlayerChoiceSceneOptions
-      keyboardEnabled={!isLocked}
+      isChecked={isChecked}
+      isGuess={isGuess}
+      isLocked={isLocked}
       onSelect={handleSelect}
-      options={options.map((option) => {
-        const resultState = getResultState({ isChecked, option, selectedId });
-
-        return {
-          content: (
-            <PlayerChoiceSceneOptionText>
-              <LessonRichText text={option.text} />
-            </PlayerChoiceSceneOptionText>
-          ),
-          disabled: isLocked,
-          isDimmed: isChecked
-            ? resultState === null
-            : selectedId !== null && selectedId !== option.id,
-          isSelected: selectedId === option.id,
-          key: option.id,
-          resultState,
-        };
-      })}
+      options={options.map((option) => ({
+        content: (
+          <PlayerChoiceSceneOptionText>
+            <LessonRichText text={option.text} />
+          </PlayerChoiceSceneOptionText>
+        ),
+        isCorrect: option.isCorrect,
+        key: option.id,
+      }))}
+      selectedKey={selectedId}
     />
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
-import { LessonRichTextBlocks } from "../_components/lesson-rich-text";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 import { type AnswerExplanationOutcome } from "../lesson-player-types";
 
@@ -42,7 +42,7 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
         data-slot="lesson-answer-explanation"
       >
         <p className="text-muted-foreground text-sm font-medium">{t("Why that answer misses")}</p>
-        <LessonRichTextBlocks className="text-base leading-relaxed" text={state.explanation} />
+        <RichTextBlocks className="text-base leading-relaxed" text={state.explanation} />
       </div>
     );
   }

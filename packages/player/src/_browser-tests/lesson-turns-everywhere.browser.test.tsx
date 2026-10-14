@@ -22,8 +22,14 @@ const BEFORE = { text: "This screen comes first.", title: "Before" };
 const AFTER = { text: "This screen comes next.", title: "After" };
 const SWIPE_PX = 160;
 
+/**
+ * A heading of the screen in view, in the lesson's content: from `lg` the aside's "From the lesson"
+ * repeats the last reading screen's title beside a question.
+ */
 function heading(text: string) {
-  return page.getByRole("heading", { exact: true, name: text });
+  return page
+    .getByRole("main", { name: "Lesson content" })
+    .getByRole("heading", { exact: true, name: text });
 }
 
 /** The screen's text, top to bottom: where a learner's finger lands to turn the screen. */

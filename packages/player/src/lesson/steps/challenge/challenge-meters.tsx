@@ -51,7 +51,7 @@ function MeterChange({ meter }: { meter: ChallengeMeterState }) {
     <span
       className={cn(
         "flex items-center gap-1 font-medium",
-        isGood ? "text-success" : "text-warning",
+        isGood ? "text-success-text" : "text-warning",
       )}
     >
       <Icon aria-hidden="true" className="size-4" />
@@ -119,7 +119,7 @@ export function ChallengeMeters({
     <section
       aria-label={t("How the case is going")}
       aria-live="polite"
-      className="bg-muted/50 flex w-full flex-col gap-3 rounded-2xl p-4"
+      className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4"
       data-slot="challenge-meters"
     >
       {meters.map((meter) => (

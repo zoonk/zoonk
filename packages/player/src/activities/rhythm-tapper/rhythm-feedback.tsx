@@ -29,9 +29,9 @@ export function RhythmFeedback({
 
   return (
     <p aria-live="polite" className="text-sm leading-snug" role="status">
-      {t("{onTime} of {total} taps on time.", {
+      {t("{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time.", {
         onTime: String(onTime),
-        total: String(hits.length),
+        total: hits.length,
       })}{" "}
       {worst && detail[worst.hit.status]}{" "}
       {extraTaps > 0 &&

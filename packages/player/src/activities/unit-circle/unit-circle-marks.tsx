@@ -48,7 +48,7 @@ export function DialLabel({
   return (
     <text
       aria-hidden="true"
-      className={cn("text-sm font-bold tabular-nums", HALO, className)}
+      className={cn("text-sm font-semibold tabular-nums", HALO, className)}
       dominantBaseline="middle"
       textAnchor={anchor}
       x={point.x}

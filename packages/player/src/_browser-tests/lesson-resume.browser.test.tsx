@@ -45,6 +45,68 @@ async function answerRight() {
 }
 
 describe("coming back to a lesson", () => {
+  it("waits for Finish when no playable screens remain on entry", async () => {
+    const lesson = buildLesson([]);
+    const adapters = buildAdapters(lesson);
+    renderLessonPlayer({ adapters, lesson });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Nothing left to answer" }))
+      .toBeVisible();
+
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    await page.getByRole("button", { exact: true, name: "Finish" }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    expect(adapters.completeLesson).toHaveBeenCalledOnce();
+  });
+
+  it("only preselects an answer supplied when the player opens, checking it on a learner tap", async () => {
+    const first = teachingStep("check");
+    const lesson = buildLesson([first]);
+    const adapters = buildAdapters(lesson);
+    const option = first.content.options[0];
+
+    if (!option) {
+      throw new Error("The first question needs an option");
+    }
+
+    renderLessonPlayer({ adapters, firstAnswer: option.id, lesson });
+
+    await expect.element(page.getByRole("radio", { name: option.text })).toBeChecked();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+    expect(adapters.checkStep).toHaveBeenCalledOnce();
+  });
+
+  it("waits for Finish before completing a lesson whose answers were already saved", async () => {
+    const lesson = createLesson();
+    const resume = checkIds(lesson).map((stepId) => runAnswer({ stepId }));
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+    });
+
+    renderLessonPlayer({ adapters, lesson, resume });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Nothing left to answer" }))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { exact: true, name: "Finish" })).toBeVisible();
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+    expect(adapters.checkStep).not.toHaveBeenCalled();
+
+    await page.getByRole("button", { exact: true, name: "Finish" }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: /^Continue/u })).toBeVisible();
+    expect(adapters.completeLesson).toHaveBeenCalledOnce();
+  });
+
   it("opens at the first screen still to answer, after its reading, and counts what was answered", async () => {
     const lesson = createLesson();
     const [first] = checkIds(lesson);
@@ -126,10 +188,12 @@ describe("coming back to a lesson", () => {
     const finished = buildAdapters(lesson).completeLesson;
 
     // The second answer never arrived: the server only has the first one.
+    const runId = crypto.randomUUID();
+
     const startLesson = vi
       .fn<LessonPlayerAdapters["startLesson"]>()
-      .mockResolvedValueOnce(startedRun())
-      .mockResolvedValue(startedRun({ answers: [runAnswer({ stepId: first ?? "" })] }));
+      .mockResolvedValueOnce(startedRun({ runId }))
+      .mockResolvedValue(startedRun({ answers: [runAnswer({ stepId: first ?? "" })], runId }));
 
     const completeLesson = vi
       .fn<LessonPlayerAdapters["completeLesson"]>()

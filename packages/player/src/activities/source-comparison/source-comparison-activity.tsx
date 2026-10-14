@@ -42,7 +42,7 @@ const PASSAGE_CLASS: Record<PassageState, string> = {
   correct: "bg-success/15 text-foreground",
   incorrect: "bg-destructive/15 text-foreground",
   marked: "bg-viz-highlight-soft text-foreground",
-  missed: "decoration-success underline decoration-2 decoration-dashed underline-offset-4",
+  missed: "decoration-success-text underline decoration-2 decoration-dashed underline-offset-4",
   unmarked:
     "decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",
 };
@@ -110,7 +110,7 @@ function SourceCard({
   return (
     <article
       aria-label={source.author}
-      className="bg-background flex flex-col gap-2 rounded-2xl border p-3.5"
+      className="bg-background flex flex-col gap-2 rounded-xl border p-3.5"
     >
       <header className="flex items-center gap-2.5">
         <span className="bg-viz-accent-soft text-viz-accent flex size-8 shrink-0 items-center justify-center rounded-full">

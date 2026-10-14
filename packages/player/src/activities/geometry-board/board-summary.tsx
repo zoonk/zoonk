@@ -123,7 +123,7 @@ export function BoardSummary({
     <span
       className={cn(
         measure === "pythagoras" && BOARD_TONES.highlight.ink,
-        isAnswer && "text-success",
+        isAnswer && "text-success-text",
       )}
     >
       {format(reading.total, { unit })}

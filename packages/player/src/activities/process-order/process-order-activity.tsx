@@ -26,8 +26,8 @@ function PositionBadge({
       className={cn(
         "flex size-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold tabular-nums",
         state === null && "bg-muted text-foreground",
-        state === "correct" && "bg-success text-background",
-        state === "incorrect" && "bg-destructive text-white",
+        state === "correct" && "bg-success-text text-background",
+        state === "incorrect" && "bg-destructive-text text-white",
       )}
     >
       {position}
@@ -64,7 +64,7 @@ function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }
   return (
     <li
       className={cn(
-        "flex gap-3 rounded-2xl border px-3 py-2.5",
+        "flex gap-3 rounded-xl border px-3 py-2.5",
         isRight ? "border-success/50 bg-success/5" : "border-destructive/50 bg-destructive/5",
       )}
     >
@@ -82,7 +82,7 @@ function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }
         {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
 
         {!isRight && result.learnerPosition !== null && (
-          <p className="text-destructive text-xs font-medium">
+          <p className="text-destructive-text text-xs font-medium">
             {t("You had it at {position}", { position: String(result.learnerPosition) })}
           </p>
         )}
@@ -94,7 +94,7 @@ function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }
 /** One step of the process explored on an explanation screen, with why it comes here. */
 function ExploredStep({ position, step }: { position: number; step: ProcessStep }) {
   return (
-    <li className="flex gap-3 rounded-2xl border px-3 py-2.5">
+    <li className="flex gap-3 rounded-xl border px-3 py-2.5">
       <StepMarks icon={step.icon} position={position} state={null} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">

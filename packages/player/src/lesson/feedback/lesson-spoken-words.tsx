@@ -13,8 +13,8 @@ type HeardWord = SpokenAnswerHeard["words"][number];
 type PracticeWord = SpokenAnswerHeard["wordsToPractice"][number];
 
 const WORD_TONE = {
-  correct: "text-success",
-  different: "text-destructive underline decoration-wavy underline-offset-4",
+  correct: "text-success-text",
+  different: "text-destructive-text underline decoration-wavy underline-offset-4",
   missed: "text-muted-foreground line-through",
 } as const;
 

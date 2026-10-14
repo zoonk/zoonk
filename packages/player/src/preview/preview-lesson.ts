@@ -44,7 +44,7 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
   return {
     checkStep: ({ answer, stepId }) => {
       const step = lesson.steps.find((item) => item.id === stepId);
-      const graded = step ? gradeStepAnswer({ answer, step }) : null;
+      const graded = step ? gradeStepAnswer({ answer, language: lesson.language, step }) : null;
 
       if (!graded) {
         return Promise.resolve({ status: "failed" as const });

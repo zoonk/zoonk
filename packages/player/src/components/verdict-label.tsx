@@ -1,8 +1,7 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheckIcon, CircleDashedIcon, CircleXIcon, SparklesIcon } from "lucide-react";
+import { type FeedbackTone, FeedbackVerdict } from "@zoonk/learn/feedback-panel";
+import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /**
@@ -19,37 +18,23 @@ export type Verdict =
   | "typo"
   | "unchecked";
 
-const VERDICT_TONE: Record<Verdict, string> = {
-  almost: "text-warning",
-  correct: "text-success",
-  guess: "text-foreground",
-  guessRight: "text-success",
-  incorrect: "text-destructive",
-  typo: "text-success",
-  unchecked: "text-foreground",
+const VERDICT_TONE: Record<Verdict, FeedbackTone> = {
+  almost: "almost",
+  correct: "right",
+  guess: "neutral",
+  guessRight: "right",
+  incorrect: "wrong",
+  typo: "right",
+  unchecked: "neutral",
 };
 
-function VerdictIcon({ verdict }: { verdict: Verdict }) {
-  if (verdict === "correct" || verdict === "guessRight" || verdict === "typo") {
-    return <CircleCheckIcon aria-hidden="true" className="size-[1.1em]" />;
-  }
-
-  if (verdict === "guess") {
-    return <SparklesIcon aria-hidden="true" className="size-[1.1em]" />;
-  }
-
-  if (verdict === "unchecked") {
-    return <CircleDashedIcon aria-hidden="true" className="size-[1.1em]" />;
-  }
-
-  return <CircleXIcon aria-hidden="true" className="size-[1.1em]" />;
-}
-
 /**
- * The verdict line of every answer's feedback: icon, tone and words stay the same on lesson
- * screens, activities and inline checks.
+ * The verdict line of every answer's feedback, the title of the feedback panel: a plain ✓ or ✕ in
+ * its color and a few words, the same on lesson screens and activities. A guess that missed keeps
+ * its sparkle, since a guess is never wrong. `end` holds a quiet aside on the right, such as
+ * Hyperdrive's "3 right in a row".
  */
-export function VerdictLabel({ verdict }: { verdict: Verdict }) {
+export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict: Verdict }) {
   const t = useExtracted();
 
   const labels: Record<Verdict, string> = {
@@ -63,15 +48,12 @@ export function VerdictLabel({ verdict }: { verdict: Verdict }) {
   };
 
   return (
-    <p
-      className={cn("flex items-start gap-2 text-lg font-semibold", VERDICT_TONE[verdict])}
-      data-slot="lesson-result-verdict"
+    <FeedbackVerdict
+      end={end}
+      icon={verdict === "guess" ? <SparklesIcon aria-hidden="true" /> : undefined}
+      tone={VERDICT_TONE[verdict]}
     >
-      {/* Sized by the verdict's type and kept on its first line. */}
-      <LineMarker>
-        <VerdictIcon verdict={verdict} />
-      </LineMarker>
       {labels[verdict]}
-    </p>
+    </FeedbackVerdict>
   );
 }

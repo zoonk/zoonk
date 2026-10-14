@@ -82,12 +82,19 @@ async function scanScreen(where: string): Promise<string[]> {
 }
 
 /**
- * The screen as every test finds the device, light, then dark. Dark mode is CSS alone, so
- * switching the device's scheme restyles the same screen in place.
+ * The screen in light, then dark, on a device asking for more contrast: the app keeps WCAG AA
+ * contrast there, while its regular look trades some of it for softer tones (the device's choice).
+ * Dark mode and contrast are CSS alone, so switching them restyles the same screen in place.
  */
 async function scanInEachScheme(label: string): Promise<string[]> {
-  const light = await scanScreen(`${label} (light)`);
-  const dark = await onDevice({ colorScheme: "dark" }, () => scanScreen(`${label} (dark)`));
+  const light = await onDevice({ colorScheme: "light", contrast: "more" }, () =>
+    scanScreen(`${label} (light)`),
+  );
+
+  const dark = await onDevice({ colorScheme: "dark", contrast: "more" }, () =>
+    scanScreen(`${label} (dark)`),
+  );
+
   return [...light, ...dark];
 }
 

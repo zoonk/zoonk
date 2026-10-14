@@ -10,15 +10,15 @@ type ListedLink = Link & { state: LinkResult["state"] | "made" };
 
 function StateIcon({ state }: { state: ListedLink["state"] }) {
   if (state === "correct") {
-    return <Check aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />;
+    return <Check aria-hidden="true" className="text-success-text mt-0.5 size-4 shrink-0" />;
   }
 
   if (state === "incorrect") {
-    return <X aria-hidden="true" className="text-destructive mt-0.5 size-4 shrink-0" />;
+    return <X aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />;
   }
 
   return state === "missed" ? (
-    <CircleDashed aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
+    <CircleDashed aria-hidden="true" className="text-success-text mt-0.5 size-4 shrink-0" />
   ) : null;
 }
 
@@ -69,7 +69,7 @@ export function CauseEffectLinkList({
         return (
           <li
             className={cn(
-              "flex items-start gap-2 rounded-2xl border px-3 py-2 text-sm",
+              "flex items-start gap-2 rounded-xl border px-3 py-2 text-sm",
               link.state === "missed" && "border-dashed",
             )}
             key={`${link.from}-${link.to}`}

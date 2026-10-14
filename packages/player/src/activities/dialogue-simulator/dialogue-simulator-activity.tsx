@@ -48,7 +48,7 @@ function ChatLine({
 
       <div
         className={cn(
-          "flex min-w-0 flex-col rounded-2xl px-3.5 py-2.5",
+          "flex min-w-0 flex-col rounded-xl px-3.5 py-2.5",
           isThem ? "bg-background rounded-bl-md shadow-xs" : "bg-viz-accent-soft rounded-br-md",
         )}
       >
@@ -69,30 +69,14 @@ function ReplyContent({ isChecked, reply }: { isChecked: boolean; reply: Dialogu
   return (
     <span className="flex flex-col gap-0.5">
       <PlayerChoiceSceneOptionText>{reply.text}</PlayerChoiceSceneOptionText>
-      {isChecked && <span className="text-sm opacity-90">{reply.translation}</span>}
+      {isChecked && <span className="text-muted-foreground text-sm">{reply.translation}</span>}
       {isChecked && (
-        <span className="text-foreground text-sm leading-snug">
+        <span className="text-sm leading-snug font-normal">
           <LessonRichText text={reply.why} />
         </span>
       )}
     </span>
   );
-}
-
-function replyResult({
-  expectedIds,
-  reply,
-  selectedId,
-}: {
-  expectedIds: readonly string[];
-  reply: DialogueReply;
-  selectedId: string | null;
-}): "correct" | "incorrect" | null {
-  if (expectedIds.includes(reply.id)) {
-    return "correct";
-  }
-
-  return reply.id === selectedId ? "incorrect" : null;
 }
 
 /**
@@ -151,18 +135,18 @@ export function DialogueSimulatorActivity({
         </ol>
       </div>
 
+      {/* Every reply stays after the check: each says what it means and why it fits or doesn't. */}
       <PlayerChoiceSceneOptions
         ariaLabel={t("Your reply")}
-        keyboardEnabled={!isChecked}
+        isChecked={isChecked}
+        keepsEveryOption
         onSelect={handleSelect}
         options={fields.replies.map((reply) => ({
           content: <ReplyContent isChecked={isChecked} reply={reply} />,
-          disabled: isChecked,
-          isDimmed: !isChecked && selectedId !== null && selectedId !== reply.id,
-          isSelected: selectedId === reply.id,
+          isCorrect: expectedIds.includes(reply.id),
           key: reply.id,
-          resultState: isChecked ? replyResult({ expectedIds, reply, selectedId }) : null,
         }))}
+        selectedKey={selectedId}
       />
 
       {isChecked && canSpeak && best && (

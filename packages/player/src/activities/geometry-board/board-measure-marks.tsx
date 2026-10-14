@@ -52,7 +52,7 @@ function BoardLabel({
 }) {
   return (
     <text
-      className={cn("text-sm font-bold tabular-nums", HALO, className)}
+      className={cn("text-sm font-semibold tabular-nums", HALO, className)}
       dominantBaseline="middle"
       textAnchor="middle"
       x={point.x}

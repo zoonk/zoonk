@@ -11,6 +11,7 @@ import {
 } from "./_utils/lesson-flow";
 import { getRunVerdicts, resumeLesson } from "./_utils/lesson-resume";
 import { isReadStep } from "./_utils/lesson-steps";
+import { restorePicturedSteps } from "./_utils/restore-pictured-steps";
 import {
   type LessonPlayerAction,
   type LessonPlayerState,
@@ -130,7 +131,23 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     state.support,
   );
 
-  return { ...resumeLesson(fresh, answers), run: state.run };
+  const available = {
+    ...fresh,
+    queue: fresh.queue.filter(
+      (id) => ![...state.unavailableStepIds, ...state.skippedWritingStepIds].includes(id),
+    ),
+  };
+
+  if (available.queue.length === 0) {
+    return state;
+  }
+
+  return {
+    ...resumeLesson(available, answers),
+    run: state.run,
+    skippedWritingStepIds: state.skippedWritingStepIds,
+    unavailableStepIds: state.unavailableStepIds,
+  };
 }
 
 /**
@@ -150,7 +167,7 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
     status: "started" as const,
   };
 
-  const started = { ...state, run };
+  const started = skipSteps({ ...state, run }, action.optionalStepIds ?? []);
   const isUntouched = Object.keys(state.results).length === 0 && !state.quickCheck;
   const answers = action.answers.filter((answer) => answer.stepId in state.steps);
 
@@ -163,18 +180,43 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
 
 /**
  * The server couldn't finish the lesson because an answer the screens show never reached it: the
- * lesson goes back to the first screen it's missing, never to a save that can't succeed.
+ * lesson goes back to the first screen it's missing, never to a save that can't succeed. A
+ * question left out because its picture was missing stays out of the run, as the server leaves it
+ * out once its picture comes late (`isPictureLateForRun`). Only when nothing else is missing does
+ * the server still ask for one: its picture came within its wait and this screen never got it, so
+ * the question comes back with it.
  */
 function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): LessonPlayerState {
   if (state.phase !== "completed") {
     return state;
   }
 
-  const resumed = resumeFrom(state, action.answers);
+  /** A host returning another sitting cannot describe the answers or omissions of this run. */
+  if (
+    state.run.status === "started" &&
+    action.runId !== undefined &&
+    action.runId !== state.run.runId
+  ) {
+    return setCompletionStatus(state, "failed");
+  }
 
-  return resumed.phase === "completed"
+  const optionalStepIds = action.optionalStepIds ?? [];
+  const available = skipSteps(state, optionalStepIds);
+  const missing = resumeFrom(available, action.answers);
+
+  if (missing.phase !== "completed") {
+    return { ...missing, notice: "answerNotSaved" };
+  }
+
+  const pictures = (action.pictures ?? []).filter(
+    (picture) => !optionalStepIds.includes(picture.stepId),
+  );
+
+  const pictured = resumeFrom(restorePicturedSteps(available, pictures), action.answers);
+
+  return pictured.phase === "completed"
     ? setCompletionStatus(state, "failed")
-    : { ...resumed, notice: "answerNotSaved" };
+    : { ...pictured, notice: "pictureReady" };
 }
 
 function completionSaved(
@@ -200,7 +242,7 @@ export function lessonPlayerReducer(
     case "continue":
       return continueFrom(state);
     case "skipKinds":
-      return skipStepKinds(state, action.kinds);
+      return skipStepKinds(state, action.kinds, action.stepIds);
     case "skipSteps":
       return skipSteps(state, action.stepIds);
     case "navigate":

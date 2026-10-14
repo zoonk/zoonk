@@ -9,8 +9,7 @@ import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
-import { InlineFeedback } from "./inline-feedback";
-import { QuestionText } from "./question-text";
+import { QUESTION_TEXT_CLASS, QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -58,11 +57,11 @@ function BlankSlot({
               })
         }
         className={cn(
-          "inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150",
+          "text-foreground inline-flex min-w-16 items-center justify-center border-b-2 px-1 transition-colors",
           hasResult && "pointer-events-none",
-          !resultState && "border-primary/30 text-primary",
-          resultState === "correct" && "border-success/50 text-success",
-          resultState === "incorrect" && "border-destructive/50 text-destructive",
+          !resultState && "border-foreground/40",
+          resultState === "correct" && "border-success",
+          resultState === "incorrect" && "border-destructive",
         )}
         disabled={hasResult}
         onClick={onRemove}
@@ -98,7 +97,7 @@ function TemplateText({
   const segments = template.split("[BLANK]");
 
   return (
-    <p className="text-base leading-10">
+    <p className={cn(QUESTION_TEXT_CLASS, "leading-10")}>
       {segments.map((segment, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
         <span key={`seg-${segment}-${index}`}>
@@ -211,8 +210,6 @@ export function FillBlankStep({
         onPlaceWord={handlePlaceWord}
         options={step.fillBlankOptions}
       />
-
-      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

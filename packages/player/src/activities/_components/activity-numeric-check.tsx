@@ -4,17 +4,15 @@ import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schem
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { Input } from "@zoonk/ui/components/input";
 import {
+  exactFractionDigitsFor,
   formatLocalizedNumber,
-  fractionDigitsFor,
   parseLocalizedNumber,
 } from "@zoonk/utils/localized-number";
+import { getUnitPosition } from "@zoonk/utils/math-answer";
 import { useLocale } from "next-intl";
 import { useId, useState } from "react";
 import { type ActivityPhase } from "../activity-renderer";
 import { ActivityCheckQuestion } from "./activity-check-question";
-
-/** The input shows cents even when a readout would round them away, so typed answers match. */
-const INPUT_FRACTION_DIGITS = 2;
 
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 
@@ -25,7 +23,9 @@ function answerValue(answer: ActivityAnswer | null): number | null {
 /**
  * The number the canvas produced, in an input the learner can also type into. Moving the canvas
  * rewrites the input; typing leaves the canvas alone. Typed text is kept as written ("3,5") while
- * it still reads as the current answer, so the field never fights the learner.
+ * it still reads as the current answer, so the field never fights the learner. Its unit sits
+ * where the learner's language writes it, as the feedback does: "R$" before the field in
+ * Portuguese, "°C" or "€" in German after it.
  */
 export function ActivityNumericCheck({
   answer,
@@ -41,6 +41,7 @@ export function ActivityNumericCheck({
   const locale = useLocale();
   const [inputId, unitId] = [useId(), useId()];
   const value = answerValue(answer);
+  const unitPosition = check.unit ? getUnitPosition({ language: locale, unit: check.unit }) : null;
   const [typed, setTyped] = useState<string | null>(null);
   const [previousValue, setPreviousValue] = useState(value);
 
@@ -59,7 +60,11 @@ export function ActivityNumericCheck({
       : formatLocalizedNumber({
           grouping: false,
           locale,
-          maximumFractionDigits: Math.max(fractionDigitsFor(value), INPUT_FRACTION_DIGITS),
+          maximumFractionDigits: exactFractionDigitsFor({
+            expected: check.answer,
+            tolerance: check.tolerance,
+            value,
+          }),
           value,
         }));
 
@@ -69,11 +74,19 @@ export function ActivityNumericCheck({
     onAnswerChange(parsed === null ? null : { kind: "numeric", value: parsed });
   }
 
+  const unit = check.unit && (
+    <span className="text-muted-foreground text-base" id={unitId}>
+      {check.unit}
+    </span>
+  );
+
   return (
     <div className="flex flex-col gap-3" data-slot="activity-numeric-check">
       <ActivityCheckQuestion htmlFor={inputId}>{check.question}</ActivityCheckQuestion>
 
       <div className="flex items-center gap-2">
+        {unitPosition === "prefix" && unit}
+
         <Input
           aria-describedby={check.unit ? unitId : undefined}
           autoComplete="off"
@@ -85,11 +98,7 @@ export function ActivityNumericCheck({
           value={display}
         />
 
-        {check.unit && (
-          <span className="text-muted-foreground text-base" id={unitId}>
-            {check.unit}
-          </span>
-        )}
+        {unitPosition === "suffix" && unit}
       </div>
     </div>
   );

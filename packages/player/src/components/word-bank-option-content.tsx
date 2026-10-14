@@ -1,4 +1,5 @@
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useId } from "react";
 import { RomanizationText } from "./romanization-text";
@@ -47,9 +48,9 @@ function hasWordBankOptionDescription(option: WordBankOption): boolean {
 }
 
 /**
- * Word-bank tiles have three visual states: available, globally disabled after
- * an answer is checked, and selected placeholders that stay visible only to
- * preserve the bank layout.
+ * Word-bank tiles have three visual states: available, faded once after an
+ * answer is checked, and placed words' empty slots that stay only to preserve
+ * the bank layout.
  */
 function getWordBankButtonStateClass({
   disabled,
@@ -59,15 +60,24 @@ function getWordBankButtonStateClass({
   isSelected: boolean;
 }) {
   if (isSelected) {
-    return "border-transparent bg-muted/50 opacity-70";
+    return "bg-muted ring-transparent";
   }
 
   if (disabled) {
     return "opacity-50";
   }
 
-  return "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]";
+  return "hover:bg-muted/60";
 }
+
+/**
+ * A word chip, in a word bank or placed in an answer: the answer options' strong line and type in
+ * a smaller, 10px-round chip.
+ */
+export const WORD_CHIP_CLASS = cn(
+  "focus-visible:outline-ring flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg px-3.5 py-2 text-center text-[0.9375rem] leading-6 font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid",
+  ANSWER_TONE.idle,
+);
 
 /**
  * Shared word-bank button chrome keeps fill-blank, reading, and listening tiles
@@ -93,10 +103,7 @@ export function WordBankOptionButton({
     <button
       aria-describedby={hasDescription && !isSelected ? descriptionId : undefined}
       aria-label={option.word}
-      className={cn(
-        "border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
-        getWordBankButtonStateClass({ disabled, isSelected }),
-      )}
+      className={cn(WORD_CHIP_CLASS, getWordBankButtonStateClass({ disabled, isSelected }))}
       disabled={isDisabled}
       onClick={onToggle}
       type="button"

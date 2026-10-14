@@ -100,7 +100,7 @@ function AtomFace({
         strokeWidth={fill === "open" ? THIN_RING : STATUS_RING}
       />
       <text
-        className={cn(style.text, "font-bold select-none")}
+        className={cn(style.text, "font-semibold select-none")}
         dominantBaseline="central"
         fontSize={LETTER_SIZE}
         textAnchor="middle"

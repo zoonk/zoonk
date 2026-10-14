@@ -67,7 +67,7 @@ export function PatternTableActivity(props: PatternTableProps) {
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <div className="bg-background overflow-x-auto rounded-2xl px-2 py-3">
+      <div className="bg-background overflow-x-auto rounded-xl px-2 py-3">
         <table className="w-full border-collapse text-base">
           <thead>
             <tr className="border-border border-b">

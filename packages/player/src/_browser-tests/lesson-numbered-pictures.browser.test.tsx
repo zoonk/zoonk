@@ -40,11 +40,11 @@ describe("numbered pictures", () => {
   });
 
   it("leaves out numbered questions whose picture never came, and goes on", async () => {
-    const diagram = contentStep("activity", { content: heart, imagePending: true });
+    const diagram = contentStep("activity", { content: heart });
 
     const lesson = buildLesson([
       diagram,
-      numberedCheckStep({ drawn: false, imagePending: true }),
+      numberedCheckStep({ drawn: false }),
       explanationStep(NEXT),
     ]);
 
@@ -67,7 +67,7 @@ describe("numbered pictures", () => {
       { image: inlineImage({ alt: heart.fields.picture.alt }) },
     );
 
-    const lost = explanationStep({ explore, text: NEXT.text }, { imagePending: true });
+    const lost = explanationStep({ explore, text: NEXT.text });
 
     renderLessonPlayer({ lesson: buildLesson([drawn, lost]) });
 

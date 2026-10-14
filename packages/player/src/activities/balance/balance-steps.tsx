@@ -31,7 +31,10 @@ export function BalanceSteps({
           // oxlint-disable-next-line react/no-array-index-key -- Steps are positional
           <li className="flex items-start gap-2 text-sm" key={index}>
             {isDone ? (
-              <CircleCheck aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
+              <CircleCheck
+                aria-hidden="true"
+                className="text-success-text mt-0.5 size-4 shrink-0"
+              />
             ) : (
               <CircleDashed
                 aria-hidden="true"

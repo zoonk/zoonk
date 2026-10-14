@@ -41,7 +41,7 @@ export function CategorizeResults({
         <ul className="flex flex-col gap-2">
           {misplaced.map((item) => (
             <li
-              className="bg-background rounded-2xl border px-3 py-2.5 text-sm leading-snug"
+              className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug"
               key={item.id}
             >
               <p>

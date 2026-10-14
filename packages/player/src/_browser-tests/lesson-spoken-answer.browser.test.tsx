@@ -53,8 +53,8 @@ function allowMicrophone() {
 }
 
 async function sayIt() {
-  await page.getByRole("button", { name: "Start speaking" }).click();
-  await page.getByRole("button", { name: "Stop and check" }).click();
+  await page.getByRole("button", { name: "Record" }).click();
+  await page.getByRole("button", { name: /^Stop/u }).click();
 }
 
 describe("spoken answers", () => {
@@ -87,7 +87,7 @@ describe("spoken answers", () => {
     openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
     await page.getByRole("button", { name: "I can talk now" }).click();
-    await expect.element(page.getByRole("button", { name: "Start speaking" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
   });
 
   it("with no words in it says so and lets the learner try again or type", async () => {
@@ -147,15 +147,16 @@ describe("spoken answers", () => {
     const adapters = buildAdapters(lesson, { gradeSpokenAnswer });
     renderLessonPlayer({ adapters, lesson });
 
-    await page.getByRole("button", { name: "Start speaking" }).click();
+    await page.getByRole("button", { name: "Record" }).click();
 
     await expect
       .element(page.getByText("The microphone is blocked. Type your answer instead."))
       .toBeVisible();
 
-    await page
-      .getByRole("textbox", { name: "Pergunte quanto é o aluguel." })
-      .fill("How much is the rent?");
+    // The field that replaces Record takes its focus, so a keyboard learner can type right away.
+    const field = page.getByRole("textbox", { name: "Pergunte quanto é o aluguel." });
+    await expect.element(field).toHaveFocus();
+    await field.fill("How much is the rent?");
 
     await page.getByRole("button", { name: /^Check/u }).click();
 

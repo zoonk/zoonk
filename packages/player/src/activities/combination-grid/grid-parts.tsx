@@ -22,7 +22,7 @@ export function CellValue({
   value: string;
 }) {
   return (
-    <span className={cn("font-bold tracking-wide tabular-nums", className)}>
+    <span className={cn("font-semibold tracking-wide tabular-nums", className)}>
       {isAllele ? (
         <>
           <Allele value={value.charAt(0)} />
@@ -79,7 +79,7 @@ export function GridHeader({
     <div
       aria-hidden="true"
       className={cn(
-        "bg-background ring-border flex min-h-11 items-center justify-center rounded-2xl text-xl ring-1 motion-safe:transition-colors",
+        "bg-background ring-border flex min-h-11 items-center justify-center rounded-xl text-xl ring-1 motion-safe:transition-colors",
         isLit && "bg-viz-accent-soft ring-viz-accent ring-2",
       )}
     >

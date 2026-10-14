@@ -20,7 +20,7 @@ function GuessWorkings({ workings }: { workings: Workings }) {
   const format = useFormatNumber();
 
   return (
-    <ul className="bg-background flex flex-col gap-1 rounded-2xl border px-4 py-3 text-sm tabular-nums">
+    <ul className="bg-background flex flex-col gap-1 rounded-xl border px-4 py-3 text-sm tabular-nums">
       {workings.map((working) => {
         const value = evaluateFormula(working.expression);
 

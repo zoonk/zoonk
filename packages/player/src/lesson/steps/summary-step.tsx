@@ -13,10 +13,7 @@ export function SummaryStepView({ step }: LessonStepViewProps<StepOf<"summary">>
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-1">
-        <h2
-          className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl"
-          data-slot="lesson-summary-title"
-        >
+        <h2 className="text-title" data-slot="lesson-summary-title">
           {t("Summary")}
         </h2>
         <p className="text-muted-foreground text-base">

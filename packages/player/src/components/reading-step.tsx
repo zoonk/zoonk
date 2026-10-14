@@ -135,7 +135,7 @@ export function ReadingStep({
       wordBankOptions={step.wordBankOptions}
     >
       <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Translate this sentence:")}</SectionLabel>
+        <SectionLabel>{t("Translate")}</SectionLabel>
         <QuestionText>
           <ReadingPromptText
             sentence={step.sentence.translation}

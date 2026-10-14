@@ -63,7 +63,7 @@ export function ArgumentCandidate({
       {...dragProps}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-2xl border px-3.5 py-2.5 text-left outline-none focus-visible:ring-[3px]",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left outline-none focus-visible:ring-[3px]",
         !disabled && "cursor-grab active:cursor-grabbing",
         isDragging && "relative z-20 shadow-lg",
       )}
@@ -115,7 +115,7 @@ export function ArgumentSlot({
     <section
       aria-label={label}
       className={cn(
-        "flex flex-col gap-1.5 rounded-2xl border-2 border-dashed px-3.5 py-2.5",
+        "flex flex-col gap-1.5 rounded-xl border-2 border-dashed px-3.5 py-2.5",
         isOpen && "border-viz-accent/60 bg-viz-accent-soft/40",
         isOver && "border-viz-accent bg-viz-accent-soft",
         isFilled && "bg-background border-solid",
@@ -136,14 +136,14 @@ export function ArgumentSlot({
         </p>
 
         {result === "strong" && (
-          <span className="text-success flex items-center gap-1 text-xs font-semibold">
+          <span className="text-success-text flex items-center gap-1 text-xs font-semibold">
             <Check aria-hidden="true" className="size-3.5" />
             {t("Strong")}
           </span>
         )}
 
         {result === "weak" && (
-          <span className="text-destructive flex items-center gap-1 text-xs font-semibold">
+          <span className="text-destructive-text flex items-center gap-1 text-xs font-semibold">
             <X aria-hidden="true" className="size-3.5" />
             {t("Weak")}
           </span>

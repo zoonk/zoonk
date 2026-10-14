@@ -201,7 +201,7 @@ export function LineCrossingChart({
 
       {answerLine && (
         <LineLabel
-          className="text-success"
+          className="text-success-text"
           domain={domain}
           end="lower"
           label={t("What happened")}

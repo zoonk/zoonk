@@ -34,10 +34,13 @@ function enterPosition(state: LessonPlayerState, position: number): LessonPlayer
   };
 }
 
-function complete(state: LessonPlayerState): LessonPlayerState {
+function complete(
+  state: LessonPlayerState,
+  status: "ready" | "saving" = "saving",
+): LessonPlayerState {
   return {
     ...state,
-    completion: { result: null, status: "saving", testedOut: state.quickCheck !== null },
+    completion: { result: null, status, testedOut: state.quickCheck !== null },
     phase: "completed",
   };
 }
@@ -79,13 +82,18 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
     return leaveQuickCheck(state);
   }
 
+  const queue = state.queue.filter(
+    (id, index) => index <= state.position || !state.unavailableStepIds.includes(id),
+  );
+
+  const available = queue.length === state.queue.length ? state : { ...state, queue };
   const next = state.position + 1;
 
-  if (next >= state.queue.length) {
-    return complete(state);
+  if (next >= queue.length) {
+    return complete(available);
   }
 
-  return enterPosition({ ...state, notice: null }, next);
+  return enterPosition({ ...available, notice: null }, next);
 }
 
 /**
@@ -95,28 +103,67 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
 function leaveOutAhead(
   state: LessonPlayerState,
   isLeftOut: (stepId: string) => boolean,
+  completionStatus: "ready" | "saving",
+): LessonPlayerState {
+  if (state.phase === "completed") {
+    return state;
+  }
+
+  /** A busy current question keeps its verdict; only screens after it are removed. */
+  const start = state.position + (state.phase === "playing" ? 0 : 1);
+  const ahead = state.queue.slice(start).filter((id) => !isLeftOut(id));
+
+  if (ahead.length === state.queue.length - start) {
+    return state;
+  }
+
+  const next = { ...state, queue: [...state.queue.slice(0, start), ...ahead] };
+
+  if (next.queue[state.position] === state.queue[state.position]) {
+    return next;
+  }
+
+  return state.position >= next.queue.length
+    ? complete(next, completionStatus)
+    : enterPosition({ ...next, notice: null }, state.position);
+}
+
+/**
+ * Leaves writing out of the rest of this sitting, with no answer verdict. The screen that takes
+ * its place says so, so the learner knows one tap covered the whole lesson.
+ */
+export function skipStepKinds(
+  state: LessonPlayerState,
+  kinds: readonly PlayableLibraryStep["kind"][],
+  stepIds?: readonly string[],
 ): LessonPlayerState {
   if (state.phase !== "playing") {
     return state;
   }
 
-  const ahead = state.queue.slice(state.position).filter((id) => !isLeftOut(id));
-  const next = { ...state, queue: [...state.queue.slice(0, state.position), ...ahead] };
-
-  return state.position >= next.queue.length
-    ? complete(next)
-    : enterPosition({ ...next, notice: null }, state.position);
-}
-
-/** Leaves out the screens of kinds the learner just skipped ("Skip writing"). */
-export function skipStepKinds(
-  state: LessonPlayerState,
-  kinds: readonly PlayableLibraryStep["kind"][],
-): LessonPlayerState {
-  return leaveOutAhead(state, (id) => {
+  const isLeftOut = (id: string) => {
     const kind = state.steps[id]?.kind;
-    return kind !== undefined && kinds.includes(kind);
-  });
+    return kind !== undefined && kinds.includes(kind) && (!stepIds || stepIds.includes(id));
+  };
+
+  const skippedWritingStepIds = state.queue
+    .slice(state.position)
+    .filter((id) => isLeftOut(id) && state.steps[id]?.kind === "typedAnswer");
+
+  const next = leaveOutAhead(
+    {
+      ...state,
+      skippedWritingStepIds: [
+        ...new Set([...state.skippedWritingStepIds, ...skippedWritingStepIds]),
+      ],
+    },
+    isLeftOut,
+    "saving",
+  );
+
+  return !stepIds && next.phase === "playing" && skippedWritingStepIds.length > 0
+    ? { ...next, notice: "writingSkipped" }
+    : next;
 }
 
 /**
@@ -124,7 +171,25 @@ export function skipStepKinds(
  * that never came: without it, nobody can tell which number is which.
  */
 export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]): LessonPlayerState {
-  return leaveOutAhead(state, (id) => stepIds.includes(id));
+  const added = stepIds.filter((id) => id in state.steps && !state.unavailableStepIds.includes(id));
+
+  if (added.length === 0) {
+    return state;
+  }
+
+  const unavailableStepIds = [...state.unavailableStepIds, ...new Set(added)];
+  const isLeftOut = (id: string) => unavailableStepIds.includes(id);
+
+  const quickCheck = state.quickCheck && {
+    ...state.quickCheck,
+    returnPosition: state.quickCheck.returnQueue
+      .slice(0, state.quickCheck.returnPosition)
+      .filter((id) => !isLeftOut(id)).length,
+    returnQueue: state.quickCheck.returnQueue.filter((id) => !isLeftOut(id)),
+  };
+
+  // Picture recovery can run on mount; only a learner's Finish may save a terminal lesson.
+  return leaveOutAhead({ ...state, quickCheck, unavailableStepIds }, isLeftOut, "ready");
 }
 
 /** Continue on a reading screen reveals a worked example one step at a time, then moves on. */
@@ -267,7 +332,11 @@ export function resolveCheck(
   }
 
   const willRetry =
-    isMiss && !state.quickCheck && step && isRetryStep(step) && !state.retried.includes(stepId);
+    isMiss &&
+    !state.quickCheck &&
+    step &&
+    isRetryStep(step) &&
+    ![...state.retried, ...state.unavailableStepIds].includes(stepId);
 
   const resolved: LessonPlayerState = {
     ...state,

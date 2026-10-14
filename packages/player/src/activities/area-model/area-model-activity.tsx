@@ -111,8 +111,8 @@ export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
       </ActivityReadout>
 
       <ActivityTextAlternative>
-        {t("Split into {count} parts: {parts}.", {
-          count: String(values.length),
+        {t("Split into {count, plural, one {# part} other {# parts}}: {parts}.", {
+          count: values.length,
           parts: values.map((value) => format(value)).join(", "),
         })}
         {!hidesTotal && " "}

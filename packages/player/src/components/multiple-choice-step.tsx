@@ -2,7 +2,7 @@
 
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { type SelectedAnswer } from "../step-answer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
@@ -13,12 +13,18 @@ function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   return selectedAnswer.selectedOptionId;
 }
 
+/**
+ * A language lesson's multiple-choice question. Once checked, its options show the right answer
+ * and a wrong pick, like every other question in the lesson.
+ */
 export function MultipleChoiceStep({
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -38,8 +44,13 @@ export function MultipleChoiceStep({
     <ChoiceStepLayout
       context={content.context}
       image={content.image}
+      isChecked={result !== undefined}
       onSelect={handleSelect}
-      options={content.options.map((option) => ({ key: option.id, text: option.text }))}
+      options={content.options.map((option) => ({
+        isCorrect: option.isCorrect,
+        key: option.id,
+        text: option.text,
+      }))}
       question={content.question}
       selectedKey={selectedOptionId}
     />

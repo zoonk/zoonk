@@ -65,7 +65,7 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
         <ViewToggle onChange={changeView} view={view} />
       </div>
 
-      {status === "loading" && <Skeleton className="h-40 w-full rounded-2xl" />}
+      {status === "loading" && <Skeleton className="h-40 w-full rounded-xl" />}
 
       {status === "failed" && (
         <p className="text-muted-foreground text-sm">

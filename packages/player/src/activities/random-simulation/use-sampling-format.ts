@@ -26,7 +26,8 @@ export function useSamplingFormat(fields: Fields) {
 
   function formatMargin(margin: number): string {
     return isShare
-      ? t("±{value} points", {
+      ? t("±{value} {count, plural, =0 {points} one {point} other {points}}", {
+          count: margin * PERCENT,
           value: format(margin * PERCENT, { maximumFractionDigits: SHARE_DIGITS }),
         })
       : t("±{value}", { value: format(margin, { unit: fields.unit }) });

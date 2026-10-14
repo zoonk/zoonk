@@ -21,7 +21,7 @@ function ElementSwatch({ element }: { element: string }) {
         strokeWidth={1}
       />
       <text
-        className={cn(style.text, "font-bold")}
+        className={cn(style.text, "font-semibold")}
         dominantBaseline="central"
         fontSize={12}
         textAnchor="middle"
@@ -56,7 +56,7 @@ export function MoleculeElements({
     <div className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">
       {elements.map((element) => (
         <button
-          className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-2xl border px-2 outline-none focus-visible:ring-[3px] disabled:opacity-50"
+          className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 outline-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={!canAdd}
           key={element}
           onClick={() => onAdd(element)}
@@ -99,7 +99,7 @@ export function MoleculeTools({
     <div className="flex shrink-0 gap-2">
       <Button
         aria-label={t("Undo")}
-        className="size-11 rounded-2xl"
+        className="size-11 rounded-xl"
         disabled={!canUndo}
         onClick={onUndo}
         size="icon-lg"
@@ -112,7 +112,7 @@ export function MoleculeTools({
         aria-label={
           selectedName ? t("Remove {atom}", { atom: selectedName }) : t("Remove the selected atom")
         }
-        className="size-11 rounded-2xl"
+        className="size-11 rounded-xl"
         disabled={!selectedName}
         onClick={onRemove}
         size="icon-lg"

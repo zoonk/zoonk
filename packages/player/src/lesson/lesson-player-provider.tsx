@@ -65,8 +65,8 @@ function toFirstAnswer({
 /**
  * A lesson the learner comes back to opens where they left off (`resume`, the open run's answers
  * read with the page). A public lesson page lets a visitor answer the first question right there:
- * the player opens with that answer picked, and checks it at once, so the tap counts as the
- * lesson's first step. The playground opens a screen checked the same way, with any answer.
+ * the player opens with that answer picked. A hook reveals its local answer immediately; a
+ * graded question waits for Check because grading can start model work.
  */
 function createStartingState({
   firstAnswer,
@@ -101,14 +101,19 @@ export type LessonPlayerProviderProps = {
   challengeTeam?: ChallengeTeam | null;
   children: React.ReactNode;
   /**
-   * The first screen's answer, checked as soon as the player opens: the option a visitor picked
-   * on the lesson's public page, or a whole answer (the playground's checked screens).
+   * The first screen's answer, selected when the player opens: the option a visitor picked on
+   * the public page, or a whole answer for the playground. Only a hook reveals without Check.
    */
   firstAnswer?: LessonPlayerAnswer | string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
   /** Called by Escape. */
   onExit: () => void;
+  /**
+   * The lesson's outline beside its reading screens from `lg`: for a short story read screen by
+   * screen, such as a quick explanation, whose aside would otherwise stay empty.
+   */
+  outline?: boolean;
   /**
    * The answers of the learner's open run of this lesson, read with the page, so a lesson they
    * come back to opens where they left off before the run starts again. Empty for a new run.
@@ -150,6 +155,7 @@ export function LessonPlayerProvider({
   lesson,
   linkComponent,
   onExit,
+  outline = false,
   resume = NO_ANSWERS,
   routes,
   slots = NO_SLOTS,
@@ -165,12 +171,24 @@ export function LessonPlayerProvider({
     createStartingState,
   );
 
-  const actions = useLessonPlayerActions({ adapters, dispatch, state, track });
+  const actions = useLessonPlayerActions({
+    adapters,
+    dispatch,
+    language: lesson.language,
+    state,
+    track,
+  });
+
   useAbandonTracking({ state, track });
   const screen = useMemo(() => getLessonScreen(state), [state]);
+  const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 
   const onOpen = useEffectEvent(() => {
-    if (state.answers[lesson.steps[0]?.id ?? ""] && firstAnswer) {
+    const first = lesson.steps[0];
+    const answer = state.answers[first?.id ?? ""];
+
+    // A hook only reveals stored words; real checks can grade text or classify a mistake.
+    if (first?.kind === "hook" && answer?.kind === "hook" && firstAnswer) {
       actions.check();
       return;
     }
@@ -198,12 +216,24 @@ export function LessonPlayerProvider({
       },
       linkComponent,
       onExit,
+      outline,
       routes,
       slots,
       soundsEnabled,
       track,
     }),
-    [adapters, challengeTeam, lesson, linkComponent, onExit, routes, slots, soundsEnabled, track],
+    [
+      adapters,
+      challengeTeam,
+      lesson,
+      linkComponent,
+      onExit,
+      outline,
+      routes,
+      slots,
+      soundsEnabled,
+      track,
+    ],
   );
 
   const runtime = useMemo(() => ({ actions, screen, state }), [actions, screen, state]);
@@ -215,7 +245,7 @@ export function LessonPlayerProvider({
           <LessonPicturesProvider
             getLessonPictures={adapters.getLessonPictures}
             onPicturesLost={actions.skipSteps}
-            steps={lesson.steps}
+            steps={pictureSteps}
           >
             <UserNameProvider initialName={viewer.userName}>{children}</UserNameProvider>
           </LessonPicturesProvider>

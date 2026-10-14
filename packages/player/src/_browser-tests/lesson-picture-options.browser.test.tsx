@@ -2,7 +2,7 @@ import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { press } from "../_test-utils/activity-player";
+import { expectCount, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
@@ -32,7 +32,7 @@ async function checkAnswer(expected: "Correct!" | "Not quite") {
 }
 
 describe("picture options", () => {
-  it("picks a picture by what it looks like, and names every option once checked", async () => {
+  it("picks a picture by what it looks like, and keeps only the named right one once checked", async () => {
     renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
 
     await expect.element(page.getByRole("img", { name: GOTHIC?.picture.alt })).toBeVisible();
@@ -42,9 +42,11 @@ describe("picture options", () => {
     await option(GOTHIC?.picture.alt ?? "").click();
     await checkAnswer("Correct!");
 
+    // Only the right pick stays, named; the others step aside for the result.
     await expect.element(page.getByText("Gothic", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Romanesque", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Baroque", { exact: true })).toBeVisible();
+    await expectCount(page.getByRole("radio"), 1);
+    await expect.element(page.getByText("Romanesque", { exact: true })).not.toBeInTheDocument();
+    await expect.element(page.getByText("Baroque", { exact: true })).not.toBeInTheDocument();
   });
 
   it("picks with a number key, and marks a wrong pick next to the right one", async () => {

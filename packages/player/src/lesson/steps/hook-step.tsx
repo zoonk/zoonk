@@ -12,7 +12,14 @@ import {
   useHasStepPicture,
   useIsPictureDrawing,
 } from "../_components/lesson-pictures";
-import { LessonBody, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
+import {
+  LessonBody,
+  LessonContext,
+  LessonEyebrow,
+  LessonQuestion,
+} from "../_components/lesson-step-text";
+import { ScreenSupport } from "../_components/screen-support";
+import { splitQuestionData } from "../_utils/lesson-aside";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 function HookGuess({
@@ -30,18 +37,23 @@ function HookGuess({
   }
 
   const selectedId = answer?.kind === "hook" ? answer.optionId : null;
+  const { data, question } = splitQuestionData(step.content.question);
 
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
         <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>{t("Guess first")}</LessonEyebrow>
-        <LessonStepPicture asks priority step={step} />
-        <LessonVisual visual={step.content.visual} />
-        <LessonQuestion>{step.content.question}</LessonQuestion>
+        <ScreenSupport step={step}>
+          <LessonStepPicture asks priority step={step} />
+          <LessonVisual visual={step.content.visual} />
+          <LessonContext>{data ?? undefined}</LessonContext>
+        </ScreenSupport>
+        <LessonQuestion>{question}</LessonQuestion>
       </PlayerChoiceScenePrompt>
 
       <LessonChoiceOptions
         isChecked={Boolean(result)}
+        isGuess
         isLocked={isLocked || isPictureDrawing}
         onSelect={(optionId) => onAnswer(optionId ? { kind: "hook", optionId } : null)}
         options={step.content.options}
@@ -69,11 +81,15 @@ export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
     return <HookGuess {...props} />;
   }
 
+  // The text comes first for screen readers and in the aside's place from `lg`; a phone still
+  // leads with the picture, like a story.
   return (
     <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
-      <LessonStepPicture hero priority step={step} />
       <LessonBody>{step.content.text}</LessonBody>
-      <LessonVisual visual={step.content.visual} />
+      <ScreenSupport className="max-lg:contents" step={step}>
+        <LessonStepPicture className="max-lg:order-first" hero priority step={step} />
+        <LessonVisual visual={step.content.visual} />
+      </ScreenSupport>
     </PlayerReadScene>
   );
 }

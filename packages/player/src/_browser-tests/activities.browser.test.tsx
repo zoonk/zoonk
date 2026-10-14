@@ -1,3 +1,4 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -103,6 +104,87 @@ describe("lesson activities", () => {
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
     await page.getByRole("button", { name: "Run again" }).click();
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
+  });
+
+  it("random simulation with one trial a run: its two bars say whether they're the hit", async () => {
+    const { randomSimulation } = activityContentFixtures;
+
+    openActivity({
+      content: {
+        ...randomSimulation,
+        fields: {
+          ...randomSimulation.fields,
+          hitLabel: "Win the prize",
+          model: {
+            hit: { comparison: "exactly", value: 1 },
+            kind: "binomial",
+            probability: 0.25,
+            trials: 1,
+          },
+          trialLabel: "draws",
+        },
+      },
+      template: "randomSimulation",
+    });
+
+    await page.getByRole("radio", { name: /About 1 in 4/u }).click();
+    await checkActivity();
+
+    // A 0 and a 1 would say nothing: the bars read "No" and "Yes" under the chart's "Win the prize".
+    await expect.element(page.getByText("No", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Yes", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("0", { exact: true })).not.toBeInTheDocument();
+  });
+
+  it("a money answer's unit sits where the language writes it, before the field", async () => {
+    const { balance } = activityContentFixtures;
+
+    openActivity({
+      content: { ...balance, check: { ...balance.check, unit: "$" } },
+      template: "balance",
+    });
+
+    const field = valueInput();
+    const unit = page.getByText("$", { exact: true });
+    await expect.element(unit).toBeVisible();
+
+    // Before the field on screen and for screen readers, as the feedback writes "$3" after Check.
+    expect(unit.element().compareDocumentPosition(field.element())).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+
+    expect(unit.element().getBoundingClientRect().right).toBeLessThanOrEqual(
+      field.element().getBoundingClientRect().left,
+    );
+
+    await field.fill("3");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("$3", { exact: true })).toBeVisible();
+  });
+
+  it("shows the close wrong number separately from the expected answer", async () => {
+    const { numberLine } = activityContentFixtures;
+
+    openActivity({
+      content: {
+        ...numberLine,
+        check: {
+          ...numberLine.check,
+          answer: 0.125,
+          tolerance: { kind: "absolute", value: 0.0001 },
+          unit: undefined,
+        },
+      },
+      template: "numberLine",
+    });
+
+    await valueInput().fill("0.1254");
+    await checkActivity();
+    await expectVerdict("Not quite");
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("0.1254", { exact: true })).toBeVisible();
+    await expect.element(feedback.getByText("0.125", { exact: true })).toBeVisible();
   });
 
   it("chart reader: tapping a span measures it", async () => {

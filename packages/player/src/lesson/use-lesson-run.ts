@@ -39,6 +39,7 @@ export function useLessonRun({
         dispatch({
           answers: outcome.answers,
           hyperdrive: outcome.hyperdrive,
+          optionalStepIds: outcome.optionalStepIds,
           runId: outcome.runId,
           startedAt: outcome.startedAt,
           type: "runStarted",

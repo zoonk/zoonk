@@ -1,4 +1,3 @@
-import { type LanguageActivityType } from "@zoonk/core/language/activities";
 import {
   type LessonPicture,
   type LessonStepAnswer,
@@ -60,6 +59,7 @@ export type LessonStartOutcome =
   | {
       answers: LessonRunAnswers;
       hyperdrive: LessonRunHyperdrive;
+      optionalStepIds?: string[];
       reason: "started";
       runId: string;
       /** When this sitting's run started: earlier answers came from sittings before it. */
@@ -106,6 +106,12 @@ export type SpokenAnswerOutcome =
   | { retryAfterSeconds: number; status: "slowDown" };
 
 /**
+ * A screen's personal example: the saved line (null when there's none), and whether asking for one
+ * can write it (the learner shares something, and no line was written from it yet).
+ */
+export type ExampleLine = { canRequest: boolean; line: string | null };
+
+/**
  * How the player reaches the server. The host implements these (the web app over its own
  * routes, a native app over the public API), so the player never knows about auth or URLs.
  * Optional adapters turn their controls off when missing.
@@ -118,12 +124,21 @@ export type LessonPlayerAdapters = {
     stepId: string;
     usedHelp: boolean;
   }) => Promise<LessonCheckOutcome>;
-  completeLesson: (input: { runId: string }) => Promise<LessonCompletionOutcome>;
+  completeLesson: (input: {
+    runId: string;
+    skippedWritingStepIds?: string[];
+  }) => Promise<LessonCompletionOutcome>;
   /**
    * One sentence tying an explanation to the learner's life, for screens with an example-line
-   * slot. It arrives after the screen shows, so the lesson never waits for it.
+   * slot. Reads a saved line only; opening a screen must never generate one. Null when the read
+   * failed.
    */
-  getExampleLine?: (input: { stepId: string }) => Promise<string | null>;
+  getExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
+  /**
+   * Writes a missing personal example only after an explicit learner click. Null when the request
+   * failed or was refused.
+   */
+  requestExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
   /**
    * The lesson's pictures drawn so far, asked for while a screen's picture is still being drawn
    * (`imagePending`). Without it, those screens show without their picture.
@@ -137,12 +152,7 @@ export type LessonPlayerAdapters = {
     durationMs: number;
     stepId: string;
   }) => Promise<SpokenAnswerOutcome>;
-  /**
-   * "Skip writing" in a language lesson: leaves that practice out of the learner's plan, so this
-   * and later lessons skip it until they turn it back on. Without it, the control isn't shown.
-   */
-  skipLanguageActivity?: (activity: LanguageActivityType) => Promise<boolean>;
-  startLesson: () => Promise<LessonStartOutcome>;
+  startLesson: (input?: { runId: string }) => Promise<LessonStartOutcome>;
 };
 
 /** Where the player's links go, supplied by the host. */

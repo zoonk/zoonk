@@ -19,3 +19,12 @@ export function getLessonFocusTarget(): HTMLElement | null {
 
   return document.querySelector(`#${LESSON_CONTENT_ID}`);
 }
+
+/**
+ * Keeps focus in the lesson after a control on the screen turns it (Explain first, Can't write
+ * now): the control leaves with its screen, so focus would fall back to the page. It goes where
+ * it goes after a sheet closes (`getLessonFocusTarget`), once the next screen is in.
+ */
+export function focusLessonAfterTurn(): void {
+  requestAnimationFrame(() => getLessonFocusTarget()?.focus({ preventScroll: true }));
+}

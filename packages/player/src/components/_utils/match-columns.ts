@@ -1,3 +1,5 @@
+import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
+
 export type Pair = { left: string; right: string };
 export type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
 export type MatchSide = "left" | "right";
@@ -104,22 +106,23 @@ export function getItemVisualState({
 
 /**
  * Keeps the visual-state class mapping beside the state machine so each state
- * has one styling definition.
+ * has one styling definition, the answer options' own: a matched pair turns
+ * green, a wrong pair red for a moment, and the picked item gets a firm ring.
  */
 export function getItemClassName(state: ItemVisualState): string {
   if (state === "correct") {
-    return "bg-success/5 border-transparent text-success pointer-events-none";
+    return `${ANSWER_TONE.right} pointer-events-none`;
   }
 
   if (state === "incorrectFlash") {
-    return "border-destructive bg-destructive/5 animate-shake";
+    return ANSWER_TONE.wrong;
   }
 
   if (state === "selected") {
-    return "border-primary bg-primary/5";
+    return ANSWER_TONE.picked;
   }
 
-  return "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]";
+  return `${ANSWER_TONE.idle} hover:bg-muted/60`;
 }
 
 /**

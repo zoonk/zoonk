@@ -45,7 +45,7 @@ function NodeCard({
       <button
         aria-pressed={isCause}
         className={cn(
-          "bg-background focus-visible:ring-ring/50 flex min-h-11 w-full flex-col items-start gap-0.5 rounded-2xl border px-3 py-2 text-left outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
+          "bg-background focus-visible:ring-ring/50 flex min-h-11 w-full flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
           isCause && "border-viz-highlight ring-viz-highlight/30 ring-2",
           isCandidate && "hover:border-viz-highlight border-dashed",
           !disabled && !isCause && !isCandidate && "hover:bg-accent",
@@ -161,9 +161,9 @@ export function CauseEffectChainActivity({
 
           {check.kind === "interaction" && (
             <ActivityCanvasLabel className="shrink-0 tabular-nums">
-              {t("{count} of {total} links", {
+              {t("{count} of {total, plural, one {# link} other {# links}}", {
                 count: format(links.length),
-                total: format(fields.links.length),
+                total: fields.links.length,
               })}
             </ActivityCanvasLabel>
           )}

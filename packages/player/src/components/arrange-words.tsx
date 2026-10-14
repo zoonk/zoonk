@@ -3,7 +3,6 @@
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -94,14 +93,7 @@ function WordBank({
   const tiles = getWordBankTiles({ placedWords, words });
 
   return (
-    <div
-      aria-label={t("Word bank")}
-      className={cn(
-        "mt-auto flex flex-wrap gap-2.5 pt-6 sm:pt-8 lg:mt-0 lg:pt-0",
-        disabled && "pointer-events-none opacity-50",
-      )}
-      role="group"
-    >
+    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
       {tiles.map((tile) => (
         <WordBankOptionButton
           disabled={disabled}
@@ -233,7 +225,7 @@ export function ArrangeWordsInteraction({
   );
 
   return (
-    <InteractiveStepLayout className="my-0 flex-1 lg:my-auto lg:flex-none">
+    <InteractiveStepLayout>
       {children}
 
       <ArrangeWordsAnswerArea

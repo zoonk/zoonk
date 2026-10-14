@@ -80,8 +80,8 @@ function PlaceDetails({ number, place }: { number: number; place: Place | null }
   }
 
   return (
-    <div className="bg-background flex gap-3 rounded-2xl border p-3" data-slot="map-place-details">
-      <span className="bg-viz-accent text-background flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold tabular-nums">
+    <div className="bg-background flex gap-3 rounded-xl border p-3" data-slot="map-place-details">
+      <span className="bg-viz-accent text-background flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums">
         {number}
       </span>
       <div className="flex min-w-0 flex-col gap-0.5">

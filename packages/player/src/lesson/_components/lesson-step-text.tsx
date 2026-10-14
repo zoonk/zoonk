@@ -1,35 +1,7 @@
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { findMarkdownTableLines } from "@zoonk/utils/markdown-table";
-import { LessonRichText, LessonRichTextBlocks } from "./lesson-rich-text";
-
-/**
- * A question written with a table of data ("The office logged its letters:", a table, then "Which
- * month had the fewest?") reads as that data, then the question itself: its last paragraph that
- * isn't a table. Data written after the question ("Which sensor…?", then the table) shows above it
- * too, so the heading never holds a table.
- */
-function splitQuestionData(text: string): { data: string | null; question: string } {
-  const lines = text.split(/\r?\n/u);
-  const tableLines = findMarkdownTableLines(lines);
-
-  if (tableLines.size === 0) {
-    return { data: null, question: text };
-  }
-
-  const isProse = (index: number) => !tableLines.has(index) && Boolean(lines[index]?.trim());
-  const end = lines.findLastIndex((_, index) => isProse(index));
-
-  if (end === -1) {
-    return { data: text, question: "" };
-  }
-
-  const start = lines.findLastIndex((_, index) => index < end && !isProse(index)) + 1;
-
-  return {
-    data: [...lines.slice(0, start), ...lines.slice(end + 1)].join("\n").trim(),
-    question: lines.slice(start, end + 1).join("\n"),
-  };
-}
+import { QUESTION_TEXT_CLASS } from "../../components/question-text";
+import { splitQuestionData } from "../_utils/lesson-aside";
 
 /** The question or prompt of a screen: the one line the learner answers. */
 export function LessonQuestion({ children, id }: { children: string; id?: string }) {
@@ -39,12 +11,9 @@ export function LessonQuestion({ children, id }: { children: string; id?: string
     <>
       {data && <LessonContext>{data}</LessonContext>}
       {question && (
-        <h2
-          className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl"
-          id={id}
-        >
-          <LessonRichText text={question} />
-        </h2>
+        <div id={id}>
+          <RichTextBlocks className={QUESTION_TEXT_CLASS} paragraphTag="h2" text={question} />
+        </div>
       )}
     </>
   );
@@ -56,20 +25,31 @@ export function LessonContext({ children }: { children?: string }) {
     return null;
   }
 
-  return <LessonRichTextBlocks className="text-lg leading-relaxed sm:text-xl" text={children} />;
+  return <RichTextBlocks className="text-base leading-relaxed" text={children} />;
 }
 
-/** The main reading text of a screen, large and calm. */
+/**
+ * The main reading text of a screen, large and calm: a step up from a tablet, and kept to a
+ * readable measure beside the aside on a wide screen.
+ */
 export function LessonBody({ children }: { children: string }) {
   return (
-    <LessonRichTextBlocks
-      className="text-foreground text-lg leading-relaxed sm:text-xl sm:leading-relaxed"
+    <RichTextBlocks
+      className="text-foreground text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6] lg:max-w-xl"
       text={children}
     />
   );
 }
 
-/** A small label above a screen's content, such as "Guess first" or "Worked example". */
+/**
+ * A screen's chip: a hairline outline, a 14px icon and a few muted words, square-cornered (no pill)
+ * and colorless, since it names what the screen asks, not a state. "Guess first", "Worked example"
+ * and an activity's verb ("Try it") all wear it.
+ */
+export const SCREEN_CHIP_CLASS =
+  "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-[0.375rem] px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
+
+/** A small chip above a screen's content, such as "Guess first" or "Worked example". */
 export function LessonEyebrow({
   children,
   className,
@@ -80,12 +60,7 @@ export function LessonEyebrow({
   icon?: React.ReactNode;
 }) {
   return (
-    <p
-      className={cn(
-        "bg-muted text-muted-foreground inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium [&_svg]:size-3.5",
-        className,
-      )}
-    >
+    <p className={cn(SCREEN_CHIP_CLASS, className)}>
       {icon}
       {children}
     </p>

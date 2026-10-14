@@ -1,5 +1,10 @@
+import {
+  markRichBlocks,
+  markRichInline,
+  parseRichBlocks,
+  parseRichInline,
+} from "@zoonk/learn/rich-text/parser";
 import { describe, expect, it } from "vitest";
-import { parseRichBlocks, parseRichInline } from "./lesson-rich-text";
 
 describe(parseRichInline, () => {
   it("reads inline and display math between dollar signs", () => {
@@ -106,6 +111,92 @@ describe(parseRichBlocks, () => {
         ],
       },
       { kind: "paragraph", lines: [[{ kind: "text", text: "Qual horário teve menos?" }]] },
+    ]);
+  });
+});
+
+describe(markRichBlocks, () => {
+  it("marks the quoted sentence by the words it shows, across emphasis, and only once", () => {
+    const text =
+      "A change multiplies the **current** value. Then it repeats.\n\nA change multiplies the **current** value.";
+
+    const [first, second] = markRichBlocks(
+      parseRichBlocks(text),
+      "A change multiplies the **current** value.",
+    );
+
+    expect(first).toStrictEqual({
+      kind: "paragraph",
+      lines: [
+        [
+          { kind: "text", marked: true, text: "A change multiplies the " },
+          { kind: "bold", marked: true, text: "current" },
+          { kind: "text", marked: true, text: " value." },
+          { kind: "text", text: " Then it repeats." },
+        ],
+      ],
+    });
+
+    expect(second).toStrictEqual(parseRichBlocks(text)[1]);
+  });
+
+  it("splits emphasis the quote starts inside and marks a formula it reaches whole", () => {
+    expect(
+      markRichInline(parseRichInline("**Always multiply** by $1.2$ first."), "multiply by 1"),
+    ).toStrictEqual([
+      { kind: "bold", text: "Always " },
+      { kind: "bold", marked: true, text: "multiply" },
+      { kind: "text", marked: true, text: " by " },
+      { kind: "math", marked: true, text: "1.2" },
+      { kind: "text", text: " first." },
+    ]);
+  });
+
+  it("reads a quote copied with its list marker the way the list item shows", () => {
+    const blocks = parseRichBlocks("Two rules:\n\n- Rises add.\n1. Falls **subtract**.");
+
+    expect(markRichBlocks(blocks, "- Rises add.")[1]).toMatchObject({
+      items: [[{ kind: "text", marked: true, text: "Rises add." }]],
+    });
+
+    expect(markRichBlocks(blocks, "1. Falls **subtract**.")[2]).toMatchObject({
+      items: [
+        [
+          { kind: "text", marked: true, text: "Falls " },
+          { kind: "bold", marked: true, text: "subtract" },
+          { kind: "text", marked: true, text: "." },
+        ],
+      ],
+    });
+  });
+
+  it("marks nothing when no line shows the quote or the quote cuts a mark in two", () => {
+    const blocks = parseRichBlocks("A **bold** idea.\n\n- One item");
+
+    expect(markRichBlocks(blocks, "Another idea.")).toStrictEqual(blocks);
+    expect(markRichBlocks(blocks, "A **bold idea.")).toStrictEqual(blocks);
+
+    expect(markRichBlocks(blocks, "One item")[1]).toStrictEqual({
+      items: [[{ kind: "text", marked: true, text: "One item" }]],
+      kind: "list",
+      ordered: false,
+    });
+  });
+});
+
+describe("shared question math dialects", () => {
+  it("keeps standard and over-escaped LaTeX distinct from currency and emphasis", () => {
+    expect(
+      parseRichInline(String.raw`**Compare** \(x^2\), \\(y^2\\) and $z^2$ for R$ 80.`),
+    ).toStrictEqual([
+      { kind: "bold", text: "Compare" },
+      { kind: "text", text: " " },
+      { kind: "math", text: "x^2" },
+      { kind: "text", text: ", " },
+      { kind: "math", text: "y^2" },
+      { kind: "text", text: " and " },
+      { kind: "math", text: "z^2" },
+      { kind: "text", text: " for R$ 80." },
     ]);
   });
 });

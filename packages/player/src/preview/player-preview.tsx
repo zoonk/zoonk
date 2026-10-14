@@ -1,7 +1,8 @@
 "use client";
 
 import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
-import { useMemo } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef } from "react";
+import { useLessonPlayer } from "../lesson/lesson-player-context";
 import { LessonPlayerProvider } from "../lesson/lesson-player-provider";
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 import {
@@ -80,6 +81,22 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   };
 }
 
+/** Checked gallery screens use only this preview's in-memory adapters, never an AI endpoint. */
+function CheckPreviewAnswer({ enabled }: { enabled: boolean }) {
+  const { actions } = useLessonPlayer();
+  const checked = useRef(false);
+  const check = useEffectEvent(actions.check);
+
+  useEffect(() => {
+    if (enabled && !checked.current) {
+      checked.current = true;
+      check();
+    }
+  }, [enabled]);
+
+  return null;
+}
+
 /**
  * One screen of the player's catalog (`previewEntries`) played in the real player, with the
  * server stood in for: answering, read, explored on an explanation screen, or checked with its
@@ -115,6 +132,7 @@ export function PlayerPreview({
         routes={ROUTES}
         viewer={{ hasSession: true }}
       >
+        <CheckPreviewAnswer enabled={state === "checked" && first.kind !== "hook"} />
         <LessonPlayerShell />
       </LessonPlayerProvider>
     </SpeechPlayerProvider>

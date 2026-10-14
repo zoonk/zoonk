@@ -60,8 +60,8 @@ export function LessonSlowDown({
   return (
     <AccessLayout
       description={t(
-        "You started a lot of lessons in a short time. This one opens in {seconds} seconds.",
-        { seconds: String(Math.max(secondsLeft, 0)) },
+        "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
+        { seconds: Math.max(secondsLeft, 0) },
       )}
       icon={<HourglassIcon aria-hidden="true" />}
       title={t("Take a short break")}

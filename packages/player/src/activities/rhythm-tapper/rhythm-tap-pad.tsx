@@ -35,7 +35,7 @@ export function RhythmTapPad({
       aria-disabled={!isActive}
       aria-keyshortcuts="Space"
       className={cn(
-        "bg-muted flex h-32 w-full touch-none flex-col items-center justify-center gap-1 rounded-3xl outline-none select-none",
+        "bg-muted flex h-32 w-full touch-none flex-col items-center justify-center gap-1 rounded-2xl outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
         isActive
           ? "cursor-pointer motion-safe:transition-transform motion-safe:active:scale-[0.98]"

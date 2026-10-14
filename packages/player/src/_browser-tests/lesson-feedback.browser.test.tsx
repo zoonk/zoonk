@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { press } from "../_test-utils/activity-player";
+import { expectCount, press } from "../_test-utils/activity-player";
 import { buildAdapters, renderLessonPlayer, startedRun } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
@@ -47,6 +47,21 @@ describe("lesson feedback", () => {
 
     await next();
     await answer(WRONG_OPTION, "Not quite");
+
+    // Only the pick and the right answer stay, each saying what it is, so the result fits a phone.
+    await expectCount(page.getByRole("radio"), 2);
+
+    await expect
+      .element(page.getByRole("radio", { name: WRONG_OPTION }))
+      .toMatchTextContent(/Your answer/u);
+
+    await expect
+      .element(page.getByRole("radio", { name: RIGHT_OPTION }))
+      .toMatchTextContent(/Correct/u);
+
+    // What happens next is the panel's last line.
+    const panel = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(panel.getByText("Saved to your mistakes", { exact: false })).toBeVisible();
 
     const notes = page.getByRole("paragraph").filter({ hasText: "Saved to your mistakes" });
 
@@ -128,6 +143,24 @@ describe("lesson feedback", () => {
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
   });
 
+  it("keeps a missed guess neutral: the pick was a guess, not a mistake", async () => {
+    const lesson = buildLesson([teachingStep("hook"), teachingStep("explanation")]);
+    renderLessonPlayer({ lesson });
+
+    await answer("Yes, exactly", "Here's the answer", /^See the answer/u);
+
+    await expect
+      .element(page.getByRole("radio", { name: "Yes, exactly" }))
+      .toMatchTextContent(/Your guess/u);
+
+    await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Correct/u);
+    // Every option stays: a guess reveals the answer, and the third one vanishing read as a glitch.
+    await expect.element(page.getByRole("radio", { name: "Sort of" })).toBeVisible();
+    await expect.element(page.getByText("Your answer")).not.toBeInTheDocument();
+    // A guess never counts: its segment fills in as read, not red.
+    expect(document.querySelector<HTMLElement>("[data-segment]")?.dataset.segment).toBe("read");
+  });
+
   it("has Previous on every screen after the first, back to an answered question's result", async () => {
     const lesson = buildLesson([
       teachingStep("hook"),
@@ -171,5 +204,18 @@ describe("lesson feedback", () => {
     await press("Enter");
     await expect.element(page.getByText(QUESTION)).toBeVisible();
     await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
+  });
+
+  it('keeps the keyboard in the lesson after "Explain first" turns the screen', async () => {
+    const lesson = buildLesson([teachingStep("check"), teachingStep("explanation")]);
+    renderLessonPlayer({ lesson });
+
+    await page.getByRole("button", { name: "Explain first" }).click();
+    await expect.element(page.getByText(QUESTION)).not.toBeInTheDocument();
+
+    // The button left with its screen, so focus goes on to the new screen's main action.
+    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+    await press("Enter");
+    await expect.element(page.getByText(QUESTION)).toBeVisible();
   });
 });

@@ -62,7 +62,7 @@ function JumpMark({
         strokeWidth={2.5}
       />
       <text
-        className="fill-current text-sm font-bold"
+        className="fill-current text-sm font-semibold"
         textAnchor="middle"
         x={arc.labelX}
         y={arc.labelY}
@@ -92,7 +92,7 @@ function NumberLineAxis({ baseline, fields }: { baseline: number; fields: Fields
             <text
               className={cn(
                 "tabular-nums",
-                value === 0 ? "fill-foreground font-bold" : "fill-muted-foreground",
+                value === 0 ? "fill-foreground font-semibold" : "fill-muted-foreground",
               )}
               textAnchor="middle"
               x={x.toPixel(value)}

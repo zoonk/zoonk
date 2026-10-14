@@ -126,7 +126,7 @@ export function LineCrossingAnswer({
 
   return (
     <p className="text-sm leading-relaxed">
-      <span className="text-success font-medium">
+      <span className="text-success-text font-medium">
         {lineWords.moved(shifted, realOffset, axis)}.
       </span>{" "}
       {feedback && <LessonRichText text={feedback} />}

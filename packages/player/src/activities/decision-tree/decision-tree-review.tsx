@@ -1,8 +1,8 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Check, Dot, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { type TreeNode, findNode, firstDivergence, walkSteps } from "./decision-tree-walk";
 
 /**
@@ -27,7 +27,7 @@ export function DecisionTreeReview({
   return (
     <section
       aria-label={t("The walk for this case")}
-      className="bg-background flex flex-col gap-2 rounded-2xl border px-3.5 py-3"
+      className="bg-background flex flex-col gap-2 rounded-xl border px-3.5 py-3"
       data-slot="decision-tree-review"
     >
       <p className="text-sm font-semibold">{t("The walk for this case")}</p>
@@ -41,26 +41,26 @@ export function DecisionTreeReview({
           return (
             <li className="flex items-start gap-2.5 text-sm leading-snug" key={step.node.id}>
               {index < missedAt && (
-                <Check aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
+                <Check aria-hidden="true" className="text-success-text mt-0.5 size-4 shrink-0" />
               )}
               {isMissed && (
-                <X aria-hidden="true" className="text-destructive mt-0.5 size-4 shrink-0" />
+                <X aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
               )}
               {index > missedAt && (
                 <Dot aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
               )}
 
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="text-muted-foreground">
-                  <LessonRichText text={step.node.question} />
-                </span>
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <div className="text-muted-foreground">
+                  <RichTextBlocks text={step.node.question} />
+                </div>
                 <span className="font-medium">{step.branch}</span>
                 {isMissed && learnerBranch && (
-                  <span className="text-destructive text-xs">
+                  <span className="text-destructive-text text-xs">
                     {t("You chose {branch}", { branch: learnerBranch })}
                   </span>
                 )}
-              </span>
+              </div>
             </li>
           );
         })}

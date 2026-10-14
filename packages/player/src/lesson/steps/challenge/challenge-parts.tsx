@@ -59,7 +59,7 @@ export function ChallengePanelView({
 }) {
   return (
     <div
-      className="border-border flex w-full flex-col gap-3 rounded-2xl border p-4"
+      className="border-border flex w-full flex-col gap-3 rounded-xl border p-4"
       data-slot="challenge-panel"
     >
       {panel.title && <ChallengeLabel>{fill(panel.title)}</ChallengeLabel>}
@@ -128,7 +128,7 @@ export function ChallengePickView({ text }: { text: string }) {
 
   return (
     <li className="flex justify-end" data-slot="challenge-pick">
-      <p className="bg-primary text-primary-foreground max-w-[85%] rounded-2xl px-4 py-2.5 text-base leading-relaxed">
+      <p className="bg-primary text-primary-foreground max-w-[85%] rounded-xl px-4 py-2.5 text-base leading-relaxed">
         <span className="sr-only">{`${t("You:")} `}</span>
         <LessonRichText text={text} />
       </p>

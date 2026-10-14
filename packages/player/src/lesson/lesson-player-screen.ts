@@ -1,3 +1,4 @@
+import { type TaskSegment } from "@zoonk/learn/task-header";
 import { getChallengeProgress } from "./_utils/challenge-progress";
 import { canGoBack } from "./_utils/lesson-flow";
 import { getHyperdriveStreak } from "./_utils/lesson-hyperdrive";
@@ -48,6 +49,11 @@ export type LessonScreen = {
   hyperdriveStreak: number | null;
   primary: LessonPrimaryAction | null;
   progress: { current: number; total: number };
+  /**
+   * Each screen of the lesson in its order, for the header's segments: read, answered right or
+   * wrong the first time it came, the one in view, or still ahead.
+   */
+  segments: TaskSegment[];
   /** Position within "I know this", when it's running. */
   quickCheck: { current: number; total: number } | null;
   step: PlayableLibraryStep | null;
@@ -56,6 +62,11 @@ export type LessonScreen = {
    * struggles.
    */
   struggleOffer: ExplainingStep | null;
+  /**
+   * The screen holds an answer the learner wrote whose check hasn't saved successfully: leaving
+   * now could drop it, so the way out asks first, including while the check is pending.
+   */
+  unsentAnswer: boolean;
 };
 
 function hasText(text: string): boolean {
@@ -73,6 +84,16 @@ function isAnswerReady(answer: LessonPlayerAnswer | undefined): boolean {
   }
 
   return true;
+}
+
+/** Words on the screen stay protected until their check saves successfully. */
+function hasUnsentAnswer(state: LessonPlayerState, step: PlayableLibraryStep | null): boolean {
+  const awaitingCheck = state.phase === "playing" || state.phase === "checking";
+  const answer = step && awaitingCheck ? state.answers[step.id] : undefined;
+
+  return (
+    (answer?.kind === "typedAnswer" || answer?.kind === "spokenAnswer") && hasText(answer.text)
+  );
 }
 
 function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): LessonPrimaryLabel {
@@ -146,6 +167,39 @@ function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | nu
   return state.phase === "feedback" || (state.phase === "playing" && isReadStep(step));
 }
 
+/**
+ * A screen already passed: any answer that counted (a check, an activity, a language exercise, a
+ * spoken or written answer) by the verdict it got there (its first one, or for a question that came
+ * back at the end, the one it got then), any other screen read, a guess included.
+ */
+function getPassedSegment(state: LessonPlayerState, index: number): TaskSegment {
+  const stepId = state.queue[index] ?? "";
+
+  const verdict =
+    state.queue.indexOf(stepId) === index
+      ? state.firstVerdicts[stepId]
+      : state.results[stepId]?.isCorrect;
+
+  if (verdict === undefined) {
+    return "read";
+  }
+
+  return verdict ? "right" : "wrong";
+}
+
+/** The header's segments: passed screens by their verdict, the one in view, the rest ahead. */
+function getSegments(state: LessonPlayerState): TaskSegment[] {
+  return state.queue.map((_, index) => {
+    const answeredInView = index === state.position && state.phase === "feedback";
+
+    if (index < state.position || answeredInView || state.phase === "completed") {
+      return getPassedSegment(state, index);
+    }
+
+    return index === state.position ? "current" : "ahead";
+  });
+}
+
 /** Derives the screen from the reducer state. */
 export function getLessonScreen(state: LessonPlayerState): LessonScreen {
   const step = state.phase === "completed" ? null : getCurrentStep(state);
@@ -172,7 +226,9 @@ export function getLessonScreen(state: LessonPlayerState): LessonScreen {
       total: state.queue.length,
     },
     quickCheck: state.quickCheck ? { current: state.position, total: state.queue.length } : null,
+    segments: getSegments(state),
     step,
     struggleOffer: getStruggleOffer(state),
+    unsentAnswer: hasUnsentAnswer(state, step),
   };
 }

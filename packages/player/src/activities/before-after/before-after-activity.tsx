@@ -88,7 +88,7 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
         />
       ) : (
         <button
-          className="border-viz-accent/40 text-viz-accent hover:bg-viz-accent-soft focus-visible:ring-ring/50 flex min-h-24 items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 text-sm font-semibold transition-colors outline-none focus-visible:ring-[3px]"
+          className="border-viz-accent/40 text-viz-accent hover:bg-viz-accent-soft focus-visible:ring-ring/50 flex min-h-24 items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 text-sm font-semibold transition-colors outline-none focus-visible:ring-[3px]"
           onClick={() => setIsRevealed(true)}
           type="button"
         >

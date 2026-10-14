@@ -39,6 +39,7 @@ type StepOptions = {
   id?: string;
   image?: PlayableStepImage | null;
   imagePending?: boolean;
+  pictureWaitStartedAt?: number;
   /** A picture question's drawn pictures, by option id. */
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
@@ -52,6 +53,7 @@ export function contentStep<TKind extends TeachingStepKind>(
     image = null,
     imagePending = false,
     optionPictures,
+    pictureWaitStartedAt = imagePending ? Date.now() : undefined,
   }: StepOptions & { content: object },
 ): PlayableTeachingStepOf<TKind> {
   return {
@@ -60,6 +62,7 @@ export function contentStep<TKind extends TeachingStepKind>(
     id,
     image,
     imagePending,
+    ...(pictureWaitStartedAt === undefined ? {} : { pictureWaitStartedAt }),
     kind,
     ...(optionPictures ? { optionPictures } : {}),
     position: 0,

@@ -18,7 +18,7 @@ function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   return (
     <div className="flex flex-col gap-3">
       <SectionLabel>{t("What do you hear?")}</SectionLabel>
-      <PlayAudioButton audioUrl={audioUrl} />
+      <PlayAudioButton audioUrl={audioUrl} variant="labeled" />
     </div>
   );
 }
@@ -28,7 +28,7 @@ function TextPrompt({ sentence }: { sentence: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <SectionLabel>{t("Translate this sentence:")}</SectionLabel>
+      <SectionLabel>{t("Translate")}</SectionLabel>
       <QuestionText>{sentence}</QuestionText>
     </div>
   );

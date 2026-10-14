@@ -59,7 +59,7 @@ const CONTROLS = [
     control: () => page.getByRole("group", { name: "Word bank" }).getByRole("button").first(),
     kind: "a word to tap",
     screen: "language-reading",
-    text: () => page.getByText("Translate this sentence:"),
+    text: () => page.getByText("Translate", { exact: true }),
   },
   {
     control: () => page.getByRole("slider"),

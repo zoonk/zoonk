@@ -3,6 +3,8 @@
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { Kbd } from "@zoonk/ui/components/kbd";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -28,34 +30,38 @@ import {
 } from "./_utils/match-columns";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { QuestionText } from "./question-text";
-import { ResultKbd } from "./result-kbd";
 import { InteractiveStepLayout } from "./step-layouts";
 
 const FLASH_DURATION = 800;
 
+/**
+ * One item to match, drawn like an answer option: its number in a keycap (number keys pick from
+ * one column at a time), its words, and a strong line that turns into a firm ring when picked,
+ * green once matched and red for a moment on a wrong pair.
+ */
 function MatchItem({
   isShortcutActive,
   label,
+  marker,
   onTap,
-  shortcut,
   state,
 }: {
   isShortcutActive: boolean;
   label: string;
+  marker: number;
   onTap: () => void;
-  shortcut: string | null;
   state: ItemVisualState;
 }) {
   const isLocked = state === "correct" || state === "incorrectFlash";
   const displayLabel = stripWrappingQuotes(label);
-  const visibleShortcut = !isLocked && isShortcutActive ? shortcut : null;
+  const shortcut = !isLocked && isShortcutActive ? getNumberKeyShortcut(marker - 1) : null;
 
   return (
     <button
-      aria-keyshortcuts={visibleShortcut ?? undefined}
+      aria-keyshortcuts={shortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left text-[0.9375rem] leading-6 font-medium wrap-break-word transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}
@@ -63,21 +69,12 @@ function MatchItem({
       onClick={onTap}
       type="button"
     >
-      {/* The shortcut sits on the label's first line when a long label wraps. */}
-      <span className="flex min-w-0 items-start gap-2">
-        {shortcut && (
-          <span
-            className={cn(
-              "hidden h-lh flex-none items-center lg:pointer-fine:flex",
-              !visibleShortcut && "invisible",
-            )}
-          >
-            <ResultKbd isSelected={state === "selected"}>{shortcut}</ResultKbd>
-          </span>
-        )}
+      {/* On the label's first line when a long label wraps. */}
+      <LineMarker aria-hidden="true">
+        <Kbd>{marker}</Kbd>
+      </LineMarker>
 
-        <span className="min-w-0">{displayLabel}</span>
-      </span>
+      <span className="min-w-0">{displayLabel}</span>
     </button>
   );
 }
@@ -100,7 +97,7 @@ function MatchGrid({
   selected: MatchSelection | null;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+    <div className="grid grid-cols-2 gap-2.5">
       {leftItems.map((left, index) => {
         const right = rightItems[index];
 
@@ -127,16 +124,16 @@ function MatchGrid({
             <MatchItem
               isShortcutActive={activeKeyboardSide === "left"}
               label={left.label}
+              marker={index + 1}
               onTap={() => onTap(left)}
-              shortcut={getNumberKeyShortcut(index)}
               state={leftState}
             />
 
             <MatchItem
               isShortcutActive={activeKeyboardSide === "right"}
               label={right.label}
+              marker={index + 1}
               onTap={() => onTap(right)}
-              shortcut={getNumberKeyShortcut(index)}
               state={rightState}
             />
           </Fragment>

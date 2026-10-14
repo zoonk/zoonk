@@ -1,14 +1,24 @@
 "use client";
 
+import { DiffLines } from "@zoonk/learn/diff-lines";
+import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useExtracted } from "next-intl";
 import { type Verdict, VerdictLabel } from "../../components/verdict-label";
-import { LessonRichText, LessonRichTextBlocks } from "../_components/lesson-rich-text";
+import { LessonRichText } from "../_components/lesson-rich-text";
 import { isLanguageStep } from "../_utils/lesson-steps";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { WordHints } from "../steps/word-hints";
 import { ExplainAnswer } from "./explain-answer";
 import { LessonKeyPoints } from "./lesson-key-points";
+import { HyperdriveStreak, type LessonResultNext, LessonResultNote } from "./lesson-result-notes";
 import { LessonSpokenWords } from "./lesson-spoken-words";
+
+/** Language screens whose options already show the right answer and the pick once checked. */
+const OPTION_LANGUAGE_KINDS = new Set<PlayableLibraryStep["kind"]>([
+  "multipleChoice",
+  "translation",
+]);
 
 function getVerdict({
   result,
@@ -34,7 +44,7 @@ function getVerdict({
 
 /**
  * The right answer, for screens that don't show it themselves: language answers built from words.
- * Options already turn green and red, and a written answer has its key points.
+ * Options already show it, and a written answer has its key points.
  */
 function CorrectAnswerLine({
   result,
@@ -45,17 +55,23 @@ function CorrectAnswerLine({
 }) {
   const t = useExtracted();
 
-  if (!result.correctAnswer || result.isCorrect || !result.checked || !isLanguageStep(step)) {
+  if (
+    !result.correctAnswer ||
+    result.isCorrect ||
+    !result.checked ||
+    !isLanguageStep(step) ||
+    OPTION_LANGUAGE_KINDS.has(step.kind)
+  ) {
     return null;
   }
 
   return (
-    <p className="text-sm">
+    <FeedbackExplanation>
       <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
-      <span className="text-success font-medium">
+      <span className="text-success-text font-medium">
         <LessonRichText text={result.correctAnswer} />
       </span>
-    </p>
+    </FeedbackExplanation>
   );
 }
 
@@ -64,14 +80,14 @@ function UncheckedLine({ sampleAnswer }: { sampleAnswer: string }) {
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
+    <FeedbackExplanation className="flex flex-col gap-1">
       <p className="text-muted-foreground">
         {t("Each question is checked a few times a day. Compare your answer with this one:")}
       </p>
-      <p className="text-base font-medium">
+      <p className="font-medium">
         <LessonRichText text={sampleAnswer} />
       </p>
-    </div>
+    </FeedbackExplanation>
   );
 }
 
@@ -79,56 +95,52 @@ function SpellingLine({ spelling }: { spelling: string }) {
   const t = useExtracted();
 
   return (
-    <p className="text-sm">
+    <FeedbackExplanation>
       <span className="text-muted-foreground">{t("Spelled:")}</span>{" "}
-      <span className="text-success font-medium">
+      <span className="text-success-text font-medium">
         <LessonRichText text={spelling} />
       </span>
-    </p>
+    </FeedbackExplanation>
   );
 }
 
 /**
- * A language answer's form mistakes, each struck through next to its right form: the ideas were
- * stated (the key points say so), only how they were written needs fixing.
+ * A language answer's form mistakes as a diff: each as the learner wrote it, then its right form.
+ * The ideas were stated (the key points say so), only how they were written needs fixing.
  */
 function CorrectionLines({ corrections }: { corrections: LessonStepResult["corrections"] }) {
   const t = useExtracted();
 
   return (
-    <ul className="flex flex-col gap-1 text-sm" data-slot="lesson-corrections">
-      {corrections.map((correction) => (
-        <li
-          className="flex flex-wrap items-baseline gap-x-2"
-          key={`${correction.wrong}→${correction.right}`}
-        >
-          <span className="text-muted-foreground decoration-destructive line-through decoration-2">
-            <span className="sr-only">{t("Your answer:")} </span>
-            {correction.wrong}
-          </span>{" "}
-          <span className="text-success font-medium">
-            <span className="sr-only">{t("Correct answer:")} </span>
-            {correction.right}
-          </span>
-        </li>
-      ))}
-    </ul>
+    <DiffLines
+      labels={{ added: t("Correct answer"), removed: t("Your answer") }}
+      lines={corrections.flatMap((correction) => [
+        { kind: "removed" as const, text: correction.wrong },
+        { kind: "added" as const, text: correction.right },
+      ])}
+    />
   );
 }
 
 /**
- * The result of one screen, shown under the question: the verdict and one why. The options on
- * screen already show what was picked and what was right, so nothing repeats them; a written
- * answer shows its key points instead of a paragraph, a typo its right spelling, a language
- * answer's form mistakes their corrections, and a spoken one the words heard.
+ * The result of one screen, on the feedback panel under the question: the verdict (with
+ * Hyperdrive's streak on its right), one why, and a faint last line on what happens next. The
+ * options on screen already show what was picked and what was right, so nothing repeats them; a
+ * written answer shows its key points instead of a paragraph, a typo its right spelling, a
+ * language answer's form mistakes as a diff, and a spoken one the words heard.
  */
 export function LessonStepResultView({
+  hyperdriveStreak,
+  next,
   result,
   step,
 }: {
+  hyperdriveStreak: number | null;
+  next: LessonResultNext;
   result: LessonStepResult;
   step: PlayableLibraryStep;
 }) {
+  const t = useExtracted();
   const verdict = getVerdict({ result, step });
   const { answerText } = result;
   const wordHints = "wordHints" in step ? step.wordHints : null;
@@ -139,12 +151,14 @@ export function LessonStepResultView({
     (step.kind === "typedAnswer" || (step.kind === "spokenAnswer" && !result.feedback));
 
   return (
-    <section
-      className="bg-muted/40 flex flex-col gap-4 rounded-2xl p-4 sm:p-5"
-      data-slot="lesson-step-result"
-    >
-      <div aria-live="polite" className="flex flex-col gap-3" role="status">
-        <VerdictLabel verdict={verdict} />
+    <FeedbackPanel aria-label={t("Answer feedback")}>
+      <div aria-live="polite" className="flex flex-col gap-2.5" role="status">
+        <VerdictLabel
+          end={
+            hyperdriveStreak === null ? undefined : <HyperdriveStreak count={hyperdriveStreak} />
+          }
+          verdict={verdict}
+        />
         {result.spelling && <SpellingLine spelling={result.spelling} />}
         {result.corrections.length > 0 && <CorrectionLines corrections={result.corrections} />}
         <CorrectAnswerLine result={result} step={step} />
@@ -158,13 +172,17 @@ export function LessonStepResultView({
           <LessonKeyPoints keyPoints={result.keyPoints} />
         ) : (
           result.feedback && (
-            <LessonRichTextBlocks className="text-base leading-relaxed" text={result.feedback} />
+            <FeedbackExplanation>
+              <RichTextBlocks text={result.feedback} />
+            </FeedbackExplanation>
           )
         )}
         {wordHints && <WordHints hints={wordHints} />}
       </div>
 
       {canExplain && <ExplainAnswer answer={answerText} stepId={step.id} />}
-    </section>
+
+      <LessonResultNote {...next} />
+    </FeedbackPanel>
   );
 }

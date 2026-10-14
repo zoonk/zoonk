@@ -1,11 +1,11 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CircleCheck, Undo2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { LessonRichText, LessonRichTextBlocks } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,
   ActivityCanvasLabel,
@@ -61,10 +61,10 @@ export function DecisionTreeActivity({
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <section
         aria-label={t("The case")}
-        className="bg-background flex flex-col gap-1 rounded-2xl border px-3.5 py-3"
+        className="bg-background flex flex-col gap-1 rounded-xl border px-3.5 py-3"
       >
         <ActivityCanvasLabel className="font-medium">{t("The case")}</ActivityCanvasLabel>
-        <LessonRichTextBlocks className="text-base leading-snug" text={fields.case.description} />
+        <RichTextBlocks className="text-base leading-snug" text={fields.case.description} />
       </section>
 
       {current?.kind === "question" && (
@@ -91,9 +91,9 @@ export function DecisionTreeActivity({
               <LineMarker>
                 <CircleCheck aria-hidden="true" className="text-muted-foreground size-[18px]" />
               </LineMarker>
-              <span className="text-muted-foreground min-w-0 flex-1">
-                <LessonRichText text={step.node.question} />
-              </span>
+              <div className="text-muted-foreground min-w-0 flex-1">
+                <RichTextBlocks text={step.node.question} />
+              </div>
               <LineMarker>
                 <span className="bg-background rounded-full border px-2.5 py-1 text-xs font-medium">
                   {step.branch}
@@ -106,15 +106,15 @@ export function DecisionTreeActivity({
 
       {current?.kind === "question" && !isChecked && (
         <div className="flex flex-col gap-3 border-t pt-4">
-          <p className="flex items-start gap-2.5 text-base leading-snug font-semibold">
+          <div className="flex items-start gap-2.5 text-base leading-snug font-semibold">
             <span
               aria-hidden="true"
-              className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+              className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
             >
               {steps.length + 1}
             </span>
-            <LessonRichText text={current.question} />
-          </p>
+            <RichTextBlocks text={current.question} />
+          </div>
 
           <ActivitySelectGrid
             columns={
@@ -138,7 +138,7 @@ export function DecisionTreeActivity({
       {current?.kind === "outcome" && (
         <div
           aria-live="polite"
-          className="bg-viz-accent-soft flex flex-col gap-0.5 rounded-2xl px-3.5 py-3"
+          className="bg-viz-accent-soft flex flex-col gap-0.5 rounded-xl px-3.5 py-3"
         >
           <p className="text-viz-accent text-xs font-semibold">{t("The key leads to")}</p>
           <p className="text-lg font-semibold">{current.label}</p>
@@ -158,10 +158,10 @@ export function DecisionTreeActivity({
 
       <ActivityTextAlternative>
         {current?.kind === "outcome"
-          ? t("You reached {outcome} after {count} questions.", {
-              count: String(steps.length),
-              outcome: current.label,
-            })
+          ? t(
+              "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}.",
+              { count: steps.length, outcome: current.label },
+            )
           : t("Question {number}. Still possible: {outcomes}.", {
               number: String(steps.length + 1),
               outcomes: stillPossible.map((node) => outcomeLabel(node)).join(", "),

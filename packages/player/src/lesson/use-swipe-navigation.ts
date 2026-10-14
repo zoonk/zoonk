@@ -16,16 +16,19 @@ const SWIPE_MAX_MS = 800;
 
 const ZOOMED_SCALE = 1.01;
 
-/** Controls keep their own touch: tapping, dragging or sliding them never turns the screen. */
+/**
+ * Controls keep their own touch: tapping, dragging or sliding them never turns the screen. A
+ * disabled one (a checked answer's options) takes no touch, so a swipe can start on it.
+ */
 const INTERACTIVE_SELECTOR = [
   "a",
   "audio",
-  "button",
-  "input",
+  "button:not(:disabled)",
+  "input:not(:disabled)",
   "label",
-  "select",
+  "select:not(:disabled)",
   "summary",
-  "textarea",
+  "textarea:not(:disabled)",
   "video",
   "[contenteditable='true']",
   "[draggable='true']",

@@ -27,7 +27,7 @@ export function VocabularyStep({
         className="flex flex-col gap-6"
       >
         <PlayerReadSceneStack className="gap-2">
-          <p className="text-4xl font-bold tracking-tight sm:text-5xl">{word.word}</p>
+          <p className="text-title lg:text-[2.5rem]">{word.word}</p>
 
           <RomanizationText>{word.romanization}</RomanizationText>
 

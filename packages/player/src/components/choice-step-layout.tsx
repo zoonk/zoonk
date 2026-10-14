@@ -1,6 +1,7 @@
 "use client";
 
 import { type ExerciseImage } from "@zoonk/core/library/steps/contract/language-exercises";
+import { TaskAsideContent } from "@zoonk/learn/task-layout";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
@@ -12,115 +13,31 @@ import {
 import { StepImageView } from "./step-image";
 
 /**
- * The prompt and option list are the reusable heart of every choice scene.
- * Keeping them separate from the outer layout lets the same content render in
- * the classic text-only shell or the newer image-led split layout.
+ * A choice question's picture, above its question on a phone and beside it from `lg`, capped in
+ * height so the options stay in reach.
  */
-function ChoiceStepLayoutContent({
-  context,
-  onSelect,
-  options,
-  question,
-  selectedKey,
-}: {
-  context?: string | null;
-  onSelect: (key: string) => void;
-  options: readonly { key: string; text: string }[];
-  question?: string | null;
-  selectedKey: string | null;
-}) {
-  const hasSelection = selectedKey !== null;
-
-  const handleSelect = (index: number) => {
-    const option = options[index];
-
-    if (!option) {
-      return;
-    }
-
-    onSelect(option.key);
-  };
-
-  return (
-    <>
-      {(context || question) && (
-        <PlayerChoiceScenePrompt>
-          <PlayerChoiceSceneContext>{context}</PlayerChoiceSceneContext>
-          <PlayerChoiceSceneQuestion>{question}</PlayerChoiceSceneQuestion>
-        </PlayerChoiceScenePrompt>
-      )}
-
-      <PlayerChoiceSceneOptions
-        onSelect={handleSelect}
-        options={options.map((option) => ({
-          content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
-          isDimmed: hasSelection && selectedKey !== option.key,
-          isSelected: selectedKey === option.key,
-          key: option.key,
-        }))}
-      />
-    </>
-  );
-}
-
-/**
- * Choice steps keep the image inset on mobile, where the learner needs to scan
- * one vertical flow, then let the same image bleed through the full left
- * column on desktop where there is enough room to separate evidence and action.
- */
-function ChoiceStepImageStage({ image }: { image: ExerciseImage }) {
-  return (
-    <div className="w-full lg:h-full lg:min-h-0" data-slot="choice-step-image-stage-shell">
-      <div
-        className="relative aspect-square w-full overflow-hidden rounded-xl lg:aspect-auto lg:h-full lg:rounded-none"
-        data-slot="choice-step-image-stage"
-      >
-        <StepImageView image={image} />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Visual practice questions use the normal compact mobile stack, then become a
- * full-height image/text split on desktop. That keeps small screens familiar
- * while making large screens feel intentionally image-led instead of showing a
- * small square artifact inside a wide empty stage.
- */
-function ChoiceStepMediaLayout({
-  children,
-  image,
-}: {
-  children: React.ReactNode;
-  image: ExerciseImage;
-}) {
+function ChoiceStepImage({ image }: { image: ExerciseImage }) {
   return (
     <div
-      className="mx-auto my-auto w-full max-w-5xl px-4 py-4 sm:px-6 sm:py-6 lg:my-0 lg:h-full lg:max-w-none lg:p-0"
-      data-slot="choice-step-media-layout"
+      className="relative h-[40dvh] w-full overflow-hidden rounded-xl"
+      data-slot="choice-step-image"
     >
-      <div className="flex flex-col gap-4 sm:gap-6 lg:grid lg:h-full lg:grid-cols-2 lg:gap-0">
-        <ChoiceStepImageStage image={image} />
-        <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:px-10 lg:py-10">
-          <div className="flex min-w-0 flex-col gap-4 sm:gap-6 lg:mx-auto lg:my-auto lg:w-full lg:max-w-md">
-            {children}
-          </div>
-        </div>
-      </div>
+      <StepImageView image={image} />
     </div>
   );
 }
 
 /**
- * Shared layout for choice-based steps.
- *
- * Owns all rendering and interaction: text display, option list with dimming,
- * numeric keyboard shortcuts, and toggle-to-unselect. Each step kind provides
- * a thin wrapper that parses its content and builds the answer shape.
+ * Shared layout for choice-based language steps: an optional picture and situation, the question
+ * and the options, with numeric keyboard shortcuts and toggle-to-unselect. The picture and the
+ * situation come first on a phone and sit in the lesson's aside from `lg`, beside the question.
+ * Once checked, the options show the right answer and a wrong pick. Each step kind provides a thin
+ * wrapper that parses its content and builds the answer shape.
  */
 export function ChoiceStepLayout({
   context,
   image,
+  isChecked,
   onSelect,
   options,
   question,
@@ -128,24 +45,47 @@ export function ChoiceStepLayout({
 }: {
   context?: string | null;
   image?: ExerciseImage | null;
+  isChecked: boolean;
   onSelect: (key: string) => void;
-  options: readonly { key: string; text: string }[];
+  options: readonly { isCorrect: boolean; key: string; text: string }[];
   question?: string | null;
   selectedKey: string | null;
 }) {
-  const content = (
-    <ChoiceStepLayoutContent
-      context={context}
-      onSelect={onSelect}
-      options={options}
-      question={question}
-      selectedKey={selectedKey}
-    />
+  const handleSelect = (index: number) => {
+    const option = options[index];
+
+    if (!option || isChecked) {
+      return;
+    }
+
+    onSelect(option.key);
+  };
+
+  return (
+    <PlayerChoiceScene>
+      {(image || context) && (
+        <TaskAsideContent className="flex flex-col gap-3 lg:gap-4">
+          {image && <ChoiceStepImage image={image} />}
+          <PlayerChoiceSceneContext>{context}</PlayerChoiceSceneContext>
+        </TaskAsideContent>
+      )}
+
+      {question && (
+        <PlayerChoiceScenePrompt>
+          <PlayerChoiceSceneQuestion>{question}</PlayerChoiceSceneQuestion>
+        </PlayerChoiceScenePrompt>
+      )}
+
+      <PlayerChoiceSceneOptions
+        isChecked={isChecked}
+        onSelect={handleSelect}
+        options={options.map((option) => ({
+          content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
+          isCorrect: option.isCorrect,
+          key: option.key,
+        }))}
+        selectedKey={selectedKey}
+      />
+    </PlayerChoiceScene>
   );
-
-  if (!image) {
-    return <PlayerChoiceScene>{content}</PlayerChoiceScene>;
-  }
-
-  return <ChoiceStepMediaLayout image={image}>{content}</ChoiceStepMediaLayout>;
 }

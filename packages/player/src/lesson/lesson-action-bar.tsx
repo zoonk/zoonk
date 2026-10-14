@@ -1,19 +1,25 @@
 "use client";
 
+import {
+  TASK_BACK_ACTION_CLASS,
+  TASK_MAIN_ACTION_CLASS,
+  TaskActionBar,
+  TaskActions,
+} from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayAudioButton } from "../components/play-audio-button";
-import { PlayerContentFrame } from "../components/step-layouts";
 import { usePromptAudioUrl } from "../player-audio-context";
 import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
 import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPrimaryLabel } from "./lesson-player-screen";
 import { AskTutorButton } from "./tutor/ask-tutor-button";
+import { useShowsMiss } from "./tutor/use-shows-miss";
 
 function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
   const t = useExtracted();
@@ -45,18 +51,22 @@ function PromptAudio() {
     return null;
   }
 
-  return <PlayAudioButton audioUrl={audioUrl} variant="outline" />;
+  return <PlayAudioButton audioUrl={audioUrl} variant="icon" />;
 }
 
 /**
- * The one next action, with Previous on every screen after the first and a card's sound on
- * reading screens. It stays at the bottom on every size, so it never moves when a result appears,
- * and Enter always does what it says.
+ * The task's action bar: the one next action, with Previous on every screen after the first and a
+ * card's sound on reading screens. The buddy is an icon after the main action, and says its name
+ * before it after a wrong answer, when asking helps most, unless the buddy's own offer to help
+ * already says it on the screen; from `lg` the buddy is in the aside instead. The bar stays pinned
+ * at the bottom over a hairline on every size, so it never moves when a result appears, and Enter
+ * always does what it says. Every button is 44px tall.
  */
 export function LessonActionBar() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
   const { primary } = screen;
+  const showsMiss = useShowsMiss() && !screen.struggleOffer;
 
   if (!primary) {
     return null;
@@ -65,16 +75,14 @@ export function LessonActionBar() {
   const runPrimary = primary.action === "check" ? actions.check : actions.continue;
 
   return (
-    <div
-      className="bg-background/90 sticky bottom-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm lg:pb-6"
-      data-slot="lesson-action-bar"
-    >
-      <PlayerContentFrame className="flex items-center gap-2 pt-3">
+    <TaskActionBar data-slot="lesson-action-bar">
+      <TaskActions>
         {screen.canGoBack && (
           <Button
             aria-keyshortcuts="ArrowLeft"
+            className={TASK_BACK_ACTION_CLASS}
             onClick={actions.goBack}
-            size="icon-lg"
+            size="icon"
             variant="outline"
           >
             <ChevronLeftIcon aria-hidden="true" />
@@ -84,28 +92,23 @@ export function LessonActionBar() {
 
         <PromptAudio />
 
+        {showsMiss && <AskTutorButton labeled />}
+
         <Button
           aria-keyshortcuts="Enter"
-          className={cn(
-            "h-12 flex-1 rounded-full text-base",
-            primary.busy && "disabled:opacity-100",
-          )}
+          className={cn(TASK_MAIN_ACTION_CLASS, primary.busy && "disabled:opacity-100")}
           disabled={primary.disabled}
           id={LESSON_PRIMARY_ID}
           onClick={runPrimary}
-          size="lg"
+          size="xl"
         >
-          {/* One group, so the arrow stays with the label next to the Enter hint. */}
-          <span className="inline-flex items-center gap-1.5">
-            {primary.busy && <Spinner aria-hidden="true" />}
-            <PrimaryLabel label={primary.label} />
-            {primary.label === "next" && <ChevronRightIcon aria-hidden="true" />}
-          </span>
-          {!primary.busy && <ShortcutKbd tone="inverse">Enter</ShortcutKbd>}
+          {primary.busy && <Spinner aria-hidden="true" />}
+          <PrimaryLabel label={primary.label} />
+          {!primary.busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
         </Button>
 
-        <AskTutorButton />
-      </PlayerContentFrame>
-    </div>
+        {!showsMiss && <AskTutorButton />}
+      </TaskActions>
+    </TaskActionBar>
   );
 }

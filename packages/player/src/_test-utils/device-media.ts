@@ -1,12 +1,13 @@
 import { commands } from "vitest/browser";
 
 /**
- * The device's light or dark scheme and its reduced-motion setting: media features a page can
- * read but not change, so tests ask the browser's driver for them (Playwright's
- * `page.emulateMedia`, registered as the `emulateMedia` command in vitest.config.mts).
+ * The device's light or dark scheme, its contrast preference and its reduced-motion setting:
+ * media features a page can read but not change, so tests ask the browser's driver for them
+ * (Playwright's `page.emulateMedia`, registered as the `emulateMedia` command in vitest.config.mts).
  */
 export type DeviceMedia = {
   colorScheme?: "dark" | "light";
+  contrast?: "more" | "no-preference";
   reducedMotion?: "no-preference" | "reduce";
 };
 
@@ -17,9 +18,10 @@ declare module "vitest/browser" {
   }
 }
 
-/** How every test finds the device: light, with no motion preference. */
+/** How every test finds the device: light, with no contrast or motion preference. */
 const DEVICE_DEFAULTS: Required<DeviceMedia> = {
   colorScheme: "light",
+  contrast: "no-preference",
   reducedMotion: "no-preference",
 };
 

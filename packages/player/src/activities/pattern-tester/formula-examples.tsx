@@ -33,10 +33,10 @@ function FormulaExampleRow({
         <span className="inline-flex items-center justify-end gap-1.5">
           {result && result.value !== null && format(result.value)}
           {result?.passes === true && (
-            <Check aria-label={t("matches")} className="text-success size-4" />
+            <Check aria-label={t("matches")} className="text-success-text size-4" />
           )}
           {result && !result.passes && result.value !== null && (
-            <X aria-label={t("doesn't match")} className="text-destructive size-4" />
+            <X aria-label={t("doesn't match")} className="text-destructive-text size-4" />
           )}
         </span>
       </td>
@@ -59,7 +59,7 @@ export function FormulaExamples({
   const names = examples[0]?.inputs.map((input) => input.name) ?? [];
 
   return (
-    <div className="bg-background overflow-x-auto rounded-2xl border">
+    <div className="bg-background overflow-x-auto rounded-xl border">
       <table className="w-full text-sm tabular-nums">
         <caption className="sr-only">{t("Examples for your formula")}</caption>
 

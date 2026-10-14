@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useEffectEvent } from "react";
+import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { usePlayerInteractionState } from "../../player-context";
 
-/** Space taps from anywhere on the page while the rhythm plays, not only on the pad. */
+const SPACE_CONTROLS =
+  "button, a[href], summary, [role='button'], [role='radio'], [role='checkbox'], [role='switch'], [role='tab'], [role='slider']";
+
+/** Space taps while the rhythm plays; fields, popups and other controls keep their keys. */
 export function useSpaceToTap({
   enabled,
   onTap,
@@ -10,23 +14,24 @@ export function useSpaceToTap({
   enabled: boolean;
   onTap: (timeMs: number) => void;
 }) {
-  const tap = useEffectEvent(onTap);
+  const interaction = usePlayerInteractionState();
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== " " || event.repeat) {
-        return;
+  useKeyboardCallback(
+    " ",
+    (event) => {
+      if (!enabled || interaction === "paused") {
+        return false;
       }
 
-      event.preventDefault();
-      tap(event.timeStamp);
-    }
+      const element = event.target instanceof Element ? event.target : document.activeElement;
+      const pad = element?.closest("[data-slot='rhythm-tap-pad']");
 
-    globalThis.addEventListener("keydown", handleKeyDown);
-    return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [enabled]);
+      if (!pad && element?.closest(SPACE_CONTROLS)) {
+        return false;
+      }
+
+      onTap(event.timeStamp);
+    },
+    { mode: "none", screen: true },
+  );
 }

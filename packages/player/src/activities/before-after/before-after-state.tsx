@@ -76,7 +76,7 @@ function FactRow({
         <span className={cn("text-sm", isAfter ? "text-foreground" : "text-muted-foreground")}>
           {fact.label}
         </span>
-        <span className={cn("text-base font-bold tabular-nums", isAfter && "text-viz-accent")}>
+        <span className={cn("text-base font-semibold tabular-nums", isAfter && "text-viz-accent")}>
           {format(fact.value, { unit: fact.unit })}
         </span>
       </div>
@@ -98,7 +98,7 @@ function FactRow({
         <span
           className={cn(
             "w-fit rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
-            isHighlighted ? "bg-success/10 text-success" : "bg-background text-foreground",
+            isHighlighted ? "bg-success/10 text-success-text" : "bg-background text-foreground",
           )}
         >
           {changeLabel(change)}
@@ -135,7 +135,7 @@ export function BeforeAfterState({
       ref={ref}
       tabIndex={-1}
       className={cn(
-        "flex flex-col gap-3 rounded-2xl p-4 outline-none",
+        "flex flex-col gap-3 rounded-xl p-4 outline-none",
         isAfter
           ? "bg-viz-accent-soft motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2"
           : "bg-background",

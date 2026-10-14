@@ -3,8 +3,9 @@
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeDebrief } from "@zoonk/core/library/challenges/run";
 import { cn } from "@zoonk/ui/lib/utils";
+import { formatDuration } from "@zoonk/utils/duration";
 import { CheckIcon, TrophyIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type StepOf } from "../lesson-step-view-props";
@@ -13,6 +14,9 @@ import { type ChallengeNames } from "./use-challenge-names";
 
 type ChallengeContent = StepOf<"challenge">["content"];
 type ChallengeDebrief = ReturnType<typeof getChallengeDebrief>;
+
+/** The short practice the debrief suggests for the weakest skill. */
+const PRACTICE_SECONDS = 300;
 
 function DebriefNotes({
   debrief,
@@ -28,14 +32,14 @@ function DebriefNotes({
   }
 
   return (
-    <div className="border-border flex w-full flex-col gap-4 rounded-2xl border p-4 shadow-xs">
+    <div className="border-border flex w-full flex-col gap-4 rounded-xl border p-4">
       {debrief.good.length > 0 && (
         <section
           aria-labelledby="challenge-good"
           className="flex flex-col gap-2"
           data-slot="challenge-good"
         >
-          <ChallengeLabel as="h3" className="text-success" id="challenge-good">
+          <ChallengeLabel as="h3" className="text-success-text" id="challenge-good">
             {t("Nicely done")}
           </ChallengeLabel>
           <ul className="flex flex-col gap-2">
@@ -44,7 +48,7 @@ function DebriefNotes({
                 className="flex gap-2 text-base leading-relaxed"
                 key={`${note.skill}-${note.text}`}
               >
-                <CheckIcon aria-hidden="true" className="text-success mt-1 size-4 shrink-0" />
+                <CheckIcon aria-hidden="true" className="text-success-text mt-1 size-4 shrink-0" />
                 <LessonRichText text={fill(note.text)} />
               </li>
             ))}
@@ -97,6 +101,7 @@ export function ChallengeDebriefView({
   steps: ChallengeStep[];
 }) {
   const t = useExtracted();
+  const locale = useLocale();
   const { fill } = names;
   const debrief = getChallengeDebrief(content, steps);
   const ending = steps.at(-1)?.choice.next;
@@ -109,7 +114,7 @@ export function ChallengeDebriefView({
       </span>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2 className="text-title">
           {content.variant === "whatIf" ? t("Scenario complete") : t("Challenge complete")}
         </h2>
         {outcome && (
@@ -145,11 +150,14 @@ export function ChallengeDebriefView({
       {debrief.practice && (
         <section
           aria-labelledby="challenge-practice"
-          className="bg-muted/50 flex w-full flex-col gap-1 rounded-2xl p-4"
+          className="bg-muted/50 flex w-full flex-col gap-1 rounded-xl p-4"
           data-slot="challenge-practice"
         >
           <ChallengeLabel as="h3" id="challenge-practice">
-            {t("Practice “{skill}” · 5 min", { skill: fill(debrief.practice.name) })}
+            {t("Practice “{skill}” · {time}", {
+              skill: fill(debrief.practice.name),
+              time: formatDuration({ locale, totalSeconds: PRACTICE_SECONDS }),
+            })}
           </ChallengeLabel>
           <p className="text-foreground text-base leading-relaxed">
             <LessonRichText text={fill(debrief.practice.practice)} />

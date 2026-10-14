@@ -1,8 +1,8 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
@@ -132,7 +132,7 @@ export function CodeTracerActivity({
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <TracerVariables values={values} />
 
-      <div className="bg-background flex flex-col gap-1 rounded-3xl border px-2 pt-2 pb-2.5">
+      <div className="bg-background flex flex-col gap-1 rounded-2xl border px-2 pt-2 pb-2.5">
         <div className="pl-2">
           <TracerControls
             canGoBack={step > start}
@@ -152,9 +152,9 @@ export function CodeTracerActivity({
 
       {upcoming && !isRevealed(upcoming.pause) && (
         <div className="flex flex-col gap-2 pt-1" data-slot="code-tracer-prediction">
-          <p className="text-base leading-snug font-medium">
-            <LessonRichText text={upcoming.pause.question} />
-          </p>
+          <div className="text-base leading-snug font-medium">
+            <RichTextBlocks text={upcoming.pause.question} />
+          </div>
 
           <ActivitySelectGrid
             className="font-mono"

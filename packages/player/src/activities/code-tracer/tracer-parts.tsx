@@ -1,10 +1,10 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, StepBack, StepForward, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCodeListing } from "../_components/activity-code";
 import { type CodeLanguage } from "../_utils/highlight-code";
 import { type WatchedValue } from "./tracer-steps";
@@ -135,14 +135,14 @@ export function TracerPredictionLog({ results }: { results: readonly PauseResult
       {results.map((result) => (
         <li className="flex items-start gap-2 text-sm leading-snug" key={result.question}>
           {result.isRight ? (
-            <Check aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
+            <Check aria-hidden="true" className="text-success-text mt-0.5 size-4 shrink-0" />
           ) : (
-            <X aria-hidden="true" className="text-destructive mt-0.5 size-4 shrink-0" />
+            <X aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
           )}
-          <span className="min-w-0 flex-1">
-            <span className="text-muted-foreground">
-              <LessonRichText text={result.question} />
-            </span>{" "}
+          <div className="min-w-0 flex-1">
+            <div className="text-muted-foreground">
+              <RichTextBlocks text={result.question} />
+            </div>{" "}
             <span className="font-medium">
               {result.isRight
                 ? t("You said {guess}, and it was.", { guess: result.guess })
@@ -151,7 +151,7 @@ export function TracerPredictionLog({ results }: { results: readonly PauseResult
                     traced: result.traced,
                   })}
             </span>
-          </span>
+          </div>
         </li>
       ))}
     </ul>

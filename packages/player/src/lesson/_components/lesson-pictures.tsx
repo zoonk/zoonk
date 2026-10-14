@@ -1,10 +1,31 @@
 "use client";
 
 import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ImageIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Activity, createContext, use, useEffect, useEffectEvent, useMemo, useState } from "react";
+import {
+  Activity,
+  createContext,
+  use,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { type StepPictureShown } from "../_utils/lesson-aside";
+import {
+  type PicturesState,
+  getImageRequest,
+  getLostNumberedScreens,
+  getPendingKeys,
+  getWaitingKeys,
+  labeledDiagramOf,
+  pictureKey,
+  pictureOptionIds,
+} from "../_utils/lesson-pictures";
 import {
   type LessonPlayerAdapters,
   type PlayableLibraryStep,
@@ -15,80 +36,7 @@ import { type LessonPictureFrame, LessonStepImage, PICTURE_FRAME_CLASS } from ".
 /** How often the player asks for pictures still being drawn. */
 const POLL_MS = 4000;
 
-/**
- * How long the player waits for a picture before showing the screen without it: drawing one takes
- * about a minute, two when its first try fails the check.
- */
-const MAX_WAIT_MS = 150_000;
-
-type PicturesState = {
-  /** Pictures drawn after the lesson opened, by screen (`pictureKey`). */
-  drawn: Readonly<Record<string, PlayableStepImage>>;
-  /** No more waiting: every pending picture arrived, or the wait ran out. */
-  settled: boolean;
-};
-
-const LessonPicturesContext = createContext<PicturesState>({ drawn: {}, settled: true });
-
-/** Where a picture is kept: its screen, or one option of its screen's question. */
-function pictureKey(stepId: string, optionId?: string): string {
-  return optionId ? `${stepId}:${optionId}` : stepId;
-}
-
-/** The options of a question whose options are pictures, by id. */
-function pictureOptionIds(step: PlayableLibraryStep): string[] {
-  if (step.kind !== "check") {
-    return [];
-  }
-
-  return step.content.options.flatMap((option) => (option.picture ? [option.id] : []));
-}
-
-/** Every picture a screen still waits on: its own, or its picture options' missing ones. */
-function getPendingKeys(steps: readonly PlayableLibraryStep[]): string[] {
-  return steps.flatMap((step) => {
-    if (!("imagePending" in step) || !step.imagePending) {
-      return [];
-    }
-
-    const options = pictureOptionIds(step);
-
-    if (options.length > 0) {
-      const drawn = step.optionPictures ?? {};
-      return options.filter((id) => !drawn[id]).map((id) => pictureKey(step.id, id));
-    }
-
-    return step.image ? [] : [step.id];
-  });
-}
-
-/** Whether a screen's answer key is its picture's numbers: a labeled diagram, or "which number…?". */
-function asksAboutNumbers(step: PlayableLibraryStep): boolean {
-  if (step.kind === "check") {
-    return Boolean(step.content.image?.parts);
-  }
-
-  return step.kind === "activity" && labeledDiagramOf(step) !== null;
-}
-
-/** Screens asking about a numbered picture that never came: nobody can play them without it. */
-function getLostNumberedScreens({
-  drawn,
-  steps,
-}: {
-  drawn: PicturesState["drawn"];
-  steps: readonly PlayableLibraryStep[];
-}): string[] {
-  return steps.flatMap((step) =>
-    asksAboutNumbers(step) &&
-    "imagePending" in step &&
-    step.imagePending &&
-    !step.image &&
-    !drawn[step.id]
-      ? [step.id]
-      : [],
-  );
-}
+const LessonPicturesContext = createContext<PicturesState>({ drawn: {}, pending: [] });
 
 function toDrawn(pictures: readonly LessonPicture[]): Record<string, PlayableStepImage> {
   return Object.fromEntries(
@@ -114,32 +62,38 @@ export function LessonPicturesProvider({
   steps: readonly PlayableLibraryStep[];
 }) {
   const pendingKey = getPendingKeys(steps).join(",");
-  const [state, setState] = useState<PicturesState>({ drawn: {}, settled: !pendingKey });
+  const startedAt = useMountTime().getTime();
+  const drawnRef = useRef<Record<string, PlayableStepImage>>({});
+
+  const [state, setState] = useState<PicturesState>(() => ({
+    drawn: {},
+    pending: getWaitingKeys({ drawn: {}, now: startedAt, startedAt, steps }),
+  }));
 
   useEffect(() => {
     const pending = pendingKey ? pendingKey.split(",") : [];
 
-    if (!getLessonPictures || pending.length === 0) {
+    if (pending.length === 0) {
       return;
     }
 
-    const startedAt = Date.now();
     let timer: ReturnType<typeof setTimeout> | null = null;
     let cancelled = false;
 
     const poll = async () => {
-      const pictures = await getLessonPictures().catch(() => []);
+      const pictures = (await getLessonPictures?.().catch(() => [])) ?? [];
 
       if (cancelled) {
         return;
       }
 
-      const drawn = toDrawn(pictures);
-      const done = pending.every((id) => drawn[id]) || Date.now() - startedAt > MAX_WAIT_MS;
+      const drawn = { ...drawnRef.current, ...toDrawn(pictures) };
+      drawnRef.current = drawn;
+      const waiting = getWaitingKeys({ drawn, now: Date.now(), startedAt, steps });
 
-      setState({ drawn, settled: done });
+      setState({ drawn, pending: waiting });
 
-      if (!done) {
+      if (waiting.length > 0) {
         timer = setTimeout(() => void poll(), POLL_MS);
       }
     };
@@ -153,17 +107,13 @@ export function LessonPicturesProvider({
         clearTimeout(timer);
       }
     };
-  }, [getLessonPictures, pendingKey]);
+  }, [getLessonPictures, pendingKey, startedAt, steps]);
 
-  // Without a way to ask for them, pictures drawn later only come with the next visit.
-  const value = useMemo(
-    () => (getLessonPictures ? state : { ...state, settled: true }),
-    [getLessonPictures, state],
-  );
-
-  const lostKey = value.settled
-    ? getLostNumberedScreens({ drawn: value.drawn, steps }).join(",")
-    : "";
+  const lostKey = getLostNumberedScreens({
+    drawn: state.drawn,
+    pending: state.pending,
+    steps,
+  }).join(",");
 
   const leaveOut = useEffectEvent((stepIds: string[]) => onPicturesLost(stepIds));
 
@@ -173,7 +123,7 @@ export function LessonPicturesProvider({
     }
   }, [lostKey]);
 
-  return <LessonPicturesContext value={value}>{children}</LessonPicturesContext>;
+  return <LessonPicturesContext value={state}>{children}</LessonPicturesContext>;
 }
 
 /**
@@ -181,11 +131,11 @@ export function LessonPicturesProvider({
  * screen whose only pictures are its options' has none of its own to wait on.
  */
 function useStepPicture(step: PlayableLibraryStep) {
-  const { drawn, settled } = use(LessonPicturesContext);
+  const { drawn, pending: waiting } = use(LessonPicturesContext);
   const own = "image" in step ? step.image : null;
   const image = own ?? drawn[step.id] ?? null;
   const asks = getImageRequest(step) !== null;
-  const pending = !image && asks && "imagePending" in step && step.imagePending && !settled;
+  const pending = !image && asks && waiting.includes(step.id);
 
   return { image, pending };
 }
@@ -195,10 +145,10 @@ function useStepPicture(step: PlayableLibraryStep) {
  * since it opened, or still on its way.
  */
 export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
-  const { drawn, settled } = use(LessonPicturesContext);
+  const { drawn, pending: waiting } = use(LessonPicturesContext);
   const own = "optionPictures" in step ? step.optionPictures?.[optionId] : undefined;
   const image = own ?? drawn[pictureKey(step.id, optionId)] ?? null;
-  const pending = !image && "imagePending" in step && step.imagePending && !settled;
+  const pending = !image && waiting.includes(pictureKey(step.id, optionId));
 
   return { image, pending };
 }
@@ -208,16 +158,15 @@ export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
  * them waits, so nobody answers about a picture they can't see yet.
  */
 export function useIsPictureDrawing(step: PlayableLibraryStep): boolean {
-  const { drawn, settled } = use(LessonPicturesContext);
+  const { pending } = use(LessonPicturesContext);
   const ownPending = useStepPicture(step).pending;
   const options = pictureOptionIds(step);
 
-  if (options.length === 0 || settled || !("imagePending" in step) || !step.imagePending) {
+  if (options.length === 0) {
     return ownPending;
   }
 
-  const ready = step.optionPictures ?? {};
-  return options.some((id) => !ready[id] && !drawn[pictureKey(step.id, id)]);
+  return ownPending || options.some((id) => pending.includes(pictureKey(step.id, id)));
 }
 
 /**
@@ -236,6 +185,18 @@ export function useHasStepPicture(step: PlayableLibraryStep): boolean {
 }
 
 /**
+ * What a screen's picture shows, as `LessonStepPicture` draws it: a screen that leads with its
+ * picture shows it drawn or on its way, and a question about it also shows its description when
+ * the drawing failed.
+ */
+export function useStepPictureShown(step: PlayableLibraryStep): StepPictureShown {
+  const { image, pending } = useStepPicture(step);
+  const shown = image !== null || pending;
+
+  return { asked: shown || getImageRequest(step) !== null, shown };
+}
+
+/**
  * Where a picture being drawn goes: a portrait box as tall as its frame lets a picture be, so
  * nothing moves when it arrives.
  */
@@ -245,7 +206,7 @@ function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
   return (
     <div
       className={cn(
-        "bg-muted/60 text-muted-foreground flex aspect-4/5 w-full flex-col items-center justify-center gap-2 rounded-2xl motion-safe:animate-pulse",
+        "bg-muted/60 text-muted-foreground flex aspect-4/5 w-full flex-col items-center justify-center gap-2 rounded-xl motion-safe:animate-pulse",
         PICTURE_FRAME_CLASS[frame],
       )}
       role="status"
@@ -262,9 +223,11 @@ function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
  */
 function PictureFrame({
   children,
+  className,
   frame,
 }: {
   children: React.ReactNode;
+  className?: string;
   frame: LessonPictureFrame;
 }) {
   return (
@@ -272,6 +235,7 @@ function PictureFrame({
       className={cn(
         "flex w-full justify-center",
         frame === "hero" && "max-sm:-mx-4 max-sm:w-[calc(100%+2rem)]",
+        className,
       )}
       data-slot="lesson-picture"
     >
@@ -292,12 +256,14 @@ function PictureFrame({
  */
 export function LessonStepPicture({
   asks = false,
+  className,
   hero = false,
   priority = false,
   step,
 }: {
   /** The screen's question is about the picture: without one, it shows the picture's description. */
   asks?: boolean;
+  className?: string;
   /** The picture leads a reading screen, as large as the screen allows. */
   hero?: boolean;
   priority?: boolean;
@@ -309,7 +275,7 @@ export function LessonStepPicture({
 
   if (image) {
     return (
-      <PictureFrame frame={frame}>
+      <PictureFrame className={className} frame={frame}>
         <LessonStepImage frame={frame} image={image} priority={priority} />
       </PictureFrame>
     );
@@ -317,7 +283,7 @@ export function LessonStepPicture({
 
   if (pending) {
     return (
-      <PictureFrame frame={frame}>
+      <PictureFrame className={className} frame={frame}>
         <LessonPicturePending frame={frame} />
       </PictureFrame>
     );
@@ -328,7 +294,12 @@ export function LessonStepPicture({
   }
 
   return (
-    <figure className="bg-muted/50 text-muted-foreground flex items-start gap-3 rounded-2xl px-4 py-3 text-sm leading-relaxed">
+    <figure
+      className={cn(
+        "bg-muted/50 text-muted-foreground flex items-start gap-3 rounded-xl px-4 py-3 text-sm leading-relaxed",
+        className,
+      )}
+    >
       <ImageIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <figcaption>{request.alt}</figcaption>
     </figure>
@@ -370,36 +341,4 @@ export function UpcomingPictures({ steps }: { steps: readonly PlayableLibrarySte
       ))}
     </Activity>
   );
-}
-
-/** The labeled diagram a screen asks about, or shows to explore on an explanation. */
-function labeledDiagramOf(step: PlayableLibraryStep) {
-  if (step.kind === "explanation") {
-    const { explore } = step.content;
-    return explore?.template === "labeledDiagram" ? explore : null;
-  }
-
-  return step.kind === "activity" && step.content.template === "labeledDiagram"
-    ? step.content
-    : null;
-}
-
-/**
- * The picture a screen asks for: its own `image`, or the numbered picture of a labeled diagram it
- * asks about or shows to explore.
- */
-function getImageRequest(step: PlayableLibraryStep): { alt: string } | null {
-  if (!("content" in step)) {
-    return null;
-  }
-
-  const labeled = labeledDiagramOf(step);
-
-  if (labeled) {
-    return { alt: labeled.fields.picture.alt };
-  }
-
-  const { content } = step;
-  const image = "image" in content ? content.image : null;
-  return image && typeof image === "object" && "alt" in image ? { alt: image.alt } : null;
 }

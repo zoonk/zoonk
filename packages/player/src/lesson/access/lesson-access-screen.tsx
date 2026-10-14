@@ -11,7 +11,7 @@ import { type LessonRunRefusal } from "../lesson-player-types";
 import { AccessLayout, LessonSlowDown } from "./lesson-slow-down";
 
 /** The screen's buttons match the lesson's main action: the same size and shape. */
-const BUTTON_SHAPE = "h-12 rounded-full text-base";
+const BUTTON_SHAPE = "h-12 text-[0.9375rem]";
 const PRIMARY_BUTTON = cn(buttonVariants({ size: "lg" }), BUTTON_SHAPE);
 const SECONDARY_BUTTON = cn(buttonVariants({ size: "lg", variant: "outline" }), BUTTON_SHAPE);
 
@@ -142,7 +142,7 @@ function Unavailable({
   if (refusal.reason === "failed") {
     return (
       <AccessLayout
-        description={t("Check your connection and try again. Nothing you did was lost.")}
+        description={t("Try again in a moment. Nothing you did was lost.")}
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
       >

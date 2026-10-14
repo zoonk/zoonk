@@ -132,7 +132,7 @@ function AnchorCard({
 }) {
   return (
     <div
-      className="bg-background absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center rounded-2xl border px-3 py-1.5"
+      className="bg-background absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center rounded-xl border px-3 py-1.5"
       style={{ left: CARD_LEFT, top }}
     >
       <p className="text-muted-foreground text-xs tabular-nums">{formatYear(item.shownYear)}</p>

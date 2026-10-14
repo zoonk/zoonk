@@ -52,23 +52,50 @@ function shownScreen(): Element {
 
 describe("lessons that read like stories", () => {
   it("turns reading screens with the arrow keys, sliding each new one in", async () => {
+    await atViewport(PHONE, async () => {
+      const lesson = buildLesson([
+        pictured(LOBES),
+        explanationStep({ text: "The frontal lobe plans what you do.", title: "The frontal lobe" }),
+      ]);
+
+      renderLessonPlayer({ lesson });
+
+      await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeVisible();
+      expect(shownScreen().getAnimations()).toHaveLength(0);
+
+      await press("ArrowRight");
+      await expect.element(page.getByRole("heading", { name: "The frontal lobe" })).toBeVisible();
+      expect(shownScreen().getAnimations().length).toBeGreaterThan(0);
+
+      await press("ArrowLeft");
+      await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeVisible();
+      expect(shownScreen().getAnimations().length).toBeGreaterThan(0);
+    });
+  });
+
+  it("turns screens in place beside the aside on a wide screen, the picture in the aside", async () => {
     const lesson = buildLesson([
-      pictured(LOBES),
       explanationStep({ text: "The frontal lobe plans what you do.", title: "The frontal lobe" }),
+      pictured(LOBES),
     ]);
 
     renderLessonPlayer({ lesson });
-
-    await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeVisible();
-    expect(shownScreen().getAnimations()).toHaveLength(0);
+    await expect.element(page.getByRole("heading", { name: "The frontal lobe" })).toBeVisible();
 
     await press("ArrowRight");
-    await expect.element(page.getByRole("heading", { name: "The frontal lobe" })).toBeVisible();
-    expect(shownScreen().getAnimations().length).toBeGreaterThan(0);
-
-    await press("ArrowLeft");
     await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeVisible();
-    expect(shownScreen().getAnimations().length).toBeGreaterThan(0);
+    // A sliding column would carry the aside's picture with it.
+    expect(shownScreen().getAnimations()).toHaveLength(0);
+
+    const picture = page.getByRole("img", { name: LOBES.alt });
+    await expect.element(picture).toBeVisible();
+
+    const asideBox = page
+      .getByRole("complementary", { name: "Help with this screen" })
+      .element()
+      .getBoundingClientRect();
+
+    expect(picture.element().getBoundingClientRect().left).toBeGreaterThanOrEqual(asideBox.left);
   });
 
   it("shows a new screen in place when the device asks for reduced motion", async () => {

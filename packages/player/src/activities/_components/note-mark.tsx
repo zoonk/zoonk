@@ -7,13 +7,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 export type NoteMarkKind = "correct" | "heard" | "kept" | "missed" | "new" | "removed" | "wrong";
 
 const MARK_CLASSES: Record<NoteMarkKind, string> = {
-  correct: "bg-success text-background",
+  correct: "bg-success-text text-background",
   heard: "bg-viz-accent text-background",
   kept: "bg-foreground text-background",
-  missed: "border-success text-success bg-background border-2 border-dashed",
+  missed: "border-success text-success-text bg-background border-2 border-dashed",
   new: "bg-viz-accent text-background",
   removed: "border-muted-foreground text-muted-foreground bg-background border-2 border-dashed",
-  wrong: "border-destructive text-destructive bg-background border-2",
+  wrong: "border-destructive text-destructive-text bg-background border-2",
 };
 
 /** A note's name in a circle, drawn on a piano key or a guitar string. */
@@ -30,7 +30,7 @@ export function NoteMark({
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums",
+        "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums",
         MARK_CLASSES[kind],
         className,
       )}

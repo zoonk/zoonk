@@ -1,7 +1,8 @@
+import { act } from "@testing-library/react";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
-import { type Locator, page, userEvent } from "vitest/browser";
-import { expectVerdict, focusOn, press } from "../_test-utils/activity-player";
+import { describe, expect, it, vi } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import { expectVerdict, focusOn, press, pressOnPage } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
 import {
@@ -9,7 +10,7 @@ import {
   buildAdapters,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
-import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep, teachingStep } from "../preview/preview-steps";
 
@@ -20,7 +21,6 @@ import { activityStep, teachingStep } from "../preview/preview-steps";
  */
 
 const DESKTOP = { height: 900, width: 1280 };
-const PHONE = { height: 812, width: 375 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
@@ -31,18 +31,6 @@ function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
 /** A screen's verdict, as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
-}
-
-/** The element at a CSS selector inside a control, once the control is on screen. */
-async function inside(locator: Locator, selector: string) {
-  await expect.element(locator).toBeVisible();
-  const element = locator.element().querySelector(selector);
-
-  if (!element) {
-    throw new Error(`Nothing matches ${selector} inside ${locator.selector}`);
-  }
-
-  return page.elementLocator(element);
 }
 
 describe("lesson by keyboard", () => {
@@ -119,25 +107,99 @@ describe("lesson by keyboard", () => {
     });
   });
 
-  it("the close button holds its Esc hint beside the X, and phones keep the plain X", async () => {
+  it("leaving with a written answer not yet checked asks first, and staying keeps the text", async () => {
+    await atViewport(DESKTOP, async () => {
+      const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+      const { onExit } = renderLessonPlayer({ lesson });
+
+      const answer = page.getByRole("textbox", {
+        name: "In your own words: why is the electron drawn as a cloud?",
+      });
+
+      await answer.click();
+      await userEvent.keyboard(RIGHT_TYPED);
+
+      // The X asks before dropping the answer, and keeping it goes back to the text as it was.
+      await page.getByRole("button", { name: "Close lesson" }).click();
+      const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
+      await expect.element(leave).toBeVisible();
+      await leave.getByRole("button", { name: "Keep writing" }).click();
+      await expect.element(leave).not.toBeInTheDocument();
+      await expect.element(answer).toHaveValue(RIGHT_TYPED);
+      expect(onExit).not.toHaveBeenCalled();
+
+      // Escape away from the field asks the same, and leaving then leaves.
+      await pressOnPage("Escape");
+      await expect.element(leave).toBeVisible();
+      await leave.getByRole("button", { exact: true, name: "Leave" }).click();
+      expect(onExit).toHaveBeenCalledOnce();
+    });
+  });
+
+  it("a pending written check keeps both exits guarded through failure and releases them after saving", async () => {
+    const typedAnswer = teachingStep("typedAnswer");
+    const lesson = buildLesson([typedAnswer, teachingStep("summary")]);
+    const pending = Promise.withResolvers<Awaited<ReturnType<LessonPlayerAdapters["checkStep"]>>>();
+
+    const checkStep = vi
+      .fn<LessonPlayerAdapters["checkStep"]>()
+      .mockReturnValueOnce(pending.promise)
+      .mockImplementationOnce(acceptedAnswerCheck(typedAnswer));
+
+    const { onExit } = renderLessonPlayer({
+      adapters: buildAdapters(lesson, { checkStep }),
+      lesson,
+    });
+
+    const answer = page.getByRole("textbox", {
+      name: "In your own words: why is the electron drawn as a cloud?",
+    });
+
+    await answer.fill(RIGHT_TYPED);
+    await page.getByRole("button", { exact: true, name: "Check" }).click();
+    await expect.poll(() => checkStep.mock.calls.length).toBe(1);
+    await expect.element(page.getByRole("button", { name: "Checking" })).toBeDisabled();
+    await page.getByRole("button", { name: "Close lesson" }).click();
+    const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
+    await expect.element(leave).toBeVisible();
+    await leave.getByRole("button", { name: "Keep writing" }).click();
+    await pressOnPage("Escape");
+    await expect.element(leave).toBeVisible();
+    await leave.getByRole("button", { name: "Keep writing" }).click();
+    expect(onExit).not.toHaveBeenCalled();
+
+    await act(async () => {
+      pending.resolve({ status: "failed" });
+      await pending.promise;
+    });
+
+    await expect.element(answer).toHaveValue(RIGHT_TYPED);
+    await page.getByRole("button", { name: "Close lesson" }).click();
+    await expect.element(leave).toBeVisible();
+    await leave.getByRole("button", { name: "Keep writing" }).click();
+    await pressOnPage("Escape");
+    await expect.element(leave).toBeVisible();
+    await leave.getByRole("button", { name: "Keep writing" }).click();
+    expect(onExit).not.toHaveBeenCalled();
+
+    await page.getByRole("button", { exact: true, name: "Check" }).click();
+    await expect.element(verdict("Correct!")).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "Close lesson" })).toBeVisible();
+    await pressOnPage("Escape");
+    expect(onExit).toHaveBeenCalledOnce();
+    await expect.element(leave).not.toBeInTheDocument();
+  });
+
+  it("the close button is a plain X on every size, with Escape as its key", async () => {
     await atViewport(DESKTOP, async () => {
       openLesson({ steps: [teachingStep("explanation")] });
 
       const close = page.getByRole("link", { name: "Close lesson" });
-      const hint = await inside(close, "kbd");
-      await expect.element(hint).toHaveTextContent("Esc");
+      await expect.element(close).toHaveAttribute("aria-keyshortcuts", "Escape");
+      expect(close.element().querySelector("kbd")).toBeNull();
 
-      const icon = await inside(close, "svg");
-      const iconBox = icon.element().getBoundingClientRect();
-      const hintBox = hint.element().getBoundingClientRect();
-
-      expect(iconBox.x + iconBox.width).toBeLessThanOrEqual(hintBox.x);
-
-      await page.viewport(PHONE.width, PHONE.height);
-      await expect.element(hint).not.toBeVisible();
-
-      const phoneBox = close.element().getBoundingClientRect();
-      expect(phoneBox.width).toBe(phoneBox.height);
+      const desktopBox = close.element().getBoundingClientRect();
+      expect(desktopBox.width).toBe(desktopBox.height);
     });
   });
 

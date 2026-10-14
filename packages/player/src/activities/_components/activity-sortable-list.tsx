@@ -82,7 +82,7 @@ function SortableRow({
 
   return (
     <li
-      className={cn("rounded-2xl border", isDragging && "bg-background relative z-10 shadow-md")}
+      className={cn("rounded-xl border", isDragging && "bg-background relative z-10 shadow-md")}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
@@ -90,7 +90,7 @@ function SortableRow({
         {...attributes}
         {...listeners}
         className={cn(
-          "focus-visible:ring-ring/50 flex min-h-11 w-full touch-none items-start gap-3 rounded-2xl px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px]",
+          "focus-visible:ring-ring/50 flex min-h-11 w-full touch-none items-start gap-3 rounded-xl px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px]",
           !disabled && "hover:bg-accent cursor-grab active:cursor-grabbing",
         )}
         disabled={disabled}

@@ -32,7 +32,7 @@ export function SandboxRunBar({
   if (runtimeStatus === "failed") {
     return (
       <div className="flex flex-col gap-2" role="alert">
-        <p className="text-destructive text-sm">
+        <p className="text-destructive-text text-sm">
           {t("{runtime} didn't load. Check your connection and try again.", {
             runtime: runtimeName,
           })}

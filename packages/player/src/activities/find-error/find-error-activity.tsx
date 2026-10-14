@@ -1,11 +1,12 @@
 "use client";
 
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText, LessonRichTextBlocks } from "../../lesson/_components/lesson-rich-text";
+import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
 import { getNumberKeyShortcut } from "../../player-shortcuts";
 import {
@@ -26,8 +27,8 @@ function StepNumber({ index, verdict }: { index: number; verdict: StepVerdict })
       className={cn(
         "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums",
         verdict === "plain" && "bg-muted",
-        verdict === "error" && "bg-success text-background",
-        verdict === "picked" && "bg-destructive text-background",
+        verdict === "error" && "bg-success-text text-background",
+        verdict === "picked" && "bg-destructive-text text-background",
       )}
     >
       {verdict === "error" && <Check className="size-4" />}
@@ -66,7 +67,7 @@ function FindErrorStep({
       aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       aria-label={t("Step {number}: {text}", { number: String(index + 1), text })}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-2xl border px-3.5 py-3 text-left text-sm leading-snug outline-none focus-visible:ring-[3px] sm:text-base",
+        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none focus-visible:ring-[3px] sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
         !isChecked && isPicked && "border-primary ring-primary/15 ring-[3px]",
         verdict === "error" && "border-success bg-success/10 border-2",
@@ -86,14 +87,14 @@ function FindErrorStep({
         <span
           className={cn(
             verdict === "error" &&
-              "text-muted-foreground decoration-destructive line-through decoration-2",
+              "text-muted-foreground decoration-destructive-text line-through decoration-2",
           )}
         >
           <LessonRichText text={text} />
         </span>
 
         {verdict === "error" && (
-          <span className="text-success font-medium">
+          <span className="text-success-text font-medium">
             <LessonRichText text={correction} />
           </span>
         )}
@@ -155,7 +156,7 @@ export function FindErrorActivity({
         <ActivityCanvasLabel className="font-medium">
           {isAiAnswer ? t("Someone asked an AI assistant") : t("Problem")}
         </ActivityCanvasLabel>
-        <LessonRichTextBlocks
+        <RichTextBlocks
           className="text-base leading-snug [&>p]:font-medium"
           text={fields.problem}
         />

@@ -24,15 +24,14 @@ export function GridCaption({
   traits: GridTraits;
 }) {
   const t = useExtracted();
-  const total = String(fill.length);
+  const total = fill.length;
 
   function text() {
     if (counted !== null && outputName !== null) {
-      return t("{count} of {total} squares: {what}", {
-        count: String(counted),
-        total,
-        what: outputName,
-      });
+      return t(
+        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}",
+        { count: String(counted), total, what: outputName },
+      );
     }
 
     if (expected.length > 0) {
@@ -40,12 +39,19 @@ export function GridCaption({
         (cell, index) => cell !== null && sameCell(cell, expected[index] ?? ""),
       ).length;
 
-      return t("{count} of {total} squares right", { count: String(right), total });
+      return t(
+        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right",
+        { count: String(right), total },
+      );
     }
 
     if (!traits) {
       const filled = fill.filter((cell) => cell !== null).length;
-      return t("{count} of {total} squares filled", { count: String(filled), total });
+
+      return t(
+        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled",
+        { count: String(filled), total },
+      );
     }
 
     const counts = traitCounts(fill);
@@ -55,7 +61,7 @@ export function GridCaption({
       dominantCount: String(counts.dominant),
       recessive: traits.recessive,
       recessiveCount: String(counts.recessive),
-      total,
+      total: String(total),
     });
   }
 

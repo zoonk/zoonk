@@ -74,7 +74,7 @@ export function SqlRowsTable({
   return (
     <div
       aria-label={caption}
-      className="bg-background focus-visible:ring-ring/50 overflow-x-auto rounded-2xl border outline-none focus-visible:ring-[3px]"
+      className="bg-background focus-visible:ring-ring/50 overflow-x-auto rounded-xl border outline-none focus-visible:ring-[3px]"
       role="region"
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
       tabIndex={0}
@@ -119,10 +119,10 @@ export function SqlTableViewer({ table }: { table: Table }) {
 
   return (
     <details
-      className="group bg-background rounded-2xl border"
+      className="group bg-background rounded-xl border"
       open={table.rows.length <= OPEN_ROW_LIMIT}
     >
-      <summary className="focus-visible:ring-ring/50 flex min-h-11 cursor-pointer list-none items-center gap-2.5 rounded-2xl px-3.5 py-2 outline-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
+      <summary className="focus-visible:ring-ring/50 flex min-h-11 cursor-pointer list-none items-center gap-2.5 rounded-xl px-3.5 py-2 outline-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
         <span className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs">

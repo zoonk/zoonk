@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 
 /**
@@ -18,7 +19,15 @@ export function ExplainFirstButton() {
   }
 
   return (
-    <Button className="w-fit" onClick={actions.explainFirst} size="sm" variant="ghost">
+    <Button
+      className="w-fit"
+      onClick={() => {
+        actions.explainFirst();
+        focusLessonAfterTurn();
+      }}
+      size="sm"
+      variant="ghost"
+    >
       <BookOpenIcon aria-hidden="true" />
       {t("Explain first")}
     </Button>

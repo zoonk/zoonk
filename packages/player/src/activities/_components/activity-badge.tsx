@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import {
   ArrowDownUp,
   ArrowLeftRight,
@@ -44,6 +43,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SCREEN_CHIP_CLASS } from "../../lesson/_components/lesson-step-text";
 
 /**
  * What the learner does in an activity, named in a small badge above the prompt. Each renderer
@@ -92,50 +92,49 @@ export type ActivityBadgeKind =
   | "turnIt"
   | "whatIf";
 
-type BadgeTone = "accent" | "highlight" | "secondary";
-
-const BADGES: Record<ActivityBadgeKind, { icon: LucideIcon; tone: BadgeTone }> = {
-  beforeAfter: { icon: GitCompareArrows, tone: "secondary" },
-  buildArgument: { icon: Puzzle, tone: "accent" },
-  buildIt: { icon: Atom, tone: "highlight" },
-  buildSentence: { icon: Blocks, tone: "secondary" },
-  compareSources: { icon: Columns2, tone: "accent" },
-  dragCorner: { icon: Move, tone: "secondary" },
-  earTraining: { icon: Ear, tone: "highlight" },
-  estimateFirst: { icon: Target, tone: "highlight" },
-  explore: { icon: ChartSpline, tone: "accent" },
-  exploreMap: { icon: MapPinned, tone: "secondary" },
-  fillSquare: { icon: Grid2x2Check, tone: "accent" },
-  findError: { icon: ScanSearch, tone: "highlight" },
-  followKey: { icon: Split, tone: "secondary" },
-  handsOn: { icon: Hand, tone: "accent" },
-  labelIt: { icon: Tag, tone: "accent" },
-  linkCauses: { icon: Workflow, tone: "highlight" },
-  listen: { icon: Headphones, tone: "highlight" },
-  matchPairs: { icon: Link2, tone: "accent" },
-  moveCurve: { icon: ArrowLeftRight, tone: "secondary" },
-  placeInTime: { icon: MoveVertical, tone: "secondary" },
-  placeIt: { icon: MoveHorizontal, tone: "secondary" },
-  playIt: { icon: Piano, tone: "accent" },
-  predictFirst: { icon: Dices, tone: "highlight" },
-  predictValue: { icon: Target, tone: "highlight" },
-  putInOrder: { icon: ArrowDownUp, tone: "secondary" },
-  queryData: { icon: Database, tone: "secondary" },
-  readAndListen: { icon: Music, tone: "secondary" },
-  readChart: { icon: ChartLine, tone: "secondary" },
-  reply: { icon: MessagesSquare, tone: "secondary" },
-  runCode: { icon: SquareTerminal, tone: "accent" },
-  simulate: { icon: Repeat, tone: "accent" },
-  sortGroups: { icon: Group, tone: "secondary" },
-  splitIt: { icon: Grid2x2, tone: "accent" },
-  spotPattern: { icon: Table2, tone: "accent" },
-  stepByStep: { icon: ListOrdered, tone: "secondary" },
-  stepThrough: { icon: Footprints, tone: "highlight" },
-  tapAlong: { icon: Hand, tone: "highlight" },
-  testPattern: { icon: Regex, tone: "accent" },
-  tryIt: { icon: SlidersHorizontal, tone: "accent" },
-  turnIt: { icon: RotateCw, tone: "accent" },
-  whatIf: { icon: GitBranch, tone: "highlight" },
+/** Each verb's icon: its shape says what the learner does; the chip itself stays colorless. */
+const BADGE_ICONS: Record<ActivityBadgeKind, LucideIcon> = {
+  beforeAfter: GitCompareArrows,
+  buildArgument: Puzzle,
+  buildIt: Atom,
+  buildSentence: Blocks,
+  compareSources: Columns2,
+  dragCorner: Move,
+  earTraining: Ear,
+  estimateFirst: Target,
+  explore: ChartSpline,
+  exploreMap: MapPinned,
+  fillSquare: Grid2x2Check,
+  findError: ScanSearch,
+  followKey: Split,
+  handsOn: Hand,
+  labelIt: Tag,
+  linkCauses: Workflow,
+  listen: Headphones,
+  matchPairs: Link2,
+  moveCurve: ArrowLeftRight,
+  placeInTime: MoveVertical,
+  placeIt: MoveHorizontal,
+  playIt: Piano,
+  predictFirst: Dices,
+  predictValue: Target,
+  putInOrder: ArrowDownUp,
+  queryData: Database,
+  readAndListen: Music,
+  readChart: ChartLine,
+  reply: MessagesSquare,
+  runCode: SquareTerminal,
+  simulate: Repeat,
+  sortGroups: Group,
+  splitIt: Grid2x2,
+  spotPattern: Table2,
+  stepByStep: ListOrdered,
+  stepThrough: Footprints,
+  tapAlong: Hand,
+  testPattern: Regex,
+  tryIt: SlidersHorizontal,
+  turnIt: RotateCw,
+  whatIf: GitBranch,
 };
 
 function useBadgeLabel(kind: ActivityBadgeKind): string {
@@ -189,20 +188,12 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
 }
 
 export function ActivityBadge({ kind }: { kind: ActivityBadgeKind }) {
-  const { icon: Icon, tone } = BADGES[kind];
+  const Icon = BADGE_ICONS[kind];
   const label = useBadgeLabel(kind);
 
   return (
-    <span
-      className={cn(
-        "inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
-        tone === "accent" && "bg-viz-accent-soft text-viz-accent",
-        tone === "highlight" && "bg-viz-highlight-soft text-viz-highlight",
-        tone === "secondary" && "bg-viz-secondary-soft text-viz-secondary",
-      )}
-      data-slot="activity-badge"
-    >
-      <Icon aria-hidden="true" className="size-3.5" />
+    <span className={SCREEN_CHIP_CLASS} data-slot="activity-badge">
+      <Icon aria-hidden="true" />
       {label}
     </span>
   );

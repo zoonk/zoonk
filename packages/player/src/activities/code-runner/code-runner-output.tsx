@@ -60,7 +60,7 @@ function StopNotice({ language, run }: { language: "javascript" | "python"; run:
   }
 
   return (
-    <p className="text-destructive flex gap-2 font-mono text-sm leading-snug" role="status">
+    <p className="text-destructive-text flex gap-2 font-mono text-sm leading-snug" role="status">
       <CircleX aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <span className="min-w-0 wrap-break-word">{message}</span>
     </p>
@@ -89,7 +89,7 @@ function PrintedOutput({
 
   return (
     <OutputText
-      className={cn(hasTarget && (matches ? "text-success" : "text-destructive"))}
+      className={cn(hasTarget && (matches ? "text-success-text" : "text-destructive-text"))}
       text={run.output.trimEnd()}
     />
   );
@@ -122,15 +122,20 @@ export function CodeRunnerOutput({
     <div className="flex flex-col gap-3">
       <div
         className={cn(
-          "bg-background grid overflow-hidden rounded-2xl border",
+          "bg-background grid overflow-hidden rounded-xl border",
           expectedOutput !== null && "grid-cols-2",
         )}
       >
+        {/* Output from before an edit dims and isn't judged: it isn't this code's output. */}
         <OutputCell
-          className={cn(isStale && "opacity-60")}
+          className={cn(isStale && run && "opacity-60")}
           label={expectedOutput === null ? t("Output") : t("Your output")}
         >
-          <PrintedOutput hasTarget={expectedOutput !== null} matches={matches} run={run} />
+          <PrintedOutput
+            hasTarget={expectedOutput !== null && !isStale}
+            matches={matches}
+            run={run}
+          />
         </OutputCell>
 
         {expectedOutput !== null && (
@@ -156,9 +161,9 @@ export function CodeRunnerOutput({
 
       {mistake && !isStale && (
         <p className="flex gap-2.5 text-sm leading-relaxed">
-          <CircleX aria-hidden="true" className="text-destructive mt-0.5 size-4 shrink-0" />
+          <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
           <span>
-            <span className="text-destructive font-semibold">{t("Not quite:")}</span>{" "}
+            <span className="text-destructive-text font-semibold">{t("Not quite:")}</span>{" "}
             <LessonRichText text={mistake} />
           </span>
         </p>

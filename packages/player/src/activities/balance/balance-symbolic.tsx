@@ -67,7 +67,7 @@ export function BalanceSymbolic({
 
   return (
     <div className="flex flex-col gap-3" data-slot="balance-symbolic">
-      <p aria-live="polite" className="text-center text-2xl font-bold tabular-nums">
+      <p aria-live="polite" className="text-center font-mono text-2xl font-medium tabular-nums">
         {current}
       </p>
 
@@ -83,7 +83,7 @@ export function BalanceSymbolic({
 
       {hint && (
         <p aria-live="polite" className="text-sm leading-snug">
-          <span className="text-destructive font-semibold">{t("Not quite:")}</span> {hint}
+          <span className="text-destructive-text font-semibold">{t("Not quite:")}</span> {hint}
         </p>
       )}
     </div>

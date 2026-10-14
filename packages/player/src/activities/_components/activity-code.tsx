@@ -201,7 +201,7 @@ export function ActivityCodeEditor({
   return (
     <div
       className={cn(
-        "bg-background focus-within:border-ring focus-within:ring-ring/50 overflow-x-auto rounded-2xl border px-4 py-3 focus-within:ring-[3px]",
+        "bg-background focus-within:border-ring focus-within:ring-ring/50 overflow-x-auto rounded-xl border px-4 py-3 focus-within:ring-[3px]",
         className,
       )}
       data-slot="activity-code-editor"

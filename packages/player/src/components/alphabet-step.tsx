@@ -22,7 +22,7 @@ function getAlphabetContent(step: SerializedStep) {
  */
 function AlphabetSymbol({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-7xl leading-none font-semibold sm:text-8xl" dir="auto">
+    <p className="text-[4rem] leading-none font-semibold" dir="auto">
       {children}
     </p>
   );
@@ -41,7 +41,7 @@ function AlphabetReading({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-foreground text-xl font-medium sm:text-2xl">{readingAid}</p>
+      <p className="text-foreground text-xl font-medium">{readingAid}</p>
       <p className="text-muted-foreground text-sm">{pronunciation}</p>
     </div>
   );
@@ -57,10 +57,10 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
   }
 
   return (
-    <dl className="grid w-full grid-cols-2 gap-x-6 gap-y-4 border-y py-4 sm:grid-cols-4">
+    <dl className="border-border grid w-full grid-cols-2 gap-x-6 gap-y-4 border-y py-4 sm:grid-cols-4">
       {forms.map((form) => (
         <div className="flex min-w-0 flex-col gap-1" key={`${form.label}-${form.symbol}`}>
-          <dt className="text-muted-foreground text-xs">{form.label}</dt>
+          <dt className="text-label">{form.label}</dt>
           <dd className="text-2xl font-medium" dir="auto">
             {form.symbol}
           </dd>

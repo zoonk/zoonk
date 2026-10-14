@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
 import {
   acceptedAnswerCheck,
@@ -24,6 +25,9 @@ import {
   spokenAnswerStep,
   teachingStep,
 } from "../preview/preview-steps";
+
+/** Below `lg`, where the buddy opens in a drawer over the lesson. */
+const TABLET_PORTRAIT = { height: 1180, width: 820 };
 
 /**
  * Accessibility of the lesson player, in light and dark: every kind of screen and all 43 activity
@@ -175,42 +179,46 @@ describe("lesson player accessibility", () => {
   });
 
   it("a lesson played by keyboard, in each state", async () => {
-    openHostedLesson();
+    // Below `lg` the buddy opens in a drawer over the lesson, a layer of its own to scan; a wide
+    // screen docks it in the aside, which the screen's scans cover.
+    await atViewport(TABLET_PORTRAIT, async () => {
+      openHostedLesson();
 
-    await expect.element(page.getByText("Guess first")).toBeVisible();
-    await pick("3", "No");
-    await enterTo(verdict("Good guess!"));
-    await expectAccessibleScreen("a guess's reveal");
-    await enterTo(page.getByText("A cloud, not a little ball"));
+      await expect.element(page.getByText("Guess first")).toBeVisible();
+      await pick("3", "No");
+      await enterTo(verdict("Good guess!"));
+      await expectAccessibleScreen("a guess's reveal");
+      await enterTo(page.getByText("A cloud, not a little ball"));
 
-    await scanLayer({ button: "Ask Pip", layer: page.getByRole("dialog", { name: "Pip" }) });
+      await scanLayer({ button: "Ask Pip", layer: page.getByRole("dialog", { name: "Pip" }) });
 
-    await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
+      await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
 
-    // Closing the menu left focus on Next, so Enter goes on to the next screen.
-    await enterTo(page.getByText('What does the electron "cloud" show?'));
-    await pick("1", "The electron's exact path");
-    await enterTo(verdict("Not quite"));
-    await expectAccessibleScreen("a wrong answer's feedback");
+      // Closing the menu left focus on Next, so Enter goes on to the next screen.
+      await enterTo(page.getByText('What does the electron "cloud" show?'));
+      await pick("1", "The electron's exact path");
+      await enterTo(verdict("Not quite"));
+      await expectAccessibleScreen("a wrong answer's feedback");
 
-    const typed = page.getByRole("textbox", {
-      name: "In your own words: why is the electron drawn as a cloud?",
+      const typed = page.getByRole("textbox", {
+        name: "In your own words: why is the electron drawn as a cloud?",
+      });
+
+      await enterTo(typed);
+      await tabTo(typed);
+      await userEvent.keyboard(RIGHT_TYPED);
+      await tabTo(page.getByRole("button", { name: /^Check/u }));
+      await press("Enter");
+      await expect.element(verdict("Correct!")).toBeVisible();
+      await expectAccessibleScreen("a written answer's grade");
+      await enterTo(page.getByRole("heading", { name: "Summary" }));
+
+      // The check answered wrong comes back once at the end; this time it's answered right.
+      await enterTo(page.getByText('What does the electron "cloud" show?'));
+      await pick("2", RIGHT_OPTION);
+      await enterTo(verdict("Correct!"));
+      await enterTo(page.getByRole("heading", { level: 2, name: "Lesson complete" }));
+      await expectAccessibleScreen("the completion moment");
     });
-
-    await enterTo(typed);
-    await tabTo(typed);
-    await userEvent.keyboard(RIGHT_TYPED);
-    await tabTo(page.getByRole("button", { name: /^Check/u }));
-    await press("Enter");
-    await expect.element(verdict("Correct!")).toBeVisible();
-    await expectAccessibleScreen("a written answer's grade");
-    await enterTo(page.getByRole("heading", { name: "Summary" }));
-
-    // The check answered wrong comes back once at the end; this time it's answered right.
-    await enterTo(page.getByText('What does the electron "cloud" show?'));
-    await pick("2", RIGHT_OPTION);
-    await enterTo(verdict("Correct!"));
-    await enterTo(page.getByRole("heading", { level: 2, name: "Lesson complete" }));
-    await expectAccessibleScreen("the completion moment");
   });
 });

@@ -42,7 +42,7 @@ export function TimelineTray({
 
       <button
         aria-label={t("Place {event} on the timeline", { event: label })}
-        className="bg-background border-viz-accent focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full cursor-grab touch-none items-center gap-3 rounded-2xl border-2 border-dashed px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px] active:cursor-grabbing"
+        className="bg-background border-viz-accent focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full cursor-grab touch-none items-center gap-3 rounded-xl border-2 border-dashed px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px] active:cursor-grabbing"
         onClick={() => {
           if (!hasDragged.current) {
             onPlace();

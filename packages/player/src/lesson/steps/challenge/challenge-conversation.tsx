@@ -2,6 +2,7 @@
 
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
@@ -79,13 +80,13 @@ function ChallengeDecision({
 
   return (
     <div className="flex flex-col gap-3" data-slot="challenge-decision">
-      <h3 className="text-foreground text-lg font-semibold" id={`challenge-prompt-${node.id}`}>
-        <LessonRichText text={names.fill(node.prompt)} />
-      </h3>
+      <div className="text-foreground text-lg font-semibold" id={`challenge-prompt-${node.id}`}>
+        <RichTextBlocks text={names.fill(node.prompt)} paragraphTag="h3" />
+      </div>
 
       <PlayerChoiceSceneOptions
         ariaLabel={t("Your options")}
-        keyboardEnabled={!isLocked}
+        isLocked={isLocked}
         onSelect={(index) => {
           const choice = node.choices[index];
 
@@ -99,11 +100,11 @@ function ChallengeDecision({
               <LessonRichText text={names.fill(choice.text)} />
             </PlayerChoiceSceneOptionText>
           ),
-          disabled: isLocked,
-          isDimmed: progress.pendingChoiceId !== null && progress.pendingChoiceId !== choice.id,
-          isSelected: progress.pendingChoiceId === choice.id,
+          // A decision has no right answer: it plays out in the story.
+          isCorrect: false,
           key: choice.id,
         }))}
+        selectedKey={progress.pendingChoiceId}
       />
     </div>
   );
@@ -183,7 +184,7 @@ export function ChallengeConversation({
         ) : (
           <section
             aria-labelledby="challenge-outcome"
-            className="bg-muted/50 flex flex-col gap-2 rounded-2xl p-4"
+            className="bg-muted/50 flex flex-col gap-2 rounded-xl p-4"
             data-slot="challenge-outcome"
           >
             <ChallengeLabel as="h3" id="challenge-outcome">

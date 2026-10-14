@@ -1,29 +1,53 @@
 "use client";
 
+import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
+import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerInteractionState } from "../player-context";
-import { OptionCard } from "./option-card";
+import { getNumberKeyShortcut } from "../player-shortcuts";
 import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
-type PlayerChoiceOptionResultState = "correct" | "incorrect";
+type PlayerChoiceSceneOption = { content: React.ReactNode; isCorrect: boolean; key: string };
 
-type PlayerChoiceSceneOption = {
-  content: React.ReactNode;
-  disabled?: boolean;
-  isDimmed?: boolean;
-  isSelected: boolean;
-  key: string;
-  resultState?: PlayerChoiceOptionResultState | null;
-};
+/**
+ * Once checked, the right option says so, and the learner's pick says it was theirs if wrong. A
+ * guess that missed (a hook's "Guess first") is never a mistake: the pick stays neutral.
+ */
+function getOptionResult({
+  isChecked,
+  isCorrect,
+  isGuess,
+  isPicked,
+}: {
+  isChecked: boolean;
+  isCorrect: boolean;
+  isGuess: boolean;
+  isPicked: boolean;
+}): AnswerOptionResult | null {
+  if (!isChecked) {
+    return null;
+  }
+
+  if (isCorrect) {
+    return "right";
+  }
+
+  if (!isPicked) {
+    return null;
+  }
+
+  return isGuess ? "guess" : "wrong";
+}
 
 /**
  * Provides the shared shell for all choice-based scenes.
  *
- * Multiple choice and translation choices need the same centered layout,
+ * Multiple choice and translation choices need the same top-aligned layout,
  * spacing, and action placement. Keeping that shell here means future layout
  * changes land once for the whole family.
  */
@@ -39,7 +63,7 @@ export function PlayerChoiceScene({ children }: { children: React.ReactNode }) {
  */
 export function PlayerChoiceScenePrompt({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2 sm:gap-6" data-slot="player-choice-scene-prompt">
+    <div className="flex flex-col gap-3" data-slot="player-choice-scene-prompt">
       {children}
     </div>
   );
@@ -91,62 +115,90 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
  */
 export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-base leading-6" data-slot="player-choice-scene-option-text">
+    <span data-slot="player-choice-scene-option-text">
       {typeof children === "string" ? <PlayerRichText text={children} /> : children}
     </span>
   );
 }
 
 /**
- * Renders the shared option list and owns the numeric keyboard shortcuts.
- *
- * This exists so the option-card layout, radiogroup semantics, and keyboard
- * interaction cannot drift between multiple-choice and translation adapters.
+ * The answers of every choice question in the player (a check, a guess, a picture question, an
+ * activity's question, a language lesson's multiple choice and translation), as the kit's
+ * `AnswerOption`: numbered, picked with a tap or its number key. Once checked they lock, and only
+ * the right answer and a wrong pick stay, marked "Correct" and "Your answer", so the question, both
+ * answers and the result fit on a phone's screen without scrolling. A guess keeps every option, since
+ * its reveal answers the question the learner just read and nothing in it was wrong, and so does
+ * `keepsEveryOption`, where each option explains itself after the check.
  */
 export function PlayerChoiceSceneOptions({
   ariaLabel,
-  keyboardEnabled = true,
+  isChecked = false,
+  isGuess = false,
+  isLocked = false,
+  keepsEveryOption = false,
   layout = "list",
   onSelect,
   options,
+  selectedKey,
 }: {
   ariaLabel?: string;
-  keyboardEnabled?: boolean;
+  isChecked?: boolean;
+  /** A guess that never counts (a hook's "Guess first"): a missed pick says "Your guess", not wrong. */
+  isGuess?: boolean;
+  /** The answer is being graded or the screen waits on something: options can't be picked. */
+  isLocked?: boolean;
+  keepsEveryOption?: boolean;
   /** `grid` lays picture options out side by side, two to a row. */
   layout?: "grid" | "list";
   onSelect: (index: number) => void;
   options: readonly PlayerChoiceSceneOption[];
+  selectedKey: string | null;
 }) {
   const t = useExtracted();
   const interactionState = usePlayerInteractionState();
+  const isDisabled = isLocked || isChecked;
 
   useNumberKeys({
     count: options.length,
-    enabled: keyboardEnabled && interactionState !== "paused",
+    enabled: !isDisabled && interactionState !== "paused",
     onPick: onSelect,
   });
 
   return (
-    <div
+    <AnswerOptionGroup
       aria-label={ariaLabel ?? t("Answer options")}
-      className={layout === "grid" ? "grid grid-cols-2 gap-3" : "flex flex-col gap-3"}
+      className={cn(layout === "grid" && "grid grid-cols-2 gap-3")}
       data-slot="player-choice-scene-options"
-      role="radiogroup"
     >
-      {options.map((option, index) => (
-        <OptionCard
-          disabled={option.disabled}
-          index={index}
-          isDimmed={option.isDimmed}
-          isSelected={option.isSelected}
-          key={option.key}
-          layout={layout === "grid" ? "stacked" : "row"}
-          onSelect={() => onSelect(index)}
-          resultState={option.resultState ?? null}
-        >
-          {option.content}
-        </OptionCard>
-      ))}
-    </div>
+      {options.map((option, index) => {
+        const isPicked = selectedKey === option.key;
+
+        const result = getOptionResult({
+          isChecked,
+          isCorrect: option.isCorrect,
+          isGuess,
+          isPicked,
+        });
+
+        if (isChecked && !result && !keepsEveryOption && !isGuess) {
+          return null;
+        }
+
+        return (
+          <AnswerOption
+            aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
+            disabled={isDisabled}
+            key={option.key}
+            layout={layout === "grid" ? "stacked" : "row"}
+            marker={index + 1}
+            onClick={() => onSelect(index)}
+            picked={isPicked}
+            result={result}
+          >
+            {option.content}
+          </AnswerOption>
+        );
+      })}
+    </AnswerOptionGroup>
   );
 }

@@ -23,8 +23,8 @@ export type LessonPlayerActions = {
   retryCompletion: () => void;
   retryStart: () => void;
   selectAnswer: (stepId: string, answer: LessonPlayerAnswer | null) => void;
-  /** Leaves a language activity out of the plan and skips its screens in this lesson. */
-  skipActivity: (activity: "speaking" | "writing") => Promise<void>;
+  /** Skips one writing screen, or the rest of this lesson's writing, without changing the plan. */
+  skipWriting: (stepId?: string) => void;
   /** Leaves out screens that can't be played after all, such as a numbered picture that never came. */
   skipSteps: (stepIds: string[]) => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
@@ -44,6 +44,12 @@ type LessonReportTarget = { contentId: string; contentKind: "step" };
 export type LessonPlayerSlots = {
   completion?: (props: LessonCompletionSlotProps) => ReactNode;
   /**
+   * The header over the completion moment, in place of the lesson's, such as the day's session
+   * over a session block's moment. While it returns null (the lesson isn't saved yet), the
+   * lesson's header stays.
+   */
+  completionHeader?: (props: LessonCompletionSlotProps) => ReactNode;
+  /**
    * What comes next on the completion moment, in place of Continue, such as a guest's "Build my
    * plan" and "Create an account to save".
    */
@@ -62,6 +68,8 @@ type LessonPlayerConfig = {
   >;
   linkComponent: PlayerLinkComponent;
   onExit: () => void;
+  /** The lesson's outline beside its reading screens from `lg`, for a short story (`outline`). */
+  outline: boolean;
   routes: LessonPlayerRoutes;
   slots: LessonPlayerSlots;
   /** Appearance's sounds for a right answer and for finishing. */

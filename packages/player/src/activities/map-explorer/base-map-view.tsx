@@ -138,7 +138,7 @@ export function BaseMapView({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl",
+        "relative overflow-hidden rounded-xl",
         !drawing.sphere && "bg-viz-secondary-soft",
       )}
       data-slot="base-map"
@@ -190,7 +190,7 @@ export function BaseMapView({
         >
           <span
             className={cn(
-              "border-viz-accent flex size-8 items-center justify-center rounded-full border-2 text-sm font-bold tabular-nums shadow-md motion-safe:transition-colors",
+              "border-viz-accent flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums shadow-md motion-safe:transition-colors",
               pin.isSelected && "bg-viz-accent text-background ring-viz-accent/30 ring-4",
               !pin.isSelected && pin.isVisited && "bg-viz-accent-soft text-viz-accent",
               !pin.isSelected && !pin.isVisited && "bg-background text-viz-accent",

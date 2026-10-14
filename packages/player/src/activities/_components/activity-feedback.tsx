@@ -2,22 +2,21 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { fractionDigitsFor } from "@zoonk/utils/localized-number";
+import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
 import { VerdictLabel } from "../../components/verdict-label";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-
-const FEEDBACK_FRACTION_DIGITS = 2;
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
 
 function FeedbackText({ children }: { children: string }) {
   return (
-    <p className="text-muted-foreground text-sm leading-relaxed">
+    <FeedbackExplanation>
       <LessonRichText text={children} />
-    </p>
+    </FeedbackExplanation>
   );
 }
 
@@ -37,12 +36,12 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
 
       {correct && !chosen?.isCorrect && (
         <>
-          <p className="text-sm leading-relaxed">
+          <FeedbackExplanation>
             <span className="text-muted-foreground">{t("Correct answer:")}</span>{" "}
-            <span className="text-success font-medium">
+            <span className="text-success-text font-medium">
               <LessonRichText text={correct.text} />
             </span>
-          </p>
+          </FeedbackExplanation>
 
           <FeedbackText>{correct.reason}</FeedbackText>
         </>
@@ -64,27 +63,30 @@ function NumericFeedback({
   const t = useExtracted();
   const format = useFormatNumber();
 
-  /* Exact enough to tell a near miss from the answer, like 3,869.68 next to 3,870. */
-  const exact = (value: number) =>
-    format(value, {
-      maximumFractionDigits: Math.max(fractionDigitsFor(value), FEEDBACK_FRACTION_DIGITS),
-      unit: check.unit,
-    });
+  const maximumFractionDigits = exactFractionDigitsFor({
+    expected: check.answer,
+    tolerance: check.tolerance,
+    value: answer?.kind === "numeric" ? answer.value : undefined,
+  });
+
+  const exact = (value: number) => format(value, { maximumFractionDigits, unit: check.unit });
 
   return (
     <>
-      <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm tabular-nums">
+      <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         {answer?.kind === "numeric" && (
           <div className="flex gap-1.5">
             <dt className="text-muted-foreground">{t("Your answer:")}</dt>
-            <dd className="font-medium">{exact(answer.value)}</dd>
+            <dd className="font-mono font-medium tabular-nums">{exact(answer.value)}</dd>
           </div>
         )}
 
         {!isCorrect && (
           <div className="flex gap-1.5">
             <dt className="text-muted-foreground">{t("Answer:")}</dt>
-            <dd className="text-success font-medium">{exact(check.answer)}</dd>
+            <dd className="text-success-text font-mono font-medium tabular-nums">
+              {exact(check.answer)}
+            </dd>
           </div>
         )}
       </dl>
@@ -95,8 +97,9 @@ function NumericFeedback({
 }
 
 /**
- * The verdict and the why after an activity's check. It reads the check's own explanation or
- * option reasons and code's computed answer, never a model's judgment of the learner.
+ * The verdict and the why after an activity's check, on the same feedback panel as every other
+ * answer. It reads the check's own explanation or option reasons and code's computed answer, never
+ * a model's judgment of the learner.
  */
 export function ActivityFeedback({
   answer,
@@ -111,13 +114,7 @@ export function ActivityFeedback({
   const { check } = content;
 
   return (
-    <div
-      aria-label={t("Answer feedback")}
-      aria-live="polite"
-      className="flex flex-col gap-2"
-      data-slot="activity-feedback"
-      role="region"
-    >
+    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
       <VerdictLabel verdict={isCorrect ? "correct" : "incorrect"} />
 
       {check.kind === "choice" && <ChoiceFeedback answer={answer} check={check} />}
@@ -127,6 +124,6 @@ export function ActivityFeedback({
       )}
 
       {check.kind === "interaction" && <FeedbackText>{check.explanation}</FeedbackText>}
-    </div>
+    </FeedbackPanel>
   );
 }

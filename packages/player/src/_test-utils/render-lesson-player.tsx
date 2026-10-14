@@ -60,10 +60,11 @@ export function runAnswer({
 export function startedRun({
   answers = [],
   hyperdrive = { knownStepIds: [], streak: 0 },
+  optionalStepIds,
   runId = crypto.randomUUID(),
   startedAt = new Date().toISOString(),
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
-  return { answers, hyperdrive, reason: "started" as const, runId, startedAt };
+  return { answers, hyperdrive, optionalStepIds, reason: "started" as const, runId, startedAt };
 }
 
 /**

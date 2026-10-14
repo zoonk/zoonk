@@ -1,9 +1,12 @@
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
+import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { type CDPSession, type Page } from "playwright";
 import { defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
+
+assertBrowserLaunchAllowed();
 
 const browserTests = ["src/**/*.browser.test.tsx"];
 const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];

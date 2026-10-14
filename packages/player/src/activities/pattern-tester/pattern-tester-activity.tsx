@@ -140,7 +140,7 @@ export function PatternTesterActivity({
 
         <div
           className={cn(
-            "bg-background focus-within:border-primary flex h-14 items-center gap-0.5 rounded-2xl border-2 px-4 font-mono text-xl",
+            "bg-background focus-within:border-primary flex h-14 items-center gap-0.5 rounded-xl border-2 px-4 font-mono text-xl",
             isChecked && "opacity-80",
           )}
         >
@@ -239,7 +239,7 @@ function PatternExamples({ fields, pattern }: { fields: Fields; pattern: string 
   return (
     <div className="flex flex-col gap-3">
       {results.status === "invalid" && (
-        <p className="text-destructive text-sm" role="status">
+        <p className="text-destructive-text text-sm" role="status">
           {t(
             "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
           )}

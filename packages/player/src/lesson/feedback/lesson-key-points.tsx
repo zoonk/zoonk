@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheckIcon, CircleDashedIcon } from "lucide-react";
+import { CheckIcon, MinusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../_components/lesson-rich-text";
 
@@ -13,16 +13,19 @@ export function LessonKeyPoints({ keyPoints }: { keyPoints: { met: boolean; text
   return (
     <div className="flex flex-col gap-2" data-slot="lesson-key-points">
       <p className="text-muted-foreground text-sm font-medium">
-        {t("{met} of {total} key points", { met: String(met), total: String(keyPoints.length) })}
+        {t("{met} of {total, plural, =0 {# key points} one {# key point} other {# key points}}", {
+          met: String(met),
+          total: keyPoints.length,
+        })}
       </p>
 
       <ul className="flex flex-col gap-1.5">
         {keyPoints.map((point) => (
           <li className="flex items-start gap-2 text-sm" key={point.text}>
             {point.met ? (
-              <CircleCheckIcon aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
+              <CheckIcon aria-hidden="true" className="text-success mt-0.5 size-4 shrink-0" />
             ) : (
-              <CircleDashedIcon
+              <MinusIcon
                 aria-hidden="true"
                 className="text-muted-foreground mt-0.5 size-4 shrink-0"
               />

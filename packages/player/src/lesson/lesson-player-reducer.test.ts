@@ -42,6 +42,20 @@ function answerCheck(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
 }
 
 describe(lessonPlayerReducer, () => {
+  it("skips only the open answer the learner doesn't know, without a verdict", () => {
+    const steps = [typedAnswerStep("first"), explanationStep("tip"), typedAnswerStep("last")];
+
+    const skipped = play(steps, [
+      { kinds: ["typedAnswer"], stepIds: ["first"], type: "skipKinds" },
+    ]);
+
+    expect(skipped.queue).toStrictEqual(["tip", "last"]);
+    expect(skipped.skippedWritingStepIds).toStrictEqual(["first"]);
+    expect(skipped.firstVerdicts).toStrictEqual({});
+    expect(skipped.results).toStrictEqual({});
+    expect(skipped.notice).toBeNull();
+  });
+
   it("goes back one screen at a time, showing an answered question's result again", () => {
     const steps = [checkStep("quiz"), explanationStep("a"), explanationStep("b")];
 
@@ -82,6 +96,12 @@ describe(lessonPlayerReducer, () => {
 
     expect(skipped.queue).toStrictEqual(["tip", "end"]);
     expect(getCurrentStep(skipped)?.id).toBe("tip");
+    expect(skipped.skippedWritingStepIds).toStrictEqual(["write-1", "write-2"]);
+    expect(skipped.firstVerdicts).toStrictEqual({});
+
+    // The screen that took the writing's place says so, until the learner moves on.
+    expect(skipped.notice).toBe("writingSkipped");
+    expect(lessonPlayerReducer(skipped, { type: "continue" }).notice).toBeNull();
   });
 
   it("leaves out screens that can't be played, the one in view too, and keeps the ones before", () => {
@@ -104,7 +124,43 @@ describe(lessonPlayerReducer, () => {
 
     const done = play(steps, [{ type: "continue" }, { kinds: ["typedAnswer"], type: "skipKinds" }]);
 
-    expect(done.phase).toBe("completed");
+    expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
+  });
+
+  it("keeps writing skipped when a missing non-writing answer resyncs the same lesson", () => {
+    const steps = [checkStep("quiz"), typedAnswerStep("write"), summaryStep("end")];
+
+    const done = play(steps, [
+      ...answerCheck("quiz", true),
+      { type: "continue" },
+      { kinds: ["typedAnswer"], type: "skipKinds" },
+      { type: "continue" },
+    ]);
+
+    const resumed = lessonPlayerReducer(done, { answers: [], type: "runResynced" });
+    expect(getCurrentStep(resumed)?.id).toBe("quiz");
+    expect(resumed.queue).toStrictEqual(["quiz", "end"]);
+    expect(resumed.skippedWritingStepIds).toStrictEqual(["write"]);
+  });
+
+  it("waits for Finish when the last screen disappears without a learner action", () => {
+    const done = play(
+      [typedAnswerStep("numbered")],
+      [{ stepIds: ["numbered"], type: "skipSteps" }],
+    );
+
+    expect(done).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
+
+    expect(lessonPlayerReducer(done, { type: "completionRetried" })).toMatchObject({
+      completion: { status: "saving" },
+    });
+  });
+
+  it("opens an empty lesson ready to finish, without saving on entry", () => {
+    expect(createInitialState({ id: "empty", steps: [] })).toMatchObject({
+      completion: { status: "ready" },
+      phase: "completed",
+    });
   });
 
   it("reveals a worked example one step at a time before moving on", () => {
@@ -381,7 +437,7 @@ describe(lessonPlayerReducer, () => {
     expect(getCurrentStep(resumed)?.id).toBe("e2");
   });
 
-  it("finishes a resumed run with every screen answered, and leaves a lesson in play alone", () => {
+  it("waits for a deliberate finish on a resumed run with every screen answered", () => {
     const steps = [explanationStep("e1"), checkStep("q1")];
     const answers = [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "q1" }];
     const hyperdrive = { knownStepIds: [], streak: 0 };
@@ -390,7 +446,12 @@ describe(lessonPlayerReducer, () => {
       { answers, hyperdrive, runId: "run", startedAt: STARTED_AT, type: "runStarted" },
     ]);
 
-    expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
+    expect(done).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
+
+    expect(lessonPlayerReducer(done, { type: "completionRetried" })).toMatchObject({
+      completion: { status: "saving" },
+      phase: "completed",
+    });
 
     const answeredHere = play(steps, [
       { type: "continue" },

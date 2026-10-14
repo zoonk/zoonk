@@ -18,6 +18,8 @@ import { type CheckContext, useStepGrading } from "./use-step-grading";
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
+  /** The lesson's language, which grading writes a number's unit in, as the server does. */
+  language: string;
   state: LessonPlayerState;
   track: (event: AnalyticsEvent) => void;
 };
@@ -33,18 +35,16 @@ function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | n
   return null;
 }
 
-/** The screens each skippable activity is made of in a lesson. */
-const SKIPPED_KINDS = { speaking: "spokenAnswer", writing: "typedAnswer" } as const;
-
 /**
  * Turns learner intent into reducer actions and server calls. Checks, activities and exercises
  * are graded on the device at once and recorded in the background; typed and spoken answers wait
- * for the server's grade. Reaching the end (or coming back to a run with every screen answered)
- * saves the run once every answer is recorded.
+ * for the server's grade. Reaching the end from a learner's click saves the run once every answer
+ * is recorded; a resumed all-answered run waits for Finish first.
  */
 export function useLessonPlayerActions({
   adapters,
   dispatch,
+  language,
   state,
   track,
 }: ActionsInput): LessonPlayerActions {
@@ -67,18 +67,39 @@ export function useLessonPlayerActions({
 
     // A request that never reached the server (offline) fails like any other save.
     const outcome =
-      allSaved && runId ? await adapters.completeLesson({ runId }).catch(() => null) : null;
+      allSaved && runId
+        ? await adapters
+            .completeLesson({
+              runId,
+              ...(state.skippedWritingStepIds.length > 0 && {
+                skippedWritingStepIds: state.skippedWritingStepIds,
+              }),
+            })
+            .catch(() => null)
+        : null;
 
     if (outcome?.status === "completed") {
       dispatch({ result: outcome.completion, type: "completionSaved" });
       return;
     }
 
-    const restarted =
-      outcome?.status === "incomplete" ? await adapters.startLesson().catch(() => null) : null;
+    const [restarted, pictures] =
+      outcome?.status === "incomplete"
+        ? await Promise.all([
+            adapters.startLesson(runId ? { runId } : undefined).catch(() => null),
+            adapters.getLessonPictures?.().catch(() => []) ?? Promise.resolve([]),
+          ])
+        : [null, []];
 
     if (restarted?.reason === "started") {
-      dispatch({ answers: restarted.answers, type: "runResynced" });
+      dispatch({
+        answers: restarted.answers,
+        optionalStepIds: restarted.optionalStepIds,
+        pictures,
+        runId: restarted.runId,
+        type: "runResynced",
+      });
+
       return;
     }
 
@@ -118,7 +139,7 @@ export function useLessonPlayerActions({
       return;
     }
 
-    const graded = gradeStepAnswer({ answer, step });
+    const graded = gradeStepAnswer({ answer, language, step });
 
     if (!graded) {
       return;
@@ -138,7 +159,7 @@ export function useLessonPlayerActions({
     });
 
     recordInBackground({ answer, step });
-  }, [dispatch, ensureRun, gradeOnServer, recordInBackground, state, track]);
+  }, [dispatch, ensureRun, gradeOnServer, language, recordInBackground, state, track]);
 
   return useMemo(
     () => ({
@@ -153,16 +174,15 @@ export function useLessonPlayerActions({
       retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
       selectAnswer: (stepId, answer) => dispatch({ answer, stepId, type: "selectAnswer" }),
-      skipActivity: async (activity) => {
-        const skipped = await adapters.skipLanguageActivity?.(activity);
-
-        if (skipped) {
-          dispatch({ kinds: [SKIPPED_KINDS[activity]], type: "skipKinds" });
-        }
-      },
       skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
+      skipWriting: (stepId) =>
+        dispatch({
+          kinds: ["typedAnswer"],
+          ...(stepId && { stepIds: [stepId] }),
+          type: "skipKinds",
+        }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [adapters, check, dispatch, ensureRun, submitSpokenAnswer],
+    [check, dispatch, ensureRun, submitSpokenAnswer],
   );
 }

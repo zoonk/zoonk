@@ -50,7 +50,7 @@ export function GridPalette({
           <button
             aria-disabled={isDisabled}
             className={cn(
-              "bg-background focus-visible:ring-ring/50 flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl border outline-none focus-visible:ring-[3px]",
+              "bg-background focus-visible:ring-ring/50 flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl border outline-none focus-visible:ring-[3px]",
               isDisabled ? "opacity-60" : "hover:bg-accent",
             )}
             key={option}
