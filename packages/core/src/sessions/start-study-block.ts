@@ -1,7 +1,11 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getUserProgressCacheTag, getUserSessionCacheTag } from "../cache/tags";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import {
@@ -41,6 +45,22 @@ export type StartStudyBlockResult =
   | { status: "plusRequired" }
   | { status: "questionsNeeded" }
   | { status: "unauthorized" };
+
+/** Replays and refusals must roll back the revision taken before the domain locks. */
+class StudyBlockStartUnchangedError extends Error {
+  readonly result: StartStudyBlockResult;
+
+  constructor(result: StartStudyBlockResult) {
+    super(result.status);
+    this.name = "StudyBlockStartUnchangedError";
+    this.result = result;
+  }
+}
+
+function isRunningBlock(block: StudySessionBlock): boolean {
+  const timing = readBlockPayload(block).timing;
+  return block.status === "active" && Boolean(timing ? timing.activeAt : block.startedAt);
+}
 
 /**
  * The first block to start opens the session: it records where the learner stands (so the end
@@ -131,90 +151,112 @@ export async function startStudyBlock({
       : captureSessionSnapshot({ goalId: session.goalId, now: snapshotAt, timeZone, userId }),
   ]);
 
-  const result = await prisma.$transaction(async (tx) => {
-    const { completedAt: now } = await getCompletionEnergyContext({
-      timeZone,
-      transaction: tx,
-      userId,
-    });
+  const attempt = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { userId });
 
-    const lockedIds = await lockStudyBlockClocks({ blockId, tx, userId });
+      const { completedAt: now } = await getCompletionEnergyContext({
+        timeZone,
+        transaction: tx,
+        userId,
+      });
 
-    const current = await tx.studySessionBlock.findUnique({ where: { id: blockId } });
+      const lockedIds = await lockStudyBlockClocks({ blockId, tx, userId });
 
-    if (!current || current.sessionId !== sessionId) {
-      return { status: "notFound" as const };
-    }
+      const current = await tx.studySessionBlock.findUnique({ where: { id: blockId } });
 
-    if (current.status === "completed" || current.status === "skipped") {
-      return { status: "blockFinished" as const };
-    }
+      if (!current || current.sessionId !== sessionId) {
+        throw new StudyBlockStartUnchangedError({ status: "notFound" });
+      }
 
-    if (current.status === "pending" && limit?.reached) {
-      return { status: "dailyLimitReached" as const };
-    }
+      if (current.status === "completed" || current.status === "skipped") {
+        throw new StudyBlockStartUnchangedError({ status: "blockFinished" });
+      }
 
-    await tx.$queryRaw`
+      if (current.status === "pending" && limit?.reached) {
+        throw new StudyBlockStartUnchangedError({ status: "dailyLimitReached" });
+      }
+
+      await tx.$queryRaw`
       SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
     `;
 
-    const locked = await tx.studySession.findFirst({
-      include: STUDY_SESSION_INCLUDE,
-      where: { id: sessionId, userId },
-    });
+      const locked = await tx.studySession.findFirst({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: sessionId, userId },
+      });
 
-    if (!locked) {
-      return { status: "notFound" as const };
-    }
+      if (!locked) {
+        throw new StudyBlockStartUnchangedError({ status: "notFound" });
+      }
 
-    const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
+      const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
 
-    if (wait) {
-      return { reason: wait, status: "earlierFirst" as const };
-    }
+      if (wait) {
+        throw new StudyBlockStartUnchangedError({ reason: wait, status: "earlierFirst" });
+      }
 
-    const filled = await fillCheckpointQuestions({
-      afterWriting: input.afterWriting,
-      block: current,
-      goal: locked.goal,
-      now,
-      tx,
-      userId,
-    });
+      if (locked.status === "active" && locked.startedAt && isRunningBlock(current)) {
+        const { id, kind, lessonId, startedAt, status } = current;
 
-    if (!filled) {
-      return { status: "questionsNeeded" as const };
-    }
+        throw new StudyBlockStartUnchangedError({
+          block: { id, kind, lessonId, startedAt, status },
+          status: "ready",
+        });
+      }
 
-    const opened = await openSession({ now, session: locked, snapshot, timeZone, tx });
+      const filled = await fillCheckpointQuestions({
+        afterWriting: input.afterWriting,
+        block: current,
+        goal: locked.goal,
+        now,
+        tx,
+        userId,
+      });
 
-    await pauseOtherStudyBlocks({ blockId, lockedIds, now, tx });
-    /** Filling a checkpoint may have replaced its payload; preserve the questions it just picked. */
-    const filledBlock = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: current.id } });
+      if (!filled) {
+        throw new StudyBlockStartUnchangedError({ status: "questionsNeeded" });
+      }
 
-    const started = await tx.studySessionBlock.update({
-      data: {
-        payload: {
-          ...readBlockPayload(filledBlock),
-          timing: {
-            ...readBlockPayload(filledBlock).timing,
-            activeAt: now.toISOString(),
-            elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
+      const opened = await openSession({ now, session: locked, snapshot, timeZone, tx });
+
+      await pauseOtherStudyBlocks({ blockId, lockedIds, now, tx });
+      /** Filling a checkpoint may have replaced its payload; preserve the questions it just picked. */
+      const filledBlock = await tx.studySessionBlock.findUniqueOrThrow({
+        where: { id: current.id },
+      });
+
+      const started = await tx.studySessionBlock.update({
+        data: {
+          payload: {
+            ...readBlockPayload(filledBlock),
+            timing: {
+              ...readBlockPayload(filledBlock).timing,
+              activeAt: now.toISOString(),
+              elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
+            },
           },
+          startedAt: current.startedAt ?? now,
+          status: "active",
         },
-        startedAt: current.startedAt ?? now,
-        status: "active",
-      },
-      select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
-      where: { id: current.id },
-    });
+        select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
+        where: { id: current.id },
+      });
 
-    return { block: started, opened, session: locked, status: "ready" as const };
-  });
+      return { block: started, opened, session: locked, status: "ready" as const };
+    }),
+  );
 
-  if (result.status !== "ready") {
-    return result;
+  if (attempt.error instanceof StudyBlockStartUnchangedError) {
+    return attempt.error.result;
   }
+
+  if (attempt.error) {
+    throw attempt.error;
+  }
+
+  const result = attempt.data;
+  revalidateCacheTags([getUserProgressCacheTag(userId), getUserSessionCacheTag(userId)]);
 
   if (result.opened) {
     trackSessionStarted(result.session);
