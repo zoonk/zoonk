@@ -68,6 +68,8 @@ const nextConfig: NextConfig = {
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
+    /** The guard needs rejected validation jobs to reach Next's parent error logger. */
+    ...(isE2E && process.env.PRERENDER_GUARD === "true" && { devValidationWorker: false }),
     authInterrupts: true,
     exposeTestingApiInProductionBuild: isE2E,
     // The root layout sits under `[lang]`, so URLs no route matches need `app/global-not-found.tsx`.
