@@ -101,6 +101,8 @@ model CourseChapter {
   chapter   Chapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   level     CourseLevel
   position  Int
+  /// The outline's area when published, retained when the exam's active skill graph changes.
+  area      String?
   createdAt DateTime    @default(now()) @map("created_at")
 
   @@id([courseId, chapterId])
@@ -236,6 +238,9 @@ model Step {
   sentence           Sentence?           @relation(fields: [sentenceId], references: [id], onDelete: SetNull)
   mediaAssetId       String?             @map("media_asset_id") @db.Uuid
   mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  /// When this screen's current picture became available. Null on older links whose arrival time
+  /// was not recorded; ordinary screen edits never change picture availability.
+  pictureAvailableAt DateTime?           @map("picture_available_at")
   /// Where this screen comes from: the learner's material for lessons built from their own files, or
   /// the public document its facts come from (a law, an exam notice), shown with the date it was checked.
   sourceId           String?             @map("source_id") @db.Uuid

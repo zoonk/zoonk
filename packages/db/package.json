@@ -5,6 +5,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./anonymous-records": "./src/anonymous-records.ts",
+    "./course-home": "./src/course-home.ts",
+    "./enums": "./src/generated/prisma/enums.ts",
+    "./live-call-enums": "./src/live-call-enums.ts",
     "./local-database": "./src/local-database.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",
     "./seed/v2": "./src/prisma/seed/v2/index.ts",
@@ -13,6 +16,7 @@
     "./utils": "./src/utils.ts"
   },
   "scripts": {
+    "db:backfill:enem-areas": "tsx --env-file=.env src/scripts/backfill-enem-chapter-areas.ts",
     "db:deploy": "tsx src/scripts/deploy-migrations.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
