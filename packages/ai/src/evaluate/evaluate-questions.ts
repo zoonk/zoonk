@@ -1,27 +1,48 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { Experimental_DecisionLanguageModel } from "@ai-sdk/provider-utils/experimental-decision";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import {
+  type Experimental_DecisionModel,
   type Experimental_DecisionQuestion,
   type Experimental_DecisionResult,
   experimental_decide,
 } from "ai";
 import { getModelFamily } from "../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../data-protection";
+import { zoonkGateway } from "../gateway";
 import { computeCallCostUsd } from "../pricing/call-cost";
 import { type AiGenerationContext } from "../provenance/ai-generation-event";
 import { captureAiGeneration } from "../provenance/ai-generation-sink";
 import { readGatewayMetadata } from "../provenance/gateway-metadata";
 import { toEvaluationRunRecord } from "./evaluation-event";
 import { fitsTokenLimit } from "./evaluation-limits";
-import { JEV_MODEL_ID, getEvaluationModel, getEvaluationTokenLimit } from "./evaluation-models";
+import {
+  JEV_MODEL_ID,
+  getEvaluationTokenLimit,
+  isNativeEvaluationModel,
+} from "./evaluation-models";
 import { type EvaluationRunAnswer, captureEvaluationRun } from "./evaluation-run-sink";
 import { EvaluationTimeoutError } from "./evaluation-timeout";
 import { formatUntrustedInput } from "./untrusted-input";
 
 type EvaluationQuestions = Record<string, Experimental_DecisionQuestion>;
+
+/**
+ * Jev and Luna Decisions are the gateway's native decision models. Any other gateway id (Luna,
+ * Flash Lite, Haiku) runs through the AI SDK's language-model decision adapter, the same class
+ * `openai.decisionModel()` and `anthropic.decisionModel()` wrap around their own models, so every
+ * candidate shares the gateway's key, routing, fallback and billing.
+ */
+function getEvaluationModel(modelId: string): Experimental_DecisionModel {
+  if (isNativeEvaluationModel(modelId)) {
+    return zoonkGateway.decisionModel(modelId);
+  }
+
+  return new Experimental_DecisionLanguageModel({ model: zoonkGateway.languageModel(modelId) });
+}
 
 const TIMEOUT_MS = 10_000;
 

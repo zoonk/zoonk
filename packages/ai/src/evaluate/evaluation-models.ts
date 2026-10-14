@@ -1,6 +1,7 @@
-import { Experimental_DecisionLanguageModel } from "@ai-sdk/provider-utils/experimental-decision";
-import { type Experimental_DecisionModel } from "ai";
-import { zoonkGateway } from "../gateway";
+/**
+ * The evaluation models' ids and limits, without the gateway, so the evals app's pages can list
+ * them in the browser. `evaluate-questions.ts` builds the model each id calls.
+ */
 
 /**
  * Every `decide` call's model. On the seven decision evals (7 Oct 2026) GPT-6 Luna Decisions cost
@@ -27,20 +28,6 @@ const NATIVE_EVALUATION_MODELS: ReadonlySet<string> = new Set([
 
 export function isNativeEvaluationModel(modelId: string): boolean {
   return NATIVE_EVALUATION_MODELS.has(modelId);
-}
-
-/**
- * Jev and Luna Decisions are the gateway's native decision models. Any other gateway id (Luna,
- * Flash Lite, Haiku) runs through the AI SDK's language-model decision adapter, the same class
- * `openai.decisionModel()` and `anthropic.decisionModel()` wrap around their own models, so every
- * candidate shares the gateway's key, routing, fallback and billing.
- */
-export function getEvaluationModel(modelId: string): Experimental_DecisionModel {
-  if (isNativeEvaluationModel(modelId)) {
-    return zoonkGateway.decisionModel(modelId);
-  }
-
-  return new Experimental_DecisionLanguageModel({ model: zoonkGateway.languageModel(modelId) });
 }
 
 /** Returns null for models whose limit is far above any classification input. */

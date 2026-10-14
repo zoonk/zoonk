@@ -2,13 +2,13 @@
 
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
 import { formatDollars, formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
+import { type LeaderboardEntry } from "@/lib/leaderboard";
 import {
-  type LeaderboardEntry,
   type SortDirection,
   type SortKey,
   getDefaultSortDirection,
   sortLeaderboardEntries,
-} from "@/lib/leaderboard";
+} from "@/lib/leaderboard-sort";
 import {
   Table,
   TableBody,
