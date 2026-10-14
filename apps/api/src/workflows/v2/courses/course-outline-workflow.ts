@@ -9,7 +9,8 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
-import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
+import { courseIconWorkflow } from "./course-details-workflow";
+import { startCourseDetailsRun } from "./start-course-details-run";
 import { type BandPlan } from "./steps/band-outline";
 import {
   finishCourseOutlineStep,
@@ -47,8 +48,12 @@ export type CourseOutlineResult =
   | { status: "busy" | "joined" }
   | { bandsWritten: number; chapterIds: string[]; status: "written" };
 
-/** One wait for another run of the same course, then this run's own bands. */
-const MAX_JOIN_ATTEMPTS = 1;
+/**
+ * How many times a request waits its turn behind other runs of the same course. Each turn waits
+ * for a whole run (a minute or two), so a request still missing bands after this many is stuck,
+ * not busy, and fails visibly instead.
+ */
+const MAX_OUTLINE_TURNS = 10;
 /** A run saving the course's other bands holds it for a minute or two; this run waits for it. */
 const BUSY_WAIT = "15s";
 const MAX_CLAIM_TRIES = 20;
@@ -159,7 +164,33 @@ async function startSharedCourseWork(input: CourseOutlineInput): Promise<void> {
     return;
   }
 
-  await start(courseDetailsWorkflow, [{ analytics: input.analytics, courseId: input.courseId }]);
+  await startCourseDetailsRun({ analytics: input.analytics, courseId: input.courseId });
+}
+
+/**
+ * Another run had the course while this request's bands were still missing: the request goes
+ * again once that run ends, as many times as the course stays taken (several learners starting it
+ * at once), since dropping it would leave a learner's band unwritten. A request still missing
+ * bands after `MAX_OUTLINE_TURNS` fails, so its run shows as failed; the plan's stand-ins ask for
+ * those bands again when sessions get close to them.
+ */
+async function takeNextTurn({
+  attempt,
+  input,
+  status,
+}: {
+  attempt: number;
+  input: CourseOutlineInput;
+  status: "busy" | "joined";
+}): Promise<CourseOutlineResult> {
+  if (attempt >= MAX_OUTLINE_TURNS) {
+    throw new Error(
+      `Course ${input.courseId} still missing bands after ${MAX_OUTLINE_TURNS} turns behind other runs`,
+    );
+  }
+
+  await start(courseOutlineWorkflow, [{ ...input, attempt: attempt + 1 }]);
+  return { status };
 }
 
 /** Each level's band, planned from what the course has; one per level (see `joinLevelBands`). */
@@ -188,7 +219,8 @@ async function planBands({
  * gains only the chapters that teach them, or the next chapter of a skill it teaches in part
  * (`extend`), while a plan still stands in for the rest of it. As each band lands, every goal
  * waiting on its skills re-plans with the real lessons. One run per course at a time: a second
- * request waits for the first, then writes whatever is still missing. A shared course then gets
+ * request waits for the first, then writes whatever is still missing, taking as many turns as it
+ * takes (`takeNextTurn`). A shared course then gets
  * its page details in the background; level bands no goal needs are never written ahead.
  */
 export async function courseOutlineWorkflow(
@@ -200,19 +232,19 @@ export async function courseOutlineWorkflow(
   const { conflict } = await claimRunToken(`course-outline:${input.courseId}`);
   const attempt = input.attempt ?? 0;
 
+  const context: RunContext = { ...input, workflowRunId };
+
   if (conflict) {
     // However the run writing this course ends (one that stalled is stopped), the next check reads
     // the database.
     await joinRun(conflict);
 
-    if (attempt < MAX_JOIN_ATTEMPTS) {
-      await start(courseOutlineWorkflow, [{ ...input, attempt: attempt + 1 }]);
-    }
+    const missing = await planBands({ context, needs: input.bands });
 
-    return { status: "joined" };
+    return missing.length > 0
+      ? takeNextTurn({ attempt, input, status: "joined" })
+      : { status: "joined" };
   }
-
-  const context: RunContext = { ...input, workflowRunId };
 
   const [, outlined] = await Promise.allSettled([
     startIconEarly(context),
@@ -265,7 +297,7 @@ async function writeOutline({
   });
 
   if (!claim.claimed) {
-    return { status: "busy" };
+    return takeNextTurn({ attempt: input.attempt ?? 0, input, status: "busy" });
   }
 
   // Another run may have saved some of these bands while this run waited for the course.

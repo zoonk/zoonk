@@ -36,7 +36,7 @@ test.describe("Memory API", () => {
     const responses = await Promise.all([
       api.get("/v1/me/memory"),
       api.patch("/v1/me/memory", { data: { enabled: false } }),
-      api.patch(`/v1/me/memory/facts/${id}`, { data: { statement: "Changed" } }),
+      api.post(`/v1/me/memory/facts/${id}`, { data: { statement: "Changed" } }),
       api.delete(`/v1/me/memory/facts/${id}`),
       api.post("/v1/me/memory/change-reversals", {
         data: { changes: [{ factId: id, previousFactId: null }] },
@@ -76,8 +76,20 @@ test.describe("Memory API", () => {
     expect(memory.facts.map((fact) => fact.id)).toStrictEqual([law.id, football.id]);
     expect(memory.facts[0]?.source).toStrictEqual({ id: null, kind: "onboarding" });
 
+    const [readFact, oldCorrection] = await Promise.all([
+      api.get(`/v1/me/memory/facts/${football.id}`),
+      api.patch(`/v1/me/memory/facts/${football.id}`, {
+        data: { statement: "A correction without a POST" },
+      }),
+    ]);
+
+    expect([readFact.status(), oldCorrection.status()]).toStrictEqual([405, 405]);
+
+    const untouched = await prisma.memoryFact.findUniqueOrThrow({ where: { id: football.id } });
+    expect(untouched.statement).toBe(football.statement);
+
     const corrected = await readBody({
-      response: await api.patch(`/v1/me/memory/facts/${football.id}`, {
+      response: await api.post(`/v1/me/memory/facts/${football.id}`, {
         data: { statement: "Likes football and futsal examples" },
       }),
       schema: memoryFactResponseSchema,
@@ -152,7 +164,7 @@ test.describe("Memory API", () => {
     ]);
 
     const [empty, invalidId, tooMany, hidden] = await Promise.all([
-      api.patch(`/v1/me/memory/facts/${fact.id}`, { data: {} }),
+      api.post(`/v1/me/memory/facts/${fact.id}`, { data: {} }),
       api.delete("/v1/me/memory/facts/not-a-uuid"),
       api.post("/v1/me/memory/change-reversals", { data: { changes: [] } }),
       api.delete(`/v1/me/memory/facts/${theirs.id}`),

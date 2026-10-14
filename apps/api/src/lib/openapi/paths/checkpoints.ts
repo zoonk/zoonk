@@ -19,6 +19,7 @@ import {
   checkpointMovePathParamsSchema,
   checkpointPathParamsSchema,
 } from "../schemas/paths";
+import { planChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
   forbiddenResponse,
@@ -27,7 +28,6 @@ import {
   paymentRequiredResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
-  unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
@@ -56,7 +56,7 @@ export const checkpointPaths = {
   "/challenges/{planItemId}/generations": {
     post: {
       description:
-        "Writes the questions a challenge still lacks when the learner starts it (never on a screen view): `ready` when the bank holds its ten, otherwise a run writes what it lacks on the skills it asks with the fewest (shared with every learner of those skills, and with reviews and practice) and answers 202; a run already writing them is joined. Follow the run's stream until it ends (`challengeQuestionsReady`, or an error when no question could be written), then start the challenge again with `afterWriting`. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. A challenge the learner's plan leaves to Plus (a phase challenge past a free exam plan's first week) answers 402 `PLUS_REQUIRED` and nothing is written.",
+        "Writes the questions a challenge still lacks when the learner starts it (never on a screen view): `ready` when the bank holds its ten, otherwise a run writes what it lacks on the skills it asks with the fewest (shared with every learner of those skills, and with reviews and practice) and answers 202; a run already writing them is joined. Follow the run's stream until it ends (`challengeQuestionsReady`, or an error when no question could be written), then start the challenge again with `afterWriting`. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. A challenge the learner's plan leaves to Plus (a language phase/final call on Free, or a phase challenge past a free exam plan's first week) answers 402 `PLUS_REQUIRED` and nothing is written.",
       operationId: "createChallengeGeneration",
       requestParams: { path: challengePathParamsSchema },
       responses: {
@@ -107,7 +107,7 @@ export const checkpointPaths = {
           ...conflictResponse,
           description: "It isn't a weekly challenge, it started, or its day is past",
         },
-        "422": unprocessableEntityResponse,
+        "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Move a challenge to Monday",
@@ -141,7 +141,7 @@ export const checkpointPaths = {
   "/challenges/{planItemId}/starts": {
     post: {
       description:
-        "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
+        "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). Phase challenges, including language calls, wait for earlier lessons and phase challenges in the same session to be completed or skipped. Weekly challenges and mocks can open in any order. The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
       operationId: "startChallenge",
       requestBody: {
         content: { "application/json": { schema: studyBlockStartInputSchema } },
@@ -157,13 +157,13 @@ export const checkpointPaths = {
         "401": unauthorizedResponse,
         "402": {
           ...paymentRequiredResponse,
-          description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a mock without mocks in the plan, or a phase challenge past a free exam plan's first week. Error code: ${studySessionErrorCodes.plusRequired}.`,
+          description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a language phase/final call on Free or after Plus lapses, a mock without mocks in the plan, or a phase challenge past a free exam plan's first week. Error code: ${studySessionErrorCodes.plusRequired}.`,
         },
         "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: `It isn't in today's session, it's already finished, or the bank holds too few questions for it (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with \`afterWriting\`).`,
+          description: `It isn't in today's session, it's already finished, a phase challenge waits for earlier work (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or the bank holds too few questions for it (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with \`afterWriting\`).`,
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -213,7 +213,7 @@ export const checkpointPaths = {
           ...conflictResponse,
           description: "It already started, or isn't a weekly challenge",
         },
-        "422": unprocessableEntityResponse,
+        "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Move the weekly challenge to Monday",

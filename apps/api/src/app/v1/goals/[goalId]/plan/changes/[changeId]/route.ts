@@ -40,7 +40,7 @@ async function decideChange(
   });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status === "conflict") {
@@ -58,4 +58,4 @@ async function decideChange(
   return NextResponse.json(result.change);
 }
 
-export const PATCH = withApiErrorBoundary(decideChange);
+export const POST = withApiErrorBoundary(decideChange);

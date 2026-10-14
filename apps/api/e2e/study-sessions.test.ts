@@ -27,6 +27,7 @@ import {
   studyAnswerFeedbackResponseSchema,
   studyBlockDetailResponseSchema,
   studyBlockSchema,
+  studySessionResponseSchema,
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { weeklyChallengeResponseSchema } from "../src/lib/openapi/schemas/weekly-challenge";
@@ -34,6 +35,79 @@ import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
+const CHALLENGE_QUESTIONS = 5;
+
+/** No goal means starting these blocks cannot schedule content generation. */
+async function createSessionWithChallengeQuestions(userId: string) {
+  const [session, skill] = await Promise.all([
+    studySessionFixture({ missions: [], userId }),
+    skillFixture(),
+  ]);
+
+  const items = await Promise.all(
+    Array.from({ length: CHALLENGE_QUESTIONS }, () =>
+      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+    ),
+  );
+
+  return { itemIds: items.map((item) => item.id), session };
+}
+
+function challengePayload({
+  itemIds,
+  kind,
+  mock = false,
+}: {
+  itemIds: string[];
+  kind: "boss" | "finalBoss" | "weekly";
+  mock?: boolean;
+}) {
+  return {
+    checkpoint: { kind, mock, passMark: itemIds.length, phase: 0, timeLimitMinutes: null },
+    itemIds,
+  };
+}
+
+async function expectEarlierFirst({
+  api,
+  blockId,
+  path,
+  reason,
+  sessionId,
+  userId,
+}: {
+  api: APIRequestContext;
+  blockId: string;
+  path?: string;
+  reason: "challenge" | "lessons";
+  sessionId: string;
+  userId: string;
+}) {
+  const before = await Promise.all([
+    prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    prisma.learningEvent.count({ where: { kind: "session", userId } }),
+  ]);
+
+  const refused = await api.post(
+    path ?? `/v1/study-sessions/${sessionId}/blocks/${blockId}/starts`,
+    { data: { timeZone: "UTC" } },
+  );
+
+  expect(refused.status()).toBe(409);
+
+  await expect(refused.json()).resolves.toMatchObject({
+    error: { code: "EARLIER_FIRST", details: { reason } },
+  });
+
+  const after = await Promise.all([
+    prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    prisma.learningEvent.count({ where: { kind: "session", userId } }),
+  ]);
+
+  expect(after).toStrictEqual(before);
+}
 
 /**
  * A goal whose first of two lessons is done: its skill is due for review and has a mistake saved
@@ -186,6 +260,7 @@ test.describe("Study sessions API", () => {
     });
 
     expect(today.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
+    expect(today.missions.map((mission) => mission.kind)).toStrictEqual(["review", "somethingNew"]);
 
     expect(today.blocks[1]).toMatchObject({
       canDo: "You'll compare ratios",
@@ -218,13 +293,15 @@ test.describe("Study sessions API", () => {
       userId,
     });
 
-    await readBody({
+    const lessonDone = await readBody({
       response: await api.post(`${learnPath}/completions`, { data: {} }),
       schema: studyBlockCompletionSchema,
     });
 
+    expect(lessonDone).toMatchObject({ fullMeal: { paid: true } });
+
     const practiceDone = await playBlock({ api, blockId: practice?.id ?? "", sessionId: today.id });
-    expect(practiceDone).toMatchObject({ fullMeal: { paid: true }, sessionCompleted: true });
+    expect(practiceDone).toMatchObject({ fullMeal: { paid: false }, sessionCompleted: true });
 
     const summary = await readBody({
       response: await api.get(`/v1/study-sessions/${today.id}/summary`),
@@ -244,6 +321,285 @@ test.describe("Study sessions API", () => {
     });
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
+  });
+
+  test("holds a phase challenge for unfinished lessons without opening it or the session", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-order-lessons" });
+
+    const [{ itemIds, session }, lesson] = await Promise.all([
+      createSessionWithChallengeQuestions(userId),
+      libraryLessonFixture(),
+    ]);
+
+    const [review, learn, skipped, boss] = await Promise.all([
+      studySessionBlockFixture({ kind: "review", position: 0, sessionId: session.id }),
+      studySessionBlockFixture({ lessonId: lesson.id, position: 1, sessionId: session.id }),
+      studySessionBlockFixture({ position: 2, sessionId: session.id, status: "skipped" }),
+      studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: challengePayload({ itemIds, kind: "boss" }),
+        position: 3,
+        sessionId: session.id,
+      }),
+    ]);
+
+    const sessionPath = `/v1/study-sessions/${session.id}`;
+
+    const before = await readBody({
+      response: await api.get(`${sessionPath}?timeZone=UTC`),
+      schema: studySessionResponseSchema,
+    });
+
+    expect(before.blocks.map((block) => block.waitReason)).toStrictEqual([
+      null,
+      null,
+      null,
+      "lessons",
+    ]);
+
+    expect(session).toMatchObject({ startSnapshot: null, startedAt: null, status: "planned" });
+    expect(boss).toMatchObject({ startedAt: null, status: "pending" });
+
+    await expectEarlierFirst({
+      api,
+      blockId: boss.id,
+      reason: "lessons",
+      sessionId: session.id,
+      userId,
+    });
+
+    await readBody({
+      response: await api.post(`${sessionPath}/blocks/${learn.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      schema: startedStudyBlockResponseSchema,
+    });
+
+    await expectEarlierFirst({
+      api,
+      blockId: boss.id,
+      reason: "lessons",
+      sessionId: session.id,
+      userId,
+    });
+
+    await learningEventFixture({
+      contentIds: { lessonId: lesson.id, studySessionId: session.id },
+      userId,
+    });
+
+    await readBody({
+      response: await api.post(`${sessionPath}/blocks/${learn.id}/completions`, {
+        data: { timeZone: "UTC" },
+      }),
+      schema: studyBlockCompletionSchema,
+    });
+
+    const released = await readBody({
+      response: await api.get(`${sessionPath}?timeZone=UTC`),
+      schema: studySessionResponseSchema,
+    });
+
+    expect(released.blocks.find((block) => block.id === boss.id)?.waitReason).toBeNull();
+
+    await readBody({
+      response: await api.post(`${sessionPath}/blocks/${boss.id}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      schema: startedStudyBlockResponseSchema,
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: review.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: skipped.id } }),
+    ).resolves.toMatchObject({ status: "skipped" });
+
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+    await api.dispose();
+  });
+
+  (["completed", "skipped"] as const).forEach((priorStatus) => {
+    test(`releases a later phase challenge once the earlier challenge is ${priorStatus}`, async () => {
+      const { api, userId } = await createBearerLearner({
+        baseURL,
+        prefix: `study-order-challenge-${priorStatus}`,
+      });
+
+      const { itemIds, session } = await createSessionWithChallengeQuestions(userId);
+
+      const [boss, finalBoss] = await Promise.all([
+        studySessionBlockFixture({
+          kind: "checkpoint",
+          payload: challengePayload({ itemIds, kind: "boss" }),
+          position: 0,
+          sessionId: session.id,
+        }),
+        studySessionBlockFixture({
+          kind: "checkpoint",
+          payload: challengePayload({ itemIds, kind: "finalBoss" }),
+          position: 1,
+          sessionId: session.id,
+        }),
+      ]);
+
+      const sessionPath = `/v1/study-sessions/${session.id}`;
+
+      const before = await readBody({
+        response: await api.get(`${sessionPath}?timeZone=UTC`),
+        schema: studySessionResponseSchema,
+      });
+
+      expect(before.blocks.map((block) => block.waitReason)).toStrictEqual([null, "challenge"]);
+      expect(session).toMatchObject({ startSnapshot: null, startedAt: null, status: "planned" });
+      expect(finalBoss).toMatchObject({ startedAt: null, status: "pending" });
+
+      await expectEarlierFirst({
+        api,
+        blockId: finalBoss.id,
+        reason: "challenge",
+        sessionId: session.id,
+        userId,
+      });
+
+      if (priorStatus === "completed") {
+        await playBlock({ api, blockId: boss.id, sessionId: session.id });
+      } else {
+        // There is no public block-skip route; set the supported persisted outcome.
+        await prisma.studySessionBlock.update({
+          data: { status: "skipped" },
+          where: { id: boss.id },
+        });
+      }
+
+      const released = await readBody({
+        response: await api.get(`${sessionPath}?timeZone=UTC`),
+        schema: studySessionResponseSchema,
+      });
+
+      expect(released.blocks.find((block) => block.id === finalBoss.id)?.waitReason).toBeNull();
+
+      await readBody({
+        response: await api.post(`${sessionPath}/blocks/${finalBoss.id}/starts`, {
+          data: { timeZone: "UTC" },
+        }),
+        schema: startedStudyBlockResponseSchema,
+      });
+
+      await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+      await api.dispose();
+    });
+  });
+
+  (["lessons", "challenge"] as const).forEach((reason) => {
+    test(`preserves the ${reason} refusal when a phase challenge starts through its own endpoint`, async () => {
+      const { api, userId } = await createBearerLearner({
+        baseURL,
+        prefix: `challenge-order-${reason}`,
+      });
+
+      const [goal, { itemIds, session }] = await Promise.all([
+        goalFixture({ timezone: "UTC", userId }),
+        createSessionWithChallengeQuestions(userId),
+      ]);
+
+      const plan = await planFixture({ goalId: goal.id });
+      const challenge = await planItemFixture({ kind: "boss", planId: plan.id, position: 1 });
+
+      await prisma.studySession.update({ data: { goalId: goal.id }, where: { id: session.id } });
+
+      const [block] = await Promise.all([
+        studySessionBlockFixture({
+          kind: "checkpoint",
+          payload: { ...challengePayload({ itemIds, kind: "boss" }), planItemId: challenge.id },
+          position: 1,
+          sessionId: session.id,
+        }),
+        studySessionBlockFixture({
+          kind: reason === "lessons" ? "learn" : "checkpoint",
+          ...(reason === "challenge" && { payload: challengePayload({ itemIds, kind: "boss" }) }),
+          position: 0,
+          sessionId: session.id,
+        }),
+      ]);
+
+      await expectEarlierFirst({
+        api,
+        blockId: block.id,
+        path: `/v1/challenges/${challenge.id}/starts`,
+        reason,
+        sessionId: session.id,
+        userId,
+      });
+
+      await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+      await api.dispose();
+    });
+  });
+
+  test("opens weekly challenges and mocks while earlier lessons and phase challenges wait", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-order-weekly" });
+    const { itemIds, session } = await createSessionWithChallengeQuestions(userId);
+
+    const [learn, boss, weekly, mock] = await Promise.all([
+      studySessionBlockFixture({ position: 0, sessionId: session.id }),
+      studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: challengePayload({ itemIds, kind: "boss" }),
+        position: 1,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: challengePayload({ itemIds, kind: "weekly" }),
+        position: 2,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: challengePayload({ itemIds, kind: "weekly", mock: true }),
+        position: 3,
+        sessionId: session.id,
+      }),
+    ]);
+
+    const sessionPath = `/v1/study-sessions/${session.id}`;
+
+    const before = await readBody({
+      response: await api.get(`${sessionPath}?timeZone=UTC`),
+      schema: studySessionResponseSchema,
+    });
+
+    expect(before.blocks.map((block) => block.waitReason)).toStrictEqual([
+      null,
+      "lessons",
+      null,
+      null,
+    ]);
+
+    await Promise.all(
+      [weekly, mock].map(async (block) => {
+        const started = await readBody({
+          response: await api.post(`${sessionPath}/blocks/${block.id}/starts`, {
+            data: { timeZone: "UTC" },
+          }),
+          schema: startedStudyBlockResponseSchema,
+        });
+
+        expect(started).toMatchObject({ id: block.id, status: "active" });
+      }),
+    );
+
+    const untouched = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { id: { in: [learn.id, boss.id] } },
+    });
+
+    expect(untouched).toStrictEqual([learn, boss]);
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+    await api.dispose();
   });
 
   test("dates the source a question quotes, for its Sources chip", async () => {
@@ -515,7 +871,12 @@ test.describe("Study sessions API", () => {
 
     expect(recap.week.questions).toBe(0);
     // Reading the buddy never builds today's session, so there are no missions yet.
-    expect(buddy).toMatchObject({ buddy: null, stage: "baby", today: null });
+    expect(buddy).toMatchObject({
+      buddy: { glasses: "round", kind: "zu", name: null, picked: false },
+      stage: "baby",
+      today: null,
+    });
+
     expect(challenge).toStrictEqual({ challenge: null });
 
     const stranger = await userFixture();

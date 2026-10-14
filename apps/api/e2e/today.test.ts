@@ -1,6 +1,7 @@
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   goalFixture,
   planFixture,
@@ -14,6 +15,7 @@ import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
@@ -61,7 +63,7 @@ async function createExamGoal(userId: string) {
     learningProfileFixture({ activeGoalId: goal.id, userId }),
   ]);
 
-  return { goal, lesson };
+  return { goal, lesson, plan };
 }
 
 test.describe("Today API", () => {
@@ -101,13 +103,15 @@ test.describe("Today API", () => {
   });
 
   test("offers a returning learner's last course, answered once", async () => {
-    const [{ api, userId }, stranger] = await Promise.all([
+    const [{ api, userId }, stranger, course] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "today-suggested" }),
       userFixture(),
+      courseFixture({ isPublished: true, title: "Physics", visibility: "public" }),
     ]);
 
+    // The course the learner was taking still exists, so apps start it instead of onboarding.
     const [suggestion, theirs] = await Promise.all([
-      suggestedGoalFixture({ title: "Physics", userId }),
+      suggestedGoalFixture({ courseId: course.id, title: "Physics", userId }),
       suggestedGoalFixture({ userId: stranger.id }),
     ]);
 
@@ -116,7 +120,14 @@ test.describe("Today API", () => {
     await expect(today.json()).resolves.toMatchObject({
       error: {
         code: "NO_ACTIVE_GOAL",
-        details: { suggestedGoal: { id: suggestion.id, status: "pending", title: "Physics" } },
+        details: {
+          suggestedGoal: {
+            courseId: course.id,
+            id: suggestion.id,
+            status: "pending",
+            title: "Physics",
+          },
+        },
       },
     });
 
@@ -127,7 +138,12 @@ test.describe("Today API", () => {
     expect(answered.status(), await answered.text()).toBe(200);
 
     expect(suggestedGoalResultSchema.parse(await answered.json())).toStrictEqual({
-      suggestedGoal: { id: suggestion.id, status: "accepted", title: "Physics" },
+      suggestedGoal: {
+        courseId: course.id,
+        id: suggestion.id,
+        status: "accepted",
+        title: "Physics",
+      },
     });
 
     const [again, others] = await Promise.all([
@@ -181,6 +197,68 @@ test.describe("Today API", () => {
     const againResponse = await api.get("/v1/today?timeZone=UTC");
     const again = todayResponseSchema.parse(await againResponse.json());
     expect(again.session.id).toBe(today.session.id);
+
+    await api.dispose();
+  });
+
+  test("shares exact saved mock funding and fractional budgets through Today and Plan", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "today-mock-funding" });
+    const { goal, plan } = await createExamGoal(userId);
+    const today = localDay("UTC");
+    const day = toIsoDay(today);
+    const mockDate = toIsoDay(new Date(today.getTime() + 10 * DAY_MS));
+
+    const contributions = [
+      { date: day, minutes: 30.125 },
+      { date: toIsoDay(new Date(today.getTime() + DAY_MS)), minutes: 29.625 },
+      { date: toIsoDay(new Date(today.getTime() + 7 * DAY_MS)), minutes: 30.125 },
+      { date: toIsoDay(new Date(today.getTime() + 8 * DAY_MS)), minutes: 30.125 },
+    ];
+
+    const funding = [{ contributions, date: mockDate, minutes: 165 }];
+
+    const [mock] = await Promise.all([
+      planItemFixture({
+        kind: "mock",
+        planId: plan.id,
+        position: 1,
+        scheduledFor: new Date(mockDate),
+        titleSnapshot: "Full mock",
+      }),
+      prisma.goal.update({
+        data: { dailyMinutes: 45, details: { placementDeclined: true } },
+        where: { id: goal.id },
+      }),
+      prisma.plan.update({
+        data: { settings: { mockFunding: funding, startDate: day } },
+        where: { id: plan.id },
+      }),
+    ]);
+
+    const response = await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
+    expect(response.status(), await response.text()).toBe(200);
+    const view = todayResponseSchema.parse(await response.json());
+    const expected = { mockDate, mockMinutes: 165, setAsideMinutes: 30.125 };
+
+    expect(view.mockFunding).toStrictEqual(expected);
+    expect(view.session.minutes.dailyGoal).toBe(14.875);
+    expect(Number.isInteger(view.session.week.time.targetMinutes)).toBe(false);
+
+    const planResponse = await api.get(`/v1/goals/${goal.id}/plan`);
+    expect(planResponse.status(), await planResponse.text()).toBe(200);
+    const planView = planResponseSchema.parse(await planResponse.json());
+
+    expect(planView.week.days.find((entry) => entry.date === day)).toMatchObject({
+      minutes: view.session.minutes.dailyGoal,
+      mockFunding: expected,
+    });
+
+    expect(planView.fundedMocks).toMatchObject([
+      { id: mock.id, kind: "mock", minutes: 165, scheduledFor: mockDate, status: "todo" },
+    ]);
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved.settings).toMatchObject({ mockFunding: funding });
 
     await api.dispose();
   });

@@ -1,6 +1,6 @@
 import { NativeAuthResponseError } from "@zoonk/auth/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createOneTimeTokenAction, validateTrustedOriginAction } from "./actions";
+import { createOneTimeTokenUrl, isTrustedRedirect } from "./handoff";
 
 const authMocks = vi.hoisted(() => ({
   generateOneTimeToken: vi.fn(),
@@ -23,9 +23,9 @@ describe("auth callback error handling", () => {
       new NativeAuthResponseError({ body: { message: "UNTRUSTED_ORIGIN" }, statusCode: 403 }),
     );
 
-    await expect(validateTrustedOriginAction(CALLBACK_URL)).resolves.toBe(false);
+    await expect(isTrustedRedirect(CALLBACK_URL)).resolves.toBe(false);
 
-    await expect(createOneTimeTokenAction(CALLBACK_URL)).resolves.toMatchObject({
+    await expect(createOneTimeTokenUrl(CALLBACK_URL)).resolves.toMatchObject({
       error: "UNTRUSTED_ORIGIN",
       success: false,
     });
@@ -41,21 +41,21 @@ describe("auth callback error handling", () => {
 
     authMocks.validateTrustedOrigin.mockRejectedValue(error);
 
-    await expect(validateTrustedOriginAction(CALLBACK_URL)).rejects.toBe(error);
+    await expect(isTrustedRedirect(CALLBACK_URL)).rejects.toBe(error);
   });
 
   it("propagates unexpected validation and token failures", async () => {
     const error = new Error("Authentication storage unavailable");
     authMocks.validateTrustedOrigin.mockRejectedValueOnce(error);
 
-    await expect(validateTrustedOriginAction(CALLBACK_URL)).rejects.toBe(error);
+    await expect(isTrustedRedirect(CALLBACK_URL)).rejects.toBe(error);
 
     authMocks.generateOneTimeToken.mockRejectedValue(error);
-    await expect(createOneTimeTokenAction(CALLBACK_URL)).rejects.toBe(error);
+    await expect(createOneTimeTokenUrl(CALLBACK_URL)).rejects.toBe(error);
   });
 
   it("preserves the return path and login state when adding the token", async () => {
-    await expect(createOneTimeTokenAction(CALLBACK_URL)).resolves.toStrictEqual({
+    await expect(createOneTimeTokenUrl(CALLBACK_URL)).resolves.toStrictEqual({
       success: true,
       url: `${CALLBACK_URL}&token=one-time-token`,
     });

@@ -1,8 +1,10 @@
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
+import { recoverOverdueLiveCallsStep } from "../calls/steps/live-call-recovery-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
+import { sweepCourseCopyStep } from "./steps/course-copy-sweep-step";
 import {
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
@@ -19,12 +21,14 @@ import {
 const MAX_GUEST_BATCHES = 20;
 
 export type DailySweepsResult = {
+  courseCopyRewrites: number;
   evaluationRunsPurged: number;
   flaggedContentStarted: boolean;
   freshnessChecks: number;
   guestsDeleted: number;
   itemsRecalibrated: number;
   laterReviews: number;
+  liveCallRecovery: Awaited<ReturnType<typeof recoverOverdueLiveCallsStep>> | null;
   memoryFactsPurged: number;
   retiredStepsDeleted: number;
   verificationsPurged: number;
@@ -92,26 +96,41 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
   // Each sweep stands alone: one failing doesn't keep the others from running.
-  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications] =
-    await Promise.allSettled([
-      checkFreshness(),
-      deleteGuests(),
-      purgeMemoryFactsStep(),
-      purgeEvaluationRunsStep(),
-      recalibrateItemDifficultiesStep(),
-      startLaterReviews(),
-      rewriteFlaggedContent(),
-      deleteRetiredStepsStep(),
-      purgeExpiredVerificationsStep(),
-    ]);
+  const [
+    checks,
+    guests,
+    facts,
+    runs,
+    items,
+    reviews,
+    flagged,
+    retired,
+    verifications,
+    courseCopy,
+    calls,
+  ] = await Promise.allSettled([
+    checkFreshness(),
+    deleteGuests(),
+    purgeMemoryFactsStep(),
+    purgeEvaluationRunsStep(),
+    recalibrateItemDifficultiesStep(),
+    startLaterReviews(),
+    rewriteFlaggedContent(),
+    deleteRetiredStepsStep(),
+    purgeExpiredVerificationsStep(),
+    sweepCourseCopyStep(),
+    recoverOverdueLiveCallsStep(),
+  ]);
 
   return {
+    courseCopyRewrites: countOf(courseCopy),
     evaluationRunsPurged: countOf(runs),
     flaggedContentStarted: flagged.status === "fulfilled" && flagged.value,
     freshnessChecks: countOf(checks),
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
     laterReviews: countOf(reviews),
+    liveCallRecovery: calls.status === "fulfilled" ? calls.value : null,
     memoryFactsPurged: countOf(facts),
     retiredStepsDeleted: countOf(retired),
     verificationsPurged: countOf(verifications),

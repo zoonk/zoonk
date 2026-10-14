@@ -29,7 +29,7 @@ async function createPreview(
   const result = await previewPlanChange({ goalId: path.data.goalId, input: body.data });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   return result.status === "ready" ? NextResponse.json(result.preview) : accessError(result.status);

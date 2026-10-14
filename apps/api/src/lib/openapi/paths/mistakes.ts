@@ -23,7 +23,7 @@ export const mistakePaths = {
   "/me/mistake-practice": {
     get: {
       description:
-        '"Practice mistakes": up to five open mistakes from earlier days, each with a drill chosen by its cause and the questions to answer, the original one first.',
+        '"Practice mistakes": up to five open mistakes from earlier days, each with a drill chosen by its cause and the questions to answer, the original one first. With `skillId`, "Practice this skill": only that skill\'s mistakes.',
       operationId: "getCurrentUserMistakePractice",
       requestParams: { query: mistakePracticeInputSchema },
       responses: {
@@ -67,7 +67,7 @@ export const mistakePaths = {
   "/me/mistakes": {
     get: {
       description:
-        "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters. Every entry keeps the question and answers as text.",
+        "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters and shared practice availability. Each entry preserves the original question, answers, context, picture, visual and shared passage or recording. Mistakes from today remain visible and become available to practice on the next learner-local day; only mistakes with usable drill material are offered for practice.",
       operationId: "listCurrentUserMistakes",
       requestParams: { query: mistakeListQuerySchema },
       responses: {

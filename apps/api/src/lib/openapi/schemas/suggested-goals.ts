@@ -3,9 +3,20 @@ import { z } from "zod";
 
 export const suggestedGoalSchema = z
   .object({
+    courseId: z
+      .uuid()
+      .nullable()
+      .meta({
+        description:
+          "The course to start on accepting (POST /v1/courses/{courseId}/goals), while anyone can still start it; null once it's gone, when apps open onboarding with the title",
+      }),
     id: z.uuid(),
     status: z.enum(SuggestedGoalStatus),
-    title: z.string().meta({ description: "The course's title, which onboarding opens with" }),
+    title: z
+      .string()
+      .meta({
+        description: "The course's title, which onboarding opens with when courseId is null",
+      }),
   })
   .meta({
     description:

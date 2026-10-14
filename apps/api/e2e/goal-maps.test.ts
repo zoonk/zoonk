@@ -228,6 +228,9 @@ test.describe("Goal maps API", () => {
 
     expect(map.next?.nextLevel).toMatchObject({ courseId: course.id, level: "beginner" });
 
+    // Finished, no phase is the one the learner is in: the map's own rule kept the last current.
+    expect(map.phases.map((phase) => phase.state)).toStrictEqual(["done"]);
+
     const response = await apiContext.post(`/v1/goals/${goal.id}/next-level`);
     expect(response.status()).toBe(201);
 
@@ -243,9 +246,9 @@ test.describe("Goal maps API", () => {
     await apiContext.dispose();
   });
 
-  // Missed days set the plan's last lesson aside: nothing is left to do, but the plan ended rather
-  // than finished, with what's next all the same, and the next level is the learner's choice.
-  test("ends a plan whose last lesson was set aside, with what's next and the next level", async () => {
+  // A plan without a date sets a lesson aside only when the Library couldn't write it: nothing is
+  // left for the learner, so it's finished, with what's next and the next level.
+  test("finishes a dateless plan whose last lesson was set aside, with what's next and the next level", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "maps-ended",
@@ -261,7 +264,7 @@ test.describe("Goal maps API", () => {
       schema: planResponseSchema,
     });
 
-    expect(plan.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
+    expect(plan.end).toStrictEqual({ kind: "finished" });
 
     const map = await readBody({
       response: await apiContext.get(`/v1/goals/${goal.id}/map`),
@@ -269,6 +272,11 @@ test.describe("Goal maps API", () => {
     });
 
     expect(map.next?.nextLevel).toMatchObject({ courseId: course.id, level: "beginner" });
+
+    // The map's phases read the plan's.
+    expect(map.phases.map((phase) => phase.state)).toStrictEqual(
+      plan.phases.map((phase) => phase.state),
+    );
 
     const response = await apiContext.post(`/v1/goals/${goal.id}/next-level`);
     expect(response.status()).toBe(201);

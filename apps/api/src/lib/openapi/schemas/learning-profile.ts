@@ -1,13 +1,6 @@
-import { BuddyGlasses, BuddyKind } from "@zoonk/db";
+import { learningBuddySchema } from "@zoonk/core/profile/contract";
+import { BuddyGlasses } from "@zoonk/db";
 import { z } from "zod";
-
-const buddySchema = z
-  .object({
-    glasses: z.enum(BuddyGlasses).meta({ description: "The buddy's glasses" }),
-    kind: z.enum(BuddyKind).meta({ description: "Which buddy" }),
-    name: z.string().nullable().meta({ description: "Custom name, or null for the buddy's own" }),
-  })
-  .meta({ id: "Buddy" });
 
 export const learningProfileSchema = z
   .object({
@@ -15,7 +8,7 @@ export const learningProfileSchema = z
     availableGlasses: z
       .array(z.enum(BuddyGlasses))
       .meta({ description: "Glasses the buddy can wear: round plus the earned ones" }),
-    buddy: buddySchema.nullable().meta({ description: "The learner's buddy, or null" }),
+    buddy: learningBuddySchema,
     dailyLimitMinutes: z
       .int()
       .nullable()

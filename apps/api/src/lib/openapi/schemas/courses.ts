@@ -25,11 +25,49 @@ export const courseListQuerySchema = z
 export const courseResultSchema = z
   .object({
     description: z.string().nullable().meta({ description: "Course description" }),
+    estimatedMinutes: z
+      .int()
+      .nonnegative()
+      .meta({
+        description:
+          "The estimated minutes of every lesson in the course's outline added up, as its page states its length",
+      }),
     id: z.uuid().meta({ description: "Course ID" }),
     imageUrl: z.string().nullable().meta({ description: "Cover image URL" }),
     language: z.string().meta({ description: "Language code" }),
+    lessonCount: z
+      .int()
+      .nonnegative()
+      .meta({
+        description: "Lessons in the course's outline; 0 while its lessons aren't written yet",
+      }),
     organization: organizationSummarySchema,
     slug: z.string().meta({ description: "URL slug" }),
     title: z.string().meta({ description: "Course title" }),
   })
   .meta({ id: "CourseResult" });
+
+export const courseCategoryCountsQuerySchema = z
+  .object({
+    language: z
+      .string()
+      .min(2, "Language code must be at least 2 characters")
+      .meta({ description: "Course language code", examples: ["en"] }),
+  })
+  .strict()
+  .meta({ id: "CourseCategoryCountsQuery" });
+
+export const courseCategoryCountsSchema = z
+  .object({
+    categories: z
+      .array(z.object({ category: z.enum(COURSE_CATEGORIES), courseCount: z.int().nonnegative() }))
+      .meta({ description: "Every category, with how many listed courses it has" }),
+    total: z
+      .int()
+      .nonnegative()
+      .meta({
+        description:
+          "Listed courses in the language; a course can sit in several categories, so it isn't their sum",
+      }),
+  })
+  .meta({ id: "CourseCategoryCounts" });

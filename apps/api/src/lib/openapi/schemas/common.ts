@@ -1,5 +1,6 @@
 import { numericEntrySchema, optionSelectSchema } from "@zoonk/ai/tasks/v2/items/schemas";
 import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { itemImageSchema } from "@zoonk/core/library/items/image";
 import { z } from "zod";
 
 export const errorSchema = z
@@ -48,15 +49,7 @@ export const itemCitationSchema = z
  * The picture a question is about (a diagram, a map, a geometry figure), drawn and checked before
  * the question was stored; null when the question shows none.
  */
-export const questionImageSchema = z
-  .object({
-    alt: z.string().meta({ description: "What the picture shows, for screen readers" }),
-    height: z.int().nullable(),
-    url: z.string(),
-    width: z.int().nullable(),
-  })
-  .meta({ description: "Show it with the question: its words point at it", id: "QuestionImage" })
-  .nullable();
+export const questionImageSchema = itemImageSchema.nullable();
 
 /**
  * A chart or timeline a question reads, drawn by the app from its data (the same shape lesson

@@ -11,6 +11,8 @@ import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
 import { checkpointPaths } from "./paths/checkpoints";
 import { contentGenerationPaths } from "./paths/content-generation";
+import { courseDetailsRegenerationPaths } from "./paths/course-details-regenerations";
+import { courseEstimatePaths } from "./paths/course-estimates";
 import { courseGoalPaths } from "./paths/course-goals";
 import { currentLearningPaths } from "./paths/current-learning";
 import { currentUserProgressPaths } from "./paths/current-user-progress";
@@ -32,6 +34,7 @@ import { learnerProfilePaths } from "./paths/learner-profile";
 import { lessonQuestionPaths } from "./paths/lesson-questions";
 import { lessonRegenerationPaths } from "./paths/lesson-regenerations";
 import { libraryLessonPaths } from "./paths/library-lessons";
+import { liveCallAdminPaths } from "./paths/live-calls";
 import { memoryPaths } from "./paths/memory";
 import { milestonePaths } from "./paths/milestones";
 import { mindMapPaths } from "./paths/mind-maps";
@@ -107,6 +110,8 @@ const paths = withInternalErrorResponses({
   ...checkpointPaths,
   ...contentGenerationPaths,
   ...courseGoalPaths,
+  ...courseDetailsRegenerationPaths,
+  ...courseEstimatePaths,
   ...currentLearningPaths,
   ...examPaths,
   ...generationPaths,
@@ -115,6 +120,7 @@ const paths = withInternalErrorResponses({
   ...languagePaths,
   ...languageGoalPaths,
   ...languageConversationPaths,
+  ...liveCallAdminPaths,
   ...pronunciationPaths,
   ...speechClipPaths,
   ...learnerProfilePaths,

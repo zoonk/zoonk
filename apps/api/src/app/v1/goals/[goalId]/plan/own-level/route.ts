@@ -41,4 +41,4 @@ async function updateOwnLevel(
   return NextResponse.json(result.ownLevel);
 }
 
-export const PUT = withApiErrorBoundary(updateOwnLevel);
+export const POST = withApiErrorBoundary(updateOwnLevel);

@@ -6,6 +6,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import {
   mistakePracticeCompletionSchema,
   mistakePracticeFeedbackSchema,
@@ -122,6 +123,15 @@ test.describe("Mistake practice API", () => {
 
     const { goal, lesson, mistake } = await createMistakeGoal({ cause: "gap", userId });
 
+    const day = await studySessionFixture({
+      goalId: goal.id,
+      missions: {
+        picks: [{ anchor: {}, kind: "fixMistake", opens: { kind: "mistakesPractice" }, total: 1 }],
+        version: 1,
+      },
+      userId,
+    });
+
     const practice = await readBody({
       response: await api.get(`/v1/me/mistake-practice?goalId=${goal.id}&timeZone=UTC`),
       schema: mistakePracticeResponseSchema,
@@ -159,7 +169,16 @@ test.describe("Mistake practice API", () => {
       schema: mistakePracticeCompletionSchema,
     });
 
-    expect(counted).toMatchObject({ brainPower: 2, correct: 1, total: 1 });
+    expect(counted).toMatchObject({
+      brainPower: 2,
+      correct: 1,
+      missionMoment: {
+        completed: ["fixMistake"],
+        fullMeal: { bonus: 50, paid: true },
+        missions: [{ kind: "fixMistake", status: "done" }],
+      },
+      total: 1,
+    });
 
     const again = await readBody({
       response: await api.post("/v1/me/mistake-practice/completions", { data: finish }),
@@ -168,13 +187,24 @@ test.describe("Mistake practice API", () => {
 
     expect(again).toStrictEqual(counted);
 
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
+    ).resolves.toMatchObject({
+      fullMealAt: expect.any(Date),
+      startSnapshot: { fullMealReward: { after: 52, before: 2 } },
+    });
+
+    await expect(
+      prisma.userProgress.findUniqueOrThrow({ where: { userId } }),
+    ).resolves.toMatchObject({ totalBrainPower: 52n });
+
     const [today, runs] = await Promise.all([
       prisma.dailyProgress.findFirstOrThrow({ where: { userId } }),
       prisma.learningEvent.findMany({ where: { lessonKind: "mistakePractice", userId } }),
     ]);
 
     expect(today).toMatchObject({
-      brainPowerEarned: 2,
+      brainPowerEarned: 52,
       correctAnswers: 1,
       interactiveCompleted: 1,
       timeSpentSeconds: counted.seconds,
@@ -189,6 +219,56 @@ test.describe("Mistake practice API", () => {
     expect(stolen.status()).toBe(422);
 
     await Promise.all([api.dispose(), stranger.api.dispose()]);
+  });
+
+  test("don't know preserves the notebook entry and never announces a correction", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-unknown" });
+    const { mistake } = await createMistakeGoal({ cause: "trap", userId });
+
+    const feedback = await readBody({
+      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
+        data: {
+          answer: { dontKnow: true },
+          durationMs: 100,
+          itemId: mistake.itemId,
+          timeZone: "UTC",
+        },
+      }),
+      schema: mistakePracticeFeedbackSchema,
+    });
+
+    expect(feedback).toMatchObject({
+      fixed: false,
+      isCorrect: false,
+      mistakeStatus: "open",
+      trap: null,
+    });
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
+    ).resolves.toMatchObject({ cause: "gap", status: "open" });
+
+    await api.dispose();
+  });
+
+  test("a correct practice answer never claims the learner fell for a trap", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-trap-correct" });
+    const { mistake } = await createMistakeGoal({ cause: "trap", userId });
+
+    const feedback = await readBody({
+      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
+        data: {
+          answer: { selectedIndex: 0 },
+          durationMs: 100,
+          itemId: mistake.itemId,
+          timeZone: "UTC",
+        },
+      }),
+      schema: mistakePracticeFeedbackSchema,
+    });
+
+    expect(feedback).toMatchObject({ isCorrect: true, trap: null });
+    await api.dispose();
   });
 
   test("plays today's mistake drill by its cause and names the trap", async () => {

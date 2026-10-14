@@ -35,6 +35,17 @@ describe(proxy, () => {
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
+  it("lets the apps read the server's clock from a stream's Date header", () => {
+    const request = new NextRequest(`${INTERNAL_API_ORIGIN}/v1/generations/run/events`, {
+      headers: { origin: "https://www.zoonk.com" },
+    });
+
+    const response = proxy(request);
+
+    expect(response.headers.get("access-control-allow-origin")).toBe("https://www.zoonk.com");
+    expect(response.headers.get("access-control-expose-headers")).toBe("Date");
+  });
+
   it("blocks cookie-authenticated API requests from a different origin", async () => {
     const request = new NextRequest(`${INTERNAL_API_ORIGIN}/v1/courses`, {
       headers: { cookie: "better-auth.session_token=test", origin: FOREIGN_ORIGIN },

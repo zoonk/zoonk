@@ -8,6 +8,12 @@ export const stepPathParamsSchema = z
 
 export const stepExampleLineSchema = z
   .object({
+    canRequest: z
+      .boolean()
+      .meta({
+        description:
+          "Whether asking for the line (POST) can write one: the screen has a slot, the learner shares facts, and none was written from them yet. False once written, even as null, and when the learner shares nothing. The learner's help allowance can still refuse the request.",
+      }),
     line: z
       .string()
       .nullable()

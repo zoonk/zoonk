@@ -29,7 +29,7 @@ async function createToolChoice(
   const result = await choosePlanTools({ goalId: path.data.goalId, input: body.data });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status !== "applied") {

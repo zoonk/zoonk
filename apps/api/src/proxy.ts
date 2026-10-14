@@ -5,10 +5,15 @@ import { isCorsAllowedOrigin } from "@zoonk/utils/origin";
 import { API_URL } from "@zoonk/utils/url";
 import { type NextRequest, NextResponse } from "next/server";
 
+/**
+ * `Date` is exposed so a wait following a run's events reads the server's clock, the one the
+ * events' times are on, to time the step running now.
+ */
 const corsHeaders = {
   "Access-Control-Allow-Credentials": "true",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Access-Control-Expose-Headers": "Date",
   "Access-Control-Max-Age": "86400",
 };
 

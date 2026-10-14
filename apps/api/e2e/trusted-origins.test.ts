@@ -42,7 +42,6 @@ test.describe("Trusted Origin Validation", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await page.waitForURL(/\/auth\/untrusted-origin/u);
 

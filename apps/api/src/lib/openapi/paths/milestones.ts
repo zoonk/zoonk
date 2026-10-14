@@ -19,7 +19,7 @@ export const milestonePaths = {
   "/me/buddy": {
     get: {
       description:
-        "The buddy's page: its Energy and whether it naps, is awake or glows, its stage and the Brain Power to the next one, today's missions, what it ate this week and the glasses. Learners without a buddy get the same numbers with `buddy` null.",
+        "The buddy's page: its Energy and whether it naps, is awake or glows, its stage and the Brain Power to the next one, today's missions, what it ate this week and the glasses. Learners without a saved choice get Zu with round glasses and picked false.",
       operationId: "getCurrentUserBuddy",
       requestParams: { query: buddyStatusInputSchema },
       responses: {

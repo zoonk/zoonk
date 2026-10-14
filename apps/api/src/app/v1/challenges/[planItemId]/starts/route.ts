@@ -9,9 +9,10 @@ import { studyBlockStartInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
- * Starts a challenge on its day and says where it's played. One the bank holds too few questions
- * for answers `QUESTIONS_NEEDED`: POST its generations, wait for the run to end, then start it
- * again with `afterWriting`.
+ * Starts a challenge on its day and says where it's played. A phase challenge held by earlier
+ * work answers `EARLIER_FIRST` with its reason. One the bank holds too few questions for answers
+ * `QUESTIONS_NEEDED`: POST its generations, wait for the run to end, then start it again with
+ * `afterWriting`.
  */
 async function startChallengeRoute(
   request: NextRequest,
@@ -37,7 +38,7 @@ async function startChallengeRoute(
 
   return result.status === "notToday"
     ? errors.conflict("It isn't in today's session")
-    : studySessionError({ status: result.status });
+    : studySessionError(result);
 }
 
 export const POST = withApiErrorBoundary(startChallengeRoute);

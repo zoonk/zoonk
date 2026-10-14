@@ -11,6 +11,7 @@ import {
 import { speakingSectionViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { missionMomentSchema } from "@zoonk/core/sessions/completion-contract";
 import { MistakeCause } from "@zoonk/db";
 import { z } from "zod";
 import {
@@ -194,6 +195,12 @@ export const mockViewResponseSchema = z
     goalId: z.uuid().nullable(),
     leftOut: mockLeftOutSchema,
     minutes: z.number().int(),
+    missionMoment: missionMomentSchema
+      .nullable()
+      .meta({
+        description:
+          "Once it's over: what it did to the day's missions, its own (a plan's mock completes the day's mock mission as it's handed in) and its speaking paper's calls', with the bonus when one of them did the last mission. Read from what settlement recorded, so every GET says it while that study day is the learner's (a reload, another device); null before it's over, when it completed none, and after that day",
+      }),
     mistakes: z.array(
       z.object({ cause: z.enum(MistakeCause).nullable(), count: z.number().int() }),
     ),
@@ -262,7 +269,12 @@ export const mockViewResponseSchema = z
           "Its speaking paper once the learner started its speaking section (POST /v1/mocks/{blockId}/speaking): each task a live call to open, and the paper's estimate once every task is graded, never an official score; null before and without one",
       }),
     startTime: clockTimeSchema.nullable(),
-    status: z.enum(["ready", "running", "finished"]),
+    status: z
+      .enum(["ready", "running", "finished", "expired"])
+      .meta({
+        description:
+          "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation: say so calmly and offer a new one (its challenge for the plan's mock, the goal's mocks for one taken any time). One mostly answered is graded as it stands; a placement mock never expires",
+      }),
     timeZone: z.string().nullable(),
     trueFalseLabels: trueFalseLabelsSchema,
   })
@@ -273,5 +285,12 @@ export const mockEssayGradesResponseSchema = z
   .meta({ id: "MockEssayGrades" });
 
 export const mockStepResponseSchema = z
-  .object({ status: z.enum(["next", "finished"]) })
+  .object({
+    status: z
+      .enum(["next", "finished", "expired"])
+      .meta({
+        description:
+          "`expired`: its time ran out while the learner was away, so nothing was handed in or graded (GET the mock to show it)",
+      }),
+  })
   .meta({ id: "MockStep" });

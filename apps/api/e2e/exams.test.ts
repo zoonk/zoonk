@@ -187,7 +187,7 @@ test.describe("Exams API", () => {
     expect(otherExam.status()).toBe(404);
   });
 
-  test("finishes a running mock early, counting unanswered questions as blank", async () => {
+  test("finishes a running mock early, counting unanswered questions as blank, and says the mission it completed", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "mock-finish" }),
       createBearerLearner({ baseURL, prefix: "mock-finish-other" }),
@@ -200,8 +200,26 @@ test.describe("Exams API", () => {
       schema: todayResponseSchema,
     });
 
-    const path = `/v1/mocks/${today.blocks.find((block) => block.checkpoint?.mock)?.id}`;
+    const mock = today.blocks.find((block) => block.checkpoint?.mock);
+    const path = `/v1/mocks/${mock?.id}`;
     const inUtc = { data: { timeZone: "UTC" } };
+
+    // Taking the plan's mock is the day's only mission.
+    await prisma.studySession.update({
+      data: {
+        missions: {
+          picks: [
+            {
+              anchor: { blockKind: "checkpoint", planItemId: mock?.planItemId },
+              kind: "mock",
+              total: 1,
+            },
+          ],
+          version: 1,
+        },
+      },
+      where: { id: today.id },
+    });
 
     const notStarted = await api.post(`${path}/finishes`, inUtc);
 
@@ -279,10 +297,21 @@ test.describe("Exams API", () => {
       "wrong",
     ]);
 
+    // Handing it in completed the day's last mission, and every read of it today says so.
+    expect(view.missionMoment).toMatchObject({
+      completed: ["mock"],
+      fullMeal: { bonus: 50, paid: true },
+      missions: [{ kind: "mock", status: "done" }],
+    });
+
     // A retried finish, after a dropped connection, reads as finished instead of failing.
     const retried = await api.post(`${path}/finishes`, inUtc);
 
     expect(retried.status()).toBe(200);
+
+    await expect(
+      readBody({ response: await api.get(path), schema: mockViewResponseSchema }),
+    ).resolves.toMatchObject({ missionMoment: view.missionMoment });
 
     // A weekly mock that asks no essay has none to grade.
     expect(view.essays).toStrictEqual([]);
@@ -295,6 +324,76 @@ test.describe("Exams API", () => {
     ).resolves.toStrictEqual({ status: "graded" });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("never scores a mock whose time ran out while the learner was away, and starts the plan's mock again", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-expired" });
+    const { goal } = await createExamGoal(userId);
+
+    const { session: today } = await readBody({
+      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+      schema: todayResponseSchema,
+    });
+
+    const path = `/v1/mocks/${today.blocks.find((block) => block.checkpoint?.mock)?.id}`;
+    const inUtc = { data: { timeZone: "UTC" } };
+
+    const started = await api.post(`${path}/starts`, inUtc);
+    expect(started.status()).toBe(204);
+
+    const running = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    const saved = await api.put(`${path}/answers`, {
+      data: {
+        answer: { selectedIndex: 0 },
+        durationMs: 5000,
+        flagged: false,
+        itemId: running.current?.questions[0]?.itemId,
+      },
+    });
+
+    expect(saved.status()).toBe(204);
+
+    // One answer, then three days away: its clock ran out long before anything handed it in.
+    await prisma.mockExam.updateMany({
+      data: { sectionStartedAt: new Date(Date.now() - 3 * DAY_MS) },
+      where: { userId },
+    });
+
+    await expect(
+      readBody({ response: await api.get(path), schema: mockViewResponseSchema }),
+    ).resolves.toMatchObject({ current: null, result: null, status: "expired" });
+
+    const handIns = await Promise.all([
+      readBody({
+        response: await api.post(`${path}/sections/0/submissions`, inUtc),
+        schema: mockStepResponseSchema,
+      }),
+      readBody({
+        response: await api.post(`${path}/finishes`, inUtc),
+        schema: mockStepResponseSchema,
+      }),
+    ]);
+
+    expect(handIns).toStrictEqual([{ status: "expired" }, { status: "expired" }]);
+
+    await expect(
+      prisma.learningEvent.count({ where: { goalId: goal.id, kind: "mock", userId } }),
+    ).resolves.toBe(0);
+
+    // The plan's mock starts again in a new sitting, its clock running from now.
+    const restarted = await api.post(`${path}/starts`, inUtc);
+    expect(restarted.status()).toBe(204);
+
+    const again = await readBody({ response: await api.get(path), schema: mockViewResponseSchema });
+
+    expect(again).toMatchObject({ current: { drafts: [] }, number: 1, status: "running" });
+    expect(Date.parse(again.current?.deadline ?? "")).toBeGreaterThan(Date.now());
+
+    await api.dispose();
   });
 
   test("takes a mock any time, then skips what it showed the learner knows once they say so", async () => {

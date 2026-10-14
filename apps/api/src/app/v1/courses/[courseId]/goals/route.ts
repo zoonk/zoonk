@@ -1,11 +1,13 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { startGoalGeneration } from "@/lib/goal-content";
+import { startGoalGeneration, startGoalWork } from "@/lib/goal-content";
 import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { goalRefusedError } from "@/lib/plan-errors";
+import { type GoalView } from "@zoonk/core/goals/contract";
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
+import { isResearchedCourseStart } from "@zoonk/core/goals/research";
 import { startCourseGoal } from "@zoonk/core/goals/start-course";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
@@ -13,9 +15,14 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** A run that couldn't start is logged; the client can start it again for that goal. */
-async function startCourseGoalGeneration(goal: Parameters<typeof startGoalGeneration>[0]["goal"]) {
-  const { error } = await safeAsync(() => startGoalGeneration({ goal }));
+/**
+ * Starts the goal's run, after research for an exam course nobody stored an exam for. A run that
+ * couldn't start is logged; the client can start it again for that goal.
+ */
+async function startCourseGoalGeneration(goal: GoalView) {
+  const { error } = await safeAsync(async () => {
+    await (isResearchedCourseStart(goal) ? startGoalWork([goal]) : startGoalGeneration({ goal }));
+  });
 
   if (error) {
     logError("[courseGoals] The goal's run didn't start:", error);

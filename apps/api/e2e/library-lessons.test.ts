@@ -7,7 +7,7 @@ import {
   libraryLessonCompletionSchema,
   libraryLessonRunSchema,
 } from "@zoonk/core/lesson-player/contract";
-import { lessonQuestionResourceSchema } from "@zoonk/core/lesson-questions/contract";
+import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -185,6 +185,55 @@ test.describe("Library lessons API", () => {
 
     expect([missing.status(), invalid.status()]).toStrictEqual([404, 400]);
     await api.dispose();
+  });
+
+  [null, "en"].forEach((targetLanguage) => {
+    test(`skips writing in one lesson (target: ${targetLanguage}) without an answer verdict or a permanent preference`, async () => {
+      const [{ api, userId }, { lesson, steps }] = await Promise.all([
+        createBearerLearner({ baseURL, prefix: "writing-skip" }),
+        playableLessonFixture({
+          lesson: { targetLanguage },
+          steps: ["typedAnswer", "typedAnswer", "summary"],
+        }),
+      ]);
+
+      const runId = await startRun({ api, lessonId: lesson.id });
+
+      const skippedWritingStepIds = steps
+        .filter((step) => step.kind === "typedAnswer")
+        .map((step) => step.id);
+
+      const response = await api.post(`/v1/library/lessons/${lesson.id}/completions`, {
+        data: { runId, skippedWritingStepIds },
+      });
+
+      const completion = await readBody({ response, schema: libraryLessonCompletionSchema });
+      expect(completion).toMatchObject({ correctCount: 0, incorrectCount: 0 });
+      expect(await prisma.attempt.count({ where: { userId } })).toBe(0);
+      expect(await prisma.mistake.count({ where: { userId } })).toBe(0);
+
+      expect(await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } })).toMatchObject({
+        contentIds: { lessonId: lesson.id, skippedWritingStepIds },
+        endedAt: expect.any(Date),
+      });
+
+      const repeated = await api.post(`/v1/library/lessons/${lesson.id}/completions`, {
+        data: { runId },
+      });
+
+      expect(
+        await readBody({ response: repeated, schema: libraryLessonCompletionSchema }),
+      ).toStrictEqual(completion);
+
+      const nextRun = await startRun({ api, lessonId: lesson.id });
+
+      const incomplete = await api.post(`/v1/library/lessons/${lesson.id}/completions`, {
+        data: { runId: nextRun },
+      });
+
+      expect(incomplete.status()).toBe(422);
+      await api.dispose();
+    });
   });
 
   test("plays a lesson from start to finish and counts it once", async () => {
@@ -458,7 +507,7 @@ test.describe("Library lessons API", () => {
       response: await guestApi.post(`/v1/lessons/${lesson.id}/questions`, {
         data: { context: { kind: "lesson" }, question: "Why?", requestId: randomUUID() },
       }),
-      schema: lessonQuestionResourceSchema,
+      schema: createdLessonQuestionSchema,
       status: 201,
     });
 

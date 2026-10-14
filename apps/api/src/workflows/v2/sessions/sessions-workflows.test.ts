@@ -539,10 +539,13 @@ describe(sessionPreparationWorkflow, () => {
     },
   );
 
-  it("writes a language goal's next checkpoint call ahead, so opening it never waits", async () => {
+  it("writes a Plus learner's next checkpoint call ahead, so opening it never waits", async () => {
     const { goal, plan, renting, user } = await languageGoalFixture();
 
     await Promise.all([
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
       planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
       prisma.languageSkillLevel.create({
         data: { language: "en", score: 2, skill: "speaking", startScore: 2, userId: user.id },

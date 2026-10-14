@@ -7,6 +7,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
+import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { laterReviewWorkflow } from "./later-review-workflow";
@@ -17,7 +18,7 @@ const [spec] = recordedOutput<{ lessons: object[] }>("lesson-spec").lessons;
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
 async function publishedLesson(summary: string) {
-  const lesson = await libraryLessonFixture({
+  const lesson = await recordedLessonFixture({
     contentStatus: "completed",
     level: "overview",
     spec,

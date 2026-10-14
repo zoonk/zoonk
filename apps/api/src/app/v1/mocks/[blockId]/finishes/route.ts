@@ -27,11 +27,11 @@ async function postFinish(
 
   const result = await finishMock({ blockId: path.data.blockId, input: body.data });
 
-  if (result.status !== "finished") {
+  if (result.status !== "finished" && result.status !== "expired") {
     return examError(result);
   }
 
-  return NextResponse.json({ status: "finished" });
+  return NextResponse.json({ status: result.status });
 }
 
 export const POST = withApiErrorBoundary(postFinish);

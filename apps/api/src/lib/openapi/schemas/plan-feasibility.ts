@@ -59,4 +59,10 @@ export const planFeasibilitySchema = z.object({
     .int()
     .nullable()
     .meta({ description: "Daily minutes that would cover everything in depth" }),
+  timeCovers: z
+    .boolean()
+    .meta({
+      description:
+        "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): offer `fitOffer` at their time, never another daily time. Don't infer it from recommendedMinutes: more time a day can cover less (a weekly mock takes a study day). False without a deadline",
+    }),
 });

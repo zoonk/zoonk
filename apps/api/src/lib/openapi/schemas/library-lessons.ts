@@ -66,6 +66,14 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
           "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
       }),
     kind: z.literal(kind),
+    pictureWaitStartedAt: z
+      .number()
+      .int()
+      .optional()
+      .meta({
+        description:
+          "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
+      }),
   });
 }
 

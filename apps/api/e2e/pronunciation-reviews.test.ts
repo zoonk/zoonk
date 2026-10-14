@@ -7,6 +7,7 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
@@ -155,6 +156,15 @@ test.describe("Pronunciation reviews API", () => {
     const { goal, review } = await learnerWithReviews(user.id);
     const roundId = randomUUID();
 
+    const day = await studySessionFixture({
+      goalId: goal.id,
+      missions: {
+        picks: [{ anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 }],
+        version: 1,
+      },
+      userId: user.id,
+    });
+
     await Promise.all(
       [true, false].map((isCorrect) =>
         attemptFixture({
@@ -167,7 +177,7 @@ test.describe("Pronunciation reviews API", () => {
       ),
     );
 
-    const body = { goalId: goal.id, timeZone: "America/Sao_Paulo" };
+    const body = { goalId: goal.id, timeZone: "UTC" };
 
     const first = await apiContext.post(`/v1/pronunciation-rounds/${roundId}/completions`, {
       data: body,
@@ -182,7 +192,36 @@ test.describe("Pronunciation reviews API", () => {
     });
 
     expect(first.status()).toBe(200);
-    expect(await first.json()).toMatchObject({ correct: 1, total: 2 });
+
+    expect(await first.json()).toMatchObject({
+      brainPower: 2,
+      correct: 1,
+      missionMoment: {
+        completed: ["pronunciation"],
+        fullMeal: { bonus: 50, paid: true },
+        missions: [{ kind: "pronunciation", status: "done" }],
+      },
+      total: 2,
+    });
+
+    await expect(
+      prisma.learningEvent.findMany({
+        select: { brainPower: true },
+        where: { lessonKind: "pronunciationReview", userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ brainPower: 2 }]);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
+    ).resolves.toMatchObject({
+      fullMealAt: expect.any(Date),
+      startSnapshot: { fullMealReward: { after: 52, before: 2 } },
+    });
+
+    await expect(
+      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ totalBrainPower: 52n });
+
     expect(await again.json()).toStrictEqual(await first.json());
     expect(empty.status()).toBe(422);
 

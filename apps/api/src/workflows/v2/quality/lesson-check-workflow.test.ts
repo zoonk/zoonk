@@ -6,13 +6,11 @@ import { writeLessonContent } from "@zoonk/core/library/lessons/write-content";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
+import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
+import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
@@ -65,7 +63,7 @@ async function publishedLesson() {
     userFixture(),
   ]);
 
-  const lesson = await libraryLessonFixture({
+  const lesson = await recordedLessonFixture({
     contentRunId: workflowRunId,
     contentStatus: "running",
     homeChapterId: chapter.id,

@@ -182,7 +182,7 @@ export const mockPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: mockStepResponseSchema } },
-          description: "Finished",
+          description: "Finished, or expired (its time ran out while the learner was away)",
         },
         ...commonErrors,
         "409": { ...conflictResponse, description: "The mock isn't running" },
@@ -217,7 +217,7 @@ export const mockPaths = {
   "/mocks/{blockId}/starts": {
     post: {
       description:
-        "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts.",
+        "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts. The plan's mock whose time ran out while the learner was away starts again in a new sitting; one taken any time stays expired (`MOCK_EXPIRED`): start a new one from the goal's mocks.",
       operationId: "startMock",
       requestBody: {
         content: { "application/json": { schema: mockTimeZoneInputSchema } },
@@ -228,7 +228,10 @@ export const mockPaths = {
         "204": { description: "Running" },
         ...commonErrors,
         "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
-        "409": { ...conflictResponse, description: "The mock or its block already finished" },
+        "409": {
+          ...conflictResponse,
+          description: "The mock or its block already finished, or the mock expired",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Start a mock exam",

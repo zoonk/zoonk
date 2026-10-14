@@ -5,15 +5,16 @@ import {
   OTPError,
   OTPForm as OTPFormContainer,
   OTPInput,
+  OTPLinks,
   OTPSubmit,
+  OTP_LINK_CLASS,
 } from "@/components/otp";
 import { authClient } from "@zoonk/auth/client";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { getCallbackHref } from "../_utils/auth-redirect";
 import { ChangeEmailLink } from "./change-email-link";
 
@@ -95,7 +96,7 @@ function ResendMessage({ email, status }: { email: string; status: ResendStatus 
 
   if (status === "rateLimited" || status === "failed") {
     return (
-      <p className="text-destructive text-sm" role="alert">
+      <p className="text-destructive-text text-sm" role="alert">
         {status === "rateLimited"
           ? t("Wait a minute before asking for another code.")
           : t("We couldn't send a new code. Try again.")}
@@ -132,17 +133,18 @@ function useResendCode(email: string) {
 }
 
 export function OTPForm({ email, redirectTo }: { email: string; redirectTo: string | null }) {
-  const router = useRouter();
   const t = useExtracted();
+  const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<OTPStatus>("idle");
   const [codeRound, setCodeRound] = useState(0);
   const resendCode = useResendCode(email);
   const isCodeGone = needsNewCode(status);
+  const isChecking = status === "pending";
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isCodeGone) {
+    if (isCodeGone || isChecking) {
       return;
     }
 
@@ -162,8 +164,9 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
       return;
     }
 
-    setStatus("idle");
-    router.push(getCallbackHref(redirectTo));
+    // A full load, not a client navigation: the router may still hold the callback as it rendered
+    // before sign-in (no session), which sent the learner back to the email form on the first try.
+    globalThis.location.assign(getCallbackHref(redirectTo));
   };
 
   /** A new code starts a clean try: an empty input and no old error. */
@@ -175,13 +178,15 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   };
 
   return (
-    <OTPFormContainer onSubmit={handleSubmit}>
-      {/* Focused on arrival (and after a new code), so the code can be typed or pasted right away. */}
+    <OTPFormContainer onSubmit={handleSubmit} ref={formRef}>
+      {/* Focused on arrival (and after a new code), so the code can be typed or pasted right away.
+          The sixth digit sends it; Continue stays for the keyboard and for a try after an error. */}
       <OTPInput
         aria-label={t("Code from the email")}
         autoFocus
         disabled={isCodeGone}
         key={codeRound}
+        onComplete={() => formRef.current?.requestSubmit()}
       />
       <OTPErrorMessage status={status} />
       <ResendMessage email={email} status={resendCode.status} />
@@ -189,31 +194,37 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
       <OTPActions>
         {isCodeGone ? (
           <Button
-            className="w-full"
+            className="w-full font-[560]"
             disabled={resendCode.status === "sending"}
             onClick={sendNewCode}
+            size="lg"
             type="button"
           >
             {t("Send a new code")}
           </Button>
         ) : (
-          <OTPSubmit isLoading={status === "pending"}>{t("Continue")}</OTPSubmit>
+          <OTPSubmit isLoading={isChecking}>{t("Continue")}</OTPSubmit>
         )}
+      </OTPActions>
 
+      <OTPLinks>
         {!isCodeGone && (
-          <Button
-            className="text-muted-foreground"
-            disabled={resendCode.status === "sending"}
-            onClick={sendNewCode}
-            type="button"
-            variant="ghost"
-          >
-            {t("Didn't get it? Send a new code")}
-          </Button>
+          <>
+            {t("Didn't get it?")}
+            <button
+              className={OTP_LINK_CLASS}
+              disabled={resendCode.status === "sending"}
+              onClick={sendNewCode}
+              type="button"
+            >
+              {t("Send again")}
+            </button>
+            <span aria-hidden="true">{" · "}</span>
+          </>
         )}
 
         <ChangeEmailLink redirectTo={redirectTo}>{t("Change email")}</ChangeEmailLink>
-      </OTPActions>
+      </OTPLinks>
     </OTPFormContainer>
   );
 }

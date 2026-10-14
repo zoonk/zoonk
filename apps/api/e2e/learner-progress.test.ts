@@ -135,10 +135,10 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
     dailyProgressFixtureMany([
       {
         brainPowerEarned: 500,
-        correctAnswers: 3,
+        correctAnswers: 9,
         date: today,
         energyAtEnd: 80,
-        incorrectAnswers: 1,
+        incorrectAnswers: 3,
         interactiveCompleted: 1,
         lessonsCompleted: 1,
         staticCompleted: 1,
@@ -156,8 +156,9 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
         userId: otherUser.id,
       },
     ]),
+    // Enough answers in the day and the morning to be named the strongest (core's minimum).
     learningEventFixture({
-      correctAnswers: 1,
+      correctAnswers: 10,
       endedAt: today,
       hour: 9,
       localDate: today,
@@ -275,10 +276,10 @@ test.describe("Learner Progress API", () => {
       activity: { learningDays: 1, totalLearningSeconds: 120, totalLessonCompletions: 1 },
       energy: { currentEnergy: 80 },
       level: { belt: "orange", level: 8, totalBrainPower: 15_000 },
-      score: { correctAnswers: 3, incorrectAnswers: 1, score: 75, totalAnswers: 4 },
+      score: { correctAnswers: 9, incorrectAnswers: 3, score: 75, totalAnswers: 12 },
       scorePatterns: {
-        strongestTime: { period: "morning", totalAnswers: 1 },
-        strongestWeekday: { dayOfWeek: WEEKDAYS[today.getUTCDay()], totalAnswers: 4 },
+        strongestTime: { period: "morning", totalAnswers: 10 },
+        strongestWeekday: { dayOfWeek: WEEKDAYS[today.getUTCDay()], totalAnswers: 12 },
       },
     });
 
@@ -298,7 +299,7 @@ test.describe("Learner Progress API", () => {
     expect(energyBody.energy?.days.at(-1)?.date).toMatch(LOGICAL_DATE_PATTERN);
     expect(levelBody.level).toMatchObject({ belt: "orange", level: 8, totalBrainPower: 15_000 });
     expect(levelBody.level).not.toHaveProperty("color");
-    expect(scoreBody.score).toMatchObject({ score: 75, totalAnswers: 4 });
+    expect(scoreBody.score).toMatchObject({ score: 75, totalAnswers: 12 });
     expect(scoreBody.score?.periodStart).toMatch(LOGICAL_DATE_PATTERN);
     expect(scoreBody.score?.periodEnd).toMatch(LOGICAL_DATE_PATTERN);
     expect(scoreBody.score?.dataPoints.at(-1)?.date).toMatch(LOGICAL_DATE_PATTERN);
@@ -319,7 +320,7 @@ test.describe("Learner Progress API", () => {
 
     expect(patternsBody.patterns?.strongestTime).toMatchObject({
       period: "morning",
-      totalAnswers: 1,
+      totalAnswers: 10,
     });
 
     await Promise.all([apiContext.dispose(), cookieContext.dispose()]);

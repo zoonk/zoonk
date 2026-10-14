@@ -3,7 +3,6 @@ import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { EXAM_DAY_CHECKLIST_KEYS, EXAM_STAGES } from "@zoonk/core/exams/final-stretch/rules";
 import {
   MOCK_PURPOSES,
-  MOCK_SCORINGS,
   mockShapeSchema,
   netCalibrationSchema,
 } from "@zoonk/core/exams/mocks/contract";
@@ -18,6 +17,7 @@ import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/cont
 import { TOPIC_FREQUENCY_LEVELS } from "@zoonk/core/library/exams/blueprint-contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { z } from "zod";
+import { examMockSummarySchema } from "./exam-mock-summary";
 import { examMockProgressSchema } from "./exam-progress";
 import { examScoringSchema } from "./exam-scoring";
 import { noSittingSchema, noticeDaySchema } from "./notice-dates";
@@ -182,40 +182,7 @@ export const examViewResponseSchema = z
       }),
     goalId: z.uuid(),
     map: examMapSchema.nullable(),
-    mocks: z.array(
-      z.object({
-        blockId: z
-          .uuid()
-          .nullable()
-          .meta({
-            description:
-              "The id its result opens by (GET /v1/mocks/{blockId}): its session block's for a mock the plan scheduled, its own for one taken any time",
-          }),
-        correct: z.number().int().min(0),
-        examQuestions: z
-          .number()
-          .int()
-          .min(0)
-          .nullable()
-          .meta({
-            description:
-              "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones): say how many it asked of them. Null when it asked them all",
-          }),
-        finishedAt: z.iso.datetime(),
-        measure: z
-          .number()
-          .meta({ description: "The IRT score, the net score or the percent right, by scoring" }),
-        number: z.number().int().min(1),
-        purpose: z
-          .enum(MOCK_PURPOSES)
-          .meta({ description: "The plan's weekly mock, one taken any time, or placement" }),
-        scoring: z.enum(MOCK_SCORINGS),
-        shape: mockShapeSchema
-          .nullable()
-          .meta({ description: "What a mock taken any time sat; null for the plan's" }),
-        total: z.number().int().min(0),
-      }),
-    ),
+    mocks: z.array(examMockSummarySchema),
     mocksRequirePlus: z
       .boolean()
       .meta({
@@ -242,7 +209,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The plan's next mock exam, also when the learner's plan doesn't include mocks (`mocksRequirePlus`); null when the next checkpoint isn't one",
+          "The plan's next mock exam, also when the learner's plan doesn't include mocks (`mocksRequirePlus`); null when the next checkpoint isn't one, or when it's a mock running (its `runningMocks` row stands for it)",
       }),
     noSitting: noSittingSchema,
     noticeDay: noticeDaySchema,
@@ -265,6 +232,51 @@ export const examViewResponseSchema = z
           "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`): show it locked, never hidden",
       }),
     result: examResultResponseSchema.nullable(),
+    runningMocks: z
+      .array(
+        z.object({
+          answered: z
+            .number()
+            .int()
+            .min(0)
+            .meta({ description: "Its questions with an answer so far, essays included" }),
+          deadline: z.iso
+            .datetime()
+            .nullable()
+            .meta({
+              description:
+                "When the clock of the section it's on runs out: the one the learner sees on opening it, the next section's once a break ends. Past it, the mock waits to be handed in. Null once every section is handed in and it only waits to be graded",
+            }),
+          id: z
+            .uuid()
+            .meta({
+              description:
+                "The id it opens by (GET /v1/mocks/{blockId}): its session block's for the plan's weekly mock, its own for one taken any time",
+            }),
+          number: z
+            .number()
+            .int()
+            .min(1)
+            .meta({
+              description: 'Its place among the goal\'s mocks, as it names itself: "Mock exam 2"',
+            }),
+          purpose: z
+            .enum(MOCK_PURPOSES)
+            .meta({ description: "The plan's weekly mock, one taken any time, or placement" }),
+          questions: z
+            .number()
+            .int()
+            .min(0)
+            .meta({ description: "Its questions, essays included" }),
+          shape: mockShapeSchema
+            .nullable()
+            .meta({ description: "What a mock taken any time sits; null for the plan's" }),
+        }),
+      )
+      .meta({
+        description:
+          "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it. Lead the exam's mocks with them, with what's answered and the time left, each opening its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't",
+      }),
     scoring: examScoringSchema,
     sessionsDone: z.number().int().min(0),
     speaking: speakingPaperViewSchema
@@ -279,6 +291,9 @@ export const examViewResponseSchema = z
         description:
           "IELTS and TOEFL iBT goals: the exam whose speaking test runs as a live call (POST /v1/language-conversations with kind speakingMock); null for other exams",
       }),
+    speakingMockPaused: z
+      .boolean()
+      .meta({ description: "The speaking mock cannot start while live calls are paused" }),
     stage: z.enum(EXAM_STAGES),
     targetScore: z
       .string()

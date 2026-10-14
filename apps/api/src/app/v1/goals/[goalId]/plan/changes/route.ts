@@ -34,7 +34,7 @@ async function createChange(
   const result = await changeGoalPlan({ goalId: path.data.goalId, input: body.data });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status === "unchanged") {

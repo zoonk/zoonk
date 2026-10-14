@@ -1,8 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -12,6 +17,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { start } from "workflow/api";
 import { getStartMock } from "../../_test-utils/start-mock";
+import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -50,6 +56,33 @@ async function missedQuestionFixture() {
 }
 
 describe(dailySweepsWorkflow, () => {
+  it("starts copy-only refreshes from the existing system sweep", async () => {
+    const [course, chapter] = await Promise.all([
+      courseFixture({
+        detailsGeneratedAt: new Date(1),
+        detailsPromptVersion: "old-sweep-copy",
+        landingPage: { audience: [], outcomes: [], valueProposition: "Old copy" },
+        visibility: "public",
+      }),
+      libraryChapterFixture(),
+    ]);
+
+    await courseChapterFixture({ chapterId: chapter.id, courseId: course.id });
+
+    try {
+      const result = await dailySweepsWorkflow();
+      expect(result.courseCopyRewrites).toBeGreaterThan(0);
+
+      expect(start).toHaveBeenCalledWith(
+        courseDetailsWorkflow,
+        [{ copyOnly: true, courseId: course.id }],
+        { attributes: { courseId: course.id } },
+      );
+    } finally {
+      await prisma.course.delete({ where: { id: course.id } });
+    }
+  });
+
   // What each sweep deletes, keeps or recalibrates is core's (each sweep's own test); this run
   // shows they all run and what each one counts.
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {

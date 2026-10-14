@@ -22,7 +22,7 @@ test.describe("Learning profile API", () => {
     await api.dispose();
   });
 
-  test("starts empty and saves the buddy and settings", async () => {
+  test("starts with Zu and saves the buddy and settings", async () => {
     const { api } = await createBearerLearner({ baseURL, prefix: "profile" });
 
     const initial = await api.get("/v1/me/learning-profile");
@@ -32,7 +32,7 @@ test.describe("Learning profile API", () => {
       profile: {
         activeGoalId: null,
         availableGlasses: ["round"],
-        buddy: null,
+        buddy: { glasses: "round", kind: "zu", name: null, picked: false },
         dailyLimitMinutes: null,
         soundsEnabled: true,
       },
@@ -45,7 +45,10 @@ test.describe("Learning profile API", () => {
     expect(updated.status()).toBe(200);
 
     await expect(updated.json()).resolves.toMatchObject({
-      profile: { buddy: { glasses: "round", kind: "beep", name: "Bip" }, soundsEnabled: false },
+      profile: {
+        buddy: { glasses: "round", kind: "beep", name: "Bip", picked: true },
+        soundsEnabled: false,
+      },
     });
 
     const limited = await api.patch("/v1/me/learning-profile", { data: { dailyLimitMinutes: 40 } });
@@ -53,6 +56,12 @@ test.describe("Learning profile API", () => {
 
     const timeLimit = await api.get("/v1/me/daily-time-limit");
     await expect(timeLimit.json()).resolves.toMatchObject({ limitMinutes: 40, reached: false });
+
+    const reset = await api.patch("/v1/me/learning-profile", { data: { buddy: null } });
+
+    await expect(reset.json()).resolves.toMatchObject({
+      profile: { buddy: { glasses: "round", kind: "zu", name: null, picked: false } },
+    });
 
     await api.dispose();
   });

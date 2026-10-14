@@ -37,6 +37,33 @@ export const goalChapterPathParamsSchema = goalPathParamsSchema
   .extend({ chapterId: z.uuid().meta({ description: "Library chapter ID in the goal's plan" }) })
   .meta({ id: "GoalChapterPathParams" });
 
+export const itemPathParamsSchema = z
+  .object({
+    itemId: z
+      .uuid()
+      .meta({
+        description:
+          "A question of the item bank, as a study session's block or mistakes practice asks it (`itemId`)",
+      }),
+  })
+  .meta({ id: "ItemPathParams" });
+
+/** Longer than any syllabus subject's key, which is its name made URL-safe. */
+const MAX_SUBJECT_KEY_LENGTH = 200;
+
+export const goalSubjectPathParamsSchema = goalPathParamsSchema
+  .extend({
+    subjectKey: z
+      .string()
+      .trim()
+      .min(1)
+      .max(MAX_SUBJECT_KEY_LENGTH)
+      .meta({
+        description: "A subject's `key` in the goal's syllabus (`GET /v1/goals/{goalId}/syllabus`)",
+      }),
+  })
+  .meta({ id: "GoalSubjectPathParams" });
+
 export const goalSkillPathParamsSchema = goalPathParamsSchema
   .extend({
     skillId: z

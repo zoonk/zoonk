@@ -57,6 +57,29 @@ describe(courseDetailsWorkflow, () => {
     } as never);
   });
 
+  it("writes copy only without generating a missing icon for an admin refresh", async () => {
+    const { course } = await outlinedCourse();
+
+    await expect(
+      courseDetailsWorkflow({ copyOnly: true, courseId: course.id }),
+    ).resolves.toStrictEqual({ details: "written", iconUrl: null });
+
+    const stored = await prisma.course.findUniqueOrThrow({
+      include: { categories: true },
+      where: { id: course.id },
+    });
+
+    expect(stored).toMatchObject({
+      categories: [],
+      description: null,
+      landingPage: details.landingPage,
+    });
+
+    expect(generateCourseDetails).toHaveBeenCalledOnce();
+    expect(generateCourseIcon).not.toHaveBeenCalled();
+    expect(uploadImage).not.toHaveBeenCalled();
+  });
+
   it("writes a new course's details, then draws its icon", async () => {
     const { course } = await outlinedCourse();
 

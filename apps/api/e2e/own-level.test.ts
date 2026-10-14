@@ -51,10 +51,10 @@ test.describe("Own level API", () => {
     const { goal } = await createGoal(owner.id);
 
     const [unauthorized, hidden, missing, invalid] = await Promise.all([
-      anonymous.put(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "basic" } }),
-      apiContext.put(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "basic" } }),
-      apiContext.put(`/v1/goals/${randomUUID()}/plan/own-level`, { data: { level: "basic" } }),
-      apiContext.put(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "expert" } }),
+      anonymous.post(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "basic" } }),
+      apiContext.post(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "basic" } }),
+      apiContext.post(`/v1/goals/${randomUUID()}/plan/own-level`, { data: { level: "basic" } }),
+      apiContext.post(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "expert" } }),
     ]);
 
     expect(
@@ -72,7 +72,17 @@ test.describe("Own level API", () => {
 
     const { chapters, goal } = await createGoal(user.id);
 
-    const raise = await apiContext.put(`/v1/goals/${goal.id}/plan/own-level`, {
+    const [read, oldMutation] = await Promise.all([
+      apiContext.get(`/v1/goals/${goal.id}/plan/own-level`),
+      apiContext.put(`/v1/goals/${goal.id}/plan/own-level`, { data: { level: "advanced" } }),
+    ]);
+
+    expect([read.status(), oldMutation.status()]).toStrictEqual([405, 405]);
+
+    const untouched = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(untouched.details).toMatchObject({ level: "basic" });
+
+    const raise = await apiContext.post(`/v1/goals/${goal.id}/plan/own-level`, {
       data: { level: "advanced", timeZone: "UTC" },
     });
 
@@ -85,7 +95,7 @@ test.describe("Own level API", () => {
       testOuts: chapters.map((chapter) => ({ chapterId: chapter.id, title: chapter.title })),
     });
 
-    const lowered = await apiContext.put(`/v1/goals/${goal.id}/plan/own-level`, {
+    const lowered = await apiContext.post(`/v1/goals/${goal.id}/plan/own-level`, {
       data: { level: "none" },
     });
 

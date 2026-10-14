@@ -40,7 +40,7 @@ async function editGoal(request: NextRequest, context: RouteContext<"/v1/goals/[
   const result = await updateGoal({ goalId: path.data.goalId, input: body.data });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status === "limitReached") {

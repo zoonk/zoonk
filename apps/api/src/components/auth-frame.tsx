@@ -1,10 +1,14 @@
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
+import { ArrowLeftIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
+/** The product's name, the same in every language. */
+const BRAND_NAME = "Zoonk";
+
 /**
- * Every sign-in page as one centered unit: the brain on top, which also goes back to the app the
- * learner came from (`appUrl`, so leaving sign-in is always one tap), then the page's one step. From
- * tablets up the unit sits on a card, so it never floats in an empty screen.
+ * Every sign-in page as one centered column on the page itself, as Linear and Vercel draw theirs:
+ * the brain on top, then the page's one step. The way back to the app the learner came from
+ * (`appUrl`) says so in the top-left corner, so leaving sign-in is always one tap.
  */
 export async function AuthFrame({
   appUrl,
@@ -16,15 +20,20 @@ export async function AuthFrame({
   const t = await getExtracted();
 
   return (
-    <div className="sm:bg-background flex w-full max-w-sm flex-col items-center gap-6 sm:max-w-[440px] sm:rounded-[28px] sm:p-10 sm:shadow-[0_0_0_1px_rgb(0_0_0/0.04),0_1px_2px_rgb(0_0_0/0.04),0_16px_40px_-16px_rgb(0_0_0/0.16)] sm:dark:shadow-[0_0_0_1px_rgb(255_255_255/0.1)]">
+    <>
       <a
-        className="focus-visible:ring-ring/50 -m-2 rounded-2xl p-2 outline-none focus-visible:ring-[3px]"
+        aria-label={t("Back to Zoonk")}
+        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 absolute top-3 left-2 inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-5 sm:left-5"
         href={appUrl}
       >
-        <ZoonkLogo className="size-10" label={t("Back to Zoonk")} />
+        <ArrowLeftIcon aria-hidden="true" className="size-4" />
+        {BRAND_NAME}
       </a>
 
-      {children}
-    </div>
+      <div className="flex w-full max-w-[360px] flex-col items-center gap-6">
+        <ZoonkLogo className="size-8" />
+        {children}
+      </div>
+    </>
   );
 }

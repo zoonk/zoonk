@@ -341,24 +341,47 @@ test.describe("Learner model API", () => {
 
     const { goal, items, skills } = await createGoal(user.id);
 
-    const mistake = await mistakeFixture({
-      cause: "misread",
-      createdAt: YESTERDAY,
-      itemId: items[0]?.id,
-      skillId: skills[0]?.id,
-      userId: user.id,
-    });
+    const [mistake, todayMistake] = await Promise.all([
+      mistakeFixture({
+        cause: "misread",
+        createdAt: YESTERDAY,
+        itemId: items[0]?.id,
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        cause: "misread",
+        createdAt: new Date(),
+        itemId: items[0]?.id,
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+    ]);
 
     const notebook = await readBody({
       response: await apiContext.get(`/v1/me/mistakes?goalId=${goal.id}&status=open`),
       schema: mistakeListResponseSchema,
     });
 
-    expect(notebook.data.map((entry) => entry.id)).toStrictEqual([mistake.id]);
-    expect(notebook.counts.byCause.misread).toBe(1);
+    expect(notebook.data.map((entry) => entry.id)).toStrictEqual([todayMistake.id, mistake.id]);
+    expect(notebook.counts.byCause.misread).toBe(2);
+    expect(notebook.availability).toStrictEqual({ ready: 1, tomorrow: 1 });
 
+    expect(notebook.data[0]).toMatchObject({
+      practiceAvailable: false,
+      practiceAvailableTomorrow: true,
+    });
+
+    expect(notebook.data[1]).toMatchObject({
+      practiceAvailable: true,
+      practiceAvailableTomorrow: false,
+    });
+
+    // "Practice this skill": only the skill's mistakes.
     const practice = await readBody({
-      response: await apiContext.get("/v1/me/mistake-practice?timeZone=UTC"),
+      response: await apiContext.get(
+        `/v1/me/mistake-practice?skillId=${skills[0]?.id}&timeZone=UTC`,
+      ),
       schema: mistakePracticeResponseSchema,
     });
 
@@ -384,6 +407,14 @@ test.describe("Learner model API", () => {
       isCorrect: true,
       mistakeStatus: "fixed",
     });
+
+    const after = await readBody({
+      response: await apiContext.get(`/v1/me/mistakes?goalId=${goal.id}&status=open`),
+      schema: mistakeListResponseSchema,
+    });
+
+    expect(after.availability).toStrictEqual({ ready: 0, tomorrow: 1 });
+    expect(after.data.map((entry) => entry.id)).toStrictEqual([todayMistake.id]);
 
     await apiContext.dispose();
   });

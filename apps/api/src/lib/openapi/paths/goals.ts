@@ -6,6 +6,7 @@ import {
   goalUpdateResponseSchema,
 } from "../schemas/goals";
 import { goalPathParamsSchema } from "../schemas/paths";
+import { planDateChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   guestRefusalResponse,
   notFoundResponse,
@@ -55,7 +56,11 @@ export const goalPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "403": guestRefusalResponse,
-        "422": unprocessableEntityResponse,
+        "422": {
+          ...unprocessableEntityResponse,
+          description:
+            "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today. A range refusal writes no goal or plan; details give the nearest accepted date.",
+        },
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -78,7 +83,7 @@ export const goalPaths = {
     },
     patch: {
       description:
-        "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals, and archiving the goal the tabs show moves them to another active goal.",
+        "Edits a goal. A new daily time, study days or date re-plans from today (past work never moves) and returns the plan change, which can be undone. Status pauses, resumes, archives or completes the goal: resuming counts against the learner's active goals and keeps the plan unless the pause left lessons on days now past, when it plans again from today and returns that change (`GET /goals/{goalId}/plan/resume-preview` shows it first); archiving the goal the tabs show moves them to another active goal.",
       operationId: "updateGoal",
       requestBody: {
         content: { "application/json": { schema: goalUpdateInputSchema } },
@@ -91,7 +96,7 @@ export const goalPaths = {
           content: { "application/json": { schema: goalUpdateResponseSchema } },
           description: "The goal and the plan change it made, if any",
         },
-        "422": unprocessableEntityResponse,
+        "422": planDateChangeInvalidResponse,
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,

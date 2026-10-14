@@ -1,10 +1,10 @@
 import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import { goalPathParamsSchema } from "../schemas/paths";
+import { planDateChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   notFoundResponse,
   unauthorizedResponse,
-  unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
@@ -28,10 +28,30 @@ export const planPreviewPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
-        "422": unprocessableEntityResponse,
+        "422": planDateChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Preview a plan change",
+      tags: ["Plans"],
+    },
+  },
+  "/goals/{goalId}/plan/resume-preview": {
+    get: {
+      description:
+        "What resuming a paused goal would do to its plan, with nothing saved. A pause that left nothing behind (resumed the same day, or over rest days only) keeps the plan as it is (`unchanged`). When the pause left lessons on days now past, resuming plans again from today, as `PATCH /goals/{goalId}` with `status: active` does: show its effect where the learner resumes. A goal that isn't paused is `unchanged`.",
+      operationId: "previewGoalResume",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: planChangePreviewSchema } },
+          description: "What resuming would do",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Preview resuming a goal",
       tags: ["Plans"],
     },
   },

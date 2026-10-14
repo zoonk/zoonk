@@ -125,9 +125,9 @@ export const memoryPaths = {
       summary: "Delete a memory fact",
       tags: ["Memory"],
     },
-    patch: {
+    post: {
       description:
-        "Saves the learner's correction of a fact in place; the old wording isn't kept. The fact then counts as something the learner said.",
+        "Saves the learner's correction of a fact in place; the old wording isn't kept. The fact then counts as something the learner said. A corrected statement is checked for sensitive details after the response.",
       operationId: "updateMemoryFact",
       requestBody: {
         content: { "application/json": { schema: memoryFactUpdateSchema } },

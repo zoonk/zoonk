@@ -12,6 +12,7 @@ import {
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
   areaPracticeResponseSchema,
@@ -167,6 +168,65 @@ test.describe("Learning tab views API", () => {
 
     // Without a skill graph naming courses, chapters sit in no section.
     expect(content.groups[0]?.section).toBeNull();
+
+    await apiContext.dispose();
+  });
+
+  test("exam weights include every notice area and the essay and add up to 100 percent", async () => {
+    const [{ apiContext, user }, blueprint, skill] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "exam-display-weights" }),
+      examBlueprintFixture({
+        structure: {
+          formats: [],
+          mock: null,
+          rules: [],
+          subjects: ["Languages", "Humanities", "Science", "Math", "Essay"].map((name) => ({
+            citation: { passage: "The exam tests all five areas", sourceId: "notice" },
+            name,
+            questions: name === "Essay" ? null : 45,
+            topics: [name],
+            weight: null,
+          })),
+        },
+      }),
+      skillFixture({ name: "Calculate a percentage" }),
+    ]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ name: "Mathematics" }],
+        skills: [{ area: "Math", lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
+      },
+    });
+
+    const response = await apiContext.get(`/v1/goals/${goal.id}/syllabus`);
+    expect(response.status()).toBe(200);
+    const syllabus = syllabusViewSchema.parse(await response.json());
+    const areas = syllabus.subjects.filter((subject) => subject.source === "notice");
+
+    expect(areas.map((area) => area.name)).toEqual([
+      "Languages",
+      "Humanities",
+      "Science",
+      "Math",
+      "Essay",
+    ]);
+
+    expect(areas.every((area) => area.displayWeight !== null)).toBe(true);
+    expect(areas.reduce((sum, area) => sum + area.displayWeight!.percent, 0)).toBe(100);
+
+    expect(areas.find((area) => area.name === "Essay")?.displayWeight).toEqual({
+      basis: "assumed",
+      percent: 20,
+      share: 0.2,
+    });
 
     await apiContext.dispose();
   });

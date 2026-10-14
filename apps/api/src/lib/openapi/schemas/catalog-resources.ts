@@ -1,3 +1,4 @@
+import { courseExamDaysSchema } from "@zoonk/core/catalog/course-exam-days-contract";
 import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
@@ -61,6 +62,12 @@ export const courseResourceSchema = z
   .object({
     categories: z.array(z.enum(COURSE_CATEGORIES)),
     description: z.string().nullable(),
+    exam: courseExamDaysSchema
+      .nullable()
+      .meta({
+        description:
+          "Upcoming exam days, matching a default course start; null for non-exam, private or unknown exam courses. Estimated when the next edition's notice is not stored",
+      }),
     format: z.enum(CourseFormat),
     generationId: z
       .string()

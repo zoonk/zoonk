@@ -84,8 +84,10 @@ export async function decideGoalScopeStep({
   const { goal, startedCourse } = inputs;
   const shared = { language: goal.language, ownerId: null, targetLanguage: goal.targetLanguage };
 
+  // An exam course's chapters are written for the exam its goal prepares for, as a typed exam's.
   if (startedCourse) {
-    return getStartedCourseScope({ course: startedCourse, goal });
+    const scope = getStartedCourseScope({ course: startedCourse, goal });
+    return inputs.exams.length > 0 ? { ...scope, exams: inputs.exams } : scope;
   }
 
   if (goal.kind === "language") {

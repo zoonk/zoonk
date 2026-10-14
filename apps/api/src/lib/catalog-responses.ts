@@ -2,7 +2,7 @@ import { type getCatalogChapter } from "@zoonk/core/catalog/chapter";
 import { type listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-lessons";
 import { type listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapters";
 import { type searchCatalog } from "@zoonk/core/catalog/search";
-import { type getCourseById } from "@zoonk/core/courses/get-by-id";
+import { type getCourseDetail } from "@zoonk/core/courses/get-detail";
 import { type listCourses } from "@zoonk/core/courses/list";
 import { toApiImageUrl } from "./file-urls";
 
@@ -10,7 +10,7 @@ type CatalogSearch = Awaited<ReturnType<typeof searchCatalog>>;
 type CatalogChapter = NonNullable<Awaited<ReturnType<typeof getCatalogChapter>>>;
 type CourseChapter = NonNullable<Awaited<ReturnType<typeof listCatalogCourseChapters>>>[number];
 type ChapterLessons = NonNullable<Awaited<ReturnType<typeof listCatalogChapterLessons>>>;
-type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseById>>>;
+type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseDetail>>>;
 type CourseSummary = Awaited<ReturnType<typeof listCourses>>[number];
 
 /** The Library chapter fields both chapter resources share. */
@@ -53,6 +53,15 @@ export function toCourseSummary(
   };
 }
 
+/** A catalog course: its summary and what its outline holds, its lessons and their minutes. */
+export function toCatalogCourse(course: CourseSummary) {
+  return {
+    ...toCourseSummary(course),
+    estimatedMinutes: course.estimatedMinutes,
+    lessonCount: course.lessonCount,
+  };
+}
+
 /**
  * Serializes the complete course metadata resource while excluding
  * persistence-only fields. The generation fields follow the course outline,
@@ -62,6 +71,7 @@ export function toCourseResource(course: CourseResource) {
   return {
     categories: course.categories.map((category) => category.category),
     description: course.description,
+    exam: course.exam,
     format: course.format,
     generationId: course.outlineRunId,
     generationStatus: course.outlineStatus ?? "pending",

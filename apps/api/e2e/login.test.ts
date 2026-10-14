@@ -47,6 +47,14 @@ test.describe("Login Page", () => {
     await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
   });
 
+  test("says when the last sign-in couldn't finish", async ({ page }) => {
+    await page.goto("/auth/login?error=expired");
+    await expect(page.getByText("That sign-in expired. Try again.")).toBeVisible();
+
+    await page.goto("/auth/login");
+    await expect(page.getByText("That sign-in expired. Try again.")).toBeHidden();
+  });
+
   test("the brain goes back to the app that started the sign-in", async ({ page }) => {
     const appCallback = "http://localhost:49152/auth/callback?state=abc";
 
@@ -99,9 +107,9 @@ test.describe("Login Page", () => {
     await page.getByRole("button", { name: /^continue$/iu }).click();
     await page.waitForURL(/\/auth\/otp\?email=[^&]+$/u);
 
+    // The sixth digit sends the code.
     const otp = await getOTPForEmail(email);
     await page.getByRole("textbox", { name: "Code from the email" }).fill(otp ?? "");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await page.waitForURL(/\/auth\/setup$/u);
     await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Direct Learner");

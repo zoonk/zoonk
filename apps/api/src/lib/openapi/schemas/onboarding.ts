@@ -19,6 +19,23 @@ export const onboardingResponseSchema = z
         description:
           "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the learner's pick (null until made), for the `examChoice` screen; the plan studies only the picked options. Empty for other goals",
       }),
+    examDays: z
+      .object({
+        days: z
+          .array(z.iso.date())
+          .min(1)
+          .meta({
+            description: "The sitting's days in order; the first is the plan's default date",
+          }),
+        estimated: z
+          .boolean()
+          .meta({ description: "True while the days are estimated, before the notice is out" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The days of the exam's next sitting for a goal started from a public exam course, for the `targetDate` screen to lead with; null for other goals",
+      }),
     examSubjects: z
       .array(
         z.object({
@@ -66,7 +83,7 @@ export const onboardingResponseSchema = z
       .positive()
       .meta({
         description:
-          "The daily minutes the time question picks first, from how soon the goal's or its exam's date is; the plan says what that time covers",
+          "The daily minutes the time question picks first: the time a day picked on a course's page when the goal started there, otherwise from how big the goal is and how soon its or its exam's date is. Only a starting pick; the plan says what that time covers",
       }),
     steps: z
       .array(onboardingStepSchema)

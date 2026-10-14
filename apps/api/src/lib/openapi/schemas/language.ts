@@ -23,6 +23,14 @@ export const languageConversationPathParamsSchema = z
   .object({ conversationId: z.uuid().meta({ description: "Live conversation ID" }) })
   .meta({ id: "LanguageConversationPathParams" });
 
+export const languageConversationConnectionPathParamsSchema = languageConversationPathParamsSchema
+  .extend({ connectionId: z.uuid().meta({ description: "Reserved live-call connection ID" }) })
+  .meta({ id: "LanguageConversationConnectionPathParams" });
+
+export const liveCallEndResponseSchema = z
+  .object({ status: z.literal("closed") })
+  .meta({ id: "LiveCallEndResponse" });
+
 export const mistakePatternPathParamsSchema = z
   .object({ patternId: z.uuid().meta({ description: "Mistake pattern ID" }) })
   .meta({ id: "MistakePatternPathParams" });

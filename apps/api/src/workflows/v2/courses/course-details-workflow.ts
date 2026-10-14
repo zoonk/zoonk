@@ -3,7 +3,12 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { createCourseIconStep, writeCourseDetailsStep } from "./steps/course-details-steps";
 
-export type CourseDetailsInput = { analytics?: ContentAnalytics; courseId: string };
+export type CourseDetailsInput = {
+  analytics?: ContentAnalytics;
+  courseId: string;
+  /** Admin copy rewrites never generate images or incur image costs. */
+  copyOnly?: boolean;
+};
 
 export type CourseDetailsResult = {
   details: "failed" | "skipped" | "written";
@@ -29,9 +34,18 @@ export async function courseDetailsWorkflow(
     await joinRun(conflict);
   }
 
-  const context = { analytics: input.analytics, courseId: input.courseId, workflowRunId };
+  const context = {
+    analytics: input.analytics,
+    copyOnly: input.copyOnly,
+    courseId: input.courseId,
+    workflowRunId,
+  };
+
   const [details] = await Promise.allSettled([writeCourseDetailsStep(context)]);
-  const [icon] = await Promise.allSettled([createCourseIconStep(context)]);
+
+  const [icon] = await Promise.allSettled([
+    input.copyOnly ? Promise.resolve(null) : createCourseIconStep(context),
+  ]);
 
   return {
     details: details.status === "fulfilled" ? details.value : "failed",

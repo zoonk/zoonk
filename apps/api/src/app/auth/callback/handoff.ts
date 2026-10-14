@@ -1,11 +1,18 @@
-"use server";
-
+import "server-only";
 import { auth } from "@zoonk/auth";
 import { getAuthError } from "@zoonk/auth/errors";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 
-export async function validateTrustedOriginAction(redirectTo: string): Promise<boolean> {
+/**
+ * Whether sign-in may send the session to `redirectTo`: it must be one of Zoonk's apps. A failure
+ * other than an untrusted origin (a session or storage problem) is never mistaken for one.
+ */
+export async function isTrustedRedirect(redirectTo: string): Promise<boolean> {
+  if (!URL.canParse(redirectTo)) {
+    return false;
+  }
+
   const reqHeaders = await headers();
 
   const { error } = await safeAsync(async () =>
@@ -23,10 +30,11 @@ export async function validateTrustedOriginAction(redirectTo: string): Promise<b
   throw error;
 }
 
-export async function createOneTimeTokenAction(
+/** The app's callback with a one-time token for this session, which the app redeems for its own. */
+export async function createOneTimeTokenUrl(
   redirectTo: string,
 ): Promise<{ success: true; url: string } | { success: false; error: "UNTRUSTED_ORIGIN" }> {
-  if (!(await validateTrustedOriginAction(redirectTo))) {
+  if (!(await isTrustedRedirect(redirectTo))) {
     return { error: "UNTRUSTED_ORIGIN", success: false };
   }
 

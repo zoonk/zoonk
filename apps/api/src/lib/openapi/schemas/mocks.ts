@@ -7,6 +7,7 @@ import {
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { z } from "zod";
+import { examMockSummarySchema } from "./exam-mock-summary";
 import { mockPurposeSchema } from "./mock-exam";
 import { mockLeftOutSchema } from "./mock-left-out";
 import { mockSizeSourceSchema } from "./mock-parts";
@@ -86,6 +87,12 @@ export const mockOptionsResponseSchema = z
     examDocument: examDocumentSchema,
     examName: z.string(),
     goalId: z.uuid(),
+    lastMock: examMockSummarySchema
+      .nullable()
+      .meta({
+        description:
+          "The goal's latest mock (the first of the exam's mocks list), to show how it went beside the options; null before the first",
+      }),
     options: z
       .array(mockOptionSchema)
       .meta({

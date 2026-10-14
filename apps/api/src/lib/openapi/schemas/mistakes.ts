@@ -1,7 +1,11 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
-import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
+import { mistakeAvailabilitySchema, mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { MISTAKE_DRILL_KINDS } from "@zoonk/core/mistakes/drills";
 import { mistakeSnapshotSchema } from "@zoonk/core/mistakes/snapshot";
+import {
+  activityBrainPowerSchema,
+  missionMomentSchema,
+} from "@zoonk/core/sessions/completion-contract";
 import { MistakeCause, MistakeStatus } from "@zoonk/db";
 import { z } from "zod";
 import { paginationSchema } from "./common";
@@ -26,7 +30,32 @@ const mistakeSchema = z
     fixedAt: z.iso.datetime().nullable(),
     id: z.uuid(),
     itemId: z.uuid().nullable(),
-    skill: z.object({ id: z.uuid(), name: z.string() }).nullable(),
+    lesson: z
+      .object({ id: z.uuid(), title: z.string() })
+      .nullable()
+      .meta({
+        description:
+          'The lesson "Open the lesson" opens: the one the mistake was made in; for a question answered outside a lesson, the first teaching lesson the learner completed, otherwise the first written (already generated) teaching lesson, otherwise the current first teaching lesson. Only lessons the learner can open qualify; null when there is none',
+      }),
+    practiceAvailable: z
+      .boolean()
+      .meta({
+        description:
+          "Open and made on an earlier learner-local day; today's mistakes become available tomorrow",
+      }),
+    practiceAvailableTomorrow: z
+      .boolean()
+      .meta({
+        description:
+          "This open mistake has drill material and becomes available on the next learner-local day",
+      }),
+    skill: z
+      .object({ id: z.uuid(), name: z.string() })
+      .nullable()
+      .meta({
+        description:
+          'Its skill; "Practice this skill" is `GET /me/mistake-practice` with its `skillId`',
+      }),
     snapshot: mistakeSnapshotSchema,
     status: mistakeStatusSchema,
   })
@@ -41,6 +70,7 @@ export const mistakeListQuerySchema = mistakeListInputSchema
 
 export const mistakeListResponseSchema = z
   .object({
+    availability: mistakeAvailabilitySchema,
     counts: z.object({
       byCause: z.object({
         gap: z.number().int().min(0),
@@ -69,7 +99,7 @@ export const mistakeDrillSchema = z
       .enum(MISTAKE_DRILL_KINDS)
       .meta({
         description:
-          "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: read the whole question before the answers), spotTheTrap (trap: the trap is named after each answer), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)",
+          "The practice the mistake's cause calls for: reteach (content gap: the lesson's idea first), readCarefully (misread: read the whole question before the answers), spotTheTrap (trap: only the trap matching a wrong answer is named), timed (ran out of time: a time box per question), noGuessing (guess: an honest \"I'm not sure\" instead of a guess), retry (cause not known yet)",
       }),
     lesson: z
       .object({
@@ -137,6 +167,13 @@ export const mistakePracticeFeedbackSchema = z
       z.object({ isTrue: z.boolean() }),
     ]),
     explanation: z.string().nullable(),
+    fixed: z.boolean().meta({ description: "This answer fixed the practiced notebook entry" }),
+    fixedMistakeIds: z
+      .array(z.uuid())
+      .meta({
+        description:
+          "Every notebook entry fixed by this answer; deduplicate these for the run correction count",
+      }),
     isCorrect: z.boolean(),
     mistakeStatus: mistakeStatusSchema.meta({
       description: "Fixed once answered right on a later day",
@@ -144,14 +181,18 @@ export const mistakePracticeFeedbackSchema = z
     trap: z
       .string()
       .nullable()
-      .meta({ description: "In a trap drill, the trap the question set, named after the answer" }),
+      .meta({
+        description:
+          "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
+      }),
   })
   .meta({ id: "MistakePracticeFeedback" });
 
 export const mistakePracticeCompletionSchema = z
   .object({
-    brainPower: z.number().int().min(0).meta({ description: "Brain Power the run earned" }),
+    brainPower: activityBrainPowerSchema,
     correct: z.number().int().min(0),
+    missionMoment: missionMomentSchema.nullable(),
     seconds: z.number().int().min(0).meta({ description: "Learning time the run added to today" }),
     total: z.number().int().min(0).meta({ description: "Answers the run counted" }),
   })

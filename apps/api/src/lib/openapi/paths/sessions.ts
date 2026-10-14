@@ -15,7 +15,7 @@ import {
   googleSessionRequestSchema,
   sessionTokenResponseSchema,
 } from "../schemas/sessions";
-import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
+import { AUTHENTICATED_SECURITY, OPTIONAL_BEARER_SECURITY, PUBLIC_SECURITY } from "../security";
 
 const sessionTokenResponse = {
   content: { "application/json": { schema: sessionTokenResponseSchema } },
@@ -53,8 +53,8 @@ const botCheckForbiddenResponse = {
 } as const;
 
 /**
- * Email codes create accounts, so they need a person behind the request. Vercel BotID only runs
- * in a browser, which native apps can't provide yet.
+ * Anonymous email sign-in creates accounts, so it needs browser BotID proof. Existing native
+ * accounts can request their own deletion proof with a still-active bearer, even when stale.
  */
 const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser. Native apps get 403 ${accessErrorCodes.botDetected} in production until the API accepts app attestation (App Attest on iOS, Play Integrity on Android); Sign in with Apple and Google work meanwhile.`;
 
@@ -79,7 +79,7 @@ export const authRateLimitResponse = {
 export const sessionPaths = {
   "/email-sign-in-codes": {
     post: {
-      description: `Emails a sign-in code; signing in with it creates the account the first time. ${EMAIL_CODE_BOT_CHECK}`,
+      description: `Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Anonymous requests still require browser BotID proof.`,
       operationId: "createEmailSignInCode",
       requestBody: {
         content: { "application/json": { schema: emailSignInCodeRequestSchema } },
@@ -91,7 +91,7 @@ export const sessionPaths = {
         "403": botCheckForbiddenResponse,
         "429": authRateLimitResponse,
       },
-      security: PUBLIC_SECURITY,
+      security: OPTIONAL_BEARER_SECURITY,
       summary: "Send an email sign-in code",
       tags: ["Sessions"],
     },

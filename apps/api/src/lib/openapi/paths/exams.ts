@@ -6,6 +6,7 @@ import { essayViewResponseSchema } from "../schemas/essays";
 import { examResultResponseSchema, examViewResponseSchema } from "../schemas/exams";
 import { replacementGoalResponseSchema } from "../schemas/goals";
 import { essayPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
+import { planChangeInvalidResponse } from "../schemas/plan-errors";
 import { planChangeResultSchema } from "../schemas/plans";
 import {
   conflictResponse,
@@ -150,7 +151,7 @@ export const examPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
-        "422": unprocessableEntityResponse,
+        "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Choose an option of an exam's choice",

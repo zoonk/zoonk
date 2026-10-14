@@ -56,12 +56,12 @@ test.describe("OTP Login Flow", () => {
     await expect(input).toBeFocused();
     await page.keyboard.press("ControlOrMeta+V");
 
+    // The sixth digit sends the code: nothing else to press.
     await expect(input).toHaveValue(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
-    // New users are asked for a name and a username
+    // New users without a name are asked for one
     await page.waitForURL(/\/auth\/setup/u);
-    await expect(page.getByRole("heading", { name: "Create your profile" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
     await cleanupVerifications(email);
   });
@@ -74,11 +74,13 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type("000000");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await expect(
       page.getByText("That code isn't right. Check the email and try again."),
     ).toBeVisible();
+
+    // Continue tries the same code again from the keyboard.
+    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeEnabled();
   });
 
   test("after too many wrong tries, asks for a new code, and the new code signs in", async ({
@@ -96,10 +98,18 @@ test.describe("OTP Login Flow", () => {
     const input = page.getByRole("textbox", { name: "Code from the email" });
     const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
 
-    /** One try. The button stays disabled while a try is checked, so the next one waits for it. */
+    /**
+     * One try: the sixth digit sends it, from an empty box, as a learner retyping it would. The next
+     * try waits for this one's answer.
+     */
     async function tryCode(attempt: string) {
+      const checked = page.waitForResponse((response) =>
+        response.url().includes("/sign-in/email-otp"),
+      );
+
+      await input.fill("");
       await input.fill(attempt);
-      await page.getByRole("button", { name: /^continue$/iu }).click();
+      await checked;
     }
 
     await tryCode(wrongCode);
@@ -123,7 +133,6 @@ test.describe("OTP Login Flow", () => {
 
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await page.waitForURL(/\/auth\/setup/u);
 
@@ -146,7 +155,6 @@ test.describe("OTP Login Flow", () => {
     });
 
     await page.getByRole("textbox", { name: "Code from the email" }).fill(code ?? "");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await expect(page.getByText("This code expired. Get a new one.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Send a new code" })).toBeVisible();
@@ -164,14 +172,13 @@ test.describe("OTP Login Flow", () => {
 
     const firstCode = await getOTPForEmail(email);
 
-    await page.getByRole("button", { name: "Didn't get it? Send a new code" }).click();
+    await page.getByRole("button", { name: "Send again" }).click();
     await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
 
     await expect.poll(() => getOTPForEmail(email)).not.toBe(firstCode);
     const newCode = await getOTPForEmail(email);
 
     await page.getByRole("textbox", { name: "Code from the email" }).fill(newCode ?? "");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     await page.waitForURL(/\/auth\/setup/u);
 
@@ -187,7 +194,7 @@ test.describe("OTP Login Flow", () => {
     const changeEmailLink = page.getByRole("link", { name: /change email/iu });
 
     await expect(continueButton).toHaveAttribute("aria-keyshortcuts", "Enter");
-    await expect(continueButton.getByText("Enter")).toBeVisible();
+    await expect(continueButton.getByText("⏎")).toBeVisible();
     await expect(changeEmailLink).toHaveAttribute("aria-keyshortcuts", "Escape");
     await expect(changeEmailLink.getByText("Esc")).toBeVisible();
 
@@ -217,7 +224,6 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     // New user will be redirected to setup first
     await page.waitForURL(/\/auth\/setup/u);

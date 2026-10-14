@@ -69,6 +69,12 @@ export const studySessionSummaryResponseSchema = z
       }),
     newCards: z.array(z.object({ description: z.string(), name: z.string(), skillId: idSchema })),
     preparation: z.object({ after: z.number().nullable(), before: z.number().nullable() }),
+    progress: z
+      .object({ after: z.number().nullable(), before: z.number().nullable() })
+      .meta({
+        description:
+          "A goal that isn't an exam reads its progress here, not `preparation`: the share of its plan's lessons studied or known, as the syllabus's `lessons` say. Null for an exam, and `before` for a session started before it was kept",
+      }),
     questions: z.number().int().min(0),
     sessionId: idSchema,
     skillsMoved: z.array(

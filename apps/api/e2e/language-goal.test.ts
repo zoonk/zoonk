@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -391,8 +392,22 @@ test.describe("Language goal API", () => {
       404, 404, 422,
     ]);
 
+    const reserved = await apiContext.post(
+      `/v1/language-conversations/${conversationId}/connections`,
+    );
+
+    expect(reserved.status()).toBe(201);
+    const setup = languageConversationSetupSchema.parse(await reserved.json());
+    const connected = await apiContext.post(setup.sessionUrl, { data: { sdp: "offer" } });
+    expect(connected.status()).toBe(201);
+
     // Only the character spoke, so no objective or feedback model is called.
-    const completion = { spokenSeconds: 0, turns, usedHelp: true };
+    const completion = {
+      connectionId: setup.connectionId,
+      spokenSeconds: 0,
+      turns,
+      usedHelp: true,
+    };
 
     const [first, again] = [
       await apiContext.post(`/v1/language-conversations/${conversationId}/completions`, {
@@ -460,16 +475,25 @@ test.describe("Language goal API", () => {
     // and says it ends at the day's limit.
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
 
+    const nextCall = await start();
+
     const shortened = await apiContext.post(
       `/v1/language-conversations/${await start()}/connections`,
     );
 
     expect(shortened.status()).toBe(201);
-    await expect(shortened.json()).resolves.toMatchObject({ endsAtLimit: "day", seconds: 90 });
+    const setup = languageConversationSetupSchema.parse(await shortened.json());
+    expect(setup).toMatchObject({ endsAtLimit: "day", seconds: 90 });
 
-    const limited = await apiContext.post(
-      `/v1/language-conversations/${await start()}/connections`,
-    );
+    const occupied = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
+    expect(occupied.status()).toBe(409);
+    await expect(occupied.json()).resolves.toMatchObject({ error: { code: "CALL_IN_PROGRESS" } });
+
+    // An unredeemed hold spends nothing. End it, then fill the allowance with settled history.
+    const ended = await apiContext.post(setup.sessionUrl.replace(/\/sdp$/u, "/end"));
+    expect(ended.status()).toBe(200);
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 90, userId: user.id });
+    const limited = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
 
     expect(limited.status()).toBe(429);
 
@@ -647,11 +671,21 @@ test.describe("Language goal API", () => {
       title: "since e for",
     });
 
+    const drill = { answers: ["for"], requestId: randomUUID() };
+
     const practice = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/practices`, {
-      data: { answers: ["for"] },
+      data: drill,
     });
 
-    expect(await practice.json()).toMatchObject({ correct: 1, total: 1 });
+    const result = await practice.json();
+    expect(result).toMatchObject({ correct: 1, total: 1 });
+
+    // The same drill sent again (a retry after a lost response) returns what it already counted.
+    const retry = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/practices`, {
+      data: drill,
+    });
+
+    expect(await retry.json()).toStrictEqual(result);
 
     const dismissed = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/dismissals`);
     expect(dismissed.status()).toBe(204);

@@ -221,7 +221,11 @@ describe(courseOutlineWorkflow, () => {
       // bands no goal needs are never written ahead.
       expect(vi.mocked(start).mock.calls).toStrictEqual([
         [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
-        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
+        [
+          courseDetailsWorkflow,
+          [{ analytics: undefined, courseId: course.id }],
+          { attributes: { courseId: course.id } },
+        ],
       ]);
     },
   );
@@ -934,9 +938,11 @@ describe(courseOutlineWorkflow, () => {
     expect(generateCourseOutline).not.toHaveBeenCalled();
 
     // The course may still lack its page details; that run finds what's missing.
-    expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
-      { analytics: undefined, courseId: course.id },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      courseDetailsWorkflow,
+      [{ analytics: undefined, courseId: course.id }],
+      { attributes: { courseId: course.id } },
+    );
   });
 
   it(
@@ -1233,7 +1239,7 @@ describe(courseOutlineWorkflow, () => {
     expect(cancel).toHaveBeenCalledOnce();
   });
 
-  it("waits for the run already writing the course, then writes what is still missing once", async () => {
+  it("waits for the run already writing the course, then writes what is still missing", async () => {
     const course = await courseFixture();
     mockHookConflict({ returnValue: Promise.resolve({ status: "written" }), runId: "owner-run" });
 
@@ -1245,12 +1251,78 @@ describe(courseOutlineWorkflow, () => {
 
     await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({ status: "joined" });
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 1 }]);
+  });
 
-    vi.mocked(start).mockClear();
+  // Three learners started the same course at once, each needing a different band: the third
+  // request found another run on the course a second time and gave up, so its band never came.
+  it("keeps its turn while its bands are still missing, however many runs held the course before it", async () => {
+    const [course, skill] = await Promise.all([courseFixture(), skillFixture()]);
+    mockHookConflict({ returnValue: Promise.resolve({ status: "written" }), runId: "other-run" });
 
-    await expect(courseOutlineWorkflow({ ...input, attempt: 1 })).resolves.toStrictEqual({
-      status: "joined",
-    });
+    const input = {
+      attempt: 1,
+      bands: [
+        {
+          level: "advanced" as const,
+          skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+        },
+      ],
+      courseId: course.id,
+      scope,
+    };
+
+    await expect(courseOutlineWorkflow(input)).resolves.toStrictEqual({ status: "joined" });
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 2 }]);
+  });
+
+  it("stops waiting once the runs before it wrote everything it needed", async () => {
+    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+    const [chapter, lesson] = await Promise.all([libraryChapterFixture(), libraryLessonFixture()]);
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      prisma.chapterLesson.create({
+        data: { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
+      }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    ]);
+
+    mockHookConflict({ returnValue: Promise.resolve({ status: "written" }), runId: "other-run" });
+
+    await expect(
+      courseOutlineWorkflow({
+        bands: [
+          {
+            level: "beginner",
+            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+          },
+        ],
+        courseId: course.id,
+        scope,
+      }),
+    ).resolves.toStrictEqual({ status: "joined" });
+
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it("fails visibly instead of dropping its bands when the course stays taken", async () => {
+    const [course, skill] = await Promise.all([courseFixture(), skillFixture()]);
+    mockHookConflict({ returnValue: Promise.resolve({ status: "written" }), runId: "other-run" });
+
+    await expect(
+      courseOutlineWorkflow({
+        // Far past any number of turns a busy course needs.
+        attempt: 1000,
+        bands: [
+          {
+            level: "advanced",
+            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+          },
+        ],
+        courseId: course.id,
+        scope,
+      }),
+    ).rejects.toThrow(/still missing/u);
 
     expect(start).not.toHaveBeenCalled();
   });

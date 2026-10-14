@@ -4,15 +4,18 @@ import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
-import { getStepExampleLine } from "@zoonk/core/library/variants/example-line";
+import {
+  getStepExampleLine,
+  requestStepExampleLine,
+} from "@zoonk/core/library/variants/example-line";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
  * The signed-in learner's example line for one explanation screen, written the first time. A POST,
  * since writing it calls a model: a GET never starts AI work.
  */
-async function requestExampleLine(
-  _request: NextRequest,
+async function exampleLine(
+  request: NextRequest,
   context: RouteContext<"/v1/me/example-lines/[stepId]">,
 ) {
   const path = parsePathParams({ params: await context.params, schema: stepPathParamsSchema });
@@ -21,7 +24,8 @@ async function requestExampleLine(
     return errors.validation(path.error);
   }
 
-  const result = await getStepExampleLine({ stepId: path.data.stepId });
+  const capability = request.method === "POST" ? requestStepExampleLine : getStepExampleLine;
+  const result = await capability({ stepId: path.data.stepId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -43,7 +47,12 @@ async function requestExampleLine(
     return usageDecisionError(result);
   }
 
-  return NextResponse.json({ line: result.line, stepId: path.data.stepId });
+  return NextResponse.json({
+    canRequest: result.canRequest,
+    line: result.line,
+    stepId: path.data.stepId,
+  });
 }
 
-export const POST = withApiErrorBoundary(requestExampleLine);
+export const GET = withApiErrorBoundary(exampleLine);
+export const POST = withApiErrorBoundary(exampleLine);

@@ -4,7 +4,7 @@ import { parseBody } from "@/lib/body-parser";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
-import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/contract";
+import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**

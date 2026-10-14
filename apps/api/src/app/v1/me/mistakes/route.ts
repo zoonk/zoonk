@@ -29,6 +29,7 @@ async function listMistakes(request: Request) {
   }
 
   return NextResponse.json({
+    availability: result.availability,
     counts: result.counts,
     ...createPaginatedResponse({ hasMore: result.hasMore, items: result.mistakes, offset }),
     trueFalseLabels: result.trueFalseLabels,

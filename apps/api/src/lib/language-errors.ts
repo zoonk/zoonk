@@ -1,11 +1,22 @@
-import { type UsageDecision } from "@zoonk/core/entitlements/contract";
+import { type ConnectLanguageConversationResult } from "@zoonk/core/language/conversations/connect";
+import { type endLanguageConversationConnection } from "@zoonk/core/language/conversations/end-connection";
+import { type redeemLiveCallSdp } from "@zoonk/core/language/conversations/redeem-sdp";
+import { type StartLanguageConversationResult } from "@zoonk/core/language/conversations/start";
 import { z } from "zod";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
 import { signUpRequiredError } from "./lesson-player-errors";
+import { studySessionError } from "./study-session-errors";
 
 type RefusedConversation =
-  | Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>
-  | { status: "conversationEnded" | "notFound" | "unauthorized" };
+  | Exclude<ConnectLanguageConversationResult, { status: "ready" }>
+  | Exclude<Awaited<ReturnType<typeof redeemLiveCallSdp>>, { status: "ready" }>
+  | {
+      status: Exclude<
+        Awaited<ReturnType<typeof endLanguageConversationConnection>>["status"],
+        "closed"
+      >;
+    }
+  | Exclude<StartLanguageConversationResult, { status: "ready" }>;
 
 /** What a refused call says, by the call time that ran out. */
 const CALL_LIMIT_MESSAGES = {
@@ -19,7 +30,28 @@ const CALL_LIMIT_MESSAGES = {
  * or a guest's plan has none (`details` names it: its period and limit in seconds), too many at
  * once, the call already ended, or it isn't the learner's.
  */
-export function conversationRefusalError(result: RefusedConversation) {
+export function conversationRefusalError(
+  result: RefusedConversation,
+  notFoundMessage = "Conversation not found",
+) {
+  if (result.status === "callInProgress") {
+    return createErrorResponse({
+      code: "CALL_IN_PROGRESS",
+      details: { connectionId: result.connectionId, conversationId: result.conversationId },
+      message: "End your current call before starting another",
+      status: httpStatus.conflict,
+    });
+  }
+
+  if (result.status === "connectionLimitReached") {
+    return createErrorResponse({
+      code: "CONNECTION_LIMIT_REACHED",
+      details: { period: result.period },
+      message: "This call has reached its connection limit",
+      status: httpStatus.tooManyRequests,
+    });
+  }
+
   if ("limit" in result) {
     return createErrorResponse({
       code: "CONVERSATION_LIMIT_REACHED",
@@ -41,7 +73,16 @@ export function conversationRefusalError(result: RefusedConversation) {
     return signUpRequiredError();
   }
 
-  return languageError(result.status, "Conversation not found");
+  if (
+    result.status === "earlierFirst" ||
+    result.status === "blockFinished" ||
+    result.status === "dailyLimitReached" ||
+    result.status === "questionsNeeded"
+  ) {
+    return studySessionError(result);
+  }
+
+  return languageError(result.status, notFoundMessage);
 }
 
 /** A spoken answer's multipart body without its recording. */
@@ -80,27 +121,77 @@ function conversationEndedError() {
   });
 }
 
-/** An exam's speaking task, like every mock exam, comes with Plus. */
+/** A checkpoint call or exam speaking task requires Plus. */
 function plusRequiredError() {
   return createErrorResponse({
     code: "PLUS_REQUIRED",
-    message: "Exam speaking tasks come with Plus",
+    message: "This call comes with Plus",
     status: httpStatus.paymentRequired,
   });
 }
 
 type LanguageRefusal =
+  | "callsPaused"
+  | "connectionExpired"
+  | "connectionUsed"
   | "conversationEnded"
   | "invalid"
   | "noGoal"
   | "notFound"
   | "notLanguage"
   | "plusRequired"
+  | "previousConnectionClosing"
+  | "retryable"
+  | "takenOver"
   | "unauthorized";
 
 /** Maps a language capability's outcome that isn't ready to the shared error envelope. */
 export function languageError(status: LanguageRefusal, notFoundMessage = "Resource not found") {
   switch (status) {
+    case "takenOver":
+      return createErrorResponse({
+        code: "CALL_TAKEN_OVER",
+        message: "This call was ended when another call started.",
+        status: httpStatus.conflict,
+      });
+    case "callsPaused":
+      return createErrorResponse({
+        code: "CALLS_PAUSED",
+        message: "Calls are paused. Try again later.",
+        status: 503,
+      });
+    case "retryable": {
+      const response = createErrorResponse({
+        code: "CALL_RETRYABLE",
+        message: "The call could not connect. Try again.",
+        status: 503,
+      });
+
+      response.headers.set("Retry-After", "5");
+      return response;
+    }
+    case "previousConnectionClosing": {
+      const response = createErrorResponse({
+        code: "PREVIOUS_CONNECTION_CLOSING",
+        message: "Your previous call is still closing. Try again shortly.",
+        status: httpStatus.conflict,
+      });
+
+      response.headers.set("Retry-After", "5");
+      return response;
+    }
+    case "connectionExpired":
+      return createErrorResponse({
+        code: "CONNECTION_EXPIRED",
+        message: "This connection reservation expired. Reserve the call again.",
+        status: httpStatus.conflict,
+      });
+    case "connectionUsed":
+      return createErrorResponse({
+        code: "CONNECTION_USED",
+        message: "This connection reservation was already redeemed.",
+        status: httpStatus.conflict,
+      });
     case "unauthorized":
       return errors.unauthorized();
     case "notLanguage":

@@ -123,7 +123,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/completions": {
     post: {
       description:
-        "Finishes a block and returns its completion moment: Brain Power (with the bonus for all three missions when it just paid), the session bar, missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. Learn blocks finish once their lesson was finished in the lesson player.",
+        "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player.",
       operationId: "createStudyBlockCompletion",
       requestBody: timeZoneBody,
       requestParams: { path: studyBlockPathParamsSchema },
@@ -136,7 +136,7 @@ export const studySessionPaths = {
         },
         "422": {
           ...unprocessableEntityResponse,
-          description: `Nothing answered yet, or a checkpoint with unanswered questions. Error codes: ${studySessionErrorCodes.noAnswers}, ${studySessionErrorCodes.unanswered}.`,
+          description: `Nothing answered yet, or a checkpoint with unanswered questions (a boss finishes once its duel is decided: its right answers reach its pass mark, or its misses leave too few questions to reach it, the rest unasked). Error codes: ${studySessionErrorCodes.noAnswers}, ${studySessionErrorCodes.unanswered}.`,
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -147,7 +147,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/starts": {
     post: {
       description:
-        "Starts or resumes a block. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts.",
+        "Starts or resumes a block. A phase challenge waits for earlier lessons and phase challenges in the same session to be completed or skipped; `waitReason` says which is still unfinished. Other blocks can open in any order, including lessons, review, practice, weekly challenges and mocks. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts.",
       operationId: "createStudyBlockStart",
       requestBody: {
         content: { "application/json": { schema: studyBlockStartInputSchema } },
@@ -163,7 +163,7 @@ export const studySessionPaths = {
         },
         "409": {
           ...conflictResponse,
-          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), or it's a challenge whose questions aren't written yet (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
+          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), a phase challenge waits for earlier work in the same session (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or it's a challenge whose questions aren't written yet (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
         },
       },
       security: AUTHENTICATED_SECURITY,

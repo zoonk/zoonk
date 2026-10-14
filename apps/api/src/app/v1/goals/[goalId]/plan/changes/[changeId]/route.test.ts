@@ -3,7 +3,7 @@ import { decidePlanChange } from "@zoonk/core/plans/decide-change";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { PATCH as decideChange } from "./route";
+import { POST as decideChange } from "./route";
 
 // Core's integration tests cover what each decision does to the plan; this adapter test covers
 // which decisions start writing what the plan has soon (the preparation itself is a workflow).
@@ -16,7 +16,7 @@ const CHANGE_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190c";
 function decide(status: string) {
   const request = new NextRequest(
     `http://localhost/v1/goals/${GOAL_ID}/plan/changes/${CHANGE_ID}`,
-    { body: JSON.stringify({ status, timeZone: "UTC" }), method: "PATCH" },
+    { body: JSON.stringify({ status, timeZone: "UTC" }), method: "POST" },
   );
 
   return decideChange(request, {
@@ -24,7 +24,7 @@ function decide(status: string) {
   });
 }
 
-describe("PATCH /v1/goals/{goalId}/plan/changes/{changeId}", () => {
+describe("POST /v1/goals/{goalId}/plan/changes/{changeId}", () => {
   beforeEach(() => {
     vi.mocked(decidePlanChange).mockResolvedValue({
       change: { id: CHANGE_ID } as PlanChangeView,

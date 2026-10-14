@@ -17,7 +17,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { setupProfileAction } from "./actions";
 
 /** Under the username: the rule, then whether the one typed is free as soon as it's checked. */
@@ -43,7 +43,7 @@ function UsernameDescription({
 
   if (status === "available") {
     return (
-      <p className="text-success text-sm" id={id}>
+      <p className="text-success-text text-sm" id={id}>
         {t("{username} is available", { username })}
       </p>
     );
@@ -51,7 +51,7 @@ function UsernameDescription({
 
   if (status === "taken") {
     return (
-      <p className="text-destructive text-sm" id={id}>
+      <p className="text-destructive-text text-sm" id={id}>
         {t("{username} is already taken", { username })}
       </p>
     );
@@ -59,7 +59,10 @@ function UsernameDescription({
 
   return (
     <p
-      className={cn("text-sm", status === "invalid" ? "text-destructive" : "text-muted-foreground")}
+      className={cn(
+        "text-sm",
+        status === "invalid" ? "text-destructive-text" : "text-muted-foreground",
+      )}
       id={id}
     >
       {t("3-30 characters. Letters, numbers, and underscores only.")}
@@ -67,9 +70,31 @@ function UsernameDescription({
   );
 }
 
+/** The username as one muted line, kept as it is unless the learner asks to change it. */
+function UsernameLine({ onChange, username }: { onChange: () => void; username: string }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-sm">
+      <input name="username" type="hidden" value={username} />
+      {t("Your username: @{username}", { username })}
+      <span aria-hidden="true">{" · "}</span>
+      <button
+        aria-label={t("Change username")}
+        className="text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
+        onClick={onChange}
+        type="button"
+      >
+        {t("Change")}
+      </button>
+    </p>
+  );
+}
+
 /**
- * A new account's name and username. The username starts from a free one made from the email, so
- * keeping it is one tap; another one is checked while it's typed.
+ * A new account's name, the one question. The username starts from a free one made from the email,
+ * shown under the name, so keeping it takes nothing; "Change" opens its field in place, and another
+ * one is checked while it's typed.
  */
 export function SetupProfileForm({
   defaultName,
@@ -83,9 +108,11 @@ export function SetupProfileForm({
   const t = useExtracted();
   const descriptionId = useId();
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
+  const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
   const boundAction = setupProfileAction.bind(null, redirectTo);
   const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
   const canSubmit = status === "idle" || status === "available";
+  const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
 
   return (
     <SetupForm action={formAction}>
@@ -102,28 +129,34 @@ export function SetupProfileForm({
         />
       </SetupField>
 
-      <SetupField>
-        <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
-        <InputGroup>
-          <InputGroupAddon>@</InputGroupAddon>
-          <InputGroupInput
-            aria-describedby={descriptionId}
-            aria-invalid={status === "invalid" || status === "taken"}
-            autoCapitalize="none"
-            autoComplete="username"
-            autoCorrect="off"
-            id="username"
-            maxLength={USERNAME_MAX_LENGTH}
-            minLength={USERNAME_MIN_LENGTH}
-            name="username"
-            onChange={(event) => setUsername(event.target.value)}
-            required
-            spellCheck={false}
-            value={username}
-          />
-        </InputGroup>
-        <UsernameDescription id={descriptionId} status={status} username={username} />
-      </SetupField>
+      {showsUsernameField ? (
+        <SetupField>
+          <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
+          <InputGroup>
+            <InputGroupAddon>@</InputGroupAddon>
+            <InputGroupInput
+              aria-describedby={descriptionId}
+              aria-invalid={status === "invalid" || status === "taken"}
+              autoCapitalize="none"
+              autoComplete="username"
+              autoCorrect="off"
+              // Opened with "Change", so it's where the learner is about to type.
+              autoFocus={Boolean(defaultUsername)}
+              id="username"
+              maxLength={USERNAME_MAX_LENGTH}
+              minLength={USERNAME_MIN_LENGTH}
+              name="username"
+              onChange={(event) => setUsername(event.target.value)}
+              required
+              spellCheck={false}
+              value={username}
+            />
+          </InputGroup>
+          <UsernameDescription id={descriptionId} status={status} username={username} />
+        </SetupField>
+      ) : (
+        <UsernameLine onChange={() => setIsChangingUsername(true)} username={username} />
+      )}
 
       <SetupError hasError={state.status === "usernameTaken"}>
         {t("{username} is already taken", { username })}

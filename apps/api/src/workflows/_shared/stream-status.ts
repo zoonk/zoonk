@@ -42,7 +42,7 @@ export function createStepStream<T extends string>(): StepStream<T> {
     },
 
     async status(params: StepStreamMessage<T>) {
-      await writeSSE(writer, params);
+      await writeSSE(writer, { ...params, at: Date.now() });
     },
   };
 }

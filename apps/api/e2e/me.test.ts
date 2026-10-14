@@ -177,13 +177,9 @@ test.describe("Current User API", () => {
       prisma.user.update({ data: { emailVerified: true }, where: { id: userId } }),
     ]);
 
-    const otpContext = await request.newContext({ baseURL });
+    const otpResponse = await apiContext.post("/v1/email-sign-in-codes", { data: { email } });
 
-    const otpResponse = await otpContext.post("/v1/auth/email-otp/send-verification-otp", {
-      data: { email, type: "sign-in" },
-    });
-
-    expect(otpResponse.ok()).toBe(true);
+    expect(otpResponse.status()).toBe(204);
 
     const otp = await getOTPForEmail(email);
 
@@ -208,7 +204,7 @@ test.describe("Current User API", () => {
     expect(course).toBeNull();
     expect(sessionCount).toBe(0);
 
-    await Promise.all([apiContext.dispose(), otpContext.dispose()]);
+    await apiContext.dispose();
   });
 
   test("deletes the account, learning data, auth state, and local subscriptions", async () => {

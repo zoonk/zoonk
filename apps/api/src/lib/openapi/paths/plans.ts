@@ -20,6 +20,7 @@ import {
   planChangePathParamsSchema,
   planLinkPathParamsSchema,
 } from "../schemas/paths";
+import { planChangeInvalidResponse, planDateChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   ownLevelChangeSchema,
   planChangeResultSchema,
@@ -80,7 +81,7 @@ export const planPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
-        "422": unprocessableEntityResponse,
+        "422": planDateChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change a plan",
@@ -88,9 +89,9 @@ export const planPaths = {
     },
   },
   "/goals/{goalId}/plan/changes/{changeId}": {
-    patch: {
+    post: {
       description:
-        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. 409 when the change was already answered or the plan moved on.',
+        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. Applying or undoing a change starts preparing the lessons it brings in soon. 409 when the change was already answered or the plan moved on.',
       operationId: "decidePlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeDecisionInputSchema } },
@@ -104,7 +105,7 @@ export const planPaths = {
           description: "The change",
         },
         "409": conflictResponse,
-        "422": unprocessableEntityResponse,
+        "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer or undo a plan change",
@@ -181,9 +182,9 @@ export const planPaths = {
     },
   },
   "/goals/{goalId}/plan/own-level": {
-    put: {
+    post: {
       description:
-        "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level.",
+        "Changes the learner's own level (nothing yet, basic, intermediate or advanced) from the plan. Past work is never undone: known skills and passed test-outs stay. A lower level adds the foundations the plan left out, right before the skills they prepare for, as a change with an undo. A higher level skips nothing: it returns test-outs for the chapters the new level covers. Placement starts from the new level. The next lessons start being prepared after this request.",
       operationId: "updateOwnLevel",
       requestBody: {
         content: { "application/json": { schema: ownLevelChangeInputSchema } },
@@ -236,7 +237,7 @@ export const planPaths = {
           content: { "application/json": { schema: planChangeResultSchema } },
           description: "The applied change",
         },
-        "422": unprocessableEntityResponse,
+        "422": planChangeInvalidResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Choose how to use a plan's tools",

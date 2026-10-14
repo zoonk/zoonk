@@ -35,7 +35,7 @@ async function moveChallenge(
   }
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status === "unauthorized") {

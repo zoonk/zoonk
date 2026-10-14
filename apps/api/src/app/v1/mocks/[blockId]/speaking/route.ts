@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
+import { conversationRefusalError } from "@/lib/language-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { startMockSpeaking } from "@zoonk/core/exams/mocks/start-speaking";
@@ -21,6 +22,10 @@ async function postMockSpeaking(
   }
 
   const result = await startMockSpeaking({ blockId: path.data.blockId });
+
+  if (result.status === "callsPaused") {
+    return conversationRefusalError({ status: result.status });
+  }
 
   if (result.status !== "ready") {
     return examError({ status: result.status });

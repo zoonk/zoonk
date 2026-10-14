@@ -9,11 +9,11 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import {
   chapterLessonFixture,
   heldBackDraftFixture,
-  libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
+import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
@@ -49,13 +49,13 @@ function mockDrafts(held: number) {
 }
 
 /** A lesson of a learner's plan, its spec already written (reasoning check on, as for exams). */
-async function plannedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] = {}) {
+async function plannedLesson(attrs: Parameters<typeof recordedLessonFixture>[0] = {}) {
   const [chapter, user] = await Promise.all([
     libraryChapterFixture({ title: "How vaccines train the immune system" }),
     userFixture(),
   ]);
 
-  const lesson = await libraryLessonFixture({
+  const lesson = await recordedLessonFixture({
     homeChapterId: chapter.id,
     level: "overview",
     spec: recordedSpec.lessons[0],

@@ -1,4 +1,5 @@
 import { type ExtraStudyBlockResult } from "@zoonk/core/sessions/extra-block";
+import { type StartStudyBlockResult } from "@zoonk/core/sessions/start-block";
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
 
 /** Stable codes clients use to recover from a session request that can't be applied. */
@@ -7,6 +8,7 @@ export const studySessionErrorCodes = {
   blockFinished: "BLOCK_FINISHED",
   blockNotActive: "BLOCK_NOT_ACTIVE",
   dailyLimitReached: "DAILY_LIMIT_REACHED",
+  earlierFirst: "EARLIER_FIRST",
   extraTimeUnavailable: "EXTRA_TIME_UNAVAILABLE",
   goalNotActive: "GOAL_NOT_ACTIVE",
   invalidItem: "INVALID_ITEM",
@@ -23,6 +25,7 @@ export const studySessionErrorCodes = {
 type ExtraTimeReason = Extract<ExtraStudyBlockResult, { status: "unavailable" }>["reason"];
 
 type StudySessionRefusal =
+  | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
   | { reason: ExtraTimeReason; status: "unavailable" }
   | {
       status:
@@ -75,7 +78,7 @@ const REFUSALS = {
     status: httpStatus.conflict,
   },
   unanswered: {
-    message: "A checkpoint needs every question answered",
+    message: "A checkpoint needs every question answered, unless a boss's duel is already decided",
     status: httpStatus.unprocessableEntity,
   },
 } as const;
@@ -95,6 +98,18 @@ export function studySessionError(refusal: StudySessionRefusal) {
       code: studySessionErrorCodes.extraTimeUnavailable,
       details: { reason: refusal.reason },
       message: "More time isn't available right now",
+      status: httpStatus.conflict,
+    });
+  }
+
+  if (refusal.status === "earlierFirst") {
+    return createErrorResponse({
+      code: studySessionErrorCodes.earlierFirst,
+      details: { reason: refusal.reason },
+      message:
+        refusal.reason === "lessons"
+          ? "Finish the earlier lessons first"
+          : "Finish the earlier challenge first",
       status: httpStatus.conflict,
     });
   }

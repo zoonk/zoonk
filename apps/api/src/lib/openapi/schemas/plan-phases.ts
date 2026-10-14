@@ -80,8 +80,20 @@ export const planPhaseSchema = z
     checkpoint: z
       .object({
         date: isoDateSchema.nullable(),
+        locked: z
+          .boolean()
+          .meta({
+            description:
+              "The challenge remains visible in the plan, but starting it requires Plus; its intro reports `locked` and `status` `plusRequired`",
+          }),
         planItemId: z.uuid().meta({ description: "Its intro is GET /challenges/{planItemId}" }),
         state: z.enum(["done", "upcoming"]),
+        when: z
+          .enum(["date", "nextSession", "queued"])
+          .meta({
+            description:
+              "When it comes, as sessions offer challenges and its intro says: `date`, on its `date`; `nextSession`, the learner's next session has it (the first one reached, and any whose day came): say that instead of `date`; `queued`, its phase's lessons are done but a challenge before it comes first, one a session: say it comes after that one, not `date`. Always `date` once won, and past a free exam plan's first week (its sessions hold no challenges)",
+          }),
       })
       .nullable()
       .meta({
@@ -114,10 +126,10 @@ export const planPhaseSchema = z
     short: shortPhaseSchema,
     startDate: isoDateSchema.nullable(),
     state: z
-      .enum(["current", "done", "unfinished", "upcoming"])
+      .enum(["current", "done", "leftOut", "unfinished", "upcoming"])
       .meta({
         description:
-          "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done; say the lessons studied of its total (`lessonsDone`, `lessonsTotal`)",
+          "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done; say the lessons studied of its total (`lessonsDone`, `lessonsTotal`). `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done",
       }),
   })
   .meta({ id: "PlanPhase" });

@@ -1,19 +1,25 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { languageConversationViewSchema } from "@zoonk/core/language/conversations/contract";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import {
   challengeGenerationSchema,
   challengeResponseSchema,
   challengeStartResponseSchema,
   checkpointResponseSchema,
 } from "../src/lib/openapi/schemas/checkpoints";
+import { languageConversationCreatedSchema } from "../src/lib/openapi/schemas/language";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { createExamGoal } from "./helpers/exams";
 import { readBody } from "./helpers/response";
 
 const QUESTIONS_PER_SKILL = 3;
@@ -71,6 +77,8 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
       phase: 0,
       planId: plan.id,
       position: SKILL_NAMES.length,
+      // C2 requires the saved due day; completed teaching does not unlock an undated boss.
+      scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
       titleSnapshot: "Boss",
     }),
   ]);
@@ -78,12 +86,53 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
   return goal;
 }
 
-test.describe("Checkpoints API", () => {
-  let baseURL: string;
+/** A language unit reached with its call already written, including a pending locked challenge. */
+async function createLanguageBoss({
+  final,
+  plus,
+  userId,
+}: {
+  final: boolean;
+  plus: boolean;
+  userId: string;
+}) {
+  const { arriving, goal, plan, renting } = await languageGoalFixture({ userId });
 
-  test.beforeAll(() => {
-    baseURL = process.env.E2E_BASE_URL ?? "";
+  await Promise.all([
+    prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } }),
+    prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } }),
+    prisma.plan.update({
+      data: {
+        phases: [
+          { name: arriving.title },
+          { name: renting.title },
+          ...(final ? [] : [{ name: "The next unit" }]),
+        ],
+      },
+      where: { id: plan.id },
+    }),
+    !final &&
+      planItemFixture({ kind: "lesson", phase: 2, planId: plan.id, position: 11, status: "done" }),
+    plus &&
+      prisma.subscription.create({
+        data: { id: randomUUID(), plan: "plus", referenceId: userId, status: "active" },
+      }),
+  ]);
+
+  // C2 requires the saved due day for the call as well as completed teaching.
+  const boss = await planItemFixture({
+    kind: "boss",
+    phase: 1,
+    planId: plan.id,
+    position: 10,
+    scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
   });
+
+  return { boss, goal };
+}
+
+test.describe("Checkpoints API", () => {
+  const baseURL = process.env.E2E_BASE_URL ?? "";
 
   test.afterAll(async () => {
     await prisma.$disconnect();
@@ -168,12 +217,83 @@ test.describe("Checkpoints API", () => {
       status: "completed",
     });
 
+    await prisma.item.deleteMany({
+      where: { id: { in: before.questions.map((question) => question.itemId) } },
+    });
+
+    const reopened = await readBody({
+      response: await api.get(path),
+      schema: checkpointResponseSchema,
+    });
+
+    expect(reopened).toMatchObject({
+      questions: [],
+      result: { correct: BOSS_QUESTIONS, passed: true, total: BOSS_QUESTIONS },
+      status: "completed",
+    });
+
     const hidden = await other.api.get(path);
     expect(hidden.status()).toBe(404);
 
     // Only the week's challenge moves to Monday; a boss keeps its day.
     const bossMove = await api.post(`${path}/moves`, { data: {} });
     expect(bossMove.status()).toBe(404);
+  });
+
+  test("ends a duel whose questions vanished without a verdict or reward", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "checkpoint-empty" });
+    const goal = await createGoalAtBoss(userId);
+
+    const { session: today } = await readBody({
+      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+      schema: todayResponseSchema,
+    });
+
+    const boss = today.blocks.find((block) => block.kind === "checkpoint");
+    const path = `/v1/checkpoints/${boss?.id}`;
+    const blockPath = `/v1/study-sessions/${today.id}/blocks/${boss?.id}`;
+
+    const before = await readBody({
+      response: await api.get(path),
+      schema: checkpointResponseSchema,
+    });
+
+    const started = await api.post(`${blockPath}/starts`, { data: {} });
+    expect(started.status()).toBe(200);
+
+    await prisma.item.deleteMany({
+      where: { id: { in: before.questions.map((question) => question.itemId) } },
+    });
+
+    const completion = await readBody({
+      response: await api.post(`${blockPath}/completions`, { data: {} }),
+      schema: studyBlockCompletionSchema,
+    });
+
+    expect(completion).toMatchObject({
+      brainPower: 0,
+      checkpoint: null,
+      correct: 0,
+      milestones: [],
+      total: 0,
+    });
+
+    const reopened = await readBody({
+      response: await api.get(path),
+      schema: checkpointResponseSchema,
+    });
+
+    expect(reopened).toMatchObject({ questions: [], result: null, status: "skipped" });
+
+    await expect(
+      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", plan: { goalId: goal.id } } }),
+    ).resolves.toMatchObject({ status: "todo" });
+
+    await expect(
+      prisma.learningEvent.count({ where: { kind: "checkpoint", userId } }),
+    ).resolves.toBe(0);
+
+    await api.dispose();
   });
 
   test("a boss's challenge says what it asks on its day and starts its block, only for its learner", async () => {
@@ -196,9 +316,11 @@ test.describe("Checkpoints API", () => {
     });
 
     expect(intro).toMatchObject({
+      call: null,
       canMove: false,
       goalId: goal.id,
       kind: "boss",
+      locked: false,
       phase: { index: 0, name: "Basics" },
       planItemId: boss.id,
       questions: BOSS_QUESTIONS,
@@ -295,5 +417,243 @@ test.describe("Checkpoints API", () => {
     });
 
     expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+  });
+
+  test("an included exam mock is unlocked", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "challenge-mock" });
+    const { goal } = await createExamGoal(userId);
+
+    const mock = await prisma.planItem.findFirstOrThrow({
+      where: { kind: "mock", plan: { goalId: goal.id } },
+    });
+
+    const intro = await readBody({
+      response: await api.get(`/v1/challenges/${mock.id}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(intro).toMatchObject({ call: null, kind: "weekly", locked: false, mock: true });
+    await api.dispose();
+  });
+
+  // oxlint-disable-next-line vitest/prefer-each -- Playwright doesn't provide test.each.
+  for (const final of [false, true]) {
+    // oxlint-disable-next-line vitest/prefer-each -- Playwright doesn't provide test.each.
+    for (const plus of [false, true]) {
+      test(`${plus ? "Plus" : "Free"} language ${final ? "final" : "phase"} challenges keep the call ${plus ? "unlocked" : "locked"}`, async () => {
+        const { api, userId } = await createBearerLearner({ baseURL, prefix: "language-boss" });
+        const { boss, goal } = await createLanguageBoss({ final, plus, userId });
+        const path = `/v1/challenges/${boss.id}`;
+
+        const intro = await readBody({
+          response: await api.get(`${path}?timeZone=UTC`),
+          schema: challengeResponseSchema,
+        });
+
+        expect(intro).toMatchObject({
+          kind: final ? "finalBoss" : "boss",
+          locked: !plus,
+          questions: 0,
+          result: null,
+          status: plus ? "ready" : "plusRequired",
+        });
+
+        expect(intro.call).toMatchObject({ level: "A2", targetLanguage: "en" });
+
+        const plan = await readBody({
+          response: await api.get(`/v1/goals/${goal.id}/plan`),
+          schema: planResponseSchema,
+        });
+
+        expect(plan.phases.find((phase) => phase.index === 1)?.checkpoint).toMatchObject({
+          locked: !plus,
+          planItemId: boss.id,
+          state: "upcoming",
+        });
+
+        expect(plan.end).toStrictEqual(plus ? null : { kind: "finished" });
+
+        if (plus) {
+          const started = await readBody({
+            response: await api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+            schema: challengeStartResponseSchema,
+          });
+
+          expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+
+          const call = await readBody({
+            response: await api.post("/v1/language-conversations", {
+              data: { blockId: started.blockId, kind: "checkpoint" },
+            }),
+            schema: languageConversationCreatedSchema,
+            status: 201,
+          });
+
+          await expect(
+            prisma.languageConversation.findUniqueOrThrow({ where: { id: call.conversationId } }),
+          ).resolves.toMatchObject({ kind: "checkpoint", studyBlockId: started.blockId });
+
+          await api.dispose();
+          return;
+        }
+
+        const [refused, generation] = await Promise.all([
+          api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+          api.post(`${path}/generations`),
+        ]);
+
+        expect(refused.status()).toBe(402);
+        expect(generation.status()).toBe(402);
+        await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+        await expect(generation.json()).resolves.toMatchObject({
+          error: { code: "PLUS_REQUIRED" },
+        });
+
+        await expect(
+          prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+        ).resolves.toMatchObject({ status: "todo" });
+
+        await expect(prisma.languageConversation.count({ where: { userId } })).resolves.toBe(0);
+        await expect(prisma.aiCall.count({ where: { userId } })).resolves.toBe(0);
+        await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+        await api.dispose();
+      });
+    }
+  }
+
+  test("a language challenge locks when Plus lapses between its intro and Start", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "language-lapse" });
+    const { boss } = await createLanguageBoss({ final: false, plus: true, userId });
+    const path = `/v1/challenges/${boss.id}`;
+
+    const intro = await readBody({
+      response: await api.get(`${path}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(intro).toMatchObject({ locked: false, questions: 0, status: "ready" });
+    expect(intro.call).not.toBeNull();
+
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({
+      select: { sessionId: true },
+      where: { id: intro.blockId ?? "" },
+    });
+
+    await prisma.subscription.updateMany({
+      data: { status: "canceled" },
+      where: { referenceId: userId },
+    });
+
+    const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
+    expect(refused.status()).toBe(402);
+    await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+    const [blockStart, callStart] = await Promise.all([
+      api.post(`/v1/study-sessions/${block.sessionId}/blocks/${intro.blockId}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      api.post("/v1/language-conversations", {
+        data: { blockId: intro.blockId, kind: "checkpoint" },
+      }),
+    ]);
+
+    expect(blockStart.status()).toBe(402);
+    expect(callStart.status()).toBe(402);
+    await expect(blockStart.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+    await expect(callStart.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+    const locked = await readBody({
+      response: await api.get(`${path}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(locked).toMatchObject({
+      locked: true,
+      questions: 0,
+      result: null,
+      status: "plusRequired",
+    });
+
+    expect(locked.call).toStrictEqual(intro.call);
+    await expect(prisma.languageConversation.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.aiCall.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+    await api.dispose();
+  });
+
+  test("a checkpoint call opened with Plus cannot connect after the subscription lapses", async () => {
+    const { api, userId } = await createBearerLearner({
+      baseURL,
+      prefix: "language-connect-lapse",
+    });
+
+    const { boss } = await createLanguageBoss({ final: false, plus: true, userId });
+
+    const intro = await readBody({
+      response: await api.get(`/v1/challenges/${boss.id}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    const call = await readBody({
+      response: await api.post("/v1/language-conversations", {
+        data: { blockId: intro.blockId, kind: "checkpoint" },
+      }),
+      schema: languageConversationCreatedSchema,
+      status: 201,
+    });
+
+    const before = await readBody({
+      response: await api.get(`/v1/language-conversations/${call.conversationId}`),
+      schema: languageConversationViewSchema,
+    });
+
+    expect(before).toMatchObject({ kind: "checkpoint", locked: false });
+
+    await prisma.subscription.updateMany({
+      data: { status: "canceled" },
+      where: { referenceId: userId },
+    });
+
+    const after = await readBody({
+      response: await api.get(`/v1/language-conversations/${call.conversationId}`),
+      schema: languageConversationViewSchema,
+    });
+
+    expect(after).toMatchObject({ kind: "checkpoint", locked: true });
+
+    const refused = await api.post(`/v1/language-conversations/${call.conversationId}/connections`);
+    expect(refused.status()).toBe(402);
+    await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+    // Existing completed feedback stays readable, but another challenge call still needs Plus.
+    await prisma.languageConversation.update({
+      data: { spokenSeconds: 0, status: "completed" },
+      where: { id: call.conversationId },
+    });
+
+    const completed = await readBody({
+      response: await api.get(`/v1/language-conversations/${call.conversationId}`),
+      schema: languageConversationViewSchema,
+    });
+
+    expect(completed).toMatchObject({
+      locked: true,
+      result: { passed: false },
+      status: "completed",
+    });
+
+    await prisma.planItem.update({ data: { status: "done" }, where: { id: boss.id } });
+
+    const done = await readBody({
+      response: await api.get(`/v1/challenges/${boss.id}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(done).toMatchObject({ locked: true, status: "done" });
+
+    await expect(prisma.aiCall.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+    await api.dispose();
   });
 });

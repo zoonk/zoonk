@@ -30,7 +30,7 @@ async function createExamChoice(
   const result = await chooseExamOption({ goalId: path.data.goalId, input: body.data });
 
   if (result.status === "invalid") {
-    return planChangeInvalid(result.error);
+    return planChangeInvalid(result);
   }
 
   if (result.status !== "applied") {

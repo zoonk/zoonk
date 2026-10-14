@@ -1,5 +1,12 @@
-import { milestoneSchema, missionSchema } from "@zoonk/core/sessions/completion-contract";
-import { BuddyGlasses, BuddyKind, MasteryState } from "@zoonk/db";
+import { learningBuddySchema } from "@zoonk/core/profile/contract";
+import {
+  firstStepKindSchema,
+  milestoneSchema,
+  missionOpensSchema,
+  missionSchema,
+  missionWaitReasonSchema,
+} from "@zoonk/core/sessions/completion-contract";
+import { BuddyGlasses, MasteryState } from "@zoonk/db";
 import { z } from "zod";
 import { logicalDateSchema } from "./study-sessions";
 
@@ -36,6 +43,38 @@ const weekNumbersSchema = z.object({
 const buddyDietSchema = z
   .object({ fixes: countSchema, newIdeas: countSchema, reviews: countSchema })
   .meta({ id: "BuddyDiet" });
+
+const firstStepWhenSchema = z.discriminatedUnion("kind", [
+  z.object({ date: logicalDateSchema.optional(), kind: z.literal("challenge") }),
+  z.object({ date: logicalDateSchema.optional(), kind: z.literal("essay") }),
+  z.object({ kind: z.enum(["mistake", "review", "pattern", "call", "buddy", "lesson", "mock"]) }),
+]);
+
+const firstStepsSchema = z
+  .object({
+    completedOn: logicalDateSchema
+      .optional()
+      .meta({
+        description:
+          "The learner-local day the last step was done, present only on that day: the finished list is returned once more so it can say so, and is null from the next day.",
+      }),
+    done: countSchema,
+    steps: z.array(
+      z.object({
+        kind: firstStepKindSchema,
+        opens: missionOpensSchema.optional(),
+        status: z.enum(["done", "today", "available", "later"]),
+        waitReason: missionWaitReasonSchema.optional(),
+        when: firstStepWhenSchema.optional(),
+      }),
+    ),
+    total: countSchema,
+  })
+  .meta({
+    description:
+      "Account-level first steps applicable to the current goal, checked from the learner's history. Today marks a step included in the saved missions; available steps can be completed anytime. There is no separate reward. Once every applicable step is done the list stays for the rest of that learner-local day (completedOn), then is null; it is also null from the learner's fourteenth study day.",
+    id: "BuddyFirstSteps",
+  });
 
 export const weeklyRecapResponseSchema = z
   .object({
@@ -83,10 +122,7 @@ export const buddyStatusResponseSchema = z
       progressInLevel: countSchema,
       totalBrainPower: countSchema,
     }),
-    buddy: z
-      .object({ glasses: glassesSchema, kind: z.enum(BuddyKind), name: z.string().nullable() })
-      .nullable()
-      .meta({ description: "Null for learners without a buddy" }),
+    buddy: learningBuddySchema,
     energy: z.object({
       current: z
         .number()
@@ -100,6 +136,7 @@ export const buddyStatusResponseSchema = z
       state: z.enum(["napping", "awake", "glowing"]),
       studiedToday: z.boolean(),
     }),
+    firstSteps: firstStepsSchema.nullable().optional(),
     glasses: z.array(glassesProgressSchema),
     nextStage: z
       .object({
@@ -118,7 +155,7 @@ export const buddyStatusResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Today's missions from the active goal's session, null until today's session is built (reading the buddy never builds it)",
+          "The same saved missions as the active goal's current session, including its original day while it carries over midnight. Null until a current session exists; reading the buddy never builds a session or starts generation. The bonus is earned when any goal paid it for that session's learner-local date.",
       }),
   })
   .meta({ id: "BuddyStatus" });

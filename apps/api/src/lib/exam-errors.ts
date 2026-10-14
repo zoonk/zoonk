@@ -9,6 +9,7 @@ const examErrorCodes = {
   essayLimitReached: "ESSAY_LIMIT_REACHED",
   invalidMockOption: "INVALID_MOCK_OPTION",
   mockAnswerLocked: "MOCK_ANSWER_LOCKED",
+  mockExpired: "MOCK_EXPIRED",
   mockFinished: "MOCK_FINISHED",
   mockNotFinished: "MOCK_NOT_FINISHED",
   mockNotOnBreak: "MOCK_NOT_ON_BREAK",
@@ -27,6 +28,7 @@ type ExamRefusal = {
     | "blockFinished"
     | "blockNotActive"
     | "dailyLimitReached"
+    | "expired"
     | "finished"
     | "goalNotActive"
     | "invalidItem"
@@ -64,6 +66,11 @@ const REFUSALS = {
     code: studySessionErrorCodes.dailyLimitReached,
     message: "Today's time limit is reached",
     status: httpStatus.forbidden,
+  },
+  expired: {
+    code: examErrorCodes.mockExpired,
+    message: "Time ran out while the learner was away: this mock isn't scored, take a new one",
+    status: httpStatus.conflict,
   },
   finished: {
     code: examErrorCodes.mockFinished,

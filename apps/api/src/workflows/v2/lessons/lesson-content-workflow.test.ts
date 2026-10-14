@@ -23,6 +23,7 @@ import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
+import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
@@ -38,7 +39,7 @@ const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 async function outlinedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] = {}) {
   const chapter = await libraryChapterFixture({ title: "How vaccines train the immune system" });
 
-  const lesson = await libraryLessonFixture({
+  const lesson = await recordedLessonFixture({
     homeChapterId: chapter.id,
     level: "overview",
     ...attrs,
@@ -82,7 +83,7 @@ describe(lessonContentWorkflow, () => {
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
     const stored = await prisma.lesson.findUniqueOrThrow({
-      include: { steps: true },
+      include: { skills: true, steps: true },
       where: { id: lesson.id },
     });
 
@@ -93,6 +94,16 @@ describe(lessonContentWorkflow, () => {
     });
 
     expect(stored.steps).toHaveLength(recordedDraft.screens.length);
+
+    const [link] = stored.skills;
+
+    const questions = stored.steps.filter(
+      (step) => step.kind === "check" || step.kind === "typedAnswer",
+    );
+
+    expect(link).toBeDefined();
+    expect(questions.length).toBeGreaterThan(0);
+    expect(questions.map((step) => step.skillId)).toStrictEqual(questions.map(() => link?.skillId));
 
     expect(
       getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`),
@@ -391,7 +402,11 @@ describe(lessonContentWorkflow, () => {
   });
 
   it("writes a chapter's challenge with the case writer, without a spec step or pictures", async () => {
-    const lesson = await outlinedLesson({
+    const chapter = await libraryChapterFixture();
+
+    // Chapter challenges are cases, so they legitimately have no notebook skill links.
+    const lesson = await libraryLessonFixture({
+      homeChapterId: chapter.id,
       spec: {
         kind: "challenge",
         skills: [{ description: null, name: "Judge whether a gap is chance" }],
@@ -410,6 +425,8 @@ describe(lessonContentWorkflow, () => {
     await expect(
       prisma.step.findMany({ select: { kind: true }, where: { lessonId: lesson.id } }),
     ).resolves.toStrictEqual([{ kind: "challenge" }]);
+
+    await expect(prisma.lessonSkill.count({ where: { lessonId: lesson.id } })).resolves.toBe(0);
 
     expect(generateLessonSpec).not.toHaveBeenCalled();
     expect(writeLessonDraft).not.toHaveBeenCalled();

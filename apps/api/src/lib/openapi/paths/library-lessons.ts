@@ -1,9 +1,9 @@
+import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import {
   answerExplanationInputSchema,
   answerExplanationSchema,
   lessonStepCheckInputSchema,
   lessonStepCheckResultSchema,
-  libraryLessonCompletionInputSchema,
   libraryLessonCompletionSchema,
   libraryLessonRunSchema,
   libraryLessonStartInputSchema,
@@ -68,7 +68,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}/completions": {
     post: {
       description:
-        'Finishes a run once every screen that takes an answer was answered in it, or once "I know this" got every check right. Adds Brain Power, Energy and the day\'s totals; a replay counts as a review. Repeating it returns the same result without counting twice.',
+        'Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once "I know this" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. Adds Brain Power, Energy and the day\'s totals; a replay counts as a review. Repeating it returns the same result without counting twice.',
       operationId: "createLibraryLessonCompletion",
       requestBody: {
         content: { "application/json": { schema: libraryLessonCompletionInputSchema } },

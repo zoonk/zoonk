@@ -112,7 +112,8 @@ export const mockSittingPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: mockStepResponseSchema } },
-          description: "The next section started, or the mock finished",
+          description:
+            "The next section started, the mock finished, or it expired (its time ran out while the learner was away)",
         },
         ...commonErrors,
         "409": { ...conflictResponse, description: "Not the running section" },
@@ -138,6 +139,10 @@ export const mockSittingPaths = {
         "409": {
           ...conflictResponse,
           description: "The mock isn't running its speaking section (MOCK_NOT_SPEAKING)",
+        },
+        "503": {
+          ...conflictResponse,
+          description: "Calls are paused (CALLS_PAUSED); no task cards are generated.",
         },
       },
       security: AUTHENTICATED_SECURITY,

@@ -57,5 +57,5 @@ async function deleteFact(_request: NextRequest, context: FactContext) {
   return NextResponse.json({ change: result.change });
 }
 
-export const PATCH = withApiErrorBoundary(updateFact);
+export const POST = withApiErrorBoundary(updateFact);
 export const DELETE = withApiErrorBoundary(deleteFact);
