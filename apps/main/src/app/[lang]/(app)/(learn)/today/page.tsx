@@ -1,5 +1,6 @@
-import { StartClient } from "@/app/[lang]/(app)/(onboarding)/start/start-client";
+import { LazyStartClient } from "@/app/[lang]/(app)/(onboarding)/start/lazy-start-client";
 import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view";
+import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { Link } from "@/i18n/navigation";
@@ -76,7 +77,8 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
         </span>
       </div>
 
-      {/* Prefetched with its explanation, like a written lesson's link, so it opens at once. */}
+      {/* Prefetched with its explanation, its player preloaded, so it opens at once. */}
+      <LessonPlayerPreload />
       <Link
         className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto sm:self-start")}
         href={`/explain/${explanation.id}`}
@@ -138,7 +140,7 @@ async function TodayFirstGoal() {
   const { buddy, canAttach, draft, goalLimit, needsAccount } = start;
 
   return (
-    <StartClient
+    <LazyStartClient
       buddy={buddy}
       canAttach={canAttach}
       defaultGoal=""

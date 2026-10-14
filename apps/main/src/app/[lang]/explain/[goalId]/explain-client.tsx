@@ -1,6 +1,5 @@
 "use client";
 
-import { LessonPlayerClient } from "@/app/[lang]/learn/[lessonId]/lesson-player-client";
 import { useRouter } from "@/i18n/navigation";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
@@ -10,10 +9,11 @@ import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
 import { useExtracted, useLocale } from "next-intl";
-import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentProps, startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
+import { LazyLessonPlayer, preloadLessonPlayer } from "./lazy-lesson-player";
 
-type EndingSlots = NonNullable<ComponentProps<typeof LessonPlayerClient>["endingSlots"]>;
+type EndingSlots = NonNullable<ComponentProps<typeof LazyLessonPlayer>["endingSlots"]>;
 
 /**
  * The course to go further is linked a few seconds after the explanation can be read, so an
@@ -164,6 +164,16 @@ export function ExplainClient({
 
   useExplanationWait(Boolean(explanation.lesson));
 
+  const { lesson } = explanation;
+  const isWaiting = !lesson || phase === "outline";
+
+  // The player loads while the learner waits, so the explanation opens at once when it's ready.
+  useEffect(() => {
+    if (isWaiting) {
+      preloadLessonPlayer();
+    }
+  }, [isWaiting]);
+
   const progress = useWorkflowRun({
     generationId: explanation.generationId,
     kind: "explanation",
@@ -176,7 +186,7 @@ export function ExplainClient({
     restart: () => retryExplanationAction(explanation.goalId),
   });
 
-  if (!explanation.lesson || phase === "outline") {
+  if (isWaiting) {
     return (
       <ExplainWaiting
         closeHref={getHomeHref(explanation)}
@@ -184,18 +194,19 @@ export function ExplainClient({
         explanation={explanation}
         onCheck={() => router.refresh()}
         onRetry={() => retryExplanationAction(explanation.goalId)}
-        onStart={() => setPhase("playing")}
+        // A transition keeps the outline on screen until the player's code is in.
+        onStart={() => startTransition(() => setPhase("playing"))}
         progress={progress}
       />
     );
   }
 
   return (
-    <LessonPlayerClient
+    <LazyLessonPlayer
       endingSlots={endingSlots}
       firstAnswer={null}
       hasSession={hasSession}
-      lesson={explanation.lesson}
+      lesson={lesson}
       outline
       routing={routing}
       soundsEnabled={soundsEnabled}
