@@ -13,9 +13,7 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { useTickCount } from "@zoonk/ui/hooks/tick-count";
-import { FileClockIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
-import { Callout } from "../../_components/callout";
 import { getDetailLine } from "../../generation/_utils/detail-line";
 import {
   OnboardingColumn,
@@ -29,6 +27,9 @@ const READING_MS = 240_000;
 
 /** The plan is built; the bar starts where the reading does. */
 const PLAN_BUILT_PROGRESS = 40;
+
+/** The two phases' shares of the bar: the plan built, then the reading. */
+const PHASE_WEIGHTS = [PLAN_BUILT_PROGRESS, 100 - PLAN_BUILT_PROGRESS];
 
 /** The reading's line changes every few seconds, so the wait shows what's going on. */
 function ReadingDetail({ document }: { document: ExamDocument }) {
@@ -99,7 +100,12 @@ export function NoticeReading({
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <GenerationTimelineProgress aria-label={title} locale={locale} value={value} />
+          <GenerationTimelineProgress
+            aria-label={title}
+            locale={locale}
+            value={value}
+            weights={PHASE_WEIGHTS}
+          />
         </GenerationTimelineHeader>
 
         <GenerationTimelineSteps aria-label={title}>
@@ -124,20 +130,18 @@ export function NoticeReading({
 }
 
 /**
- * A plan revealed before its notice was read follows the exam's usual structure, and says so: the
- * reading arrives on Today as a change the learner applies or not.
+ * A plan revealed before its notice was read follows the exam's usual structure, and says so in one
+ * muted line under its phases: the reading arrives on Today as a change the learner applies or
+ * not.
  */
 export function UsualStructureNote() {
   const t = useExtracted();
 
   return (
-    <Callout>
-      <FileClockIcon aria-hidden="true" />
-      <p>
-        {t(
-          "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
-        )}
-      </p>
-    </Callout>
+    <p className="text-muted-foreground text-xs text-pretty">
+      {t(
+        "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+      )}
+    </p>
   );
 }

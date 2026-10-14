@@ -100,7 +100,6 @@ function useKeptMonthRow() {
     return {
       editDefault: keptMonth,
       editable: { key: "targetDate", kind: "date" },
-      icon: "calendar",
       id: "targetDate",
       label: t("Exam date"),
       note: noticeDay
@@ -212,7 +211,6 @@ function useSittingChoiceRow() {
       editDefault: first.date,
       editLabel: t("Exam date"),
       editable: { key: "targetDate", kind: "date" },
-      icon: "calendar",
       id: "examDates",
       label: t("Exam date"),
       note: t(
@@ -294,7 +292,6 @@ function useOwnDateRow() {
 
     return {
       editable: { key: "targetDate", kind: "date" },
-      icon: "calendar",
       id: "targetDate",
       label: draft.kind === "exam" ? t("Exam date") : t("Deadline"),
       note: note ?? undefined,
@@ -339,7 +336,6 @@ export function useDateRow() {
     if (!first) {
       return {
         editable: { key: "targetDate", kind: "date" },
-        icon: "calendar",
         id: "targetDate",
         label: t("Exam date"),
         note: t(
@@ -370,7 +366,6 @@ export function useDateRow() {
       editDefault: day.date,
       editLabel: t("Exam date"),
       editable: { key: "targetDate", kind: "date" },
-      icon: "calendar",
       id: "examDates",
       label: t("{count, plural, one {Exam date} other {Exam dates}}", { count: sitting.length }),
       note: estimated

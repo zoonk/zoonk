@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
+import { useAdvanceOnPick } from "./use-advance-on-pick";
 
 /**
  * An exam whose candidates take one of several subjects (ENEM's foreign language: English or
@@ -35,21 +36,28 @@ export function ExamChoiceStep({
 
   const isComplete = choices.every((choice) => picks[choice.group]);
 
+  const answerWith = (picked: Record<string, string>) =>
+    onAnswer({
+      choices: choices.flatMap((choice) => {
+        const subjectPicked = picked[choice.group];
+        return subjectPicked ? [{ group: choice.group, subject: subjectPicked }] : [];
+      }),
+      question: "examChoice",
+      timeZone: getLocalTimeZone(),
+    });
+
+  // One choice to make moves on once it's picked; several wait for Continue.
+  const { cancel, pick, submit } = useAdvanceOnPick({ answer: answerWith, pending });
+
   return (
     <StepForm
       canContinue={isComplete}
       description={t("The plan and the mocks follow your pick. You can change it in your plan.")}
-      onContinue={() =>
-        onAnswer({
-          choices: choices.flatMap((choice) => {
-            const picked = picks[choice.group];
-            return picked ? [{ group: choice.group, subject: picked }] : [];
-          }),
-          question: "examChoice",
-          timeZone: getLocalTimeZone(),
-        })
-      }
-      onSkip={() => onAnswer({ choices: null, question: "examChoice" })}
+      onContinue={() => submit(picks)}
+      onSkip={() => {
+        cancel();
+        onAnswer({ choices: null, question: "examChoice" });
+      }}
       pending={pending}
       skipLabel={t("Decide later")}
       subject={subject}
@@ -73,6 +81,12 @@ export function ExamChoiceStep({
             // Number keys pick from the first choice only.
             numberKeys={index === 0}
             onChange={(value) => setPicks({ ...picks, [choice.group]: value })}
+            onPick={
+              choices.length === 1
+                ? (value) => pick({ ...picks, [choice.group]: value })
+                : undefined
+            }
+            readOnly={pending}
             value={picks[choice.group] ?? null}
           />
         </section>

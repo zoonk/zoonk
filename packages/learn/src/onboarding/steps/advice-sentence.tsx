@@ -70,7 +70,7 @@ export function AdviceSentence({
 
     return advice.measure === "exam"
       ? t(
-          "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of the exam in depth, what comes up most first.",
+          "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of the plan's exam topics in depth, what comes up most first.",
           values,
         )
       : t(

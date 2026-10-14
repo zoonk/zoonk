@@ -6,7 +6,10 @@ import { useId } from "react";
 
 const MAX_ANSWER_LENGTH = 200;
 
-/** Only a screen's first field takes focus; the others wait for the learner. */
+/**
+ * Only a screen's first field takes focus; the others wait for the learner. Its text stays 16px on
+ * phones, where iOS Safari zooms into smaller fields.
+ */
 export function TextField({
   autoFocus = true,
   label,
@@ -27,7 +30,7 @@ export function TextField({
       <Label htmlFor={inputId}>{label}</Label>
       <Input
         autoFocus={autoFocus}
-        className="h-12 text-base"
+        className="h-11 text-base md:text-[0.9375rem]"
         id={inputId}
         maxLength={MAX_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}

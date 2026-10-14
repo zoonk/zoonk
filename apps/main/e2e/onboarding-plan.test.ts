@@ -79,19 +79,24 @@ test.describe("Placement and the plan", () => {
     await tabTo(page, stop);
     await page.keyboard.press("Enter");
 
-    // The plan's shape in two facts and its path of phases to the goal, with one way on.
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    // The plan as data: the goal as the title, its facts in one line and its phases on a bar,
+    // with Adjust and one way on.
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(goal.title);
     await expect(page.getByText("30 min a day", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Adjust" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/today");
 
-    // Two phases, then the goal itself.
-    const path = page.getByRole("list", { name: "Your journey" });
-    await expect(path.getByRole("listitem")).toHaveCount(3);
-    await expect(path.getByRole("listitem").last()).toContainText(goal.title);
-    await expect(page.locator('li[aria-current="step"]')).toContainText(", you are here");
+    // Two phases, the first one current: its band is the step the learner is on.
+    const path = page.getByRole("region", { name: "Phases" }).getByRole("list");
+    await expect(path.getByRole("listitem")).toHaveCount(2);
+
+    await expect(path.getByRole("listitem").first().locator('[aria-current="step"]')).toContainText(
+      ", you are here",
+    );
 
     // No chapters, tools or numbers to read before starting, and never a skill's raw name.
-    await expect(page.getByText(/~0 h/u)).toHaveCount(0);
+    await expect(page.getByText(/~0 (?:hr|min)\b/u)).toHaveCount(0);
     await expect(page.getByText("Lesson 1", { exact: true })).toHaveCount(0);
     await expect(path.getByRole("button")).toHaveCount(0);
 
@@ -128,24 +133,90 @@ test("the plan right after the learner's time shows that time, never the plan th
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible();
 
-  await page.getByText("1h", { exact: true }).click();
+  await page.getByText("1 hr", { exact: true }).click();
 
   // From here on, any moment the page says the old 30 minutes a day is remembered.
   await page.evaluate(() => {
     new MutationObserver(() => {
-      if (document.body.innerText.includes("30 min a day")) {
+      if (/30\smin a day/u.test(document.body.innerText)) {
         Object.assign(globalThis, { staleSeen: true });
       }
     }).observe(document.body, { characterData: true, childList: true, subtree: true });
   });
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
-  await expect(page.getByText("1h a day", { exact: true })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 hr a day", { exact: true })).toBeVisible();
 
   await expect(page.evaluate(() => Reflect.get(globalThis, "staleSeen") === true)).resolves.toBe(
     false,
   );
+});
+
+// A pick moves on by itself after a moment: Continue in that moment, or another pick while the
+// answer saved, used to save it twice and skip the question after it.
+test("a picked answer saves once and moves on once, whatever else is pressed while it saves", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await goalFixture({
+    details: { answered: ["targetDate", "schedule", "buddy"], subject: "algebra" },
+    prompt: `learn algebra ${randomUUID().slice(0, 8)}`,
+    title: "Learn algebra",
+    userId: noProgressUser.id,
+  });
+
+  const purposeSaves: string[] = [];
+
+  // The save takes longer than the pick's moment.
+  await page.route(`**/start/${goal.id}`, async (route) => {
+    const request = route.request();
+
+    if (request.method() === "POST" && request.postData()?.includes('"purpose"')) {
+      purposeSaves.push(request.url());
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1500);
+      });
+    }
+
+    await route.continue();
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
+
+  const purposeSaved = page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      Boolean(response.request().postData()?.includes('"purpose"')),
+  );
+
+  await page.getByText("Use it at work", { exact: true }).click();
+  await page.keyboard.press("Enter");
+  await page.getByText("Get an overview", { exact: true }).click();
+
+  // Screen readers hear the answer it moved on with, once.
+  await expect(page.getByRole("status").filter({ hasText: /^You picked/u })).toHaveText(
+    "You picked Use it at work",
+  );
+
+  const saveResponse = await purposeSaved;
+  expect(saveResponse.status()).toBe(200);
+
+  // Work plans ask the learner's role next: the question after it isn't skipped.
+  await expect(page.getByRole("heading", { name: "What do you do at work?" })).toBeVisible();
+  expect(purposeSaves).toHaveLength(1);
+
+  await expect
+    .poll(async () => {
+      const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      return saved.details;
+    })
+    .toMatchObject({ purpose: "work" });
+
+  await expect(page.getByRole("heading", { name: "What do you do at work?" })).toBeVisible();
+  expect(purposeSaves).toHaveLength(1);
 });
 
 // An IELTS learner's time was lost when saving it crashed and "Try again" started the step over.
@@ -193,7 +264,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await expect(page.getByRole("radio", { name: "45 min" })).toBeChecked();
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
 });
 
@@ -213,7 +284,7 @@ test("while the learner changes the days, the time step recommends only the time
   });
 
   // The API's answer for each number of study days, as Marcos's plan gave it: an hour on every
-  // day, 1h 10min on six, 1h 25min on five. Main's E2E runs without the API, so it's stood in for
+  // day, 1 hr 10 min on six, 1 hr 25 min on five. Main's E2E runs without the API, so it's stood in for
   // here; while `holding`, answers wait until released, as a big plan's took seconds.
   const minutesFor = new Map([
     [5, 85],
@@ -235,8 +306,10 @@ test("while the learner changes the days, the time step recommends only the time
 
     await route.fulfill({
       json: {
+        coveredShare: null,
         maximum: null,
         measure: "goal",
+        numbers: null,
         ready: true,
         recommendedMinutes: minutesFor.get(studyDays.split(",").length) ?? null,
         targetDate: targetDate.toISOString().slice(0, "YYYY-MM-DD".length),
@@ -248,26 +321,28 @@ test("while the learner changes the days, the time step recommends only the time
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { name: "Start from zero" }).click();
 
-  await expect(page.getByText(/we recommend 1h a day\.$/u)).toBeVisible();
+  // The week starts Monday to Friday.
+  await expect(page.getByText(/we recommend 1\shr 25\smin a day\.$/u)).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
 
   holding = true;
-  await page.getByRole("button", { name: "Sunday" }).click();
+  await page.getByRole("button", { name: /^Which days\?/u }).click();
+  await page.getByRole("button", { name: "Saturday" }).click();
 
-  // Every day's hour isn't what six days need: until the plan says, nothing is recommended.
+  // Five days' time isn't what six days need: until the plan says, nothing is recommended.
   await expect(page.getByText(/^6 days · /u)).toBeVisible();
   await expect(page.getByText("Working out the time your goal needs…")).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toHaveCount(0);
 
   // Another change asks about the new days right away, without waiting for the old answer.
-  await page.getByRole("button", { name: "Saturday" }).click();
+  await page.getByRole("button", { name: "Sunday" }).click();
   await expect.poll(() => held.length).toBe(2);
 
   holding = false;
   held.forEach((release) => release());
 
-  await expect(page.getByText(/^5 days · /u)).toBeVisible();
-  await expect(page.getByText(/we recommend 1h 25m a day\.$/u)).toBeVisible();
+  await expect(page.getByText(/^7 days · /u)).toBeVisible();
+  await expect(page.getByText(/we recommend 1\shr a day\.$/u)).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
 });
 
@@ -287,6 +362,84 @@ async function createTimeStepGoal(userId: string) {
   return { goal, isoDate: targetDate.toISOString().slice(0, "YYYY-MM-DD".length) };
 }
 
+test("the time step asks what a larger Sunday exam budget covers instead of assuming it fits", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
+  await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+
+  const requests: { dailyMinutes: number; studyDays: string }[] = [];
+
+  // Main runs without the API. These are the real fourteen-lesson, 69-minute-mock planner's
+  // shares: Sunday 65 fits, but adding a mock at higher budgets makes 90 cover only 12 lessons.
+  await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) => {
+    const params = new URL(route.request().url()).searchParams;
+    const dailyMinutes = Number(params.get("dailyMinutes"));
+    const studyDays = params.get("studyDays") ?? "";
+    requests.push({ dailyMinutes, studyDays });
+
+    return route.fulfill({
+      json: {
+        coveredShare: studyDays === "0" && dailyMinutes === 90 ? 12 / 14 : 1,
+        maximum: null,
+        measure: "exam",
+        numbers: null,
+        readingNotice: false,
+        ready: true,
+        recommendedMinutes: studyDays === "0" ? 65 : 60,
+        targetDate: isoDate,
+        targetDateNamedMonth: false,
+      },
+    });
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start from zero" }).click();
+  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /^Which days\?/u }).click();
+
+  // From Monday to Friday to Sunday alone.
+  await page.getByRole("button", { exact: true, name: "Sunday" }).click();
+  await page.getByRole("button", { exact: true, name: "Monday" }).click();
+  await page.getByRole("button", { exact: true, name: "Tuesday" }).click();
+  await page.getByRole("button", { exact: true, name: "Wednesday" }).click();
+  await page.getByRole("button", { exact: true, name: "Thursday" }).click();
+  await page.getByRole("button", { exact: true, name: "Friday" }).click();
+
+  // The recommended time is marked, never picked for the learner: they pick it.
+  await expect(page.getByText(/we recommend 1\shr 5\smin a day\.$/u)).toBeVisible();
+  await expect(page.getByRole("radio", { name: "1 hr 5 min" })).not.toBeChecked();
+
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("1 hr 5 min", { exact: true })
+    .click();
+
+  await expect(page.getByRole("radio", { name: "1 hr 5 min" })).toBeChecked();
+  const estimate = page.getByRole("region", { name: "Estimate" });
+  await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
+
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("1 hr 30 min", { exact: true })
+    .click();
+
+  // A known recommendation must not stop polling for this different pick.
+  await expect.poll(() => requests).toContainEqual({ dailyMinutes: 90, studyDays: "0" });
+  await expect(estimate.getByText(/^~86% of the plan's exam topics/u)).toBeVisible();
+  await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toHaveCount(0);
+  await expect(page.getByRole("radio", { exact: true, name: "1 hr 30 min" })).toBeChecked();
+  await expect(page.getByText(/we recommend 1\shr 5\smin a day\.$/u)).toBeVisible();
+
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("1 hr 5 min", { exact: true })
+    .click();
+
+  await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
+});
+
 test("the time step keeps asking while a slow plan is still being built, and recommends its time once it's ready", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -303,8 +456,10 @@ test("the time step keeps asking while a slow plan is still being built, and rec
 
     return route.fulfill({
       json: {
+        coveredShare: null,
         maximum: null,
         measure: "goal",
+        numbers: null,
         ready: built,
         recommendedMinutes: built ? 100 : null,
         targetDate: built ? isoDate : null,
@@ -329,7 +484,7 @@ test("the time step keeps asking while a slow plan is still being built, and rec
 
   // The plan is built: the next ask recommends its time.
   built = true;
-  await expect(page.getByText(/we recommend 1h 40m a day\.$/u)).toBeVisible();
+  await expect(page.getByText(/we recommend 1\shr 40\smin a day\.$/u)).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
 });
 
@@ -345,8 +500,10 @@ test("when the plan's time can't be read, the time step says so and asks again o
       ? route.fulfill({ body: "", status: 500 })
       : route.fulfill({
           json: {
+            coveredShare: null,
             maximum: null,
             measure: "goal",
+            numbers: null,
             ready: true,
             recommendedMinutes: 60,
             targetDate: isoDate,
@@ -370,7 +527,7 @@ test("when the plan's time can't be read, the time step says so and asks again o
   failing = false;
   await page.getByRole("button", { name: "Try again" }).click();
 
-  await expect(page.getByText(/we recommend 1h a day\.$/u)).toBeVisible();
+  await expect(page.getByText(/we recommend 1\shr a day\.$/u)).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
 
   // The learner can always go on with a time of their own.
@@ -402,7 +559,7 @@ test("starting from the plan on a weekday the learner rests opens today's sessio
   ]);
 
   await page.goto(`/start/${goal.id}`);
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   // The plan is built from the answers: changing them is in "Adjust", not back through them.
   await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
@@ -443,7 +600,7 @@ test("an exam's plan waits on the reveal while its notice is read, and says when
   // The reading lands in the plan: the reveal shows it by itself.
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
 
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   await expect(page.getByText(/usual structure/u)).toHaveCount(0);
 
   // Past the wait, the plan shows the exam's usual structure and says what happens next.
@@ -454,7 +611,7 @@ test("an exam's plan waits on the reveal while its notice is read, and says when
 
   await page.reload();
 
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   await expect(
     page.getByText(
@@ -527,7 +684,7 @@ test("the reveal offers the exam notice's day over the learner's own, and takes 
 
   await page.goto(`/start/${goal.id}`);
 
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   const offer = page.getByText(/^The exam notice says .+\.$/u);
   await expect(offer).toBeVisible();
@@ -582,7 +739,7 @@ test("the reveal says the learner's month has no exam date, and takes the closes
 
   await page.goto(`/start/${goal.id}`);
 
-  await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+  await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   const card = page.getByText(`No exam date in February ${year + 1}`, { exact: true });
   await expect(card).toBeVisible();
@@ -901,7 +1058,7 @@ test.describe("Typed placement answers", () => {
     await expect(page.getByRole("heading", { name: "Your starting point is set" })).toBeVisible();
     await page.getByRole("button", { name: "See my plan" }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
     await expect(
       prisma.attempt.findFirst({ where: { item: { format: "typed" }, userId: noProgressUser.id } }),
@@ -955,6 +1112,6 @@ test.describe("Typed placement answers", () => {
 
     await expect(page.getByText(/Your first sessions ask a few more/u)).toBeVisible();
     await page.getByRole("button", { name: "See my plan" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   });
 });

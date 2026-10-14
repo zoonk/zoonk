@@ -24,6 +24,9 @@ type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const GOAL_URL = /\/start\/[0-9a-f-]{36}$/u;
 
+/** A year a plan reaches (at most 3,650 days ahead), for the deadlines the words give. */
+const DEADLINE_YEAR = new Date().getUTCFullYear() + 3;
+
 /**
  * Stores what the words mean for the page's guest, as a real read leaves it, and returns the words
  * made unique.
@@ -43,8 +46,8 @@ async function openStart(page: Page) {
 }
 
 async function sendGoal(page: Page, goal: string) {
-  await page.getByRole("textbox", { name: "Your goal" }).fill(goal);
-  await page.getByRole("button", { name: "Start with your goal" }).click();
+  await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+  await page.getByRole("button", { name: "Build my plan" }).click();
 }
 
 async function typeGoal(page: Page, { result, words }: { result: Understanding; words: string }) {
@@ -62,7 +65,7 @@ async function findCreatedGoal(page: Page, goal: string) {
 }
 
 async function confirmGoal(page: Page, goal: string) {
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await page.getByRole("button", { name: "Looks right" }).click();
 
   return findCreatedGoal(page, goal);
@@ -97,11 +100,11 @@ async function pressByKeyboard(page: Page, target: Locator) {
  * returns the goal it made.
  */
 async function startByKeyboard(page: Page, goal: string) {
-  await tabTo(page, page.getByRole("textbox", { name: "Your goal" }));
+  await tabTo(page, page.getByRole("textbox", { name: "I want to" }));
   await page.keyboard.type(goal);
   await page.keyboard.press("Enter");
 
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await expectAccessibleScreen(page, "what was understood");
   await pressByKeyboard(page, page.getByRole("button", { name: "Looks right" }));
 
@@ -128,6 +131,64 @@ const QUANTUM: Understanding = {
 };
 
 test.describe("Onboarding from a typed goal", () => {
+  test("a plan that stops building says so by Continue, without moving the choices", async ({
+    browser,
+  }) => {
+    // AI is off in tests, so the plan the answers start building always stops: the notice arrives
+    // while the learner is on a question, on a phone and on a laptop, in either theme.
+    for (const { colorScheme, width } of [
+      { colorScheme: "light", width: 390 },
+      { colorScheme: "dark", width: 390 },
+      { colorScheme: "light", width: 1440 },
+      { colorScheme: "dark", width: 1440 },
+    ] as const) {
+      // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+      const context = await browser.newContext({ colorScheme, viewport: { height: 900, width } });
+
+      try {
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        const page = await context.newPage();
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        const goal = await typeGoal(page, {
+          result: QUANTUM,
+          words: "i want to understand quantum physics",
+        });
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await confirmGoal(page, goal);
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await expect(
+          page.getByRole("heading", { name: "What do you want from it?" }),
+        ).toBeVisible();
+
+        const first = page.getByRole("radio").first();
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        const before = await first.boundingBox();
+
+        const stopped = page.getByText(
+          /^(?:Building your plan stopped|We couldn't start building your plan)$/u,
+        );
+        // The run retries before it gives up, longer than an assertion's default wait.
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await expect(stopped).toBeVisible({ timeout: 30_000 });
+
+        // It sits with Continue, in a live region screen readers hear, and the choices stay put.
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await expect(page.locator("[aria-live='polite']").filter({ has: stopped })).toHaveCount(1);
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        expect(await first.boundingBox()).toStrictEqual(before);
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await page.screenshot({
+          path: test.info().outputPath(`plan-stopped-${width}-${colorScheme}.png`),
+        });
+      } finally {
+        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
+        await context.close();
+      }
+    }
+  });
+
   test("a visitor goes from a goal in their words to a plan, by keyboard", async ({ page }) => {
     const goal = await storeUnderstanding(page, {
       result: QUANTUM,
@@ -169,32 +230,50 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("textbox", { name: "Name" })).toHaveValue("");
     await pressByKeyboard(page, page.getByRole("button", { exact: true, name: "Continue" }));
 
+    // Placement is a step between the questions, with their dots and their count.
     const placement = "Let's see what you already know";
     await expect(page.getByRole("heading", { name: placement })).toBeVisible();
+    await expect(page.getByRole("img", { name: "Step 6 of 7" })).toBeVisible();
     await expect(page.getByText(/A few quick questions, so your plan skips/u)).toBeVisible();
     await expectAccessibleScreen(page, placement);
     const scratch = page.getByRole("button", { name: "Start from zero" });
     await pressByKeyboard(page, scratch);
+
+    // A refresh after placement still counts it: the time is the last of the seven steps.
+    const time = page.getByRole("heading", { name: "How much time can you study each day?" });
+    await expect(time).toBeVisible();
+    await page.reload();
+    await expect(time).toBeVisible();
 
     await answerByKeyboard(page, {
       choose: async () => {
         // The time comes after placement. A new career with no date: an hour a day comes picked
         // (a whole field to learn), never claimed as what the goal needs (without a date there's
         // nothing to cover it by); minutes and days are all it asks.
-        await expect(page.getByRole("radio", { exact: true, name: "1h" })).toBeChecked();
+        await expect(page.getByRole("radio", { exact: true, name: "1 hr" })).toBeChecked();
         await expect(page.getByText(/Recommended/u)).toHaveCount(0);
+        await expect(page.getByRole("img", { name: "Step 7 of 7" })).toBeVisible();
 
         await expect(page.getByText("When will you study?")).toBeHidden();
         await page.getByText("30 min", { exact: true }).click();
-        await page.getByRole("button", { name: "Sunday" }).click();
-        await expect(page.getByText("6 days · 3h a week")).toBeVisible();
+        // The days and the weekend's time are folded into one row under the time a day; the week
+        // starts Monday to Friday, which nobody has to undo.
+        await page.getByRole("button", { name: /^Which days\?/u }).click();
+
+        await expect(page.getByRole("button", { name: "Sunday" })).toHaveAttribute(
+          "aria-pressed",
+          "false",
+        );
+
+        await page.getByRole("button", { name: "Saturday" }).click();
+        await expect(page.getByText("6 days · 3 hr a week")).toBeVisible();
 
         // Saturday can take its own time; the switch shows the choice only once it's on.
         const weekend = page.getByRole("radiogroup", { name: "Minutes on weekends" });
         await expect(weekend).toBeHidden();
         await page.getByRole("switch", { name: "Different time on weekends" }).click();
-        await weekend.getByText("1h", { exact: true }).click();
-        await expect(page.getByText("6 days · 3h 30m a week")).toBeVisible();
+        await weekend.getByText("1 hr", { exact: true }).click();
+        await expect(page.getByText("6 days · 3 hr 30 min a week")).toBeVisible();
         await expectAccessibleAnswer(page, "How much time can you study each day?");
       },
       heading: "How much time can you study each day?",
@@ -265,13 +344,13 @@ test.describe("Onboarding from a typed goal", () => {
             ownLevel: "none",
             purpose: "overview",
             subject,
-            targetDate: "2099-01-31",
+            targetDate: `${DEADLINE_YEAR}-01-31`,
             title: `Learn about ${subject}`,
           },
         ],
         route: "goals",
       },
-      words: `learn about ${subject} from zero by 2099, 20 min a day`,
+      words: `learn about ${subject} from zero by ${DEADLINE_YEAR}, 20 min a day`,
     });
 
     await expect(page.getByText("20 min a day")).toBeVisible();
@@ -365,7 +444,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText(new RegExp(`,\\s${namedYear}$`, "u"))).toBeVisible();
     await expect(page.getByText(/We'll tell you when the official ones are out/u)).toBeVisible();
     await expect(page.getByText("Exam year", { exact: true })).toBeHidden();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeHidden();
+    await expect(page.getByRole("link", { name: /^Source:/u })).toBeHidden();
 
     // The same row takes any full date of her own: no estimated day is offered over it.
     const ownDay = `${namedYear}-10-20`;
@@ -394,7 +473,7 @@ test.describe("Onboarding from a typed goal", () => {
 
     // A refresh keeps what was understood, with the learner's fixes.
     await page.reload();
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
     await expect(page.getByText(goal, { exact: true })).toBeVisible();
     await expect(page.getByText(title, { exact: true })).toBeVisible();
     await expect(page.getByText(ownDate, { exact: true })).toBeVisible();
@@ -428,7 +507,7 @@ test.describe("Onboarding from a typed goal", () => {
       page.getByRole("heading", { name: "How much time can you study each day?" }),
     ).toBeVisible();
 
-    await expect(page.getByRole("radio", { exact: true, name: "1h" })).toBeChecked();
+    await expect(page.getByRole("radio", { exact: true, name: "1 hr" })).toBeChecked();
 
     await expect(page.getByText("When will you study?")).toBeHidden();
   });
@@ -488,7 +567,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText("Exam date", { exact: true })).toBeVisible();
     await expect(page.getByText(`March ${noticeYear}`, { exact: true })).toBeVisible();
     await expect(page.getByText(noticeDay)).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Source:/u })).toBeVisible();
 
     // She sets an exact day of her own: still not the notice's, which stays one tap away.
     await page.getByRole("button", { name: "Edit Exam date" }).click();
@@ -503,7 +582,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText(noticeDay)).toBeHidden();
     await expect(page.getByRole("button", { name: "Use this date" })).toBeHidden();
     await expect(page.getByText(/days? left/u)).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Source:/u })).toBeVisible();
   });
 
   // Dele's DELE B2 without a date listed every sitting and planned for the one six days away, whose
@@ -566,7 +645,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText(`July 10, ${year}`, { exact: true })).toBeVisible();
     await expect(page.getByText("Pick your date", { exact: true })).toBeHidden();
     await expect(page.getByText(/days? left/u)).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Source:/u })).toBeVisible();
   });
 
   test("the card never repeats what the goal's title says, and gives the goal one date", async ({
@@ -581,11 +660,11 @@ test.describe("Onboarding from a typed goal", () => {
         goals: [
           {
             examName,
-            examYear: 2099,
+            examYear: DEADLINE_YEAR,
             institution: "Câmara dos Deputados",
             kind: "exam",
             subject: examName,
-            targetDate: "2099-01-31",
+            targetDate: `${DEADLINE_YEAR}-01-31`,
             targetPosition: "registro e redação",
             title: `Passar no concurso da Câmara dos Deputados ${id} para registro e redação`,
           },
@@ -596,7 +675,7 @@ test.describe("Onboarding from a typed goal", () => {
     });
 
     await expect(page.getByText("Exam date", { exact: true })).toBeVisible();
-    await expect(page.getByText("January 31, 2099")).toBeVisible();
+    await expect(page.getByText(`January 31, ${DEADLINE_YEAR}`)).toBeVisible();
     await expect(page.getByText("Exam year", { exact: true })).toBeHidden();
     await expect(page.getByText("Where", { exact: true })).toBeHidden();
     await expect(page.getByText("Position", { exact: true })).toBeHidden();
@@ -617,7 +696,7 @@ test.describe("Onboarding from a typed goal", () => {
             ownLevel: "basic",
             reason: "Moving to Toronto, Canada",
             subject: "English",
-            targetDate: "2099-03-31",
+            targetDate: `${DEADLINE_YEAR}-03-31`,
             targetLanguage: "en",
             title: "Speak English in Toronto",
           },

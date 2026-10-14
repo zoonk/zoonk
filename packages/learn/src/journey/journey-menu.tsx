@@ -15,7 +15,6 @@ import {
   LibraryIcon,
   MessageCircleQuestionIcon,
   Share2Icon,
-  SlidersHorizontalIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useBuddyName } from "../buddies/use-buddy-name";
@@ -50,7 +49,7 @@ function ReportItem() {
   );
 }
 
-function TalkToBuddy({ buddy }: { buddy: NonNullable<PlanTutor["buddy"]> }) {
+function TalkToBuddy({ buddy }: { buddy: PlanTutor["buddy"] }) {
   const t = useExtracted();
   const name = useBuddyName(buddy);
   return t("Talk to {name}", { name });
@@ -58,12 +57,10 @@ function TalkToBuddy({ buddy }: { buddy: NonNullable<PlanTutor["buddy"]> }) {
 
 /** "Talk to Zu": the buddy's conversation, where questions about the plan go. */
 function AskTutorItem({ tutor }: { tutor: PlanTutor }) {
-  const t = useExtracted();
-
   return (
     <DropdownMenuItem render={<LearnLink href={tutor.href} />}>
       <MessageCircleQuestionIcon aria-hidden="true" />
-      {tutor.buddy ? <TalkToBuddy buddy={tutor.buddy} /> : t("Talk to your buddy")}
+      <TalkToBuddy buddy={tutor.buddy} />
     </DropdownMenuItem>
   );
 }
@@ -75,38 +72,32 @@ type JourneyMenuGoal = {
   onSetStatus: (status: GoalStatusChange) => void;
 };
 
-/** "Adjust plan" in the preparation card's action row, beside the Journey's "…". */
+/** "Adjust plan" beside the Plan's title, small, with the "…" after it. */
 export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button onClick={onAdjust} variant="outline">
-      <SlidersHorizontalIcon aria-hidden="true" />
+    <Button onClick={onAdjust} size="sm" variant="outline">
       {t("Adjust plan")}
     </Button>
   );
 }
 
 /**
- * The Journey's "…": what the learner does now and then. Adjusting the plan comes first when the
- * page has no "Adjust plan" button of its own (`adjustInMenu`); then the exam's page (exam goals),
- * the course the plan is built from, sharing, talking to the buddy and reporting; last, what acts
- * on the goal itself (pause or resume, archive), here on its own page so it's clear which goal
- * changes.
+ * The Plan's "…", beside "Adjust plan": what the learner does now and then. The exam's page
+ * (exam goals), the course the plan is built from, sharing, talking to the buddy and reporting;
+ * last, what acts on the goal itself (pause or resume, archive), here on its own page so it's
+ * clear which goal changes.
  */
 export function JourneyMenu({
-  adjustInMenu,
   courseHref,
   examHref,
   goal,
-  onAdjust,
 }: {
-  adjustInMenu: boolean;
   /** The Library course the plan takes part of, when it has a public page. */
   courseHref: string | null;
   examHref: string | null;
   goal: JourneyMenuGoal | null;
-  onAdjust: () => void;
 }) {
   const t = useExtracted();
   const share = useSharePlan();
@@ -115,20 +106,13 @@ export function JourneyMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button className="rounded-full" size="icon" variant="outline" />}
+        render={<Button className="size-7.5" size="icon-sm" variant="outline" />}
       >
         <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{t("Journey options")}</span>
+        <span className="sr-only">{t("Plan options")}</span>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-60">
-        {adjustInMenu && (
-          <DropdownMenuItem onClick={onAdjust}>
-            <SlidersHorizontalIcon aria-hidden="true" />
-            {t("Adjust plan")}
-          </DropdownMenuItem>
-        )}
-
         {examHref && (
           <DropdownMenuItem render={<LearnLink href={examHref} />}>
             <GraduationCapIcon aria-hidden="true" />
@@ -143,7 +127,7 @@ export function JourneyMenu({
           </DropdownMenuItem>
         )}
 
-        {(adjustInMenu || examHref || courseHref) && <DropdownMenuSeparator />}
+        {(examHref || courseHref) && <DropdownMenuSeparator />}
 
         <DropdownMenuItem onClick={() => void share()}>
           <Share2Icon aria-hidden="true" />

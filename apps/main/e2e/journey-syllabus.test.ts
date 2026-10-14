@@ -12,6 +12,7 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
+import { stubScreenTutor } from "./screen-tutor";
 import { createStudyDay, openAs, pastFreeWeek } from "./study-day";
 
 /**
@@ -62,9 +63,13 @@ function graphSkill({
  * A civil service candidate three months from the exam. Portuguese: spelling studied, cohesion begun, verb
  * tenses taught by no skill yet. Constitutional law ahead (the plan calls it "Constitutional Law"). The
  * legislative process taken out of the plan, and an exam-strategy area the notice doesn't list. With
- * `setAside`, days she missed set a second spelling lesson aside.
+ * `setAside`, days she missed set a second spelling lesson aside. With `lawLeftOut`, her time left
+ * constitutional law out of the plan.
  */
-async function createCivilServiceLearner({ setAside = false }: { setAside?: boolean } = {}) {
+async function createCivilServiceLearner({
+  lawLeftOut = false,
+  setAside = false,
+}: { lawLeftOut?: boolean; setAside?: boolean } = {}) {
   const user = await createE2EUser(getBaseURL());
   const today = toUTCMidnight(new Date());
   const day = (offset: number) => new Date(today.getTime() + offset * MS_PER_DAY);
@@ -171,8 +176,8 @@ async function createCivilServiceLearner({ setAside = false }: { setAside?: bool
     lesson(0, spellingChapter.id, spelling.id, "done"),
     lesson(1, cohesionChapter.id, cohesion.id, "done"),
     lesson(2, cohesionChapter.id, cohesion.id),
-    lesson(3, principlesChapter.id, principles.id),
-    lesson(4, rulesChapter.id, houseRules.id),
+    !lawLeftOut && lesson(3, principlesChapter.id, principles.id),
+    !lawLeftOut && lesson(4, rulesChapter.id, houseRules.id),
     lesson(5, timingChapter.id, timing.id),
     planItemFixture({ kind: "mock", planId: plan.id, position: 6, scheduledFor: day(6) }),
     planItemFixture({ kind: "boss", planId: plan.id, position: 7, scheduledFor: day(8) }),
@@ -330,16 +335,48 @@ test.describe("A goal's structure", () => {
     await pastFreeWeek(goal.id);
 
     const page = await openAs(browser, user);
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    const path = page.getByRole("list", { name: "Your journey" });
-    const current = path.locator('li[aria-current="step"]');
+    const next = page.getByRole("region", { name: "Next on your path" });
 
     await expect(
-      current.getByRole("link", { name: /^Phase challenge.*Available with Plus/u }),
+      next.getByRole("link", { name: /^Phase challenge.*Available with Plus/u }),
     ).toHaveAttribute("href", /^\/challenge\/[\da-f-]{36}$/u);
 
-    await expect(page.getByText("Your free week of exam prep is over")).toBeVisible();
+    await expect(
+      page.getByText("Your free week of exam prep is over").filter({ visible: true }),
+    ).toBeVisible();
+
+    await page.context().close();
+  });
+
+  // Her time left constitutional law out of the plan, but the exam still tests it, so her
+  // preparation counts it: with no number on its row, her overall sat under every subject she
+  // could see. The one she took out isn't counted, so it has none.
+  test("a subject her time left out shows its preparation, which her overall counts", async ({
+    browser,
+  }) => {
+    const { user } = await createCivilServiceLearner({ lawLeftOut: true });
+    const page = await openAs(browser, user);
+    await page.goto("/plan");
+
+    const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
+
+    await expect(syllabus.getByRole("link", { name: /^(?!download)/u })).toHaveText([
+      new RegExp(`^${PORTUGUESE}30 questions[<>]?\\d+%$`, "u"),
+      new RegExp(`^${CONSTITUTIONAL}20 questionsNot in your plan[<>]?\\d+%$`, "u"),
+      `${PROCESS}10 questionsNot in your plan`,
+      /^Exam strategy[<>]?\d+%$/u,
+    ]);
+
+    // Its page says why it's out, and the same preparation.
+    await syllabus.getByRole("link", { name: new RegExp(`^${CONSTITUTIONAL}`, "u") }).click();
+    await expect(page.getByText("It doesn't fit in the time you have.")).toBeVisible();
+
+    await expect(
+      page.locator('[data-slot="subject-preparation"]').filter({ visible: true }),
+    ).toContainText(/\d+%/u);
+
     await page.context().close();
   });
 
@@ -348,26 +385,36 @@ test.describe("A goal's structure", () => {
   }) => {
     const { cohesionChapter, goal, user } = await createCivilServiceLearner();
     const page = await openAs(browser, user);
-    await page.goto("/journey");
+    const asked = await stubScreenTutor(page);
+    await page.goto("/plan");
 
-    // The path is a timeline: the phase she's in with its next mock and its challenge, no
-    // chapters. Mocks come with Plus: her free plan's path shows them as they are, marked Plus.
-    const path = page.getByRole("list", { name: "Your journey" });
-    const current = path.locator('li[aria-current="step"]');
+    // What's next on her path: her next mock and the challenge that closes her phase, no
+    // chapters (they live under the subjects). Mocks come with Plus: her free plan shows them as
+    // they are, marked Plus.
+    const next = page.getByRole("region", { name: "Next on your path" });
 
     // Her free week isn't over yet: the challenge is hers to take.
-    await expect(current.getByRole("link", { name: /^Phase challenge/u })).toBeVisible();
-    await expect(current.getByRole("link", { name: /^Phase challenge.*Plus/u })).toHaveCount(0);
+    await expect(next.getByRole("link", { name: /^Phase challenge/u })).toBeVisible();
+    await expect(next.getByRole("link", { name: /^Phase challenge.*Plus/u })).toHaveCount(0);
 
     await expect(
-      current.getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
+      next.getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
     ).toHaveAttribute("href", "/exam");
 
-    await expect(path.getByRole("link", { name: /Linking ideas/u })).toHaveCount(0);
+    await expect(next.getByRole("link", { name: /Linking ideas/u })).toHaveCount(0);
 
-    // What's on the exam: the notice's subjects in its groups, then what the plan adds.
-    const syllabus = page.getByRole("region", { name: "What's on the exam" });
-    await expect(syllabus.getByText("3 subjects · 8 topics")).toBeVisible();
+    // Her mock exams are one of her plan's properties too, said only as regular as their planned
+    // days are; they aren't a setting, so the row opens the exam's page, where they are.
+    await expect(
+      page
+        .getByRole("region", { exact: true, name: "Your plan" })
+        .getByRole("link", { name: /^Mock exams.*Available with Plus/u }),
+    ).toHaveAttribute("href", "/exam");
+
+    // The subjects: the notice's subjects in its groups, then what the plan adds, counted in the
+    // note under them.
+    const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
+    await expect(syllabus.getByText(/^3 subjects · 8 topics/u)).toBeVisible();
 
     await expect(syllabus.getByRole("heading", { level: 3 })).toHaveText([
       "Basic knowledge (P1)",
@@ -375,37 +422,67 @@ test.describe("A goal's structure", () => {
       "Beyond the notice",
     ]);
 
-    // Each subject with its questions on the exam, as the notice counts them.
-    await expect(syllabus.getByRole("link")).toHaveText([
-      `${PORTUGUESE}1 of 3 topics30 questions`,
-      `${CONSTITUTIONAL}0 of 3 topics20 questions`,
-      `${PROCESS}Not in your plan10 questions`,
-      // As many of its lessons as the plan's time holds.
-      /^Exam strategy0 of \d+ lessons?$/u,
+    // Each subject on one row: its name, its questions on the exam as the notice counts them (a
+    // column of their own where the list is wide), its bar and the share done at its end; one she
+    // took out of the plan says so where its bar would be, with no share: her overall doesn't
+    // count it.
+    await expect(syllabus.getByRole("link", { name: /^(?!download)/u })).toHaveText([
+      new RegExp(`^${PORTUGUESE}30 questions[<>]?\\d+%$`, "u"),
+      new RegExp(`^${CONSTITUTIONAL}20 questions[<>]?\\d+%$`, "u"),
+      `${PROCESS}10 questionsNot in your plan`,
+      /^Exam strategy[<>]?\d+%$/u,
     ]);
 
     // A subject's page: its topics in the notice's words, each ticked, opening to its chapters.
     await syllabus.getByRole("link", { name: new RegExp(`^${PORTUGUESE}`, "u") }).click();
-    await expect(page).toHaveURL(/\/journey\/portuguese-language$/u);
+    await expect(page).toHaveURL(/\/plan\/portuguese-language$/u);
     await expect(page.getByRole("heading", { level: 1, name: PORTUGUESE })).toBeVisible();
     await expect(page.getByText("Basic knowledge (P1)").filter({ visible: true })).toBeVisible();
     await expect(page.getByRole("article").getByText("30 questions")).toBeVisible();
+
+    // Her buddy answers about the subject, beside its facts. Opening it asks nothing: only what
+    // she sends is answered.
+    await page.getByRole("button", { name: "Ask Zu about this subject" }).click();
+    const tutor = page.getByRole("dialog", { name: "Zu" });
+    await expect(tutor.getByText("Ask questions about this subject")).toBeVisible();
+    expect(asked).toStrictEqual([]);
+
+    await tutor.getByRole("button", { name: "What's left to study here?" }).click();
+
+    await expect(
+      tutor.getByText("Here's the short version, from what the screen shows."),
+    ).toBeVisible();
+
+    expect(asked).toStrictEqual([
+      {
+        input: expect.objectContaining({
+          context: { kind: "subject" },
+          question: "What's left to study here?",
+        }),
+        path: `/v1/goals/${goal.id}/subjects/portuguese-language/questions`,
+      },
+    ]);
+
+    await page.keyboard.press("Escape");
+    await expect(tutor).toBeHidden();
 
     // How far, at a glance: "Continue" with the share of the notice's topics studied, into the
     // next chapter, and the topics studied beside the notice's topics.
     const subjectPage = page.getByRole("article");
 
-    await expect(
-      subjectPage.getByRole("link", { name: /^Continue\s*33% complete$/u }),
-    ).toBeVisible();
+    await expect(subjectPage.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
 
     await expect(subjectPage.getByText("1 of 3 topics", { exact: true })).toBeVisible();
 
     // The chapters lead: the one done folded into the list's first row, the next one marked.
     const chapters = page.getByRole("region", { name: "Chapters" });
-    const next = chapters.getByRole("link", { name: /Linking ideas/u });
+    const nextChapter = chapters.getByRole("link", { name: /Linking ideas/u });
 
-    await expect(next).toContainText(/up next/iu);
+    await expect(nextChapter.locator("xpath=ancestor::li[1]")).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
+
     await expect(chapters.getByRole("link", { name: /Spelling in context/u })).toBeHidden();
     await chapters.getByRole("button", { name: "1 chapter done" }).click();
     await expect(chapters.getByRole("link", { name: /Spelling in context/u })).toBeVisible();
@@ -439,12 +516,12 @@ test.describe("A goal's structure", () => {
     await chapter.click();
     await expect(page.getByText(`${PORTUGUESE} · Chapter 2`, { exact: true })).toBeVisible();
     const back = page.getByRole("main").getByRole("link", { name: `Back to ${PORTUGUESE}` });
-    await expect(back).toHaveAttribute("href", "/journey/portuguese-language");
+    await expect(back).toHaveAttribute("href", "/plan/portuguese-language");
     await back.click();
-    await expect(page).toHaveURL(/\/journey\/portuguese-language$/u);
+    await expect(page).toHaveURL(/\/plan\/portuguese-language$/u);
 
-    await page.getByRole("main").getByRole("link", { name: "Back to Journey" }).click();
-    await expect(page).toHaveURL(/\/journey$/u);
+    await page.getByRole("main").getByRole("link", { name: "Back to Plan" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
 
     // The notice's own outline with its own numbers, each item with the ones under it folded in,
     // so the learner can check it against the notice item by item.
@@ -473,8 +550,8 @@ test.describe("A goal's structure", () => {
     await expect(page.getByText("Constitutional Law · Chapter 1", { exact: true })).toBeVisible();
     await page.getByRole("main").getByRole("link", { name: "Back to Constitutional Law" }).click();
 
-    await page.getByRole("main").getByRole("link", { name: "Back to Journey" }).click();
-    await expect(page).toHaveURL(/\/journey$/u);
+    await page.getByRole("main").getByRole("link", { name: "Back to Plan" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
 
     // A subject taken out of the plan says so, and one tap brings it back.
     await page.getByRole("link", { name: new RegExp(`^${PROCESS}`, "u") }).click();
@@ -500,7 +577,7 @@ test.describe("A goal's structure", () => {
   test("a lesson set aside never counts as studied on a subject's page", async ({ browser }) => {
     const { user } = await createCivilServiceLearner({ setAside: true });
     const page = await openAs(browser, user);
-    await page.goto("/journey/portuguese-language");
+    await page.goto("/plan/portuguese-language");
 
     const topics = page
       .getByRole("region", { name: "Topics in the notice" })
@@ -528,9 +605,9 @@ test.describe("A goal's structure", () => {
   }) => {
     const { user } = await createEntranceExamLearner();
     const page = await openAs(browser, user);
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    const syllabus = page.getByRole("region", { name: "What's on the exam" });
+    const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
 
     await expect(
       syllabus.getByText(
@@ -598,9 +675,7 @@ test.describe("A goal's structure", () => {
     await page.context().close();
   });
 
-  test("Today labels each lesson with its subject and says the day's subjects", async ({
-    browser,
-  }) => {
+  test("Today labels each block still to do with its subject", async ({ browser }) => {
     const { goal, session, user } = await createStudyDay({ reviewDone: true });
 
     const blocks = await prisma.studySessionBlock.findMany({
@@ -630,21 +705,22 @@ test.describe("A goal's structure", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
-    await expect(card.getByText("Math and Economics", { exact: true })).toBeVisible();
-    await expect(card.getByText(/^Up next\s*\d+ min\s*Economics$/u)).toBeVisible();
 
-    // The block after this one is in sight with its subject; the last row shows the whole day.
-    await expect(card.getByRole("list").getByRole("listitem")).toHaveText([
-      /^Mixed practice\s*Math/u,
-    ]);
+    // A short day is in sight whole, each block still to do with its subject and the next one
+    // highlighted. A done block is one quiet line, its name and minutes only.
+    await expect(card.locator('[data-slot="today-next"]')).toContainText(
+      /^Discounts in your head\s*Economics/u,
+    );
 
-    await card.getByRole("button", { name: /^See today's \d+ activities/u }).click();
+    const rows = card.getByRole("list").getByRole("listitem");
 
-    await expect(card.getByRole("list").getByRole("listitem")).toHaveText([
-      /^Quick review, done\s*Math/u,
+    await expect(rows).toHaveText([
+      /^Quick review, done/u,
       /^Discounts in your head\s*Economics/u,
       /^Mixed practice\s*Math/u,
     ]);
+
+    await expect(rows.first()).not.toContainText("Math");
 
     await page.context().close();
   });

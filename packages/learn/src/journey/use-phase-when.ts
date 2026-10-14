@@ -11,7 +11,7 @@ import { useShortDays } from "../plan/use-short-plan";
 const NEAR_ESTIMATE_DAYS = 42;
 
 /**
- * An estimated date as the Journey says it: the month when it's far off, the day when it's within
+ * An estimated date as the Plan says it: the month when it's far off, the day when it's within
  * a few weeks, so a plan ending this month never reads "October" in October.
  */
 function useFormatEstimate() {
@@ -27,7 +27,7 @@ function useFormatEstimate() {
 
 /**
  * "Until about September 2027": when the plan ends at the learner's pace, said as the estimate it
- * is. One text for every place that says it (the plan's reveal, the Journey's path), so a goal
+ * is. One text for every place that says it (the plan's reveal, the Plan's path), so a goal
  * without a date never shows that end as its date. Null when the plan has no end yet.
  */
 export function usePlanEndText(): string | null {
@@ -73,7 +73,7 @@ export function usePhaseWhen() {
       return days;
     }
 
-    if (phase.state === "done" || phase.state === "unfinished") {
+    if (phase.state === "done" || phase.state === "unfinished" || phase.state === "leftOut") {
       return null;
     }
 

@@ -39,7 +39,7 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
       <OnboardingFooter>
         <SignUpLink href={routes.signUp} />
         <LearnLink
-          className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "h-12 w-full text-base")}
+          className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "w-full")}
           href={routes.today}
         >
           {t("Back to Today")}

@@ -9,6 +9,17 @@ import { type Preparation } from "./use-preparation-parts";
 /** The most a learner is shown at once: one or two things to do, never a checklist. */
 const MAX_SHOWN = 2;
 
+const MINUTES_PER_HOUR = 60;
+
+/** From this long, an estimate reads in whole hours: "about 232 hr", never "231 hr 37 min". */
+const WHOLE_HOURS_FROM_MINUTES = 2 * MINUTES_PER_HOUR;
+
+function roundEstimate(minutes: number): number {
+  return minutes < WHOLE_HOURS_FROM_MINUTES
+    ? minutes
+    : Math.round(minutes / MINUTES_PER_HOUR) * MINUTES_PER_HOUR;
+}
+
 export type StillNeededItem = {
   detail: string | null;
   done: boolean;
@@ -32,7 +43,7 @@ function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededIte
   return {
     detail:
       left > 0 && minutes > 0
-        ? t("About {time} in your plan", { time: formatDuration(minutes) })
+        ? t("About {time} in your plan", { time: formatDuration(roundEstimate(minutes)) })
         : null,
     done: left === 0,
     key: "skills",

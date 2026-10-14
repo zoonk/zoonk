@@ -6,13 +6,13 @@ import { continueToLastStep } from "./result-steps";
 import { openAs } from "./study-day";
 
 /**
- * Opens the day's summary and goes through its steps to the last, where the moment opens (at once
- * when the summary has one step).
+ * Opens the day's summary, where the moment opens over it at once (a phone's rewards step, when
+ * there is one, comes after it).
  */
 async function openSummaryEnd(page: Page) {
   await page.goto("/session");
 
-  const summary = page.getByRole("heading", { level: 1, name: "Session complete" });
+  const summary = page.getByRole("heading", { level: 1, name: /^Done in /u });
   await expect(summary.or(page.getByRole("dialog")).first()).toBeVisible();
   await continueToLastStep(page);
 }
@@ -28,7 +28,7 @@ async function readGlasses(userId: string) {
 }
 
 test.describe("Ceremonies", () => {
-  test("new glasses get one full-screen moment at the summary's last step: Skip closes it and it never repeats", async ({
+  test("new glasses get one full-screen moment as the summary opens: Skip closes it and it never repeats", async ({
     browser,
   }) => {
     const { milestone, user } = await createCeremonyLearner({ key: "star", kind: "glasses" });
@@ -51,7 +51,7 @@ test.describe("Ceremonies", () => {
     await expect.poll(() => readGlasses(user.id)).toBe("round");
 
     await page.reload();
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await continueToLastStep(page);
     await expect(page.getByRole("dialog")).toHaveCount(0);
 
@@ -88,7 +88,7 @@ test.describe("Ceremonies", () => {
 
     // The step under it takes the focus, so the summary reads on from there.
     await expect(ceremony).toBeHidden();
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeFocused();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeFocused();
     await expect.poll(() => readShownAt(milestone.id)).not.toBeNull();
 
     await page.context().close();

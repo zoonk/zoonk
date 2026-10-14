@@ -4,7 +4,6 @@ import {
   type OnboardingDraftEdit,
   type UnderstoodGoalView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { GoalFooter } from "../entry/goal-outcomes";
@@ -27,8 +26,6 @@ import {
   useScheduleRow,
   useUnderstoodRows,
 } from "./use-understood-rows";
-
-const CARD_CLASS = "bg-card ring-foreground/10 rounded-3xl p-4 ring-1 sm:p-5";
 
 type GoalDraft = UnderstoodGoalView["draft"];
 
@@ -104,7 +101,7 @@ function GoalCard({
   ];
 
   return (
-    <ul className={`${CARD_CLASS} divide-border flex flex-col divide-y`}>
+    <ul className="flex flex-col [&>li+li]:border-t">
       {rows.map((row) => (
         <UnderstoodRowItem
           editValue={readEditValue({ draft: goal.draft, row })}
@@ -121,7 +118,7 @@ function GoalCard({
 }
 
 /**
- * "Here's what I understood": every fact the typed goal already gave, one row each, with its
+ * "Here's what I understood": every fact the typed goal already gave, one flat row each, with its
  * source when it's official. Confirming is one tap. One wrong fact is fixed in place (any full date
  * for the exam, or the notice's day with one tap); "Fix something" changes the words themselves,
  * which are read again from scratch.
@@ -182,11 +179,12 @@ export function UnderstoodScreen({
       />
 
       <OnboardingHeading>
-        <OnboardingTitle>{t("Here's what I understood:")}</OnboardingTitle>
-        {/* What they wrote sits right above, so only a note that adds something stays. */}
-        {draft.goals.length > 1 && (
-          <OnboardingDescription>{t("These goals share your daily time.")}</OnboardingDescription>
-        )}
+        <OnboardingTitle>{t("Here's what I understood")}</OnboardingTitle>
+        <OnboardingDescription>
+          {draft.goals.length > 1
+            ? t("These goals share your daily time. You can change all of this later.")
+            : t("You can change all of this later.")}
+        </OnboardingDescription>
       </OnboardingHeading>
 
       {draft.goals.map((understood, index) => (
@@ -201,13 +199,6 @@ export function UnderstoodScreen({
           onSave={({ field, value }) => onRevise(toDraftEdit({ field, goal: index, value }))}
         />
       ))}
-
-      <p className="text-muted-foreground flex items-start justify-center gap-2 text-sm">
-        <span className="flex h-lh items-center">
-          <RotateCcwIcon aria-hidden="true" className="size-4" />
-        </span>
-        {t("You can change all of this later.")}
-      </p>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
         <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>

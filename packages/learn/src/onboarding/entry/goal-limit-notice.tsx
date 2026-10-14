@@ -37,7 +37,7 @@ export function GoalLimitNotice({
     <PlusNotice title={t("More goals at once with Plus")}>
       {upFront
         ? t(
-            "The free plan follows one goal at a time. To start another, pause your current goal from the menu on Journey. Quick questions work anytime.",
+            "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.",
           )
         : message(reason)}
     </PlusNotice>

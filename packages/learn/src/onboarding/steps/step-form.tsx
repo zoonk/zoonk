@@ -24,17 +24,20 @@ export function StepForm({
   onContinue,
   onSkip,
   pending,
+  rail,
   skipLabel,
   subject,
   title,
 }: {
   canContinue?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   continueLabel?: string;
   description?: React.ReactNode;
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
+  /** What the page's aside shows beside this question from 72rem, in place of the flow's rail. */
+  rail?: React.ReactNode;
   skipLabel?: string;
   /** What the question is about, above it: the exam, the course or the subject. */
   subject?: string;
@@ -43,7 +46,7 @@ export function StepForm({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn rail={rail}>
       <form
         className="flex flex-1 flex-col gap-6"
         onSubmit={(event) => {

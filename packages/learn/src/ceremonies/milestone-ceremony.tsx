@@ -1,6 +1,5 @@
 "use client";
 
-import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -10,19 +9,25 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { GlassesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
-import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
+import {
+  TASK_MAIN_ACTION_CLASS,
+  TaskActionBar,
+  TaskActions,
+  TaskBody,
+} from "../_components/task-layout";
+import { toBeltColor } from "../_utils/use-belt-name";
+import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
 import { type CeremonyMilestone, toBuddyGlasses, useCeremonyCopy } from "./use-ceremony-copy";
 
 export type { CeremonyMilestone } from "./use-ceremony-copy";
 
 type CeremonyProps = {
-  /** Draws the buddy in its new belt, stage or glasses; null for learners who haven't picked one. */
+  /** Draws the buddy in its new belt, stage or glasses; null resolves to the default buddy. */
   buddy: LearnBuddy | null;
   milestone: CeremonyMilestone;
   /** Called once it's closed, by its button, Skip or Escape. */
@@ -62,80 +67,65 @@ function useMarkShown({ milestone, onShown }: Pick<CeremonyProps, "milestone" | 
 }
 
 /** The picture: the buddy in its new belt, at its new stage or in its new glasses. */
-function CeremonyArt({ buddy, milestone }: Pick<CeremonyProps, "buddy" | "milestone">) {
-  const beltName = useBeltName();
-  const buddyName = useBuddyName(buddy ?? { kind: "zu", name: null });
+function CeremonyArt({
+  buddy: learnerBuddy,
+  milestone,
+}: Pick<CeremonyProps, "buddy" | "milestone">) {
+  const buddy = resolveLearnBuddy(learnerBuddy);
+  const buddyName = useBuddyName(buddy);
   const belt = toBeltColor(milestone.key);
   const glasses = toBuddyGlasses(milestone.key);
 
-  if (buddy) {
-    return (
-      <Buddy
-        beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        className="animate-in fade-in motion-safe:zoom-in-90 size-52 duration-500"
-        energy={buddy.energy}
-        expression="cheer"
-        glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
-        kind={buddy.kind}
-        label={buddyName}
-      />
-    );
-  }
-
-  if (belt) {
-    return <BeltIndicator className="size-24" color={belt} label={beltName(belt)} />;
-  }
-
   return (
-    <span className="bg-muted flex size-24 items-center justify-center rounded-full">
-      <GlassesIcon aria-hidden="true" className="size-10" />
-    </span>
-  );
-}
-
-/** Phones keep the button within thumb reach; wider screens keep it under the text. */
-function CeremonyBody({
-  action,
-  buddy,
-  children,
-  milestone,
-  onConfirm,
-}: Pick<CeremonyProps, "buddy" | "milestone"> & {
-  action: string;
-  children: React.ReactNode;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="flex flex-1 flex-col gap-8 sm:my-auto sm:flex-none">
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-        <CeremonyArt buddy={buddy} milestone={milestone} />
-        {children}
-      </div>
-
-      <Button autoFocus className="w-full" onClick={onConfirm} size="lg">
-        {action}
-      </Button>
-    </div>
+    <Buddy
+      beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
+      className="size-40 sm:size-48"
+      energy={buddy.energy}
+      expression="cheer"
+      glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
+      kind={buddy.kind}
+      label={buddyName}
+    />
   );
 }
 
 function CeremonyText({ detail, title }: { detail: string; title: string }) {
   return (
-    <div className="flex flex-col gap-2">
-      <DialogTitle className="text-3xl leading-tight font-semibold tracking-tight text-balance">
-        {title}
-      </DialogTitle>
-      <DialogDescription className="text-muted-foreground text-base text-balance">
-        {detail}
-      </DialogDescription>
+    <div className="flex flex-col items-start gap-1.5">
+      <DialogTitle className="text-title text-balance">{title}</DialogTitle>
+      <DialogDescription className="text-muted-foreground text-balance">{detail}</DialogDescription>
     </div>
   );
 }
 
 /**
- * One full-screen moment for a new belt, the buddy's next stage or new glasses, over the summary:
- * the picture, a title, one line and one button, with Skip for anyone in a hurry. Escape closes it
- * too.
+ * The moment's one action in the pinned action bar, where every task's main action is: focused as
+ * it opens, so Enter presses it.
+ */
+function CeremonyBar({ action, onConfirm }: { action: string; onConfirm: () => void }) {
+  return (
+    <TaskActionBar>
+      <TaskActions>
+        <Button
+          aria-keyshortcuts="Enter"
+          autoFocus
+          className={TASK_MAIN_ACTION_CLASS}
+          onClick={onConfirm}
+          size="xl"
+        >
+          {action}
+          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        </Button>
+      </TaskActions>
+    </TaskActionBar>
+  );
+}
+
+/**
+ * One full-screen moment for a new belt, the buddy's next stage or new glasses, over the summary,
+ * laid out like a task's result: the picture, a title and one line from the top of the column, and
+ * one button in the pinned action bar (focused, so Enter presses it), with Skip on the header's
+ * right for anyone in a hurry. Escape closes it too.
  */
 function CeremonyMoment({
   buddy,
@@ -146,7 +136,7 @@ function CeremonyMoment({
   const t = useExtracted();
   const [open, setOpen] = useState(true);
   const glasses = milestone.kind === "glasses" ? toBuddyGlasses(milestone.key) : null;
-  const canWear = Boolean(glasses && buddy && onWearGlasses);
+  const canWear = Boolean(glasses && onWearGlasses);
   const copy = useCeremonyCopy({ buddy, canWear, milestone });
 
   async function confirm() {
@@ -172,22 +162,18 @@ function CeremonyMoment({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col overflow-y-auto duration-200"
           data-slot="milestone-ceremony"
         >
-          <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-            <div className="flex justify-end">
-              <Button onClick={() => setOpen(false)} size="sm" variant="ghost">
-                {t("Skip")}
-              </Button>
-            </div>
-
-            <CeremonyBody
-              action={copy.action}
-              buddy={buddy}
-              milestone={milestone}
-              onConfirm={() => void confirm()}
-            >
-              <CeremonyText detail={copy.detail} title={copy.title} />
-            </CeremonyBody>
+          <div className="max-w-column mx-auto flex w-full justify-end px-4 py-2 xl:py-3">
+            <Button className="-mr-2.5" onClick={() => setOpen(false)} size="sm" variant="ghost">
+              {t("Skip")}
+            </Button>
           </div>
+
+          <TaskBody className="items-start">
+            <CeremonyArt buddy={buddy} milestone={milestone} />
+            <CeremonyText detail={copy.detail} title={copy.title} />
+          </TaskBody>
+
+          <CeremonyBar action={copy.action} onConfirm={() => void confirm()} />
         </DialogPopup>
       </DialogPortal>
     </Dialog>

@@ -14,7 +14,8 @@ async function expectGoalQuestion(page: Page, { heading, path }: (typeof LOCALES
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
   await expect(page.getByRole("textbox")).toBeVisible();
-  await expect(page.getByRole("region", { name: /./u }).getByRole("listitem")).toHaveCount(5);
+  // The five examples, each a row that starts onboarding with its words.
+  await expect(page.getByRole("region", { name: /./u }).getByRole("button")).toHaveCount(5);
 }
 
 test("/start asks for the goal in each interface language", async ({ page }) => {

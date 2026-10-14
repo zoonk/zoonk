@@ -2,9 +2,10 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { ArrowUpIcon, CompassIcon, PaperclipIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CompassIcon, PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { LearnLink } from "../../learn-link";
 import { type GoalError } from "../goal-errors";
 import {
@@ -13,7 +14,9 @@ import {
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
+import { useOnboardingSection } from "../onboarding-host";
 import { GoalExamples } from "./goal-examples";
+import { GoalField, GoalFieldLabel, GoalFieldSubmit, GoalFieldText } from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
@@ -22,30 +25,22 @@ export const MAX_GOAL_LENGTH = 2000;
 
 /**
  * Sends the goal. Enter in the box sends it too; from elsewhere on the screen, such as right after
- * picking what to do with attached material, Enter presses this.
+ * picking what to do with attached material, Enter presses this. It's never greyed out: with
+ * nothing to send, it puts the cursor in the box instead.
  */
-function SubmitButton({ disabled }: { disabled: boolean }) {
+function SubmitButton() {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !disabled });
+  const ref = useEnterClick<HTMLButtonElement>();
 
-  return (
-    <Button
-      aria-label={t("Start with your goal")}
-      className="size-11 shrink-0 rounded-full"
-      disabled={disabled}
-      ref={ref}
-      size="icon-lg"
-      type="submit"
-    >
-      <ArrowUpIcon aria-hidden="true" className="size-5" />
-    </Button>
-  );
+  return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
 }
 
 /**
  * The first onboarding screen: one question and one box for the goal in the learner's own
  * words, examples that start it in one tap, the Library for browsing, and a paperclip for
- * studying their own material.
+ * studying their own material. Inside a host's page (Today without a goal) it's that page's
+ * "Start a goal" section, under the page's title, its link to the Library right under the
+ * examples.
  */
 export function GoalEntry({
   attachment,
@@ -75,89 +70,95 @@ export function GoalEntry({
   signUpHref: string;
 }) {
   const t = useExtracted();
+  const section = useOnboardingSection();
   const example = useLocalGoalExample();
   const inputId = useId();
+  const fieldRef = useRef<HTMLTextAreaElement>(null);
   const [goal, setGoal] = useState(defaultGoal);
-  const trimmed = goal.trim();
 
   const submit = (value: string) => {
     if (value.trim() || canSubmitEmpty) {
       onSubmit(value.trim());
+      return;
     }
+
+    fieldRef.current?.focus();
   };
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
-        <OnboardingDescription>
-          {fromSharedPlan
-            ? t(
-                "Tell us in your own words. Your plan starts from the plan someone shared with you.",
-              )
-            : t("Tell us in your own words. We'll build the plan.")}
-        </OnboardingDescription>
-      </OnboardingHeading>
+    <OnboardingColumn className={cn(section && "gap-4")}>
+      {section ? (
+        <h2 className="text-label">{t("Start a goal")}</h2>
+      ) : (
+        <OnboardingHeading>
+          <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+          <OnboardingDescription>
+            {fromSharedPlan
+              ? t(
+                  "Tell us in your own words. Your plan starts from the plan someone shared with you.",
+                )
+              : t("Tell us in your own words. We'll build the plan.")}
+          </OnboardingDescription>
+        </OnboardingHeading>
+      )}
 
       {notice}
 
-      <form
-        className="bg-muted/60 focus-within:ring-ring/40 flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px]"
+      {/* The landing's field: "I want to", then the words. On phones the words keep the
+          field's width, the paperclip and "Build my plan" under them; from tablets one row. */}
+      <GoalField
+        className="flex-col items-stretch sm:flex-row sm:items-end"
         onSubmit={(event) => {
           event.preventDefault();
           submit(goal);
         }}
       >
-        {onAttach && (
-          <Button
-            aria-label={t("Study your own material")}
-            className="-ml-2 shrink-0"
-            onClick={onAttach}
-            size="icon"
-            type="button"
-            variant="ghost"
-          >
-            <PaperclipIcon aria-hidden="true" />
-          </Button>
-        )}
+        <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
+          <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
-        <label className="sr-only" htmlFor={inputId}>
-          {t("Your goal")}
-        </label>
+          <GoalFieldText
+            autoFocusOnPointer
+            id={inputId}
+            maxLength={MAX_GOAL_LENGTH}
+            onChange={(event) => setGoal(event.target.value)}
+            placeholder={t(
+              "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
+              example,
+            )}
+            ref={fieldRef}
+            value={goal}
+          />
+        </div>
 
-        <textarea
-          autoFocus
-          className="placeholder:text-muted-foreground/80 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent py-2.5 text-[17px] leading-snug outline-none"
-          enterKeyHint="go"
-          id={inputId}
-          maxLength={MAX_GOAL_LENGTH}
-          onChange={(event) => setGoal(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-              event.preventDefault();
-              submit(goal);
-            }
-          }}
-          placeholder={t(
-            "{exam, select, abitur {E.g., pass the Abitur, speak {language}…} bac {E.g., pass the bac, speak {language}…} enem {E.g., pass the ENEM, speak {language}…} pau {E.g., pass the PAU, speak {language}…} other {E.g., pass the SAT, speak {language}…}}",
-            example,
+        <div className="flex items-end justify-end gap-1">
+          {onAttach && (
+            <Button
+              aria-label={t("Study your own material")}
+              className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 sm:mr-0 sm:ml-0"
+              onClick={onAttach}
+              size="icon-lg"
+              type="button"
+              variant="ghost"
+            >
+              <PaperclipIcon aria-hidden="true" />
+            </Button>
           )}
-          rows={1}
-          value={goal}
-        />
 
-        <SubmitButton disabled={!trimmed && !canSubmitEmpty} />
-      </form>
+          <SubmitButton />
+        </div>
+      </GoalField>
 
       {attachment}
 
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
-      <GoalExamples onPick={submit} />
+      {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
+      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={submit} />
 
-      <div className="text-muted-foreground mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-4 text-sm lg:mt-0">
+      {/* Right under the examples on every screen, never pinned under the tab bar. */}
+      <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <LearnLink
-          className="text-foreground inline-flex min-h-11 items-center gap-1.5 font-medium underline-offset-4 hover:underline"
+          className="hover:text-foreground inline-flex min-h-11 items-center gap-1.5 underline-offset-4 hover:underline"
           href={exploreHref}
         >
           <CompassIcon aria-hidden="true" className="size-4" />

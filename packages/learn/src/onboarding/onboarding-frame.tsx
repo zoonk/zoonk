@@ -1,170 +1,148 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, createContext, use } from "react";
+import { type ReactNode } from "react";
+import { PageEyebrow } from "../_components/page";
 import { toLabelCase } from "../_utils/label-case";
+import { OnboardingBarRow } from "./onboarding-bar";
+import {
+  NO_BAR,
+  type OnboardingBar,
+  OnboardingScreenProvider,
+  useOnboardingHost,
+  useOnboardingProgress,
+  useOnboardingSection,
+} from "./onboarding-host";
+import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
+import { useOnboardingRail } from "./onboarding-rail";
+import { PlanStartNoticeSlot } from "./steps/plan-start-notice";
 
-const OnboardingChromeContext = createContext<ReactNode>(null);
+export { OnboardingEmbedded, OnboardingPage } from "./onboarding-host";
 
-/** Where the learner is in the goal's questions, for the screen's eyebrow ("ENEM · Step 2 of 4"). */
-type OnboardingProgress = { current: number; total: number };
+/** A screen of its own: one centered column about 560px wide, its bar on the same edges. */
+const STANDALONE_COLUMN_CLASS = "mx-auto w-full max-w-xl px-4";
 
-const OnboardingProgressContext = createContext<OnboardingProgress | null>(null);
-
-/** The question the learner is on, from the steps' flow, so each screen's eyebrow can say it. */
-export function OnboardingProgressProvider({
+/**
+ * The page behind every onboarding screen, with the flow's bar (`bar`) and a line over the screen
+ * (`notice`: a save that failed). On a page of the app's frame each screen draws the page from
+ * them (`OnboardingColumn`); under a host's title they follow its top; a screen of its own puts
+ * the bar over one centered column.
+ */
+export function OnboardingFrame({
+  bar = NO_BAR,
   children,
-  progress,
+  notice = null,
 }: {
+  bar?: OnboardingBar;
   children: ReactNode;
-  progress: OnboardingProgress | null;
+  notice?: ReactNode;
 }) {
-  return <OnboardingProgressContext value={progress}>{children}</OnboardingProgressContext>;
-}
+  const host = useOnboardingHost();
 
-/**
- * The app's own top bar for every onboarding page, from the host's layout: the public bar for
- * visitors and guests, the learning tabs' bar for learners adding a goal.
- */
-export function OnboardingChromeProvider({
-  children,
-  chrome,
-}: {
-  children: ReactNode;
-  chrome: ReactNode;
-}) {
-  return <OnboardingChromeContext value={chrome}>{children}</OnboardingChromeContext>;
-}
+  if (host?.kind === "page") {
+    return <OnboardingScreenProvider value={{ bar, notice }}>{children}</OnboardingScreenProvider>;
+  }
 
-/**
- * The page behind every onboarding screen: the app's top bar, then the app's background. One
- * centered column on every screen size, with the next step at the bottom.
- */
-export function OnboardingFrame({ children, className, ...props }: React.ComponentProps<"div">) {
-  const chrome = use(OnboardingChromeContext);
-
-  return (
-    <div
-      className={cn("bg-background text-foreground flex min-h-dvh flex-col", className)}
-      data-slot="onboarding-frame"
-      {...props}
-    >
-      {chrome}
-      {children}
-    </div>
-  );
-}
-
-/**
- * A goal's onboarding questions are a task of their own, like a lesson: the page holds only the
- * steps' bar and the screen, without the app's bar, so nothing but the next answer competes.
- */
-export function OnboardingTaskFrame({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("bg-background text-foreground flex min-h-dvh flex-col", className)}
-      data-slot="onboarding-frame"
-      {...props}
-    />
-  );
-}
-
-/** Back to the previous screen, as round as every bar's way back. */
-function BackButton({ onBack }: { onBack: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <Button className="rounded-full" onClick={onBack} size="icon-bar" variant="outline">
-      <ChevronLeftIcon aria-hidden="true" className="size-5" />
-      <span className="sr-only">{t("Back")}</span>
-    </Button>
-  );
-}
-
-/**
- * Where the learner is in the questions, as segments: the ones answered and the current one filled,
- * announced as "Step 2 of 4".
- */
-function StepSegments({ current, total }: OnboardingProgress) {
-  const t = useExtracted();
-
-  return (
-    <div
-      aria-label={t("Step {current, number} of {total, number}", { current: current + 1, total })}
-      className="flex w-32 gap-1.5 sm:w-48"
-      data-slot="step-dots"
-      role="img"
-    >
-      {Array.from({ length: total }, (_, index) => (
-        <span
-          className={cn(
-            "h-1.5 flex-1 rounded-full transition-colors motion-reduce:transition-none",
-            index <= current ? "bg-foreground" : "bg-foreground/15",
-          )}
-          key={index}
-        />
-      ))}
-    </div>
-  );
-}
-
-/**
- * The steps of this part of onboarding, at the top of the content under the app's bar: back on the
- * left, where the learner is in the middle, and one quiet way out on the right. Nothing shows when
- * there's none of them.
- */
-export function OnboardingTopBar({
-  end,
-  onBack,
-  progress,
-}: {
-  end?: React.ReactNode;
-  onBack?: () => void;
-  progress?: { current: number; total: number } | null;
-}) {
-  if (!end && !onBack && !progress) {
-    return null;
+  if (host?.kind === "section") {
+    return (
+      <OnboardingSectionFrame bar={bar} header={host.header} notice={notice}>
+        {children}
+      </OnboardingSectionFrame>
+    );
   }
 
   return (
-    <div className="mx-auto grid min-h-11 w-full max-w-xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 pt-3 sm:pt-4">
-      <div className="justify-self-start">{onBack && <BackButton onBack={onBack} />}</div>
-
-      {progress ? <StepSegments current={progress.current} total={progress.total} /> : <span />}
-
-      <div className="justify-self-end">{end}</div>
+    <div
+      className="bg-background text-foreground flex min-h-dvh flex-col"
+      data-slot="onboarding-frame"
+    >
+      <OnboardingBarRow bar={bar} className={cn(STANDALONE_COLUMN_CLASS, "pt-3 sm:pt-4")} />
+      {notice}
+      {children}
     </div>
   );
 }
 
 /**
- * The screen's content: one column about 560px wide. On phones its next step sits at the bottom;
- * on wide screens the content and its next step stay together in the middle.
+ * The screen's content, from the top like any working screen: on phones its next step sits at the
+ * bottom, from tablets it follows the content. On a page of the app's frame it draws the page
+ * (`OnboardingScreenPage`), with the flow's rail in its aside from 72rem (`rail` puts the screen's
+ * own there; `null`, none); a `wide` screen, such as the plan's reveal, fills the room. Under a
+ * host's title it's a section at the page's edges; on a screen of its own, one centered column.
  */
-export function OnboardingColumn({ children, className, ...props }: React.ComponentProps<"main">) {
+export function OnboardingColumn({
+  children,
+  className,
+  rail,
+  wide = false,
+  ...props
+}: React.ComponentProps<"main"> & { rail?: ReactNode; wide?: boolean }) {
+  const host = useOnboardingHost();
+  const flowRail = useOnboardingRail();
+
+  if (host?.kind === "page") {
+    return (
+      <OnboardingScreenPage
+        backHref={host.backHref}
+        barEnd={host.barEnd}
+        rail={rail === undefined ? flowRail : rail}
+        wide={wide}
+      >
+        <section
+          className={cn("flex w-full min-w-0 flex-1 flex-col gap-6", className)}
+          data-slot="onboarding-column"
+          {...props}
+        >
+          {children}
+        </section>
+      </OnboardingScreenPage>
+    );
+  }
+
+  // Under a host's title the host's `main` and edges hold it: the page's column, from its edge.
+  if (host?.kind === "section") {
+    return (
+      <section
+        className={cn("max-w-column flex w-full flex-col gap-6", className)}
+        data-slot="onboarding-column"
+        {...props}
+      >
+        {children}
+      </section>
+    );
+  }
+
   return (
     <main
-      className={cn(
-        "mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 pt-4 pb-8 sm:pt-8 lg:justify-center-safe lg:pb-16",
-        className,
-      )}
+      className={cn(STANDALONE_COLUMN_CLASS, "flex flex-1 flex-col pt-4 pb-8 sm:pt-8 lg:pb-16")}
       data-slot="onboarding-column"
       {...props}
     >
-      {children}
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-6", className)}>{children}</div>
     </main>
   );
 }
 
 export function OnboardingTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
+  const section = useOnboardingSection();
+
+  // Under the host's own title, the screen's title is a section's.
+  if (section) {
+    return (
+      <h2 className={cn("text-xl leading-snug font-semibold text-pretty", className)} {...props}>
+        {children}
+      </h2>
+    );
+  }
+
   return (
     <h1
       className={cn(
-        "text-[28px] leading-tight font-bold tracking-tight text-balance wrap-break-word hyphens-auto [hyphenate-limit-chars:12] sm:text-3xl",
+        "text-title wrap-break-word hyphens-auto [hyphenate-limit-chars:12]",
         className,
       )}
       {...props}
@@ -180,7 +158,11 @@ export function OnboardingDescription({
   ...props
 }: React.ComponentProps<"p">) {
   return (
-    <p className={cn("text-muted-foreground text-base text-pretty", className)} {...props}>
+    <p
+      className={cn("text-muted-foreground text-sm text-pretty", className)}
+      data-slot="onboarding-description"
+      {...props}
+    >
       {children}
     </p>
   );
@@ -188,9 +170,10 @@ export function OnboardingDescription({
 
 /**
  * What the screen is about (the exam, the course or the subject) as the eyebrow above the question,
- * with where the learner is in the questions ("ENEM 2026 · Step 2 of 4"). Naming it apart keeps
- * each question natural in every language: an exam's name inside a sentence would need an article
- * that depends on the name ("sobre o ENEM", "über den SAT").
+ * with where the learner is in the questions ("ENEM 2026 · Step 2 of 4"); on a page of the app's
+ * frame it's the page's eyebrow. Naming it apart keeps each question natural in every language: an
+ * exam's name inside a sentence would need an article that depends on the name ("sobre o ENEM",
+ * "über den SAT").
  */
 export function OnboardingSubject({
   children,
@@ -200,7 +183,8 @@ export function OnboardingSubject({
   className?: string;
 }) {
   const t = useExtracted();
-  const progress = use(OnboardingProgressContext);
+  const host = useOnboardingHost();
+  const progress = useOnboardingProgress();
 
   const step =
     progress &&
@@ -209,53 +193,102 @@ export function OnboardingSubject({
       total: progress.total,
     });
 
-  return (
-    <p
-      className={cn(
-        "text-muted-foreground min-w-0 text-[0.8125rem] font-semibold tracking-wide text-pretty wrap-break-word uppercase",
-        className,
-      )}
-    >
+  const content = (
+    <>
       <span>{toLabelCase(children)}</span>
       {step && <span>{` · ${step}`}</span>}
-    </p>
+    </>
+  );
+
+  if (host?.kind === "page") {
+    return (
+      <PageEyebrow className={cn("min-w-0 text-pretty wrap-break-word", className)}>
+        {content}
+      </PageEyebrow>
+    );
+  }
+
+  return (
+    <p className={cn("text-label min-w-0 text-pretty wrap-break-word", className)}>{content}</p>
   );
 }
 
-export function OnboardingHeading({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-2">{children}</div>;
+/**
+ * The screen's title, what it's about over it and its one line under it. On a page of the app's
+ * frame it's laid out as the page's header (`PageHeaderContent`): opening the screen, it keeps the
+ * eyebrow's line even when it's empty, so the title sits where every page's does.
+ */
+export function OnboardingHeading({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const host = useOnboardingHost();
+
+  if (host?.kind === "page") {
+    return (
+      <div
+        className={cn(
+          "flex min-w-0 flex-col gap-1 first:not-has-[>[data-slot=page-eyebrow]]:pt-5 *:data-[slot=onboarding-description]:pt-1",
+          className,
+        )}
+        data-slot="onboarding-heading"
+      >
+        {children}
+      </div>
+    );
+  }
+
+  return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
 /**
- * The next step stays in reach at the bottom of the column on phones, above the home indicator,
- * and right under the content on wide screens.
+ * The next step stays in reach at the bottom of the column on phones (above the home indicator;
+ * the app's frame has no tab bar under onboarding), and right under the content from
+ * tablets, where the bottom of the screen is far from it.
  */
 export function OnboardingFooter({ children, className, ...props }: React.ComponentProps<"div">) {
+  const standalone = useOnboardingHost() === null;
+
   return (
     <div
       className={cn(
-        "mt-auto flex flex-col gap-2 pt-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:mt-0",
+        "mt-auto flex flex-col gap-2 pt-4 sm:mt-0",
+        standalone && "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
         className,
       )}
       {...props}
     >
+      <PlanStartNoticeSlot />
       {children}
     </div>
   );
 }
 
 /**
- * The screen's one main action. Enter presses it from anywhere on the screen unless another control
- * has focus.
+ * The screen's one main action, with its ⏎ hint where there's a keyboard. Enter presses it from
+ * anywhere on the screen unless another control has focus.
  */
 export function OnboardingPrimaryButton({
+  children,
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled });
 
   return (
-    <Button className={cn("h-12 w-full text-base", className)} size="lg" {...props} ref={ref} />
+    <Button
+      aria-keyshortcuts="Enter"
+      className={cn("w-full font-[560]", className)}
+      size="lg"
+      {...props}
+      ref={ref}
+    >
+      {children}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+    </Button>
   );
 }
 
@@ -264,12 +297,5 @@ export function OnboardingSecondaryButton({
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  return (
-    <Button
-      className={cn("h-12 w-full text-base", className)}
-      size="lg"
-      variant="ghost"
-      {...props}
-    />
-  );
+  return <Button className={cn("w-full", className)} size="lg" variant="ghost" {...props} />;
 }

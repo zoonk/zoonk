@@ -1,23 +1,23 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useLocale } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { useLearnAnalytics } from "../learn-context";
-import { getClassifiedKind, useDraftGoals } from "./entry/draft-goals";
+import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
 import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GoalExamples } from "./entry/goal-examples";
 import { GoalLimitNotice } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
 import { MaterialQuestions } from "./entry/material-questions";
-import { sendGoal, takeGoalSent } from "./entry/understanding-start";
 import { SendingGoal } from "./entry/understanding-wait";
 import { useDraftActions } from "./entry/use-draft-actions";
 import { useGoalCreation } from "./entry/use-goal-creation";
-import { type GoalError, useStartError } from "./goal-errors";
+import { useSubmitUnderstanding } from "./entry/use-submit-understanding";
+import { type GoalError } from "./goal-errors";
+import { OnboardingHowItWorks } from "./how-it-works";
 import {
   type AttachedSource,
   type GoalLimitReason,
@@ -25,7 +25,9 @@ import {
   type OnboardingNavigation,
   type OnboardingRoutes,
 } from "./onboarding-actions";
-import { OnboardingFrame, OnboardingTopBar } from "./onboarding-frame";
+import { OnboardingFrame } from "./onboarding-frame";
+import { useOnboardingSection } from "./onboarding-host";
+import { OnboardingRailProvider } from "./onboarding-rail";
 
 type StartState =
   | { error: GoalError | null; kind: "entry"; words: string }
@@ -56,7 +58,9 @@ function getBack({
  * the waitlist with musicianship offered, and an unsafe goal is declined kindly. Confirming
  * creates the goals and continues on the goal's own onboarding screens. A guest whose one goal is
  * taken is asked to create an account instead, before typing anything; a learner whose plan can't
- * start another goal (`goalLimit`) is told up front, with the box open for quick questions.
+ * start another goal (`goalLimit`) is told up front, with the box open for quick questions. Until
+ * the goal is confirmed there's no plan to show in the page's aside from 72rem: how it works
+ * instead.
  */
 export function StartFlow({
   needsAccount = false,
@@ -76,19 +80,9 @@ export function StartFlow({
   return <GoalStartFlow {...props} />;
 }
 
-function GoalStartFlow({
-  actions,
-  buddy = null,
-  canAttach = false,
-  defaultGoal = "",
-  fromSharedPlan = false,
-  goalLimit = null,
-  initialDraft = null,
-  navigation,
-  routes,
-}: {
+type GoalStartFlowProps = {
   actions: OnboardingActions;
-  /** The learner's buddy, who answers questions about their material; null before they pick one. */
+  /** The learner's buddy; a host without a profile gets the default when omitted or null. */
   buddy?: LearnBuddy | null;
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach?: boolean;
@@ -101,11 +95,21 @@ function GoalStartFlow({
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
-}) {
-  const locale = useLocale();
-  const analytics = useLearnAnalytics();
+};
+
+function GoalStartFlow({
+  actions,
+  buddy = null,
+  canAttach = false,
+  defaultGoal = "",
+  fromSharedPlan = false,
+  goalLimit = null,
+  initialDraft = null,
+  navigation,
+  routes,
+}: GoalStartFlowProps) {
+  const section = useOnboardingSection();
   const creation = useGoalCreation();
-  const getStartError = useStartError();
   const { createExplanation } = useDraftGoals(actions);
   const [attached, setAttached] = useState<AttachedSource[]>([]);
   const [intent, setIntent] = useState<MaterialIntent | null>(null);
@@ -128,6 +132,7 @@ function GoalStartFlow({
   });
 
   const showEntry = ({ error = null, words }: { error?: GoalError | null; words: string }) => {
+    submission.cancel();
     navigation.showDraft(null);
     creation.clearError();
     setState({ error, kind: "entry", words });
@@ -145,112 +150,77 @@ function GoalStartFlow({
       run: () => createExplanation({ draft, question }),
     });
 
-  /**
-   * A draft that was just read: "Goal Classified" counts how long it took from the learner's tap,
-   * and a question goes on to its explanation. Both only follow a tap in this tab (`takeGoalSent`
-   * finds it once), never a refresh or a link, since the explanation is new work.
-   */
-  const settle = useEffectEvent((draft: OnboardingDraftView) => {
-    const understanding = draft.status === "understood" ? draft.understanding : null;
-    const sentAt = understanding ? takeGoalSent(draft.id) : null;
-
-    if (!understanding || sentAt === null) {
-      return;
-    }
-
-    analytics.track({
-      name: "Goal Classified",
-      properties: {
-        duration_ms: Math.max(0, Date.now() - sentAt),
-        result: getClassifiedKind(understanding),
-      },
-    });
-
-    if (understanding.status === "explain") {
-      startExplanation({ draft, question: understanding.question });
-    }
+  const submission = useSubmitUnderstanding({
+    hasAttachment: attached.length > 0,
+    onDraft: showDraft,
+    onError: showEntry,
+    onExplanation: startExplanation,
+    onSending: (goal) => setState({ goal, kind: "sending" }),
+    understanding: actions.understanding,
   });
-
-  useEffect(() => {
-    if (state.kind === "draft") {
-      settle(state.draft);
-    }
-  }, [state]);
-
-  const understand = (goal: string) => {
-    analytics.track({ name: "Goal Typed", properties: { has_attachment: attached.length > 0 } });
-    setState({ goal, kind: "sending" });
-
-    void (async () => {
-      const outcome = await sendGoal({
-        goal,
-        language: locale,
-        understanding: actions.understanding,
-      });
-
-      if (outcome.status === "started" || outcome.status === "startFailed") {
-        showDraft(outcome.draft);
-        return;
-      }
-
-      showEntry({ error: getStartError(outcome), words: goal });
-    })();
-  };
 
   const submit = useSubmitGoal({
     attached,
     intent,
     onAsk: () => setState({ kind: "questions" }),
-    understand,
+    understand: (goal) => void submission.send(goal),
   });
 
   const backToEntry = (words: string) => showEntry({ words });
 
+  // Under Today's title the examples to start from move to the page's aside, with how it works.
+  const rail = (
+    <>
+      {section && state.kind === "entry" && <GoalExamples onPick={submit} />}
+      <OnboardingHowItWorks hasAccount={canAttach} />
+    </>
+  );
+
   return (
-    <OnboardingFrame>
-      <OnboardingTopBar onBack={getBack({ backToEntry, state })} />
+    <OnboardingRailProvider rail={rail}>
+      <OnboardingFrame bar={{ onBack: getBack({ backToEntry, state }) }}>
+        {state.kind === "entry" && (
+          <AttachableGoalEntry
+            attach={actions.attach}
+            attached={attached}
+            canAttach={canAttach}
+            defaultGoal={state.words}
+            error={state.error}
+            fromSharedPlan={fromSharedPlan}
+            intent={intent}
+            notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
+            onAttachedChange={setAttached}
+            onIntentChange={setIntent}
+            onSubmit={submit}
+            routes={routes}
+          />
+        )}
 
-      {state.kind === "entry" && (
-        <AttachableGoalEntry
-          attach={actions.attach}
-          attached={attached}
-          canAttach={canAttach}
-          defaultGoal={state.words}
-          error={state.error}
-          fromSharedPlan={fromSharedPlan}
-          intent={intent}
-          notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
-          onAttachedChange={setAttached}
-          onIntentChange={setIntent}
-          onSubmit={submit}
-          routes={routes}
-        />
-      )}
+        {state.kind === "questions" && (
+          <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
+        )}
 
-      {state.kind === "questions" && (
-        <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
-      )}
+        {state.kind === "sending" && <SendingGoal goal={state.goal} />}
 
-      {state.kind === "sending" && <SendingGoal goal={state.goal} />}
-
-      {state.kind === "draft" && (
-        <DraftScreen
-          actions={actions}
-          attached={attached}
-          creation={{
-            error: creation.error,
-            isCreating: creation.isCreating,
-            run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
-            startExplanation,
-          }}
-          draft={state.draft}
-          draftActions={draftActions}
-          intent={intent}
-          onBack={() => backToEntry(state.draft.prompt)}
-          onRewrite={understand}
-          routes={routes}
-        />
-      )}
-    </OnboardingFrame>
+        {state.kind === "draft" && (
+          <DraftScreen
+            actions={actions}
+            attached={attached}
+            creation={{
+              error: creation.error,
+              isCreating: creation.isCreating || submission.isSubmitting,
+              run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
+              startExplanation,
+            }}
+            draft={state.draft}
+            draftActions={draftActions}
+            intent={intent}
+            onBack={() => backToEntry(state.draft.prompt)}
+            onRewrite={(goal) => void submission.send(goal)}
+            routes={routes}
+          />
+        )}
+      </OnboardingFrame>
+    </OnboardingRailProvider>
   );
 }

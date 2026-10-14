@@ -4,14 +4,14 @@ import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../../_components/kind-tile";
+import { KindDot, KindMark } from "../../_components/kind-tile";
 import { PlusMark } from "../../_components/plus-lock";
 import { ProgressRing } from "../../_components/progress-ring";
 import { SectionLabel } from "../../_components/section-label";
 import { useFormatShare } from "../../_utils/percent";
 import { useScoreRange } from "../../_utils/use-score-range";
 import { LearnLink } from "../../learn-link";
-import { type Preparation, usePreparationParts } from "./use-preparation-parts";
+import { type Lessons, type Preparation, usePreparationParts } from "./use-preparation-parts";
 import { type StillNeededItem, useStillNeeded } from "./use-still-needed";
 
 /**
@@ -27,8 +27,11 @@ function EstimateWaits({ preparation }: { preparation: Preparation }) {
   }
 
   return (
-    <p className="text-muted-foreground flex items-center gap-3 text-sm" data-slot="estimate-waits">
-      <KindTile kind="mock" size="sm" />
+    <p
+      className="text-muted-foreground flex items-baseline gap-3 text-sm"
+      data-slot="estimate-waits"
+    >
+      <KindDot className="-translate-y-px" kind="mock" />
       {t("Take more mock exams of the whole exam or half of it to see your estimated score.")}
     </p>
   );
@@ -48,14 +51,12 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   }
 
   return (
-    <div
-      className="bg-muted/60 flex items-center gap-4 rounded-2xl p-4"
-      data-slot="estimated-score"
-    >
-      <KindTile kind="mock" />
-      <p className="flex min-w-0 flex-col">
-        <span className="text-muted-foreground text-xs font-medium">{t("Estimated score")}</span>
-        <span className="text-2xl font-bold tracking-tight tabular-nums">{scoreRange(score)}</span>
+    <div className="flex flex-col" data-slot="estimated-score">
+      <p className="flex min-w-0 flex-col gap-1">
+        <span className="text-label">{t("Estimated score")}</span>
+        <span className="font-mono text-2xl font-medium tracking-[-0.03em] tabular-nums">
+          {scoreRange(score)}
+        </span>
         <span className="text-muted-foreground text-xs">
           {t(
             "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}",
@@ -67,7 +68,12 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   );
 }
 
-/** How the number is made, and the test it waits for: the one the learner's plan has. */
+/**
+ * How the number is made: an exam's preparation, its subjects by their share of the exam, each
+ * held under 75% until the test it waits for (the one the learner's plan has), so the whole can
+ * pass 75% while a subject waits; another goal's progress, its plan's lessons, beside how well
+ * they're known.
+ */
 function MeasureNote({
   forExam,
   testKind,
@@ -79,16 +85,16 @@ function MeasureNote({
 
   if (!forExam) {
     return t(
-      "Your progress is how much you've studied times how well you know it: right answers, memory and weekly challenges. Harder topics count more, and it stays under 75% until you've answered them and taken a weekly challenge.",
+      "Your progress is the share of your plan's lessons you've studied or already knew. Mastery, memory and weekly challenges show how well you know them.",
     );
   }
 
   return testKind === "fullReviews"
     ? t(
-        "Your preparation is how much you've studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and it stays under 75% until you've answered them and done a full review in your test's format.",
+        "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and done a full review in your test's format.",
       )
     : t(
-        "Your preparation is how much you've studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and it stays under 75% until you've answered them and taken a mock exam.",
+        "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and taken a mock exam.",
       );
 }
 
@@ -98,13 +104,15 @@ function MeasureNote({
  */
 function PreparationParts({
   forExam,
+  lessons,
   preparation,
 }: {
   forExam: boolean;
+  lessons: Lessons | null;
   preparation: Preparation;
 }) {
   const t = useExtracted();
-  const parts = usePreparationParts(preparation);
+  const parts = usePreparationParts({ lessons: forExam ? null : lessons, preparation });
   const formatShare = useFormatShare();
 
   return (
@@ -153,7 +161,7 @@ function PreparationParts({
 function StillNeededRow({ examHref, item }: { examHref: string | null; item: StillNeededItem }) {
   const content = (
     <>
-      <KindTile kind={item.kind} size="sm" />
+      <KindMark kind={item.kind} />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-sm font-medium">{item.label}</span>
         {item.detail && <span className="text-muted-foreground text-xs">{item.detail}</span>}
@@ -166,7 +174,7 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
   if (item.key === "test" && item.kind === "mock" && examHref) {
     return (
       <LearnLink
-        className="hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-12 items-center gap-3 rounded-xl px-2 py-1.5 transition-colors outline-none focus-visible:ring-[3px]"
+        className="hover:bg-muted/70 focus-visible:ring-ring/50 -mx-2.5 flex min-h-12 items-center gap-3 rounded-[0.625rem] px-2.5 py-1.5 transition-colors outline-none focus-visible:ring-[3px]"
         href={examHref}
       >
         {content}
@@ -198,7 +206,7 @@ function StillNeeded({
   return (
     <section aria-labelledby="still-needed-title" className="flex flex-col gap-2">
       <SectionLabel id="still-needed-title">{t("Still to do")}</SectionLabel>
-      <ul className="flex flex-col">
+      <ul className="flex flex-col [&>li+li]:border-t">
         {items.map((item) => (
           <li key={item.key}>
             <StillNeededRow examHref={examHref} item={item} />
@@ -210,26 +218,29 @@ function StillNeeded({
 }
 
 /**
- * What's behind the preparation number, at a glance: the estimated score after a mock, the four
- * parts as small rings, and the one or two things still to do. A goal that isn't an exam calls the
- * number progress, never preparation.
+ * What's behind the number, at a glance: the estimated score after a mock, the four parts as small
+ * rings, and the one or two things still to do. A goal that isn't an exam calls the number
+ * progress, never preparation, and its first ring is that number: its plan's lessons.
  */
 export function PreparationDetails({
   examHref,
   forExam,
+  lessons,
   preparation,
   stillNeeded,
 }: {
   /** The exam's page, where mock exams are taken; null for goals without one. */
   examHref: string | null;
   forExam: boolean;
+  /** Another goal's lessons studied or known, its progress; ignored for an exam. */
+  lessons: Lessons | null;
   preparation: Preparation;
   stillNeeded: ProgressView["stillNeeded"];
 }) {
   return (
     <div className="flex flex-col gap-7">
       <EstimatedScore preparation={preparation} />
-      <PreparationParts forExam={forExam} preparation={preparation} />
+      <PreparationParts forExam={forExam} lessons={lessons} preparation={preparation} />
       <StillNeeded examHref={examHref} preparation={preparation} stillNeeded={stillNeeded} />
     </div>
   );

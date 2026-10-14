@@ -1,6 +1,5 @@
 "use client";
 
-import { CalendarClockIcon, LayersIcon, MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type Choice, ChoiceList } from "../choice-list";
 
@@ -23,19 +22,16 @@ export function MaterialIntentChoice({
   const choices: Choice<MaterialIntent>[] = [
     {
       description: t("Give a date and we'll plan up to it"),
-      icon: <CalendarClockIcon />,
       label: t("Prepare for an exam"),
       value: "exam",
     },
     {
       description: t("Short lessons, in the right order"),
-      icon: <LayersIcon />,
       label: t("Understand this material"),
       value: "understand",
     },
     {
       description: t("Answers show the page they came from"),
-      icon: <MessageCircleQuestionIcon />,
       label: t("Ask questions"),
       value: "questions",
     },

@@ -10,7 +10,8 @@ type RunState = Pick<GenerationRun, "failure" | "status" | "steps">;
 export type PhaseProgress<TPhase extends string> = {
   /** How long the running phase usually takes: the bar's pace. Null when nothing runs. */
   activeMs: number | null;
-  phases: { id: TPhase; status: PhaseStatus }[];
+  /** Each phase with how long it usually takes, the width of its segment on the bar. */
+  phases: { id: TPhase; seconds: number; status: PhaseStatus }[];
   /** The share of work finished, 0 to 100. */
   progress: number;
   /** Where `progress` will be once the running phase finishes. */
@@ -19,7 +20,11 @@ export type PhaseProgress<TPhase extends string> = {
 
 const PERCENT = 100;
 
-function getPhaseSteps<TPhase extends string>(definition: Definition<TPhase>, phase: TPhase) {
+/** The steps the run reports for a phase of the wait. */
+export function getPhaseSteps<TPhase extends string>(
+  definition: Definition<TPhase>,
+  phase: TPhase,
+) {
   return Object.entries(definition.steps).flatMap(([step, place]) =>
     place === phase ? [step] : [],
   );
@@ -125,7 +130,11 @@ export function getPhaseProgress<TPhase extends string>({
   if (run.status === "ready" || isGenerationDone({ definition, steps: run.steps })) {
     return {
       activeMs: null,
-      phases: phases.map((phase) => ({ id: phase.id, status: "completed" })),
+      phases: phases.map((phase) => ({
+        id: phase.id,
+        seconds: phase.seconds,
+        status: "completed",
+      })),
       progress: PERCENT,
       target: PERCENT,
     };
@@ -142,6 +151,7 @@ export function getPhaseProgress<TPhase extends string>({
     activeMs: run.status === "failed" || !active ? null : activeSeconds * 1000,
     phases: phases.map((phase, index) => ({
       id: phase.id,
+      seconds: phase.seconds,
       status: getStatus({ activeIndex, index, run }),
     })),
     progress: toPercent(finished + activeShare * activeSeconds, total),

@@ -4,12 +4,15 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { Button } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { useLetterKeys, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { ItemLine, ItemSupport } from "../../questions/item-text";
+import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { ANSWER_LETTERS } from "../../_components/answer-tone";
+import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
-import { type Choice, ChoiceList } from "../choice-list";
+import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -17,8 +20,6 @@ import {
   OnboardingPrimaryButton,
   OnboardingSubject,
 } from "../onboarding-frame";
-
-const LETTERS = ["A", "B", "C", "D", "E", "F"];
 
 /** A typed answer is a sentence or two; the grader looks for each key point. */
 const MAX_TYPED_ANSWER = 1000;
@@ -34,24 +35,58 @@ function useQuestionChoices({
 
   if (question.format === "trueFalse") {
     return [
-      {
-        icon: <span className="text-sm font-semibold">{LETTERS[0]}</span>,
-        label: answerLabel(true),
-        value: "true",
-      },
-      {
-        icon: <span className="text-sm font-semibold">{LETTERS[1]}</span>,
-        label: answerLabel(false),
-        value: "false",
-      },
+      { label: answerLabel(true), value: "true" },
+      { label: answerLabel(false), value: "false" },
     ];
   }
 
   return (question.options ?? []).map((option, index) => ({
-    icon: <span className="text-sm font-semibold">{LETTERS[index]}</span>,
     label: <ItemLine text={option} />,
     value: String(index),
   }));
+}
+
+/**
+ * A placement question's options drawn as every question's are (the player's answer option): its
+ * letter on the left, the strong line, a firm ring once picked. Its letter or number key picks it
+ * too.
+ */
+function PlacementOptions({
+  choices,
+  label,
+  onChange,
+  value,
+}: {
+  choices: Choice<string>[];
+  label: string;
+  onChange: (value: string) => void;
+  value: string | null;
+}) {
+  const pick = (index: number) => {
+    const choice = choices[index];
+
+    if (choice) {
+      onChange(choice.value);
+    }
+  };
+
+  useLetterKeys({ count: choices.length, onPick: pick });
+  useNumberKeys({ count: choices.length, onPick: pick });
+
+  return (
+    <AnswerOptionGroup aria-label={label}>
+      {choices.map((choice, index) => (
+        <AnswerOption
+          key={choice.value}
+          marker={ANSWER_LETTERS[index]}
+          onClick={() => onChange(choice.value)}
+          picked={value === choice.value}
+        >
+          {choice.label}
+        </AnswerOption>
+      ))}
+    </AnswerOptionGroup>
+  );
 }
 
 function toAnswer({
@@ -173,7 +208,7 @@ export function PlacementQuestionScreen({
         {subject && number !== undefined && (
           <div className="flex items-start justify-between gap-3">
             <OnboardingSubject>{subject}</OnboardingSubject>
-            <span className="text-muted-foreground shrink-0 py-1 text-xs font-medium tabular-nums">
+            <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
               {t("Question {number, number}", { number })}
             </span>
           </div>
@@ -188,14 +223,14 @@ export function PlacementQuestionScreen({
           visual={question.visual}
         />
 
-        <h1 className="text-xl leading-snug font-semibold text-pretty">
-          <ItemLine text={question.question} />
-        </h1>
+        <div className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty">
+          <ItemStem text={question.question} heading="h1" />
+        </div>
 
         {question.format === "typed" ? (
           <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
         ) : (
-          <ChoiceList
+          <PlacementOptions
             choices={choices}
             label={question.question}
             onChange={setValue}
@@ -204,9 +239,9 @@ export function PlacementQuestionScreen({
         )}
 
         <Button
-          className="h-12 rounded-full text-base"
           disabled={pending}
           onClick={() => send({ dontKnow: true })}
+          size="lg"
           type="button"
           variant="outline"
         >
@@ -216,7 +251,7 @@ export function PlacementQuestionScreen({
 
         <OnboardingFooter>
           {error && (
-            <p className="text-destructive text-center text-sm" role="alert">
+            <p className="text-destructive-text text-center text-sm" role="alert">
               {error}
             </p>
           )}

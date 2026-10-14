@@ -1,48 +1,26 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon, ClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { FactChip, FactChips } from "../../_components/fact-chips";
-import { daysUntilIsoDate } from "../../_utils/iso-date";
-import { useFormatDuration } from "../../_utils/time-format";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
-import { JourneyPath } from "../../journey/journey-path";
-import { usePlanEndText } from "../../journey/use-phase-when";
-import { LearnLink } from "../../learn-link";
-import { PlanChoices } from "../../plan/plan-choices";
-import {
-  type PlanActions,
-  type PlanGoal,
-  PlanScreenProvider,
-  usePlanScreen,
-} from "../../plan/plan-context";
-import { PlanEditor } from "../../plan/plan-editor";
-import { PlanNotice } from "../../plan/plan-notice";
+import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
-import { SyllabusSummary } from "../../syllabus/syllabus-summary";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
-import { SavePlanNote } from "../save-plan-note";
-import { NoticeReading, UsualStructureNote } from "./notice-reading";
-import { RevealNoticeDay } from "./reveal-notice-day";
+import { NoticeReading } from "./notice-reading";
+import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
 import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
 
@@ -72,111 +50,6 @@ function PlanBuilding({
         </OnboardingHeading>
       </GenerationWait>
       {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
-    </OnboardingColumn>
-  );
-}
-
-/**
- * The plan's one next step: Enter starts day 1 from anywhere on the screen. Today isn't
- * prefetched: a copy taken while onboarding was still saving could send the learner back to the
- * start, so day 1 is always read fresh.
- */
-function StartButton({ href }: { href: string }) {
-  const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
-
-  return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "h-12 w-full text-base")}
-      href={href}
-      prefetch={false}
-      ref={ref}
-    >
-      {t("Start")}
-    </LearnLink>
-  );
-}
-
-/**
- * The plan's shape as two facts: how long until the goal (or when it ends at this pace), and the
- * time a day.
- */
-function RevealFacts() {
-  const t = useExtracted();
-  const today = useMountTime();
-  const formatDuration = useFormatDuration();
-  const planEnd = usePlanEndText();
-  const { plan } = usePlanScreen();
-  const { dailyMinutes, targetDate, targetDateEstimated } = plan.schedule;
-
-  return (
-    <FactChips>
-      {targetDate && (
-        <FactChip>
-          <CalendarDaysIcon aria-hidden="true" />
-          {targetDateEstimated
-            ? t("{days, plural, one {About # day} other {About # days}}", {
-                days: daysUntilIsoDate({ isoDate: targetDate, today }),
-              })
-            : t("{days, plural, one {# day} other {# days}}", {
-                days: daysUntilIsoDate({ isoDate: targetDate, today }),
-              })}
-        </FactChip>
-      )}
-      {!targetDate && planEnd && (
-        <FactChip>
-          <CalendarDaysIcon aria-hidden="true" />
-          {planEnd}
-        </FactChip>
-      )}
-      <FactChip>
-        <ClockIcon aria-hidden="true" />
-        {t("{time} a day", { time: formatDuration(dailyMinutes) })}
-      </FactChip>
-    </FactChips>
-  );
-}
-
-function RevealBody({
-  isGuest,
-  signUpHref,
-  syllabus,
-  todayHref,
-}: {
-  isGuest: boolean;
-  signUpHref: string;
-  syllabus: SyllabusView | null;
-  todayHref: string;
-}) {
-  const t = useExtracted();
-  const [editing, setEditing] = useState(false);
-  const { goal, plan } = usePlanScreen();
-
-  return (
-    <OnboardingColumn>
-      <div className="flex flex-col gap-4">
-        <OnboardingHeading>
-          <OnboardingTitle>{t("Your plan is ready")}</OnboardingTitle>
-          <OnboardingDescription>{goal.title}</OnboardingDescription>
-        </OnboardingHeading>
-
-        <RevealFacts />
-        <RevealNoticeDay />
-        <PlanNotice onAdjust={() => setEditing(true)} />
-        <PlanChoices />
-        {plan.notice === "usual" && <UsualStructureNote />}
-      </div>
-
-      <SyllabusSummary dailyMinutes={plan.schedule.dailyMinutes} syllabus={syllabus} />
-      <JourneyPath />
-
-      {/* A long plan never hides the one next step. */}
-      <OnboardingFooter className="from-background sticky bottom-0 z-20 bg-linear-to-t from-70% to-transparent">
-        <StartButton href={todayHref} />
-        {isGuest && <SavePlanNote signUpHref={signUpHref} />}
-      </OnboardingFooter>
-
-      <PlanEditor onOpenChange={setEditing} open={editing} />
     </OnboardingColumn>
   );
 }
@@ -215,11 +88,10 @@ function usePlanWait({
 }
 
 /**
- * The last onboarding screen: the plan's shape in two facts, honest about how much of the goal
- * their time covers ("Adjust" when it doesn't cover it all), the choices it starts with (its
- * prerequisites on the recommendation, studying everything instead), the goal's structure (an exam's
- * notice subjects and topics, or the plan's modules, all one tap away) and its path of phases to
- * the goal. One button starts.
+ * The last onboarding screen, the plan as data: "Plan created" over the goal, its facts in one
+ * line, its phases on a bar with their dates, what each area weighs and the syllabus one tap away,
+ * honest about how much of the goal their time covers (with the one tap that changes it), and the
+ * choices it starts with. "Adjust" opens the plan editor; "Start" begins day 1.
  */
 export function PlanReveal({
   actions,
@@ -251,7 +123,7 @@ export function PlanReveal({
   signUpHref: string;
   todayHref: string;
 }) {
-  const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
+  const [plan, setPlan] = useState<PlanScreenView | null>(initialPlan?.plan ?? null);
   const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
   // Without the page's read (the steps changed the plan since), nothing shows until a fresh one.
   const [read, setRead] = useState(initialPlan !== null);

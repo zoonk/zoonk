@@ -1,9 +1,12 @@
 "use client";
 
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useRef } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -12,21 +15,18 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { CHOICE_CONTROL_CLASS, CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
+import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
   description?: string;
-  icon?: React.ReactNode;
   /** Text, or a question's option with its emphasis (`ItemLine`). */
   label: React.ReactNode;
   value: Value;
 };
 
-/**
- * A choice's radio or checkbox at its row's end, drawn as every list marks what's done: an empty
- * ring, filled with a check once picked. The row is its label, so a tap anywhere on it picks it.
- */
-export const CHOICE_CONTROL_CLASS =
-  "border-foreground/15 data-checked:border-primary data-checked:bg-primary size-6 self-center rounded-full border-2 dark:bg-transparent [&_svg]:size-3.5";
+/** Number keys reach the first nine options. */
+const NUMBER_KEY_COUNT = 9;
 
 /** A radio as a row's check: the ring, and a check over it once picked (its dot left out). */
 function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
@@ -38,22 +38,30 @@ function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
       />
       <CheckIcon
         aria-hidden="true"
-        className="text-primary-foreground pointer-events-none absolute inset-0 m-auto hidden size-3.5 group-has-data-checked/choice:block"
+        className="text-selected-foreground pointer-events-none absolute inset-0 m-auto hidden size-3 group-has-data-checked/choice:block"
         strokeWidth={3}
       />
     </span>
   );
 }
 
-/** A choice as a row of one grouped list: the whole row picks it, the keyboard ring inside it. */
+/**
+ * A choice as a flat row of one list: the whole row picks it, the picked one (`data-highlighted`)
+ * on the learner's blue tint, the keyboard ring inside it.
+ */
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
-  "group/choice has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px] has-focus-visible:ring-inset",
+  CHOICE_PICKED_ROW_CLASS,
+  "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px]",
 );
 
+/**
+ * A preset (an amount of time): the strong line, and the learner's blue ring and tint once picked;
+ * the keyboard's focus is an outline, so a picked preset still shows it.
+ */
 const CHIP_CLASS = cn(
-  "border-border bg-card flex cursor-pointer items-center rounded-2xl border transition-colors motion-reduce:transition-none",
-  "hover:bg-muted/60 has-data-checked:border-foreground has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+  "ring-input flex cursor-pointer items-center rounded-lg ring-1 transition-colors ring-inset motion-reduce:transition-none",
+  "hover:bg-muted has-data-checked:bg-selected-tint has-data-checked:ring-selected has-focus-visible:outline-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-data-checked:ring-2",
 );
 
 /**
@@ -63,15 +71,20 @@ const CHIP_CLASS = cn(
 type ChoiceListVariant = "chips" | "rows";
 
 /**
- * One answer from a short list: the rows of one grouped list, each with its own short explanation
- * and a check at its end once picked, or compact chips for plain values. Number keys pick an
- * option, unless another list on the screen owns them.
+ * One answer from a short list: flat rows, each with its own short explanation and a check at its
+ * end once picked, or compact presets for plain values. Number keys pick an option, unless another
+ * list on the screen owns them; where there's a keyboard, each row shows its key. `onPick` hears a
+ * deliberate pick (a tap, a click or a number key), so a one-answer question can move on with it,
+ * and screen readers hear which answer it moved on with; the arrow keys only move the selection,
+ * and Enter continues. `readOnly` keeps the pick as it is while the answer saves.
  */
 export function ChoiceList<Value extends string>({
   choices,
   label,
   numberKeys = true,
   onChange,
+  onPick,
+  readOnly = false,
   value,
   variant = "rows",
 }: {
@@ -80,21 +93,49 @@ export function ChoiceList<Value extends string>({
   /** Off for a second list on the same screen: number keys pick from the first. */
   numberKeys?: boolean;
   onChange: (value: Value) => void;
+  onPick?: (value: Value) => void;
+  readOnly?: boolean;
   value: Value | null;
   variant?: ChoiceListVariant;
 }) {
+  const t = useExtracted();
+  const announce = useOnboardingAnnounce();
+
+  // The option a pointer went down on, so its click counts as a pick and a keyboard's doesn't.
+  const pointerPick = useRef<Value | null>(null);
+
+  const pickDeliberately = (choice: Choice<Value>) => {
+    if (!onPick || readOnly) {
+      return;
+    }
+
+    onPick(choice.value);
+
+    if (typeof choice.label === "string") {
+      announce?.(t("You picked {answer}", { answer: choice.label }));
+    }
+  };
+
   // Number keys pick an option, so the keyboard answers as fast as a tap.
   useNumberKeys({
     count: choices.length,
-    enabled: numberKeys,
+    enabled: numberKeys && !readOnly,
     onPick: (index) => {
       const choice = choices[index];
 
       if (choice) {
         onChange(choice.value);
+        pickDeliberately(choice);
       }
     },
   });
+
+  const pickByPointer = (choice: Choice<Value>) => {
+    if (pointerPick.current === choice.value) {
+      pointerPick.current = null;
+      pickDeliberately(choice);
+    }
+  };
 
   const pick = (next: unknown) => {
     const choice = choices.find((item) => item.value === next);
@@ -104,50 +145,71 @@ export function ChoiceList<Value extends string>({
     }
   };
 
+  // Four to a row where each chip has room for its longest time on one line ("1 h 30 min"), three
+  // on a phone, two in a narrow column: the columns follow the room the list has, not the screen.
   if (variant === "chips") {
     return (
-      <RadioGroup
-        aria-label={label}
-        className="grid grid-cols-4 gap-2"
-        onValueChange={pick}
-        value={value}
-      >
-        {choices.map((choice) => (
-          <RadioGroupOption
-            className={cn(
-              CHIP_CLASS,
-              "has-data-checked:bg-foreground has-data-checked:text-background relative min-h-12 justify-center px-1 py-2 text-center",
-            )}
-            key={choice.value}
-          >
-            <span className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-sm font-medium tabular-nums">{choice.label}</span>
-              {/* A chip's note follows its color, so it reads on the picked chip's fill too. */}
-              {choice.description && (
-                <span className="text-[0.6875rem] leading-tight font-normal opacity-75">
-                  {choice.description}
+      <div className="@container">
+        <RadioGroup
+          aria-label={label}
+          className="grid grid-cols-2 gap-2 @[19rem]:grid-cols-3 @[26rem]:grid-cols-4"
+          onValueChange={pick}
+          readOnly={readOnly}
+          value={value}
+        >
+          {choices.map((choice) => (
+            <RadioGroupOption
+              className={cn(CHIP_CLASS, "relative min-h-11 justify-center px-1 py-1.5 text-center")}
+              key={choice.value}
+            >
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="font-mono text-[0.8125rem] font-medium tabular-nums">
+                  {choice.label}
                 </span>
-              )}
-            </span>
+                {choice.description && (
+                  <span className="text-muted-foreground text-[0.6875rem] leading-tight">
+                    {choice.description}
+                  </span>
+                )}
+              </span>
 
-            {/* A chip shows it's picked by its fill; its radio, invisible, still takes focus. */}
-            <RadioGroupItem
-              className="pointer-events-none absolute inset-0 size-full opacity-0"
-              value={choice.value}
-            />
-          </RadioGroupOption>
-        ))}
-      </RadioGroup>
+              {/* A chip shows it's picked by its fill; its radio, invisible, still takes focus. */}
+              <RadioGroupItem
+                className="pointer-events-none absolute inset-0 size-full opacity-0"
+                value={choice.value}
+              />
+            </RadioGroupOption>
+          ))}
+        </RadioGroup>
+      </div>
     );
   }
 
   return (
-    <RadioGroup aria-label={label} className={LIST_GROUP_CLASS} onValueChange={pick} value={value}>
-      {choices.map((choice) => (
-        <RadioGroupOption className={CHOICE_ROW_CLASS} key={choice.value}>
-          {choice.icon && (
-            <ListRowLeading className="bg-muted size-10 justify-center rounded-xl [&_svg]:size-5">
-              {choice.icon}
+    <RadioGroup
+      aria-label={label}
+      className={LIST_GROUP_CLASS}
+      onKeyDown={() => {
+        pointerPick.current = null;
+      }}
+      onValueChange={pick}
+      readOnly={readOnly}
+      value={value}
+    >
+      {choices.map((choice, index) => (
+        <RadioGroupOption
+          className={CHOICE_ROW_CLASS}
+          data-highlighted={choice.value === value || undefined}
+          key={choice.value}
+          onClick={() => pickByPointer(choice)}
+          onPointerDown={() => {
+            pointerPick.current = choice.value;
+          }}
+        >
+          {numberKeys && index < NUMBER_KEY_COUNT && (
+            // Only where there's a keyboard, so on touch the titles start at the row's edge.
+            <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
+              <ShortcutKbd>{index + 1}</ShortcutKbd>
             </ListRowLeading>
           )}
 

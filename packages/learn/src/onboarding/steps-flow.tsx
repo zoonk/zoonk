@@ -7,57 +7,57 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
+import { StepDots } from "../_components/step-dots";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
+import { type FlowState, applyAnswer } from "./_utils/answered-step";
 import {
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
   type RevealedPlan,
 } from "./onboarding-actions";
-import {
-  OnboardingProgressProvider,
-  OnboardingTaskFrame,
-  OnboardingTopBar,
-} from "./onboarding-frame";
+import { OnboardingAnnouncer } from "./onboarding-announcer";
+import { OnboardingFrame } from "./onboarding-frame";
+import { OnboardingProgressProvider } from "./onboarding-host";
+import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
+import { PlanReceipt } from "./plan-receipt";
 import { StartOverButton } from "./start-over-button";
-import { PlanStartNotice } from "./steps/plan-start-notice";
+import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
 
-/** Placement and the plan aren't questions, so they don't count in the dots. */
-const UNCOUNTED_STEPS = new Set<OnboardingStep>(["placement", "plan"]);
-
-/** The screens that count as questions, in the names the goal saves its answers under. */
-const QUESTION_SCREENS = new Set<string>([
+/** The screens that count as steps in the dots, in the names the goal saves its answers under. */
+const STEP_SCREENS = new Set<string>([
   "purpose",
   "role",
   "reason",
   "target",
   "targetDate",
   "followUps",
+  "examChoice",
   "level",
   "schedule",
   "buddy",
+  // Placement sits between the questions, so it's a step like them; the plan isn't.
+  "placement",
 ]);
 
-function isQuestionScreen(step: unknown): step is OnboardingStep {
-  return typeof step === "string" && QUESTION_SCREENS.has(step);
+function isStepScreen(step: unknown): step is OnboardingStep {
+  return typeof step === "string" && STEP_SCREENS.has(step);
 }
 
 /**
- * The questions this goal's onboarding already asked, in the order they were answered, so after a
- * refresh the dots count them and Back returns to them.
+ * The steps this goal's onboarding already went through, in the order they were answered, so after
+ * a refresh the dots count them and Back returns to them, as it does before one.
  */
 function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
   const answered = view.goal.details.answered;
-  return Array.isArray(answered) ? answered.filter((step) => isQuestionScreen(step)) : [];
+  return Array.isArray(answered) ? answered.filter((step) => isStepScreen(step)) : [];
 }
 
-type FlowState = { current: OnboardingStep; history: OnboardingStep[]; view: OnboardingView };
-
-function countQuestions(steps: OnboardingStep[]): number {
-  return steps.filter((step) => !UNCOUNTED_STEPS.has(step)).length;
+function countSteps(steps: OnboardingStep[]): number {
+  return steps.filter((step) => isStepScreen(step)).length;
 }
 
 /**
@@ -101,15 +101,26 @@ export function StepsFlow({
     view: onboarding,
   }));
 
-  const advance = (view: OnboardingView) =>
-    setState((previous) => ({
-      ...previous,
-      current: view.steps.find((step) => step !== previous.current) ?? "plan",
-      history: [...previous.history, previous.current],
-      view,
-    }));
+  // One answer saves at a time, admitted at once: a pick that moves on by itself and Continue (or
+  // a second pick) while it saves never save twice and skip the question after it.
+  const saving = useRef(false);
 
-  const answer = (input: OnboardingAnswerInput) =>
+  // The screen whose answer (or start over) is saving, and whether its request is still open.
+  // While it is, every screen waits (Back included: a pick there couldn't save). Once it answers,
+  // the transition stays pending until the page's refresh after the save lands, seconds on a cold
+  // server, while the next screen already shows: then only the screen that sent it waits, so the
+  // next one answers at once (an ENEM learner's "1" for English did nothing there).
+  const [sending, setSending] = useState<{ open: boolean; step: OnboardingStep } | null>(null);
+
+  const answer = (input: OnboardingAnswerInput) => {
+    if (saving.current) {
+      return;
+    }
+
+    saving.current = true;
+    const step = state.current;
+    setSending({ open: true, step });
+
     startTransition(async () => {
       setFailed(false);
 
@@ -118,6 +129,9 @@ export function StepsFlow({
       const { data: outcome } = await safeAsync(() =>
         actions.answer({ goalId: state.view.goal.id, input }),
       );
+
+      saving.current = false;
+      setSending({ open: false, step });
 
       if (!outcome || outcome.status === "failed") {
         setFailed(true);
@@ -129,8 +143,9 @@ export function StepsFlow({
         navigation.replaceSteps(outcome.onboarding.goal.id);
       }
 
-      advance(outcome.onboarding);
+      setState((previous) => applyAnswer({ state: previous, step, view: outcome.onboarding }));
     });
+  };
 
   const back = () =>
     setState((previous) => ({
@@ -139,53 +154,73 @@ export function StepsFlow({
       history: previous.history.slice(0, -1),
     }));
 
-  const startOver = () =>
+  const startOver = () => {
+    setSending({ open: true, step: state.current });
+
     startTransition(async () => {
       await actions.startOver(state.view.goalIds);
       navigation.toStart();
     });
+  };
 
   const isPlan = state.current === "plan";
-  const remaining = countQuestions(state.view.steps.filter((step) => step !== state.current));
-  const answeredCount = countQuestions(state.history);
-  const showDots = !UNCOUNTED_STEPS.has(state.current);
+  const remaining = countSteps(state.view.steps.filter((step) => step !== state.current));
+  const answeredCount = countSteps(state.history);
+  const showDots = isStepScreen(state.current);
 
   const progress = showDots
     ? { current: answeredCount, total: answeredCount + 1 + remaining }
     : null;
 
+  // In the page's aside from 72rem, the plan so far: what the answers set, as they set it.
   return (
-    <OnboardingTaskFrame>
-      <OnboardingTopBar
-        end={isPlan ? null : <StartOverButton disabled={isPending} onStartOver={startOver} />}
-        // The plan is built from the answers: changing them now happens in "Adjust", not by going
-        // back through the questions.
-        onBack={state.history.length > 0 && !isPlan ? back : undefined}
-        progress={progress}
-      />
-
-      {failed && (
-        <p className="text-destructive mx-auto w-full max-w-xl px-4 text-sm" role="alert">
-          {t("We couldn't save that. Try again in a moment.")}
-        </p>
-      )}
-
-      {showDots && generation && <PlanStartNotice run={generation} />}
-
-      <OnboardingProgressProvider progress={progress}>
-        <OnboardingStepScreen
-          actions={actions}
-          isGuest={isGuest}
-          onAnswer={answer}
-          onPlacementDone={() => answer({ question: "placement" })}
-          pending={isPending}
-          plan={{ initialPlan: pagePlan, planActions }}
-          routes={routes}
-          run={generation}
-          step={state.current}
-          view={state.view}
-        />
-      </OnboardingProgressProvider>
-    </OnboardingTaskFrame>
+    <OnboardingRailProvider rail={<PlanReceipt goal={state.view.goal} />}>
+      <OnboardingAnnouncer>
+        <OnboardingFrame
+          bar={{
+            end: isPlan ? null : <StartOverButton disabled={isPending} onStartOver={startOver} />,
+            middle: progress && (
+              <StepDots
+                className="w-24 sm:w-32"
+                current={progress.current}
+                total={progress.total}
+              />
+            ),
+            // The plan is built from the answers: changing them now happens in "Adjust", not by
+            // going back through the questions.
+            onBack: state.history.length > 0 && !isPlan ? back : undefined,
+          }}
+          notice={
+            failed && (
+              <p className="text-destructive-text text-sm" role="alert">
+                {t("We couldn't save that. Try again in a moment.")}
+              </p>
+            )
+          }
+        >
+          <OnboardingProgressProvider progress={progress}>
+            {/* Placement follows the run itself, so only the questions say it stopped. */}
+            <PlanStartNoticeProvider
+              run={showDots && state.current !== "placement" ? generation : null}
+            >
+              <OnboardingStepScreen
+                actions={actions}
+                isGuest={isGuest}
+                onAnswer={answer}
+                onPlacementDone={() => answer({ question: "placement" })}
+                pending={
+                  isPending && sending !== null && (sending.open || sending.step === state.current)
+                }
+                plan={{ initialPlan: pagePlan, planActions }}
+                routes={routes}
+                run={generation}
+                step={state.current}
+                view={state.view}
+              />
+            </PlanStartNoticeProvider>
+          </OnboardingProgressProvider>
+        </OnboardingFrame>
+      </OnboardingAnnouncer>
+    </OnboardingRailProvider>
   );
 }

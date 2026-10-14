@@ -1,36 +1,19 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type WeeklyStudyTime } from "@zoonk/core/progress/weekly-study-time-contract";
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import {
-  GenerationTimelineDescription,
-  GenerationTimelineTitle,
-} from "@zoonk/ui/components/generation-timeline";
-import { cn } from "@zoonk/ui/lib/utils";
+import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import {
-  Page,
-  PageEyebrow,
-  PageHeader,
-  PageHeaderContent,
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionTitle,
-  PageTitle,
-} from "../_components/page";
-import { Surface } from "../_components/surface";
-import { useFormatGoalDate } from "../_utils/iso-date";
+import { useLayoutEffect, useState } from "react";
+import { Page, PageEyebrow, PageHeaderContent, PageTitle } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
-import { type AlphabetLink, AlphabetRow } from "../language/units/alphabet-row";
-import { MindMapsReference } from "../mind-maps/mind-maps-reference";
+import { type AlphabetLink } from "../language/units/alphabet-row";
 import {
-  PLAN_TITLE_ID,
   type PlanActions,
   type PlanGoal,
   PlanScreenProvider,
@@ -38,22 +21,28 @@ import {
   usePlanScreen,
 } from "../plan/plan-context";
 import { PlanEditor } from "../plan/plan-editor";
-import { ExamChoiceNotices } from "../plan/plan-exam-choices";
-import { PlanNotice } from "../plan/plan-notice";
+import { type PlanEditorSection } from "../plan/plan-editor-sections";
+import { PlanProperties } from "../plan/plan-properties";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
-import { WIDE_PAGE_CLASS } from "../shell/learn-shell";
+import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
+import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import {
   ArchiveGoalDialog,
-  GoalPausedNotice,
+  type GoalStatusChange,
   type GoalStatusControl,
+  ResumeGoalDialog,
   useSetGoalStatus,
 } from "./goal-actions";
-import { JourneyHero, type JourneyStanding } from "./journey-hero";
+import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPartialCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
-import { JourneyPath } from "./journey-path";
-import { StudyNext } from "./study-next";
+import { NextOnPath } from "./next-on-path";
+import { PlanHeader } from "./plan-header";
+import { PlanRoadmap } from "./plan-roadmap";
+import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
+import { changesOnResume } from "./resume-effect";
+import { WeeklyStudyTimeProvider } from "./weekly-study-time-context";
 
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
@@ -65,14 +54,21 @@ export type { GoalStatusControl, GoalStatusOutcome } from "./goal-actions";
  */
 const WRITING_REFRESH_MS = 10_000;
 
+/** From 72rem the numbers, the slot and the plan's settings live in the aside instead. */
+const IN_COLUMN_CLASS = "min-[72rem]:hidden";
+const IN_ASIDE_CLASS = "hidden min-[72rem]:flex";
+const IN_ASIDE_GRID_CLASS = "hidden min-[72rem]:grid";
+
 /**
- * Where the Journey leads beyond its path: a Library course's page, the focus test and each
- * subject's page.
+ * Where the Plan leads beyond its path: a Library course's page, the focus test, each subject's
+ * page, the goal's mind maps and last week's recap.
  */
 export type JourneyLinks = JourneyPathLinks & {
   course: (course: { brandSlug: string; courseSlug: string }) => string;
   /** The focus test, offered beside choosing where to focus. */
   focusTest: string;
+  /** Last week's recap, from "Your pace"; null on a host without it. */
+  logbook: string | null;
   /**
    * The goal's mind maps; null until a finished chapter has a map or can get one (its lessons were
    * written), and for a goal whose chapters get none (a language's units).
@@ -90,7 +86,7 @@ type JourneyAlphabet = { link: AlphabetLink; onSkip: () => Promise<boolean> };
  * The current phase still stands in for lessons on the way. Topics after the weeks the plan writes
  * ahead (`far`) aren't being written: nothing would change by reading them again.
  */
-function isPhaseBeingWritten(plan: PlanView): boolean {
+function isPhaseBeingWritten(plan: PlanScreenView): boolean {
   return plan.phases.some(
     (phase) =>
       phase.state === "current" &&
@@ -99,9 +95,10 @@ function isPhaseBeingWritten(plan: PlanView): boolean {
 }
 
 /**
- * The Journey while the goal's run builds its plan, as Today waits for its first day: the run's
- * progress as it happens, turning into the Journey on its own once the plan is saved (the host
- * reads it again). A run that failed or never started offers "Try again".
+ * The Plan while the goal's run builds it, as Today waits for its first day: the page's own
+ * header, whose eyebrow says the plan is being built (the wait under it has no title of its own,
+ * so the page keeps one), then the run's progress as it happens, turning into the Plan on its own
+ * once it's saved (the host reads it again). A run that failed or never started offers "Try again".
  */
 export function JourneyBuilding({
   goalTitle,
@@ -109,7 +106,7 @@ export function JourneyBuilding({
   run,
 }: {
   goalTitle: string;
-  /** Reads the Journey again: the path shows as soon as the plan exists. */
+  /** Reads the Plan again: it shows as soon as it exists. */
   onRefresh: () => void;
   run: GenerationRun;
 }) {
@@ -118,80 +115,72 @@ export function JourneyBuilding({
   useRefreshUntilShown({ isReady: run.status === "ready", refresh: onRefresh });
 
   return (
-    <section
-      className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 py-12"
-      data-slot="journey-preparing"
-    >
-      <GenerationWait kind="curriculum" run={run}>
-        <GenerationTimelineTitle>
-          {t("Building your plan for {goal}", { goal: goalTitle })}
-        </GenerationTimelineTitle>
-        <GenerationTimelineDescription>
-          {t("It usually takes a minute or two. Your plan opens here as soon as it's ready.")}
-        </GenerationTimelineDescription>
-      </GenerationWait>
-    </section>
+    <Page data-slot="journey-preparing">
+      <PageHeaderContent>
+        <PageEyebrow>{t("{goal} · Building your plan", { goal: goalTitle })}</PageEyebrow>
+        <PageTitle>{t("Plan")}</PageTitle>
+      </PageHeaderContent>
+
+      <section className="flex max-w-xl flex-col gap-8">
+        <GenerationWait kind="curriculum" run={run}>
+          <GenerationTimelineDescription>
+            {t("It usually takes a minute or two. Your plan opens here as soon as it's ready.")}
+          </GenerationTimelineDescription>
+        </GenerationWait>
+      </section>
+    </Page>
   );
 }
 
 /**
- * "ENEM 2026 · November 8": the goal, and its date when it has one, "About" a day the plan only
- * estimates (an edition whose notice isn't out), and the month the learner named as that month.
+ * The goal's pause, resume and archive, for its "…", with archiving's confirmation, and resuming's
+ * when it changes the plan (see `ResumeGoalDialog`).
  */
-function useJourneyEyebrow(): string {
-  const t = useExtracted();
-  const formatGoalDate = useFormatGoalDate();
-  const { goal, plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
-
-  if (!targetDate) {
-    return goal.title;
-  }
-
-  const date = formatGoalDate({
-    isoDate: targetDate,
-    namedMonth: targetDateNamedMonth,
-    style: "long",
-  });
-
-  const isAbout = targetDateEstimated && !targetDateNamedMonth;
-
-  return `${goal.title} · ${isAbout ? t("About {date}", { date }) : date}`;
-}
-
-/** "Phase 2 of 4": where the path is, beside its header; nothing for a path of one phase. */
-function PhaseDetail() {
-  const t = useExtracted();
-  const { plan } = usePlanScreen();
-  const current = plan.phases.findIndex((phase) => phase.state === "current");
-
-  if (plan.phases.length < 2 || current === -1) {
-    return null;
-  }
-
-  return (
-    <PageSectionDetail>
-      {t("Phase {number, number} of {total, number}", {
-        number: current + 1,
-        total: plan.phases.length,
-      })}
-    </PageSectionDetail>
-  );
-}
-
-/** The goal's pause, resume and archive, for its "…", with archiving's confirmation. */
 function useGoalMenu(control: GoalStatusControl | null) {
   const [archiving, setArchiving] = useState(false);
+  const [resuming, setResuming] = useState(false);
   const { setStatus } = useSetGoalStatus(control?.onSetStatus ?? null);
+  const resumePreview = control && changesOnResume(control.resume) ? control.resume : null;
 
   const archive = () => {
     setArchiving(false);
     setStatus("archived");
   };
 
-  const goal = control && { control, onArchive: () => setArchiving(true), onSetStatus: setStatus };
+  const resume = () => {
+    setResuming(false);
+    setStatus("active");
+  };
 
-  return { archive, archiving, goal, setArchiving };
+  const onSetStatus = (status: GoalStatusChange) => {
+    if (status === "active" && resumePreview) {
+      setResuming(true);
+      return;
+    }
+
+    setStatus(status);
+  };
+
+  const goal = control && { control, onArchive: () => setArchiving(true), onSetStatus };
+
+  return { archive, archiving, goal, resume, resumePreview, resuming, setArchiving, setResuming };
+}
+
+/** "Adjust plan", opened at one of its settings or from its top. */
+function usePlanEditor(openOnArrival: boolean) {
+  const [editor, setEditor] = useState<{ open: boolean | null; section: PlanEditorSection | null }>(
+    { open: null, section: null },
+  );
+
+  // Activity preserves state when the page hides. A later arrival starts from its requested view,
+  // while closing the editor still sticks for as long as the learner stays on the Plan.
+  useLayoutEffect(() => () => setEditor({ open: null, section: null }), []);
+
+  return {
+    editor: { ...editor, open: editor.open ?? openOnArrival },
+    open: (section: PlanEditorSection | null = null) => setEditor({ open: true, section }),
+    setOpen: (open: boolean) => setEditor((current) => ({ ...current, open })),
+  };
 }
 
 function JourneyBody({
@@ -199,6 +188,7 @@ function JourneyBody({
   goalStatus,
   links,
   next,
+  openAdjust,
   standing,
   syllabus,
 }: {
@@ -206,118 +196,121 @@ function JourneyBody({
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
   next: JourneyNext | null;
+  openAdjust: boolean;
   standing: JourneyStanding | null;
   syllabus: SyllabusView | null;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
-  const [editing, setEditing] = useState(false);
+  const editor = usePlanEditor(openAdjust);
+  const [phasesOpen, setPhasesOpen] = useState(false);
   const goalMenu = useGoalMenu(goalStatus);
-  const adjust = () => setEditing(true);
   const partialCourse = getPartialCourse(plan);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
-  const eyebrow = useJourneyEyebrow();
+  const paused = goalStatus?.status === "paused";
 
-  const menu = (
-    <JourneyMenu
-      adjustInMenu={standing === null}
-      courseHref={partialCourse && links.course(partialCourse)}
-      examHref={links.exam}
-      goal={goalMenu.goal}
-      onAdjust={adjust}
-    />
-  );
+  const numbers = (variant: "stats" | "tiles", className: string) =>
+    standing && (
+      <PlanNumbers
+        className={className}
+        examHref={links.exam}
+        logbookHref={links.logbook}
+        onAdjust={() => editor.open()}
+        paused={paused}
+        standing={standing}
+        status={plan.status}
+        variant={variant}
+      />
+    );
 
   return (
-    <Page className={cn(structure && WIDE_PAGE_CLASS)} data-slot="journey">
-      <PageHeader>
-        <PageHeaderContent>
-          <PageEyebrow>{eyebrow}</PageEyebrow>
-          <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
-            {t("Journey")}
-          </PageTitle>
-        </PageHeaderContent>
-
-        {/* Without a number to stand on, the Journey's "…" stays beside its title. */}
-        {!standing && menu}
-      </PageHeader>
-
-      <div
-        className={cn(
-          "flex flex-col gap-8",
-          // With a structure, a wide screen puts it beside the path instead of under it.
-          structure && "lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-10",
-        )}
+    <PlanSuggestionProvider
+      host={{
+        courseHref: links.course,
+        goalStatus,
+        next,
+        onAdjust: () => editor.open(),
+        onEdit: editor.open,
+      }}
+    >
+      <PageWithAside
+        aside={
+          <>
+            {numbers("stats", IN_ASIDE_GRID_CLASS)}
+            <PlanSuggestionSlot className="hidden min-[72rem]:block" />
+            <NextOnPath links={links} />
+            <MoreSection links={links} />
+            <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
+          </>
+        }
+        asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-2 sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
+        asideLabel={t("Your plan at a glance")}
       >
-        <div className="flex min-w-0 flex-col gap-8">
-          {goalStatus && <GoalPausedNotice control={goalStatus} />}
-          {standing && (
-            <JourneyHero
-              actions={
-                <>
-                  <AdjustPlanButton onAdjust={adjust} />
-                  <span className="ml-auto">{menu}</span>
-                </>
-              }
+        <Page data-slot="journey">
+          <PlanHeader>
+            <AdjustPlanButton onAdjust={() => editor.open()} />
+            <JourneyMenu
+              courseHref={partialCourse && links.course(partialCourse)}
               examHref={links.exam}
-              standing={standing}
-              status={plan.status}
+              goal={goalMenu.goal}
             />
+          </PlanHeader>
+
+          <PlanRoadmap
+            className="sm:hidden"
+            density="compact"
+            onOpen={structure ? () => setPhasesOpen(true) : null}
+          />
+          <PlanRoadmap className="hidden sm:flex" density="full" links={links} />
+
+          {numbers("tiles", IN_COLUMN_CLASS)}
+          <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
+
+          {structure ? (
+            <SyllabusSection subjectHref={links.subject} syllabus={structure} />
+          ) : (
+            <PathSection alphabet={alphabet} links={links} />
           )}
-          <PlanNotice adjustInNotice={standing === null} onAdjust={adjust} />
-          <ExamChoiceNotices />
+        </Page>
 
-          <PageSection aria-labelledby="journey-path-title">
-            <PageSectionHeader>
-              <PageSectionTitle id="journey-path-title">{t("Your path")}</PageSectionTitle>
-              <PhaseDetail />
-            </PageSectionHeader>
-
-            {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
-
-            <Surface className="px-4 pt-4 pb-3">
-              <JourneyPath compact={structure !== null} links={links} />
-            </Surface>
-          </PageSection>
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-8 empty:hidden">
-          {structure && <SyllabusSection subjectHref={links.subject} syllabus={structure} />}
-
-          {next && <StudyNext courseHref={links.course} next={next} onAdjust={adjust} />}
-
-          {links.mindMaps && (
-            <MindMapsReference
-              description={t("The chapters you finished, each in one picture")}
-              href={links.mindMaps}
-            />
-          )}
-        </div>
-      </div>
-
-      <PlanEditor onOpenChange={setEditing} open={editing} />
-      {goalMenu.goal && (
-        <ArchiveGoalDialog
-          goalTitle={goal.title}
-          onArchive={goalMenu.archive}
-          onOpenChange={goalMenu.setArchiving}
-          open={goalMenu.archiving}
+        <PlanEditor
+          onOpenChange={editor.setOpen}
+          open={editor.editor.open}
+          section={editor.editor.section}
         />
-      )}
-    </Page>
+        {structure && <PhasesSheet links={links} onOpenChange={setPhasesOpen} open={phasesOpen} />}
+        {goalMenu.goal && (
+          <ArchiveGoalDialog
+            goalTitle={goal.title}
+            onArchive={goalMenu.archive}
+            onOpenChange={goalMenu.setArchiving}
+            open={goalMenu.archiving}
+          />
+        )}
+        {goalMenu.resumePreview && (
+          <ResumeGoalDialog
+            goalTitle={goal.title}
+            onOpenChange={goalMenu.setResuming}
+            onResume={goalMenu.resume}
+            open={goalMenu.resuming}
+            preview={goalMenu.resumePreview}
+          />
+        )}
+      </PageWithAside>
+    </PlanSuggestionProvider>
   );
 }
 
 /**
- * The Journey: where the learner is on the way to their goal. Where they stand (one number, its
- * details a tap away), the plan's fit when it needs adjusting, the path of phases to the goal as
- * the finish, the goal's structure (an exam's notice subjects, or the plan's modules) and the
- * mistakes to fix. With a structure, the path is a timeline and each subject's page holds its
- * topics and chapters; without one (a language's units, a plan from one course) the current phase
- * opens to its chapters. The "…" beside the title adjusts the plan and holds what's done now and
- * then; mocks and the mistakes notebook are practiced from Today. The host
- * passes the plan's actions, already bound to the goal, and `refresh`, called every few seconds
- * while lessons in it are being written: the host reads the plan again once they changed.
+ * The Plan: where the learner is on the way to their goal. Under the title (with "Adjust plan" and
+ * the "…" of what's done now and then beside it) the phases in time as a roadmap, then the goal's
+ * structure (an exam's notice subjects, the plan's modules) or, for a goal without one (a
+ * language's units, a plan from one course), its path. Beside them from 72rem, in the aside: the
+ * two numbers that answer "will I make it?", the one thing the Plan wants the learner to know or
+ * decide, what comes next on the path and the plan's settings; on smaller screens the numbers and
+ * that one thing follow the roadmap, and the rest follows the page. The host passes the plan's
+ * actions, already bound to the goal, and `refresh`, called every few seconds while lessons in it
+ * are being written: the host reads the plan again once they changed.
  */
 export function JourneyScreen({
   actions,
@@ -326,6 +319,7 @@ export function JourneyScreen({
   goalStatus = null,
   links,
   next = null,
+  openAdjust = false,
   openFocus = false,
   openFullCourse = false,
   plan,
@@ -334,6 +328,7 @@ export function JourneyScreen({
   standing,
   syllabus = null,
   tutor,
+  weekTime,
 }: {
   actions: PlanActions;
   /** A language whose script isn't Latin: its alphabet lesson, first on the path. */
@@ -343,19 +338,23 @@ export function JourneyScreen({
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
   next?: JourneyNext | null;
+  /** Opens the plan editor on arrival, as Today's fewer-lessons notice offers. */
+  openAdjust?: boolean;
   /** Opens "Choose where to focus" on arrival, as the buddy's offer asks. */
   openFocus?: boolean;
   /** Opens "Study everything" on arrival, as Today's offer asks. */
   openFullCourse?: boolean;
-  plan: PlanView;
+  plan: PlanScreenView;
   refresh: () => unknown;
   shareHref: string;
   /** Null for a goal without a number to stand on yet. */
   standing: JourneyStanding | null;
-  /** The goal's subjects or modules; its path then stays a timeline of phases. */
+  /** The goal's subjects or modules; its path then shows on the roadmap and in "Next on your path". */
   syllabus?: SyllabusView | null;
   /** The buddy's conversation, for questions about the plan and changes in the learner's words. */
   tutor?: PlanTutor;
+  /** Actual minutes studied and the shared weekly time target, already calculated by core. */
+  weekTime: WeeklyStudyTime;
 }) {
   usePoll({
     active: isPhaseBeingWritten(plan),
@@ -365,19 +364,22 @@ export function JourneyScreen({
   });
 
   return (
-    <PlanScreenProvider
-      value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
-    >
-      <PlanSheetHosts openFullCourse={openFullCourse}>
-        <JourneyBody
-          alphabet={alphabet}
-          goalStatus={goalStatus}
-          links={links}
-          next={next}
-          standing={standing}
-          syllabus={syllabus}
-        />
-      </PlanSheetHosts>
-    </PlanScreenProvider>
+    <WeeklyStudyTimeProvider value={weekTime}>
+      <PlanScreenProvider
+        value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
+      >
+        <PlanSheetHosts openFullCourse={openFullCourse}>
+          <JourneyBody
+            alphabet={alphabet}
+            goalStatus={goalStatus}
+            links={links}
+            next={next}
+            openAdjust={openAdjust}
+            standing={standing}
+            syllabus={syllabus}
+          />
+        </PlanSheetHosts>
+      </PlanScreenProvider>
+    </WeeklyStudyTimeProvider>
   );
 }

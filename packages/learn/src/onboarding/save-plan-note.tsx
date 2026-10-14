@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { LearnLink } from "../learn-link";
 
 /**
  * A guest's soft prompt to keep their plan: under the plan reveal and again when their first
@@ -13,12 +12,9 @@ export function SavePlanNote({ signUpHref }: { signUpHref: string }) {
   return (
     <p className="text-muted-foreground text-center text-sm">
       {t("Save your plan so it's here next time.")}{" "}
-      <LearnLink
-        className="text-foreground font-medium underline underline-offset-4"
-        href={signUpHref}
-      >
+      <a className="text-foreground font-medium underline underline-offset-4" href={signUpHref}>
         {t("Create an account")}
-      </LearnLink>
+      </a>
     </p>
   );
 }

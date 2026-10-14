@@ -1,60 +1,147 @@
+import { type AnalyticsGoalKind } from "@zoonk/core/analytics/shared-properties";
+import { type GoalCreateInput } from "@zoonk/core/goals/contract";
+import {
+  type GoalUnderstandingView,
+  type OnboardingDraftView,
+} from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
 
-/**
- * The goal the learner just sent, kept for this tab across the move from the home page to
- * `/start`: when they sent it, for "Goal Classified", and proof that the next step follows their
- * own tap, so a question goes on to its explanation by itself. Taken once: a later refresh finds
- * nothing and waits for a tap instead. Storage can be off (a private window); then the page simply
- * asks for the tap.
- */
+const READ_INTERVAL_MS = 1000;
+const MAX_READ_MS = 300_000;
+const EXPLANATION_MINUTES = 5;
 
-const KEY_PREFIX = "zoonk:goal-sent:";
+/** A short explanation uses the same goal input from the home box and onboarding. */
+export function getExplanationGoalInput({
+  draft,
+  language,
+  question,
+}: {
+  draft: OnboardingDraftView;
+  language: string;
+  question: string;
+}): GoalCreateInput {
+  return {
+    dailyMinutes: EXPLANATION_MINUTES,
+    goals: [
+      {
+        details: { onboardingId: draft.id, question: draft.prompt },
+        kind: "explain",
+        language,
+        prompt: draft.prompt,
+        title: question,
+      },
+    ],
+    timeZone: getLocalTimeZone(),
+  };
+}
 
-/** Older than this, it wasn't this visit's tap. */
-const MAX_AGE_MS = 10 * 60 * 1000;
-
-function rememberGoalSent({ draftId, sentAt }: { draftId: string; sentAt: number }) {
-  try {
-    sessionStorage.setItem(`${KEY_PREFIX}${draftId}`, String(sentAt));
-  } catch {
-    // Without storage the page waits for a tap.
+/** What analytics calls the typed goal once its words have been understood. */
+export function getClassifiedKind(
+  understanding: GoalUnderstandingView,
+): AnalyticsGoalKind | "declined" {
+  switch (understanding.status) {
+    case "goals":
+      return understanding.goals[0]?.draft.kind ?? "learn";
+    case "explain":
+      return "explain";
+    case "instrument":
+      return "learn";
+    case "unclear":
+    case "unsafe":
+      return "declined";
+    default:
+      return "declined";
   }
 }
 
-/** When the learner sent this draft's goal in this tab, once; null after that or if never. */
-export function takeGoalSent(draftId: string): number | null {
-  try {
-    const key = `${KEY_PREFIX}${draftId}`;
-    const sentAt = Number(sessionStorage.getItem(key));
-    sessionStorage.removeItem(key);
-
-    return sentAt > 0 && Date.now() - sentAt < MAX_AGE_MS ? sentAt : null;
-  } catch {
-    return null;
+function waitForRead(signal?: AbortSignal): Promise<void> {
+  if (signal?.aborted) {
+    return Promise.resolve();
   }
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(finish, READ_INTERVAL_MS);
+
+    function finish() {
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", finish);
+      resolve();
+    }
+
+    signal?.addEventListener("abort", finish, { once: true });
+  });
 }
 
 /**
- * Sends a typed goal to be read, from wherever the learner typed it (the home page's goal box or
- * `/start`): it's saved as a draft and its run starts, and the tap is remembered for `/start`.
+ * Only the submitting handler awaits this read. Reloading destroys that task; opening a draft
+ * later follows its existing run and waits for Explain it before starting new work.
  */
+async function readSubmittedDraft({
+  draft,
+  signal,
+  startedAt,
+  understanding,
+}: {
+  draft: OnboardingDraftView;
+  signal?: AbortSignal;
+  startedAt: number;
+  understanding: Pick<UnderstandingActions, "get">;
+}): Promise<OnboardingDraftView> {
+  if (
+    draft.status !== "understanding" ||
+    signal?.aborted ||
+    Date.now() - startedAt >= MAX_READ_MS
+  ) {
+    return draft;
+  }
+
+  await waitForRead(signal);
+
+  if (signal?.aborted) {
+    return draft;
+  }
+
+  const { data: next } = await safeAsync(() => understanding.get(draft.id));
+  return next ? readSubmittedDraft({ draft: next, signal, startedAt, understanding }) : draft;
+}
+
+/** Saves and reads a typed goal as one click-owned task, without persisted continuation state. */
 export async function sendGoal({
   goal,
   language,
+  onDraft,
+  signal,
   understanding,
 }: {
   goal: string;
   language: string;
-  understanding: Pick<UnderstandingActions, "start">;
+  onDraft?: (draft: OnboardingDraftView) => void;
+  signal?: AbortSignal;
+  understanding: Pick<UnderstandingActions, "get" | "start">;
 }): Promise<StartUnderstandingOutcome> {
-  const sentAt = Date.now();
+  // Home loads its actions lazily; leaving before that finishes must not submit afterward.
+  if (signal?.aborted) {
+    return { status: "failed" };
+  }
+
+  const startedAt = Date.now();
   const { data } = await safeAsync(() => understanding.start({ goal, language }));
   const outcome: StartUnderstandingOutcome = data ?? { status: "failed" };
 
-  if (outcome.status === "started" || outcome.status === "startFailed") {
-    rememberGoalSent({ draftId: outcome.draft.id, sentAt });
+  if (outcome.status !== "started" && outcome.status !== "startFailed") {
+    return outcome;
   }
 
-  return outcome;
+  if (!signal?.aborted) {
+    onDraft?.(outcome.draft);
+  }
+
+  return outcome.status === "started"
+    ? {
+        ...outcome,
+        draft: await readSubmittedDraft({ draft: outcome.draft, signal, startedAt, understanding }),
+      }
+    : outcome;
 }

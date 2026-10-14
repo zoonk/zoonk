@@ -37,7 +37,7 @@ function useGlassesCopy(glasses: BuddyGlasses | null): Omit<CeremonyCopy, "actio
       };
     case "catEye":
       return {
-        detail: t("For finishing all three missions on 7 days."),
+        detail: t("For finishing every mission on 7 different days."),
         title: t("Cat-eye glasses!"),
       };
     case "retro":
@@ -94,12 +94,12 @@ export function useCeremonyCopy({
   milestone,
 }: {
   buddy: LearnBuddy | null;
-  /** New glasses go on with the button; without a buddy to wear them, it only continues. */
+  /** New glasses go on with the button when the host can save them; otherwise it continues. */
   canWear: boolean;
   milestone: CeremonyMilestone;
 }): CeremonyCopy {
   const t = useExtracted();
-  const buddyName = useBuddyName(buddy ?? { kind: "zu", name: null });
+  const buddyName = useBuddyName(buddy);
   const glasses = useGlassesCopy(toBuddyGlasses(milestone.key));
   const stageLine = useStageLine({ buddyName, key: milestone.key });
   const beltTitle = useBeltTitle(toBeltColor(milestone.key));

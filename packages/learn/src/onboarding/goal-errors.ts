@@ -7,7 +7,7 @@ import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboardi
 /**
  * Why a goal couldn't be read or created, as the screen says it. These messages live in their
  * own namespace (`goalErrors`), which apps ship on every page, because a goal starts from public
- * pages too: the home page's goal box and a course's "Start this course".
+ * pages too: the home page's goal box and a course's "Build my plan".
  */
 export type GoalError = {
   /** The goal limit that refused it, when one did: one Plus lifts shows as the Plus notice. */
@@ -42,7 +42,7 @@ export function useGoalLimitMessage() {
       "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
     ),
     oneActiveGoal: t(
-      "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on Journey, or get Plus.",
+      "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
     ),
     signUpRequired: t("Create your free account to continue."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),

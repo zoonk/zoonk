@@ -1,42 +1,13 @@
 "use client";
 
-import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import {
-  BriefcaseBusinessIcon,
-  CalendarDaysIcon,
-  ClockIcon,
-  FileTextIcon,
-  GaugeIcon,
-  GraduationCapIcon,
-  LanguagesIcon,
-  MessageCircleIcon,
-  PencilIcon,
-  PlaneIcon,
-  ShieldCheckIcon,
-  TargetIcon,
-  TrophyIcon,
-} from "lucide-react";
+import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { UseDateButton } from "../../plan/notice-day";
-import { type UnderstoodRow as Row, type UnderstoodRowIcon } from "./use-understood-rows";
-
-const ICONS: Record<UnderstoodRowIcon, React.ComponentType<{ className?: string }>> = {
-  calendar: CalendarDaysIcon,
-  clock: ClockIcon,
-  course: GraduationCapIcon,
-  goal: TargetIcon,
-  language: LanguagesIcon,
-  level: GaugeIcon,
-  material: FileTextIcon,
-  reason: PlaneIcon,
-  speaks: MessageCircleIcon,
-  target: TrophyIcon,
-  work: BriefcaseBusinessIcon,
-};
+import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
@@ -58,19 +29,20 @@ function getSourceName(source: NonNullable<Row["source"]>): string {
   return title && title.length <= MAX_SOURCE_TITLE_LENGTH ? title : (host ?? source.url);
 }
 
-function SourceBadge({ source }: { source: NonNullable<Row["source"]> }) {
+/** Where an official fact comes from, as a quiet link to it ("inep.gov.br ↗"). */
+function SourceLink({ source }: { source: NonNullable<Row["source"]> }) {
   const t = useExtracted();
 
   return (
     <a
-      className="text-success bg-success/10 focus-visible:ring-ring/50 inline-flex min-h-6 max-w-full items-center gap-1 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px]"
+      className="hover:text-foreground focus-visible:ring-ring/50 inline-flex max-w-full items-center gap-0.5 rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
       href={source.url}
       rel="noreferrer"
       target="_blank"
       title={source.title ?? undefined}
     >
-      <ShieldCheckIcon aria-hidden="true" className="size-3 shrink-0" />
-      <span className="truncate">{t("source: {source}", { source: getSourceName(source) })}</span>
+      <span className="truncate">{t("Source: {source}", { source: getSourceName(source) })}</span>
+      <ArrowUpRightIcon aria-hidden="true" className="size-3 shrink-0" />
     </a>
   );
 }
@@ -124,7 +96,7 @@ function RowEditor({
         {...getInputLimits(type)}
       />
       {failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("We couldn't save that. Try again in a moment.")}
         </p>
       )}
@@ -160,7 +132,7 @@ function SuggestedDate({
         }}
       />
       {failed && (
-        <span className="text-destructive text-sm" role="alert">
+        <span className="text-destructive-text text-sm" role="alert">
           {t("We couldn't save that. Try again in a moment.")}
         </span>
       )}
@@ -202,7 +174,7 @@ function ChoiceDates({
         </Button>
       ))}
       {failed && (
-        <span className="text-destructive text-sm" role="alert">
+        <span className="text-destructive-text text-sm" role="alert">
           {t("We couldn't save that. Try again in a moment.")}
         </span>
       )}
@@ -211,10 +183,12 @@ function ChoiceDates({
 }
 
 /**
- * One understood fact: what it is, the value, where it came from, and a pencil to fix it in
- * place. Official exam dates keep their source one tap away, and the notice's day, when the date
- * is another, one tap to take. Closing the editor gives focus back to the pencil (`focusEdit`), so
- * keyboard users keep their place.
+ * One understood fact as a flat row: what it is, the value, where it came from, and a pencil to
+ * fix it in place (always there on touch; with a pointer, on hover and focus). On phones the label
+ * sits over the value; from `sm` they share the line, labels in one column. Official exam dates
+ * keep their source one tap away, and the notice's day, when the date is another, one tap to take.
+ * Closing the editor gives focus back to the pencil (`focusEdit`), so keyboard users keep their
+ * place.
  */
 export function UnderstoodRowItem({
   editValue,
@@ -233,64 +207,58 @@ export function UnderstoodRowItem({
   row: Row;
 }) {
   const t = useExtracted();
-  const Icon = ICONS[row.icon];
   const label = editing ? (row.editLabel ?? row.label) : row.label;
 
   return (
-    <li className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-1">
-      <span className="bg-muted mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full">
-        <Icon aria-hidden="true" className="size-4.5" />
-      </span>
+    <li className="group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:contents">
+        <span className="text-muted-foreground text-[0.8125rem] sm:pt-px">{label}</span>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-muted-foreground text-xs">{label}</span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          {editing && row.editable ? (
+            <RowEditor
+              defaultValue={editValue}
+              label={label}
+              onCancel={() => onEdit(false)}
+              onSave={async (value) => {
+                const saved = await onSave(value);
 
-        {editing && row.editable ? (
-          <RowEditor
-            defaultValue={editValue}
-            label={label}
-            onCancel={() => onEdit(false)}
-            onSave={async (value) => {
-              const saved = await onSave(value);
+                if (saved) {
+                  onEdit(false);
+                }
 
-              if (saved) {
-                onEdit(false);
-              }
+                return saved;
+              }}
+              type={row.editable.kind}
+            />
+          ) : (
+            <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="text-[0.9375rem] font-medium">{row.value}</span>
+              {row.badge && <span className="text-muted-foreground text-xs">{row.badge}</span>}
+            </span>
+          )}
 
-              return saved;
-            }}
-            type={row.editable.kind}
-          />
-        ) : (
-          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-base font-medium">{row.value}</span>
-            {row.badge && (
-              <Badge className="bg-warning/15 text-warning border-transparent" variant="outline">
-                {row.badge}
-              </Badge>
-            )}
-          </span>
-        )}
+          {(row.note || row.source) && !editing && (
+            <span className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+              {row.note}
+              {row.note && row.source && <span aria-hidden="true">{" · "}</span>}
+              {row.source && <SourceLink source={row.source} />}
+            </span>
+          )}
 
-        {(row.note || row.source) && !editing && (
-          <span className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
-            {row.note}
-            {row.source && <SourceBadge source={row.source} />}
-          </span>
-        )}
+          {row.suggestedDate && !editing && (
+            <SuggestedDate date={row.suggestedDate} onSave={onSave} />
+          )}
 
-        {row.suggestedDate && !editing && (
-          <SuggestedDate date={row.suggestedDate} onSave={onSave} />
-        )}
-
-        {row.choiceDates && !editing && <ChoiceDates dates={row.choiceDates} onSave={onSave} />}
+          {row.choiceDates && !editing && <ChoiceDates dates={row.choiceDates} onSave={onSave} />}
+        </div>
       </div>
 
       {row.editable && !editing && (
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
           autoFocus={focusEdit}
-          className="text-muted-foreground -mr-2 shrink-0"
+          className="text-muted-foreground -my-1.5 -mr-2 shrink-0 focus-visible:opacity-100 pointer-fine:opacity-0 pointer-fine:group-hover/fact:opacity-100"
           onClick={() => onEdit(true)}
           size="icon"
           variant="ghost"

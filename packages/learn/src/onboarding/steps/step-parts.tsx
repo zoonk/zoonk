@@ -5,8 +5,15 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { OnboardingColumn } from "../onboarding-frame";
 
 /**
- * The large icon that opens a finished or changed moment, such as placement being done; `success`
- * colors it as done.
+ * An action inside a sentence of a step (the plan's reveal: "Use 1h 40 a day", "Use this date"): a
+ * word of it, underlined, as tall as its line.
+ */
+export const INLINE_ACTION_CLASS =
+  "text-foreground decoration-foreground/30 hover:decoration-foreground focus-visible:ring-ring/50 rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-[3px] disabled:opacity-50";
+
+/**
+ * The icon that opens a finished or changed moment, such as placement being done: a bare glyph
+ * over the title, no tile; `success` colors it as done.
  */
 export function StepIcon({
   children,
@@ -19,8 +26,8 @@ export function StepIcon({
     <span
       aria-hidden="true"
       className={cn(
-        "bg-muted flex size-14 shrink-0 items-center justify-center rounded-2xl [&_svg]:size-7",
-        success && "text-success",
+        "text-muted-foreground flex shrink-0 [&_svg]:size-6",
+        success && "text-success-text",
       )}
     >
       {children}

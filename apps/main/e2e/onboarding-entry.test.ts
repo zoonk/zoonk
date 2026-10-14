@@ -24,8 +24,8 @@ function uniqueWords(words: string) {
 
 async function sendGoal(page: Page, goal: string) {
   await page.goto("/start");
-  await page.getByRole("textbox", { name: "Your goal" }).fill(goal);
-  await page.getByRole("button", { name: "Start with your goal" }).click();
+  await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+  await page.getByRole("button", { name: "Build my plan" }).click();
 }
 
 async function findDraft(prompt: string) {
@@ -49,9 +49,9 @@ test.describe("Sending a goal", () => {
     try {
       await noScripts.goto("/");
 
-      const hero = noScripts.getByRole("region", { name: /Get ready for/u });
+      const hero = noScripts.getByRole("region", { name: /Know what to study/u });
       await hero.getByRole("textbox", { name: "I want to" }).fill("learn to cook for my family");
-      await hero.getByRole("button", { exact: true, name: "Start" }).click();
+      await hero.getByRole("button", { exact: true, name: "Build my plan" }).click();
 
       await expect(noScripts).toHaveURL(/\/start\?goal=learn\+to\+cook\+for\+my\+family$/u);
     } finally {
@@ -61,7 +61,7 @@ test.describe("Sending a goal", () => {
     // A link with a goal never reads it by itself: the box is filled, and nothing was sent.
     await page.goto("/start?goal=learn+to+cook+for+my+family");
 
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue(
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(
       "learn to cook for my family",
     );
 
@@ -76,36 +76,57 @@ test.describe("Sending a goal", () => {
 });
 
 test.describe("Coming back", () => {
-  test("a guest's goal from the home page's box waits for them on home and on Today", async ({
+  test("a refreshed question draft waits for Explain it instead of starting new work", async ({
+    page,
+  }) => {
+    const question = uniqueWords("why does ice float on water?");
+    await sendGoal(page, question);
+    await expect(page.getByText("This didn't start")).toBeVisible();
+
+    const draft = await findDraft(question);
+
+    // The external read finished while this tab was away. Reloading must not turn the old
+    // submission into a new explanation request, even if it was made only moments ago.
+    await prisma.onboardingDraft.update({
+      data: {
+        status: "understood",
+        understanding: { question: "Why ice floats", status: "explain" },
+      },
+      where: { id: draft.id },
+    });
+
+    await page.reload();
+    await expect(page.getByRole("button", { exact: true, name: "Explain it" })).toBeVisible();
+    await expect(page).toHaveURL(DRAFT_URL);
+    await expect(prisma.goal.count({ where: { prompt: question } })).resolves.toBe(0);
+
+    await page.getByRole("button", { exact: true, name: "Explain it" }).click();
+    await expect(page).toHaveURL(/\/explain\/[0-9a-f-]{36}$/u);
+    await expect(page.getByRole("heading", { name: "Why ice floats" })).toBeVisible();
+    await expect(prisma.goal.count({ where: { prompt: question } })).resolves.toBe(1);
+  });
+
+  test("a guest's goal waits for them on Today, where the home page sends them", async ({
     page,
   }) => {
     const goal = uniqueWords("understand quantum physics, back later");
     await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
 
-    // The home goal box sends what was typed, with no second submit.
+    // With a session, the home page opens Today, whose start form sends what was typed.
     await page.goto("/");
-    const hero = page.getByRole("region", { name: /Get ready for/u });
-    await hero.getByRole("textbox", { name: "I want to" }).fill(goal);
-    await hero.getByRole("button", { exact: true, name: "Start" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await page.getByRole("button", { name: "Build my plan" }).click();
 
-    await expect(page).toHaveURL(DRAFT_URL);
+    await expect(page).toHaveURL(/\/today\?draft=[0-9a-f-]{36}$/u);
     await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
-    const draftUrl = page.url();
 
-    // A guest keeps the home page, with a way back to the goal they typed.
+    // Back on the home page later, a guest without a goal yet finds the goal they typed on Today.
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Get ready for");
 
-    await page.getByRole("link", { name: /Continue where you left off/u }).click();
-    await expect(page).toHaveURL(draftUrl);
+    await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
-
-    // Without a goal yet, Today opens the goal they typed.
-    await page.goto("/today");
-
-    await expect(page).toHaveURL(draftUrl);
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   });
 
   test("a start that failed offers to try again, and a refresh follows the read to the card", async ({
@@ -171,7 +192,7 @@ test.describe("Coming back", () => {
 
     release.resolve(null);
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
     await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
   });
 
@@ -275,7 +296,7 @@ test.describe("Goal limits", () => {
       page.getByRole("heading", { name: "Create a free account to start another goal" }),
     ).toBeVisible();
 
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toBeHidden();
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeHidden();
 
     await expect(page.getByRole("link", { name: "Create a free account" })).toHaveAttribute(
       "href",
@@ -308,7 +329,7 @@ test.describe("Goal limits", () => {
     });
 
     await sendGoal(page, goal);
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
 
     // Their one goal is taken in another tab before they confirm this one.
     await goalFixture({ userId: guestId });
@@ -330,14 +351,21 @@ test.describe("Goal limits", () => {
   });
 });
 
-test.describe("The app's bar on /start", () => {
-  test("visitors get the home page's bar and an account ask on the paperclip, learners get their own bar", async ({
+test.describe("Starting a goal inside the app's frame", () => {
+  test("a visitor gets the frame and its way in; a learner's Start a new goal keeps the sidebar, marks no tab, and goes back to the page they left", async ({
+    noProgressUser,
     page,
     userWithoutProgress,
   }) => {
     await page.goto("/start");
-    await expect(page.getByRole("link", { name: "Zoonk home page" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "What do you want to achieve?" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("complementary", { name: "Sidebar" }).getByRole("link", { name: "Log in" }),
+    ).toBeVisible();
 
     // A visitor's paperclip asks for an account first.
     await page.getByRole("button", { name: "Study your own material" }).click();
@@ -348,8 +376,43 @@ test.describe("The app's bar on /start", () => {
       "/login",
     );
 
-    await userWithoutProgress.goto("/start");
-    await expect(userWithoutProgress.getByRole("button", { name: "User menu" })).toBeVisible();
-    await expect(userWithoutProgress.getByRole("link", { name: "Log in" })).toBeHidden();
+    // A learner with a goal starts another from the goal switcher and stays in the app.
+    await goalFixture({ userId: noProgressUser.id });
+    await userWithoutProgress.goto("/today");
+
+    const sidebar = userWithoutProgress.getByRole("complementary", { name: "Sidebar" });
+    await sidebar.getByRole("button", { name: /^Current goal:/u }).click();
+    await userWithoutProgress.getByRole("menuitem", { name: "Start a new goal" }).click();
+
+    await expect(userWithoutProgress).toHaveURL(/\/start$/u);
+
+    await expect(
+      userWithoutProgress.getByRole("heading", { level: 1, name: "What do you want to achieve?" }),
+    ).toBeVisible();
+
+    // Starting a goal is none of the tabs' pages: the tabs stay, none of them current.
+    const sideTabs = sidebar.getByRole("navigation", { name: "Learning tabs" });
+    const sideToday = sideTabs.getByRole("link", { name: /^Today/u });
+    const sidePlan = sideTabs.getByRole("link", { name: /^Plan/u });
+
+    await expect(sideToday).toBeVisible();
+    await expect(sideToday).not.toHaveAttribute("aria-current");
+    await expect(sidePlan).not.toHaveAttribute("aria-current");
+
+    // On a phone onboarding has no tab bar: the bar's way back returns to the page they left,
+    // where the tabs are back.
+    await userWithoutProgress.setViewportSize({ height: 844, width: 390 });
+
+    const tabBar = userWithoutProgress.getByRole("navigation", { name: "Learning tabs" });
+
+    await expect(tabBar).toHaveCount(0);
+
+    await userWithoutProgress.getByRole("link", { exact: true, name: "Back" }).click();
+    await expect(userWithoutProgress).toHaveURL(/\/today$/u);
+
+    await expect(tabBar.getByRole("link", { name: /^Today/u })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 });

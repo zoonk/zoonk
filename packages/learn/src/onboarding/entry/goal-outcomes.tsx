@@ -10,7 +10,6 @@ import {
   MusicIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LearnLink } from "../../learn-link";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
@@ -25,18 +24,19 @@ import {
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
-  "bg-muted self-end rounded-3xl rounded-br-lg px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
 
-const ICON_CLASS = "bg-muted flex size-14 items-center justify-center rounded-2xl [&_svg]:size-7";
+/** An outcome's glyph over its title: bare, no tile. */
+const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 
 /** Creating a free account, as a screen's one main action. */
 export function SignUpLink({ href }: { href: string }) {
   const t = useExtracted();
 
   return (
-    <LearnLink className={cn(buttonVariants({ size: "lg" }), "h-12 w-full text-base")} href={href}>
+    <a className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
       {t("Create a free account")}
-    </LearnLink>
+    </a>
   );
 }
 
@@ -66,7 +66,7 @@ export function GoalErrorAlert({
 
   if (!error.needsAccount) {
     return (
-      <p className="text-destructive text-sm" role="alert">
+      <p className="text-destructive-text text-sm" role="alert">
         {error.message}
       </p>
     );
@@ -221,7 +221,7 @@ function WaitlistNote({
 
   if (outcome === "joined") {
     return (
-      <p className="text-success text-sm font-medium" role="status">
+      <p className="text-success-text text-sm font-medium" role="status">
         {t("You're on the list. We'll let you know when lessons for playing are ready.")}
       </p>
     );
@@ -231,18 +231,15 @@ function WaitlistNote({
     return (
       <p className="text-muted-foreground text-sm" role="status">
         {t("Create an account so we can let you know.")}{" "}
-        <LearnLink
-          className="text-foreground font-medium underline underline-offset-4"
-          href={signUpHref}
-        >
+        <a className="text-foreground font-medium underline underline-offset-4" href={signUpHref}>
           {t("Create an account")}
-        </LearnLink>
+        </a>
       </p>
     );
   }
 
   return outcome === "failed" ? (
-    <p className="text-destructive text-sm" role="alert">
+    <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't work. Try again in a moment.")}
     </p>
   ) : null;
@@ -294,7 +291,7 @@ export function InstrumentGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <div className="bg-card ring-foreground/10 flex items-start gap-3 rounded-3xl p-4 text-sm ring-1">
+      <div className="bg-card ring-border flex items-start gap-3 rounded-xl p-4 text-sm ring-1">
         <span className="flex h-lh shrink-0 items-center">
           <MusicIcon aria-hidden="true" className="size-5" />
         </span>

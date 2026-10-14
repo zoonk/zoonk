@@ -8,7 +8,7 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted, useLocale } from "next-intl";
-import { useFormatTimeOfDay } from "../../_utils/time-format";
+import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
@@ -26,19 +26,6 @@ export type EditableField =
   | { kind: "text"; key: "title" }
   | { kind: "time"; key: "studyTime" };
 
-export type UnderstoodRowIcon =
-  | "calendar"
-  | "clock"
-  | "course"
-  | "goal"
-  | "language"
-  | "level"
-  | "material"
-  | "reason"
-  | "speaks"
-  | "target"
-  | "work";
-
 export type UnderstoodRow = {
   /** A small marker next to the value, such as "you said" for a level. */
   badge?: string;
@@ -49,7 +36,6 @@ export type UnderstoodRow = {
   editDefault?: string;
   /** What the row is called while it's being fixed, when that's one of its facts (one date). */
   editLabel?: string;
-  icon: UnderstoodRowIcon;
   id: string;
   label: string;
   note?: string;
@@ -59,16 +45,23 @@ export type UnderstoodRow = {
   value: string;
 };
 
-function readText(details: GoalDraft["details"], key: string): string | null {
+/** What a goal (a draft, or one already created) says of itself, as its rows read it. */
+type GoalFacts = Pick<GoalDraft, "kind" | "language" | "title"> & {
+  details?: Record<string, unknown> | null;
+  targetLanguage?: string | null;
+};
+
+function readText(details: GoalFacts["details"], key: string): string | null {
   const value = details?.[key];
   return typeof value === "string" && value.trim() ? value : null;
 }
 
-function useLanguageRows() {
+/** A language goal's language, unless its title says it, and the one the learner speaks. */
+export function useLanguageRows() {
   const t = useExtracted();
   const locale = useLocale();
 
-  return (draft: GoalDraft): UnderstoodRow[] => {
+  return (draft: GoalFacts): UnderstoodRow[] => {
     if (draft.kind !== "language" || !draft.targetLanguage) {
       return [];
     }
@@ -82,13 +75,11 @@ function useLanguageRows() {
 
     const rows: (UnderstoodRow | false)[] = [
       !isSaidInTitle({ title: draft.title, value: language }) && {
-        icon: "language",
         id: "targetLanguage",
         label: t("Language"),
         value: language,
       },
       {
-        icon: "speaks",
         id: "nativeLanguage",
         label: t("You speak"),
         value: getLanguageName({ targetLanguage: nativeLanguage, userLanguage: locale }),
@@ -109,7 +100,6 @@ function useCutoffRow() {
 
   return (cutoff: TargetCutoff | null): UnderstoodRow | null =>
     cutoff && {
-      icon: "target",
       id: "cutoff",
       label: t("Last cut-off"),
       note: words.detail(cutoff),
@@ -119,11 +109,16 @@ function useCutoffRow() {
     };
 }
 
-function useDetailRows() {
+/**
+ * The goal's course or where, its target, the last cut-off, why, and the learner's role, each once:
+ * what the title already says isn't repeated. Shared by "Here's what I understood" and the plan
+ * so far beside the questions, which shows each as the answers fill it in.
+ */
+export function useDetailRows() {
   const t = useExtracted();
   const cutoffRow = useCutoffRow();
 
-  return (draft: GoalDraft, cutoff: TargetCutoff | null): UnderstoodRow[] => {
+  return (draft: GoalFacts, cutoff: TargetCutoff | null): UnderstoodRow[] => {
     /** A detail the title already says isn't repeated: fixing the title fixes it. */
     const unsaid = (key: string) => {
       const value = readText(draft.details, key);
@@ -142,7 +137,6 @@ function useDetailRows() {
     const rows: (UnderstoodRow | false)[] = [
       Boolean(course) && {
         editable: { key: "targetCourse", kind: "text" },
-        icon: "course",
         id: "targetCourse",
         label: t("Course"),
         // A label, not "at {institution}": the preposition's article depends on the name ("na USP").
@@ -152,37 +146,32 @@ function useDetailRows() {
       !course &&
         Boolean(institution) && {
           editable: { key: "institution", kind: "text" },
-          icon: "course",
           id: "institution",
           label: t("Where"),
           value: institution ?? "",
         },
       Boolean(position) && {
         editable: { key: "targetPosition", kind: "text" },
-        icon: "work",
         id: "targetPosition",
         label: isCareerChange ? t("The role you want") : t("Position"),
         value: position ?? "",
       },
       Boolean(target) && {
         editable: { key: "targetScore", kind: "text" },
-        icon: "target",
         id: "targetScore",
-        // A language goal aims for a level ("B2"), which the Journey shows next to the learner's.
+        // A language goal aims for a level ("B2"), which the Plan shows next to the learner's.
         label: draft.kind === "language" ? t("Level you're aiming for") : t("Target score"),
         value: target ?? "",
       },
       cutoffRow(cutoff) ?? false,
       Boolean(reason) && {
         editable: { key: "reason", kind: "text" },
-        icon: "reason",
         id: "reason",
         label: t("Reason"),
         value: reason ?? "",
       },
       Boolean(role) && {
         editable: { key: "role", kind: "text" },
-        icon: "work",
         id: "role",
         label: isCareerChange ? t("What you do now") : t("Your role"),
         value: role ?? "",
@@ -219,7 +208,6 @@ export function useUnderstoodRows() {
     const rows: (UnderstoodRow | null | false)[] = [
       {
         editable: { key: "title", kind: "text" },
-        icon: "goal",
         id: "title",
         label: t("Goal"),
         value: draft.title,
@@ -229,7 +217,6 @@ export function useUnderstoodRows() {
       ...detailRows(draft, cutoff),
       Boolean(levelNote) && {
         badge: t("you said"),
-        icon: "level",
         id: "level",
         label: t("Level"),
         value: levelNote ?? "",
@@ -246,6 +233,7 @@ export function useUnderstoodRows() {
  */
 export function useScheduleRow() {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const formatTime = useFormatTimeOfDay();
 
   return function toScheduleRow(
@@ -257,14 +245,13 @@ export function useScheduleRow() {
 
     const parts = [
       when,
-      minutesSaid ? t("{minutes, number} min a day", { minutes: schedule.dailyMinutes }) : null,
+      minutesSaid ? t("{time} a day", { time: formatDuration(schedule.dailyMinutes) }) : null,
     ].filter(Boolean);
 
     return parts.length > 0
       ? {
           editDefault: schedule.studyTime ?? "",
           editable: { key: "studyTime", kind: "time" },
-          icon: "clock",
           id: "schedule",
           label: t("When you study"),
           value: parts.join(" · "),
@@ -286,7 +273,6 @@ export function useMaterialRow() {
     }
 
     return {
-      icon: "material",
       id: "material",
       label: t("Your material"),
       note: t("Your plan and lessons follow this material"),

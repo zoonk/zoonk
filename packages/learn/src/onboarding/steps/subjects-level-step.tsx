@@ -10,7 +10,8 @@ import {
   ListRowDescription,
   ListRowTitle,
 } from "../../_components/list-group";
-import { CHOICE_CONTROL_CLASS, CHOICE_ROW_CLASS } from "../choice-list";
+import { CHOICE_ROW_CLASS } from "../choice-list";
+import { CHOICE_CONTROL_CLASS } from "../choice-styles";
 import { StepForm } from "./step-form";
 
 /** One of the notice's subjects: its name, and what learners call it when that's long. */
@@ -57,7 +58,11 @@ export function SubjectsLevelStep({
       <fieldset className={LIST_GROUP_CLASS}>
         <legend className="sr-only">{t("Subjects you know well")}</legend>
         {subjects.map((item) => (
-          <label className={CHOICE_ROW_CLASS} key={item.name}>
+          <label
+            className={CHOICE_ROW_CLASS}
+            data-highlighted={known.includes(item.name) || undefined}
+            key={item.name}
+          >
             <ListRowContent>
               <ListRowTitle>{item.shortName ?? item.name}</ListRowTitle>
               {item.shortName && item.shortName !== item.name && (

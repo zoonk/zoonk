@@ -6,7 +6,6 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { LearnLink } from "../../learn-link";
 import {
   type AttachOutcome,
   type AttachedSource,
@@ -19,7 +18,7 @@ import { PasteLink } from "./paste-link";
 const ACCEPTED_FILES =
   ".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,text/plain,text/markdown,image/jpeg,image/png,image/webp";
 
-const PANEL_CLASS = "bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1";
+const PANEL_CLASS = "bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1";
 
 /** The plan's cap on new material: the day's or the month's, with Plus for a free learner. */
 function useAttachLimitMessage() {
@@ -72,12 +71,12 @@ export function SignUpPrompt({ signUpHref }: { signUpHref: string }) {
       <p className="text-muted-foreground text-sm">
         {t("Create a free account to add a PDF, a photo of your notes or any text to your goal.")}
       </p>
-      <LearnLink
+      <a
         className="text-foreground self-start text-sm font-medium underline underline-offset-4"
         href={signUpHref}
       >
         {t("Create an account")}
-      </LearnLink>
+      </a>
     </div>
   );
 }
@@ -225,7 +224,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
       )}
 
       {error && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {error}
         </p>
       )}

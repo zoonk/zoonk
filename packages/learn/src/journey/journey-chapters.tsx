@@ -5,7 +5,7 @@ import {
   type PlanPhaseCheckpointView,
 } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
@@ -18,7 +18,7 @@ import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
 
 /** Rows without a chapter (lessons being written, or settled) differ by their kind and name. */
-function getChapterKey(chapter: PlanChapterView): string {
+export function getChapterKey(chapter: PlanChapterView): string {
   return chapter.chapterId ?? `${chapter.writing ? "writing" : "settled"}:${chapter.title}`;
 }
 
@@ -28,7 +28,7 @@ function getChapterKey(chapter: PlanChapterView): string {
  * course, and are just "More lessons" when that's the goal's own course (core leaves the title
  * empty then).
  */
-function useChapterTitle() {
+export function useChapterTitle() {
   const t = useExtracted();
 
   return (chapter: PlanChapterView): string => {
@@ -49,12 +49,49 @@ function isSkipped(chapter: PlanChapterView): boolean {
 }
 
 /**
- * One chapter of the path: done, the next one (its tile and "Next", the page's obvious target) or
- * ahead. Its page opens on tap. Lessons still being written have no page yet, so their row only
- * says so; topics after the weeks the plan writes ahead say what the plan knows ("About 12 lessons
- * · from March") and, unless chapters already teach them, open a sheet that can write their
- * lessons now. A chapter an earlier phase started says it goes deeper, so a later phase never reads
- * as listing it twice.
+ * Lessons still being written ahead of the learner, without a page yet: said in one quiet line
+ * under the phase's rows instead of a row of their own.
+ */
+export function isWritingAhead(chapter: PlanChapterView): boolean {
+  return chapter.writing && !chapter.far && chapter.skills.length === 0;
+}
+
+/**
+ * "3 / 8" at a chapter's end: its lessons done of its lessons, heard as words. Nothing for one
+ * without lessons yet.
+ */
+function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
+  const t = useExtracted();
+
+  if (chapter.writing || chapter.lessonsTotal === 0 || isSkipped(chapter)) {
+    return null;
+  }
+
+  return (
+    <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+      <span aria-hidden="true">
+        {t("{done, number} / {total, number}", {
+          done: chapter.lessonsDone,
+          total: chapter.lessonsTotal,
+        })}
+      </span>
+      <span className="sr-only">
+        {t(
+          "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
+          { done: chapter.lessonsDone, total: chapter.lessonsTotal },
+        )}
+      </span>
+    </span>
+  );
+}
+
+/**
+ * One chapter of the path: done, the next one (highlighted with its dot: the page's obvious
+ * target, `aria-current`) or ahead, with its lessons done at its end. Its page opens on tap. Topics
+ * after the weeks the plan writes ahead say what the plan knows ("About 12 lessons · from March")
+ * and, unless chapters already teach them, open a sheet that can write their lessons now. A
+ * chapter an earlier phase started says it goes deeper, so a later phase never reads as listing
+ * it twice.
  */
 function ChapterRow({
   chapter,
@@ -89,20 +126,15 @@ function ChapterRow({
       <span className="flex min-w-0 flex-1 flex-col">
         <span
           className={cn(
-            "line-clamp-2",
+            "line-clamp-2 font-medium",
             chapter.state === "done" && "text-muted-foreground",
-            isNext && "font-semibold",
           )}
         >
           {title(chapter)}
         </span>
         {line && <span className="text-muted-foreground text-xs">{line}</span>}
       </span>
-      {isNext && (
-        <span className="bg-primary text-primary-foreground shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium">
-          {t("Up next")}
-        </span>
-      )}
+      <ChapterLessons chapter={chapter} />
     </>
   );
 
@@ -115,9 +147,7 @@ function ChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={title(chapter)}
-        trigger={
-          <button className={cn(PATH_ROW_CLASS, "hover:bg-muted w-full text-left")} type="button" />
-        }
+        trigger={<button className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} type="button" />}
       >
         {content}
       </FarTopicSheet>
@@ -130,11 +160,45 @@ function ChapterRow({
 
   return (
     <LearnLink
-      className={cn(PATH_ROW_CLASS, "hover:bg-muted", isNext && "bg-muted/60")}
+      className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
       href={links.chapter(chapter.chapterId)}
     >
       {content}
+      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
     </LearnLink>
+  );
+}
+
+/**
+ * Lessons of the phase still being written, as one quiet line under its rows: the goal's own
+ * course's ("More lessons for this phase are being written.", or "this unit" under a phase that is
+ * one language unit, `unit`) or another course's, by its name.
+ */
+export function WritingAheadLine({
+  chapters,
+  unit = false,
+}: {
+  chapters: readonly PlanChapterView[];
+  unit?: boolean;
+}) {
+  const t = useExtracted();
+  const writing = chapters.filter((chapter) => isWritingAhead(chapter));
+
+  if (writing.length === 0) {
+    return null;
+  }
+
+  const courses = writing.map((chapter) => chapter.title).filter(Boolean);
+
+  return (
+    <p className="text-muted-foreground py-2 text-xs" data-slot="writing-ahead">
+      {courses.length > 0 &&
+        t("Lessons from {courses} are being written.", { courses: courses.join(", ") })}
+      {courses.length === 0 &&
+        (unit
+          ? t("More lessons for this unit are being written.")
+          : t("More lessons for this phase are being written."))}
+    </p>
   );
 }
 
@@ -153,14 +217,18 @@ export function JourneyChapters({
 }) {
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
-  const range = getChapterWindow({ states: chapters.map((chapter) => chapter.state) });
-  const hidden = chapters.length - (range.end - range.start);
-  const shown = showAll ? chapters : chapters.slice(range.start, range.end);
+  const rows = chapters.filter((chapter) => !isWritingAhead(chapter));
+  const range = getChapterWindow({ states: rows.map((chapter) => chapter.state) });
+  const hidden = rows.length - (range.end - range.start);
+  const shown = showAll ? rows : rows.slice(range.start, range.end);
 
   return (
-    <ul className="flex flex-col gap-0.5">
+    <ul className="flex flex-col">
       {shown.map((chapter) => (
-        <li key={getChapterKey(chapter)}>
+        <li
+          aria-current={chapter.state === "current" ? "step" : undefined}
+          key={getChapterKey(chapter)}
+        >
           <ChapterRow chapter={chapter} isNext={chapter.state === "current"} links={links} />
         </li>
       ))}
@@ -171,13 +239,13 @@ export function JourneyChapters({
             aria-expanded={showAll}
             className={cn(
               PATH_ROW_CLASS,
-              "text-muted-foreground hover:bg-muted hover:text-foreground",
+              "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
             )}
             onClick={() => setShowAll(!showAll)}
             type="button"
           >
             <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS}>
-              {showAll ? <MinusIcon className="size-4" /> : <PlusIcon className="size-4" />}
+              {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
             </span>
             {showAll
               ? t("Show fewer chapters")
@@ -193,6 +261,10 @@ export function JourneyChapters({
           <CheckpointRow checkpoint={checkpoint} links={links} />
         </li>
       )}
+
+      <li className="empty:hidden">
+        <WritingAheadLine chapters={chapters} />
+      </li>
     </ul>
   );
 }

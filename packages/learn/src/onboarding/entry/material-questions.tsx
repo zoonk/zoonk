@@ -4,6 +4,7 @@ import { type MaterialCitation } from "@zoonk/core/library/sources/material-ques
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useId, useState, useTransition } from "react";
@@ -24,6 +25,7 @@ import {
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
+import { GOAL_PANEL_CLASS } from "./goal-field";
 import { TypedGoal } from "./goal-outcomes";
 
 const MAX_QUESTION_LENGTH = 500;
@@ -87,7 +89,7 @@ function TurnAnswer({
 
     return (
       <TutorMessage identity={identity}>
-        <p className="text-destructive text-sm">{messages[outcome.status]}</p>
+        <p className="text-destructive-text text-sm">{messages[outcome.status]}</p>
       </TutorMessage>
     );
   }
@@ -96,7 +98,7 @@ function TurnAnswer({
 
   return (
     <TutorMessage identity={identity}>
-      <div className="bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1">
+      <div className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
         <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
 
         {citations.length > 0 && (
@@ -118,8 +120,8 @@ function TurnAnswer({
 }
 
 /**
- * "Ask questions" about the material the learner attached, answered by their buddy (a neutral
- * "Buddy" before they pick one): each answer comes from their pages and shows the page it came
+ * "Ask questions" about the material the learner attached, answered by their resolved buddy:
+ * each answer comes from their pages and shows the page it came
  * from, so they can read it there.
  */
 export function MaterialQuestions({
@@ -187,7 +189,7 @@ export function MaterialQuestions({
       </div>
 
       <form
-        className="bg-muted/60 focus-within:ring-ring/40 mt-auto flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px] lg:mt-0"
+        className={cn(GOAL_PANEL_CLASS, "mt-auto flex items-end gap-2 p-1.5 pl-4 lg:mt-0")}
         onSubmit={(event) => {
           event.preventDefault();
           submit();

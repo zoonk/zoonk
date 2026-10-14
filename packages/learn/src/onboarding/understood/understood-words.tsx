@@ -1,9 +1,11 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MAX_GOAL_LENGTH } from "../entry/goal-entry";
+import { GOAL_PANEL_CLASS } from "../entry/goal-field";
 import { TypedGoal } from "../entry/goal-outcomes";
 
 /**
@@ -41,7 +43,7 @@ export function UnderstoodWords({
 
   return (
     <form
-      className="bg-muted/60 focus-within:ring-ring/40 flex flex-col gap-3 rounded-3xl p-3 pl-4 focus-within:ring-[3px]"
+      className={cn(GOAL_PANEL_CLASS, "flex flex-col gap-3 p-3 pl-4")}
       onSubmit={(event) => {
         event.preventDefault();
         submit();

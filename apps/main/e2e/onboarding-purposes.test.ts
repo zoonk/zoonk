@@ -25,9 +25,9 @@ test("work asks for the role and what it's used for there", async ({ page }) => 
   });
 
   await page.goto("/start");
-  await page.getByRole("textbox", { name: "Your goal" }).fill(goal);
-  await page.getByRole("button", { name: "Start with your goal" }).click();
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+  await page.getByRole("button", { name: "Build my plan" }).click();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await page.getByRole("button", { name: "Looks right" }).click();
   await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 

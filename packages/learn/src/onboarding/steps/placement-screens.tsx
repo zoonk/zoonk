@@ -2,9 +2,8 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheckIcon, ListChecksIcon, SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../../_components/kind-tile";
+import { KindDot } from "../../_components/kind-tile";
 import {
   ListGroup,
   ListRowContent,
@@ -15,6 +14,7 @@ import {
   ListRowTrailing,
 } from "../../_components/list-group";
 import { PlusMark } from "../../_components/plus-lock";
+import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { type PlacementMockOutcome } from "../onboarding-actions";
@@ -28,7 +28,6 @@ import {
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding-frame";
-import { StepIcon } from "./step-parts";
 
 type PlacementMockOffer = NonNullable<PlacementMockOutcome["offer"]> & { href: string };
 
@@ -65,7 +64,7 @@ function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
     <ListGroup>
       <ListRowLink href={mock.href}>
         <ListRowLeading>
-          <KindTile kind="mock" />
+          <KindDot kind="mock" />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{t("Or take a mock exam")}</ListRowTitle>
@@ -82,7 +81,7 @@ function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
 }
 
 /**
- * Placement's start: a quiz's tile, what it's for in one sentence (with how many areas it covers
+ * Placement's start: what it's for in one sentence (with how many areas it covers
  * for an exam), Start, and starting from zero as the quiet way around it. An exam also offers a
  * diagnostic mock instead, with how long it takes.
  */
@@ -107,7 +106,6 @@ export function PlacementIntro({
 
   return (
     <OnboardingColumn>
-      <KindTile icon={ListChecksIcon} kind="practice" size="lg" />
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
         <OnboardingTitle>{t("Let's see what you already know")}</OnboardingTitle>
@@ -135,26 +133,29 @@ export function PlacementIntro({
   );
 }
 
-/** A finished moment: its icon, what it means for the plan, and one way on. */
+/**
+ * A finished moment: what was done (`done`, as the green ✓ line every finished screen opens with;
+ * none when nothing was), what it means for the plan, and one way on.
+ */
 function PlacementOutcome({
   children,
-  icon,
+  done,
   onContinue,
   pending,
-  success = false,
 }: {
   children: React.ReactNode;
-  icon: React.ReactNode;
+  done?: string;
   onContinue: () => void;
   pending: boolean;
-  success?: boolean;
 }) {
   const t = useExtracted();
 
   return (
     <OnboardingColumn>
-      <StepIcon success={success}>{icon}</StepIcon>
-      <OnboardingHeading>{children}</OnboardingHeading>
+      <OnboardingHeading>
+        {done && <SuccessEyebrow>{done}</SuccessEyebrow>}
+        {children}
+      </OnboardingHeading>
       <OnboardingFooter>
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
           {t("See my plan")}
@@ -180,14 +181,16 @@ export function PlacementDone({
 }) {
   const t = useExtracted();
 
+  const done = fromMock
+    ? t("Mock exam done")
+    : t(
+        "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}",
+        { count: answered },
+      );
+
   if (fromMock) {
     return (
-      <PlacementOutcome
-        icon={<CircleCheckIcon />}
-        onContinue={onContinue}
-        pending={pending}
-        success
-      >
+      <PlacementOutcome done={done} onContinue={onContinue} pending={pending}>
         <OnboardingTitle>{t("Your mock exam set your starting point")}</OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -200,20 +203,14 @@ export function PlacementDone({
   }
 
   return (
-    <PlacementOutcome icon={<CircleCheckIcon />} onContinue={onContinue} pending={pending} success>
+    <PlacementOutcome done={done} onContinue={onContinue} pending={pending}>
       <OnboardingTitle>
         {forToday ? t("That's enough questions for today") : t("Your starting point is set")}
       </OnboardingTitle>
       <OnboardingDescription>
         {forToday
-          ? t(
-              "Your plan starts from {count, plural, one {your first answer} other {your first # answers}}. Your first sessions ask a few more to fine-tune it.",
-              { count: answered },
-            )
-          : t(
-              "Based on {count, plural, one {# question} other {# questions}}. It gets more accurate every day.",
-              { count: answered },
-            )}
+          ? t("Your first sessions ask a few more to fine-tune your plan.")
+          : t("It gets more accurate every day.")}
       </OnboardingDescription>
     </PlacementOutcome>
   );
@@ -230,7 +227,7 @@ export function PlacementUnavailable({
   const t = useExtracted();
 
   return (
-    <PlacementOutcome icon={<SignpostIcon />} onContinue={onContinue} pending={pending}>
+    <PlacementOutcome onContinue={onContinue} pending={pending}>
       <OnboardingTitle>{t("Let's skip the questions")}</OnboardingTitle>
       <OnboardingDescription>
         {t(
@@ -258,7 +255,6 @@ export function PlacementMockRunning({
 
   return (
     <OnboardingColumn>
-      <KindTile kind="mock" size="lg" />
       <OnboardingHeading>
         <OnboardingTitle>{t("Your mock exam is waiting")}</OnboardingTitle>
         <OnboardingDescription>
@@ -269,10 +265,7 @@ export function PlacementMockRunning({
       </OnboardingHeading>
 
       <OnboardingFooter>
-        <LearnLink
-          className={cn(buttonVariants({ size: "lg" }), "h-12 w-full text-base")}
-          href={href}
-        >
+        <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
           {t("Continue the mock exam")}
         </LearnLink>
         <OnboardingSecondaryButton disabled={pending} onClick={onStop} variant="ghost">

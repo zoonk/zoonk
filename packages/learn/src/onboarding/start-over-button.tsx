@@ -30,11 +30,7 @@ export function StartOverButton({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger
-        render={
-          <Button className="rounded-full" disabled={disabled} size="icon-bar" variant="outline" />
-        }
-      >
+      <AlertDialogTrigger render={<Button disabled={disabled} size="icon-bar" variant="ghost" />}>
         <XIcon aria-hidden="true" className="size-5" />
         <span className="sr-only">{t("Start over")}</span>
       </AlertDialogTrigger>

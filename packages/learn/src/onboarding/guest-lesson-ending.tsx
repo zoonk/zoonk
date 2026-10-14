@@ -5,20 +5,20 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { Progress } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon, CalendarClockIcon } from "lucide-react";
-import { useExtracted, useFormatter, useLocale } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
-import { LearnLink } from "../learn-link";
+import { useFormatDuration } from "../_utils/time-format";
 
 const MINUTES_PER_HOUR = 60;
 
 function WhereItFits({ fit }: { fit: LessonFit }) {
   const t = useExtracted();
   const locale = useLocale();
-  const format = useFormatter();
+  const formatDuration = useFormatDuration();
   const { chapter, course } = fit;
 
   return (
-    <section className="bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1">
+    <section className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
       <p className="text-muted-foreground text-sm">{t("This is part of")}</p>
 
       {course && (
@@ -30,14 +30,12 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
             <span className="font-semibold">{course.title}</span>
             <span className="text-muted-foreground text-sm">
               {t(
-                "{chapters, plural, one {# chapter} other {# chapters}} · about {hours} at your pace",
+                "{chapters, plural, one {# chapter} other {# chapters}} · about {time} at your pace",
                 {
                   chapters: course.chapterCount,
-                  hours: format.number(Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)), {
-                    style: "unit",
-                    unit: "hour",
-                    unitDisplay: "narrow",
-                  }),
+                  time: formatDuration(
+                    Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)) * MINUTES_PER_HOUR,
+                  ),
                 },
               )}
             </span>
@@ -95,15 +93,12 @@ export function GuestLessonNext({
 
       <div className="flex flex-col gap-2">
         {plan}
-        <LearnLink
-          className={cn(
-            buttonVariants({ size: "lg", variant: "outline" }),
-            "h-12 w-full rounded-full text-base",
-          )}
+        <a
+          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
           href={signUpHref}
         >
           {t("Create an account to save")}
-        </LearnLink>
+        </a>
       </div>
     </div>
   );

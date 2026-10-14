@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
@@ -44,7 +45,7 @@ function placementWait(page: Page) {
 }
 
 test.describe("Refreshing mid-onboarding", () => {
-  test("comes back to the same question, with the dots, Back and Start over", async ({
+  test("comes back to the same question, with the dots, Back and Start over, and Today leads back to the questions left", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -72,13 +73,36 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await expect(date).toBeVisible();
     await expect(page.getByRole("img", { name: /^Step 2 of \d+$/u })).toBeVisible();
-    await page.getByRole("button", { name: "Back" }).click();
 
+    // On a phone the questions have no tab bar: the bar has the way back and out.
+    const size = page.viewportSize();
+    await page.setViewportSize({ height: 844, width: 390 });
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+
+    if (size) {
+      await page.setViewportSize(size);
+    }
+
+    // The app's tabs stay in reach during the questions. Today, opened halfway, doesn't claim the
+    // plan is being built: it waits for the answers left, and leads back to the question left.
+    await page
+      .getByRole("complementary", { name: "Sidebar" })
+      .getByRole("link", { name: /^Today/u })
+      .click();
+
+    await expect(
+      page.getByText("Your plan for Learn algebra needs a few more answers."),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: "Continue setting up" }).click();
+    await expect(page).toHaveURL(new RegExp(`/start/${goal.id}$`, "u"));
+    await expect(date).toBeVisible();
+
+    await page.getByRole("button", { name: "Back" }).click();
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // Onboarding is a task: no app bar, and its close starts over, after asking. Starting over sets
-    // the goal aside and goes back to the first question.
-    await expect(page.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
+    // The steps' close starts over, after asking. Starting over sets the goal aside and goes back to
+    // the first question.
     await page.getByRole("button", { name: "Start over" }).click();
 
     const confirm = page.getByRole("alertdialog", { name: "Start over?" });
@@ -93,6 +117,71 @@ test.describe("Refreshing mid-onboarding", () => {
       .toBe("archived");
   });
 });
+
+/** Next year: ahead of the server's today, and within what a plan reaches (3,650 days). */
+const DEADLINE_YEAR = new Date().getUTCFullYear() + 1;
+
+for (const boundary of [
+  {
+    localToday: `${DEADLINE_YEAR}-10-13`,
+    now: `${DEADLINE_YEAR}-10-13T23:30:00-03:00`,
+    timezoneId: "America/Sao_Paulo",
+    tomorrow: `${DEADLINE_YEAR}-10-14`,
+  },
+  {
+    localToday: `${DEADLINE_YEAR}-10-14`,
+    now: `${DEADLINE_YEAR}-10-14T00:30:00+09:00`,
+    timezoneId: "Asia/Tokyo",
+    tomorrow: `${DEADLINE_YEAR}-10-15`,
+  },
+]) {
+  test.describe(`Deadline in ${boundary.timezoneId}`, () => {
+    test.use({ timezoneId: boundary.timezoneId });
+
+    test("rejects today and accepts tomorrow across the UTC day boundary", async ({
+      noProgressUser,
+      userWithoutProgress: page,
+    }) => {
+      const goal = await createGoalBeingMapped({
+        answered: [],
+        runId: null,
+        userId: noProgressUser.id,
+      });
+
+      await planFixture({ goalId: goal.id, phases: [] });
+
+      await page.clock.setFixedTime(new Date(boundary.now));
+      await page.goto(`/start/${goal.id}`);
+      await page.getByRole("radio", { name: /Understand it in depth/u }).click();
+      await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+      const date = page.getByLabel("Date", { exact: true });
+      const next = page.getByRole("button", { exact: true, name: "Continue" });
+      await expect(date).toHaveAttribute("min", boundary.tomorrow);
+      // No later than a plan reaches: the picker greys out what the server would refuse.
+      await expect(date).toHaveAttribute("max", getTargetDateBounds(boundary.localToday).max);
+      await date.fill(boundary.localToday);
+      await expect(next).toBeDisabled();
+      // A typed date the picker would have greyed out says why Continue waits.
+      await expect(date).toHaveAccessibleDescription("Pick a date after today.");
+      await date.fill(boundary.tomorrow);
+      await expect(next).toBeEnabled();
+      await expect(date).toHaveAccessibleDescription("");
+      await next.click();
+
+      await expect(
+        page.getByRole("heading", { name: "How much do you already know?" }),
+      ).toBeVisible();
+
+      await expect
+        .poll(async () => {
+          const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+          return saved.targetDate?.toISOString().slice(0, 10);
+        })
+        .toBe(boundary.tomorrow);
+    });
+  });
+}
 
 test.describe("Waiting for placement's questions", () => {
   test("shows the run's progress, survives a refresh and moves on when questions arrive", async ({
@@ -234,7 +323,8 @@ test.describe("When a wait can't go on", () => {
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // Picking an answer shows the page is interactive, so its wait for the run has begun.
+    // Picking an answer shows the page is interactive, so its wait for the run has begun; a
+    // one-answer question then moves on by itself.
     const deep = page.getByRole("radio", { name: /Understand it in depth/u });
     await deep.click();
     await expect(deep).toBeChecked();
@@ -248,11 +338,37 @@ test.describe("When a wait can't go on", () => {
     await expect(notice).toBeVisible();
     await expect(notice).toContainText("Your answers are saved.");
 
-    // Starting it again is the learner's tap; here the API can't be reached, so it says so again.
-    await notice.getByRole("button", { name: "Try again" }).click();
-    await expect(notice).toBeVisible();
+    // The learner keeps answering under the notice.
+    const nextQuestion = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
+    await expect(nextQuestion).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
+    // The API accepts the learner's retry. Stand in for the new run's failure at the browser's
+    // stream boundary: server-side API calls are reachable and page.route cannot intercept them.
+    await page.route("**/v1/generations/*/events**", (route) =>
+      route.fulfill({
+        body: `data: ${JSON.stringify({ entityId: goal.id, reason: "aiGenerationFailed", status: "error", step: "workflowError" })}\n\n`,
+        contentType: "text/event-stream",
+        status: 200,
+      }),
+    );
+
+    await page.route(/\/v1\/generations\/[^/]+$/u, (route) =>
+      route.fulfill({ json: { status: "failed" }, status: 200 }),
+    );
+
+    await notice.getByRole("button", { name: "Try again" }).click();
+
+    const stopped = page.getByRole("alert").filter({ hasText: "Building your plan stopped" });
+    await expect(stopped).toBeVisible();
+    await expect(stopped).toContainText("Your answers are saved.");
+    await expect(nextQuestion).toBeVisible();
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.generationRunId;
+      })
+      .toEqual(expect.any(String));
   });
 
   test("placement with no questions to ask goes on without them", async ({
@@ -267,7 +383,7 @@ test.describe("When a wait can't go on", () => {
     await expect(page.getByRole("heading", { name: "Let's skip the questions" })).toBeVisible();
     await page.getByRole("button", { name: "See my plan" }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
     await expect
       .poll(async () => {
@@ -329,7 +445,21 @@ test.describe("When a wait can't go on", () => {
     await expect(page.getByRole("button", { name: "Skip the test" })).toBeVisible();
     await stopped.getByRole("button", { name: "Try again" }).click();
 
-    // The tap asks the API to write them; it can't be reached here, so the wait says so.
-    await expect(page.getByRole("alert").filter({ hasText: "This didn't start" })).toBeVisible();
+    // The API accepts the retry and a new writer claims the pair. The test environment blocks
+    // its model calls, but that happens after the start succeeds: it resumes the preparation wait.
+    await expect(stopped).toBeHidden();
+    await expect(progress).toBeVisible();
+
+    await expect
+      .poll(async () => {
+        const bank = await prisma.languageLevelTest.findUniqueOrThrow({
+          where: { languagePair: pair },
+        });
+
+        return { fresh: bank.runId !== writing.runId, runId: bank.runId };
+      })
+      .toEqual({ fresh: true, runId: expect.any(String) });
+
+    await expect(page.getByRole("button", { name: "Skip the test" })).toBeVisible();
   });
 });
