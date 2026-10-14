@@ -48,9 +48,15 @@ export type LearnerSummaryToday = {
 
 /**
  * The active goal's own places beside the tabs: an exam's page, a language goal's speaking paper,
- * and the mind maps once a chapter can have one.
+ * the mind maps once a chapter can have one, and how many of its notebook's mistakes are ready to
+ * practice (they become ready at the learner's next local midnight, which `nextChangeAt` covers).
  */
-export type LearnerSummaryPlaces = { exam: boolean; mindMaps: boolean; speaking: boolean };
+export type LearnerSummaryPlaces = {
+  exam: boolean;
+  mindMaps: boolean;
+  readyMistakes: number;
+  speaking: boolean;
+};
 
 /** What analytics attach to the learner's events; analytics stay off while `disabled`. */
 type LearnerSummaryAnalytics = {

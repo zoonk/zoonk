@@ -160,14 +160,13 @@ test.describe("Language goal progress", () => {
       await expect(sheet).toBeHidden();
       await expect(page.getByText("Your preparation")).toHaveCount(0);
 
-      // The notebook in the desktop sidebar (its link has no count: the frame reads only whether
-      // a mistake is open) offers the pattern noticed in his recent mistakes.
+      // The notebook in the desktop sidebar offers the pattern noticed in his recent mistakes.
       await page.goto("/today");
 
       await page
         .getByRole("complementary", { name: "Sidebar" })
         .getByRole("navigation", { name: "Study" })
-        .getByRole("link", { name: /^Mistakes notebook$/u })
+        .getByRole("link", { name: /^Mistakes notebook 1$/u })
         .click();
 
       const pattern = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });

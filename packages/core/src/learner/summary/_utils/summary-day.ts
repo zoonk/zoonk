@@ -85,11 +85,13 @@ async function countDayMissions({
   day,
   goal,
   now,
+  readyMistakesOn,
   timeZone,
 }: {
   day: SavedSession | null;
   goal: Goal;
   now: Date;
+  readyMistakesOn?: (localDate: Date) => Promise<number>;
   timeZone: string;
 }): Promise<{ done: number; total: number } | null> {
   if (!day) {
@@ -98,6 +100,7 @@ async function countDayMissions({
 
   const missions = await getDayMissions({
     displayBlocks: day.blocks,
+    readyMistakesOn,
     session: { ...day, goal },
     through: now,
     timeZone,
@@ -115,6 +118,7 @@ export async function loadActiveGoalDay({
   localDate,
   now,
   phaseChallengesRequired,
+  readyMistakesOn,
   sessions,
   timeZone,
 }: {
@@ -122,6 +126,8 @@ export async function loadActiveGoalDay({
   localDate: Date;
   now: Date;
   phaseChallengesRequired: boolean;
+  /** The goal's mistakes ready to practice on a day, which a day saved without missions shares. */
+  readyMistakesOn?: (localDate: Date) => Promise<number>;
   sessions: readonly SavedSession[];
   timeZone: string;
 }): Promise<{
@@ -138,7 +144,7 @@ export async function loadActiveGoalDay({
 
   return {
     carriedUntil: carried ? getCarryOverEnd(day) : null,
-    missions: await countDayMissions({ day, goal, now, timeZone }),
+    missions: await countDayMissions({ day, goal, now, readyMistakesOn, timeZone }),
     today: getSummaryToday({ day, goal, phaseChallengesRequired }),
   };
 }

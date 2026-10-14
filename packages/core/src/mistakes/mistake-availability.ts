@@ -1,10 +1,10 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import {
+  loadGoalListeningSkillIds,
   loadLearnerListeningSkillIds,
-  loadListeningSkillIds,
 } from "../exams/listening/listening-skills";
-import { getSkillOwners, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { loadGoalSkillScope } from "../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getGoalField } from "../library/items/item-field";
 import { type MistakeAvailability } from "./contract";
@@ -34,30 +34,45 @@ function isMistakePracticeAvailable({
   return status === "open" && createdAt.getTime() < startOfToday.getTime();
 }
 
-type AvailabilityInput = {
+/** Whose mistakes, in which goal's scope (or `skillIds`, or every goal without either). */
+type MistakeScopeInput = {
+  /** The goal's row when the caller already read it (the learner summary), so it isn't again. */
+  goal?: Goal | null;
   goalId?: string | null;
-  localDate: Date;
   skillIds?: readonly string[] | null;
-  timeZone: string;
   userId: string;
 };
 
-/** Internal: the caller has resolved the learner and owns the goal, when scoped. */
-export async function loadMistakePracticeAvailability({
+type AvailabilityInput = MistakeScopeInput & { localDate: Date; timeZone: string };
+
+/** The goal's row, its skill scope (`getSkillOwners` of its plan) and its listening skills. */
+async function loadGoalScope({ goal: known, goalId }: { goal?: Goal | null; goalId: string }) {
+  const [scope, goal] = await Promise.all([
+    loadGoalSkillScope(goalId),
+    known?.id === goalId ? known : prisma.goal.findUnique({ where: { id: goalId } }),
+  ]);
+
+  const listeningSkillIds = goal
+    ? await loadGoalListeningSkillIds({ goal, graph: scope.graph })
+    : new Set<string>();
+
+  return { goal, listeningSkillIds, ownerOf: scope.ownerOf };
+}
+
+/**
+ * The open mistakes in scope that practice material can drill: whichever day it is, what's ready
+ * to practice is those made before its start. Internal: the caller resolved the learner and owns
+ * the goal, when scoped.
+ */
+async function loadPracticeEligibleMistakes({
+  goal: knownGoal,
   goalId,
-  localDate,
   skillIds,
-  timeZone,
   userId,
-}: AvailabilityInput): Promise<{
-  availability: MistakeAvailability;
-  readyIds: ReadonlySet<string>;
-  tomorrowIds: ReadonlySet<string>;
-}> {
-  const plan = goalId ? await loadGoalPlan(goalId) : null;
-  const ownerOf = getSkillOwners(plan?.skills ?? []);
+}: MistakeScopeInput) {
+  const scope = goalId ? await loadGoalScope({ goal: knownGoal, goalId }) : null;
+  const ownerOf = scope?.ownerOf ?? new Map<string, string>();
   const scopedSkillIds = skillIds ?? (goalId ? [...ownerOf.keys()] : null);
-  const startOfToday = getMistakePracticeBefore({ localDate, timeZone });
 
   const where = {
     status: "open" as const,
@@ -65,25 +80,53 @@ export async function loadMistakePracticeAvailability({
     ...(scopedSkillIds ? { skillId: { in: [...scopedSkillIds] } } : {}),
   };
 
-  const [mistakes, goal, listeningSkillIds] = await Promise.all([
+  const [mistakes, listeningSkillIds] = await Promise.all([
     prisma.mistake.findMany({ omit: { snapshot: true }, where }),
-    goalId ? prisma.goal.findUnique({ where: { id: goalId } }) : null,
-    goalId ? loadListeningSkillIds(goalId) : loadLearnerListeningSkillIds(userId),
+    scope ? scope.listeningSkillIds : loadLearnerListeningSkillIds(userId),
   ]);
 
-  const eligible = await filterMistakesWithPracticeMaterial({
+  const goal = scope?.goal ?? null;
+
+  return filterMistakesWithPracticeMaterial({
     examBlueprintId: goal?.examBlueprintId ?? null,
     field: getGoalField(goal?.details),
     listeningSkillIds,
     mistakes,
     ownerOf,
   });
+}
 
-  const readyIds = new Set(
+type EligibleMistake = Awaited<ReturnType<typeof loadPracticeEligibleMistakes>>[number];
+
+/** The eligible mistakes ready to practice on the learner's `localDate`, by id. */
+function findReadyIds({
+  eligible,
+  localDate,
+  timeZone,
+}: {
+  eligible: readonly EligibleMistake[];
+  localDate: Date;
+  timeZone: string;
+}): Set<string> {
+  const startOfToday = getMistakePracticeBefore({ localDate, timeZone });
+
+  return new Set(
     eligible
       .filter((mistake) => isMistakePracticeAvailable({ ...mistake, startOfToday }))
       .map((mistake) => mistake.id),
   );
+}
+
+/** Internal: the caller has resolved the learner and owns the goal, when scoped. */
+export async function loadMistakePracticeAvailability(
+  input: AvailabilityInput,
+): Promise<{
+  availability: MistakeAvailability;
+  readyIds: ReadonlySet<string>;
+  tomorrowIds: ReadonlySet<string>;
+}> {
+  const eligible = await loadPracticeEligibleMistakes(input);
+  const readyIds = findReadyIds({ eligible, ...input });
 
   const tomorrowIds = new Set(
     eligible.filter((mistake) => !readyIds.has(mistake.id)).map((mistake) => mistake.id),
@@ -93,6 +136,38 @@ export async function loadMistakePracticeAvailability({
     availability: { ready: readyIds.size, tomorrow: tomorrowIds.size },
     readyIds,
     tomorrowIds,
+  };
+}
+
+/**
+ * The notebook's ready count (`availability.ready`) on the learner's `today` and on earlier days
+ * (a day carried over from the night before), from one read of the eligible mistakes. While no
+ * open mistake was made before the start of `today` (one indexed check), none can be ready on any
+ * of those days, so nothing else is read.
+ */
+export function countReadyMistakesByDay({
+  timeZone,
+  today,
+  ...scope
+}: MistakeScopeInput & { timeZone: string; today: Date }): (localDate: Date) => Promise<number> {
+  let eligible: Promise<readonly EligibleMistake[]> | undefined;
+
+  async function loadEligible() {
+    const candidate = await prisma.mistake.findFirst({
+      select: { id: true },
+      where: {
+        createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
+        status: "open",
+        userId: scope.userId,
+      },
+    });
+
+    return candidate ? loadPracticeEligibleMistakes(scope) : [];
+  }
+
+  return async (localDate) => {
+    eligible ??= loadEligible();
+    return findReadyIds({ eligible: await eligible, localDate, timeZone }).size;
   };
 }
 

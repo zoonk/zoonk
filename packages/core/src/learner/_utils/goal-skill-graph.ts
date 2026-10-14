@@ -183,19 +183,17 @@ function toLeftOutEntries({
   });
 }
 
+/** A goal skill and the finer skills its lessons teach, which count for it. */
+function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, MemberEntry[]>) {
+  return unique([skillId, ...(membersOf.get(skillId) ?? []).map((member) => member.memberId)]);
+}
+
 /**
- * Loads the skills a goal's plan covers, in plan order, with their phase, area, band and
- * prerequisites inside the goal, plus each plan item's skills. With `withLeftOut`, the skill
- * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
- * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
+ * The plan's rows and the skills it covers, in plan order (one entry per skill), with each skill's
+ * finer member skills: what `loadPlan` decorates and the goal's skill scope reads. Null without a
+ * plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlan({
-  goalId,
-  withLeftOut,
-}: {
-  goalId: string;
-  withLeftOut: boolean;
-}): Promise<GoalPlan> {
+async function loadPlanEntries({ goalId, withLeftOut }: { goalId: string; withLeftOut: boolean }) {
   const plan = await prisma.plan.findUnique({
     select: {
       graph: true,
@@ -219,7 +217,7 @@ async function loadPlan({
   });
 
   if (!plan) {
-    return { items: [], skills: [] };
+    return null;
   }
 
   const itemSkills = await loadItemSkills(plan.items);
@@ -236,9 +234,34 @@ async function loadPlan({
     toSurvivingMembers(toMemberEntries({ items: plan.items, skills: itemSkills })),
   ]);
 
-  const membersOf = Map.groupBy(members, (entry) => entry.skillId);
+  return {
+    allEntries,
+    entries: firstPerSkill(allEntries),
+    membersOf: Map.groupBy(members, (entry) => entry.skillId),
+    plan,
+  };
+}
 
-  const entries = firstPerSkill(allEntries);
+/**
+ * Loads the skills a goal's plan covers, in plan order, with their phase, area, band and
+ * prerequisites inside the goal, plus each plan item's skills. With `withLeftOut`, the skill
+ * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
+ * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
+ */
+async function loadPlan({
+  goalId,
+  withLeftOut,
+}: {
+  goalId: string;
+  withLeftOut: boolean;
+}): Promise<GoalPlan> {
+  const loaded = await loadPlanEntries({ goalId, withLeftOut });
+
+  if (!loaded) {
+    return { items: [], skills: [] };
+  }
+
+  const { allEntries, entries, membersOf, plan } = loaded;
   const skillIds = entries.map((entry) => entry.skillId);
 
   const [titles, edges, bands] = await Promise.all([
@@ -290,10 +313,7 @@ async function loadPlan({
       band: bandOf.get(entry.skillId) ?? null,
       foundation: foundations.has(entry.skillId),
       id: entry.skillId,
-      memberSkillIds: unique([
-        entry.skillId,
-        ...(membersOf.get(entry.skillId) ?? []).map((member) => member.memberId),
-      ]),
+      memberSkillIds: toMemberSkillIds(entry.skillId, membersOf),
       order,
       phase: entry.phase,
       prerequisiteIds: edges
@@ -318,6 +338,28 @@ export function getSkillOwners(
       .flatMap((skill) => skill.memberSkillIds.map((id): [string, string] => [id, skill.id])),
     ...skills.map((skill): [string, string] => [skill.id, skill.id]),
   ]);
+}
+
+/**
+ * Which goal skill each answered skill counts for (`getSkillOwners` of the goal's plan), with the
+ * plan's raw skill graph: all the mistakes notebook needs of the plan, without the titles,
+ * prerequisites and bands its screens read. Empty without a plan.
+ */
+export async function loadGoalSkillScope(
+  goalId: string,
+): Promise<{ graph: unknown; ownerOf: Map<string, string> }> {
+  const loaded = await loadPlanEntries({ goalId, withLeftOut: false });
+
+  if (!loaded) {
+    return { graph: null, ownerOf: new Map() };
+  }
+
+  const skills = loaded.entries.map((entry) => ({
+    id: entry.skillId,
+    memberSkillIds: toMemberSkillIds(entry.skillId, loaded.membersOf),
+  }));
+
+  return { graph: loaded.plan.graph, ownerOf: getSkillOwners(skills) };
 }
 
 /** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */

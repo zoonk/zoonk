@@ -416,22 +416,27 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("counts the mistakes ready to practice when the palette opens, with a read", async ({
+  test("counts the mistakes ready to practice in the sidebar and the palette, from the summary", async ({
     browser,
   }) => {
     const { user } = await createMistakeLearner({ causes: ["misread"] });
     const context = await browser.newContext({ storageState: user.storageState });
     const reads: string[] = [];
 
+    // The page's own render brings the summary: nothing is read for the counts.
     context.on("request", (request) => {
-      if (new URL(request.url()).pathname === "/api/learner/ready-mistakes") {
-        reads.push(request.method());
+      const { pathname } = new URL(request.url());
+
+      if (pathname.startsWith("/api/learner/")) {
+        reads.push(pathname);
       }
     });
 
     const page = await openAs(context, "/today");
-    await expect(goalSwitcher(page, "Current goal")).toBeVisible();
-    expect(reads).toStrictEqual([]);
+
+    await expect(sidebar(page).getByRole("link", { name: /^Mistakes notebook/u })).toHaveText(
+      "Mistakes notebook1",
+    );
 
     const palette = await openPaletteWithKeyboard(page);
 
@@ -440,13 +445,7 @@ test.describe("learner summary", () => {
     );
 
     await expect(palette.getByRole("option", { name: /^Mistakes notebook/u })).toContainText("1");
-    expect(reads).toStrictEqual(["GET"]);
-
-    // Each opening reads it again: what's ready can change while the palette is closed.
-    await page.keyboard.press("Escape");
-    await expect(palette).toBeHidden();
-    await openPaletteWithKeyboard(page);
-    await expect.poll(() => reads).toStrictEqual(["GET", "GET"]);
+    expect(reads).toStrictEqual([]);
 
     await context.close();
   });

@@ -69,7 +69,18 @@ const learnerSummarySchema = z
         "When the summary changes without a write: the next local midnight, the subscription's next change or the session's end",
     }),
     places: z
-      .object({ exam: z.boolean(), mindMaps: z.boolean(), speaking: z.boolean() })
+      .object({
+        exam: z.boolean(),
+        mindMaps: z.boolean(),
+        readyMistakes: z
+          .int()
+          .min(0)
+          .meta({
+            description:
+              "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made",
+          }),
+        speaking: z.boolean(),
+      })
       .meta({ description: "The active goal's own places beside the tabs" }),
     readAt: millisecondsSchema,
     revision: z

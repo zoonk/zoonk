@@ -8,6 +8,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -21,6 +22,9 @@ import {
   mockSession,
   mockSessionFailure,
 } from "../../_test-utils/mock-session";
+import { mistakeListInputSchema } from "../../mistakes/contract";
+import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
+import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getLearnerSummary } from "./get-learner-summary";
 
 const NOW = new Date("2026-03-10T12:00:00.000Z");
@@ -30,8 +34,16 @@ const SIGNED_IN_AT = new Date("2026-03-01T08:00:00.000Z");
 const SESSION_ENDS_AT = new Date("2026-04-01T08:00:00.000Z");
 const MINUTE_MS = 60_000;
 
-/** The summary's budget: the learner's row, then one wave of reads, then the day's own counts. */
-const SUMMARY_STATEMENT_BUDGET = 10;
+/**
+ * The summary's budget: the learner's row, then one wave of reads, then the day's own counts and
+ * the active goal's ready mistakes (the notebook's own count, with its plan, when any can be ready).
+ */
+const SUMMARY_STATEMENT_BUDGET = 25;
+
+/** Without a mistake made before the learner's day, nothing is read for the count. */
+const QUIET_SUMMARY_STATEMENT_BUDGET = 10;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * A day saved before missions were stored reads its fix mission's availability through the
@@ -389,7 +401,12 @@ describe(getLearnerSummary, () => {
 
     const summary = await getLearnerSummary();
 
-    expect(summary?.places).toStrictEqual({ exam: true, mindMaps: true, speaking: false });
+    expect(summary?.places).toStrictEqual({
+      exam: true,
+      mindMaps: true,
+      readyMistakes: 0,
+      speaking: false,
+    });
   });
 
   it("lists mind maps only once a chapter is finished", async () => {
@@ -500,5 +517,183 @@ describe(getLearnerSummary, () => {
       buddy: { beltColor: belt.color, energy: 50, studiedToday: true },
       level: { color: belt.color, level: belt.level },
     });
+  });
+});
+
+/** São Paulo's midnight starting NOW's local day (UTC-3). */
+const LOCAL_MIDNIGHT = new Date("2026-03-10T03:00:00.000Z");
+
+/** An active goal in São Paulo whose plan has two skills with practice questions. */
+async function learnerWithPlannedGoal() {
+  const user = await userFixture();
+  const fixture = await learnerGoalFixture({ phases: [2], userId: user.id });
+
+  await Promise.all([
+    prisma.goal.update({ data: { timezone: "America/Sao_Paulo" }, where: { id: fixture.goal.id } }),
+    learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
+  ]);
+
+  signIn(user);
+  return { ...fixture, user };
+}
+
+/** What the mistakes notebook counts as ready to practice for the goal. */
+async function notebookReady(goalId: string) {
+  const notebook = await listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId }));
+  return notebook.status === "ready" ? notebook.availability.ready : null;
+}
+
+/** Yesterday's session, saved before missions were stored, that the learner is still in. */
+async function carriedLegacyDay({ goalId, userId }: { goalId: string; userId: string }) {
+  const day = await studySessionFixture({
+    goalId,
+    localDate: YESTERDAY,
+    startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
+    userId,
+  });
+
+  await studySessionBlockFixture({
+    kind: "learn",
+    sessionId: day.id,
+    startedAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+    status: "active",
+  });
+
+  return day;
+}
+
+describe("the summary's ready mistakes", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("counts the mistakes the notebook counts as ready, within its budget", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const [elsewhere, other] = await Promise.all([skillFixture(), userFixture()]);
+
+    await Promise.all([
+      // One second before the learner's local midnight, and the day before: ready.
+      mistakeFixture({
+        createdAt: new Date(LOCAL_MIDNIGHT.getTime() - 1000),
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[1]?.id, userId: user.id }),
+      // At local midnight (today), fixed, outside the goal, or someone else's: not counted.
+      mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id }),
+      mistakeFixture({
+        createdAt: YESTERDAY,
+        skillId: skills[0]?.id,
+        status: "fixed",
+        userId: user.id,
+      }),
+      mistakeFixture({ createdAt: YESTERDAY, skillId: elsewhere.id, userId: user.id }),
+      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: other.id }),
+    ]);
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.places.readyMistakes).toBe(2);
+    await expect(notebookReady(goal.id)).resolves.toBe(2);
+    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+  });
+
+  it("reads nothing more while no mistake is ready yet", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+
+    await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.places.readyMistakes).toBe(0);
+    await expect(notebookReady(goal.id)).resolves.toBe(0);
+    assertReadBudget(counts, QUIET_SUMMARY_STATEMENT_BUDGET);
+  });
+
+  it("is read again at the next local midnight, when today's mistakes become ready", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+
+    await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
+
+    const today = await getLearnerSummary();
+    const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + DAY_MS);
+
+    expect(today).toMatchObject({
+      nextChangeAt: nextMidnight.getTime(),
+      places: { readyMistakes: 0 },
+    });
+
+    vi.setSystemTime(nextMidnight);
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({ places: { readyMistakes: 1 } });
+    await expect(notebookReady(goal.id)).resolves.toBe(1);
+  });
+
+  it("shares the count with the fix mission of a day saved before missions were stored", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const day = await studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id });
+
+    await Promise.all([
+      studySessionBlockFixture({ kind: "learn", position: 0, sessionId: day.id }),
+      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: user.id }),
+    ]);
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    // The legacy missions read the same count: one learn block and the fix mission.
+    expect(counts.result?.places.readyMistakes).toBe(1);
+    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 2 });
+    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+  });
+
+  it("rings a carried legacy day on its own day's boundary, from the same read", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+    const day = await carriedLegacyDay({ goalId: goal.id, userId: user.id });
+
+    // Made yesterday afternoon: ready today, not by the start of the carried day.
+    await mistakeFixture({
+      createdAt: new Date("2026-03-09T15:00:00.000Z"),
+      skillId: skills[0]?.id,
+      userId: user.id,
+    });
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.today?.next?.sessionId).toBe(day.id);
+    expect(counts.result?.places.readyMistakes).toBe(1);
+    await expect(notebookReady(goal.id)).resolves.toBe(1);
+    // Its learn block, and no fix mission: nothing was ready when that day started.
+    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 1 });
+    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+  });
+
+  it("gives a carried legacy day its fix mission when a mistake was ready by its start", async () => {
+    const { goal, skills, user } = await learnerWithPlannedGoal();
+    await carriedLegacyDay({ goalId: goal.id, userId: user.id });
+
+    await Promise.all([
+      mistakeFixture({
+        createdAt: new Date("2026-03-08T15:00:00.000Z"),
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        createdAt: new Date("2026-03-09T15:00:00.000Z"),
+        skillId: skills[1]?.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.places.readyMistakes).toBe(2);
+    await expect(notebookReady(goal.id)).resolves.toBe(2);
+    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 2 });
+    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
   });
 });

@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import {
   type PlanGraph,
@@ -133,6 +133,31 @@ export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<
       }),
     ]),
   );
+}
+
+/**
+ * `loadListeningSkillIds` for a goal row the caller already read, on its plan's raw graph: only
+ * an exam goal that names its blueprint reads it (only exams practice with recordings).
+ */
+export async function loadGoalListeningSkillIds({
+  goal,
+  graph,
+}: {
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "targetLanguage">;
+  graph: unknown;
+}): Promise<Set<string>> {
+  if (goal.kind !== "exam" || !goal.examBlueprintId) {
+    return new Set();
+  }
+
+  const examBlueprint = await prisma.examBlueprint.findUnique({
+    where: { id: goal.examBlueprintId },
+  });
+
+  return getListeningSkillIds({
+    exam: toListeningExam({ ...goal, examBlueprint }),
+    graph: parsePlanGraph(graph),
+  });
 }
 
 /**

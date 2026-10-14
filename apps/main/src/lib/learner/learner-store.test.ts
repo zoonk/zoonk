@@ -36,7 +36,7 @@ function summaryOf(userId: string, activeGoalId: string | null = null): LearnerS
     level: null,
     missions: null,
     nextChangeAt: now + DAY_MS,
-    places: { exam: false, mindMaps: false, speaking: false },
+    places: { exam: false, mindMaps: false, readyMistakes: 0, speaking: false },
     readAt: now,
     revision: "1",
     tier: "free",

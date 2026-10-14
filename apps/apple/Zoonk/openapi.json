@@ -36941,6 +36941,12 @@
               "mindMaps": {
                 "type": "boolean"
               },
+              "readyMistakes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made"
+              },
               "speaking": {
                 "type": "boolean"
               }
@@ -36948,6 +36954,7 @@
             "required": [
               "exam",
               "mindMaps",
+              "readyMistakes",
               "speaking"
             ],
             "additionalProperties": false,

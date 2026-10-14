@@ -13,9 +13,9 @@ import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 
 /**
- * The goal's places in its order: the mistakes notebook, an exam's page, a language goal's
- * speaking paper and the mind maps when there are some, then the learner's statistics. Until the
- * learner is read (and for a visitor), the two every learner has.
+ * The goal's places in its order: the mistakes notebook with how many are ready to practice, an
+ * exam's page, a language goal's speaking paper and the mind maps when there are some, then the
+ * learner's statistics. Until the learner is read (and for a visitor), the two every learner has.
  */
 export function StudyLinks() {
   const t = useExtracted();
@@ -24,7 +24,11 @@ export function StudyLinks() {
 
   return (
     <>
-      <LearnSidebarLink label={t("Mistakes notebook")} menu="mistakes" />
+      <LearnSidebarLink
+        count={places?.readyMistakes}
+        label={t("Mistakes notebook")}
+        menu="mistakes"
+      />
       {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
       {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
       {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}

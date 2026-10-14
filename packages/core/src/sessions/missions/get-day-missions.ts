@@ -201,6 +201,7 @@ function toMission({
 export async function getDayMissions({
   session: storedSession,
   displayBlocks,
+  readyMistakesOn,
   timeZone,
   client = prisma,
   through,
@@ -208,6 +209,11 @@ export async function getDayMissions({
   session: StudySessionRow;
   /** Today shares its resolved durations so missions and queue use the same content snapshot. */
   displayBlocks?: StudySessionBlock[];
+  /**
+   * The goal's mistakes ready to practice on a given day, when the caller reads them anyway (the
+   * learner summary), so a day saved without missions doesn't read them twice.
+   */
+  readyMistakesOn?: (localDate: Date) => Promise<number>;
   timeZone: string;
   client?: TransactionClient;
   through?: Date;
@@ -219,22 +225,23 @@ export async function getDayMissions({
       return [];
     }
     // No backfill: pre-deployment sessions retain their original three-kind read contract.
-    const [fixedToday, availability, blocks] = await Promise.all([
+    const [fixedToday, availableMistakes, blocks] = await Promise.all([
       countMistakesFixedToday({
         localDate: storedSession.localDate,
         timeZone,
         userId: storedSession.userId,
       }),
-      loadMistakeAvailability({
-        goalId: storedSession.goalId,
-        localDate: storedSession.localDate,
-        timeZone,
-        userId: storedSession.userId,
-      }),
+      readyMistakesOn?.(storedSession.localDate) ??
+        loadMistakeAvailability({
+          goalId: storedSession.goalId,
+          localDate: storedSession.localDate,
+          timeZone,
+          userId: storedSession.userId,
+        }).then((availability) => availability.ready),
       displayBlocks ?? withLessonDisplayMinutes({ blocks: storedSession.blocks, client }),
     ]);
 
-    return getSessionMissions({ availableMistakes: availability.ready, blocks, fixedToday });
+    return getSessionMissions({ availableMistakes, blocks, fixedToday });
   }
 
   const [progress, blocks] = await Promise.all([

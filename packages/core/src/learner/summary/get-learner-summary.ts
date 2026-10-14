@@ -18,6 +18,7 @@ import {
   loadPlanPhaseFacts,
 } from "../../goals/_utils/plan-phase-facts";
 import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
+import { countReadyMistakesByDay } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
@@ -108,13 +109,15 @@ function getPlaces({
   activeGoal,
   facts,
   goal,
+  readyMistakes,
 }: {
   activeGoal: Goal | null;
   facts: LearnerFacts;
   goal: LearnerSummaryGoal | null;
+  readyMistakes: number;
 }): LearnerSummaryPlaces {
   if (!goal || !activeGoal) {
-    return { exam: false, mindMaps: false, speaking: false };
+    return { exam: false, mindMaps: false, readyMistakes: 0, speaking: false };
   }
 
   const speakingScore = activeGoal.targetLanguage
@@ -124,6 +127,7 @@ function getPlaces({
   return {
     exam: goal.kind === "exam",
     mindMaps: facts.mindMapGoalIds.includes(goal.id),
+    readyMistakes,
     speaking: hasSpeakingPaper({
       blueprintName: facts.blueprintNames[activeGoal.id] ?? null,
       goal: activeGoal,
@@ -216,14 +220,29 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
 
-  const day = await loadActiveGoalDay({
-    goal: activeGoal,
-    localDate,
-    now,
-    phaseChallengesRequired,
-    sessions,
-    timeZone,
-  });
+  // One read of the goal's eligible mistakes: today's ready count, and a legacy day's own.
+  const readyMistakesOn = activeGoal
+    ? countReadyMistakesByDay({
+        goal: activeGoal,
+        goalId: activeGoal.id,
+        timeZone,
+        today: localDate,
+        userId,
+      })
+    : undefined;
+
+  const [day, ready] = await Promise.all([
+    loadActiveGoalDay({
+      goal: activeGoal,
+      localDate,
+      now,
+      phaseChallengesRequired,
+      readyMistakesOn,
+      sessions,
+      timeZone,
+    }),
+    readyMistakesOn?.(localDate) ?? 0,
+  ]);
 
   return {
     account: {
@@ -255,7 +274,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       subscription,
       timeZone,
     }),
-    places: getPlaces({ activeGoal, facts, goal: current }),
+    places: getPlaces({ activeGoal, facts, goal: current, readyMistakes: ready }),
     readAt: now.getTime(),
     revision: String(user.learnerRevision),
     tier: getTier({ isAnonymous, subscription }),
