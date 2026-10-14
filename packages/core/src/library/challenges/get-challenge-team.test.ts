@@ -24,7 +24,7 @@ async function learnerWithPlan({ language = "pt" }: { language?: string } = {}) 
 }
 
 describe(getChallengeTeam, () => {
-  it("picks the plan's team from names in the lesson's language and keeps it with the plan", async () => {
+  it("derives the plan's same team from lesson-language names without saving during a read", async () => {
     const { lesson, plan } = await learnerWithPlan();
 
     const outcome = await getChallengeTeam({ lessonId: lesson.id });
@@ -32,10 +32,13 @@ describe(getChallengeTeam, () => {
 
     expect(outcome).toStrictEqual({ status: "ready", team });
 
+    await expect(getChallengeTeam({ lessonId: lesson.id })).resolves.toStrictEqual(outcome);
+
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const settings = parsePlanSettings(stored.settings);
 
-    expect(settings.team).toStrictEqual(team);
+    expect(stored).toStrictEqual(plan);
+    expect(settings.team).toBeNull();
     expect(settings.focusAreas).toStrictEqual(["Statistics"]);
   });
 
