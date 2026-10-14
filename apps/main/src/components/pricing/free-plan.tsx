@@ -1,10 +1,12 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { type PlusPriceTable } from "@/data/subscriptions/get-plus-price-table";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted, getLocale } from "next-intl/server";
+import { CurrencyVariants } from "./currency-amounts";
 import {
   PLAN_CARD_CLASS,
   PLAN_NAME_ROW_CLASS,
@@ -59,17 +61,17 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
 
 /**
  * The free plan as a plan of its own, on a card like Plus's: what it costs (nothing, in the
- * reader's currency), its next step with "No card needed." under it for whoever hasn't started,
+ * currency Plus is priced in for the reader), its next step with "No card needed." under it for whoever hasn't started,
  * then what it includes, its numbers read from the rules the allowance enforces, so they can't
  * drift from what learners get. Its rows sit level with Plus's beside it, so the two plans read
  * across.
  */
 export async function FreePlan({
-  currency,
+  prices,
   viewerState,
 }: {
-  /** The reader's currency, the one Plus is priced in; unknown, the price isn't shown. */
-  currency: string | null;
+  /** Plus's prices, whose currency the free plan's zero is in; without them, it isn't shown. */
+  prices: PlusPriceTable;
   viewerState: PlusViewerState;
 }) {
   const t = await getExtracted();
@@ -85,8 +87,18 @@ export async function FreePlan({
       </div>
 
       <div className={PLAN_PRICE_CLASS}>
-        {currency && (
-          <PlanPrice amount={formatPlanPrice({ locale, price: { amount: 0, currency } })} />
+        {(prices.monthly || prices.yearly) && (
+          <PlanPrice
+            amount={
+              <CurrencyVariants
+                plan={prices.monthly ? "monthly" : "yearly"}
+                prices={prices}
+                render={({ currency }) =>
+                  formatPlanPrice({ locale, price: { amount: 0, currency } })
+                }
+              />
+            }
+          />
         )}
       </div>
 

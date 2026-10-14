@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { readCookie } from "@zoonk/utils/cookies";
 import { isJsonObject } from "@zoonk/utils/json";
 import {
   DEFAULT_LOCALE,
@@ -23,10 +24,7 @@ function getVisitorLocale(): SupportedLocale {
     return prefix;
   }
 
-  const saved = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith(`${LOCALE_COOKIE}=`))
-    ?.slice(LOCALE_COOKIE.length + 1);
+  const saved = readCookie(LOCALE_COOKIE);
 
   return saved && isValidLocale(saved) ? saved : DEFAULT_LOCALE;
 }

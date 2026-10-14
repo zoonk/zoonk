@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getStripePrices } from "./prices";
+import { getStripePriceTable, getStripePrices } from "./prices";
 
 const { mockList } = vi.hoisted(() => ({ mockList: vi.fn() }));
 
@@ -90,5 +90,53 @@ describe(getStripePrices, () => {
     mockList.mockRejectedValueOnce(providerError);
 
     await expect(getStripePrices(["plus_monthly"], "usd")).rejects.toBe(providerError);
+  });
+});
+
+describe(getStripePriceTable, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("prices every lookup key in every currency from one Stripe request", async () => {
+    mockList.mockResolvedValue({
+      data: [
+        {
+          currency: "usd",
+          currency_options: { brl: { unit_amount: 2990 } },
+          lookup_key: "plus_monthly",
+          unit_amount: 999,
+        },
+        { currency: "usd", currency_options: {}, lookup_key: "plus_yearly", unit_amount: 9999 },
+      ],
+    });
+
+    const result = await getStripePriceTable(["plus_monthly", "plus_yearly"], ["usd", "BRL"]);
+
+    expect(mockList).toHaveBeenCalledOnce();
+
+    expect(result).toStrictEqual({
+      plus_monthly: {
+        brl: { amount: 2990, currency: "brl" },
+        usd: { amount: 999, currency: "usd" },
+      },
+      plus_yearly: {
+        brl: { amount: 9999, currency: "usd" },
+        usd: { amount: 9999, currency: "usd" },
+      },
+    });
+  });
+
+  it("does not contact Stripe during E2E tests", async () => {
+    vi.stubEnv("E2E_TESTING", "true");
+
+    const result = await getStripePriceTable(["plus_monthly"], ["usd", "brl"]);
+
+    expect(result).toStrictEqual({});
+    expect(mockList).not.toHaveBeenCalled();
   });
 });

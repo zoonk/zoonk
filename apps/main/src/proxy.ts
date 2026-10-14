@@ -1,10 +1,12 @@
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale-request";
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { proxyApiRequest } from "./lib/api-proxy";
 import { getCatalogNotFound } from "./lib/catalog-not-found";
+import { VISITOR_COUNTRY_COOKIE } from "./lib/visitor-country";
 
 const localizedMiddleware = createMiddleware(routing);
 const HOME_PATH = new RegExp(`^/(?:${SUPPORTED_LOCALES.join("|")})?$`, "u");
@@ -13,6 +15,33 @@ const CATALOG_PATH = new RegExp(
   `^/(?:(?:${SUPPORTED_LOCALES.join("|")})/)?b/[^/]+/c/[^/]+(?:/|$)`,
   "u",
 );
+
+/**
+ * Keeps the visitor's country in a cookie the browser reads (`VISITOR_COUNTRY_COOKIE`), set only
+ * when it changed: the platform's geo header, else the region of the language the browser prefers.
+ * Static pages can't read the request, so the pricing page picks its currency from this.
+ */
+function keepVisitorCountry({
+  request,
+  response,
+}: {
+  request: NextRequest;
+  response: NextResponse;
+}) {
+  const country =
+    request.headers.get("x-vercel-ip-country") ??
+    getCountryFromAcceptLanguage(request.headers.get("accept-language"));
+
+  if (request.cookies.get(VISITOR_COUNTRY_COOKIE)?.value === country) {
+    return;
+  }
+
+  response.cookies.set(VISITOR_COUNTRY_COOKIE, country, {
+    path: "/",
+    sameSite: "lax",
+    secure: request.nextUrl.protocol === "https:",
+  });
+}
 
 /**
  * Course editions have their own slugs. UI-language variants of the same slug
@@ -25,6 +54,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const response = localizedMiddleware(request);
+  keepVisitorCountry({ request, response });
 
   /**
    * Resolve the home page's language before sending a session browser to Today, in one hop and

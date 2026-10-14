@@ -31,6 +31,7 @@
     "./logger": "./src/logger.ts",
     "./math-answer": "./src/math-answer.ts",
     "./locale": "./src/locale.ts",
+    "./locale-request": "./src/locale-request.ts",
     "./localized-number": "./src/localized-number.ts",
     "./name-words": "./src/name-words.ts",
     "./markdown-links": "./src/markdown-links.ts",

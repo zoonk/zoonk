@@ -6,13 +6,14 @@ import {
   VariantSwitch,
   VariantSwitchOption,
 } from "@/components/public/variant-switch";
+import { type PlusPriceTable } from "@/data/subscriptions/get-plus-price-table";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type PriceInfo } from "@zoonk/utils/currency";
 import { getExtracted, getLocale } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
+import { CurrencyAmounts, CurrencyVariants } from "./currency-amounts";
 import { PLAN_CARD_CLASS, PLAN_NAME_ROW_CLASS, PLAN_PRICE_CLASS, PlanPrice } from "./plan-includes";
 import { formatPlanPrice } from "./plan-price";
 import { PlusBenefits } from "./plus-benefits";
@@ -132,34 +133,35 @@ async function PlusAction({
 
 /**
  * Plus's price for each billing period, the picked one showing: the monthly price billed every
- * month, or the yearly one with what it comes to a month. Without a yearly price there's no choice
- * to make, and without any price checkout says it.
+ * month, or the yearly one with what it comes to a month, each in every billing currency (the
+ * reader's shows). Without a yearly price there's no choice to make, and without any price
+ * checkout says it.
  */
 async function PlusPrices({
   billingSwitch,
-  monthlyPrice,
-  yearlyPrice,
+  prices,
 }: {
   billingSwitch: string;
-  monthlyPrice: PriceInfo | null;
-  yearlyPrice: PriceInfo | null;
+  prices: PlusPriceTable;
 }) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const monthlyEquivalent = getMonthlyEquivalent({ yearlyPrice });
 
-  if (!monthlyPrice) {
+  if (!prices.monthly) {
     return <p className="text-muted-foreground text-sm">{t("Price shown at checkout")}</p>;
   }
 
   const monthly = (
     <>
-      <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
+      <PlanPrice
+        amount={<CurrencyAmounts locale={locale} plan="monthly" prices={prices} />}
+        per={t("per month")}
+      />
       <p className="text-muted-foreground text-[0.8125rem]">{t("Billed every month.")}</p>
     </>
   );
 
-  if (!yearlyPrice || !monthlyEquivalent) {
+  if (!prices.yearly) {
     return monthly;
   }
 
@@ -170,13 +172,27 @@ async function PlusPrices({
       </Variant>
 
       <Variant className="flex flex-col gap-2" name={billingSwitch} value="yearly">
-        <PlanPrice amount={formatPlanPrice({ locale, price: yearlyPrice })} per={t("per year")} />
-        <p className="text-muted-foreground text-[0.8125rem]">
-          {t.rich("That's <mono>{amount}</mono> a month.", {
-            amount: formatPlanPrice({ locale, price: monthlyEquivalent }),
-            mono: renderMono,
-          })}
-        </p>
+        <PlanPrice
+          amount={<CurrencyAmounts locale={locale} plan="yearly" prices={prices} />}
+          per={t("per year")}
+        />
+
+        <CurrencyVariants
+          as="p"
+          className="text-muted-foreground text-[0.8125rem]"
+          plan="yearly"
+          prices={prices}
+          render={(yearlyPrice) => {
+            const monthlyEquivalent = getMonthlyEquivalent({ yearlyPrice });
+
+            return monthlyEquivalent
+              ? t.rich("That's <mono>{amount}</mono> a month.", {
+                  amount: formatPlanPrice({ locale, price: monthlyEquivalent }),
+                  mono: renderMono,
+                })
+              : null;
+          }}
+        />
       </Variant>
     </>
   );
@@ -195,20 +211,17 @@ async function PlusPrices({
 export async function PlusPlan({
   billingSwitch,
   defaultPeriod = DEFAULT_PERIOD,
-  monthlyPrice,
+  prices,
   viewerState,
-  yearlyPrice,
 }: {
   billingSwitch: string;
   defaultPeriod?: BillingPeriod;
-  monthlyPrice: PriceInfo | null;
+  prices: PlusPriceTable;
   viewerState: PlusViewerState;
-  yearlyPrice: PriceInfo | null;
 }) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const comparison = getYearlyPriceComparison({ monthlyPrice, yearlyPrice });
-  const hasChoice = Boolean(monthlyPrice && yearlyPrice);
+  const hasChoice = Boolean(prices.monthly && prices.yearly);
 
   return (
     <section
@@ -244,12 +257,24 @@ export async function PlusPlan({
               value="yearly"
             >
               {t("Yearly")}
-              {comparison && (
-                <span className="text-muted-foreground font-normal">
-                  {t("save {amount}", {
-                    amount: formatPlanPrice({ locale, price: comparison.savings }),
-                  })}
-                </span>
+              {prices.yearly && (
+                <CurrencyVariants
+                  className="text-muted-foreground font-normal"
+                  plan="yearly"
+                  prices={prices}
+                  render={(yearlyPrice, currency) => {
+                    const comparison = getYearlyPriceComparison({
+                      monthlyPrice: prices.monthly?.[currency] ?? null,
+                      yearlyPrice,
+                    });
+
+                    return comparison
+                      ? t("save {amount}", {
+                          amount: formatPlanPrice({ locale, price: comparison.savings }),
+                        })
+                      : null;
+                  }}
+                />
               )}
             </VariantSwitchOption>
           </VariantSwitch>
@@ -257,11 +282,7 @@ export async function PlusPlan({
       </div>
 
       <div className={PLAN_PRICE_CLASS}>
-        <PlusPrices
-          billingSwitch={billingSwitch}
-          monthlyPrice={monthlyPrice}
-          yearlyPrice={yearlyPrice}
-        />
+        <PlusPrices billingSwitch={billingSwitch} prices={prices} />
       </div>
 
       <div className="mt-5 flex flex-col gap-2.5">

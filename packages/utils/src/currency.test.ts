@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { countryToCurrency, formatPrice } from "./currency";
+import { BILLING_CURRENCIES, COUNTRY_CURRENCY, countryToCurrency, formatPrice } from "./currency";
+
+describe("billing currencies", () => {
+  it("has every currency a country is billed in once, and the default for every other country", () => {
+    expect(BILLING_CURRENCIES).toContain(countryToCurrency("ZZ"));
+    expect(new Set(BILLING_CURRENCIES).size).toBe(BILLING_CURRENCIES.length);
+
+    expect(
+      Object.keys(COUNTRY_CURRENCY).every((country) =>
+        BILLING_CURRENCIES.includes(countryToCurrency(country)),
+      ),
+    ).toBe(true);
+  });
+});
 
 describe(countryToCurrency, () => {
   it("returns correct currency for known countries", () => {

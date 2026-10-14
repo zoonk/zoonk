@@ -1,7 +1,8 @@
 import { getPathname } from "@/i18n/navigation";
 import { verifyOneTimeTokenCallback } from "@zoonk/core/auth/ott/callback";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
-import { LOCALE_COOKIE, getLocaleFromRequest } from "@zoonk/utils/locale";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { getExtracted } from "next-intl/server";
 import { type NextRequest } from "next/server";
 

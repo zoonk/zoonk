@@ -10,7 +10,7 @@ import {
 import { PricingCovers } from "@/components/pricing/pricing-covers";
 import { PublicPage } from "@/components/public/public-page";
 import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
-import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
+import { getPlusPriceTable } from "@/data/subscriptions/get-plus-price-table";
 import { getLocalizedAlternates } from "@/lib/metadata/localized-url";
 import { getSession } from "@zoonk/core/users/session";
 import { type Metadata } from "next";
@@ -37,19 +37,10 @@ async function getViewerState(): Promise<PlusViewerState> {
   return { status: subscription ? "subscribed" : "free" };
 }
 
-/**
- * Prices depend on the reader's country and each plan's next step on who they are, so both stream
- * in under the static headline.
- */
+/** Each plan's next step depends on who's reading, so the plans stream in under the headline. */
 async function ViewerPricingPlans() {
-  const [{ monthlyPrice, yearlyPrice }, viewerState] = await Promise.all([
-    getPlusPrices(),
-    getViewerState(),
-  ]);
-
-  return (
-    <PricingPlans monthlyPrice={monthlyPrice} viewerState={viewerState} yearlyPrice={yearlyPrice} />
-  );
+  const [prices, viewerState] = await Promise.all([getPlusPriceTable(), getViewerState()]);
+  return <PricingPlans prices={prices} viewerState={viewerState} />;
 }
 
 /** The free plan's answer starts with trying lessons only for someone without an account. */
@@ -59,12 +50,8 @@ async function ViewerPricingQuestions() {
 
 /** The closing call is for visitors; anyone with a session already started. */
 async function VisitorPricingClose() {
-  const [session, { monthlyPrice, yearlyPrice }] = await Promise.all([
-    getSession(),
-    getPlusPrices(),
-  ]);
-
-  return session ? null : <PricingClose hasChoice={Boolean(monthlyPrice && yearlyPrice)} />;
+  const [session, prices] = await Promise.all([getSession(), getPlusPriceTable()]);
+  return session ? null : <PricingClose hasChoice={Boolean(prices.monthly && prices.yearly)} />;
 }
 
 /**

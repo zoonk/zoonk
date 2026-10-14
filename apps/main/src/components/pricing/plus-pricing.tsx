@@ -5,15 +5,16 @@ import {
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
 import { getStartControlClassName } from "@/components/public/public-start";
+import { type PlusPriceTable } from "@/data/subscriptions/get-plus-price-table";
 import { Link } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type PriceInfo } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { BillingCurrencyScope } from "./billing-currency";
 import { FreePlan } from "./free-plan";
 import { PLAN_CARD_CLASS } from "./plan-includes";
 import { type BillingPeriod, PlusLoginLink, PlusPlan, type PlusViewerState } from "./plus-plan";
@@ -76,29 +77,24 @@ const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
  * step for whoever is reading on the same line.
  */
 export function PricingPlans({
-  monthlyPrice,
+  prices,
   viewerState,
-  yearlyPrice,
 }: {
-  monthlyPrice: PriceInfo | null;
+  prices: PlusPriceTable;
   viewerState: PlusViewerState;
-  yearlyPrice: PriceInfo | null;
 }) {
-  const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
-
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
+    <BillingCurrencyScope className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
       <div className={PLANS_GRID_CLASS}>
-        <FreePlan currency={currency} viewerState={viewerState} />
+        <FreePlan prices={prices} viewerState={viewerState} />
 
         <PlusPlan
           billingSwitch={PRICING_BILLING_SWITCH}
-          monthlyPrice={monthlyPrice}
+          prices={prices}
           viewerState={viewerState}
-          yearlyPrice={yearlyPrice}
         />
       </div>
-    </div>
+    </BillingCurrencyScope>
   );
 }
 
@@ -187,33 +183,26 @@ export async function PricingClose({ hasChoice }: { hasChoice: boolean }) {
  */
 export function PlusPricing({
   defaultPeriod,
-  monthlyPrice,
+  prices,
   viewerState,
-  yearlyPrice,
 }: {
   /** The billing period its switch opens on: the one picked on the pricing page before logging in. */
   defaultPeriod?: BillingPeriod;
-  monthlyPrice: PriceInfo | null;
+  prices: PlusPriceTable;
   viewerState: PlusViewerState;
-  yearlyPrice: PriceInfo | null;
 }) {
-  const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
-
   return (
     <>
-      <div className="max-w-form flex flex-col gap-4">
+      <BillingCurrencyScope className="max-w-form flex flex-col gap-4">
         <PlusPlan
           billingSwitch="subscription-billing"
           defaultPeriod={defaultPeriod}
-          monthlyPrice={monthlyPrice}
+          prices={prices}
           viewerState={viewerState}
-          yearlyPrice={yearlyPrice}
         />
 
-        {viewerState.status === "visitor" && (
-          <FreePlan currency={currency} viewerState={viewerState} />
-        )}
-      </div>
+        {viewerState.status === "visitor" && <FreePlan prices={prices} viewerState={viewerState} />}
+      </BillingCurrencyScope>
 
       <PlusQuestions className="max-w-form" hasNoAccount={hasNoAccount(viewerState)} />
     </>

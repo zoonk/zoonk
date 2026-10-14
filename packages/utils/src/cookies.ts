@@ -44,3 +44,22 @@ export async function setCookie(
   // eslint-disable-next-line unicorn/no-document-cookie -- Fallback for older browsers
   document.cookie = parts.join("; ");
 }
+
+function decodeCookieValue(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+/**
+ * A cookie's value in the browser, from `document.cookie` (so never an httpOnly one), such as a
+ * hint the proxy leaves for static pages; null when it isn't set.
+ */
+export function readCookie(name: string): string | null {
+  const prefix = `${encodeURIComponent(name)}=`;
+  const entry = document.cookie.split(/;\s*/u).find((cookie) => cookie.startsWith(prefix));
+
+  return entry === undefined ? null : decodeCookieValue(entry.slice(prefix.length));
+}
