@@ -23,7 +23,9 @@ test.describe("Source change notice on Today", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    await expect(page.getByRole("complementary", { name: "What changed" })).toHaveText(MESSAGE);
+    // Today's one notice: a line on a phone, a panel in the aside here, saying all of it.
+    const note = page.getByRole("region", { name: "What changed" });
+    await expect(note.getByText(MESSAGE).filter({ visible: true })).toBeVisible();
     await page.context().close();
   });
 });

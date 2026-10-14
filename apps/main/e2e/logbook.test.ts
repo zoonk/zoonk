@@ -58,7 +58,11 @@ test.describe("Logbook", () => {
     await expect(page.getByRole("heading", { level: 1, name: /^What a week/u })).toBeVisible();
     await expect(page.getByRole("img", { name: "2 days studied" })).toBeVisible();
     await expect(page.getByText("30 min", { exact: true })).toBeVisible();
-    await expect(page.getByText("20 questions", { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("listitem").filter({ hasText: "Questions" })).toHaveText(
+      "Questions 20",
+    );
+
     await expect(page.getByText("30 min more than the week before!")).toBeVisible();
     await expectAccessibleScreen(page, "the weekly summary");
 

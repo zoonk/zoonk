@@ -9,7 +9,7 @@ import { createStudyDay, openAs } from "./study-day";
  */
 
 test("screens and menus stay still with reduced motion", async ({ browser }) => {
-  // A goal with a plan, so the Journey shows its path.
+  // A goal with a plan, so the Plan shows its path.
   const { user } = await createStudyDay();
   const page = await openAs(browser, user);
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -21,7 +21,7 @@ test("screens and menus stay still with reduced motion", async ({ browser }) => 
     moving.push(...found.map((animation) => `${where}: ${animation}`));
   };
 
-  for (const path of ["/today", "/buddy", "/logbook", "/journey", "/stats"]) {
+  for (const path of ["/today", "/buddy", "/logbook", "/plan", "/stats"]) {
     // oxlint-disable-next-line no-await-in-loop -- One page visits each screen in turn.
     await page.goto(path);
     // oxlint-disable-next-line no-await-in-loop -- The screen shows before its motion is read.

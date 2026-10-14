@@ -12,47 +12,54 @@ async function openUserMenu(page: Page) {
   return page.getByRole("menu").getByRole("menuitem");
 }
 
-test.describe("Catalog bar - Visitor", () => {
-  test("is a section's bar, without a logo: the way home and a way in", async ({ page }) => {
+test.describe("Catalog chrome", () => {
+  test("a visitor browses it in the app's frame, as a learner does, with a way in", async ({
+    page,
+  }) => {
     await page.goto("/courses");
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
-    const bar = page.getByRole("banner");
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
 
-    // The logo is for marketing pages and login; the app's goal, tabs and account stay out.
-    await expect(bar.getByRole("link", { name: "Zoonk home page" })).toHaveCount(0);
-    await expect(bar.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
-    await expect(bar.getByRole("button", { name: /user menu/iu })).toHaveCount(0);
-    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    await expect(sidebar.getByRole("navigation", { name: "Learning tabs" })).toBeVisible();
 
-    // The page names itself, so the bar only leads home (the home page for a visitor), and a
-    // visitor's way in is in plain sight.
-    await expect(bar.getByRole("link", { exact: true, name: "Home" })).toHaveAttribute("href", "/");
-    await expect(bar.getByRole("link", { exact: true, name: "Back" })).toHaveCount(0);
-    await expect(bar).not.toContainText("Courses");
-    await expect(bar.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/login");
+    await expect(sidebar.getByRole("link", { name: "Log in" })).toHaveAttribute(
+      "href",
+      "/login?next=%2Fcourses",
+    );
   });
 
-  test("leads a learner home to Today", async ({ noProgressUser, userWithoutProgress: page }) => {
-    const goal = await goalFixture({ userId: noProgressUser.id });
-    await planFixture({ goalId: goal.id });
-    await page.goto("/courses");
-
-    const home = page.getByRole("banner").getByRole("link", { exact: true, name: "Home" });
-    await expect(home).toHaveAttribute("href", "/today");
-    await home.click();
-    await expect(page).toHaveURL(/\/today$/u);
-  });
-});
-
-test.describe("User menu - Account", () => {
-  test("says whose account it is and holds search, statistics, the catalog, settings and logout; settings open on their hub and lead back", async ({
+  test("a learner browses it inside the app, with the learning tabs", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     const goal = await goalFixture({ userId: noProgressUser.id });
     await planFixture({ goalId: goal.id });
-    await page.goto("/journey");
+    await page.goto("/courses");
+
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+
+    // The sidebar says where the learner is: the catalog is one of its places.
+    await expect(
+      page
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Explore courses" }),
+    ).toHaveAttribute("aria-current", "page");
+
+    const tabs = page.getByRole("navigation", { name: "Learning tabs" }).first();
+    await tabs.getByRole("link", { name: /Today/u }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+  });
+});
+
+test.describe("User menu - Account", () => {
+  test("says whose account it is and holds search, statistics, the catalog, settings and the way out; settings keep the app's sidebar and lead back", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await planFixture({ goalId: goal.id });
+    await page.goto("/plan");
 
     const items = await openUserMenu(page);
 
@@ -64,33 +71,84 @@ test.describe("User menu - Account", () => {
       "Explore courses",
       "Settings",
       "Help",
-      "Logout",
+      "Log out",
     ]);
 
     await page.getByRole("menuitem", { name: "Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
-    // On a wide screen the hub's pages are in the sidebar, the profile beside them.
+    // On a wide screen the hub shows its first page, the profile.
     await expect(page.getByRole("heading", { level: 1, name: "Profile" })).toBeVisible();
 
-    // Settings replace the app's bar: no tabs, no goal, no account.
-    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
+    // On a wide screen settings keep the app's sidebar: its tabs, the goal and the account.
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(1);
+    await expect(page.getByRole("button", { name: /current goal/iu })).toBeVisible();
 
-    // The hub lists the settings pages; each page keeps them beside it on a wide screen.
-    const hub = page.getByRole("main");
-    await hub.getByRole("link", { name: /profile/iu }).click();
-    await expect(page.getByRole("heading", { level: 1, name: /profile/iu })).toBeVisible();
-
+    // The settings pages are tabs above each page.
     const settings = page.getByRole("navigation", { name: "Settings" });
+
+    await expect(settings.getByRole("link", { name: /profile/iu })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
     await settings.getByRole("link", { exact: true, name: "Help" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Help" })).toBeVisible();
 
-    // A settings page goes back to the hub, which leaves the section for the page the learner
-    // left for it.
-    await page.getByRole("banner").getByRole("link", { name: "Back to Settings" }).click();
+    // On a phone a settings page goes back to the hub, which leaves the section for the page the
+    // learner left for it.
+    await page.setViewportSize({ height: 812, width: 375 });
+    await page.getByRole("main").getByRole("link", { name: "Back to Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
-    await page.getByRole("banner").getByRole("link", { exact: true, name: "Back" }).click();
-    await expect(page).toHaveURL(/\/journey$/u);
+    await page.getByRole("main").getByRole("link", { exact: true, name: "Back" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
+
+    // A restored Plan entry remains the way back on the next visit to the same section.
+    await openUserMenu(page);
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await expect(page).toHaveURL(/\/settings$/u);
+    await page.getByRole("main").getByRole("link", { exact: true, name: "Help" }).click();
+    await expect(page).toHaveURL(/\/support$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Help" })).toBeVisible();
+    await page.getByRole("main").getByRole("link", { name: "Back to Settings" }).click();
+    await expect(page).toHaveURL(/\/settings$/u);
+    await page.getByRole("main").getByRole("link", { exact: true, name: "Back" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
+  });
+
+  test("in the sidebar the whole account row opens the menu: its name, Enter and Space", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await planFixture({ goalId: goal.id });
+    await page.goto("/plan");
+
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+    const account = sidebar.getByRole("button", { name: /^E2E User \w+, (?:.+, )?User menu$/u });
+    const menu = page.getByRole("menu");
+
+    // One target: the row is 44px tall and named by what it shows, the name first.
+    const box = await account.boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+
+    // Clicking the name opens the menu, again until the client has hydrated the row.
+    await expect(async () => {
+      await sidebar.getByText(/^E2E User \w+$/u).click();
+      await expect(menu).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await expect(menu).toContainText(noProgressUser.email);
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(account).toBeFocused();
+
+    await page.keyboard.press("Enter");
+    await expect(menu).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+
+    await page.keyboard.press("Space");
+    await expect(menu).toBeVisible();
   });
 
   test("in the learning tabs, Search opens the palette the top bar has no button for", async ({
@@ -109,21 +167,22 @@ test.describe("User menu - Account", () => {
       "Explore courses",
       "Settings",
       "Help",
-      "Logout",
+      "Log out",
     ]);
 
-    await page.getByRole("menuitem", { name: "Search" }).click();
+    await page.getByRole("menuitem", { name: "Search or ask…" }).click();
 
     const palette = page.getByRole("dialog", { name: "Search" });
     await expect(palette.getByRole("combobox", { name: "Search" })).toBeFocused();
-    await expect(palette.getByRole("group", { name: "Pages" })).toBeVisible();
+    await expect(palette.getByRole("group", { name: "Go to" })).toBeVisible();
   });
 
   test("the old My courses page opens Today, which starts a goal for a learner without one", async ({
     userWithoutProgress: page,
   }) => {
     await page.goto("/my");
-    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
   });
 });
 
@@ -132,11 +191,17 @@ test.describe("User menu - Guest", () => {
     const { context, page } = await openAsGuest(browser);
     await page.goto("/buddy");
 
-    // A guest has no name yet ("Anonymous" to auth), so the avatar shows no initial.
-    await expect(page.getByRole("button", { name: /user menu/iu })).toHaveText("");
+    // A guest has no name yet ("Anonymous" to auth), so the avatar shows no initial, and the
+    // sidebar's account row says whose the menu is instead.
+    const account = page
+      .getByRole("complementary", { name: "Sidebar" })
+      .getByRole("button", { name: /^Guest, (?:.+, )?User menu$/u });
+
+    await expect(account).toHaveText(/^Guest\d*$/u);
 
     const items = await openUserMenu(page);
 
+    // A guest who already has an account finds the way in too.
     await expect(items).toHaveText([
       /^Search/u,
       /^Statistics/u,
@@ -144,6 +209,7 @@ test.describe("User menu - Guest", () => {
       "Settings",
       "Help",
       "Create an account",
+      "Log in",
     ]);
 
     await expect(page.getByRole("menuitem", { name: "Create an account" })).toHaveAttribute(

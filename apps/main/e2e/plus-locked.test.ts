@@ -37,6 +37,8 @@ async function openExamLearner(browser: Browser, plan: Plan) {
  * makes it, a full review of every topic, and the mocks stay in sight, locked, under practice.
  */
 async function expectLockedMocksOnToday(page: Page) {
+  // Practice anytime is the phone/tablet entry; wider screens use the sidebar and palette.
+  await page.setViewportSize({ height: 860, width: 820 });
   await page.goto("/today");
 
   const week = page.getByRole("region", { name: "This week" });
@@ -86,30 +88,42 @@ async function expectLockedMocksOnExamPage(page: Page) {
 }
 
 test.describe("Plus features are never hidden", () => {
-  test("a free learner sees the exam's mocks locked on Today, the Journey and the exam page, each opening what Plus unlocks", async ({
+  test("a free learner sees the exam's mocks locked on Today, the Plan and the exam page, each opening what Plus unlocks", async ({
     browser,
   }) => {
     const { context, page } = await openExamLearner(browser, "free");
 
     await expectLockedMocksOnToday(page);
     await expectAccessibleScreen(page, "Today with locked mocks");
+    await page.setViewportSize({ height: 900, width: 1440 });
 
-    // The Journey's path keeps its mocks, marked Plus: the next one opens the exam page.
-    await page.goto("/journey");
-
-    const path = page.getByRole("list", { name: "Your journey" });
-    const current = path.locator('li[aria-current="step"]');
+    // The Plan keeps her mocks, marked Plus: her next one opens the exam page, and a phase ahead
+    // counts its own.
+    await page.goto("/plan");
 
     await expect(
-      current.getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
+      page
+        .getByRole("region", { name: "Next on your path" })
+        .getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
     ).toHaveAttribute("href", "/exam");
 
+    await page
+      .getByRole("region", { exact: true, name: "Phases" })
+      .locator('[data-slot="roadmap-band"]')
+      .nth(1)
+      .click();
+
+    // Its mocks (the next one, or how many it holds) are marked Plus too.
+    const ahead = page.getByRole("dialog", { name: "Fill the gaps" });
+
     await expect(
-      path
-        .locator('li[data-state="upcoming"]')
-        .filter({ hasText: /\d+ mock exams?/u })
+      ahead
+        .getByRole("listitem")
+        .filter({ hasText: /mock exam/iu })
         .first(),
     ).toContainText("Available with Plus");
+
+    await page.keyboard.press("Escape");
 
     await expectLockedMocksOnExamPage(page);
     await expectAccessibleScreen(page, "the exam page with locked mocks");
@@ -161,7 +175,7 @@ test.describe("Plus features are never hidden", () => {
   test("a Plus learner sees the same mocks without any lock", async ({ browser }) => {
     const { context, page } = await openExamLearner(browser, "plus");
 
-    for (const path of ["/today", "/journey", "/exam"]) {
+    for (const path of ["/today", "/plan", "/exam"]) {
       // oxlint-disable-next-line no-await-in-loop -- One page after another, in one browser.
       await page.goto(path);
       // oxlint-disable-next-line no-await-in-loop -- Checked once the page is there.

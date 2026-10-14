@@ -8,21 +8,20 @@ import {
   type MemoryView,
 } from "@zoonk/core/memory/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Switch } from "@zoonk/ui/components/switch";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { downloadFile } from "@zoonk/utils/download";
 import { safeAsync } from "@zoonk/utils/error";
 import { DownloadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useOptimistic, useState, useTransition } from "react";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { useOptimistic, useState, useTransition } from "react";
+import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import {
-  SettingCard,
-  SettingCardControl,
-  SettingCardDescription,
-  SettingCardLabel,
-  SettingCardText,
-} from "../_components/setting-card";
+  PageSection,
+  PageSectionFooter,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "../_components/page";
+import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
@@ -83,31 +82,24 @@ function MemorySwitch({
   onChange: (enabled: boolean) => void;
 }) {
   const t = useExtracted();
-  const descriptionId = useId();
-  const labelId = useId();
 
   return (
-    <SettingCard className="gap-4">
-      <SettingCardText>
-        <SettingCardLabel id={labelId}>{t("Use memory")}</SettingCardLabel>
-        <SettingCardDescription id={descriptionId}>
-          <MemorySwitchDescription enabled={enabled} />
-        </SettingCardDescription>
-      </SettingCardText>
-
-      <SettingCardControl>
-        <Switch
-          aria-describedby={descriptionId}
-          aria-labelledby={labelId}
-          checked={enabled}
-          onCheckedChange={onChange}
-        />
-      </SettingCardControl>
-    </SettingCard>
+    <ListGroup>
+      <SwitchSettingRow
+        checked={enabled}
+        description={<MemorySwitchDescription enabled={enabled} />}
+        label={t("Use memory")}
+        onCheckedChange={onChange}
+      />
+    </ListGroup>
   );
 }
 
-function MemoryExportButton({ exportMemory }: Pick<MemoryActions, "exportMemory">) {
+/**
+ * "Download my memory" as a row, the way the profile's "Download my data" is: what it is, and a
+ * small Download at the row's end that says when the file is being prepared.
+ */
+function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
@@ -124,13 +116,26 @@ function MemoryExportButton({ exportMemory }: Pick<MemoryActions, "exportMemory"
   };
 
   return (
-    <div className="flex flex-col items-start gap-1">
-      <Button disabled={isPending} onClick={download} size="sm" variant="outline">
-        <DownloadIcon aria-hidden="true" />
-        {t("Download my memory")}
-      </Button>
+    <div className="flex flex-col gap-2">
+      <ListGroup>
+        <SettingRow
+          description={t("Everything in your memory, as one file")}
+          label={t("Download my memory")}
+        >
+          <Button
+            aria-label={isPending ? t("Preparing your memory…") : t("Download my memory")}
+            disabled={isPending}
+            onClick={download}
+            size="sm"
+            variant="outline"
+          >
+            {isPending ? <Spinner aria-hidden="true" /> : <DownloadIcon aria-hidden="true" />}
+            {isPending ? t("Preparing…") : t("Download")}
+          </Button>
+        </SettingRow>
+      </ListGroup>
       {failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("We couldn't prepare the download. Try again.")}
         </p>
       )}
@@ -181,7 +186,7 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
   const groups = groupByCategory(screen.facts);
 
   return (
-    <div className="flex flex-col gap-8" data-slot="memory-screen">
+    <div className="flex flex-col gap-7" data-slot="memory-screen">
       <MemorySwitch enabled={screen.enabled} onChange={screen.setEnabled} />
 
       {screen.lastChange && (
@@ -193,13 +198,13 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
       )}
 
       {screen.failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("That didn't save. Try again.")}
         </p>
       )}
 
       {groups.length === 0 ? (
-        <p className="text-muted-foreground py-6 text-center text-sm">
+        <p className="text-muted-foreground text-sm">
           {screen.enabled
             ? t(
                 "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here.",
@@ -230,12 +235,12 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
       )}
 
       <footer className="flex flex-col gap-4">
-        <p className="text-muted-foreground px-1 text-sm">
+        <MemoryExportRow exportMemory={actions.exportMemory} />
+        <PageSectionFooter>
           {t(
             "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
           )}
-        </p>
-        <MemoryExportButton exportMemory={actions.exportMemory} />
+        </PageSectionFooter>
       </footer>
     </div>
   );

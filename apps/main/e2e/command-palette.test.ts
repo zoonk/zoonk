@@ -203,37 +203,52 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog).not.toBeVisible();
   });
 
-  test("shows the Pages, My account and Help groups a visitor can use", async ({ page }) => {
+  test("shows the same Go to, Pricing, Log in and Explore courses vocabulary to visitors", async ({
+    page,
+  }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    const pages = dialog.getByRole("group", { name: "Pages" });
+    const pages = dialog.getByRole("group", { name: "Go to" });
 
     await expect(pages).toBeVisible();
 
     await expect(pages.getByRole("option")).toHaveText([
       /home page/iu,
-      /^courses$/iu,
+      /^explore courses/iu,
       /^start a goal$/iu,
+      /^pricing$/iu,
+      /^log in$/iu,
     ]);
 
-    await expect(dialog.getByText("My account")).toBeVisible();
-    await expect(dialog.getByText(/^login$/iu)).toBeVisible();
-    await expect(dialog.getByText(/^language$/iu)).toBeVisible();
+    await expect(pages.getByRole("option", { name: /^log in$/iu })).toHaveAttribute(
+      "href",
+      "/login?next=%2Fcourses",
+    );
+
+    await expect(dialog.getByText("My account")).toHaveCount(0);
 
     // Should NOT show authenticated-only options
     await expect(dialog.getByText(/^subscription$/iu)).not.toBeVisible();
     await expect(dialog.getByText(/^profile$/iu)).not.toBeVisible();
 
     await expect(dialog.getByRole("option", { exact: true, name: "Help" })).toBeVisible();
+
+    await dialog.getByRole("combobox", { name: /search/iu }).fill("settings");
+
+    await expect(pages.getByRole("option")).toHaveText([
+      /^settings/iu,
+      /^preferences$/iu,
+      /^language$/iu,
+    ]);
   });
 
-  test("selecting Courses or Start a goal opens that page", async ({ page }) => {
+  test("selecting Explore courses or Start a goal opens that page", async ({ page }) => {
     await openCommandPalette(page);
 
     await page
       .getByRole("dialog")
-      .getByRole("option", { name: /^courses$/iu })
+      .getByRole("option", { name: /^explore courses/iu })
       .click();
 
     await expect(page).toHaveURL(/\/courses$/u);
@@ -252,27 +267,42 @@ test.describe("Command Palette - Unauthenticated", () => {
 });
 
 test.describe("Command Palette - Authenticated", () => {
-  test("My account lists a learner's options without Login, and opens the language and the subscription", async ({
+  test("Settings pages are found in Go to, without Log in, and open the language and subscription", async ({
     userWithoutProgress: page,
   }) => {
     await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByText(/^my courses$/iu)).toHaveCount(0);
-    await expect(dialog.getByText(/^subscription$/iu)).toBeVisible();
-    await expect(dialog.getByText(/^profile$/iu)).toBeVisible();
-    await expect(dialog.getByText(/^logout$/iu)).toBeVisible();
-    await expect(dialog.getByText(/^login$/iu)).not.toBeVisible();
+    const input = dialog.getByRole("combobox", { name: SEARCH_CONTROL_NAME });
 
-    await dialog.getByText(/^language$/iu).click();
+    // A learner's palette opens on their actions and places; the account is a query away.
+    await expect(dialog.getByRole("group", { name: "Go to" })).toBeVisible();
+    await expect(dialog.getByRole("group", { name: "My account" })).toHaveCount(0);
 
-    // The language lives in Appearance.
+    for (const option of ["Subscription", "Profile"]) {
+      // oxlint-disable-next-line no-await-in-loop -- One query after the other, in one field.
+      await input.fill(option);
+
+      // oxlint-disable-next-line no-await-in-loop -- Checked before the next query.
+      await expect(
+        dialog.getByRole("group", { name: "Go to" }).getByRole("option", { name: option }),
+      ).toBeVisible();
+    }
+
+    await input.fill("log");
+    await expect(dialog.getByRole("option", { exact: true, name: "Log in" })).toHaveCount(0);
+
+    await input.fill("language");
+    await dialog.getByRole("option", { name: /^Language/u }).click();
+
+    // The language lives in Preferences.
     await expect(page.getByRole("combobox", { name: "App language" })).toBeVisible();
 
     await page.goto("/courses");
     await openCommandPalette(page);
-    await dialog.getByText(/^subscription$/iu).click();
+    await input.fill("subscription");
+    await dialog.getByRole("option", { name: /^Subscription/u }).click();
 
     // Verify user sees subscription page
     await expect(
@@ -284,8 +314,14 @@ test.describe("Command Palette - Authenticated", () => {
   test("selecting Logout logs user out and shows the visitor home page", async ({ logoutPage }) => {
     await logoutPage.goto("/courses");
 
-    // Verify authenticated state by checking command palette shows Logout option
+    // Verify authenticated state by checking command palette finds the Logout option
     await openCommandPalette(logoutPage);
+
+    await logoutPage
+      .getByRole("dialog")
+      .getByRole("combobox", { name: SEARCH_CONTROL_NAME })
+      .fill("logout");
+
     await expect(logoutPage.getByRole("dialog").getByText(/^logout$/iu)).toBeVisible();
 
     // Logout reloads the app at the home page, so wait for the new main document
@@ -301,13 +337,13 @@ test.describe("Command Palette - Authenticated", () => {
     ]);
 
     await expect(
-      logoutPage.getByRole("heading", { level: 1, name: /get ready for/iu }),
+      logoutPage.getByRole("heading", { level: 1, name: /Know what to study/iu }),
     ).toBeVisible();
 
     // Verify user is logged out - command palette should show Login option
     await logoutPage.goto("/courses");
     await openCommandPalette(logoutPage);
-    await expect(logoutPage.getByRole("dialog").getByText(/^login$/iu)).toBeVisible();
+    await expect(logoutPage.getByRole("dialog").getByText(/^log in$/iu)).toBeVisible();
   });
 });
 
@@ -341,7 +377,9 @@ test.describe("Command Palette - Course Search", () => {
     }
   });
 
-  test("shows chapter results below courses and opens a course or a chapter", async ({ page }) => {
+  test("shows compact course and chapter rows in the catalog and opens either destination", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `E2E Palette Mixed ${uniqueId}`;
     const courseName = `${searchTerm} Course`;
@@ -377,9 +415,11 @@ test.describe("Command Palette - Course Search", () => {
     const chapterOption = dialog.getByRole("option", { name: new RegExp(`^${chapterName}`, "u") });
 
     await expect(courseOption).toBeVisible();
-    await expect(courseOption.getByText(courseDescription)).toBeVisible();
+    await expect(courseOption.getByText(courseDescription)).toHaveCount(0);
     await expect(chapterOption).toBeVisible();
-    await expect(chapterOption.getByText(chapterDescription)).toBeVisible();
+    await expect(chapterOption.getByText(chapterDescription)).toHaveCount(0);
+    await expect(chapterOption.getByText(courseName)).toBeVisible();
+    await expect(dialog.getByRole("group", { name: "In the catalog" })).toBeVisible();
 
     const optionsText = await dialog.getByRole("option").allTextContents();
     const courseIndex = optionsText.findIndex((text) => text.includes(courseName));
@@ -447,7 +487,7 @@ test.describe("Command Palette - Course Search", () => {
     await expectNoHorizontalScrollableOverflow(dialog);
   });
 
-  test("starts onboarding with a non-matching query as the goal", async ({ page }) => {
+  test("ends every query with starting a goal from it, never a dead end", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const prompt = `E2E Empty Search ${uniqueId}`;
 
@@ -457,15 +497,16 @@ test.describe("Command Palette - Course Search", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByPlaceholder(/search/iu).fill(prompt);
 
-    await expect(dialog.getByText(/no results found/iu)).toBeVisible();
+    const startGoal = dialog
+      .getByRole("group", { name: "New goal" })
+      .getByRole("option", { name: `Start a goal: “${prompt}”` });
 
-    const startGoalLink = dialog.getByRole("link", { name: `Start a goal: ${prompt}` });
-
-    await expect(startGoalLink).toBeVisible();
-    await startGoalLink.click();
+    await expect(startGoal).toBeVisible();
+    await expect(dialog.getByText(/no results found/iu)).toHaveCount(0);
+    await startGoal.click();
 
     await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(prompt)}`);
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue(prompt);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(prompt);
   });
 
   test("shows only results from the active app language", async ({ page }) => {
@@ -515,12 +556,12 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expectActiveOption(page, /home page/iu);
 
     // Also wait for the second option to be present before navigating
-    const coursesOption = dialog.getByRole("option", { name: /^courses$/iu });
+    const coursesOption = dialog.getByRole("option", { name: /^explore courses/iu });
     await expect(coursesOption).toBeVisible();
 
-    // Press ArrowDown - "Courses" should now be selected
+    // Press ArrowDown - "Explore courses" should now be selected
     await page.keyboard.press("ArrowDown");
-    await expectActiveOption(page, /^courses$/iu);
+    await expectActiveOption(page, /^explore courses/iu);
 
     // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");
@@ -533,13 +574,16 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await openCommandPalette(page);
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    // Type to filter to Home option, then press Enter to select it
+    // Type to filter to Home option, the first one, then press Enter to select it
     await page.getByPlaceholder(/search/iu).fill("Home");
-    await page.keyboard.press("ArrowDown");
+    await expectActiveOption(page, /home page/iu);
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { level: 1, name: /get ready for/iu })).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: /Know what to study/iu }),
+    ).toBeVisible();
   });
 });
 

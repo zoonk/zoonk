@@ -23,10 +23,15 @@ async function loadCadence(goalId: string): Promise<unknown> {
   return isJsonObject(plan.settings) ? (plan.settings.writtenCadence ?? "weekly") : null;
 }
 
+/**
+ * "Adjust plan" beside the Plan's title: her old plan no longer fits the date moved closer, and the
+ * Plan's suggestion says so with an "Adjust plan" of its own.
+ */
 async function openEditor(page: Page) {
-  await page.goto("/journey");
-  await expect(page.locator('[data-slot="journey"]')).toBeVisible();
-  await page.getByRole("button", { name: "Adjust plan" }).click();
+  await page.goto("/plan");
+  const plan = page.locator('[data-slot="journey"]');
+  await expect(plan).toBeVisible();
+  await plan.getByRole("button", { name: "Adjust plan" }).click();
   return page.getByRole("dialog", { name: "Adjust your plan" });
 }
 

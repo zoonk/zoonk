@@ -75,9 +75,11 @@ test.describe("Paywall", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const note = page.getByRole("complementary", { name: "Exam prep on the free plan" });
+    const note = page.getByRole("region", { name: "Exam prep on the free plan" });
 
-    await expect(note.getByText("Your free week of exam prep is over")).toBeVisible();
+    await expect(
+      note.getByRole("heading", { name: "Your free week of exam prep is over" }),
+    ).toBeVisible();
 
     await expect(note.getByRole("link", { name: "See Plus" })).toHaveAttribute(
       "href",
@@ -100,9 +102,9 @@ test.describe("Paywall", () => {
     });
 
     await page.goto("/session");
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await continueToLastStep(page);
-    await expect(page.getByRole("button", { name: "Finish" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await expect(page.getByRole("button", { name: EXTRA_TIME_BUTTON })).toHaveCount(0);
 
     // Nor does it name tomorrow's new lesson, which the free plan no longer opens.
@@ -152,8 +154,12 @@ test.describe("Paywall", () => {
 
     const card = page.getByRole("region", { name: "Today's session" });
 
-    await expect(card.getByRole("heading", { name: "Reviews" })).toBeVisible();
-    await expect(card.getByText("Practice mistakes")).toBeVisible();
+    await expect(card.getByRole("listitem")).toHaveText([
+      /^Reviews.*30\smin$/u,
+      /^Practice mistakes.*2\smin$/u,
+    ]);
+
+    await expect(card.getByRole("listitem").nth(0)).toHaveAttribute("aria-current", "step");
     await expect(card.getByText(/^(?:Quick review|Mixed practice)$/u)).toHaveCount(0);
     await page.context().close();
   });
@@ -241,7 +247,7 @@ test.describe("Paywall", () => {
 
     await expect(
       notice.getByText(
-        "The free plan follows one goal at a time. To start another, pause your current goal from the menu on Journey. Quick questions work anytime.",
+        "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.",
       ),
     ).toBeVisible();
 
@@ -251,8 +257,8 @@ test.describe("Paywall", () => {
     );
 
     // The box stays open for quick questions, so a goal can still be typed and read.
-    await page.getByRole("textbox", { name: "Your goal" }).fill(goal);
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+    await page.getByRole("button", { name: "Build my plan" }).click();
     await page.getByRole("button", { name: "Looks right" }).click();
 
     // A goal that can't start says so as the same notice, with Plus, never as a passing error.
@@ -260,7 +266,7 @@ test.describe("Paywall", () => {
 
     await expect(
       refused.getByText(
-        "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on Journey, or get Plus.",
+        "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
       ),
     ).toBeVisible();
 

@@ -102,10 +102,10 @@ export function MemoryFactRow({
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <li className="flex items-start gap-3 px-4 py-3.5" data-slot="memory-fact">
+    <li className="flex items-start gap-3 py-2.75" data-slot="memory-fact">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="text-base leading-snug">{fact.statement}</p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-[0.9375rem] leading-snug">{fact.statement}</p>
+        <p className="text-muted-foreground text-[0.8125rem] leading-snug">
           <MemoryFactSource fact={fact} />
         </p>
       </div>

@@ -1,20 +1,13 @@
 "use client";
 
-import { Switch } from "@zoonk/ui/components/switch";
+import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { type SupportedLocale } from "@zoonk/utils/locale";
-import { type LucideIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useOptimistic } from "react";
+import { useOptimistic } from "react";
+import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import {
-  SettingCard,
-  SettingCardControl,
-  SettingCardDescription,
-  SettingCardIcon,
-  SettingCardLabel,
-  SettingCardText,
-} from "../_components/setting-card";
+import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
 import { type AppearanceBuddy, BuddySettings } from "./buddy-settings";
@@ -24,7 +17,7 @@ import { LanguageSetting } from "./language-setting";
 export type { AppearanceBuddy } from "./buddy-settings";
 
 /**
- * What Appearance shows: the learning profile's buddy and sounds, plus the belt and Energy the
+ * What Preferences shows: the learning profile's buddy and sounds, plus the belt and Energy the
  * buddy is drawn with. Visitors without a session have nothing to personalize but the language.
  */
 export type AppearanceView = {
@@ -32,11 +25,11 @@ export type AppearanceView = {
   canPersonalize: boolean;
   dailyLimitMinutes: number | null;
   look: BuddyLook;
-  buddy: AppearanceBuddy | null;
+  buddy: ResolvedBuddy;
   soundsEnabled: boolean;
 };
 
-/** How Appearance saves. Each resolves to whether it was saved. */
+/** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
   setDailyLimit: (minutes: number | null) => Promise<boolean>;
@@ -48,41 +41,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     <PageSectionHeader>
       <PageSectionTitle>{children}</PageSectionTitle>
     </PageSectionHeader>
-  );
-}
-
-function SwitchSetting({
-  checked,
-  description,
-  icon,
-  label,
-  onCheckedChange,
-}: {
-  checked: boolean;
-  description: string;
-  icon: LucideIcon;
-  label: string;
-  onCheckedChange: (checked: boolean) => void;
-}) {
-  const labelId = useId();
-  const descriptionId = useId();
-
-  return (
-    <SettingCard>
-      <SettingCardIcon icon={icon} />
-      <SettingCardText>
-        <SettingCardLabel id={labelId}>{label}</SettingCardLabel>
-        <SettingCardDescription id={descriptionId}>{description}</SettingCardDescription>
-      </SettingCardText>
-      <SettingCardControl>
-        <Switch
-          aria-describedby={descriptionId}
-          aria-labelledby={labelId}
-          checked={checked}
-          onCheckedChange={onCheckedChange}
-        />
-      </SettingCardControl>
-    </SettingCard>
   );
 }
 
@@ -99,7 +57,7 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
     failed,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
-        () => setOptimisticBuddy(next),
+        () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
       ),
     setDailyLimit: (next: number | null) =>
@@ -117,8 +75,9 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
 }
 
 /**
- * Appearance: the buddy, sounds, a daily limit and the app's language. Light, dark and reduced
- * motion follow the device, so there's no theme picker.
+ * Preferences: the buddy, then the lessons' sounds and daily limit as one list, then the app's
+ * language, each a row with its control at its end. Light, dark and reduced motion follow the
+ * device, so there's no theme picker.
  */
 export function AppearanceScreen({
   actions,
@@ -133,7 +92,7 @@ export function AppearanceScreen({
   const appearance = useAppearance({ actions, view });
 
   return (
-    <div className="flex flex-col gap-8" data-slot="appearance-screen">
+    <div className="flex flex-col gap-7" data-slot="appearance-screen">
       {view.canPersonalize && (
         <PageSection>
           <SectionTitle>{t("Your buddy")}</SectionTitle>
@@ -149,33 +108,30 @@ export function AppearanceScreen({
       {view.canPersonalize && (
         <PageSection>
           <SectionTitle>{t("Lessons")}</SectionTitle>
-          <SwitchSetting
-            checked={appearance.soundsEnabled}
-            description={t("When you get it right or finish")}
-            icon={Volume2Icon}
-            label={t("Sounds")}
-            onCheckedChange={appearance.setSoundsEnabled}
-          />
-        </PageSection>
-      )}
-
-      {view.canPersonalize && (
-        <PageSection>
-          <SectionTitle>{t("Healthy use")}</SectionTitle>
-          <DailyLimitSetting
-            minutes={appearance.dailyLimitMinutes}
-            onChange={appearance.setDailyLimit}
-          />
+          <ListGroup>
+            <SwitchSettingRow
+              checked={appearance.soundsEnabled}
+              description={t("When you get it right or finish")}
+              label={t("Sounds")}
+              onCheckedChange={appearance.setSoundsEnabled}
+            />
+            <DailyLimitSetting
+              minutes={appearance.dailyLimitMinutes}
+              onChange={appearance.setDailyLimit}
+            />
+          </ListGroup>
         </PageSection>
       )}
 
       <PageSection>
         <SectionTitle>{t("Language")}</SectionTitle>
-        <LanguageSetting onChange={onLanguageChange} />
+        <ListGroup>
+          <LanguageSetting onChange={onLanguageChange} />
+        </ListGroup>
       </PageSection>
 
       {appearance.failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("That didn't save. Try again.")}
         </p>
       )}

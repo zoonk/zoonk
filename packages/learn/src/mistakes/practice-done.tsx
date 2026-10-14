@@ -1,50 +1,38 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, CheckCheckIcon, CheckIcon, TargetIcon, ZapIcon } from "lucide-react";
+import { BrainIcon, CheckCheckIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { FactChip, FactChips } from "../_components/fact-chips";
-import { KindTile } from "../_components/kind-tile";
-import { LearnLink } from "../learn-link";
-import { SessionBody } from "../session/session-body";
+import { StatTile, StatTiles } from "../_components/stat-tile";
+import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
+import { MissionMoment } from "../missions/mission-moment";
+import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
 
-/** The one way out, at the bottom on phones and right under the moment on wide screens. */
-function BackLink({ backHref }: { backHref: string }) {
+/**
+ * The one way out, pinned at the bottom like every task's main action (or Enter), in the bar's
+ * row: full width on a phone, as wide as its label from `lg`.
+ */
+function BackBar({ backHref }: { backHref: string }) {
   const t = useExtracted();
-  const backRef = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "mt-8 h-12 w-full rounded-full text-base")}
-      href={backHref}
-      ref={backRef}
-    >
-      {t("Back")}
-    </LearnLink>
+    <TaskActionBar>
+      <TaskActions>
+        <TaskMainLink href={backHref}>{t("Back")}</TaskMainLink>
+      </TaskActions>
+    </TaskActionBar>
   );
 }
 
 /**
- * A finished moment's layout: its anchor and words in the middle of a phone's screen with the way
- * back at the bottom, and on wide screens all of it together in the middle.
+ * What the run did, as numbers on their tiles: mistakes fixed, right answers (green once one is
+ * right), Brain Power (never "+0"). A run that fixed nothing and counted nothing says the rest come
+ * back, and so does a run with a miss, so a hard day reads as "not yet".
  */
-function DoneLayout({ children, footer }: { children: React.ReactNode; footer: React.ReactNode }) {
-  return (
-    <SessionBody className="lg:justify-center-safe">
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center lg:flex-none">
-        {children}
-      </div>
-      {footer}
-    </SessionBody>
-  );
-}
-
-/** What the run did, as chips: mistakes fixed, right answers, Brain Power (never "+0"). */
-function PracticeFacts({
+function PracticeStats({
   fixed,
   summary,
 }: {
@@ -55,37 +43,40 @@ function PracticeFacts({
   const brainPower = summary?.brainPower ?? 0;
 
   if (fixed === 0 && !summary) {
-    return (
-      <p className="text-muted-foreground text-balance">
-        {t("The rest come back another day, when they stick better.")}
-      </p>
-    );
+    return <StepDetail>{t("The rest come back another day, when they stick better.")}</StepDetail>;
   }
 
+  const tiles = [fixed > 0, summary !== null, brainPower > 0].filter(Boolean).length;
+  const missed = summary !== null && summary.correct < summary.total;
+
   return (
-    <FactChips className="justify-center">
-      {fixed > 0 && (
-        <FactChip>
-          <CheckCheckIcon aria-hidden="true" />
-          {t("{count, plural, one {# mistake fixed} other {# mistakes fixed}}", { count: fixed })}
-        </FactChip>
+    <>
+      <StatTiles className={cn(tiles === 3 && "sm:grid-cols-3", tiles === 1 && "grid-cols-1")}>
+        {fixed > 0 && (
+          <StatTile icon={<CheckCheckIcon />} label={t("Mistakes fixed")} value={fixed} />
+        )}
+        {summary && (
+          <StatTile
+            icon={<TargetIcon />}
+            label={t("Right answers")}
+            tone={summary.correct > 0 ? "success" : "neutral"}
+            value={`${summary.correct}/${summary.total}`}
+          />
+        )}
+        {brainPower > 0 && (
+          <StatTile
+            icon={<BrainIcon />}
+            label={t("Brain Power")}
+            tone="brain"
+            value={`+${brainPower}`}
+          />
+        )}
+      </StatTiles>
+
+      {missed && (
+        <StepDetail>{t("The rest come back another day, when they stick better.")}</StepDetail>
       )}
-      {summary && (
-        <FactChip>
-          <TargetIcon aria-hidden="true" />
-          {t("{correct} of {total} right", {
-            correct: String(summary.correct),
-            total: String(summary.total),
-          })}
-        </FactChip>
-      )}
-      {brainPower > 0 && (
-        <FactChip>
-          <ZapIcon aria-hidden="true" />
-          {t("+{points} Brain Power", { points: String(brainPower) })}
-        </FactChip>
-      )}
-    </FactChips>
+    </>
   );
 }
 
@@ -94,23 +85,27 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
   const t = useExtracted();
 
   return (
-    <DoneLayout footer={<BackLink backHref={backHref} />}>
-      <KindTile icon={CalendarClockIcon} kind="mistakes" size="lg" />
-      <div className="flex flex-col items-center gap-2" role="status">
-        <h1 className="text-3xl font-bold tracking-tight text-balance">
-          {t("Nothing to practice yet")}
-        </h1>
-        <p className="text-muted-foreground text-balance">
-          {t("Mistakes come back for practice from the day after you make them.")}
-        </p>
-      </div>
-    </DoneLayout>
+    <>
+      <TaskBody>
+        <StepCard role="status">
+          <StepHeader>
+            <h2 className="text-title">{t("Nothing to practice yet")}</h2>
+            <StepDetail>
+              {t("Mistakes come back for practice from the day after you make them.")}
+            </StepDetail>
+          </StepHeader>
+        </StepCard>
+      </TaskBody>
+
+      <BackBar backHref={backHref} />
+    </>
   );
 }
 
 /**
- * The end of a run, at the last question or stopped early: a check that pops in, what it did as
- * chips (mistakes fixed, right answers, Brain Power), and back to the notebook.
+ * The end of a run, at the last question or stopped early, straight on the page under the run's
+ * header (its title a step under the header's): what it did as numbers on their tiles (mistakes
+ * fixed, right answers, Brain Power), and back to the notebook from the pinned bar.
  */
 export function PracticeDone({
   backHref,
@@ -124,16 +119,24 @@ export function PracticeDone({
   const t = useExtracted();
 
   return (
-    <DoneLayout footer={<BackLink backHref={backHref} />}>
-      <span className="bg-success/10 text-success animate-in zoom-in-50 fade-in flex size-20 items-center justify-center rounded-full duration-500 ease-out motion-reduce:animate-none">
-        <CheckIcon aria-hidden="true" className="size-10" strokeWidth={2.5} />
-      </span>
+    <>
+      <TaskBody>
+        <StepCard aria-live="polite" role="status">
+          <h2 className="text-title">{t("Practice done")}</h2>
+          <PracticeStats fixed={fixed} summary={summary} />
 
-      <div aria-live="polite" className="flex flex-col items-center gap-4" role="status">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("Practice done")}</h1>
-        <PracticeFacts fixed={fixed} summary={summary} />
-      </div>
-    </DoneLayout>
+          {summary?.missionMoment && (
+            <MissionMoment
+              completed={summary.missionMoment.completed}
+              fullMeal={summary.missionMoment.fullMeal}
+              missions={summary.missionMoment.missions}
+            />
+          )}
+        </StepCard>
+      </TaskBody>
+
+      <BackBar backHref={backHref} />
+    </>
   );
 }
 
@@ -142,11 +145,11 @@ export function PracticeSaving() {
   const t = useExtracted();
 
   return (
-    <SessionBody className="items-center justify-center">
+    <TaskBody>
       <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
         <Spinner />
         {t("Saving your practice…")}
       </p>
-    </SessionBody>
+    </TaskBody>
   );
 }

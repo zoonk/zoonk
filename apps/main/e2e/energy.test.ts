@@ -6,7 +6,7 @@ import { expect, test } from "./fixtures";
 const DAYS_OUTSIDE_CHART = 400;
 
 test.describe("Energy Page", () => {
-  test("shows Energy now, its past 12 months as a heatmap with its legend, its lifetime numbers and one line on how it moves", async ({
+  test("shows Energy now and its lifetime numbers on tiles, its past 12 months as a heatmap with its key, and one line on how it moves", async ({
     baseURL,
     browser,
   }) => {
@@ -15,7 +15,8 @@ test.describe("Energy Page", () => {
     const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
     const todayLabel = new Intl.DateTimeFormat("en", {
-      dateStyle: "short",
+      day: "numeric",
+      month: "short",
       timeZone: "UTC",
     }).format(today);
 
@@ -41,9 +42,9 @@ test.describe("Energy Page", () => {
       await expect(page.getByRole("main").getByText(/^50%$/u)).toBeVisible();
       await expect(energyChart).toBeVisible();
 
-      // The readout starts on today, the newest day with Energy.
+      // The readout starts on today, the newest day with Energy, in the mono face's short form.
       await expect(energyChart.locator('[data-slot="contribution-calendar-readout"]')).toHaveText(
-        `50% Energy on ${todayLabel}`,
+        `${todayLabel} · 50% Energy`,
       );
 
       // The day at 100% is older than the chart, so no square has the top shade.
@@ -56,11 +57,16 @@ test.describe("Energy Page", () => {
       ).toContainText(/Low\s*High/u);
 
       // Over the whole history, that day still counts as one at its maximum.
-      await expect(page.getByText("Average Energy")).toBeVisible();
-      await expect(page.getByText("Days at Max Energy")).toBeVisible();
+      const tiles = page.locator('[data-slot="stat-tile"]');
+      // Across 401 days: 100 down to 1, then 300 idle days at 0, and today's 50.
+      // (5050 + 50) / 401 = 12.7%, including the days without a stored completion.
+      await expect(tiles.filter({ hasText: /^Average/u })).toContainText("12.7%");
+      await expect(tiles.filter({ hasText: /^At 100%/u })).toContainText("1 day");
 
       await expect(
-        page.getByText("Energy rises when you study and drops a little on days off."),
+        page.getByText(
+          "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay.",
+        ),
       ).toBeVisible();
     } finally {
       await browserContext.close();
@@ -92,9 +98,12 @@ test.describe("Energy Page", () => {
       await expect(page.getByRole("main").getByText(starts)).toBeVisible();
       await expect(page.getByRole("main").getByText(/^2%$/u)).toHaveCount(0);
 
+      // The overview's Energy tile says it isn't there yet; its page says when it starts.
       await page.goto("/stats");
-      await expect(page.getByRole("main").getByText(starts)).toBeVisible();
-      await expect(page.getByRole("main").getByText(/^Energy\s*\d+%/u)).toHaveCount(0);
+      const overview = page.getByRole("main");
+
+      await expect(overview.getByRole("link", { name: "Energy Not yet" })).toBeVisible();
+      await expect(overview.getByRole("link", { name: /^Energy \d+%/u })).toHaveCount(0);
     } finally {
       await browserContext.close();
     }

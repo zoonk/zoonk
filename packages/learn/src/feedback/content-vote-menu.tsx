@@ -7,9 +7,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
 import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "../_components/detail-page";
+import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { ContentVoteMenuItems, ReportProblemItem } from "./content-vote-menu-items";
 import { useContentFeedback } from "./feedback-context";
 
@@ -19,7 +21,8 @@ import { useContentFeedback } from "./feedback-context";
  * screen's keys pause, so a number or Enter can't answer the question under it. `label` names the
  * button for screen readers ("Course options") and `screen` names the page in a report's context.
  * In a page's top bar it takes the bar's size (`size="icon-bar"`); beside a detail page's main
- * action it's that page's outline "…" (`size="detail"`). Hosts without feedback get no menu.
+ * action it's that page's outline "…" (`size="detail"`); in a task's header its glyph sits on the
+ * column's edge (`size="task"`). Hosts without feedback get no menu.
  */
 export function ContentVoteMenu({
   label,
@@ -30,7 +33,7 @@ export function ContentVoteMenu({
 }: {
   label: string;
   screen: string;
-  size?: "detail" | "icon" | "icon-bar";
+  size?: "detail" | "icon" | "icon-bar" | "task";
   target: ContentVoteTarget;
   /** False for a menu that only reports a problem. */
   votes?: boolean;
@@ -53,7 +56,11 @@ export function ContentVoteMenu({
           size === "detail" ? (
             <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
           ) : (
-            <Button className="shrink-0" size={size} variant="ghost" />
+            <Button
+              className={cn("shrink-0", size === "task" && TASK_HEADER_ICON_CLASS.end)}
+              size={size === "task" ? "icon" : size}
+              variant="ghost"
+            />
           )
         }
       >

@@ -92,8 +92,8 @@ test.describe("Plan-change insight bigger than a lesson", () => {
       const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
       await page.goto("/today");
 
-      const card = page.getByRole("complementary", { name: "From your recent answers" });
-      await expect(card.getByText(MESSAGE)).toBeVisible();
+      const card = page.getByRole("region", { name: "From your recent answers" });
+      await expect(card.getByText(MESSAGE).filter({ visible: true })).toBeVisible();
       // Ana's plan has a date, so Today says only what it adds.
       await expect(card.getByText("Adds 3 lessons.", { exact: true })).toBeVisible();
 

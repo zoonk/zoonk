@@ -16,7 +16,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
-import { openAs } from "./study-day";
+import { openAs, pickAndCheck } from "./study-day";
 
 /** A passage long enough to fold on a phone once just read. */
 const PASSAGE = {
@@ -88,7 +88,17 @@ test.describe("Question sets in practice", () => {
     await expect(passage.getByText(PASSAGE.source)).toBeVisible();
     await expect(passage.getByRole("button", { name: "Read it all again" })).toBeHidden();
 
-    await page.getByRole("button", { name: "Right answer" }).click();
+    // On a wide screen the passage sits beside its question, in the task's aside.
+    const opening = page.getByRole("heading", { name: /^Opening/u });
+
+    const [wideText, wideQuestion] = await Promise.all([
+      passage.boundingBox(),
+      opening.boundingBox(),
+    ]);
+
+    expect(wideText?.x ?? 0).toBeGreaterThan((wideQuestion?.x ?? 0) + (wideQuestion?.width ?? 0));
+
+    await pickAndCheck(page, "Right answer");
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
@@ -102,6 +112,16 @@ test.describe("Question sets in practice", () => {
 
     await page.setViewportSize({ height: 844, width: 390 });
     await expect(readAgain).toHaveAttribute("aria-expanded", "false");
+
+    // On a phone it's above the question, in the column.
+    const visitors = page.getByRole("heading", { name: /^Visitors/u });
+
+    const [phoneText, phoneQuestion] = await Promise.all([
+      passage.boundingBox(),
+      visitors.boundingBox(),
+    ]);
+
+    expect(phoneText?.y ?? 0).toBeLessThan(phoneQuestion?.y ?? 0);
     await readAgain.click();
 
     await expect(passage.getByRole("button", { name: "Show less" })).toHaveAttribute(
@@ -109,7 +129,7 @@ test.describe("Question sets in practice", () => {
       "true",
     );
 
-    await page.getByRole("button", { name: "Wrong answer" }).click();
+    await pickAndCheck(page, "Wrong answer");
     await expect(feedback.getByText("Not quite")).toBeVisible();
 
     const attempts = await prisma.attempt.findMany({ where: { itemId: { in: itemIds } } });

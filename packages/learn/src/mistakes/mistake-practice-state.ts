@@ -1,5 +1,6 @@
 import { type MistakePracticeResult } from "@zoonk/core/mistakes/practice";
 import { type FinishMistakePracticeResult } from "@zoonk/core/mistakes/practice-finish";
+import { type TaskSegment } from "../_components/task-header";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
 import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
@@ -15,7 +16,13 @@ export type MistakePracticeAnswer = {
 
 /** The grade of one answer, the trap a trap drill names, and the answer's id the run counts. */
 export type MistakePracticeFeedback =
-  | (ChoiceFeedback & { answerId: string; fixed: boolean; trap: string | null })
+  | (ChoiceFeedback & {
+      answerId: string;
+      fixed: boolean;
+      fixedMistakeIds: string[];
+      mistakeStatus: "open" | "fixed";
+      trap: string | null;
+    })
   | null;
 
 /** What the run earned: its Brain Power, right answers and the time it added to today. */
@@ -32,6 +39,7 @@ export type PracticeStep = {
 };
 
 type Graded = NonNullable<MistakePracticeFeedback>;
+type PracticeVerdict = "read" | "right" | "wrong";
 
 /**
  * Where the run is: a gap's idea before its questions, a misread's question before its answers,
@@ -49,7 +57,8 @@ type PracticePhase =
 
 /**
  * The run keeps the questions it started with: grading or counting an answer refreshes the page,
- * and a fixed mistake leaves the server's practice, but not the run in progress.
+ * and a fixed mistake leaves the server's practice, but not the run in progress. `verdicts` holds
+ * each answered question's grade, in order, for the header's segments.
  */
 type PracticeState = {
   answerIds: string[];
@@ -57,6 +66,7 @@ type PracticeState = {
   index: number;
   phase: PracticePhase;
   steps: PracticeStep[];
+  verdicts: PracticeVerdict[];
 };
 
 type PracticeAction =
@@ -103,6 +113,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     index: 0,
     phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
     steps,
+    verdicts: [],
   };
 }
 
@@ -110,6 +121,35 @@ function afterIdea(step: PracticeStep | undefined): PracticePhase {
   return isReadFirst(step?.entry.drill ?? null)
     ? { kind: "reading" }
     : { kind: "answering", selected: null };
+}
+
+function getFixedIds(state: PracticeState, action: Extract<PracticeAction, { type: "answered" }>) {
+  const fixed = [...new Set([...state.fixedIds, ...action.feedback.fixedMistakeIds])];
+
+  if (action.feedback.mistakeStatus === "open") {
+    return fixed.filter((id) => id !== action.mistakeId);
+  }
+
+  return action.feedback.fixed && !fixed.includes(action.mistakeId)
+    ? [...fixed, action.mistakeId]
+    : fixed;
+}
+
+/** An explicit unknown is neutral; the clock running out remains a miss. */
+function getPracticeVerdict({
+  answer,
+  isCorrect,
+  timedOut,
+}: {
+  answer: ChoiceAnswer;
+  isCorrect: boolean;
+  timedOut: boolean;
+}): PracticeVerdict {
+  if (!timedOut && "dontKnow" in answer) {
+    return "read";
+  }
+
+  return isCorrect ? "right" : "wrong";
 }
 
 function answered(state: PracticeState, action: Extract<PracticeAction, { type: "answered" }>) {
@@ -122,11 +162,12 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
   return {
     ...state,
     answerIds: [...state.answerIds, action.feedback.answerId],
-    fixedIds:
-      action.feedback.fixed && !state.fixedIds.includes(action.mistakeId)
-        ? [...state.fixedIds, action.mistakeId]
-        : state.fixedIds,
+    fixedIds: getFixedIds(state, action),
     phase: { ...phase, feedback: action.feedback, kind: "feedback" as const },
+    verdicts: [
+      ...state.verdicts,
+      getPracticeVerdict({ ...phase, isCorrect: action.feedback.isCorrect }),
+    ],
   };
 }
 
@@ -163,4 +204,54 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     default:
       return state;
   }
+}
+
+/**
+ * Each question of the run as a segment of its header: green once answered right, red once
+ * answered wrong or the time runs out, neutral for an explicit "I'm not sure", the one in view,
+ * then the ones ahead.
+ */
+export function getPracticeSegments(state: PracticeState): TaskSegment[] {
+  return state.steps.map((_, index) => {
+    const verdict = state.verdicts[index];
+
+    if (verdict !== undefined) {
+      return verdict;
+    }
+
+    return index === state.index ? "current" : "ahead";
+  });
+}
+
+/**
+ * Which of the run's mistakes the question in view drills, and how many the run holds ("2 of 3"),
+ * from the questions it started with: a mistake can bring several questions.
+ */
+export function getPracticeMistakePosition(state: PracticeState): {
+  current: number;
+  total: number;
+} {
+  const mistakeIds = [...new Set(state.steps.map((step) => step.entry.mistakeId))];
+  const current = state.steps[state.index]?.entry.mistakeId;
+
+  return { current: current ? mistakeIds.indexOf(current) + 1 : 0, total: mistakeIds.length };
+}
+
+/** Spaces and line breaks as one space, so a text reads the same however it was joined. */
+function squashSpaces(text: string): string {
+  return text.replaceAll(/\s+/gu, " ").trim();
+}
+
+/**
+ * Whether the question in view is the one the mistake was made on. The notebook keeps a lesson's
+ * question with its context before it, and a bank question as it's asked.
+ */
+export function isMistakeQuestion(step: PracticeStep): boolean {
+  const saved = squashSpaces(step.entry.snapshot.question);
+  const { context, question } = step.question;
+
+  return (
+    saved === squashSpaces(question) ||
+    (Boolean(context) && saved === squashSpaces(`${context} ${question}`))
+  );
 }

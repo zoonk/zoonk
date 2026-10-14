@@ -3,9 +3,13 @@
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, CircleCheckIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { Fragment, useState } from "react";
 import {
   DETAIL_PRIMARY_CLASS,
   DetailActions,
@@ -16,35 +20,39 @@ import {
   DetailHero,
   DetailHeroText,
   DetailLayout,
-  DetailPrimaryLabel,
   DetailTitle,
 } from "../_components/detail-page";
-import { KindTile } from "../_components/kind-tile";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListGroup,
   ListRowContent,
-  ListRowIcon,
   ListRowLeading,
-  ListRowLink,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { INBOX_PAGE_CLASS } from "../_components/page";
+import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
-import { MistakeEntryCard } from "./mistake-entry";
+import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
+import { NotebookAvailabilityText } from "./notebook-availability-text";
 
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
 
 /**
  * Where the notebook lives (its pages are query parameters on it), back to Today, where
- * practice runs and a noticed pattern's page (the pattern id is appended).
+ * practice runs (`?skill=` with a skill's id practices just its mistakes), where a lesson opens
+ * (its id is appended) and a noticed pattern's page (the pattern id is appended).
  */
-type MistakesHrefs = { back: string; notebook: string; pattern: string; practice: string };
+type MistakesHrefs = {
+  back: string;
+  lesson: string;
+  notebook: string;
+  pattern: string;
+  practice: string;
+};
 
 /** The notebook's page, read from the query by the host. */
 type MistakesFilters = { nextOffset: number | null; status: "fixed" | "open" };
@@ -74,149 +82,232 @@ function groupBySkill(mistakes: readonly MistakeEntry[]) {
   return [...Map.groupBy(mistakes, (mistake) => mistake.skill?.id ?? "none").values()];
 }
 
+/** A skill's group, by its skill (or "none" for the questions without one). */
+function getGroupKey(group: readonly MistakeEntry[]): string {
+  return group[0]?.skill?.id ?? "none";
+}
+
+/** From `lg` the notebook is an inbox, its list beside the selected skill's mistakes. */
+const INBOX_QUERY = "(min-width: 64rem)";
+
 /**
- * The notebook at a glance: its tile, how many mistakes are left to fix in big type (or how many
- * were fixed, on that page), and under it the one thing to do about them.
+ * The notebook at a glance: its name as the title, how many are left to fix and fixed in one
+ * mono line, and beside them from `md` the one thing to do about them, practicing them (Enter
+ * opens it).
  */
 function NotebookHero({
+  goalTitle,
   hrefs,
   notebook,
-  showingFixed,
 }: {
+  goalTitle: string | null;
   hrefs: MistakesHrefs;
   notebook: Notebook;
-  showingFixed: boolean;
 }) {
   const t = useExtracted();
-  const { counts } = notebook;
+  const ref = useEnterClick<HTMLAnchorElement>({ enabled: notebook.availability.ready > 0 });
+  const { availability, counts } = notebook;
 
   return (
-    <>
-      <DetailHero>
-        <KindTile kind="mistakes" size="lg" />
-        <DetailHeroText>
-          <DetailEyebrow>{t("Mistakes notebook")}</DetailEyebrow>
-          <DetailTitle className="tabular-nums">
-            {showingFixed
-              ? t("{fixed, plural, one {# fixed} other {# fixed}}", { fixed: counts.fixed })
-              : t("{open, plural, =0 {Nothing to fix right now} one {# to fix} other {# to fix}}", {
-                  open: counts.open,
-                })}
-          </DetailTitle>
-          {!showingFixed && counts.open === 0 && (
-            <DetailFacts>
-              {t("Mistakes from your lessons and reviews show up here, ready to practice.")}
-            </DetailFacts>
-          )}
-          {!showingFixed && counts.open > 0 && counts.fixed > 0 && (
-            <DetailFacts className="tabular-nums">
-              {t("{fixed, plural, one {# fixed} other {# fixed}}", { fixed: counts.fixed })}
-            </DetailFacts>
-          )}
-        </DetailHeroText>
-      </DetailHero>
+    <DetailHero>
+      <DetailHeroText>
+        {goalTitle && <DetailEyebrow>{goalTitle}</DetailEyebrow>}
+        <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
+        <DetailFacts>
+          <NotebookAvailabilityText availability={availability} fixed={counts.fixed} />
+        </DetailFacts>
+        {availability.ready === 0 && availability.tomorrow > 0 && (
+          <p className="text-muted-foreground text-sm text-pretty">
+            {t("Mistakes come back for practice from the day after you make them.")}
+          </p>
+        )}
+      </DetailHeroText>
 
-      {!showingFixed && counts.open > 0 && (
+      {availability.ready > 0 && (
         <DetailActions>
           <LearnLink
             className={DETAIL_PRIMARY_CLASS}
             href={hrefs.practice}
             // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
             prefetch={false}
+            ref={ref}
           >
-            <DetailPrimaryLabel label={t("Practice mistakes")} />
+            {t("Practice mistakes")}
+            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
           </LearnLink>
         </DetailActions>
       )}
-    </>
+    </DetailHero>
   );
 }
 
-/** "See fixed mistakes" as a row with how many, opening the notebook's fixed ones. */
-function FixedMistakesRow({ count, notebookHref }: { count: number; notebookHref: string }) {
+const TAB_CLASS =
+  "focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
+
+/** "To fix 3 · Fixed 1": the notebook's two lists, side by side, the one shown current. */
+function NotebookTabs({
+  counts,
+  notebookHref,
+  showingFixed,
+}: {
+  counts: Notebook["counts"];
+  notebookHref: string;
+  showingFixed: boolean;
+}) {
   const t = useExtracted();
 
+  const tabs = [
+    { count: counts.open, current: !showingFixed, label: t("To fix"), status: "open" as const },
+    { count: counts.fixed, current: showingFixed, label: t("Fixed"), status: "fixed" as const },
+  ];
+
   return (
-    <ListGroup>
-      <ListRowLink
-        href={buildNotebookHref({ notebook: notebookHref, status: "fixed" })}
-        prefetch={false}
-      >
-        <ListRowLeading>
-          <ListRowIcon className="text-success">
-            <CircleCheckIcon />
-          </ListRowIcon>
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{t("See fixed mistakes")}</ListRowTitle>
-        </ListRowContent>
-        <ListRowTrailing>{count}</ListRowTrailing>
-      </ListRowLink>
-    </ListGroup>
+    <nav aria-label={t("Mistakes")} data-slot="mistakes-tabs">
+      <ul className="flex items-center gap-1">
+        {tabs.map((tab) => (
+          <li key={tab.status}>
+            <LearnLink
+              aria-current={tab.current ? "page" : undefined}
+              className={TAB_CLASS}
+              href={buildNotebookHref({ notebook: notebookHref, status: tab.status })}
+            >
+              {tab.label}
+              <span className="font-mono text-xs tabular-nums">{tab.count}</span>
+            </LearnLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
 /**
- * One skill's mistakes behind one row: its name and how many, opening in place to each question,
- * the learner's answer, the right one and why. A notebook with a single skill opens it.
+ * The mistakes by skill: on a phone a list whose rows open in place to their mistakes; from `lg`
+ * an inbox, the skills on the left (the selected one highlighted) and its mistakes on the right,
+ * each with the question, what the learner answered against the right answer, and why. One list
+ * drawn both ways: each skill's mistakes follow its row, and from `lg` the grid puts the shown one
+ * in the right column. Every row is a mistake, so a row wears no kind's dot; in "Fixed" each one
+ * wears the done mark, as every finished thing does.
  */
-function SkillGroup({
-  group,
-  open,
+function MistakesInbox({
+  groups,
+  hrefs,
   trueFalseLabels,
 }: {
-  group: MistakeEntry[];
-  open: boolean;
+  groups: MistakeEntry[][];
+  hrefs: MistakesHrefs;
   trueFalseLabels: Notebook["trueFalseLabels"];
 }) {
   const t = useExtracted();
-  const [first] = group;
+  const keys = groups.map((group) => getGroupKey(group));
+  const [picked, setPicked] = useState<string | null>(keys[0] ?? null);
+
+  // The inbox stays mounted when the list changes (the other tab, the next page): a skill picked
+  // in one list that isn't in the new one gives way to the new list's first skill. On a phone a
+  // learner who closed every row keeps them closed.
+  const selected = picked === null || keys.includes(picked) ? picked : (keys[0] ?? null);
+
+  // The inbox's rows: one per skill, then the rest of the column under them. The selected skill's
+  // hairlines turn transparent from `lg`, as `divided-rows` does around a list's highlighted row.
+  const rowsStyle: CSSPropertiesWithVariables = { "--skills": groups.length };
+
+  // On a phone a row opens and closes its mistakes; in the inbox it only selects.
+  const select = (key: string) =>
+    setPicked(selected === key && !globalThis.matchMedia(INBOX_QUERY).matches ? null : key);
 
   return (
-    <li>
-      <details className="group" open={open}>
-        <summary
-          className={cn(
-            LIST_ROW_INTERACTIVE_CLASS,
-            "cursor-pointer list-none [&::-webkit-details-marker]:hidden",
-          )}
-        >
-          <ListRowContent>
-            <ListRowTitle>{first?.skill?.name ?? t("Other questions")}</ListRowTitle>
-          </ListRowContent>
-          <ListRowTrailing>{group.length}</ListRowTrailing>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-open:rotate-180 motion-reduce:transition-none"
-          />
-        </summary>
+    <div
+      className="flex flex-col lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:grid-rows-[repeat(var(--skills),auto)_1fr] lg:items-start lg:gap-x-8 lg:*:aria-expanded:border-t-transparent lg:[&>[aria-expanded=true]+section+button]:border-t-transparent [&>button+button]:border-t [&>section+button]:border-t"
+      data-slot="mistakes-inbox"
+      style={rowsStyle}
+    >
+      {groups.map((group) => {
+        const key = getGroupKey(group);
+        const open = selected === key;
+        const name = group[0]?.skill?.name ?? t("Other questions");
+        const panelId = `mistakes-skill-${key}`;
 
-        <ul className="flex flex-col px-4 pb-2">
-          {group.map((mistake) => (
-            <MistakeEntryCard
-              key={mistake.id}
-              mistake={mistake}
-              trueFalseLabels={trueFalseLabels}
-            />
-          ))}
-        </ul>
-      </details>
-    </li>
+        return (
+          <Fragment key={key}>
+            <button
+              aria-controls={panelId}
+              aria-expanded={open}
+              className={cn(
+                LIST_ROW_INTERACTIVE_CLASS,
+                "group/skill lg:col-start-1",
+                open && "lg:before:bg-muted",
+              )}
+              onClick={() => select(key)}
+              type="button"
+            >
+              <ListRowLeading>{group[0]?.status === "fixed" && <DoneMark />}</ListRowLeading>
+              <ListRowContent>
+                <ListRowTitle>{name}</ListRowTitle>
+              </ListRowContent>
+              <ListRowTrailing>{group.length}</ListRowTrailing>
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
+              />
+            </button>
+
+            <section
+              aria-label={name}
+              className="pb-2 lg:col-start-2 lg:row-span-full lg:min-h-full lg:border-l lg:pb-0 lg:pl-8"
+              hidden={!open}
+              id={panelId}
+            >
+              <ul className="flex flex-col">
+                {group.map((mistake, index) => (
+                  <MistakeEntryCard
+                    continued={
+                      mistake.snapshot.set !== null &&
+                      mistake.snapshot.set !== undefined &&
+                      group[index - 1]?.snapshot.set?.id === mistake.snapshot.set.id
+                    }
+                    key={mistake.id}
+                    links={getMistakeEntryLinks({ hrefs, mistake })}
+                    mistake={mistake}
+                    trueFalseLabels={trueFalseLabels}
+                  />
+                ))}
+              </ul>
+            </section>
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+/** An empty list names what is missing and where entries come from, without promising immediate practice. */
+function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground text-sm text-pretty" data-slot="mistakes-empty">
+      {showingFixed
+        ? t("Mistakes you fix in practice show up here.")
+        : t("Nothing to fix right now. Mistakes from your lessons and reviews show up here.")}
+    </p>
   );
 }
 
 /**
- * The mistakes notebook: how many are left to fix and one "Practice mistakes" button that drills
- * them by cause; the mistakes themselves wait behind one row per skill. For a language goal, the
- * pattern noticed in them is one tap away.
+ * The mistakes notebook: its name, how many are left to fix and fixed, and one "Practice mistakes"
+ * button that drills them by cause; then the two lists ("To fix", "Fixed") and the mistakes by
+ * skill, an inbox from `lg`. For a language goal, the pattern noticed in them is one tap away.
  */
 export function MistakesNotebook({
   filters,
+  goalTitle = null,
   hrefs,
   notebook,
   pattern,
 }: {
   filters: MistakesFilters;
+  /** The goal the notebook is for, over its title. */
+  goalTitle?: string | null;
   hrefs: MistakesHrefs;
   notebook: Notebook;
   pattern: NoticedPattern | null;
@@ -227,70 +318,48 @@ export function MistakesNotebook({
   const groups = groupBySkill(mistakes);
 
   return (
-    <div className="flex flex-col gap-8">
-      <LearnPageBar
-        back={
-          showingFixed
-            ? { href: hrefs.notebook, label: t("Mistakes notebook") }
-            : { href: hrefs.back, label: t("Today") }
-        }
-        title={t("Mistakes notebook")}
-      />
+    <DetailLayout
+      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
+      className={INBOX_PAGE_CLASS}
+      data-slot="mistakes-notebook"
+    >
+      <DetailAside>
+        <NotebookHero goalTitle={goalTitle} hrefs={hrefs} notebook={notebook} />
+        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
+      </DetailAside>
 
-      <DetailLayout>
-        <DetailAside>
-          <NotebookHero hrefs={hrefs} notebook={notebook} showingFixed={showingFixed} />
-        </DetailAside>
+      <DetailContent>
+        {pattern && !showingFixed && (
+          <ListGroup>
+            <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
+          </ListGroup>
+        )}
 
-        <DetailContent>
-          {pattern && !showingFixed && (
-            <ListGroup>
-              <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
-            </ListGroup>
-          )}
+        {groups.length > 0 ? (
+          <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
+            <MistakesInbox
+              groups={groups}
+              hrefs={hrefs}
+              trueFalseLabels={notebook.trueFalseLabels}
+            />
+          </section>
+        ) : (
+          <EmptyNotebook showingFixed={showingFixed} />
+        )}
 
-          {groups.length > 0 && (
-            <PageSection aria-labelledby="mistakes-list-title">
-              <PageSectionHeader>
-                <PageSectionTitle id="mistakes-list-title">
-                  {showingFixed ? t("What you fixed") : t("What you got wrong")}
-                </PageSectionTitle>
-              </PageSectionHeader>
-
-              <ul className={LIST_GROUP_CLASS}>
-                {groups.map((group) => (
-                  <SkillGroup
-                    group={group}
-                    key={group[0]?.skill?.id ?? "none"}
-                    open={groups.length === 1}
-                    trueFalseLabels={notebook.trueFalseLabels}
-                  />
-                ))}
-              </ul>
-            </PageSection>
-          )}
-
-          {!showingFixed && counts.fixed > 0 && (
-            <FixedMistakesRow count={counts.fixed} notebookHref={hrefs.notebook} />
-          )}
-
-          <div className="flex flex-wrap gap-2 empty:hidden">
-            {filters.nextOffset !== null && (
-              <LearnLink
-                className={buttonVariants({ variant: "outline" })}
-                href={buildNotebookHref({
-                  ...filters,
-                  notebook: hrefs.notebook,
-                  offset: filters.nextOffset,
-                })}
-                prefetch={false}
-              >
-                {t("Show more")}
-              </LearnLink>
-            )}
-          </div>
-        </DetailContent>
-      </DetailLayout>
-    </div>
+        {filters.nextOffset !== null && (
+          <LearnLink
+            className={buttonVariants({ className: "self-start", variant: "outline" })}
+            href={buildNotebookHref({
+              ...filters,
+              notebook: hrefs.notebook,
+              offset: filters.nextOffset,
+            })}
+          >
+            {t("Show more")}
+          </LearnLink>
+        )}
+      </DetailContent>
+    </DetailLayout>
   );
 }

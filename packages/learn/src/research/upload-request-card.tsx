@@ -26,7 +26,7 @@ type CardState = "answered" | "asking" | "dismissed" | "uploading";
  * What's missing, in the goal's own terms: an exam's notice (a language certificate's official
  * guide), a law's text, a class's material.
  */
-function useRequestCopy({
+export function useRequestCopy({
   examDocument: document,
   goalKind,
   reason,
@@ -123,7 +123,7 @@ export function UploadRequestCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn("bg-muted/60 flex flex-col gap-3 rounded-2xl p-4", className)}
+      className={cn("bg-muted/60 flex flex-col gap-3 rounded-xl p-4", className)}
     >
       <div className="flex items-start gap-3">
         <FileSearchIcon
@@ -185,7 +185,7 @@ export function UploadRequestCard({
       )}
 
       {failed && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="text-destructive-text text-sm" role="alert">
           {t("We couldn't save that. Try again.")}
         </p>
       )}

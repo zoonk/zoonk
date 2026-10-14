@@ -1,8 +1,8 @@
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 
-const ACTIVE_DAY_LABEL = /^1 activity finished on /iu;
-const EMPTY_DAY_LABEL = /^No study on /iu;
+const ACTIVE_DAY_LABEL = / · \d+ activit(?:y|ies)$/u;
+const EMPTY_DAY_LABEL = / · No study$/u;
 
 test.describe("Activity Page", () => {
   test("learners see their study days, the calendar that lights them and inspect its days", async ({
@@ -15,11 +15,13 @@ test.describe("Activity Page", () => {
     try {
       await page.goto("/activity");
 
-      await expect(page.getByRole("heading", { level: 1, name: /^activity$/iu })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /^activity$/iu })).toBeAttached();
 
-      // The headline and the calendar count the same days: one finished lesson today.
-      await expect(page.getByText("1 day", { exact: true })).toBeVisible();
-      await expect(page.getByText("1 lesson finished and 2 min of study in total.")).toBeVisible();
+      // The tiles and the calendar count the same days: one finished lesson today.
+      const tiles = page.locator('[data-slot="stat-tile"]');
+      await expect(tiles.filter({ hasText: /^Study days/u })).toContainText(/^Study days\s*1\b/u);
+      await expect(tiles.filter({ hasText: /^Lessons/u })).toContainText(/^Lessons\s*1\b/u);
+      await expect(tiles.filter({ hasText: /^Time/u })).toContainText("2 min");
 
       const activityChart = page.getByRole("figure", { name: /past 12 months/iu });
       const days = activityChart.getByRole("group", { name: "Activity by day" });
@@ -59,7 +61,7 @@ test.describe("Activity Page", () => {
     const readout = page.locator('[data-slot="contribution-calendar-readout"]');
 
     await days.locator('[data-slot="contribution-calendar-day"]').last().tap();
-    await expect(readout).toHaveText(/ on /u);
+    await expect(readout).toHaveText(/ · /u);
     await expect(days.locator("[data-active]")).toHaveCount(1);
     await expectAccessibleScreen(page, "Activity");
 

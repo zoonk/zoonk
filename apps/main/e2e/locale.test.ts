@@ -35,7 +35,8 @@ test.describe("Locale Behavior - English", () => {
     await page.goto("/en");
 
     await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { level: 1, name: /get ready for/iu })).toBeVisible();
+
+    await expect(page.getByRole("heading", { level: 1, name: /the big day/iu })).toBeVisible();
   });
 });
 
@@ -69,7 +70,7 @@ test.describe("Locale Navigation", () => {
     const login = page.getByRole("link", { exact: true, name: "Entrar" });
     await expect(login).toHaveAttribute("href", /^\/pt\/login/u);
 
-    const home = page.getByRole("link", { name: "Página inicial do Zoonk" });
+    const home = page.getByRole("link", { exact: true, name: "Zoonk" });
     await expect(home).toHaveAttribute("href", "/pt");
     await home.click();
 

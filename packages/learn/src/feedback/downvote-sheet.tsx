@@ -74,7 +74,7 @@ function DownvoteDetails({ onClose, target }: { onClose: () => void; target: Con
       <div aria-label={t("Reasons")} className="flex flex-wrap gap-2" role="group">
         {REASONS.map((reason) => (
           <Toggle
-            className="aria-pressed:border-foreground h-11 rounded-full px-4 aria-pressed:font-semibold"
+            className="h-11 rounded-lg px-4"
             key={reason}
             onPressedChange={() => setReasons((current) => toggleReason(current, reason))}
             pressed={reasons.includes(reason)}

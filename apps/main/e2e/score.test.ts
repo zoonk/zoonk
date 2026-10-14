@@ -3,7 +3,7 @@ import { expect, test } from "./fixtures";
 const CHART_SIZE_WARNING = "The width(-1) and height(-1) of chart should be greater than 0";
 
 test.describe("Score", () => {
-  test("shows one weighted 90-day score with its answers, the weekly trend and one line", async ({
+  test("shows one weighted 90-day score with its answers on tiles, the weekly trend and one line", async ({
     browser,
     withProgressUser,
   }) => {
@@ -22,16 +22,16 @@ test.describe("Score", () => {
 
       await expect(
         page.getByRole("heading", { exact: true, level: 1, name: "Score" }),
-      ).toBeVisible();
+      ).toBeAttached();
 
-      const scoreSummary = page.getByRole("region", { name: /score summary/iu });
+      const tiles = page.locator('[data-slot="stat-tile"]');
       const scoreChart = page.getByRole("figure", { name: /weekly score trend/iu });
 
-      await expect(scoreSummary).toContainText(/\d+(?:\.\d+)?%/u);
-      await expect(scoreSummary).toContainText(/\d+ of \d+ answers right in the last 90 days/iu);
+      await expect(tiles.filter({ hasText: /^Score/u })).toContainText(/\d+(?:\.\d+)?%/u);
+      await expect(tiles.filter({ hasText: /^Right/u })).toContainText(/\d+ of \d+/u);
       await expect(scoreChart).toBeVisible();
 
-      // The 90-day window is said once, in the headline.
+      // The 90-day window is said once, on its tile.
       await expect(page.getByText(/90 days/iu)).toHaveCount(1);
 
       // The trend renders at its size, without the chart library's invalid size warnings.

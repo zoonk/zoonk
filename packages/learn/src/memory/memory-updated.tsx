@@ -5,8 +5,6 @@ import {
   type MemoryChangeReference,
   type MemoryFactView,
 } from "@zoonk/core/memory/contract";
-import { Button } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -34,17 +32,14 @@ function ChangeText({ change, extra }: { change: MemoryChangeSummary; extra: num
   const t = useExtracted();
 
   return (
-    <span className="min-w-0 flex-1">
-      <span className="font-medium">{t("Memory updated:")}</span>{" "}
+    <>
+      <span className="text-foreground font-medium">{t("Memory updated:")}</span>{" "}
       {change.fact && <span>{change.fact.statement}</span>}{" "}
-      {change.previous && <del className="text-muted-foreground">{change.previous.statement}</del>}
+      {change.previous && <del>{change.previous.statement}</del>}
       {extra > 0 && (
-        <span className="text-muted-foreground">
-          {" "}
-          {t("{count, plural, one {and # more} other {and # more}}", { count: extra })}
-        </span>
+        <span> {t("{count, plural, one {and # more} other {and # more}}", { count: extra })}</span>
       )}
-    </span>
+    </>
   );
 }
 
@@ -52,16 +47,17 @@ function UndoResult({ status }: { status: UndoStatus }) {
   const t = useExtracted();
 
   if (status === "undone") {
-    return <span className="text-muted-foreground">{t("Change undone")}</span>;
+    return <span>{t("Change undone")}</span>;
   }
 
-  return <span className="text-destructive">{t("Couldn't undo. It changed since.")}</span>;
+  return <span className="text-destructive-text">{t("Couldn't undo. It changed since.")}</span>;
 }
 
 /**
  * "Memory updated", with what changed and an undo, shown right where a chat, a session or the
- * Memory screen changed what Zoonk remembers. `onUndo` sends the changes back and says whether
- * they were undone.
+ * Memory screen changed what Zoonk remembers: one quiet line with its glyph, the undo inline, so a
+ * note about the conversation doesn't read as another card in it. `onUndo` sends the changes back
+ * and says whether they were undone.
  */
 export function MemoryUpdated({
   changes,
@@ -91,35 +87,32 @@ export function MemoryUpdated({
     <div
       aria-live="polite"
       className={cn(
-        "border-border bg-background flex items-start gap-3 rounded-2xl border px-3 py-3.5 text-sm",
+        "text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-5",
         className,
       )}
       data-slot="memory-updated"
       role="status"
     >
-      <LineMarker aria-hidden="true">
-        <BrainIcon className="size-4 text-violet-600 dark:text-violet-400" />
-      </LineMarker>
+      <BrainIcon aria-hidden="true" className="mt-0.75 size-3.5 shrink-0" />
 
-      {status === "idle" ? (
-        <ChangeText change={first} extra={changes.length - 1} />
-      ) : (
-        <span className="min-w-0 flex-1">
+      <p className="min-w-0 flex-1 text-pretty">
+        {status === "idle" ? (
+          <>
+            <ChangeText change={first} extra={changes.length - 1} />
+            <span aria-hidden="true">{" · "}</span>
+            <button
+              className="text-foreground hit-area focus-visible:ring-ring/50 relative rounded-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-[3px] disabled:opacity-50"
+              disabled={isPending}
+              onClick={undo}
+              type="button"
+            >
+              {t("Undo")}
+            </button>
+          </>
+        ) : (
           <UndoResult status={status} />
-        </span>
-      )}
-
-      {status === "idle" && (
-        <Button
-          className="-my-1.5 shrink-0"
-          disabled={isPending}
-          onClick={undo}
-          size="sm"
-          variant="ghost"
-        >
-          {t("Undo")}
-        </Button>
-      )}
+        )}
+      </p>
     </div>
   );
 }

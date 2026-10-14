@@ -1,7 +1,8 @@
 "use client";
 
+import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import {
   ListRowContent,
   ListRowDescription,
@@ -11,9 +12,31 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 
-/** The mistakes notebook as a row of a list, with how many are left to fix at its end; nothing at zero. */
-export function MistakesRow({ count, href }: { count: number; href: string }) {
+function MistakesRowDescription({ availability }: { availability: MistakeAvailability }) {
   const t = useExtracted();
+  const { ready, tomorrow } = availability;
+
+  if (ready > 0 && tomorrow > 0) {
+    return t(
+      "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}",
+      { ready, tomorrow },
+    );
+  }
+
+  return ready > 0 ? t("Redo what you got wrong") : t("Today's mistakes return tomorrow");
+}
+
+/** The mistakes notebook as a row of a list, with how many are left to fix at its end; nothing at zero. */
+export function MistakesRow({
+  availability,
+  href,
+}: {
+  availability: MistakeAvailability;
+  href: string;
+}) {
+  const t = useExtracted();
+  const { ready, tomorrow } = availability;
+  const count = ready + tomorrow;
 
   if (count === 0) {
     return null;
@@ -22,17 +45,29 @@ export function MistakesRow({ count, href }: { count: number; href: string }) {
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindTile kind="mistakes" />
+        <KindDot kind="mistakes" />
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("Mistakes notebook")}</ListRowTitle>
-        <ListRowDescription>{t("Redo what you got wrong")}</ListRowDescription>
+        <ListRowDescription>
+          <MistakesRowDescription availability={availability} />
+        </ListRowDescription>
       </ListRowContent>
       <ListRowTrailing>
-        <span aria-hidden="true">{count}</span>
-        <span className="sr-only">
-          {t("{count, plural, one {# to fix} other {# to fix}}", { count })}
-        </span>
+        <span aria-hidden="true">{ready > 0 ? ready : tomorrow}</span>
+        {!(ready > 0 && tomorrow > 0) && (
+          <span className="sr-only">
+            {ready > 0
+              ? t(
+                  "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}",
+                  { count: ready },
+                )
+              : t(
+                  "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}",
+                  { count: tomorrow },
+                )}
+          </span>
+        )}
       </ListRowTrailing>
     </ListRowLink>
   );

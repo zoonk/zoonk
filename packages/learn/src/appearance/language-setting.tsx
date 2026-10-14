@@ -7,16 +7,9 @@ import {
   type SupportedLocale,
   isValidLocale,
 } from "@zoonk/utils/locale";
-import { LanguagesIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useId } from "react";
-import {
-  SettingCard,
-  SettingCardDescription,
-  SettingCardIcon,
-  SettingCardLabel,
-  SettingCardText,
-} from "../_components/setting-card";
+import { SelectSettingRow } from "../_components/setting-rows";
 
 /**
  * The app's language on this device. Each language is named in itself, so anyone can find theirs
@@ -30,34 +23,29 @@ export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLoca
   const descriptionId = useId();
 
   return (
-    <SettingCard>
-      <SettingCardIcon icon={LanguagesIcon} />
-      {/* The select needs room: under the text on phones, beside it from tablets up. */}
-      <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <SettingCardText>
-          <SettingCardLabel>
-            <label htmlFor={selectId}>{t("App language")}</label>
-          </SettingCardLabel>
-          <SettingCardDescription id={descriptionId}>{t("On this device")}</SettingCardDescription>
-        </SettingCardText>
-
-        <NativeSelect
-          aria-describedby={descriptionId}
-          defaultValue={locale}
-          id={selectId}
-          onChange={(event) => {
-            if (isValidLocale(event.target.value)) {
-              onChange(event.target.value);
-            }
-          }}
-        >
-          {SUPPORTED_LOCALES.map((option) => (
-            <NativeSelectOption key={option} lang={option} value={option}>
-              {LOCALE_LABELS[option]}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </div>
-    </SettingCard>
+    <SelectSettingRow
+      description={t("On this device")}
+      descriptionId={descriptionId}
+      label={t("App language")}
+      selectId={selectId}
+    >
+      <NativeSelect
+        aria-describedby={descriptionId}
+        defaultValue={locale}
+        id={selectId}
+        onChange={(event) => {
+          if (isValidLocale(event.target.value)) {
+            onChange(event.target.value);
+          }
+        }}
+        size="sm"
+      >
+        {SUPPORTED_LOCALES.map((option) => (
+          <NativeSelectOption key={option} lang={option} value={option}>
+            {LOCALE_LABELS[option]}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    </SelectSettingRow>
   );
 }

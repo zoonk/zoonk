@@ -27,27 +27,42 @@ export function MemoryCategoryName({ category }: { category: MemoryCategory }) {
 }
 
 /** Where a fact came from, so the learner can tell what they said from what was noticed. */
-export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
+function useFactSourceName(fact: MemoryFactView): string {
   const t = useExtracted();
-  const format = useFormatter();
-  const date = format.dateTime(fact.createdAt, { day: "numeric", month: "short" });
 
   if (fact.origin === "noticed") {
-    return t("Noticed from your activity · {date}", { date });
+    return t("Noticed from your activity");
   }
 
-  if (!fact.source) {
-    return t("You told us · {date}", { date });
-  }
-
-  switch (fact.source.kind) {
+  switch (fact.source?.kind) {
+    case undefined:
+      return t("You told us");
     case "chat":
-      return t("From a chat · {date}", { date });
+      return t("From a chat");
     case "onboarding":
-      return t("From onboarding · {date}", { date });
+      return t("From onboarding");
     case "session":
-      return t("From a study session · {date}", { date });
+      return t("From a study session");
     default:
-      return t("From a study session · {date}", { date });
+      return t("From a study session");
   }
+}
+
+/** Where a fact came from, then the day, in the mono face as every date reads ("Oct 11"). */
+export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
+  const format = useFormatter();
+  const source = useFactSourceName(fact);
+
+  return (
+    <>
+      {source}
+      {" · "}
+      <time
+        className="font-mono text-xs tabular-nums"
+        dateTime={new Date(fact.createdAt).toISOString()}
+      >
+        {format.dateTime(fact.createdAt, { day: "numeric", month: "short" })}
+      </time>
+    </>
+  );
 }

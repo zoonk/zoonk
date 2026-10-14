@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import {
   Field,
   FieldContent,
@@ -9,6 +10,7 @@ import {
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { parseFormField } from "@zoonk/utils/form";
@@ -123,6 +125,24 @@ async function sendMessage({
 }
 
 /**
+ * Where the form sits: on a page (Help), its Send small at the end of the form behind a hairline,
+ * like Save on every settings page; in a dialog, in the dialog's own footer layout.
+ */
+type FeedbackFormLayout = "dialog" | "page";
+
+/** Send at the end of the page's form, small like a settings page's Save; busy while it's sent. */
+function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean }) {
+  const t = useExtracted("feedback");
+
+  return (
+    <Button disabled={disabled || pending} size="sm" type="submit">
+      {pending && <Spinner aria-hidden="true" />}
+      {t("Send message")}
+    </Button>
+  );
+}
+
+/**
  * The feedback form: the message first (it takes focus in a dialog), and an email to reply to only
  * when the app doesn't know the learner's. The page, the content the learner was on, the platform
  * and the app version are attached for them.
@@ -130,9 +150,11 @@ async function sendMessage({
 export function FeedbackForm({
   context,
   defaultEmail,
+  layout = "page",
 }: {
   context: FeedbackFormContext;
   defaultEmail?: string | null;
+  layout?: FeedbackFormLayout;
 }) {
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
@@ -141,15 +163,18 @@ export function FeedbackForm({
   const [typedEmail, setTypedEmail] = useState("");
   const email = (viewerEmail ?? typedEmail).trim();
 
-  const [status, formAction] = useActionState<FormStatus, FormData>(async (_state, formData) => {
-    const message = parseFormField(formData, "message") ?? "";
+  const [status, formAction, isPending] = useActionState<FormStatus, FormData>(
+    async (_state, formData) => {
+      const message = parseFormField(formData, "message") ?? "";
 
-    if (!feedback || !email || !message) {
-      return "error";
-    }
+      if (!feedback || !email || !message) {
+        return "error";
+      }
 
-    return sendMessage({ context, email, feedback, message });
-  }, "idle");
+      return sendMessage({ context, email, feedback, message });
+    },
+    "idle",
+  );
 
   return (
     <form action={formAction} className="flex w-full flex-col gap-6">
@@ -189,12 +214,18 @@ export function FeedbackForm({
 
       {viewerEmail === null && <EmailField onChange={setTypedEmail} value={typedEmail} />}
 
-      <SubmitButton disabled={viewerEmail === undefined}>{t("Send message")}</SubmitButton>
+      {layout === "page" ? (
+        <div className="flex flex-col items-end border-t pt-3">
+          <SendButton disabled={viewerEmail === undefined} pending={isPending} />
+        </div>
+      ) : (
+        <SubmitButton disabled={viewerEmail === undefined}>{t("Send message")}</SubmitButton>
+      )}
     </form>
   );
 }
 
-/** Holds the form's place while the signed-in learner's email loads. */
+/** Holds the page form's place while the signed-in learner's email loads. */
 export function FeedbackFormSkeleton() {
   return (
     <div className="flex w-full flex-col gap-6">
@@ -203,7 +234,9 @@ export function FeedbackFormSkeleton() {
         <Skeleton className="h-32 w-full rounded-xl" />
       </div>
 
-      <Skeleton className="h-9 w-32 rounded-full" />
+      <div className="flex flex-col items-end border-t pt-3">
+        <Skeleton className="h-7.5 w-28 rounded-md" />
+      </div>
     </div>
   );
 }

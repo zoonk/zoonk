@@ -6,7 +6,7 @@ import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { type Page, expect, test } from "./fixtures";
 
 /**
- * Appearance: the buddy can be chosen, changed, renamed and given earned glasses, sounds turn on
+ * Preferences: the buddy can be chosen, changed, renamed and given earned glasses, sounds turn on
  * and off, a daily limit, and the app's language.
  */
 
@@ -14,34 +14,44 @@ function findProfile(userId: string) {
   return prisma.userLearningProfile.findUnique({ where: { userId } });
 }
 
-async function openAppearance(page: Page) {
+/** Preferences keeps its address from when it was called Appearance. */
+async function openPreferences(page: Page) {
   await page.goto("/settings/appearance");
-  await expect(page.getByRole("heading", { level: 1, name: "Appearance" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Preferences" })).toBeAttached();
 }
 
-test.describe("Appearance", () => {
-  test("a learner without a buddy is offered one, and Escape leaves settings for Today", async ({
+test.describe("Preferences", () => {
+  test("a learner starts with Zu and can choose a buddy, and Escape leaves settings for Today", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     const goal = await goalFixture({ userId: noProgressUser.id });
     await planFixture({ goalId: goal.id });
-    await openAppearance(page);
+
+    // On a phone, where the section's bar has the way back.
+    await page.setViewportSize({ height: 812, width: 375 });
+    await openPreferences(page);
 
     await expect(page.getByRole("button", { name: "Choose your buddy" })).toBeVisible();
-    await expectAccessibleScreen(page, "the appearance settings");
+    await expect(page.getByRole("main").getByText("Zu", { exact: true })).toBeVisible();
+
+    await expect(
+      page.getByRole("main").locator('[data-slot="buddy"][data-buddy="zu"]'),
+    ).toHaveAttribute("data-energy", "awake");
+
+    await expectAccessibleScreen(page, "the preferences");
 
     // Opened directly, the page's way back leads to the settings hub and the hub's to Today;
     // Escape presses each.
     await expect(
-      page.getByRole("banner").getByRole("link", { name: "Back to Settings" }),
+      page.getByRole("main").getByRole("link", { name: "Back to Settings" }),
     ).toHaveAttribute("href", "/settings");
 
     await page.keyboard.press("Escape");
     await expect(page).toHaveURL(/\/settings$/u);
 
     await expect(
-      page.getByRole("banner").getByRole("link", { exact: true, name: "Back" }),
+      page.getByRole("main").getByRole("link", { exact: true, name: "Back" }),
     ).toHaveAttribute("href", "/today");
 
     await page.keyboard.press("Escape");
@@ -59,7 +69,7 @@ test.describe("Appearance", () => {
       milestoneFixture({ key: "star", kind: "glasses", userId: noProgressUser.id }),
     ]);
 
-    await openAppearance(page);
+    await openPreferences(page);
     await page.getByRole("button", { name: "Change" }).click();
 
     const editor = page.getByRole("dialog", { name: "Your buddy" });
@@ -82,7 +92,7 @@ test.describe("Appearance", () => {
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    await openAppearance(page);
+    await openPreferences(page);
 
     const sounds = page.getByRole("switch", { name: "Sounds" });
     await expect(sounds).toBeChecked();
@@ -118,7 +128,7 @@ test.describe("Appearance", () => {
   });
 
   test("a visitor gets the app's language and nothing to save", async ({ page }) => {
-    await openAppearance(page);
+    await openPreferences(page);
 
     await expect(page.getByRole("combobox", { name: "App language" })).toHaveValue("en");
     await expect(page.getByRole("switch", { name: "Sounds" })).toHaveCount(0);

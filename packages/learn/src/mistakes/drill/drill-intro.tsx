@@ -1,6 +1,8 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
   ExternalLinkIcon,
   EyeIcon,
@@ -14,7 +16,6 @@ import {
 import { useExtracted } from "next-intl";
 import { Callout } from "../../_components/callout";
 import { EnterButton } from "../../_components/enter-button";
-import { KindTile } from "../../_components/kind-tile";
 import { type Drill, type LessonHref } from "./drill-types";
 import { useDrillLine } from "./use-drill-line";
 
@@ -31,18 +32,26 @@ const DRILL_ICON: Readonly<Record<Drill["kind"], LucideIcon>> = {
 };
 
 /** The whole lesson a tap away in a new tab, so the drill waits where it is. */
-function LessonLink({ lesson, lessonHref }: { lesson: DrillLesson; lessonHref: LessonHref }) {
+export function LessonLink({
+  className,
+  lesson,
+  lessonHref,
+}: {
+  className?: string;
+  lesson: DrillLesson;
+  lessonHref: LessonHref;
+}) {
   const t = useExtracted();
 
   return (
     <a
-      className="inline-flex min-h-11 w-fit items-center gap-1.5 text-sm font-medium underline underline-offset-4"
+      className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-fit", className)}
       href={lessonHref(lesson.id)}
       rel="noopener"
       target="_blank"
     >
       {t("Go over the lesson")}
-      <ExternalLinkIcon aria-hidden="true" className="size-3.5" />
+      <ExternalLinkIcon aria-hidden="true" data-icon="inline-end" />
       <span className="sr-only">{t("(opens in a new tab)")}</span>
     </a>
   );
@@ -57,9 +66,9 @@ function StartButton({ onStart }: { onStart: () => void }) {
 }
 
 /**
- * A content gap's idea, back before its questions, on a screen of its own: the lesson's name big,
- * its ideas on a soft panel, the whole lesson a tap away, and one button (or Enter) to start. On
- * phones the button sits at the bottom; on wide screens it stays right under the card.
+ * A content gap's idea, back before its questions, on a screen of its own: what the drill is for,
+ * the lesson's name as the title, its ideas as one flat numbered list, the whole lesson a tap away,
+ * and one button (or Enter) to start at the end of the column.
  */
 function IdeaScreen({
   drill,
@@ -75,23 +84,27 @@ function IdeaScreen({
   const drillLine = useDrillLine();
 
   return (
-    <div className="flex flex-1 flex-col lg:justify-center-safe">
-      <div className="flex flex-1 flex-col justify-center lg:flex-none">
-        <section className="flex flex-col items-center gap-5 text-center">
-          <KindTile icon={LightbulbIcon} kind="lesson" size="lg" />
-
-          <div className="flex flex-col items-center gap-1.5">
-            <p className="text-muted-foreground text-sm font-medium text-balance">
-              {drillLine(drill)}
-            </p>
-            <h2 className="text-3xl font-bold tracking-tight text-balance">{lesson.title}</h2>
+    <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col">
+        <section className="flex flex-col items-start gap-5">
+          <div className="flex flex-col gap-1.5">
+            <p className="text-label">{drillLine(drill)}</p>
+            <h2 className="text-title">{lesson.title}</h2>
           </div>
 
-          <ul className="bg-muted/60 flex w-full list-disc flex-col gap-2 rounded-2xl py-4 pr-4 pl-9 text-left leading-relaxed">
-            {lesson.ideas.map((idea) => (
-              <li key={idea}>{idea}</li>
+          <ol className="flex w-full flex-col leading-relaxed [&>li+li]:border-t">
+            {lesson.ideas.map((idea, index) => (
+              <li className="flex gap-3 py-2.75" key={idea}>
+                <span
+                  aria-hidden="true"
+                  className="text-muted-foreground w-4 shrink-0 font-mono text-sm leading-relaxed tabular-nums"
+                >
+                  {index + 1}
+                </span>
+                <span className="min-w-0 flex-1 text-pretty">{idea}</span>
+              </li>
             ))}
-          </ul>
+          </ol>
 
           {lessonHref && <LessonLink lesson={lesson} lessonHref={lessonHref} />}
         </section>
@@ -108,13 +121,17 @@ function IdeaScreen({
  * How a mistake's drill works, as a note above its first question: its rule with its own mark,
  * and the learner's last answer when the host has it. A content gap without ideas to show links
  * its lesson instead. "Try it again" alone says nothing a question doesn't, so a plain retry only
- * shows with the last answer.
+ * shows with the last answer. The rule is for answering, so once the question is graded
+ * (`answered`) only the last answer and the lesson stay: "There's a trap in here" beside a blank
+ * answer would claim a trap nobody looked for.
  */
 function DrillNote({
+  answered,
   drill,
   lastAnswer,
   lessonHref,
 }: {
+  answered: boolean;
   drill: Drill;
   lastAnswer: string | null;
   lessonHref: LessonHref | null;
@@ -128,11 +145,15 @@ function DrillNote({
     return null;
   }
 
+  if (answered && !lastAnswer && !(lesson && lessonHref)) {
+    return null;
+  }
+
   return (
     <Callout>
       <Icon aria-hidden="true" />
       <div className="flex min-w-0 flex-col gap-1">
-        <p className="font-medium">{drillLine(drill)}</p>
+        {!answered && <p className="font-medium">{drillLine(drill)}</p>}
 
         {lastAnswer && (
           <p className="text-muted-foreground">
@@ -152,11 +173,14 @@ function DrillNote({
  * own, and its button (or Enter) starts the questions.
  */
 export function DrillIntro({
+  answered = false,
   drill,
   lastAnswer = null,
   lessonHref,
   onStart,
 }: {
+  /** The question below is graded: the drill's rule has done its job. */
+  answered?: boolean;
   drill: Drill;
   lastAnswer?: string | null;
   lessonHref: LessonHref | null;
@@ -169,12 +193,19 @@ export function DrillIntro({
   }
 
   if (!onStart) {
-    return <DrillNote drill={drill} lastAnswer={lastAnswer} lessonHref={lessonHref} />;
+    return (
+      <DrillNote
+        answered={answered}
+        drill={drill}
+        lastAnswer={lastAnswer}
+        lessonHref={lessonHref}
+      />
+    );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <DrillNote drill={drill} lastAnswer={lastAnswer} lessonHref={lessonHref} />
+      <DrillNote answered={false} drill={drill} lastAnswer={lastAnswer} lessonHref={lessonHref} />
       <StartButton onStart={onStart} />
     </div>
   );

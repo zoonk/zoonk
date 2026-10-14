@@ -6,8 +6,8 @@ test.describe("Profile settings page", () => {
   test("shows login prompt for unauthenticated users", async ({ page }) => {
     await page.goto("/profile");
 
-    await expect(page.getByText(/you need to be logged in/iu)).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Log in to continue" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: "Log in" })).toBeVisible();
   });
 
   test("holds the name and username, the learner's data and deleting the account", async ({

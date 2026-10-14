@@ -11,13 +11,13 @@ import { expect, test } from "./fixtures";
  * day starts; once they studied, the day stays the goal's until the next one.
  */
 
-/** "Friday, October 9": a day as Today's header writes it. */
+/** "Fri, Oct 9": a day as Today's compact header writes it. */
 function headerDay(timeZone: string): string {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
-    month: "long",
+    month: "short",
     timeZone,
-    weekday: "long",
+    weekday: "short",
   }).format(new Date());
 }
 

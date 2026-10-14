@@ -58,6 +58,11 @@ test.describe("Mistake drills", () => {
     await page.goto("/session");
     await page.getByRole("button", { name: /^Start/u }).click();
     await expectIdeaFirst(page, gap?.lesson.id ?? "");
+
+    // The buddy waits beside each question, its field at the foot of the block's aside.
+    const askBuddy = page.getByRole("textbox", { name: "Ask a question" });
+    await expect(askBuddy).toBeVisible();
+
     await answerRight(page, drillQuestion("gap", "original"));
     await answerRight(page, drillQuestion("gap", "extra"));
 
@@ -65,8 +70,9 @@ test.describe("Mistake drills", () => {
       page.getByRole("heading", { name: drillQuestion("time", "original") }),
     ).toBeVisible();
 
-    // While the clock runs, the question's menu waits.
+    // While the clock runs, the question's menu and the buddy wait.
     await expect(page.getByRole("button", { name: "Question options" })).toBeHidden();
+    await expect(askBuddy).toBeHidden();
     await runOutOfTime(page);
 
     await expect(feedback.getByText("Not quite")).toBeVisible();

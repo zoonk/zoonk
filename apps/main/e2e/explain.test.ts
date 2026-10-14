@@ -41,12 +41,12 @@ test.describe("Quick explanations", () => {
     });
 
     await page.goto("/start");
-    await page.getByRole("textbox", { name: "Your goal" }).fill(question);
+    await page.getByRole("textbox", { name: "I want to" }).fill(question);
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/explain\/[0-9a-f-]{36}$/u);
     await expect(page.getByRole("heading", { name: "How a microwave works" })).toBeVisible();
-    await expect(page.getByText("Writing your explanation…")).toBeVisible();
+    await expect(page.getByRole("list", { name: "Writing your explanation" })).toBeVisible();
     await expect(page.getByText("Quick explanation · 5 min")).toBeVisible();
 
     const goal = await prisma.goal.findFirstOrThrow({
@@ -93,15 +93,17 @@ test.describe("Quick explanations", () => {
 
     await page.goto(`/explain/${goal.id}`);
 
-    const progress = page.getByRole("list", { name: "Progress" });
+    // The wait's phases, as every generation wait draws them: done ones say so, and the one
+    // running is the current step.
+    const progress = page.getByRole("list", { name: "Writing your explanation" });
 
     await expect(
       progress.getByRole("listitem").filter({ hasText: "Checking if someone asked it before" }),
-    ).toHaveAttribute("data-state", "done");
+    ).toContainText("done");
 
     await expect(
       progress.getByRole("listitem").filter({ hasText: "Writing about 5 short screens" }),
-    ).toHaveAttribute("data-state", "current");
+    ).toHaveAttribute("aria-current", "step");
 
     await expect(page.getByText("1 quick question at the end")).toBeVisible();
 
@@ -173,7 +175,7 @@ test.describe("Quick explanations", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("main").getByText(course.title, { exact: true })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toBeHidden();
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeHidden();
 
     // Leaving here leaves nothing: no goal, so no plan and no lessons being written.
     const courseGoals = {
@@ -264,7 +266,11 @@ test.describe("Quick explanations", () => {
   test(`plays the story and ends with "Now you know"`, async ({ browser }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
       await page.goto(`/explain/${persona.goalId}`);
-      await expect(page.getByText("The market isn't one price")).toBeVisible();
+
+      // The screen's title, which the outline beside it on a wide screen names too.
+      await expect(
+        page.getByRole("main", { name: "Lesson content" }).getByText("The market isn't one price"),
+      ).toBeVisible();
 
       await readStory(page, STORY_SCREENS);
 
@@ -304,15 +310,12 @@ test.describe("Quick explanations", () => {
     });
   });
 
-  test("a learner with only quick explanations gets no study plan around them", async ({
-    browser,
-  }) => {
+  test("a learner with only quick explanations starts a goal on Today", async ({ browser }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page }) => {
       await page.goto("/today");
 
-      await expect(page).toHaveURL(/\/start(?:\?|$)/u);
-      await expect(page.getByRole("textbox", { name: "Your goal" })).toBeVisible();
-      await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+      await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
+      await expect(page).toHaveURL(/\/today$/u);
     });
   });
 
@@ -338,6 +341,7 @@ test.describe("Quick explanations", () => {
       await page.keyboard.press("Escape");
 
       const palette = await openPaletteWithKeyboard(page);
+      await palette.getByRole("combobox", { name: "Search" }).fill("market");
       const explanations = palette.getByRole("group", { name: "Quick explanations" });
       await explanations.getByRole("option", { name: /the market is up 2%/u }).click();
 

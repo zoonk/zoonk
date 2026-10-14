@@ -7,7 +7,7 @@ async function expectEmptyStart(page: Page, path: string) {
   await page.goto(path);
 
   await expect(page).toHaveURL(/\/start$/u);
-  await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue("");
+  await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
 }
 
 test("old start pages open onboarding, with a course prompt's goal filled in its language", async ({
@@ -16,7 +16,7 @@ test("old start pages open onboarding, with a course prompt's goal filled in its
   await page.goto(`/start/learn/${encodeURIComponent("Python 3.12")}`);
 
   await expect(page).toHaveURL(/\/start\?goal=Python(?:%20|\+)3\.12$/u);
-  await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue("Python 3.12");
+  await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("Python 3.12");
 
   for (const path of EMPTY_START_PATHS) {
     // oxlint-disable-next-line no-await-in-loop -- One page visits each old path in turn.

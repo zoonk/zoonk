@@ -39,13 +39,7 @@ export function NotSureButton({
   const t = useExtracted();
 
   return (
-    <Button
-      className="h-12 rounded-full"
-      disabled={disabled}
-      onClick={onClick}
-      size="lg"
-      variant="outline"
-    >
+    <Button disabled={disabled} onClick={onClick} size="lg" variant="outline">
       <HelpCircleIcon aria-hidden="true" />
       {label ?? t("I'm not sure")}
     </Button>

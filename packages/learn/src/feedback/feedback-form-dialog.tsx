@@ -58,7 +58,9 @@ export function FeedbackFormDialog({
       <DialogContent closeLabel={t("Close")}>
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
-        <DialogFooter>{request && <FeedbackForm context={request.context} />}</DialogFooter>
+        <DialogFooter>
+          {request && <FeedbackForm context={request.context} layout="dialog" />}
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

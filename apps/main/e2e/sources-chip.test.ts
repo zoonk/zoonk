@@ -11,7 +11,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
-import { openAs } from "./study-day";
+import { checkWithEnter, openAs } from "./study-day";
 
 /**
  * Questions built from a public document (a law, an exam notice) show a dated "Sources" chip:
@@ -89,6 +89,7 @@ test.describe("Sources chip", () => {
     ).toBeVisible();
 
     await page.keyboard.press("1");
+    await checkWithEnter(page);
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await expect(feedback.getByText("Law 8,112, Art. 20")).toBeVisible();
     await feedback.getByRole("button", { name: CHIP }).click();

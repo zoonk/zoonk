@@ -11,7 +11,6 @@ import {
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { RECORDING_MS, toneUrl } from "./listening-audio";
-import { continueToLastStep } from "./result-steps";
 import { openAs } from "./study-day";
 
 /** Four choices on the booking call, then the day it ends on, typed as the exam's form asks. */
@@ -143,24 +142,26 @@ test.describe("A Listening phase's boss", () => {
     await expect(recording.getByText(/so you can play it once more/u)).toBeHidden();
     await expect(questionsButton).toHaveAttribute("aria-expanded", "false");
 
+    // The first one missed, so the shield breaks only at the last question: every one is asked.
     for (const [index, { options }] of CHOICES.entries()) {
+      const missed = index === 0;
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
       await expect(page.getByText(`Question ${index + 1} of 5 on this recording`)).toBeVisible();
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
-      await page.getByRole("radio", { name: options[0]?.text }).click();
+      await page.getByRole("radio", { name: options[missed ? 1 : 0]?.text }).click();
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
       await page.getByRole("button", { name: "Confirm" }).click();
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
-      await expect(page.getByText("Right!")).toBeVisible();
+      await expect(page.getByRole("status")).toHaveText(missed ? /^Not quite/u : "Correct!");
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
       await page.getByRole("button", { name: "Next" }).click();
     }
 
-    // The form's gap is typed, as the exam asks it; Enter confirms.
+    // The form's gap is typed, as the exam asks it; Enter confirms, and breaks the shield.
     await expect(page.getByText("Day of the booking: ______")).toBeVisible();
     await page.getByRole("textbox", { name: "Your answer" }).fill("thursday");
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Right!")).toBeVisible();
+    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
 
     // Its last question answered, the recording plays freely, with what was said.
     await expect(recording.getByText("Listen again as often as you like.")).toBeVisible();
@@ -171,16 +172,14 @@ test.describe("A Listening phase's boss", () => {
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeVisible();
 
-    // The answers wait behind a link on the result's last step.
-    await continueToLastStep(page);
-    await page.getByRole("button", { name: "Review the answers" }).click();
-    const answers = page.getByRole("dialog", { name: "The answers" });
+    // The desktop result shows the answers and recording inline.
+    const answers = page.getByRole("region", { name: "The answers" });
     await answers.getByRole("button", { name: "Transcript" }).click();
     await expect(answers.getByText("Tuesday, no, sorry, Thursday the twelfth.")).toBeVisible();
     await expect(answers.getByRole("button", { name: "Play it again" })).toBeEnabled();
 
     const attempts = await prisma.attempt.findMany({ where: { itemId: { in: itemIds } } });
-    expect(attempts.filter((attempt) => attempt.isCorrect)).toHaveLength(5);
+    expect(attempts.filter((attempt) => attempt.isCorrect)).toHaveLength(PASS_MARK);
 
     await page.context().close();
   });

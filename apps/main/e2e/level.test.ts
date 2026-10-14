@@ -46,34 +46,28 @@ test.describe("Level Page", () => {
 
     try {
       await page.goto("/level");
+      const tiles = page.locator('[data-slot="stat-tile"]');
 
-      await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
-      await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeAttached();
+
+      // The level in its belt, the Brain Power behind it and what the next level takes, on tiles.
+      await expect(tiles.filter({ hasText: /^Level/u })).toContainText(/8\s*Orange belt/u);
+      await expect(tiles.filter({ hasText: /^Brain Power/u })).toContainText("15,000");
 
       // Brain Power is written out, never abbreviated.
-      const levelProgress = page.getByRole("progressbar", {
-        name: /^500 brain power to the next level$/iu,
-      });
-
-      await expect(levelProgress).toBeVisible();
-      await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
+      await expect(tiles.filter({ hasText: /^To level 9/u })).toContainText("500 Brain Power");
       await expect(page.getByText(/\bBP\b/u)).toHaveCount(0);
 
       await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
 
       await expect(
-        page.getByText(
-          "You have 15,000 Brain Power. Every lesson adds 10, and it never goes down.",
-        ),
+        page.getByText("Every lesson adds 10 Brain Power, and it never goes down."),
       ).toBeVisible();
 
-      // The app's locale formats the progress, not the browser's.
+      // The app's locale formats the numbers, not the browser's.
       await page.goto("/de/level");
 
-      await expect(page.getByRole("progressbar", { name: /500 brain power/iu })).toHaveAttribute(
-        "aria-valuetext",
-        new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
-      );
+      await expect(tiles.nth(1)).toContainText(new Intl.NumberFormat("de").format(15_000));
     } finally {
       await browserContext.close();
     }
@@ -89,12 +83,10 @@ test.describe("Level Page", () => {
     try {
       await page.goto("/level");
 
-      await expect(page.getByText(/^black belt · level 10$/iu)).toBeVisible();
-      await expect(page.getByText(/^max level reached$/iu)).toBeVisible();
+      const tiles = page.locator('[data-slot="stat-tile"]');
 
-      const levelProgress = page.getByRole("progressbar", { name: /max level reached/iu });
-
-      await expect(levelProgress).toHaveAttribute("aria-valuenow", "100");
+      await expect(tiles.filter({ hasText: /^Level/u })).toContainText(/10\s*Black belt/u);
+      await expect(tiles.filter({ hasText: /^Next level/u })).toContainText("Max level reached");
       await expectAccessibleScreen(page, "Level");
     } finally {
       await browserContext.close();

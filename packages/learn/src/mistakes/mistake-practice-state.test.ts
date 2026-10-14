@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { type PracticeEntry, createPracticeState, practiceReducer } from "./mistake-practice-state";
+import {
+  type PracticeEntry,
+  createPracticeState,
+  getPracticeMistakePosition,
+  getPracticeSegments,
+  isMistakeQuestion,
+  practiceReducer,
+} from "./mistake-practice-state";
 
 function entry(
   mistakeId: string,
@@ -34,7 +41,9 @@ function graded(answerId: string, fixed = false) {
     correctAnswer: { selectedIndex: 0 },
     explanation: null,
     fixed,
+    fixedMistakeIds: [],
     isCorrect: true,
+    mistakeStatus: fixed ? ("fixed" as const) : ("open" as const),
     trap: null,
   };
 }
@@ -110,6 +119,67 @@ describe(practiceReducer, () => {
     });
   });
 
+  it("counts other notebook entries fixed by overlapping drills", () => {
+    const initial = createPracticeState([entry("first"), entry("other")]);
+
+    const checked = practiceReducer(initial, {
+      answer: { selectedIndex: 0 },
+      timedOut: false,
+      type: "check",
+    });
+
+    const state = practiceReducer(checked, {
+      feedback: { ...graded("a1", true), fixedMistakeIds: ["first", "other"] },
+      mistakeId: "first",
+      type: "answered",
+    });
+
+    const unknown = practiceReducer(practiceReducer(state, { type: "next" }), {
+      answer: { dontKnow: true },
+      timedOut: false,
+      type: "check",
+    });
+
+    const reopened = practiceReducer(unknown, {
+      feedback: { ...graded("a2"), fixedMistakeIds: [], isCorrect: false },
+      mistakeId: "first",
+      type: "answered",
+    });
+
+    expect(reopened.fixedIds).toStrictEqual(["other"]);
+  });
+
+  it("removes a correction from the run count if the entry returns to the notebook", () => {
+    const initial = createPracticeState([entry("trap")]);
+
+    const checked = practiceReducer(initial, {
+      answer: { selectedIndex: 0 },
+      timedOut: false,
+      type: "check",
+    });
+
+    const fixed = practiceReducer(checked, {
+      feedback: graded("a1", true),
+      mistakeId: "trap",
+      type: "answered",
+    });
+
+    const checkedUnknown = practiceReducer(practiceReducer(fixed, { type: "next" }), {
+      answer: { dontKnow: true },
+      timedOut: false,
+      type: "check",
+    });
+
+    const unknown = practiceReducer(checkedUnknown, {
+      feedback: { ...graded("a2"), isCorrect: false },
+      mistakeId: "trap",
+      type: "answered",
+    });
+
+    expect(unknown.fixedIds).toStrictEqual([]);
+    expect(unknown.answerIds).toStrictEqual(["a1", "a2"]);
+  });
+
   it("keeps the answer to check again when grading fails", () => {
     const practice = [entry("time", { kind: "timed", timeLimitSeconds: 45 })];
     const reduce = practiceReducer;
@@ -125,5 +195,123 @@ describe(practiceReducer, () => {
       kind: "answerFailed",
       timedOut: true,
     });
+  });
+});
+
+describe(getPracticeSegments, () => {
+  it("marks each answered question right or wrong, then the one in view and the ones ahead", () => {
+    const practice = [entry("retry"), entry("guess", { kind: "noGuessing" }, 1)];
+    const answer = { selectedIndex: 0 };
+
+    const played = [
+      { answer, timedOut: false, type: "check" },
+      { feedback: graded("a1"), mistakeId: "retry", type: "answered" },
+      { type: "next" },
+      { answer: { selectedIndex: 1 }, timedOut: false, type: "check" },
+      { feedback: { ...graded("a2"), isCorrect: false }, mistakeId: "retry", type: "answered" },
+      { type: "next" },
+    ] as const;
+
+    const states = played.map((_, count) =>
+      played
+        .slice(0, count + 1)
+        .reduce(
+          (current, action) => practiceReducer(current, action),
+          createPracticeState(practice),
+        ),
+    );
+
+    expect(getPracticeSegments(createPracticeState(practice))).toStrictEqual([
+      "current",
+      "ahead",
+      "ahead",
+    ]);
+
+    expect(getPracticeSegments(states[1]!)).toStrictEqual(["right", "ahead", "ahead"]);
+    expect(getPracticeSegments(states[2]!)).toStrictEqual(["right", "current", "ahead"]);
+    expect(getPracticeSegments(states[5]!)).toStrictEqual(["right", "wrong", "current"]);
+  });
+
+  it.each([
+    { segment: "read", timedOut: false },
+    { segment: "wrong", timedOut: true },
+  ] as const)(
+    "marks an unknown answer $segment when timedOut is $timedOut",
+    ({ segment, timedOut }) => {
+      const initial = createPracticeState([entry("gap")]);
+
+      const checking = practiceReducer(initial, {
+        answer: { dontKnow: true },
+        timedOut,
+        type: "check",
+      });
+
+      const answered = practiceReducer(checking, {
+        feedback: { ...graded("unknown"), isCorrect: false },
+        mistakeId: "gap",
+        type: "answered",
+      });
+
+      expect(getPracticeSegments(answered)).toStrictEqual([segment, "ahead"]);
+
+      expect(getPracticeSegments(practiceReducer(answered, { type: "next" }))).toStrictEqual([
+        segment,
+        "current",
+      ]);
+    },
+  );
+});
+
+function next(state: ReturnType<typeof createPracticeState>) {
+  return practiceReducer(state, { type: "next" });
+}
+
+describe(getPracticeMistakePosition, () => {
+  it("counts the run's mistakes, not its questions, and says which one the question drills", () => {
+    const practice = [entry("first", {}, 2), entry("second", {}, 3), entry("third", {}, 1)];
+    const start = createPracticeState(practice);
+    const secondMistake = next(next(start));
+    const lastQuestion = next(next(next(next(next(start)))));
+
+    expect(getPracticeMistakePosition(start)).toStrictEqual({ current: 1, total: 3 });
+    expect(getPracticeMistakePosition(next(start))).toStrictEqual({ current: 1, total: 3 });
+    expect(getPracticeMistakePosition(secondMistake)).toStrictEqual({ current: 2, total: 3 });
+    expect(getPracticeMistakePosition(lastQuestion)).toStrictEqual({ current: 3, total: 3 });
+  });
+});
+
+describe(isMistakeQuestion, () => {
+  const mistake = entry("lesson");
+
+  function stepOn(question: { context: string | null; question: string }, saved: string) {
+    return {
+      entry: { ...mistake, snapshot: { ...mistake.snapshot, question: saved } },
+      firstOfEntry: true,
+      question: { ...mistake.questions[0]!, ...question },
+    };
+  }
+
+  it("knows a bank question saved as it's asked", () => {
+    expect(isMistakeQuestion(stepOn({ context: null, question: "How much?" }, "How much?"))).toBe(
+      true,
+    );
+  });
+
+  it("knows a lesson's question saved with its context before it, on any line break", () => {
+    const question = { context: "A shirt costs R$ 120.", question: "How much?" };
+
+    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120.\n\nHow much?"))).toBe(true);
+    expect(isMistakeQuestion(stepOn(question, "A shirt costs R$ 120. How much?"))).toBe(true);
+  });
+
+  it("tells another question on the same skill apart", () => {
+    expect(
+      isMistakeQuestion(
+        stepOn(
+          { context: "A bike costs R$ 250.", question: "How much?" },
+          "A shirt costs R$ 120.\n\nHow much?",
+        ),
+      ),
+    ).toBe(false);
   });
 });

@@ -161,10 +161,9 @@ test.describe("Subscription Page - Guest", () => {
     await expect(page.getByText(/your goal:/iu)).toHaveCount(0);
     await expect(page.getByText("Plus gives you everything Zoonk has.")).toHaveCount(0);
 
-    // Without an account, the free plan's answer starts with trying lessons first.
+    // Without an account, the free plan's answer (its question is open) starts with trying lessons.
     const questions = page.getByRole("region", { name: "Common questions" });
-    await questions.getByText("What's in the free plan?").click();
-    await expect(questions.getByText(/lessons without an account/u)).toBeVisible();
+    await expect(questions.getByText(/lessons, no account needed/u)).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
@@ -172,26 +171,29 @@ test.describe("Subscription Page - Guest", () => {
     );
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Try free" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Start free" })).toHaveCount(0);
 
     await context.close();
   });
 });
 
 test.describe("Subscription Page - No Subscription", () => {
-  test("pricing opens one Plus offer in the app, with a direct subscribe action", async ({
+  test("pricing offers a learner Plus with a direct subscribe action, as the app's page does", async ({
     userWithoutProgress: page,
   }) => {
+    // The public page speaks to who's reading it: a learner subscribes from there too.
     await page.goto("/pricing");
+    await expect(page.getByRole("button", { name: "Subscribe" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Start free" })).toHaveCount(0);
 
-    await expect(page).toHaveURL(/\/subscription$/u);
+    await page.goto("/subscription");
 
     await expect(
       page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
     ).toBeVisible();
 
-    // A settings page like the others: the section's bar with its pills, one centered column.
-    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    // A settings page like the others: the app's sidebar beside it, the settings pages as tabs.
+    await expect(page.getByRole("complementary", { name: "Sidebar" })).toBeVisible();
 
     await expect(
       page
@@ -199,21 +201,19 @@ test.describe("Subscription Page - No Subscription", () => {
         .getByRole("link", { exact: true, name: "Subscription" }),
     ).toHaveAttribute("aria-current", "page");
 
-    await expect(page.getByRole("link", { name: "Try free" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Start free" })).toHaveCount(0);
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
+    // The free plan's question is open, its answer for a learner who has an account.
     const questions = page.getByRole("region", { name: "Common questions" });
-    await questions.getByText("What's in the free plan?").click();
     await expect(questions.getByText("With the free plan, you get:")).toBeVisible();
-    await expect(questions.getByText(/without an account/u)).toHaveCount(0);
+    await expect(questions.getByText(/no account needed/u)).toHaveCount(0);
 
-    await expect(page.getByRole("button", { name: /monthly/iu })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-
-    await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
-    await expect(page.getByRole("radio")).toHaveCount(0);
+    // E2E has no Stripe prices: the offer says the price comes at checkout and offers no billing
+    // period to choose, since there's nothing to compare (with both prices it's a segmented control).
+    const plus = page.getByRole("region", { name: "Plus" });
+    await expect(plus.getByText("Price shown at checkout")).toBeVisible();
+    await expect(plus.getByRole("radiogroup", { name: "Billing period" })).toHaveCount(0);
     await expectAccessibleScreen(page, "the Plus offer");
   });
 });
@@ -251,14 +251,12 @@ test.describe("Subscription Page - With Plus Subscription", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
     await expect(page.getByText("Active", { exact: true })).toBeVisible();
-    await expect(page.getByText("Renews on March 14, 2027.")).toBeVisible();
+    await expect(page.getByText("Renews on Mar 14, 2027.")).toBeVisible();
     await expect(page.getByText(/subscription will end on/iu)).not.toBeVisible();
 
     const included = page.getByRole("region", { name: "What's included" });
 
-    await expect(
-      included.getByText("Full exam prep, with mock exams and speaking tasks"),
-    ).toBeVisible();
+    await expect(included.getByText("Your whole exam plan, every day to the exam")).toBeVisible();
 
     await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
@@ -296,6 +294,24 @@ async function openBackFromCheckout(browser: Browser) {
 
   return { confirm, context, page };
 }
+
+test.describe("Pricing for a subscriber", () => {
+  test("the public pricing page sends a subscriber to manage their plan, not to buy it again", async ({
+    browser,
+  }) => {
+    const { browserContext, page } = await openWithSubscription(browser);
+
+    await page.goto("/pricing");
+
+    await expect(page.getByRole("button", { name: "Subscribe" })).toHaveCount(0);
+    await page.getByRole("link", { name: "Manage your plan" }).click();
+
+    await expect(page).toHaveURL(/\/subscription$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+
+    await browserContext.close();
+  });
+});
 
 test.describe("Subscription Page - Back From Checkout", () => {
   test("confirms the subscription instead of showing the offer, then shows the plan", async ({

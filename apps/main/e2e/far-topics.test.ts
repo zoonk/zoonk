@@ -40,7 +40,7 @@ function startMonth(date: Date): string {
  * A learner of a learn goal whose current phase holds a chapter to study now and a topic two
  * months away, its lessons not written yet: the plan teaches `lessons` of them (the graph sizes
  * the skill at 30). In two modules, Charts and Inference, each module's page lists its chapters;
- * in one, Inference, the Journey's path does. With `taught`, the course already teaches the far
+ * in one, Inference, the Plan's path does. With `taught`, the course already teaches the far
  * topic in a chapter the plan studies first, and the stand-in is the rest of it.
  */
 async function createLearner({
@@ -149,7 +149,7 @@ test.describe("Far topics", () => {
       }),
     );
 
-    await page.goto("/journey/inference");
+    await page.goto("/plan/inference");
 
     // Instead of "Lessons on the way" for months, the row says the lessons the plan teaches it.
     const row = page.getByRole("button", { name: new RegExp(far.name, "u") });
@@ -206,9 +206,9 @@ test.describe("Far topics", () => {
       route.fulfill({ json: { chapters: [], status: "available" }, status: 200 }),
     );
 
-    // One module: the Journey's path lists the chapters, the far topic under its module's name.
-    await page.goto("/journey");
-    const path = page.getByRole("list", { name: "Your journey" });
+    // One module: the Plan's path lists the chapters, the far topic under its module's name.
+    await page.goto("/plan");
+    const path = page.getByRole("list", { name: "Your path" });
     const row = path.getByRole("button", { name: /^Inference/u });
     await expect(row).toContainText(`1 lesson · from ${startMonth(start)}`);
     await expect(row).not.toContainText("About");
@@ -245,8 +245,8 @@ test.describe("Far topics", () => {
       await route.continue();
     });
 
-    await page.goto("/journey");
-    const journey = page.getByRole("list", { name: "Your journey" });
+    await page.goto("/plan");
+    const journey = page.getByRole("list", { name: "Your path" });
     await expect(journey.getByRole("link", { name: path.written.title })).toBeVisible();
 
     const row = journey
@@ -265,7 +265,7 @@ test.describe("Far topics", () => {
       await route.continue();
     });
 
-    await modulePage.goto("/journey/inference");
+    await modulePage.goto("/plan/inference");
     await expect(modulePage.getByText(modules.far.name).first()).toBeVisible();
     await expect(modulePage.getByText("About 12 lessons").first()).toBeVisible();
 
@@ -285,10 +285,10 @@ test.describe("Far topics", () => {
     const { start, user } = await createLearner({ lessons: null, modules: 1 });
     const page = await openAs(browser, user);
 
-    await page.goto("/journey");
+    await page.goto("/plan");
 
     const row = page
-      .getByRole("list", { name: "Your journey" })
+      .getByRole("list", { name: "Your path" })
       .getByRole("button", { name: /^Inference/u });
 
     await expect(row).toContainText(`From ${startMonth(start)}`);

@@ -58,29 +58,43 @@ test.describe("Statistics", () => {
       await expect(page).toHaveURL(/\/stats$/u);
 
       const main = page.getByRole("main");
-      const bar = page.getByRole("banner");
+      const bar = page.getByRole("main");
 
       await expect(main.getByRole("heading", { level: 1, name: "Statistics" })).toBeVisible();
 
-      // A section's bar: the way back, without the app's tabs; on a phone no sidebar either.
-      await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+      // A section's bar: the way back, with the app's tabs; on a phone no sidebar either.
+      await expect(page.getByRole("navigation", { name: "Learning tabs" })).toBeVisible();
       await expect(page.getByRole("navigation", { name: "Your stats" })).toHaveCount(0);
 
-      // One card per stat, each with its number: the belt leads, Energy shows its last weeks.
-      const links = main.getByRole("link");
+      // Four numbers on tiles, each opening its page; the year of study as a calendar; the best
+      // day and time as a row.
+      const level = main.getByRole("link", { name: "Level 8" });
+      await expect(level).toHaveAttribute("href", "/level");
 
-      await expect(links).toHaveText([
-        /^Level\s*Orange belt · level 8/u,
-        /^Energy\s*\d+%/u,
-        /^Activity\s*1 day/u,
-        /^Score\s*\d+(?:\.\d+)?%/u,
-        /^Patterns\s*\w+ · (?:Night|Morning|Afternoon|Evening)/u,
-      ]);
+      await expect(main.getByRole("link", { name: /^Energy \d+%$/u })).toHaveAttribute(
+        "href",
+        "/energy",
+      );
+
+      const activity = main.getByRole("link", { name: "Study days 1" });
+      await expect(activity).toHaveAttribute("href", "/activity");
+
+      await expect(main.getByRole("link", { name: /^Score \d+(?:\.\d+)?%$/u })).toHaveAttribute(
+        "href",
+        "/score",
+      );
+
+      await expect(main.getByRole("figure", { name: /past 12 months/iu })).toBeVisible();
+
+      // A phone shows the best day and time as one row, opening the full patterns.
+      await expect(main.getByRole("link", { name: /^Patterns/u })).toContainText(
+        /\w+ · (?:Night|Morning|Afternoon|Evening)/iu,
+      );
 
       await expectNoHorizontalScroll(page);
       await expectAccessibleScreen(page, "Statistics");
 
-      await links.filter({ hasText: "Orange belt" }).click();
+      await level.click();
       await expect(page).toHaveURL(/\/level$/u);
       await expect(main.getByRole("heading", { level: 1, name: "Level" })).toBeVisible();
 
@@ -88,7 +102,7 @@ test.describe("Statistics", () => {
       await bar.getByRole("link", { name: "Back to Statistics" }).click();
       await expect(page).toHaveURL(/\/stats$/u);
 
-      await links.filter({ hasText: "Activity" }).click();
+      await activity.click();
       await expect(page).toHaveURL(/\/activity$/u);
       await expect(main.getByRole("heading", { level: 1, name: "Activity" })).toBeVisible();
 
@@ -96,17 +110,87 @@ test.describe("Statistics", () => {
       await expect(page).toHaveURL(/\/stats$/u);
       await bar.getByRole("link", { exact: true, name: "Back" }).click();
       await expect(page).toHaveURL(/\/buddy$/u);
+
+      // Returning to Plan must keep its history entry eligible on another Statistics visit.
+      await page.setViewportSize({ height: 900, width: 1440 });
+      const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+      const tabs = sidebar.getByRole("navigation", { name: "Learning tabs" });
+
+      await tabs.getByRole("link", { exact: true, name: "Today" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+      await tabs.getByRole("link", { exact: true, name: "Plan" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
+      await sidebar.getByRole("link", { exact: true, name: "Statistics" }).click();
+      await expect(page).toHaveURL(/\/stats$/u);
+      await page.setViewportSize(PHONE);
+      await bar.getByRole("link", { exact: true, name: "Back" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
+
+      await page.getByRole("link", { name: "Orange belt, level 8. Statistics" }).click();
+      await expect(page).toHaveURL(/\/stats$/u);
+      await bar.getByRole("link", { exact: true, name: "Back" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
     } finally {
       await context.close();
     }
   });
 
-  test("ask visitors to log in", async ({ page }) => {
+  test("on a wide screen keeps the app's sidebar, with the stats as tabs under the section's title", async ({
+    authenticatedPage: page,
+  }) => {
+    await page.setViewportSize({ height: 860, width: 1280 });
+    await page.goto("/energy");
+
+    await expect(page.getByRole("heading", { level: 1, name: "Energy" })).toBeAttached();
+    await expect(page.getByRole("complementary", { name: "Sidebar" })).toBeVisible();
+
+    const stats = page.getByRole("navigation", { name: "Your stats" });
+
+    await expect(stats.getByRole("link", { exact: true, name: "Energy" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    // Every stats page keeps the section's title where it was: moving between tabs moves nothing.
+    const title = page.locator('[data-slot="section-title"]');
+    const energyTop = await title.evaluate((element) => element.getBoundingClientRect().top);
+
+    await stats.getByRole("link", { exact: true, name: "Overview" }).click();
+    await expect(page).toHaveURL(/\/stats$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Statistics" })).toBeAttached();
+
+    await expect
+      .poll(() => title.evaluate((element) => element.getBoundingClientRect().top))
+      .toBe(energyTop);
+
+    // On a wide screen the overview is a dashboard: Score's trend beside the best day and time.
+    await expect(page.getByRole("region", { name: "Score · 90 days" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Patterns · 90 days" })).toBeVisible();
+  });
+
+  test("ask visitors to log in and come back to the page, or start free, as every gated page does", async ({
+    page,
+  }) => {
     for (const statsPage of STATS_PAGES) {
       // oxlint-disable-next-line no-await-in-loop -- One page visits each stats page in turn.
-      await expectEmptyState({ page, prompt: /log in to track your progress/iu, statsPage });
+      await expectEmptyState({
+        page,
+        prompt: /log in to pick up where you left off, or start free/iu,
+        statsPage,
+      });
+
+      const main = page.getByRole("main");
+
       // oxlint-disable-next-line no-await-in-loop -- One page visits each stats page in turn.
-      await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
+      await expect(main.getByRole("link", { name: "Log in" })).toHaveAttribute(
+        "href",
+        `/login?next=${encodeURIComponent(statsPage.path)}`,
+      );
+      // oxlint-disable-next-line no-await-in-loop -- One page visits each stats page in turn.
+      await expect(main.getByRole("link", { name: "Start free" })).toHaveAttribute(
+        "href",
+        "/start",
+      );
     }
   });
 
@@ -141,15 +225,19 @@ test.describe("Statistics", () => {
       await page.goto("/patterns");
 
       await expect(
-        page.getByRole("region", { name: /weekly rhythm/iu }).getByRole("button"),
+        page.getByRole("region", { name: "Throughout the week" }).getByRole("listitem"),
       ).toHaveCount(7);
 
       await expectNoHorizontalScroll(page);
       await expectAccessibleScreen(page, "Patterns");
 
-      // Energy leads with its value, then the year as a heatmap.
+      // Energy leads with its numbers on tiles, now first, then the year as a heatmap.
       await page.goto("/energy");
-      await expect(page.locator('[data-slot="progress-headline-value"]')).toHaveText(/^\d+%$/u);
+
+      await expect(
+        page.locator('[data-slot="stat-tile"]').filter({ hasText: /^Energy/u }),
+      ).toContainText(/\d+%/u);
+
       await expect(page.getByRole("figure", { name: /past 12 months/iu })).toBeVisible();
       await expectNoHorizontalScroll(page);
       await expectAccessibleScreen(page, "Energy");

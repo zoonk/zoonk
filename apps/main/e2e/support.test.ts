@@ -77,7 +77,8 @@ test.describe("Support page - Room to write and where to follow us", () => {
     const followUs = page.getByRole("region", { name: "Follow us" });
     const profiles = followUs.getByRole("link");
 
-    await expect(profiles).toHaveCount(10);
+    await expect(profiles).toHaveCount(5);
+    await expect(profiles).toHaveText(["X", "LinkedIn", "Instagram", "Bluesky", "YouTube"]);
 
     await expect(followUs.getByRole("link", { name: "Instagram" })).toHaveAttribute(
       "href",

@@ -65,25 +65,39 @@ test.describe("Asking for the notice research couldn't find", () => {
   test("Today asks for the notice, and uploading it sends it to research", async ({ browser }) => {
     const { goal, user } = await studyDayWaitingFor("noOfficialSource");
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 900 });
     const upload = await stubUpload({ page, userId: user.id });
     const lastResearch = await stubResearch(page);
 
     await page.goto("/today");
 
-    const ask = page.getByRole("region", { name: "We couldn't find the official notice" });
-    await expect(ask).toContainText("Upload the notice so your plan follows the real exam.");
+    const ask = page.getByRole("region", { name: "Your plan needs a document" });
+    await expect(ask).toContainText("We couldn't find the official notice");
     await expectAccessibleScreen(page, "Today asking for the notice");
 
-    await ask.getByRole("button", { name: "Upload the notice" }).click();
-    await ask.getByRole("button", { name: "Paste text" }).click();
-    await ask.getByRole("textbox", { name: "Your text" }).fill("Edital nº 1: 120 questões.");
-    await ask.getByRole("button", { name: "Add text" }).click();
+    await ask.getByRole("button", { exact: true, name: "Upload" }).click();
+    const sheet = page.getByRole("dialog", { name: "Your plan needs a document" });
+    await expect(sheet).toContainText("Upload the notice so your plan follows the real exam.");
+    await sheet.getByRole("button", { name: "Upload the notice" }).click();
+    await sheet.getByRole("button", { name: "Paste text" }).click();
+    await sheet.getByRole("textbox", { name: "Your text" }).fill("Edital nº 1: 120 questões.");
+    await sheet.getByRole("button", { name: "Add text" }).click();
 
-    await expect(
-      ask.getByText("Thanks. We're reading it now, and your plan will update in a few minutes."),
-    ).toBeVisible();
+    await expect(ask.getByRole("status").filter({ visible: true })).toHaveText(
+      "Thanks. We're reading it now, and your plan will update in a few minutes.",
+    );
 
-    await expect(ask.getByRole("button", { name: "Upload the notice" })).toBeHidden();
+    await expect(sheet).toBeHidden();
+
+    // The settled answer belongs to the request, including the previously hidden desktop panel.
+    await page.setViewportSize({ height: 900, width: 1280 });
+
+    await expect(ask.getByRole("status")).toHaveText(
+      "Thanks. We're reading it now, and your plan will update in a few minutes.",
+    );
+
+    await expect(ask.getByRole("button", { name: "Upload the notice" })).toHaveCount(0);
+    await expect(ask.getByRole("button", { name: "Not now" })).toHaveCount(0);
 
     expect(lastResearch()).toStrictEqual({ goalId: goal.id, sourceIds: [upload.id] });
     await page.context().close();
@@ -94,10 +108,12 @@ test.describe("Asking for the notice research couldn't find", () => {
   }) => {
     const { goal, user } = await studyDayWaitingFor("unverified");
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1280 });
 
     await page.goto("/today");
 
-    const ask = page.getByRole("region", { name: "We couldn't confirm the exam's details" });
+    const ask = page.getByRole("region", { name: "Your plan needs a document" });
+    await expect(ask).toContainText("We couldn't confirm the exam's details");
     await expect(ask).toContainText("Upload the official notice");
 
     await ask.getByRole("button", { name: "Not now" }).click();
@@ -112,7 +128,7 @@ test.describe("Asking for the notice research couldn't find", () => {
 
     await page.reload();
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(page.getByRole("region", { name: /exam's details/u })).toBeHidden();
+    await expect(page.getByRole("region", { name: "Your plan needs a document" })).toBeHidden();
     await page.context().close();
   });
 
@@ -121,11 +137,12 @@ test.describe("Asking for the notice research couldn't find", () => {
   }) => {
     const { goal, user } = await createStudyDay();
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1280 });
 
     await page.goto("/today");
 
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(page.getByRole("region", { name: /official notice/u })).toBeHidden();
+    await expect(page.getByRole("region", { name: "Your plan needs a document" })).toBeHidden();
 
     // A teacher's test asks for the class's material.
     await prisma.goal.update({
@@ -135,7 +152,8 @@ test.describe("Asking for the notice research couldn't find", () => {
 
     await page.reload();
 
-    const ask = page.getByRole("region", { name: "Add your class material" });
+    const ask = page.getByRole("region", { name: "Your plan needs a document" });
+    await expect(ask).toContainText("Add your class material");
     await expect(ask).toContainText("Upload the slides, notes or list of topics");
     await expect(ask.getByRole("button", { name: "Upload your material" })).toBeVisible();
     await page.context().close();

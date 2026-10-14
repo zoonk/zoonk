@@ -6,12 +6,10 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Meter, MeterFill } from "../../_components/meter";
 import { formatClock } from "../../_utils/clock";
+import { WARNING_SECONDS, getAnnouncedSeconds } from "./countdown-announcement";
 
 const TICK_MS = 250;
 const MS_PER_SECOND = 1000;
-
-/** The last seconds turn the clock amber and are said once to screen readers. */
-const WARNING_SECONDS = 10;
 
 /** Time left since the question showed. When it reaches zero, `onTimeUp` runs once. */
 function useCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; seconds: number }) {
@@ -43,16 +41,23 @@ function useCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; seconds: nu
   return remaining;
 }
 
+/** What screen readers hear: the seconds left at a few marks (see `getAnnouncedSeconds`), then "Time's up". */
 function useCountdownAnnouncement(secondsLeft: number): string {
   const t = useExtracted();
+  const [announced, setAnnounced] = useState<number | null>(null);
+  const next = getAnnouncedSeconds({ announced, secondsLeft });
+
+  if (next !== announced) {
+    setAnnounced(next);
+  }
 
   if (secondsLeft === 0) {
     return t("Time's up");
   }
 
-  return secondsLeft <= WARNING_SECONDS
-    ? t("{seconds, number} seconds left", { seconds: WARNING_SECONDS })
-    : "";
+  return next === null
+    ? ""
+    : t("{seconds, plural, one {# second left} other {# seconds left}}", { seconds: next });
 }
 
 /**
@@ -86,7 +91,7 @@ export function DrillCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; se
       <span
         aria-label={t("Time left")}
         className={cn(
-          "min-w-10 text-right text-sm font-semibold tabular-nums",
+          "min-w-10 text-right font-mono text-sm font-medium tabular-nums",
           warning && "text-warning",
         )}
         role="timer"

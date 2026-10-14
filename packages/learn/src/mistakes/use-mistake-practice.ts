@@ -44,10 +44,11 @@ export function useMistakePractice({
   }, []);
 
   const finish = useEffectEvent(async () => {
+    // A count that didn't get through still ends the run: each answer was counted as it came.
     const summary =
       state.answerIds.length === 0
         ? null
-        : await actions.finish({ answerIds: state.answerIds, ended: true });
+        : await actions.finish({ answerIds: state.answerIds, ended: true }).catch(() => null);
 
     dispatch({ summary, type: "ended" });
   });
@@ -68,12 +69,16 @@ export function useMistakePractice({
 
     dispatch({ answer, timedOut, type: "check" });
 
-    const feedback = await actions.answer({
-      answer,
-      durationMs: timedOut ? Math.max(durationMs, limitMs) : durationMs,
-      itemId: step.question.itemId,
-      mistakeId: step.entry.mistakeId,
-    });
+    // A request that didn't get through (the network dropped) reads as not saved, with the answer
+    // kept to check again, never as a Check that spins forever.
+    const feedback = await actions
+      .answer({
+        answer,
+        durationMs: timedOut ? Math.max(durationMs, limitMs) : durationMs,
+        itemId: step.question.itemId,
+        mistakeId: step.entry.mistakeId,
+      })
+      .catch(() => null);
 
     if (!feedback) {
       dispatch({ type: "answerFailed" });
@@ -81,7 +86,10 @@ export function useMistakePractice({
     }
 
     dispatch({ feedback, mistakeId: step.entry.mistakeId, type: "answered" });
-    void actions.finish({ answerIds: [...state.answerIds, feedback.answerId], ended: false });
+
+    void actions
+      .finish({ answerIds: [...state.answerIds, feedback.answerId], ended: false })
+      .catch(() => null);
   };
 
   return {

@@ -130,9 +130,7 @@ test.describe("Analytics", () => {
     await expectSent(sent, "Capsule Opened", SHARED);
 
     // The block's moment shows once the block was saved, when the server sends its outcomes.
-    await expect(
-      page.getByRole("progressbar", { name: "Today's session: 1 of 3 done" }),
-    ).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "1 of 3 done" })).toBeVisible();
 
     const outcomes = sent.filter((item) => SERVER_OUTCOMES.has(item.event));
     expect(outcomes).toStrictEqual([]);
@@ -191,7 +189,7 @@ test("the player's events say which lesson and screen they come from", async ({ 
   await page.context().close();
 });
 
-test("a goal sent from the home page counts once as typed, then as classified on /start", async ({
+test("a guest returning home starts a goal on Today, counted once as typed and classified", async ({
   page,
 }) => {
   const goal = `understand quantum physics for analytics ${randomUUID().slice(0, 8)}`;
@@ -209,11 +207,13 @@ test("a goal sent from the home page counts once as typed, then as classified on
   const sent = await capturePostHog(page);
   await page.goto("/");
 
-  const goalBox = page.getByRole("region", { name: /Get ready for/u }).getByRole("textbox");
+  await expect(page).toHaveURL(/\/today$/u);
+
+  const goalBox = page.getByRole("textbox", { name: "I want to" });
   await goalBox.fill(goal);
   await goalBox.press("Enter");
 
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await expectSent(sent, "Goal Typed", { has_attachment: false });
   await expectSent(sent, "Goal Classified", { result: "learn" });
 
@@ -227,7 +227,7 @@ test("a goal sent from the home page counts once as typed, then as classified on
   const viewsBefore = pageViews();
 
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await expect.poll(pageViews, { timeout: 15_000 }).toBeGreaterThan(viewsBefore);
   expect(sent.filter((item) => item.event === "Goal Classified")).toHaveLength(1);
 });
