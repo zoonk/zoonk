@@ -9,6 +9,8 @@ import { openPersona } from "./learn-personas";
 
 type Plan = "free" | "guest" | "plus";
 
+const CHALLENGE_PATH = /^\/challenge\/(?<id>[\da-f-]{36})$/u;
+
 /**
  * The day of Ana's plan whose week holds her first mock: an exam plan's mocks begin on the event
  * day of its second week, and at her 45 minutes a day they come every few weeks after that.
@@ -24,12 +26,15 @@ async function openExamLearner(browser: Browser, plan: Plan) {
   const user = await createE2EPersona(getBaseURL(), { day: FIRST_MOCK_WEEK_DAY, persona: "exam" });
 
   if (plan === "plus") {
-    return openPersona(browser, user);
+    return { ...(await openPersona(browser, user)), user };
   }
 
   await prisma.subscription.deleteMany({ where: { referenceId: user.id } });
 
-  return plan === "guest" ? openUserAsGuest(browser, user) : openPersona(browser, user);
+  const opened =
+    plan === "guest" ? await openUserAsGuest(browser, user) : await openPersona(browser, user);
+
+  return { ...opened, user };
 }
 
 /**
@@ -91,21 +96,33 @@ test.describe("Plus features are never hidden", () => {
   test("a free learner sees the exam's mocks locked on Today, the Plan and the exam page, each opening what Plus unlocks", async ({
     browser,
   }) => {
-    const { context, page } = await openExamLearner(browser, "free");
+    const { context, page, user } = await openExamLearner(browser, "free");
 
     await expectLockedMocksOnToday(page);
     await expectAccessibleScreen(page, "Today with locked mocks");
     await page.setViewportSize({ height: 900, width: 1440 });
 
-    // The Plan keeps her mocks, marked Plus: her next one opens the exam page, and a phase ahead
-    // counts its own.
+    // The Plan keeps her mocks, marked Plus: her next one, which the plan already saves time for,
+    // opens its own intro, and a phase ahead counts its own.
     await page.goto("/plan");
 
+    const nextMock = page
+      .getByRole("region", { name: "Next on your path" })
+      .getByRole("link", { name: /^Mock exam.*Available with Plus/u });
+
+    await expect(nextMock).toHaveAttribute("href", CHALLENGE_PATH);
+    const planItemId = CHALLENGE_PATH.exec((await nextMock.getAttribute("href")) ?? "")?.groups?.id;
+
     await expect(
-      page
-        .getByRole("region", { name: "Next on your path" })
-        .getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
-    ).toHaveAttribute("href", "/exam");
+      prisma.planItem.count({
+        where: {
+          id: planItemId ?? "",
+          kind: "mock",
+          plan: { goalId: user.goalId },
+          status: "todo",
+        },
+      }),
+    ).resolves.toBe(1);
 
     await page
       .getByRole("region", { exact: true, name: "Phases" })
