@@ -3,6 +3,7 @@ import {
   type LearnerSummarySeedValue,
   type LearnerSummaryState,
   type Snapshot,
+  getUntilChange,
   isNewerSummary,
   isSameIdentity,
   reconcileSessionHint,
@@ -19,9 +20,6 @@ const SEED_WAIT_MS = 10_000;
 
 /** A summary older than this is read again when its tab is shown again. */
 const STALE_ON_RETURN_MS = 2 * 60 * 1000;
-
-/** A timer longer than a day isn't needed: the summary changes at the learner's midnight. */
-const MAX_TIMER_MS = 24 * 60 * 60 * 1000;
 
 const CHANNEL_NAME = "zoonk-learner";
 
@@ -103,7 +101,7 @@ function scheduleNextChange(summary: LearnerSummary | null) {
     return;
   }
 
-  const wait = Math.min(Math.max(summary.nextChangeAt - Date.now(), 0), MAX_TIMER_MS);
+  const wait = getUntilChange(summary, store);
 
   store.changeTimer = setTimeout(() => {
     if (store.listeners.size > 0) {
@@ -112,10 +110,11 @@ function scheduleNextChange(summary: LearnerSummary | null) {
   }, wait);
 }
 
+/** Holds a snapshot; the same read again (a page's cached seed) keeps the time it first arrived. */
 function hold(snapshot: Snapshot) {
   store.state = snapshot.summary ? { status: "ready", summary: snapshot.summary } : VISITOR;
+  store.receivedAt = snapshot.readAt === store.readAt ? store.receivedAt : Date.now();
   store.readAt = snapshot.readAt;
-  store.receivedAt = Date.now();
   syncSessionHint(snapshot);
   scheduleNextChange(snapshot.summary);
   notify();
@@ -271,7 +270,7 @@ function waitForSeed() {
 }
 
 function isStale(summary: LearnerSummary, olderThanMs: number): boolean {
-  return Date.now() >= summary.nextChangeAt || Date.now() - store.receivedAt > olderThanMs;
+  return getUntilChange(summary, store) === 0 || Date.now() - store.receivedAt > olderThanMs;
 }
 
 function onVisible() {
@@ -341,7 +340,7 @@ export function ensureLearnerSummary(): void {
     return;
   }
 
-  if (state.status === "ready" && Date.now() >= state.summary.nextChangeAt) {
+  if (state.status === "ready" && getUntilChange(state.summary, store) === 0) {
     void readLearnerSummary();
     return;
   }

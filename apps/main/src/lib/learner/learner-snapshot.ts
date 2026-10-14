@@ -27,6 +27,31 @@ export type LearnerSummarySeedValue =
   | { status: "ready"; summary: LearnerSummary }
   | { status: "visitor" };
 
+/** A timer longer than a day isn't needed: the summary changes at the learner's midnight. */
+const MAX_TIMER_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * How long a summary is held before its next change reads it again, even when it arrived already
+ * due: a server whose answer stays due can't make the browser ask back to back.
+ */
+const MIN_REREAD_MS = 60 * 1000;
+
+/**
+ * How long until a summary changes on its own, by the server's clock: `nextChangeAt` and `readAt`
+ * are the server's times, so what was left at the read less what the browser's clock says passed
+ * since it arrived (`receivedAt`). A device set ahead or behind never finds a midnight early or
+ * late. Never less than a minute after it arrived; 0 once it's due.
+ */
+export function getUntilChange(
+  { nextChangeAt }: Pick<LearnerSummary, "nextChangeAt">,
+  { readAt, receivedAt }: { readAt: number; receivedAt: number },
+): number {
+  const elapsed = Date.now() - receivedAt;
+  const untilChange = nextChangeAt - readAt - elapsed;
+
+  return Math.min(Math.max(untilChange, MIN_REREAD_MS - elapsed, 0), MAX_TIMER_MS);
+}
+
 export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | null): boolean {
   if (!a || !b) {
     return a === b;

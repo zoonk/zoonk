@@ -242,3 +242,114 @@ describe("learner store identity", () => {
     });
   });
 });
+
+const MINUTE_MS = 60 * 1000;
+
+/** When the server read the summaries below, by its own clock. */
+const SERVER_READ_AT = Date.UTC(2026, 9, 14, 23, 50);
+
+/** The learner's summary as the server read it at `readAt`, changing on its own at `nextChangeAt`. */
+function summaryReadAt({ nextChangeAt, readAt }: { nextChangeAt: number; readAt: number }) {
+  return { ...summaryOf("first"), nextChangeAt, readAt };
+}
+
+/** A tab showing the learner, whose summary the server read at `SERVER_READ_AT`. */
+async function showLearner({
+  deviceAhead,
+  nextChangeAt,
+}: {
+  deviceAhead: number;
+  nextChangeAt: number;
+}) {
+  vi.setSystemTime(SERVER_READ_AT + deviceAhead);
+  stubPage({ seeded: false });
+  const reads = stubSummaryReads();
+  const store = await loadStore();
+
+  store.subscribeToLearnerSummary(vi.fn());
+  store.ensureLearnerSummary();
+
+  reads[0]?.resolve({
+    status: "ready",
+    summary: summaryReadAt({ nextChangeAt, readAt: SERVER_READ_AT }),
+  });
+
+  await settle();
+
+  return { reads, store };
+}
+
+describe("learner store timing", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it.each([
+    { clock: "ahead", deviceAhead: 15 * MINUTE_MS },
+    { clock: "behind", deviceAhead: -15 * MINUTE_MS },
+  ])(
+    "reads the summary again at its next change by the server's clock, a device's $clock",
+    async ({ deviceAhead }) => {
+      // Midnight is ten minutes away for the server; the device's clock is a quarter-hour off.
+      const { reads, store } = await showLearner({
+        deviceAhead,
+        nextChangeAt: SERVER_READ_AT + 10 * MINUTE_MS,
+      });
+
+      store.ensureLearnerSummary();
+      vi.advanceTimersByTime(10 * MINUTE_MS - 1);
+      expect(reads).toHaveLength(1);
+
+      vi.advanceTimersByTime(1);
+      expect(reads).toHaveLength(2);
+    },
+  );
+
+  it("keeps the next change's time when a page hands back the same summary", async () => {
+    const nextChangeAt = SERVER_READ_AT + 2 * MINUTE_MS;
+    const { reads, store } = await showLearner({ deviceAhead: 0, nextChangeAt });
+
+    // The learner comes back to a page the router kept, whose seed is that same read.
+    vi.advanceTimersByTime(90 * 1000);
+
+    store.mergeLearnerSummarySeed({
+      status: "ready",
+      summary: summaryReadAt({ nextChangeAt, readAt: SERVER_READ_AT }),
+    });
+
+    vi.advanceTimersByTime(30 * 1000 - 1);
+    expect(reads).toHaveLength(1);
+
+    vi.advanceTimersByTime(1);
+    expect(reads).toHaveLength(2);
+  });
+
+  it("asks again at most once a minute when the server's answer is already due", async () => {
+    const { reads } = await showLearner({ deviceAhead: 0, nextChangeAt: SERVER_READ_AT - 1 });
+
+    vi.advanceTimersByTime(MINUTE_MS - 1);
+    expect(reads).toHaveLength(1);
+
+    vi.advanceTimersByTime(1);
+    expect(reads).toHaveLength(2);
+
+    // The next answer is still due: the minute starts again from it.
+    reads[1]?.resolve({
+      status: "ready",
+      summary: summaryReadAt({ nextChangeAt: SERVER_READ_AT, readAt: SERVER_READ_AT + MINUTE_MS }),
+    });
+
+    await settle();
+
+    vi.advanceTimersByTime(MINUTE_MS - 1);
+    expect(reads).toHaveLength(2);
+
+    vi.advanceTimersByTime(1);
+    expect(reads).toHaveLength(3);
+  });
+});
