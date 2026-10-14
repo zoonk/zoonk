@@ -1,17 +1,13 @@
-import { randomUUID } from "node:crypto";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
-import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { SITEMAP_FIXTURES } from "./e2e-data";
 import { expect, test } from "./fixtures";
 
 type SitemapResource = "courses" | "library-chapters" | "library-lessons";
 
 /**
- * Finds the `<url>` entry holding `expectedUrl`, checking every sitemap page because a new fixture
- * may sort after the first 5,000 URLs in a long-lived E2E database. Next.js returns 404 for IDs
- * beyond generateSitemaps(), while page zero must always exist.
+ * Finds the `<url>` entry holding `expectedUrl`, checking every sitemap page: a row's page comes
+ * from its id, and a page can be empty. Next.js returns 404 for IDs beyond generateSitemaps(),
+ * while page zero always exists.
  */
 async function findSitemapEntry({
   expectedUrl,
@@ -35,7 +31,7 @@ async function findSitemapEntry({
 
   const entry = body.split("<url>").find((item) => item.includes(expectedUrl));
 
-  if (entry || !body.includes("<url>")) {
+  if (entry) {
     return entry;
   }
 
@@ -97,37 +93,19 @@ test.describe("sitemap.xml", () => {
 });
 
 test.describe("catalog sitemaps", () => {
+  const coursePath = `/b/${SITEMAP_FIXTURES.organizationSlug}/c/${SITEMAP_FIXTURES.courseSlug}`;
+  const chapterPath = `${coursePath}/ch/${SITEMAP_FIXTURES.chapterSlug}`;
+
+  const undescribedPath = `/b/${SITEMAP_FIXTURES.organizationSlug}/c/${SITEMAP_FIXTURES.undescribedCourseSlug}`;
+
   test("lists only matching locale URLs for indexable course content, with when they last changed", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const organization = await getAiOrganization();
-
-    const course = await courseFixture({
-      isPublished: true,
-      language: "pt-BR",
-      organizationId: organization.id,
-      slug: `e2e-sitemap-course-${uniqueId}`,
-    });
-
-    const chapter = await libraryChapterFixture({
-      homeCourseId: course.id,
-      language: "pt-BR",
-      slug: `e2e-sitemap-chapter-${uniqueId}`,
-    });
-
-    const lesson = await libraryLessonFixture({
-      homeChapterId: chapter.id,
-      language: "pt-BR",
-      slug: `e2e-sitemap-lesson-${uniqueId}`,
-    });
-
-    const coursePath = `/b/${organization.slug}/c/${course.slug}`;
-    const chapterPath = `${coursePath}/ch/${chapter.slug}`;
-    const lessonPath = `${chapterPath}/l/${lesson.slug}`;
-
     const entries = await Promise.all([
       findPortugueseSitemapEntry({ path: coursePath, resource: "courses" }),
       findPortugueseSitemapEntry({ path: chapterPath, resource: "library-chapters" }),
-      findPortugueseSitemapEntry({ path: lessonPath, resource: "library-lessons" }),
+      findPortugueseSitemapEntry({
+        path: `${chapterPath}/l/${SITEMAP_FIXTURES.lessonSlug}`,
+        resource: "library-lessons",
+      }),
     ]);
 
     const lastChanged = expect.stringContaining("<lastmod>");
@@ -135,30 +113,10 @@ test.describe("catalog sitemaps", () => {
   });
 
   test("leaves out a shared course whose page details aren't written yet, with its chapters", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const organization = await getAiOrganization();
-
-    // A shared course a guest's goal made: published with its outline, its details still to come.
-    const course = await courseFixture({
-      description: null,
-      isPublished: true,
-      language: "pt-BR",
-      organizationId: organization.id,
-      slug: `e2e-sitemap-undescribed-${uniqueId}`,
-    });
-
-    const chapter = await libraryChapterFixture({
-      homeCourseId: course.id,
-      language: "pt-BR",
-      slug: `e2e-sitemap-undescribed-chapter-${uniqueId}`,
-    });
-
-    const coursePath = `/b/${organization.slug}/c/${course.slug}`;
-
     const entries = await Promise.all([
-      findPortugueseSitemapEntry({ path: coursePath, resource: "courses" }),
+      findPortugueseSitemapEntry({ path: undescribedPath, resource: "courses" }),
       findPortugueseSitemapEntry({
-        path: `${coursePath}/ch/${chapter.slug}`,
+        path: `${undescribedPath}/ch/${SITEMAP_FIXTURES.undescribedChapterSlug}`,
         resource: "library-chapters",
       }),
     ]);

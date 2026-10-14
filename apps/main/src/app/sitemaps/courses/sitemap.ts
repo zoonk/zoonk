@@ -1,11 +1,10 @@
-import { countSitemapCourses, listSitemapCourses } from "@/data/sitemaps/courses";
+import { listSitemapCourses } from "@/data/sitemaps/courses";
 import { getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { type MetadataRoute } from "next";
 
-export async function generateSitemaps() {
-  const pageIds = getSitemapPageIds(await countSitemapCourses());
-  return pageIds.map((id) => ({ id }));
+export function generateSitemaps() {
+  return getSitemapPageIds("courses").map((id) => ({ id }));
 }
 
 export default async function sitemap(props: {

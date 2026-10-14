@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { routing } from "@/i18n/routing";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
+import { cacheLife } from "next/cache";
 import { ImageResponse } from "next/og";
 
 const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
@@ -12,9 +14,13 @@ export const size = { height: 630, width: 1200 };
 
 /**
  * Reuses the app icon as the social-card mark while swapping its colors for the
- * light-on-dark treatment established by the original static image.
+ * light-on-dark treatment established by the original static image. Cached, so the file read
+ * doesn't keep the card from being generated at build time.
  */
 async function getLogoDataUrl(): Promise<string> {
+  "use cache";
+  cacheLife("days");
+
   const icon = await readFile(LOGO_PATH, "utf8");
 
   const logo = icon
@@ -22,6 +28,11 @@ async function getLogoDataUrl(): Promise<string> {
     .replace('fill="#fff"', 'fill="#0d1117"');
 
   return `data:image/svg+xml;base64,${Buffer.from(logo).toString("base64")}`;
+}
+
+/** One card per supported language, generated at build time. */
+export function generateStaticParams() {
+  return routing.locales.map((language) => ({ lang: language }));
 }
 
 /**

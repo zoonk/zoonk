@@ -1,8 +1,9 @@
 import "server-only";
 import { QUICK_LESSON_KEY_WHERE } from "@zoonk/core/library/quick-lessons/identity";
 import { prisma } from "@zoonk/db";
+import { cacheLife } from "next/cache";
 import { getSitemapCourseWhere } from "./course-where";
-import { SITEMAP_BATCH_SIZE } from "./courses";
+import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 /**
  * A shared lesson is listed once, at its home placement, which is also its
@@ -19,22 +20,25 @@ async function getSitemapLibraryLessonWhere() {
   };
 }
 
-export async function countSitemapLibraryLessons(): Promise<number> {
-  return prisma.lesson.count({ where: await getSitemapLibraryLessonWhere() });
-}
+type SitemapLesson = {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  language: string;
+  lessonSlug: string;
+  updatedAt: Date;
+};
 
-export async function listSitemapLibraryLessons(
-  page: number,
-): Promise<
-  {
-    brandSlug: string;
-    chapterSlug: string;
-    courseSlug: string;
-    language: string;
-    lessonSlug: string;
-    updatedAt: Date;
-  }[]
-> {
+/** A page's lessons (`getSitemapPage`), read once a day. */
+async function listSitemapLibraryLessonPage(page: number): Promise<SitemapLesson[]> {
+  "use cache";
+  cacheLife("days");
+
+  const where = await getSitemapLibraryLessonWhere();
+  const listed = await prisma.lesson.findMany({ select: { id: true }, where });
+  const ids = getSitemapPageRowIds({ listed, page, resource: "library-lessons" });
+  warnIfSitemapPageIsFull({ page, resource: "library-lessons", rows: ids.length });
+
   const lessons = await prisma.lesson.findMany({
     orderBy: { id: "asc" },
     select: {
@@ -49,9 +53,7 @@ export async function listSitemapLibraryLessons(
       slug: true,
       updatedAt: true,
     },
-    skip: page * SITEMAP_BATCH_SIZE,
-    take: SITEMAP_BATCH_SIZE,
-    where: await getSitemapLibraryLessonWhere(),
+    where: { ...where, id: { in: ids } },
   });
 
   return lessons.flatMap(({ homeChapter, slug, updatedAt }) =>
@@ -68,4 +70,10 @@ export async function listSitemapLibraryLessons(
         ]
       : [],
   );
+}
+
+export async function listSitemapLibraryLessons(page: number): Promise<SitemapLesson[]> {
+  return isSitemapPage({ page, resource: "library-lessons" })
+    ? listSitemapLibraryLessonPage(page)
+    : [];
 }

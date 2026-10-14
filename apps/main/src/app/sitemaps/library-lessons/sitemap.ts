@@ -1,15 +1,11 @@
-import {
-  countSitemapLibraryLessons,
-  listSitemapLibraryLessons,
-} from "@/data/sitemaps/library-lessons";
+import { listSitemapLibraryLessons } from "@/data/sitemaps/library-lessons";
 import { getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLessonHref } from "@/lib/public/public-hrefs";
 import { type MetadataRoute } from "next";
 
-export async function generateSitemaps() {
-  const pageIds = getSitemapPageIds(await countSitemapLibraryLessons());
-  return pageIds.map((id) => ({ id }));
+export function generateSitemaps() {
+  return getSitemapPageIds("library-lessons").map((id) => ({ id }));
 }
 
 /**

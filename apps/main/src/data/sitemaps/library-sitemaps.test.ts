@@ -6,13 +6,21 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { SITEMAP_BATCH_SIZE } from "./courses";
-import { countSitemapLibraryChapters, listSitemapLibraryChapters } from "./library-chapters";
-import { countSitemapLibraryLessons, listSitemapLibraryLessons } from "./library-lessons";
+import { listSitemapLibraryChapters } from "./library-chapters";
+import { listSitemapLibraryLessons } from "./library-lessons";
+import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
 
-/** Library ids are time-ordered, so rows a test just created are on the last sitemap page. */
-function lastPage(count: number): number {
-  return Math.max(Math.ceil(count / SITEMAP_BATCH_SIZE) - 1, 0);
+/** Every page, so a fixture's page doesn't matter. */
+async function listAllPages<Row>({
+  list,
+  resource,
+}: {
+  list: (page: number) => Promise<Row[]>;
+  resource: SitemapResource;
+}): Promise<Row[]> {
+  const pages = getSitemapPageIds(resource);
+  const rows = await Promise.all(pages.map((page) => list(page)));
+  return rows.flat();
 }
 
 async function homeChapter({ isPublished = true } = {}) {
@@ -25,11 +33,11 @@ async function homeChapter({ isPublished = true } = {}) {
 }
 
 async function listedLessons() {
-  return listSitemapLibraryLessons(lastPage(await countSitemapLibraryLessons()));
+  return listAllPages({ list: listSitemapLibraryLessons, resource: "library-lessons" });
 }
 
 async function listedChapters() {
-  return listSitemapLibraryChapters(lastPage(await countSitemapLibraryChapters()));
+  return listAllPages({ list: listSitemapLibraryChapters, resource: "library-chapters" });
 }
 
 describe(listSitemapLibraryChapters, () => {

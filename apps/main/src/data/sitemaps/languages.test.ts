@@ -3,23 +3,24 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
-import { SITEMAP_BATCH_SIZE, countSitemapCourses, listSitemapCourses } from "./courses";
-import { countSitemapLibraryChapters, listSitemapLibraryChapters } from "./library-chapters";
-import { countSitemapLibraryLessons, listSitemapLibraryLessons } from "./library-lessons";
+import { listSitemapCourses } from "./courses";
+import { listSitemapLibraryChapters } from "./library-chapters";
+import { listSitemapLibraryLessons } from "./library-lessons";
+import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
 
 /**
  * Read every sitemap page so excluded fixtures cannot appear to pass simply
  * because their IDs sort outside the final page in a shared test database.
  */
 async function listSitemapPages<T>({
-  count,
   list,
+  resource,
 }: {
-  count: () => Promise<number>;
   list: (page: number) => Promise<T[]>;
+  resource: SitemapResource;
 }): Promise<T[]> {
-  const pages = Math.max(Math.ceil((await count()) / SITEMAP_BATCH_SIZE), 1);
-  const rows = await Promise.all(Array.from({ length: pages }, (_, page) => list(page)));
+  const pages = getSitemapPageIds(resource);
+  const rows = await Promise.all(pages.map((page) => list(page)));
   return rows.flat();
 }
 
@@ -47,9 +48,9 @@ describe("sitemap content languages", () => {
     ]);
 
     const [courses, chapters, lessons] = await Promise.all([
-      listSitemapPages({ count: countSitemapCourses, list: listSitemapCourses }),
-      listSitemapPages({ count: countSitemapLibraryChapters, list: listSitemapLibraryChapters }),
-      listSitemapPages({ count: countSitemapLibraryLessons, list: listSitemapLibraryLessons }),
+      listSitemapPages({ list: listSitemapCourses, resource: "courses" }),
+      listSitemapPages({ list: listSitemapLibraryChapters, resource: "library-chapters" }),
+      listSitemapPages({ list: listSitemapLibraryLessons, resource: "library-lessons" }),
     ]);
 
     const courseSlugs = courses.map((course) => course.courseSlug);

@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { cacheLife } from "next/cache";
 import { getSitemapCourseWhere } from "./course-where";
-import { SITEMAP_BATCH_SIZE } from "./courses";
+import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 /**
  * A shared chapter is listed once, at its home placement (the course it was
@@ -12,21 +13,24 @@ async function getSitemapLibraryChapterWhere() {
   return { homeCourse: await getSitemapCourseWhere(), visibility: "public" as const };
 }
 
-export async function countSitemapLibraryChapters(): Promise<number> {
-  return prisma.chapter.count({ where: await getSitemapLibraryChapterWhere() });
-}
+type SitemapChapter = {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  language: string;
+  updatedAt: Date;
+};
 
-export async function listSitemapLibraryChapters(
-  page: number,
-): Promise<
-  {
-    brandSlug: string;
-    chapterSlug: string;
-    courseSlug: string;
-    language: string;
-    updatedAt: Date;
-  }[]
-> {
+/** A page's chapters (`getSitemapPage`), read once a day. */
+async function listSitemapLibraryChapterPage(page: number): Promise<SitemapChapter[]> {
+  "use cache";
+  cacheLife("days");
+
+  const where = await getSitemapLibraryChapterWhere();
+  const listed = await prisma.chapter.findMany({ select: { id: true }, where });
+  const ids = getSitemapPageRowIds({ listed, page, resource: "library-chapters" });
+  warnIfSitemapPageIsFull({ page, resource: "library-chapters", rows: ids.length });
+
   const chapters = await prisma.chapter.findMany({
     orderBy: { id: "asc" },
     select: {
@@ -36,9 +40,7 @@ export async function listSitemapLibraryChapters(
       slug: true,
       updatedAt: true,
     },
-    skip: page * SITEMAP_BATCH_SIZE,
-    take: SITEMAP_BATCH_SIZE,
-    where: await getSitemapLibraryChapterWhere(),
+    where: { ...where, id: { in: ids } },
   });
 
   return chapters.flatMap(({ homeCourse, slug, updatedAt }) =>
@@ -54,4 +56,10 @@ export async function listSitemapLibraryChapters(
         ]
       : [],
   );
+}
+
+export async function listSitemapLibraryChapters(page: number): Promise<SitemapChapter[]> {
+  return isSitemapPage({ page, resource: "library-chapters" })
+    ? listSitemapLibraryChapterPage(page)
+    : [];
 }
