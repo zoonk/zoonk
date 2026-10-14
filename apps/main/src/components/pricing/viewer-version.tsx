@@ -10,20 +10,22 @@ export type ViewerVersions = Record<PlusViewerState["status"], ReactNode>;
 
 /**
  * Who's reading, from the learner summary in the browser: a visitor until it reads someone (or
- * when it can't), so the static page keeps what its HTML has until then.
+ * when it can't), so the static page keeps what its HTML has until then. While it isn't known
+ * (`known`), a browser whose session hint says it holds a session keeps the visitor's version out
+ * of sight (`signed-in:`), since it's someone's with an account or a guest's.
  */
-function useViewerStatus(): PlusViewerState["status"] {
+function useViewer(): { known: boolean; status: PlusViewerState["status"] } {
   const learner = useLearnerSummary();
 
   if (learner.status !== "ready") {
-    return "visitor";
+    return { known: learner.status === "visitor", status: "visitor" };
   }
 
   if (learner.summary.identity.isAnonymous) {
-    return "guest";
+    return { known: true, status: "guest" };
   }
 
-  return learner.summary.tier === "plus" ? "subscribed" : "free";
+  return { known: true, status: learner.summary.tier === "plus" ? "subscribed" : "free" };
 }
 
 /**
@@ -31,7 +33,9 @@ function useViewerStatus(): PlusViewerState["status"] {
  * summary reads someone. For parts below the first screen, where the swap moves nothing in sight.
  */
 export function ViewerVersion({ versions }: { versions: ViewerVersions }) {
-  return versions[useViewerStatus()];
+  const { known, status } = useViewer();
+
+  return <div className={cn("contents", !known && "signed-in:hidden")}>{versions[status]}</div>;
 }
 
 /** A plan's action with the quiet line under it. */
@@ -43,12 +47,19 @@ const PLAN_NEXT_STEP_CLASS = "col-start-1 row-start-1 flex flex-col gap-2.5";
  * the visitor's holds, so the card's rows and everything under it stay where they were.
  */
 export function PlanNextStepVersion({ versions }: { versions: ViewerVersions }) {
-  const status = useViewerStatus();
+  const { known, status } = useViewer();
   const isVisitor = status === "visitor";
 
   return (
     <div className="mt-5 grid">
-      <div className={cn(PLAN_NEXT_STEP_CLASS, !isVisitor && "invisible")} inert={!isVisitor}>
+      <div
+        className={cn(
+          PLAN_NEXT_STEP_CLASS,
+          !isVisitor && "invisible",
+          !known && "signed-in:invisible",
+        )}
+        inert={!isVisitor}
+      >
         {versions.visitor}
       </div>
 
