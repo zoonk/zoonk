@@ -1,9 +1,11 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 
+type RevisionTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
+
 /** Each learner-visible writer calls this once, in the transaction that owns its domain write. */
 export async function markLearnerChanged(
-  tx: TransactionClient,
+  tx: RevisionTransaction,
   { userId, planInputs = false }: { userId: string; planInputs?: boolean },
 ): Promise<{ learnerRevision: bigint }> {
   if (planInputs) {
@@ -36,7 +38,7 @@ export async function markLearnerChanged(
 
 /** A shared-content writer marks dependent plans, without returning another learner's revision. */
 export async function markPlansChanged(
-  tx: TransactionClient,
+  tx: RevisionTransaction,
   { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
   if (planIds.length === 0) {
@@ -58,8 +60,14 @@ export async function markPlansChanged(
   /** Stable lock order prevents overlapping multi-owner writes from deadlocking each other. */
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();
 
-  for (const userId of userIds) {
-    // oxlint-disable-next-line eslint/no-await-in-loop -- Acquire each owner lock in the same stable order.
-    await markLearnerChanged(tx, { userId });
-  }
+  await tx.$queryRaw`
+    SELECT id FROM users
+    WHERE id = ANY(${userIds}::uuid[])
+    ORDER BY id FOR UPDATE
+  `;
+
+  await tx.$executeRaw`
+    UPDATE users SET learner_revision = learner_revision + 1
+    WHERE id = ANY(${userIds}::uuid[])
+  `;
 }

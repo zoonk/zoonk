@@ -14,6 +14,38 @@ async function plan(userId: string) {
   return planFixture({ goalId: goal.id });
 }
 
+function queryText(args: unknown): string {
+  if (typeof args === "object" && args !== null && "sql" in args && typeof args.sql === "string") {
+    return args.sql;
+  }
+
+  if (Array.isArray(args)) {
+    return args.every((part) => typeof part === "string") ? args.join("") : queryText(args[0]);
+  }
+
+  throw new Error("Expected a raw SQL query at the Prisma observation boundary");
+}
+
+/** Observe real SQL through Prisma's query lifecycle, without changing its args or results. */
+function observeStatements() {
+  const statements: string[] = [];
+
+  const client = prisma.$extends({
+    query: {
+      $executeRaw({ args, query }) {
+        statements.push(queryText(args));
+        return query(args);
+      },
+      $queryRaw({ args, query }) {
+        statements.push(queryText(args));
+        return query(args);
+      },
+    },
+  });
+
+  return { client, statements };
+}
+
 describe(markLearnerChanged, () => {
   it("increments monotonically once per call, including plan-input changes", async () => {
     const user = await userFixture();
@@ -100,6 +132,36 @@ describe(markLearnerChanged, () => {
 });
 
 describe(markPlansChanged, () => {
+  it("updates dependent owners in one statement rather than one round trip per learner", async () => {
+    const users = await Promise.all(Array.from({ length: 4 }, () => userFixture()));
+
+    const plans = await Promise.all([
+      plan(users[0]!.id),
+      plan(users[0]!.id),
+      plan(users[1]!.id),
+      plan(users[2]!.id),
+    ]);
+
+    const { client, statements } = observeStatements();
+
+    await client.$transaction((tx) =>
+      markPlansChanged(tx, { planIds: [...plans.map((row) => row.id), plans[0]!.id].toReversed() }),
+    );
+
+    expect(statements.filter((query) => /^\s*UPDATE\s+users\b/iu.test(query))).toHaveLength(1);
+
+    await expect(Promise.all(users.map((user) => revision(user.id)))).resolves.toStrictEqual([
+      1n,
+      1n,
+      1n,
+      0n,
+    ]);
+
+    await expect(
+      prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),
+    ).resolves.toMatchObject(plans.map(() => ({ inputVersion: 1, version: 1 })));
+  });
+
   it("locks plans before users across mixed concurrent writers", async () => {
     const [firstUser, secondUser] = await Promise.all([userFixture(), userFixture()]);
     const firstPlan = await plan(firstUser.id);
