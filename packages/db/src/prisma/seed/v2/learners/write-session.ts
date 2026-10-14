@@ -47,6 +47,8 @@ export type BuiltDay = {
   answers: ReadonlyMap<number, readonly BlockAnswer[]>;
   blocks: readonly BuiltBlock[];
   freshStart: StudyFreshStart | null;
+  /** The missions the app picks for the day as it builds it (`ensureStudySession` in core). */
+  missions: Prisma.InputJsonObject;
   /** The plan version the day was built from (`loadDayPlanVersion` in core). */
   planVersion: number | null;
 };
@@ -229,6 +231,7 @@ async function writeDay(
       goalId,
       id,
       localDate: scopeDay(scope, 0),
+      missions: day.missions,
       planVersion: day.planVersion,
       plannedMinutes: day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
       startSnapshot: startedAt ? toStartSnapshot(scope, earnedToday) : Prisma.DbNull,

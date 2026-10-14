@@ -6,6 +6,8 @@ import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { getBlockItemIds } from "../sessions/block-payload";
+import { loadDayMissionFacts } from "../sessions/missions/day-facts";
+import { pickMissions } from "../sessions/missions/pick-missions";
 import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-builder";
 
 /** A question the persona answered in a block, as the session's grading reads it. */
@@ -54,9 +56,9 @@ async function loadRightAnswers({
 /**
  * Builds a persona's today the way the app does when the learner opens Today (see
  * `ensureStudySession`), from the plan the seed just made, as of the moment the seed writes the
- * persona on. The seed then stores how far the persona got through it, the blocks it finished
- * answered right, and each lesson it finished is checked off in the plan as finishing its block
- * does. No model is called.
+ * persona on, with the missions the app picks for it. The seed then stores how far the persona got
+ * through it, the blocks it finished answered right, and each lesson it finished is checked off in
+ * the plan as finishing its block does. No model is called.
  */
 export async function buildSeededDay({ goalId, today }: { goalId: string; today: SeededToday }) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
@@ -72,13 +74,19 @@ export async function buildSeededDay({ goalId, today }: { goalId: string; today:
   // Read before the day is built from the plan, as the app does.
   const planVersion = await loadDayPlanVersion(day);
   const input = await loadSessionBuildInput(day);
-  const { blocks } = buildSessionBlocks(input);
-  const answers = await loadRightAnswers({ blocks, today });
+  const { blocks, plannedMinutes } = buildSessionBlocks(input);
+
+  // The day's missions are picked and stored with it, so the frame reads them as it reads any day's.
+  const [answers, facts] = await Promise.all([
+    loadRightAnswers({ blocks, today }),
+    loadDayMissionFacts({ ...day, blocks, plannedMinutes }),
+  ]);
 
   const finished = await today.write({
     answers,
     blocks,
     freshStart: input.freshStart,
+    missions: { picks: pickMissions(facts), version: 1 },
     planVersion,
   });
 
