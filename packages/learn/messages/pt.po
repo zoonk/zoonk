@@ -8838,9 +8838,9 @@ msgid "~{percent}"
 msgstr "~{percent}"
 
 #: src/onboarding/steps/plan-shape.tsx
-msgctxt "8zg_j1"
-msgid "~ Estimated: the notice doesn't say how much these weigh."
-msgstr "~ Estimativa: o edital não diz quanto estas áreas pesam."
+msgctxt "8QCeck"
+msgid "{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}"
+msgstr "{count, plural, one {~ Estimativa: o edital não diz quanto esta área pesa.} other {~ Estimativa: o edital não diz quanto estas áreas pesam.}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "w_jfVo"
