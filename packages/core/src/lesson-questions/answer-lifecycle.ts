@@ -1,7 +1,6 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
-import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
 import { prisma } from "@zoonk/db";
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -17,7 +16,6 @@ import { lessonQuestionResourceOmit } from "./_utils/question-resource";
 import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
 import { findTutorMemory, markTutorMemoryUsed, rememberTutorExchange } from "./_utils/tutor-memory";
 import { type TutorSubject, findThreadSubject } from "./_utils/tutor-subject";
-import { findSubjectGoal } from "./_utils/tutored-goal";
 
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
@@ -128,21 +126,16 @@ async function claimTutorAnswer({
 
 /**
  * Who the answer's AI calls run for, so the tutor's cost is summed per learner, and per goal for
- * the buddy's answers inside a goal (its conversation, or a chapter, lesson or mock of it).
+ * the buddy's answers asked under a goal (its conversation, or a chapter, lesson or mock of it).
  */
-async function getAnswerAnalytics({
-  contextSnapshot,
-  subject,
+function getAnswerAnalytics({
+  goalId,
   userId,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
-  subject: TutorSubject;
+  goalId: string | null;
   userId: string;
-}): Promise<Pick<AiGenerationContext, "distinctId" | "goalId">> {
-  const goal =
-    contextSnapshot.scope.kind === "plan" ? await findSubjectGoal({ subject, userId }) : null;
-
-  return goal ? { distinctId: userId, goalId: goal.id } : { distinctId: userId };
+}): Pick<AiGenerationContext, "distinctId" | "goalId"> {
+  return goalId ? { distinctId: userId, goalId } : { distinctId: userId };
 }
 
 /**
@@ -178,12 +171,13 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
     return claimed;
   }
 
-  const { contextSnapshot, priorTurns, question, questionId, revision } = claimed.claim;
+  const { contextSnapshot, goalId, priorTurns, question, questionId, revision } = claimed.claim;
 
-  const [tutor, analytics] = await Promise.all([
-    claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
-    getAnswerAnalytics({ contextSnapshot, subject: access.subject, userId }),
-  ]);
+  const tutor = await claimTutorAnswer({
+    question: claimed.claim,
+    subject: access.subject,
+    userId,
+  });
 
   if (tutor.status !== "ready") {
     return { decision: tutor, status: "usageRefused" as const };
@@ -193,7 +187,7 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   return {
     claim: {
-      analytics,
+      analytics: getAnswerAnalytics({ goalId, userId }),
       contextSnapshot,
       learnerMemory,
       priorTurns,

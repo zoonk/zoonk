@@ -5,6 +5,7 @@ import {
   type SubjectScopeContext,
   type TutorScreenContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
+import { prisma } from "@zoonk/db";
 import { type LessonQuestionContextInput, type LessonScopeContextInput } from "../contract";
 import { buildChapterContextSnapshot } from "./chapter-context-snapshot";
 import { buildItemContextSnapshot } from "./item-context-snapshot";
@@ -97,16 +98,56 @@ async function buildScreenSnapshot({
   }
 }
 
-/** The plan of the goal a screen belongs to, as the buddy reads it; null without one. */
+/**
+ * Whether the screen's own Library row (its lesson or chapter, with its home course, or its
+ * question's skill) was written for this learner alone, so its words are as personal as theirs. A
+ * subject's and a mock's words come from the goal's course or the exam: the plan marks a course
+ * of the learner's own.
+ */
+async function isOwnScreen(subject: ScreenSubject): Promise<boolean> {
+  switch (subject.kind) {
+    case "lesson": {
+      const { lesson } = subject;
+      const chapter = lesson.homeChapter;
+
+      return [lesson, chapter, chapter?.homeCourse].some((row) => row?.visibility === "private");
+    }
+    case "chapter": {
+      const chapter = await prisma.chapter.findUnique({
+        select: { homeCourse: { select: { visibility: true } }, visibility: true },
+        where: { id: subject.chapterId },
+      });
+
+      return [chapter, chapter?.homeCourse].some((row) => row?.visibility === "private");
+    }
+    case "item": {
+      const item = await prisma.item.findUnique({
+        select: { skill: { select: { visibility: true } } },
+        where: { id: subject.item.id },
+      });
+
+      return item?.skill.visibility === "private";
+    }
+    case "mock":
+    case "subject":
+      return false;
+    default:
+      return subject satisfies never;
+  }
+}
+
+/** The goal a screen belongs to and its plan, as the buddy reads it; null without one. */
 async function buildScreenGoalSnapshot({
   subject,
   userId,
 }: {
   subject: ScreenSubject;
   userId: string;
-}): Promise<PlanScopeContext | null> {
+}): Promise<{ goalId: string; plan: PlanScopeContext } | null> {
   const goal = await findSubjectGoal({ subject, userId });
-  return goal ? buildPlanContextSnapshot(goal) : null;
+  const plan = goal ? await buildPlanContextSnapshot(goal) : null;
+
+  return goal && plan ? { goalId: goal.id, plan } : null;
 }
 
 /**
@@ -114,7 +155,8 @@ async function buildScreenGoalSnapshot({
  * from a chapter, a lesson, a subject or a finished mock inside one of the learner's goals, goes
  * to the buddy with the goal's plan, plus the screen it came from: every place the buddy is asked
  * can read the plan, propose a change to it and offer the app's features. A learner without a
- * goal asks about the screen alone.
+ * goal asks about the screen alone. `goalId` is the goal whose plan the snapshot holds: the
+ * question keeps it, so its answer reads and acts on that goal alone (see `findAnsweringGoal`).
  */
 export async function buildTutorContextSnapshot({
   context,
@@ -133,23 +175,40 @@ export async function buildTutorContextSnapshot({
         : null;
 
     return contextSnapshot
-      ? { contextSnapshot, status: "ready" as const, stepId: null, stepNumber: null }
+      ? {
+          contextSnapshot,
+          goalId: subject.goal.id,
+          status: "ready" as const,
+          stepId: null,
+          stepNumber: null,
+        }
       : INVALID_CONTEXT;
   }
 
-  const [screen, plan] = await Promise.all([
+  const [screen, goalPlan, ownScreen] = await Promise.all([
     buildScreenSnapshot({ context, subject, userId }),
     buildScreenGoalSnapshot({ subject, userId }),
+    isOwnScreen(subject),
   ]);
 
   if (screen.status !== "ready") {
     return screen;
   }
 
-  if (plan) {
-    return { ...screen, contextSnapshot: { ...plan, screen: screen.contextSnapshot } };
+  if (goalPlan) {
+    const contextSnapshot = {
+      ...goalPlan.plan,
+      // The plan's own marks, and the screen's: a plan without one reads as private.
+      privateContent: ownScreen || goalPlan.plan.privateContent !== false,
+      screen: screen.contextSnapshot,
+    };
+
+    return { ...screen, contextSnapshot, goalId: goalPlan.goalId };
   }
 
   const { contextSnapshot } = screen;
-  return needsGoalPlan(contextSnapshot) ? INVALID_CONTEXT : { ...screen, contextSnapshot };
+
+  return needsGoalPlan(contextSnapshot)
+    ? INVALID_CONTEXT
+    : { ...screen, contextSnapshot, goalId: null };
 }

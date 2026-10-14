@@ -238,6 +238,14 @@ export type PlanScopeContext = {
     kind: string;
     name: string;
   } | null;
+  /**
+   * Whether some Library text here was written for this learner alone (their own private course,
+   * chapter, lesson or skill, built from their goal's words) or read from their own material: then
+   * the course's and the screen's text are as personal as what they wrote, and never leave the app
+   * (a web search's words included). Only `false` makes that text public; questions saved before it
+   * was marked have none, which reads as private.
+   */
+  privateContent?: boolean;
   scope: { kind: "plan" };
   /**
    * This is the buddy's own conversation about the goal the app has open: its answers may link what

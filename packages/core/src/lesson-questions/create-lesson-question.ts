@@ -86,6 +86,7 @@ function findExistingLessonQuestion({
 async function persistLessonQuestion({
   asked,
   contextSnapshot,
+  goalId,
   input,
   requestFingerprint,
   stepId,
@@ -95,6 +96,8 @@ async function persistLessonQuestion({
 }: {
   asked: AskedQuestion;
   contextSnapshot: LessonQuestionContextSnapshot;
+  /** The goal whose plan the snapshot holds; null without one. */
+  goalId: string | null;
   input: CreateLessonQuestionInput;
   requestFingerprint: string;
   stepId: string | null;
@@ -137,6 +140,7 @@ async function persistLessonQuestion({
         data: {
           contextKind: input.context.kind,
           contextSnapshot: toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
+          goalId,
           libraryStepId: stepId,
           question: asked.question,
           requestFingerprint,
@@ -245,6 +249,7 @@ export async function createLessonQuestion({
   const outcome = await persistLessonQuestion({
     asked,
     contextSnapshot: context.contextSnapshot,
+    goalId: context.goalId,
     input,
     requestFingerprint,
     stepId: context.stepId,

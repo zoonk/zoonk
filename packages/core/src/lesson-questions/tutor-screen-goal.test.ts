@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,6 +19,8 @@ import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answe
 import { type LessonQuestionContextInput, type TutorTarget } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
+import { lookUpTutorData } from "./look-up-tutor-data";
+import { offerTutorTool } from "./offer-tutor-tool";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
 /** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
@@ -34,7 +39,7 @@ const ANSWER_RUN = {
 };
 
 /** A goal with a built plan for a learner, whose first chapter the plan teaches. */
-async function plannedGoal(userId: string) {
+async function plannedGoal(userId: string, title = "Get a UX job") {
   const library = await planLibraryFixture({
     skills: [
       { area: "Research", lessons: 4 },
@@ -45,7 +50,7 @@ async function plannedGoal(userId: string) {
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 12,
     settings: { startDate: "2020-09-28" },
-    title: "Get a UX job",
+    title,
     userId,
   });
 
@@ -57,7 +62,35 @@ async function plannedGoal(userId: string) {
     throw new Error("Expected the plan's chapter");
   }
 
-  return { chapter, goal };
+  return { chapter, goal, skills: library.skills };
+}
+
+/**
+ * A learner with two planned goals who asks on a chapter of the first while it's open, then opens
+ * the second on another device while the buddy is still writing the answer.
+ */
+async function switchGoalsMidAnswer() {
+  const user = await userFixture();
+
+  const [asked, other] = await Promise.all([
+    plannedGoal(user.id),
+    plannedGoal(user.id, "Learn Figma"),
+  ]);
+
+  await learningProfileFixture({ activeGoalId: asked.goal.id, userId: user.id });
+  mockSession(user.id);
+
+  const { claim, questionId } = await askAndClaim({
+    context: { kind: "chapter" },
+    target: { chapterId: asked.chapter.id, kind: "chapter" },
+  });
+
+  await prisma.userLearningProfile.update({
+    data: { activeGoalId: other.goal.id },
+    where: { userId: user.id },
+  });
+
+  return { answering: { questionId, revision: claim.revision }, asked, other, user };
 }
 
 /** A learner's goal with a plan row and no lessons, for screens that read none of its lessons. */
@@ -226,6 +259,121 @@ describe("the buddy on a screen inside a goal", () => {
     });
   });
 
+  it("looks up and changes the goal it was asked under when the learner opens another one mid-answer", async () => {
+    mockRestDay();
+    const { answering, asked, other } = await switchGoalsMidAnswer();
+
+    await expect(
+      lookUpTutorData({ ...answering, area: null, query: null, what: "goals" }),
+    ).resolves.toMatchObject({
+      goals: expect.arrayContaining([
+        expect.objectContaining({ open: false, thisGoal: true, title: "Get a UX job" }),
+        expect.objectContaining({ open: true, thisGoal: false, title: "Learn Figma" }),
+      ]),
+      status: "found",
+    });
+
+    await expect(
+      proposeTutorPlanChange({ ...answering, request: "Sunday is a rest day" }),
+    ).resolves.toMatchObject({ status: "proposed" });
+
+    const [onAsked, onOther] = await Promise.all([
+      prisma.planChange.count({ where: { plan: { goalId: asked.goal.id }, status: "proposed" } }),
+      prisma.planChange.count({ where: { plan: { goalId: other.goal.id }, status: "proposed" } }),
+    ]);
+
+    expect({ onAsked, onOther }).toStrictEqual({ onAsked: 1, onOther: 0 });
+  });
+
+  it("offers the app's features for the goal it was asked under when the learner opens another one mid-answer", async () => {
+    const { answering, asked, user } = await switchGoalsMidAnswer();
+    const [skill] = asked.skills;
+
+    if (!skill) {
+      throw new Error("Expected the asked goal's skill");
+    }
+
+    await mistakeFixture({ skillId: skill.id, userId: user.id });
+
+    await expect(offerTutorTool({ ...answering, tool: "mistakes" })).resolves.toStrictEqual({
+      offer: { goalId: asked.goal.id, kind: "mistakes", open: 1 },
+      status: "offered",
+    });
+  });
+
+  it("marks the words of the learner's own private chapter as theirs, never a public chapter's", async () => {
+    const user = await userFixture();
+    const { chapter } = await plannedGoal(user.id);
+    mockSession(user.id);
+
+    const target = { chapterId: chapter.id, kind: "chapter" } as const;
+    const onPublic = await askAndClaim({ context: { kind: "chapter" }, target });
+
+    expect(onPublic.claim.contextSnapshot).toMatchObject({ privateContent: false });
+
+    await completeLessonQuestionAnswer({
+      ...ANSWER_RUN,
+      questionId: onPublic.questionId,
+      revision: onPublic.claim.revision,
+    });
+
+    // The same chapter, written for this learner's goal alone.
+    await prisma.chapter.update({
+      data: { ownerId: user.id, visibility: "private" },
+      where: { id: chapter.id },
+    });
+
+    const onOwn = await askAndClaim({
+      context: { kind: "chapter" },
+      question: "And here?",
+      target,
+    });
+
+    expect(onOwn.claim.contextSnapshot).toMatchObject({ privateContent: true });
+  });
+
+  it("reads a question saved before its Library text was marked as private", async () => {
+    const user = await userFixture();
+    const { chapter } = await plannedGoal(user.id);
+    mockSession(user.id);
+
+    const created = await createLessonQuestion({
+      input: { context: { kind: "chapter" }, question: "And here?", requestId: randomUUID() },
+      target: { chapterId: chapter.id, kind: "chapter" },
+    });
+
+    if (created.status !== "created") {
+      throw new Error(`Expected a created question, received ${created.status}`);
+    }
+
+    const questionId = created.question.id;
+
+    // As a question saved before the mark existed: its snapshot has none.
+    await prisma.$executeRaw`
+      UPDATE lesson_questions SET context_snapshot = context_snapshot - 'privateContent'
+      WHERE id = ${questionId}::uuid`;
+
+    const claimed = await claimLessonQuestionAnswer({ questionId, requestedModel: MODEL });
+
+    expect(claimed).toMatchObject({ claim: { contextSnapshot: { privateContent: true } } });
+  });
+
+  it("marks a plan built from the learner's own private course", async () => {
+    const user = await userFixture();
+    const { chapter, goal } = await plannedGoal(user.id);
+    const course = await courseFixture({ userId: user.id, visibility: "private" });
+
+    await prisma.goal.update({ data: { primaryCourseId: course.id }, where: { id: goal.id } });
+    mockSession(user.id);
+
+    const { claim } = await askAndClaim({
+      context: { kind: "chapter" },
+      target: { chapterId: chapter.id, kind: "chapter" },
+    });
+
+    expect(claim.contextSnapshot).toMatchObject({ privateContent: true });
+  });
+
   it("answers about a chapter alone for a learner without a goal, with no plan to change", async () => {
     const [user, chapter] = await Promise.all([userFixture(), libraryChapterFixture()]);
     mockSession(user.id);
@@ -242,13 +390,17 @@ describe("the buddy on a screen inside a goal", () => {
 
     expect(claim.contextSnapshot).not.toHaveProperty("screen");
 
+    // A goal the learner starts while the answer is being written isn't the one they asked under.
+    await plannedGoal(user.id);
+    const answering = { questionId, revision: claim.revision };
+
     await expect(
-      proposeTutorPlanChange({
-        questionId,
-        request: "Sunday is a rest day",
-        revision: claim.revision,
-      }),
+      proposeTutorPlanChange({ ...answering, request: "Sunday is a rest day" }),
     ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(
+      lookUpTutorData({ ...answering, area: null, query: null, what: "goals" }),
+    ).resolves.toStrictEqual({ status: "notFound", what: "goals" });
   });
 
   it("keeps everything the buddy reads from a saved question: the target's cut-off and when essays are practiced", async () => {

@@ -171,6 +171,8 @@ const planScopeSnapshotSchema = z.object({
       name: z.string(),
     })
     .nullable(),
+  // Questions asked before private content was marked have none: they read as private.
+  privateContent: z.boolean().default(true),
   scope: z.object({ kind: z.literal("plan") }),
   // Questions to the buddy from its own conversation have no screen.
   screen: screenSnapshotSchema.optional(),

@@ -108,6 +108,8 @@ model Goal {
   aiCalls               AiCall[]
   questionThreads       LessonQuestionThread[] @relation("GoalQuestionThreads")
   subjectThreads        LessonQuestionThread[] @relation("SubjectQuestionThreads")
+  /// The buddy's answers asked under this goal, which read and act on its plan alone.
+  tutorQuestions        LessonQuestion[]       @relation("TutorQuestionGoal")
 
   @@index([userId, status])
   @@index([examBlueprintId])

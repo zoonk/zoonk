@@ -99,12 +99,12 @@ async function loadCourse({
 }: {
   goal: Goal;
   plan: PlanView;
-}): Promise<PlanScopeContext["course"]> {
+}): Promise<{ course: PlanScopeContext["course"]; ownCourse: boolean }> {
   const planCourse = goal.kind === "exam" ? null : plan.course;
   const course = planCourse ? await getLibraryCourse({ courseId: planCourse.courseId }) : null;
 
   if (!planCourse || !course) {
-    return null;
+    return { course: null, ownCourse: false };
   }
 
   const inPlan = new Set(
@@ -112,14 +112,18 @@ async function loadCourse({
   );
 
   return {
-    description: course.description,
-    levels: course.levels.map((band) => ({
-      chapters: band.chapters.map((chapter) => chapter.title),
-      inPlan: inPlan.has(band.level),
-      level: band.level,
-    })),
-    targetLanguage: course.targetLanguage,
-    title: course.title,
+    course: {
+      description: course.description,
+      levels: course.levels.map((band) => ({
+        chapters: band.chapters.map((chapter) => chapter.title),
+        inPlan: inPlan.has(band.level),
+        level: band.level,
+      })),
+      targetLanguage: course.targetLanguage,
+      title: course.title,
+    },
+    // A private course was written for this learner's goal alone: its words are theirs.
+    ownCourse: course.visibility === "private",
   };
 }
 
@@ -269,7 +273,7 @@ export async function buildPlanContextSnapshot(
   const activeGoalId = conversation ? await findActiveGoalId(goal.userId) : null;
   const scope = { activeGoal: activeGoalId === goal.id };
 
-  const [course, day, mistakes, exam, cutoff] = await Promise.all([
+  const [{ course, ownCourse }, day, mistakes, exam, cutoff] = await Promise.all([
     loadCourse({ goal, plan }),
     loadPlanDayContext({ goal, plan, scope }),
     loadRecentMistakes(goal),
@@ -287,6 +291,8 @@ export async function buildPlanContextSnapshot(
     mistakes,
     next: toNextDays(plan),
     phase: toPhase(plan),
+    // Text built from the learner's goal words or their own material is theirs (see `PlanScopeContext`).
+    privateContent: ownCourse || exam?.fromMaterial === true,
     scope: { kind: "plan" },
     ...(scope.activeGoal && { selectedGoal: true as const }),
     setup: toSetup(plan),

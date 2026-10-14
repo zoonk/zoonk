@@ -42,7 +42,10 @@ function toHistoryMessages(priorTurns: readonly LessonQuestionPriorTurn[]) {
   ]);
 }
 
-/** The goal's context, with the host's link wherever it points at something the app opens. */
+/**
+ * The goal's context, with the host's link wherever it points at something the app opens. Whether
+ * its Library text is public is the search's to know (`privateContent`), never the model's.
+ */
 function createContextMessage({
   contextSnapshot,
   links,
@@ -50,11 +53,13 @@ function createContextMessage({
   contextSnapshot: PlanScopeContext;
   links: GoalTutorLinks;
 }) {
+  const { privateContent: _privateContent, ...context } = contextSnapshot;
+
   return textMessage({
     role: "user",
     text: [
       "<CURRENT_CONTEXT>",
-      stringifyWithLinks(contextSnapshot, links.toLink),
+      stringifyWithLinks(context, links.toLink),
       "</CURRENT_CONTEXT>",
     ].join("\n"),
   });

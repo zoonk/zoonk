@@ -267,6 +267,8 @@ export async function claimAnswerInTransaction({
   return {
     claim: {
       contextSnapshot: parseLessonQuestionContextSnapshot(question.contextSnapshot),
+      /** The goal whose plan the question was asked with; null without one. */
+      goalId: question.goalId,
       priorTurns,
       question: question.question,
       questionId: question.id,

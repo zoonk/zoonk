@@ -84,6 +84,12 @@ model LessonQuestion {
   planChange         PlanChange?               @relation(fields: [planChangeId], references: [id], onDelete: SetNull)
   /// One of the app's tools the buddy offered in this answer: a chapter's test, choosing where to focus, a practice call.
   toolOffer          Json?                     @map("tool_offer")
+  /// The goal whose plan the buddy read when the question was asked (its own conversation's goal,
+  /// or the goal a chapter, lesson, subject, item or mock belongs to): the answer looks up, proposes
+  /// changes to and offers the app's tools for this goal alone, even after the learner opens
+  /// another. Null without one, and on questions asked before it was saved.
+  goalId             String?                   @map("goal_id") @db.Uuid
+  goal               Goal?                     @relation("TutorQuestionGoal", fields: [goalId], references: [id], onDelete: SetNull)
   createdAt          DateTime                  @default(now()) @map("created_at")
   updatedAt          DateTime                  @default(now()) @updatedAt @map("updated_at")
 
@@ -93,6 +99,7 @@ model LessonQuestion {
   @@index([libraryStepId])
   @@index([sharedAnswerId])
   @@index([planChangeId])
+  @@index([goalId])
   @@map("lesson_questions")
 }
 
