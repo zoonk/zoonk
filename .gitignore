@@ -32,6 +32,7 @@ coverage
 # Build Outputs
 .next/
 .next-e2e/
+.swc/
 out/
 build
 dist
