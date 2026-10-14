@@ -52,7 +52,7 @@ const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
 /** When a session is taken to be over: its estimated longest run after creation. */
 const SESSION_SETTLED_MS = LIVE_SESSION_ESTIMATED_MAX_SECONDS * 1000 + CREATION_SETTLED_MS;
 
-/** The most a provider session is taken to bill: its longest run. */
+/** The most a provider session is taken to bill: its estimated longest run. */
 const LONGEST_SESSION_MICROS = getLiveCallCostMicros(LIVE_SESSION_ESTIMATED_MAX_SECONDS);
 
 function cleanupBlockingDeadline(now: Date): Date {
@@ -69,7 +69,7 @@ function settledAfterMs(connection: LiveCallConnection): number {
  *   got the answer, so the session can't start running, and OpenAI bills one that hasn't started
  *   for its 15-second initialization, far below the reservation kept. An ID that still turns up
  *   opens the row again (`persistLiveCallSession`).
- * - With one: once its longest run is over, keeping that whole run's cost. A receipt that still
+ * - With one: once its estimated longest run is over, keeping that run's cost. A receipt that still
  *   comes replaces the estimate (`closeLiveCallConnection`).
  */
 export function canSettleByEstimate({
@@ -141,8 +141,8 @@ export async function isLiveCallCleanupHealthy({
 }
 
 /**
- * Liability keeps accruing after failed shutdown, up to the longest run a session can bill; the
- * intended deadline is never a cost cap.
+ * Liability keeps accruing after failed shutdown, up to the estimated longest run; the intended
+ * deadline is never a cost cap.
  */
 export function getLiveCallLiability({
   connection,

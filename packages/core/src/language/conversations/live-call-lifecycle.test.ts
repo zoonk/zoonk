@@ -19,6 +19,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLanguageProgressView } from "../../view-models/language/get-language-progress-view";
 import { loadSpeakingPaper } from "../exam-speaking/_utils/exam-speaking-setup";
 import { startSpeakingSection } from "../exam-speaking/start-speaking-section";
@@ -29,6 +30,8 @@ import {
   liveCallHistoryFixture,
   mockLiveCallAdminSession,
 } from "./_test-utils/live-call-fixture";
+import { getLiveCallLiability } from "./_utils/live-call-policy";
+import { settleEstimatedLiveCall } from "./_utils/settle-live-call";
 import { findSpeakingMockSetup } from "./_utils/speaking-mock";
 import { closeAllLiveCalls } from "./close-all-live-calls";
 import { closeLiveCallConnection } from "./close-live-call-connection";
@@ -53,9 +56,9 @@ vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
 
 const SETTINGS = { admission: "all" as const, freeDailyBudgetMicros: 150_000_000 };
 const OFFER = "v=0\r\ns=learner-offer\r\n";
-/** A provider session's longest possible run plus its creation window, after which it is over. */
+/** When an unconfirmable session settles by estimate: its estimated longest run plus creation. */
 const SESSION_SETTLED_MS = (LIVE_SESSION_ESTIMATED_MAX_SECONDS + 60) * 1000;
-/** The longest possible run's cost: checks plus two hours at $0.05 a minute. */
+/** The estimated longest run's cost: checks plus two hours at $0.05 a minute. */
 const LONGEST_SESSION_MICROS = 6_010_000;
 const ANSWER = "v=0\r\ns=provider-answer\r\n";
 
@@ -104,6 +107,16 @@ function stuckConnection({ conversation, user }: Awaited<ReturnType<typeof liveC
     state: "closing",
     userId: user.id,
   });
+}
+
+/** Sessions of this run's database blocked on a row or advisory lock. */
+async function lockWaiters(): Promise<number> {
+  const [row] = await prisma.$queryRaw<{ waiting: bigint }[]>`
+    SELECT count(*) AS waiting FROM pg_stat_activity
+    WHERE datname = current_database() AND wait_event_type = 'Lock'
+  `;
+
+  return Number(row?.waiting ?? 0);
 }
 
 function usage({ conversationId, userId }: { conversationId: string; userId: string }) {
@@ -2015,7 +2028,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     ).resolves.toBeNull();
   });
 
-  it("settles a provider session no close can confirm at its longest possible run, and it stops pausing calls", async () => {
+  it("settles a provider session no close can confirm at its estimated longest run, and it stops pausing calls", async () => {
     const [stuck, second, third, learner, admin] = await Promise.all([
       liveCallFixture(),
       liveCallFixture(),
@@ -2157,6 +2170,72 @@ describe("server-owned live-call reservation and cleanup", () => {
     ).resolves.toMatchObject({ status: "ready" });
   });
 
+  it("admits a free reservation that fits when another learner's settlement posts its cost mid-reservation", async () => {
+    const [stuck, free] = await Promise.all([liveCallFixture(), liveCallFixture()]);
+    mockSession(stuck.user.id);
+    const setup = await reserve(stuck.conversation.id);
+    await redeem({ connectionId: setup.connectionId, conversationId: stuck.conversation.id });
+    const startedAt = Date.now();
+    vi.mocked(closeLiveCallSession).mockRejectedValue(new Error("Sideband attach failed"));
+
+    await closeLiveCallConnection({
+      connectionId: setup.connectionId,
+      generation: setup.generation,
+    });
+
+    await prisma.liveCallSetting.update({
+      data: { freeDailyBudgetMicros: 10_000_000 },
+      where: { id: "live" },
+    });
+
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS + 1000));
+    const posting = Promise.withResolvers<boolean>();
+    const commit = Promise.withResolvers<null>();
+
+    /** The other learner's settlement has posted its estimate to the shared day, not yet committed. */
+    const settlement = prisma.$transaction(
+      async (transaction) => {
+        await lockUsageForViewer({ transaction, userId: stuck.user.id });
+        const now = new Date();
+
+        const current = await transaction.liveCallConnection.findUniqueOrThrow({
+          where: { id: setup.connectionId },
+        });
+
+        await settleEstimatedLiveCall({
+          connection: current,
+          now,
+          seconds: current.heldSeconds,
+          settledMicros: getLiveCallLiability({ connection: current, now }),
+          transaction,
+        });
+
+        posting.resolve(true);
+        await commit.promise;
+      },
+      { timeout: 20_000 },
+    );
+
+    await posting.promise;
+    mockSession(free.user.id);
+
+    const reservation = connectLanguageConversation({
+      conversationId: free.conversation.id,
+      scheduleDeadline: deadlineScheduler(),
+    });
+
+    await expect.poll(lockWaiters).toBeGreaterThan(0);
+    commit.resolve(null);
+    await settlement;
+    await expect(reservation).resolves.toMatchObject({ status: "ready" });
+
+    const settled = await connection(setup.connectionId);
+
+    await expect(
+      prisma.freeCallSpendDay.findUnique({ where: { day: settled.freeSpendDay! } }),
+    ).resolves.toMatchObject({ spentMicros: LONGEST_SESSION_MICROS + 135_000 });
+  });
+
   it("replaces an estimate with the provider's receipt exactly once when a close confirms after the sweep settled it", async () => {
     const { conversation, user } = await liveCallFixture();
     mockSession(user.id);
@@ -2218,7 +2297,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     ).resolves.toMatchObject({ costMicros: 2_510_000, seconds: 120 });
   });
 
-  it("settles an unconfirmable provider session once when the sweep and the learner's end race past its longest run", async () => {
+  it("settles an unconfirmable provider session once when the sweep and the learner's end race past its estimated longest run", async () => {
     const { conversation, user } = await liveCallFixture();
     mockSession(user.id);
     const setup = await reserve(conversation.id);

@@ -39,6 +39,16 @@ export async function claimFreeCallSpend({
   now: Date;
   transaction: TransactionClient;
 }): Promise<boolean> {
+  /** Locks the bucket first: a close posting to it waits, so what's owed and what's held agree. */
+  await transaction.$executeRaw(sql`
+    INSERT INTO free_call_spend_days (day, spent_micros) VALUES (${day}::date, 0)
+    ON CONFLICT (day) DO NOTHING
+  `);
+
+  await transaction.$queryRaw(
+    sql`SELECT day FROM free_call_spend_days WHERE day = ${day}::date FOR UPDATE`,
+  );
+
   const available = budgetMicros - (await unpostedLiability({ day, now, transaction }));
 
   if (costMicros > available) {
