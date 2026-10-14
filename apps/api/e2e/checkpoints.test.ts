@@ -316,6 +316,7 @@ test.describe("Checkpoints API", () => {
     });
 
     expect(intro).toMatchObject({
+      blockId: null,
       call: null,
       canMove: false,
       goalId: goal.id,
@@ -327,19 +328,22 @@ test.describe("Checkpoints API", () => {
       status: "ready",
     });
 
+    // Reading the intro writes nothing: only Start makes the day's session and its block.
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
     const started = await readBody({
       response: await api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
       schema: challengeStartResponseSchema,
     });
 
-    expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+    expect(started).toMatchObject({ blockId: expect.any(String), kind: "checkpoint" });
 
     const running = await readBody({
       response: await api.get(`${path}?timeZone=UTC`),
       schema: challengeResponseSchema,
     });
 
-    expect(running.status).toBe("started");
+    expect(running).toMatchObject({ blockId: started.blockId, status: "started" });
 
     const [hidden, bossMove] = await Promise.all([
       other.api.get(`${path}?timeZone=UTC`),
@@ -416,7 +420,11 @@ test.describe("Checkpoints API", () => {
       schema: challengeStartResponseSchema,
     });
 
-    expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+    expect(started).toMatchObject({ blockId: expect.any(String), kind: "checkpoint" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: started.blockId } }),
+    ).resolves.toMatchObject({ status: "active" });
   });
 
   test("an included exam mock is unlocked", async () => {
@@ -479,7 +487,7 @@ test.describe("Checkpoints API", () => {
             schema: challengeStartResponseSchema,
           });
 
-          expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+          expect(started).toMatchObject({ blockId: expect.any(String), kind: "checkpoint" });
 
           const call = await readBody({
             response: await api.post("/v1/language-conversations", {
@@ -532,13 +540,8 @@ test.describe("Checkpoints API", () => {
       schema: challengeResponseSchema,
     });
 
-    expect(intro).toMatchObject({ locked: false, questions: 0, status: "ready" });
+    expect(intro).toMatchObject({ blockId: null, locked: false, questions: 0, status: "ready" });
     expect(intro.call).not.toBeNull();
-
-    const block = await prisma.studySessionBlock.findUniqueOrThrow({
-      select: { sessionId: true },
-      where: { id: intro.blockId ?? "" },
-    });
 
     await prisma.subscription.updateMany({
       data: { status: "canceled" },
@@ -549,19 +552,8 @@ test.describe("Checkpoints API", () => {
     expect(refused.status()).toBe(402);
     await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
 
-    const [blockStart, callStart] = await Promise.all([
-      api.post(`/v1/study-sessions/${block.sessionId}/blocks/${intro.blockId}/starts`, {
-        data: { timeZone: "UTC" },
-      }),
-      api.post("/v1/language-conversations", {
-        data: { blockId: intro.blockId, kind: "checkpoint" },
-      }),
-    ]);
-
-    expect(blockStart.status()).toBe(402);
-    expect(callStart.status()).toBe(402);
-    await expect(blockStart.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
-    await expect(callStart.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+    // Neither the intro nor the refused Start made the day's session or the call's block.
+    await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
     const locked = await readBody({
       response: await api.get(`${path}?timeZone=UTC`),
@@ -590,14 +582,14 @@ test.describe("Checkpoints API", () => {
 
     const { boss } = await createLanguageBoss({ final: false, plus: true, userId });
 
-    const intro = await readBody({
-      response: await api.get(`/v1/challenges/${boss.id}?timeZone=UTC`),
-      schema: challengeResponseSchema,
+    const started = await readBody({
+      response: await api.post(`/v1/challenges/${boss.id}/starts`, { data: { timeZone: "UTC" } }),
+      schema: challengeStartResponseSchema,
     });
 
     const call = await readBody({
       response: await api.post("/v1/language-conversations", {
-        data: { blockId: intro.blockId, kind: "checkpoint" },
+        data: { blockId: started.blockId, kind: "checkpoint" },
       }),
       schema: languageConversationCreatedSchema,
       status: 201,
@@ -622,9 +614,23 @@ test.describe("Checkpoints API", () => {
 
     expect(after).toMatchObject({ kind: "checkpoint", locked: true });
 
-    const refused = await api.post(`/v1/language-conversations/${call.conversationId}/connections`);
-    expect(refused.status()).toBe(402);
-    await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+    // The block started while Plus was active: neither it nor its call opens again without Plus.
+    const [refused, blockStart, callStart] = await Promise.all([
+      api.post(`/v1/language-conversations/${call.conversationId}/connections`),
+      api.post(`/v1/study-sessions/${started.sessionId}/blocks/${started.blockId}/starts`, {
+        data: { timeZone: "UTC" },
+      }),
+      api.post("/v1/language-conversations", {
+        data: { blockId: started.blockId, kind: "checkpoint" },
+      }),
+    ]);
+
+    await Promise.all(
+      [refused, blockStart, callStart].map(async (response) => {
+        expect(response.status()).toBe(402);
+        await expect(response.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+      }),
+    );
 
     // Existing completed feedback stays readable, but another challenge call still needs Plus.
     await prisma.languageConversation.update({
