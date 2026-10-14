@@ -1,135 +1,78 @@
-import { type DailyProgress, type UserLearningProfile } from "@zoonk/db";
 import { type GuestLinkContext } from "./merge-keyed-rows";
 
-type ProfileMerge = Pick<
-  UserLearningProfile,
-  "activeGoalId" | "buddyGlasses" | "buddyKind" | "buddyName"
->;
-
-/** Adds a guest's day to the account's day, keeping the higher Energy the day ended with. */
-function getMergedDay({
-  account,
-  guest,
-}: {
-  account: Pick<DailyProgress, "energyAtEnd">;
-  guest: DailyProgress;
-}) {
-  return {
-    brainPowerEarned: { increment: guest.brainPowerEarned },
-    correctAnswers: { increment: guest.correctAnswers },
-    energyAtEnd: Math.max(account.energyAtEnd, guest.energyAtEnd),
-    incorrectAnswers: { increment: guest.incorrectAnswers },
-    interactiveCompleted: { increment: guest.interactiveCompleted },
-    lessonsCompleted: { increment: guest.lessonsCompleted },
-    staticCompleted: { increment: guest.staticCompleted },
-    timeSpentSeconds: { increment: guest.timeSpentSeconds },
-  };
-}
-
-/** Days both learners studied are added together; the guest's other days move as they are. */
+/** Days add up atomically, including when another guest or an account write creates the day first. */
 export async function mergeDailyProgress({ guestUserId, transaction, userId }: GuestLinkContext) {
-  const guestDays = await transaction.dailyProgress.findMany({ where: { userId: guestUserId } });
-
-  const accountDays = await transaction.dailyProgress.findMany({
-    select: { date: true, energyAtEnd: true, id: true },
-    where: { date: { in: guestDays.map((day) => day.date) }, userId },
-  });
-
-  const accountDaysByDate = new Map(accountDays.map((day) => [day.date.getTime(), day]));
-
-  const sharedDays = guestDays.flatMap((guest) => {
-    const account = accountDaysByDate.get(guest.date.getTime());
-    return account ? [{ account, guest }] : [];
-  });
-
-  await Promise.all(
-    sharedDays.map(({ account, guest }) =>
-      transaction.dailyProgress.update({
-        data: getMergedDay({ account, guest }),
-        where: { id: account.id },
-      }),
-    ),
-  );
-
-  await transaction.dailyProgress.deleteMany({
-    where: { id: { in: sharedDays.map(({ guest }) => guest.id) } },
-  });
-
-  await transaction.dailyProgress.updateMany({ data: { userId }, where: { userId: guestUserId } });
+  await transaction.$executeRaw`
+    WITH guest_days AS (
+      DELETE FROM daily_progress
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO daily_progress (
+      id, user_id, date, day_of_week, correct_answers, incorrect_answers,
+      static_completed, interactive_completed, lessons_completed, brain_power_earned,
+      time_spent_seconds, energy_at_end
+    )
+    SELECT id, ${userId}::uuid, date, day_of_week, correct_answers, incorrect_answers,
+      static_completed, interactive_completed, lessons_completed, brain_power_earned,
+      time_spent_seconds, energy_at_end
+    FROM guest_days
+    ORDER BY date
+    ON CONFLICT (user_id, date) DO UPDATE SET
+      correct_answers = daily_progress.correct_answers + EXCLUDED.correct_answers,
+      incorrect_answers = daily_progress.incorrect_answers + EXCLUDED.incorrect_answers,
+      static_completed = daily_progress.static_completed + EXCLUDED.static_completed,
+      interactive_completed = daily_progress.interactive_completed + EXCLUDED.interactive_completed,
+      lessons_completed = daily_progress.lessons_completed + EXCLUDED.lessons_completed,
+      brain_power_earned = daily_progress.brain_power_earned + EXCLUDED.brain_power_earned,
+      time_spent_seconds = daily_progress.time_spent_seconds + EXCLUDED.time_spent_seconds,
+      energy_at_end = GREATEST(daily_progress.energy_at_end, EXCLUDED.energy_at_end)
+  `;
 }
 
-/** Brain Power adds up, while Energy and last activity keep the higher value. */
+/** Brain Power adds up, while Energy and activity use the latest account values under the row lock. */
 export async function mergeUserProgress({ guestUserId, transaction, userId }: GuestLinkContext) {
-  const [guest, account] = await Promise.all([
-    transaction.userProgress.findUnique({ where: { userId: guestUserId } }),
-    transaction.userProgress.findUnique({ where: { userId } }),
-  ]);
-
-  if (!guest) {
-    return;
-  }
-
-  if (!account) {
-    await transaction.userProgress.update({ data: { userId }, where: { id: guest.id } });
-    return;
-  }
-
-  await transaction.userProgress.update({
-    data: {
-      currentEnergy: Math.max(account.currentEnergy, guest.currentEnergy),
-      lastActiveAt:
-        account.lastActiveAt > guest.lastActiveAt ? account.lastActiveAt : guest.lastActiveAt,
-      totalBrainPower: { increment: guest.totalBrainPower },
-    },
-    where: { id: account.id },
-  });
+  await transaction.$executeRaw`
+    WITH guest_progress AS (
+      DELETE FROM user_progress
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO user_progress (id, user_id, current_energy, total_brain_power, last_active_at)
+    SELECT id, ${userId}::uuid, current_energy, total_brain_power, last_active_at
+    FROM guest_progress
+    ON CONFLICT (user_id) DO UPDATE SET
+      current_energy = GREATEST(user_progress.current_energy, EXCLUDED.current_energy),
+      total_brain_power = user_progress.total_brain_power + EXCLUDED.total_brain_power,
+      last_active_at = GREATEST(user_progress.last_active_at, EXCLUDED.last_active_at)
+  `;
 }
 
 /**
- * An account's own settings win, and the guest fills what it lacks. The guest's active goal wins,
- * because signing in from a guest session means "save the plan I just made".
- */
-function getMergedProfile({
-  account,
-  guest,
-}: {
-  account: UserLearningProfile;
-  guest: UserLearningProfile;
-}): ProfileMerge {
-  const buddy = account.buddyKind ? account : guest;
-
-  return {
-    activeGoalId: guest.activeGoalId ?? account.activeGoalId,
-    buddyGlasses: buddy.buddyGlasses,
-    buddyKind: buddy.buddyKind,
-    buddyName: buddy.buddyName,
-  };
-}
-
-/**
- * A new account takes the guest's whole profile; an existing one merges it field by field. The
- * active goal is unique per profile, so the guest's profile is removed before the account takes
- * the guest's goal.
+ * The account's settings and picked Buddy win; the guest's active goal wins with the account's as
+ * fallback. Removing the guest profile first frees its unique active goal before the account takes it.
  */
 export async function mergeLearningProfile({ guestUserId, transaction, userId }: GuestLinkContext) {
-  const [guest, account] = await Promise.all([
-    transaction.userLearningProfile.findUnique({ where: { userId: guestUserId } }),
-    transaction.userLearningProfile.findUnique({ where: { userId } }),
-  ]);
-
-  if (!guest) {
-    return;
-  }
-
-  if (!account) {
-    await transaction.userLearningProfile.update({ data: { userId }, where: { id: guest.id } });
-    return;
-  }
-
-  await transaction.userLearningProfile.delete({ where: { id: guest.id } });
-
-  await transaction.userLearningProfile.update({
-    data: getMergedProfile({ account, guest }),
-    where: { id: account.id },
-  });
+  await transaction.$executeRaw`
+    WITH guest_profile AS (
+      DELETE FROM user_learning_profiles
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO user_learning_profiles (
+      id, user_id, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
+      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, created_at, updated_at
+    )
+    SELECT id, ${userId}::uuid, interests, preferences, instructions, buddy_kind, buddy_name, buddy_glasses,
+      active_goal_id, memory_enabled, sounds_enabled, daily_limit_minutes, created_at, updated_at
+    FROM guest_profile
+    ON CONFLICT (user_id) DO UPDATE SET
+      active_goal_id = COALESCE(EXCLUDED.active_goal_id, user_learning_profiles.active_goal_id),
+      buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
+      buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
+        THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,
+      buddy_glasses = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
+        THEN user_learning_profiles.buddy_glasses ELSE EXCLUDED.buddy_glasses END,
+      updated_at = clock_timestamp()
+  `;
 }

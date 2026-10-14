@@ -35,7 +35,6 @@ const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
   }
 
   await linkGuestAccount({ account: newSession.user, guestUserId: guest.id });
-  await context.context.internalAdapter.deleteUser(guest.id);
 });
 
 /** Guest and purchase rules that apply to the whole auth surface, not one endpoint. */

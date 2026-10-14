@@ -3,6 +3,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
 import { oneTimeToken } from "better-auth/plugins";
+import { GUEST_SIGN_IN_RATE_LIMIT } from "./config";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
@@ -28,7 +29,7 @@ async function recordSessionLookup(headers: Headers | undefined) {
 /**
  * E2E-specific auth configuration.
  * - Enables email+password with plain-text matching (no bcrypt overhead)
- * - Disables rate limiting to avoid 429 errors during parallel test runs
+ * - Bypasses rate limiting except guest requests opting into real limiter coverage
  * - Stores OTP and one-time tokens in plain text for E2E testing
  */
 export const auth = betterAuth({
@@ -56,7 +57,16 @@ export const auth = betterAuth({
     oneTimeToken({ storeToken: "plain" }),
     nextCookies(),
   ],
-  rateLimit: { enabled: false },
+  rateLimit: {
+    // eslint-disable-next-line sort-keys -- Better Auth uses the first matching rule; the catch-all must stay last.
+    customRules: {
+      "/sign-in/anonymous": (request) =>
+        request.headers.get("x-e2e-auth-rate-limit") === "true" ? GUEST_SIGN_IN_RATE_LIMIT : false,
+      "/**": false,
+    },
+    enabled: true,
+    storage: "database",
+  },
   socialProviders,
 });
 

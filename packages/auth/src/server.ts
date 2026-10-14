@@ -27,7 +27,6 @@ import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
-import { accountMarkerPlugin } from "./plugins/account-marker";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
@@ -101,7 +100,6 @@ export const fullPlugins = [
   trustedOriginPlugin(),
   guestPlugin(),
   accessGuardsPlugin(),
-  accountMarkerPlugin(),
   // NextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;
