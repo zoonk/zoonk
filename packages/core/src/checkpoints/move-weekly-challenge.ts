@@ -4,7 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { decidePlanChange } from "../plans/decide-plan-change";
-import { type PlanOperationError } from "../plans/planner/plan-operations";
+import { type PlanChangeRefusal } from "../plans/planner/plan-operations";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { getSession } from "../users/get-session";
@@ -20,7 +20,7 @@ type WeeklyChallengeMove = { changeId: string | null; date: string };
 
 export type MoveWeeklyChallengeResult =
   | { move: WeeklyChallengeMove; status: "moved" }
-  | { error: PlanOperationError; status: "invalid" }
+  | PlanChangeRefusal
   | { status: "notFound" | "notMovable" | "unauthorized" };
 
 export type UndoWeeklyChallengeMoveResult =

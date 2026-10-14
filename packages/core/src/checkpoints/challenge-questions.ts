@@ -18,9 +18,9 @@ import { parsePlanGraph } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
+import { isBossReached } from "./_utils/boss-reached";
 import { needsPlus } from "./_utils/challenge-plus";
 import { loadCheckpointCandidates } from "./_utils/checkpoint-candidates";
-import { isBossReached } from "./_utils/load-boss";
 import { findNextWeeklyItem, loadWeekSkillIds } from "./_utils/load-weekly-challenge";
 import { findOwnedChallenge } from "./_utils/owned-challenge";
 import {
@@ -236,12 +236,12 @@ export async function requestChallengeQuestions({
 
   const { goal, item, items, userId } = owned.challenge;
 
-  if (needsNoWriting({ goal, item })) {
-    return { status: "ready" };
-  }
-
   if (await needsPlus(owned.challenge)) {
     return { status: "plusRequired" };
+  }
+
+  if (needsNoWriting({ goal, item })) {
+    return { status: "ready" };
   }
 
   const context = await loadChallengeContext({ goal, items });
@@ -282,7 +282,7 @@ function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; 
   const bosses = items
     .filter((item) => item.kind === "boss" && item.status === "todo")
     .flatMap((boss) => {
-      const reached = isBossReached({ boss, items, today });
+      const reached = isBossReached({ boss, today });
       return reached || isDueBy(boss, BOSS_AHEAD_DAYS) ? [{ item: boss, later: !reached }] : [];
     });
 

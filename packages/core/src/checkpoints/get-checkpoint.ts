@@ -1,16 +1,18 @@
 import "server-only";
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { type Goal, type LearningEvent, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { parsePlanPhases } from "../plans/planner/plan-state";
-import { readBlockPayload } from "../sessions/block-payload";
+import { type BlockPayload, readBlockPayload } from "../sessions/block-payload";
 import { type StudyBlockResult, getStudyBlock } from "../sessions/get-study-block";
 import { getSession } from "../users/get-session";
+import { getAskablePassMark } from "./_utils/checkpoint-outcome";
+import { loadCheckpointReinforcement } from "./_utils/checkpoint-reinforcement";
 import { type CheckpointPhase, type CheckpointView } from "./checkpoint-contract";
 import { getCheckpointReward } from "./checkpoint-reward";
-import { REINFORCEMENT_LESSONS, getPassMark, hasPassedCheckpoint } from "./checkpoint-rules";
+import { getPassMark, hasPassedCheckpoint } from "./checkpoint-rules";
 import { EXAM_DAY_CHECKLIST } from "./weekly-challenge-rules";
 
 type BlockDetail = Extract<StudyBlockResult, { status: "ready" }>["detail"];
@@ -65,19 +67,39 @@ async function loadPhases(goalId: string | null): Promise<CheckpointPhase[]> {
   return parsePlanPhases(plan?.phases).map((phase, index) => ({ index, name: phase.name }));
 }
 
-/** How a finished checkpoint went, from the answers given in its block. */
-function getResult(detail: BlockDetail): CheckpointView["result"] {
+/**
+ * A finished checkpoint's ledger keeps its score after content is removed. A boss is won or lost
+ * as settlement decided (`milestoneReward`); older blocks without saved evidence use their answers.
+ */
+function getResult({
+  detail,
+  payload,
+  savedScore,
+}: {
+  detail: BlockDetail;
+  payload: BlockPayload;
+  savedScore: Pick<LearningEvent, "correctAnswers" | "incorrectAnswers"> | null;
+}): CheckpointView["result"] {
   if (detail.block.status !== "completed") {
     return null;
   }
 
   const answered = detail.questions.filter((question) => question.answered !== null);
-  const correct = answered.filter((question) => question.answered?.isCorrect).length;
+
+  const correct =
+    savedScore?.correctAnswers ??
+    answered.filter((question) => question.answered?.isCorrect).length;
+
+  const total = savedScore
+    ? savedScore.correctAnswers + savedScore.incorrectAnswers
+    : answered.length;
+
+  const settled = payload.checkpoint?.kind === "weekly" ? null : payload.milestoneReward;
 
   return {
     correct,
-    passed: hasPassedCheckpoint({ correct, passMark: getPassMark(answered.length) }),
-    total: answered.length,
+    passed: settled?.bossWon ?? hasPassedCheckpoint({ correct, passMark: getPassMark(total) }),
+    total,
   };
 }
 
@@ -96,14 +118,26 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
     return { status: "notFound" };
   }
 
-  const { planItemId } = readBlockPayload(block);
+  const payload = readBlockPayload(block);
+  const { planItemId } = payload;
 
-  const [found, phases, counts, item] = await Promise.all([
+  const [found, phases, counts, item, reinforcement, savedScore] = await Promise.all([
     getStudyBlock({ blockId, sessionId: block.sessionId }),
     loadPhases(block.session.goalId),
     loadMilestoneCounts(userId),
     planItemId && isUuid(planItemId)
       ? prisma.planItem.findUnique({ where: { id: planItemId } })
+      : null,
+    loadCheckpointReinforcement({ block, userId }),
+    block.status === "completed"
+      ? prisma.learningEvent.findFirst({
+          where: {
+            contentIds: { equals: blockId, path: ["studySessionBlockId"] },
+            endedAt: { not: null },
+            kind: { in: ["checkpoint", "mock"] },
+            userId,
+          },
+        })
       : null,
   ]);
 
@@ -115,20 +149,22 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
 
   const { detail } = found;
   const phase = phases.find((candidate) => candidate.index === checkpoint.phase) ?? null;
-  const result = getResult(detail);
+  const result = getResult({ detail, payload, savedScore });
 
   return {
     checkpoint: {
+      answeredQuestions: detail.answeredQuestions,
       blockId,
       checklist: checkpoint.mock ? [...EXAM_DAY_CHECKLIST] : [],
+      endedWithoutQuestions: payload.checkpointAbandoned,
       kind: checkpoint.kind,
       mock: checkpoint.mock,
       nextPhase: phase ? (phases.find((next) => next.index === phase.index + 1) ?? null) : null,
-      passMark: checkpoint.passMark,
+      passMark: getAskablePassMark({ payload, questions: detail.block.questions }),
       phase,
       planItemId,
       questions: detail.questions,
-      reinforcementLessons: REINFORCEMENT_LESSONS,
+      reinforcementLessons: reinforcement.length,
       rematch: checkpoint.rematch,
       result,
       retry:

@@ -69,7 +69,7 @@ describe(getCheckpoint, () => {
         nextPhase: { index: 1, name: "Practice" },
         passMark: 5,
         phase: { index: 0, name: "Basics" },
-        reinforcementLessons: 2,
+        reinforcementLessons: 0,
         rematch: false,
         result: null,
         reward: {

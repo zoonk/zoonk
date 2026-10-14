@@ -20,7 +20,7 @@ const MIN_SUBJECT_QUESTIONS = 10;
 const MAX_REUSED_SHARE = 0.5;
 
 /** The chart shows the latest mocks, enough to see a trend at a glance. */
-const PROGRESS_SIZE = 20;
+export const MOCK_PROGRESS_SIZE = 20;
 
 const PERCENT = 100;
 
@@ -116,7 +116,7 @@ export function getMockProgress(mocks: readonly ProgressMock[]): ExamMockProgres
     return null;
   }
 
-  const recent = mocks.slice(-PROGRESS_SIZE);
+  const recent = mocks.slice(-MOCK_PROGRESS_SIZE);
   const subjects = getSubjectTrends(recent);
   const improved = listImproved(subjects);
 

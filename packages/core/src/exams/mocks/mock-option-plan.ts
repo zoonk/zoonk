@@ -11,7 +11,7 @@ import { type MockEssayCandidate } from "./written-parts";
 import { isQuestionSubject } from "./written-subject";
 
 /**
- * The questions a mock may ask, each under its notice subject's name, as the Journey names it,
+ * The questions a mock may ask, each under its notice subject's name, as the Plan names it,
  * whatever name the plan gives its area ("Professional Ethics" for the OAB's "Statute of the Legal
  * Profession and of the OAB…"). A question of a written test (an essay) or of
  * an area outside the notice's objective subjects (study strategy) is never asked. When no

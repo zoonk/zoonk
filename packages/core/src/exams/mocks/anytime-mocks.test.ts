@@ -191,6 +191,9 @@ describe("mocks taken any time", () => {
         running: null,
       },
     });
+
+    // Nothing to say about a last mock before the first.
+    expect(result).toMatchObject({ view: { lastMock: null } });
   });
 
   it("says how long learners really take, once enough of them took the exam's mocks", async () => {
@@ -327,6 +330,42 @@ describe("mocks taken any time", () => {
     expect(first.result?.previous).toBeNull();
     expect(half.result?.previous).toBeNull();
     expect(second.result?.previous).toBe(100);
+  });
+
+  it("says how the last mock went beside the options, opening its result", async () => {
+    const { goal, skills } = await anytimeSetup({ itemsPerSkill: 12 });
+    const mathSkills = new Set(skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id));
+
+    const math = await startMath(goal.id);
+    await answerSection({ id: math, rightOn: mathSkills });
+    await finishMock({ blockId: math, input: { timeZone: UTC } });
+
+    const later = new Date(SESSION_NOW.getTime() + 60 * 60 * 1000);
+    vi.setSystemTime(later);
+
+    const half = await startAnytimeMock({
+      goalId: goal.id,
+      input: { shape: { area: null, day: null, kind: "half" }, timeZone: UTC },
+    });
+
+    const halfId = half.status === "started" ? half.id : "";
+    await answerSection({ id: halfId, rightOn: new Set() });
+    await finishMock({ blockId: halfId, input: { timeZone: UTC } });
+
+    // The second mock, the half exam with nothing right, is the one the exam's list shows first.
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: {
+        lastMock: {
+          blockId: halfId,
+          correct: 0,
+          finishedAt: later.toISOString(),
+          number: 2,
+          purpose: "practice",
+          shape: { area: null, day: null, kind: "half" },
+          total: 8,
+        },
+      },
+    });
   });
 
   it("grades it on its own, then offers to skip the lessons of topics it showed the learner knows", async () => {

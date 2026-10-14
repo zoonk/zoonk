@@ -28,6 +28,7 @@ import { loadListeningCandidates } from "./mock-listening";
 import { countFinishedMocksBefore } from "./mock-number";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
+import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readMockSizeSource, readMockStructure } from "./read-mock-structure";
 
 /** An exam goal's mocks as they can be taken any time: the exam they copy and their options. */
@@ -202,8 +203,11 @@ const ANYTIME_MOCK_FILTER = {
   })),
 };
 
-/** The goal's mock taken any time that's still running: one at a time. */
-export function findRunningAnytimeMock({
+/**
+ * The goal's mock taken any time that's still running: one at a time. One whose time ran out while
+ * the learner was away isn't running anymore (see `hasTimeRunOutAway`).
+ */
+export async function findRunningAnytimeMock({
   client = prisma,
   goalId,
   userId,
@@ -212,10 +216,14 @@ export function findRunningAnytimeMock({
   goalId: string;
   userId: string;
 }) {
-  return client.mockExam.findFirst({
+  const active = await client.mockExam.findMany({
+    include: { answers: { select: { answer: true } } },
     orderBy: { startedAt: "desc" },
     where: { ...ANYTIME_MOCK_FILTER, blockId: null, goalId, status: "active", userId },
   });
+
+  const now = Date.now();
+  return active.find((mock) => !hasStoredTimeRunOutAway({ mock, now })) ?? null;
 }
 
 /** The goal's mock taken as placement in onboarding, the latest one when there are several. */

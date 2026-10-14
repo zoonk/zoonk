@@ -143,6 +143,35 @@ async function speakingSetup() {
 }
 
 describe(startMockSpeaking, () => {
+  it("preserves a paused paper refusal on the active speaking section without attaching a paper", async () => {
+    const { goal } = await speakingSetup();
+    vi.mocked(startSpeakingSection).mockResolvedValue({ status: "callsPaused" });
+
+    const started = await startAnytimeMock({
+      goalId: goal.id,
+      input: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+    });
+
+    if (started.status !== "started") {
+      throw new Error(`Expected a started mock, got ${started.status}`);
+    }
+
+    await submitMockSection({ blockId: started.id, input: { timeZone: "UTC" }, section: 0 });
+    const reached = await getMock(started.id);
+    expect(reached.status === "ready" && reached.mock.current).toMatchObject({ kind: "speaking" });
+    const before = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
+
+    await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
+      status: "callsPaused",
+    });
+
+    const after = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
+    expect(after.conditions).toStrictEqual(before.conditions);
+    expect(after.conditions).not.toHaveProperty("sections.1.speakingSectionId");
+    expect(startSpeakingSection).toHaveBeenCalledExactlyOnceWith({ goalId: goal.id });
+    expect(getSpeakingSection).not.toHaveBeenCalled();
+  });
+
   it("sits the speaking paper in a full mock only: written once the learner reaches it, the same one after", async () => {
     const { goal } = await speakingSetup();
     const paper = paperFixture();

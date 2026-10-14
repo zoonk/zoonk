@@ -1,25 +1,22 @@
 import "server-only";
-import { type GoalKind, type PlanItem, prisma } from "@zoonk/db";
+import { type GoalKind, type PlanItem } from "@zoonk/db";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
-import { loadLessonsForSkills } from "../../sessions/_utils/load-plan-lessons";
-import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 import { type PlannedCheckpoint, type PlannedLesson } from "../../sessions/session-builder";
+import { getBossQuestionSkills, getCheckpointMinutes } from "../checkpoint-minutes";
 import {
-  CHECKPOINT_MINUTES_PER_QUESTION,
   MIN_CHECKPOINT_QUESTIONS,
-  REINFORCEMENT_LESSONS,
   getBossSkillIds,
-  getMissedSkills,
   getPassMark,
   getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
+import { findSessionBosses } from "./boss-reached";
 import { loadBossRecordingItems } from "./boss-recordings";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
-import { type CheckpointResult, findLastCheckpointResult } from "./checkpoint-results";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["lesson", "chapter"]);
+import { loadResultReinforcement } from "./checkpoint-reinforcement";
+import { findLastCheckpointResult } from "./checkpoint-results";
+import { arePhaseChallengesRequired } from "./phase-challenge-access";
 
 type SessionBoss = { checkpoint: PlannedCheckpoint | null; reinforcement: PlannedLesson[] };
 
@@ -27,61 +24,6 @@ type SessionBoss = { checkpoint: PlannedCheckpoint | null; reinforcement: Planne
 type SessionBosses = { checkpoints: PlannedCheckpoint[]; reinforcement: PlannedLesson[] };
 
 const NO_BOSS: SessionBoss = { checkpoint: null, reinforcement: [] };
-
-/**
- * The boss that closes a phase is reached once every lesson before it in its phase is done, or
- * on the day the plan scheduled it. A phase with no lessons of its own (an exam's window of
- * practice and mocks) has nothing to finish first: its boss comes on its day.
- */
-export function isBossReached({
-  boss,
-  items,
-  today,
-}: {
-  boss: PlanItem;
-  items: readonly PlanItem[];
-  today: Date;
-}): boolean {
-  if (boss.kind !== "boss" || boss.status !== "todo") {
-    return false;
-  }
-
-  if (boss.scheduledFor !== null && boss.scheduledFor <= today) {
-    return true;
-  }
-
-  const lessons = items.filter(
-    (other) =>
-      other.position < boss.position && other.phase === boss.phase && LEARN_KINDS.has(other.kind),
-  );
-
-  return lessons.length > 0 && lessons.every((other) => other.status !== "todo");
-}
-
-/**
- * The bosses today's session duels: the first one reached, then any later phase's whose day is
- * today too, earlier phase first. A half-studied day left one phase's challenge, and the next
- * phase still ends today as the learner saw it (R6): asked alone, the first pushed the second a
- * day and moved that phase's end.
- */
-function findSessionBosses({ items, today }: { items: readonly PlanItem[]; today: Date }) {
-  const first = items.find((boss) => isBossReached({ boss, items, today }));
-
-  if (!first) {
-    return [];
-  }
-
-  const later = items.filter(
-    (boss) =>
-      boss.kind === "boss" &&
-      boss.status === "todo" &&
-      boss.phase > first.phase &&
-      boss.scheduledFor !== null &&
-      boss.scheduledFor <= today,
-  );
-
-  return [first, ...later.toSorted((a, b) => a.phase - b.phase)];
-}
 
 /** The last boss of the plan, in its last phase, is the final boss that closes the plan. */
 export function isFinalBoss({
@@ -95,29 +37,6 @@ export function isFinalBoss({
   const laterBoss = items.some((item) => item.kind === "boss" && item.position > boss.position);
 
   return boss.phase === lastPhase && !laterBoss;
-}
-
-/** The skills a lost duel missed, from the answers given in its block. */
-async function loadMissedSkills({ result, userId }: { result: CheckpointResult; userId: string }) {
-  if (!result.studySessionId || !result.studySessionBlockId) {
-    return [];
-  }
-
-  const block = await prisma.studySessionBlock.findUnique({
-    select: { id: true, payload: true },
-    where: { id: result.studySessionBlockId },
-  });
-
-  const itemIds = block ? getBlockItemIds(readBlockPayload(block)) : [];
-
-  // Answers saved in the same instant keep the order they were saved in (uuidv7 ids).
-  const answers = await prisma.attempt.findMany({
-    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
-    select: { isCorrect: true, skillId: true },
-    where: { itemId: { in: itemIds }, studySessionId: result.studySessionId, userId },
-  });
-
-  return getMissedSkills(answers);
 }
 
 /**
@@ -136,22 +55,27 @@ export async function loadBossQuestions({
   skillIds: readonly string[];
   userId: string;
 }): Promise<{ itemIds: string[]; skillIds: string[] }> {
-  const textSkillIds = skillIds.filter((skillId) => !listeningSkillIds.has(skillId));
+  const asked = getBossQuestionSkills({ listeningSkillIds, skillIds });
 
-  if (textSkillIds.length === 0) {
-    const itemIds = await loadBossRecordingItems({ examBlueprintId, skillIds, userId });
-    return { itemIds, skillIds: [...skillIds] };
+  if (asked.recordings) {
+    const itemIds = await loadBossRecordingItems({
+      examBlueprintId,
+      skillIds: asked.skillIds,
+      userId,
+    });
+
+    return { itemIds, skillIds: asked.skillIds };
   }
 
   const candidates = await loadCheckpointCandidates({
     examBlueprintId,
-    skillIds: textSkillIds,
+    skillIds: asked.skillIds,
     userId,
   });
 
   return {
-    itemIds: selectCheckpointItems({ candidates, skillIds: textSkillIds }),
-    skillIds: textSkillIds,
+    itemIds: selectCheckpointItems({ candidates, skillIds: asked.skillIds }),
+    skillIds: asked.skillIds,
   };
 }
 
@@ -174,10 +98,14 @@ type BossInput = {
 /**
  * Today's bosses (see `findSessionBosses`): each ten mixed questions from its phase, traps first,
  * or its recordings for a phase heard only through them (see `loadBossQuestions`). A duel lost on
- * an earlier day comes back as a rematch after two short lessons on what it missed; a duel lost
+ * an earlier day comes back as a rematch after up to two available lessons on what it missed; a duel lost
  * today waits for tomorrow, and so do the later phases' challenges.
  */
 export async function loadSessionBosses(input: BossInput): Promise<SessionBosses> {
+  if (!(await arePhaseChallengesRequired({ goalKind: input.goalKind, userId: input.userId }))) {
+    return { checkpoints: [], reinforcement: [] };
+  }
+
   const [first, ...later] = findSessionBosses(input);
   const head = first ? await loadBoss({ ...input, boss: first }) : NO_BOSS;
 
@@ -263,14 +191,13 @@ async function loadBoss({
     return NO_BOSS;
   }
 
-  const missed = result ? await loadMissedSkills({ result, userId }) : [];
   const questions = getPlannedQuestions(itemIds.length);
 
   return {
     checkpoint: {
       itemIds,
       kind: isFinalBoss({ boss, items }) ? "finalBoss" : "boss",
-      minutes: questions * CHECKPOINT_MINUTES_PER_QUESTION,
+      minutes: getCheckpointMinutes(questions),
       mock: false,
       passMark: getPassMark(questions),
       phase: boss.phase,
@@ -280,6 +207,6 @@ async function loadBoss({
       timeLimitMinutes: null,
       title: boss.titleSnapshot,
     },
-    reinforcement: await loadLessonsForSkills({ limit: REINFORCEMENT_LESSONS, skillIds: missed }),
+    reinforcement: await loadResultReinforcement({ result, userId }),
   };
 }

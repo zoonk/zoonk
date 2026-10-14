@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type LearningEvent, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
@@ -10,8 +10,14 @@ import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { trackLessonStarted } from "./_utils/lesson-events";
 import { findLessonStudySessionId, getRunHyperdrive } from "./_utils/lesson-hyperdrive";
-import { findStartableLesson, isOwnExplanation } from "./_utils/lesson-rows";
 import {
+  findOpenedVersion,
+  findPlayableLessonRow,
+  findStartableLesson,
+  isOwnExplanation,
+} from "./_utils/lesson-rows";
+import {
+  findLessonRun,
   findResumableRun,
   getRunStudySessionId,
   loadProgressAnswers,
@@ -19,6 +25,7 @@ import {
   lockLessonRuns,
 } from "./_utils/lesson-runs";
 import { loadLessonSupport } from "./_utils/lesson-support";
+import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
 /** How the ledger labels a lesson run, so admin stats can tell it from checkpoints and practice. */
@@ -88,7 +95,42 @@ async function loadRunProgress({
   const sittings = await loadProgressRuns({ lessonId, until: run.startedAt, userId });
   const since = sittings[0]?.startedAt ?? run.startedAt;
 
-  return loadProgressAnswers({ lessonId, since, userId });
+  const version = await findOpenedVersion({ lessonId, since, userId });
+
+  const [answers, lesson] = await Promise.all([
+    loadProgressAnswers({ lessonId, since, userId, version }),
+    findPlayableLessonRow({ lessonId, userId, version }),
+  ]);
+
+  return lesson
+    ? {
+        answers,
+        optionalStepIds: [
+          ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt: run.startedAt }),
+        ],
+      }
+    : null;
+}
+
+/** Reads the visible version of this sitting, even if a background check retired it. */
+async function readRun({
+  lessonId,
+  run,
+  userId,
+}: {
+  lessonId: string;
+  run: LearningEvent;
+  userId: string;
+}): Promise<LibraryLessonRun | null> {
+  const [progress, hyperdrive, support] = await Promise.all([
+    loadRunProgress({ lessonId, run, userId }),
+    getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
+    loadLessonSupport({ lessonId, userId }),
+  ]);
+
+  return progress
+    ? { ...progress, hyperdrive, runId: run.id, startedAt: run.startedAt.toISOString(), support }
+    : null;
 }
 
 /**
@@ -115,11 +157,23 @@ export async function startLibraryLesson({
     return { status: "unauthorized" };
   }
 
-  if (!isUuid(lessonId)) {
+  if (!isUuid(lessonId) || (input.runId !== undefined && !isUuid(input.runId))) {
     return { status: "notFound" };
   }
 
   const userId = session.user.id;
+
+  if (input.runId) {
+    const requested = await findLessonRun({ lessonId, runId: input.runId, userId });
+
+    const run =
+      requested && requested.endedAt === null
+        ? await readRun({ lessonId, run: requested, userId })
+        : null;
+
+    return run ? { run, status: "started" } : { status: "notFound" };
+  }
+
   const lesson = await findStartableLesson({ lessonId, userId });
 
   if (!lesson) {
@@ -165,19 +219,6 @@ export async function startLibraryLesson({
     });
   }
 
-  const [answers, hyperdrive, support] = await Promise.all([
-    loadRunProgress({ lessonId: lesson.id, run, userId }),
-    getRunHyperdrive({
-      lessonId: lesson.id,
-      run,
-      studySessionId: getRunStudySessionId(run),
-      userId,
-    }),
-    loadLessonSupport({ lessonId: lesson.id, userId }),
-  ]);
-
-  return {
-    run: { answers, hyperdrive, runId: run.id, startedAt: run.startedAt.toISOString(), support },
-    status: "started",
-  };
+  const started = await readRun({ lessonId: lesson.id, run, userId });
+  return started ? { run: started, status: "started" } : { status: "notFound" };
 }

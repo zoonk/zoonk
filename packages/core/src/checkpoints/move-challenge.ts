@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { decidePlanChange } from "../plans/decide-plan-change";
-import { type PlanOperationError } from "../plans/planner/plan-operations";
+import { type PlanChangeRefusal } from "../plans/planner/plan-operations";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import {
@@ -22,7 +22,7 @@ import {
 
 export type MoveChallengeResult =
   | { move: ChallengeMove; status: "moved" }
-  | { error: PlanOperationError; status: "invalid" }
+  | PlanChangeRefusal
   | { status: "notFound" | "notMovable" | "unauthorized" };
 
 export type UndoChallengeMoveResult =

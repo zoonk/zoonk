@@ -87,6 +87,11 @@ export async function findOwnedChallenge({
   };
 }
 
+/** A language goal's phase checkpoint is the unit's call, which has goals to get across. */
+export function isLanguageCall({ goal, item }: Pick<OwnedChallenge, "goal" | "item">): boolean {
+  return goal.kind === "language" && item.kind === "boss";
+}
+
 export type ChallengeBlock = StudySessionBlock & { session: StudySession };
 
 /** The latest session block that plays a challenge: today's, or the last day it was played. */

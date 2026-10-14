@@ -154,7 +154,7 @@ async function addTestedOutStandIns({
  * and re-plans from today. Returns the ids, the plan change that announced them (null when the
  * plan isn't the planner's yet), whose undo brings them back, and the lessons it says it skipped
  * (`countLessons`: a stand-in, the lessons the plan taught in its place), so a result says the
- * count Today and the Journey say.
+ * count Today and the Plan say.
  */
 export async function markPlanItemsTestedOut({
   announceAlso = [],

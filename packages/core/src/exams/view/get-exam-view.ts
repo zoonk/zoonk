@@ -4,6 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../entitlements/get-allowance";
+import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
@@ -38,6 +39,7 @@ import { getExamFormat } from "./_utils/exam-format";
 import { loadExamHistory } from "./_utils/exam-history";
 import { listExamTools } from "./_utils/exam-tools";
 import { loadNextMock } from "./_utils/next-mock";
+import { loadRunningMocks, pickExamMocks } from "./_utils/running-mock";
 import { type ExamView } from "./exam-view-contract";
 
 export type ExamViewResult =
@@ -181,7 +183,8 @@ function toNoticeScale(structure: ExamStructure | null): ExamView["scoring"]["no
  * The learner's exam screen for one exam goal (the active goal by default): its days (with the
  * notice's day when the plan counts down to another) and where the learner stands against them,
  * the exam map with their level per subject, how it's scored and the strategy that follows, the
- * mocks so far, the estimated score after a mock, and the official result once reported.
+ * mocks running and the ones so far, the estimated score after a mock, and the official result
+ * once reported.
  */
 export async function getExamView({
   goalId: requestedGoalId,
@@ -236,9 +239,11 @@ export async function getExamView({
     shortPlan,
     finalStretchStart,
     nextMock,
+    running,
     cutoff,
     noticeDates,
     speaking,
+    admission,
   ] = await Promise.all([
     loadMap({ blueprint, goalId, userId }),
     loadExamHistory({ goalId, today }),
@@ -247,12 +252,14 @@ export async function getExamView({
     loadShortPlanDay({ goal, today }),
     loadFinalStretchStart(goalId),
     loadNextMock({ blueprint, goal, today }),
+    loadRunningMocks({ goalId, userId }),
     loadTargetCutoff({ details: goal.details, examBlueprintId: goal.examBlueprintId }),
     loadExamNoticeDates({ goal, today }),
     loadSpeakingPaper({
       access: includesMockExams ? "open" : "plusRequired",
       goal: { ...goal, examBlueprint: blueprint },
     }),
+    readLiveCallAdmission({ transaction: prisma, userId }),
   ]);
 
   return {
@@ -274,7 +281,7 @@ export async function getExamView({
       mocks: history.mocks,
       mocksRequirePlus: !includesMockExams,
       namedMonth: calendar.namedMonth,
-      nextMock,
+      ...pickExamMocks({ next: nextMock, running }),
       noSitting: noticeDates.noSitting,
       noticeDay: noticeDates.day,
       passMarks: getExamPassMarks({ blueprint, goal, structure }),
@@ -294,6 +301,7 @@ export async function getExamView({
       sessionsDone: history.sessionsDone,
       speaking,
       speakingMock: getSpeakingMockExam(goal),
+      speakingMockPaused: getSpeakingMockExam(goal) !== null && admission === null,
       stage: getExamStage({ examDays: toExamDates(calendar), finalStretchStart, today }),
       targetScore: readTargetScore(goal.details),
       timeZone: calendar.timeZone,

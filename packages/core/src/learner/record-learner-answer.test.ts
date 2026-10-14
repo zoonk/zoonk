@@ -48,6 +48,27 @@ function wrong(overrides: Partial<LearnerAnswer> & Pick<LearnerAnswer, "userId">
 }
 
 describe(recordLearnerAnswer, () => {
+  it("keeps server-owned evidence of exactly which entries the answer fixed", async () => {
+    const { item, skill, user } = await setup();
+
+    const mistake = await mistakeFixture({
+      createdAt: new Date(Date.now() - 86_400_000 * 2),
+      itemId: item.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const recorded = await recordLearnerAnswer(
+      answer({ itemId: item.id, skillId: skill.id, userId: user.id }),
+    );
+
+    expect(recorded.attempt.answer).toMatchObject({ fixedMistakeIds: [mistake.id] });
+
+    await expect(
+      prisma.attempt.findUniqueOrThrow({ where: { id: recorded.attempt.id } }),
+    ).resolves.toMatchObject({ answer: { fixedMistakeIds: [mistake.id] } });
+  });
+
   it("records the attempt on the learner's local day and reviews the skill", async () => {
     const { item, skill, user } = await setup();
     // 22:30 on September 1st in São Paulo is already September 2nd in UTC.

@@ -2,7 +2,9 @@ import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -126,6 +128,23 @@ describe(checkLessonStep, () => {
       status: "open",
       stepId: step.id,
     });
+  });
+
+  it("saves a miss on a screen without its own skill under the lesson's first skill, so the notebook lists it", async () => {
+    const { lesson, run, skill, steps, user } = await setupRun();
+    const other = await skillFixture();
+    await lessonSkillFixture({ lessonId: lesson.id, skillId: other.id });
+    const step = stepOfKind(steps, "check");
+
+    await check({ answer: { kind: "check", optionId: "size" }, runId: run.id, stepId: step.id });
+
+    const [mistake, attempt] = await Promise.all([
+      prisma.mistake.findFirstOrThrow({ where: { userId: user.id } }),
+      prisma.attempt.findFirstOrThrow({ where: { stepId: step.id, userId: user.id } }),
+    ]);
+
+    expect(mistake).toMatchObject({ skillId: skill.id, status: "open", stepId: step.id });
+    expect(attempt.skillId).toBe(skill.id);
   });
 
   it("grades an accepted typed answer in code with every key point met", async () => {

@@ -54,17 +54,22 @@ function passedEveryCheck({
 
 /**
  * Tallies the answers of one run, given oldest first. A screen counts once, with its first answer,
- * so a question that comes back at the end of the lesson never adds a second right or wrong.
+ * so a question that comes back at the end of the lesson never adds a second right or wrong. An
+ * optional screen counts when it's answered but never holds the run back (see
+ * `isPictureLateForRun`).
  */
 export function tallyLessonRun({
   attempts,
+  optionalStepIds = new Set(),
   steps,
 }: {
   attempts: RunAttempt[];
+  optionalStepIds?: ReadonlySet<string>;
   steps: RunStep[];
 }): LessonRunTally {
   const answerable = steps.filter((step) => isAnswerableStep(step)).map((step) => step.id);
   const answerableIds = new Set(answerable);
+  const required = steps.filter((step) => !optionalStepIds.has(step.id));
 
   const counted = attempts
     .filter((attempt) => isStepAttempt(attempt))
@@ -81,7 +86,7 @@ export function tallyLessonRun({
     correctCount: verdicts.filter(Boolean).length,
     incorrectCount: verdicts.filter((isCorrect) => !isCorrect).length,
     isComplete:
-      answerable.every((stepId) => firstVerdicts.has(stepId)) ||
-      passedEveryCheck({ attempts: counted, steps }),
+      answerable.every((stepId) => optionalStepIds.has(stepId) || firstVerdicts.has(stepId)) ||
+      passedEveryCheck({ attempts: counted, steps: required }),
   };
 }

@@ -4,6 +4,11 @@ import { type MasteryState } from "@zoonk/db";
 export type PreparationSkill = {
   areaId: string;
   fading: boolean;
+  /**
+   * The section of the goal's skill graph it belongs to: the area the planner and the syllabus's
+   * subjects name it by, such as an exam's "Matemática". Absent or null when the graph names none.
+   */
+  section?: string | null;
   /** The chance of recalling it now (FSRS); null when never studied. */
   retrievability: number | null;
   skillId: string;
@@ -112,7 +117,7 @@ const MASTERY_WINDOW = 40;
 const MIN_MASTERY_ANSWERS = 5;
 export const RECENT_MOCKS = 3;
 
-/** Preparation from here on reads as Solid, the ring's last stage. */
+/** The minimum preparation for Solid; the goal's evidence must also satisfy its guard. */
 const SOLID_PREPARATION = 0.75;
 
 /** The most preparation reads before the heavier part has the evidence Solid needs. */
@@ -129,7 +134,8 @@ function importanceOf(skill: Pick<PreparationSkill, "importance">): number {
   return skill.importance ?? 1;
 }
 
-function sumImportance(skills: readonly PreparationSkill[]): number {
+/** How much these skills count toward preparation together. */
+export function sumImportance(skills: readonly Pick<PreparationSkill, "importance">[]): number {
   return skills.reduce((sum, skill) => sum + importanceOf(skill), 0);
 }
 
@@ -340,6 +346,19 @@ export function getPreparationValue(
     needsTest?: boolean;
   } = {},
 ): number {
+  const { isSolid, quality } = measureQuality({ components, needsTest });
+  const prepared = components.coverage.value * quality;
+  return isSolid ? prepared : Math.min(prepared, BELOW_SOLID);
+}
+
+/** The shared evidence guard for a goal's Solid stage and individual preparation values. */
+function measureQuality({
+  components,
+  needsTest,
+}: {
+  components: PreparationComponents;
+  needsTest: boolean;
+}) {
   // The goal counts every part the learner can have, a missing one as none, so new evidence only
   // adds (a test their plan can't take isn't one of them). One area reads how well its studied
   // part is known, where practice is needed, from the evidence there is.
@@ -354,18 +373,15 @@ export function getPreparationValue(
   const totalWeight = parts.reduce((sum, part) => sum + part.weight, 0);
 
   if (totalWeight === 0) {
-    return 0;
+    return { isSolid: false, quality: 0 };
   }
 
   const quality =
     parts.reduce((sum, part) => sum + (part.value ?? 0) * part.weight, 0) / totalWeight;
 
-  const { heaviest, value } = components.coverage;
-  const prepared = value * quality;
   const hasTest = !needsTest || components.mocks.taken > 0;
-  const isSolid = hasTest && heaviest.value * quality >= SOLID_PREPARATION;
-
-  return isSolid ? prepared : Math.min(prepared, BELOW_SOLID);
+  const isSolid = hasTest && components.coverage.heaviest.value * quality >= SOLID_PREPARATION;
+  return { isSolid, quality };
 }
 
 /** The Preparation ring's stages. The last is Solid: never "ready", never a promise. */
@@ -377,6 +393,17 @@ const STAGE_THRESHOLDS: readonly { min: number; stage: PreparationStage }[] = [
   { min: 0.25, stage: "building" },
 ];
 
-export function getPreparationStage(value: number): PreparationStage {
+/** A goal's stage needs its evidence: a subject mean alone cannot establish Solid. */
+export function getPreparationStage({
+  value,
+  components,
+}: {
+  value: number;
+  components: PreparationComponents;
+}): PreparationStage {
+  if (value >= SOLID_PREPARATION && !measureQuality({ components, needsTest: true }).isSolid) {
+    return "growing";
+  }
+
   return STAGE_THRESHOLDS.find((threshold) => value >= threshold.min)?.stage ?? "starting";
 }

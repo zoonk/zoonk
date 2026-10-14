@@ -156,7 +156,8 @@ export async function gradeMock({
   const itemIds = askedIds.map((entry) => entry.itemId);
 
   const [items, attempts] = await Promise.all([
-    loadMockItems(itemIds),
+    /** Handed-in questions become notebook entries: recordings keep their revealed review support. */
+    loadMockItems(itemIds, { reveal: true }),
     prisma.attempt.findMany({
       select: { isCorrect: true, itemId: true },
       where: { mockExamId: mock.id },

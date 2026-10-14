@@ -279,7 +279,7 @@ describe(listMockOptions, () => {
   it("offers every subject the plan studies, whatever name the plan gives it", () => {
     const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
 
-    // Named as the notice (and the Journey) names them, never by their short names.
+    // Named as the notice (and the Plan) names them, never by their short names.
     expect(
       options.filter((option) => option.kind === "area").map((option) => option.areas),
     ).toStrictEqual([

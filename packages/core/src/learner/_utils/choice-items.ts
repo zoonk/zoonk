@@ -2,8 +2,10 @@ import { type Item, type ItemFormat, type MediaAsset } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
 import { type ItemImage, toItemImage } from "../../library/items/item-image";
+import { type ItemSetView } from "../../library/items/item-set-view";
+import { toItemSetView } from "../../library/items/item-sets";
 import { gradeOptionPicks } from "../../library/items/option-picks";
-import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
+import { type MistakeSnapshot, withMistakeStimulus } from "../../mistakes/mistake-snapshot";
 import { type ChoiceAnswer } from "../contract";
 
 /**
@@ -20,14 +22,16 @@ type ChoiceContent = Extract<ParsedItemContent, { format: (typeof GRADABLE_ITEM_
 
 /** A bank question with the picture it shows, when it's about one. */
 export type ChoiceItem = Pick<Item, "id" | "language" | "skillId"> &
-  ChoiceContent & { image: ItemImage | null };
+  ChoiceContent & { image: ItemImage | null; set?: ItemSetView | null };
 
 /**
  * A bank item as reads return it. Reads that show questions include its picture's file
- * (`ITEM_IMAGE_INCLUDE`); grading reads leave it out.
+ * (`ITEM_IMAGE_INCLUDE`) and its set (`ITEM_SET_INCLUDE`), including reads that save a mistake.
  */
 export type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId"> & {
   mediaAsset?: Pick<MediaAsset, "height" | "url" | "width"> | null;
+  set?: Parameters<typeof toItemSetView>[0]["item"]["set"];
+  setPosition?: number | null;
 };
 
 function isGradableFormat(format: ItemFormat): format is ChoiceContent["format"] {
@@ -52,6 +56,9 @@ export function parseChoiceItem(item: BankItem): ChoiceItem | null {
           id: item.id,
           image: toItemImage({ content: parsed.content, mediaAsset: item.mediaAsset }),
           language: item.language,
+          set: item.set
+            ? toItemSetView({ item: { set: item.set, setPosition: item.setPosition ?? null } })
+            : null,
           skillId: item.skillId,
         }
       : null;
@@ -148,7 +155,7 @@ function gradeTrueFalse({
       correctAnswer: String(item.content.isTrue),
       explanation: item.content.reason,
       format: item.format,
-      misconception: isCorrect ? null : item.content.misconception,
+      misconception: isCorrect || picked === null ? null : item.content.misconception,
       question: item.content.statement,
     },
   };
@@ -225,7 +232,21 @@ function gradeMultipleChoice({
  * asks for, or an answer shape for the other format, counts as wrong, like any wrong pick.
  */
 export function gradeChoiceAnswer({ answer, item }: { answer: ChoiceAnswer; item: ChoiceItem }) {
-  return item.format === "trueFalse"
-    ? gradeTrueFalse({ answer, item })
-    : gradeMultipleChoice({ answer, item });
+  const graded =
+    item.format === "trueFalse"
+      ? gradeTrueFalse({ answer, item })
+      : gradeMultipleChoice({ answer, item });
+
+  return {
+    ...graded,
+    snapshot: withMistakeStimulus({
+      snapshot: graded.snapshot,
+      stimulus: {
+        context: item.content.context,
+        image: item.image,
+        set: item.set,
+        visual: item.content.visual,
+      },
+    }),
+  };
 }

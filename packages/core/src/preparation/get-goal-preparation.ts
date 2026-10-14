@@ -2,7 +2,8 @@ import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
-import { getLearnerModelCacheTag } from "../cache/tags";
+import { getLearnerModelCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
+import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
 import { loadGoalScoreEstimate } from "../exams/estimates/load-goal-estimate";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
@@ -16,26 +17,24 @@ import { loadPreparationInputs } from "./_utils/load-preparation-inputs";
 import { type AreaPreparation, getAreaPreparations } from "./area-preparation";
 import { type EstimatedScore } from "./estimated-score";
 import { type PlanStatus, getMinutesPerItem, getPlanStatus } from "./plan-status";
-import {
-  type PreparationComponents,
-  type PreparationStage,
-  getPreparationComponents,
-  getPreparationStage,
-  getPreparationValue,
-} from "./preparation-math";
+import { type PreparationComponents, type PreparationStage } from "./preparation-math";
+import { type SectionPreparation, measurePreparation } from "./section-preparation";
 
 const WEEK_DAYS = 7;
 
 /**
- * Preparation for one goal, overall and per area.
- * `value` and every part run from 0 to 1. `estimatedScore` exists only once recent mock exams hold
- * enough of the exam (see `canEstimateScore`) and is a range, labeled "Estimated" wherever it shows.
+ * Preparation for one goal, overall, per area (its chapters, which rebalancing reads) and per
+ * section (its subjects, which the syllabus shows; `value` is theirs together, see
+ * `measurePreparation`). `value` and every part run from 0 to 1. `estimatedScore` exists only once
+ * recent mock exams hold enough of the exam (see `canEstimateScore`) and is a range, labeled
+ * "Estimated" wherever it shows.
  */
 type GoalPreparation = {
   areas: AreaPreparation[];
   components: PreparationComponents;
   estimatedScore: EstimatedScore | null;
   goalId: string;
+  sections: SectionPreparation[];
   skills: SkillStateCounts;
   stage: PreparationStage;
   status: PlanStatus | null;
@@ -74,7 +73,7 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
     return { status: "notFound" };
   }
 
-  cacheTag(getLearnerModelCacheTag(owned.userId));
+  cacheTag(getLearnerModelCacheTag(owned.userId), getUserSubscriptionCacheTag(owned.userId));
 
   const { goal } = owned;
 
@@ -86,15 +85,15 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
   // Areas keep a rolling seven days: rebalancing reads their trend on any day, Mondays included.
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
-  const [inputs, catchUp, access] = await Promise.all([
+  const [inputs, catchUp, access, phaseChallengesRequired] = await Promise.all([
     loadPreparationInputs({ goalId, now, readPlan: readGoalPlan, userId: owned.userId }),
     loadCatchUpItems(goalId),
     loadExamPrepAccess({ goal, timeZone, today }),
+    arePhaseChallengesRequired({ goalKind: goal.kind, userId: owned.userId }),
   ]);
 
-  const measure = (asOf: Date) => getPreparationComponents({ ...inputs, asOf });
-  const components = measure(now);
-  const value = getPreparationValue(components);
+  const measure = (asOf: Date) => measurePreparation({ ...inputs, asOf });
+  const { components, sections, stage, value } = measure(now);
   const areas = getAreaPreparations({ ...inputs, now, weekAgo });
 
   // Only mocks estimate a score: a full review stands in for one in preparation, not for a score.
@@ -109,23 +108,26 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
       components,
       estimatedScore,
       goalId,
+      sections,
       skills: countSkillStates(inputs.skills),
-      stage: getPreparationStage(value),
+      stage,
       status: getPlanStatus({
         catchUp: catchUp.length,
         freeWeekOver: access.trialEnded,
+        goalKind: goal.kind,
         items: inputs.planItems,
         minutesPerItem: getMinutesPerItem({
           estimateHours: inputs.estimateHours,
           itemCount: inputs.planItems.length,
         }),
+        phaseChallengesRequired,
         studiesPastTarget: inputs.studiesPastTarget,
         targetDate: goal.targetDate,
         today,
       }),
       value,
       weakestAreaId: areas.weakestAreaId,
-      weekGain: value - getPreparationValue(measure(weekStart)),
+      weekGain: value - measure(weekStart).value,
     },
     status: "ready",
   };

@@ -1,3 +1,5 @@
+import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { checkActivityAnswer } from "../library/activities/activity-answers";
 import { gradeChallengePath } from "../library/challenges/challenge-run";
 import { type SelectedAnswer } from "../player/contracts/_utils/selected-answer-schema";
@@ -71,19 +73,21 @@ function gradeActivityChoice({
   };
 }
 
-function formatNumber(value: number, unit: string | undefined): string {
-  return unit ? `${value} ${unit}` : String(value);
-}
-
 /**
  * The engine computes the right end state of every activity, so the player and the server share
  * one verdict. A choice answers with an option, a numeric check with a number, and an interaction
- * with its end state.
+ * with its end state. A number reads as the lesson's language writes it with its unit ("R$ 28" in
+ * Portuguese, "$28" in English, "4 °C") and as exactly as the activity's own feedback shows it,
+ * so a near miss never reads like the answer.
  */
 function gradeActivity({
   answer,
+  language,
   step,
-}: Grade<"activity"> & { step: PlayableTeachingStepOf<"activity"> }): GradedStepAnswer | null {
+}: Grade<"activity"> & {
+  language: string;
+  step: PlayableTeachingStepOf<"activity">;
+}): GradedStepAnswer | null {
   const { check } = step.content;
 
   if (check.kind === "choice") {
@@ -95,12 +99,26 @@ function gradeActivity({
   }
 
   const isCorrect = checkActivityAnswer(step.content, answer.answer);
-  const expected = check.kind === "numeric" ? formatNumber(check.answer, check.unit) : null;
+  const unit = check.kind === "numeric" ? (check.unit ?? null) : null;
+
+  const maximumFractionDigits =
+    check.kind === "numeric"
+      ? exactFractionDigitsFor({
+          expected: check.answer,
+          tolerance: check.tolerance,
+          value: answer.answer.kind === "numeric" ? answer.answer.value : undefined,
+        })
+      : undefined;
+
+  const exact = (value: number) =>
+    formatMathAnswer({ language, maximumFractionDigits, unit, value });
+
+  const expected = check.kind === "numeric" ? exact(check.answer) : null;
 
   return {
     answerText:
       answer.answer.kind === "numeric" && check.kind === "numeric"
-        ? formatNumber(answer.answer.value, check.unit)
+        ? exact(answer.answer.value)
         : null,
     correctAnswer: isCorrect ? null : expected,
     feedback: check.explanation,
@@ -225,9 +243,12 @@ function toListeningStep({
  */
 export function gradeStepAnswer({
   answer,
+  language,
   step,
 }: {
   answer: LessonStepAnswer;
+  /** The lesson's language, which writes a number's unit in the answers' text. */
+  language: string;
   step: PlayableLibraryStep;
 }): GradedStepAnswer | null {
   if (step.kind === "check") {
@@ -235,7 +256,7 @@ export function gradeStepAnswer({
   }
 
   if (step.kind === "activity") {
-    return answer.kind === "activity" ? gradeActivity({ answer, step }) : null;
+    return answer.kind === "activity" ? gradeActivity({ answer, language, step }) : null;
   }
 
   if (step.kind === "challenge") {

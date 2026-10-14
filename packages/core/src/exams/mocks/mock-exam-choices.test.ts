@@ -126,7 +126,7 @@ describe("a mock of an exam with a choice of subject", () => {
   });
 
   // Ana takes English: the chooser offered "Língua Inglesa, 5 questions" as a subject of its own
-  // and named it beside Languages on the first day, while her Journey counts it in Languages' 45.
+  // and named it beside Languages on the first day, while her Plan counts it in Languages' 45.
   it("offers the option the learner picked inside its subject, never as a subject of its own", () => {
     const chosen = toChosenStructure({ choices: [SPANISH], structure: enemDay(1) });
 

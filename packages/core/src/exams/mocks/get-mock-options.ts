@@ -8,6 +8,7 @@ import {
   findRunningAnytimeMock,
   loadAnytimeMockSetup,
 } from "./_utils/anytime-mock-setup";
+import { findLastMock } from "./_utils/finished-mocks";
 import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
 import { getRecommendedPlacementLength, toPlacementOptionView } from "./placement-mock";
 
@@ -19,8 +20,8 @@ export type MockOptionsResult =
  * The mocks the learner can take whenever they want for one exam goal (the active goal by
  * default), beside the plan's weekly ones: each exam day in full, half of one, each subject, with
  * their questions and time, the diagnostic one onboarding offers instead of the quick placement in
- * its lengths, whether their plan includes mock exams (Plus), and the one they started and haven't
- * finished.
+ * its lengths, whether their plan includes mock exams (Plus), the one they started and haven't
+ * finished, and how the last one went.
  */
 export async function getMockOptions({
   goalId,
@@ -39,11 +40,12 @@ export async function getMockOptions({
     return { status: "notExam" };
   }
 
-  const [setup, access, running, placementMock] = await Promise.all([
+  const [setup, access, running, placementMock, lastMock] = await Promise.all([
     loadAnytimeMockSetup(goal),
     getAnytimeMockAccess({ goal, timeZone: getAnswerTimeZone({ goal }) }),
     findRunningAnytimeMock({ goalId: goal.id, userId: goal.userId }),
     findPlacementMock({ goalId: goal.id, userId: goal.userId }),
+    findLastMock(goal.id),
   ]);
 
   const conditions = running ? mockConditionsSchema.safeParse(running.conditions).data : null;
@@ -56,6 +58,7 @@ export async function getMockOptions({
       examDocument: getExamDocument(goal),
       examName: setup.examName,
       goalId: goal.id,
+      lastMock,
       options: setup.options,
       placement: recommended && {
         mock: placementMock && {

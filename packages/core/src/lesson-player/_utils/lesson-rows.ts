@@ -93,17 +93,20 @@ export async function findPlayableLessonRow({
  * The version of a lesson the learner is playing: a check can publish a fixed version while they
  * play (or take the lesson out of play), and they finish the one they opened. It's the version of
  * the screens they name (`stepIds`), or else of their latest answer to the lesson since `since`.
+ * Completed runs bound that answer at `until`, so a later run cannot choose their version.
  * Null when they haven't answered yet: they play the lesson as it opens now.
  */
 export async function findOpenedVersion({
   lessonId,
   since,
   stepIds = [],
+  until,
   userId,
 }: {
   lessonId: string;
   since?: Date;
   stepIds?: readonly string[];
+  until?: Date;
   userId: string;
 }): Promise<number | null> {
   const opened =
@@ -116,7 +119,7 @@ export async function findOpenedVersion({
           .findFirst({
             orderBy: { answeredAt: "desc" },
             select: { step: { select: { version: true } } },
-            where: { answeredAt: { gte: since }, step: { lessonId }, userId },
+            where: { answeredAt: { gte: since, lte: until }, step: { lessonId }, userId },
           })
           .then((attempt) => attempt?.step ?? null);
 
@@ -139,7 +142,11 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
           language: true,
           level: true,
           planItems: ownExplanationItems(userId),
-          skills: { select: { skillId: true } },
+          // The lesson's first skill stands in for a screen without its own (`getAnswerSkillId`).
+          skills: {
+            orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+            select: { skillId: true },
+          },
           targetLanguage: true,
         },
       },
@@ -156,8 +163,10 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
 }
 
 /**
- * The skill an answer trains: the screen's own skill, or the lesson's when it teaches just one, so
- * a check the writer didn't tag still reaches the learner's memory.
+ * The skill an answer trains: the screen's own skill, or else the lesson's first (a lesson teaches
+ * its few skills together), so a check the writer didn't tag still reaches the learner's memory,
+ * and a miss on it lands in the mistakes notebook under a skill it can be practiced by, as the
+ * lesson's feedback says. Without a skill the notebook couldn't list it.
  */
 export function getAnswerSkillId({
   lessonSkillIds,
@@ -166,9 +175,5 @@ export function getAnswerSkillId({
   lessonSkillIds: string[];
   stepSkillId: string | null;
 }): string | null {
-  if (stepSkillId) {
-    return stepSkillId;
-  }
-
-  return lessonSkillIds.length === 1 ? (lessonSkillIds[0] ?? null) : null;
+  return stepSkillId ?? lessonSkillIds[0] ?? null;
 }

@@ -40,6 +40,31 @@ export type ExamNextMock = {
   questions: number;
 };
 
+/**
+ * A mock the learner started and hasn't finished (one taken any time, or the plan's weekly one),
+ * which the exam's page leads its mocks with: how much of it is answered and when its clock runs
+ * out. One whose time ran out while the learner was away isn't running (see `hasTimeRunOutAway`).
+ */
+export type ExamRunningMock = {
+  /** Its questions with an answer so far, essays included. */
+  answered: number;
+  /**
+   * When the clock of the section it's on runs out (ISO): the one the learner sees on opening it,
+   * the next section's once a break ends. Past it, the mock waits to be handed in. Null once every
+   * section is handed in and it only waits to be graded.
+   */
+  deadline: string | null;
+  /** The id it opens by: its session block's for the plan's weekly mock, its own otherwise. */
+  id: string;
+  /** Its place among the goal's mocks, as the mock names itself: "Mock exam 2". */
+  number: number;
+  purpose: MockPurpose;
+  /** Its questions, essays included. */
+  questions: number;
+  /** What one taken any time sits (a day, half of one, a subject); null for the plan's. */
+  shape: MockShape | null;
+};
+
 /** One finished mock in the goal's history, measured in the exam's own terms. */
 export type ExamMockSummary = {
   /**
@@ -159,7 +184,10 @@ export type ExamView = {
    * (the next one, a mock to take now) locked, with what Plus unlocks.
    */
   mocksRequirePlus: boolean;
-  /** The plan's next weekly mock; null when the next checkpoint isn't one, or there's none left. */
+  /**
+   * The plan's next weekly mock; null when the next checkpoint isn't one, there's none left, or
+   * it's a mock running (its row in `runningMocks` stands for it then).
+   */
   nextMock: ExamNextMock | null;
   /**
    * How the learner's mocks went over time; null before the first one, and when mocks need Plus
@@ -172,6 +200,12 @@ export type ExamView = {
    */
   passMarks: PassMarks | null;
   result: ExamResultView | null;
+  /**
+   * The mocks the learner started and hasn't finished: the one taken any time first (the page's
+   * main action continues it), then the plan's weekly one, which can run beside it. Empty when
+   * none is running.
+   */
+  runningMocks: ExamRunningMock[];
   /**
    * `scale`: the exam's own scale (SAT, AP, TOEFL) that estimates and results use. `stated`: the
    * notice says how the exam is scored; otherwise `method` is the mocks' default (a class test
@@ -214,6 +248,8 @@ export type ExamView = {
    * as the language goal had it. Null for other exams.
    */
   speakingMock: SpeakingMockExam | null;
+  /** The speaking mock cannot start while live calls are paused. */
+  speakingMockPaused: boolean;
   stage: ExamStage;
   timeZone: string | null;
   /** What the notice lets candidates use or gives them, for exam day's checklist. */

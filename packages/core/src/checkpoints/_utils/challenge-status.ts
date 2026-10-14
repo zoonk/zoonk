@@ -11,12 +11,15 @@ export function getChallengeStatus({
   due,
   itemStatus,
   plusRequired,
+  queued = false,
   todayBlockStatus,
 }: {
-  /** Its day came, or a phase checkpoint's lessons are done. */
+  /** The learner's next session has it: its day came, or a phase checkpoint was reached first. */
   due: boolean;
   itemStatus: PlanItem["status"];
   plusRequired: boolean;
+  /** A phase checkpoint whose lessons are done waits for the one before it (`BossTiming`). */
+  queued?: boolean;
   todayBlockStatus: StudySessionBlock["status"] | null;
 }): ChallengeStatus {
   if (itemStatus !== "todo") {
@@ -38,6 +41,10 @@ export function getChallengeStatus({
   // Finished today and still to do: a phase checkpoint that didn't pass tries again tomorrow.
   if (todayBlockStatus === "completed") {
     return "tried";
+  }
+
+  if (queued) {
+    return "queued";
   }
 
   return due ? "waiting" : "upcoming";

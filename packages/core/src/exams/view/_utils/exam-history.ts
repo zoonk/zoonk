@@ -1,36 +1,16 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getMockMeasure } from "../../mocks/mock-analysis";
 import {
-  type MockPurpose,
-  type MockResult,
-  mockConditionsSchema,
-  mockResultSchema,
-} from "../../mocks/mock-contract";
+  FINISHED_MOCK_SELECT,
+  readFinishedMock,
+  toMockSummary,
+} from "../../mocks/_utils/finished-mocks";
+import { type MockResult } from "../../mocks/mock-contract";
 import { sumCalibration } from "../../scoring/net-score";
 import { type ExamMockProgress, type ExamMockSummary } from "../exam-view-contract";
+import { loadExamCalibration } from "./exam-calibration";
 import { loadExamWork } from "./exam-work";
-import { getMockProgress } from "./mock-progress";
-
-/**
- * The id a finished mock's result opens by: its session block's for a scheduled one (null once
- * its session is gone), its own for one taken any time.
- */
-function getOpenId({
-  blockId,
-  id,
-  purpose,
-}: {
-  blockId: string | null;
-  id: string;
-  purpose: MockPurpose;
-}) {
-  if (blockId) {
-    return blockId;
-  }
-
-  return purpose === "planned" ? null : id;
-}
+import { MOCK_PROGRESS_SIZE, getMockProgress } from "./mock-progress";
 
 /** The history shows the latest mocks; calibration adds up every one of them. */
 const HISTORY_SIZE = 10;
@@ -54,68 +34,43 @@ export async function loadExamHistory({
   progress: ExamMockProgress | null;
   sessionsDone: number;
 }> {
-  const [rows, work] = await Promise.all([
-    // In creation order, so each mock keeps the number its screen showed (see `countFinishedMocksBefore`).
-    prisma.mockExam.findMany({
-      orderBy: { createdAt: "asc" },
-      select: { blockId: true, conditions: true, finishedAt: true, id: true, result: true },
-      where: { goalId, status: "finished" },
-    }),
+  const [[rows, total, calibration], work] = await Promise.all([
+    /** A completion between reads must not shift numbers or add unseen calibration. */
+    prisma.$transaction(
+      (transaction) =>
+        Promise.all([
+          // The chart needs twenty snapshots; numbering still counts every finished mock.
+          transaction.mockExam.findMany({
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+            select: FINISHED_MOCK_SELECT,
+            take: MOCK_PROGRESS_SIZE,
+            where: { goalId, status: "finished" },
+          }),
+          transaction.mockExam.count({ where: { goalId, status: "finished" } }),
+          loadExamCalibration({ goalId, transaction }),
+        ]),
+      { isolationLevel: "RepeatableRead" },
+    ),
     loadExamWork({ goalId, today }),
   ]);
 
-  const finished = rows.flatMap((row, index) => {
-    const result = mockResultSchema.safeParse(row.result).data;
-    const conditions = mockConditionsSchema.safeParse(row.conditions).data;
-    const purpose = conditions?.purpose ?? "planned";
-    const shape = conditions?.shape ?? null;
+  const older = total - rows.length;
 
-    const reused = conditions?.reused ?? 0;
-    const examQuestions = conditions?.examQuestions ?? null;
-
-    return result && row.finishedAt
-      ? [
-          {
-            ...row,
-            examQuestions,
-            finishedAt: row.finishedAt,
-            number: index + 1,
-            purpose,
-            result,
-            reused,
-            shape,
-          },
-        ]
-      : [];
-  });
+  const finished = rows
+    .toReversed()
+    .flatMap((row, index) => readFinishedMock({ number: older + index + 1, row }) ?? []);
 
   const mocks = finished
-    .map((row) => ({
-      blockId: getOpenId({ blockId: row.blockId, id: row.id, purpose: row.purpose }),
-      correct: row.result.correct,
-      examQuestions: row.examQuestions,
-      finishedAt: row.finishedAt.toISOString(),
-      measure: getMockMeasure(row.result),
-      number: row.number,
-      purpose: row.purpose,
-      scoring: row.result.scoring,
-      shape: row.shape,
-      total: row.result.total,
-    }))
+    .map((mock) => toMockSummary(mock))
     .toReversed()
     .slice(0, HISTORY_SIZE);
 
-  const calibrations = finished.flatMap((row) =>
-    row.result.calibration ? [row.result.calibration] : [],
-  );
-
   // The exam's latest penalty sets the break-even the advice reads against.
   const penalty = finished.at(-1)?.result.net?.penalty ?? 1;
-  const summed = calibrations.length > 0 ? sumCalibration({ calibrations, penalty }) : null;
 
   return {
-    calibration: summed
-      ? { ...summed, blankingGain: calibrations.reduce((sum, item) => sum + item.blankingGain, 0) }
+    calibration: calibration
+      ? { ...calibration, ...sumCalibration({ calibrations: [calibration], penalty }) }
       : null,
     mocks,
     progress: getMockProgress(finished),

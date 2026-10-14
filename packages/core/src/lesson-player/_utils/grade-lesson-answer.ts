@@ -177,7 +177,11 @@ export async function gradeLessonAnswer(
     return gradeSpokenFallback(input);
   }
 
-  const graded = gradeStepAnswer({ answer: input.answer, step: input.step });
+  const graded = gradeStepAnswer({
+    answer: input.answer,
+    language: input.lesson.language,
+    step: input.step,
+  });
 
   return graded
     ? {

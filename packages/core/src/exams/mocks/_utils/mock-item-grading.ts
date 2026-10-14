@@ -4,10 +4,10 @@ import { type ChoiceItem, gradeChoiceAnswer } from "../../../learner/_utils/choi
 import { gradeMathAnswer, readRecordedMath } from "../../../learner/_utils/math-items";
 import { matchesAcceptedAnswer, toTypedSnapshot } from "../../../learner/_utils/typed-items";
 import { gradeOptionPicks } from "../../../library/items/option-picks";
-import { type MistakeSnapshot } from "../../../mistakes/mistake-snapshot";
+import { type MistakeSnapshot, withMistakeStimulus } from "../../../mistakes/mistake-snapshot";
 import { getPickCredit } from "../../scoring/partial-credit";
 import { type MockAnswer, mockAnswerSchema, mockChoiceSchema } from "../mock-answer-contract";
-import { type MockItem, serveMockMath } from "./mock-items";
+import { type MockItem, serveMockMath, toMockQuestionView } from "./mock-items";
 
 const BLANK = { dontKnow: true } as const;
 
@@ -65,7 +65,7 @@ function gradeChoice({
  * which only grading with a model can tell (see `gradeMock`). An answer of another format's shape
  * is wrong, like any wrong pick.
  */
-export function gradeMockItem({
+function gradeMockAnswer({
   answer,
   item,
   mockId,
@@ -104,6 +104,20 @@ export function gradeMockItem({
   }
 
   return gradeChoice({ answer, item, partialCredit });
+}
+
+/** Every mock format saves the complete served question, including a number's drawn context. */
+export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): MockItemGrade {
+  const graded = gradeMockAnswer(input);
+  const question = toMockQuestionView({ item: input.item, mockId: input.mockId });
+
+  return {
+    ...graded,
+    snapshot: withMistakeStimulus({
+      snapshot: { ...graded.snapshot, question: question.question },
+      stimulus: question,
+    }),
+  };
 }
 
 /**

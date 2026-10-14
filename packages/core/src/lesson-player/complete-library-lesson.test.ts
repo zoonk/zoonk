@@ -92,6 +92,96 @@ async function playLesson({ checkOption = "likely" }: { checkOption?: string } =
 }
 
 describe(completeLibraryLesson, () => {
+  it("finishes a language lesson with writing skipped only in this sitting, without wrong answers", async () => {
+    const setup = await setupPlayableLesson({
+      steps: ["explanation", "typedAnswer", "typedAnswer", "summary"],
+    });
+
+    await prisma.lesson.update({ data: { targetLanguage: "en" }, where: { id: setup.lesson.id } });
+    const runId = await startRun(setup.lesson.id);
+
+    const skippedWritingStepIds = setup.steps
+      .filter((step) => step.kind === "typedAnswer")
+      .map((step) => step.id);
+
+    const input = { runId, skippedWritingStepIds, timeZone: TIME_ZONE };
+
+    await expect(
+      completeLibraryLesson({ input, lessonId: setup.lesson.id }),
+    ).resolves.toMatchObject({
+      completion: { correctCount: 0, incorrectCount: 0 },
+      status: "completed",
+    });
+
+    await expect(prisma.attempt.count({ where: { userId: setup.user.id } })).resolves.toBe(0);
+    await expect(prisma.mistake.count({ where: { userId: setup.user.id } })).resolves.toBe(0);
+
+    const nextRunId = await startRun(setup.lesson.id);
+
+    await expect(complete({ lessonId: setup.lesson.id, runId: nextRunId })).resolves.toStrictEqual({
+      status: "invalid",
+    });
+  });
+
+  it("cannot skip a non-writing question", async () => {
+    const setup = await setupPlayableLesson({ steps: ["check", "typedAnswer"] });
+    const runId = await startRun(setup.lesson.id);
+
+    const input = {
+      runId,
+      skippedWritingStepIds: setup.steps.map((step) => step.id),
+      timeZone: TIME_ZONE,
+    };
+
+    await expect(
+      completeLibraryLesson({ input, lessonId: setup.lesson.id }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+  });
+
+  it.each([null, "en"])(
+    "finishes skipped writing from the opened version when no answer preceded a lesson rewrite (target: %s)",
+    async (targetLanguage) => {
+      const setup = await setupPlayableLesson({ steps: ["typedAnswer", "typedAnswer", "summary"] });
+      await prisma.lesson.update({ data: { targetLanguage }, where: { id: setup.lesson.id } });
+      const runId = await startRun(setup.lesson.id);
+
+      await saveLessonVersion({
+        language: setup.lesson.language,
+        lessonId: setup.lesson.id,
+        replaces: 1,
+        screens: setup.steps.map((step) => ({
+          content: step.content as object,
+          kind: step.kind,
+          mathItem: null,
+          provenance: { generatedAt: new Date(), model: "fix", promptVersion: "fix", runId: "fix" },
+          skillId: step.skillId,
+        })),
+        summary: ["A fixed idea."],
+      });
+
+      await expect(
+        completeLibraryLesson({
+          input: {
+            runId,
+            skippedWritingStepIds: setup.steps
+              .filter((step) => step.kind === "typedAnswer")
+              .map((step) => step.id),
+            timeZone: TIME_ZONE,
+          },
+          lessonId: setup.lesson.id,
+        }),
+      ).resolves.toMatchObject({
+        completion: { correctCount: 0, incorrectCount: 0 },
+        status: "completed",
+      });
+
+      await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+        completion: { correctCount: 0, incorrectCount: 0 },
+        status: "completed",
+      });
+    },
+  );
+
   it("closes the run and adds Brain Power, Energy and the day's first completion", async () => {
     const { lesson, runId, user } = await playLesson({ checkOption: "path" });
 

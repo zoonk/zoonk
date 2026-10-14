@@ -37,6 +37,136 @@ async function setup() {
 }
 
 describe(getGoalPreparation, () => {
+  it("keeps a high subject mean Growing until the globally heaviest skill is confirmed", async () => {
+    const user = await userFixture();
+
+    const { goal, items, plan, skills } = await learnerGoalFixture({
+      itemsPerSkill: 2,
+      phases: [20, 1],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    mockClock();
+    const at = daysAgo(10);
+    const sitting = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    await prisma.plan.update({
+      data: {
+        graph: {
+          phases: [{ name: "Base" }],
+          skills: skills.map((entry, index) => ({
+            area: index < 20 ? "Medium subjects" : "Hard subject",
+            lessons: 1,
+            name: entry.name,
+            phase: 0,
+            skillId: entry.id,
+            weight: 1,
+          })),
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    await prisma.goal.update({ data: { kind: "exam", timezone: "UTC" }, where: { id: goal.id } });
+
+    await Promise.all([
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      ...items.map((entry, index) =>
+        prisma.item.update({ data: { difficulty: index < 40 ? 0 : 1 }, where: { id: entry.id } }),
+      ),
+      ...skills
+        .slice(0, 20)
+        .map((entry) =>
+          learnerSkillFixture({
+            difficulty: 5,
+            lastReviewedAt: NOW,
+            reps: 3,
+            skillId: entry.id,
+            stability: 100,
+            state: "learning",
+            userId: user.id,
+          }),
+        ),
+      ...items
+        .slice(0, 40)
+        .map((entry) =>
+          attemptFixture({
+            answeredAt: at,
+            itemId: entry.id,
+            skillId: entry.skillId,
+            studySessionId: sitting.id,
+            userId: user.id,
+          }),
+        ),
+      learningEventFixture({
+        correctAnswers: 44,
+        endedAt: at,
+        goalId: goal.id,
+        incorrectAnswers: 1,
+        kind: "mock",
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getGoalPreparation(goal.id);
+
+    if (result.status !== "ready") {
+      throw new Error("Expected owned preparation");
+    }
+
+    const { preparation } = result;
+    expect(preparation.components.coverage.heaviest.value).toBe(0);
+    expect(preparation.value).toBeGreaterThan(0.85);
+
+    expect(preparation.value).toBeCloseTo(
+      preparation.sections.reduce((sum, entry) => sum + entry.preparation * entry.weight, 0),
+    );
+
+    expect(preparation.weekGain).toBe(0);
+
+    const snapshot = await measureSessionState({
+      goalId: goal.id,
+      now: NOW,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(snapshot.preparation).toBeCloseTo(preparation.value);
+    expect(preparation.stage).toBe("growing");
+    const hard = skills[20]!;
+    const recent = new Date(NOW.getTime() - 1000);
+
+    await Promise.all([
+      attemptFixture({ answeredAt: recent, skillId: hard.id, userId: user.id }),
+      learnerSkillFixture({
+        difficulty: 5,
+        lastReviewedAt: recent,
+        reps: 3,
+        skillId: hard.id,
+        stability: 100,
+        state: "learning",
+        userId: user.id,
+      }),
+    ]);
+
+    const confirmed = await getGoalPreparation(goal.id);
+
+    if (confirmed.status !== "ready") {
+      throw new Error("Expected confirmed owned preparation");
+    }
+
+    expect(confirmed.preparation.components.coverage.heaviest.value).toBe(1);
+    expect(confirmed.preparation.stage).toBe("solid");
+
+    expect(confirmed.preparation.weekGain).toBeCloseTo(
+      confirmed.preparation.value - preparation.value,
+      12,
+    );
+  });
+
   it("requires a signed-in learner and hides other learners' goals", async () => {
     const { goal } = await setup();
 
@@ -821,6 +951,41 @@ describe(getGoalPreparation, () => {
 
     expect(result.status === "ready" && result.preparation.status).toStrictEqual({
       kind: "onTrack",
+    });
+  });
+
+  it("reports finished plans by completed work, and past their date with lessons left", async () => {
+    const { goal, planItems } = await setup();
+    const today = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), NOW.getUTCDate()));
+
+    await Promise.all(
+      planItems.map((item, index) =>
+        prisma.planItem.update({
+          data: { scheduledFor: new Date(today.getTime() + (index + 5) * DAY_MS), status: "done" },
+          where: { id: item.id },
+        }),
+      ),
+    );
+
+    const result = await getGoalPreparation(goal.id);
+
+    expect(result.status === "ready" && result.preparation.status).toStrictEqual({
+      kind: "finished",
+    });
+
+    await Promise.all([
+      prisma.planItem.update({ data: { status: "skipped" }, where: { id: planItems[0]!.id } }),
+      prisma.goal.update({
+        data: { targetDate: new Date(today.getTime() - DAY_MS) },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    const past = await getGoalPreparation(goal.id);
+
+    expect(past.status === "ready" && past.preparation.status).toStrictEqual({
+      kind: "pastDate",
+      lessons: 1,
     });
   });
 });

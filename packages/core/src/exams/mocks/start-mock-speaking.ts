@@ -7,7 +7,7 @@ import { findOwnedMock } from "./_utils/owned-mock";
 
 export type StartMockSpeakingResult =
   | { section: SpeakingSectionView; status: "ready" }
-  | { status: "notFound" | "notSpeaking" | "plusRequired" | "unauthorized" };
+  | { status: "callsPaused" | "notFound" | "notSpeaking" | "plusRequired" | "unauthorized" };
 
 /** The paper another tap kept on the mock first; the one just written if none is there. */
 async function loadKeptPaper({

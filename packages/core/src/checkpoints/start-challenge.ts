@@ -3,7 +3,7 @@ import { startMock } from "../exams/mocks/start-mock";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type StudyBlockStartInput } from "../sessions/contract";
 import { ensureStudySession } from "../sessions/ensure-study-session";
-import { startStudyBlock } from "../sessions/start-study-block";
+import { type StartStudyBlockResult, startStudyBlock } from "../sessions/start-study-block";
 import { needsPlus } from "./_utils/challenge-plus";
 import { findOwnedChallenge } from "./_utils/owned-challenge";
 import { type ChallengeDestination } from "./challenge-contract";
@@ -15,18 +15,19 @@ import { type ChallengeDestination } from "./challenge-contract";
  */
 export type StartChallengeResult =
   | { destination: ChallengeDestination; status: "ready" }
+  | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
+  | { status: "notToday" }
   | {
       status:
         | "blockFinished"
         | "dailyLimitReached"
         | "notFound"
-        | "notToday"
         | "plusRequired"
         | "questionsNeeded"
         | "unauthorized";
     };
 
-type StartedBlock = { id: string; isMock: boolean; isCall: boolean; sessionId: string };
+type StartedBlock = { id: string; isMock: boolean; sessionId: string };
 
 /** Starts the block: a mock fixes its sections and starts its clock, a duel its first question. */
 async function startBlock({
@@ -35,19 +36,23 @@ async function startBlock({
 }: {
   block: StartedBlock;
   input: StudyBlockStartInput;
-}): Promise<StartChallengeResult["status"]> {
-  // A language goal's checkpoint is the unit's call: its own screen opens it.
-  if (block.isCall) {
-    return "ready";
-  }
-
+}): Promise<Exclude<StartChallengeResult, { status: "ready" }> | { status: "ready" }> {
   if (block.isMock) {
     const started = await startMock({ blockId: block.id, input });
-    return started.status === "finished" ? "blockFinished" : started.status;
+
+    // A session's mock whose time ran out while the learner was away starts again in a new sitting.
+    if (started.status === "expired") {
+      throw new Error(`Mock block ${block.id} didn't start again after its time ran out.`);
+    }
+
+    if (started.status === "ready") {
+      return { status: "ready" };
+    }
+
+    return { status: started.status === "finished" ? "blockFinished" : started.status };
   }
 
-  const started = await startStudyBlock({ blockId: block.id, input, sessionId: block.sessionId });
-  return started.status;
+  return startStudyBlock({ blockId: block.id, input, sessionId: block.sessionId });
 }
 
 /**
@@ -93,18 +98,13 @@ export async function startChallenge({
 
   const payload = readBlockPayload(block);
 
-  const status = await startBlock({
-    block: {
-      id: block.id,
-      isCall: goal.kind === "language" && payload.checkpoint?.kind !== "weekly",
-      isMock: Boolean(payload.checkpoint?.mock),
-      sessionId: session.id,
-    },
+  const started = await startBlock({
+    block: { id: block.id, isMock: Boolean(payload.checkpoint?.mock), sessionId: session.id },
     input,
   });
 
-  if (status !== "ready") {
-    return { status };
+  if (started.status !== "ready") {
+    return started;
   }
 
   return {

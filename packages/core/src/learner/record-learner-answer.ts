@@ -1,5 +1,11 @@
 import "server-only";
-import { type Attempt, type LearnerSkill, type Mistake, prisma } from "@zoonk/db";
+import {
+  type Attempt,
+  type LearnerSkill,
+  type Mistake,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { type JsonObject } from "@zoonk/utils/json";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
@@ -8,7 +14,7 @@ import { getLearnerModelCacheTag } from "../cache/tags";
 import { fixMistakesAnsweredRight } from "../mistakes/fix-mistakes";
 import { type MistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { type MistakeCauseRequest, recordMistake } from "../mistakes/record-mistake";
-import { getLocalAnswerTime } from "./_utils/local-time";
+import { createLearnerAttempt } from "./_utils/create-learner-attempt";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
 import { type SkillReview, getAnswerEvents } from "./answer-events";
 import { type GradedAnswer } from "./answer-rating";
@@ -65,14 +71,22 @@ export type RecordedLearnerAnswer = {
   mistake: Mistake | null;
 };
 
-async function loadSkillHistory({ skillId, userId }: { skillId: string | null; userId: string }) {
+async function loadSkillHistory({
+  skillId,
+  transaction,
+  userId,
+}: {
+  skillId: string | null;
+  transaction: TransactionClient;
+  userId: string;
+}) {
   if (!skillId) {
     return { before: null, recent: { correct: 0, total: 0 } };
   }
 
   const [before, answers] = await Promise.all([
-    prisma.learnerSkill.findUnique({ where: { userSkill: { skillId, userId } } }),
-    prisma.attempt.findMany({
+    transaction.learnerSkill.findUnique({ where: { userSkill: { skillId, userId } } }),
+    transaction.attempt.findMany({
       orderBy: { answeredAt: "desc" },
       select: { isCorrect: true },
       take: RECENT_SKILL_ANSWERS,
@@ -94,28 +108,8 @@ type AnswerContext = {
   recent: { correct: number; total: number };
   skillId: string | null;
   stepId: string | null;
+  transaction: TransactionClient;
 };
-
-function createAttempt({ answeredAt, input, itemId, skillId, stepId }: AnswerContext) {
-  return prisma.attempt.create({
-    data: {
-      answer: input.answer,
-      answeredAt,
-      durationMs: input.graded.durationMs,
-      isCorrect: input.graded.isCorrect,
-      isPlacement: input.isPlacement ?? false,
-      itemId,
-      mockExamId: input.mockExamId ?? null,
-      score: input.graded.score ?? null,
-      skillId,
-      stepId,
-      studySessionId: input.studySessionId ?? null,
-      targetLanguage: input.targetLanguage ?? null,
-      userId: input.userId,
-      ...getLocalAnswerTime({ date: answeredAt, timeZone: input.timeZone }),
-    },
-  });
-}
 
 /** See `LearnerAnswerPurpose`: diagnostics only review skills they confirm or that are underway. */
 async function updateMemory({
@@ -123,6 +117,7 @@ async function updateMemory({
   before,
   input,
   skillId,
+  transaction,
 }: AnswerContext): Promise<SkillReview | null> {
   const isUnderway = (before?.reps ?? 0) > 0;
   const updates = input.purpose === "learning" || input.graded.isCorrect || isUnderway;
@@ -131,56 +126,67 @@ async function updateMemory({
     return null;
   }
 
-  return applyAnswerToLearnerSkill({
-    answer: input.graded,
-    learning: input.purpose === "learning",
-    reviewedAt: answeredAt,
-    skillId,
-    timeZone: input.timeZone,
-    userId: input.userId,
-  });
+  return applyAnswerToLearnerSkill(
+    {
+      answer: input.graded,
+      learning: input.purpose === "learning",
+      reviewedAt: answeredAt,
+      skillId,
+      timeZone: input.timeZone,
+      userId: input.userId,
+    },
+    transaction,
+  );
 }
 
-function fixAnsweredMistakes({ answeredAt, input, itemId, stepId }: AnswerContext) {
-  if (!input.graded.isCorrect) {
+function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }: AnswerContext) {
+  if (!input.graded.isCorrect || input.answer.dontKnow === true) {
     return [];
   }
 
-  return fixMistakesAnsweredRight({
-    answeredAt,
-    itemId,
-    practicedMistakeId: input.practicedMistakeId,
-    stepId,
-    timeZone: input.timeZone,
-    userId: input.userId,
-  });
+  return fixMistakesAnsweredRight(
+    {
+      answeredAt,
+      itemId,
+      practicedMistakeId: input.practicedMistakeId,
+      stepId,
+      timeZone: input.timeZone,
+      userId: input.userId,
+    },
+    transaction,
+  );
 }
 
 function addToNotebook({ attemptId, context }: { attemptId: string; context: AnswerContext }) {
-  const { before, input, itemId, recent, skillId, stepId } = context;
+  const { before, input, itemId, recent, skillId, stepId, transaction } = context;
   const entry = input.mistake;
 
   if (input.graded.isCorrect || input.purpose !== "learning" || !entry) {
     return null;
   }
 
-  return recordMistake({
-    attemptId,
-    itemId,
-    language: input.language,
-    signals: {
-      durationMs: input.graded.durationMs,
-      misconception: entry.snapshot.misconception,
-      questionText: entry.questionText,
-      recentSkillAnswers: recent,
-      skillState: before?.state ?? "new",
-      timeLimitMs: entry.timeLimitMs,
+  return recordMistake(
+    {
+      attemptId,
+      itemId,
+      language: input.language,
+      practicedMistakeId: input.practicedMistakeId,
+      signals: {
+        dontKnow: input.answer.dontKnow === true,
+        durationMs: input.graded.durationMs,
+        misconception: entry.snapshot.misconception,
+        questionText: entry.questionText,
+        recentSkillAnswers: recent,
+        skillState: before?.state ?? "new",
+        timeLimitMs: entry.timeLimitMs,
+      },
+      skillId,
+      snapshot: entry.snapshot,
+      stepId,
+      userId: input.userId,
     },
-    skillId,
-    snapshot: entry.snapshot,
-    stepId,
-    userId: input.userId,
-  });
+    transaction,
+  );
 }
 
 /**
@@ -190,9 +196,18 @@ function addToNotebook({ attemptId, context }: { attemptId: string; context: Ans
  * a mistake fixed) go to analytics after the response. Internal: public capabilities grade the
  * answer and derive `userId` from the session first.
  */
-export async function recordLearnerAnswer(input: LearnerAnswer): Promise<RecordedLearnerAnswer> {
-  const skillId = input.skillId ? (await loadSkillSurvivors([input.skillId]))(input.skillId) : null;
-  const history = await loadSkillHistory({ skillId, userId: input.userId });
+export async function persistLearnerAnswer({
+  input,
+  transaction,
+}: {
+  input: LearnerAnswer;
+  transaction: TransactionClient;
+}) {
+  const skillId = input.skillId
+    ? (await loadSkillSurvivors([input.skillId], transaction))(input.skillId)
+    : null;
+
+  const history = await loadSkillHistory({ skillId, transaction, userId: input.userId });
 
   const context: AnswerContext = {
     ...history,
@@ -201,9 +216,14 @@ export async function recordLearnerAnswer(input: LearnerAnswer): Promise<Recorde
     itemId: input.itemId ?? null,
     skillId,
     stepId: input.stepId ?? null,
+    transaction,
   };
 
-  const attempt = await createAttempt(context);
+  const attempt = await createLearnerAttempt({
+    answeredAt: context.answeredAt,
+    input: { ...input, itemId: context.itemId, skillId, stepId: context.stepId },
+    transaction,
+  });
 
   const [review, fixedMistakes, recorded] = await Promise.all([
     updateMemory(context),
@@ -211,7 +231,19 @@ export async function recordLearnerAnswer(input: LearnerAnswer): Promise<Recorde
     addToNotebook({ attemptId: attempt.id, context }),
   ]);
 
-  revalidateCacheTags([getLearnerModelCacheTag(input.userId)]);
+  // Attribution is server evidence, never something the learner's raw answer can supply.
+  const recordedAttempt =
+    fixedMistakes.length > 0 || "fixedMistakeIds" in input.answer
+      ? await transaction.attempt.update({
+          data: {
+            answer: {
+              ...input.answer,
+              fixedMistakeIds: fixedMistakes.map((mistake) => mistake.id),
+            },
+          },
+          where: { id: attempt.id },
+        })
+      : attempt;
 
   const events = getAnswerEvents({
     answeredAt: context.answeredAt,
@@ -221,15 +253,39 @@ export async function recordLearnerAnswer(input: LearnerAnswer): Promise<Recorde
     timeZone: input.timeZone,
   });
 
-  if (events.length > 0) {
-    after(() => trackLearnerEvents({ events, userId: input.userId }));
-  }
-
-  return {
-    attempt,
+  const result: RecordedLearnerAnswer = {
+    attempt: recordedAttempt,
     causeRequest: recorded?.causeRequest ?? null,
     fixedMistakeIds: fixedMistakes.map((mistake) => mistake.id),
     learnerSkill: review?.after ?? context.before,
     mistake: recorded?.mistake ?? null,
   };
+
+  return { events, recorded: result };
+}
+
+/** Publish only after the enclosing transaction commits, so a rollback has no external effects. */
+export function publishLearnerAnswer({
+  events,
+  userId,
+}: {
+  events: ReturnType<typeof getAnswerEvents>;
+  userId: string;
+}): void {
+  revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+
+  if (events.length > 0) {
+    after(() => trackLearnerEvents({ events, userId }));
+  }
+}
+
+/** The answer and its notebook outcome commit together; checkpoints supply their own transaction. */
+export async function recordLearnerAnswer(input: LearnerAnswer): Promise<RecordedLearnerAnswer> {
+  const { events, recorded } = await prisma.$transaction((transaction) =>
+    persistLearnerAnswer({ input, transaction }),
+  );
+
+  publishLearnerAnswer({ events, userId: input.userId });
+
+  return recorded;
 }

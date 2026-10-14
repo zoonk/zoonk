@@ -1,12 +1,8 @@
 import "server-only";
-import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type Goal, type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { readBlockPayload } from "../../sessions/block-payload";
-import {
-  CHECKPOINT_MINUTES_PER_QUESTION,
-  CHECKPOINT_QUESTIONS,
-  MIN_CHECKPOINT_QUESTIONS,
-  getPassMark,
-} from "../checkpoint-rules";
+import { getCheckpointMinutes } from "../checkpoint-minutes";
+import { CHECKPOINT_QUESTIONS, MIN_CHECKPOINT_QUESTIONS, getPassMark } from "../checkpoint-rules";
 import { loadBossQuestions } from "./load-boss";
 import { loadMixedItems } from "./load-weekly-challenge";
 
@@ -45,12 +41,14 @@ export async function fillCheckpointQuestions({
   block,
   goal,
   now,
+  tx = prisma,
   userId,
 }: {
   afterWriting?: boolean;
   block: Pick<StudySessionBlock, "id" | "payload" | "status">;
   goal: Pick<Goal, "examBlueprintId" | "kind"> | null;
   now: Date;
+  tx?: TransactionClient;
   userId: string;
 }): Promise<boolean> {
   const payload = readBlockPayload(block);
@@ -81,9 +79,9 @@ export async function fillCheckpointQuestions({
     return false;
   }
 
-  await prisma.studySessionBlock.update({
+  await tx.studySessionBlock.update({
     data: {
-      estimatedMinutes: Math.round(itemIds.length * CHECKPOINT_MINUTES_PER_QUESTION),
+      estimatedMinutes: getCheckpointMinutes(itemIds.length),
       payload: {
         ...payload,
         checkpoint: { ...checkpoint, passMark: getPassMark(itemIds.length) },

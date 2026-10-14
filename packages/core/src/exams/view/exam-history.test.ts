@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -7,10 +7,38 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { DAY_MS, SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
 import { type MockConditions, type MockResult } from "../mocks/mock-contract";
+import { loadExamHistory } from "./_utils/exam-history";
 import { getExamView } from "./get-exam-view";
 
 const MOCKS = 12;
 const QUESTIONS = 20;
+
+/** Observe actual reads on both the root client and interactive transactions. */
+function observeHistoryQueries(observe: (client: TransactionClient) => () => void) {
+  const restoreRoot = observe(prisma);
+  const transaction = prisma.$transaction.bind(prisma);
+
+  const transactions = vi.spyOn(prisma, "$transaction").mockImplementation((async (
+    callback: Parameters<typeof prisma.$transaction>[0],
+    options: Parameters<typeof prisma.$transaction>[1],
+  ) =>
+    transaction(async (client) => {
+      /** Prisma transaction proxies inherit root methods; do not stack root hooks on them. */
+      restoreRoot();
+      const restore = observe(client);
+
+      try {
+        return await callback(client);
+      } finally {
+        restore();
+      }
+    }, options)) as typeof prisma.$transaction);
+
+  return () => {
+    transactions.mockRestore();
+    restoreRoot();
+  };
+}
 
 /** A Cebraspe-style mock where the learner was right on every sure answer and no unsure one. */
 function netResult(correct: number): MockResult {
@@ -47,7 +75,7 @@ function netResult(correct: number): MockResult {
 }
 
 /** An exam goal with twelve finished weekly mocks (the first without calibration) and one left. */
-async function historySetup() {
+async function historySetup(mocks = MOCKS) {
   const [user, blueprint] = await Promise.all([userFixture(), examBlueprintFixture()]);
 
   const [goal, otherGoal] = await Promise.all([
@@ -57,8 +85,10 @@ async function historySetup() {
 
   /** The `index`-th weekly mock, finished the day after it started. */
   const finished = ({ goalId, index }: { goalId: string; index: number }) => {
-    const createdAt = daysAgo((MOCKS - index) * 7);
-    const result = index === 0 ? { ...netResult(5), calibration: null } : netResult(5 + index);
+    const createdAt = daysAgo((mocks - index) * 7);
+
+    const result =
+      index === 0 ? { ...netResult(5), calibration: null } : netResult(5 + (index % MOCKS));
 
     return {
       conditions: {},
@@ -72,7 +102,7 @@ async function historySetup() {
     };
   };
 
-  const weekly = Array.from({ length: MOCKS }, (_, index) => finished({ goalId: goal.id, index }));
+  const weekly = Array.from({ length: mocks }, (_, index) => finished({ goalId: goal.id, index }));
 
   const left = { conditions: {}, createdAt: daysAgo(1), sectionStartedAt: daysAgo(1) };
 
@@ -130,6 +160,190 @@ describe("exam screen history", () => {
       blankingGain: 11,
       sure: { answered: 22, right: 22 },
       unsure: { answered: 11, right: 0 },
+    });
+  });
+
+  it("bounds snapshot reads while keeping lifetime numbering, calibration and recent progress", async () => {
+    const { goal } = await historySetup(32);
+
+    /** Observe the real query's rows without replacing Prisma or persistence. */
+    const snapshots: unknown[][] = [];
+
+    const restore = observeHistoryQueries((client) => {
+      const findMany = client.mockExam.findMany.bind(client.mockExam);
+
+      const reads = vi.spyOn(client.mockExam, "findMany").mockImplementation((async (
+        args: Parameters<typeof findMany>[0],
+      ) => {
+        const rows = await findMany(args);
+        snapshots.push(rows);
+        return rows;
+      }) as typeof client.mockExam.findMany);
+
+      return () => reads.mockRestore();
+    });
+
+    try {
+      const history = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
+      expect(snapshots).toHaveLength(1);
+      expect(snapshots[0]).toHaveLength(20);
+
+      expect(history.mocks.map((mock) => mock.number)).toStrictEqual([
+        32, 31, 30, 29, 28, 27, 26, 25, 24, 23,
+      ]);
+
+      expect(history.progress?.mocks.map((mock) => mock.number)).toStrictEqual(
+        Array.from({ length: 20 }, (_, index) => index + 13),
+      );
+
+      expect(history.calibration).toStrictEqual({
+        advice: "blankUnsure",
+        blankingGain: 31,
+        sure: { answered: 62, right: 62 },
+        unsure: { answered: 31, right: 0 },
+      });
+    } finally {
+      restore();
+    }
+  });
+
+  it("keeps numbering and calibration consistent when a mock completes between history reads", async () => {
+    const { goal } = await historySetup(32);
+
+    const pending = await prisma.mockExam.findFirstOrThrow({
+      where: { goalId: goal.id, status: "active" },
+    });
+
+    const completed = Promise.withResolvers<null>();
+
+    /** Only schedule real SQL: completion commits after snapshots, before count/calibration. */
+    const restore = observeHistoryQueries((client) => {
+      const findMany = client.mockExam.findMany.bind(client.mockExam);
+      const count = client.mockExam.count.bind(client.mockExam);
+      const queryRaw = client.$queryRaw.bind(client);
+
+      const rows = vi.spyOn(client.mockExam, "findMany").mockImplementation((async (
+        args: Parameters<typeof findMany>[0],
+      ) => {
+        const snapshots = await findMany(args);
+
+        try {
+          await prisma.mockExam.update({
+            data: { finishedAt: SESSION_NOW, result: netResult(18), status: "finished" },
+            where: { id: pending.id },
+          });
+
+          return snapshots;
+        } finally {
+          completed.resolve(null);
+        }
+      }) as typeof client.mockExam.findMany);
+
+      const counts = vi.spyOn(client.mockExam, "count").mockImplementation((async (
+        args: Parameters<typeof count>[0],
+      ) => {
+        await completed.promise;
+        return count(args);
+      }) as typeof client.mockExam.count);
+
+      const calibration = vi.spyOn(client, "$queryRaw").mockImplementation((async (...args) => {
+        await completed.promise;
+        return queryRaw(...args);
+      }) as typeof client.$queryRaw);
+
+      return () => {
+        rows.mockRestore();
+        counts.mockRestore();
+        calibration.mockRestore();
+      };
+    });
+
+    try {
+      const history = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
+
+      await expect(
+        prisma.mockExam.count({ where: { goalId: goal.id, status: "finished" } }),
+      ).resolves.toBe(33);
+
+      expect(history.mocks.map((mock) => mock.number)).toStrictEqual([
+        32, 31, 30, 29, 28, 27, 26, 25, 24, 23,
+      ]);
+
+      expect(history.progress?.mocks.map((mock) => mock.number)).toStrictEqual(
+        Array.from({ length: 20 }, (_, index) => index + 13),
+      );
+
+      expect(history.calibration).toMatchObject({
+        blankingGain: 31,
+        sure: { answered: 62, right: 62 },
+        unsure: { answered: 31, right: 0 },
+      });
+    } finally {
+      restore();
+    }
+
+    const next = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
+
+    expect(next.mocks.map((mock) => mock.number)).toStrictEqual([
+      33, 32, 31, 30, 29, 28, 27, 26, 25, 24,
+    ]);
+
+    expect(next.calibration).toMatchObject({
+      blankingGain: 32,
+      sure: { answered: 64, right: 64 },
+      unsure: { answered: 32, right: 0 },
+    });
+  });
+
+  it("uses the latest penalty for advice on the lifetime calibration", async () => {
+    const { goal } = await historySetup(32);
+
+    const result = {
+      ...netResult(10),
+      calibration: {
+        advice: null,
+        blankingGain: 1,
+        sure: { answered: 2, right: 2 },
+        unsure: { answered: 3, right: 1 },
+      },
+    };
+
+    await prisma.mockExam.updateMany({
+      data: { result },
+      where: { goalId: goal.id, status: "finished" },
+    });
+
+    const latest = await prisma.mockExam.findFirstOrThrow({
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      where: { goalId: goal.id, status: "finished" },
+    });
+
+    await prisma.mockExam.update({
+      data: {
+        result: {
+          ...result,
+          calibration: { ...result.calibration, blankingGain: -0.5 },
+          net: {
+            ...netResult(10).net,
+            blank: 0,
+            max: 20,
+            net: 7.5,
+            penalty: 0.25,
+            right: 10,
+            wrong: 10,
+          },
+        },
+      },
+      where: { id: latest.id },
+    });
+
+    const history = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
+
+    expect(history.calibration).toStrictEqual({
+      advice: "keepAnswering",
+      blankingGain: 30.5,
+      sure: { answered: 64, right: 64 },
+      unsure: { answered: 96, right: 32 },
     });
   });
 });

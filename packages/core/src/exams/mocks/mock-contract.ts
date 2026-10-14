@@ -7,8 +7,10 @@ import { answerTimeZoneSchema } from "../../learner/contract";
 import { sectionNavigationSchema } from "../../library/exams/blueprint-contract";
 import { type PassMarks } from "../../library/exams/pass-marks";
 import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
+import { type MissionMomentView } from "../../sessions/completion-contract";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
+import { type ExamMockSummary } from "../view/exam-view-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -19,6 +21,11 @@ import {
   type MockSectionView,
   type MockSizeSource,
 } from "./mock-view-contract";
+
+const MS_PER_MINUTE = 60_000;
+
+/** A read may declare a mock abandoned this long after its section deadline, depending on its answers and purpose. */
+export const MOCK_ABANDONMENT_DELAY_MS = 10 * MS_PER_MINUTE;
 
 /**
  * How a mock is scored, from the blueprint: item response theory (ENEM), wrong-cancels-right
@@ -269,6 +276,11 @@ export type MockView = {
   fullLength: boolean;
   goalId: string | null;
   minutes: number;
+  /**
+   * Once it's over, what it did to the day's missions (its own and its speaking paper's calls'),
+   * on every read while that day is the learner's (see `loadMockMissionMoment`); null otherwise.
+   */
+  missionMoment: MissionMomentView | null;
   mistakes: { cause: MistakeCause | null; count: number }[];
   /** "Mock exam 3": this goal's mocks, counting this one. */
   number: number;
@@ -308,7 +320,12 @@ export type MockView = {
   sizeSource: MockSizeSource;
   /** When the real exam starts, in its own time zone, so the mock can match it. */
   startTime: string | null;
-  status: "finished" | "ready" | "running";
+  /**
+   * `expired`: its time ran out while the learner was away with most of it unanswered (see
+   * `hasTimeRunOutAway`), so it isn't scored or counted toward preparation; the learner starts a
+   * new one.
+   */
+  status: "expired" | "finished" | "ready" | "running";
   timeZone: string | null;
   /** The words the exam's true-or-false statements are answered with. */
   trueFalseLabels: TrueFalseLabels;
@@ -429,6 +446,11 @@ export type MockOptionsView = {
   /** Where the options' number of questions, split and time come from (see `MockSizeSource`). */
   sizeSource: MockSizeSource;
   goalId: string;
+  /**
+   * The goal's latest mock (the first of the exam's history, `ExamMockSummary`), so the learner
+   * sees how the last one went before picking the next; null before the first.
+   */
+  lastMock: ExamMockSummary | null;
   options: MockOptionView[];
   /**
    * A diagnostic mock in onboarding instead of the quick placement (POST with `purpose:

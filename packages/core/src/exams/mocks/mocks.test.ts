@@ -1,116 +1,20 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
+import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import {
-  SESSION_NOW,
-  SESSION_TODAY,
-  checkpointItemFixture,
-  sessionGoalFixture,
-} from "../../sessions/_test-utils/session-goal";
+  MINUTE_MS,
+  answerRight,
+  runningMock,
+  scheduledMockSetup,
+} from "./_test-utils/scheduled-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startMock } from "./start-mock";
 import { submitMockSection } from "./submit-mock-section";
-
-const MINUTE_MS = 60_000;
-
-function mockStructure(method: "itemResponseTheory" | "raw" | "wrongCancelsRight") {
-  return {
-    formats: [],
-    mock: {
-      adaptive: false,
-      citations: [],
-      order: null,
-      scoring: { description: "How it's scored", method },
-      sections: [{ day: null, minutes: 30, name: "Math", questions: 18 }],
-      timeLimitMinutes: 30,
-      totalQuestions: 18,
-    },
-    rules: [],
-    subjects: [],
-  };
-}
-
-/**
- * A Plus learner's exam goal with today's weekly mock in the session. Item response theory scores
- * on ENEM's scale, so that exam is ENEM.
- */
-async function mockSetup(method: Parameters<typeof mockStructure>[0] = "raw") {
-  const user = await userFixture();
-
-  const blueprint = await examBlueprintFixture({
-    ...(method === "itemResponseTheory"
-      ? { identityKey: `enem-${crypto.randomUUID()}`, name: "ENEM" }
-      : {}),
-    structure: mockStructure(method),
-  });
-
-  const fixture = await sessionGoalFixture({
-    goal: { examBlueprintId: blueprint.id, kind: "exam" },
-    itemsPerSkill: 3,
-    userId: user.id,
-  });
-
-  await Promise.all([
-    checkpointItemFixture({
-      kind: "mock",
-      planId: fixture.plan.id,
-      position: 10,
-      scheduledFor: SESSION_TODAY,
-    }),
-    prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    }),
-  ]);
-
-  mockSession(user.id);
-
-  const today = await getTodayStudySession({ goalId: fixture.goal.id });
-  const block = today.status === "ready" ? today.session.blocks.at(-1) : undefined;
-
-  if (!block?.checkpoint?.mock) {
-    throw new Error("Expected today's mock");
-  }
-
-  return { ...fixture, blockId: block.id, user };
-}
-
-async function runningMock(blockId: string) {
-  const result = await getMock(blockId);
-
-  if (result.status !== "ready" || !result.mock.current) {
-    throw new Error("Expected a running mock");
-  }
-
-  return result.mock;
-}
-
-/** Answers the running section's first `count` questions right, and returns the running mock. */
-async function answerRight({ blockId, count }: { blockId: string; count: number }) {
-  const running = await runningMock(blockId);
-  const answered = (running.current?.questions ?? []).slice(0, count);
-
-  await Promise.all(
-    answered.map((question) =>
-      saveMockAnswer({
-        blockId,
-        input: {
-          answer: { selectedIndex: 0 },
-          durationMs: 30_000,
-          flagged: false,
-          itemId: question.itemId,
-        },
-      }),
-    ),
-  );
-
-  return running;
-}
 
 describe("mock exams", () => {
   beforeEach(() => {
@@ -123,7 +27,7 @@ describe("mock exams", () => {
   });
 
   it("shows the conditions, runs without feedback and grades once handed in", async () => {
-    const { blockId, goal } = await mockSetup();
+    const { blockId, goal } = await scheduledMockSetup();
     const intro = await getMock(blockId);
 
     expect(intro).toMatchObject({
@@ -225,7 +129,7 @@ describe("mock exams", () => {
   });
 
   it("numbers a mock after the goal's finished mocks, skipping one left unfinished", async () => {
-    const { blockId, goal, user } = await mockSetup();
+    const { blockId, goal, user } = await scheduledMockSetup();
     const lastWeek = new Date(SESSION_NOW.getTime() - 7 * 24 * 60 * MINUTE_MS);
     const earlier = { conditions: {}, createdAt: lastWeek, goalId: goal.id, userId: user.id };
 
@@ -240,7 +144,7 @@ describe("mock exams", () => {
   });
 
   it("scores Cebraspe exams as a net score with calibration from flags", async () => {
-    const { blockId } = await mockSetup("wrongCancelsRight");
+    const { blockId } = await scheduledMockSetup("wrongCancelsRight");
     await startMock({ blockId, input: {} });
 
     const running = await runningMock(blockId);
@@ -281,7 +185,7 @@ describe("mock exams", () => {
   });
 
   it("estimates an item response theory score as a range", async () => {
-    const { blockId } = await mockSetup("itemResponseTheory");
+    const { blockId } = await scheduledMockSetup("itemResponseTheory");
     await startMock({ blockId, input: {} });
 
     const running = await runningMock(blockId);
@@ -309,7 +213,7 @@ describe("mock exams", () => {
   });
 
   it("takes no answers once a section's time has run out", async () => {
-    const { blockId } = await mockSetup();
+    const { blockId } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
 
     const running = await runningMock(blockId);
@@ -334,7 +238,7 @@ describe("mock exams", () => {
   });
 
   it("is not found for another learner", async () => {
-    const { blockId } = await mockSetup();
+    const { blockId } = await scheduledMockSetup();
     const other = await userFixture();
 
     mockSession(other.id);
@@ -355,7 +259,7 @@ describe(finishMock, () => {
   });
 
   it("leaves early: unanswered questions count as blank, not timed out, and stay out of the notebook", async () => {
-    const { blockId, user } = await mockSetup();
+    const { blockId, user } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
     await answerRight({ blockId, count: 3 });
 
@@ -381,7 +285,7 @@ describe(finishMock, () => {
   });
 
   it("counts what's still unanswered once the section's clock ran out as timed out", async () => {
-    const { blockId } = await mockSetup();
+    const { blockId } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
     const running = await answerRight({ blockId, count: 2 });
 
@@ -399,7 +303,7 @@ describe(finishMock, () => {
   });
 
   it("ends only the learner's own running mock, and grades it once", async () => {
-    const { blockId, user } = await mockSetup();
+    const { blockId, user } = await scheduledMockSetup();
 
     await expect(finishMock({ blockId, input: {} })).resolves.toStrictEqual({
       status: "notRunning",
@@ -433,7 +337,7 @@ describe(finishMock, () => {
   it.each([0, 10])(
     "grades once when a second finish comes %i ms after the first",
     async (gapMs) => {
-      const { blockId, goal, user } = await mockSetup();
+      const { blockId, goal, user } = await scheduledMockSetup();
       await startMock({ blockId, input: {} });
       await answerRight({ blockId, count: 9 });
 
@@ -465,7 +369,7 @@ describe(finishMock, () => {
   );
 
   it("grades a finish that stopped halfway on the next try, recording each answer once", async () => {
-    const { blockId, user } = await mockSetup();
+    const { blockId, user } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
     const running = await answerRight({ blockId, count: 9 });
     const firstItemId = running.current?.questions[0]?.itemId ?? "";

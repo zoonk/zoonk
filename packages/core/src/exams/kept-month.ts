@@ -46,12 +46,12 @@ export function readOfferedNoticeDay(details: unknown): string | null {
 }
 
 /**
- * The first day, on or after `from`, of the sitting the learner means among an exam's days (see
+ * The days on or after `from` of the sitting the learner means among an exam's days (see
  * `findLearnerSitting`): the sitting of their own date while it's ahead, else of the month they
  * named, else the next one. An exam held several times a year has none when their month has no
  * sitting, so no screen offers a date in a month they didn't choose.
  */
-export function findMeantExamDay<Day extends { date: string }>({
+export function findMeantExamDays<Day extends { date: string }>({
   days,
   details,
   from,
@@ -64,10 +64,20 @@ export function findMeantExamDay<Day extends { date: string }>({
   from: string;
   /** The learner's own date, as an ISO date; null when they gave none. */
   goalDate: string | null;
-}): Day | null {
+}): Day[] {
   const wanted =
     goalDate !== null && goalDate >= from ? goalDate : getNamedMonthStart({ details, from });
 
   const sitting = findLearnerSitting({ days, from, goalDate: wanted });
-  return sitting?.find((day) => day.date >= from) ?? null;
+
+  return (sitting ?? [])
+    .filter((day) => day.date >= from)
+    .toSorted((first, second) => first.date.localeCompare(second.date));
+}
+
+/** The first upcoming day of the learner's sitting, from the shared full sitting selection. */
+export function findMeantExamDay<Day extends { date: string }>(
+  input: Parameters<typeof findMeantExamDays<Day>>[0],
+): Day | null {
+  return findMeantExamDays(input)[0] ?? null;
 }

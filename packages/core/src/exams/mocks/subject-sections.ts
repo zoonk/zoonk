@@ -8,7 +8,7 @@ type Subject = ExamStructure["subjects"][number];
 /**
  * The exam's sections a subject belongs to (see `findNamingSections`): by its short name first,
  * the one an exam day's section title uses (ENEM's "Math" in "Natural Sciences and Math"), else
- * by its name. Mocks name the subject by the notice's name everywhere, as the Journey does.
+ * by its name. Mocks name the subject by the notice's name everywhere, as the Plan does.
  */
 export function findSubjectSections({
   sections,

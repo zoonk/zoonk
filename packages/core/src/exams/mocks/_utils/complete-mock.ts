@@ -6,10 +6,8 @@ import { getLearnerModelCacheTag } from "../../../cache/tags";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
 import { loadPreparationInputs } from "../../../preparation/_utils/load-preparation-inputs";
-import {
-  getPreparationComponents,
-  getPreparationValue,
-} from "../../../preparation/preparation-math";
+import { measurePreparation } from "../../../preparation/section-preparation";
+import { readBlockPayload } from "../../../sessions/block-payload";
 import { finishStudyBlock } from "../../../sessions/finish-study-block";
 import { type GradedMockAnswer, analyzeMock, getMockMeasure } from "../mock-analysis";
 import {
@@ -26,7 +24,13 @@ import { settleAnytimeMock } from "./settle-anytime-mock";
 
 const MS_PER_MINUTE = 60_000;
 
-async function measurePreparation({ goalId, userId }: { goalId: string | null; userId: string }) {
+async function measureGoalPreparation({
+  goalId,
+  userId,
+}: {
+  goalId: string | null;
+  userId: string;
+}) {
   if (!goalId) {
     return null;
   }
@@ -34,7 +38,7 @@ async function measurePreparation({ goalId, userId }: { goalId: string | null; u
   const now = new Date();
   const inputs = await loadPreparationInputs({ goalId, now, userId });
 
-  return getPreparationValue(getPreparationComponents({ ...inputs, asOf: now }));
+  return measurePreparation({ ...inputs, asOf: now }).value;
 }
 
 /** The topics the mock asks that the learner was taken to know without studying them. */
@@ -98,24 +102,25 @@ async function loadPreviousMeasure(mock: MockSitting): Promise<number | null> {
  * The block keeps every question it reserved; an adaptive exam asks only one of a module's two
  * sets, so the block's questions become the ones asked before the session settles it.
  */
-async function keepAskedQuestions({
-  blockId,
-  mock,
-  owned,
-}: {
-  blockId: string;
-  mock: MockSitting;
-  owned: OwnedMock;
-}) {
+async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: MockSitting }) {
   const asked = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
 
-  if (asked.length === owned.payload.itemIds.length) {
-    return;
-  }
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`
+      SELECT id FROM study_session_blocks WHERE id = ${blockId}::uuid FOR UPDATE
+    `;
 
-  await prisma.studySessionBlock.update({
-    data: { payload: { ...owned.payload, itemIds: asked } },
-    where: { id: blockId },
+    const block = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+    const payload = readBlockPayload(block);
+
+    if (asked.length === payload.itemIds.length) {
+      return;
+    }
+
+    await tx.studySessionBlock.update({
+      data: { payload: { ...payload, itemIds: asked } },
+      where: { id: blockId },
+    });
   });
 }
 
@@ -139,7 +144,7 @@ async function settleMock({
     return;
   }
 
-  await keepAskedQuestions({ blockId: owned.block.id, mock, owned });
+  await keepAskedQuestions({ blockId: owned.block.id, mock });
 
   await finishStudyBlock({
     blockId: owned.block.id,
@@ -190,7 +195,7 @@ export async function completeMock({
   const areas = mock.goalId ? await loadSkillAreas(mock.goalId) : new Map<string, string>();
 
   const [before, previous, toRelearn] = await Promise.all([
-    measurePreparation({ goalId: mock.goalId, userId: mock.userId }),
+    measureGoalPreparation({ goalId: mock.goalId, userId: mock.userId }),
     loadPreviousMeasure(mock),
     loadMockSkillsToRelearn(mock),
   ]);
@@ -216,7 +221,7 @@ export async function completeMock({
     });
   }
 
-  const after = await measurePreparation({ goalId: mock.goalId, userId: mock.userId });
+  const after = await measureGoalPreparation({ goalId: mock.goalId, userId: mock.userId });
   const spentMs = graded.reduce((sum, answer) => sum + answer.durationMs, 0);
 
   const result = analyzeMock({

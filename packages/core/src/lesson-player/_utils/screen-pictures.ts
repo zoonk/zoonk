@@ -1,15 +1,14 @@
-import { type MediaAsset, type StepKind, type StepOptionPicture } from "@zoonk/db";
+import { type MediaAsset, type Step, type StepKind, type StepOptionPicture } from "@zoonk/db";
 import {
   getOptionPictureRequests,
   getStepImageRequest,
 } from "../../library/media/_utils/step-image-request";
 import { type PlayableStepImage } from "../contract";
-
-/**
- * How long after a screen is written its picture may still be on its way: pictures are drawn in
- * the background right after the lesson opens, usually in under a minute, with one retry.
- */
-const PICTURE_WAIT_MS = 300_000;
+import {
+  isPictureLateForRun,
+  isPicturePending,
+  shouldOmitNumberedPicture,
+} from "../picture-policy";
 
 /** What a screen's pictures are read from: its linked files and when it was written. */
 type PictureRow = {
@@ -102,11 +101,13 @@ function withoutLostNumberedPicture<TContent extends object>({
 }): TContent | null {
   const request = getStepImageRequest({ content, kind });
 
-  if (image || imagePending || !request?.parts) {
-    return content;
+  if (shouldOmitNumberedPicture({ content, imageAvailable: image !== null, imagePending, kind })) {
+    return null;
   }
 
-  return kind === "explanation" ? { ...content, explore: undefined } : null;
+  return kind === "explanation" && !image && !imagePending && request?.parts
+    ? { ...content, explore: undefined }
+    : content;
 }
 
 /**
@@ -131,12 +132,50 @@ export function getScreenPictures<TContent extends object>({
     (!image && getStepImageRequest({ content, kind }) !== null) ||
     getOptionPictureRequests({ content, kind }).length > Object.keys(optionPictures).length;
 
-  const imagePending = missing && Date.now() - row.generatedAt.getTime() < PICTURE_WAIT_MS;
+  const pictureWaitStartedAt = row.generatedAt.getTime();
+
+  const imagePending =
+    missing && isPicturePending({ now: Date.now(), startedAt: pictureWaitStartedAt });
 
   return {
     content: withoutLostNumberedPicture({ content, image, imagePending, kind }),
     image,
     imagePending,
     optionPictures,
+    pictureWaitStartedAt,
   };
+}
+
+/**
+ * The screens a run may finish without: questions the player left out because their numbered
+ * picture was missing, whose picture came too late for the run (see `isPictureLateForRun`). A
+ * screen's picture availability is recorded separately from unrelated edits. Historical links
+ * with no recorded arrival time stay required.
+ */
+export function getLatePictureStepIds({
+  rows,
+  runStartedAt,
+}: {
+  rows: readonly Pick<
+    Step,
+    "content" | "generatedAt" | "id" | "kind" | "mediaAssetId" | "pictureAvailableAt"
+  >[];
+  runStartedAt: Date;
+}): Set<string> {
+  return new Set(
+    rows
+      .filter(
+        (row) =>
+          row.mediaAssetId !== null &&
+          row.pictureAvailableAt !== null &&
+          isPictureLateForRun({
+            content: row.content,
+            kind: row.kind,
+            pictureAt: row.pictureAvailableAt.getTime(),
+            runStartedAt: runStartedAt.getTime(),
+            waitStartedAt: row.generatedAt.getTime(),
+          }),
+      )
+      .map((row) => row.id),
+  );
 }

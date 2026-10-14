@@ -3,7 +3,7 @@ import { type PlanItem, type StudySessionBlock, prisma } from "@zoonk/db";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { addDays, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
-import { type PlanOperationError } from "../../plans/planner/plan-operations";
+import { type PlanChangeRefusal } from "../../plans/planner/plan-operations";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../../sessions/contract";
@@ -17,7 +17,7 @@ export type ChallengeMove = { changeId: string | null; date: string; planItemId:
 
 export type ApplyChallengeMoveResult =
   | { move: ChallengeMove; status: "moved" }
-  | { error: PlanOperationError; status: "invalid" }
+  | PlanChangeRefusal
   | { status: "notFound" | "unauthorized" };
 
 /** The first Monday after a day: a Sunday's challenge moves to the next day. */

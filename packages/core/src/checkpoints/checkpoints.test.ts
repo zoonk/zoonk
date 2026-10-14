@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -7,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { thirdsMath, thirdsQuestion } from "../library/items/_test-utils/math-problems";
+import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
@@ -22,6 +24,9 @@ import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
 import { getStudyBlock } from "../sessions/get-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
+import { findLastCheckpointResult } from "./_utils/checkpoint-results";
+import { getChallenge } from "./get-challenge";
+import { getCheckpoint } from "./get-checkpoint";
 import { getWeeklyChallenge } from "./get-weekly-challenge";
 
 /** A goal whose first phase (two lessons) is done, with its boss next and a lesson after it. */
@@ -43,7 +48,16 @@ async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   return { ...fixture, boss, user };
 }
 
-async function playCheckpoint({ goalId, optionIndex }: { goalId: string; optionIndex: number }) {
+async function playCheckpoint({
+  count,
+  goalId,
+  optionIndex,
+}: {
+  /** Answers only the first ones, every question without it. */
+  count?: number;
+  goalId: string;
+  optionIndex: number;
+}) {
   const today = await getTodayStudySession({ goalId });
 
   if (today.status !== "ready") {
@@ -61,6 +75,7 @@ async function playCheckpoint({ goalId, optionIndex }: { goalId: string; optionI
 
   const feedback = await answerBlockInOrder({
     blockId: block.id,
+    count,
     optionIndex,
     sessionId: today.session.id,
   });
@@ -133,6 +148,262 @@ describe("phase checkpoint (boss)", () => {
     await expect(
       prisma.learningEvent.findFirst({ where: { kind: "checkpoint", userId: user.id } }),
     ).resolves.toMatchObject({ correctAnswers: 6, lessonKind: "boss" });
+  });
+
+  // Pedro's won challenge kept asking: the shield broke at question 7 with 3 questions left.
+  it("ends once the shield breaks: won with questions left, it finishes at the duel's pass mark", async () => {
+    const { boss, goal } = await bossSetup();
+    const { block, result } = await playCheckpoint({ count: 5, goalId: goal.id, optionIndex: 0 });
+
+    expect(block.checkpoint).toMatchObject({ passMark: 5 });
+    expect(block.questions).toBe(6);
+
+    expect(result).toMatchObject({
+      completion: { checkpoint: { correct: 5, passMark: 5, passed: true, total: 5 } },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+    ).resolves.toMatchObject({ status: "done" });
+  });
+
+  // Two submissions of one answer at once can both be saved: each question breaks one piece.
+  it("counts each question once toward breaking the shield", async () => {
+    const { boss, goal, user } = await bossSetup();
+    const today = await getTodayStudySession({ goalId: goal.id });
+    const block = today.status === "ready" ? today.session.blocks[0] : undefined;
+
+    if (!block || today.status !== "ready") {
+      throw new Error("Expected today's checkpoint");
+    }
+
+    const ref = { blockId: block.id, sessionId: today.session.id };
+    await startStudyBlock({ ...ref, input: {} });
+    const [first] = await answerBlockInOrder({ ...ref, count: 4 });
+    const detail = await getStudyBlock(ref);
+    const questions = detail.status === "ready" ? detail.detail.questions : [];
+    const [question] = questions;
+
+    expect(first?.status).toBe("ready");
+
+    await attemptFixture({
+      itemId: question?.itemId,
+      skillId: question?.skillId,
+      studySessionId: today.session.id,
+      userId: user.id,
+    });
+
+    await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toStrictEqual({
+      status: "unanswered",
+    });
+
+    // The last two missed: four of six right, the duplicate counted once, is a loss.
+    await Promise.all(
+      questions
+        .slice(4)
+        .map((rest) =>
+          answerStudyQuestion({
+            ...ref,
+            input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: rest.itemId },
+          }),
+        ),
+    );
+
+    await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
+      completion: { checkpoint: { correct: 4, passed: false, total: 6 } },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
+  });
+
+  it("asks every question while the shield holds", async () => {
+    const { boss, goal } = await bossSetup();
+    const { result } = await playCheckpoint({ count: 4, goalId: goal.id, optionIndex: 0 });
+
+    expect(result).toStrictEqual({ status: "unanswered" });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
+  });
+
+  // The mirror of a won duel: Pedro's lost challenge kept asking, still promising its prize.
+  it("ends once the shield can't break anymore: lost with questions left, it settles as a loss", async () => {
+    const { boss, goal, lessons, user } = await bossSetup();
+
+    // Five right of six win it: one miss leaves them all to get, the second decides it.
+    const { block, detail, result, session } = await playCheckpoint({
+      count: 1,
+      goalId: goal.id,
+      optionIndex: 1,
+    });
+
+    expect(block.checkpoint).toMatchObject({ passMark: 5 });
+    expect(block.questions).toBe(6);
+    expect(result).toStrictEqual({ status: "unanswered" });
+
+    const ref = { blockId: block.id, sessionId: session.id };
+    const second = detail.status === "ready" ? detail.detail.questions[1] : undefined;
+
+    await answerStudyQuestion({
+      ...ref,
+      input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: second?.itemId ?? "" },
+    });
+
+    const lost = await finishStudyBlock({ ...ref, input: {} });
+
+    expect(lost).toMatchObject({
+      completion: { checkpoint: { correct: 0, passMark: 5, passed: false, total: 2 } },
+      status: "ready",
+    });
+
+    const milestones = lost.status === "ready" ? lost.completion.milestones : [];
+
+    expect(
+      milestones.filter((milestone) => milestone.kind === "badge" || milestone.kind === "glasses"),
+    ).toStrictEqual([]);
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
+
+    await expect(
+      prisma.learningEvent.findFirst({ where: { kind: "checkpoint", userId: user.id } }),
+    ).resolves.toMatchObject({ correctAnswers: 0, incorrectAnswers: 2, lessonKind: "boss" });
+
+    // As any loss: tomorrow, two short lessons on what it missed, then the rematch.
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    const tomorrow = await getTodayStudySession({ goalId: goal.id });
+
+    if (tomorrow.status !== "ready") {
+      throw new Error("Expected tomorrow's session");
+    }
+
+    const learn = tomorrow.session.blocks.filter((candidate) => candidate.kind === "learn");
+
+    expect(learn.map((candidate) => [candidate.lessonId, candidate.reinforcement])).toStrictEqual([
+      [lessons[0]?.id, true],
+      [lessons[1]?.id, true],
+      [lessons[2]?.id, false],
+    ]);
+
+    expect(tomorrow.session.blocks.at(-1)).toMatchObject({
+      checkpoint: { kind: "boss", rematch: true },
+      kind: "checkpoint",
+    });
+  });
+
+  // A question the bank removed mid-duel (a picture that failed its checks) is never asked: the duel
+  // is judged on the five left, seven of ten of them to win, so the screen, settlement and every
+  // reader that judges a duel by its answers (the challenge's last result, milestones) agree.
+  it("judges a duel on the questions it can still ask when one was removed", async () => {
+    const { boss, goal, user } = await bossSetup();
+    const today = await getTodayStudySession({ goalId: goal.id });
+    const block = today.status === "ready" ? today.session.blocks[0] : undefined;
+
+    if (!block || today.status !== "ready") {
+      throw new Error("Expected today's checkpoint");
+    }
+
+    const ref = { blockId: block.id, sessionId: today.session.id };
+    await startStudyBlock({ ...ref, input: {} });
+    const started = await getStudyBlock(ref);
+    const asked = started.status === "ready" ? started.detail.questions : [];
+
+    await prisma.item.delete({ where: { id: asked.at(-1)?.itemId } });
+
+    // The duel, its block and its challenge's intro all say four right of five.
+    const shortened = await getCheckpoint(block.id);
+    const view = shortened.status === "ready" ? shortened.checkpoint : null;
+    expect([view?.passMark, view?.questions.length]).toStrictEqual([4, 5]);
+
+    await expect(getStudyBlock(ref)).resolves.toMatchObject({
+      detail: { block: { checkpoint: { passMark: 4 }, questions: 5 } },
+    });
+
+    await expect(getChallenge({ input: {}, planItemId: boss.id })).resolves.toMatchObject({
+      challenge: { passMark: 4, questions: 5 },
+    });
+
+    const answer = (itemId: string | undefined, selectedIndex: number) =>
+      answerStudyQuestion({
+        ...ref,
+        input: { answer: { selectedIndex }, durationMs: 4000, itemId: itemId ?? "" },
+      });
+
+    // Three right and a miss leave the fifth to reach four.
+    await answerBlockInOrder({ ...ref, count: 3 });
+    await answer(asked[3]?.itemId, 1);
+
+    await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toStrictEqual({
+      status: "unanswered",
+    });
+
+    await answer(asked[4]?.itemId, 1);
+    const lost = await finishStudyBlock({ ...ref, input: {} });
+
+    expect(lost).toMatchObject({
+      completion: { checkpoint: { correct: 3, passMark: 4, passed: false, total: 5 } },
+      status: "ready",
+    });
+
+    const milestones = lost.status === "ready" ? lost.completion.milestones : [];
+
+    expect(
+      milestones.filter((milestone) => milestone.kind === "badge" || milestone.kind === "glasses"),
+    ).toStrictEqual([]);
+
+    await expect(
+      findLastCheckpointResult({ planItemId: boss.id, userId: user.id }),
+    ).resolves.toMatchObject({ correct: 3, passed: false, total: 5 });
+
+    await expect(loadMilestoneCounts(user.id)).resolves.toMatchObject({ bossesWon: 0 });
+  });
+
+  // Reopened later, a finished duel says what settlement decided, whatever the bank removed since.
+  it("keeps a lost duel lost when one of its answered questions is removed", async () => {
+    const { goal } = await bossSetup();
+    const today = await getTodayStudySession({ goalId: goal.id });
+    const block = today.status === "ready" ? today.session.blocks[0] : undefined;
+
+    if (!block || today.status !== "ready") {
+      throw new Error("Expected today's checkpoint");
+    }
+
+    const ref = { blockId: block.id, sessionId: today.session.id };
+    await startStudyBlock({ ...ref, input: {} });
+    const started = await getStudyBlock(ref);
+    const questions = started.status === "ready" ? started.detail.questions : [];
+    await answerBlockInOrder({ ...ref, count: 3 });
+
+    // Three right, then two misses: the one left can't reach five.
+    await Promise.all(
+      questions
+        .slice(3, 5)
+        .map((question) =>
+          answerStudyQuestion({
+            ...ref,
+            input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: question.itemId },
+          }),
+        ),
+    );
+
+    await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
+      completion: { checkpoint: { correct: 3, passed: false, total: 5 } },
+      status: "ready",
+    });
+
+    await prisma.item.delete({ where: { id: questions[4]?.itemId } });
+    const reopened = await getCheckpoint(block.id);
+
+    expect(reopened).toMatchObject({
+      checkpoint: { result: { correct: 3, passed: false, total: 5 }, retry: "tomorrow" },
+      status: "ready",
+    });
   });
 
   it("costs nothing when lost: a rematch the next day after two short lessons on what it missed", async () => {

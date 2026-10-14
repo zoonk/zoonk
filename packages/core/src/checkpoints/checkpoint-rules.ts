@@ -4,7 +4,7 @@ import { listCoreLessonItems } from "../plans/_utils/core-lessons";
 
 /**
  * Phase checkpoints (the Trickster boss): about ten mixed questions from the whole phase in the exam's
- * format, with no hints, favoring classic traps. Seven of ten wins. Losing costs nothing: two short
+ * format, with no hints, favoring classic traps. Seven of ten wins. Losing costs nothing: up to two short
  * reinforcement lessons and a rematch the next day, and the next phase is never locked. A final
  * boss closes the plan. Weekly challenges use the same questions and pass mark rules.
  */
@@ -19,7 +19,7 @@ export const MIN_CHECKPOINT_QUESTIONS = 5;
 /** Seven of ten: most of the phase, not perfection. Admin stats count passes with it too. */
 export const PASS_SHARE = 0.7;
 
-/** Reinforcement before a rematch: two short lessons on the skills the duel missed most. */
+/** Maximum reinforcement before a rematch; distinct available lessons on the most-missed skills. */
 export const REINFORCEMENT_LESSONS = 2;
 
 /** A duel of ten questions takes about fifteen minutes, like any exam-format practice. */
@@ -120,13 +120,15 @@ type CoreLessons = ReadonlyMap<string, readonly BossPlanItem[]>;
 const LEARN_KINDS = new Set<PlanItemKind>(["chapter", "lesson"]);
 
 /**
- * Whether the plan has an item by a checkpoint's day: on or before it, by date when both have one
- * and by plan order otherwise. The plan's days, not what's done, so a plan always gives a
+ * Whether the plan has an item by a checkpoint: before its day, or on it before it in plan order
+ * (a checkpoint that leads its day tests none of the lessons after it that day), by date when both
+ * have one and by plan order otherwise. The plan's days, not what's done, so a plan always gives a
  * checkpoint the same skills, however far the learner got, and its checks read it the same way.
  */
 function comesBy({ boss, item }: { boss: BossItem; item: BossPlanItem }): boolean {
   if (item.scheduledFor && boss.scheduledFor) {
-    return item.scheduledFor <= boss.scheduledFor;
+    const order = item.scheduledFor.getTime() - boss.scheduledFor.getTime();
+    return order < 0 || (order === 0 && item.position < boss.position);
   }
 
   return item.position < boss.position;

@@ -29,7 +29,9 @@ export async function loadStillNeededWork({
 
   const [plan, computed] = await Promise.all([
     readGoalPlan(context.goal.id),
-    isPlanReady(context) ? computePlan({ context, mode: "automatic", now, pace: "saved" }) : null,
+    isPlanReady(context)
+      ? computePlan({ context, mode: "automatic", now, pace: "saved", reuseReadBuild: true })
+      : null,
   ]);
 
   const planned = new Map(

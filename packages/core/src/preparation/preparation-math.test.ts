@@ -307,7 +307,7 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
       }),
     );
 
-    expect(getPreparationStage(easyPart)).toBe("growing");
+    expect(easyPart).toBeLessThan(0.75);
 
     const withHard = getPreparationValue(
       getPreparationComponents({
@@ -318,7 +318,7 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
       }),
     );
 
-    expect(getPreparationStage(withHard)).toBe("solid");
+    expect(withHard).toBeGreaterThanOrEqual(0.75);
 
     // The same evidence without a mock exam stays below Solid: no test in real conditions yet.
     const withoutMock = getPreparationValue(
@@ -330,7 +330,7 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
       }),
     );
 
-    expect(getPreparationStage(withoutMock)).toBe("growing");
+    expect(withoutMock).toBeLessThan(0.75);
   });
 
   it("weighs answers on hard topics more than answers on easy ones", () => {
@@ -360,9 +360,37 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
 
 describe(getPreparationStage, () => {
   it("ends at Solid, never at a promise", () => {
-    expect(getPreparationStage(0.1)).toBe("starting");
-    expect(getPreparationStage(0.3)).toBe("building");
-    expect(getPreparationStage(0.6)).toBe("growing");
-    expect(getPreparationStage(0.9)).toBe("solid");
+    const components = getPreparationComponents({
+      answers: Array.from({ length: 40 }, () => ({
+        answeredAt: WEEK_AGO,
+        isCorrect: true,
+        skillId: "known",
+      })),
+      asOf: NOW,
+      mocks: [{ correct: 45, endedAt: WEEK_AGO, total: 45 }],
+      skills: [skill({ retrievability: 0.95, skillId: "known", studiedAt: WEEK_AGO })],
+    });
+
+    expect(getPreparationStage({ components, value: 0.1 })).toBe("starting");
+    expect(getPreparationStage({ components, value: 0.3 })).toBe("building");
+    expect(getPreparationStage({ components, value: 0.6 })).toBe("growing");
+    expect(getPreparationStage({ components, value: 0.9 })).toBe("solid");
+
+    expect(
+      getPreparationStage({
+        components: {
+          ...components,
+          mastery: { ...components.mastery, supported: null, value: null },
+        },
+        value: 0.9,
+      }),
+    ).toBe("growing");
+
+    expect(
+      getPreparationStage({
+        components: { ...components, mocks: { ...components.mocks, taken: 0, value: null } },
+        value: 0.9,
+      }),
+    ).toBe("growing");
   });
 });

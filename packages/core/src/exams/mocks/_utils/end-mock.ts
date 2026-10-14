@@ -28,7 +28,8 @@ async function lockMockFinish(tx: TransactionClient, mockId: string): Promise<vo
  * then every answer is recorded, under a per-mock lock. The lock's transaction only holds the
  * lock; the writes commit as they go, so a finish that fails halfway leaves the mock handed in
  * with some answers recorded, frees the lock at once, and the next try grades the rest (each
- * answer is recorded once). "notRunning" means another request moved the mock on first.
+ * answer is recorded once). "notRunning" means another request moved the mock on first, and
+ * "expired" that its time ran out while the learner was away (see `hasTimeRunOutAway`).
  */
 export async function endMock({
   conditions,
@@ -40,7 +41,7 @@ export async function endMock({
   mock: MockSitting;
   owned: OwnedMock;
   timeZone: string;
-}): Promise<"finished" | "notRunning"> {
+}): Promise<"expired" | "finished" | "notRunning"> {
   return prisma.$transaction(
     async (tx) => {
       await lockMockFinish(tx, mock.id);
@@ -48,7 +49,9 @@ export async function endMock({
       const current = await findMockSitting(tx, mock.id);
 
       if (current?.status !== "active") {
-        return current?.status === "finished" ? "finished" : "notRunning";
+        return current?.status === "finished" || current?.status === "expired"
+          ? current.status
+          : "notRunning";
       }
 
       const handedIn = conditions.sections.length;

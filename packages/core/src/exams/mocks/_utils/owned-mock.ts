@@ -19,13 +19,26 @@ import {
 } from "../../../sessions/block-payload";
 import { getSession } from "../../../users/get-session";
 import { readExamChoices } from "../../choices/exam-choices";
-import { type MockConditions, mockConditionsSchema } from "../mock-contract";
+import { isMockAnswerPresent } from "../mock-answer-presence";
+import {
+  MOCK_ABANDONMENT_DELAY_MS,
+  type MockConditions,
+  mockConditionsSchema,
+} from "../mock-contract";
+import { readMockAnswer } from "./mock-answers";
 import { getAskedItemIds } from "./mock-sections";
 import { readMockStructure } from "./read-mock-structure";
 
-export type MockSitting = Omit<MockExam, "conditions"> & {
+/**
+ * Where a sitting stands: running (`active`), handed in and graded (`finished`), or `expired`, a
+ * running one whose time ran out while the learner was away (see `hasTimeRunOutAway`).
+ */
+type MockSittingStatus = MockExam["status"] | "expired";
+
+export type MockSitting = Omit<MockExam, "conditions" | "status"> & {
   answers: MockExamAnswer[];
   conditions: MockConditions;
+  status: MockSittingStatus;
 };
 
 export type OwnedMock = {
@@ -53,7 +66,11 @@ function toSitting(mock: (MockExam & { answers: MockExamAnswer[] }) | null): Moc
   }
 
   // The mock wrote its own conditions; a row that doesn't parse is corrupted and fails loudly.
-  return { ...mock, conditions: mockConditionsSchema.parse(mock.conditions) };
+  const sitting = { ...mock, conditions: mockConditionsSchema.parse(mock.conditions) };
+
+  return hasTimeRunOutAway({ mock: sitting, now: Date.now() })
+    ? { ...sitting, status: "expired" }
+    : sitting;
 }
 
 /** The sitting as it's stored now, such as once a finish holds the mock's lock. */
@@ -189,8 +206,59 @@ export async function findOwnedMock(id: string): Promise<OwnedMockResult> {
 
 const MS_PER_MINUTE = 60_000;
 
+type SittingClock = Pick<MockSitting, "conditions" | "sectionIndex" | "sectionStartedAt">;
+
 /** When the current section's time runs out. */
-export function getSectionDeadline(mock: MockSitting): Date {
+export function getSectionDeadline(mock: SittingClock): Date {
   const minutes = mock.conditions.sections[mock.sectionIndex]?.minutes ?? 0;
   return new Date(mock.sectionStartedAt.getTime() + minutes * MS_PER_MINUTE);
+}
+
+/** Under half of its questions answered, a score would mostly measure the time away. */
+const MIN_ANSWERED_SHARE = 0.5;
+
+/** A sitting as the rule reads it: its clock, and its drafts' answers. */
+type SittingProgress = SittingClock & {
+  answers: Pick<MockExamAnswer, "answer">[];
+  status: MockSittingStatus;
+};
+
+/**
+ * The running mock's time ran out while the learner was away, with most of it unanswered: the
+ * clock of the section it's on (or of the next one, which starts on its own once a break ends) ran
+ * out more than ten minutes before anything handed it in, and under half of its questions have an
+ * answer. It was never sat, so it's never scored, recorded or counted toward preparation, and the
+ * learner starts a new one. One mostly answered is graded as it stands, like a sitting the learner
+ * left near the end. A placement mock is never abandoned: the learner stops it whenever they come
+ * back, and what they answered sets where the plan starts. A mock whose sections were all handed in
+ * only waits to be graded.
+ */
+function hasTimeRunOutAway({ mock, now }: { mock: SittingProgress; now: number }): boolean {
+  const { purpose, sections } = mock.conditions;
+  const questions = sections.reduce((sum, section) => sum + section.questions, 0);
+  const essays = sections.reduce((sum, section) => sum + section.essays.length, 0);
+
+  const answered = mock.answers.filter((draft) =>
+    isMockAnswerPresent(readMockAnswer(draft.answer)),
+  ).length;
+
+  return (
+    mock.status === "active" &&
+    purpose !== "placement" &&
+    mock.sectionIndex < sections.length &&
+    now >= getSectionDeadline(mock).getTime() + MOCK_ABANDONMENT_DELAY_MS &&
+    answered < (questions + essays) * MIN_ANSWERED_SHARE
+  );
+}
+
+/** The same rule on a stored sitting read on its own, its conditions as stored. */
+export function hasStoredTimeRunOutAway({
+  mock,
+  now,
+}: {
+  mock: Omit<SittingProgress, "conditions"> & Pick<MockExam, "conditions">;
+  now: number;
+}): boolean {
+  const conditions = mockConditionsSchema.safeParse(mock.conditions).data;
+  return conditions !== undefined && hasTimeRunOutAway({ mock: { ...mock, conditions }, now });
 }

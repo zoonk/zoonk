@@ -1,13 +1,11 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
+import { getString } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
-import { filterSkippedSteps } from "../language/activities/language-activities";
-import { loadSkippedActivities } from "../language/activities/skipped-activities";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { loadLessonReviewSkillIds } from "../learner/_utils/lesson-plan-skills";
-import { getCappedLessonDurationSeconds } from "../player/contracts/completion-duration";
 import { clampEnergy } from "../progress/energy";
 import { serializeStudyBlockCompletion } from "../sessions/completion-contract";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
@@ -16,21 +14,15 @@ import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { finishLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
+import { loadCompletionSteps, recordSkippedWritingSteps } from "./_utils/completion-steps";
 import { trackLessonCompleted } from "./_utils/lesson-events";
-import { findOpenedVersion, findPlayableLessonRow, isOwnExplanation } from "./_utils/lesson-rows";
-import {
-  findLessonRun,
-  hasFinishedLessonBefore,
-  loadProgressRuns,
-  toSittings,
-} from "./_utils/lesson-runs";
-import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { isOwnExplanation } from "./_utils/lesson-rows";
+import { findLessonRun, hasFinishedLessonBefore, toSittings } from "./_utils/lesson-runs";
+import { loadPlayedLesson } from "./_utils/load-played-lesson";
 import { getNextReviewAt, reviewFinishedLesson } from "./_utils/plan-skill-review";
-import {
-  type LibraryLessonCompletion,
-  type LibraryLessonCompletionInput,
-  type PlayableLibraryStep,
-} from "./contract";
+import { getLessonCompletionSeconds } from "./_utils/session-lesson-duration";
+import { type LibraryLessonCompletionInput } from "./completion-input-contract";
+import { type LibraryLessonCompletion, type PlayableLibraryStep } from "./contract";
 import { type LessonRunTally, isAnswerableStep, tallyLessonRun } from "./lesson-run";
 import { scoreLibraryLesson } from "./lesson-score";
 
@@ -88,12 +80,14 @@ async function finishRun({
   answeredCount,
   lessonId,
   run,
+  skippedWritingStepIds,
   tally,
   timeZone,
   userId,
 }: Omit<CompletionRun, "skillIds"> & {
   answerPoints: number;
   answeredCount: number;
+  skippedWritingStepIds: string[];
   tally: LessonRunTally;
 }) {
   return prisma.$transaction(async (tx) => {
@@ -106,9 +100,19 @@ async function finishRun({
     const isReplay = await hasFinishedLessonBefore(tx, { lessonId, runId: run.id, userId });
     const score = scoreLibraryLesson({ ...tally, answerPoints, isFirstCompletion: !isReplay });
 
-    const seconds = getCappedLessonDurationSeconds({
-      now: completedAt.getTime(),
-      startedAt: run.startedAt.getTime(),
+    const currentRun = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
+
+    if (currentRun.endedAt) {
+      return null;
+    }
+
+    const seconds = await getLessonCompletionSeconds({
+      lessonId,
+      now: completedAt,
+      run: currentRun,
+      timeZone,
+      tx,
+      userId,
     });
 
     const closed = await finishLearningEvent(tx, {
@@ -128,6 +132,8 @@ async function finishRun({
     if (!closed) {
       return null;
     }
+
+    await recordSkippedWritingSteps({ run: currentRun, skippedWritingStepIds, tx });
 
     const clampedEnergy = clampEnergy(currentEnergy + score.energyDelta);
 
@@ -173,15 +179,19 @@ async function finishRun({
 async function withStudyBlock({
   completion,
   lessonId,
+  runId,
   timeZone,
   userId,
 }: {
   completion: RunCompletion;
   lessonId: string;
+  runId: string;
   timeZone: string;
   userId: string;
 }): Promise<LibraryLessonCompletion> {
-  const studyBlock = await settleFinishedLesson({ lessonId, timeZone, userId });
+  const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
+  const blockId = getString(run.contentIds, "studySessionBlockId") ?? undefined;
+  const studyBlock = await settleFinishedLesson({ blockId, lessonId, timeZone, userId });
 
   return {
     ...completion,
@@ -218,35 +228,18 @@ async function loadLessonAttempts({
   });
 }
 
-type Sittings = Awaited<ReturnType<typeof loadProgressRuns>> | [LearningEvent];
+type Sittings = Awaited<ReturnType<typeof loadPlayedLesson>>["sittings"];
 
 /**
  * The run's sittings (see `loadProgressRuns`) and the lesson as the learner played it: the
  * version they opened, which a check may have replaced since (`findOpenedVersion`).
  */
-async function loadPlayedLesson({
-  lessonId,
-  run,
-  userId,
-}: {
-  lessonId: string;
-  run: LearningEvent;
-  userId: string;
-}) {
-  const progress = await loadProgressRuns({ lessonId, until: run.startedAt, userId });
-  const sittings: Sittings = progress.length > 0 ? progress : [run];
-  const since = sittings[0]?.startedAt;
-  const version = await findOpenedVersion({ lessonId, since, userId });
-  const lesson = await findPlayableLessonRow({ lessonId, userId, version });
-
-  return { lesson, sittings };
-}
-
 /**
  * Finishes a run of a Library lesson for the learner or guest in the session. The server
  * re-validates it from the answers it graded: every screen that takes an answer was answered in
  * this run or in an earlier sitting the learner left unfinished (see `loadProgressRuns`), or "I
- * know this" got every check right. Then the ledger row closes, and Brain Power,
+ * know this" got every check right. A question whose numbered picture came too late for this run
+ * is optional (`getLatePictureStepIds`). Then the ledger row closes, and Brain Power,
  * Energy and the day's totals are added. Completing the same run again returns the same result;
  * only the completion that closed the run counts as "Lesson Completed".
  */
@@ -271,37 +264,41 @@ export async function completeLibraryLesson({
 
   const run = await findLessonRun({ lessonId, runId: input.runId, userId });
 
-  const { lesson, sittings } = run
-    ? await loadPlayedLesson({ lessonId, run, userId })
-    : { lesson: null, sittings: [] };
+  const { lesson, sittings, skippedWritingStepIds } = run
+    ? await loadPlayedLesson({
+        lessonId,
+        run,
+        skippedWritingStepIds: input.skippedWritingStepIds,
+        userId,
+      })
+    : { lesson: null, sittings: [], skippedWritingStepIds: [] };
 
   if (!lesson || !run) {
     return { status: "notFound" };
   }
 
-  const [allSteps, skippedActivities] = await Promise.all([
-    loadPlayableSteps({ lesson, rows: lesson.steps }),
-    lesson.targetLanguage
-      ? loadSkippedActivities({ targetLanguage: lesson.targetLanguage, userId })
-      : [],
-  ]);
+  const completionSteps = await loadCompletionSteps({
+    lesson,
+    runStartedAt: run.startedAt,
+    skippedWritingStepIds,
+    userId,
+  });
 
-  // A language lesson finishes without the practice the learner left out of their plan.
-  const steps = filterSkippedSteps({ activities: skippedActivities, steps: allSteps });
+  if (!completionSteps) {
+    return { status: "invalid" };
+  }
 
   // A quick explanation never comes back in a review (reviews come with a study plan's sessions,
   // which explanations aren't part of), so its completion announces none.
-  const explanation = isOwnExplanation(lesson);
-
   const [skillIds, timeZone] = await Promise.all([
-    explanation
+    isOwnExplanation(lesson)
       ? []
       : loadLessonReviewSkillIds({
           lessonId,
           ownSkillIds: [
             ...new Set([
               ...lesson.skills.map((skill) => skill.skillId),
-              ...steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
+              ...completionSteps.steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
             ]),
           ],
           userId,
@@ -310,7 +307,7 @@ export async function completeLibraryLesson({
   ]);
 
   const settle = (completion: RunCompletion) =>
-    withStudyBlock({ completion, lessonId, timeZone, userId });
+    withStudyBlock({ completion, lessonId, runId: run.id, timeZone, userId });
 
   if (run.endedAt) {
     return {
@@ -319,8 +316,13 @@ export async function completeLibraryLesson({
     };
   }
 
-  const attempts = await loadLessonAttempts({ sittings, steps, userId });
-  const tally = tallyLessonRun({ attempts, steps });
+  const attempts = await loadLessonAttempts({ sittings, steps: completionSteps.steps, userId });
+
+  const tally = tallyLessonRun({
+    attempts,
+    optionalStepIds: completionSteps.optionalStepIds,
+    steps: completionSteps.steps,
+  });
 
   if (!tally.isComplete) {
     return { status: "invalid" };
@@ -337,6 +339,7 @@ export async function completeLibraryLesson({
     answeredCount: attempts.length,
     lessonId,
     run,
+    skippedWritingStepIds,
     tally,
     timeZone,
     userId,

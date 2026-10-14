@@ -10,7 +10,7 @@ import { type MockSitting, findOwnedMock, getSectionDeadline } from "./_utils/ow
 import { type MockConditions, type MockTimeZoneInput } from "./mock-contract";
 
 export type SubmitMockSectionResult = {
-  status: "finished" | "next" | "notFound" | "notRunning" | "unauthorized";
+  status: "expired" | "finished" | "next" | "notFound" | "notRunning" | "unauthorized";
 };
 
 /**
@@ -79,7 +79,8 @@ const MS_PER_MINUTE = 60_000;
  * Hands in the running section, by the learner or when its time runs out: the next section's
  * clock starts (an adaptive exam's next module is picked here), after the break the notice gives
  * between them, which the learner may end early (`endMockBreak`); handing in the last one ends the
- * mock. A section handed in twice, from two tabs, moves the mock on once.
+ * mock. A section handed in twice, from two tabs, moves the mock on once. One whose time ran out
+ * while the learner was away is `expired`: nothing is handed in or graded.
  */
 export async function submitMockSection({
   blockId,
@@ -98,6 +99,10 @@ export async function submitMockSection({
 
   const { owned } = found;
   const { mock } = owned;
+
+  if (mock?.status === "expired") {
+    return { status: "expired" };
+  }
 
   if (mock?.status !== "active" || mock.sectionIndex !== section) {
     return { status: mock?.status === "finished" ? "finished" : "notRunning" };

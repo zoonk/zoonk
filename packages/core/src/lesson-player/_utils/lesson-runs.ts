@@ -155,15 +155,21 @@ export async function loadProgressAnswers({
   lessonId,
   since,
   userId,
+  version = null,
 }: {
   lessonId: string;
   since: Date;
   userId: string;
+  version?: number | null;
 }): Promise<LibraryLessonRun["answers"]> {
   const rows = await prisma.attempt.findMany({
     orderBy: { answeredAt: "asc" },
     select: { answeredAt: true, isCorrect: true, stepId: true },
-    where: { answeredAt: { gte: since }, step: { lessonId, ...CURRENT_STEPS }, userId },
+    where: {
+      answeredAt: { gte: since },
+      step: { lessonId, ...(version === null ? CURRENT_STEPS : { version }) },
+      userId,
+    },
   });
 
   return rows.flatMap((row) =>

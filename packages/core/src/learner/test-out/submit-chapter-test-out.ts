@@ -22,7 +22,7 @@ type ChapterTestOutOutcome = TestOutScore & {
   answers: { isCorrect: boolean; itemId: string }[];
   /** The plan change that skipped the lessons, so the result can offer its undo right there. */
   changeId: string | null;
-  /** The lessons it skipped, as the plan change and the Journey count them. */
+  /** The lessons it skipped, as the plan change and the Plan count them. */
   lessonsSkipped: number;
   testedOutPlanItemIds: string[];
 };
@@ -123,24 +123,24 @@ export async function submitChapterTestOut({
     ),
   );
 
-  await recordAnsweredActivity({
-    answers: graded.map(({ answer, result }) => ({
-      durationMs: answer.durationMs,
-      isCorrect: result?.isCorrect ?? false,
-    })),
-    contentIds: { chapterId },
-    goalId,
-    lessonKind: "testOut",
-    timeZone,
-    userId: owned.userId,
-  });
-
   const score = scoreTestOut({
     chapterSkillIds,
     results: graded.map(({ item, result }) => ({
       isCorrect: result?.isCorrect ?? false,
       skillId: item?.skillId ?? "",
     })),
+  });
+
+  await recordAnsweredActivity({
+    answers: graded.map(({ answer, result }) => ({
+      durationMs: answer.durationMs,
+      isCorrect: result?.isCorrect ?? false,
+    })),
+    contentIds: { chapterId, testOutPassed: String(score.passed) },
+    goalId,
+    lessonKind: "testOut",
+    timeZone,
+    userId: owned.userId,
   });
 
   const testedOut = score.passed

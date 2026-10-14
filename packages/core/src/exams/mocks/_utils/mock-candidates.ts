@@ -119,11 +119,14 @@ async function loadItems({
   skillIds: readonly string[];
   typed: readonly ItemFormat[];
 }) {
+  // A recording's questions are its listening section's (`loadListeningCandidates`), never
+  // another section's, a mock picked before it had its recordings included.
   const where = {
     ...getFormatFilter(typed),
     ...(itemIds
       ? { id: { in: [...itemIds] } }
       : { skillId: { in: [...skillIds] }, ...getItemAudienceFilter({ examBlueprintId }) }),
+    NOT: { set: { is: { kind: "audio" as const } } },
   };
 
   const examItems =

@@ -165,6 +165,7 @@ export function getExamEditionDays({
   examMonth = null,
   examYear,
   from,
+  registrationFrom = from,
 }: {
   edition: ExamEdition | null;
   /**
@@ -176,8 +177,10 @@ export function getExamEditionDays({
   examYear: number | null;
   /** The day the learner starts from, as an ISO date. */
   from: string;
+  /** Registration stays open through its deadline, even when exam eligibility starts tomorrow. */
+  registrationFrom?: string;
 }): EditionExamDays {
-  const found = getEditionDays({ edition, examYear, from });
+  const found = getEditionDays({ edition, examYear, from, registrationFrom });
 
   return found.estimated && examMonth !== null && examYear !== null
     ? { days: moveIntoMonth({ days: found.days, month: examMonth }), estimated: true }
@@ -188,12 +191,14 @@ function getEditionDays({
   edition,
   examYear,
   from,
+  registrationFrom,
 }: {
   edition: ExamEdition | null;
   examYear: number | null;
   from: string;
+  registrationFrom: string;
 }): EditionExamDays {
-  const days = getNoticeExamDays({ edition, from });
+  const days = getNoticeExamDays({ edition, from: registrationFrom });
   const [first] = days;
 
   if (!first) {

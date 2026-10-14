@@ -18,11 +18,11 @@ import {
 
 /**
  * A goal whose first phase teaches two skills holding one question each, with its challenge
- * next: reached once both lessons are done, else on its day. A third lesson opens phase 1.
+ * next on the saved study day after them. A third lesson opens phase 1.
  */
 async function thinChallengeSetup({
   done = true,
-  scheduledFor = null,
+  scheduledFor = SESSION_TODAY,
 }: { done?: boolean; scheduledFor?: Date | null } = {}) {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ itemsPerSkill: 1, lessons: 3, userId: user.id });

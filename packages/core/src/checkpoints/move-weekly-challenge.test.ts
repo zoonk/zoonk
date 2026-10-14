@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { moveChallenge, undoChallengeMove } from "./move-challenge";
 import { moveWeeklyChallenge, undoWeeklyChallengeMove } from "./move-weekly-challenge";
 
 /** A Monday in 2020, before other tests' learning events, so the planner's pace is its own. */
@@ -61,7 +62,43 @@ async function setup() {
 
   mockSession(user.id);
 
-  return { block, challenge, plan, user };
+  return { block, challenge, plan, session, user };
+}
+
+/** The saved plan, including the identities today's block payloads refer to. */
+async function readPlan(planId: string) {
+  const { coveredShare, estimateHours, graph, inputsKey, items, phases, settings } =
+    await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { id: planId },
+    });
+
+  return {
+    coveredShare,
+    estimateHours,
+    graph,
+    inputsKey,
+    items: items.map(({ createdAt: _createdAt, updatedAt: _updatedAt, ...item }) => item),
+    phases,
+    settings,
+  };
+}
+
+/** Today's exact work and progress, without persistence timestamps or the plan's version. */
+async function readToday(sessionId: string) {
+  const { blocks, id, localDate, plannedMinutes, status } =
+    await prisma.studySession.findUniqueOrThrow({
+      include: { blocks: { orderBy: { position: "asc" } } },
+      where: { id: sessionId },
+    });
+
+  return {
+    blocks: blocks.map(({ createdAt: _createdAt, updatedAt: _updatedAt, ...block }) => block),
+    id,
+    localDate,
+    plannedMinutes,
+    status,
+  };
 }
 
 async function challengeDates(planId: string) {
@@ -118,6 +155,81 @@ describe(moveWeeklyChallenge, () => {
 
     expect(restored.payload).toMatchObject({ planItemId: back.id });
   });
+
+  it.each(["session", "challenge"] as const)(
+    "undo from the %s gives back the exact plan and today's session together",
+    async (entry) => {
+      const { block, challenge, plan, session } = await setup();
+
+      const lesson = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+      });
+
+      await Promise.all([
+        studySessionBlockFixture({
+          completedAt: CHALLENGE_DAY,
+          estimatedMinutes: 4,
+          lessonId: lesson.lessonId,
+          payload: { planItemId: lesson.id, title: "The lesson already finished" },
+          position: 1,
+          sessionId: session.id,
+          startedAt: CHALLENGE_DAY,
+          status: "completed",
+        }),
+        studySessionBlockFixture({
+          estimatedMinutes: 6,
+          kind: "practice",
+          payload: { itemIds: [], title: "Practice today's mistakes" },
+          position: 2,
+          sessionId: session.id,
+        }),
+        prisma.studySession.update({ data: { status: "active" }, where: { id: session.id } }),
+      ]);
+
+      const [beforePlan, beforeToday] = await Promise.all([
+        readPlan(plan.id),
+        readToday(session.id),
+      ]);
+
+      const moved =
+        entry === "session"
+          ? await moveWeeklyChallenge({ blockId: block.id, input: { timeZone: "UTC" } })
+          : await moveChallenge({ input: { timeZone: "UTC" }, planItemId: challenge.id });
+
+      expect(moved).toMatchObject({ move: { date: "2020-10-12" }, status: "moved" });
+
+      if (moved.status !== "moved" || !moved.move.changeId) {
+        throw new Error("Expected the moved challenge and its Undo");
+      }
+
+      await expect(statusOf(block.id)).resolves.toBe("skipped");
+
+      const destination = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "checkpoint", planId: plan.id, scheduledFor: new Date("2020-10-12") },
+      });
+
+      const undone =
+        entry === "session"
+          ? await undoWeeklyChallengeMove({
+              blockId: block.id,
+              changeId: moved.move.changeId,
+              input: { timeZone: "UTC" },
+            })
+          : await undoChallengeMove({
+              changeId: moved.move.changeId,
+              input: { timeZone: "UTC" },
+              planItemId: destination.id,
+            });
+
+      expect(undone.status).toBe("undone");
+      await expect(readPlan(plan.id)).resolves.toStrictEqual(beforePlan);
+      await expect(readToday(session.id)).resolves.toStrictEqual(beforeToday);
+
+      await expect(
+        prisma.planItem.findUniqueOrThrow({ where: { id: challenge.id } }),
+      ).resolves.toMatchObject({ scheduledFor: new Date("2020-10-11"), status: "todo" });
+    },
+  );
 
   it("moves only a pending weekly challenge of the learner's own, never onto or past the goal's date", async () => {
     const [{ block, plan, user }, other] = await Promise.all([setup(), userFixture()]);

@@ -70,7 +70,7 @@ export async function loadSkillImportance({
   graph: PlanGraph;
   skills: readonly ImportanceSkill[];
   survivorOf: (skillId: string) => string;
-}): Promise<Map<string, number>> {
+}): Promise<{ importance: Map<string, number>; sectionWeights: Map<string, number> | null }> {
   const members = [...new Set(skills.flatMap((skill) => skill.memberSkillIds))];
 
   const [facts, bank] = await Promise.all([
@@ -87,7 +87,7 @@ export async function loadSkillImportance({
 
   const graphSkills = new Map(weighed.skills.map((skill) => [survivorOf(skill.skillId), skill]));
 
-  return new Map(
+  const importance = new Map(
     skills.map((skill) => {
       const graphSkill = graphSkills.get(skill.skillId);
       const counts = skill.memberSkillIds.flatMap((id) => bank.get(id) ?? []);
@@ -104,4 +104,6 @@ export async function loadSkillImportance({
       ] as const;
     }),
   );
+
+  return { importance, sectionWeights: facts?.areaShares ?? null };
 }

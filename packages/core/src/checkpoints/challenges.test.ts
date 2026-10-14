@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -10,6 +11,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -20,6 +22,7 @@ import {
 import { getBlockItemIds, readBlockPayload } from "../sessions/block-payload";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
+import { startStudyBlock } from "../sessions/start-study-block";
 import { requestChallengeQuestions } from "./challenge-questions";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
@@ -159,7 +162,7 @@ describe("a phase checkpoint's challenge", () => {
   });
 
   it("not passed, it tries again tomorrow, then is back in the plan, as the result says", async () => {
-    const { boss } = await bossSetup();
+    const { boss, goal, user } = await bossSetup();
     const lost = await playBoss({ optionIndex: 1, planItemId: boss.id });
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
@@ -182,6 +185,35 @@ describe("a phase checkpoint's challenge", () => {
       checkpoint: { retry: "open" },
     });
 
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
+      reason: "lessons",
+      status: "earlierFirst",
+    });
+
+    const today = await getTodayStudySession({ goalId: goal.id });
+
+    if (today.status !== "ready") {
+      throw new Error("Expected the rematch's session");
+    }
+
+    const lessons = today.session.blocks.filter((block) => block.kind === "learn");
+
+    expect(lessons.filter((block) => block.reinforcement)).toHaveLength(2);
+
+    await lessons.reduce(async (previous, block) => {
+      await previous;
+      await startStudyBlock({ blockId: block.id, input: {}, sessionId: today.session.id });
+
+      await learningEventFixture({
+        contentIds: { lessonId: block.lessonId, studySessionId: today.session.id },
+        userId: user.id,
+      });
+
+      await expect(
+        finishStudyBlock({ blockId: block.id, input: {}, sessionId: today.session.id }),
+      ).resolves.toMatchObject({ status: "ready" });
+    }, Promise.resolve());
+
     const won = await playBoss({ optionIndex: 0, planItemId: boss.id });
 
     // Reopened once won, the challenge says how the win went rather than inviting a new duel.
@@ -194,6 +226,44 @@ describe("a phase checkpoint's challenge", () => {
     await expect(getCheckpoint(lost.blockId)).resolves.toMatchObject({
       checkpoint: { retry: "passed" },
     });
+  });
+
+  it("says what it asks about before its day, as its duel asks on the day", async () => {
+    const { boss, planItems } = await bossSetup();
+    const [first, second] = planItems;
+    const lessonIds = [first?.id ?? "", second?.id ?? ""];
+
+    // Its lessons are today and its saved retrieval day is tomorrow: show the same topics ahead.
+    await prisma.planItem.update({
+      data: { scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) },
+      where: { id: boss.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { status: "todo" },
+      where: { id: { in: lessonIds } },
+    });
+
+    const topics = [
+      { name: "Skill 1", subject: null },
+      { name: "Skill 2", subject: null },
+    ];
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      blockId: null,
+      status: "upcoming",
+      topics,
+    });
+
+    // On its saved day, the session asks it on the same topics; the next phase's stays out.
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { id: { in: lessonIds } },
+    });
+
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({ status: "ready", topics });
   });
 
   it("is only the learner's own", async () => {
@@ -291,6 +361,53 @@ describe("the week's mixed challenge with too few questions", () => {
 
     expect(getBlockItemIds(readBlockPayload(block))).toHaveLength(6);
   });
+
+  // Only a boss ends once his shield breaks: the week's challenge pays for finishing it.
+  it("asks every question of the week's challenge, however many are already right", async () => {
+    const user = await userFixture();
+    const { items, plan, skills } = await sessionGoalFixture({ lessons: 3, userId: user.id });
+
+    const studied = skills
+      .slice(0, 2)
+      .map((skill) => items.find((item) => item.skillId === skill.id));
+
+    const [weekly] = await Promise.all([
+      checkpointItemFixture({
+        kind: "checkpoint",
+        planId: plan.id,
+        position: 10,
+        scheduledFor: SESSION_TODAY,
+      }),
+      ...studied.map((item) =>
+        attemptFixture({
+          answeredAt: new Date(SESSION_NOW.getTime() - 2 * DAY_MS),
+          itemId: item?.id,
+          skillId: item?.skillId,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    mockSession(user.id);
+    const started = await startChallenge({ input: {}, planItemId: weekly.id });
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected the challenge to start, got ${started.status}`);
+    }
+
+    const { blockId, sessionId } = started.destination;
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+    const payload = readBlockPayload(block);
+    const passMark = payload.checkpoint?.passMark ?? 0;
+
+    expect(passMark).toBeLessThan(getBlockItemIds(payload).length);
+
+    await answerBlockInOrder({ blockId, count: passMark, sessionId });
+
+    await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toStrictEqual({
+      status: "unanswered",
+    });
+  });
 });
 
 /** A Monday in 2020, before other tests' learning events, so the planner's pace is its own. */
@@ -356,6 +473,7 @@ describe("the week's challenge before its day", () => {
   it("says when it is, and moves to Monday from there, with an undo", async () => {
     const { challenge, plan } = await weeklySetup();
 
+    // The week's topics are the ones studied by its day: none to say before it.
     await expect(challengeOf(challenge.id)).resolves.toMatchObject({
       blockId: null,
       canMove: true,
@@ -364,6 +482,7 @@ describe("the week's challenge before its day", () => {
       passMark: null,
       status: "upcoming",
       today: "2020-10-05",
+      topics: [],
     });
 
     const moved = await moveChallenge({ input: {}, planItemId: challenge.id });

@@ -11,7 +11,7 @@ import { type GoalPlan, loadGoalPlan } from "./goal-skill-graph";
 
 /**
  * `loadGoalPlan` for the reads a page renders, which ask for the same goal's skills several times
- * (the Journey's progress, skills, mistakes and map): loaded once per request and tagged like the
+ * (the Plan's progress, skills, mistakes and map): loaded once per request and tagged like the
  * tabs' reads (`resolveViewGoal`), so whatever clears them clears it too. Mutations call
  * `loadGoalPlan`, whose reads after their own writes must see them. The caller has checked the
  * goal is the learner's.

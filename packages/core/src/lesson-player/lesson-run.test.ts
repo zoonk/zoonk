@@ -85,6 +85,30 @@ describe(tallyLessonRun, () => {
     expect(tally).toStrictEqual({ correctCount: 0, incorrectCount: 0, isComplete: false });
   });
 
+  it("never waits on an optional screen, and counts it when it's answered", () => {
+    const skipped = tallyLessonRun({
+      attempts: [
+        { isCorrect: true, stepId: "check-1" },
+        { isCorrect: true, stepId: "typed" },
+      ],
+      optionalStepIds: new Set(["check-2"]),
+      steps: lesson,
+    });
+
+    const answered = tallyLessonRun({
+      attempts: [
+        { isCorrect: true, stepId: "check-1" },
+        { isCorrect: true, stepId: "typed" },
+        { isCorrect: false, stepId: "check-2" },
+      ],
+      optionalStepIds: new Set(["check-2"]),
+      steps: lesson,
+    });
+
+    expect(skipped).toStrictEqual({ correctCount: 2, incorrectCount: 0, isComplete: true });
+    expect(answered).toStrictEqual({ correctCount: 2, incorrectCount: 1, isComplete: true });
+  });
+
   it("completes a lesson with nothing to answer", () => {
     const tally = tallyLessonRun({
       attempts: [],

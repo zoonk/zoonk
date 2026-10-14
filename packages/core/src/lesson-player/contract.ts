@@ -8,6 +8,7 @@ import { type StepContentByKind } from "../library/steps/contract/step-contract"
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 import { type SerializedStep } from "../player/contracts/prepare-lesson-data";
 import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
 /**
  * Stable error codes of the lesson endpoints, so the player (web or native) reacts to each one
@@ -57,15 +58,11 @@ export const lessonStepAnswerSchema = z
 
 export type LessonStepAnswer = z.infer<typeof lessonStepAnswerSchema>;
 
-const runIdSchema = z
-  .uuid()
-  .meta({ description: "The lesson run returned by the start, which answers count toward" });
-
 export const lessonStepCheckInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
     durationMs: answerDurationSchema,
-    runId: runIdSchema,
+    runId: lessonRunIdSchema,
     timeZone: answerTimeZoneSchema,
     usedHelp: z
       .boolean()
@@ -81,6 +78,9 @@ export type LessonStepCheckInput = z.infer<typeof lessonStepCheckInputSchema>;
 
 export const libraryLessonStartInputSchema = z
   .object({
+    runId: lessonRunIdSchema
+      .optional()
+      .describe("Refresh this open run, including after a long pause"),
     studySessionId: z
       .uuid()
       .optional()
@@ -94,13 +94,6 @@ export const libraryLessonStartInputSchema = z
   .meta({ id: "LibraryLessonStartInput" });
 
 export type LibraryLessonStartInput = z.infer<typeof libraryLessonStartInputSchema>;
-
-export const libraryLessonCompletionInputSchema = z
-  .object({ runId: runIdSchema, timeZone: answerTimeZoneSchema })
-  .strict()
-  .meta({ id: "LibraryLessonCompletionInput" });
-
-export type LibraryLessonCompletionInput = z.infer<typeof libraryLessonCompletionInputSchema>;
 
 /** Screens that teach and check an idea. Everything else is a language exercise. */
 export type TeachingStepKind =
@@ -166,6 +159,8 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
    * The player waits on it (`getLessonPictures`) instead of showing the screen without it.
    */
   imagePending: boolean;
+  /** Original screen-generation time in epoch milliseconds; reopening does not restart its wait. */
+  pictureWaitStartedAt?: number;
   kind: TKind;
   /**
    * The pictures of a question whose options are pictures, by option id. An option without one
@@ -273,11 +268,10 @@ export const libraryLessonRunSchema = z
         description:
           "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
       }),
+    optionalStepIds: z.array(z.uuid()).optional().describe("Questions with late numbered pictures"),
     runId: z.uuid().meta({ description: "Send it with every answer and with the completion" }),
     startedAt: z.iso.datetime(),
-    support: lessonSupportSchema
-      .nullable()
-      .meta({ description: "How the lesson opens for this learner; null keeps its own order" }),
+    support: lessonSupportSchema.nullable().describe("Lesson opening; null keeps its order"),
   })
   .meta({ id: "LibraryLessonRun" });
 

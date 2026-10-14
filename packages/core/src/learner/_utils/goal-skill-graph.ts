@@ -5,6 +5,15 @@ import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type PlacementSkill } from "../placement/placement-graph";
+import {
+  type ItemSkillRows,
+  type SkillEntry,
+  expandItem,
+  firstPerSkill,
+  getPhaseAreaId,
+  toGraphEntries,
+  unique,
+} from "./goal-plan-projection";
 import { loadSkillSurvivors } from "./update-learner-skill";
 
 /**
@@ -24,8 +33,6 @@ type PlanItemRow = Pick<
   "chapterId" | "id" | "kind" | "lessonId" | "phase" | "skillId" | "status" | "titleSnapshot"
 >;
 
-type SkillEntry = { areaId: string; phase: number; planItemId: string; skillId: string };
-
 /**
  * A plan item with the skills it teaches and the chapter it's planned in, for marking what a
  * learner already knows.
@@ -34,26 +41,19 @@ export type GoalPlanItem = Pick<PlanItem, "chapterId" | "id" | "status"> & { ski
 
 export type GoalPlan = { items: GoalPlanItem[]; skills: GoalSkillNode[] };
 
-function unique<TValue>(values: readonly (TValue | null)[]): TValue[] {
-  return [...new Set(values.filter((value) => value !== null))];
-}
-
-function getPhaseAreaId(phase: number): string {
-  return `phase:${phase}`;
-}
-
-async function loadItemSkills(items: readonly PlanItemRow[]) {
-  const lessonIds = unique(items.map((item) => item.lessonId));
-
-  const chapterIds = unique(
-    items.filter((item) => !item.lessonId && !item.skillId).map((item) => item.chapterId),
-  );
-
+/** The skills the Library says plan items' lessons and chapters teach (see `ItemSkillRows`). */
+export async function loadItemSkillRows({
+  chapterIds,
+  lessonIds,
+}: {
+  chapterIds: readonly string[];
+  lessonIds: readonly string[];
+}): Promise<ItemSkillRows> {
   const [lessonSkills, chapterLessons] = await Promise.all([
     prisma.lessonSkill.findMany({
       orderBy: { createdAt: "asc" },
       select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
-      where: { lessonId: { in: lessonIds } },
+      where: { lessonId: { in: [...lessonIds] } },
     }),
     prisma.chapterLesson.findMany({
       orderBy: { position: "asc" },
@@ -63,45 +63,21 @@ async function loadItemSkills(items: readonly PlanItemRow[]) {
           select: { skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } } },
         },
       },
-      where: { chapterId: { in: chapterIds } },
+      where: { chapterId: { in: [...chapterIds] } },
     }),
   ]);
 
   return { chapterLessons, lessonSkills };
 }
 
-/**
- * Expands one plan item into its skills in teaching order: the item's own skill, the skills its
- * lesson teaches, or every skill of its chapter's lessons.
- */
-function expandItem({
-  item,
-  skills,
-}: {
-  item: PlanItemRow;
-  skills: Awaited<ReturnType<typeof loadItemSkills>>;
-}): SkillEntry[] {
-  const fallbackArea = item.chapterId ?? getPhaseAreaId(item.phase);
-  const base = { phase: item.phase, planItemId: item.id };
-
-  if (item.skillId) {
-    return [{ ...base, areaId: fallbackArea, skillId: item.skillId }];
-  }
-
-  if (item.lessonId) {
-    return skills.lessonSkills
-      .filter((row) => row.lessonId === item.lessonId)
-      .map((row) => ({
-        ...base,
-        areaId: item.chapterId ?? row.lesson.homeChapterId ?? fallbackArea,
-        skillId: row.skillId,
-      }));
-  }
-
-  return skills.chapterLessons
-    .filter((row) => row.chapterId === item.chapterId)
-    .flatMap((row) => row.lesson.skills)
-    .map((row) => ({ ...base, areaId: fallbackArea, skillId: row.skillId }));
+/** The rows a saved plan's items need (see `loadItemSkillRows`). */
+function loadItemSkills(items: readonly PlanItemRow[]): Promise<ItemSkillRows> {
+  return loadItemSkillRows({
+    chapterIds: unique(
+      items.filter((item) => !item.lessonId && !item.skillId).map((item) => item.chapterId),
+    ),
+    lessonIds: unique(items.map((item) => item.lessonId)),
+  });
 }
 
 /** A finer skill a lesson planned for one of the graph's skills teaches. */
@@ -116,7 +92,7 @@ function toMemberEntries({
   skills,
 }: {
   items: readonly PlanItemRow[];
-  skills: Awaited<ReturnType<typeof loadItemSkills>>;
+  skills: ItemSkillRows;
 }): MemberEntry[] {
   const byLesson = Map.groupBy(skills.lessonSkills, (row) => row.lessonId);
 
@@ -144,12 +120,6 @@ async function toSurvivingMembers(entries: readonly MemberEntry[]): Promise<Memb
 async function toSurvivingSkills(entries: readonly SkillEntry[]): Promise<SkillEntry[]> {
   const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)));
   return entries.map((entry) => ({ ...entry, skillId: survivorOf(entry.skillId) }));
-}
-
-function firstPerSkill(entries: readonly SkillEntry[]): SkillEntry[] {
-  return entries.filter(
-    (entry, index) => entries.findIndex((other) => other.skillId === entry.skillId) === index,
-  );
 }
 
 async function loadAreaTitles({
@@ -183,20 +153,6 @@ async function loadAreaTitles({
     ...snapshots,
     ...chapters.map((chapter): [string, string] => [chapter.id, chapter.title]),
   ]);
-}
-
-/**
- * The goal's skills from its skill graph, for a plan whose items no longer carry any: a re-plan
- * with no room left (a class test opened only the day before) drops every lesson, and the mock
- * and reviews still need the goal's skills.
- */
-function toGraphEntries(graph: unknown): SkillEntry[] {
-  return parsePlanGraph(graph).skills.map((skill) => ({
-    areaId: getPhaseAreaId(skill.phase),
-    phase: skill.phase,
-    planItemId: "",
-    skillId: skill.skillId,
-  }));
 }
 
 /**

@@ -77,7 +77,7 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
     return null;
   }
 
-  const { content, image, imagePending, optionPictures } = getScreenPictures({
+  const { content, image, imagePending, optionPictures, pictureWaitStartedAt } = getScreenPictures({
     content: parsed.data,
     kind,
     row,
@@ -94,6 +94,7 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
     id: row.id,
     image,
     imagePending,
+    pictureWaitStartedAt,
     ...(Object.keys(optionPictures).length > 0 ? { optionPictures } : {}),
     kind,
     position: row.position,
