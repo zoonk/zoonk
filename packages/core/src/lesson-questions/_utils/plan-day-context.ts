@@ -43,7 +43,7 @@ const TODAY_LINK = { kind: "page", page: "today" } as const satisfies TutorLink;
  * nothing in the day holds it back; a challenge that waits for earlier work, its page; anything
  * else, Today. Nothing outside the open goal's conversation (see `LinkScope`).
  */
-function toBlockLink({
+export function toBlockLink({
   block,
   current,
   scope,
@@ -68,7 +68,7 @@ function toBlockLink({
 }
 
 /** The learner's day, as Today shows it, with the lesson titles its learn blocks teach. */
-type SavedDay = {
+export type SavedDay = {
   lessonTitles: Map<string, string>;
   session: StudySessionRow;
   view: StudySessionView;
@@ -145,7 +145,7 @@ function toPlanItem(item: PlanItemView): PlanScopeItem {
  * lessons its learn blocks teach. Null while the day isn't built or has no blocks: nothing here
  * builds it.
  */
-async function loadSavedDay(goal: Goal): Promise<SavedDay | null> {
+export async function loadSavedDay(goal: Goal): Promise<SavedDay | null> {
   const timeZone = getAnswerTimeZone({ goal });
 
   const session = await findSavedDaySession({
@@ -228,24 +228,33 @@ function toCatchUpLink({
   return scope.activeGoal ? TODAY_LINK : null;
 }
 
+/** The lessons earlier days left, as the buddy reads them (see `loadCatchUp`). */
+export type CatchUpLessons = NonNullable<PlanScopeContext["catchUp"]> & {
+  /** Lessons left past the ones named. */
+  more: number;
+};
+
 /**
  * The lessons earlier days left, from the same rows the plan's status counts (`loadCatchUpItems`):
- * the first few by title, each linked to today's block when the day holds it, and to Today
+ * the first `limit` by title, each linked to today's block when the day holds it, and to Today
  * otherwise, where the day either offers catching up (`offeredToday`) or the next days open with
  * them. No original day: the plan keeps only that earlier days left them. A free exam plan past
- * its first week has none, as its status says.
+ * its first week has none, as its status says. The context names the first few; the buddy's
+ * `catchUp` lookup names more.
  */
-async function loadCatchUp({
+export async function loadCatchUp({
   day,
   goal,
+  limit = CATCH_UP_LESSONS,
   plan,
   scope,
 }: {
   day: SavedDay | null;
   goal: Goal;
+  limit?: number;
   plan: PlanView;
   scope: LinkScope;
-}): Promise<PlanScopeContext["catchUp"]> {
+}): Promise<CatchUpLessons | null> {
   // A free exam plan past its first week has no new lessons, so nothing to catch up on.
   const items = plan.access.freeWeekOver ? [] : await loadCatchUpItems(goal.id);
 
@@ -253,8 +262,10 @@ async function loadCatchUp({
     return null;
   }
 
+  const shown = items.slice(0, limit);
+
   return {
-    lessons: items.slice(0, CATCH_UP_LESSONS).map((item) => {
+    lessons: shown.map((item) => {
       const block = findCatchUpBlock({ day, item });
 
       return {
@@ -263,6 +274,7 @@ async function loadCatchUp({
         title: item.titleSnapshot,
       };
     }),
+    more: items.length - shown.length,
     offeredToday: day?.view.catchUp?.later.offered ?? false,
     total: items.length,
   };
@@ -321,6 +333,16 @@ async function loadChallenges({
   ];
 }
 
+/** The context's catch-up: the first few lessons and how many in all. */
+function toContextCatchUp(catchUp: CatchUpLessons | null): PlanScopeContext["catchUp"] {
+  if (!catchUp) {
+    return null;
+  }
+
+  const { lessons, offeredToday, total } = catchUp;
+  return { lessons, offeredToday, total };
+}
+
 /**
  * The learner's day as the buddy reads it, from what Today itself reads: today's items (the saved
  * day's blocks, or the plan's items until it's built), the lessons earlier days left and the
@@ -338,7 +360,7 @@ export async function loadPlanDayContext({
   const [day, challenges] = await Promise.all([loadSavedDay(goal), loadChallenges({ goal, plan })]);
 
   return {
-    catchUp: await loadCatchUp({ day, goal, plan, scope }),
+    catchUp: toContextCatchUp(await loadCatchUp({ day, goal, plan, scope })),
     challenges,
     today: toToday({ day, plan, scope }),
   };

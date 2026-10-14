@@ -125,6 +125,8 @@
     "./tasks/v2/tutor/goal-tutor": "./src/tasks/v2/tutor/goal-tutor.ts",
     "./tasks/v2/tutor/goal-tutor-cards": "./src/tasks/v2/tutor/goal-tutor-cards.ts",
     "./tasks/v2/tutor/goal-tutor-lookup": "./src/tasks/v2/tutor/goal-tutor-lookup.ts",
+    "./tasks/v2/tutor/goal-tutor-lookup-learner": "./src/tasks/v2/tutor/goal-tutor-lookup-learner.ts",
+    "./tasks/v2/tutor/goal-tutor-lookup-plan": "./src/tasks/v2/tutor/goal-tutor-lookup-plan.ts",
     "./tasks/v2/tutor/goal-tutor-pages": "./src/tasks/v2/tutor/goal-tutor-pages.ts",
     "./tasks/v2/tutor/goal-tutor-tools": "./src/tasks/v2/tutor/goal-tutor-tools.ts",
     "./tasks/v2/research/changing-facts": "./src/tasks/v2/research/changing-facts.ts",

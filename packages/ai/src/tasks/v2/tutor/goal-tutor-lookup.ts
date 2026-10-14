@@ -1,12 +1,20 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { isTimeoutError, toDeadlineError } from "../../../evaluate/evaluation-timeout";
+import {
+  LEARNER_LOOKUPS,
+  LEARNER_LOOKUP_USES,
+  type LearnerLookUpFound,
+} from "./goal-tutor-lookup-learner";
+import { PLAN_LOOKUPS, PLAN_LOOKUP_USES, type PlanLookUpFound } from "./goal-tutor-lookup-plan";
 import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
 
 /**
- * What the buddy can look up about the learner's goal beyond its context, which stays small so
- * every message reads it from the cache: the notice's topics, progress by subject, the mocks they
- * finished, a lesson of their plan and their older mistakes.
+ * What the buddy can look up about the learner beyond its context, which stays small so every
+ * message reads it from the cache: the notice's topics, progress by subject, the mocks they
+ * finished, a lesson of their plan and their older mistakes; their plan's days, challenges and
+ * lessons left (`PLAN_LOOKUPS`); and their missions, goals, account, week, courses and progress
+ * (`LEARNER_LOOKUPS`).
  */
 const GOAL_TUTOR_LOOKUPS = [
   "noticeTopics",
@@ -14,9 +22,21 @@ const GOAL_TUTOR_LOOKUPS = [
   "mocks",
   "lesson",
   "mistakes",
+  ...PLAN_LOOKUPS,
+  ...LEARNER_LOOKUPS,
 ] as const;
 
 export type GoalTutorLookUp = (typeof GOAL_TUTOR_LOOKUPS)[number];
+
+/** Whether a lookup reads the learner's plan (`PLAN_LOOKUPS`), for core to route it. */
+export function isPlanLookUp(what: GoalTutorLookUp): what is (typeof PLAN_LOOKUPS)[number] {
+  return PLAN_LOOKUPS.some((kind) => kind === what);
+}
+
+/** Whether a lookup reads the learner beyond their plan (`LEARNER_LOOKUPS`), for core to route it. */
+export function isLearnerLookUp(what: GoalTutorLookUp): what is (typeof LEARNER_LOOKUPS)[number] {
+  return LEARNER_LOOKUPS.some((kind) => kind === what);
+}
 
 /**
  * A lookup reads the learner's own rows in the database, usually in well under a second; past
@@ -59,6 +79,8 @@ type SubjectChapter = { lessonsDone: number; lessonsTotal: number; state: string
 
 /** What a lookup found, by kind. */
 type GoalTutorLookUpFound =
+  | PlanLookUpFound
+  | LearnerLookUpFound
   | {
       /** Each subject's questions are in the context's `exam.subjects`, counted as the app shows them. */
       subjects: {
@@ -162,6 +184,8 @@ export type LookUpGoalData = (request: GoalTutorLookUpRequest) => Promise<GoalTu
 
 /** What each kind holds and when it answers the learner, in the model's words. */
 const LOOKUP_USES: Record<GoalTutorLookUp, string> = {
+  ...PLAN_LOOKUP_USES,
+  ...LEARNER_LOOKUP_USES,
   lesson:
     "a lesson of their plan by its title (`query`): what it teaches (its key ideas), whether they finished it and when it's planned. For what a lesson covers or what comes in it.",
   mistakes:
