@@ -24,6 +24,11 @@ import {
 } from "@zoonk/testing/fixtures/library-courses";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner, createGuest } from "./helpers/bearer";
@@ -263,6 +268,60 @@ test.describe("Tutor threads beyond lessons", () => {
     });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("reads the lessons earlier days left into a plan question, the one today holds first", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "tutor-plan-behind" });
+    const goal = await createPlannedGoal(userId);
+
+    const [plan, chapter] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      libraryChapterFixture({ title: "Powers of ten" }),
+    ]);
+
+    const carried = await planItemFixture({
+      chapterId: chapter.id,
+      planId: plan.id,
+      titleSnapshot: "Powers of ten",
+    });
+
+    // The last new day carried the lesson, and today's session already holds it.
+    const [session] = await Promise.all([
+      studySessionFixture({ goalId: goal.id, localDate: toUTCMidnight(new Date()), userId }),
+      planChangeFixture({
+        kind: "missedDays",
+        payload: { carriedItemIds: [carried.id], days: 1, source: "system" },
+        planId: plan.id,
+        status: "applied",
+      }),
+    ]);
+
+    await studySessionBlockFixture({
+      kind: "learn",
+      payload: { planItemId: carried.id },
+      position: 0,
+      sessionId: session.id,
+    });
+
+    const question = await readCreated(
+      await ask({
+        api,
+        context: { kind: "plan" },
+        path: `/v1/goals/${goal.id}/plan/questions`,
+        question: "Which lesson should I do first?",
+      }),
+    );
+
+    const stored = await prisma.lessonQuestion.findUniqueOrThrow({
+      select: { contextSnapshot: true },
+      where: { id: question.id },
+    });
+
+    expect(stored.contextSnapshot).toMatchObject({
+      catchUp: { lessons: [{ inToday: true, title: "Powers of ten" }], total: 1 },
+    });
+
+    await api.dispose();
   });
 
   test("asks about a subject of the learner's own goal only", async () => {
