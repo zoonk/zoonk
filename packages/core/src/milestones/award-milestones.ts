@@ -1,7 +1,11 @@
 import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getUserProgressCacheTag } from "../cache/tags";
 import { CHECKPOINT_LEDGER_KINDS } from "../checkpoints/_utils/checkpoint-results";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { type BrainPowerReward } from "./milestone-reward";
 import {
   type MilestoneAward,
@@ -12,6 +16,11 @@ import {
 
 /** The ledger's count of opened capsules: one `review` row per capsule, marked as such. */
 export const CAPSULE_LEDGER_KIND = "capsule";
+
+/** A competing award owns the new rows; this transaction's redundant revision must roll back. */
+class MilestoneAwardUnchangedError extends Error {
+  override name = "MilestoneAwardUnchangedError";
+}
 
 /** Counts what glasses are earned from, all from learner rows that outlive content. */
 export async function loadMilestoneCounts(userId: string): Promise<MilestoneCounts> {
@@ -94,10 +103,28 @@ export async function awardMilestones({
     return [];
   }
 
-  await prisma.milestone.createMany({
-    data: missing.map((award) => ({ ...award, userId })),
-    skipDuplicates: true,
-  });
+  const { error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { userId });
+
+      const { count } = await tx.milestone.createMany({
+        data: missing.map((award) => ({ ...award, userId })),
+        skipDuplicates: true,
+      });
+
+      if (count === 0) {
+        throw new MilestoneAwardUnchangedError("The milestones were already awarded");
+      }
+    }),
+  );
+
+  if (error && !(error instanceof MilestoneAwardUnchangedError)) {
+    throw error;
+  }
+
+  if (!error) {
+    revalidateCacheTags([getUserProgressCacheTag(userId)]);
+  }
 
   return prisma.milestone.findMany({
     orderBy: { earnedAt: "asc" },

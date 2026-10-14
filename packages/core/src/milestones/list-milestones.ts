@@ -1,9 +1,18 @@
 import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getUserProgressCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getSession } from "../users/get-session";
 import { loadMilestoneCounts } from "./award-milestones";
 import { type GlassesProgress, getGlassesProgress, pickCeremony } from "./milestone-rules";
+
+/** A replay or another learner's id changes neither ceremony nor actor revision. */
+class MilestoneShownUnchangedError extends Error {
+  override name = "MilestoneShownUnchangedError";
+}
 
 type MilestoneList = {
   /** The one milestone to celebrate next, if any hasn't been shown yet. */
@@ -61,10 +70,28 @@ export async function markMilestoneShown(milestoneId: string): Promise<Milestone
 
   const userId = session.user.id;
 
-  await prisma.milestone.updateMany({
-    data: { shownAt: new Date() },
-    where: { id: milestoneId, shownAt: null, userId },
-  });
+  const { error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { userId });
+
+      const { count } = await tx.milestone.updateMany({
+        data: { shownAt: new Date() },
+        where: { id: milestoneId, shownAt: null, userId },
+      });
+
+      if (count === 0) {
+        throw new MilestoneShownUnchangedError("The ceremony did not change");
+      }
+    }),
+  );
+
+  if (error && !(error instanceof MilestoneShownUnchangedError)) {
+    throw error;
+  }
+
+  if (!error) {
+    revalidateCacheTags([getUserProgressCacheTag(userId)]);
+  }
 
   const milestone = await prisma.milestone.findFirst({ where: { id: milestoneId, userId } });
 
