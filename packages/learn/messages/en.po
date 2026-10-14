@@ -7977,14 +7977,14 @@ msgid "Learn a topic"
 msgstr "Learn a topic"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "wduJme"
-msgid "Instrument"
-msgstr "Instrument"
+msgctxt "79lLl-"
+msgid "Music"
+msgstr "Music"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "IyTH2b"
-msgid "Play the guitar"
-msgstr "Play the guitar"
+msgctxt "Xwxsav"
+msgid "Read sheet music"
+msgstr "Read sheet music"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "_g7xra"
