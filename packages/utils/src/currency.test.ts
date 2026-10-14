@@ -6,6 +6,7 @@ describe("billing currencies", () => {
     const countries = ["US", "BR", "GB", "JP", "DE", "IN", "IS", "UY", "ZZ"];
 
     expect(new Set(BILLING_CURRENCIES).size).toBe(BILLING_CURRENCIES.length);
+
     expect(
       countries.every((country) => BILLING_CURRENCIES.includes(countryToCurrency(country))),
     ).toBe(true);
