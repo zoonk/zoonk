@@ -1681,8 +1681,22 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ANALYTICS_BEHIND_NO_OFFER,
-    expectations: `${PLAN_STATUS_EXPECTATIONS} Owen, writing in Portuguese, asks what's late. The answer names "Funnels and drop-off" and "Cohort retention curves" and 1 more from earlier days, says they come first on his next study days (Today doesn't offer adding them today), and links none of them: they have no link. Saying they're in today's session, offering to add them to today with one tap, or linking them to Today or the Plan as if it opened them, is a major error (cap 5.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} Owen, writing in Portuguese, asks what's late. The answer names "Funnels and drop-off" and "Cohort retention curves" and either "1 more" or, after looking up catchUp, "Activation and the aha moment", from earlier days, says they come first on his next study days (Today doesn't offer adding them today), and links none of them: they have no link. Saying they're in today's session, offering to add them to today with one tap, or linking them to Today or the Plan as if it opened them, is a major error (cap 5.0); so is saying it can't see or doesn't have a lesson's title (the owner's report, 14 Oct 2026).`,
     id: "pt-status-behind-next-days",
+    lookUps: {
+      catchUp: {
+        lessons: [
+          { inToday: false, link: null, title: "Funnels and drop-off" },
+          { inToday: false, link: null, title: "Cohort retention curves" },
+          { inToday: false, link: null, title: "Activation and the aha moment" },
+        ],
+        more: 0,
+        offeredToday: false,
+        status: "found",
+        total: 3,
+        what: "catchUp",
+      },
+    },
     question: "quais aulas estão atrasadas?",
   }),
   // Persona walk (14 Oct 2026): a lesson the day doesn't hold was linked to the Plan, which doesn't show it.
@@ -1700,7 +1714,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: PHYSICS_BEHIND,
-    expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks when her next challenge is. The answer leads with the week's challenge ("desafio semanal") on Sunday, 18 October, linked to its page (/challenge/${WEEKLY_CHALLENGE}), and may add the phase's challenge on 20 October (/challenge/${PHASE_CHALLENGE}), which closes the phase "O átomo por dentro". Calling the weekly one the phase's challenge, an invented date or a missing link is a major error (cap 6.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks when her next challenge is. The answer leads with the week's challenge ("desafio semanal") on Sunday, 18 October, linked to its page (/challenge/${WEEKLY_CHALLENGE}), and may add the phase's challenge on 20 October (/challenge/${PHASE_CHALLENGE}), which closes the phase "O átomo por dentro". Calling the weekly one the phase's challenge, an invented date or a missing link is a major error (cap 6.0); so is a link whose words are the phase's name rather than the challenge's (persona walk, 14 Oct 2026: "Dentro do átomo" opened the weekly challenge's page, which doesn't show it).`,
     id: "pt-status-next-challenge",
     question: "quando é meu próximo desafio?",
   }),
