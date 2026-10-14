@@ -16,6 +16,19 @@ const CATALOG_PATH = new RegExp(
   "u",
 );
 
+/**
+ * next-intl reads the saved language (`LOCALE_COOKIE`) to send unprefixed addresses to it, and
+ * would also write it whenever a page opens in another language. Pages are static, so their
+ * responses never set a cookie, and a link shared in another language mustn't change the saved
+ * one: only a language switch saves it, in the browser (`rememberLocale`). The language is the only
+ * cookie next-intl's middleware sets, so its cookie headers go: the response's and the one Next.js
+ * applies to the request (`x-middleware-set-cookie`).
+ */
+function dropLocaleCookie(response: NextResponse) {
+  response.headers.delete("set-cookie");
+  response.headers.delete("x-middleware-set-cookie");
+}
+
 /** The pricing page once next-intl resolved its language: `/{locale}/pricing`. */
 const PRICING_PATH = new RegExp(`^/(?<locale>${SUPPORTED_LOCALES.join("|")})/pricing/?$`, "u");
 
@@ -72,6 +85,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const response = localizedMiddleware(request);
+  dropLocaleCookie(response);
 
   /**
    * Resolve the home page's language before sending a session browser to Today, in one hop and
@@ -86,13 +100,7 @@ export default async function proxy(request: NextRequest) {
 
     const prefix = resolvedUrl.pathname.replace(/\/$/u, "");
     resolvedUrl.pathname = `${prefix === `/${DEFAULT_LOCALE}` ? "" : prefix}/today`;
-    const redirect = NextResponse.redirect(resolvedUrl);
-
-    for (const cookie of response.cookies.getAll()) {
-      redirect.cookies.set(cookie);
-    }
-
-    return redirect;
+    return NextResponse.redirect(resolvedUrl);
   }
 
   if (

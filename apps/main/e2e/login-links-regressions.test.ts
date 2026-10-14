@@ -115,8 +115,9 @@ test("signed-in home resolves browser, saved, and explicit locales in one redire
   const explicitLocale = await context.request.get("/pt", { maxRedirects: 0 });
   expect(getRedirectUrl(explicitLocale).pathname).toBe("/pt/today");
 
+  // Opening the Portuguese address doesn't change the saved language.
   const cookies = await context.cookies();
-  expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");
+  expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("de");
 
   const explicitEnglish = await context.request.get("/en", { maxRedirects: 0 });
   expect(getRedirectUrl(explicitEnglish).pathname).toBe("/today");

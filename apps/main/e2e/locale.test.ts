@@ -77,3 +77,43 @@ test.describe("Locale Navigation", () => {
     await expect(page).toHaveURL(/\/pt$/u);
   });
 });
+
+test.describe("Saved language", () => {
+  test("a page opened in another language sets no cookie and keeps the saved language", async ({
+    page,
+  }) => {
+    await setLocale(page, "de");
+
+    const response = await page.request.get("/pt/privacy", { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+    expect(response.headers()["set-cookie"]).toBeUndefined();
+
+    // A link shared in Portuguese opens in Portuguese, and the saved German stays.
+    await page.goto("/pt/privacy");
+    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
+
+    await page.goto("/terms");
+    await expect(page).toHaveURL(/\/de\/terms$/u);
+  });
+
+  test("the footer's language opened in a new tab is a pick too", async ({ page }) => {
+    await setLocale(page, "pt");
+    await page.goto("/privacy");
+    await expect(page).toHaveURL(/\/pt\/privacy$/u);
+
+    const [englishTab] = await Promise.all([
+      page.context().waitForEvent("page"),
+      page
+        .getByRole("navigation", { name: "Idioma" })
+        .getByRole("link", { name: "English" })
+        .click({ button: "middle" }),
+    ]);
+
+    await expect(englishTab).toHaveURL(/\/privacy$/u);
+    await expect(englishTab.locator("html")).toHaveAttribute("lang", "en");
+
+    await page.goto("/terms");
+    await expect(page).toHaveURL(/\/terms$/u);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+});

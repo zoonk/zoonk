@@ -847,6 +847,10 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("button", { name: "Use the app in português" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/pt/start/${goal.id}$`, "u"));
+
+    // The switch is saved: the site's unprefixed addresses open in Portuguese.
+    await page.goto(`/start/${goal.id}`);
+    await expect(page).toHaveURL(new RegExp(`/pt/start/${goal.id}$`, "u"));
   });
 
   test("the first learner of a new pair waits with the questions' progress, and the test opens by itself", async ({

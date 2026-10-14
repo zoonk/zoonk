@@ -1,5 +1,6 @@
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
+import { rememberLocale } from "@/i18n/remember-locale";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
@@ -59,9 +60,11 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
       form.set("audio", audio);
       return speakLevelTestAction(goalId, form);
     },
-    // A document navigation, like the language setting, so the proxy keeps the choice.
+    // Saved, then a document navigation, like the language setting.
     switchLanguage: (language) => {
       if (isValidLocale(language)) {
+        rememberLocale(language);
+
         globalThis.location.replace(
           getPathname({ forcePrefix: true, href: `/start/${goalId}`, locale: language }),
         );

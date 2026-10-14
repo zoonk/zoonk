@@ -73,6 +73,24 @@ test.describe("Language setting in Preferences", () => {
   });
 });
 
+test.describe("Language setting saves the choice", () => {
+  test("opens the site's unprefixed addresses in the language picked in Preferences", async ({
+    page,
+  }) => {
+    await page.goto("/settings/appearance");
+
+    await selectLanguage({
+      expectedPath: "/pt/settings/appearance",
+      locale: "pt",
+      page,
+      selector: page.getByRole("combobox", { name: "App language" }),
+    });
+
+    await page.goto("/courses");
+    await expect(page).toHaveURL(/\/pt\/courses$/u);
+  });
+});
+
 test.describe("Legal pages", () => {
   test("renders the French privacy policy and the German terms of service", async ({ page }) => {
     await setLocale(page, "fr");

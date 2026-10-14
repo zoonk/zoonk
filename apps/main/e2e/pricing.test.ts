@@ -40,12 +40,20 @@ test.describe("Pricing for visitors", () => {
     await expect(page).toHaveURL(/\/pt\/pricing$/u);
     await expect(page.locator("html")).toHaveAttribute("lang", "pt");
 
-    // The unprefixed address follows the last language picked, so English is picked back too.
+    // The pick is saved: the site's unprefixed addresses open in it.
+    await page.goto("/privacy");
+    await expect(page).toHaveURL(/\/pt\/privacy$/u);
+
+    // So English is picked back too.
     await page
       .getByRole("navigation", { name: "Idioma" })
       .getByRole("link", { name: "English" })
       .click();
 
+    await expect(page).toHaveURL(/\/privacy$/u);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
+    await page.goto("/pricing");
     await expect(page).toHaveURL(/\/pricing$/u);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
   });

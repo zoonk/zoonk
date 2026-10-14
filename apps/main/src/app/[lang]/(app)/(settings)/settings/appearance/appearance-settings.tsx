@@ -1,6 +1,7 @@
 "use client";
 
 import { getPathname, usePathname } from "@/i18n/navigation";
+import { rememberLocale } from "@/i18n/remember-locale";
 import {
   type AppearanceActions,
   AppearanceScreen,
@@ -20,11 +21,12 @@ export function AppearanceSettings({ view }: { view: AppearanceView }) {
   const pathname = usePathname();
 
   /**
-   * Use a document navigation because changing the root language through the client router can
-   * lose its in-flight response when the proxy canonicalizes English. The forced prefix lets the
-   * proxy persist the explicit choice before redirecting English to its unprefixed URL.
+   * Saves the choice, then opens the page in it with a document navigation, because changing the
+   * root language through the client router can lose its in-flight response when the proxy
+   * canonicalizes English. The forced prefix lets the proxy send English to its unprefixed URL.
    */
   function changeLanguage(locale: SupportedLocale) {
+    rememberLocale(locale);
     globalThis.location.replace(getPathname({ forcePrefix: true, href: pathname, locale }));
   }
 

@@ -208,10 +208,11 @@ test.describe("catalog URLs with another language preference", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "pt");
     await expect(page.getByRole("link", { name: "Montar meu plano" }).first()).toBeVisible();
 
+    // Opening the Portuguese address doesn't change the saved language.
     const cookies = await page.context().cookies();
-    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("pt");
+    expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("de");
 
     await page.goto("/courses");
-    await expect(page).toHaveURL(/\/pt\/courses$/u);
+    await expect(page).toHaveURL(/\/de\/courses$/u);
   });
 });

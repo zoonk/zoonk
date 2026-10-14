@@ -31,7 +31,7 @@ describe("catalog locale routing", () => {
     expect(response.headers.get("link")).toBeNull();
   });
 
-  it("remembers an explicit course locale for subsequent navigation", async () => {
+  it("opens an explicit course locale without changing the saved one", async () => {
     const response = await proxy(
       new NextRequest("https://www.zoonk.com/pt/b/zoonk/c/ciencia-da-computacao-pt", {
         headers: { "accept-language": "fr-FR", cookie: "ZOONK_LOCALE=de" },
@@ -40,7 +40,8 @@ describe("catalog locale routing", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
-    expect(response.cookies.get("ZOONK_LOCALE")?.value).toBe("pt");
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(response.headers.get("x-middleware-set-cookie")).toBeNull();
     expect(response.headers.get("link")).toBeNull();
   });
 
@@ -240,6 +241,28 @@ describe("pricing in the visitor's currency", () => {
   });
 });
 
+describe("English by its prefix", () => {
+  it.each([
+    { cookie: "ZOONK_LOCALE=de", follows: "/de/privacy" },
+    { cookie: "", follows: "/pt/privacy" },
+  ])(
+    "leads /en/… to the unprefixed address, which follows $follows",
+    async ({ cookie, follows }) => {
+      const headers = { "accept-language": "pt-BR", cookie };
+
+      const [english, unprefixed] = await Promise.all([
+        proxy(new NextRequest("https://www.zoonk.com/en/privacy", { headers })),
+        proxy(new NextRequest("https://www.zoonk.com/privacy", { headers })),
+      ]);
+
+      expect(english.status).toBe(307);
+      expect(english.headers.get("location")).toBe("https://www.zoonk.com/privacy");
+      expect(english.headers.get("set-cookie")).toBeNull();
+      expect(unprefixed.headers.get("location")).toBe(`https://www.zoonk.com${follows}`);
+    },
+  );
+});
+
 describe("static pages set no cookies", () => {
   const sessionCookie = `${getSessionCookieName({ secure: true })}=token`;
 
@@ -273,6 +296,34 @@ describe("static pages set no cookies", () => {
       expect(response.headers.get("set-cookie")).toBeNull();
     }
   });
+
+  it.each(["/pt/pricing", "/pt/privacy", "/de/courses", "/pt", "/fr/b/ai/c/computer-science"])(
+    "answers %s in another language than the saved one or the browser's without changing either",
+    async (path) => {
+      const [savedGerman, englishBrowser, sessionSavedSpanish] = await Promise.all([
+        proxy(
+          new NextRequest(`https://www.zoonk.com${path}`, {
+            headers: { "accept-language": "en-US", cookie: "ZOONK_LOCALE=es" },
+          }),
+        ),
+        proxy(
+          new NextRequest(`https://www.zoonk.com${path}`, {
+            headers: { "accept-language": "en-US" },
+          }),
+        ),
+        proxy(
+          new NextRequest(`https://www.zoonk.com${path}`, {
+            headers: { "accept-language": "en-US", cookie: `ZOONK_LOCALE=es; ${sessionCookie}` },
+          }),
+        ),
+      ]);
+
+      for (const response of [savedGerman, englishBrowser, sessionSavedSpanish]) {
+        expect(response.headers.get("set-cookie")).toBeNull();
+        expect(response.headers.get("x-middleware-set-cookie")).toBeNull();
+      }
+    },
+  );
 });
 
 describe("proxy matcher", () => {
