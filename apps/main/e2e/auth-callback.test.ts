@@ -178,6 +178,33 @@ test.describe("Auth Callback", () => {
     await ctx.close();
   });
 
+  test("leaves main's session hint beside the session it signs in, for as long", async ({
+    browser,
+  }) => {
+    const baseURL = getBaseURL();
+    const user = await createE2EUser(baseURL);
+    const token = await generateOneTimeToken(baseURL, user);
+
+    const ctx = await browser.newContext({ baseURL });
+    const state = await createLoginState({ baseURL, context: ctx });
+
+    const response = await ctx.request.get(
+      `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
+      { maxRedirects: 0 },
+    );
+
+    expect(response.status()).toBe(302);
+
+    const cookies = await ctx.cookies(baseURL);
+    const hint = cookies.find((cookie) => cookie.name === "zoonk-signed-in");
+    const session = cookies.find((cookie) => cookie.name.endsWith("session_token"));
+
+    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: "1" });
+    expect(Math.abs((hint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
+
+    await ctx.close();
+  });
+
   test("redirects to the requested app path on valid token", async ({ browser }) => {
     const baseURL = getBaseURL();
     const user = await createE2EUser(baseURL);

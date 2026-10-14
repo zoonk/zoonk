@@ -1,9 +1,10 @@
 import "server-only";
 import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
 import { type Goal, prisma } from "@zoonk/db";
+import { type CefrLevel } from "@zoonk/utils/cefr";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
-import { getSpeakingLevel } from "../../conversations/_utils/conversation-goal";
+import { getSpeakingLevel, toSpeakingLevel } from "../../conversations/_utils/conversation-goal";
 import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
 import { type SpeakingPaperView } from "../speaking-contract";
 import { type SpeakingFormat } from "../speaking-format";
@@ -16,14 +17,34 @@ export type ExamSpeakingSetup = { format: SpeakingFormat; goal: Goal };
 
 const EXAM_LANGUAGES = Object.values(SPEAKING_EXAM_LANGUAGES);
 
+/** Whether the goal's target language has an exam speaking paper here at all. */
+function hasExamLanguage(goal: Pick<Goal, "targetLanguage">): goal is { targetLanguage: string } {
+  return Boolean(goal.targetLanguage && EXAM_LANGUAGES.includes(goal.targetLanguage));
+}
+
 /**
  * The speaking paper a goal prepares for, from its exam and level (`getSpeakingExamGoal`), with the
  * learner's speaking level standing in for a level nobody named.
  */
+function findGoalSpeakingFormat({
+  fallbackLevel,
+  goal,
+}: {
+  fallbackLevel: CefrLevel;
+  goal: Goal & { examBlueprint?: { name: string } | null };
+}): SpeakingFormat | null {
+  const found = getSpeakingExamGoal({
+    fallbackLevel,
+    goal: { ...goal, blueprintName: goal.examBlueprint?.name },
+  });
+
+  return found ? getSpeakingFormat(found) : null;
+}
+
 async function readGoalSpeakingFormat(
   goal: Goal & { examBlueprint?: { name: string } | null },
 ): Promise<SpeakingFormat | null> {
-  if (!goal.targetLanguage || !EXAM_LANGUAGES.includes(goal.targetLanguage)) {
+  if (!hasExamLanguage(goal)) {
     return null;
   }
 
@@ -33,12 +54,7 @@ async function readGoalSpeakingFormat(
     userId: goal.userId,
   });
 
-  const found = getSpeakingExamGoal({
-    fallbackLevel,
-    goal: { ...goal, blueprintName: goal.examBlueprint?.name },
-  });
-
-  return found ? getSpeakingFormat(found) : null;
+  return findGoalSpeakingFormat({ fallbackLevel, goal });
 }
 
 /**
@@ -82,6 +98,30 @@ export async function loadSpeakingPaperEntry({
 }): Promise<{ access: SpeakingPaperView["access"]; title: string } | null> {
   const [format, open] = await Promise.all([readGoalSpeakingFormat(goal), hasSpeakingAccess()]);
   return format ? { access: open ? "open" : "plusRequired", title: format.title } : null;
+}
+
+/**
+ * Whether a language goal practices an exam's speaking paper (its Speaking page), the same paper
+ * Today offers, without reading its access, from what the caller already read: the name of the
+ * blueprint it names and the learner's speaking score in its language.
+ */
+export function hasSpeakingPaper({
+  blueprintName,
+  goal,
+  speakingScore,
+}: {
+  blueprintName: string | null;
+  goal: Goal;
+  speakingScore: number | null;
+}): boolean {
+  if (goal.kind !== "language" || !hasExamLanguage(goal)) {
+    return false;
+  }
+
+  const fallbackLevel = toSpeakingLevel({ goal, score: speakingScore });
+  const examBlueprint = blueprintName ? { name: blueprintName } : null;
+
+  return findGoalSpeakingFormat({ fallbackLevel, goal: { ...goal, examBlueprint } }) !== null;
 }
 
 /** The learner's own goal and the speaking paper it prepares for; null for any other goal. */

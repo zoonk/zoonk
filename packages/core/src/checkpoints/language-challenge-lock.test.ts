@@ -2,8 +2,9 @@ import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { getAllowance } from "../entitlements/get-allowance";
+import { getLearnerSummary } from "../learner/summary/get-learner-summary";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
@@ -13,7 +14,6 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
-import { getSavedTodayQueue } from "../sessions/get-saved-today-queue";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getChallenge } from "./get-challenge";
 import { startChallenge } from "./start-challenge";
@@ -211,8 +211,11 @@ describe("language challenges are Plus only", () => {
           after.session.blocks.some((block) => block.id === intro.blockId),
       ).toBe(false);
 
-      await expect(getSavedTodayQueue()).resolves.toMatchObject({
-        next: expect.objectContaining({ sessionId: expect.any(String) }),
+      // The frame's "Continue" goes on with the day without the locked call.
+      mockAccountSession({ user });
+
+      await expect(getLearnerSummary()).resolves.toMatchObject({
+        today: { next: expect.objectContaining({ sessionId: expect.any(String) }) },
       });
 
       await expect(getAllowance()).resolves.toMatchObject({ callTime: { usedSeconds: 0 } });

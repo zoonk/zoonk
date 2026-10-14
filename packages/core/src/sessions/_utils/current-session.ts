@@ -28,6 +28,11 @@ function getLastActivity(session: SessionTimes): number {
   );
 }
 
+/** When a day the learner is still in stops being theirs: once they've been away from it this long. */
+export function getCarryOverEnd(session: SessionTimes): Date {
+  return new Date(getLastActivity(session) + CARRY_OVER_MS);
+}
+
 /**
  * Whether the day before's session is still the learner's day: they started it and were in it a
  * moment ago. Once finished, it stays only when it finished after midnight, so its summary is what
@@ -42,7 +47,7 @@ function isCarriedOver({
   session: SessionTimes;
   timeZone: string;
 }): boolean {
-  if (!session.startedAt || now.getTime() - getLastActivity(session) >= CARRY_OVER_MS) {
+  if (!session.startedAt || now.getTime() >= getCarryOverEnd(session).getTime()) {
     return false;
   }
 
@@ -79,6 +84,26 @@ export function isCurrentSession({
   return (
     session.localDate.getTime() === yesterday.getTime() && isCarriedOver({ now, session, timeZone })
   );
+}
+
+/**
+ * The learner's day of a goal: today's session, unless they're still in the day before's (see
+ * `isCurrentSession`) and haven't started today's yet. Null when neither is saved.
+ */
+export function pickCurrentDay<Session extends SessionTimes>({
+  now,
+  previous,
+  timeZone,
+  today,
+}: {
+  now: Date;
+  /** The goal's session from the day before, when saved. */
+  previous: Session | null;
+  timeZone: string;
+  today: Session | null;
+}): Session | null {
+  const carried = previous && isCarriedOver({ now, session: previous, timeZone }) ? previous : null;
+  return carried && !today?.startedAt ? carried : today;
 }
 
 /**

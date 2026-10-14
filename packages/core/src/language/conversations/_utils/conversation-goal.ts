@@ -19,6 +19,16 @@ export async function getSpeakingLevel({
     where: { userLanguageSkill: { language: targetLanguage, skill: "speaking", userId } },
   });
 
-  const score = row?.score ?? getStartScore({ details: readGoalDetails(goal), skill: "speaking" });
-  return toCefrLevel(score);
+  return toSpeakingLevel({ goal, score: row?.score ?? null });
+}
+
+/** The speaking band from the learner's saved speaking score, or the goal's starting one without it. */
+export function toSpeakingLevel({
+  goal,
+  score,
+}: {
+  goal: Goal | null;
+  score: number | null;
+}): CefrLevel {
+  return toCefrLevel(score ?? getStartScore({ details: readGoalDetails(goal), skill: "speaking" }));
 }

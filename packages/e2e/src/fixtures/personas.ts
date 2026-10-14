@@ -3,6 +3,7 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { type SeedPersonaName } from "@zoonk/db/seed/v2/personas";
 import { seedV2PersonaCopy } from "./seed-v2";
+import { withSessionHint } from "./session-hint";
 import { type E2EUser } from "./users";
 
 const SHORT_UUID_LENGTH = 8;
@@ -27,7 +28,7 @@ async function signIn({ baseURL, email }: { baseURL: string; email: string }) {
     throw new Error(`Sign-in failed for ${email}: ${response.status()} - ${body}`);
   }
 
-  const storageState = await context.storageState();
+  const storageState = withSessionHint(await context.storageState());
   await context.dispose();
 
   return storageState;

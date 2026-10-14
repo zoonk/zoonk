@@ -1,3 +1,5 @@
+import { ensureLearnerSummary } from "@/lib/learner/learner-store";
+import { hasSessionHint, setSessionHint } from "@/lib/learner/session-hint";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
@@ -25,6 +27,10 @@ async function startGuestSession(): Promise<boolean> {
   }
 
   if (data) {
+    if (!hasSessionHint()) {
+      await markSession();
+    }
+
     return true;
   }
 
@@ -32,9 +38,21 @@ async function startGuestSession(): Promise<boolean> {
 
   if (error) {
     logError("[ensureGuestSession] Could not start a guest session:", error);
+    return false;
   }
 
-  return !error;
+  await markSession();
+  return true;
+}
+
+/**
+ * The session hint for a session the browser now holds (a new guest's, or one the hint missed),
+ * then its summary, whose read keeps the hint for as long as the session lasts: the frame, the
+ * palette and analytics follow the learner from here.
+ */
+async function markSession() {
+  await setSessionHint();
+  ensureLearnerSummary();
 }
 
 /** The check or sign-in in flight, so callers at the same moment share one guest. */

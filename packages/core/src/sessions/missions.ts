@@ -79,6 +79,13 @@ export function countDoneMissions(missions: readonly Pick<Mission, "status">[]):
   return missions.filter((mission) => mission.status === "done").length;
 }
 
+/** The day's missions as the buddy's tab rings them (done of offered); null on a day without any. */
+export function countMissions(
+  missions: readonly Pick<Mission, "status">[],
+): { done: number; total: number } | null {
+  return missions.length > 0 ? { done: countDoneMissions(missions), total: missions.length } : null;
+}
+
 /** Every offered mission actually done; a day with none never earns the completion bonus. */
 export function isFullMeal(missions: readonly Mission[]): boolean {
   return missions.length > 0 && countDoneMissions(missions) === missions.length;

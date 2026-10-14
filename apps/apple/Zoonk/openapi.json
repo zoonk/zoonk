@@ -7175,6 +7175,56 @@
         }
       }
     },
+    "/me/summary": {
+      "get": {
+        "description": "What an app's frame shows about the learner or guest in one read: goals, buddy, today's saved queue and missions, places, plan, time zone and analytics settings. It never builds or changes the day. Read it again after `nextChangeAt`.",
+        "operationId": "getCurrentUserSummary",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get current user's summary",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "The learner summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearnerSummaryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/library/lessons/{lessonId}": {
       "get": {
         "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
@@ -36622,6 +36672,429 @@
         },
         "required": [
           "profile"
+        ],
+        "additionalProperties": false
+      },
+      "LearnerSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/LearnerSummary"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "additionalProperties": false
+      },
+      "LearnerSummary": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "image": {
+                "nullable": true,
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email",
+              "image",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "activeGoalId": {
+            "nullable": true,
+            "description": "The goal the tabs show",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "analytics": {
+            "type": "object",
+            "properties": {
+              "disabled": {
+                "type": "boolean",
+                "description": "The learner turned analytics off"
+              },
+              "goal": {
+                "nullable": true,
+                "description": "The active goal's kind and the plan phase it's in",
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "learn",
+                      "explain",
+                      "language",
+                      "exam"
+                    ]
+                  },
+                  "phase": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "kind",
+                  "phase"
+                ],
+                "additionalProperties": false
+              },
+              "plan": {
+                "type": "string",
+                "description": "The subscription's plan, or \"free\""
+              },
+              "username": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "disabled",
+              "goal",
+              "plan",
+              "username"
+            ],
+            "additionalProperties": false,
+            "description": "What analytics attach to the learner's events"
+          },
+          "buddy": {
+            "type": "object",
+            "properties": {
+              "beltColor": {
+                "type": "string",
+                "enum": [
+                  "white",
+                  "yellow",
+                  "orange",
+                  "green",
+                  "blue",
+                  "purple",
+                  "brown",
+                  "red",
+                  "gray",
+                  "black"
+                ]
+              },
+              "energy": {
+                "nullable": true,
+                "description": "Energy, or null until a day of study has passed",
+                "type": "number"
+              },
+              "glasses": {
+                "type": "string",
+                "enum": [
+                  "round",
+                  "star",
+                  "aviator",
+                  "catEye",
+                  "retro",
+                  "monocle"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "zu",
+                  "noodle",
+                  "beep",
+                  "otto"
+                ]
+              },
+              "name": {
+                "nullable": true,
+                "type": "string"
+              },
+              "studiedToday": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "beltColor",
+              "energy",
+              "glasses",
+              "kind",
+              "name",
+              "studiedToday"
+            ],
+            "additionalProperties": false,
+            "description": "The buddy as the tabs draw it"
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LearnerSummaryGoal"
+            },
+            "description": "Goals not archived, the active one first, then oldest first"
+          },
+          "identity": {
+            "type": "object",
+            "properties": {
+              "expiresAt": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "When the session ends"
+              },
+              "isAnonymous": {
+                "type": "boolean",
+                "description": "A guest without an account yet"
+              },
+              "signedInAt": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since the epoch"
+              },
+              "userId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              }
+            },
+            "required": [
+              "expiresAt",
+              "isAnonymous",
+              "signedInAt",
+              "userId"
+            ],
+            "additionalProperties": false
+          },
+          "level": {
+            "nullable": true,
+            "description": "The belt and level, or null before any learning",
+            "type": "object",
+            "properties": {
+              "color": {
+                "type": "string",
+                "enum": [
+                  "white",
+                  "yellow",
+                  "orange",
+                  "green",
+                  "blue",
+                  "purple",
+                  "brown",
+                  "red",
+                  "gray",
+                  "black"
+                ]
+              },
+              "level": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "color",
+              "level"
+            ],
+            "additionalProperties": false
+          },
+          "missions": {
+            "nullable": true,
+            "description": "Today's missions, or null on a day without any",
+            "type": "object",
+            "properties": {
+              "done": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "done",
+              "total"
+            ],
+            "additionalProperties": false
+          },
+          "nextChangeAt": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "When the summary changes without a write: the next local midnight, the subscription's next change or the session's end"
+          },
+          "places": {
+            "type": "object",
+            "properties": {
+              "exam": {
+                "type": "boolean"
+              },
+              "mindMaps": {
+                "type": "boolean"
+              },
+              "speaking": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "exam",
+              "mindMaps",
+              "speaking"
+            ],
+            "additionalProperties": false,
+            "description": "The active goal's own places beside the tabs"
+          },
+          "readAt": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Milliseconds since the epoch"
+          },
+          "revision": {
+            "type": "string",
+            "description": "The learner's change counter as a decimal string: every write they can see raises it, so a higher one is newer"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "free",
+              "guest",
+              "plus"
+            ]
+          },
+          "timeZone": {
+            "nullable": true,
+            "description": "The active goal's saved time zone",
+            "type": "string"
+          },
+          "today": {
+            "nullable": true,
+            "description": "Today's saved session, or null before it's saved",
+            "type": "object",
+            "properties": {
+              "blocksLeft": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "next": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "minutes": {
+                    "type": "number"
+                  },
+                  "sessionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "title": {
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "minutes",
+                  "sessionId",
+                  "title"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "blocksLeft",
+              "next"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "account",
+          "activeGoalId",
+          "analytics",
+          "buddy",
+          "goals",
+          "identity",
+          "level",
+          "missions",
+          "nextChangeAt",
+          "places",
+          "readAt",
+          "revision",
+          "tier",
+          "timeZone",
+          "today"
+        ],
+        "additionalProperties": false
+      },
+      "LearnerSummaryGoal": {
+        "type": "object",
+        "properties": {
+          "dailyMinutes": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "The goal the tabs show"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "learn",
+              "explain",
+              "language",
+              "exam"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused",
+              "completed",
+              "archived"
+            ]
+          },
+          "targetDate": {
+            "nullable": true,
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dailyMinutes",
+          "id",
+          "isActive",
+          "kind",
+          "status",
+          "targetDate",
+          "targetLanguage",
+          "title"
         ],
         "additionalProperties": false
       },

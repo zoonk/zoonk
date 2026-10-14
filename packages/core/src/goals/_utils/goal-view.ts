@@ -2,11 +2,15 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
-import { PHASE_WORK_KINDS } from "../../plans/_utils/phase-states";
 import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalView } from "../goal-contract";
+import {
+  type PlanPhaseFacts,
+  getCurrentPhaseFromFacts,
+  loadPlanPhaseFacts,
+} from "./plan-phase-facts";
 
 type PlanRow = { goalId: string; id: string; phases: unknown; settings: unknown };
 
@@ -20,54 +24,48 @@ function getStudyDays({ dailyMinutes, settings }: { dailyMinutes: number; settin
 }
 
 /**
+ * Whether each learner's plans require their phase challenges, checked once per learner: a free
+ * language plan shows the Plus call, but progress never depends on its locked challenge.
+ */
+async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
+  const languageOwners = [
+    ...new Set(facts.filter((plan) => plan.goalKind === "language").map((plan) => plan.userId)),
+  ];
+
+  const required = await Promise.all(
+    languageOwners.map(
+      async (userId) =>
+        [userId, await arePhaseChallengesRequired({ goalKind: "language", userId })] as const,
+    ),
+  );
+
+  return new Map(required);
+}
+
+/**
  * `findCurrentPhase` for many plans at once, in SQL: each plan's earliest phase with work left (a
  * lesson, written or not, or its challenge), or its last phase once everything is done. Null for a
  * plan without items.
  */
 export async function loadCurrentPhases(
-  plans: readonly Pick<PlanRow, "id" | "phases">[],
+  plans: readonly Pick<PlanRow, "id">[],
 ): Promise<Map<string, number | null>> {
-  const planIds = plans.map((plan) => plan.id);
-
-  const language = await prisma.plan.findMany({
-    include: { goal: true },
-    where: { goal: { kind: "language" }, id: { in: planIds } },
-  });
-
-  const access = await Promise.all(
-    language.map(async (plan) => ({
-      id: plan.id,
-      required: await arePhaseChallengesRequired({
-        goalKind: plan.goal.kind,
-        userId: plan.goal.userId,
-      }),
-    })),
-  );
-
-  const locked = access.filter((plan) => !plan.required).map((plan) => plan.id);
-
-  const [withItems, left] = await Promise.all([
-    prisma.planItem.groupBy({ by: ["planId"], where: { planId: { in: planIds } } }),
-    prisma.planItem.groupBy({
-      _min: { phase: true },
-      by: ["planId"],
-      where: {
-        NOT: { kind: "boss", planId: { in: locked } },
-        kind: { in: [...PHASE_WORK_KINDS] },
-        planId: { in: planIds },
-        status: "todo",
-      },
-    }),
-  ]);
+  const facts = await loadPlanPhaseFacts({ planIds: plans.map((plan) => plan.id) });
+  const required = await loadChallengeRequirements(facts);
 
   return new Map(
     plans.map((plan) => {
-      const phaseCount = parsePlanPhases(plan.phases).length;
-      const hasItems = withItems.some((row) => row.planId === plan.id);
-      const phase = left.find((row) => row.planId === plan.id)?._min.phase;
-      const last = hasItems && phaseCount > 0 ? phaseCount - 1 : null;
+      const planFacts = facts.find((row) => row.planId === plan.id);
 
-      return [plan.id, phase ?? last];
+      const phase = planFacts
+        ? getCurrentPhaseFromFacts({
+            facts: planFacts,
+            phaseChallengesRequired:
+              planFacts.goalKind !== "language" || (required.get(planFacts.userId) ?? true),
+          })
+        : null;
+
+      return [plan.id, phase];
     }),
   );
 }

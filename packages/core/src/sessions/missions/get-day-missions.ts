@@ -1,5 +1,5 @@
 import "server-only";
-import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import { type Sql, type StudySessionBlock, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
@@ -14,6 +14,15 @@ import { type MissionPick, readMissionDocument } from "./catalog";
 import { getMissionBlocks } from "./mission-blocks";
 import { getBlockTitle, getMissionMinutes } from "./mission-time";
 
+/** The picks done outside the day's blocks, which count what the learner did today. */
+const DAY_PROGRESS_KINDS: readonly MissionPick["kind"][] = [
+  "askBuddy",
+  "call",
+  "fixMistake",
+  "pattern",
+  "pronunciation",
+];
+
 type DayProgress = {
   fixed: number;
   patterns: Set<string>;
@@ -22,6 +31,19 @@ type DayProgress = {
   questions: number;
 };
 
+type DayProgressRow = {
+  calls: number;
+  fixed: number;
+  patterns: string[];
+  pronunciation: number;
+  questions: number;
+  usage: number;
+};
+
+/**
+ * What the day's picks count, in one statement: only the counts some pick needs are read, the rest
+ * stay zero.
+ */
 async function loadDayProgress({
   client,
   picks,
@@ -43,41 +65,55 @@ async function loadDayProgress({
   });
   // A running session keeps its day across midnight; its completion still feeds that day's picks.
   const to = through && through >= nextDay ? new Date(through.getTime() + 1) : nextDay;
-  const range = { gte: from, lt: to };
   const kinds = new Set(picks.map((pick) => pick.kind));
   const userId = session.userId;
 
-  const [fixed, patterns, pronunciation, calls, questions, usage] = await Promise.all([
-    kinds.has("fixMistake")
-      ? client.mistake.count({ where: { fixedAt: range, status: "fixed", userId } })
-      : 0,
-    kinds.has("pattern")
-      ? client.mistakePattern.findMany({ where: { practicedAt: range, userId } })
-      : [],
-    kinds.has("pronunciation")
-      ? client.learningEvent.count({
-          where: { endedAt: range, lessonKind: "pronunciationReview", userId },
-        })
-      : 0,
-    kinds.has("call")
-      ? client.languageConversation.count({
-          where: { endedAt: range, spokenSeconds: { gt: 0 }, status: "completed", userId },
-        })
-      : 0,
-    kinds.has("askBuddy")
-      ? client.lessonQuestion.count({ where: { createdAt: range, thread: { userId } } })
-      : 0,
-    kinds.has("askBuddy")
-      ? client.usageRecord.count({ where: { createdAt: range, kind: "tutorMessage", userId } })
-      : 0,
-  ]);
+  if (!DAY_PROGRESS_KINDS.some((kind) => kinds.has(kind))) {
+    return { calls: 0, fixed: 0, patterns: new Set(), pronunciation: 0, questions: 0 };
+  }
+
+  const counted = (kind: MissionPick["kind"], query: Sql) => (kinds.has(kind) ? query : sql`0`);
+
+  const [row] = await client.$queryRaw<DayProgressRow[]>`
+    SELECT
+      ${counted(
+        "fixMistake",
+        sql`(SELECT count(*) FROM mistakes WHERE user_id = ${userId}::uuid AND status = 'fixed'
+          AND fixed_at >= ${from} AND fixed_at < ${to})`,
+      )}::int AS fixed,
+      ${
+        kinds.has("pattern")
+          ? sql`ARRAY(SELECT id::text FROM mistake_patterns WHERE user_id = ${userId}::uuid
+              AND practiced_at >= ${from} AND practiced_at < ${to})`
+          : sql`'{}'::text[]`
+      } AS patterns,
+      ${counted(
+        "pronunciation",
+        sql`(SELECT count(*) FROM learning_events WHERE user_id = ${userId}::uuid
+          AND lesson_kind = 'pronunciationReview' AND ended_at >= ${from} AND ended_at < ${to})`,
+      )}::int AS pronunciation,
+      ${counted(
+        "call",
+        sql`(SELECT count(*) FROM language_conversations WHERE user_id = ${userId}::uuid
+          AND status = 'completed' AND spoken_seconds > 0 AND ended_at >= ${from} AND ended_at < ${to})`,
+      )}::int AS calls,
+      ${counted(
+        "askBuddy",
+        sql`(SELECT count(*) FROM lesson_questions q JOIN lesson_question_threads t ON t.id = q.thread_id
+          WHERE t.user_id = ${userId}::uuid AND q.created_at >= ${from} AND q.created_at < ${to})`,
+      )}::int AS questions,
+      ${counted(
+        "askBuddy",
+        sql`(SELECT count(*) FROM usage_records WHERE user_id = ${userId}::uuid
+          AND kind = 'tutor_message' AND created_at >= ${from} AND created_at < ${to})`,
+      )}::int AS usage`;
 
   return {
-    calls,
-    fixed,
-    patterns: new Set(patterns.map((pattern) => pattern.id)),
-    pronunciation,
-    questions: Math.max(questions, usage),
+    calls: row?.calls ?? 0,
+    fixed: row?.fixed ?? 0,
+    patterns: new Set(row?.patterns),
+    pronunciation: row?.pronunciation ?? 0,
+    questions: Math.max(row?.questions ?? 0, row?.usage ?? 0),
   };
 }
 

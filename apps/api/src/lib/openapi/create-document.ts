@@ -31,6 +31,7 @@ import { languageGoalPaths } from "./paths/language-goal";
 import { learnViewPaths } from "./paths/learn-views";
 import { learnerPaths } from "./paths/learner";
 import { learnerProfilePaths } from "./paths/learner-profile";
+import { learnerSummaryPaths } from "./paths/learner-summary";
 import { lessonQuestionPaths } from "./paths/lesson-questions";
 import { lessonRegenerationPaths } from "./paths/lesson-regenerations";
 import { libraryLessonPaths } from "./paths/library-lessons";
@@ -124,6 +125,7 @@ const paths = withInternalErrorResponses({
   ...pronunciationPaths,
   ...speechClipPaths,
   ...learnerProfilePaths,
+  ...learnerSummaryPaths,
   ...libraryLessonPaths,
   ...lessonRegenerationPaths,
   ...reviewFlagPaths,

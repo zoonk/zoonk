@@ -182,6 +182,8 @@
     "./learner/placement/get": "./src/learner/placement/get-goal-placement.ts",
     "./learner/placement/picks": "./src/learner/placement/placement-item-picks.ts",
     "./learner/review-schedule": "./src/learner/get-current-user-review-schedule.ts",
+    "./learner/summary": "./src/learner/summary/get-learner-summary.ts",
+    "./learner/summary/contract": "./src/learner/summary/learner-summary-contract.ts",
     "./learner/test-out/contract": "./src/learner/test-out/test-out-contract.ts",
     "./learner/test-out/get": "./src/learner/test-out/get-chapter-test-out.ts",
     "./learner/test-out/request-questions": "./src/learner/test-out/request-test-out-questions.ts",
