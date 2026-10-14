@@ -24,10 +24,44 @@ export async function createSkill() {
   });
 }
 
+export function createGoal(userId: string) {
+  return prisma.goal.create({
+    data: {
+      dailyMinutes: DAILY_MINUTES,
+      kind: "learn",
+      language: "en",
+      prompt: "Learn photosynthesis",
+      title: "Photosynthesis",
+      userId,
+    },
+  });
+}
+
+/** Creates a Library lesson directly, for rows a learner keeps about one. */
+export async function createLesson() {
+  const id = randomUUID();
+
+  return prisma.lesson.create({
+    data: {
+      description: "A test lesson",
+      estimatedMinutes: 5,
+      identityKey: `guest-link-lesson-${id}`,
+      language: "en",
+      level: "beginner",
+      model: "test-model",
+      normalizedTitle: `guest link lesson ${id}`,
+      promptVersion: "test",
+      runId: `test-run-${id}`,
+      slug: `guest-link-lesson-${id}`,
+      title: `Guest link lesson ${id}`,
+    },
+  });
+}
+
 /**
  * Gives a learner one row of everything a guest can create: a goal with its plan, a typed goal
  * not confirmed yet, a skill, an answer, a memory, votes, a milestone, a day of stats, usage, an AI
- * call and a profile.
+ * call, a practice conversation, a mistake pattern, a mock and an exam result, and a profile.
  */
 export async function seedLearnerData({
   brainPower,
@@ -40,16 +74,7 @@ export async function seedLearnerData({
   skillId: string;
   userId: string;
 }) {
-  const goal = await prisma.goal.create({
-    data: {
-      dailyMinutes: DAILY_MINUTES,
-      kind: "learn",
-      language: "en",
-      prompt: "Learn photosynthesis",
-      title: "Photosynthesis",
-      userId,
-    },
-  });
+  const goal = await createGoal(userId);
 
   const studyTime = { hour: STUDY_HOUR, localDate: STUDY_DAY, weekday: STUDY_WEEKDAY };
 
@@ -92,6 +117,36 @@ export async function seedLearnerData({
         userId,
       },
     }),
+    prisma.languageConversation.create({
+      data: {
+        goalId: goal.id,
+        kind: "practice",
+        language: "en",
+        level: "A2",
+        minutes: 5,
+        scenario: {},
+        targetLanguage: "es",
+        titleSnapshot: "At the market",
+        userId,
+      },
+    }),
+    prisma.mistakePattern.create({
+      data: {
+        content: {},
+        goalId: goal.id,
+        kind: "pattern",
+        language: "es",
+        model: "test-model",
+        promptVersion: "test",
+        runId: `test-run-${contentId}`,
+        title: "Ser and estar",
+        userId,
+      },
+    }),
+    prisma.mockExam.create({
+      data: { conditions: {}, goalId: goal.id, sectionStartedAt: STUDY_DAY, userId },
+    }),
+    prisma.examResult.create({ data: { examName: "Test exam", goalId: goal.id, userId } }),
     prisma.userProgress.update({ data: { totalBrainPower: brainPower }, where: { userId } }),
   ]);
 
@@ -119,6 +174,10 @@ export async function countLearnerRows(userId: string) {
     prisma.dailyProgress.count(byUser),
     prisma.usageRecord.count(byUser),
     prisma.aiCall.count(byUser),
+    prisma.languageConversation.count(byUser),
+    prisma.mistakePattern.count(byUser),
+    prisma.mockExam.count(byUser),
+    prisma.examResult.count(byUser),
   ]);
 
   const [
@@ -134,18 +193,26 @@ export async function countLearnerRows(userId: string) {
     days,
     usage,
     aiCalls,
+    conversations,
+    patterns,
+    mocks,
+    examResults,
   ] = counts;
 
   return {
     aiCalls,
     attempts,
+    conversations,
     days,
     drafts,
     events,
+    examResults,
     feedback,
     goals,
     memory,
     milestones,
+    mocks,
+    patterns,
     skills,
     usage,
     votes,

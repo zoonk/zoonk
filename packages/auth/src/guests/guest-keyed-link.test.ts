@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma, sql } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
+import { waitForBlocked } from "./_test-utils/blocked-sessions";
 import { createExistingAccount, signInAsGuest, signInWithPassword } from "./_test-utils/guest-auth";
-import { createSkill } from "./_test-utils/learner-data";
+import { createLesson, createSkill } from "./_test-utils/learner-data";
 import { moveKeyedRows } from "./_utils/merge-keyed-rows";
 
 /** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
@@ -10,12 +11,19 @@ vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: 
 
 const OLDER = new Date("2026-09-01T00:00:00Z");
 
+/** A learner keeps one insight a day, so each seeded insight gets its own day. */
+const insightDays = { seeded: 0 };
+
 const TABLES = [
   "learner_skills",
   "milestones",
   "content_feedback",
   "usage_records",
   "learner_sources",
+  "memory_insights",
+  "goal_understandings",
+  "pronunciation_reviews",
+  "step_example_lines",
 ] as const;
 
 type KeyedTable = (typeof TABLES)[number];
@@ -112,6 +120,94 @@ async function seedSharedRows({ table, userIds }: { table: KeyedTable; userIds: 
         ),
       );
     }
+    case "memory_insights": {
+      insightDays.seeded += 1;
+      const localDate = new Date(Date.UTC(2026, 0, insightDays.seeded));
+
+      return Promise.all(
+        userIds.map((userId) =>
+          prisma.memoryInsight.create({
+            data: { createdAt: OLDER, inputHash: key, localDate, userId },
+          }),
+        ),
+      );
+    }
+    case "goal_understandings":
+      return Promise.all(
+        userIds.map((userId) =>
+          prisma.goalUnderstanding.create({
+            data: {
+              createdAt: OLDER,
+              generatedAt: OLDER,
+              language: "en",
+              normalizedPrompt: `learn ${key}`,
+              result: { kind: "learn" },
+              updatedAt: OLDER,
+              userId,
+            },
+          }),
+        ),
+      );
+    case "pronunciation_reviews": {
+      const organization = await prisma.organization.create({
+        data: { name: "Words", slug: `guest-link-words-${key}` },
+      });
+
+      const word = await prisma.word.create({
+        data: { organizationId: organization.id, targetLanguage: "es", word: `hola-${key}` },
+      });
+
+      return Promise.all(
+        userIds.map((userId) =>
+          prisma.pronunciationReview.create({
+            data: {
+              createdAt: OLDER,
+              dueAt: OLDER,
+              language: "es",
+              stage: 2,
+              updatedAt: OLDER,
+              userId,
+              userLanguage: "en",
+              wordId: word.id,
+            },
+          }),
+        ),
+      );
+    }
+    case "step_example_lines": {
+      const lesson = await createLesson();
+
+      const step = await prisma.step.create({
+        data: {
+          content: {},
+          kind: "explanation",
+          lessonId: lesson.id,
+          model: "test-model",
+          position: 0,
+          promptVersion: "test",
+          runId: key,
+        },
+      });
+
+      return Promise.all(
+        userIds.map((userId) =>
+          prisma.stepExampleLine.create({
+            data: {
+              contextKey: key,
+              createdAt: OLDER,
+              generatedAt: OLDER,
+              model: "test-model",
+              promptVersion: "test",
+              runId: key,
+              stepId: step.id,
+              text: "An example about the learner",
+              updatedAt: OLDER,
+              userId,
+            },
+          }),
+        ),
+      );
+    }
     default:
       throw new Error("Unknown keyed table");
   }
@@ -131,41 +227,17 @@ function readRows({ table, userId }: { table: KeyedTable; userId: string }) {
       return prisma.usageRecord.findMany({ where });
     case "learner_sources":
       return prisma.learnerSource.findMany({ where });
+    case "memory_insights":
+      return prisma.memoryInsight.findMany({ where });
+    case "goal_understandings":
+      return prisma.goalUnderstanding.findMany({ where });
+    case "pronunciation_reviews":
+      return prisma.pronunciationReview.findMany({ where });
+    case "step_example_lines":
+      return prisma.stepExampleLine.findMany({ where });
     default:
       throw new Error("Unknown keyed table");
   }
-}
-
-async function waitForBothLinks({
-  blocker,
-  deadline = Date.now() + 4000,
-}: {
-  blocker: number;
-  deadline?: number;
-}): Promise<void> {
-  const sessions = await prisma.$queryRaw<{ waiting: bigint }[]>`
-    WITH RECURSIVE blocked(pid) AS (
-      SELECT pid FROM pg_stat_activity
-      WHERE datname = current_database() AND ${blocker}::int = ANY(pg_blocking_pids(pid))
-      UNION
-      SELECT activity.pid FROM pg_stat_activity activity JOIN blocked ON blocked.pid = ANY(pg_blocking_pids(activity.pid))
-      WHERE activity.datname = current_database()
-    ) SELECT COUNT(*) AS waiting FROM blocked
-  `;
-
-  if (Number(sessions[0]?.waiting) >= 2) {
-    return;
-  }
-
-  if (Date.now() >= deadline) {
-    throw new Error("Both transfers must wait behind the test's held source rows before release");
-  }
-
-  await new Promise((resolve) => {
-    setTimeout(resolve, 10);
-  });
-
-  return waitForBothLinks({ blocker, deadline });
 }
 
 describe("guest keyed-row linking", () => {
@@ -220,7 +292,7 @@ describe("guest keyed-row linking", () => {
       );
 
       try {
-        await waitForBothLinks({ blocker });
+        await waitForBlocked({ blocker, count: 2 });
       } finally {
         release.resolve(null);
         await held;

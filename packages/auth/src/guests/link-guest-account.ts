@@ -1,5 +1,6 @@
-import { isPrismaTransactionConflictError, prisma } from "@zoonk/db";
+import { isPrismaTransactionConflictError, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { lockCourseHome } from "@zoonk/db/course-home";
+import { markLearnerRevision, markPlanInputsChanged } from "@zoonk/db/learner-revision";
 import { safeAsync } from "@zoonk/utils/error";
 import { type GuestLinkContext, moveKeyedRows } from "./_utils/merge-keyed-rows";
 import { mergeLanguageLevels } from "./_utils/merge-language-levels";
@@ -9,9 +10,26 @@ import {
   mergeUserProgress,
 } from "./_utils/merge-progress";
 import { movePrivateCourses } from "./_utils/move-private-courses";
+import { moveTutorThreads } from "./_utils/move-tutor-threads";
 
 /** Retry rolled-back transaction conflicts from competing writers without repeating external effects. */
 const TRANSFER_ATTEMPTS = 3;
+
+/** Another link moved the guest first: roll back this one's marks, since it changed nothing. */
+class GuestAlreadyLinkedError extends Error {
+  constructor() {
+    super("The guest was already linked");
+    this.name = "GuestAlreadyLinkedError";
+  }
+}
+
+/**
+ * Worth a retry from the start: a competing writer's conflict, or a tutor thread the account
+ * started about the same thing mid-move (a unique key), which the retry joins instead.
+ */
+function isRetryableTransferError(error: unknown) {
+  return isPrismaTransactionConflictError(error) || isPrismaUniqueConstraintError(error);
+}
 
 /** Rows with no per-learner unique key move as they are, including private content below its course. */
 async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkContext) {
@@ -30,6 +48,10 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
     transaction.learningEvent.updateMany({ data: toAccount, where: fromGuest }),
     transaction.feedback.updateMany({ data: toAccount, where: fromGuest }),
     transaction.aiCall.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.languageConversation.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.mistakePattern.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.mockExam.updateMany({ data: toAccount, where: fromGuest }),
+    transaction.examResult.updateMany({ data: toAccount, where: fromGuest }),
     transaction.skill.updateMany({ data: ownedByAccount, where: ownedByGuest }),
     transaction.chapter.updateMany({ data: ownedByAccount, where: ownedByGuest }),
     transaction.lesson.updateMany({ data: ownedByAccount, where: ownedByGuest }),
@@ -41,8 +63,10 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
 
 /**
  * Moves everything a guest did to the account they signed up or signed in with: goals and plans,
- * goals typed but not confirmed yet, sessions, attempts, mistakes, skills, memory, feedback, stats,
- * language evidence and words, usage, AI calls (so the account's spend counts them) and private content. It runs in one
+ * goals typed and how they were understood, sessions, attempts, mistakes and their patterns,
+ * skills, memory and its insights, conversations with the tutor and in the language, mocks and
+ * exam results, feedback, stats, language evidence, words and pronunciation reviews, example
+ * lines, usage, AI calls (so the account's spend counts them) and private content. It runs in one
  * transaction, so a failure leaves the guest untouched and the sign-in can be retried.
  */
 async function moveGuestData({
@@ -57,6 +81,14 @@ async function moveGuestData({
   const result = await safeAsync(() =>
     prisma.$transaction(async (transaction) => {
       const context = { guestUserId, transaction, userId };
+
+      /**
+       * The account's summary changes, and so do the inputs of every plan the move feeds: the
+       * account's and the guest's, which read the merged skills and evidence. Mark them before any
+       * domain lock, plans then the account, in the order every learner writer locks them.
+       */
+      await markPlanInputsChanged(transaction, { userIds: [userId, guestUserId] });
+      await markLearnerRevision(transaction, { userId });
 
       /** Serialize account merges, acquiring the home lock before any user FK lock like writers do. */
       await lockCourseHome({ homeId: userId, transaction });
@@ -73,9 +105,10 @@ async function moveGuestData({
     `;
 
       if (guests.length === 0) {
-        return;
+        throw new GuestAlreadyLinkedError();
       }
 
+      await moveTutorThreads(context);
       await movePrivateCourses(context);
       await moveOwnedRows(context);
       await moveKeyedRows(context);
@@ -95,11 +128,11 @@ async function moveGuestData({
     }),
   );
 
-  if (!result.error) {
+  if (!result.error || result.error instanceof GuestAlreadyLinkedError) {
     return;
   }
 
-  if (attempt < TRANSFER_ATTEMPTS && isPrismaTransactionConflictError(result.error)) {
+  if (attempt < TRANSFER_ATTEMPTS && isRetryableTransferError(result.error)) {
     return moveGuestData({ attempt: attempt + 1, guestUserId, userId });
   }
 

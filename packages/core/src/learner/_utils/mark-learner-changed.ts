@@ -1,44 +1,26 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
-
-type RevisionTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
+import {
+  type LearnerRevisionTransaction,
+  markLearnerRevision,
+  markPlanInputsChanged,
+} from "@zoonk/db/learner-revision";
 
 /** Each learner-visible writer calls this once, in the transaction that owns its domain write. */
 export async function markLearnerChanged(
-  tx: RevisionTransaction,
+  tx: LearnerRevisionTransaction,
   { userId, planInputs = false }: { userId: string; planInputs?: boolean },
 ): Promise<{ learnerRevision: bigint }> {
   if (planInputs) {
     /** Always acquire plan locks before the learner row, including in mixed writer transactions. */
-    const plans = await tx.$queryRaw<{ id: string }[]>`
-      SELECT plan.id FROM plans AS plan
-      JOIN goals AS goal ON goal.id = plan.goal_id
-      WHERE goal.user_id = ${userId}::uuid
-      ORDER BY plan.id FOR UPDATE OF plan
-    `;
-
-    await tx.$executeRaw`
-      UPDATE plans SET input_version = input_version + 1
-      WHERE id = ANY(${plans.map((plan) => plan.id)}::uuid[])
-    `;
+    await markPlanInputsChanged(tx, { userIds: [userId] });
   }
 
-  const [user] = await tx.$queryRaw<{ learnerRevision: bigint }[]>`
-    UPDATE users SET learner_revision = learner_revision + 1
-    WHERE id = ${userId}::uuid
-    RETURNING learner_revision AS "learnerRevision"
-  `;
-
-  if (!user) {
-    throw new Error("Cannot mark a missing learner changed");
-  }
-
-  return user;
+  return markLearnerRevision(tx, { userId });
 }
 
 /** A shared-content writer marks dependent plans, without returning another learner's revision. */
 export async function markPlansChanged(
-  tx: RevisionTransaction,
+  tx: LearnerRevisionTransaction,
   { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
   if (planIds.length === 0) {

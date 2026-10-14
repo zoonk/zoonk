@@ -98,6 +98,67 @@ async function moveLearnerWords({ guestUserId, transaction, userId }: GuestLinkC
   `;
 }
 
+async function moveMemoryInsights({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM memory_insights
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO memory_insights (id, user_id, goal_id, local_date, kind, message, payload, status, input_hash, responded_at, model, prompt_version, run_id, generated_at, created_at)
+    SELECT id, ${userId}::uuid, goal_id, local_date, kind, message, payload, status, input_hash, responded_at, model, prompt_version, run_id, generated_at, created_at
+    FROM guest_rows
+    ORDER BY local_date
+    ON CONFLICT (user_id, local_date) DO NOTHING
+  `;
+}
+
+/** How a typed goal was understood, so finishing the guest's onboarding never asks a model again. */
+async function moveGoalUnderstandings({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM goal_understandings
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO goal_understandings (id, user_id, language, normalized_prompt, result, model, prompt_version, run_id, generated_at, created_at, updated_at)
+    SELECT id, ${userId}::uuid, language, normalized_prompt, result, model, prompt_version, run_id, generated_at, created_at, updated_at
+    FROM guest_rows
+    ORDER BY language, normalized_prompt
+    ON CONFLICT (user_id, language, normalized_prompt) DO NOTHING
+  `;
+}
+
+async function movePronunciationReviews({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM pronunciation_reviews
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO pronunciation_reviews (id, user_id, word_id, language, user_language, stage, due_at, last_reviewed_at, created_at, updated_at)
+    SELECT id, ${userId}::uuid, word_id, language, user_language, stage, due_at, last_reviewed_at, created_at, updated_at
+    FROM guest_rows
+    ORDER BY word_id
+    ON CONFLICT (user_id, word_id) DO NOTHING
+  `;
+}
+
+async function moveStepExampleLines({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM step_example_lines
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO step_example_lines (id, user_id, step_id, text, context_key, model, prompt_version, run_id, generated_at, created_at, updated_at)
+    SELECT id, ${userId}::uuid, step_id, text, context_key, model, prompt_version, run_id, generated_at, created_at, updated_at
+    FROM guest_rows
+    ORDER BY step_id
+    ON CONFLICT (user_id, step_id) DO NOTHING
+  `;
+}
+
 /** Moves guest rows with per-learner unique keys, keeping the account's on a clash; language levels merge separately. */
 export async function moveKeyedRows(context: GuestLinkContext) {
   await moveLearnerSkills(context);
@@ -106,4 +167,8 @@ export async function moveKeyedRows(context: GuestLinkContext) {
   await moveUsageRecords(context);
   await moveLearnerSources(context);
   await moveLearnerWords(context);
+  await moveMemoryInsights(context);
+  await moveGoalUnderstandings(context);
+  await movePronunciationReviews(context);
+  await moveStepExampleLines(context);
 }

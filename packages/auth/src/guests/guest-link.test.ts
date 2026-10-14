@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
+import { holdTransaction, waitForBlocked } from "./_test-utils/blocked-sessions";
 import {
   createExistingAccount,
   createTestEmail,
@@ -9,7 +10,13 @@ import {
   signInWithPassword,
   signUp,
 } from "./_test-utils/guest-auth";
-import { countLearnerRows, createSkill, seedLearnerData } from "./_test-utils/learner-data";
+import {
+  countLearnerRows,
+  createGoal,
+  createSkill,
+  seedLearnerData,
+} from "./_test-utils/learner-data";
+import { linkGuestAccount } from "./link-guest-account";
 
 /** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
 vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
@@ -18,6 +25,33 @@ const THIRTY_DAYS_MS = 2_592_000_000;
 
 function daysAgo(milliseconds: number) {
   return new Date(Date.now() - milliseconds);
+}
+
+/** The account's revision and the input versions of the plans these goals have. */
+async function readMarks({ goalIds, userId }: { goalIds: string[]; userId: string }) {
+  const [user, plans] = await Promise.all([
+    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
+    prisma.plan.findMany({
+      orderBy: { goalId: "asc" },
+      select: { goalId: true, inputVersion: true },
+      where: { goalId: { in: goalIds } },
+    }),
+  ]);
+
+  return { learnerRevision: user.learnerRevision, plans };
+}
+
+/** An account and a guest, each following a goal with a plan. */
+async function createLearnersWithPlans() {
+  const [account, guest] = await Promise.all([
+    createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
+    signInAsGuest(),
+  ]);
+
+  const goals = await Promise.all([createGoal(account.userId), createGoal(guest.guestId)]);
+  await Promise.all(goals.map((goal) => prisma.plan.create({ data: { goalId: goal.id } })));
+
+  return { account, goalIds: goals.map((goal) => goal.id), guest };
 }
 
 describe("guest accounts", () => {
@@ -48,13 +82,17 @@ describe("guest accounts", () => {
     await expect(countLearnerRows(userId)).resolves.toStrictEqual({
       aiCalls: 1,
       attempts: 1,
+      conversations: 1,
       days: 1,
       drafts: 1,
       events: 1,
+      examResults: 1,
       feedback: 1,
       goals: 1,
       memory: 1,
       milestones: 1,
+      mocks: 1,
+      patterns: 1,
       skills: 1,
       usage: 1,
       votes: 1,
@@ -132,10 +170,14 @@ describe("guest accounts", () => {
 
     await expect(countLearnerRows(account.userId)).resolves.toMatchObject({
       attempts: 2,
+      conversations: 2,
       days: 1,
       drafts: 2,
+      examResults: 2,
       goals: 2,
       milestones: 1,
+      mocks: 2,
+      patterns: 2,
       skills: 1,
       usage: 2,
       votes: 1,
@@ -174,6 +216,67 @@ describe("guest accounts", () => {
     await signInWithOneTimeToken({ email: account.email, guestHeaders: guest.headers });
 
     await expect(countLearnerRows(account.userId)).resolves.toMatchObject({ goals: 1, skills: 1 });
+    await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
+  });
+
+  it("marks the account and every plan the guest's learning feeds as changed", async () => {
+    const { account, goalIds, guest } = await createLearnersWithPlans();
+    const before = await readMarks({ goalIds, userId: account.userId });
+
+    await signInWithPassword({ email: account.email, headers: guest.headers });
+
+    await expect(readMarks({ goalIds, userId: account.userId })).resolves.toStrictEqual({
+      learnerRevision: before.learnerRevision + 1n,
+      plans: before.plans.map((plan) => ({ ...plan, inputVersion: plan.inputVersion + 1 })),
+    });
+  });
+
+  it("changes nothing when another sign-in already moved the guest", async () => {
+    const { account, goalIds, guest } = await createLearnersWithPlans();
+    await signInWithPassword({ email: account.email, headers: guest.headers });
+    const linked = await readMarks({ goalIds, userId: account.userId });
+
+    await linkGuestAccount({ account: { id: account.userId }, guestUserId: guest.guestId });
+
+    await expect(readMarks({ goalIds, userId: account.userId })).resolves.toStrictEqual(linked);
+  });
+
+  it("marks the account before it takes any lock of its own rows", async () => {
+    const { account, guest } = await createLearnersWithPlans();
+
+    // A writer of the account holds its row; the link must wait there, holding nothing else yet.
+    const writing = await holdTransaction(
+      (transaction) =>
+        transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
+    );
+
+    const linking = signInWithPassword({ email: account.email, headers: guest.headers });
+
+    try {
+      await waitForBlocked({ blocker: writing.blocker, count: 1 });
+
+      const [advisory, guestRows] = await Promise.all([
+        prisma.$queryRaw<{ pid: number }[]>`
+          SELECT lock.pid FROM pg_locks AS lock
+          WHERE lock.locktype = 'advisory' AND ${writing.blocker}::int = ANY(pg_blocking_pids(lock.pid))
+        `,
+        prisma.$transaction(
+          (transaction) => transaction.$queryRaw<{ id: string }[]>`
+            SELECT id FROM users WHERE id = ${guest.guestId}::uuid FOR UPDATE SKIP LOCKED
+          `,
+        ),
+      ]);
+
+      expect({ advisory, guestRows: guestRows.length }).toStrictEqual({
+        advisory: [],
+        guestRows: 1,
+      });
+    } finally {
+      writing.release();
+    }
+
+    await writing.held;
+    await linking;
     await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
   });
 });

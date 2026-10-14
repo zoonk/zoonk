@@ -1,5 +1,6 @@
 import { type TransactionClient, prisma, sql } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
+import { waitForBlocked } from "./_test-utils/blocked-sessions";
 import { createExistingAccount, signInAsGuest, signInWithPassword } from "./_test-utils/guest-auth";
 import {
   mergeDailyProgress,
@@ -119,40 +120,6 @@ function merge({
     default:
       throw new Error("Unknown progress table");
   }
-}
-
-async function waitForBlocked({
-  blocker,
-  count,
-  deadline = Date.now() + 4000,
-}: {
-  blocker: number;
-  count: number;
-  deadline?: number;
-}): Promise<void> {
-  const rows = await prisma.$queryRaw<{ waiting: bigint }[]>`
-    WITH RECURSIVE blocked(pid) AS (
-      SELECT pid FROM pg_stat_activity
-      WHERE datname = current_database() AND ${blocker}::int = ANY(pg_blocking_pids(pid))
-      UNION
-      SELECT activity.pid FROM pg_stat_activity activity JOIN blocked ON blocked.pid = ANY(pg_blocking_pids(activity.pid))
-      WHERE activity.datname = current_database()
-    ) SELECT COUNT(*) AS waiting FROM blocked
-  `;
-
-  if (Number(rows[0]?.waiting) >= count) {
-    return;
-  }
-
-  if (Date.now() >= deadline) {
-    throw new Error("Transfers did not reach the held progress rows");
-  }
-
-  await new Promise((resolve) => {
-    setTimeout(resolve, 10);
-  });
-
-  return waitForBlocked({ blocker, count, deadline });
 }
 
 async function holdRows({ table, userIds }: { table: Table; userIds: string[] }) {
