@@ -4,7 +4,8 @@ test.describe("Horizontal Scroll - Category Pills", () => {
   test("scrolls the overflowing pill row sideways only, with a scroll button for each way", async ({
     page,
   }) => {
-    // The categories are a row of chips under `lg` (a list beside the courses from `lg`).
+    // The categories are a row of chips under `lg` (a list beside the courses from `lg`). The E2E
+    // catalog files its courses under more categories than fit this width (`e2e-data.ts`).
     await page.setViewportSize({ height: 1180, width: 820 });
     await page.goto("/courses");
 
