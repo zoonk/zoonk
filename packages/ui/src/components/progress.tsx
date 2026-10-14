@@ -28,7 +28,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       className={cn(
-        "bg-muted relative flex h-3 w-full items-center overflow-x-hidden rounded-4xl",
+        "bg-muted relative flex h-3 w-full items-center overflow-x-hidden rounded-lg",
         className,
       )}
       data-slot="progress-track"
@@ -37,10 +37,14 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   );
 }
 
+/**
+ * The share done, in green (progress made: lessons done, a chapter's way through). A bar that says
+ * where the learner is in a task they're doing passes the text color (`bg-foreground`).
+ */
 function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
-      className={cn("bg-primary h-full transition-all", className)}
+      className={cn("bg-success h-full transition-all", className)}
       data-slot="progress-indicator"
       {...props}
     />

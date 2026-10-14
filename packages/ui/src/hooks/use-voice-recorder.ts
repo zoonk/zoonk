@@ -1,5 +1,6 @@
 "use client";
 
+import { safeAsync } from "@zoonk/utils/error";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useIsMounted } from "./use-is-mounted";
 
@@ -10,7 +11,7 @@ const TICK_MS = 250;
 /** Formats the grader accepts, in the order browsers support them (Chrome, then Safari). */
 const RECORDING_TYPES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
 
-type RecorderStatus = "denied" | "idle" | "recording";
+type RecorderStatus = "acquiring" | "denied" | "idle" | "recording";
 
 type Recording = { audio: Blob; durationMs: number };
 
@@ -32,10 +33,83 @@ function getRecordingType(): string | undefined {
 
 type ActiveRecording = {
   recorder: MediaRecorder;
+  released: boolean;
   startedAt: number;
   stream: MediaStream;
   timeout: ReturnType<typeof setTimeout>;
 };
+
+/** Release the session's own resources before the asynchronous stop event arrives. */
+function finishRecording(active: ActiveRecording) {
+  if (active.released) {
+    return;
+  }
+
+  active.released = true;
+  globalThis.clearTimeout(active.timeout);
+
+  if (active.recorder.state !== "inactive") {
+    active.recorder.stop();
+  }
+
+  active.stream.getTracks().forEach((track) => track.stop());
+}
+
+/** Constructor/start failures still release the microphone, even before a session is ready. */
+async function createRecording({
+  onStopped,
+  stream,
+}: {
+  onStopped: (recording: Recording) => void;
+  stream: MediaStream;
+}): Promise<ActiveRecording | null> {
+  const session: { active: ActiveRecording | null; started: boolean } = {
+    active: null,
+    started: false,
+  };
+
+  const { data: active } = await safeAsync(async () => {
+    const chunks: Blob[] = [];
+    const type = getRecordingType();
+    const recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+
+    const recording: ActiveRecording = {
+      recorder,
+      released: false,
+      startedAt: Date.now(),
+      stream,
+      timeout: globalThis.setTimeout(() => finishRecording(recording), MAX_RECORDING_MS),
+    };
+
+    session.active = recording;
+    recorder.addEventListener("dataavailable", (event) => chunks.push(event.data));
+
+    recorder.addEventListener("stop", () => {
+      finishRecording(recording);
+
+      if (session.started) {
+        onStopped({
+          audio: new Blob(chunks, { type: recorder.mimeType }),
+          durationMs: Date.now() - recording.startedAt,
+        });
+      }
+    });
+
+    recorder.start();
+    session.started = true;
+    return recording;
+  });
+
+  if (!active) {
+    if (session.active) {
+      finishRecording(session.active);
+    } else {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+  }
+
+  return active;
+}
 
 /**
  * Records one spoken answer in the browser. Audio stays in memory and goes only to the grader;
@@ -45,62 +119,81 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const [elapsedMs, setElapsedMs] = useState(0);
   const activeRef = useRef<ActiveRecording | null>(null);
+  const acquisitionRef = useRef<symbol | null>(null);
   const unmountedRef = useRef(false);
 
   const stop = useCallback(() => {
     const active = activeRef.current;
 
-    if (active?.recorder.state === "recording") {
-      active.recorder.stop();
+    if (active) {
+      finishRecording(active);
     }
   }, []);
 
-  /** Starts recording; false when the browser or the learner blocks the microphone. */
-  const start = useCallback(async (): Promise<boolean> => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null);
+  /** False means blocked; null means a busy or departed owner has no new recording to start. */
+  const start = useCallback(async (): Promise<boolean | null> => {
+    if (acquisitionRef.current || unmountedRef.current) {
+      return null;
+    }
 
-    if (!stream) {
+    if (!canRecord()) {
       setStatus("denied");
       return false;
     }
 
-    const chunks: Blob[] = [];
-    const type = getRecordingType();
-    const recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
-    const startedAt = Date.now();
+    const acquisition = Symbol("voice-recording");
+    acquisitionRef.current = acquisition;
+    setStatus("acquiring");
 
-    recorder.addEventListener("dataavailable", (event) => chunks.push(event.data));
+    const { data: stream } = await safeAsync(() =>
+      navigator.mediaDevices.getUserMedia({ audio: true }),
+    );
 
-    recorder.addEventListener("stop", () => {
-      const active = activeRef.current;
-      activeRef.current = null;
-      stream.getTracks().forEach((track) => track.stop());
-      globalThis.clearTimeout(active?.timeout);
+    if (unmountedRef.current || acquisitionRef.current !== acquisition) {
+      stream?.getTracks().forEach((track) => track.stop());
+      return null;
+    }
 
-      if (unmountedRef.current) {
-        return;
-      }
+    if (!stream) {
+      acquisitionRef.current = null;
+      setStatus("denied");
+      return false;
+    }
 
-      setStatus("idle");
+    const active = await createRecording({
+      onStopped: (recording) => {
+        if (unmountedRef.current || acquisitionRef.current !== acquisition) {
+          return;
+        }
 
-      onRecorded({
-        audio: new Blob(chunks, { type: recorder.mimeType }),
-        durationMs: Date.now() - startedAt,
-      });
+        activeRef.current = null;
+        acquisitionRef.current = null;
+        setStatus("idle");
+        onRecorded(recording);
+      },
+      stream,
     });
 
-    activeRef.current = {
-      recorder,
-      startedAt,
-      stream,
-      timeout: globalThis.setTimeout(stop, MAX_RECORDING_MS),
-    };
+    if (unmountedRef.current || acquisitionRef.current !== acquisition) {
+      if (active) {
+        finishRecording(active);
+      }
 
-    recorder.start();
+      return null;
+    }
+
+    if (!active) {
+      acquisitionRef.current = null;
+      setStatus("denied");
+      return false;
+    }
+
+    activeRef.current = active;
+
     setElapsedMs(0);
     setStatus("recording");
     return true;
-  }, [onRecorded, stop]);
+  }, [onRecorded]);
 
   useEffect(() => {
     if (status !== "recording") {
@@ -119,7 +212,15 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
 
     return () => {
       unmountedRef.current = true;
-      activeRef.current?.stream.getTracks().forEach((track) => track.stop());
+      acquisitionRef.current = null;
+      const active = activeRef.current;
+      activeRef.current = null;
+      setStatus("idle");
+      setElapsedMs(0);
+
+      if (active) {
+        finishRecording(active);
+      }
     };
   }, []);
 

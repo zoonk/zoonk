@@ -2,21 +2,16 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import {
-  ProgressIndicator,
-  ProgressRoot,
-  type ProgressRootProps,
-  ProgressTrack,
-  ProgressValue,
-} from "@zoonk/ui/components/progress";
+import { ProgressRoot, type ProgressRootProps, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import { getSegmentFills } from "./_utils/segment-fills";
 
 export type GenerationTimelineStepStatus = "active" | "completed" | "failed" | "pending";
 
 /**
- * A wait for generated content: a header with the progress bar, then one row per phase. It holds
- * no copy; callers pass every label. `data-paused` on it (a lost connection) stops the rows'
+ * A wait for generated content: a header with the progress bar, then one flat row per phase. It
+ * holds no copy; callers pass every label. `data-paused` on it (a lost connection) stops the rows'
  * working animations while their statuses stay as they were.
  */
 function GenerationTimeline({ className, ...props }: React.ComponentProps<"div">) {
@@ -40,21 +35,13 @@ function GenerationTimelineHeader({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * The wait is usually the page's main content, so its title is the page's heading; a wait inside
- * a screen that has its own (`render`, such as `<h2 />`) takes the next level.
+ * The wait is usually the page's main content, so its title is the page's heading, sized as every
+ * page's; a wait inside a screen that has its own (`render`, such as `<h2 />`) takes the next level.
  */
 function GenerationTimelineTitle({ className, render, ...props }: useRender.ComponentProps<"h1">) {
   return useRender({
     defaultTagName: "h1",
-    props: mergeProps<"h1">(
-      {
-        className: cn(
-          "text-2xl leading-tight font-semibold tracking-tight text-balance",
-          className,
-        ),
-      },
-      props,
-    ),
+    props: mergeProps<"h1">({ className: cn("text-title wrap-break-word", className) }, props),
     render,
     state: { slot: "generation-timeline-title" },
   });
@@ -63,7 +50,7 @@ function GenerationTimelineTitle({ className, render, ...props }: useRender.Comp
 function GenerationTimelineDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-muted-foreground text-base text-pretty", className)}
+      className={cn("text-muted-foreground text-sm text-pretty", className)}
       data-slot="generation-timeline-description"
       {...props}
     />
@@ -71,23 +58,44 @@ function GenerationTimelineDescription({ className, ...props }: React.ComponentP
 }
 
 /**
- * The bar with its percentage. `aria-label` names what is being made; pass `locale` so the server
- * and the browser format the percentage the same way.
+ * The bar with its percentage: one segment per phase, as wide as the phase usually takes
+ * (`weights`), so the segments fill in step with the percentage. The ones done are green, the one
+ * running fills as it goes, the rest wait on the track. `aria-label` names what is being made;
+ * pass `locale` so the server and the browser format the percentage the same way.
  */
 function GenerationTimelineProgress({
   className,
+  value,
+  weights,
   ...props
-}: ProgressRootProps & { "aria-label": string }) {
+}: ProgressRootProps & { "aria-label": string; weights: readonly number[] }) {
+  const fills = getSegmentFills({ value: value ?? 0, weights });
+
   return (
     <ProgressRoot
       className={cn("flex-nowrap items-center gap-3", className)}
       data-slot="generation-timeline-progress"
+      value={value}
       {...props}
     >
-      <ProgressTrack className="h-2 flex-1">
-        <ProgressIndicator className="rounded-full duration-700 ease-out motion-reduce:transition-none" />
-      </ProgressTrack>
-      <ProgressValue className="ml-0 min-w-[4ch] text-right font-medium" />
+      <span aria-hidden="true" className="flex h-1 min-w-0 flex-1 gap-[3px]">
+        {fills.map((fill, index) => (
+          <span
+            className="bg-surface-3 flex min-w-0 overflow-hidden rounded-xs"
+            data-slot="generation-timeline-segment"
+            // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
+            key={index}
+            style={{ flexGrow: Math.max(1, weights[index] ?? 1) }}
+          >
+            <span
+              className="bg-success h-full transition-[width] duration-700 ease-out motion-reduce:transition-none"
+              style={{ width: `${fill * 100}%` }}
+            />
+          </span>
+        ))}
+      </span>
+
+      <ProgressValue className="text-muted-foreground ml-0 min-w-[4ch] text-right font-mono text-xs tabular-nums" />
     </ProgressRoot>
   );
 }
@@ -110,7 +118,7 @@ function GenerationTimelineStatus({ className, ...props }: React.ComponentProps<
 function GenerationTimelineSteps({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
-      className={cn("flex flex-col", className)}
+      className={cn("flex flex-col gap-2.5", className)}
       data-slot="generation-timeline-steps"
       {...props}
     />
@@ -118,11 +126,10 @@ function GenerationTimelineSteps({ className, ...props }: React.ComponentProps<"
 }
 
 /**
- * One phase: an indicator, its label and, while it runs, a detail line. The connector to the next
- * row fills in once this phase is done.
+ * One phase as a flat row: its mark, its label and, while it runs, a detail line under it, with its
+ * time at the end when the row has one.
  */
 function GenerationTimelineStep({
-  children,
   className,
   status,
   ...props
@@ -131,60 +138,44 @@ function GenerationTimelineStep({
     <li
       aria-current={status === "active" ? "step" : undefined}
       className={cn(
-        "group/generation-timeline-step relative grid grid-cols-[1.5rem_1fr] gap-x-3 pb-5 last:pb-0",
+        "group/generation-timeline-step grid grid-cols-[1rem_minmax(0,1fr)] gap-x-3 has-data-[slot=generation-timeline-step-time]:grid-cols-[1rem_minmax(0,1fr)_auto]",
         className,
       )}
       data-slot="generation-timeline-step"
       data-status={status}
       {...props}
-    >
-      <span
-        aria-hidden="true"
-        className="bg-border group-data-[status=completed]/generation-timeline-step:bg-foreground absolute top-7 bottom-1 left-3 w-px -translate-x-1/2 group-last/generation-timeline-step:hidden"
-      />
-      {children}
-    </li>
+    />
   );
 }
 
-const indicatorClassName = cn(
-  "relative row-span-2 flex size-6 items-center justify-center rounded-full border-2",
-  "border-muted-foreground/60 border-dashed",
-  "group-data-[status=active]/generation-timeline-step:border-foreground group-data-[status=active]/generation-timeline-step:border-solid",
-  "group-data-[status=completed]/generation-timeline-step:bg-foreground group-data-[status=completed]/generation-timeline-step:text-background group-data-[status=completed]/generation-timeline-step:border-transparent",
-  "group-data-[status=failed]/generation-timeline-step:text-destructive group-data-[status=failed]/generation-timeline-step:border-0",
-);
-
 /**
- * An empty ring while the phase waits, a dot with a soft breathing ring while it runs (still when
- * the timeline is paused or motion is reduced), a check once done and an alert where it stopped.
+ * A quiet ring while the phase waits, a dot in the text color while it runs, a faint check once
+ * done and an alert where it stopped. Level with the label's first line.
  */
 function GenerationTimelineStepIndicator({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       aria-hidden="true"
-      className={cn(indicatorClassName, className)}
+      className={cn("row-span-2 flex h-5 items-center justify-center", className)}
       data-slot="generation-timeline-step-indicator"
       {...props}
     >
-      <span className="animate-breathe border-foreground/30 absolute -inset-0.5 hidden rounded-full border-2 group-data-paused/generation-timeline:animate-none group-data-[status=active]/generation-timeline-step:block motion-reduce:animate-none" />
+      <span className="ring-faint size-2 rounded-full ring-1 group-data-[status=active]/generation-timeline-step:hidden group-data-[status=completed]/generation-timeline-step:hidden group-data-[status=failed]/generation-timeline-step:hidden" />
       <span className="bg-foreground hidden size-2 rounded-full group-data-[status=active]/generation-timeline-step:block" />
-      <CheckIcon className="hidden size-3.5 stroke-3 group-data-[status=completed]/generation-timeline-step:block" />
-      <CircleAlertIcon className="hidden size-6 group-data-[status=failed]/generation-timeline-step:block" />
+      <CheckIcon className="text-faint hidden size-4 group-data-[status=completed]/generation-timeline-step:block" />
+      <CircleAlertIcon className="text-destructive-text hidden size-4 group-data-[status=failed]/generation-timeline-step:block" />
     </span>
   );
 }
 
-/** The phase's name; one line of it sits level with the indicator. */
+/** The phase's name, muted unless it's the one running (or where it stopped). */
 function GenerationTimelineStepLabel({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "col-start-2 text-sm leading-6",
-        "group-data-[status=pending]/generation-timeline-step:text-muted-foreground",
-        "group-data-[status=completed]/generation-timeline-step:text-muted-foreground",
-        "group-data-[status=active]/generation-timeline-step:shimmer group-data-paused/generation-timeline:shimmer-none group-data-[status=active]/generation-timeline-step:font-medium",
-        "group-data-[status=failed]/generation-timeline-step:font-medium",
+        "text-muted-foreground col-start-2 text-sm leading-5",
+        "group-data-[status=active]/generation-timeline-step:text-foreground group-data-[status=active]/generation-timeline-step:shimmer group-data-paused/generation-timeline:shimmer-none group-data-[status=active]/generation-timeline-step:font-medium",
+        "group-data-[status=failed]/generation-timeline-step:text-foreground group-data-[status=failed]/generation-timeline-step:font-medium",
         className,
       )}
       data-slot="generation-timeline-step-label"
@@ -198,10 +189,24 @@ function GenerationTimelineStepDetail({ className, ...props }: React.ComponentPr
   return (
     <span
       className={cn(
-        "text-muted-foreground animate-in fade-in-0 col-start-2 hidden text-sm duration-500 group-data-[status=active]/generation-timeline-step:block motion-reduce:animate-none",
+        "text-muted-foreground col-start-2 hidden text-xs group-data-[status=active]/generation-timeline-step:block",
         className,
       )}
       data-slot="generation-timeline-step-detail"
+      {...props}
+    />
+  );
+}
+
+/** How long the phase took, or has taken so far, in mono at the row's end, level with its label. */
+function GenerationTimelineStepTime({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        "text-muted-foreground col-start-3 row-start-1 font-mono text-xs leading-5 tabular-nums",
+        className,
+      )}
+      data-slot="generation-timeline-step-time"
       {...props}
     />
   );
@@ -217,6 +222,7 @@ export {
   GenerationTimelineStepDetail,
   GenerationTimelineStepIndicator,
   GenerationTimelineStepLabel,
+  GenerationTimelineStepTime,
   GenerationTimelineSteps,
   GenerationTimelineTitle,
 };

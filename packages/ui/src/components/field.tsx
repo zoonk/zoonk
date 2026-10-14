@@ -52,18 +52,21 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-const fieldVariants = cva("group/field data-[invalid=true]:text-destructive flex w-full gap-3", {
-  defaultVariants: { orientation: "vertical" },
-  variants: {
-    orientation: {
-      horizontal:
-        "flex-row items-center has-[>[data-slot=field-content]]:items-start *:data-[slot=field-label]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-      responsive:
-        "flex-col *:w-full @md/field-group:flex-row @md/field-group:items-center @md/field-group:*:w-auto @md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:*:data-[slot=field-label]:flex-auto [&>.sr-only]:w-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-      vertical: "flex-col *:w-full [&>.sr-only]:w-auto",
+const fieldVariants = cva(
+  "group/field data-[invalid=true]:text-destructive-text flex w-full gap-3",
+  {
+    defaultVariants: { orientation: "vertical" },
+    variants: {
+      orientation: {
+        horizontal:
+          "flex-row items-center has-[>[data-slot=field-content]]:items-start *:data-[slot=field-label]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        responsive:
+          "flex-col *:w-full @md/field-group:flex-row @md/field-group:items-center @md/field-group:*:w-auto @md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:*:data-[slot=field-label]:flex-auto [&>.sr-only]:w-auto @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        vertical: "flex-col *:w-full [&>.sr-only]:w-auto",
+      },
     },
   },
-});
+);
 
 function Field({
   className,
@@ -197,7 +200,7 @@ function FieldError({
 
   return (
     <div
-      className={cn("text-destructive text-sm font-normal", className)}
+      className={cn("text-destructive-text text-sm font-normal", className)}
       data-slot="field-error"
       role="alert"
       {...props}
@@ -258,7 +261,7 @@ function FieldDynamicDescription({
           showSuccess ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
         )}
       >
-        <p className="text-success text-sm font-medium">{successMessage}</p>
+        <p className="text-success-text text-sm font-medium">{successMessage}</p>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 const accordionVariants = cva("flex w-full flex-col overflow-hidden", {
   defaultVariants: { variant: "default" },
-  variants: { variant: { default: "rounded-2xl border", ghost: "rounded-none border-0" } },
+  variants: { variant: { default: "rounded-xl border", ghost: "rounded-none border-0" } },
 });
 
 const accordionItemVariants = cva("data-open:bg-muted/50", {

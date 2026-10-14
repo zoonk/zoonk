@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
+import { getLetterKeyIndex, getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
 
 /** Dispatches a key press on an element, so `event.target` is that element as in a browser. */
 function pressOn(target: EventTarget, init: KeyboardEventInit) {
@@ -104,5 +104,48 @@ describe(getNumberKeyIndex, () => {
     expect(
       presses.map((init) => getNumberKeyIndex(new KeyboardEvent("keydown", init))),
     ).toStrictEqual([null, null, null, null, null, null]);
+  });
+});
+
+describe(getLetterKeyIndex, () => {
+  it("maps A to I, in either case, to the first nine options", () => {
+    const keys = ["a", "C", "i"].map((key) =>
+      getLetterKeyIndex(new KeyboardEvent("keydown", { key })),
+    );
+
+    expect(keys).toStrictEqual([0, 2, 8]);
+  });
+
+  it("ignores letters past I, digits, named keys and shortcut chords such as Cmd+A", () => {
+    const presses = [
+      { key: "j" },
+      { key: "1" },
+      { key: "Enter" },
+      { key: "a", metaKey: true },
+      { ctrlKey: true, key: "a" },
+      { altKey: true, key: "a" },
+    ];
+
+    expect(
+      presses.map((init) => getLetterKeyIndex(new KeyboardEvent("keydown", init))),
+    ).toStrictEqual([null, null, null, null, null, null]);
+  });
+});
+
+describe("scrollable question regions", () => {
+  it("leaves arrows to a focused region while preserving screen shortcuts outside it", () => {
+    const region = mount(
+      '<div data-target role="region" tabindex="0"><table><tbody><tr><td>Readings</td></tr></tbody></table></div>',
+    );
+
+    const cell = region.querySelector("td");
+
+    if (!cell) {
+      throw new Error("The table cell is missing.");
+    }
+
+    expect(isScreenShortcut(pressOn(region, { key: "ArrowRight" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(cell, { key: "ArrowLeft" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(document.body, { key: "ArrowRight" }))).toBe(true);
   });
 });

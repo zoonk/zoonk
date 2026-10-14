@@ -148,7 +148,7 @@ export function ListItemStatusCompleted({ className, ...props }: React.Component
   return (
     <span
       className={cn(
-        "text-success mt-0.5 flex size-4 shrink-0 items-center justify-center",
+        "text-success-text mt-0.5 flex size-4 shrink-0 items-center justify-center",
         className,
       )}
       data-slot="list-item-status"

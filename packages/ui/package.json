@@ -21,7 +21,6 @@
     "./hooks/tick-count": "./src/hooks/use-tick-count.ts",
     "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",
     "./lib/*": "./src/lib/*.ts",
-    "./patterns/auth/protected": "./src/patterns/auth/protected-section.tsx",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
     "./patterns/error": "./src/patterns/error-view.tsx",
     "./postcss.config": "./postcss.config.mjs"

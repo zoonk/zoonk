@@ -199,7 +199,7 @@ function getToastIcon(type: string | undefined): ReactNode {
   }
 
   if (type === "error") {
-    return <OctagonXIcon aria-hidden="true" className="text-destructive" />;
+    return <OctagonXIcon aria-hidden="true" className="text-destructive-text" />;
   }
 
   if (type === "loading") {

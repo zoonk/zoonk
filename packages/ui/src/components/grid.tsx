@@ -85,7 +85,7 @@ const gridGroupVariants = cva("grid sm:gap-4", {
   variants: {
     variant: {
       default: cn(
-        "max-sm:bg-card max-sm:ring-foreground/10 grid-cols-1 max-sm:overflow-hidden max-sm:rounded-2xl max-sm:ring-1 sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))]",
+        "grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] max-sm:[&>*+*]:border-t",
       ),
       pane: "gap-3 sm:grid-cols-2 xl:grid-cols-3",
     },
@@ -137,8 +137,8 @@ export function GridItem({ className, render, ...props }: useRender.ComponentPro
       {
         className: cn(
           "group/grid-item focus-visible:border-ring focus-visible:ring-ring/50 flex h-full w-full min-w-0 outline-none focus-visible:ring-[3px]",
-          "max-sm:hover:bg-muted/50 items-center gap-4 px-4 transition-colors max-sm:focus-visible:ring-inset",
-          "sm:bg-background sm:dark:bg-card sm:dark:ring-border/50 sm:dark:hover:ring-border sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-3xl sm:p-4 sm:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)] sm:transition-all sm:duration-150 sm:hover:-translate-y-0.5 sm:hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_14px_36px_rgb(0_0_0/0.08)] sm:motion-reduce:hover:translate-y-0 sm:dark:shadow-[0_1px_2px_rgb(0_0_0/0.35),0_16px_40px_rgb(0_0_0/0.3)] sm:dark:ring-1 sm:dark:hover:shadow-[0_2px_4px_rgb(0_0_0/0.45),0_20px_52px_rgb(0_0_0/0.42)]",
+          "items-center gap-3 transition-colors max-sm:rounded-lg max-sm:focus-visible:ring-inset",
+          "sm:bg-card sm:ring-border sm:hover:ring-input sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-xl sm:p-4 sm:ring-1 sm:transition-[--tw-ring-color] sm:duration-150",
           className,
         ),
       },
@@ -157,7 +157,7 @@ export function GridItemMedia({ className, ...props }: React.ComponentProps<"div
   return (
     <div
       className={cn(
-        "flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl max-sm:bg-white max-sm:ring-1 max-sm:ring-black/5 sm:mx-auto sm:size-28 sm:rounded-[1.75rem] dark:max-sm:ring-white/10 [&_img]:size-full [&_img]:object-contain",
+        "rounded-option flex size-12 shrink-0 items-center justify-center overflow-hidden max-sm:bg-white max-sm:ring-1 max-sm:ring-black/5 sm:mx-auto sm:size-28 sm:rounded-2xl dark:max-sm:ring-white/10 [&_img]:size-full [&_img]:object-contain",
         className,
       )}
       data-slot="grid-item-media"
@@ -188,7 +188,7 @@ export function GridItemTitle({ className, ...props }: React.ComponentProps<"div
   return (
     <div
       className={cn(
-        "line-clamp-2 text-[0.9375rem] leading-snug font-semibold text-balance sm:text-lg sm:leading-tight sm:font-bold",
+        "line-clamp-2 text-[0.9375rem] leading-snug font-semibold text-balance sm:text-base sm:leading-tight sm:tracking-[-0.01em]",
         className,
       )}
       data-slot="grid-item-title"
@@ -233,7 +233,7 @@ export function GridSkeleton({
         // oxlint-disable-next-line eslint/no-array-index-key -- Static skeleton placeholders.
         <GridGroupItem key={index}>
           <GridItem>
-            <Skeleton className="size-16 shrink-0 rounded-2xl sm:mx-auto sm:size-28 sm:rounded-3xl" />
+            <Skeleton className="rounded-option size-12 shrink-0 sm:mx-auto sm:size-28 sm:rounded-2xl" />
             <div className="flex flex-1 flex-col items-start gap-2 py-3.5 sm:pt-3 sm:pb-0">
               <Skeleton className="h-5 w-3/5" />
               <Skeleton className="h-4 w-full" />
