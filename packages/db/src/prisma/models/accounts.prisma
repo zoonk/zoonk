@@ -17,6 +17,7 @@ model User {
   /// Guests are anonymous Better Auth users. Their progress moves to the account they sign up with,
   /// and guests with no activity for 30 days are deleted.
   isAnonymous           Boolean                   @default(false) @map("is_anonymous")
+  learnerRevision       BigInt                    @default(0) @map("learner_revision")
   username              String?
   displayUsername       String?                   @map("display_username")
   sessions              Session[]
