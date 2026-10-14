@@ -1,3 +1,12 @@
+/**
+ * Every app importing cached core reads must register the same named profiles.
+ * @public App build configuration consumes this supported profile contract.
+ */
+export const CACHE_LIFE_PROFILES = {
+  catalog: { expire: 86_400, revalidate: 600, stale: 300 },
+  learner: { stale: 900 },
+};
+
 export const COURSE_LIST_CACHE_TAG = "catalog-courses";
 
 /** Identifies every cached view of one course without coupling callers to tag formatting. */

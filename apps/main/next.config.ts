@@ -1,5 +1,6 @@
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs/config";
+import { CACHE_LIFE_PROFILES } from "@zoonk/core/cache-tags";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { withBotId } from "botid/next/config";
@@ -63,6 +64,7 @@ const movedPageRedirects = localePrefixes.flatMap((prefix) => [
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
+  cacheLife: { ...CACHE_LIFE_PROFILES },
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {

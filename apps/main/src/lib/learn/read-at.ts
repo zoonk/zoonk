@@ -1,4 +1,5 @@
 import "server-only";
+import { cacheLife } from "next/cache";
 
 /**
  * When the page's private reads ran, in milliseconds since the epoch. Read inside the same private
@@ -7,5 +8,6 @@ import "server-only";
  */
 export async function getReadAt(): Promise<number> {
   "use cache: private";
+  cacheLife({ stale: Infinity });
   return Date.now();
 }
