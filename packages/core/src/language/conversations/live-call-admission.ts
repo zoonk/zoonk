@@ -13,6 +13,8 @@ import {
   liveCallAdmissionInputSchema,
 } from "./live-call-admission-contract";
 
+const ADMIN_CONNECTIONS = 100;
+
 export async function getLiveCallAdmission() {
   const access = await getAdminAccess();
 
@@ -23,15 +25,31 @@ export async function getLiveCallAdmission() {
   await io();
   const now = new Date();
 
-  const [setting, connections, cleanupHealthy] = await Promise.all([
+  const [setting, unresolved, estimated, cleanupHealthy] = await Promise.all([
     prisma.liveCallSetting.findUnique({ where: { id: LIVE_CALL_SETTING_ID } }),
     prisma.liveCallConnection.findMany({
       orderBy: { deadlineAt: "asc" },
-      take: 100,
+      take: ADMIN_CONNECTIONS,
       where: { state: { not: "closed" } },
+    }),
+    prisma.liveCallConnection.findMany({
+      orderBy: { closedAt: "desc" },
+      take: ADMIN_CONNECTIONS,
+      where: { costConfidence: "estimated", state: "closed" },
     }),
     isLiveCallCleanupHealthy({ now, transaction: prisma }),
   ]);
+
+  /**
+   * Unresolved rows first, then the latest settled by estimate, which no provider confirmed. A
+   * settlement landing between the two reads shows a row in both: its settled copy wins.
+   */
+  const settledIds = new Set(estimated.map(({ id }) => id));
+
+  const connections = [...unresolved.filter(({ id }) => !settledIds.has(id)), ...estimated].slice(
+    0,
+    ADMIN_CONNECTIONS,
+  );
 
   return {
     cleanupHealthy,

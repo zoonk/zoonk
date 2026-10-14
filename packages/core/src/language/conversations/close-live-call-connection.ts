@@ -7,9 +7,10 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../entitlements/limits";
-import { canSettleWithoutProvider, getLiveCallLiability } from "./_utils/live-call-policy";
+import { canSettleByEstimate, getLiveCallLiability } from "./_utils/live-call-policy";
 import {
   accrueLiveCallLiability,
+  reopenEstimatedLiveCall,
   settleEstimatedLiveCall,
   settleLiveCall,
 } from "./_utils/settle-live-call";
@@ -69,10 +70,12 @@ export async function closeLiveCallConnection({
       where: { id: connectionId },
     });
 
-    if (canSettleWithoutProvider({ connection, now })) {
+    if (canSettleByEstimate({ connection, now })) {
+      /** A session that ran keeps its learner's whole held time; one without an ID never ran. */
       await settleEstimatedLiveCall({
         connection,
         now,
+        seconds: connection.providerSessionId === null ? null : connection.heldSeconds,
         settledMicros: getLiveCallLiability({ connection, now }),
         transaction,
       });
@@ -109,27 +112,43 @@ export async function closeLiveCallConnection({
       return { status: "stale" as const };
     }
 
-    if (current.state === "closed") {
+    const seconds =
+      result.data?.status === "closed" &&
+      Number.isFinite(result.data.seconds) &&
+      result.data.seconds >= 0
+        ? result.data.seconds
+        : null;
+
+    /** A receipt for a row settled by estimate in the meantime replaces that estimate, once. */
+    const settledByEstimate =
+      current.state === "closed" &&
+      current.costConfidence === "estimated" &&
+      current.providerSessionId === providerSessionId;
+
+    if (current.state === "closed" && (seconds === null || !settledByEstimate)) {
       return { status: "closed" as const };
     }
 
     const now = new Date();
 
-    if (
-      result.data?.status === "closed" &&
-      Number.isFinite(result.data.seconds) &&
-      result.data.seconds >= 0
-    ) {
-      await settleLiveCall({ connection: current, now, seconds: result.data.seconds, transaction });
-
-      return {
-        confirmedSeconds: Math.max(LIVE_CALL_INITIALIZATION_SECONDS, result.data.seconds),
-        status: "closed" as const,
-      };
+    if (seconds === null) {
+      await accrueLiveCallLiability({ connection: current, now, transaction });
+      return { status: "closing" as const };
     }
 
-    await accrueLiveCallLiability({ connection: current, now, transaction });
-    return { status: "closing" as const };
+    const settling = settledByEstimate
+      ? await transaction.liveCallConnection.update({
+          data: reopenEstimatedLiveCall(current),
+          where: { id: current.id },
+        })
+      : current;
+
+    await settleLiveCall({ connection: settling, now, seconds, transaction });
+
+    return {
+      confirmedSeconds: Math.max(LIVE_CALL_INITIALIZATION_SECONDS, seconds),
+      status: "closed" as const,
+    };
   });
 
   revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);

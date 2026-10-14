@@ -44,8 +44,16 @@ const endReasonLabels: Record<NonNullable<LiveCallConnectionRow["endReason"]>, s
   timerFailed: "Closing: deadline timer failed",
 };
 
-/** The one thing worth knowing about a row, the exhausted retries first. */
+/** The one thing worth knowing about a row: an estimate in place of a receipt, then exhausted retries. */
 function ConnectionNote({ connection }: { connection: LiveCallConnectionRow }) {
+  if (connection.state === "closed") {
+    return (
+      <span>
+        Settled by estimate {connection.closedAt ? formatDateTime(connection.closedAt) : null}
+      </span>
+    );
+  }
+
   if (connection.recoveryUnconfirmedAt) {
     return (
       <span className="text-destructive-text">
@@ -88,7 +96,10 @@ function ConnectionRow({ connection }: { connection: LiveCallConnectionRow }) {
       </TableCell>
       <TableCell className="text-right tabular-nums">{connection.closeAttempts}</TableCell>
       <TableCell className="text-right tabular-nums">
-        {formatUsd(connection.liabilityMicros / MICROS_PER_DOLLAR)}
+        {formatUsd(
+          (connection.state === "closed" ? connection.settledMicros : connection.liabilityMicros) /
+            MICROS_PER_DOLLAR,
+        )}
         <span className="text-muted-foreground ms-1.5 text-xs">{connection.costConfidence}</span>
       </TableCell>
       <TableCell className="font-mono text-xs">{connection.providerSessionId ?? "None"}</TableCell>
@@ -164,12 +175,12 @@ export async function LiveCallSections() {
       </AdminSection>
 
       <AdminSection
-        description="Connections the provider hasn't confirmed closed, earliest deadline first (up to 100)."
-        title="Open connections"
+        description="Connections the provider hasn't confirmed closed: open ones by earliest deadline, then the latest settled by estimate (up to 100)."
+        title="Unconfirmed connections"
       >
         <AdminTableColumns
           columns={columns}
-          emptyLabel="No open connections."
+          emptyLabel="Every connection is confirmed closed."
           isEmpty={controls.connections.length === 0}
         >
           {controls.connections.map((connection) => (

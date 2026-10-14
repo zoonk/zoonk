@@ -1,4 +1,7 @@
-import { LIVE_CALL_CREATE_TIMEOUT_MS } from "@zoonk/ai/tasks/v2/language/live-call-creation";
+import {
+  LIVE_CALL_CREATE_TIMEOUT_MS,
+  LIVE_SESSION_ESTIMATED_MAX_SECONDS,
+} from "@zoonk/ai/tasks/v2/language/live-call-creation";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { type LiveCallConnection, type TransactionClient } from "@zoonk/db";
 import { LIVE_CALL_HEALTH_THRESHOLD_MS, getLiveCallCostMicros } from "../../../entitlements/limits";
@@ -46,31 +49,42 @@ const SYSTEMIC_CLEANUP_FAILURE_LEARNERS = 3;
 /** Twice the adapter's abort: no creation request is still waiting on the provider. */
 const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
 
+/** When a session is taken to be over: its estimated longest run after creation. */
+const SESSION_SETTLED_MS = LIVE_SESSION_ESTIMATED_MAX_SECONDS * 1000 + CREATION_SETTLED_MS;
+
+/** The most a provider session is taken to bill: its longest run. */
+const LONGEST_SESSION_MICROS = getLiveCallCostMicros(LIVE_SESSION_ESTIMATED_MAX_SECONDS);
+
 function cleanupBlockingDeadline(now: Date): Date {
   return new Date(now.getTime() - LIVE_CALL_HEALTH_THRESHOLD_MS);
 }
 
+function settledAfterMs(connection: LiveCallConnection): number {
+  return connection.providerSessionId === null ? CREATION_SETTLED_MS : SESSION_SETTLED_MS;
+}
+
 /**
- * A connection without a provider ID can never be confirmed closed. Past its deadline, once its
- * creation request is over, it closes and keeps its liability as the estimate. A browser that never
- * got the answer can't connect, so such a session never starts running; OpenAI bills one that
- * hasn't started for its 15-second initialization, far below the reservation kept. An ID that still
- * turns up opens the row again (`persistLiveCallSession`).
+ * When no close can confirm a session anymore, it settles by estimate.
+ * - Without a provider ID: past its deadline, once its creation request is over. The browser never
+ *   got the answer, so the session can't start running, and OpenAI bills one that hasn't started
+ *   for its 15-second initialization, far below the reservation kept. An ID that still turns up
+ *   opens the row again (`persistLiveCallSession`).
+ * - With one: once its longest run is over, keeping that whole run's cost. A receipt that still
+ *   comes replaces the estimate (`closeLiveCallConnection`).
  */
-export function canSettleWithoutProvider({
+export function canSettleByEstimate({
   connection,
   now,
 }: {
   connection: LiveCallConnection;
   now: Date;
 }): boolean {
-  if (connection.providerSessionId !== null) {
-    return false;
-  }
+  const startedAt = (connection.providerStartedAt ?? connection.createdAt).getTime();
 
-  const startedAt = connection.providerStartedAt ?? connection.createdAt;
-
-  return now >= connection.deadlineAt && now.getTime() >= startedAt.getTime() + CREATION_SETTLED_MS;
+  return (
+    (connection.providerSessionId !== null || now >= connection.deadlineAt) &&
+    now.getTime() >= startedAt + settledAfterMs(connection)
+  );
 }
 
 /** The displayed flags and the systemic admission guard share one deadline and state policy. */
@@ -84,11 +98,20 @@ export function getLiveCallAdminHealth({
   return {
     cleanupBlocking:
       POSSIBLY_BILLING_STATES.some((state) => state === connection.state) &&
-      connection.deadlineAt < cleanupBlockingDeadline(now),
+      connection.deadlineAt < cleanupBlockingDeadline(now) &&
+      !canSettleByEstimate({ connection, now }),
     overdue: connection.state !== "closed" && connection.deadlineAt < now,
   };
 }
 
+function startedAfter(cutoff: Date) {
+  return [
+    { providerStartedAt: { gt: cutoff } },
+    { createdAt: { gt: cutoff }, providerStartedAt: null },
+  ];
+}
+
+/** The SQL form of `getLiveCallAdminHealth`: settling by estimate already bounds a row's cost. */
 export async function isLiveCallCleanupHealthy({
   transaction,
   now,
@@ -99,6 +122,16 @@ export async function isLiveCallCleanupHealthy({
   const stuckLearners = await transaction.liveCallConnection.groupBy({
     by: ["userId"],
     where: {
+      OR: [
+        {
+          OR: startedAfter(new Date(now.getTime() - CREATION_SETTLED_MS)),
+          providerSessionId: null,
+        },
+        {
+          OR: startedAfter(new Date(now.getTime() - SESSION_SETTLED_MS)),
+          providerSessionId: { not: null },
+        },
+      ],
       deadlineAt: { lt: cleanupBlockingDeadline(now) },
       state: { in: [...POSSIBLY_BILLING_STATES] },
     },
@@ -107,7 +140,10 @@ export async function isLiveCallCleanupHealthy({
   return stuckLearners.length < SYSTEMIC_CLEANUP_FAILURE_LEARNERS;
 }
 
-/** Liability keeps accruing after failed shutdown; the intended deadline is never a cost cap. */
+/**
+ * Liability keeps accruing after failed shutdown, up to the longest run a session can bill; the
+ * intended deadline is never a cost cap.
+ */
 export function getLiveCallLiability({
   connection,
   now,
@@ -123,10 +159,10 @@ export function getLiveCallLiability({
     return connection.liabilityMicros;
   }
 
+  const elapsedSeconds = Math.ceil((now.getTime() - connection.providerStartedAt.getTime()) / 1000);
+
   return Math.max(
     connection.liabilityMicros,
-    getLiveCallCostMicros(
-      Math.ceil((now.getTime() - connection.providerStartedAt.getTime()) / 1000),
-    ),
+    Math.min(getLiveCallCostMicros(elapsedSeconds), LONGEST_SESSION_MICROS),
   );
 }

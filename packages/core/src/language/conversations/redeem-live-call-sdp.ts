@@ -60,6 +60,7 @@ async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<v
     await settleEstimatedLiveCall({
       connection: current,
       now: new Date(),
+      seconds: null,
       settledMicros: getLiveCallCostMicros(0),
       transaction,
     });

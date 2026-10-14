@@ -7,7 +7,7 @@ import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../../entitlements/limits";
 import { isPlusOnlyLiveCall } from "./live-call-plus";
 import { readLiveCallAdmission } from "./live-call-policy";
-import { settleLiveCall } from "./settle-live-call";
+import { reopenEstimatedLiveCall, settleLiveCall } from "./settle-live-call";
 
 const PERSISTENCE_ATTEMPTS = 3;
 
@@ -84,14 +84,7 @@ function persistedConnectionData({
   providerSessionId: string;
 }) {
   if (isClosedWithoutProvider(current)) {
-    return {
-      closedAt: null,
-      costConfidence: "unconfirmed" as const,
-      liabilityMicros: current.settledMicros,
-      providerSessionId,
-      settledMicros: 0,
-      state: "closing" as const,
-    };
+    return { ...reopenEstimatedLiveCall(current), providerSessionId };
   }
 
   if (current.state === "closed") {

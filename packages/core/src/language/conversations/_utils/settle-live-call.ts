@@ -102,17 +102,19 @@ export async function settleLiveCall({
 }
 
 /**
- * Without a provider ID no close can confirm the cost: the learner never had the call, so their
- * time returns, while the estimate stays charged in case the provider billed it.
+ * No close can confirm the cost anymore, so the estimate stays charged in case the provider billed
+ * it. `seconds` is the learner time to keep: none for a call they never had.
  */
 export async function settleEstimatedLiveCall({
   connection,
   now,
+  seconds,
   settledMicros,
   transaction,
 }: {
   connection: LiveCallConnection;
   now: Date;
+  seconds: number | null;
   settledMicros: number;
   transaction: TransactionClient;
 }): Promise<void> {
@@ -120,10 +122,24 @@ export async function settleEstimatedLiveCall({
     connection,
     costConfidence: "estimated",
     now,
-    seconds: null,
+    seconds,
     settledMicros,
     transaction,
   });
+}
+
+/**
+ * Provider evidence for a row settled by estimate: the estimate is owed again as liability until
+ * the receipt settles it, so the free day and usage move by the difference exactly once.
+ */
+export function reopenEstimatedLiveCall(connection: LiveCallConnection) {
+  return {
+    closedAt: null,
+    costConfidence: "unconfirmed" as const,
+    liabilityMicros: connection.settledMicros,
+    settledMicros: 0,
+    state: "closing" as const,
+  };
 }
 
 export async function accrueLiveCallLiability({

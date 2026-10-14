@@ -227,6 +227,7 @@ async function reserveCallLedger({
       budgetMicros: budget,
       costMicros: reservedMicros,
       day: freeSpendDay,
+      now,
       transaction,
     }))
   ) {

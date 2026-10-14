@@ -2,7 +2,10 @@ import { randomUUID } from "node:crypto";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
-import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
+import {
+  LIVE_SESSION_ESTIMATED_MAX_SECONDS,
+  LiveCallCreationRefusedError,
+} from "@zoonk/ai/tasks/v2/language/live-call-creation";
 import {
   closeLiveCallSession,
   createLiveCallSession,
@@ -50,6 +53,10 @@ vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
 
 const SETTINGS = { admission: "all" as const, freeDailyBudgetMicros: 150_000_000 };
 const OFFER = "v=0\r\ns=learner-offer\r\n";
+/** A provider session's longest possible run plus its creation window, after which it is over. */
+const SESSION_SETTLED_MS = (LIVE_SESSION_ESTIMATED_MAX_SECONDS + 60) * 1000;
+/** The longest possible run's cost: checks plus two hours at $0.05 a minute. */
+const LONGEST_SESSION_MICROS = 6_010_000;
 const ANSWER = "v=0\r\ns=provider-answer\r\n";
 
 /** The API's durable Workflow-start boundary; a receipt is required before provider creation. */
@@ -2006,6 +2013,251 @@ describe("server-owned live-call reservation and cleanup", () => {
     await expect(
       usage({ conversationId: paused.conversation.id, userId: paused.user.id }),
     ).resolves.toBeNull();
+  });
+
+  it("settles a provider session no close can confirm at its longest possible run, and it stops pausing calls", async () => {
+    const [stuck, second, third, learner, admin] = await Promise.all([
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture({ role: "admin" }),
+    ]);
+
+    mockSession(stuck.user.id);
+    const setup = await reserve(stuck.conversation.id);
+    await redeem({ connectionId: setup.connectionId, conversationId: stuck.conversation.id });
+    const startedAt = Date.now();
+    vi.mocked(closeLiveCallSession).mockRejectedValue(new Error("Sideband attach failed"));
+
+    await expect(
+      closeLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closing" });
+
+    await Promise.all(
+      [second, third].map(({ conversation, user }) =>
+        liveCallHistoryFixture({
+          closedAt: null,
+          conversationId: conversation.id,
+          deadlineAt: new Date(setup.deadlineAt),
+          liabilityMicros: 135_000,
+          providerSessionId: `live_${randomUUID()}`,
+          providerStartedAt: new Date(startedAt),
+          state: "closing",
+          userId: user.id,
+        }),
+      ),
+    );
+
+    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 301_000));
+    mockSession(learner.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: learner.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toStrictEqual({ status: "callsPaused" });
+
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS + 1000));
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: learner.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    vi.mocked(closeLiveCallSession).mockClear();
+    await recoverLiveCalls();
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costConfidence: "estimated",
+      liabilityMicros: 0,
+      settledMicros: LONGEST_SESSION_MICROS,
+      state: "closed",
+    });
+
+    expect(closeLiveCallSession).not.toHaveBeenCalled();
+
+    await expect(
+      usage({ conversationId: stuck.conversation.id, userId: stuck.user.id }),
+    ).resolves.toMatchObject({ costMicros: LONGEST_SESSION_MICROS, seconds: 120 });
+
+    await expect(
+      prisma.liveCallSlot.findUnique({ where: { userId: stuck.user.id } }),
+    ).resolves.toMatchObject({ connectionId: null });
+
+    mockLiveCallAdminSession(admin.user);
+    const admission = await getLiveCallAdmission();
+
+    if (admission.status !== "ready") {
+      throw new Error("Admin admission read was not authorized");
+    }
+
+    expect(admission.connections).toContainEqual(
+      expect.objectContaining({
+        cleanupBlocking: false,
+        costConfidence: "estimated",
+        id: setup.connectionId,
+        settledMicros: LONGEST_SESSION_MICROS,
+        state: "closed",
+      }),
+    );
+  });
+
+  it("counts unsettled calls' unposted cost against the shared free day once they stop pausing calls", async () => {
+    const [first, second, third, free, plus] = await Promise.all([
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture({ plus: true }),
+    ]);
+
+    const startedAt = Date.now();
+    vi.mocked(closeLiveCallSession).mockRejectedValue(new Error("Sideband attach failed"));
+
+    for (const stuck of [first, second, third]) {
+      mockSession(stuck.user.id);
+      // oxlint-disable-next-line no-await-in-loop -- Each learner's call starts and fails to close in turn.
+      const setup = await reserve(stuck.conversation.id);
+      // oxlint-disable-next-line no-await-in-loop -- Redemption follows its own reservation.
+      await redeem({ connectionId: setup.connectionId, conversationId: stuck.conversation.id });
+
+      // oxlint-disable-next-line no-await-in-loop -- The failed close posts the reservation's liability.
+      await closeLiveCallConnection({
+        connectionId: setup.connectionId,
+        generation: setup.generation,
+      });
+    }
+
+    await prisma.liveCallSetting.update({
+      data: { freeDailyBudgetMicros: 5_000_000 },
+      where: { id: "live" },
+    });
+
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS + 1000));
+    mockSession(free.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: free.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ limit: { period: "day" }, status: "limitReached" });
+
+    mockSession(plus.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: plus.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("replaces an estimate with the provider's receipt exactly once when a close confirms after the sweep settled it", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const setup = await reserve(conversation.id);
+    await redeem({ connectionId: setup.connectionId, conversationId: conversation.id });
+    const startedAt = Date.now();
+    const closeStarted = Promise.withResolvers<boolean>();
+    const receipt = Promise.withResolvers<{ reason: string; seconds: number; status: "closed" }>();
+
+    vi.mocked(closeLiveCallSession).mockImplementationOnce(() => {
+      closeStarted.resolve(true);
+      return receipt.promise;
+    });
+
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS - 10_000));
+
+    const ending = closeLiveCallConnection({
+      connectionId: setup.connectionId,
+      generation: setup.generation,
+      reason: "completion",
+    });
+
+    await closeStarted.promise;
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS + 1000));
+
+    await expect(
+      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closed" });
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costConfidence: "estimated",
+      settledMicros: LONGEST_SESSION_MICROS,
+      state: "closed",
+    });
+
+    receipt.resolve({ reason: "expired", seconds: 3000, status: "closed" });
+    await expect(ending).resolves.toStrictEqual({ status: "closed" });
+    const reconciled = await connection(setup.connectionId);
+
+    expect(reconciled).toMatchObject({
+      costConfidence: "confirmed",
+      liabilityMicros: 0,
+      settledMicros: 2_510_000,
+      state: "closed",
+    });
+
+    await expect(
+      closeLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closed" });
+
+    expect(closeLiveCallSession).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.freeCallSpendDay.findUnique({ where: { day: reconciled.freeSpendDay! } }),
+    ).resolves.toMatchObject({ spentMicros: 2_510_000 });
+
+    await expect(
+      usage({ conversationId: conversation.id, userId: user.id }),
+    ).resolves.toMatchObject({ costMicros: 2_510_000, seconds: 120 });
+  });
+
+  it("settles an unconfirmable provider session once when the sweep and the learner's end race past its longest run", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const setup = await reserve(conversation.id);
+    await redeem({ connectionId: setup.connectionId, conversationId: conversation.id });
+    const startedAt = Date.now();
+    vi.mocked(closeLiveCallSession).mockRejectedValue(new Error("Sideband attach failed"));
+    vi.setSystemTime(new Date(startedAt + SESSION_SETTLED_MS + 1000));
+
+    await expect(
+      Promise.all([
+        recoverLiveCallConnection({
+          connectionId: setup.connectionId,
+          generation: setup.generation,
+        }),
+        closeLiveCallConnection({
+          connectionId: setup.connectionId,
+          generation: setup.generation,
+          reason: "completion",
+        }),
+      ]),
+    ).resolves.toStrictEqual([{ status: "closed" }, { status: "closed" }]);
+
+    const settled = await connection(setup.connectionId);
+
+    expect(settled).toMatchObject({
+      costConfidence: "estimated",
+      settledMicros: LONGEST_SESSION_MICROS,
+      state: "closed",
+    });
+
+    await expect(
+      prisma.freeCallSpendDay.findUnique({ where: { day: settled.freeSpendDay! } }),
+    ).resolves.toMatchObject({ spentMicros: LONGEST_SESSION_MICROS });
+
+    await expect(
+      usage({ conversationId: conversation.id, userId: user.id }),
+    ).resolves.toMatchObject({ costMicros: LONGEST_SESSION_MICROS, seconds: 120 });
+
+    expect(closeLiveCallSession).not.toHaveBeenCalled();
   });
 
   it("takes over another call only after its server-confirmed close", async () => {
