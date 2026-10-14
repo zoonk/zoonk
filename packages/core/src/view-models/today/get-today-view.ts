@@ -36,6 +36,7 @@ import { getOnboarding } from "../onboarding/get-onboarding";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
+import { toWeeklyChallenge } from "./_utils/weekly-challenge-view";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
@@ -116,6 +117,8 @@ export type TodayView = {
   studiedToday: boolean;
   /** A course the learner was taking before goals existed, offered as another goal to plan. */
   suggestedGoal: SuggestedGoalView | null;
+  /** The authenticated viewer who produced this read, retained across delayed delivery. */
+  userId: string;
   weeklyChallenge: TodayWeeklyChallenge | null;
 };
 
@@ -273,26 +276,6 @@ async function loadSessionDay({
   return { exam, lessonStates, shortPlan, studied, studySession };
 }
 
-function toWeeklyChallenge(
-  result: Awaited<ReturnType<typeof getWeeklyChallenge>>,
-): TodayWeeklyChallenge | null {
-  if (result.status !== "ready" || !result.challenge) {
-    return null;
-  }
-
-  const { challenge } = result;
-
-  return {
-    access: challenge.access,
-    date: challenge.date,
-    kind: challenge.kind,
-    planItemId: challenge.planItemId,
-    questions: challenge.questions,
-    timeLimitMinutes: challenge.conditions?.timeLimitMinutes ?? null,
-    title: challenge.title,
-  };
-}
-
 /** The first of an exam goal's choices the learner hasn't picked, if any (see `TodayView`). */
 async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
@@ -425,6 +408,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
       shortPlan,
       studiedToday: studied || studySession.minutes.done > 0,
       suggestedGoal,
+      userId,
       weeklyChallenge: toWeeklyChallenge(around.challenge),
     },
   };

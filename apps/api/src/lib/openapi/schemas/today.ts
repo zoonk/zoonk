@@ -123,6 +123,12 @@ export const todayResponseSchema = z
         description:
           "A course the learner was taking before goals existed, offered as another goal to plan until it's answered",
       }),
+    userId: z
+      .uuid()
+      .meta({
+        description:
+          "The authenticated viewer who produced this response. Discard a delayed response if that learner is no longer current.",
+      }),
     weeklyChallenge: z
       .object({
         access: z.enum(["open", "plusRequired"]),

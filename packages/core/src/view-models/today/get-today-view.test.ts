@@ -97,6 +97,35 @@ describe(getTodayView, () => {
     });
   });
 
+  it("keeps a delayed Today response bound to its original viewer after an account switch", async () => {
+    const first = await setup();
+    const firstToday = await readReadyToday();
+    const delivery = Promise.withResolvers<boolean>();
+    // Hold network delivery after A's real read; each request keeps its own auth boundary.
+    const pendingFirst = delivery.promise.then(() => firstToday);
+
+    const second = await setup();
+    const secondToday = await readReadyToday();
+    delivery.resolve(true);
+    const delayedFirst = await pendingFirst;
+
+    expect(delayedFirst).toMatchObject({
+      goal: { id: first.goal.id },
+      session: { goalId: first.goal.id },
+      userId: first.user.id,
+    });
+
+    expect(secondToday).toMatchObject({
+      goal: { id: second.goal.id },
+      session: { goalId: second.goal.id },
+      userId: second.user.id,
+    });
+
+    expect(first.user.id).not.toBe(second.user.id);
+    expect(delayedFirst?.session.id).not.toBe(secondToday?.session.id);
+    expect(delayedFirst?.session.missions).toStrictEqual(firstToday?.session.missions);
+  });
+
   it("shows the active goal's countdown, status and today's session", async () => {
     const { goal, lessons, mock } = await setup();
     const result = await getTodayView({});

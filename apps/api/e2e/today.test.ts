@@ -181,6 +181,8 @@ test.describe("Today API", () => {
 
     const today = todayResponseSchema.parse(await response.json());
 
+    expect(today.userId).toBe(userId);
+
     expect(today.goal).toMatchObject({
       daysLeft: DAYS_TO_EXAM,
       id: goal.id,

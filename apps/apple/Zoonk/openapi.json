@@ -77870,6 +77870,12 @@
               }
             ]
           },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The authenticated viewer who produced this response. Discard a delayed response if that learner is no longer current."
+          },
           "weeklyChallenge": {
             "nullable": true,
             "description": "The goal's next weekly checkpoint: a mock exam or a mixed challenge",
@@ -77942,6 +77948,7 @@
           "shortPlan",
           "studiedToday",
           "suggestedGoal",
+          "userId",
           "weeklyChallenge"
         ],
         "additionalProperties": false
