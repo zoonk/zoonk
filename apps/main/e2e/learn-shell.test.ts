@@ -426,7 +426,7 @@ test.describe("Learning tabs", () => {
     await expect(study.getByRole("link")).toHaveText([/^Mistakes notebook/u, "Exam", "Statistics"]);
 
     // The goal and search on top; the account at the end, one row with the learner's name and
-    // their belt and level that opens the account menu (Statistics is above, and in the menu).
+    // their belt and level that opens the account menu (Statistics is in the study links above).
     // Energy lives on the buddy's page, and the phone's bars are gone.
     const account = sidebar.getByRole("button", { name: /, \w+ belt, level \d+, User menu$/u });
 

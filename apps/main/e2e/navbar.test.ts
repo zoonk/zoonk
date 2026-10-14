@@ -1,3 +1,4 @@
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
@@ -52,7 +53,7 @@ test.describe("Catalog chrome", () => {
 });
 
 test.describe("User menu - Account", () => {
-  test("says whose account it is and holds search, statistics, settings and the way out; settings keep the app's sidebar and lead back", async ({
+  test("keeps account actions in the menu; settings keep the app's sidebar and lead back", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -64,7 +65,14 @@ test.describe("User menu - Account", () => {
 
     await expect(page.getByRole("menu")).toContainText(noProgressUser.email);
 
-    await expect(items).toHaveText([/^Search/u, /^Statistics/u, "Settings", "Help", "Log out"]);
+    await expect(items).toHaveText(["Settings", /^Subscription/u, "Help", "Log out"]);
+
+    await expect(page.getByRole("menuitem", { name: /^Subscription/u })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expectAccessibleScreen(page, "Account menu");
 
     await page.getByRole("menuitem", { name: "Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
@@ -95,7 +103,8 @@ test.describe("User menu - Account", () => {
     await expect(page).toHaveURL(/\/plan$/u);
 
     // A restored Plan entry remains the way back on the next visit to the same section.
-    await openUserMenu(page);
+    const phoneItems = await openUserMenu(page);
+    await expect(phoneItems).toHaveText(["Settings", "Subscription", "Help", "Log out"]);
     await page.getByRole("menuitem", { name: "Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
     await page.getByRole("main").getByRole("link", { exact: true, name: "Help" }).click();
@@ -105,6 +114,14 @@ test.describe("User menu - Account", () => {
     await expect(page).toHaveURL(/\/settings$/u);
     await page.getByRole("main").getByRole("link", { exact: true, name: "Back" }).click();
     await expect(page).toHaveURL(/\/plan$/u);
+
+    await openUserMenu(page);
+    await page.getByRole("menuitem", { exact: true, name: "Subscription" }).click();
+    await expect(page).toHaveURL(/\/subscription$/u);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
+    ).toBeVisible();
   });
 
   test("in the sidebar the whole account row opens the menu: its name, Enter and Space", async ({
@@ -143,23 +160,37 @@ test.describe("User menu - Account", () => {
     await expect(menu).toBeVisible();
   });
 
-  test("in the learning tabs, Search opens the palette the top bar has no button for", async ({
-    noProgressUser,
-    userWithoutProgress: page,
+  test("a subscriber opens their plan directly from the account menu on a laptop and phone", async ({
+    subscriberPage: page,
   }) => {
-    const goal = await goalFixture({ userId: noProgressUser.id });
-    await planFixture({ goalId: goal.id });
-    await page.goto("/today");
+    await page.goto("/courses");
 
     const items = await openUserMenu(page);
 
-    await expect(items).toHaveText([/^Search/u, /^Statistics/u, "Settings", "Help", "Log out"]);
+    await expect(items).toHaveText(["Settings", /^Subscription/u, "Help", "Log out"]);
+    await page.getByRole("menuitem", { name: /^Subscription/u }).click();
+    await expect(page).toHaveURL(/\/subscription$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByText("Active", { exact: true })).toBeVisible();
 
+    await page.setViewportSize({ height: 844, width: 390 });
+    await page.goto("/courses");
+    await openUserMenu(page);
     await page.getByRole("menuitem", { name: "Search or ask…" }).click();
+    await expect(page.getByRole("dialog", { name: "Search" })).toBeVisible();
+    await page.keyboard.press("Escape");
 
-    const palette = page.getByRole("dialog", { name: "Search" });
-    await expect(palette.getByRole("combobox", { name: "Search" })).toBeFocused();
-    await expect(palette.getByRole("group", { name: "Go to" })).toBeVisible();
+    await openUserMenu(page);
+    await page.getByRole("menuitem", { name: /^Subscription/u }).click();
+
+    await expect(page).toHaveURL(/\/subscription$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByText("Active", { exact: true })).toBeVisible();
+
+    await page.goto("/pricing");
+    await openUserMenu(page);
+    await page.getByRole("menuitem", { name: "Search or ask…" }).click();
+    await expect(page.getByRole("dialog", { name: "Search" })).toBeVisible();
   });
 
   test("the old My courses page opens Today, which starts a goal for a learner without one", async ({
@@ -187,15 +218,7 @@ test.describe("User menu - Guest", () => {
     const items = await openUserMenu(page);
 
     // A guest who already has an account finds the way in too, and what an account costs.
-    await expect(items).toHaveText([
-      /^Search/u,
-      /^Statistics/u,
-      "Pricing",
-      "Settings",
-      "Help",
-      "Create an account",
-      "Log in",
-    ]);
+    await expect(items).toHaveText(["Settings", "Pricing", "Help", "Create an account", "Log in"]);
 
     await expect(page.getByRole("menuitem", { name: "Create an account" })).toHaveAttribute(
       "href",

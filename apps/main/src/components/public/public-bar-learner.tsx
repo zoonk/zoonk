@@ -28,11 +28,12 @@ export function PublicBarStart({ visitor }: { visitor: ReactNode }) {
 }
 
 /**
- * The public bar's account action: their account menu, wearing their belt, once the browser's
- * learner summary reads someone, and a visitor's way in (`visitor`, what the static HTML has)
- * otherwise. Until the summary answers (or when it can't), a browser whose session hint says it
- * holds a session shows a quiet circle the account menu's size instead (`signed-in:`), so a learner
- * never sees "Log in" and nothing moves when their avatar arrives.
+ * The public bar's account action: their account menu, wearing their belt and leading with search
+ * (public pages have no sidebar or search field), once the browser's learner summary reads
+ * someone, and a visitor's way in (`visitor`, what the static HTML has) otherwise. Until the
+ * summary answers (or when it can't), a browser whose session hint says it holds a session shows a
+ * quiet circle the account menu's size instead (`signed-in:`), so a learner never sees "Log in" and
+ * nothing moves when their avatar arrives.
  */
 export function PublicBarAccount({ visitor }: { visitor: ReactNode }) {
   const learner = useLearnerSummary();
@@ -40,7 +41,7 @@ export function PublicBarAccount({ visitor }: { visitor: ReactNode }) {
   if (learner.status === "ready") {
     return (
       <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-        <UserAvatarMenu />
+        <UserAvatarMenu includeSearch />
       </LearnAvatarBelt>
     );
   }

@@ -134,7 +134,7 @@ function AccountRow({ summary }: { summary: LearnerSummary }) {
 /**
  * The sidebar's end: one row that opens the account's menu, with whose it is (the 24px avatar and
  * the learner's name, or "Guest" for someone studying without an account yet) and their belt and
- * level, which the menu's Statistics opens. Its name says all three, the visible name first. A
+ * level, which Statistics above it opens. Its name says all three, the visible name first. A
  * visitor's Pricing and way in instead (`visitor`).
  */
 export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {

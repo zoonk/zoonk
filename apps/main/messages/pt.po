@@ -251,7 +251,6 @@ msgid "Logbook"
 msgstr "Diário de bordo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
@@ -304,6 +303,7 @@ msgid "Memory"
 msgstr "Memória"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"
@@ -386,11 +386,6 @@ msgstr "Menu do usuário"
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
-
-#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "Nível {level}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
