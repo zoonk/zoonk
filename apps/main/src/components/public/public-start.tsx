@@ -2,8 +2,6 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { type ReactNode } from "react";
-import { PUBLIC_CLOSING_START_ID, PUBLIC_FOOTER_ID, PUBLIC_START_ID } from "./public-ids";
-import { StickyStartBar } from "./sticky-start-bar";
 
 /**
  * Marks why a start control's action didn't go through, shown under it: the start row's short
@@ -11,9 +9,19 @@ import { StickyStartBar } from "./sticky-start-bar";
  */
 export const START_FAILURE_SLOT = "start-failure";
 
+const START_CONTROL_CLASS = "px-5 font-[560]";
+
 /** The look of a public page's one action: a large button with an arrow after its label. */
 export function getStartControlClassName(className?: string) {
-  return cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base", className);
+  return cn(buttonVariants({ size: "lg" }), START_CONTROL_CLASS, className);
+}
+
+/**
+ * A start that isn't the page's main action, such as a lesson's plan under its first question:
+ * the same shape, see-through with the stronger line.
+ */
+export function getSecondaryStartControlClassName() {
+  return cn(buttonVariants({ size: "lg", variant: "outline" }), START_CONTROL_CLASS);
 }
 
 /**
@@ -40,30 +48,24 @@ export function StartLink({
 }
 
 /**
- * On phones, the page's one action (`children`, its control) follows the reader in a bottom bar
- * once the page's own start control scrolls away, and steps aside while the closing call or the
- * footer is on screen.
+ * A page's one next step (`children`, its control), with a short line on what it takes. It opens
+ * the first screen's space under the title by default; `className` places it elsewhere.
  */
-export function StickyStart({ children }: { children: ReactNode }) {
-  return (
-    <StickyStartBar
-      afterId={PUBLIC_START_ID}
-      hideWhileVisibleIds={[PUBLIC_CLOSING_START_ID, PUBLIC_FOOTER_ID]}
-    >
-      {children}
-    </StickyStartBar>
-  );
-}
-
-/**
- * A page's one next step in its first screen (`children`, its control), with a short line on what
- * it takes. It's the control the phone's bottom start bar waits to scroll away.
- */
-export function StartBlock({ children, note }: { children: ReactNode; note?: ReactNode }) {
+export function StartBlock({
+  children,
+  className,
+  note,
+}: {
+  children: ReactNode;
+  className?: string;
+  note?: ReactNode;
+}) {
   return (
     <div
-      className="mt-7 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-5 [&:has([data-slot=start-failure])>[data-slot=start-note]]:hidden"
-      id={PUBLIC_START_ID}
+      className={cn(
+        "mt-7 flex flex-col items-stretch gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-5 [&:has([data-slot=start-failure])>[data-slot=start-note]]:hidden",
+        className,
+      )}
     >
       {children}
 
@@ -76,18 +78,5 @@ export function StartBlock({ children, note }: { children: ReactNode; note?: Rea
         </p>
       )}
     </div>
-  );
-}
-
-/**
- * A course's or chapter's one next step (`start`, its control), which follows the reader on
- * phones.
- */
-export function PublicStart({ note, start }: { note?: ReactNode; start: ReactNode }) {
-  return (
-    <>
-      <StartBlock note={note}>{start}</StartBlock>
-      <StickyStart>{start}</StickyStart>
-    </>
   );
 }

@@ -1,19 +1,22 @@
 import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  type ContainerProps,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+  EYEBROW_CLASS,
+  HEADLINE_CLASS,
+  LEAD_CLASS,
+  PUBLIC_CONTAINER_CLASS,
+} from "@/components/public/landing-styles";
+import { getStartControlClassName } from "@/components/public/public-start";
+import { Link } from "@/i18n/navigation";
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
-import { PlusBenefits } from "./plus-benefits";
-import { PlusPurchase, type PlusViewerState } from "./plus-purchase";
+import { FreePlan } from "./free-plan";
+import { PLAN_CARD_CLASS } from "./plan-includes";
+import { type BillingPeriod, PlusLoginLink, PlusPlan, type PlusViewerState } from "./plus-plan";
 import { PlusQuestions } from "./plus-questions";
 
 /** The public pricing page and the subscription page describe the same offer. */
@@ -22,70 +25,57 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and the AI tutor. Try it free.",
+      "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free.",
     ),
     title: t("Zoonk Plus: plans and pricing"),
   };
 }
 
-/**
- * The public pricing page's hero, or the app's settings pages' header, so the in-app page reads
- * like its siblings.
- */
-const PRICING_PAGE_VARIANTS = {
-  hero: {
-    body: "sm:px-4",
-    container: "gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10",
-    header: "",
-    title: "text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl",
-  },
-  settings: {
-    body: "px-0 pb-0",
-    container: "gap-6",
-    header: "px-0",
-    title: "text-foreground text-2xl leading-tight font-semibold tracking-tight",
-  },
-} as const;
+function renderRest(chunks: ReactNode) {
+  return <span className="text-muted-foreground">{chunks}</span>;
+}
 
 /**
- * The offer's headline over one column. Visitors read the public pricing page's, in the words
- * people use for what they're getting ready for; learners in the app's subscription page read
- * plainly what it is ("Subscribe to Zoonk Plus"), with what it includes and its price in the offer
- * under it, never a slogan.
+ * The pricing page's first words: its name as a quiet eyebrow, the offer as the headline (starting
+ * free in the text color, Plus muted after it) and one line on what each covers.
  */
-export async function PlusPricingPage({
-  children,
-  className,
-  render,
-  variant = "hero",
-}: {
-  children: ReactNode;
-  className?: string;
-  render?: ContainerProps["render"];
-  variant?: keyof typeof PRICING_PAGE_VARIANTS;
-}) {
+export async function PricingHero() {
   const t = await getExtracted();
-  const classes = PRICING_PAGE_VARIANTS[variant];
 
   return (
-    <Container className={cn(classes.container, className)} render={render}>
-      <ContainerHeader className={cn("items-start", classes.header)}>
-        <ContainerHeaderGroup className={variant === "hero" ? "gap-4" : "gap-1.5"}>
-          <ContainerTitle className={classes.title}>
-            {variant === "hero"
-              ? t("Get ready for your exam, new job or move.")
-              : t("Subscribe to Zoonk Plus")}
-          </ContainerTitle>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <section
+      aria-labelledby="pricing-title"
+      className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col pt-12 lg:pt-24")}
+    >
+      <p className={EYEBROW_CLASS}>{t("Pricing")}</p>
 
-      <ContainerBody className={classes.body}>{children}</ContainerBody>
-    </Container>
+      <h1 className={cn(HEADLINE_CLASS, "mt-4 max-w-[16em]")} id="pricing-title">
+        {t.rich("Start free. <rest>Plus when you want everything.</rest>", { rest: renderRest })}
+      </h1>
+
+      <p className={cn(LEAD_CLASS, "mt-4.5")}>
+        {t("Free covers one goal at a time. Plus covers every goal, all the way to the big day.")}
+      </p>
+    </section>
   );
 }
 
-/** The Plus offer for whoever is looking, then what people ask before paying. */
-export function PlusPricing({
+/** Whether the reader has no account yet: the free plan's answer then starts with trying lessons. */
+function hasNoAccount(viewerState: PlusViewerState): boolean {
+  return viewerState.status === "guest" || viewerState.status === "visitor";
+}
+
+/** The pricing page's billing period switch, which its closing "Get Plus" follows too. */
+const PRICING_BILLING_SWITCH = "pricing-billing";
+
+/** The two plans side by side from `md`, one under the other on phones, Free first. */
+const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
+
+/**
+ * The plans on the public pricing page, Free and Plus, two cards of one height with each one's next
+ * step for whoever is reading on the same line.
+ */
+export function PricingPlans({
   monthlyPrice,
   viewerState,
   yearlyPrice,
@@ -94,40 +84,147 @@ export function PlusPricing({
   viewerState: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {
-  const hasNoAccount = viewerState.status === "guest" || viewerState.status === "visitor";
+  const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
+
+  return (
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
+      <div className={PLANS_GRID_CLASS}>
+        <FreePlan currency={currency} viewerState={viewerState} />
+
+        <PlusPlan
+          billingSwitch={PRICING_BILLING_SWITCH}
+          monthlyPrice={monthlyPrice}
+          viewerState={viewerState}
+          yearlyPrice={yearlyPrice}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** A plan card while the reader's prices load: its rows in their places. */
+function PlanCardSkeleton() {
+  return (
+    <div className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "gap-4")}>
+      <Skeleton className="h-6 w-16" />
+      <Skeleton className="h-11 w-24" />
+      <Skeleton className="h-11 w-full rounded-lg" />
+      <div className="flex flex-col gap-3 border-t pt-5">
+        <Skeleton className="h-5 w-3/5" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+    </div>
+  );
+}
+
+/** The plans while the reader's prices load, in their places: Free beside Plus from `md`. */
+export function PricingPlansSkeleton() {
+  return (
+    <div aria-hidden="true" className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
+      <div className={PLANS_GRID_CLASS}>
+        <PlanCardSkeleton />
+        <PlanCardSkeleton />
+      </div>
+    </div>
+  );
+}
+
+/** The questions under the plans, their title beside them from `lg`. */
+export function PricingQuestions({ viewerState }: { viewerState: PlusViewerState }) {
+  return (
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
+      <PlusQuestions
+        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
+        hasNoAccount={hasNoAccount(viewerState)}
+      />
+    </div>
+  );
+}
+
+/**
+ * The page's last word for a visitor: starting free needs no account, with both plans' steps again,
+ * starting free first. "Get Plus" keeps the billing period picked on Plus's card (`hasChoice`
+ * when there's one to pick).
+ */
+export async function PricingClose({ hasChoice }: { hasChoice: boolean }) {
+  const t = await getExtracted();
+
+  return (
+    <section
+      aria-labelledby="pricing-close"
+      className={cn(
+        PUBLIC_CONTAINER_CLASS,
+        "flex flex-col items-center pt-28 pb-24 text-center lg:pt-40 lg:pb-36",
+      )}
+    >
+      <h2
+        className="max-w-[14em] text-[32px] leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
+        id="pricing-close"
+      >
+        {t("Start free, no account needed.")}
+      </h2>
+
+      <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <Link className={getStartControlClassName()} href="/start">
+          {t("Start free")}
+        </Link>
+        <PlusLoginLink
+          billingSwitch={PRICING_BILLING_SWITCH}
+          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "px-5")}
+          hasChoice={hasChoice}
+        />
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The Plus offer inside the app for whoever is looking (the subscription page), then what people
+ * ask before paying. A visitor also sees the free plan under it, with its free start, since
+ * Plus's card keeps one action.
+ */
+export function PlusPricing({
+  defaultPeriod,
+  monthlyPrice,
+  viewerState,
+  yearlyPrice,
+}: {
+  /** The billing period its switch opens on: the one picked on the pricing page before logging in. */
+  defaultPeriod?: BillingPeriod;
+  monthlyPrice: PriceInfo | null;
+  viewerState: PlusViewerState;
+  yearlyPrice: PriceInfo | null;
+}) {
+  const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
 
   return (
     <>
-      <PlusPurchase
-        benefits={<PlusBenefits />}
-        monthlyPrice={monthlyPrice}
-        viewerState={viewerState}
-        yearlyPrice={yearlyPrice}
-      />
+      <div className="max-w-form flex flex-col gap-4">
+        <PlusPlan
+          billingSwitch="subscription-billing"
+          defaultPeriod={defaultPeriod}
+          monthlyPrice={monthlyPrice}
+          viewerState={viewerState}
+          yearlyPrice={yearlyPrice}
+        />
 
-      <PlusQuestions hasNoAccount={hasNoAccount} />
+        {viewerState.status === "visitor" && (
+          <FreePlan currency={currency} viewerState={viewerState} />
+        )}
+      </div>
+
+      <PlusQuestions className="max-w-form" hasNoAccount={hasNoAccount(viewerState)} />
     </>
   );
 }
 
+/** The Plus offer while the reader's prices load. */
 export function PlusPricingSkeleton() {
   return (
-    <div
-      aria-hidden="true"
-      className="ring-foreground/10 flex flex-col gap-5 rounded-2xl p-5 ring-1 sm:p-6"
-    >
-      <div className="flex justify-between">
-        <Skeleton className="h-6 w-14" />
-        <Skeleton className="h-8 w-44 rounded-4xl" />
-      </div>
-      <Skeleton className="h-10 w-28" />
-      <div className="flex flex-col gap-3">
-        <Skeleton className="h-4 w-3/5" />
-        <Skeleton className="h-4 w-2/3" />
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-4 w-3/5" />
-      </div>
-      <Skeleton className="h-10 w-full rounded-4xl" />
+    <div aria-hidden="true" className="max-w-form">
+      <PlanCardSkeleton />
     </div>
   );
 }

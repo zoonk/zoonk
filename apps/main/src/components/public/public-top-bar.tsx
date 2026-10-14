@@ -1,37 +1,41 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 
-/** The brain, going home: the public pages' and the login's only logo. */
-export async function PublicHomeLink() {
-  const t = await getExtracted();
+/** The product's name, the same in every language. */
+const BRAND_NAME = "Zoonk";
 
+/**
+ * The brain, going home: the public pages' only logo. It's named by the brand it shows, so
+ * screen readers and voice control call it what the page calls it.
+ */
+export function PublicHomeLink() {
   return (
     <Link
-      className="focus-visible:ring-ring/50 -m-2 rounded-xl p-2 outline-none focus-visible:ring-[3px]"
+      aria-label={BRAND_NAME}
+      className="focus-visible:ring-ring/50 -m-2.5 flex items-center rounded-xl p-2.5 outline-none focus-visible:ring-[3px]"
       href="/"
     >
-      <ZoonkLogo className="size-7" label={t("Zoonk home page")} />
+      <ZoonkLogo className="size-6" />
     </Link>
   );
 }
 
 /**
- * The public top bar: the brain goes home (or what `start` puts there instead), the page's
- * navigation, and its actions on the right. Pages that never show the account menu (the visitor
- * home) use it directly, so its code never ships to them; the others use `PublicHeader`.
+ * The public top bar: the brain goes home (or what `start` puts there instead), and the page's
+ * actions on the right, on the public pages' one container. Pages that never show the account menu
+ * (the visitor home) use it directly, so its code never ships to them; the others use
+ * `PublicHeader`.
  */
 export function PublicTopBar({
   actions,
   className,
-  navigation,
   start,
 }: {
   actions: ReactNode;
   className?: string;
-  navigation?: ReactNode;
   start?: ReactNode;
 }) {
   return (
@@ -41,11 +45,8 @@ export function PublicTopBar({
         className,
       )}
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-8 px-4 sm:h-[72px] sm:px-8">
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-8 sm:h-[72px]")}>
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
-
-        {navigation}
-
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>
     </header>

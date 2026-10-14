@@ -5,3 +5,6 @@
  */
 export const PLUS_CTA_CLASS =
   "h-auto min-h-10 w-full py-2 text-center whitespace-normal text-balance";
+
+/** The one quiet line under each plan's action ("No card needed.", "Cancel anytime."). */
+export const PLAN_ACTION_NOTE_CLASS = "text-muted-foreground text-center text-xs leading-relaxed";

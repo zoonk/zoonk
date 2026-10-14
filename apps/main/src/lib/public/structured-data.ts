@@ -127,3 +127,18 @@ export function lessonJsonLd({
     url,
   };
 }
+
+/**
+ * The home page's site and the organization behind it, so search results can show Zoonk's name and
+ * logo for the whole site. Every language's home page describes the same site.
+ */
+export const HOME_JSON_LD: JsonLdObject[] = [
+  { "@context": SCHEMA_CONTEXT, "@type": "WebSite", name: "Zoonk", url: `${SITE_URL}/` },
+  {
+    "@context": SCHEMA_CONTEXT,
+    "@type": "Organization",
+    logo: `${SITE_URL}/apple-icon.png`,
+    name: "Zoonk",
+    url: `${SITE_URL}/`,
+  },
+];

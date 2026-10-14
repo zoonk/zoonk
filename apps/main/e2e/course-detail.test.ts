@@ -1,9 +1,33 @@
 import { randomUUID } from "node:crypto";
+import { type Locator } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
+
+/** The seeded course whose outline core can plan, at each time a day the page offers. */
+const PLANNED_COURSE_PATH = `/b/${AI_ORG_SLUG}/c/quantum-physics-from-scratch`;
+
+/** The example plan's number for the time a day picked: its weeks to the course's end. */
+async function readPlanWeeks(plan: Locator): Promise<number> {
+  const text = await plan.locator("[aria-live='polite']").innerText();
+  return Number(/~(?<weeks>\d+)\s*weeks?/u.exec(text)?.groups?.weeks);
+}
+
+/** The latest week any chapter of the outline shows ("Week 3", "Weeks 18–20"), for the time a day picked. */
+async function readLastOutlineWeek(page: Page): Promise<number> {
+  const marks = await page
+    .getByRole("region", { name: "Course outline" })
+    .getByText(/^Weeks? \d+(?:–\d+)?$/u)
+    .filter({ visible: true })
+    .allInnerTexts();
+
+  return Math.max(...marks.map((mark) => Number(/(?<last>\d+)$/u.exec(mark)?.groups?.last)));
+}
 
 async function publishedCourse(attrs: {
   language: string;
@@ -22,23 +46,103 @@ async function publishedCourse(attrs: {
   return { course, path: `/b/${org.slug}/c/${course.slug}` };
 }
 
+const MS_PER_DAY = 86_400_000;
+
+/** A day some days from now, as a notice writes it ("YYYY-MM-DD", UTC). */
+function dayIn(days: number): string {
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
+}
+
+/** A notice edition with its exam days, in UTC. */
+function examEdition(dates: string[]) {
+  return {
+    citations: [],
+    dates: dates.map((date) => ({
+      citation: { passage: "Exam day", sourceId: "notice" },
+      date,
+      kind: "exam",
+      label: "Exam",
+    })),
+    noticeUrl: null,
+    questionCount: null,
+    sourceHash: null,
+    timeZone: "UTC",
+    year: Number(dates[0]?.slice(0, 4)),
+  };
+}
+
+/** A published exam course whose stored exam graph starts on it, with its notice's days. */
+async function publishedExamCourse(dates: string[]) {
+  const { course, path } = await publishedCourse({
+    language: "en",
+    title: `E2E Exam Course ${randomUUID().slice(0, 8)}`,
+  });
+
+  await prisma.course.update({ data: { format: "exam" }, where: { id: course.id } });
+
+  const [blueprint, [band]] = await Promise.all([
+    examBlueprintFixture({ edition: examEdition(dates) }),
+    courseBandsFixture({ courseId: course.id, levels: ["beginner"] }),
+  ]);
+
+  await prisma.examSkillGraph.create({
+    data: {
+      examBlueprintId: blueprint.id,
+      generatedAt: new Date(),
+      graph: {
+        phases: [{ milestone: null, name: "Exam" }],
+        skills: [
+          {
+            area: null,
+            courseIds: [course.id],
+            lessons: 1,
+            name: band?.skill.name ?? "",
+            phase: 0,
+            skillId: band?.skill.id ?? "",
+            weight: null,
+          },
+        ],
+      },
+      model: "fixture",
+      primaryCourseId: course.id,
+      promptVersion: "fixture",
+      runId: "fixture",
+    },
+  });
+
+  return { blueprint, course, path };
+}
+
+/** A notice day as the page's eyebrow writes it ("Nov 8"). */
+function eyebrowDay(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+}
+
 test.describe("Course Detail Page", () => {
-  test("a course that doesn't exist answers 404 with the app's message and a way home", async ({
+  test("a course that doesn't exist answers 404 inside the catalog, with the way to the courses", async ({
     page,
   }) => {
     const response = await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
+    const main = page.getByRole("main");
 
     expect(response?.status()).toBe(404);
-    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Go to the home page" })).toBeVisible();
+    await expect(main.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    await expect(main.getByRole("link", { name: "Back to Explore courses" })).toBeVisible();
     await expectAccessibleScreen(page, "a missing course");
+
+    await main.getByRole("link", { exact: true, name: "Explore courses" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Explore courses" })).toBeVisible();
   });
 
   test("a language course whose outline isn't written yet leads with its flag and stays on its page", async ({
     page,
   }) => {
     const title = `E2E Language Course ${randomUUID().slice(0, 8)}`;
-    const { path } = await publishedCourse({ language: "en", targetLanguage: "pt", title });
+    const { course, path } = await publishedCourse({ language: "en", targetLanguage: "pt", title });
 
     await page.goto(path);
 
@@ -47,10 +151,55 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByRole("img", { name: "Brazilian Portuguese" })).toBeVisible();
 
     await expect(
-      page.getByText("The chapters and lessons are written when the first learner starts."),
+      page.getByText(
+        "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level.",
+      ),
     ).toBeVisible();
 
-    await expect(page.getByRole("button", { name: "Start this course" }).first()).toBeVisible();
+    // Its start asks the visitor's level for the whole course, whose outline comes once it starts.
+    await expect(page.getByRole("link", { name: "Build my plan" }).first()).toHaveAttribute(
+      "href",
+      `/start/course/${course.id}`,
+    );
+
+    // On a phone the invitation reads whole, with nothing scrolling sideways.
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await expect(
+      page.getByRole("region", { name: "Course outline" }).getByText(/^Build your plan and Zoonk/u),
+    ).toBeVisible();
+
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      ),
+    ).toBe(0);
+
+    await expectAccessibleScreen(page, "a course whose outline isn't written yet, on a phone");
+  });
+
+  test("an exam course's page reads a notice revised by another app on the next visit", async ({
+    page,
+  }) => {
+    const first = dayIn(40);
+    const revised = dayIn(54);
+    const { blueprint, path } = await publishedExamCourse([first]);
+
+    await page.goto(path);
+    await expect(page.getByText(new RegExp(`^Exam on ${eyebrowDay(first)} · `, "u"))).toBeVisible();
+
+    // The API's notice research revises the edition: it touches neither this app's caches nor the
+    // course's row.
+    await prisma.examBlueprint.update({
+      data: { edition: examEdition([revised]) },
+      where: { id: blueprint.id },
+    });
+
+    await page.reload();
+
+    await expect(
+      page.getByText(new RegExp(`^Exam on ${eyebrowDay(revised)} · `, "u")),
+    ).toBeVisible();
   });
 
   test("titles a course with a regional language tag in its own language", async ({ page }) => {
@@ -61,5 +210,45 @@ test.describe("Course Detail Page", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
     await expect(page).toHaveTitle(`Aprenda ${title} | Zoonk`);
+  });
+
+  test("the example plan follows the time a day picked, and the outline's weeks follow it, by mouse and keyboard", async ({
+    page,
+  }) => {
+    await page.goto(PLANNED_COURSE_PATH);
+
+    const plan = page.getByRole("main").locator("[data-slot='course-plan']");
+    const pace = plan.getByRole("radiogroup", { name: "Time a day" });
+    const outline = page.getByRole("region", { name: "Course outline" });
+
+    // 15 minutes on arrival: weeks to the course's end, and the outline marked at that pace.
+    await expect(pace.getByRole("radio", { name: "15 min" })).toBeChecked();
+    await expect(outline.getByText("Your plan at 15 minutes a day, from scratch")).toBeVisible();
+
+    const atFifteen = await readPlanWeeks(plan);
+    expect(atFifteen).toBeGreaterThan(0);
+    // No chapter starts after the course ends.
+    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(atFifteen);
+
+    // More time a day finishes sooner, in the window and in the outline.
+    await pace.getByText("30 min").click();
+    await expect(outline.getByText("Your plan at 30 minutes a day, from scratch")).toBeVisible();
+
+    const atThirty = await readPlanWeeks(plan);
+    expect(atThirty).toBeLessThan(atFifteen);
+    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(atThirty);
+    await expectAccessibleScreen(page, "a course's example plan at 30 minutes a day");
+
+    // "Build my plan" starts the plan at the time picked.
+    const start = page.getByRole("main").getByRole("link", { name: "Build my plan" }).first();
+    await expect(start).toHaveAttribute("href", /\?minutes=30&picked=1$/u);
+
+    // The arrow keys move between the times, as in any radio group.
+    await pace.getByRole("radio", { name: "30 min" }).focus();
+    await page.keyboard.press("ArrowLeft");
+    await expect(pace.getByRole("radio", { name: "15 min" })).toBeChecked();
+    await expect(pace.getByRole("radio", { name: "15 min" })).toBeFocused();
+    expect(await readPlanWeeks(plan)).toBe(atFifteen);
+    await expect(start).toHaveAttribute("href", /\?minutes=15$/u);
   });
 });

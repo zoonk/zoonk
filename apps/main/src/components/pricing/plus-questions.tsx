@@ -43,7 +43,7 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
   const lead =
     hasNoAccount && limits.guestLessons !== null
       ? t(
-          "Try {count, plural, one {# lesson} other {# lessons}} without an account. With a free account, you get:",
+          "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
           { count: limits.guestLessons },
         )
       : t("With the free plan, you get:");
@@ -52,7 +52,7 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
     t("{count, plural, one {# goal} other {# goals}} at a time", {
       count: limits.activeGoals ?? 0,
     }),
-    t("{day, plural, one {# lesson} other {# lessons}} a day, up to {month, number} a month", {
+    t("{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day", {
       day: limits.lessonsPerDay ?? 0,
       month: limits.lessonsPerMonth ?? 0,
     }),
@@ -61,7 +61,7 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
       { days: limits.examPrepDays ?? 0 },
     ),
     t(
-      "{tutor, plural, one {# tutor message} other {# tutor messages}} and {uploads, plural, one {# upload} other {# uploads}} a day",
+      "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day",
       { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
     ),
     t("Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"),
@@ -86,29 +86,49 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
 }
 
 /**
- * What people ask before paying, one tap away under the offer. Plus's limits only stop automated
- * use, except speaking calls, which have daily and monthly limits: one answer says so honestly
- * (never how many minutes, on any plan) and links the fair use policy. The free plan's limits live
- * here too, for whoever wants them, instead of crowding the offer.
+ * What people ask before paying, one tap away under the offer, and where to ask anything else. Plus's
+ * limits only stop automated use, except speaking calls, which have daily and monthly limits: one
+ * answer says so honestly (never how many minutes, on any plan) and links the fair use policy. The
+ * free plan's limits live here in full, for whoever wants the details. A wide page sets the title
+ * beside the questions (`className`).
  */
-export async function PlusQuestions({ hasNoAccount }: { hasNoAccount: boolean }) {
+export async function PlusQuestions({
+  className,
+  hasNoAccount,
+}: {
+  className?: string;
+  hasNoAccount: boolean;
+}) {
   const t = await getExtracted();
+  // The address is a message of its own: each language writes to its own inbox (pt: contato@).
+  const email = t("hello@zoonk.com");
 
   return (
-    <section aria-labelledby={PLUS_QUESTIONS_ID} className="flex flex-col gap-4 pt-8">
-      <h2 className="text-lg font-semibold tracking-tight" id={PLUS_QUESTIONS_ID}>
-        {t("Common questions")}
-      </h2>
+    <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
+      <div className="flex flex-col gap-1">
+        <h2 className="text-lg font-semibold tracking-tight" id={PLUS_QUESTIONS_ID}>
+          {t("Common questions")}
+        </h2>
+        <p className="text-muted-foreground text-sm">
+          {t("Still unsure?")}{" "}
+          <a
+            className="text-foreground underline-offset-4 hover:underline"
+            href={`mailto:${email}`}
+          >
+            {email}
+          </a>
+        </p>
+      </div>
 
       <div>
-        <PublicDisclosure summary={t("What's in the free plan?")}>
+        <PublicDisclosure open summary={t("What's in the free plan?")}>
           <FreePlanAnswer hasNoAccount={hasNoAccount} />
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={ANSWER_CLASS}>
             {t.rich(
-              "Almost. Lessons, goals and the tutor have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
+              "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>

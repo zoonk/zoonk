@@ -1,7 +1,9 @@
 import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
-import { type ReactNode } from "react";
+import { FooterExploreLinks } from "./footer-explore-links";
+import { FooterLanguages } from "./footer-languages";
+import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PUBLIC_FOOTER_ID } from "./public-ids";
 
 /** Read once when the server starts, so rendering never depends on the clock. */
@@ -15,39 +17,43 @@ const FOOTER_LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px]";
 
 /**
- * The public pages' footer: where to find courses, pricing, help and the
- * legal pages. Pages can put more links above it, like the home page's
- * course categories.
+ * The public pages' footer: the catalog (its popular courses and the categories that have
+ * courses), then where to find courses, pricing, help and the legal pages, and every language the
+ * site speaks, on the public pages' one container.
  */
-export async function PublicFooter({ children }: { children?: ReactNode }) {
+export async function PublicFooter({ pathname }: { pathname?: string }) {
   const t = await getExtracted();
 
   return (
     <footer className="border-t" id={PUBLIC_FOOTER_ID}>
-      {children}
+      <div className={PUBLIC_CONTAINER_CLASS}>
+        <FooterExploreLinks />
 
-      <div className="text-muted-foreground mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-3 px-4 py-8 text-sm sm:px-8">
-        <ZoonkLogo className="text-foreground size-6" />
+        <div className="text-muted-foreground flex flex-wrap items-center gap-x-7 gap-y-3 py-8 text-sm">
+          <ZoonkLogo className="text-foreground size-6" />
 
-        <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
-          <Link className={FOOTER_LINK_CLASS} href="/courses">
-            {t("Courses")}
-          </Link>
-          <Link className={FOOTER_LINK_CLASS} href="/pricing">
-            {t("Pricing")}
-          </Link>
-          <Link className={FOOTER_LINK_CLASS} href="/support">
-            {t("Help")}
-          </Link>
-          <Link className={FOOTER_LINK_CLASS} href="/privacy">
-            {t("Privacy")}
-          </Link>
-          <Link className={FOOTER_LINK_CLASS} href="/terms">
-            {t("Terms")}
-          </Link>
-        </nav>
+          <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
+            <Link className={FOOTER_LINK_CLASS} href="/courses">
+              {t("Courses")}
+            </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/pricing">
+              {t("Pricing")}
+            </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/support">
+              {t("Help")}
+            </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/privacy">
+              {t("Privacy")}
+            </Link>
+            <Link className={FOOTER_LINK_CLASS} href="/terms">
+              {t("Terms")}
+            </Link>
+          </nav>
 
-        <p className="sm:ml-auto">{t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}</p>
+          <FooterLanguages pathname={pathname} />
+
+          <p className="sm:ml-auto">{t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}</p>
+        </div>
       </div>
     </footer>
   );

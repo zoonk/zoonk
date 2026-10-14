@@ -29,15 +29,55 @@ export function getGoalStartHref(goal: string) {
  */
 export const CHAPTER_PARAM = "chapter";
 
+/**
+ * `minutes` holds the time a day the course's example plan showed, which the plan starts with
+ * (onboarding's schedule question opens on it). `picked` says the visitor chose it there, rather
+ * than leaving the page's first one, so the start page only says "as you picked" when they did.
+ */
+export const MINUTES_PARAM = "minutes";
+export const PICKED_PARAM = "picked";
+
+const MIN_DAILY_MINUTES = 5;
+const MAX_DAILY_MINUTES = 240;
+
+/** The time a day the parameter holds, when it's one a plan can have. */
+export function readDailyMinutes(value: string | string[] | undefined): number | null {
+  const minutes = typeof value === "string" && /^\d+$/u.test(value) ? Number(value) : null;
+
+  return minutes !== null && minutes >= MIN_DAILY_MINUTES && minutes <= MAX_DAILY_MINUTES
+    ? minutes
+    : null;
+}
+
 export function getCourseStartHref({
   chapterId,
   courseId,
+  minutes,
+  picked = false,
 }: {
   chapterId?: string | null;
   courseId: string;
+  minutes?: number | null;
+  picked?: boolean;
 }) {
-  return chapterId
-    ? (`/start/course/${courseId}?${CHAPTER_PARAM}=${chapterId}` as const)
+  const query = new URLSearchParams();
+
+  if (chapterId) {
+    query.set(CHAPTER_PARAM, chapterId);
+  }
+
+  if (minutes) {
+    query.set(MINUTES_PARAM, String(minutes));
+  }
+
+  if (minutes && picked) {
+    query.set(PICKED_PARAM, "1");
+  }
+
+  const search = query.toString();
+
+  return search
+    ? (`/start/course/${courseId}?${search}` as const)
     : (`/start/course/${courseId}` as const);
 }
 
@@ -58,6 +98,28 @@ export function getPlanLinkStartHref({ goal, planId }: { goal: string; planId: s
  * so the tap on the public page counts as the first step of the lesson.
  */
 export const FIRST_ANSWER_PARAM = "answer";
+
+/**
+ * Also part of the player's contract: `from` holds the catalog page (a course's, a chapter's or a
+ * lesson's, without the language, and the place on it, such as its "Try a lesson" card) a visitor
+ * opened the lesson from, so closing the lesson returns there instead of to an empty Today. Only a
+ * catalog path is read back, so the parameter can't send anyone off the site.
+ */
+export const ORIGIN_PARAM = "from";
+
+const CATALOG_PATH =
+  /^\/b\/[^\s#/?]+\/c\/[^\s#/?]+(?:\/ch\/[^\s#/?]+(?:\/l\/[^\s#/?]+)?)?(?:#[\w-]+)?$/u;
+
+/** The catalog page a lesson was opened from, when the parameter holds one. */
+export function readCatalogOrigin(value: string | string[] | undefined): string | null {
+  return typeof value === "string" && CATALOG_PATH.test(value) ? value : null;
+}
+
+/** A player link that remembers the catalog page it was opened from. */
+export function withCatalogOrigin(href: string, origin: string): string {
+  const separator = href.includes("?") ? "&" : "?";
+  return `${href}${separator}${ORIGIN_PARAM}=${encodeURIComponent(origin)}`;
+}
 
 /** Where "Start" and first-screen answers go: the lesson player, in the page's language. */
 export function getLessonPlayerPath({

@@ -3,7 +3,7 @@
 import {
   type CourseStartOutcome,
   startCourseAction,
-} from "@/app/[lang]/start/course-start-actions";
+} from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
 import { useRouter } from "@/i18n/navigation";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
@@ -28,10 +28,13 @@ export type CourseStartFailure = Exclude<CourseStartOutcome, { status: "started"
 export function useCourseStart({
   chapterId,
   courseId,
+  dailyMinutes = null,
   initialFailure = null,
 }: {
   chapterId?: string | null;
   courseId: string;
+  /** The time a day picked on the course's page, which the plan starts with. */
+  dailyMinutes?: number | null;
   /** Why the start page's form came back without JavaScript, until the next try. */
   initialFailure?: CourseStartFailure | null;
 }) {
@@ -50,7 +53,13 @@ export function useCourseStart({
 
       const { data } = await safeAsync(async () =>
         (await ensureGuestSession())
-          ? startCourseAction({ chapterId, courseId, level, timeZone: getLocalTimeZone() })
+          ? startCourseAction({
+              chapterId,
+              courseId,
+              dailyMinutes,
+              level,
+              timeZone: getLocalTimeZone(),
+            })
           : null,
       );
 

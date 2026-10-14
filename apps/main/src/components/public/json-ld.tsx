@@ -3,7 +3,7 @@ export type JsonLdObject = { [key: string]: JsonLdValue | undefined };
 
 /** `<` can't close the script tag once escaped, so text from content can't break out of it. */
 function serialize(data: JsonLdObject): string {
-  return JSON.stringify(data).replaceAll("<", String.raw`<`);
+  return JSON.stringify(data).replaceAll("<", String.raw`\u003c`);
 }
 
 /** Structured data for search engines, one script per schema.org item. */

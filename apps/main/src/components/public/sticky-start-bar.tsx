@@ -60,9 +60,10 @@ function useShowAfterScrollingPast({
 
 /**
  * On phones, a page's one action stays one thumb away: once the control that
- * holds it (`afterId`) scrolls away, this bar offers it at the bottom of the
- * screen, and it steps aside while any element in `hideWhileVisibleIds` is on
- * screen, like a second goal box or the footer.
+ * holds it (`afterId`) scrolls away, this action bar offers it at the bottom of
+ * the screen, edge to edge behind a hairline, and it steps aside while any
+ * element in `hideWhileVisibleIds` is on screen, like a second goal box or the
+ * footer. It fades rather than slides, since it follows the reader's scroll.
  */
 export function StickyStartBar({
   afterId,
@@ -82,8 +83,8 @@ export function StickyStartBar({
     <div
       aria-hidden={!isShown}
       className={cn(
-        "from-background fixed inset-x-0 bottom-0 z-30 bg-linear-to-t from-60% to-transparent px-4 pt-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-[opacity,translate] duration-200 ease-out motion-reduce:transition-none sm:hidden",
-        isShown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",
+        "bg-background/90 supports-backdrop-filter:bg-background/75 fixed inset-x-0 bottom-0 z-30 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md transition-opacity duration-150 ease-out motion-reduce:transition-none sm:hidden",
+        isShown ? "opacity-100" : "pointer-events-none opacity-0",
       )}
       inert={!isShown}
     >

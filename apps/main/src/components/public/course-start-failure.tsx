@@ -1,10 +1,10 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
+import { Link, getPathname } from "@/i18n/navigation";
 import { useGoalLimitMessage } from "@zoonk/learn/onboarding/goal-errors";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
 
@@ -45,13 +45,14 @@ function FailureAction({
   onRetry: () => void;
 }) {
   const t = useExtracted();
+  const locale = useLocale();
   const remedy = getCourseStartRemedy(failure);
 
   if (remedy === "signUp") {
     return (
-      <Link className={className} href="/login" prefetch={false}>
+      <a className={className} href={getPathname({ href: "/login", locale })}>
         {t("Create a free account")}
-      </Link>
+      </a>
     );
   }
 

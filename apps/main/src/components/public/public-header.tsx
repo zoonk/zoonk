@@ -1,14 +1,17 @@
-import { UserAvatarMenu } from "@/app/[lang]/(catalog)/_components/user-avatar-menu";
-import { LearnGoalMenu } from "@/app/[lang]/(learn)/_components/learn-goal-menu";
+import { UserAvatarMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar-menu";
+import { LearnGoalMenu } from "@/app/[lang]/(app)/(learn)/_components/learn-goal-menu";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { LoginBarLink } from "@/components/login-bar-link";
+import { Link } from "@/i18n/navigation";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getSession } from "@zoonk/core/users/session";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
-import { ButtonSkeleton } from "@zoonk/ui/components/button";
+import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode, Suspense } from "react";
+import { PublicNavLinks } from "./public-nav-links";
 import { PublicHomeLink, PublicTopBar } from "./public-top-bar";
 
 /**
@@ -29,12 +32,26 @@ async function BarStart() {
   );
 }
 
-/** Visitors get a way into their account; anyone with a session gets the app's account menu. */
+/**
+ * Visitors get the home page's actions (a quiet way into their account and starting free, from
+ * tablet widths); anyone with a session gets the app's account menu.
+ */
 async function AccountAction() {
+  const t = await getExtracted();
   const session = await getSession();
 
   if (!session) {
-    return <LoginBarLink />;
+    return (
+      <>
+        <LoginBarLink />
+        <Link
+          className={cn(buttonVariants({ size: "bar" }), "hidden sm:inline-flex")}
+          href="/start"
+        >
+          {t("Start free")}
+        </Link>
+      </>
+    );
   }
 
   const belt = await getBeltLevel();
@@ -48,8 +65,8 @@ async function AccountAction() {
 
 /**
  * Public pages keep the top bar quiet so the page's one next step leads: on the left the brain
- * home (or, with a session, the goal switcher), and the page's options and an account action on
- * the right.
+ * home (or, with a session, the goal switcher), and on the right the courses and pricing, the
+ * page's options and an account action.
  */
 export async function PublicHeader({ options }: { options?: ReactNode }) {
   const t = await getExtracted();
@@ -58,10 +75,11 @@ export async function PublicHeader({ options }: { options?: ReactNode }) {
     <PublicTopBar
       actions={
         <>
+          <PublicNavLinks />
           {options}
           <Suspense
             fallback={
-              <ButtonSkeleton size="bar" variant="outline">
+              <ButtonSkeleton size="bar" variant="ghost">
                 {t("Log in")}
               </ButtonSkeleton>
             }
@@ -71,7 +89,7 @@ export async function PublicHeader({ options }: { options?: ReactNode }) {
         </>
       }
       start={
-        <Suspense fallback={<Skeleton className="size-7 rounded-full" />}>
+        <Suspense fallback={<Skeleton className="h-7 w-24 rounded-lg" />}>
           <BarStart />
         </Suspense>
       }

@@ -26,7 +26,8 @@ async function getLogoDataUrl(): Promise<string> {
 
 /**
  * Creates one static social card per route locale so unprefixed English pages
- * and explicitly localized pages describe Zoonk in the language being shared.
+ * and explicitly localized pages describe Zoonk in the language being shared,
+ * with the home page's promise and how Zoonk keeps it.
  */
 export default async function OpenGraphImage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -50,7 +51,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
       }}
     >
       {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
-      <img alt="" src={logoSrc} style={{ height: 190, width: 190 }} />
+      <img alt="" src={logoSrc} style={{ height: 150, width: 150 }} />
 
       <div
         style={{
@@ -58,7 +59,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
           display: "flex",
           flexDirection: "column",
           gap: 18,
-          marginTop: 48,
+          marginTop: 40,
           textAlign: "center",
         }}
       >
@@ -71,7 +72,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             lineHeight: 1.05,
           }}
         >
-          {t("learn anything with AI.")}
+          {t("Know what to study every day until the big day.")}
         </div>
 
         <div
@@ -83,7 +84,9 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             lineHeight: 1.25,
           }}
         >
-          {t("get an interactive course created for you.")}
+          {t(
+            "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day.",
+          )}
         </div>
       </div>
     </div>,

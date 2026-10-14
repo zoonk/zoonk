@@ -13,7 +13,7 @@ export function LegalDocument({ children }: { children: ReactNode }) {
       <article
         className={cn(
           PUBLIC_COLUMN_CLASS,
-          "prose prose-neutral dark:prose-invert prose-headings:scroll-mt-20 prose-headings:tracking-[-0.015em] prose-h1:text-[30px] prose-h1:leading-[1.1] prose-h1:tracking-[-0.03em] sm:prose-h1:text-[44px] max-w-[704px] pt-6 pb-24 sm:pt-10",
+          "prose prose-neutral dark:prose-invert prose-headings:scroll-mt-20 prose-headings:tracking-[-0.015em] prose-h1:text-[30px] prose-h1:leading-[1.1] prose-h1:font-[620] prose-h1:tracking-[-0.035em] prose-h2:text-lg max-w-[704px] pt-6 pb-24 sm:pt-10",
         )}
       >
         {children}
