@@ -224,8 +224,10 @@ describe("the learner's data the buddy looks up", () => {
   it("lists the learner's own goals, the open one linked to its Plan, bounded", async () => {
     const [{ goal, user }, other] = await Promise.all([learnerWithGoal(), userFixture()]);
 
-    // Created right after the open goal, so it's the oldest of the rest: shown second.
+    // The oldest of the rest, a minute before any of them, so it's shown second even when the
+    // others share its millisecond (goals are listed by creation time alone).
     const paused = await goalFixture({
+      createdAt: new Date(Date.now() - 60_000),
       status: "paused",
       targetDate: new Date("2027-06-01T00:00:00Z"),
       title: `Paused ${randomUUID()}`,
