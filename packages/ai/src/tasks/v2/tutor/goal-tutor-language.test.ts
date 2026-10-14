@@ -18,6 +18,7 @@ const LANGUAGES = Object.keys(TODAY_TABS) as (keyof typeof TODAY_TABS)[];
 describe(selectAppLanguageNames, () => {
   it.each(LANGUAGES)("gives a %s learner the app's names in that language alone", (language) => {
     const prompt = selectAppLanguageNames({ language, template });
+
     const others = LANGUAGES.filter((other) => other !== language).map(
       (other) => TODAY_TABS[other],
     );
