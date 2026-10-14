@@ -124,6 +124,7 @@ model Item {
   steps                 Step[]
   answerExplanations    AnswerExplanation[]
   attempts              Attempt[]
+  questionThreads       LessonQuestionThread[]
   mistakes              Mistake[]
   reviewFlags           ContentReviewFlag[]
   anonymousFirstAnswers AnonymousFirstAnswer[]

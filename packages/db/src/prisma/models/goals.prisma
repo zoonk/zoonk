@@ -106,7 +106,8 @@ model Goal {
   examResult            ExamResult?
   evaluationRuns        EvaluationRun[]
   aiCalls               AiCall[]
-  questionThreads       LessonQuestionThread[]
+  questionThreads       LessonQuestionThread[] @relation("GoalQuestionThreads")
+  subjectThreads        LessonQuestionThread[] @relation("SubjectQuestionThreads")
 
   @@index([userId, status])
   @@index([examBlueprintId])
