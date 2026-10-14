@@ -3,37 +3,20 @@
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  BookOpenIcon,
-  HeadphonesIcon,
-  MicIcon,
-  PenLineIcon,
-  TrendingUpIcon,
-} from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, TrendingUpIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { SectionLabel } from "../../_components/section-label";
 import { useFormatIsoDate } from "../../_utils/iso-date";
-import { getBandFill, getLevelShare, listRises } from "../_utils/level-scale";
+import { getLevelShare, listRises } from "../_utils/level-scale";
 import { useSkillName } from "../_utils/use-skill-name";
-import { LanguageCard, LanguageCardTitle } from "../language-card";
+import { LevelBar } from "../level-bar";
 
 type LanguageSkillLevel = LanguageProgressView["levels"][number];
-type Skill = LanguageSkillLevel["skill"];
-
-const PERCENT = 100;
 
 /** Name, bar and level columns; the target line is placed over the bar column with the same sizes. */
-const ROW_GRID = "grid grid-cols-[7rem_1fr_3.5rem] items-center gap-x-3";
-const BAR_START = "7rem + 0.75rem";
-const BAR_WIDTH = "100% - 7rem - 3.5rem - 1.5rem";
-
-const SKILL_ICONS = {
-  listening: HeadphonesIcon,
-  reading: BookOpenIcon,
-  speaking: MicIcon,
-  writing: PenLineIcon,
-} as const satisfies Record<Skill, unknown>;
+const ROW_GRID = "grid grid-cols-[8rem_1fr_3.5rem] items-center gap-x-3";
+const BAR_START = "8rem + 0.75rem";
+const BAR_WIDTH = "100% - 8rem - 3.5rem - 1.5rem";
 
 function TargetLabel({
   target,
@@ -50,7 +33,7 @@ function TargetLabel({
     <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
       <span
         aria-hidden="true"
-        className="border-success inline-block h-3 border-l-2 border-dashed"
+        className="border-foreground/50 inline-block h-3 border-l-[1.5px] border-dashed"
       />
       {targetDate
         ? t("Goal {level} by {date}", {
@@ -62,42 +45,20 @@ function TargetLabel({
   );
 }
 
-function LevelBar({ score }: { score: number }) {
-  return (
-    <div aria-hidden="true" className="flex gap-0.75">
-      {CEFR_LEVELS.map((band, index) => (
-        <span
-          className="bg-muted h-2.5 flex-1 overflow-hidden first:rounded-l-full last:rounded-r-full"
-          key={band}
-        >
-          <span
-            className="bg-primary block h-full"
-            style={{ width: `${getBandFill({ band: index, score }) * PERCENT}%` }}
-          />
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function LevelRow({ level }: { level: LanguageSkillLevel }) {
   const t = useExtracted();
   const skillName = useSkillName();
-  const Icon = SKILL_ICONS[level.skill];
 
   return (
-    <li className={ROW_GRID}>
-      <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
-        <Icon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-        <span className="truncate">{skillName(level.skill)}</span>
-      </span>
+    <li className={`${ROW_GRID} min-h-11 py-2.5`}>
+      <span className="min-w-0 text-sm font-medium text-pretty">{skillName(level.skill)}</span>
       <LevelBar score={level.score} />
-      <span className="flex items-center justify-end gap-0.5 font-semibold tabular-nums">
+      <span className="flex items-center justify-end gap-0.5 font-mono text-xs font-medium tabular-nums">
         {level.label}
         {level.trend === "up" && (
           <ArrowUpIcon
             aria-label={t("up since the level test")}
-            className="text-success size-3.5 shrink-0"
+            className="text-success-text size-3.5 shrink-0"
           />
         )}
         {level.trend === "down" && (
@@ -132,7 +93,7 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   return (
     <p className="flex items-start gap-2 text-sm">
       <LineMarker aria-hidden="true">
-        <TrendingUpIcon className="text-success size-4" />
+        <TrendingUpIcon className="text-success-text size-4" />
       </LineMarker>
       {rises.length === 1
         ? t("{skill} went up to {level} since the level test.", {
@@ -147,30 +108,25 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
 }
 
 /**
- * Level by skill on the A1 to C2 scale: one bar per skill, the learner's target as a dashed line
- * across them, an arrow for each skill that moved since the level test, and the biggest rise.
+ * Level by skill on the A1 to C2 scale, flat: one hairline row per skill with its segmented bar and
+ * its level in the mono face, the learner's target as a dashed line across them, an arrow for each
+ * skill that moved since the level test, and the biggest rise.
  */
-export function SkillLevelsCard({
-  className,
-  progress,
-}: {
-  className?: string;
-  progress: LanguageProgressView;
-}) {
+export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }) {
   const t = useExtracted();
   const { levels, target } = progress;
   const targetShare = target ? getLevelShare(target.score) : null;
 
   return (
-    <LanguageCard aria-labelledby="language-levels-title" className={className}>
+    <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <LanguageCardTitle id="language-levels-title">{t("Level by skill")}</LanguageCardTitle>
+        <SectionLabel id="language-levels-title">{t("Level by skill")}</SectionLabel>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
       </div>
 
       <div aria-hidden="true" className={ROW_GRID}>
         <span />
-        <span className="text-muted-foreground grid grid-cols-6 text-center text-xs font-medium tabular-nums">
+        <span className="text-muted-foreground grid grid-cols-6 text-center font-mono text-[0.6875rem] font-medium">
           {CEFR_LEVELS.map((band) => (
             <span key={band}>{band}</span>
           ))}
@@ -182,12 +138,12 @@ export function SkillLevelsCard({
         {targetShare !== null && (
           <span
             aria-hidden="true"
-            className="border-success pointer-events-none absolute -top-1 -bottom-1 border-l-2 border-dashed"
+            className="border-foreground/50 pointer-events-none absolute top-1 bottom-1 border-l-[1.5px] border-dashed"
             data-slot="language-level-target"
             style={{ left: `calc(${BAR_START} + (${BAR_WIDTH}) * ${targetShare})` }}
           />
         )}
-        <ul aria-label={t("Level by skill")} className="flex flex-col gap-3.5">
+        <ul aria-label={t("Level by skill")} className="flex flex-col [&>li+li]:border-t">
           {levels.map((level) => (
             <LevelRow key={level.skill} level={level} />
           ))}
@@ -195,6 +151,6 @@ export function SkillLevelsCard({
       </div>
 
       <RiseLine levels={levels} />
-    </LanguageCard>
+    </section>
   );
 }

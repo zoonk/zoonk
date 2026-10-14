@@ -6,7 +6,7 @@ import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciatio
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { answerLiveCalls } from "./live-gateway";
+import { answerLiveCalls } from "./live-peer";
 
 const RENTING_UNIT = "Alugando um apartamento";
 
@@ -77,10 +77,10 @@ async function addDueWord(userId: string) {
 }
 
 /**
- * A language unit's page for Marcos's English goal, opened from the Journey's path: its lessons
- * with the next one first, what it teaches, a practice call that runs from its intro to its
+ * A language unit's page for Marcos's English goal, opened from the Plan's path: its lessons
+ * with the next one marked, what it teaches, a practice call that runs from its intro to its
  * result, its test-out, the pattern noticed in its mistakes and the words to say again, then
- * folded away its grammar tips, words, his mistakes filtered by skill and the summary of the
+ * folded away its grammar tips, words, his mistakes with their skills and the summary of the
  * lesson he finished.
  */
 test.describe("Language unit page", () => {
@@ -105,18 +105,31 @@ test.describe("Language unit page", () => {
       // The call's stand-in is set before the first page loads: Playwright puts it into a page
       // when the page loads, and the call opens later in the same page.
       await answerLiveCalls(page, "answers");
-      await page.goto("/journey");
+      await page.goto("/plan");
 
-      // A language goal's path runs through its units: the one he finished is a done phase, and
-      // the one he's in is open with the unit next.
-      const path = page.getByRole("list", { name: "Your journey" });
+      // Each of his phases is one unit, so each is one row opening the unit's page, its name said
+      // once: the one he finished is done, and the one he's in is the path's highlighted row, with
+      // no chip to say it again.
+      const path = page.getByRole("list", { name: "Your path" });
 
-      await expect(
-        path.getByRole("button", { name: /^Chegando: aeroporto e imigração\s*, done$/u }),
-      ).toHaveAttribute("aria-expanded", "false");
+      // A row is named by its name and state in one run, never "… , done", and described by the
+      // rest of it.
+      const finished = path.getByRole("link", {
+        exact: true,
+        name: "Chegando: aeroporto e imigração, done",
+      });
 
-      const unit = path.getByRole("link", { name: `${RENTING_UNIT} Up next` });
+      await expect(finished).toHaveAttribute("href", /^\/content\/units\/[\da-f-]{36}$/u);
+      await expect(finished).toHaveAccessibleDescription(/^\d+ of \d+ lessons? done$/u);
+
+      const current = path.locator(':scope > li[aria-current="step"]');
+      const unit = current.getByRole("link", { name: new RegExp(RENTING_UNIT, "u") });
+
+      await expect(unit).toHaveCount(1);
+      await expect(unit).toContainText(", you are here");
+      await expect(unit).toHaveAccessibleName(`${RENTING_UNIT}, you are here`);
       await expect(unit).toHaveAttribute("href", /^\/content\/units\/[\da-f-]{36}$/u);
+      await expect(path.getByText("Up next", { exact: true })).toHaveCount(0);
       await unit.click();
 
       await expect(page).toHaveURL(/\/content\/units\/[\da-f-]{36}$/u);
@@ -125,7 +138,7 @@ test.describe("Language unit page", () => {
       await expect(page.getByRole("heading", { level: 1, name: RENTING_UNIT })).toBeVisible();
       await expect(page.getByText("Unit 2 · A1–A2")).toBeVisible();
 
-      await expect(page.getByRole("link", { name: /^Continue\s*25% complete$/u })).toHaveAttribute(
+      await expect(page.getByRole("link", { exact: true, name: "Continue" })).toHaveAttribute(
         "href",
         /\/learn\/[\da-f-]{36}$/u,
       );
@@ -133,17 +146,27 @@ test.describe("Language unit page", () => {
       await expect(page.getByRole("button", { name: "Unit options" })).toBeVisible();
 
       await expect(
-        page.getByRole("main").getByRole("link", { name: "Back to Journey" }),
-      ).toHaveAttribute("href", "/journey");
+        page.getByRole("main").getByRole("link", { name: "Back to Plan" }),
+      ).toHaveAttribute("href", "/plan");
 
-      // Every lesson opens in the player, in teaching order, the next one marked.
+      // Every lesson opens in the player, in teaching order; "Continue" opens the next one. The
+      // unit he's in holds the plan's next lesson, so its list marks it, as the Plan marks the
+      // unit.
       const lessons = page.getByRole("region", { name: "Lessons" });
       await expect(lessons.getByText("1 of 4", { exact: true })).toBeVisible();
       await expect(lessons.getByRole("link")).toHaveCount(4);
+      await expect(page.getByText(/^4 lessons(?: · About \d+\smin)? · 25% done$/u)).toBeVisible();
 
-      await expect(
-        lessons.getByRole("link", { name: /^Up next \d+\. There is, there are \d+ min$/u }),
-      ).toHaveAttribute("href", /\/learn\/[\da-f-]{36}$/u);
+      const nextLesson = lessons.getByRole("link", {
+        name: /^Up next \d+\. There is, there are \d+ min$/u,
+      });
+
+      await expect(nextLesson).toHaveAttribute("href", /\/learn\/[\da-f-]{36}$/u);
+
+      await expect(nextLesson.locator("xpath=ancestor::li[1]")).toHaveAttribute(
+        "aria-current",
+        "step",
+      );
 
       await expect(
         lessons.getByRole("link", { name: /^Done \d+\. Quanto é o aluguel\?/u }),
@@ -186,26 +209,15 @@ test.describe("Language unit page", () => {
       await page.getByRole("button", { name: /^Words in this unit/u }).click();
       await expect(page.getByText(/^bedroom · bathroom · rent/u)).toBeVisible();
 
-      // The filters split the unit's mistakes by skill, so they add up to all of them.
-      await page.getByRole("button", { name: /^Review my mistakes/u }).click();
+      // His open mistakes on the unit, one list, each saying which skill it was, with the right
+      // answer and why.
+      await page.getByRole("button", { name: /^Your mistakes/u }).click();
       const all = page.getByRole("list", { name: "All mistakes" }).getByRole("listitem");
-      const filters = page.getByRole("group", { name: "Show mistakes in" }).getByRole("button");
+      const spoken = all.filter({ hasText: "Is the apartment still available?" });
 
-      await expect(filters).toHaveText([/Words$/u, /Listening$/u, /Speaking$/u, /Writing$/u]);
-      const total = await all.count();
-      const byFilter = await filters.allTextContents();
-
-      expect(total).toBeGreaterThanOrEqual(unitMistakes.length);
-      // Each filter reads its count, then its skill: "1Speaking".
-      const counted = byFilter.map((text) => Number(/^\d+/u.exec(text)?.[0] ?? 0));
-      expect(counted.reduce((sum, count) => sum + count, 0)).toBe(total);
-
-      await filters.filter({ hasText: "Speaking" }).click();
-
-      const speaking = page.getByRole("list", { name: "Speaking" });
-      await expect(speaking.getByRole("listitem")).toHaveCount(1);
-      await expect(speaking.getByText("Is the apartment still available?")).toBeVisible();
-      await expect(speaking.getByText("Still vem antes do adjetivo.")).toBeVisible();
+      await expect(spoken.getByText("Speaking", { exact: true })).toBeVisible();
+      await expect(spoken.getByText("Still vem antes do adjetivo.")).toBeVisible();
+      expect(await all.count()).toBeGreaterThanOrEqual(unitMistakes.length);
 
       await page.getByRole("button", { name: "Unit summary" }).click();
       const summaries = page.getByRole("region", { name: "Summaries" });
@@ -251,9 +263,12 @@ test.describe("Language unit page", () => {
 
       expect(conversation).toMatchObject({ minutes: 2, status: "completed" });
 
-      // A language goal's chapter has one page, the unit's.
-      await page.goto(unitPath.replace("/content/units/", "/content/chapters/"));
-      await expect(page).toHaveURL(new RegExp(`${unitPath}$`, "u"));
+      // A language goal's chapter has one page, the unit's, drawn at the chapter's address too.
+      const chapterPath = unitPath.replace("/content/units/", "/content/chapters/");
+      await page.goto(chapterPath);
+      await expect(page).toHaveURL(new RegExp(`${chapterPath}$`, "u"));
+      await expect(page.getByRole("heading", { level: 1, name: RENTING_UNIT })).toBeVisible();
+      await expect(page.getByText("Unit 2 · A1–A2")).toBeVisible();
 
       // An unknown unit isn't found.
       await page.goto(`/content/units/${randomUUID()}`);

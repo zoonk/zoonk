@@ -2,12 +2,18 @@
 
 import { type SpeakingMockExam } from "@zoonk/core/language/conversations/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { MicIcon } from "lucide-react";
+import { PhoneOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { KindDot } from "../../_components/kind-tile";
+import {
+  NoticeCard,
+  NoticeCardContent,
+  NoticeCardDescription,
+  NoticeCardTitle,
+} from "../../_components/notice-card";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { useCallStart } from "../conversation/use-call-start";
-import { LanguageCard, LanguageCardTitle } from "../language-card";
 
 function useSpeakingMockDescription() {
   const t = useExtracted();
@@ -25,17 +31,19 @@ function useSpeakingMockDescription() {
 }
 
 /**
- * The speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT): a short test with an
- * examiner, then an estimated band per criterion. The host starts the call and opens it; false
- * means it didn't. A mock is usually written ahead and opens at once; when it isn't, the card shows
- * it being written until it opens.
+ * The speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), flat on its page or
+ * sheet with the conversation kind's dot: a short test with an examiner, then an estimated band per
+ * criterion. The host starts the call and opens it; false means it didn't. A mock is usually
+ * written ahead and opens at once; when it isn't, the card shows it being written until it opens.
  */
 export function SpeakingMockCard({
   exam,
   onStart,
+  paused,
 }: {
   exam: SpeakingMockExam;
   onStart: () => Promise<boolean>;
+  paused: boolean;
 }) {
   const t = useExtracted();
   const title = useSpeakingMockTitle();
@@ -43,41 +51,57 @@ export function SpeakingMockCard({
   const call = useCallStart({ onStart, step: "writeMock" });
 
   return (
-    <LanguageCard aria-labelledby="language-speaking-mock">
-      <div className="flex items-start gap-3">
-        <span
-          aria-hidden="true"
-          className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-2xl"
-        >
-          <MicIcon className="size-5" />
-        </span>
-        <div className="flex min-w-0 flex-col gap-1">
-          <LanguageCardTitle id="language-speaking-mock">{title(exam)}</LanguageCardTitle>
-          <p className="text-muted-foreground text-sm">{description(exam)}</p>
+    <section aria-labelledby="language-speaking-mock" className="flex flex-col gap-3">
+      <div className="flex items-baseline gap-3">
+        <KindDot className="-translate-y-px" kind="conversation" />
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h2 className="text-[0.9375rem] font-medium" id="language-speaking-mock">
+            {title(exam)}
+          </h2>
+          <p className="text-muted-foreground text-[0.8125rem]">{description(exam)}</p>
         </div>
       </div>
 
-      {call.run ? (
-        <GenerationWait className="pt-2" kind="speakingMock" run={call.run}>
-          {call.run.status !== "failed" && (
-            <p className="text-muted-foreground text-sm">
-              {t("Your mock opens as soon as it's ready.")}
-            </p>
-          )}
-        </GenerationWait>
-      ) : (
-        <>
-          <Button className="self-start" disabled={call.isStarting} onClick={call.start}>
-            {call.isStarting ? t("Starting…") : t("Start the mock")}
-          </Button>
-
-          {call.failed && (
-            <p className="text-destructive text-sm" role="alert">
-              {t("The mock didn't start. Try again in a moment.")}
-            </p>
-          )}
-        </>
+      {paused && (
+        <NoticeCard>
+          <PhoneOffIcon aria-hidden="true" />
+          <NoticeCardContent>
+            <NoticeCardTitle>{t("Calls are paused")}</NoticeCardTitle>
+            <NoticeCardDescription>
+              {t("It's the same for everyone right now. Try again later.")}
+            </NoticeCardDescription>
+          </NoticeCardContent>
+        </NoticeCard>
       )}
-    </LanguageCard>
+
+      {!paused &&
+        (call.run ? (
+          <GenerationWait className="pt-2" kind="speakingMock" run={call.run}>
+            {call.run.status !== "failed" && (
+              <p className="text-muted-foreground text-sm">
+                {t("Your mock opens as soon as it's ready.")}
+              </p>
+            )}
+          </GenerationWait>
+        ) : (
+          <>
+            <Button
+              className="self-start"
+              disabled={call.isStarting}
+              onClick={call.start}
+              size="lg"
+              variant="outline"
+            >
+              {call.isStarting ? t("Starting…") : t("Start the mock")}
+            </Button>
+
+            {call.failed && (
+              <p className="text-destructive-text text-sm" role="alert">
+                {t("The mock didn't start. Try again in a moment.")}
+              </p>
+            )}
+          </>
+        ))}
+    </section>
   );
 }

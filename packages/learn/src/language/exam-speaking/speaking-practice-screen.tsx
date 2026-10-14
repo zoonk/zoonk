@@ -13,7 +13,7 @@ import {
   DetailLayout,
   DetailTitle,
 } from "../../_components/detail-page";
-import { KindTile } from "../../_components/kind-tile";
+import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowContent,
   ListRowDescription,
@@ -43,7 +43,7 @@ export function SpeakingPracticeRow({
   return (
     <ListRowLink href={href}>
       <ListRowLeading>
-        <KindTile kind="conversation" />
+        <KindDot kind="conversation" />
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("Exam-style speaking")}</ListRowTitle>
@@ -52,7 +52,7 @@ export function SpeakingPracticeRow({
         </ListRowDescription>
       </ListRowContent>
       {entry.access === "plusRequired" && (
-        <ListRowTrailing>
+        <ListRowTrailing className="font-sans">
           <PlusMark />
         </ListRowTrailing>
       )}
@@ -84,12 +84,11 @@ export function SpeakingPracticeScreen({
 
   return (
     <div className="flex flex-col gap-8">
-      <LearnPageBar back={{ href: backHref, label: t("Today") }} title={t("Speaking practice")} />
+      <LearnPageBar back={{ href: backHref }} root title={t("Speaking practice")} />
 
       <DetailLayout>
         <DetailAside>
           <DetailHero>
-            <KindTile kind="conversation" size="lg" />
             <DetailHeroText>
               <DetailEyebrow>{t("Exam-style speaking")}</DetailEyebrow>
               <DetailTitle>{paper.title}</DetailTitle>

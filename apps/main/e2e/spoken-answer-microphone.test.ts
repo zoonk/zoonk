@@ -42,9 +42,14 @@ const NO_SPEECH = {
 };
 
 async function sayIt(page: Page) {
-  await page.getByRole("button", { name: "Start speaking" }).click();
-  await expect(page.getByText(/Listening… [1-9]\d*s/u)).toBeVisible();
-  await page.getByRole("button", { name: "Stop and check" }).click();
+  await page.getByRole("button", { name: "Record" }).click();
+  await expect(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
+  // The clock on Stop has run a second, so there's something to check.
+  await expect(
+    page.getByRole("button", { name: /^Stop\s?\d+:(?:0[1-9]|[1-5]\d)$/u }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: /^Stop/u }).click();
 }
 
 test.describe("A spoken answer", () => {

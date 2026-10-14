@@ -29,7 +29,7 @@ function CardPhoto({
     <img
       alt={photo.alt}
       className={cn(
-        "bg-muted/40 h-auto w-full rounded-xl object-cover",
+        "bg-muted/40 h-auto w-full rounded-md object-cover",
         compact && "max-h-40 sm:max-h-56",
       )}
       decoding="async"
@@ -51,9 +51,9 @@ function CardText({
   return (
     <article
       className={cn(
-        "bg-muted/40 flex flex-col gap-2 rounded-xl p-4 text-sm leading-6",
+        "border-border flex flex-col gap-2 border-s-2 ps-3 text-sm leading-6",
         compact &&
-          "focus-visible:ring-ring/50 max-h-56 overflow-y-auto outline-none focus-visible:ring-[3px]",
+          "focus-visible:ring-ring/50 max-h-56 overflow-y-auto rounded-e-md outline-none focus-visible:ring-[3px]",
       )}
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A text that scrolls in its box needs focus by keyboard.
       tabIndex={compact ? 0 : undefined}

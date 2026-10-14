@@ -1,7 +1,10 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
+import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { FactChip, FactChips } from "../../_components/fact-chips";
+import { MissionMoment } from "../../missions/mission-moment";
 import {
   type ChoiceFeedback,
   ChoiceQuestion,
@@ -55,21 +58,25 @@ function toFeedback({
 }
 
 /**
- * One fill-in-the-blank sentence: tap an option or press its number, and the right answer and why
- * show at once. Nothing is saved until the last one.
+ * One fill-in-the-blank sentence, answered as a lesson's question is: tap an option or press its
+ * number (`picked`, which can still change), then Check shows the right answer and why
+ * (`answer`). Nothing is saved until the last one.
  */
 export function PatternDrillQuestion({
   answer,
   index,
   onPick,
+  picked,
   question,
 }: {
+  /** The checked answer, or null before Check. */
   answer: string | null;
   index: number;
   onPick: (option: string) => void;
+  picked: string | null;
   question: DrillQuestion;
 }) {
-  const selectedIndex = answer === null ? -1 : question.options.indexOf(answer);
+  const selectedIndex = picked === null ? -1 : question.options.indexOf(picked);
 
   return (
     <ChoiceQuestion
@@ -88,34 +95,53 @@ export function PatternDrillQuestion({
   );
 }
 
-/** The drill's result: right answers of the total and the Brain Power it paid. */
+/** The drill's score in the mono face, as every count reads ("5/6"). */
+function monoScore(chunks: React.ReactNode) {
+  return <span className="font-mono tracking-[-0.03em] tabular-nums">{chunks}</span>;
+}
+
+/**
+ * The drill's result: right answers of the total ("5/6 right", screen readers hear "5 of 6
+ * right"), and the Brain Power it paid as a chip.
+ */
 export function PatternDrillResult({ result }: { result: PatternPracticeResult }) {
   const t = useExtracted();
   const format = useFormatter();
   const allRight = result.correct === result.total;
+  const counts = { correct: result.correct, total: result.total };
 
   return (
-    <div
-      aria-live="polite"
-      className="flex flex-col items-center gap-3 py-8 text-center"
-      role="status"
-    >
-      <h1 className="text-3xl font-bold tracking-tight tabular-nums">
-        {t("{correct, number} of {total, number} right", {
-          correct: result.correct,
-          total: result.total,
-        })}
+    <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
+      <h1 className="text-title text-balance">
+        <span aria-hidden="true">
+          {t.rich("<score>{correct, number}/{total, number}</score> right", {
+            ...counts,
+            score: monoScore,
+          })}
+        </span>
+        <span className="sr-only">{t("{correct, number} of {total, number} right", counts)}</span>
       </h1>
       {result.brainPower > 0 && (
-        <p className="text-score font-semibold tabular-nums">
-          {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
-        </p>
+        <FactChips>
+          <FactChip>
+            <BrainIcon aria-hidden="true" className="text-brain" />
+            {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
+          </FactChip>
+        </FactChips>
       )}
-      <p className="text-muted-foreground max-w-sm">
+      <p className="text-muted-foreground text-pretty">
         {allRight
           ? t("You've got this rule.")
           : t("Knowing the rule is the first step. It gets easier each time you use it.")}
       </p>
+
+      {result.missionMoment && (
+        <MissionMoment
+          completed={result.missionMoment.completed}
+          fullMeal={result.missionMoment.fullMeal}
+          missions={result.missionMoment.missions}
+        />
+      )}
     </div>
   );
 }

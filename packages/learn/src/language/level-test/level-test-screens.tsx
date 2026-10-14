@@ -3,9 +3,8 @@
 import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon, ListChecksIcon } from "lucide-react";
+import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
-import { KindTile } from "../../_components/kind-tile";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -66,8 +65,6 @@ export function TestIntro({
 
   return (
     <OnboardingColumn>
-      {/* The same anchor as every other goal's placement, so both read as one step. */}
-      <KindTile icon={ListChecksIcon} kind="practice" size="lg" />
       <OnboardingHeading>
         <OnboardingTitle>
           {t("Let's see your level in {language}", { language: target ?? goal.targetLanguage })}

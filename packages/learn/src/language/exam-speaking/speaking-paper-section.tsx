@@ -1,10 +1,17 @@
 "use client";
 
 import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contract";
+import { PhoneOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { ListGroup } from "../../_components/list-group";
+import {
+  NoticeCard,
+  NoticeCardContent,
+  NoticeCardDescription,
+  NoticeCardTitle,
+} from "../../_components/notice-card";
 import {
   PageSection,
   PageSectionDetail,
@@ -42,7 +49,7 @@ function useOpenTask(openTask: string | null) {
  * Cambridge English), its tasks in the paper's order under their official names with the exam's
  * timing. A tap starts that task's call with a new card; while the card is written the section
  * shows the wait, and the call opens when it's ready. Without Plus the tasks show all the same,
- * marked, with the one notice of what Plus unlocks. The AI stands in for the human examiner or the
+ * under the one notice of what Plus unlocks, read before them. The AI stands in for the human examiner or the
  * other candidate, and each task ends with an estimate on the official criteria, never a score. A
  * task the call time left can't fit says until when, like any call, and writes nothing.
  */
@@ -70,6 +77,7 @@ export function SpeakingPaperSection({
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
   const locked = paper.access === "plusRequired";
+  const paused = paper.access === "callsPaused";
 
   const call = useCallStart({
     onStart: async () => {
@@ -95,6 +103,26 @@ export function SpeakingPaperSection({
         {!title && <PageSectionDetail>{paper.title}</PageSectionDetail>}
       </PageSectionHeader>
 
+      {locked && (
+        <PlusNotice>
+          {t(
+            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
+          )}
+        </PlusNotice>
+      )}
+
+      {paused && (
+        <NoticeCard>
+          <PhoneOffIcon aria-hidden="true" />
+          <NoticeCardContent>
+            <NoticeCardTitle>{t("Calls are paused")}</NoticeCardTitle>
+            <NoticeCardDescription>
+              {t("It's the same for everyone right now. Try again later.")}
+            </NoticeCardDescription>
+          </NoticeCardContent>
+        </NoticeCard>
+      )}
+
       <ListGroup>
         <ol>
           {paper.tasks.map((task, index) => (
@@ -105,13 +133,14 @@ export function SpeakingPaperSection({
                 index={index}
                 language={paper.language}
                 level={paper.level}
-                locked={locked}
+                locked={locked || paused}
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);
                   setLimit(null);
                   call.start();
                 }}
+                paused={paused}
                 resultHref={resultHref}
                 starting={call.isStarting && startedTask === task.key}
                 task={task}
@@ -145,17 +174,9 @@ export function SpeakingPaperSection({
       )}
 
       {call.failed && !limit && (
-        <p className="text-destructive px-1 text-sm" role="alert">
+        <p className="text-destructive-text px-1 text-sm" role="alert">
           {t("The task didn't start. Try again in a moment.")}
         </p>
-      )}
-
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-          )}
-        </PlusNotice>
       )}
 
       <PageSectionFooter>

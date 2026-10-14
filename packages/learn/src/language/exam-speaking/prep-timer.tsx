@@ -2,11 +2,10 @@
 
 import { type SpeakingTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { HourglassIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Callout } from "../../_components/callout";
 import { formatClock } from "../../_utils/clock";
+import { useFormatDuration } from "../../_utils/time-format";
 
 const MS_PER_MINUTE = 60_000;
 const TICK_MS = 500;
@@ -46,27 +45,26 @@ function subscribeToStorage(onChange: () => void) {
 function usePrepLine() {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
 
   return (task: Pick<SpeakingTaskView, "prepMinutes" | "prepShared">) =>
     task.prepShared
-      ? t(
-          "The exam gives {total} min to prepare tasks {tasks} together, about {minutes} for this one.",
-          {
-            minutes: String(Math.round(task.prepMinutes)),
-            tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
-            total: String(Math.round(task.prepShared.minutes)),
-          },
-        )
-      : t("The exam gives {minutes} min to prepare with the card.", {
-          minutes: String(Math.round(task.prepMinutes)),
+      ? t("The exam gives {total} to prepare tasks {tasks} together, about {time} for this one.", {
+          tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
+          time: formatDuration(task.prepMinutes),
+          total: formatDuration(task.prepShared.minutes),
+        })
+      : t("The exam gives {time} to prepare with the card.", {
+          time: formatDuration(task.prepMinutes),
         });
 }
 
 /**
- * The exam's preparation time before a task, as the exam room's clock: the learner starts it when
- * they turn to the card, can start it again, and can start the call any time. The clock keeps
- * running through a reload or a locked phone (its start is kept on the device, per card), and
- * nothing is charged while it runs, since the call hasn't connected.
+ * The exam's preparation time before a task, as the exam room's clock in the mono face, like a
+ * mock's timer: the learner starts it when they turn to the card, can start it again, and can
+ * start the call any time. The clock keeps running through a reload or a locked phone (its start
+ * is kept on the device, per card), and nothing is charged while it runs, since the call hasn't
+ * connected.
  */
 export function PrepTimer({
   cardId,
@@ -112,29 +110,42 @@ export function PrepTimer({
 
   if (startedAt === null) {
     return (
-      <Callout>
-        <HourglassIcon aria-hidden="true" />
-        <div className="flex flex-1 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p>{prepLine(task)}</p>
-          <Button className="shrink-0" onClick={start} size="sm" variant="outline">
-            {t("Start preparing")}
-          </Button>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <p className="text-label">{t("Preparation")}</p>
+          <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
+            {prepLine(task)}
+          </p>
         </div>
-      </Callout>
+        <Button className="shrink-0" onClick={start} size="sm" variant="outline">
+          {t("Start preparing")}
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Callout className="items-center outline-none" ref={clock} role="timer" tabIndex={-1}>
-      <HourglassIcon aria-hidden="true" />
-      <p className="flex-1">
-        {leftMs === 0
-          ? t("Preparation time is over. Start the call when you're ready.")
-          : t("Preparing: {left} left", { left: formatClock(leftMs) })}
-      </p>
+    <div className="flex items-center justify-between gap-4">
+      <div
+        className="flex min-w-0 flex-col gap-1 outline-none"
+        ref={clock}
+        role="timer"
+        tabIndex={-1}
+      >
+        <p className="text-label">{t("Preparation")}</p>
+        {leftMs === 0 ? (
+          <p className="text-[0.8125rem] leading-snug text-pretty">
+            {t("Preparation time is over. Start the call when you're ready.")}
+          </p>
+        ) : (
+          <p className="font-mono text-2xl leading-tight font-medium tracking-[-0.03em] tabular-nums">
+            {formatClock(leftMs)}
+          </p>
+        )}
+      </div>
       <Button className="shrink-0" onClick={start} size="sm" variant="ghost">
         {t("Start again")}
       </Button>
-    </Callout>
+    </div>
   );
 }

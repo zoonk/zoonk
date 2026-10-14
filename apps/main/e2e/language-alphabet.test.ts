@@ -19,7 +19,7 @@ async function learnNewScript(goalId: string) {
 }
 
 /**
- * A language whose script isn't Latin starts with its alphabet: the Journey shows the lesson above
+ * A language whose script isn't Latin starts with its alphabet: the Plan shows the lesson above
  * its path while it still opens the sessions, "I can already read it" skips it, and the lesson
  * stays open as practice.
  */
@@ -27,7 +27,7 @@ test.describe("Alphabet intro", () => {
   test("lists the alphabet first, skips it and opens it as practice", async ({ browser }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
       const lesson = await learnNewScript(user.goalId);
-      await page.goto("/journey");
+      await page.goto("/plan");
 
       const row = page.getByRole("link", { name: new RegExp(SCRIPT.title, "u") });
       const skip = page.getByRole("button", { name: "I can already read it" });

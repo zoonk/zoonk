@@ -23,17 +23,17 @@ async function selectLanguage({
   await expect(page).toHaveURL((url) => url.pathname === expectedPath);
 }
 
-test.describe("Language setting in Appearance", () => {
+test.describe("Language setting in Preferences", () => {
   test("switches the UI through every language and drops the prefix back in English", async ({
     page,
   }) => {
     await page.goto("/settings/appearance");
 
-    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Preferences" })).toBeAttached();
 
     const english = page.getByRole("combobox", { name: "App language" });
     await expect(english).toHaveValue("en");
-    await expectAccessibleScreen(page, "the appearance settings for a visitor");
+    await expectAccessibleScreen(page, "the preferences for a visitor");
 
     await selectLanguage({
       expectedPath: "/pt/settings/appearance",
@@ -42,7 +42,7 @@ test.describe("Language setting in Appearance", () => {
       selector: english,
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^aparência$/iu })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
 
     await selectLanguage({
       expectedPath: "/fr/settings/appearance",
@@ -51,7 +51,7 @@ test.describe("Language setting in Appearance", () => {
       selector: page.getByRole("combobox", { name: "Idioma do app" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^apparence$/iu })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "fr");
 
     await selectLanguage({
       expectedPath: "/de/settings/appearance",
@@ -60,7 +60,7 @@ test.describe("Language setting in Appearance", () => {
       selector: page.getByRole("combobox", { name: "Langue de l’application" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^aussehen$/iu })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "de");
 
     await selectLanguage({
       expectedPath: "/settings/appearance",
@@ -69,7 +69,7 @@ test.describe("Language setting in Appearance", () => {
       selector: page.getByRole("combobox", { name: "App-Sprache" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Preferences" })).toBeAttached();
   });
 });
 

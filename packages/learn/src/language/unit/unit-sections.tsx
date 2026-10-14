@@ -10,14 +10,14 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_components/page";
-import { StatusMark } from "../../_components/status-mark";
+import { CanDoMark } from "../progress/can-do-list";
 
 /** "By the end of this unit" says a few things, so it stays a glance. */
 const SHOWN_OBJECTIVES = 3;
 
 /**
- * The unit's "I can" objectives, at most three, with the same marks as its lessons: checked once
- * every lesson is done, an empty ring until then.
+ * The unit's "I can" objectives, at most three, with the marks of "I can already…": a green dot
+ * once every lesson is done, an 8px ring until then, so they never read as lessons left undone.
  */
 export function UnitObjectives({ view }: { view: LanguageUnitView }) {
   const t = useExtracted();
@@ -39,9 +39,9 @@ export function UnitObjectives({ view }: { view: LanguageUnitView }) {
         {unit.objectives.slice(0, SHOWN_OBJECTIVES).map((objective) => (
           <li className={LIST_ROW_CLASS} key={objective}>
             <ListRowLeading>
-              <StatusMark status={finished ? "done" : "todo"} />
+              <CanDoMark done={finished} />
             </ListRowLeading>
-            <ListRowContent className="min-h-12 py-2.5">
+            <ListRowContent>
               <ListRowTitle className="font-normal">{objective}</ListRowTitle>
             </ListRowContent>
           </li>

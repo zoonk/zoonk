@@ -20,19 +20,22 @@ import {
   ListRowIcon,
   ListRowLeading,
   ListRowTitle,
-  ListRowTrailing,
 } from "../../_components/list-group";
-import { PlusMark } from "../../_components/plus-lock";
+import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { useCriterionGloss, useTaskRoleLabel } from "./exam-speaking-labels";
 
-/** "6–7 min", or "2 min" when the exam gives one length: the exam's own timing. */
+/**
+ * "6–7 min", or "2 min" when the exam gives one length: the exam's own timing. The shared duration
+ * has no range form, so a range keeps its own minute label.
+ */
 export function useTaskMinutes() {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
 
   return ({ max, min }: SpeakingTaskView["minutes"]) =>
     min === max
-      ? t("{minutes} min", { minutes: String(max) })
+      ? formatDuration(max)
       : t("{min}–{max} min", { max: String(max), min: String(min) });
 }
 
@@ -40,6 +43,7 @@ export function useTaskMinutes() {
 function usePrepFact() {
   const t = useExtracted();
   const format = useFormatter();
+  const formatDuration = useFormatDuration();
 
   return function prepFact(task: SpeakingTaskView): string | null {
     if (task.prepMinutes <= 0) {
@@ -47,11 +51,11 @@ function usePrepFact() {
     }
 
     return task.prepShared
-      ? t("{minutes} min to prepare tasks {tasks}", {
-          minutes: String(Math.round(task.prepShared.minutes)),
+      ? t("{time} to prepare tasks {tasks}", {
           tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
+          time: formatDuration(Math.round(task.prepShared.minutes)),
         })
-      : t("{minutes} min to prepare", { minutes: String(Math.round(task.prepMinutes)) });
+      : t("{time} to prepare", { time: formatDuration(Math.round(task.prepMinutes)) });
   };
 }
 
@@ -103,7 +107,7 @@ function useLastTryText() {
 /**
  * A task of the paper as a row that opens in place: its official name, whom the learner talks to,
  * its timing and their last try; opened, what it's rated on, its start (Plus) and the last try's
- * result. Without Plus it opens the same, marked Plus, with nothing to start.
+ * result. Without Plus it opens the same, under the paper's one Plus notice, with nothing to start.
  */
 export function TaskRow({
   busy,
@@ -113,6 +117,7 @@ export function TaskRow({
   level,
   locked,
   onStart,
+  paused,
   resultHref,
   starting,
   task,
@@ -124,6 +129,7 @@ export function TaskRow({
   level: string;
   locked: boolean;
   onStart: () => void;
+  paused: boolean;
   resultHref: (conversationId: string) => string;
   starting: boolean;
   task: SpeakingPaperTaskView;
@@ -141,9 +147,7 @@ export function TaskRow({
         id={getTaskRowId(task.key)}
       >
         <ListRowLeading>
-          <ListRowIcon className="text-foreground text-sm font-semibold tabular-nums">
-            {index + 1}
-          </ListRowIcon>
+          <ListRowIcon className="font-mono text-xs tabular-nums">{index + 1}</ListRowIcon>
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle lang={language}>{task.name}</ListRowTitle>
@@ -152,18 +156,13 @@ export function TaskRow({
             <ListRowDescription>{lastTryText(task.lastTry, level)}</ListRowDescription>
           )}
         </ListRowContent>
-        {locked && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
         <ChevronDownIcon
           aria-hidden="true"
           className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/task:rotate-180 motion-reduce:transition-none"
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="flex flex-col items-start gap-3 ps-15 pe-4 pt-1 pb-4">
+        <div className="flex flex-col items-start gap-3 ps-7 pt-1 pb-4">
           <p className="text-muted-foreground text-sm text-pretty">
             {t("Rated on {criteria}.", {
               criteria: format.list(
@@ -173,6 +172,7 @@ export function TaskRow({
             })}
           </p>
           <div className="flex flex-wrap gap-2">
+            {paused && <p className="text-muted-foreground text-sm">{t("Calls are paused")}</p>}
             {!locked && (
               <Button disabled={busy} onClick={onStart} size="sm">
                 {starting ? t("Starting…") : t("Start this task")}

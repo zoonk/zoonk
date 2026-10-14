@@ -6,6 +6,7 @@ import {
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
 import { useMemo, useState, useTransition } from "react";
+import { type TaskSegment } from "../../_components/task-header";
 
 /**
  * What the host's grader returns for one recording: `signUpRequired` asks a guest to create an
@@ -46,14 +47,19 @@ const READY: WordState = { kind: "ready", notice: null };
  */
 export function usePronunciationRound({
   actions,
-  words,
+  words: initialWords,
 }: {
   actions: PronunciationRoundActions;
   words: PronunciationReviewsView["words"];
 }) {
+  /** Grading refreshes the due list, but the active round must keep its original word cohort. */
+  // oxlint-disable-next-line react/hook-use-state -- The round's cohort is immutable after it starts.
+  const [words] = useState(initialWords);
   const roundId = useMemo(() => crypto.randomUUID(), []);
   const [step, setStep] = useState<RoundStep>({ index: 0, kind: "word", word: READY });
   const [answered, setAnswered] = useState(0);
+  // How each word went, by its place in the round: its last grade, or skipped.
+  const [outcomes, setOutcomes] = useState<Record<number, TaskSegment>>({});
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -69,7 +75,7 @@ export function usePronunciationRound({
     setFailed(false);
 
     startTransition(async () => {
-      const result = await actions.finish(roundId);
+      const result = await actions.finish(roundId).catch(() => null);
 
       if (result) {
         setStep({ kind: "result", result });
@@ -80,6 +86,9 @@ export function usePronunciationRound({
   };
 
   const next = () => {
+    // A word left without a grade was skipped: it fills in quietly, without a verdict.
+    setOutcomes((previous) => ({ ...previous, [index]: previous[index] ?? "read" }));
+
     if (index + 1 < words.length) {
       setStep({ index: index + 1, kind: "word", word: READY });
       return;
@@ -94,10 +103,19 @@ export function usePronunciationRound({
     }
 
     startTransition(async () => {
-      const outcome = await actions.answer({ audio, durationMs, reviewId: current.id, roundId });
+      // A request that didn't get through says so, and the word waits to be said again.
+      const outcome = await actions
+        .answer({ audio, durationMs, reviewId: current.id, roundId })
+        .catch((): PronunciationAnswerOutcome => ({ status: "failed" }));
 
       if (outcome.status === "graded") {
         setAnswered((count) => count + 1);
+
+        setOutcomes((previous) => ({
+          ...previous,
+          [index]: outcome.grade.isCorrect ? "right" : "wrong",
+        }));
+
         setStep({ index, kind: "word", word: { grade: outcome.grade, kind: "graded" } });
         return;
       }
@@ -105,6 +123,12 @@ export function usePronunciationRound({
       setStep({ index, kind: "word", word: { kind: "ready", notice: outcome.status } });
     });
   };
+
+  // One segment per word in the header: green once it sounded right, red when it didn't yet,
+  // quiet if skipped; otherwise the word in view, then the ones ahead.
+  const segments = words.map(
+    (_, position): TaskSegment => outcomes[position] ?? (position === index ? "current" : "ahead"),
+  );
 
   return {
     current,
@@ -114,7 +138,12 @@ export function usePronunciationRound({
     next,
     record,
     retryFinish: () => finish(true),
+    segments,
     step,
-    tryAgain: () => setStep({ index, kind: "word", word: READY }),
+    tryAgain: () => {
+      // Trying again starts the word over, so its segment waits for the new grade.
+      setOutcomes(({ [index]: _retried, ...others }) => others);
+      setStep({ index, kind: "word", word: READY });
+    },
   };
 }

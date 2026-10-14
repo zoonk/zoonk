@@ -22,7 +22,7 @@ const IELTS_SCENARIO = {
 
 /** A language learner speaking at B1, while the renting unit's call is only written at A2. */
 async function createB1Learner() {
-  const learner = await createLanguageLearner();
+  const learner = await createLanguageLearner({ withSubscription: true });
   const { user } = learner;
 
   await prisma.languageSkillLevel.create({
@@ -134,6 +134,50 @@ async function holdServerActions(page: Page) {
 }
 
 test.describe("Language calls written ahead", () => {
+  test("a unit's challenge before its day describes its call, never a duel of questions", async ({
+    browser,
+  }) => {
+    const [written, unwritten] = await Promise.all([
+      createLanguageLearner({ withSubscription: true }),
+      createB1Learner(),
+    ]);
+
+    const [writtenBoss, unwrittenBoss] = await Promise.all(
+      [written, unwritten].map(({ plan }) =>
+        planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
+      ),
+    );
+
+    // At A2 the renting unit's call is written: its name, a minute of talk and its three goals.
+    const page = await openAs(browser, written.user);
+    await page.goto(`/challenge/${writtenBoss?.id}`);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title }),
+    ).toBeVisible();
+
+    await expect(page.locator("p").filter({ hasText: "3 goals" })).toHaveText(
+      /^1\smin\s·\sLevel A2\s·\s3 goals\s·\s3 to win\s·\s\+\d+ Brain Power$/u,
+    );
+
+    await expect(page.getByText("Book a viewing")).toBeVisible();
+    await expect(page.getByText("The Trickster")).toBeHidden();
+    await expect(page.getByText(/questions/u)).toBeHidden();
+    await page.context().close();
+
+    // At B1 it isn't written yet: only how long and at what level it talks.
+    const other = await openAs(browser, unwritten.user);
+    await other.goto(`/challenge/${unwrittenBoss?.id}`);
+
+    await expect(other.getByRole("heading", { level: 1, name: "The unit's call" })).toBeVisible();
+
+    await expect(other.locator("p").filter({ hasText: "Level B1" })).toHaveText(
+      /^2\smin\s·\sLevel B1\s·\s\+\d+ Brain Power$/u,
+    );
+
+    await other.context().close();
+  });
+
   test("a checkpoint whose call isn't written yet writes it when the learner asks, then opens it at once", async ({
     browser,
   }) => {
@@ -179,9 +223,14 @@ test.describe("Language calls written ahead", () => {
 
     const page = await openAs(browser, user);
 
-    // The mock is in the level sheet behind the Journey's number.
-    await page.goto("/journey");
-    await page.getByRole("button", { name: /^Your level/u }).click();
+    // The mock is in the level sheet behind the Plan's number.
+    await page.goto("/plan");
+
+    await page
+      .locator('[data-slot="journey-standing"]')
+      .filter({ visible: true })
+      .getByRole("button", { name: /^Level/u })
+      .click();
 
     const card = page
       .getByRole("dialog", { name: "Your level" })

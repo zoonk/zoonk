@@ -5,12 +5,17 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { expectCallClock } from "./call-clock";
 import { expect, test } from "./fixtures";
 import { openUserAsGuest } from "./guest-session";
 import { createLanguageLearner } from "./language-learner";
-import { CHARACTER_CHECK_IN, CHARACTER_REPLY, answerLiveCalls } from "./live-gateway";
+import { CHARACTER_CHECK_IN, CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
 import { continueToLastStep, nextStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -227,7 +232,11 @@ test.describe("Language calls", () => {
     // Then one thing to say better, with why, and a word to practice saying.
     await nextStep(page);
     await expect(page.getByRole("heading", { level: 1, name: "To improve" })).toBeVisible();
-    await expect(page.locator("p", { hasText: "Is it still available?" })).toBeVisible();
+
+    await expect(
+      page.getByRole("listitem").filter({ hasText: "Is it still available?" }),
+    ).toBeVisible();
+
     await expect(page.getByText("Em perguntas, o verbo vem antes do sujeito.")).toBeVisible();
     await expect(page.getByText("available", { exact: true })).toBeVisible();
 
@@ -260,18 +269,37 @@ test.describe("Language calls", () => {
     const call = await createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id });
     const page = await openAs(browser, user);
 
-    await answerLiveCalls(page, "answers");
+    const peer = await answerLiveCalls(page, "answers");
     await page.goto(`/conversation/${call.id}`);
+
+    // From `lg` the goals sit beside the intro, where the call keeps them, so the call's column
+    // stays put when it starts.
+    const character = page.getByText(RENTING_SCENARIO.character.name, { exact: true });
+    await expect(character).toBeVisible();
+    const introBox = await character.boundingBox();
     await page.getByRole("button", { name: "Start the call" }).click();
 
     const transcript = page.getByRole("log", { name: "Conversation" });
     await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+    await expect(character).toBeVisible();
+    const liveBox = await character.boundingBox();
+
+    if (!introBox || !liveBox) {
+      throw new Error("The call's character must be visible before and after connecting.");
+    }
+
+    expect(liveBox.x).toBe(introBox.x);
 
     await expect(
       page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title }),
     ).toBeVisible();
 
-    await expect(page.getByText(/^0:0\d \/ 2:00$/u)).toBeVisible();
+    await expectCallClock({
+      allowanceSeconds: 120,
+      conversationId: call.id,
+      getStartedAt: peer.getStartedAt,
+      page,
+    });
 
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still available?");
     await page.keyboard.press("Enter");
@@ -302,6 +330,78 @@ test.describe("Language calls", () => {
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.id } }),
     ).resolves.toMatchObject({ status: "completed", usedHelp: false });
+
+    await page.context().close();
+  });
+
+  test("a call that completes the day's last mission says so at its end, with the +50", async ({
+    browser,
+  }) => {
+    const { goal, renting, user } = await createLanguageLearner();
+
+    const [call] = await Promise.all([
+      createCall({ chapterId: renting.id, goalId: goal.id, userId: user.id }),
+      studySessionFixture({
+        goalId: goal.id,
+        missions: {
+          picks: [
+            {
+              anchor: { chapterId: renting.id },
+              kind: "call",
+              opens: { chapterId: renting.id, kind: "call" },
+              total: 1,
+            },
+          ],
+          version: 1,
+        },
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const peer = await answerLiveCalls(page, "answers");
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    const transcript = page.getByRole("log", { name: "Conversation" });
+    await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+
+    // A call counts as the mission once the learner speaks in it (typed replies aren't speaking).
+    await peer.emit({
+      delta: " Is it still available?",
+      end_ms: 3000,
+      start_ms: 1000,
+      type: "session.input_transcript.delta",
+    });
+
+    await expect(transcript.getByText("Is it still available?")).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "End" }).click();
+
+    const moment = page.locator("[data-slot=mission-moment]");
+    await expect(moment).toContainText("Mission done: Have a call");
+    await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+    await expect(moment).toContainText("from today's missions");
+
+    await expect(
+      page.getByRole("main").getByRole("listitem").filter({ hasText: "Brain Power" }),
+    ).toHaveCount(0);
+
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("call-mission-done-390.png"),
+    });
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("call-mission-done-1440.png"),
+    });
 
     await page.context().close();
   });
@@ -576,7 +676,7 @@ test.describe("Language calls", () => {
       ]);
 
       const page = await openAs(browser, user);
-      await answerLiveCalls(page, "answers");
+      const peer = await answerLiveCalls(page, "answers");
       await page.clock.install();
       await page.goto(`/conversation/${call.id}`);
 
@@ -587,7 +687,12 @@ test.describe("Language calls", () => {
       const transcript = page.getByRole("log", { name: "Conversation" });
       await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
       // The call's clock counts to what it may run.
-      await expect(page.getByText(/^0:0\d \/ 1:30$/u)).toBeVisible();
+      await expectCallClock({
+        allowanceSeconds: 90,
+        conversationId: call.id,
+        getStartedAt: peer.getStartedAt,
+        page,
+      });
 
       const reply = page.getByRole("textbox", { name: "Type your reply" });
       const status = page.getByRole("status").filter({ hasText: "almost up" });
@@ -618,23 +723,90 @@ test.describe("Language calls", () => {
 });
 
 test.describe("Language practice in the plan", () => {
-  test(`"Skip writing" leaves writing out until the plan brings it back`, async ({ browser }) => {
-    const [{ goal, user }, { lesson }] = await Promise.all([
+  test(`"Can't write now" finishes this lesson and keeps writing in the plan and today's session`, async ({
+    browser,
+  }) => {
+    const [{ goal, plan, items, user }, { lesson, steps }] = await Promise.all([
       createLanguageLearner(),
       playableLessonFixture({
         lesson: { language: "pt", targetLanguage: "en" },
-        steps: ["explanation", "typedAnswer", "summary"],
+        steps: ["explanation", "typedAnswer", "typedAnswer", "summary"],
       }),
     ]);
 
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    await Promise.all([
+      studySessionBlockFixture({ lessonId: lesson.id, position: 0, sessionId: session.id }),
+      studySessionBlockFixture({ kind: "practice", position: 1, sessionId: session.id }),
+    ]);
+
     const page = await openAs(browser, user);
-    await page.goto(`/learn/${lesson.id}`);
+    await page.goto(`/learn/${lesson.id}?session=${session.id}`);
     await page.getByRole("button", { name: "Next" }).click();
-    await page.getByRole("button", { name: "Skip writing" }).click();
 
-    await expect(page.getByRole("button", { name: "Skip writing" })).toBeHidden();
+    const before = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: session.id },
+    });
 
-    await page.goto("/journey");
+    await page.getByRole("button", { name: "Can't write now" }).click();
+
+    await expect(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+
+    expect(
+      await prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: session.id },
+      }),
+    ).toStrictEqual(before);
+
+    const planAfterSkip = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(planAfterSkip.settings).toStrictEqual(plan.settings);
+
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+    await expect
+      .poll(async () =>
+        prisma.learningEvent.count({
+          where: {
+            contentIds: { equals: lesson.id, path: ["lessonId"] },
+            endedAt: { not: null },
+            userId: user.id,
+          },
+        }),
+      )
+      .toBe(1);
+
+    const run = await prisma.learningEvent.findFirstOrThrow({
+      where: { contentIds: { equals: lesson.id, path: ["lessonId"] }, userId: user.id },
+    });
+
+    expect(run).toMatchObject({ correctAnswers: 0, incorrectAnswers: 0 });
+
+    expect(
+      await prisma.attempt.count({
+        where: { stepId: { in: steps.map((step) => step.id) }, userId: user.id },
+      }),
+    ).toBe(0);
+
+    expect(await prisma.mistake.count({ where: { userId: user.id } })).toBe(0);
+
+    const [blocksAfterFinish, itemsAfterFinish] = await Promise.all([
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { sessionId: session.id },
+      }),
+      prisma.planItem.findMany({ orderBy: { position: "asc" }, where: { planId: plan.id } }),
+    ]);
+
+    expect(blocksAfterFinish.map((block) => block.id)).toStrictEqual(
+      before.map((block) => block.id),
+    );
+
+    expect(itemsAfterFinish.map((item) => item.id)).toStrictEqual(items.map((item) => item.id));
+
+    await page.goto("/plan");
     await page.getByRole("button", { name: "Adjust plan" }).click();
 
     const writing = page
@@ -642,13 +814,15 @@ test.describe("Language practice in the plan", () => {
       .getByRole("group", { name: "What you practice" })
       .getByRole("button", { name: "Writing" });
 
+    await expect(writing).toHaveAttribute("aria-pressed", "true");
+    await writing.click();
     await expect(writing).toHaveAttribute("aria-pressed", "false");
     await writing.click();
     await expect(writing).toHaveAttribute("aria-pressed", "true");
 
     await expect
       .poll(async () => {
-        const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+        const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
         return saved.settings;
       })
       .toMatchObject({ skippedActivities: [] });

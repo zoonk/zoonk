@@ -102,7 +102,7 @@ async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; b
 }
 
 test.describe("Patterns", () => {
-  test("shows every weekday, opening on the strongest, and every part of the day with the best one marked", async ({
+  test("names the best day only when it stands out, and never calls a time best on too few answers", async ({
     baseURL,
     browser,
   }) => {
@@ -110,48 +110,50 @@ test.describe("Patterns", () => {
 
     try {
       await page.goto("/patterns");
+      const main = page.getByRole("main");
 
-      await expect(page.getByText("When you answer best, over the last 90 days.")).toBeVisible();
+      // Tuesday and Friday have enough answers to compare, and Tuesday stands out.
+      const bestDay = main.getByRole("listitem").filter({ hasText: /^Best day/u });
+      await expect(bestDay).toContainText(/Tuesday/u);
+      await expect(bestDay).toContainText(/90%\s*·\s*10 answers/u);
 
-      const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
+      // Only the morning has enough answers, so no part of the day is called the best yet.
+      const bestTime = main.getByRole("listitem").filter({ hasText: /^Best time/u });
+      await expect(bestTime).toContainText("Not enough answers yet");
+      await expect(main.getByText(/needs 10 answers to count/u)).toBeVisible();
 
-      await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
+      // Every day of the week as a row on one scale, its share and its answers.
+      const week = page.getByRole("region", { name: "Throughout the week" });
+      await expect(week.getByRole("listitem")).toHaveCount(WEEKDAYS.length);
 
-      await Promise.all(
-        WEEKDAYS.map((weekday) =>
-          expect(
-            weeklyRhythm.getByRole("button", { name: new RegExp(weekday, "iu") }),
-          ).toBeVisible(),
-        ),
+      await expect(week.getByRole("listitem", { name: "Tuesday" })).toContainText(
+        /10 answers\s*90%/u,
       );
 
-      await expect(weeklyRhythm.getByRole("status")).toContainText(
-        /you do better on tuesdays.*90% across 10 answers/iu,
+      await expect(week.getByRole("listitem", { name: "Friday" })).toContainText(
+        /10 answers\s*10%/u,
       );
 
-      await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
+      await expect(week.getByRole("listitem", { name: "Monday" })).toContainText("No answers");
 
-      await expect(weeklyRhythm.getByRole("status")).toContainText(
-        /friday performance.*10% across 10 answers/iu,
-      );
-
-      // Night, morning, afternoon and evening, each with its share of right answers.
+      // Night, morning, afternoon and evening, each with its hours beside its name, its answers and share.
       const day = page.getByRole("region", { name: "Throughout the day" });
 
       await expect(day.getByRole("listitem")).toHaveCount(4);
 
       await expect(day.getByRole("listitem", { name: "Morning" })).toContainText(
-        /90%\s*10 answers/u,
+        /10 answers\s*90%/u,
       );
 
       await expect(day.getByRole("listitem", { name: "Afternoon" })).toContainText(
-        /20%\s*5 answers/u,
+        /5 answers\s*20%/u,
       );
 
       await expect(day.getByRole("listitem", { name: "Evening" })).toContainText(
-        /40%\s*5 answers/u,
+        /5 answers\s*40%/u,
       );
 
+      await expect(day.getByRole("listitem", { name: "Morning" })).toContainText("6 AM–12 PM");
       await expect(day.getByRole("listitem", { name: "Night" })).toContainText("No answers");
     } finally {
       await browserContext.close();

@@ -6,25 +6,25 @@ import {
   type ExamTaskView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { InfoIcon, LightbulbIcon } from "lucide-react";
+import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
-import { Callout } from "../../_components/callout";
-import { KindTile } from "../../_components/kind-tile";
 import {
   StepCard,
   StepDetail,
   StepEyebrow,
   StepHeader,
-  StepRow,
-  StepRows,
   StepTitle,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { MissionMoment } from "../../missions/mission-moment";
 import { TaskMainLink } from "../../shell/task-frame";
+import { CallNote } from "../conversation/call-note";
+import { EstimateNote, ResultRow, ResultRows } from "../conversation/result-rows";
 import { CriteriaDetails } from "./exam-speaking-criteria";
 import { useBandText, useCriterionGloss, useStandingText } from "./exam-speaking-labels";
 import { useExamTaskTitle } from "./exam-task-intro";
@@ -122,10 +122,12 @@ function CriterionEstimate({
 
   return (
     <span className="flex shrink-0 flex-col items-end gap-1">
-      <span className="font-semibold whitespace-nowrap tabular-nums">
+      <span className="font-mono font-medium whitespace-nowrap tabular-nums">
         {band(graded.grade, graded.criterion)}
       </span>
-      <span className={cn("text-xs", standing === "at" ? "text-success" : "text-muted-foreground")}>
+      <span
+        className={cn("text-xs", standing === "at" ? "text-success-text" : "text-muted-foreground")}
+      >
         {text}
       </span>
       {focus && <Badge variant="outline">{t("Focus")}</Badge>}
@@ -155,7 +157,6 @@ function CriteriaStep({
   return (
     <>
       <StepCard>
-        <KindTile kind="conversation" size="lg" />
         <StepHeader>
           <StepEyebrow>{title(examTask)}</StepEyebrow>
           <StepTitle lang={conversation.targetLanguage}>{examTask.task.name}</StepTitle>
@@ -164,9 +165,9 @@ function CriteriaStep({
             <StepDetail key={note}>{note}</StepDetail>
           ))}
         </StepHeader>
-        <StepRows>
+        <ResultRows>
           {listCriteria({ examTask, feedback }).map((item) => (
-            <StepRow className="items-start justify-between gap-3" key={item.criterion.key}>
+            <ResultRow className="items-start" key={item.criterion.key}>
               <CriterionName criterion={item.criterion} language={conversation.targetLanguage} />
               {isGraded(item) ? (
                 <CriterionEstimate
@@ -177,21 +178,18 @@ function CriteriaStep({
               ) : (
                 <span className="text-muted-foreground shrink-0 text-sm">{t("Not rated")}</span>
               )}
-            </StepRow>
+            </ResultRow>
           ))}
-        </StepRows>
+        </ResultRows>
       </StepCard>
 
-      <Callout>
-        <InfoIcon aria-hidden="true" />
-        <p>
-          {aboutSound
-            ? t(
-                "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
-              )
-            : t("An estimate from one practice task, not an official score.")}
-        </p>
-      </Callout>
+      <EstimateNote>
+        {aboutSound
+          ? t(
+              "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
+            )
+          : t("An estimate from one practice task, not an official score.")}
+      </EstimateNote>
     </>
   );
 }
@@ -212,10 +210,10 @@ function FocusStep({ focus, language }: { focus: GradedCriterion; language: stri
         </StepHeader>
       </StepCard>
 
-      <Callout>
+      <CallNote>
         <LightbulbIcon aria-hidden="true" />
-        <p>{focus.grade.tip}</p>
-      </Callout>
+        <span>{focus.grade.tip}</span>
+      </CallNote>
     </>
   );
 }
@@ -226,7 +224,6 @@ function NoGradeStep() {
 
   return (
     <StepCard>
-      <KindTile kind="conversation" size="lg" />
       <StepTitle>{t("This task has no estimate")}</StepTitle>
       <StepDetail>{t("Try the task again when you're ready.")}</StepDetail>
     </StepCard>
@@ -253,16 +250,17 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
 /**
  * After an exam's speaking task, one thing at a time: each official criterion the task is rated on
  * with its estimate on the exam's own scale (DELE's 0 to 3, Goethe's A to E, Cambridge's 0 to 5 in
- * half bands, DELF's points) and the ones at the exam's level marked, then the one to work on
- * first with what was heard and a tip. One task gives no total: the paper's points come from all
- * its tasks. It's an estimate, never an official score, and pronunciation counts how easy the
- * learner is to understand, never their accent.
+ * half bands, DELF's points) and the ones at the exam's level marked, with what the call did to
+ * the day's missions, then the one to work on first with what was heard and a tip. One task gives
+ * no total: the paper's points come from all its tasks. It's an estimate, never an official score,
+ * and pronunciation counts how easy the learner is to understand, never their accent.
  */
 export function ExamSpeakingResult({
   conversation,
   examTask,
   exitHref,
   feedback,
+  missionMoment,
   nextHref,
   nextTaskHref,
   onTryAgain,
@@ -271,6 +269,8 @@ export function ExamSpeakingResult({
   examTask: ExamTaskView;
   exitHref: string;
   feedback: ExamSpeakingFeedback | null;
+  /** What the call just did to the day's missions; null when it did nothing or was opened later. */
+  missionMoment: MissionMomentView | null;
   nextHref: string;
   /** The paper's next task, opened in its list; null after the last one. */
   nextTaskHref: string | null;
@@ -282,18 +282,40 @@ export function ExamSpeakingResult({
   const graded = criteria.filter((item) => isGraded(item));
   const focus = graded.find(({ criterion }) => criterion.key === feedback?.focus);
 
+  // Last on the first step, as a call's result has it under its stars.
+  const moment = missionMoment && (
+    <MissionMoment
+      completed={missionMoment.completed}
+      fullMeal={missionMoment.fullMeal}
+      missions={missionMoment.missions}
+    />
+  );
+
   const items: StepsItem[] =
     feedback && graded.length > 0
       ? [
           {
             content: (
-              <CriteriaStep conversation={conversation} examTask={examTask} feedback={feedback} />
+              <>
+                <CriteriaStep conversation={conversation} examTask={examTask} feedback={feedback} />
+                {moment}
+              </>
             ),
             id: "criteria",
           },
           focus && { content: <FocusStep focus={focus} language={language} />, id: "focus" },
         ].filter((item) => item !== undefined)
-      : [{ content: <NoGradeStep />, id: "noGrade" }];
+      : [
+          {
+            content: (
+              <>
+                <NoGradeStep />
+                {moment}
+              </>
+            ),
+            id: "noGrade",
+          },
+        ];
 
   return (
     <Steps

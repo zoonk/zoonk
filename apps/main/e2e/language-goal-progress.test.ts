@@ -1,8 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { type Page, expect, test } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
 import { asPersona } from "./learn-personas";
+import { answerLiveCalls } from "./live-peer";
 import { nextStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -80,17 +82,23 @@ async function createToeflMock({
   });
 }
 
-/** The Journey's hero opens the level sheet. */
+/** The Plan's first number, his level, opens the level sheet. */
 async function openLevel(page: Page) {
-  await page.goto("/journey");
-  await page.getByRole("button", { name: /^Your level/u }).click();
+  await page.goto("/plan");
+
+  await page
+    .locator('[data-slot="journey-standing"]')
+    .filter({ visible: true })
+    .getByRole("button", { name: /^Level/u })
+    .click();
+
   return page.getByRole("dialog", { name: "Your level" });
 }
 
 /**
- * Marcos's English goal (a language goal) on the Journey: its hero is his level against his
- * target, and its sheet has level by skill with every rise named and "I can already…". The
- * mistakes notebook it links to offers the pattern noticed in his mistakes. Preparation stays out.
+ * Marcos's English goal (a language goal) on the Plan: its first number is his level against his
+ * target, and its sheet has level by skill with every rise named and "I can already…". His
+ * mistakes notebook offers the pattern noticed in his mistakes. Preparation stays out.
  * A goal preparing for the TOEFL gets its speaking mock in that sheet: before the call, the header
  * names the TOEFL and the objectives are its two tasks; after it, an estimated band on TOEFL's 1
  * to 6 scale, overall and for each TOEFL criterion, with the focus marked.
@@ -152,13 +160,13 @@ test.describe("Language goal progress", () => {
       await expect(sheet).toBeHidden();
       await expect(page.getByText("Your preparation")).toHaveCount(0);
 
-      // The notebook, one of Today's "Practice anytime", offers the pattern noticed in his recent
-      // mistakes.
+      // The notebook in the desktop sidebar offers the pattern noticed in his recent mistakes.
       await page.goto("/today");
 
       await page
-        .getByRole("region", { name: "Practice anytime" })
-        .getByRole("link", { name: /^Mistakes notebook\b.*\b1 to fix$/u })
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("navigation", { name: "Study" })
+        .getByRole("link", { name: /^Mistakes notebook 1$/u })
         .click();
 
       const pattern = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
@@ -260,7 +268,66 @@ test.describe("Language goal progress", () => {
     await expect(page.getByRole("button", { name: "Try another mock" })).toBeEnabled();
 
     await page.getByRole("link", { name: "Continue" }).click();
-    await expect(page).toHaveURL(/\/journey$/u);
+    await expect(page).toHaveURL(/\/plan$/u);
+    await page.context().close();
+  });
+
+  test("a speaking mock whose call completes the day's last mission says so on its result, with the +50", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createLanguageLearner({ withSubscription: true });
+
+    const [waiting] = await Promise.all([
+      createToeflMock({ finished: false, goalId: goal.id, userId: user.id }),
+      studySessionFixture({
+        goalId: goal.id,
+        missions: { picks: [{ anchor: {}, kind: "call", total: 1 }], version: 1 },
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const peer = await answerLiveCalls(page, "answers");
+    await page.goto(`/conversation/${waiting.id}`);
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    const transcript = page.getByRole("log", { name: "Conversation" });
+    await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+
+    // A call counts as the mission once the learner speaks in it (typed replies aren't speaking).
+    await peer.emit({
+      delta: " The library is open late.",
+      end_ms: 3000,
+      start_ms: 1000,
+      type: "session.input_transcript.delta",
+    });
+
+    await expect(transcript.getByText("The library is open late.")).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "End" }).click();
+
+    // No model grades in tests, so the mock has no score; what it did to the missions still shows.
+    await expect(page.getByRole("heading", { name: "This mock has no score" })).toBeVisible();
+    const moment = page.locator("[data-slot=mission-moment]");
+    await expect(moment).toContainText("Mission done: Have a call");
+    await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
+    await expect(moment).toContainText("from today's missions");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("speaking-mock-mission-390.png"),
+    });
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: test.info().outputPath("speaking-mock-mission-1440.png"),
+    });
+
     await page.context().close();
   });
 });

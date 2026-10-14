@@ -4,13 +4,23 @@ import { type LanguageTodayView } from "@zoonk/core/view-models/language/contrac
 import { KeyboardIcon, MicIcon, SparklesIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
-  ListGroup,
   ListRowContent,
   ListRowDescription,
   ListRowIcon,
+  ListRowLeading,
   ListRowLink,
   ListRowTitle,
 } from "../../_components/list-group";
+import {
+  Suggestion,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionDescription,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionLinkAction,
+  SuggestionSummary,
+} from "../../_components/suggestion";
 
 type Pattern = NonNullable<LanguageTodayView["pattern"]>;
 type Pronunciation = NonNullable<LanguageTodayView["pronunciation"]>;
@@ -22,9 +32,11 @@ export function PatternRow({ href, pattern }: { href: string; pattern: Pattern }
 
   return (
     <ListRowLink href={href}>
-      <ListRowIcon className="bg-info/10 text-info">
-        {isTypos ? <KeyboardIcon /> : <SparklesIcon />}
-      </ListRowIcon>
+      <ListRowLeading>
+        <ListRowIcon className={isTypos ? undefined : "text-warning"}>
+          {isTypos ? <KeyboardIcon /> : <SparklesIcon />}
+        </ListRowIcon>
+      </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{isTypos ? t("Just typos") : t("We noticed a pattern")}</ListRowTitle>
         <ListRowDescription>
@@ -35,7 +47,7 @@ export function PatternRow({ href, pattern }: { href: string; pattern: Pattern }
   );
 }
 
-/** The words to say again today, as a row of a list. */
+/** The words to say again today, as a row of a list, with the microphone their review uses. */
 export function PronunciationRow({
   href,
   pronunciation,
@@ -48,9 +60,11 @@ export function PronunciationRow({
 
   return (
     <ListRowLink href={href}>
-      <ListRowIcon className="bg-warning/10 text-warning">
-        <MicIcon />
-      </ListRowIcon>
+      <ListRowLeading>
+        <ListRowIcon>
+          <MicIcon />
+        </ListRowIcon>
+      </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
           {t("{count, plural, one {Say # word again} other {Say # words again}}", {
@@ -65,11 +79,49 @@ export function PronunciationRow({
   );
 }
 
+/** The practice due, as Today's notice: what it is, the words or the pattern, and the way in. */
+function PracticeNotice({
+  action,
+  description,
+  href,
+  label,
+  mark,
+  summary,
+}: {
+  action: string;
+  description: string;
+  href: string;
+  label: string;
+  mark?: React.ReactNode;
+  summary: string;
+}) {
+  return (
+    <Suggestion data-slot="language-practice" label={label} mark={mark}>
+      <SuggestionLine>
+        <SuggestionSummary>{summary}</SuggestionSummary>
+        <SuggestionLinkAction className="shrink-0" href={href} variant="outline">
+          {action}
+        </SuggestionLinkAction>
+      </SuggestionLine>
+
+      <SuggestionContent>
+        <SuggestionHeader>{label}</SuggestionHeader>
+        <SuggestionDescription>{description}</SuggestionDescription>
+        <SuggestionActions>
+          <SuggestionLinkAction href={href} variant="outline">
+            {action}
+          </SuggestionLinkAction>
+        </SuggestionActions>
+      </SuggestionContent>
+    </Suggestion>
+  );
+}
+
 /**
- * A language goal's practice that's due, as one row on Today: the words mispronounced earlier that
- * are due to be said again (they're due today), else a pattern noticed in recent mistakes (or the
- * kind note that they were only typos), which waits a week. The host renders it only when there's
- * one, as Today's notice.
+ * A language goal's practice that's due, as Today's one notice: the words mispronounced earlier
+ * that are due to be said again (they're due today), else a pattern noticed in recent mistakes
+ * (or the kind note that they were only typos), which waits a week. The host renders it only when
+ * there's one.
  */
 export function LanguagePracticeRow({
   hrefs,
@@ -78,21 +130,51 @@ export function LanguagePracticeRow({
   hrefs: { pattern: string | null; pronunciation: string };
   today: Pick<LanguageTodayView, "pattern" | "pronunciation">;
 }) {
-  if (today.pronunciation) {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { pattern, pronunciation } = today;
+
+  if (pronunciation) {
+    const title = t("{count, plural, one {Say # word again} other {Say # words again}}", {
+      count: pronunciation.count,
+    });
+
     return (
-      <ListGroup>
-        <PronunciationRow href={hrefs.pronunciation} pronunciation={today.pronunciation} />
-      </ListGroup>
+      <PracticeNotice
+        action={t("Say them")}
+        description={format.list(pronunciation.words, { type: "conjunction" })}
+        href={hrefs.pronunciation}
+        label={title}
+        mark={<MicIcon />}
+        summary={title}
+      />
     );
   }
 
-  if (today.pattern && hrefs.pattern) {
+  if (!pattern || !hrefs.pattern) {
+    return null;
+  }
+
+  if (pattern.kind === "typos") {
     return (
-      <ListGroup>
-        <PatternRow href={hrefs.pattern} pattern={today.pattern} />
-      </ListGroup>
+      <PracticeNotice
+        action={t("Open")}
+        description={t("Your recent mistakes were slips, not a rule to learn.")}
+        href={hrefs.pattern}
+        label={t("Just typos")}
+        mark={<KeyboardIcon />}
+        summary={t("Your recent mistakes were slips, not a rule to learn.")}
+      />
     );
   }
 
-  return null;
+  return (
+    <PracticeNotice
+      action={t("Practice it")}
+      description={pattern.title}
+      href={hrefs.pattern}
+      label={t("We noticed a pattern")}
+      summary={t("We noticed a pattern: {pattern}", { pattern: pattern.title })}
+    />
+  );
 }

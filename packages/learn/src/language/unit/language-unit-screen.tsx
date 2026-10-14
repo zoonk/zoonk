@@ -3,10 +3,15 @@
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
 import { BookOpenTextIcon, LanguagesIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DetailAside, DetailContent, DetailLayout } from "../../_components/detail-page";
+import {
+  DetailAside,
+  DetailAsideSection,
+  DetailContent,
+  DetailLayout,
+} from "../../_components/detail-page";
 import { Disclosure } from "../../_components/disclosure";
-import { KindTile } from "../../_components/kind-tile";
-import { LessonList } from "../../_components/lesson-list";
+import { KindDot } from "../../_components/kind-tile";
+import { LessonList, LessonProgress } from "../../_components/lesson-list";
 import { LessonSummaries } from "../../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_components/page";
@@ -35,6 +40,7 @@ type LanguageUnitHrefs = {
 };
 
 const PRACTICE_TITLE_ID = "unit-practice-title";
+const PROGRESS_TITLE_ID = "unit-progress-title";
 const EXTRAS_TITLE_ID = "unit-extras-title";
 
 /** The unit's folded extras: its grammar tips, its words and its summaries. */
@@ -118,7 +124,6 @@ function UnitPractice({
   unit: LanguageUnitView;
 }) {
   const t = useExtracted();
-  const finished = unit.lessons.length > 0 && unit.lessons.every((lesson) => lesson.done);
 
   return (
     <PageSection aria-labelledby={PRACTICE_TITLE_ID}>
@@ -131,14 +136,12 @@ function UnitPractice({
           conversation={unit.conversation}
           onStart={actions.startConversation}
         />
-        {!finished && unit.goalId && (
-          <TestOutStartRow onStart={actions.startTestOut} scope="unit" />
-        )}
+        {unit.canTestOut && <TestOutStartRow onStart={actions.startTestOut} scope="unit" />}
         {unit.mistakes.length > 0 && (
           <Disclosure
             aside={unit.mistakes.length}
-            icon={<KindTile kind="mistakes" />}
-            title={t("Review my mistakes")}
+            icon={<KindDot kind="mistakes" />}
+            title={t("Your mistakes")}
           >
             <UnitMistakes mistakes={unit.mistakes} />
           </Disclosure>
@@ -149,12 +152,34 @@ function UnitPractice({
   );
 }
 
+/** How far the learner is in the unit, as one segment per lesson ("1 of 3"), in the aside. */
+function UnitProgress({ unit }: { unit: LanguageUnitView }) {
+  const t = useExtracted();
+  const done = unit.lessons.filter((lesson) => lesson.done).length;
+
+  if (unit.lessons.length === 0) {
+    return null;
+  }
+
+  return (
+    <DetailAsideSection
+      className="hidden min-[72rem]:flex"
+      detail={t("{done, number} of {total, number}", { done, total: unit.lessons.length })}
+      title={t("Progress")}
+      titleId={PROGRESS_TITLE_ID}
+    >
+      <LessonProgress lessons={unit.lessons} />
+    </DetailAsideSection>
+  );
+}
+
 /**
- * A language unit's page, one real situation and the only page for it: its name and "Continue"
- * into the next lesson, then sections under their headers: its lessons in order, what the learner
- * will be able to do, practice (a conversation, a test to skip it, its open mistakes, a noticed
- * pattern, words to say again) and, folded away for reference, its grammar tips, words and
- * summaries.
+ * A language unit's page, one real situation and the only page for it, as a chapter's: its name
+ * with "Continue" into the next lesson beside it, its lessons in order (the next one marked while
+ * the unit is the plan's current one, `upNext`) and what the learner will be able to do; in the
+ * aside from 72rem (after them under it) how far they are, practice (a conversation, a test to
+ * skip it, its open mistakes, a noticed pattern, words to say again) and, for reference, its
+ * grammar tips, words and summaries.
  *
  * ```tsx
  * <LanguageUnitScreen
@@ -162,39 +187,57 @@ function UnitPractice({
  *   hrefs={hrefs}
  *   renderLessonText={(text) => <LessonText text={text} />}
  *   unit={unit}
+ *   upNext
  * />
  * ```
  */
 export function LanguageUnitScreen({
   actions,
+  ask,
   hrefs,
   renderLessonText,
   unit,
+  upNext = false,
 }: {
   actions: LanguageUnitActions;
+  /** "Ask" about the unit, such as the player's `AskTutor`; the host decides who can ask. */
+  ask?: React.ReactNode;
   hrefs: LanguageUnitHrefs;
   /** Grammar tips and summaries are lesson text (emphasis, short lists): drawn as lessons do. */
   renderLessonText: (text: string) => React.ReactNode;
   unit: LanguageUnitView;
+  /** The unit holds the plan's next lesson, which its list marks. */
+  upNext?: boolean;
 }) {
+  const t = useExtracted();
+
   return (
-    <div className="flex flex-col gap-8" data-slot="language-unit">
-      <UnitBar backHref={hrefs.back} view={unit} />
-
-      <DetailLayout>
-        <DetailAside>
-          <UnitHeader lessonHref={hrefs.lesson} view={unit} />
-        </DetailAside>
-
-        <DetailContent>
-          {unit.lessons.length > 0 && (
-            <LessonList lessonHref={hrefs.lesson} lessons={unit.lessons} />
-          )}
-          <UnitObjectives view={unit} />
+    <DetailLayout
+      aside={
+        <>
+          <UnitProgress unit={unit} />
           <UnitPractice actions={actions} hrefs={hrefs} unit={unit} />
           <UnitExtras renderLessonText={renderLessonText} unit={unit} />
-        </DetailContent>
-      </DetailLayout>
-    </div>
+        </>
+      }
+      asideLabel={t("About this unit")}
+      bar={
+        <UnitBar backHref={hrefs.back} view={unit}>
+          {ask}
+        </UnitBar>
+      }
+      data-slot="language-unit"
+    >
+      <DetailAside>
+        <UnitHeader lessonHref={hrefs.lesson} view={unit} />
+      </DetailAside>
+
+      <DetailContent>
+        {unit.lessons.length > 0 && (
+          <LessonList lessonHref={hrefs.lesson} lessons={unit.lessons} upNext={upNext} />
+        )}
+        <UnitObjectives view={unit} />
+      </DetailContent>
+    </DetailLayout>
   );
 }

@@ -2,13 +2,14 @@
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type ExamTaskView } from "@zoonk/core/language/exam-speaking/contract";
-import { ClockIcon, InfoIcon, MicIcon, PhoneIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { Callout } from "../../_components/callout";
-import { FactChip, FactChips } from "../../_components/fact-chips";
-import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
-import { CharacterAvatar } from "../conversation/conversation-parts";
+import { PageEyebrow } from "../../_components/page";
+import { TaskAsideContent } from "../../_components/task-layout";
+import { TaskFrame } from "../../shell/task-frame";
+import { CharacterRow, MicNote } from "../conversation/conversation-parts";
 import { useCriterionGloss, useTaskRoleNoun } from "./exam-speaking-labels";
 import { PrepTimer } from "./prep-timer";
 import { SpeakingCard } from "./speaking-card";
@@ -44,21 +45,23 @@ function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string 
 }
 
 /**
- * Before an exam task's call, as the exam room has it: who the learner talks to and the task's
- * official timing, that an AI stands in for the examiner or partner, what to do in the learner's
- * language, then the card itself in the exam's language with the preparation time the exam gives.
- * One button (or Enter) starts the call; Escape leaves, since nothing has started.
+ * Before an exam task's call, as the exam room has it, on the page like every call's intro: the
+ * task's official timing and name, what to do in the learner's language, who they talk to, that an
+ * AI stands in for the examiner or partner, the preparation time the exam gives, then the card
+ * itself in the exam's language. The `footer` is every call intro's: one button (or Enter) starts
+ * the call, or a task the learner's plan leaves to Plus shows the Plus notice with "See Plus".
+ * Escape leaves, since nothing has started.
  */
 export function ExamTaskIntro({
   conversation,
   examTask,
   exitHref,
-  onStart,
+  footer,
 }: {
   conversation: LanguageConversationView;
   examTask: ExamTaskView;
   exitHref: string;
-  onStart: () => void;
+  footer: ReactNode;
 }) {
   const t = useExtracted();
   const title = useExamTaskTitle();
@@ -76,51 +79,22 @@ export function ExamTaskIntro({
 
   return (
     <TaskFrame
+      aside={{ label: t("Your card") }}
       closeOnEscape
       exitHref={exitHref}
-      footer={
-        <>
-          <p className="text-muted-foreground text-center text-xs text-balance">
-            <MicIcon aria-hidden="true" className="me-1.5 inline size-3.5 align-[-0.2em]" />
-            {t(
-              "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
-            )}
-          </p>
-          <TaskMainButton onClick={onStart}>
-            <PhoneIcon aria-hidden="true" />
-            {t("Start the call")}
-          </TaskMainButton>
-        </>
-      }
+      footer={footer}
       headerTitle={title(examTask)}
     >
-      <section className="flex flex-col items-center gap-4 text-center">
-        <CharacterAvatar name={character.name} size="lg" />
-        <div className="flex flex-col items-center gap-1.5">
-          <h1
-            className="text-2xl font-bold tracking-tight text-balance outline-none"
-            lang={conversation.targetLanguage}
-            ref={heading}
-            tabIndex={-1}
-          >
-            {examTask.task.name}
-          </h1>
-          {/* Every task happens in the exam room, so its place says nothing; the role says who. */}
-          <p className="text-muted-foreground text-balance">
-            {t("{name} · {role}", { name: character.name, role: roleNoun(examTask.task.role) })}
-          </p>
-        </div>
-        <FactChips className="justify-center">
-          <FactChip>
-            <ClockIcon aria-hidden="true" />
-            {minutes(examTask.task.minutes)}
-          </FactChip>
-        </FactChips>
-      </section>
-
-      <StandInNote examTask={examTask} name={character.name} />
-
-      <div className="flex flex-col gap-1.5">
+      <header className="flex flex-col gap-2">
+        <PageEyebrow>{minutes(examTask.task.minutes)}</PageEyebrow>
+        <h1
+          className="text-title text-balance outline-none"
+          lang={conversation.targetLanguage}
+          ref={heading}
+          tabIndex={-1}
+        >
+          {examTask.task.name}
+        </h1>
         <p className="text-pretty">{examTask.card.summary}</p>
         <p className="text-muted-foreground text-sm text-pretty">
           {t("{name} opens the call, and your card stays on screen.", { name: character.name })}{" "}
@@ -131,11 +105,25 @@ export function ExamTaskIntro({
             ),
           })}
         </p>
-      </div>
+      </header>
+
+      {/* Every task happens in the exam room, so its place says nothing; the role says who. */}
+      <CharacterRow detail={roleNoun(examTask.task.role)} name={character.name} />
+
+      <StandInNote examTask={examTask} name={character.name} />
 
       {examTask.task.prepMinutes > 0 && <PrepTimer cardId={conversation.id} task={examTask.task} />}
 
-      <SpeakingCard card={examTask.card} language={conversation.targetLanguage} />
+      {/* Beside the intro from `lg`, where the live call keeps it, so the column stays put. */}
+      <TaskAsideContent className="w-full">
+        <SpeakingCard card={examTask.card} language={conversation.targetLanguage} />
+      </TaskAsideContent>
+
+      <MicNote>
+        {t(
+          "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
+        )}
+      </MicNote>
     </TaskFrame>
   );
 }
