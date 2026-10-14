@@ -4488,6 +4488,7 @@ msgstr "This call has ended"
 
 #: src/language/conversation/call-problem.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/progress/speaking-mock-card.tsx
 #: src/language/unit/practice-conversation.tsx
 msgctxt "bpY1F_"
 msgid "It's the same for everyone right now. Try again later."
@@ -4496,6 +4497,7 @@ msgstr "It's the same for everyone right now. Try again later."
 #: src/language/conversation/call-problem.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
+#: src/language/progress/speaking-mock-card.tsx
 #: src/language/unit/practice-conversation.tsx
 msgctxt "hFgARl"
 msgid "Calls are paused"
