@@ -1,6 +1,7 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { redirect } from "@/i18n/navigation";
 import { getEssay } from "@zoonk/core/exams/essays/get";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -16,24 +17,40 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Writing practice") };
 }
 
+/**
+ * The writing screen's own shape (its chrome, the prompt over the box on a phone, the box filling
+ * the column and the prompt in the aside from `lg`), so nothing moves when it arrives.
+ */
 function EssaySkeleton() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="h-4 w-40" />
-      <Skeleton className="h-16 w-full" />
-      <Skeleton className="h-72 w-full rounded-2xl" />
-    </main>
+    <TaskSkeleton
+      aside={
+        <>
+          <Skeleton className="h-28 w-full" />
+          <Skeleton className="h-7 w-5/6" />
+        </>
+      }
+    >
+      <div className="flex flex-col gap-4 lg:hidden">
+        <Skeleton className="h-3 w-32" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-7 w-5/6" />
+      </div>
+      <div className="flex flex-1 flex-col gap-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="min-h-72 w-full flex-1 rounded-lg" />
+      </div>
+    </TaskSkeleton>
   );
 }
 
 async function EssayContent({ params }: Props) {
-  const { blockId, lang } = await params;
+  const { blockId } = await params;
 
   const result = await getEssay({ blockId });
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={`/essay/${blockId}`} />;
   }
 
   if (result.status !== "ready") {

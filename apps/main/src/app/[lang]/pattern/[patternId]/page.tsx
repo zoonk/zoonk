@@ -1,5 +1,5 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { redirect } from "@/i18n/navigation";
 import { getMistakePattern } from "@zoonk/core/language/patterns/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -19,22 +19,25 @@ export async function generateMetadata(): Promise<Metadata> {
 function PatternSkeleton() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="size-12 rounded-2xl" />
-      <Skeleton className="h-10 w-2/3" />
-      <Skeleton className="h-48 w-full rounded-3xl" />
-      <Skeleton className="mt-auto h-14 w-full rounded-full" />
+      <Skeleton className="size-9 rounded-lg" />
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-36 rounded-md" />
+        <Skeleton className="h-8 w-2/3 rounded-lg" />
+      </div>
+      <Skeleton className="h-16 w-full" />
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="mt-auto h-11 w-full rounded-lg" />
     </main>
   );
 }
 
 async function PatternContent({ params }: Props) {
-  const { lang, patternId } = await params;
+  const { patternId } = await params;
 
   const result = await getMistakePattern(patternId);
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={`/pattern/${patternId}`} />;
   }
 
   if (result.status !== "ready") {

@@ -1,6 +1,8 @@
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
-import { FIRST_ANSWER_PARAM } from "@/lib/public/public-hrefs";
+import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
+import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
+import { FIRST_ANSWER_PARAM, ORIGIN_PARAM, readCatalogOrigin } from "@/lib/public/public-hrefs";
 import { getLessonSessionContext } from "@/lib/session/lesson-session-context";
 import { filterSkippedSteps } from "@zoonk/core/language/activities";
 import { getLanguageActivitySettings } from "@zoonk/core/language/activities/skipped";
@@ -16,6 +18,7 @@ import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getLessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -38,33 +41,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: lesson?.title };
 }
 
+/**
+ * The player's own shape (its header with the lesson's segments, a screen in the column, the
+ * action bar, and the aside beside them from `lg`), so nothing moves when the lesson arrives.
+ */
 function LessonPlayerSkeleton() {
   return (
-    <main className="flex min-h-dvh flex-col">
-      <header className="flex items-center justify-between px-3 py-2 sm:px-4 xl:py-3">
-        <Skeleton className="size-9 rounded-full" />
-        <div className="flex flex-col items-center gap-1">
-          <Skeleton className="h-4 w-40" />
-          <Skeleton className="h-3 w-12" />
-        </div>
-        <span className="size-9" />
-      </header>
-      <Skeleton className="h-1 w-full rounded-none" />
-      <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-4 py-6 lg:pt-10">
-        <Skeleton className="h-7 w-3/4" />
+    <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-40" />}>
+      <Skeleton className="h-7 w-3/4" />
+      <div className="flex flex-col gap-2">
         <Skeleton className="h-5 w-full" />
         <Skeleton className="h-5 w-5/6" />
-      </section>
-      <div className="mx-auto w-full max-w-2xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <Skeleton className="h-12 w-full rounded-full" />
+        <Skeleton className="h-5 w-2/3" />
       </div>
-    </main>
+    </TaskSkeleton>
   );
 }
 
 /**
- * The player's URL contract: the option a visitor picked on the public page's first screen, and
- * the study session the lesson is a block of.
+ * The player's URL contract: the option a visitor picked on the public page's first screen, the
+ * catalog page they opened the lesson from, and the study session the lesson is a block of.
  */
 function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
   const firstAnswer = query[FIRST_ANSWER_PARAM];
@@ -72,20 +68,21 @@ function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
 
   return {
     firstAnswer: typeof firstAnswer === "string" ? firstAnswer : null,
+    origin: readCatalogOrigin(query[ORIGIN_PARAM]),
     studySessionId: isUuid(sessionParam) ? sessionParam : null,
   };
 }
 
 /**
- * A language lesson without the practice the learner left out of their plan, and whether they can
- * skip more of it from the lesson ("Skip writing"). Other lessons play as they are.
+ * A language lesson without the practice left out in Plan settings. Temporary writing skips
+ * belong to the current player sitting and never change these preferences.
  */
 async function withLanguageActivities(lesson: PlayableLibraryLesson) {
   const { targetLanguage } = lesson;
   const settings = targetLanguage ? await getLanguageActivitySettings({ targetLanguage }) : null;
 
   if (!settings) {
-    return { lesson, skippableLanguage: null };
+    return { lesson };
   }
 
   return {
@@ -93,7 +90,6 @@ async function withLanguageActivities(lesson: PlayableLibraryLesson) {
       ...lesson,
       steps: filterSkippedSteps({ activities: settings.skipped, steps: lesson.steps }),
     },
-    skippableLanguage: targetLanguage,
   };
 }
 
@@ -116,50 +112,70 @@ async function getLessonChallengeTeam(played: { lesson: PlayableLibraryLesson } 
  * never writes one.
  */
 function LessonWithoutScreens({
-  hasSession,
   inSession,
+  initialRequest,
+  origin,
   result,
 }: {
-  hasSession: boolean;
   inSession: boolean;
+  initialRequest: LessonRequest;
+  origin: string | null;
   result: Exclude<PlayableLibraryLessonResult, { status: "ready" }>;
 }) {
   if (result.status === "sessionRequired") {
-    return <LessonGuestGate lesson={result.lesson} />;
+    return <LessonGuestGate exitHref={origin ?? "/"} lesson={result.lesson} />;
   }
 
-  return <LessonWaitingView hasSession={hasSession} inSession={inSession} lesson={result.lesson} />;
+  return (
+    <LessonWaitingView
+      inSession={inSession}
+      initialRequest={initialRequest}
+      lesson={result.lesson}
+      origin={origin}
+    />
+  );
 }
 
 const SESSION_ROUTING: LessonRouting = { exit: "/today", exitTo: null, nextLesson: null };
 
 /**
  * Where the lesson closes to: a session block back to Today, a learner's lesson to its chapter
- * (with the next lesson there), and a guest's to where the default player sends it.
+ * in their plan (with the next lesson there), and otherwise back to the catalog page it was opened
+ * from (a guest who tried it on a course's page returns there), or where the default player
+ * sends it.
  */
 async function getRouting({
   inSession,
   isGuest,
   lesson,
+  origin,
 }: {
   inSession: boolean;
   isGuest: boolean;
   lesson: PlayableLibraryLesson | null;
+  origin: string | null;
 }): Promise<LessonRouting | undefined> {
   if (inSession) {
     return SESSION_ROUTING;
   }
 
+  const fromPage = origin ? { exit: origin, exitTo: null, nextLesson: null } : undefined;
+
   if (isGuest || !lesson) {
-    return undefined;
+    return fromPage;
   }
 
-  return getLessonRouting({ chapterId: lesson.chapter?.id ?? null, lessonId: lesson.id });
+  const routing = await getLessonRouting({
+    chapterId: lesson.chapter?.id ?? null,
+    lessonId: lesson.id,
+  });
+
+  return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
 async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
-  const { firstAnswer, studySessionId } = readPlayerQuery(query);
+  const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);
 
   const [result, session, profile, fit, sessionContext, support, resume, tutor] = await Promise.all(
     [
@@ -187,7 +203,12 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
   const [challengeTeam, routing, tutorSuggestions] = await Promise.all([
     getLessonChallengeTeam(played),
-    getRouting({ inSession: sessionContext !== null, isGuest, lesson: played?.lesson ?? null }),
+    getRouting({
+      inSession: sessionContext !== null,
+      isGuest,
+      lesson: played?.lesson ?? null,
+      origin,
+    }),
     played ? wordTutorSuggestions(played.lesson.language) : [],
   ]);
 
@@ -205,6 +226,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           hasSession={Boolean(session)}
           lesson={result.lesson}
           resume={resume}
+          routing={routing}
           soundsEnabled={soundsEnabled}
           studySessionId={null}
           support={support}
@@ -220,7 +242,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           resume={resume}
           routing={routing}
           sessionContext={sessionContext}
-          skippableLanguage={played.skippableLanguage}
           soundsEnabled={soundsEnabled}
           studySessionId={studySessionId}
           support={support}
@@ -231,8 +252,9 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
       {result.status !== "ready" && (
         <LessonWithoutScreens
-          hasSession={Boolean(session)}
           inSession={studySessionId !== null}
+          initialRequest={readLessonWritingRequest(query)}
+          origin={origin}
           result={result}
         />
       )}

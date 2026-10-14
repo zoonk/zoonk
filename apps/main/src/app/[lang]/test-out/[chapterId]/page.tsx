@@ -3,12 +3,14 @@ import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
-import { getGoalPlan } from "@zoonk/core/plans/get";
+import { getGoalPlanScreen } from "@zoonk/core/plans/get";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { findPlanChapter } from "./_utils/plan-chapter";
 import { TestOutClient, TestOutPreparingClient } from "./test-out-client";
 
 type Props = PageProps<"/[lang]/test-out/[chapterId]">;
@@ -20,24 +22,24 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Test out of a chapter") };
 }
 
-/** The chapter's title as the plan shows it, since the test-out itself carries only questions. */
-async function findChapterTitle({ chapterId, goalId }: { chapterId: string; goalId: string }) {
-  const result = await getGoalPlan(goalId);
+/** The chapter as the plan shows it (its title and lessons left), since the test-out has none. */
+async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalId: string }) {
+  const result = await getGoalPlanScreen(goalId);
 
   if (result.status !== "ready") {
     return null;
   }
 
-  const chapters = result.plan.phases.flatMap((phase) => phase.chapters ?? []);
-  return chapters.find((chapter) => chapter.chapterId === chapterId)?.title ?? null;
+  return findPlanChapter({ chapterId, phases: result.plan.phases });
 }
 
 async function TestOutBody({ params, searchParams }: Props) {
-  const [{ chapterId, lang }, query, goal, t] = await Promise.all([
+  const t = await getExtracted();
+
+  const [{ chapterId, lang }, query, goal] = await Promise.all([
     params,
     searchParams,
     getCurrentGoal(),
-    getExtracted(),
   ]);
 
   if (!goal) {
@@ -45,9 +47,9 @@ async function TestOutBody({ params, searchParams }: Props) {
     return null;
   }
 
-  const [result, title] = await Promise.all([
+  const [result, chapter] = await Promise.all([
     getChapterTestOut({ chapterId, goalId: goal.id }),
-    findChapterTitle({ chapterId, goalId: goal.id }),
+    loadPlanChapter({ chapterId, goalId: goal.id }),
   ]);
 
   if (result.status !== "ready" && result.status !== "plusRequired") {
@@ -56,7 +58,7 @@ async function TestOutBody({ params, searchParams }: Props) {
 
   const page = {
     chapterId,
-    chapterTitle: title ?? t("This chapter"),
+    chapterTitle: chapter?.title ?? t("This chapter"),
     closeHref: query[TEST_OUT_FROM_SESSION_PARAM] ? "/today" : `/content/chapters/${chapterId}`,
     goalId: goal.id,
   };
@@ -78,6 +80,7 @@ async function TestOutBody({ params, searchParams }: Props) {
 
   return (
     <TestOutClient
+      lessonsLeft={chapter?.lessonsLeft ?? null}
       page={page}
       passMark={result.testOut.passMark}
       questions={result.testOut.questions}
@@ -86,23 +89,36 @@ async function TestOutBody({ params, searchParams }: Props) {
   );
 }
 
+/**
+ * The test's own shape (its chrome, a question and its options, and the aside from `lg`), so
+ * nothing moves when it arrives.
+ */
 function TestOutSkeleton() {
   return (
-    <main className="flex min-h-dvh flex-col">
-      <header className="flex items-center justify-between px-3 py-2 sm:px-4">
-        <Skeleton className="size-9 rounded-full" />
-        <Skeleton className="h-4 w-40" />
-        <span className="size-9" />
-      </header>
-      <Skeleton className="h-1 w-full rounded-none" />
-      <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-4 py-6">
-        <Skeleton className="h-4 w-2/3" />
-        <Skeleton className="h-7 w-full" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-      </section>
-    </main>
+    <TaskSkeleton
+      actions={<Skeleton className="h-11 w-36 shrink-0 rounded-lg" />}
+      aside={
+        <>
+          <Skeleton className="h-11 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+        </>
+      }
+      menu
+      progress
+      title={<Skeleton className="h-4 w-40" />}
+    >
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-4 w-2/3 lg:hidden" />
+        <Skeleton className="ml-auto h-3 w-10" />
+      </div>
+      <Skeleton className="h-7 w-5/6" />
+      <div className="flex flex-col gap-2.5">
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+      </div>
+    </TaskSkeleton>
   );
 }
 
@@ -111,9 +127,7 @@ export default function TestOutPage(props: Props) {
   return (
     <Suspense fallback={<TestOutSkeleton />}>
       <MainLearnProvider>
-        <main>
-          <TestOutBody {...props} />
-        </main>
+        <TestOutBody {...props} />
       </MainLearnProvider>
     </Suspense>
   );

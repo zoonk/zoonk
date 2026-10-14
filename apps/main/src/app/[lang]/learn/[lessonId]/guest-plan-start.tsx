@@ -5,6 +5,7 @@ import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Loader2Icon } from "lucide-react";
@@ -12,7 +13,7 @@ import { useExtracted } from "next-intl";
 
 type CourseStart = { chapterId: string | null; courseId: string };
 
-const PLAN_CLASS = cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-full text-base");
+const PLAN_CLASS = cn(buttonVariants({ size: "xl" }), "w-full");
 
 /** Starts the lesson's course as the guest's goal right here: no goal to type or confirm. */
 function StartCoursePlan({ start }: { start: CourseStart }) {
@@ -23,6 +24,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
   return (
     <>
       <button
+        aria-keyshortcuts="Enter"
         className={PLAN_CLASS}
         disabled={pending}
         onClick={startCourse}
@@ -30,7 +32,11 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
         type="button"
       >
         {t("Build my plan")}
-        {pending && <Loader2Icon aria-hidden="true" className="animate-spin" />}
+        {pending ? (
+          <Loader2Icon aria-hidden="true" className="animate-spin" />
+        ) : (
+          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        )}
       </button>
 
       {pending && (
@@ -40,10 +46,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
       )}
 
       <CourseStartFailureNote
-        actionClassName={cn(
-          buttonVariants({ size: "lg", variant: "outline" }),
-          "h-12 w-full rounded-full text-base",
-        )}
+        actionClassName={cn(buttonVariants({ size: "xl", variant: "outline" }), "w-full")}
         className="max-w-none items-stretch text-center"
         failure={failure}
         onRetry={startCourse}
@@ -66,8 +69,9 @@ export function GuestPlanStart({ goal, start }: { goal: string; start: CourseSta
   }
 
   return (
-    <Link className={PLAN_CLASS} href={getGoalStartHref(goal)} ref={ref}>
+    <Link aria-keyshortcuts="Enter" className={PLAN_CLASS} href={getGoalStartHref(goal)} ref={ref}>
       {t("Build my plan")}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Link>
   );
 }

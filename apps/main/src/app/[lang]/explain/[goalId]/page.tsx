@@ -1,5 +1,6 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { redirect } from "@/i18n/navigation";
+import { getReadAt } from "@/lib/learn/read-at";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
@@ -16,20 +17,21 @@ type Props = PageProps<"/[lang]/explain/[goalId]">;
 export const metadata: Metadata = { robots: { follow: false, index: false } };
 
 async function ExplainContent({ params }: Props) {
-  const { goalId, lang } = await params;
+  const { goalId } = await params;
 
   if (!isUuid(goalId)) {
     notFound();
   }
 
-  const [result, session, profile] = await Promise.all([
+  const [result, session, profile, readAt] = await Promise.all([
     getExplanation({ goalId }),
     getSession(),
     getLearningProfile(),
+    getReadAt(),
   ]);
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/start", locale: lang });
+    return <AuthGateScreen next={`/explain/${goalId}`} />;
   }
 
   if (result.status !== "ready") {
@@ -41,6 +43,7 @@ async function ExplainContent({ params }: Props) {
       <ExplainClient
         explanation={result.explanation}
         hasSession={Boolean(session)}
+        readAt={readAt}
         soundsEnabled={profile?.soundsEnabled ?? true}
       />
     </MainLearnProvider>
@@ -50,7 +53,7 @@ async function ExplainContent({ params }: Props) {
 function ExplainSkeleton() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-20">
-      <Skeleton className="h-40 w-full rounded-3xl" />
+      <Skeleton className="h-40 w-full rounded-xl" />
       <Skeleton className="h-5 w-2/3" />
     </main>
   );

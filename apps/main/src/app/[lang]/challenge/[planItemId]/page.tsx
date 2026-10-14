@@ -1,7 +1,10 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
+import { withQuery } from "@/lib/with-query";
 import { getChallenge } from "@zoonk/core/checkpoints/challenge";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -19,16 +22,21 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Challenge") };
 }
 
+/**
+ * The intro's own shape (its chrome, the eyebrow, title and facts, Start in the bar, and what it
+ * asks beside them from `lg`), so nothing moves when it arrives. Most challenges are the week's,
+ * whose intro has no art.
+ */
 function ChallengeSkeleton() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="h-40 w-full rounded-3xl" />
-      <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-10 w-2/3" />
-      <Skeleton className="h-5 w-full" />
-      <Skeleton className="mt-auto h-14 w-full rounded-full" />
-    </main>
+    <TaskSkeleton aside={<Skeleton className="h-24 w-full" />}>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-3 w-32" />
+        <Skeleton className="h-8 w-2/3" />
+        <Skeleton className="h-5 w-5/6" />
+      </div>
+      <Skeleton className="h-3 w-1/2" />
+    </TaskSkeleton>
   );
 }
 
@@ -46,7 +54,7 @@ async function ChallengeContent({ params, searchParams }: Props) {
   const result = await getChallenge({ input: {}, planItemId });
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={withQuery(`/challenge/${planItemId}`, query)} />;
   }
 
   if (result.status !== "ready") {
@@ -57,8 +65,9 @@ async function ChallengeContent({ params, searchParams }: Props) {
   // Today's session opened it (`?session=`): its block continues back to the session.
   const sessionId = readParam(query, STUDY_SESSION_PARAM);
 
-  // A language goal's checkpoint is the unit's call, which its own screen opens on its day.
-  if (challenge.call && challenge.blockId && challenge.status !== "done") {
+  // A language goal's checkpoint is the unit's call, which its own screen opens on its day. One the
+  // learner's plan leaves to Plus stays on its intro, which says what Plus unlocks.
+  if (challenge.call && challenge.blockId && challenge.status !== "done" && !challenge.locked) {
     redirect({
       href: `/checkpoint/${challenge.blockId}${sessionId ? `?${STUDY_SESSION_PARAM}=${sessionId}` : ""}`,
       locale: lang,

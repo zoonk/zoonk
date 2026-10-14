@@ -1,30 +1,39 @@
+import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { LessonWaiting } from "./lesson-waiting";
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
 /**
- * A lesson that isn't written yet gets written now, on a live screen with a ready alternative. A
- * visitor presses "Start this lesson" first and becomes a guest when the writing is requested, so
- * the lesson they asked for is never a dead end and loading the page alone never writes it.
+ * Follows writing already requested, or offers the one action that starts it. Loading this view
+ * only reads the lesson's state, including an active run from an earlier visit.
  */
 export async function LessonWaitingView({
-  hasSession,
+  initialRequest,
   inSession,
   lesson,
+  origin,
 }: {
-  hasSession: boolean;
+  initialRequest: LessonRequest;
   /** Opened from today's session, so going back returns to Today. */
   inSession: boolean;
   lesson: LessonOutline;
+  /** The catalog page a visitor opened it from, which going back returns to. */
+  origin: string | null;
 }) {
   const waiting = await getLessonWaitingState({ lessonId: lesson.id });
+
+  const request: LessonRequest =
+    waiting.status === "ready" && waiting.state.generationId
+      ? { generationId: waiting.state.generationId, status: "writing" }
+      : initialRequest;
 
   return (
     <LessonWaiting
       alternative={waiting.status === "ready" ? waiting.state.alternative : null}
-      exitHref={inSession ? "/today" : "/"}
-      hasSession={hasSession}
+      exitHref={inSession ? "/today" : (origin ?? "/")}
+      initialRequest={request}
+      key={request.status === "writing" ? request.generationId : request.status}
       lesson={lesson}
     />
   );

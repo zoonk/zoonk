@@ -1,19 +1,20 @@
 "use client";
 
 import { LESSON_FEEDBACK_SLOTS } from "@/components/feedback/lesson-feedback-slots";
+import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
-import { Link, useRouter } from "@/i18n/navigation";
-import { changeLanguageActivityAction } from "@/lib/language/language-activity-action";
+import { useRouter } from "@/i18n/navigation";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
-import { requestExampleLine } from "@/lib/lessons/lesson-help-requests";
+import { getExampleLine, requestExampleLine } from "@/lib/lessons/lesson-help-requests";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { DEFAULT_BUDDY } from "@zoonk/core/profile/default-buddy";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
 import {
@@ -35,7 +36,11 @@ import { startLibraryLesson } from "./start-library-lesson";
 const ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
 /** Guests and quick explanations play without the questions sheet. */
-const NO_TUTOR: TutorViewer = { buddy: null, canAsk: false, goalId: null };
+const NO_TUTOR: TutorViewer = {
+  buddy: { ...DEFAULT_BUDDY, beltColor: "white", energy: null, studiedToday: false },
+  canAsk: false,
+  goalId: null,
+};
 
 /** Where a lesson closes to: back where it was opened from, and the next lesson there, if any. */
 export type LessonRouting = Pick<LessonPlayerRoutes, "exit" | "exitTo" | "nextLesson">;
@@ -46,34 +51,21 @@ const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: nu
 /** A lesson played as a session block sends its session with the start and spoken answers. */
 function createAdapters({
   lessonId,
-  skippableLanguage,
   studySessionId,
 }: {
   lessonId: string;
-  /** The language a learner with a plan for it can skip activities of; null otherwise. */
-  skippableLanguage: string | null;
   studySessionId: string | null;
 }): LessonPlayerAdapters {
   return {
-    ...(skippableLanguage
-      ? {
-          skipLanguageActivity: (activity) =>
-            changeLanguageActivityAction({
-              activity,
-              skip: true,
-              targetLanguage: skippableLanguage,
-              timeZone: getLocalTimeZone(),
-            }),
-        }
-      : {}),
     checkStep: (input) => checkLessonStepAction({ ...input, timeZone: getLocalTimeZone() }),
-    completeLesson: ({ runId }) =>
-      completeLibraryLessonAction({ lessonId, runId, timeZone: getLocalTimeZone() }),
+    completeLesson: (input) =>
+      completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
     explainAnswer: explainAnswerAction,
-    getExampleLine: requestExampleLine,
+    getExampleLine,
     getLessonPictures: () => getLessonPicturesAction(lessonId),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId }),
-    startLesson: () => startLibraryLesson({ lessonId, studySessionId }),
+    requestExampleLine,
+    startLesson: (input) => startLibraryLesson({ lessonId, runId: input?.runId, studySessionId }),
   };
 }
 
@@ -87,10 +79,10 @@ export function LessonPlayerClient({
   firstAnswer,
   hasSession,
   lesson,
+  outline = false,
   resume,
   routing = DEFAULT_ROUTING,
   sessionContext = null,
-  skippableLanguage = null,
   soundsEnabled,
   studySessionId,
   support = null,
@@ -110,6 +102,8 @@ export function LessonPlayerClient({
   firstAnswer: string | null;
   hasSession: boolean;
   lesson: PlayableLibraryLesson;
+  /** The lesson's outline beside its reading screens on a wide screen, for a quick explanation. */
+  outline?: boolean;
   /** The answers of the learner's open run of this lesson, so it opens where they left off. */
   resume?: LessonRunAnswers;
   /**
@@ -119,8 +113,6 @@ export function LessonPlayerClient({
   routing?: LessonRouting;
   /** Today's session when the lesson is one of its blocks: its completion moment. */
   sessionContext?: LessonSessionContext | null;
-  /** A language lesson of a learner with a plan for the language: "Skip writing" is offered. */
-  skippableLanguage?: string | null;
   soundsEnabled: boolean;
   studySessionId: string | null;
   /** How the lesson opens for this learner: new skills explanation first, known ones question first. */
@@ -136,8 +128,8 @@ export function LessonPlayerClient({
   const router = useRouter();
 
   const adapters = useMemo(
-    () => createAdapters({ lessonId: lesson.id, skippableLanguage, studySessionId }),
-    [lesson.id, skippableLanguage, studySessionId],
+    () => createAdapters({ lessonId: lesson.id, studySessionId }),
+    [lesson.id, studySessionId],
   );
 
   const { buddy, canAsk, goalId } = tutorViewer;
@@ -163,8 +155,9 @@ export function LessonPlayerClient({
       challengeTeam={challengeTeam}
       firstAnswer={firstAnswer}
       lesson={lesson}
-      linkComponent={Link}
+      linkComponent={LearningLink}
       onExit={() => router.push(routes.exit)}
+      outline={outline}
       resume={resume}
       routes={routes}
       slots={slots}

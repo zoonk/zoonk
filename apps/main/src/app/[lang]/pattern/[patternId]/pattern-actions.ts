@@ -13,7 +13,7 @@ import { logError } from "@zoonk/utils/logger";
  */
 export async function practicePatternAction(
   patternId: string,
-  input: { answers: string[]; timeZone: string },
+  input: { answers: string[]; requestId: string; timeZone: string },
 ): Promise<PatternPracticeResult | null> {
   const parsed = mistakePatternPracticeInputSchema.safeParse(input);
 

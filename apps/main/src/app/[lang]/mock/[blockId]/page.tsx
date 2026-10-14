@@ -1,8 +1,12 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
+import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
+import { withQuery } from "@/lib/with-query";
 import { getMock } from "@zoonk/core/exams/mocks/get";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -19,15 +23,34 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Mock exam") };
 }
 
+/**
+ * A running section's own shape (its chrome with the clock, a question and its options, Flag and
+ * Next in the bar, and the answer sheet beside them from `lg`), so nothing moves when it arrives.
+ */
 function MockSkeleton() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="h-4 w-40" />
-      <Skeleton className="h-10 w-2/3" />
-      <Skeleton className="h-32 w-full rounded-3xl" />
-      <Skeleton className="mt-auto h-14 w-full rounded-full" />
-    </main>
+    <TaskSkeleton
+      actions={<Skeleton className="h-11 w-28 shrink-0 rounded-lg" />}
+      aside={
+        <>
+          <Skeleton className="h-9 w-32" />
+          <Skeleton className="h-36 w-full" />
+        </>
+      }
+      menu
+      progress
+      title={<Skeleton className="h-6 w-24" />}
+    >
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-7 w-5/6" />
+      <div className="flex flex-col gap-2.5">
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+      </div>
+    </TaskSkeleton>
   );
 }
 
@@ -39,7 +62,7 @@ async function MockContent({ params, searchParams }: Props) {
   const [result, tutor] = await Promise.all([getMock(blockId), getTutorViewer()]);
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={withQuery(`/mock/${blockId}`, query)} />;
   }
 
   if (result.status !== "ready") {
@@ -67,10 +90,16 @@ async function MockContent({ params, searchParams }: Props) {
       ? `/start/${mock.goalId}`
       : sessionReturn.continueHref;
 
+  // A new mock after one whose time ran out: the plan's starts from its challenge, as it first did.
+  const againHref = mock.planItemId
+    ? `/challenge/${mock.planItemId}${sessionReturn.search}`
+    : MOCK_ENTRY_HREFS.choose;
+
   // The buddy reads and changes the plan of the goal the mock was taken for, as core does.
   return (
     <MainLearnProvider>
       <MockClient
+        againHref={againHref}
         continueHref={continueHref}
         mock={mock}
         tutor={{ ...tutor, goalId: mock.goalId ?? tutor.goalId }}

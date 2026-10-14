@@ -40,8 +40,10 @@ export async function answerMistakePracticeAction({
     answerId: feedback.answerId,
     correctAnswer: feedback.correctAnswer,
     explanation: feedback.explanation,
-    fixed: feedback.mistakeStatus === "fixed",
+    fixed: feedback.fixed,
+    fixedMistakeIds: feedback.fixedMistakeIds,
     isCorrect: feedback.isCorrect,
+    mistakeStatus: feedback.mistakeStatus,
     trap: feedback.trap,
   };
 }

@@ -1,6 +1,9 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { getTutorViewer } from "@/lib/learn/tutor-viewer";
+import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { getSession } from "@zoonk/core/users/session";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -17,12 +20,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Practice mistakes") };
 }
 
-async function PracticeBody() {
-  const [language, session, goal] = await Promise.all([lang(), getSession(), getCurrentGoal()]);
+type Props = PageProps<"/[lang]/mistakes/practice">;
+
+/** "Practice this skill" opens practice with `?skill=` and the skill's id; anything else is ignored. */
+function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined {
+  const skill = Array.isArray(query.skill) ? query.skill[0] : query.skill;
+  const parsed = mistakePracticeInputSchema.shape.skillId.safeParse(skill);
+  return parsed.success ? parsed.data : undefined;
+}
+
+async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
+  const [language, session, goal, query, tutor] = await Promise.all([
+    lang(),
+    getSession(),
+    getCurrentGoal(),
+    searchParams,
+    getTutorViewer(),
+  ]);
+
+  const skillId = readSkillId(query);
 
   // A signed-out learner (or one whose session ended) signs in again, like on every learner page.
   if (!session) {
-    redirect({ href: "/login", locale: language });
+    return (
+      <AuthGateScreen
+        next={skillId ? `/mistakes/practice?skill=${skillId}` : "/mistakes/practice"}
+      />
+    );
   }
 
   if (!goal) {
@@ -30,7 +54,7 @@ async function PracticeBody() {
     return null;
   }
 
-  const result = await getMistakePractice({ goalId: goal.id });
+  const result = await getMistakePractice({ goalId: goal.id, skillId });
 
   if (result.status !== "ready") {
     notFound();
@@ -41,26 +65,39 @@ async function PracticeBody() {
       goalId={goal.id}
       practice={result.practice}
       trueFalseLabels={result.trueFalseLabels}
+      tutor={tutor}
     />
   );
 }
 
-/** The task header's place, then the question in its column. */
+/**
+ * The task header's place with its segments' row, the question in its column, then the pinned
+ * action bar, as the run lays them out.
+ */
 function PracticeSkeleton() {
   return (
     <>
       <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-4">
-        <Skeleton className="size-9 rounded-full" />
+        <Skeleton className="size-9 rounded-lg" />
         <Skeleton className="h-4 w-32" />
-        <Skeleton className="size-9 rounded-full" />
+        <Skeleton className="size-9 rounded-lg" />
       </div>
-      <Skeleton className="h-1 w-full rounded-none" />
 
-      <div className="mx-auto flex w-full max-w-150 flex-1 flex-col gap-5 px-4 pt-4 pb-6">
-        <Skeleton className="h-16 w-full rounded-2xl" />
-        <Skeleton className="h-7 w-2/3" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
+      <div className="max-w-column mx-auto w-full px-4 pb-1">
+        <Skeleton className="h-1 w-full rounded-xs" />
+      </div>
+
+      <div className="max-w-column mx-auto flex w-full flex-1 flex-col gap-2.5 px-4 pt-4 pb-8">
+        <Skeleton className="mb-3.5 h-5 w-full" />
+        <Skeleton className="mb-3.5 h-7 w-2/3" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+      </div>
+
+      <div className="border-border border-t">
+        <div className="max-w-column mx-auto w-full px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <Skeleton className="h-11 w-full" />
+        </div>
       </div>
     </>
   );
@@ -68,14 +105,14 @@ function PracticeSkeleton() {
 
 /**
  * "Practice mistakes": a short run over a few open mistakes, each drilled by why it happened,
- * full screen like a lesson.
+ * full screen like a lesson; "Practice this skill" runs it over one skill's mistakes.
  */
-export default function MistakePracticePage() {
+export default function MistakePracticePage({ searchParams }: Props) {
   return (
     <MainLearnProvider>
       <main className="bg-background flex min-h-dvh flex-col">
         <Suspense fallback={<PracticeSkeleton />}>
-          <PracticeBody />
+          <PracticeBody searchParams={searchParams} />
         </Suspense>
       </main>
     </MainLearnProvider>

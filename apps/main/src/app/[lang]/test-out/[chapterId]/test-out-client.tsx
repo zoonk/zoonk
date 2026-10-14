@@ -1,6 +1,6 @@
 "use client";
 
-import { decidePlanChangeAction } from "@/app/[lang]/(learn)/journey/journey-actions";
+import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { useRouter } from "@/i18n/navigation";
 import { type QuestionWriting } from "@/lib/questions/question-writing";
 import { requestTestOutWriting } from "@/lib/test-out/test-out-writing";
@@ -21,11 +21,14 @@ function notStartedRun(retry: () => void): GenerationRun {
 
 /** The test, graded through core when the learner finishes. */
 export function TestOutClient({
+  lessonsLeft,
   page,
   passMark,
   questions,
   trueFalseLabels,
 }: {
+  /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
+  lessonsLeft: number | null;
   page: TestOutPage;
   passMark: number;
   questions: ChoiceQuestionView[];
@@ -36,6 +39,7 @@ export function TestOutClient({
       chapterTitle={page.chapterTitle}
       closeHref={page.closeHref}
       draftKey={`test-out:${page.goalId}:${page.chapterId}`}
+      lessonsLeft={lessonsLeft}
       onSubmit={submitTestOutAction.bind(null, { chapterId: page.chapterId, goalId: page.goalId })}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       passMark={passMark}

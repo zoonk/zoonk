@@ -1,13 +1,21 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { redirect } from "@/i18n/navigation";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
+import { getTutorViewer } from "@/lib/learn/tutor-viewer";
+import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
+import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { LESSON_LIMIT_PARAM, readLessonLimitParam } from "@/lib/session/lesson-limit-param";
+import { SESSION_BLOCK_PARAM, readSessionBlockParam } from "@/lib/session/session-block-param";
 import {
   SESSION_STOPPED_PARAM,
   readSessionStoppedParam,
 } from "@/lib/session/session-stopped-param";
+import { withQuery } from "@/lib/with-query";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
+import { findAlternativeStudyBlock } from "@zoonk/core/sessions/alternative";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { getSession } from "@zoonk/core/users/session";
@@ -16,6 +24,7 @@ import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -90,11 +99,20 @@ async function getNotWritten({
   lesson,
   limit,
   next,
+  request,
 }: {
   lesson: NextStopLesson;
   limit: LessonLimit | null;
   next: StudyBlock;
+  request: LessonRequest;
 }): Promise<LessonNotWritten | null> {
+  if (
+    (lesson === "notStarted" || lesson === "failed") &&
+    (request.status === "plusRequired" || request.status === "setAside")
+  ) {
+    return request;
+  }
+
   if (lesson === "failed" && next.lessonId) {
     const state = await getLessonGenerationState(next.lessonId);
     return state?.status === "failed" && state.setAside ? { status: "setAside" } : null;
@@ -105,11 +123,7 @@ async function getNotWritten({
 
 /** A ready block to do while a lesson is written: anything but another lesson. */
 function findAlternative({ next, session }: { next: StudyBlock; session: StudySession }) {
-  return (
-    session.blocks.find(
-      (block) => block.id !== next.id && block.status === "pending" && block.kind !== "learn",
-    ) ?? null
-  );
+  return findAlternativeStudyBlock({ blockId: next.id, blocks: session.blocks });
 }
 
 async function SessionSummaryView({
@@ -143,12 +157,44 @@ async function SessionSummaryView({
   );
 }
 
+/**
+ * The block the learner opened (`?block=`), while it's still to do: Today's queue opens any of the
+ * day's blocks, so the first one under way isn't always the one they picked.
+ */
+function findOpenedBlock({ blockId, session }: { blockId: string | null; session: StudySession }) {
+  return (
+    session.blocks.find(
+      (block) => block.id === blockId && (block.status === "active" || block.status === "pending"),
+    ) ?? null
+  );
+}
+
+/** The question block the screen plays: the one the learner opened, or else the first under way. */
+function findActiveQuestionBlock({
+  opened,
+  session,
+}: {
+  opened: StudyBlock | null;
+  session: StudySession;
+}) {
+  if (opened) {
+    return opened.status === "active" && isQuestionBlock(opened) ? opened : null;
+  }
+
+  return session.blocks.find((block) => block.status === "active" && isQuestionBlock(block));
+}
+
 async function SessionView({
+  blockId,
   limit,
+  request,
   stopped,
   today,
 }: {
+  /** The block the learner opened, from `?block=`. */
+  blockId: string | null;
   limit: LessonLimit | null;
+  request: LessonRequest;
   /** The learner just stopped for today: what changed so far, before the next step. */
   stopped: boolean;
   today: TodayView;
@@ -159,21 +205,28 @@ async function SessionView({
     return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped />;
   }
 
-  const active = session.blocks.find(
-    (block) => block.status === "active" && isQuestionBlock(block),
-  );
+  const opened = findOpenedBlock({ blockId, session });
+  const active = findActiveQuestionBlock({ opened, session });
 
   if (active) {
-    const detail = await getStudyBlock({ blockId: active.id, sessionId: session.id });
+    const [detail, tutor] = await Promise.all([
+      getStudyBlock({ blockId: active.id, sessionId: session.id }),
+      getTutorViewer(),
+    ]);
 
     if (detail.status !== "ready") {
       notFound();
     }
 
-    return <SessionBlockClient detail={detail.detail} session={session} />;
+    // Asking the buddy about a question opens the player's conversation.
+    return (
+      <ClientMessagesProvider scope="player">
+        <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
+      </ClientMessagesProvider>
+    );
   }
 
-  const next = session.blocks.find((block) => block.id === session.nextBlockId);
+  const next = opened ?? session.blocks.find((block) => block.id === session.nextBlockId);
 
   if (!next) {
     return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped={false} />;
@@ -183,7 +236,7 @@ async function SessionView({
 
   const [generationId, notWritten] = await Promise.all([
     getWritingRunId({ lesson, next }),
-    getNotWritten({ lesson, limit, next }),
+    getNotWritten({ lesson, limit, next, request }),
   ]);
 
   return (
@@ -204,7 +257,7 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   const [language, result, search] = await Promise.all([lang(), getTodayView({}), searchParams]);
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: language });
+    return <AuthGateScreen next={withQuery("/session", search)} />;
   }
 
   if (result.status === "noGoal") {
@@ -221,7 +274,9 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
     <MainLearnProvider>
       <main className="bg-background flex min-h-dvh flex-col">
         <SessionView
+          blockId={readSessionBlockParam(search[SESSION_BLOCK_PARAM])}
           limit={readLessonLimitParam(search[LESSON_LIMIT_PARAM])}
+          request={readLessonWritingRequest(search)}
           stopped={readSessionStoppedParam(search[SESSION_STOPPED_PARAM])}
           today={result.today}
         />
@@ -230,25 +285,31 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   );
 }
 
-/** The task header's place (close, title, menu and its bar), then the step in its column. */
+/**
+ * The session's chrome while it loads, in its final shapes: the task header's row in the column
+ * (close, title, menu) with its bar, the step in the column, the action bar pinned under a
+ * hairline with its main action (label-width from `lg`), and the aside beside them from `lg`.
+ */
 function SessionSkeleton() {
   return (
-    <main className="flex min-h-dvh flex-col">
-      <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-4">
-        <Skeleton className="size-9 rounded-full" />
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="size-9 rounded-full" />
+    <TaskSkeleton
+      aside={
+        <>
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-4/6" />
+        </>
+      }
+      progress
+      title={<Skeleton className="h-4 w-32" />}
+    >
+      <Skeleton className="h-7 w-2/3" />
+      <div className="flex flex-col gap-2.5">
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
+        <Skeleton className="rounded-option h-12 w-full" />
       </div>
-      <Skeleton className="h-1 w-full rounded-none" />
-
-      <div className="mx-auto flex w-full max-w-150 flex-1 flex-col gap-5 px-4 pt-4 pb-6">
-        <Skeleton className="h-7 w-2/3" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="mt-auto h-12 w-full rounded-full" />
-      </div>
-    </main>
+    </TaskSkeleton>
   );
 }
 

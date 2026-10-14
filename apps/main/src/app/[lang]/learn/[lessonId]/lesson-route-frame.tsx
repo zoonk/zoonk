@@ -1,0 +1,96 @@
+"use client";
+
+import { Link } from "@/i18n/navigation";
+import {
+  TASK_HEADER_ICON_CLASS,
+  TaskHeader,
+  TaskHeaderBar,
+  TaskHeaderSide,
+  TaskHeaderTitle,
+} from "@zoonk/learn/task-header";
+import {
+  TaskAside,
+  TaskAsideContent,
+  TaskBody,
+  getTaskAsideRootProps,
+} from "@zoonk/learn/task-layout";
+import { useFormatDuration } from "@zoonk/learn/time-format";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
+import { XIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+
+type LessonAbout = { description: string; estimatedMinutes?: number; title: string };
+
+/**
+ * A lesson's page before its screens play (being written, or opening for a visitor) in the
+ * player's chrome: leave on the left, the lesson's title as the page's one heading, the column where
+ * the lesson's screens will be and, from `lg`, the aside beside it with what the lesson is about
+ * (above the column on a phone), so nothing moves when the lesson opens in its place. Its action
+ * bar (`footer`) holds the one main action, when there is one.
+ */
+export function LessonRouteFrame({
+  children,
+  exitHref,
+  footer,
+  lesson,
+}: {
+  children: React.ReactNode;
+  exitHref: string;
+  footer?: React.ReactNode;
+  lesson: LessonAbout;
+}) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const asideRoot = getTaskAsideRootProps({ footer: false });
+
+  const minutes =
+    lesson.estimatedMinutes === undefined ? undefined : formatDuration(lesson.estimatedMinutes);
+
+  return (
+    <div
+      className={cn(
+        "bg-background flex min-h-dvh flex-col",
+        asideRoot.className,
+        "lg:[--task-aside-bottom:0px]",
+      )}
+      data-aside={asideRoot["data-aside"]}
+    >
+      <TaskHeader className="bg-background sticky top-0 z-20">
+        <TaskHeaderBar>
+          <TaskHeaderSide align="start">
+            <Link
+              className={cn(
+                buttonVariants({ size: "icon", variant: "ghost" }),
+                "shrink-0",
+                TASK_HEADER_ICON_CLASS.start,
+              )}
+              href={exitHref}
+            >
+              <XIcon aria-hidden="true" />
+              <span className="sr-only">{t("Back")}</span>
+            </Link>
+          </TaskHeaderSide>
+
+          <TaskHeaderTitle title={lesson.title} />
+
+          <TaskHeaderSide align="end" />
+        </TaskHeaderBar>
+      </TaskHeader>
+
+      <main className="flex flex-1 flex-col">
+        <TaskBody>
+          <TaskAsideContent>
+            <p className="text-muted-foreground text-pretty">{lesson.description}</p>
+          </TaskAsideContent>
+
+          {children}
+        </TaskBody>
+      </main>
+
+      {footer}
+
+      <TaskAside label={t("About this lesson")} meta={minutes} title={t("About this lesson")} />
+    </div>
+  );
+}

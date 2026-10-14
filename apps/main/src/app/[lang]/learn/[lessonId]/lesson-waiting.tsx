@@ -7,15 +7,14 @@ import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationWait } from "@zoonk/learn/generation";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
+import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import {
-  GenerationTimelineDescription,
-  GenerationTimelineTitle,
-} from "@zoonk/ui/components/generation-timeline";
-import { cn } from "@zoonk/ui/lib/utils";
+import { TaskMainButton } from "@zoonk/learn/task-frame";
+import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
+import { ChevronRightIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { LessonRouteFrame } from "./lesson-route-frame";
 
 type ReadyAlternative = NonNullable<
   Extract<LessonWaitingResult, { status: "ready" }>["state"]["alternative"]
@@ -32,6 +31,10 @@ const OPEN_RETRY_MS = 2000;
 /** Where a refused guest creates an account and a free learner sees Plus. */
 const LIMIT_ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
+/**
+ * Something ready, as the list's highlighted "next" row: its name and where it leads, one tap away
+ * while the lesson is written or in place of one that won't be.
+ */
 function Alternative({
   alternative,
   instead = false,
@@ -42,29 +45,32 @@ function Alternative({
 }) {
   const t = useExtracted();
 
-  // Sized by its content: a long lesson title wraps inside the pill instead of being cut.
-  const linkClass = cn(
-    buttonVariants({ variant: "outline" }),
-    "h-auto min-h-11 rounded-full px-4 py-2 text-center text-balance whitespace-normal",
-  );
+  const rowClass =
+    "bg-muted hover:bg-muted/70 -mx-2.5 flex min-h-11 items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75 text-sm font-medium transition-colors";
 
   return (
-    <div className="bg-muted/60 flex flex-col gap-3 rounded-2xl p-4">
-      <p className="text-sm">
-        {instead ? t("Something ready to do instead:") : t("Something ready while you wait:")}
-      </p>
+    <section className="flex flex-col gap-2">
+      <h2 className="text-label">
+        {instead ? t("Ready to do instead") : t("Ready while you wait")}
+      </h2>
       {alternative.kind === "lesson" ? (
-        <Link className={linkClass} href={`/learn/${alternative.lessonId}`}>
-          {alternative.title}
+        <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>
+          <KindMark kind="lesson" />
+          <span className="min-w-0 flex-1 text-balance">{alternative.title}</span>
+          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </Link>
       ) : (
-        <Link className={linkClass} href="/today">
-          {t("{count, plural, one {Review # idea} other {Review # ideas}}", {
-            count: alternative.dueSkills,
-          })}
+        <Link className={rowClass} href="/today">
+          <KindMark kind="review" />
+          <span className="min-w-0 flex-1">
+            {t("{count, plural, one {Review # idea} other {Review # ideas}}", {
+              count: alternative.dueSkills,
+            })}
+          </span>
+          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </Link>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -117,16 +123,6 @@ function useOpenWhenReady(isReady: boolean) {
   }, [isReady]);
 }
 
-/** The lesson's own title and description, above whatever the page shows about it. */
-function LessonHeader({ lesson }: { lesson: LessonOutline }) {
-  return (
-    <header className="flex flex-col gap-2">
-      <h1 className="text-2xl font-semibold tracking-tight text-balance">{lesson.title}</h1>
-      <p className="text-muted-foreground text-pretty">{lesson.description}</p>
-    </header>
-  );
-}
-
 /**
  * The run writing the lesson, followed live: the shared wait's bar and phases, the lesson opening
  * on its own once it's ready, and a stop (a lost connection, a failed run, a request that didn't
@@ -135,11 +131,9 @@ function LessonHeader({ lesson }: { lesson: LessonOutline }) {
  */
 function WritingWait({
   alternative,
-  lesson,
   writing,
 }: {
   alternative: ReadyAlternative | null;
-  lesson: LessonOutline;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
   const t = useExtracted();
@@ -159,12 +153,10 @@ function WritingWait({
 
   useOpenWhenReady(run.status === "ready");
 
+  // The header names the lesson and the frame says what it's about, so the wait is only the wait.
   return (
     <>
-      <GenerationWait kind="lesson" run={run}>
-        <GenerationTimelineTitle>{lesson.title}</GenerationTimelineTitle>
-        <GenerationTimelineDescription>{lesson.description}</GenerationTimelineDescription>
-      </GenerationWait>
+      <GenerationWait kind="lesson" run={run} />
 
       {run.status !== "failed" && (
         <p className="text-muted-foreground text-sm text-pretty">
@@ -179,6 +171,41 @@ function WritingWait({
   );
 }
 
+/**
+ * Why the lesson isn't here and what starting it does, flat in the column like the notes that take
+ * its place (a limit reached, a lesson set aside).
+ */
+function UnwrittenLessonNote() {
+  const t = useExtracted();
+
+  return (
+    <p className="flex flex-col gap-1 text-sm text-pretty">
+      <span className="font-medium">{t("This lesson isn't written yet")}</span>
+      <span className="text-muted-foreground">
+        {t("Zoonk writes it when you start. It takes a minute or two.")}
+      </span>
+    </p>
+  );
+}
+
+/**
+ * "Start this lesson", the direct visitor's one main action, pinned where the lesson's own actions
+ * will be: Enter presses it, and it says it's starting while the lesson is asked for.
+ */
+function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <TaskActionBar>
+      <TaskActions>
+        <TaskMainButton busy={busy} onClick={onStart}>
+          {busy ? t("Starting…") : t("Start this lesson")}
+        </TaskMainButton>
+      </TaskActions>
+    </TaskActionBar>
+  );
+}
+
 function isWriting(request: LessonRequest): boolean {
   return (
     request.status === "requesting" || request.status === "writing" || request.status === "failed"
@@ -186,66 +213,65 @@ function isWriting(request: LessonRequest): boolean {
 }
 
 /**
- * A lesson that isn't written yet, for someone who can have it written: it asks for it (on open
- * with a session, after "Start this lesson" for a visitor), follows the writing live, opens the
- * lesson once it's ready, and offers something ready if it takes long. Never a spinner with no end.
+ * A lesson that isn't written yet, for someone who can have it written, with the same chrome as
+ * the lesson it becomes (leave on the left, its title in the header, what it's about beside it from
+ * `lg`): it offers writing from an explicit action or follows writing already requested, opens
+ * the lesson once it's ready, and offers something ready
+ * if it takes long. Never a spinner with no end.
  */
 export function LessonWaiting({
   alternative,
   exitHref,
-  hasSession,
+  initialRequest,
   lesson,
 }: {
   alternative: ReadyAlternative | null;
-  exitHref: "/" | "/today";
-  hasSession: boolean;
+  exitHref: string;
+  initialRequest: LessonRequest;
   lesson: LessonOutline;
 }) {
-  const t = useExtracted();
-  const writing = useLessonWriting({ hasSession, lessonId: lesson.id });
+  const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
+  // The visitor pressed Start: its button stays, busy, until the request is answered.
+  const [starting, setStarting] = useState(false);
 
   // Written meanwhile (another run finished it): the page opens it.
   useOpenWhenReady(request.status === "ready");
 
+  const start = () => {
+    setStarting(true);
+    void writing.start();
+  };
+
+  const showsStart = request.status === "idle" || (starting && request.status === "requesting");
+
   return (
-    <main className="bg-background flex min-h-dvh flex-col items-center justify-center px-4 py-10">
-      <div className="flex w-full max-w-md flex-col gap-6">
-        {isWriting(request) ? (
-          <WritingWait
-            alternative={alternative}
-            key={writing.attempt}
-            lesson={lesson}
-            writing={writing}
+    <LessonRouteFrame
+      exitHref={exitHref}
+      footer={
+        showsStart && <StartLessonBar busy={request.status === "requesting"} onStart={start} />
+      }
+      lesson={lesson}
+    >
+      {showsStart && <UnwrittenLessonNote />}
+      {isWriting(request) && (
+        <WritingWait alternative={alternative} key={writing.attempt} writing={writing} />
+      )}
+
+      {(request.status === "refused" ||
+        request.status === "plusRequired" ||
+        request.status === "setAside") && (
+        <>
+          <LessonNotWrittenNotice
+            className="rounded-none bg-transparent p-0"
+            linkComponent={Link}
+            onRetry={writing.retry}
+            reason={request}
+            routes={LIMIT_ROUTES}
           />
-        ) : (
-          <LessonHeader lesson={lesson} />
-        )}
-
-        {request.status === "idle" && (
-          <Button className="h-11 w-fit rounded-full" onClick={writing.start}>
-            {t("Start this lesson")}
-          </Button>
-        )}
-
-        {(request.status === "refused" ||
-          request.status === "plusRequired" ||
-          request.status === "setAside") && (
-          <>
-            <LessonNotWrittenNotice
-              linkComponent={Link}
-              onRetry={writing.retry}
-              reason={request}
-              routes={LIMIT_ROUTES}
-            />
-            {alternative && <Alternative alternative={alternative} instead />}
-          </>
-        )}
-
-        <Link className={cn(buttonVariants({ variant: "ghost" }), "w-fit")} href={exitHref}>
-          {t("Back")}
-        </Link>
-      </div>
-    </main>
+          {alternative && <Alternative alternative={alternative} instead />}
+        </>
+      )}
+    </LessonRouteFrame>
   );
 }

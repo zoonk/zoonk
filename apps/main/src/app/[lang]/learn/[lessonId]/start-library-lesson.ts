@@ -28,6 +28,7 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
       ? {
           answers: run.data.answers,
           hyperdrive: run.data.hyperdrive,
+          optionalStepIds: run.data.optionalStepIds,
           reason: "started",
           runId: run.data.runId,
           startedAt: run.data.startedAt,
@@ -55,9 +56,11 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
  */
 export async function startLibraryLesson({
   lessonId,
+  runId,
   studySessionId,
 }: {
   lessonId: string;
+  runId?: string;
   studySessionId: string | null;
 }): Promise<LessonStartOutcome> {
   // A session check or guest sign-in that failed is worth retrying; it never means "signed out".
@@ -68,6 +71,7 @@ export async function startLibraryLesson({
   const { data: response, error } = await safeAsync(() =>
     fetch(`/api/library/lessons/${encodeURIComponent(lessonId)}/starts`, {
       body: JSON.stringify({
+        ...(runId && { runId }),
         timeZone: getLocalTimeZone(),
         ...(studySessionId && { studySessionId }),
       }),

@@ -7,6 +7,7 @@ import {
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { type CheckpointActions, CheckpointScreen } from "@zoonk/learn/checkpoint";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 /**
@@ -22,6 +23,7 @@ export function CheckpointClient({
   continueHref: string;
 }) {
   const { blockId, sessionId } = checkpoint;
+  const router = useRouter();
 
   const actions = useMemo<CheckpointActions>(() => {
     const ids = { blockId, sessionId };
@@ -34,8 +36,16 @@ export function CheckpointClient({
           timeZone: getLocalTimeZone(),
         });
 
+        if (outcome.status !== "answered") {
+          router.refresh();
+        }
+
         return outcome.status === "answered"
-          ? { isCorrect: outcome.feedback.isCorrect, transcript: outcome.feedback.transcript }
+          ? {
+              isCorrect: outcome.feedback.isCorrect,
+              reinforcementLessons: outcome.feedback.reinforcementLessons,
+              transcript: outcome.feedback.transcript,
+            }
           : null;
       },
       finish: async () => {
@@ -43,9 +53,16 @@ export function CheckpointClient({
         return outcome.status === "finished" ? outcome.moment : null;
       },
     };
-  }, [blockId, sessionId]);
+  }, [blockId, router, sessionId]);
 
   const hrefs = useMemo(() => ({ continue: continueHref, exit: "/today" }), [continueHref]);
 
-  return <CheckpointScreen actions={actions} checkpoint={checkpoint} hrefs={hrefs} />;
+  return (
+    <CheckpointScreen
+      actions={actions}
+      checkpoint={checkpoint}
+      hrefs={hrefs}
+      key={checkpoint.questions.map((question) => question.itemId).join(",")}
+    />
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { type PronunciationReviewsView } from "@zoonk/core/language/pronunciation/contract";
 import { PronunciationReviewScreen } from "@zoonk/learn/language/pronunciation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -8,6 +9,8 @@ import { answerPronunciationAction, finishPronunciationRoundAction } from "./pro
 
 /** The review round, saved in the learner's timezone so it counts toward their day. */
 export function PronunciationClient({ reviews }: { reviews: PronunciationReviewsView }) {
+  const { bfcacheId } = useRouter();
+
   const actions = useMemo(
     () => ({
       answer: ({
@@ -38,5 +41,13 @@ export function PronunciationClient({ reviews }: { reviews: PronunciationReviews
     [reviews.goalId],
   );
 
-  return <PronunciationReviewScreen actions={actions} exitHref="/today" reviews={reviews} />;
+  return (
+    /** Fresh link entries start a new round; answer refreshes and history keep the active cohort. */
+    <PronunciationReviewScreen
+      actions={actions}
+      exitHref="/today"
+      key={`${bfcacheId}:${reviews.goalId}`}
+      reviews={reviews}
+    />
+  );
 }

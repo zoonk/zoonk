@@ -2,11 +2,11 @@
 
 import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
+import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import {
   type LessonPicture,
   answerExplanationInputSchema,
   lessonStepCheckInputSchema,
-  libraryLessonCompletionInputSchema,
 } from "@zoonk/core/lesson-player/contract";
 import { getLessonPictures } from "@zoonk/core/lesson-player/pictures";
 import { explainAnswer } from "@zoonk/core/library/items/explain-answer";
@@ -70,6 +70,7 @@ export async function completeLibraryLessonAction({
 }: {
   lessonId: string;
   runId: string;
+  skippedWritingStepIds?: string[];
   timeZone: string;
 }): Promise<LessonCompletionOutcome> {
   const input = libraryLessonCompletionInputSchema.safeParse(rawInput);

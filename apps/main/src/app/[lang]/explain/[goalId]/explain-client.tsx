@@ -2,6 +2,7 @@
 
 import { LessonPlayerClient } from "@/app/[lang]/learn/[lessonId]/lesson-player-client";
 import { useRouter } from "@/i18n/navigation";
+import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
@@ -131,19 +132,25 @@ function useExplanationWait(isWritten: boolean) {
 /**
  * A quick explanation: a designed wait while it's written (each step live,
  * the outline taking shape; shown as soon as the run says it can be read), then the story screens
- * and the check in the lesson player, ending with "Now you know" and "Want to go further?". A
- * learner who waited sees the finished outline first and starts it with "See explanation".
+ * and the check in the lesson player, with the outline beside them on a wide screen, ending with
+ * "Now you know" and "Want to go further?". A learner who waited sees the finished outline first
+ * and starts it with "See explanation". Opened from an old prefetched copy (Today's link), it
+ * reads itself again, so an explanation written meanwhile shows.
  */
 export function ExplainClient({
   explanation,
   hasSession,
+  readAt,
   soundsEnabled,
 }: {
   explanation: ExplanationView;
   hasSession: boolean;
+  /** When the page's private reads ran (`getReadAt`). */
+  readAt: number;
   soundsEnabled: boolean;
 }) {
   const router = useRouter();
+  useRefreshWhenOld(readAt);
   const endingSlots = useMemo(() => createExplainEnding(explanation), [explanation]);
 
   const routing = useMemo(
@@ -189,6 +196,7 @@ export function ExplainClient({
       firstAnswer={null}
       hasSession={hasSession}
       lesson={explanation.lesson}
+      outline
       routing={routing}
       soundsEnabled={soundsEnabled}
       studySessionId={null}

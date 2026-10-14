@@ -11,8 +11,8 @@ export function PatternClient({ pattern }: { pattern: MistakePatternView }) {
   const actions = useMemo(
     () => ({
       dismiss: () => dismissPatternAction(pattern.id),
-      practice: (answers: string[]) =>
-        practicePatternAction(pattern.id, { answers, timeZone: getLocalTimeZone() }),
+      practice: ({ answers, requestId }: { answers: string[]; requestId: string }) =>
+        practicePatternAction(pattern.id, { answers, requestId, timeZone: getLocalTimeZone() }),
     }),
     [pattern.id],
   );

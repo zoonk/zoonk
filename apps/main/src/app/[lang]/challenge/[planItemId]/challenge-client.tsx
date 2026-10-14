@@ -99,7 +99,7 @@ export function ChallengeClient({
   const [writing, setWriting] = useState<Writing | null>(null);
 
   const { actions, openWritten, startAfterWriting } = useMemo(() => {
-    const open = (started: ChallengeDestination): StartOutcome => {
+    const open = (started: Pick<ChallengeDestination, "blockId" | "kind">): StartOutcome => {
       router.push(
         getBlockHref({ blockId: started.blockId, mock: started.kind === "mock", search }),
       );
@@ -111,8 +111,20 @@ export function ChallengeClient({
     const startOnce = async (afterWriting: boolean): Promise<StartOutcome | "questionsNeeded"> => {
       const started = await startChallengeAction(planItemId, getLocalTimeZone(), afterWriting);
 
+      // A kept intro can say Continue after another tab already finished this block.
+      if (started === "blockFinished" && challenge.blockId) {
+        return open({ blockId: challenge.blockId, kind: challenge.mock ? "mock" : "checkpoint" });
+      }
+
+      // Plus lapsed since the intro opened: the screen shows the lock now, and the page reloads
+      // the challenge as it stands.
+      if (started === "plusRequired") {
+        router.refresh();
+        return "plusRequired";
+      }
+
       if (!started || typeof started === "string") {
-        return started ?? "failed";
+        return started === "blockFinished" ? "failed" : (started ?? "failed");
       }
 
       return open(started);
@@ -142,9 +154,17 @@ export function ChallengeClient({
     };
 
     const challengeActions: ChallengeActions = {
-      // A move that went through goes on to the challenge's new day (the action redirects).
-      move: async () =>
-        (await moveChallengeAction({ page, planItemId }, getLocalTimeZone())) !== "notDone",
+      // A move that went through goes on to the challenge's new day (the action redirects); a
+      // mock the plan can't save the time for there says why.
+      move: async () => {
+        const outcome = await moveChallengeAction({ page, planItemId }, getLocalTimeZone());
+
+        if (outcome === "notDone") {
+          return "failed";
+        }
+
+        return typeof outcome === "object" ? outcome : "moved";
+      },
       // A Start while a run is still writing waits for it, never opening on part of them.
       start: () => start(false),
       undoMove: async (changeId) =>
@@ -157,7 +177,7 @@ export function ChallengeClient({
       openWritten: () => startOnce(true),
       startAfterWriting: () => start(true),
     };
-  }, [page, planItemId, router, search]);
+  }, [challenge.blockId, challenge.mock, page, planItemId, router, search]);
 
   const hrefs = useMemo(
     () => ({

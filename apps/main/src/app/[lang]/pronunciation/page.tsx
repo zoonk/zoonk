@@ -1,5 +1,6 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { redirect } from "@/i18n/navigation";
+import { withQuery } from "@/lib/with-query";
 import { getPronunciationReviews } from "@zoonk/core/language/pronunciation/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -20,22 +21,27 @@ export async function generateMetadata(): Promise<Metadata> {
 function PronunciationSkeleton() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="h-56 w-full rounded-3xl" />
-      <Skeleton className="mx-auto size-20 rounded-full" />
-      <Skeleton className="mt-auto h-14 w-full rounded-full" />
+      <Skeleton className="size-9 rounded-lg" />
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-24 rounded-md" />
+        <Skeleton className="h-8 w-1/2 rounded-lg" />
+        <Skeleton className="h-4 w-40 rounded-md" />
+      </div>
+      <Skeleton className="h-7.5 w-48 rounded-md" />
+      <Skeleton className="mt-auto h-11 w-full rounded-lg" />
     </main>
   );
 }
 
-async function PronunciationContent({ params, searchParams }: Props) {
-  const [{ lang }, { goal }] = await Promise.all([params, searchParams]);
+async function PronunciationContent({ searchParams }: Pick<Props, "searchParams">) {
+  const query = await searchParams;
+  const { goal } = query;
   const goalId = typeof goal === "string" && isUuid(goal) ? goal : undefined;
 
   const result = await getPronunciationReviews({ goalId });
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={withQuery("/pronunciation", query)} />;
   }
 
   if (result.status !== "ready") {

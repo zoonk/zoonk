@@ -1,6 +1,8 @@
 "use client";
 
+import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
+import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
@@ -28,16 +30,24 @@ import { useLocale } from "next-intl";
 const EXIT_HREF = "/today";
 const SIGN_UP_HREF = "/login";
 
-/** A question block of today's session: capsules, practice or a mistake drill. */
+/**
+ * A question block of today's session: capsules, practice or a mistake drill, with the learner's
+ * buddy to ask about the question in view.
+ */
 export function SessionBlockClient({
   detail,
   session,
+  tutor,
 }: {
   detail: StudyBlockDetail;
   session: StudySession;
+  /** Who asks and the buddy who answers (`getTutorViewer`). */
+  tutor: TutorViewer;
 }) {
   const navigation = useStudyNavigation(session.id);
+  const router = useRouter();
   const lessonHref = useLessonPlayerHref();
+  const questionTutor = useQuestionTutor(tutor);
   const ids = { blockId: detail.block.id, sessionId: session.id };
 
   return (
@@ -47,6 +57,7 @@ export function SessionBlockClient({
           answerStudyQuestionAction({ ...ids, ...input, timeZone: getLocalTimeZone() }),
         continueSession: navigation.continueSession,
         finish: () => finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() }),
+        refresh: () => router.refresh(),
         stop: navigation.stop,
       }}
       detail={detail}
@@ -59,6 +70,7 @@ export function SessionBlockClient({
         id: session.id,
         missions: session.missions,
       }}
+      tutor={questionTutor}
     />
   );
 }
@@ -90,6 +102,7 @@ export function SessionNextStopClient({
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <NextStop
         actions={{
+          openWrittenLesson: navigation.openWrittenLesson,
           recordWait: (milliseconds) =>
             void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
           refresh: () => router.refresh(),
@@ -98,6 +111,7 @@ export function SessionNextStopClient({
         }}
         alternative={alternative}
         block={block}
+        blocks={session.blocks}
         exitHref={EXIT_HREF}
         generationId={generationId}
         lesson={lesson}
@@ -110,8 +124,8 @@ export function SessionNextStopClient({
 }
 
 /**
- * The end of the day in steps: what changed, then Today or "10 more minutes". Right after stopping
- * for today, what's done so far, then Today or "Keep going".
+ * The end of the day on one screen: what changed, then Today or "10 more minutes". Right after
+ * stopping for today, what's done so far, then Today or "Keep going".
  */
 export function SessionSummaryClient({
   goalKind,
@@ -132,22 +146,20 @@ export function SessionSummaryClient({
   stopped: boolean;
   summary: StudySessionSummary;
 }) {
-  const router = useRouter();
   const navigation = useStudyNavigation(sessionId);
+  const router = useRouter();
 
   return (
     <SessionSummary
       actions={{
         addExtraTime: navigation.addExtraTime,
-        done: async () => {
-          router.push(EXIT_HREF);
-          return true;
-        },
         keepGoing: navigation.continueSession,
+        refresh: () => router.refresh(),
       }}
       buddy={buddy}
       exitHref={EXIT_HREF}
       goalKind={goalKind}
+      mistakesHref="/mistakes"
       renderCeremony={(milestone, onClose) => (
         <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
