@@ -360,6 +360,13 @@ async function writeOutline({ course, courseId, language, prisma }: CourseContex
 
   const levels = [...new Set(course.chapters.map((chapter) => chapter.level))];
 
+  const areas = new Map(
+    course.chapters.map((chapter) => [
+      libraryIds.chapter(course.key, chapter.key, language),
+      chapter.area?.in(language) ?? null,
+    ]),
+  );
+
   const slots = levels.flatMap((level) =>
     arrangeSlots(
       placed
@@ -374,11 +381,18 @@ async function writeOutline({ course, courseId, language, prisma }: CourseContex
     ).map((slot) => ({ ...slot, level })),
   );
 
+  /** Existing seeded chapters keep their positions among generated chapters, but receive their area. */
+  const arrangedIds = new Set(slots.map((slot) => slot.id));
+
+  const existing = placed
+    .filter((row) => areas.has(row.chapterId) && !arrangedIds.has(row.chapterId))
+    .map((row) => ({ id: row.chapterId, level: row.level, position: row.position }));
+
   await Promise.all(
-    slots.map(({ id: chapterId, level, position }) =>
+    [...slots, ...existing].map(({ id: chapterId, level, position }) =>
       prisma.courseChapter.upsert({
-        create: { chapterId, courseId, level, position },
-        update: { level, position },
+        create: { area: areas.get(chapterId), chapterId, courseId, level, position },
+        update: { area: areas.get(chapterId), level, position },
         where: { courseId_chapterId: { chapterId, courseId } },
       }),
     ),

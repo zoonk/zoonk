@@ -487,7 +487,7 @@ function buildEdition(
       "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem",
     questionCount: 180,
     sourceHash: noticeHash,
-    timeZone: "America/Sao_Paulo",
+    timeZone: edition.timeZone,
     year: edition.year,
   };
 }

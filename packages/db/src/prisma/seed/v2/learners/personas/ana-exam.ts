@@ -265,11 +265,14 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
           day: -1,
           kind: "edited",
           payload: {
+            effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 },
             operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
             source: "memory",
           },
-          reason:
+          reason: t(
+            "You take a prep course on Saturday mornings. Want Saturday to become a rest day in the plan?",
             "Você faz cursinho aos sábados de manhã. Quer que o sábado vire dia de descanso no plano?",
+          ),
           status: "proposed",
         },
       ],

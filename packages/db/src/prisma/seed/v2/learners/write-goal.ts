@@ -1,5 +1,6 @@
 import { type PrismaClient } from "../../../../generated/prisma/client";
 import { daysFrom, localDayFrom } from "../_utils/dates";
+import { Localized } from "../_utils/localize";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { seedId } from "../_utils/seed-id";
 import { libraryIds } from "../library/library-ids";
@@ -181,7 +182,10 @@ async function writePlanChanges(
             ? { ...change.payload, planItemIds: testedOut }
             : change.payload,
         planId,
-        reason: change.reason,
+        reason:
+          change.reason instanceof Localized
+            ? change.reason.in(scope.learner.language)
+            : change.reason,
         status: change.status ?? "applied",
         ...SEED_PROVENANCE,
       };

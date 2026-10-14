@@ -67,7 +67,7 @@ export type SeedPlanItem = {
 export type SeedPlanChange = {
   kind: "edited" | "estimateUpdated" | "missedDays" | "resumed" | "testedOut";
   status?: "applied" | "proposed";
-  reason: string;
+  reason: string | Localized;
   payload: Prisma.InputJsonObject;
   day: Day;
 };

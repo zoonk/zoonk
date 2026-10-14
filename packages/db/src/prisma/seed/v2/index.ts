@@ -8,6 +8,7 @@ import { writeLearner } from "./learners/write-learner";
 import { getSeedPlus } from "./learners/write-user";
 import { writeEnemBlueprint } from "./library/enem/enem-blueprint";
 import { enemCourse } from "./library/enem/enem-course";
+import { writeEnemCourseGraph } from "./library/enem/enem-course-graph";
 import { getEnemEdition, getPlannedEnemEdition } from "./library/enem/enem-edition";
 import { englishCourse } from "./library/english/english-course";
 import { physicsCourse } from "./library/physics/physics-course";
@@ -50,6 +51,8 @@ export async function writeSeedV2(prisma: PrismaClient) {
       writeLibraryCourse({ course, organizationId: organization.id, prisma }),
     ),
   );
+
+  await writeEnemCourseGraph(prisma);
 
   const learners = await writeLearners({ edition: getPlannedEnemEdition(now), now, prisma });
   return { learners, now };

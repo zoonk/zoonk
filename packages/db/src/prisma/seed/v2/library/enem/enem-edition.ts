@@ -22,6 +22,7 @@ export type EnemEdition = {
   /** First and second exam days, as ISO dates. */
   examDays: readonly [string, string];
   registration: { end: string; start: string };
+  timeZone: string;
   year: number;
 };
 
@@ -40,6 +41,7 @@ function toEdition(year: number): EnemEdition {
   return {
     examDays: [toIsoDate(nthSundayOfNovember(year, 2)), toIsoDate(nthSundayOfNovember(year, 3))],
     registration: { end: `${year}-${REGISTRATION.end}`, start: `${year}-${REGISTRATION.start}` },
+    timeZone: EXAM_TIME_ZONE,
     year,
   };
 }
