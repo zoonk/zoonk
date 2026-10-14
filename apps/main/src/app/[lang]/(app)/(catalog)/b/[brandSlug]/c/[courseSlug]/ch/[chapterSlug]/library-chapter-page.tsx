@@ -1,7 +1,7 @@
 import { HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
-import { getChapterAreas, getCoursePlanExample } from "@/components/catalog/course-plan";
+import { getExamChapterAreas } from "@/components/catalog/course-plan";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
@@ -166,25 +166,26 @@ export async function LibraryChapterPage({
   const startChapterId = hasLesson && number > 1 ? chapter.id : null;
   const t = await getExtracted();
 
-  const tryLesson = await pickTryLesson(
-    chapter.lessons.map((lesson, index) => ({
-      chapterTitle: chapter.title,
-      lessonId: lesson.id,
-      number: index + 1,
-    })),
-  );
+  const [tryLesson, areas, urls] = await Promise.all([
+    pickTryLesson(
+      chapter.lessons.map((lesson, index) => ({
+        chapterTitle: chapter.title,
+        lessonId: lesson.id,
+        number: index + 1,
+      })),
+    ),
+    getExamChapterAreas(course),
+    getChapterUrls({
+      ...params,
+      chapterId: chapter.id,
+      chapterSlug: chapter.slug,
+      language: course.language,
+    }),
+  ]);
 
   const hasAside = tryLesson !== null || chapter.objectives.length > 0;
-  const areas = getChapterAreas(await getCoursePlanExample(course));
   const area = areas?.get(chapter.id) ?? null;
   const titleId = `chapter-title-${chapter.id}`;
-
-  const urls = await getChapterUrls({
-    ...params,
-    chapterId: chapter.id,
-    chapterSlug: chapter.slug,
-    language: course.language,
-  });
 
   return (
     <div className="flex flex-col gap-8">

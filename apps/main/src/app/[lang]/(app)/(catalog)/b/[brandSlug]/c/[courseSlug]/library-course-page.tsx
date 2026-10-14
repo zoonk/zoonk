@@ -245,9 +245,13 @@ export async function LibraryCoursePage({
   const t = await getExtracted();
   const levelLabels = await getLevelLabels();
   const formatDay = await getIsoDayFormatter();
-  const tryLesson = await pickTryLesson(getTryCandidates(outline));
+
+  const [tryLesson, plan] = await Promise.all([
+    pickTryLesson(getTryCandidates(outline)),
+    getCoursePlanExample(course),
+  ]);
+
   const tryId = getTryLessonId(course.id);
-  const plan = await getCoursePlanExample(course);
   const examDay = plan.exam?.days[0];
   const examDate = examDay ? formatDay(examDay) : null;
   const paceSwitch = getPaceSwitch(course.id);

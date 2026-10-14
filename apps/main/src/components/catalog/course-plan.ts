@@ -157,7 +157,7 @@ export function getFirstShownPace(plan: Pick<CoursePlanExample, "defaultMinutes"
  * (the default pace's), for pages that place a chapter in the exam. Null for a course read to its
  * end, or while any of its chapters has no area: the levels place them then.
  */
-export function getChapterAreas(plan: CoursePlanExample): Map<string, string> | null {
+function getChapterAreas(plan: CoursePlanExample): Map<string, string> | null {
   const paces = plan.paces.toSorted(
     (a, b) => Number(b.minutes === plan.defaultMinutes) - Number(a.minutes === plan.defaultMinutes),
   );
@@ -169,4 +169,15 @@ export function getChapterAreas(plan: CoursePlanExample): Map<string, string> | 
   }
 
   return new Map(dated.chapters.map((chapter) => [chapter.chapterId, chapter.area ?? ""]));
+}
+
+/**
+ * `getChapterAreas` for a chapter's page, which shows nothing else of the example plan: only an
+ * exam course's plan reads its chapters by area, so any other course isn't planned at all.
+ */
+export async function getExamChapterAreas(course: {
+  format: string;
+  id: string;
+}): Promise<Map<string, string> | null> {
+  return course.format === "exam" ? getChapterAreas(await getCoursePlanExample(course)) : null;
 }
