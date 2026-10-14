@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { after } from "next/server";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { scheduleMemoryAfterSession } from "../../memory/after-session";
@@ -17,6 +18,17 @@ import { type SessionState, readFullMealReward } from "./session-snapshot";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 type SessionDay = { session: StudySessionRow; timeZone: string; userId: string };
+
+/** A no-transition result must roll back the revision mark taken before the session lock. */
+class SessionCompletionUnchangedError extends Error {
+  readonly status: "open" | "alreadyCompleted";
+
+  constructor(status: "open" | "alreadyCompleted") {
+    super(status);
+    this.name = "SessionCompletionUnchangedError";
+    this.status = status;
+  }
+}
 
 /**
  * Keeps where the learner stood as the session ended, so its summary says what that session
@@ -53,56 +65,58 @@ async function completeIfFinished({
 
   const end = await measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId });
 
-  const completed = await prisma.$transaction(async (tx) => {
-    await markLearnerChanged(tx, { planInputs: session.goalId !== null, userId });
+  const { data: completed, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: session.goalId !== null, userId });
 
-    await tx.$queryRaw`
+      await tx.$queryRaw`
       SELECT id FROM study_sessions WHERE id = ${session.id}::uuid FOR NO KEY UPDATE
     `;
 
-    // Queue writers take this row before inserting/restoring blocks. A separate read after the
-    // lock sees work committed while completion waited, unlike the session read above.
-    const openBlocks = await tx.studySessionBlock.count({
-      where: { sessionId: session.id, status: { in: ["active", "pending"] } },
-    });
+      // Queue writers take this row before inserting/restoring blocks. A separate read after the
+      // lock sees work committed while completion waited, unlike the session read above.
+      const openBlocks = await tx.studySessionBlock.count({
+        where: { sessionId: session.id, status: { in: ["active", "pending"] } },
+      });
 
-    if (openBlocks > 0) {
-      return { status: "open" as const };
-    }
+      if (openBlocks > 0) {
+        throw new SessionCompletionUnchangedError("open");
+      }
 
-    const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
+      const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
 
-    if (current.status === "completed") {
-      return { status: "alreadyCompleted" as const };
-    }
+      if (current.status === "completed") {
+        throw new SessionCompletionUnchangedError("alreadyCompleted");
+      }
 
-    await tx.studySession.update({
-      data: { endedAt, status: "completed" },
-      where: { id: session.id },
-    });
+      await tx.studySession.update({
+        data: { endedAt, status: "completed" },
+        where: { id: session.id },
+      });
 
-    await keepSessionEnd(tx, { end, sessionId: session.id });
+      await keepSessionEnd(tx, { end, sessionId: session.id });
 
-    await recordSessionEnd(tx, {
-      endedAt,
-      sessionId: session.id,
-      timeZone,
-      totals: {
-        correctAnswers: answers.filter((answer) => answer.isCorrect).length,
-        incorrectAnswers: answers.filter((answer) => !answer.isCorrect).length,
-      },
-      userId,
-    });
+      await recordSessionEnd(tx, {
+        endedAt,
+        sessionId: session.id,
+        timeZone,
+        totals: {
+          correctAnswers: answers.filter((answer) => answer.isCorrect).length,
+          incorrectAnswers: answers.filter((answer) => !answer.isCorrect).length,
+        },
+        userId,
+      });
 
-    return { session: current, status: "completed" as const };
-  });
+      return { session: current, status: "completed" as const };
+    }),
+  );
 
-  if (completed.status === "open") {
-    return false;
+  if (error instanceof SessionCompletionUnchangedError) {
+    return error.status === "alreadyCompleted";
   }
 
-  if (completed.status === "alreadyCompleted") {
-    return true;
+  if (error) {
+    throw error;
   }
 
   // "10 more minutes" reopens a finished session; finishing it again isn't a new session.
