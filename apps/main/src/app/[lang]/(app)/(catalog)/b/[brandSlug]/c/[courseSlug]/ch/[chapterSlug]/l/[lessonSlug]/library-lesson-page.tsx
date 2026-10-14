@@ -1,5 +1,6 @@
 import { LESSON_LEAD_CLASS } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
+import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { JsonLd } from "@/components/public/json-ld";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
@@ -56,6 +57,17 @@ export async function LibraryLessonPage({
     lessonSlug: lesson.slug,
   });
 
+  // Only a question has a learner's version ("Continue the lesson"), read in the browser.
+  const firstScreen = (
+    <LessonFirstScreen
+      lessonId={lesson.id}
+      minutes={lesson.estimatedMinutes}
+      origin={getLessonHref({ ...params, chapterSlug: chapter.slug, lessonSlug: lesson.slug })}
+      playerPath={playerPath}
+      screen={lesson.firstScreen}
+    />
+  );
+
   return (
     <PageWithAside
       aside={<LessonChapterAside params={params} route={route} />}
@@ -103,17 +115,13 @@ export async function LibraryLessonPage({
 
             <p className={LESSON_LEAD_CLASS}>{lesson.description}</p>
 
-            <LessonFirstScreen
-              lessonId={lesson.id}
-              minutes={lesson.estimatedMinutes}
-              origin={getLessonHref({
-                ...params,
-                chapterSlug: chapter.slug,
-                lessonSlug: lesson.slug,
-              })}
-              playerPath={playerPath}
-              screen={lesson.firstScreen}
-            />
+            {lesson.firstScreen?.kind === "choice" ? (
+              <CourseProgressScope courseId={course.id} lessonId={lesson.id}>
+                {firstScreen}
+              </CourseProgressScope>
+            ) : (
+              firstScreen
+            )}
 
             <LessonMore ideas={lesson.summaryIdeas} params={params} route={route} />
           </article>

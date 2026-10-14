@@ -13,6 +13,7 @@ import {
   getFirstShownPace,
 } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
+import { CourseProgressScope } from "@/components/catalog/course-progress";
 import {
   TryLesson,
   type TryLessonCandidate,
@@ -266,80 +267,85 @@ export async function LibraryCoursePage({
       : null;
 
   return (
-    <div className="flex flex-col gap-8">
-      <CatalogPageBar
-        back={{ href: "/courses", label: t("Explore courses") }}
-        options={
-          <ContentVoteMenu
-            label={t("Course options")}
-            screen="course"
-            size="icon-bar"
-            target={{ contentId: course.id, contentKind: "course" }}
-            votes={false}
-          />
-        }
-        title={course.title}
-      />
-
-      <Page className="gap-16 sm:gap-20">
-        <PublicViewTracker contentId={course.id} page="course" />
-
-        <JsonLd
-          items={[
-            courseJsonLd({
-              description: course.description ?? landingPage?.valueProposition ?? course.title,
-              language: course.language,
-              levels: outline.levels.map((band) => levelLabels[band.level]),
-              name: course.title,
-              totalMinutes: stats.totalMinutes,
-              url: courseUrl,
-            }),
-            breadcrumbJsonLd([
-              { name: t("Courses"), url: getLocalizedUrl({ href: "/courses", language: locale }) },
-              { name: course.title, url: courseUrl },
-            ]),
-          ]}
+    <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
+      <div className="flex flex-col gap-8">
+        <CatalogPageBar
+          back={{ href: "/courses", label: t("Explore courses") }}
+          options={
+            <ContentVoteMenu
+              label={t("Course options")}
+              screen="course"
+              size="icon-bar"
+              target={{ contentId: course.id, contentKind: "course" }}
+              votes={false}
+            />
+          }
+          title={course.title}
         />
 
-        <div className={COURSE_HERO_CLASS}>
-          <CourseHero
-            course={course}
-            exam={plan.exam}
-            isOtherLanguage={isOtherLanguage}
+        <Page className="gap-16 sm:gap-20">
+          <PublicViewTracker contentId={course.id} page="course" />
+
+          <JsonLd
+            items={[
+              courseJsonLd({
+                description: course.description ?? landingPage?.valueProposition ?? course.title,
+                language: course.language,
+                levels: outline.levels.map((band) => levelLabels[band.level]),
+                name: course.title,
+                totalMinutes: stats.totalMinutes,
+                url: courseUrl,
+              }),
+              breadcrumbJsonLd([
+                {
+                  name: t("Courses"),
+                  url: getLocalizedUrl({ href: "/courses", language: locale }),
+                },
+                { name: course.title, url: courseUrl },
+              ]),
+            ]}
+          />
+
+          <div className={COURSE_HERO_CLASS}>
+            <CourseHero
+              course={course}
+              exam={plan.exam}
+              isOtherLanguage={isOtherLanguage}
+              locale={locale}
+              pace={pace}
+              promise={promise}
+              tryId={tryLesson ? tryId : null}
+            />
+
+            <CoursePlanWindow
+              chapterTitles={getChapterTitles(outline)}
+              examDate={examDate}
+              isExam={course.format === "exam"}
+              paceSwitch={paceSwitch}
+              plan={plan}
+            />
+          </div>
+
+          <TryAndFit
+            courseId={course.id}
+            landingPage={landingPage}
             locale={locale}
-            pace={pace}
-            promise={promise}
-            tryId={tryLesson ? tryId : null}
+            origin={getCourseHref(params)}
+            tryId={tryId}
+            tryLesson={tryLesson}
           />
 
-          <CoursePlanWindow
-            chapterTitles={getChapterTitles(outline)}
-            examDate={examDate}
-            isExam={course.format === "exam"}
-            paceSwitch={paceSwitch}
-            plan={plan}
+          <LibraryCourseOutline
+            courseId={course.id}
+            lead={outlineLead}
+            outline={outline}
+            params={params}
+            plan={{ defaultMinutes: plan.defaultMinutes, examDate, paceSwitch, paces: plan.paces }}
           />
-        </div>
 
-        <TryAndFit
-          courseId={course.id}
-          landingPage={landingPage}
-          locale={locale}
-          origin={getCourseHref(params)}
-          tryId={tryId}
-          tryLesson={tryLesson}
-        />
-
-        <LibraryCourseOutline
-          courseId={course.id}
-          lead={outlineLead}
-          outline={outline}
-          params={params}
-          plan={{ defaultMinutes: plan.defaultMinutes, examDate, paceSwitch, paces: plan.paces }}
-        />
-
-        <CourseClosing courseId={course.id} pace={pace} />
-      </Page>
-    </div>
+          <CourseClosing courseId={course.id} pace={pace} />
+        </Page>
+      </div>
+    </CourseProgressScope>
   );
 }

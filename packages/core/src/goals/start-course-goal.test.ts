@@ -21,7 +21,7 @@ import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { isResearchedCourseStart } from "./goal-research";
-import { findCourseGoalStart, startCourseGoal } from "./start-course-goal";
+import { findCourseGoalStart, hasCourseGoal, startCourseGoal } from "./start-course-goal";
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -353,6 +353,32 @@ describe(startCourseGoal, () => {
 
     mockSession(other.id);
     await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
+  });
+
+  // The course's public page says "Continue your plan" from one read: the learner's own active
+  // goal on the course, never someone else's, a finished one or a question's.
+  it("tells the course's page whether the learner's own active goal follows the course", async () => {
+    const [course, user, other] = await Promise.all([publicCourse(), userFixture(), userFixture()]);
+
+    mockSession(null);
+    await expect(hasCourseGoal(course.id)).resolves.toBe(false);
+
+    mockSession(user.id);
+    await expect(hasCourseGoal(course.id)).resolves.toBe(false);
+    await expect(hasCourseGoal("not-a-course")).resolves.toBe(false);
+
+    await Promise.all([
+      goalFixture({ kind: "explain", primaryCourseId: course.id, userId: user.id }),
+      goalFixture({ primaryCourseId: course.id, status: "completed", userId: user.id }),
+    ]);
+
+    await expect(hasCourseGoal(course.id)).resolves.toBe(false);
+
+    await goalFixture({ primaryCourseId: course.id, userId: user.id });
+    await expect(hasCourseGoal(course.id)).resolves.toBe(true);
+
+    mockSession(other.id);
+    await expect(hasCourseGoal(course.id)).resolves.toBe(false);
   });
 
   it("says a learner's goal on the course is past onboarding once only the plan is left", async () => {

@@ -2,6 +2,7 @@ import { HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
+import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
@@ -267,12 +268,14 @@ export async function LibraryChapterPage({
             {hasAside && (
               <div className="flex min-w-0 flex-col gap-8">
                 {tryLesson && (
-                  <TryLesson
-                    id={getTryLessonId(chapter.id)}
-                    locale={locale}
-                    origin={getChapterHref({ ...params, chapterSlug: chapter.slug })}
-                    pick={tryLesson}
-                  />
+                  <CourseProgressScope courseId={course.id} lessonId={tryLesson.lessonId}>
+                    <TryLesson
+                      id={getTryLessonId(chapter.id)}
+                      locale={locale}
+                      origin={getChapterHref({ ...params, chapterSlug: chapter.slug })}
+                      pick={tryLesson}
+                    />
+                  </CourseProgressScope>
                 )}
                 <ChapterObjectives chapterId={chapter.id} objectives={chapter.objectives} />
               </div>

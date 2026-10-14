@@ -1,11 +1,10 @@
+import { CourseGoalSwitch } from "@/components/catalog/course-progress";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { StartBlock, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { Variant } from "@/components/public/variant-switch";
-import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
 
 /**
  * The example plan's time-a-day switch: its radios' name, the minutes it offers and the one it
@@ -16,32 +15,17 @@ export type PaceChoice = { firstShown: number | null; minutes: number[]; name: s
 /**
  * "Build my plan" with the time a day picked on the example plan, so the plan starts with it: a
  * link per pace, the picked one showing. Without the plan's switch, one link. A learner whose goal
- * already follows the course gets "Continue your plan" in its place, read per request; until then,
- * and for everyone else, the plan's links.
+ * already follows the course gets "Continue your plan" in its place, which the start page sends
+ * back to that goal: the page is the same for everyone, so the browser asks once it shows, and
+ * until then, and for everyone else, it's the plan's links.
  */
 function CoursePlanLink({ courseId, pace }: { courseId: string; pace: PaceChoice | null }) {
-  const startLinks = <StartPlanLinks courseId={courseId} pace={pace} />;
-
   return (
-    <Suspense fallback={startLinks}>
-      <ContinueOrStart courseId={courseId} startLinks={startLinks} />
-    </Suspense>
+    <CourseGoalSwitch
+      continueLink={<StartPlanLink continues courseId={courseId} />}
+      startLinks={<StartPlanLinks courseId={courseId} pace={pace} />}
+    />
   );
-}
-
-/**
- * A learner already studying this course: the start page sends them back to their goal, so the
- * link says that instead of offering a new plan.
- */
-async function ContinueOrStart({
-  courseId,
-  startLinks,
-}: {
-  courseId: string;
-  startLinks: React.ReactNode;
-}) {
-  const existing = await findCourseGoalStart(courseId);
-  return existing ? <StartPlanLink continues courseId={courseId} /> : startLinks;
 }
 
 function StartPlanLinks({ courseId, pace }: { courseId: string; pace: PaceChoice | null }) {

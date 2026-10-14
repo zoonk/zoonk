@@ -49,6 +49,7 @@ function findStartableCourse({ courseId, userId }: { courseId: string; userId: s
 function findCourseGoal({ courseId, userId }: { courseId: string; userId: string }) {
   return prisma.goal.findFirst({
     orderBy: { createdAt: "desc" },
+    select: { id: true },
     where: { kind: { not: "explain" }, primaryCourseId: courseId, status: "active", userId },
   });
 }
@@ -88,6 +89,21 @@ export async function findCourseGoalStart(
   return existing.status === "existing"
     ? { goalId: goal.id, inOnboarding: existing.inOnboarding }
     : null;
+}
+
+/**
+ * Whether the signed-in learner has a goal following this course, so the course's public page
+ * says "Continue your plan": its start page sends them back to that goal. One read, without the
+ * onboarding `findCourseGoalStart` adds; false without a session.
+ */
+export async function hasCourseGoal(courseId: string): Promise<boolean> {
+  const session = await getSession();
+
+  if (!session || !isUuid(courseId)) {
+    return false;
+  }
+
+  return (await findCourseGoal({ courseId, userId: session.user.id })) !== null;
 }
 
 async function loadGoalView({ goal, userId }: { goal: GoalView; userId: string }) {

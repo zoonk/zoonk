@@ -1,20 +1,16 @@
-import { getSession } from "@zoonk/core/users/session";
-import { type ReactNode, Suspense } from "react";
+"use client";
 
-async function NoAccountNoteContent({ children }: { children: ReactNode }) {
-  const session = await getSession();
-  return session && !session.user.isAnonymous ? null : children;
-}
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { type ReactNode } from "react";
 
 /**
- * A note for people without an account yet, such as "No account needed for your first lesson": a
- * learner with one is already in, so public pages leave it out for them. It streams in after the
- * page, which stays static.
+ * What a page shows only to people without an account yet, a visitor or a guest: a note such as
+ * "Start free, no account needed.", or the bar's Pricing and Log in. The page is the same for
+ * everyone, so it's there from the first paint and leaves once the learner summary finds an account.
  */
 export function NoAccountNote({ children }: { children: ReactNode }) {
-  return (
-    <Suspense fallback={null}>
-      <NoAccountNoteContent>{children}</NoAccountNoteContent>
-    </Suspense>
-  );
+  const learner = useLearnerSummary();
+  const hasAccount = learner.status === "ready" && !learner.summary.identity.isAnonymous;
+
+  return hasAccount ? null : children;
 }

@@ -1,13 +1,13 @@
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { withCatalogOrigin } from "@/lib/public/public-hrefs";
-import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, CirclePlayIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { type ReactNode, Suspense } from "react";
+import { type ReactNode } from "react";
+import { LessonProgressSwitch } from "./course-progress";
 import { FirstScreenChoices } from "./first-screen-choices";
 
 /** A lesson's first screen when it's a question. */
@@ -134,40 +134,25 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
   );
 }
 
-/** The question, or the way back in once the learner has answered some of the lesson. */
-async function QuestionOrContinue({
-  question,
-  secondary,
-  ...props
-}: FirstQuestionProps & { question: ReactNode; secondary: boolean }) {
-  const answers = await getLessonProgress({ lessonId: props.lessonId });
-
-  if (answers.length === 0) {
-    return question;
-  }
-
-  return (
-    <ContinueLesson
-      href={withCatalogOrigin(props.playerPath, props.origin)}
-      secondary={secondary}
-    />
-  );
-}
-
 /**
  * A lesson's first question, or, for a learner partway through the lesson (a guest who tried it
- * and closed it), "Continue the lesson" in its place. That's read per request; until then, and for
- * everyone else, the question.
+ * and closed it), "Continue the lesson" in its place. The page is the same for everyone, so the
+ * browser asks once it shows (`CourseProgressScope` names the lesson); until then, and for everyone
+ * else, the question.
  */
 export function FirstQuestion({
   secondary = false,
   ...props
 }: FirstQuestionProps & { secondary?: boolean }) {
-  const question = <QuestionScreen {...props} />;
-
   return (
-    <Suspense fallback={question}>
-      <QuestionOrContinue {...props} question={question} secondary={secondary} />
-    </Suspense>
+    <LessonProgressSwitch
+      continueLesson={
+        <ContinueLesson
+          href={withCatalogOrigin(props.playerPath, props.origin)}
+          secondary={secondary}
+        />
+      }
+      question={<QuestionScreen {...props} />}
+    />
   );
 }
