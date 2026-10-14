@@ -19,7 +19,7 @@ type PersistenceInput = {
   viewer: EntitlementViewer;
 };
 
-type PersistedSession = { active: boolean; alreadyClosed?: boolean; newlySettledSeconds?: number };
+type PersistedSession = { active: boolean; newlySettledSeconds?: number };
 
 async function canActivateSession({
   current,
@@ -61,18 +61,44 @@ async function canActivateSession({
   );
 }
 
-function persistedConnectionState({
+/** Cleanup closed it without an ID and kept an estimate: a session that turns up must still close. */
+function isClosedWithoutProvider(current: LiveCallConnection): boolean {
+  return (
+    current.state === "closed" &&
+    current.costConfidence === "estimated" &&
+    current.providerSessionId === null
+  );
+}
+
+/**
+ * The known ID always stays. A row closed with an estimate opens again as closing, its estimate
+ * owed until a close confirms the real cost; its slot and learner time were already returned.
+ */
+function persistedConnectionData({
   active,
   current,
+  providerSessionId,
 }: {
   active: boolean;
   current: LiveCallConnection;
-}): LiveCallConnection["state"] {
-  if (current.state === "closed") {
-    return "closed";
+  providerSessionId: string;
+}) {
+  if (isClosedWithoutProvider(current)) {
+    return {
+      closedAt: null,
+      costConfidence: "unconfirmed" as const,
+      liabilityMicros: current.settledMicros,
+      providerSessionId,
+      settledMicros: 0,
+      state: "closing" as const,
+    };
   }
 
-  return active ? "active" : "closing";
+  if (current.state === "closed") {
+    return { providerSessionId };
+  }
+
+  return { providerSessionId, state: active ? ("active" as const) : ("closing" as const) };
 }
 
 async function persistSessionOnce(input: PersistenceInput): Promise<PersistedSession> {
@@ -85,17 +111,18 @@ async function persistSessionOnce(input: PersistenceInput): Promise<PersistedSes
 
     const active = await canActivateSession({ current, input, transaction });
     /** Late/uncertain responses always retain the known ID, even when activation was revoked. */
-    await transaction.liveCallConnection.update({
-      data: {
+    const persisted = await transaction.liveCallConnection.update({
+      data: persistedConnectionData({
+        active,
+        current,
         providerSessionId: input.providerSessionId,
-        state: persistedConnectionState({ active, current }),
-      },
+      }),
       where: { id: current.id },
     });
 
-    if (input.terminal && current.state !== "closed") {
+    if (input.terminal && persisted.state !== "closed") {
       await settleLiveCall({
-        connection: current,
+        connection: persisted,
         now: input.terminal.observedAt,
         seconds: input.terminal.seconds,
         transaction,
@@ -114,7 +141,7 @@ async function persistSessionOnce(input: PersistenceInput): Promise<PersistedSes
       });
     }
 
-    return { active, alreadyClosed: current.state === "closed" };
+    return { active };
   });
 }
 

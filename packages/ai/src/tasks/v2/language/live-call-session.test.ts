@@ -65,6 +65,19 @@ describe(createLiveCallSession, () => {
     },
   );
 
+  it.each([
+    [400, "<html><body>Bad Request</body></html>"],
+    [422, ""],
+    [429, "<html><body>Too Many Requests</body></html>"],
+  ])("keeps a %i without OpenAI's own error body ambiguous", async (status, body) => {
+    respond(status, body);
+
+    const failure = await createLiveCallSession(SESSION).catch((error: unknown) => error);
+
+    expect(APICallError.isInstance(failure)).toBe(true);
+    expect(failure).not.toBeInstanceOf(LiveCallCreationRefusedError);
+  });
+
   it("keeps an unreadable success ambiguous, since the session exists without a known ID", async () => {
     respond(201, "{");
 

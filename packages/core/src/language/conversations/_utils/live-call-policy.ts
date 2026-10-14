@@ -43,7 +43,7 @@ const POSSIBLY_BILLING_STATES = ["creating", "active", "closing"] as const;
  */
 const SYSTEMIC_CLEANUP_FAILURE_LEARNERS = 3;
 
-/** Twice the adapter's abort, so a creation request can no longer return a provider ID. */
+/** Twice the adapter's abort: no creation request is still waiting on the provider. */
 const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
 
 function cleanupBlockingDeadline(now: Date): Date {
@@ -51,8 +51,11 @@ function cleanupBlockingDeadline(now: Date): Date {
 }
 
 /**
- * A connection without a provider ID can never be confirmed closed. Past its deadline, once no
- * creation request can still return an ID, it closes and keeps its estimated cost.
+ * A connection without a provider ID can never be confirmed closed. Past its deadline, once its
+ * creation request is over, it closes and keeps its liability as the estimate. A browser that never
+ * got the answer can't connect, so such a session never starts running; OpenAI bills one that
+ * hasn't started for its 15-second initialization, far below the reservation kept. An ID that still
+ * turns up opens the row again (`persistLiveCallSession`).
  */
 export function canSettleWithoutProvider({
   connection,

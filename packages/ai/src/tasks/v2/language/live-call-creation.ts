@@ -1,7 +1,10 @@
-/** The adapter aborts a creation request after this, so no provider ID can arrive later. */
+/** The adapter stops waiting for a creation request after this. */
 export const LIVE_CALL_CREATE_TIMEOUT_MS = 30_000;
 
-/** The provider answered with a status proving it created no session: nothing can bill for it. */
+/**
+ * OpenAI refused the creation request with its own error. Its Live docs say a session whose
+ * creation failed over HTTP never reaches `session.started`, so at most initialization was billed.
+ */
 export class LiveCallCreationRefusedError extends Error {
   readonly statusCode: number;
 

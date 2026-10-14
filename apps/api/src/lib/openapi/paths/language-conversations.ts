@@ -178,7 +178,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Redeems the owned reservation once for a server-created GPT-Live WebRTC session. Rechecks admission, Plus and the absolute deadline and requires a persisted Workflow receipt. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When the provider refuses to create the session, the reservation is released at once (CALL_RETRYABLE): reserve again. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks. No provider key or token is returned.",
+        "Redeems the owned reservation once for a server-created GPT-Live WebRTC session. Rechecks admission, Plus and the absolute deadline and requires a persisted Workflow receipt. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When the provider refuses to create the session, the reservation is released at once, keeping only the shortest call's cost (CALL_RETRYABLE): reserve again. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks. No provider key or token is returned.",
       operationId: "redeemLanguageConversationSdp",
       requestBody: {
         content: { "application/json": { schema: liveCallSdpInputSchema } },

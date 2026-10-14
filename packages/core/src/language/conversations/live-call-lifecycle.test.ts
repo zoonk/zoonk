@@ -1398,7 +1398,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     expect(closeLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("releases a provider-refused creation as never started, so cleanup never pauses other learners", async () => {
+  it("releases a provider-refused creation at the shortest call's cost, so cleanup never pauses other learners", async () => {
     const [refused, other] = await Promise.all([liveCallFixture(), liveCallFixture()]);
     mockSession(refused.user.id);
     const setup = await reserve(refused.conversation.id);
@@ -1411,17 +1411,20 @@ describe("server-owned live-call reservation and cleanup", () => {
     const released = await connection(setup.connectionId);
 
     expect(released).toMatchObject({
-      costConfidence: "confirmed",
+      costConfidence: "estimated",
       liabilityMicros: 0,
       providerSessionId: null,
-      providerStartedAt: null,
-      settledMicros: 0,
+      settledMicros: 22_500,
       state: "closed",
     });
 
     await expect(
       prisma.freeCallSpendDay.findUnique({ where: { day: released.freeSpendDay! } }),
-    ).resolves.toMatchObject({ spentMicros: 0 });
+    ).resolves.toMatchObject({ spentMicros: 22_500 });
+
+    await expect(
+      usage({ conversationId: refused.conversation.id, userId: refused.user.id }),
+    ).resolves.toMatchObject({ costMicros: 22_500, seconds: 0 });
 
     await expect(
       prisma.liveCallSlot.findUnique({ where: { userId: refused.user.id } }),
@@ -1454,43 +1457,98 @@ describe("server-owned live-call reservation and cleanup", () => {
     expect(closeLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("ends a late provider session whose ID-less row was already closed with its estimated cost", async () => {
-    const { conversation, user } = await liveCallFixture();
-    mockSession(user.id);
-    const setup = await reserve(conversation.id);
-    const providerStarted = Promise.withResolvers<boolean>();
-    const created = Promise.withResolvers<{ sdp: string; sessionId: string }>();
+  it.each(["persisted", "compensated"] as const)(
+    "keeps a late %s provider session owed after its ID-less row closed, then settles its real cost without touching a newer call",
+    async (receipt) => {
+      const { conversation, user } = await liveCallFixture();
+      mockSession(user.id);
+      const setup = await reserve(conversation.id);
+      const providerStarted = Promise.withResolvers<boolean>();
+      const created = Promise.withResolvers<{ sdp: string; sessionId: string }>();
+      const sessionId = `late-${randomUUID()}`;
 
-    vi.mocked(createLiveCallSession).mockImplementation(() => {
-      providerStarted.resolve(true);
-      return created.promise;
-    });
+      vi.mocked(createLiveCallSession).mockImplementation(() => {
+        providerStarted.resolve(true);
+        return created.promise;
+      });
 
-    const redemption = redeem({
-      connectionId: setup.connectionId,
-      conversationId: conversation.id,
-    });
+      const redemption = redeem({
+        connectionId: setup.connectionId,
+        conversationId: conversation.id,
+      });
 
-    await providerStarted.promise;
-    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 1000));
+      await providerStarted.promise;
+      vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 1000));
 
-    await expect(
-      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
-    ).resolves.toStrictEqual({ status: "closed" });
+      await expect(
+        recoverLiveCallConnection({
+          connectionId: setup.connectionId,
+          generation: setup.generation,
+        }),
+      ).resolves.toStrictEqual({ status: "closed" });
 
-    created.resolve({ sdp: ANSWER, sessionId: `late-${randomUUID()}` });
-    await expect(redemption).resolves.toStrictEqual({ status: "previousConnectionClosing" });
-    const closed = await connection(setup.connectionId);
+      const replacement = await reserve(conversation.id);
+      const held = await usage({ conversationId: conversation.id, userId: user.id });
 
-    expect(closed).toMatchObject({
-      costConfidence: "estimated",
-      providerSessionId: expect.stringMatching(/^late-/u),
-      settledMicros: 135_000,
-      state: "closed",
-    });
+      const fault =
+        receipt === "compensated"
+          ? await failLiveCallReceiptWrites({ connectionId: setup.connectionId, failures: 3 })
+          : null;
 
-    expect(closeLiveCallSession).toHaveBeenCalledExactlyOnceWith(closed.providerSessionId);
-  });
+      try {
+        vi.mocked(closeLiveCallSession).mockRejectedValueOnce(new Error("Sideband attach failed"));
+        created.resolve({ sdp: ANSWER, sessionId });
+        await expect(redemption).resolves.toStrictEqual({ status: "previousConnectionClosing" });
+      } finally {
+        await fault?.restore();
+      }
+
+      await expect(connection(setup.connectionId)).resolves.toMatchObject({
+        costConfidence: "unconfirmed",
+        liabilityMicros: 135_000,
+        providerSessionId: sessionId,
+        settledMicros: 0,
+        state: "closing",
+      });
+
+      vi.mocked(closeLiveCallSession).mockResolvedValue({
+        reason: "closed",
+        seconds: 90,
+        status: "closed",
+      });
+
+      await recoverLiveCalls();
+      const settled = await connection(setup.connectionId);
+
+      expect(settled).toMatchObject({
+        costConfidence: "confirmed",
+        liabilityMicros: 0,
+        settledMicros: 85_000,
+        state: "closed",
+      });
+
+      await expect(connection(replacement.connectionId)).resolves.toMatchObject({
+        state: "pending",
+      });
+
+      await expect(
+        prisma.liveCallSlot.findUnique({ where: { userId: user.id } }),
+      ).resolves.toMatchObject({ connectionId: replacement.connectionId });
+
+      expect(held).toMatchObject({ seconds: 120 });
+
+      await expect(
+        usage({ conversationId: conversation.id, userId: user.id }),
+      ).resolves.toMatchObject({ costMicros: 220_000, seconds: 120 });
+
+      await expect(
+        prisma.freeCallSpendDay.findUnique({ where: { day: settled.freeSpendDay! } }),
+      ).resolves.toMatchObject({ spentMicros: 220_000 });
+
+      expect(closeLiveCallSession).toHaveBeenCalledTimes(2);
+      expect(closeLiveCallSession).toHaveBeenCalledWith(sessionId);
+    },
+  );
 
   it("retries a failed provider receipt without recreating the session and retains it for durable close recovery", async () => {
     const { conversation, user } = await liveCallFixture();

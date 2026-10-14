@@ -17,9 +17,9 @@ const UNPROCESSABLE_CONTENT = 422;
 const TOO_MANY_REQUESTS = 429;
 
 /**
- * Answers the provider sends before creating anything: a bad request, credentials, a missing model,
- * an oversized or unreadable body, or a rate limit. Timeouts, conflicts, server errors, dropped
- * connections and unreadable successes stay ambiguous, since the session may exist.
+ * Refusals of the request itself: a bad request, credentials, a missing model, an oversized or
+ * unreadable body, or a rate limit. Timeouts, conflicts, server errors, dropped connections and
+ * unreadable successes stay ambiguous, since a session may exist that we can't name.
  */
 const NO_SESSION_STATUSES = new Set<number>([
   BAD_REQUEST,
@@ -32,9 +32,11 @@ const NO_SESSION_STATUSES = new Set<number>([
   TOO_MANY_REQUESTS,
 ]);
 
+/** Only OpenAI's own error body counts: a proxy's page or an empty body proves nothing. */
 function toCreationError(error: unknown): unknown {
   if (
     APICallError.isInstance(error) &&
+    error.data !== undefined &&
     error.statusCode !== undefined &&
     NO_SESSION_STATUSES.has(error.statusCode)
   ) {
@@ -51,7 +53,7 @@ export type LiveCallSession = { sdp: string; sessionId: string };
 
 /**
  * Callers authorize and fence the reservation; browser configuration never enters this boundary.
- * Rejects with `LiveCallCreationRefusedError` only when the provider proved it created no session.
+ * Rejects with `LiveCallCreationRefusedError` only when OpenAI itself refused the request.
  */
 export async function createLiveCallSession({
   instructions,

@@ -7,11 +7,11 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../entitlements/limits";
-import { canSettleWithoutProvider } from "./_utils/live-call-policy";
+import { canSettleWithoutProvider, getLiveCallLiability } from "./_utils/live-call-policy";
 import {
   accrueLiveCallLiability,
+  settleEstimatedLiveCall,
   settleLiveCall,
-  settleUnconfirmableLiveCall,
 } from "./_utils/settle-live-call";
 import { type CloseLiveCallResult } from "./live-call-contract";
 
@@ -70,7 +70,13 @@ export async function closeLiveCallConnection({
     });
 
     if (canSettleWithoutProvider({ connection, now })) {
-      await settleUnconfirmableLiveCall({ connection, now, transaction });
+      await settleEstimatedLiveCall({
+        connection,
+        now,
+        settledMicros: getLiveCallLiability({ connection, now }),
+        transaction,
+      });
+
       return { status: "closed" as const };
     }
 

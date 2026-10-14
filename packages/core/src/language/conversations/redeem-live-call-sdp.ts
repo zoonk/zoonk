@@ -12,11 +12,12 @@ import { getAllowanceCacheTag } from "../../cache/tags";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { getLiveCallCostMicros } from "../../entitlements/limits";
 import { toConversationView } from "./_utils/conversation-view";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import { persistLiveCallSession } from "./_utils/persist-live-call-session";
-import { settleLiveCall } from "./_utils/settle-live-call";
+import { settleEstimatedLiveCall } from "./_utils/settle-live-call";
 import { closeLiveCallConnection } from "./close-live-call-connection";
 import { type LiveCallSdpInput } from "./conversation-contract";
 
@@ -35,7 +36,11 @@ export type RedeemLiveCallSdpResult =
         | "retryable";
     };
 
-/** The provider proved it created nothing: the call never started, so its slot, time and money return. */
+/**
+ * OpenAI answered with its own error, so the session never reached `session.started`: the slot,
+ * the learner's time and the reservation return, keeping only the shortest call's cost for the
+ * initialization OpenAI may bill.
+ */
 async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<void> {
   await prisma.$transaction(async (transaction) => {
     await lockUsageForViewer({ transaction, userId: connection.userId });
@@ -52,12 +57,12 @@ async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<v
       return;
     }
 
-    await transaction.liveCallConnection.update({
-      data: { providerStartedAt: null },
-      where: { id: current.id },
+    await settleEstimatedLiveCall({
+      connection: current,
+      now: new Date(),
+      settledMicros: getLiveCallCostMicros(0),
+      transaction,
     });
-
-    await settleLiveCall({ connection: current, now: new Date(), seconds: null, transaction });
   });
 
   revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
@@ -201,12 +206,6 @@ export async function redeemLiveCallSdp({
       throw retained.error;
     }
 
-    return { status: "previousConnectionClosing" };
-  }
-
-  if (persisted.data.alreadyClosed) {
-    /** Cleanup already closed the ID-less row with its estimated cost; still end the late session. */
-    await safeAsync(() => closeLiveCallSession(provider.sessionId));
     return { status: "previousConnectionClosing" };
   }
 

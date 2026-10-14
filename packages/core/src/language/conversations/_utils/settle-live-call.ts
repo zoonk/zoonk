@@ -46,7 +46,7 @@ async function closeLiveCallLedger({
     transaction,
   });
 
-  await transaction.liveCallSlot.updateMany({
+  const released = await transaction.liveCallSlot.updateMany({
     data: { connectionId: null },
     where: {
       connectionId: connection.id,
@@ -59,15 +59,21 @@ async function closeLiveCallLedger({
     where: { conversationId: connection.conversationId, userId: connection.userId },
   });
 
+  /**
+   * Learner time settles with the slot. A connection that no longer holds it returned its time
+   * when it first closed, and a newer call's hold on the same record must stay.
+   */
+  const learnerSeconds =
+    connection.priorUsageSeconds +
+    (seconds === null ? 0 : Math.min(connection.heldSeconds, Math.max(0, Math.ceil(seconds))));
+
   await transaction.usageRecord.updateMany({
     data: {
       costMicros: ledger.reduce(
         (total, entry) => total + getLiveCallLiability({ connection: entry, now }),
         0,
       ),
-      seconds:
-        connection.priorUsageSeconds +
-        (seconds === null ? 0 : Math.min(connection.heldSeconds, Math.max(0, Math.ceil(seconds)))),
+      ...(released.count > 0 ? { seconds: learnerSeconds } : {}),
     },
     where: { id: connection.usageRecordId },
   });
@@ -96,16 +102,18 @@ export async function settleLiveCall({
 }
 
 /**
- * No receipt can ever come for a session without a provider ID: the learner never had the call, so
- * their time returns, while its estimated cost stays charged in case the provider billed it.
+ * Without a provider ID no close can confirm the cost: the learner never had the call, so their
+ * time returns, while the estimate stays charged in case the provider billed it.
  */
-export async function settleUnconfirmableLiveCall({
+export async function settleEstimatedLiveCall({
   connection,
   now,
+  settledMicros,
   transaction,
 }: {
   connection: LiveCallConnection;
   now: Date;
+  settledMicros: number;
   transaction: TransactionClient;
 }): Promise<void> {
   await closeLiveCallLedger({
@@ -113,7 +121,7 @@ export async function settleUnconfirmableLiveCall({
     costConfidence: "estimated",
     now,
     seconds: null,
-    settledMicros: getLiveCallLiability({ connection, now }),
+    settledMicros,
     transaction,
   });
 }
