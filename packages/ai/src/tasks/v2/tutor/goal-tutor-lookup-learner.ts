@@ -158,7 +158,7 @@ export type LearnerLookUpFound =
         weekGain: number;
         weakestArea: string | null;
       } | null;
-      /** The skills below their bar, by area, with the study time the plan still gives them. */
+      /** The skills below their bar, by area, with the study time the plan still gives them; the totals count only the areas found. */
       stillNeeded: {
         areas: {
           minutes: number;

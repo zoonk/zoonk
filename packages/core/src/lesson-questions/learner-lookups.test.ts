@@ -511,6 +511,36 @@ describe("the learner's data the buddy looks up", () => {
     ).resolves.toMatchObject({ courses: [{ title: studied.course.title }], moreCourses: 0 });
   });
 
+  it("finds a course by a short name, and a short name it doesn't have finds none", async () => {
+    const { goal, user } = await learnerWithGoal();
+
+    const [go, math] = await Promise.all([
+      catalogCourseFixture({ lessonCounts: [1], title: `Go basics ${randomUUID()}` }),
+      catalogCourseFixture({ lessonCounts: [1], title: `Mathematics ${randomUUID()}` }),
+    ]);
+
+    await Promise.all(
+      [go, math].map((studied) =>
+        learningEventFixture({
+          contentIds: { chapterId: studied.chapters[0]?.id, lessonId: studied.lessons[0]?.[0]?.id },
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const asked = await answering(goal.id);
+
+    await expect(lookUp(asked, { query: "Go", what: "courses" })).resolves.toMatchObject({
+      courses: [{ title: go.course.title }],
+      moreCourses: 0,
+    });
+
+    await expect(lookUp(asked, { query: "AI", what: "courses" })).resolves.toStrictEqual({
+      status: "notFound",
+      what: "courses",
+    });
+  });
+
   it("finds no courses for a learner who studies none", async () => {
     const { goal } = await learnerWithGoal();
     const asked = await answering(goal.id);
@@ -575,13 +605,26 @@ describe("the learner's data the buddy looks up", () => {
       what: "progress",
     });
 
-    await expect(lookUp(asked, { area: "math", what: "progress" })).resolves.toMatchObject({
-      stillNeeded: { areas: [{ title: "Math chapter 1" }], moreAreas: 0 },
+    // One area asked: what's still needed counts that area alone, never the whole goal.
+    const mathOnly = await lookUp(asked, { area: "math", what: "progress" });
+
+    if (mathOnly.status !== "found" || mathOnly.what !== "progress") {
+      throw new Error(`Expected Math's progress, received ${mathOnly.status}`);
+    }
+
+    const [mathArea] = mathOnly.stillNeeded?.areas ?? [];
+
+    expect(mathOnly.stillNeeded).toStrictEqual({
+      areas: [expect.objectContaining({ title: "Math chapter 1" })],
+      minutes: mathArea?.minutes,
+      moreAreas: 0,
+      skillsLeft: 1,
     });
 
     // An area the goal doesn't have says which ones it has.
     await expect(lookUp(asked, { area: "Chemistry", what: "progress" })).resolves.toStrictEqual({
       areas: ["Math chapter 1", "Biology chapter 2"],
+      moreAreas: 0,
       status: "notFound",
       what: "progress",
     });

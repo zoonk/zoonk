@@ -157,9 +157,10 @@ export type PlanScopeContext = {
    * Lessons earlier days left that the learner hasn't done yet (the plan's last new-day settling
    * carried them first; see `status.lessons`): the first few by title in the plan's order, each
    * `inToday` when today's session already holds it (the session opens with it), with where it
-   * opens, and `total` for all of them. `offeredToday`: Today offers adding the ones today doesn't
-   * hold to today with one tap; otherwise the next days open with them. Which day each one came
-   * from isn't kept. Null or absent when nothing is left from earlier days.
+   * opens (none when nothing opens it yet), and `total` for all of them. `offeredToday`: Today
+   * offers adding the ones today doesn't hold to today with one tap; otherwise the next days open
+   * with them. Which day each one came from isn't kept. Null or absent when nothing is left from
+   * earlier days.
    */
   catchUp?: {
     lessons: { inToday: boolean; link: TutorLink | null; title: string }[];
@@ -168,13 +169,14 @@ export type PlanScopeContext = {
   } | null;
   /**
    * The challenges still ahead: the current phase's challenge (`challenge`, the Trickster's duel
-   * that closes it) and, for an exam, the next planned mock exam (`mock`), each with its day, when
-   * it comes (`date`: on its day; `nextSession`: the learner's next session duels it; `queued`:
-   * after the challenge before it), whether starting it needs Plus (`locked`) and where it opens.
+   * that closes it) and the next weekly challenge (for an exam, its next planned mock exam, `mock`;
+   * otherwise the week's mixed challenge, `weekly`), each with its day, when it comes (`date`: on
+   * its day; `nextSession`: the learner's next session duels it; `queued`: after the challenge
+   * before it), whether starting it needs Plus (`locked`) and where it opens.
    */
   challenges?: {
     date: string | null;
-    kind: "challenge" | "mock";
+    kind: "challenge" | "mock" | "weekly";
     link: TutorLink | null;
     locked: boolean;
     when: "date" | "nextSession" | "queued";

@@ -7,6 +7,7 @@ import { type PlanLookUp } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup-plan
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
+import { WEEKLY_CHALLENGE_KINDS } from "../../../checkpoints/_utils/load-weekly-challenge";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import {
   type SkillAreas,
@@ -24,6 +25,7 @@ import {
   loadSavedDay,
   toChallengeLink,
   toPlusMark,
+  toWeeklyChallenge,
 } from "../plan-day-context";
 
 /** Enough lessons to go over in one answer; the rest only count (`more`). */
@@ -35,6 +37,9 @@ const SCHEDULE_DAYS = 14;
 /** A day's items listed; the rest only count (`moreItems`). */
 const MAX_DAY_ITEMS = 8;
 
+/** The weekly challenges and mocks ahead listed by day: about two months; the rest only count. */
+const MAX_WEEKLY_CHALLENGES = 8;
+
 /** The plan as the apps show it, read only, once it's built; null before. */
 async function readPlanView(goalId: string): Promise<PlanView | null> {
   const result = await getGoalPlan(goalId);
@@ -44,8 +49,8 @@ async function readPlanView(goalId: string): Promise<PlanView | null> {
 /**
  * Every lesson earlier days left, past the first few the context lists, from the same rows the
  * plan's status counts (`loadCatchUpItems`), in the plan's order: each linked as the context links
- * it, to today's block when the day holds it and to Today otherwise. No original day: the plan
- * keeps only that earlier days left them. A free exam plan past its first week has none.
+ * it (see `loadCatchUp`). No original day: the plan keeps only that earlier days left them. A free
+ * exam plan past its first week has none.
  */
 async function lookUpCatchUp({
   goal,
@@ -66,13 +71,21 @@ async function lookUpCatchUp({
 
 /**
  * The first day a schedule reads: the day the buddy asked for when it's a real one, never before
- * tomorrow (today is in the context, and past days aren't ahead).
+ * the day after the one Today opens (that day is in the context, and earlier ones aren't ahead).
+ * While the learner is still in the session from before midnight, the calendar's today is ahead.
  */
-function getScheduleStart({ query, tomorrow }: { query: string | null; tomorrow: Date }): Date {
-  const asked = z.iso.date().safeParse(query);
-  const start = asked.success ? fromIsoDate(asked.data) : tomorrow;
+async function getScheduleStart({ goal, query }: { goal: Goal; query: string | null }) {
+  const day = await loadSavedDay(goal);
 
-  return start > tomorrow ? start : tomorrow;
+  const shown =
+    day?.session.localDate ??
+    getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+
+  const first = addDays(shown, 1);
+  const asked = z.iso.date().safeParse(query);
+  const start = asked.success ? fromIsoDate(asked.data) : first;
+
+  return start > first ? start : first;
 }
 
 /** How a day's items read: the minutes the Plan's week gives them, its access and each subject. */
@@ -120,10 +133,10 @@ function toScheduleDay({
 }
 
 /**
- * The plan's study days ahead as it saved them, from the day `query` names (tomorrow when it names
- * none) through two weeks: each day's items in the plan's order, a few per day. Minutes come from
- * the Plan's own week, the only days it estimates. Days are the learner's own, as the plan stores
- * them; nothing here plans them again.
+ * The plan's study days ahead as it saved them, from the day `query` names (the day after Today's
+ * when it names none) through two weeks: each day's items in the plan's order, a few per day.
+ * Minutes come from the Plan's own week, the only days it estimates. Days are the learner's own, as
+ * the plan stores them; nothing here plans them again.
  */
 async function lookUpSchedule({
   goal,
@@ -133,9 +146,7 @@ async function lookUpSchedule({
   query: string | null;
 }): Promise<GoalTutorLookUpResult> {
   const what = "schedule";
-
-  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
-  const from = getScheduleStart({ query, tomorrow: addDays(today, 1) });
+  const from = await getScheduleStart({ goal, query });
   const to = addDays(from, SCHEDULE_DAYS - 1);
 
   const [plan, saved] = await Promise.all([
@@ -187,37 +198,24 @@ function toChallengePhase(phase: PlanPhaseView | undefined) {
   return phase ? { index: phase.index, kind: phase.kind, name: phase.name || null } : null;
 }
 
-/** A mock still to take on its planned day, locked as the Plan locks mocks; none without a day. */
-function toPlannedMock({ mock, plan }: { mock: PlanItem; plan: PlanView }) {
-  if (mock.status !== "todo" || !mock.scheduledFor) {
-    return [];
-  }
-
-  return [
-    {
-      date: toIsoDate(mock.scheduledFor),
-      kind: "mock" as const,
-      link: { kind: "challenge" as const, planItemId: mock.id },
-      locked: plan.access.mocksRequirePlus,
-      phase: toChallengePhase(plan.phases.find((phase) => phase.index === mock.phase)),
-      when: "date" as const,
-    },
-  ];
-}
-
 /**
  * Every phase challenge still ahead, as the Plan shows when it comes and whether it's locked, then
- * every planned mock still to take by its day; and how many of each the learner already did. Their
- * pages open them, whatever goal is open.
+ * the next weekly challenges still to take by their day (an exam's mocks, locked as the Plan locks
+ * mocks; the week's mixed challenge otherwise), and how many of each the learner already did.
+ * Their pages open them, whatever goal is open.
  */
 async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
   const what = "challenges";
 
-  const [plan, mocks] = await Promise.all([
+  const [plan, weekly] = await Promise.all([
     readPlanView(goal.id),
     prisma.planItem.findMany({
       orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
-      where: { kind: "mock", plan: { goalId: goal.id }, status: { in: ["done", "todo"] } },
+      where: {
+        kind: { in: [...WEEKLY_CHALLENGE_KINDS] },
+        plan: { goalId: goal.id },
+        status: { in: ["done", "todo"] },
+      },
     }),
   ]);
 
@@ -240,20 +238,28 @@ async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
       when: checkpoint.when,
     }));
 
-  const plannedMocks = mocks.flatMap((mock) => toPlannedMock({ mock, plan }));
+  const planned = weekly.filter((item) => item.status === "todo" && item.scheduledFor);
+
+  const shown = planned
+    .slice(0, MAX_WEEKLY_CHALLENGES)
+    .map((item) => ({
+      ...toWeeklyChallenge({ item, plan }),
+      phase: toChallengePhase(plan.phases.find((phase) => phase.index === item.phase)),
+    }));
 
   const done = {
     challenges: checkpoints.filter(({ checkpoint }) => checkpoint.state === "done").length,
-    mocks: mocks.filter((mock) => mock.status === "done").length,
+    mocks: weekly.filter((item) => item.kind === "mock" && item.status === "done").length,
+    weekly: weekly.filter((item) => item.kind !== "mock" && item.status === "done").length,
   };
 
-  const ahead = [...challenges, ...plannedMocks];
+  const ahead = [...challenges, ...shown];
 
-  if (ahead.length === 0 && done.challenges === 0 && done.mocks === 0) {
+  if (ahead.length === 0 && done.challenges + done.mocks + done.weekly === 0) {
     return { status: "notFound", what };
   }
 
-  return { challenges: ahead, done, status: "found", what };
+  return { challenges: ahead, done, more: planned.length - shown.length, status: "found", what };
 }
 
 /**

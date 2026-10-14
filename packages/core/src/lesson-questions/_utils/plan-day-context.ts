@@ -11,6 +11,7 @@ import {
   type StudySessionBlock,
   prisma,
 } from "@zoonk/db";
+import { WEEKLY_CHALLENGE_KINDS } from "../../checkpoints/_utils/load-weekly-challenge";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PlanItemView, type PlanView } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -37,7 +38,6 @@ type PlanScopeItem = NonNullable<PlanScopeContext["today"]>["items"][number];
 export type LinkScope = { activeGoal: boolean };
 
 const TODAY_LINK = { kind: "page", page: "today" } as const satisfies TutorLink;
-const PLAN_LINK = { kind: "page", page: "plan" } as const satisfies TutorLink;
 
 /**
  * Where a block of the learner's day opens: itself, as Today opens it, while it's still to do and
@@ -217,8 +217,8 @@ function findCatchUpBlock({ day, item }: { day: SavedDay | null; item: PlanItem 
 
 /**
  * Where a lesson earlier days left opens: today's block that holds it; otherwise Today when it
- * offers adding them to today, and the Plan when the next days open with them (Today doesn't show
- * them then, the Plan's days do).
+ * offers adding them to today. Nowhere else: the next study days open with it, and no page shows
+ * it before then.
  */
 function toCatchUpLink({
   block,
@@ -239,7 +239,7 @@ function toCatchUpLink({
     return null;
   }
 
-  return offeredToday ? TODAY_LINK : PLAN_LINK;
+  return offeredToday ? TODAY_LINK : null;
 }
 
 /** The lessons earlier days left, as the buddy reads them (see `loadCatchUp`). */
@@ -250,11 +250,11 @@ export type CatchUpLessons = NonNullable<PlanScopeContext["catchUp"]> & {
 
 /**
  * The lessons earlier days left, from the same rows the plan's status counts (`loadCatchUpItems`):
- * the first `limit` by title, each linked to today's block when the day holds it; otherwise to
- * Today when it offers catching up (`offeredToday`), or to the Plan, whose next days open with
- * them. No original day: the plan keeps only that earlier days left them. A free exam plan past
- * its first week has none, as its status says. The context names the first few; the buddy's
- * `catchUp` lookup names more.
+ * the first `limit` by title, each linked to today's block when the day holds it, or to Today when
+ * it offers catching up (`offeredToday`); unlinked otherwise, as the next days open with them. No
+ * original day: the plan keeps only that earlier days left them. A free exam plan past its first
+ * week has none, as its status says. The context names the first few; the buddy's `catchUp` lookup
+ * names more.
  */
 export async function loadCatchUp({
   day,
@@ -303,8 +303,31 @@ async function loadCatchUpLessons({ goal, plan }: { goal: Goal; plan: PlanView }
 }
 
 /**
+ * A weekly challenge still to take on its planned day, as its page names it: an exam's mock
+ * (`mock`), locked when the plan doesn't include mocks, or the week's mixed challenge (`weekly`).
+ */
+export function toWeeklyChallenge({
+  item,
+  plan,
+}: {
+  item: Pick<PlanItem, "id" | "kind" | "scheduledFor">;
+  plan: PlanView;
+}) {
+  const mock = item.kind === "mock";
+
+  return {
+    date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
+    kind: mock ? ("mock" as const) : ("weekly" as const),
+    link: { kind: "challenge" as const, planItemId: item.id },
+    locked: mock && plan.access.mocksRequirePlus,
+    when: "date" as const,
+  };
+}
+
+/**
  * The challenges still ahead: the current phase's challenge, as the plan shows when it comes, and
- * an exam's next planned mock, by its day. Their pages open them, whatever goal is open.
+ * the next weekly challenge (an exam's mock), by its day. Their pages open them, whatever goal is
+ * open; a mock the plan doesn't include comes with Plus, the week's mixed challenge never does.
  */
 async function loadChallenges({
   goal,
@@ -315,19 +338,16 @@ async function loadChallenges({
 }): Promise<NonNullable<PlanScopeContext["challenges"]>> {
   const checkpoint = plan.phases.find((phase) => phase.state === "current")?.checkpoint;
 
-  const mock =
-    goal.kind === "exam"
-      ? await prisma.planItem.findFirst({
-          orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
-          select: { id: true, scheduledFor: true },
-          where: {
-            kind: "mock",
-            plan: { goalId: goal.id },
-            scheduledFor: { not: null },
-            status: "todo",
-          },
-        })
-      : null;
+  const weekly = await prisma.planItem.findFirst({
+    orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
+    select: { id: true, kind: true, scheduledFor: true },
+    where: {
+      kind: { in: [...WEEKLY_CHALLENGE_KINDS] },
+      plan: { goalId: goal.id },
+      scheduledFor: { not: null },
+      status: "todo",
+    },
+  });
 
   return [
     ...(checkpoint?.state === "upcoming"
@@ -341,17 +361,7 @@ async function loadChallenges({
           },
         ]
       : []),
-    ...(mock
-      ? [
-          {
-            date: mock.scheduledFor ? toIsoDate(mock.scheduledFor) : null,
-            kind: "mock" as const,
-            link: { kind: "challenge" as const, planItemId: mock.id },
-            locked: plan.access.mocksRequirePlus,
-            when: "date" as const,
-          },
-        ]
-      : []),
+    ...(weekly ? [toWeeklyChallenge({ item: weekly, plan })] : []),
   ];
 }
 

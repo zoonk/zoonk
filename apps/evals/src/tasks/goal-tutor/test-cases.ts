@@ -637,6 +637,7 @@ const BLOCK_NEXT = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c7";
 const BLOCK_REVIEW = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c8";
 const PHASE_CHALLENGE = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c9";
 const PLANNED_MOCK = "0199e2a1-3b4c-7d5e-8f60-718293a4b5d0";
+const WEEKLY_CHALLENGE = "0199e2a1-3b4c-7d5e-8f60-718293a4b5d3";
 
 /**
  * Lívia learns modern physics at 20 minutes a day, in the buddy's own conversation about it. A
@@ -660,6 +661,13 @@ const PHYSICS_BEHIND = {
       date: "2026-10-20",
       kind: "challenge",
       link: { kind: "challenge", planItemId: PHASE_CHALLENGE },
+      locked: false,
+      when: "date",
+    },
+    {
+      date: "2026-10-18",
+      kind: "weekly",
+      link: { kind: "challenge", planItemId: WEEKLY_CHALLENGE },
       locked: false,
       when: "date",
     },
@@ -796,19 +804,35 @@ const ANALYTICS_BEHIND = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** Owen's lessons from earlier days when Today can't fit them into today: the next days open with them. */
+/**
+ * Owen's lessons from earlier days when Today can't fit them into today: the next days open with
+ * them, and nothing opens them before (persona walk, 14 Oct 2026: a Plan link didn't show them).
+ */
 const ANALYTICS_BEHIND_NO_OFFER = {
   ...ANALYTICS_BEHIND,
   catchUp: {
     ...ANALYTICS_BEHIND.catchUp,
-    // Today doesn't show them then: the Plan's next days do.
-    lessons: ANALYTICS_BEHIND.catchUp.lessons.map((lesson) => ({
-      ...lesson,
-      link: { kind: "page", page: "plan" } as const,
-    })),
+    lessons: ANALYTICS_BEHIND.catchUp.lessons.map((lesson) => ({ ...lesson, link: null })),
     offeredToday: false,
   },
   language: "pt",
+} satisfies PlanScopeContext;
+
+/**
+ * Lívia's welcome-back day (persona walk, 14 Oct 2026): the lighter session holds the first lesson
+ * earlier days left; the second waits for the next study days, and nothing opens it before.
+ */
+const PHYSICS_BEHIND_ONE_LATER = {
+  ...PHYSICS_BEHIND,
+  catchUp: {
+    lessons: [
+      ...PHYSICS_BEHIND.catchUp.lessons,
+      { inToday: false, link: null, title: "Mais confinado, mais agitado" },
+    ],
+    offeredToday: false,
+    total: 2,
+  },
+  status: { ...PHYSICS_BEHIND.status, lessons: 2 },
 } satisfies PlanScopeContext;
 
 /** Rafaela's exam plan with its next mock planned and locked: her plan doesn't include mocks. */
@@ -1657,9 +1681,16 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ANALYTICS_BEHIND_NO_OFFER,
-    expectations: `${PLAN_STATUS_EXPECTATIONS} Owen, writing in Portuguese, asks what's late. The answer names "Funnels and drop-off" and "Cohort retention curves" and 1 more from earlier days, says they come first on his next study days, where the Plan shows them (Today doesn't offer adding them today), and links them as given (/plan), never to Today. Saying they're in today's session, or offering to add them to today with one tap, is a major error (cap 5.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} Owen, writing in Portuguese, asks what's late. The answer names "Funnels and drop-off" and "Cohort retention curves" and 1 more from earlier days, says they come first on his next study days (Today doesn't offer adding them today), and links none of them: they have no link. Saying they're in today's session, offering to add them to today with one tap, or linking them to Today or the Plan as if it opened them, is a major error (cap 5.0).`,
     id: "pt-status-behind-next-days",
     question: "quais aulas estão atrasadas?",
+  }),
+  // Persona walk (14 Oct 2026): a lesson the day doesn't hold was linked to the Plan, which doesn't show it.
+  goalCase({
+    context: PHYSICS_BEHIND_ONE_LATER,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks which lesson to do first. The answer starts with "Por que o elétron não cai no núcleo?", in today's session, linked to its block (/session?block=${BLOCK_CATCH_UP}), then says "Mais confinado, mais agitado" comes first on her next study days, without linking it or a page for it (nothing opens it before then). Linking the second lesson to Today or the Plan, or saying it's in today's session, is a major error (cap 5.0).`,
+    id: "pt-status-behind-one-later",
+    question: "qual aula preciso fazer primeiro?",
   }),
   goalCase({
     context: PHYSICS_ON_TRACK,
@@ -1669,7 +1700,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: PHYSICS_BEHIND,
-    expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks when her next challenge is. The answer says 20 October (in Portuguese, e.g. "20 de outubro"), links the challenge's page (/challenge/${PHASE_CHALLENGE}), and may say it closes the phase "O átomo por dentro". An invented date or a missing link is a major error (cap 6.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks when her next challenge is. The answer leads with the week's challenge ("desafio semanal") on Sunday, 18 October, linked to its page (/challenge/${WEEKLY_CHALLENGE}), and may add the phase's challenge on 20 October (/challenge/${PHASE_CHALLENGE}), which closes the phase "O átomo por dentro". Calling the weekly one the phase's challenge, an invented date or a missing link is a major error (cap 6.0).`,
     id: "pt-status-next-challenge",
     question: "quando é meu próximo desafio?",
   }),
@@ -1709,7 +1740,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: ANALYTICS_BEHIND,
     expectations:
-      "Owen asks how to change his buddy's name. The answer says it's in his preferences (the Preferences page), where 'Choose your buddy' opens its character, name and glasses, and links it (/settings/appearance); it may also mention changing it from the buddy's tab (/buddy). Leaving out the 'Choose your buddy' step is a minor error (persona walk, 14 Oct 2026: the page shows no name field until it's tapped). One or two sentences; no invented steps beyond what the page does. proposedChange is null.",
+      "Owen asks how to change his buddy's name. The answer says it's in his preferences (the Preferences page), where 'Choose your buddy' opens its character, name and glasses, and links it (/settings/appearance); it may also mention changing it from the buddy's tab (/buddy). Leaving out the 'Choose your buddy' step, or that Save keeps the new name, is a minor error (persona walks, 14 Oct 2026: the page shows no name field until it's tapped, and Save sits below it). One or two sentences; no invented steps beyond what the page does. proposedChange is null.",
     id: "en-guide-buddy-name",
     question: "How do I change my buddy's name?",
   }),
@@ -1752,7 +1783,7 @@ export const TEST_CASES: GoalTutorCase[] = [
       },
       status: { days: 3, extraMinutesPerDay: 15, kind: "behind", lessons: 7, options: [] },
     },
-    expectations: `${PLAN_STATUS_EXPECTATIONS} ${LOOKUP_EXPECTATIONS} Lívia asks for every lesson she's behind on; the context names 5 of 7. lookUps has catchUp, and the answer lists all 7 by title (the 5 plus "Quantização da energia" and "O efeito fotoelétrico"), says they're from earlier days and that doing them first keeps the plan, links the one in today's session to its block (/session?block=${BLOCK_CATCH_UP}) and the rest to Today (/today). Listing only 5, or inventing lessons, is a major error (cap 5.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} ${LOOKUP_EXPECTATIONS} Lívia asks for every lesson she's behind on; the context names 5 of 7. lookUps has catchUp, and the answer lists all 7 by title (the 5 plus "Quantização da energia" and "O efeito fotoelétrico"), says they're from earlier days and that doing them first keeps the plan, links the one in today's session to its block (/session?block=${BLOCK_CATCH_UP}) and the rest to Today (/today), which offers adding them to today. Listing only 5, or inventing lessons, is a major error (cap 5.0).`,
     id: "pt-lookup-catchup-all",
     lookUps: {
       catchUp: {
@@ -1778,7 +1809,7 @@ export const TEST_CASES: GoalTutorCase[] = [
           { inToday: false, link: { kind: "page", page: "today" }, title: "O efeito fotoelétrico" },
         ],
         more: 0,
-        offeredToday: false,
+        offeredToday: true,
         status: "found",
         total: 7,
         what: "catchUp",
@@ -1788,7 +1819,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ANALYTICS_BEHIND,
-    expectations: `${PLAN_STATUS_EXPECTATIONS} ${LOOKUP_EXPECTATIONS} Owen asks what's on his plan next Tuesday (20 October; today is Wednesday 14 October). lookUps has schedule (query 2026-10-20 or a range that holds it), and the answer names that day's items, "Retention by cohort in SQL" and a review of "Funnels and drop-off", and links the day's challenge "Phase challenge" to its page (/challenge/${PHASE_CHALLENGE}). Naming items the schedule doesn't have, or another day's, is a major error (cap 5.0).`,
+    expectations: `${PLAN_STATUS_EXPECTATIONS} ${LOOKUP_EXPECTATIONS} Owen asks what's on his plan next Tuesday (20 October; today is Wednesday 14 October). lookUps has schedule (query 2026-10-20 or a range that holds it), and the answer names that day's items, "Retention by cohort in SQL" and a review of "Funnels and drop-off", and links the day's phase challenge (named by its kind, as the phase's challenge) to its page (/challenge/${PHASE_CHALLENGE}). Naming items the schedule doesn't have, or another day's, is a major error (cap 5.0).`,
     id: "en-lookup-schedule-day",
     lookUps: {
       schedule: {
@@ -1815,7 +1846,7 @@ export const TEST_CASES: GoalTutorCase[] = [
                 link: { kind: "challenge", planItemId: PHASE_CHALLENGE },
                 minutes: null,
                 status: "todo",
-                title: "Phase challenge",
+                title: "",
               },
             ],
             moreItems: 0,
@@ -2041,7 +2072,8 @@ export const TEST_CASES: GoalTutorCase[] = [
             when: "date",
           },
         ],
-        done: { challenges: 0, mocks: 0 },
+        done: { challenges: 0, mocks: 0, weekly: 0 },
+        more: 0,
         status: "found",
         what: "challenges",
       },
@@ -2059,7 +2091,7 @@ export const TEST_CASES: GoalTutorCase[] = [
   // Persona walk (14 Oct 2026): "what's left this week" left out Sunday's weekly challenge, past the context's next days.
   goalCase({
     context: PHYSICS_ON_TRACK,
-    expectations: `${LOOKUP_EXPECTATIONS} Lívia asks what's left this week; the context's next days stop at 15 October. lookUps has schedule, and the answer lists the week's remaining days through Sunday 18 October, including Sunday's weekly challenge ("Desafio da semana"), linked to its page (/challenge/${PHASE_CHALLENGE}), with the lessons on each day. Leaving out the Sunday challenge is a major error (cap 6.0). Short, day by day. proposedChange is null.`,
+    expectations: `${LOOKUP_EXPECTATIONS} Lívia asks what's left this week; the context's next days stop at 15 October. lookUps has schedule, and the answer lists the week's remaining days through Sunday 18 October, including Sunday's weekly challenge, named as the week's challenge ("desafio semanal"), linked to its page (/challenge/${WEEKLY_CHALLENGE}), with the lessons on each day. Leaving out the Sunday challenge, or calling it the phase's challenge (persona walk, 14 Oct 2026), is a major error (cap 6.0). Short, day by day. proposedChange is null.`,
     id: "pt-lookup-week-left",
     lookUps: {
       schedule: {
@@ -2102,10 +2134,10 @@ export const TEST_CASES: GoalTutorCase[] = [
             items: [
               {
                 kind: "checkpoint",
-                link: { kind: "challenge", planItemId: PHASE_CHALLENGE },
+                link: { kind: "challenge", planItemId: WEEKLY_CHALLENGE },
                 minutes: null,
                 status: "todo",
-                title: "Desafio da semana",
+                title: "",
               },
             ],
             moreItems: 0,

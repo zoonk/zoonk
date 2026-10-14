@@ -2,7 +2,7 @@ import "server-only";
 import { type GoalTutorLookUpResult } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
 import { type Goal } from "@zoonk/db";
 import { getCatalogCourseProgress } from "../../../catalog/progress";
-import { listCurrentUserCoursesPage } from "../../../courses/list-current-user-courses";
+import { listCurrentUserCourses } from "../../../courses/list-current-user-courses";
 import { getReachedCap } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
 import { listCurrentUserGoals } from "../../../goals/list-current-user-goals";
@@ -16,9 +16,6 @@ const MAX_GOALS = 10;
 
 /** The most recent courses, each read with its progress; the rest only count. */
 const MAX_COURSES = 5;
-
-/** The courses a `query` looks through, most recent first. */
-const SEARCHED_COURSES = 100;
 
 const SECONDS_PER_MINUTE = 60;
 
@@ -119,18 +116,19 @@ async function toCourse({ course, goal }: { course: { id: string; title: string 
   };
 }
 
-/** The courses the learner studies, most recent first, the ones `query` names when it does. */
+/**
+ * The courses the learner studies, most recent first, the ones `query` names when it does: all of
+ * them searched and counted, the first few read with their progress.
+ */
 export async function lookUpCourses({
   goal,
   query,
   scope,
 }: Lookup): Promise<GoalTutorLookUpResult> {
   const what = "courses";
-  const page = await listCurrentUserCoursesPage({ limit: SEARCHED_COURSES });
+  const studied = (await listCurrentUserCourses()) ?? [];
 
-  const courses = (page?.courses ?? []).filter(
-    (course) => !query || matchesQuery({ query, text: course.title }),
-  );
+  const courses = studied.filter((course) => !query || matchesQuery({ query, text: course.title }));
 
   if (courses.length === 0) {
     return { status: "notFound", what };

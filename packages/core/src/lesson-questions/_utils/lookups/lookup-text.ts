@@ -8,15 +8,22 @@ function toSearchText(text: string): string {
   return stripPunctuation(normalizeString(text));
 }
 
-/** Whether `text` has every word of the buddy's query; an empty query matches everything. */
+/**
+ * Whether `text` has every word of the buddy's query, short ones aside; an empty query matches
+ * everything. A query of short words only ("Go", "C", "AI") names them: each must be a whole word
+ * of the text, so it never matches everything.
+ */
 export function matchesQuery({ query, text }: { query: string; text: string }): boolean {
-  const words = toSearchText(query)
-    .split(" ")
-    .filter((word) => word.length >= MIN_WORD_LENGTH || /\d/u.test(word));
-
+  const words = toSearchText(query).split(/\s+/u).filter(Boolean);
+  const long = words.filter((word) => word.length >= MIN_WORD_LENGTH || /\d/u.test(word));
   const searched = toSearchText(text);
 
-  return words.every((word) => searched.includes(word));
+  if (long.length > 0 || words.length === 0) {
+    return long.every((word) => searched.includes(word));
+  }
+
+  const textWords = new Set(searched.split(/\s+/u));
+  return words.every((word) => textWords.has(word));
 }
 
 /**

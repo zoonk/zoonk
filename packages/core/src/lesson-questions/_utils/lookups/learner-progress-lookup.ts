@@ -55,14 +55,9 @@ function pickAreas({
   return picked.length > 0 || areas.length === 0 ? picked : null;
 }
 
-function toStillNeeded({
-  areas,
-  stillNeeded,
-}: {
-  areas: StillNeededArea[];
-  stillNeeded: ProgressView["stillNeeded"] | undefined;
-}) {
-  if (!stillNeeded || areas.length === 0) {
+/** What the areas still need, the totals counting only them: the goal's, or the one asked. */
+function toStillNeeded(areas: StillNeededArea[]) {
+  if (areas.length === 0) {
     return null;
   }
 
@@ -76,9 +71,9 @@ function toStillNeeded({
         skillsTotal: area.total,
         title: area.title,
       })),
-    minutes: stillNeeded.minutes,
+    minutes: areas.reduce((total, area) => total + area.minutes, 0),
     moreAreas: Math.max(0, areas.length - MAX_AREAS),
-    skillsLeft: stillNeeded.left,
+    skillsLeft: areas.reduce((total, area) => total + area.left.length, 0),
   };
 }
 
@@ -136,7 +131,12 @@ export async function lookUpProgress({
   const areas = pickAreas({ area, areas: allAreas });
 
   if (!areas) {
-    return { areas: allAreas.map((candidate) => candidate.title), status: "notFound", what };
+    return {
+      areas: allAreas.slice(0, MAX_AREAS).map((candidate) => candidate.title),
+      moreAreas: Math.max(0, allAreas.length - MAX_AREAS),
+      status: "notFound",
+      what,
+    };
   }
 
   return {
@@ -145,7 +145,7 @@ export async function lookUpProgress({
     mistakes: { link: toPageLink({ page: "mistakes", scope }), open: progress?.mistakes.open ?? 0 },
     preparation: toPreparation(progress?.preparation),
     status: "found",
-    stillNeeded: toStillNeeded({ areas, stillNeeded: progress?.stillNeeded }),
+    stillNeeded: toStillNeeded(areas),
     what,
   };
 }

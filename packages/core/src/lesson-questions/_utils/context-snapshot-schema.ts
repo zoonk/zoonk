@@ -73,7 +73,7 @@ const planScopeSnapshotSchema = z.object({
     .array(
       z.object({
         date: z.string().nullable(),
-        kind: z.enum(["challenge", "mock"]),
+        kind: z.enum(["challenge", "mock", "weekly"]),
         link: tutorLinkSchema.default(null),
         locked: z.boolean(),
         when: z.enum(["date", "nextSession", "queued"]),

@@ -23,9 +23,6 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 
 const TODAY_LINK = { kind: "page", page: "today" };
 
-/** Where a lesson earlier days left opens when Today doesn't offer it: the Plan's next days. */
-const PLAN_LINK = { kind: "page", page: "plan" };
-
 type LearnerSpec = {
   /** The goal is the one the app has open, so the buddy may link what acts on it. */
   active?: boolean;
@@ -127,7 +124,7 @@ describe("the plan the buddy looks up", () => {
   });
 
   describe("catchUp", () => {
-    it("lists every lesson earlier days left in the plan's order, linked to the Plan's days, and only the learner's own", async () => {
+    it("lists every lesson earlier days left in the plan's order, unlinked while nothing opens them yet, and only the learner's own", async () => {
       const [learner, other] = await Promise.all([
         plannedLearner({ behind: 3 }),
         plannedLearner({ behind: 3 }),
@@ -139,9 +136,10 @@ describe("the plan the buddy looks up", () => {
       );
 
       expect(found).toStrictEqual({
+        // No day is built to hold them, and Today doesn't offer them: the next study days open with them.
         lessons: learner.carried.map((item) => ({
           inToday: false,
-          link: PLAN_LINK,
+          link: null,
           title: item.titleSnapshot,
         })),
         more: 0,
@@ -203,7 +201,7 @@ describe("the plan the buddy looks up", () => {
       expect(found.status === "found" && found.what === "catchUp" && found.lessons).toStrictEqual(
         carried
           .slice(0, 30)
-          .map((item) => ({ inToday: false, link: PLAN_LINK, title: item.titleSnapshot })),
+          .map((item) => ({ inToday: false, link: null, title: item.titleSnapshot })),
       );
     });
 
@@ -344,6 +342,42 @@ describe("the plan the buddy looks up", () => {
       });
     });
 
+    it("reads today too while the learner is still in the session from before midnight", async () => {
+      const { goal, plan, user } = await plannedLearner();
+
+      // Yesterday's session, started a few minutes ago: Today still opens it, so today is ahead.
+      const [session, today] = await Promise.all([
+        studySessionFixture({
+          goalId: goal.id,
+          localDate: new Date("2020-09-27T00:00:00Z"),
+          startedAt: new Date(NOW.getTime() - 10 * 60 * 1000),
+          status: "active",
+          userId: user.id,
+        }),
+        planItemFixture({
+          kind: "review",
+          planId: plan.id,
+          position: 1000,
+          scheduledFor: new Date("2020-09-28"),
+        }),
+      ]);
+
+      await studySessionBlockFixture({ kind: "review", position: 0, sessionId: session.id });
+
+      const found = await lookUp(await answering({ goalId: goal.id, userId: user.id }), {
+        what: "schedule",
+      });
+
+      expect(found).toMatchObject({ from: "2020-09-28", to: "2020-10-11" });
+
+      expect(found.status === "found" && found.what === "schedule" && found.days[0]).toMatchObject({
+        date: "2020-09-28",
+        items: expect.arrayContaining([
+          expect.objectContaining({ kind: "review", title: today.titleSnapshot }),
+        ]),
+      });
+    });
+
     it("never reads before tomorrow, and reads from tomorrow when the day asked isn't one", async () => {
       const { goal, user } = await plannedLearner();
       const asked = await answering({ goalId: goal.id, userId: user.id });
@@ -402,9 +436,11 @@ describe("the plan the buddy looks up", () => {
   });
 
   describe("challenges", () => {
-    it("lists every phase challenge and planned mock ahead, with how many are done", async () => {
+    it("lists every phase challenge, then the weekly challenges and mocks ahead by day, with how many of each are done", async () => {
+      const phases = ["Basics", "Projects"];
+
       const [{ goal, plan, user }, other] = await Promise.all([
-        plannedLearner({ active: false, phases: ["Basics", "Projects"] }),
+        plannedLearner({ active: false, phases }),
         plannedLearner(),
       ]);
 
@@ -429,6 +465,13 @@ describe("the plan the buddy looks up", () => {
           scheduledFor: new Date("2020-09-20"),
           status: "done",
         }),
+        planItemFixture({
+          kind: "checkpoint",
+          planId: plan.id,
+          position: 1004,
+          scheduledFor: new Date("2020-09-27"),
+          status: "done",
+        }),
         // Neither a mock set aside nor one with no day is ahead.
         planItemFixture({
           kind: "mock",
@@ -443,6 +486,18 @@ describe("the plan the buddy looks up", () => {
       const bosses = plan.items.filter((item) => item.kind === "boss");
       expect(bosses).toHaveLength(2);
 
+      // The plan's own week's challenges, from its second week on, and the mock ahead, by day.
+      const dated = [
+        ...plan.items.filter(
+          (item) => item.kind === "checkpoint" && item.status === "todo" && item.scheduledFor,
+        ),
+        ahead,
+      ].toSorted(
+        (first, second) =>
+          (first.scheduledFor?.getTime() ?? 0) - (second.scheduledFor?.getTime() ?? 0) ||
+          first.position - second.position,
+      );
+
       const found = await lookUp(await answering({ goalId: goal.id, userId: user.id }), {
         what: "challenges",
       });
@@ -454,24 +509,59 @@ describe("the plan the buddy looks up", () => {
             kind: "challenge",
             link: { kind: "challenge", planItemId: boss.id },
             locked: false,
-            phase: { index, kind: "learn", name: ["Basics", "Projects"][index] },
+            phase: { index, kind: "learn", name: phases[index] },
             when: expect.any(String),
           })),
-          {
-            date: "2020-10-10",
-            kind: "mock",
-            link: { kind: "challenge", planItemId: ahead.id },
+          ...dated.map((item) => ({
+            date: item.scheduledFor?.toISOString().slice(0, 10),
+            kind: item.kind === "mock" ? "mock" : "weekly",
+            link: { kind: "challenge", planItemId: item.id },
             locked: false,
-            phase: { index: 1, kind: "learn", name: "Projects" },
+            phase:
+              item.phase === null
+                ? null
+                : { index: item.phase, kind: "learn", name: phases[item.phase] },
             when: "date",
-          },
+          })),
         ],
-        done: { challenges: 0, mocks: 1 },
+        done: { challenges: 0, mocks: 1, weekly: 1 },
+        more: 0,
         status: "found",
         what: "challenges",
       });
 
       expect(JSON.stringify(found)).not.toContain(otherMock.id);
+    });
+
+    it("lists the first weekly challenges ahead and counts the rest", async () => {
+      const { goal, plan, user } = await plannedLearner();
+
+      const planned = plan.items.filter(
+        (item) => item.kind === "checkpoint" && item.status === "todo" && item.scheduledFor,
+      ).length;
+
+      await Promise.all(
+        Array.from({ length: 10 }, (_, week) =>
+          planItemFixture({
+            kind: "checkpoint",
+            planId: plan.id,
+            position: 1000 + week,
+            scheduledFor: new Date(Date.UTC(2021, 0, 3 + week * 7)),
+          }),
+        ),
+      );
+
+      const found = await lookUp(await answering({ goalId: goal.id, userId: user.id }), {
+        what: "challenges",
+      });
+
+      expect(found).toMatchObject({ more: planned + 10 - 8, status: "found" });
+
+      expect(
+        found.status === "found" &&
+          found.what === "challenges" &&
+          found.challenges.filter((challenge) => challenge.kind === "weekly"),
+      ).toHaveLength(8);
     });
 
     it("marks what a free exam plan needs Plus for: its mocks, and the days past its first week", async () => {

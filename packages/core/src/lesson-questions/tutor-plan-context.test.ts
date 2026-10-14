@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { planChangeFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -99,11 +99,12 @@ describe("the plan the buddy reads", () => {
 
     expect(plan.selectedGoal).toBe(true);
 
-    // Today doesn't offer catching up today: the next days open with them, as the Plan shows.
+    // No day holds them and Today doesn't offer them: the next study days open with them, and
+    // nothing opens them before (the Plan doesn't list them either).
     expect(plan.catchUp).toStrictEqual({
       lessons: learner.carried.map((item) => ({
         inToday: false,
-        link: { kind: "page", page: "plan" },
+        link: null,
         title: item.titleSnapshot,
       })),
       offeredToday: false,
@@ -189,6 +190,40 @@ describe("the plan the buddy reads", () => {
 
     expect(plan.today).toMatchObject({
       items: [{ catchUp: true, link: blockLink, title: first.titleSnapshot }],
+    });
+
+    // The lighter day leaves the other one for the next days: nothing opens it today.
+    expect(plan.catchUp?.lessons[1]).toStrictEqual({
+      inToday: false,
+      link: null,
+      title: carried[1]?.titleSnapshot,
+    });
+  });
+
+  it("names the week's challenge ahead by its kind, linked to its page", async () => {
+    const { goal, user } = await learnerBehind();
+    const { id: planId } = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await planItemFixture({
+      kind: "checkpoint",
+      planId,
+      position: 1000,
+      scheduledFor: toUTCMidnight(new Date(Date.now() + 3 * MS_PER_DAY)),
+    });
+
+    const next = await prisma.planItem.findFirstOrThrow({
+      orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
+      where: { kind: "checkpoint", planId, scheduledFor: { not: null }, status: "todo" },
+    });
+
+    const { snapshot } = await askAboutPlan({ goalId: goal.id, userId: user.id });
+
+    expect(readPlanSnapshot(snapshot).challenges).toContainEqual({
+      date: next.scheduledFor?.toISOString().slice(0, 10),
+      kind: "weekly",
+      link: { kind: "challenge", planItemId: next.id },
+      locked: false,
+      when: "date",
     });
   });
 

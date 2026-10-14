@@ -122,6 +122,15 @@ async function findCurrentUserCourses({ query, userId }: { query?: string; userI
 }
 
 /**
+ * Every course of the authenticated learner, most recent activity first, optionally filtered by
+ * title or description; null when signed out.
+ */
+export async function listCurrentUserCourses({ query }: { query?: string } = {}) {
+  const session = await getSession();
+  return session ? findCurrentUserCourses({ query: query?.trim(), userId: session.user.id }) : null;
+}
+
+/**
  * Returns one page of the authenticated learner's courses, optionally filtered by title or
  * description, with an explicit continuation signal. A null result represents an unauthenticated
  * request, allowing the API adapter to emit 401 without moving authorization outside Core.
@@ -135,15 +144,14 @@ export async function listCurrentUserCoursesPage({
   offset?: number;
   query?: string;
 }) {
-  const session = await getSession();
+  const courses = await listCurrentUserCourses({ query });
 
-  if (!session) {
+  if (!courses) {
     return null;
   }
 
   const pageSize = clampQueryItems(limit);
   const start = Math.max(Math.trunc(offset), 0);
-  const courses = await findCurrentUserCourses({ query: query?.trim(), userId: session.user.id });
   const page = courses.slice(start, start + pageSize + 1);
 
   return { courses: page.slice(0, pageSize), hasMore: page.length > pageSize };

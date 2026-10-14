@@ -172,7 +172,7 @@ type GoalTutorLookUpFound =
  */
 export type GoalTutorLookUpResult =
   | ({ status: "found" } & GoalTutorLookUpFound)
-  | { areas?: string[]; status: "notFound"; what: GoalTutorLookUp }
+  | { areas?: string[]; moreAreas?: number; status: "notFound"; what: GoalTutorLookUp }
   | {
       reason: "error" | "limit" | "notExam" | "timeout";
       status: "unavailable";
