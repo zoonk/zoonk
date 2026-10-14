@@ -7966,11 +7966,6 @@ msgctxt "bHMLQT"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}"
 
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "Explore courses"
-
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
 msgid "Learn a topic"

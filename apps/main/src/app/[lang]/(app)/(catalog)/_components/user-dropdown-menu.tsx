@@ -77,11 +77,11 @@ function getAccountStatus(learner: LearnerSummaryState) {
 
 /**
  * The account menu: whose account it is (and "Plus" when it's the plan), the app's search (the same
- * palette Cmd/Ctrl+K opens), the learner's statistics (with their level) and the catalog, then
- * settings and help, and one way in or out. A guest's session isn't an account yet, so it offers
- * one instead of signing out (which would lose the plan), has no name to show, and has Pricing
- * beside the catalog. It opens under the top bar's avatar, at its end, and above the sidebar's
- * account row, from its start (`align`, `side`).
+ * palette Cmd/Ctrl+K opens), the learner's statistics (with their level), then settings and help,
+ * and one way in or out. A guest's session isn't an account yet, so it offers one instead of
+ * signing out (which would lose the plan), has no name to show, and has Pricing beside the
+ * statistics. It opens under the top bar's avatar, at its end, and above the sidebar's account
+ * row, from its start (`align`, `side`).
  */
 export function UserDropdownMenu({
   align = "end",
@@ -105,7 +105,6 @@ export function UserDropdownMenu({
           ...getMenu("stats"),
         }
       : null,
-    { key: t("Explore courses"), ...getMenu("courses") },
     status === "guest" ? { key: t("Pricing"), ...getMenu("pricing") } : null,
   ].filter((item) => item !== null);
 

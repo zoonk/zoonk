@@ -3,10 +3,9 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CompassIcon, PaperclipIcon } from "lucide-react";
+import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState } from "react";
-import { LearnLink } from "../../learn-link";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
@@ -37,17 +36,15 @@ function SubmitButton() {
 
 /**
  * The first onboarding screen: one question and one box for the goal in the learner's own
- * words, examples that start it in one tap, the Library for browsing, and a paperclip for
- * studying their own material. Inside a host's page (Today without a goal) it's that page's
- * "Start a goal" section, under the page's title, its link to the Library right under the
- * examples.
+ * words, examples that start it in one tap, and a paperclip for studying their own material.
+ * Inside a host's page (Today without a goal) it's that page's "Start a goal" section, under the
+ * page's title.
  */
 export function GoalEntry({
   attachment,
   canSubmitEmpty = false,
   defaultGoal,
   error,
-  exploreHref,
   fromSharedPlan = false,
   notice,
   onAttach,
@@ -60,7 +57,6 @@ export function GoalEntry({
   canSubmitEmpty?: boolean;
   defaultGoal: string;
   error: GoalError | null;
-  exploreHref: string;
   /** Opened from someone's plan link: the goal starts from that plan. */
   fromSharedPlan?: boolean;
   /** What the learner should know before typing, such as a goal limit Plus lifts. */
@@ -154,17 +150,6 @@ export function GoalEntry({
 
       {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
       <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={submit} />
-
-      {/* Right under the examples on every screen, never pinned under the tab bar. */}
-      <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-        <LearnLink
-          className="hover:text-foreground inline-flex min-h-11 items-center gap-1.5 underline-offset-4 hover:underline"
-          href={exploreHref}
-        >
-          <CompassIcon aria-hidden="true" className="size-4" />
-          {t("Explore courses")}
-        </LearnLink>
-      </div>
     </OnboardingColumn>
   );
 }

@@ -12,7 +12,6 @@ msgstr ""
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/auth-gate.tsx
 #: src/components/login-bar-link.tsx
-#: src/components/public/public-header.tsx
 #: src/components/public/start-lesson-button.tsx
 msgctxt "odXlk8"
 msgid "Log in"
@@ -43,12 +42,10 @@ msgstr "Page d’accueil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/app/[lang]/(app)/(catalog)/not-found.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Explorer les cours"
@@ -221,7 +218,7 @@ msgid "Buddy"
 msgstr "Compagnon"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(learn)/mistakes/page.tsx
 #: src/app/[lang]/(home)/_components/practice-job.tsx
 msgctxt "g3GlDw"
@@ -229,19 +226,19 @@ msgid "Mistakes notebook"
 msgstr "Carnet d’erreurs"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Examen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Expression orale"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(learn)/mind-maps/page.tsx
 msgctxt "Z9Sg5E"
 msgid "Mind maps"
@@ -256,7 +253,7 @@ msgstr "Journal de bord"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "H3eDAS"
@@ -375,7 +372,7 @@ msgid "close"
 msgstr "fermer"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "6b2CRH"
 msgid "User menu"
 msgstr "Menu utilisateur"
@@ -723,11 +720,6 @@ msgid "{belt}, level {level}. Statistics"
 msgstr "Niveau {level} de {belt}. Statistiques"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
-msgctxt "CPAYvm"
-msgid "{count, plural, one {# activity left} other {# activities left}}"
-msgstr "{count, plural, one {# activité restante} other {# activités restantes}}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
 msgid "Skip to content"
 msgstr "Aller au contenu"
@@ -743,25 +735,30 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "Dis-nous ce que tu veux apprendre et on te proposera un programme quotidien pour t'aider à avancer."
 
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, niveau {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "zF7Cth"
+msgid "Guest"
+msgstr "Invité"
+
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "UTFsoN"
 msgid "Study"
 msgstr "Étude"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
-msgctxt "zF7Cth"
-msgid "Guest"
-msgstr "Invité"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, niveau {level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "JZy6jo"
 msgid "Sidebar"
 msgstr "Barre latérale"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
+msgctxt "CPAYvm"
+msgid "{count, plural, one {# activity left} other {# activities left}}"
+msgstr "{count, plural, one {# activité restante} other {# activités restantes}}"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "ijwVvk"
@@ -2285,16 +2282,6 @@ msgctxt "jpMuGb"
 msgid "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it."
 msgstr "Exemples de plans. Le tien s’adapte à ton objectif, au temps dont tu disposes et à ce que tu sais déjà. Choisis-en un : le reste de la page s’adapte."
 
-#: src/app/[lang]/(home)/_components/home-header.tsx
-#: src/app/[lang]/(home)/page.tsx
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-pricing.tsx
-#: src/components/public/public-header.tsx
-msgctxt "i7IHHZ"
-msgid "Start free"
-msgstr "Commence gratuitement"
-
 #: src/app/[lang]/(home)/_components/home-hero.tsx
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "hV7Lpg"
@@ -3117,6 +3104,15 @@ msgstr "Indique ton objectif et ta date à Zoonk, par exemple un examen ou un d�
 msgctxt "201rSY"
 msgid "Zoonk: A study plan for every day until the big day"
 msgstr "Zoonk : un plan d’étude au quotidien jusqu’au grand jour"
+
+#: src/app/[lang]/(home)/page.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/public-visitor-actions.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "Commence gratuitement"
 
 #: src/app/[lang]/account-deleted-toast.tsx
 msgctxt "H30ctc"
@@ -3991,6 +3987,7 @@ msgid "Continue your plan"
 msgstr "Continuer ton plan"
 
 #: src/lib/belt-colors.ts
+#: src/lib/belt-label.ts
 msgctxt "_6Vlf7"
 msgid "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
 msgstr "{color, select, white {Ceinture Blanche} yellow {Ceinture Jaune} orange {Ceinture Orange} green {Ceinture Verte} blue {Ceinture Bleue} purple {Ceinture Violette} brown {Ceinture Marron} red {Ceinture Rouge} gray {Ceinture Grise} black {Ceinture Noire} other {Ceinture}}"

@@ -220,7 +220,6 @@ export type OnboardingActions = {
 export type OnboardingRoutes = {
   /** A Library course's page. */
   course: (course: { brandSlug: string; courseSlug: string }) => string;
-  explore: string;
   /** A goal's focus test, where answers choose where its plan's depth goes. */
   focusTest: (goalId: string) => string;
   /** A running mock, by its id. */

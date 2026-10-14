@@ -415,14 +415,8 @@ test.describe("Learning tabs", () => {
     await expect(tabs.getByRole("link", { name: "Plan" })).toHaveAttribute("href", "/plan");
     await expect(tabs.getByRole("link", { name: /^Zu/u })).toHaveAttribute("href", "/buddy");
 
-    // The goal's own places (an exam's page) between the notebook and the statistics, then the
-    // catalog, which every learner has.
-    await expect(study.getByRole("link")).toHaveText([
-      /^Mistakes notebook/u,
-      "Exam",
-      "Statistics",
-      "Explore courses",
-    ]);
+    // The goal's own places (an exam's page) between the notebook and the statistics.
+    await expect(study.getByRole("link")).toHaveText([/^Mistakes notebook/u, "Exam", "Statistics"]);
 
     // The goal and search on top; the account at the end, one row with the learner's name and
     // their belt and level that opens the account menu (Statistics is above, and in the menu).
@@ -461,8 +455,6 @@ test.describe("Learning tabs", () => {
     await expect(study.getByRole("link", { name: "Exam" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(study.getByRole("link", { name: "Statistics" })).toBeFocused();
-    await page.keyboard.press("Tab");
-    await expect(study.getByRole("link", { name: "Explore courses" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(account).toBeFocused();
 

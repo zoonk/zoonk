@@ -11,19 +11,15 @@ import {
 import { getExtracted } from "next-intl/server";
 import { LearnGoalMenu } from "./learn-goal-menu";
 import { SidebarAccount, StudyLinks } from "./learn-sidebar-learner";
-import { LearnSidebarLink, LearnSidebarSearch } from "./learn-sidebar-links";
+import { LearnSidebarSearch } from "./learn-sidebar-links";
 
-/**
- * What the learner reaches from anywhere besides the tabs, the catalog last: it's every learner's
- * (and visitor's), so it never waits, and it's marked while the learner browses it.
- */
+/** What the learner reaches from anywhere besides the tabs. */
 async function StudyShortcuts() {
   const t = await getExtracted();
 
   return (
     <LearnSidebarSection aria-label={t("Study")} label={t("Study")}>
       <StudyLinks />
-      <LearnSidebarLink label={t("Explore courses")} menu="courses" />
     </LearnSidebarSection>
   );
 }
