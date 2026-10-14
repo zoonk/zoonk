@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getSession } from "../users/get-session";
 import { scheduleSensitivityCheck } from "./_utils/fact-sensitivity";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
@@ -41,26 +42,38 @@ export async function updateMemoryFact({
 
   const userId = session.user.id;
 
-  const { count } = await prisma.memoryFact.updateMany({
-    data: {
-      category: input.category,
-      confidence: LEARNER_CONFIDENCE,
-      origin: "said",
-      statement: input.statement,
-    },
-    where: { id: factId, status: "active", userId },
+  const fact = await prisma.$transaction(async (tx) => {
+    const { count } = await tx.memoryFact.updateMany({
+      data: {
+        category: input.category,
+        confidence: LEARNER_CONFIDENCE,
+        origin: "said",
+        statement: input.statement,
+      },
+      where: { id: factId, status: "active", userId },
+    });
+
+    if (count === 0) {
+      return null;
+    }
+
+    const updated = await tx.memoryFact.findUniqueOrThrow({ where: { id: factId } });
+
+    if (input.statement !== undefined) {
+      await forgetExampleLines({ client: tx, userId });
+    }
+
+    await markLearnerChanged(tx, { planInputs: false, userId });
+    return updated;
   });
 
-  if (count === 0) {
+  if (!fact) {
     return { status: "notFound" };
   }
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);
 
-  const fact = await prisma.memoryFact.findUniqueOrThrow({ where: { id: factId } });
-
   if (input.statement !== undefined) {
-    await forgetExampleLines({ userId });
     scheduleSensitivityCheck(fact);
   }
 

@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getSession } from "../users/get-session";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { type MemorySettingsUpdateInput } from "./memory-contract";
@@ -22,15 +23,19 @@ export async function updateMemorySettings(
 
   const userId = session.user.id;
 
-  await prisma.userLearningProfile.upsert({
-    create: { memoryEnabled: input.enabled, userId },
-    update: { memoryEnabled: input.enabled },
-    where: { userId },
-  });
+  await prisma.$transaction(async (tx) => {
+    await tx.userLearningProfile.upsert({
+      create: { memoryEnabled: input.enabled, userId },
+      update: { memoryEnabled: input.enabled },
+      where: { userId },
+    });
 
-  if (!input.enabled) {
-    await forgetExampleLines({ userId });
-  }
+    if (!input.enabled) {
+      await forgetExampleLines({ client: tx, userId });
+    }
+
+    await markLearnerChanged(tx, { planInputs: false, userId });
+  });
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);
 
