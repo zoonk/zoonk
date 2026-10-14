@@ -24,6 +24,8 @@ export async function updateMemorySettings(
   const userId = session.user.id;
 
   await prisma.$transaction(async (tx) => {
+    await markLearnerChanged(tx, { planInputs: false, userId });
+
     await tx.userLearningProfile.upsert({
       create: { memoryEnabled: input.enabled, userId },
       update: { memoryEnabled: input.enabled },
@@ -33,8 +35,6 @@ export async function updateMemorySettings(
     if (!input.enabled) {
       await forgetExampleLines({ client: tx, userId });
     }
-
-    await markLearnerChanged(tx, { planInputs: false, userId });
   });
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);

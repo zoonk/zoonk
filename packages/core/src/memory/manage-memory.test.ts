@@ -1,12 +1,18 @@
 import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getMemoryCacheTag } from "../cache/tags";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { deleteMemoryFact } from "./delete-memory-fact";
 import { exportCurrentUserMemory } from "./export-current-user-memory";
 import { getCurrentUserMemory } from "./get-current-user-memory";
@@ -16,6 +22,21 @@ import { updateMemorySettings } from "./update-memory-settings";
 
 const DAY_MS = 86_400_000;
 const MAX_LEARNER_REVISION = 9_223_372_036_854_775_807n;
+const CONCURRENT_PAIRS = 20;
+
+/** Observe the real waiting lock, rather than guessing when a write reached the revision row. */
+async function waitForBlockedBy(holderPID: number): Promise<void> {
+  await vi.waitFor(async () => {
+    const [row] = await prisma.$queryRaw<{ blocked: boolean }[]>`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_stat_activity AS backend
+        WHERE ${holderPID}::int = ANY(pg_blocking_pids(backend.pid))
+      ) AS blocked
+    `;
+
+    expect(row?.blocked).toBe(true);
+  });
+}
 
 async function learnerRevision(userId: string) {
   const user = await prisma.user.findUniqueOrThrow({
@@ -78,6 +99,44 @@ describe(getCurrentUserMemory, () => {
 });
 
 describe(updateMemorySettings, () => {
+  it("takes the revision lock before an existing profile, beside a user-first writer", async () => {
+    const user = await useLearner();
+    await learningProfileFixture({ memoryEnabled: true, userId: user.id });
+    const locked = Promise.withResolvers<number>();
+    const resume = Promise.withResolvers<null>();
+
+    const first = prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      locked.resolve(backend?.pid ?? 0);
+      await resume.promise;
+
+      await tx.userLearningProfile.update({
+        data: { soundsEnabled: false },
+        where: { userId: user.id },
+      });
+    });
+
+    const pid = await locked.promise;
+    const memory = updateMemorySettings({ enabled: false });
+    const settled = Promise.allSettled([first, memory]);
+
+    try {
+      await waitForBlockedBy(pid);
+    } finally {
+      resume.resolve(null);
+      await settled;
+    }
+
+    await expect(first).resolves.toBeUndefined();
+    await expect(memory).resolves.toStrictEqual({ enabled: false, status: "updated" });
+    await expect(learnerRevision(user.id)).resolves.toBe(2n);
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ memoryEnabled: false, soundsEnabled: false });
+  });
+
   it("turns memory off and on without touching the facts", async () => {
     const user = await useLearner();
     await memoryFactFixture({ userId: user.id });
@@ -110,10 +169,10 @@ describe(updateMemorySettings, () => {
     await expect(learnerRevision(user.id)).resolves.toBe(1n);
   });
 
-  it("rolls the settings write back when its revision cannot commit", async () => {
+  it("leaves settings untouched when its revision cannot advance", async () => {
     const user = await useLearner();
     await prisma.userLearningProfile.create({ data: { memoryEnabled: true, userId: user.id } });
-    // PostgreSQL rejects the real increment at bigint's limit, after the profile write.
+    // PostgreSQL rejects the real increment at bigint's limit, before any profile write.
     await prisma.user.update({
       data: { learnerRevision: MAX_LEARNER_REVISION },
       where: { id: user.id },
@@ -140,6 +199,54 @@ describe(updateMemorySettings, () => {
 });
 
 describe(updateMemoryFact, () => {
+  it("rolls back its bump when the fact is deactivated while the revision lock waits", async () => {
+    const user = await useLearner();
+    const fact = await memoryFactFixture({ statement: "Original", userId: user.id });
+    const locked = Promise.withResolvers<number>();
+    const resume = Promise.withResolvers<null>();
+
+    const first = prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      locked.resolve(backend?.pid ?? 0);
+      await resume.promise;
+      await tx.memoryFact.update({ data: { status: "deleted" }, where: { id: fact.id } });
+    });
+
+    const pid = await locked.promise;
+    const memory = updateMemoryFact({ factId: fact.id, input: { statement: "Changed" } });
+    const settled = Promise.allSettled([first, memory]);
+
+    try {
+      await waitForBlockedBy(pid);
+    } finally {
+      resume.resolve(null);
+      await settled;
+    }
+
+    await expect(first).resolves.toBeUndefined();
+    await expect(memory).resolves.toStrictEqual({ status: "notFound" });
+    await expect(learnerRevision(user.id)).resolves.toBe(1n);
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+    ).resolves.toMatchObject({ statement: "Original", status: "deleted" });
+
+    expect(revalidateTag).not.toHaveBeenCalled();
+    expect(after).not.toHaveBeenCalled();
+  });
+
+  it("does not bump an already inactive fact", async () => {
+    const user = await useLearner();
+    const fact = await memoryFactFixture({ status: "superseded", userId: user.id });
+
+    await expect(
+      updateMemoryFact({ factId: fact.id, input: { category: "context" } }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(0n);
+  });
+
   it("corrects a fact in place and makes it something the learner said", async () => {
     const user = await useLearner();
 
@@ -174,7 +281,7 @@ describe(updateMemoryFact, () => {
     await expect(learnerRevision(user.id)).resolves.toBe(2n);
   });
 
-  it("rolls the fact correction back when its revision cannot commit", async () => {
+  it("leaves the fact untouched when its revision cannot advance", async () => {
     const user = await useLearner();
     const fact = await memoryFactFixture({ statement: "Studies after 8 pm", userId: user.id });
     // This fails at the real revision UPDATE, rather than mocking the transaction boundary.
@@ -234,6 +341,74 @@ describe(updateMemoryFact, () => {
     await expect(learnerRevision(learner.id)).resolves.toBe(0n);
     await expect(learnerRevision(owner.id)).resolves.toBe(0n);
   });
+});
+
+describe("memory and answer transaction lock order", () => {
+  it.each(["settings", "fact"] as const)(
+    "serializes 20 %s saves with 20 real answer transactions",
+    async (kind) => {
+      const user = await useLearner();
+      const skill = await skillFixture();
+      const goal = await goalFixture({ userId: user.id });
+      const plan = await planFixture({ goalId: goal.id });
+
+      const [item, fact] = await Promise.all([
+        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+        memoryFactFixture({ userId: user.id }),
+        learnerSkillFixture({
+          difficulty: 5,
+          lastReviewedAt: new Date(Date.now() - DAY_MS),
+          reps: 1,
+          skillId: skill.id,
+          stability: 3,
+          state: "learning",
+          userId: user.id,
+        }),
+        learningProfileFixture({ userId: user.id }),
+      ]);
+
+      const saveMemory = () =>
+        kind === "settings"
+          ? updateMemorySettings({ enabled: false })
+          : updateMemoryFact({ factId: fact.id, input: { category: "preferences" } });
+
+      const saveAnswer = () =>
+        recordLearnerAnswer({
+          answer: { selectedIndex: 0 },
+          graded: { durationMs: 1000, isCorrect: true },
+          itemId: item.id,
+          language: "en",
+          purpose: "learning",
+          skillId: skill.id,
+          timeZone: "UTC",
+          userId: user.id,
+        });
+
+      const writes = Array.from({ length: CONCURRENT_PAIRS }, (_, index) =>
+        index % 2 === 0 ? [saveMemory(), saveAnswer()] : [saveAnswer(), saveMemory()],
+      ).flat();
+
+      try {
+        await Promise.all(writes);
+      } finally {
+        await Promise.allSettled(writes);
+      }
+
+      await expect(learnerRevision(user.id)).resolves.toBe(40n);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      ).resolves.toMatchObject({ inputVersion: 20 });
+
+      await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(20);
+
+      await expect(
+        prisma.learnerSkill.findUniqueOrThrow({
+          where: { userSkill: { skillId: skill.id, userId: user.id } },
+        }),
+      ).resolves.toMatchObject({ reps: 21 });
+    },
+  );
 });
 
 describe(deleteMemoryFact, () => {
