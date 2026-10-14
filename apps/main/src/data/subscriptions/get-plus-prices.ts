@@ -18,6 +18,16 @@ async function getCachedPlusPriceTable(): Promise<StripePriceTable> {
 }
 
 /**
+ * Read only when Stripe was unavailable. A static page lasts as long as the shortest cache it read,
+ * so the pricing page that rendered without prices is worked out again on its first visit after a
+ * minute, instead of keeping no prices for the hour real ones would last.
+ */
+async function retryPricesSoon(): Promise<void> {
+  "use cache";
+  cacheLife("minutes");
+}
+
+/**
  * Plus's monthly and yearly prices in `currency`, read from Stripe so no page writes a price down.
  * A missing price comes back as null; so does every price while Stripe is unavailable (checkout
  * then shows them), and that fallback lives outside the cache, so a later render reads it again.
@@ -25,7 +35,11 @@ async function getCachedPlusPriceTable(): Promise<StripePriceTable> {
 export async function getPlusPrices(
   currency: string,
 ): Promise<{ monthlyPrice: PriceInfo | null; yearlyPrice: PriceInfo | null }> {
-  const { data } = await safeAsync(() => getCachedPlusPriceTable());
+  const { data, error } = await safeAsync(() => getCachedPlusPriceTable());
+
+  if (error) {
+    await retryPricesSoon();
+  }
 
   return {
     monthlyPrice: data?.[PLUS_PLAN.lookupKey]?.[currency] ?? null,

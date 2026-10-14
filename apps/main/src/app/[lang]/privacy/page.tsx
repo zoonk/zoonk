@@ -2,6 +2,8 @@ import { LegalDocument } from "@/components/public/legal-document";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
@@ -19,7 +21,7 @@ export default async function Privacy() {
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 
   return (
-    <LegalDocument>
+    <LegalDocument pathname="/privacy">
       <PrivacyPolicy />
     </LegalDocument>
   );

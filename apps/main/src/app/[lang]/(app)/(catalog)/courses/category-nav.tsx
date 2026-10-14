@@ -3,7 +3,6 @@
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted, useLocale } from "next-intl";
@@ -39,9 +38,6 @@ const LIST_LINK_CLASS =
 function revealChip(chip: HTMLAnchorElement | null) {
   chip?.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
-
-/** The list's rows while they load, each its own width. */
-const LIST_SKELETON_WIDTHS = ["w-10", "w-14", "w-20", "w-24", "w-16", "w-20", "w-14", "w-24"];
 
 type CategoryNavProps = {
   categories: CategoryLink[];
@@ -158,34 +154,5 @@ export function CategoryNav(props: Omit<CategoryNavProps, "openCategory">) {
     <Suspense fallback={<CategoryNavView {...props} />}>
       <OpenCategoryNav {...props} />
     </Suspense>
-  );
-}
-
-/** The categories while they load, in the same places: the chips' row under `lg`, the list's rows from `lg`. */
-export function CategoryNavSkeleton() {
-  return (
-    <>
-      <div aria-hidden="true" className={CHIPS_FRAME_CLASS}>
-        <div className={cn("flex gap-2 overflow-hidden pb-2", ROW_BLEED_CLASS, ROW_INSET_CLASS)}>
-          <Skeleton className="h-7.5 w-12 rounded-md" />
-          <Skeleton className="h-7.5 w-16 rounded-md" />
-          <Skeleton className="h-7.5 w-24 rounded-md" />
-          <Skeleton className="h-7.5 w-20 rounded-md" />
-          <Skeleton className="h-7.5 w-20 rounded-md" />
-          <Skeleton className="h-7.5 w-16 rounded-md" />
-        </div>
-      </div>
-
-      <div aria-hidden="true" className={LIST_FRAME_CLASS}>
-        <div className="flex flex-col gap-0.5">
-          {LIST_SKELETON_WIDTHS.map((width, index) => (
-            // oxlint-disable-next-line react/no-array-index-key -- Placeholders are positions, not items.
-            <span className="flex h-8 items-center px-2" key={index}>
-              <Skeleton className={cn("h-3.5", width)} />
-            </span>
-          ))}
-        </div>
-      </div>
-    </>
   );
 }

@@ -22,6 +22,8 @@ import { StopDayOne } from "./_components/stop-day-one";
 import { StopEveryDay } from "./_components/stop-every-day";
 import { StopPractice } from "./_components/stop-practice";
 
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   const language = await lang();

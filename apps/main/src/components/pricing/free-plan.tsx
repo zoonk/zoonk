@@ -5,6 +5,7 @@ import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted, getLocale } from "next-intl/server";
+import { PlanNextStep } from "./for-viewer";
 import {
   PLAN_CARD_CLASS,
   PLAN_NAME_ROW_CLASS,
@@ -70,7 +71,8 @@ export async function FreePlan({
 }: {
   /** The reader's currency, the one Plus is priced in; unknown, the price isn't shown. */
   currency: string | null;
-  viewerState: PlusViewerState;
+  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
+  viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
   const locale = await getLocale();
@@ -90,13 +92,18 @@ export async function FreePlan({
         )}
       </div>
 
-      <div className="mt-5 flex flex-col gap-2.5">
-        <FreePlanAction viewerState={viewerState} />
+      <PlanNextStep
+        render={(reader) => (
+          <>
+            <FreePlanAction viewerState={reader} />
 
-        {(viewerState.status === "visitor" || viewerState.status === "guest") && (
-          <p className={PLAN_ACTION_NOTE_CLASS}>{t("No card needed.")}</p>
+            {(reader.status === "visitor" || reader.status === "guest") && (
+              <p className={PLAN_ACTION_NOTE_CLASS}>{t("No card needed.")}</p>
+            )}
+          </>
         )}
-      </div>
+        viewerState={viewerState}
+      />
 
       <div className="mt-6 border-t pt-5">
         <PlanIncludes

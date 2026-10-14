@@ -13,6 +13,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { getExtracted, getLocale } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
+import { PlanNextStep } from "./for-viewer";
 import { PLAN_CARD_CLASS, PLAN_NAME_ROW_CLASS, PLAN_PRICE_CLASS, PlanPrice } from "./plan-includes";
 import { formatPlanPrice } from "./plan-price";
 import { PlusBenefits } from "./plus-benefits";
@@ -202,7 +203,8 @@ export async function PlusPlan({
   billingSwitch: string;
   defaultPeriod?: BillingPeriod;
   monthlyPrice: PriceInfo | null;
-  viewerState: PlusViewerState;
+  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
+  viewerState?: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {
   const t = await getExtracted();
@@ -264,10 +266,15 @@ export async function PlusPlan({
         />
       </div>
 
-      <div className="mt-5 flex flex-col gap-2.5">
-        <PlusAction billingSwitch={billingSwitch} hasChoice={hasChoice} viewerState={viewerState} />
-        <p className={PLAN_ACTION_NOTE_CLASS}>{t("Cancel anytime.")}</p>
-      </div>
+      <PlanNextStep
+        render={(reader) => (
+          <>
+            <PlusAction billingSwitch={billingSwitch} hasChoice={hasChoice} viewerState={reader} />
+            <p className={PLAN_ACTION_NOTE_CLASS}>{t("Cancel anytime.")}</p>
+          </>
+        )}
+        viewerState={viewerState}
+      />
 
       <div className="mt-6 border-t pt-5">
         <PlusBenefits />

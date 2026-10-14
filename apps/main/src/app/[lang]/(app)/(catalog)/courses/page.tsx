@@ -3,9 +3,7 @@ import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { lang } from "next/root-params";
-import { Suspense } from "react";
 import { CourseListClient } from "./course-list-client";
-import { CourseListSkeleton } from "./course-list-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -21,17 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function CourseListContent() {
+/** Every course in the learner's language, under the catalog's title and chips (its layout). */
+export default async function Courses() {
   const locale = await getLocale();
   const courses = await listCourses({ language: locale });
   return <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />;
-}
-
-/** Every course in the learner's language, under the catalog's title and chips (its layout). */
-export default function Courses() {
-  return (
-    <Suspense fallback={<CourseListSkeleton />}>
-      <CourseListContent />
-    </Suspense>
-  );
 }

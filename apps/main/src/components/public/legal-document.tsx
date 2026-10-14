@@ -7,9 +7,16 @@ import { PUBLIC_COLUMN_CLASS, PublicPage } from "./public-page";
  * in the same reading column, so long lines stay comfortable on wide screens. Headings clear the
  * sticky top bar when a link jumps to one, like the pricing page's link to fair use.
  */
-export function LegalDocument({ children }: { children: ReactNode }) {
+export function LegalDocument({
+  children,
+  pathname,
+}: {
+  children: ReactNode;
+  /** The page's own path without the language, so the footer's language links open it. */
+  pathname: "/privacy" | "/terms";
+}) {
   return (
-    <PublicPage>
+    <PublicPage pathname={pathname}>
       <article
         className={cn(
           PUBLIC_COLUMN_CLASS,

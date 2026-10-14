@@ -7,10 +7,11 @@ import { countCatalogCourses } from "@zoonk/core/courses/count-catalog";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted, getLocale } from "next-intl/server";
 import { lang } from "next/root-params";
-import { Suspense } from "react";
 import { CatalogBar } from "../_components/catalog-bar";
 import { CatalogHeader } from "../_components/catalog-title";
-import { CategoryNav, CategoryNavSkeleton } from "./category-nav";
+import { CategoryNav } from "./category-nav";
+
+export const ensureStatic = "navigation";
 
 /** The categories with how many courses each has, in the reader's language like the courses. */
 async function CategoryNavWithData() {
@@ -80,9 +81,7 @@ export default async function CoursesLayout({ children }: LayoutProps<"/[lang]/c
 
         <CatalogGoalBox />
 
-        <Suspense fallback={<CategoryNavSkeleton />}>
-          <CategoryNavWithData />
-        </Suspense>
+        <CategoryNavWithData />
 
         {children}
       </div>

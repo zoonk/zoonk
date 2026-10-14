@@ -14,6 +14,7 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { ForViewer } from "./for-viewer";
 import { FreePlan } from "./free-plan";
 import { PLAN_CARD_CLASS } from "./plan-includes";
 import { type BillingPeriod, PlusLoginLink, PlusPlan, type PlusViewerState } from "./plus-plan";
@@ -60,11 +61,6 @@ export async function PricingHero() {
   );
 }
 
-/** Whether the reader has no account yet: the free plan's answer then starts with trying lessons. */
-function hasNoAccount(viewerState: PlusViewerState): boolean {
-  return viewerState.status === "guest" || viewerState.status === "visitor";
-}
-
 /** The pricing page's billing period switch, which its closing "Get Plus" follows too. */
 const PRICING_BILLING_SWITCH = "pricing-billing";
 
@@ -73,15 +69,13 @@ const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
 
 /**
  * The plans on the public pricing page, Free and Plus, two cards of one height with each one's next
- * step for whoever is reading on the same line.
+ * step for whoever is reading on the same line (the browser picks the reader's).
  */
 export function PricingPlans({
   monthlyPrice,
-  viewerState,
   yearlyPrice,
 }: {
   monthlyPrice: PriceInfo | null;
-  viewerState: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
@@ -89,12 +83,11 @@ export function PricingPlans({
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
       <div className={PLANS_GRID_CLASS}>
-        <FreePlan currency={currency} viewerState={viewerState} />
+        <FreePlan currency={currency} />
 
         <PlusPlan
           billingSwitch={PRICING_BILLING_SWITCH}
           monthlyPrice={monthlyPrice}
-          viewerState={viewerState}
           yearlyPrice={yearlyPrice}
         />
       </div>
@@ -119,26 +112,11 @@ function PlanCardSkeleton() {
   );
 }
 
-/** The plans while the reader's prices load, in their places: Free beside Plus from `md`. */
-export function PricingPlansSkeleton() {
-  return (
-    <div aria-hidden="true" className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
-      <div className={PLANS_GRID_CLASS}>
-        <PlanCardSkeleton />
-        <PlanCardSkeleton />
-      </div>
-    </div>
-  );
-}
-
 /** The questions under the plans, their title beside them from `lg`. */
-export function PricingQuestions({ viewerState }: { viewerState: PlusViewerState }) {
+export function PricingQuestions() {
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
-      <PlusQuestions
-        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
-        hasNoAccount={hasNoAccount(viewerState)}
-      />
+      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12" />
     </div>
   );
 }
@@ -146,9 +124,9 @@ export function PricingQuestions({ viewerState }: { viewerState: PlusViewerState
 /**
  * The page's last word for a visitor: starting free needs no account, with both plans' steps again,
  * starting free first. "Get Plus" keeps the billing period picked on Plus's card (`hasChoice`
- * when there's one to pick).
+ * when there's one to pick). Anyone with a session already started, so it's the visitor's alone.
  */
-export async function PricingClose({ hasChoice }: { hasChoice: boolean }) {
+async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
   const t = await getExtracted();
 
   return (
@@ -177,6 +155,18 @@ export async function PricingClose({ hasChoice }: { hasChoice: boolean }) {
         />
       </div>
     </section>
+  );
+}
+
+/**
+ * The pricing page's closing call: in the HTML for visitors, gone once the browser's learner
+ * summary reads someone with a session.
+ */
+export function PricingClose({ hasChoice }: { hasChoice: boolean }) {
+  return (
+    <ForViewer
+      render={({ status }) => status === "visitor" && <VisitorPricingClose hasChoice={hasChoice} />}
+    />
   );
 }
 
@@ -215,7 +205,7 @@ export function PlusPricing({
         )}
       </div>
 
-      <PlusQuestions className="max-w-form" hasNoAccount={hasNoAccount(viewerState)} />
+      <PlusQuestions className="max-w-form" viewerState={viewerState} />
     </>
   );
 }

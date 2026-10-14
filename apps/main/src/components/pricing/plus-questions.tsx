@@ -5,6 +5,8 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { ForViewer } from "./for-viewer";
+import { type PlusViewerState } from "./plus-plan";
 
 const PLUS_QUESTIONS_ID = "plus-questions";
 const ANSWER_CLASS = "text-muted-foreground text-[15px] leading-relaxed text-pretty sm:text-base";
@@ -31,22 +33,30 @@ function renderSupportLink(chunks: ReactNode) {
   );
 }
 
+/** Whether the reader has no account yet: a visitor, or a guest trying lessons without one. */
+function hasNoAccount(viewerState: PlusViewerState): boolean {
+  return viewerState.status === "guest" || viewerState.status === "visitor";
+}
+
 /**
  * The free plan's limits, read from the same rules the allowance enforces, so the answer can't
  * drift from what learners get. Trying lessons without an account only matters to someone who
  * doesn't have one.
  */
-async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
+async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }) {
   const t = await getExtracted();
   const limits = getFreePlanLimits();
 
-  const lead =
-    hasNoAccount && limits.guestLessons !== null
-      ? t(
-          "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
-          { count: limits.guestLessons },
-        )
-      : t("With the free plan, you get:");
+  const renderLead = (reader: PlusViewerState) => (
+    <p className={ANSWER_CLASS}>
+      {hasNoAccount(reader) && limits.guestLessons !== null
+        ? t(
+            "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
+            { count: limits.guestLessons },
+          )
+        : t("With the free plan, you get:")}
+    </p>
+  );
 
   const items = [
     t("{count, plural, one {# goal} other {# goals}} at a time", {
@@ -69,7 +79,7 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className={ANSWER_CLASS}>{lead}</p>
+      <ForViewer render={renderLead} viewerState={viewerState} />
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
@@ -94,10 +104,11 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
  */
 export async function PlusQuestions({
   className,
-  hasNoAccount,
+  viewerState,
 }: {
   className?: string;
-  hasNoAccount: boolean;
+  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
+  viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
   // The address is a message of its own: each language writes to its own inbox (pt: contato@).
@@ -122,7 +133,7 @@ export async function PlusQuestions({
 
       <div>
         <PublicDisclosure open summary={t("What's in the free plan?")}>
-          <FreePlanAnswer hasNoAccount={hasNoAccount} />
+          <FreePlanAnswer viewerState={viewerState} />
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>

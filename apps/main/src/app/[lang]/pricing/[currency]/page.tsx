@@ -2,6 +2,8 @@ import { PricingPage, getPricingPageMetadata } from "@/components/pricing/pricin
 import { BILLING_CURRENCIES, DEFAULT_CURRENCY } from "@zoonk/utils/currency";
 import { type Metadata } from "next";
 
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(): Promise<Metadata> {
   return getPricingPageMetadata();
 }
@@ -17,6 +19,9 @@ export function generateStaticParams() {
  * The pricing page in a currency, which the proxy serves at `/pricing` to visitors billed in it,
  * so the address never shows the currency and each variant is cached for everyone in it.
  */
-export default function PricingInCurrency({ params }: PageProps<"/[lang]/pricing/[currency]">) {
-  return <PricingPage currency={params.then(({ currency }) => currency)} />;
+export default async function PricingInCurrency({
+  params,
+}: PageProps<"/[lang]/pricing/[currency]">) {
+  const { currency } = await params;
+  return <PricingPage currency={currency} />;
 }

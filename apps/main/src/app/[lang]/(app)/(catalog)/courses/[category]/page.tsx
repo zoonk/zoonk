@@ -5,11 +5,7 @@ import { COURSE_CATEGORIES, isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { CourseListClient } from "../course-list-client";
-import { CourseListSkeleton } from "../course-list-skeleton";
-
-type CategoryParamsProps = Pick<PageProps<"/[lang]/courses/[category]">, "params">;
 
 export async function generateMetadata({
   params,
@@ -27,11 +23,13 @@ export async function generateMetadata({
   };
 }
 
-/**
- * Resolves the category inside the grid boundary so the surrounding catalog
- * frame can prerender without binding its shell to one request URL.
- */
-async function CategoryCourseListContent({ params }: CategoryParamsProps) {
+/** Pre-renders every category from the shared fixed taxonomy. */
+export function generateStaticParams() {
+  return COURSE_CATEGORIES.map((category) => ({ category }));
+}
+
+/** A category's courses, under the catalog's title (named after the category) and chips. */
+export default async function CategoryCourses({ params }: PageProps<"/[lang]/courses/[category]">) {
   const { category } = await params;
 
   if (!isValidCategory(category)) {
@@ -48,19 +46,5 @@ async function CategoryCourseListContent({ params }: CategoryParamsProps) {
       language={locale}
       limit={LIST_COURSES_LIMIT}
     />
-  );
-}
-
-/** Pre-renders every category from the shared fixed taxonomy. */
-export function generateStaticParams() {
-  return COURSE_CATEGORIES.map((category) => ({ category }));
-}
-
-/** A category's courses, under the catalog's title (named after the category) and chips. */
-export default function CategoryCourses(props: PageProps<"/[lang]/courses/[category]">) {
-  return (
-    <Suspense fallback={<CourseListSkeleton />}>
-      <CategoryCourseListContent params={props.params} />
-    </Suspense>
   );
 }
