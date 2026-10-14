@@ -2,13 +2,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { type CSSProperties, type ComponentProps, type ReactNode } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { PROGRESS_CHART_HEIGHT } from "./progress-chart-figure";
 
 type ProgressLineChartProps = Omit<
   ComponentProps<typeof LineChart>,
   "margin" | "responsive" | "style"
 >;
-
-type ProgressChartFigureProps = { children: ReactNode; label: string };
 
 type ProgressChartTooltipProps<DataPoint> = { children: (data: DataPoint) => ReactNode };
 
@@ -16,7 +15,10 @@ type ProgressChartLineProps = { color: string; dataKey: string };
 
 const PROGRESS_CHART_MARGIN = { bottom: 0, left: 0, right: 0, top: 8 };
 
-const PROGRESS_CHART_STYLE = { height: 220, width: "100%" } satisfies CSSProperties;
+const PROGRESS_CHART_STYLE = {
+  height: PROGRESS_CHART_HEIGHT,
+  width: "100%",
+} satisfies CSSProperties;
 
 /** Tick labels are numbers and dates, so they read in the mono face, small and muted. */
 const PROGRESS_CHART_TICK_PROPS = {
@@ -45,20 +47,6 @@ const PERCENT_TICKS = Array.from(
 const DOT = { fill: "currentColor", r: 2.5, strokeWidth: 0 };
 // oxlint-disable-next-line eslint/id-length -- `r` is SVG's name for a circle's radius.
 const ACTIVE_DOT = { r: 4, stroke: "var(--card)", strokeWidth: 2 };
-
-/**
- * Gives each progress chart the same accessible container and flex-safe
- * width behavior. Recharts measures the chart from this parent, so every chart
- * should use the same `min-w-0` guard instead of relying on each page to
- * remember it.
- */
-export function ProgressChartFigure({ children, label }: ProgressChartFigureProps) {
-  return (
-    <figure aria-label={label} className="w-full min-w-0">
-      {children}
-    </figure>
-  );
-}
 
 /**
  * Keeps every progress chart on the same Recharts sizing path. Recharts' ResponsiveContainer warns

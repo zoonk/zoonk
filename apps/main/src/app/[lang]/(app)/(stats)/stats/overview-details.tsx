@@ -28,6 +28,7 @@ import {
   getPatternsSummary,
 } from "../patterns/pattern-summary";
 import { ScoreChart } from "../score/score-chart";
+import { WideScoreChartPlot } from "./wide-score-chart-plot";
 
 const PERCENT = 100;
 
@@ -52,7 +53,11 @@ export async function ScoreTrend({
       </PageSectionHeader>
 
       {history ? (
-        <ScoreChart dataPoints={history.dataPoints} performance={history} />
+        <ScoreChart
+          dataPoints={history.dataPoints}
+          performance={history}
+          plot={WideScoreChartPlot}
+        />
       ) : (
         <p className="text-muted-foreground text-sm">
           {t("Your score shows after your first answers.")}
