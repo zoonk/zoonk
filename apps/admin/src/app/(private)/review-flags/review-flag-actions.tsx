@@ -31,7 +31,9 @@ export function ReviewFlagActions({ flagId }: { flagId: string }) {
       </div>
       {outcome ? (
         <p
-          className={outcome.error ? "text-destructive text-xs" : "text-muted-foreground text-xs"}
+          className={
+            outcome.error ? "text-destructive-text text-xs" : "text-muted-foreground text-xs"
+          }
           role="status"
         >
           {outcome.error ?? outcome.message}

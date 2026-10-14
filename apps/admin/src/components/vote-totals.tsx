@@ -19,7 +19,7 @@ export function VoteTotalsLabel({ totals }: { totals: VoteTotals }) {
       <span
         className={
           totals.down > 0
-            ? "text-destructive inline-flex items-center gap-0.5"
+            ? "text-destructive-text inline-flex items-center gap-0.5"
             : "inline-flex items-center gap-0.5"
         }
         title="Not helpful"

@@ -41,3 +41,23 @@ export async function postAdminApi({
 
   return { data, ok: true as const };
 }
+
+/** Read-only API capabilities keep workflow and prompt dependencies in the API app. */
+export async function getAdminApi({
+  path,
+  sessionToken,
+}: {
+  path: `/v1/${string}`;
+  sessionToken: string;
+}): Promise<unknown> {
+  const response = await fetch(`${API_URL}${path}`, {
+    cache: "no-store",
+    headers: { ...(await getApiDeploymentHeaders()), Authorization: `Bearer ${sessionToken}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not load the admin API preview");
+  }
+
+  return response.json();
+}

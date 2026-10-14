@@ -64,7 +64,7 @@ export function FreshnessCommandForm({
         aria-live="polite"
         className={
           state.error
-            ? "text-destructive max-w-80 text-right text-xs empty:hidden"
+            ? "text-destructive-text max-w-80 text-right text-xs empty:hidden"
             : "text-muted-foreground max-w-80 text-right text-xs empty:hidden"
         }
         key={state.submissionId}

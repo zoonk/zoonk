@@ -26,7 +26,7 @@ export function CourseRow({ course }: { course: ListedCourse }) {
 
       <TableCell>
         {course.isPublished ? (
-          <span className="text-success">✓</span>
+          <span className="text-success-text">✓</span>
         ) : (
           <span className="text-muted-foreground">—</span>
         )}

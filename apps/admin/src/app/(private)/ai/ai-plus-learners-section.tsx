@@ -192,7 +192,7 @@ function LearnerRow({ learner }: { learner: PlusLearner }) {
       <TableCell
         className={cn(
           "text-right font-medium tabular-nums",
-          isAbovePlan(learner) && "text-destructive",
+          isAbovePlan(learner) && "text-destructive-text",
         )}
       >
         {formatUsd(learner.costUsd)}

@@ -204,7 +204,7 @@ export function StatsPeriodPicker({
             </div>
           </div>
           {customRangeError ? (
-            <p className="text-destructive text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
+            <p className="text-destructive-text text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
               {customRangeError}
             </p>
           ) : null}

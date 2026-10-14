@@ -48,7 +48,7 @@ export function RegenerateLessonsForm({
           version passes the checks; learners keep their answers.
         </span>
         <span aria-live="polite" className="text-xs empty:hidden" key={state.submissionId}>
-          {state.error ? <span className="text-destructive">{state.error}</span> : null}
+          {state.error ? <span className="text-destructive-text">{state.error}</span> : null}
           {state.regenerated === null
             ? null
             : `Started rewriting ${formatLessonCount(state.regenerated)}.`}

@@ -47,7 +47,7 @@ export function MissingAudioUploadForm({
       </div>
       <span
         aria-live="polite"
-        className="text-destructive max-w-80 text-right text-xs empty:hidden"
+        className="text-destructive-text max-w-80 text-right text-xs empty:hidden"
         key={state.submissionId}
       >
         {state.error}

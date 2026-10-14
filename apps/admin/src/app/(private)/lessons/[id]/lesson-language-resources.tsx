@@ -8,7 +8,7 @@ function AudioLabel({ audioUrl }: { audioUrl: string | null }) {
   return audioUrl ? (
     <span className="text-muted-foreground">audio</span>
   ) : (
-    <span className="text-destructive">no audio</span>
+    <span className="text-destructive-text">no audio</span>
   );
 }
 
