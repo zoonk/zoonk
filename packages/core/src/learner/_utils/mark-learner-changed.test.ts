@@ -15,7 +15,7 @@ async function plan(userId: string) {
 }
 
 describe(markLearnerChanged, () => {
-  it("increments monotonically once per call, including the planner's future branch", async () => {
+  it("increments monotonically once per call, including plan-input changes", async () => {
     const user = await userFixture();
     await expect(revision(user.id)).resolves.toBe(0n);
 
@@ -26,6 +26,35 @@ describe(markLearnerChanged, () => {
 
     expect(results).toStrictEqual([{ learnerRevision: 1n }, { learnerRevision: 2n }]);
     await expect(revision(user.id)).resolves.toBe(2n);
+  });
+
+  it("invalidates only the learner's owned plans and leaves plan edit versions alone", async () => {
+    const [owner, other] = await Promise.all([userFixture(), userFixture()]);
+    const plans = await Promise.all([plan(owner.id), plan(owner.id), plan(other.id)]);
+
+    await prisma.$transaction((tx) => markLearnerChanged(tx, { userId: owner.id }));
+
+    await expect(
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        where: { id: { in: plans.map((row) => row.id) } },
+      }),
+    ).resolves.toMatchObject(
+      plans
+        .toSorted((a, b) => a.id.localeCompare(b.id))
+        .map(() => ({ inputVersion: 0, version: 1 })),
+    );
+
+    await prisma.$transaction((tx) =>
+      markLearnerChanged(tx, { planInputs: true, userId: owner.id }),
+    );
+
+    const rows = await prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } });
+    const versions = new Map(rows.map((row) => [row.id, row.inputVersion]));
+
+    expect(plans.map((row) => versions.get(row.id))).toStrictEqual([1, 1, 0]);
+    expect(rows.every((row) => row.version === 1)).toBe(true);
+    await expect(revision(other.id)).resolves.toBe(0n);
   });
 
   it("serializes concurrent transactions without losing increments", async () => {
@@ -139,6 +168,10 @@ describe(markPlansChanged, () => {
       3n,
       3n,
     ]);
+
+    await expect(prisma.plan.findMany({ where: { id: { in: planIds } } })).resolves.toMatchObject(
+      planIds.map(() => ({ inputVersion: 3 })),
+    );
   });
 
   it("deduplicates plan owners, includes guests, and returns no revisions", async () => {
@@ -167,6 +200,13 @@ describe(markPlansChanged, () => {
       Promise.all([revision(first.id), revision(guest.id), revision(unaffected.id)]),
     ).resolves.toStrictEqual([1n, 1n, 0n]);
 
+    const rows = await prisma.plan.findMany({
+      where: { id: { in: [one.id, two.id, three.id, other.id] } },
+    });
+
+    const versions = new Map(rows.map((row) => [row.id, row.inputVersion]));
+    expect([one, two, three, other].map((row) => versions.get(row.id))).toStrictEqual([1, 1, 1, 0]);
+
     await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [] }));
     await expect(revision(first.id)).resolves.toBe(1n);
     expect(other.id).not.toBe(one.id);
@@ -187,5 +227,9 @@ describe(markPlansChanged, () => {
       0n,
       0n,
     ]);
+
+    await expect(
+      prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),
+    ).resolves.toMatchObject(plans.map(() => ({ inputVersion: 0 })));
   });
 });

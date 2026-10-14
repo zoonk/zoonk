@@ -15,8 +15,10 @@ export async function markLearnerChanged(
       ORDER BY plan.id FOR UPDATE OF plan
     `;
 
-    /** Planner-owned branch: bump these locked plans' input versions before the user bump. */
-    void plans;
+    await tx.$executeRaw`
+      UPDATE plans SET input_version = input_version + 1
+      WHERE id = ANY(${plans.map((plan) => plan.id)}::uuid[])
+    `;
   }
 
   const [user] = await tx.$queryRaw<{ learnerRevision: bigint }[]>`
@@ -48,8 +50,10 @@ export async function markPlansChanged(
     ORDER BY plan.id FOR UPDATE OF plan
   `;
 
-  /** Planner-owned branch: bump these locked plans' input versions before any user bump. */
-  void plans;
+  await tx.$executeRaw`
+    UPDATE plans SET input_version = input_version + 1
+    WHERE id = ANY(${plans.map((plan) => plan.id)}::uuid[])
+  `;
 
   /** Stable lock order prevents overlapping multi-owner writes from deadlocking each other. */
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();

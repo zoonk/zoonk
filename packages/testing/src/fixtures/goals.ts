@@ -26,7 +26,7 @@ export async function goalFixture(attrs: FixtureAttrs<Goal, "details"> & Pick<Go
 
 /** Creates the plan of a goal with one phase. */
 export async function planFixture(
-  attrs: FixtureAttrs<Plan, "graph" | "phases" | "settings"> & Pick<Plan, "goalId">,
+  attrs: FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> & Pick<Plan, "goalId">,
 ) {
   return prisma.plan.create({
     data: { phases: [{ name: "Test phase", summary: "Test phase summary" }], ...attrs },
@@ -37,7 +37,9 @@ export async function planFixture(
  * Creates a plan item. Without a position it goes after the plan's current items; tests that add
  * several items in parallel should pass positions.
  */
-export async function planItemFixture(attrs: FixtureAttrs<PlanItem> & Pick<PlanItem, "planId">) {
+export async function planItemFixture(
+  attrs: FixtureAttrs<PlanItem, "facts"> & Pick<PlanItem, "planId">,
+) {
   const position =
     attrs.position ?? (await prisma.planItem.count({ where: { planId: attrs.planId } }));
 

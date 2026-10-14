@@ -5,6 +5,7 @@ import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
@@ -62,6 +63,8 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
     if (resumable) {
       return { isNew: false, run: resumable };
     }
+
+    await markLearnerChanged(tx, { planInputs: true, userId });
 
     const run = await startLearningEvent(tx, {
       contentIds: {

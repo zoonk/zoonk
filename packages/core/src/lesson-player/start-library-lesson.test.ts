@@ -75,6 +75,33 @@ describe(startLibraryLesson, () => {
     expect({ runs, usage }).toStrictEqual({ runs: 1, usage: 1 });
   });
 
+  it("invalidates owned plan inputs once for a new run and never again when it resumes", async () => {
+    const { lesson, user } = await setupPlayableLesson();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+
+    await expect(start(lesson.id)).resolves.toMatchObject({ status: "started" });
+
+    const [firstPlan, firstUser] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+    ]);
+
+    expect(firstPlan.inputVersion).toBe(1);
+    expect(firstPlan.version).toBe(plan.version);
+    expect(firstUser.learnerRevision).toBeGreaterThan(0n);
+
+    await expect(start(lesson.id)).resolves.toMatchObject({ status: "started" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      firstPlan,
+    );
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toStrictEqual(
+      firstUser,
+    );
+  });
+
   it("resumes the open run with its answers in order, and Hyperdrive as it stood when it started", async () => {
     const { lesson, steps, user } = await setupPlayableLesson();
     const check = stepOfKind(steps, "check");

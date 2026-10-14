@@ -130,6 +130,12 @@ model Plan {
   settings            Json            @default("{}")
   estimateHours       Float?          @map("estimate_hours")
   version             Int             @default(1)
+  /// Source input writers increment this independently of plan edits and Undo.
+  inputVersion        Int             @default(0) @map("input_version")
+  /// Versioned selected-build facts; a legacy or stale value is rebuilt without render writes.
+  summary             Json?
+  /// Full pre-cut skill dependencies, including aliases, for content-writer invalidation.
+  sourceSkillIds      String[]        @default([]) @map("source_skill_ids") @db.Uuid
   model               String?
   promptVersion       String?         @map("prompt_version")
   runId               String?         @map("run_id")
@@ -169,6 +175,7 @@ model Plan {
   items               PlanItem[]
   changes             PlanChange[]
 
+  @@index([sourceSkillIds], type: Gin)
   @@map("plans")
 }
 
@@ -191,6 +198,10 @@ model PlanItem {
   /// A stand-in's size: how many of its skill's lessons the plan teaches in its place, after cuts
   /// and base choices (the time the item holds). Null for every other item.
   lessons       Int?           @db.SmallInt
+  /// Exact study time from the selected build; null until a legacy item is initialized.
+  minutes       Float?
+  /// Versioned workload, projected membership and consumed teaching interval facts.
+  facts         Json?
   titleSnapshot String         @map("title_snapshot")
   scheduledFor  DateTime?      @map("scheduled_for") @db.Date
   completedAt   DateTime?      @map("completed_at")
