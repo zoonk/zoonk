@@ -17,9 +17,11 @@ const CATCH_UP_DAY_SHARE = 1.25;
 
 /**
  * The lessons earlier days left that the learner hasn't done yet: what the plan's last new-day
- * settling carried first (see `refreshGoalPlan`), still to do. Empty when the learner is on pace.
- * A stand-in for lessons not outlined yet isn't one: no day can hold it, so counting it said "5
- * lessons to catch up" over Carla's 4.
+ * settling carried first (see `refreshGoalPlan`), still to do. Empty when the learner is on pace,
+ * and after a goal came back from a pause: the paused days' lessons come first in a plan made again
+ * from that day (see `computeResumedPlan`), and a break is never falling behind. A stand-in for
+ * lessons not outlined yet isn't one: no day can hold it, so counting it said "5 lessons to catch
+ * up" over Carla's 4.
  */
 export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[]> {
   if (!goalId) {
@@ -28,10 +30,14 @@ export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[
 
   const settled = await prisma.planChange.findFirst({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    where: { kind: "missedDays", plan: { goalId } },
+    where: { kind: { in: ["missedDays", "resumed"] }, plan: { goalId } },
   });
 
-  const { carriedItemIds } = parsePlanChangePayload(settled?.payload);
+  if (settled?.kind !== "missedDays") {
+    return [];
+  }
+
+  const { carriedItemIds } = parsePlanChangePayload(settled.payload);
 
   if (carriedItemIds.length === 0) {
     return [];

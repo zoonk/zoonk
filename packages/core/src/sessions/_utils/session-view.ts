@@ -1,6 +1,8 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
+import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
+import { getStoredBlockWait } from "../block-wait";
 import {
   BRAIN_POWER_BONUS,
   type BlockOutcome,
@@ -13,7 +15,7 @@ import { type CapsuleFormat } from "../capsules";
 import { type WeekDay, getSessionMinutesDone } from "../daily-goal";
 import { type ExtraTime, getExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
-import { type Mission, isFullMeal } from "../missions";
+import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
@@ -37,6 +39,8 @@ export type StudyBlockView = Pick<
   "brainPower" | "canDo" | "id" | "kind" | "lessonId" | "position" | "status"
 > & {
   answered: number;
+  /** Whether this lesson's chapter test can be offered after today's test and study history. */
+  canTestOut: boolean;
   capsules: CapsuleView[];
   chapterId: string | null;
   checkpoint: BlockCheckpoint | null;
@@ -69,6 +73,8 @@ export type StudyBlockView = Pick<
    */
   subject: string | null;
   title: string | null;
+  /** Why this phase challenge must wait for earlier work in this session. */
+  waitReason: "challenge" | "lessons" | null;
   /**
    * A review of the weakest studied topics, none of them due: a day with nothing due and nothing
    * else to study gets it instead of staying empty.
@@ -106,11 +112,15 @@ const NO_SUBJECTS: ReadonlyMap<string, string> = new Map();
 export function toStudyBlockView({
   answeredItemIds,
   block,
+  blocks = [block],
+  blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   subject = null,
 }: {
   answeredItemIds: ReadonlySet<string>;
   block: StudySessionBlock;
+  blocks?: readonly StudySessionBlock[];
+  blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
   /** The goal's subject the block studies, by its short name; null without one. */
@@ -134,6 +144,10 @@ export function toStudyBlockView({
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
     brainPower: block.brainPower,
     canDo: block.canDo,
+    canTestOut:
+      block.kind === "learn" &&
+      payload.chapterId !== null &&
+      !blockedTestOutChapters.has(payload.chapterId),
     capsules: payload.capsules.map((capsule) => ({
       format: capsule.format,
       key: capsule.key,
@@ -162,6 +176,7 @@ export function toStudyBlockView({
     status: block.status,
     subject,
     title: payload.title ?? payload.capsules[0]?.title ?? null,
+    waitReason: getStoredBlockWait({ block, blocks }),
     weakest: payload.weakest,
   };
 }
@@ -233,7 +248,7 @@ export type StudySessionView = {
   pauseSuggested: boolean;
   sessionBar: { completed: number; total: number };
   status: StudySessionRow["status"];
-  week: { days: WeekDay[]; daysHitGoal: number; studyDays: number };
+  week: { days: WeekDay[]; daysHitGoal: number; studyDays: number; time: StudyWeek["time"] };
 };
 
 /**
@@ -257,20 +272,22 @@ export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | n
 }
 
 /**
- * Today's day in the week counts at least the session's progress (see `getSessionMinutesDone`),
- * so its ring fills as far as Today's card while the day is the session's.
+ * The session's day counts at least its progress (see `getSessionMinutesDone`). A session carried
+ * across midnight never fills the new day's ring with the previous day's completed blocks.
  */
 function withSessionDay({
   current,
   days,
   done,
+  localDate,
 }: {
   current: boolean;
   days: readonly WeekDay[];
   done: number;
+  localDate: Date;
 }): WeekDay[] {
   return days.map((day) => {
-    if (!current || !day.isToday || done <= day.minutes) {
+    if (!current || day.date.getTime() !== localDate.getTime() || done <= day.minutes) {
       return day;
     }
 
@@ -287,12 +304,14 @@ function withSessionDay({
 export function toStudySessionView({
   answers,
   blockSubjects = NO_SUBJECTS,
+  blockedTestOutChapters = NO_SKILLS,
   current,
   dailyLimit,
   dayMinutes,
   emptyDay = null,
   examAccess,
   lessonsComing = false,
+  fullMealEarned,
   missions,
   oftenTestedSkillIds,
   session,
@@ -301,6 +320,7 @@ export function toStudySessionView({
   answers: readonly SessionAnswer[];
   /** Each block's subject by its short name, by block id, for the blocks' labels. */
   blockSubjects?: ReadonlyMap<string, string>;
+  blockedTestOutChapters?: ReadonlySet<string>;
   current: boolean;
   dailyLimit: DailyTimeLimitStatus | null;
   /** The minutes the goal's plan gives the session's day. */
@@ -310,20 +330,27 @@ export function toStudySessionView({
   examAccess: ExamPrepAccess;
   /** The day holds time for lessons still being outlined (see `StudySessionView`). */
   lessonsComing?: boolean;
+  fullMealEarned?: boolean;
   missions: Mission[];
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
   session: StudySessionRow;
-  week: WeekDay[];
+  week: StudyWeek;
 }): StudySessionView {
   const answeredItemIds = new Set(
     answers.flatMap((answer) => (answer.itemId ? [answer.itemId] : [])),
   );
 
   const streak = scoreAnswers({ answers }).streak;
-  const fullMealEarned = session.fullMealAt !== null;
   const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
-  const days = withSessionDay({ current, days: week, done: minutesDone });
+
+  const days = withSessionDay({
+    current,
+    days: week.days,
+    done: minutesDone,
+    localDate: session.localDate,
+  });
+
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {
@@ -331,11 +358,13 @@ export function toStudySessionView({
       toStudyBlockView({
         answeredItemIds,
         block,
+        blockedTestOutChapters,
+        blocks: session.blocks,
         oftenTestedSkillIds,
         subject: blockSubjects.get(block.id) ?? null,
       }),
     ),
-    brainPower: blocksPower + (fullMealEarned ? BRAIN_POWER_BONUS.fullMeal : 0),
+    brainPower: blocksPower + (session.fullMealAt === null ? 0 : BRAIN_POWER_BONUS.fullMeal),
     catchUp: null,
     current,
     dailyLimit,
@@ -351,8 +380,8 @@ export function toStudySessionView({
     }),
     freshStart: session.freshStart,
     fullMeal: {
-      bonus: BRAIN_POWER_BONUS.fullMeal,
-      earned: fullMealEarned,
+      bonus: getMissionBonus(missions),
+      earned: fullMealEarned ?? session.fullMealAt !== null,
       ready: isFullMeal(missions),
     },
     goalId: session.goalId,
@@ -370,6 +399,7 @@ export function toStudySessionView({
       days,
       daysHitGoal: days.filter((day) => day.hitGoal).length,
       studyDays: days.filter((day) => day.goalMinutes > 0).length,
+      time: week.time,
     },
   };
 }

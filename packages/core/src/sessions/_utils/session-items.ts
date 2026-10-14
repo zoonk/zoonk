@@ -1,5 +1,5 @@
 import { type Item, type ItemFormat } from "@zoonk/db";
-import { type JsonObject } from "@zoonk/utils/json";
+import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
 import {
   type ChoiceItem,
   getChoiceCorrectAnswer,
@@ -274,7 +274,12 @@ export function describeEarlierAnswer({
  * numbers it was asked with, which the answer shape doesn't carry.
  */
 export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
-  const parsed = studyAnswerInputSchema.shape.answer.safeParse(answer);
+  /** Correction evidence belongs to persistence, while the public answer remains strict. */
+  const input = isJsonObject(answer)
+    ? Object.fromEntries(Object.entries(answer).filter(([key]) => key !== "fixedMistakeIds"))
+    : answer;
+
+  const parsed = studyAnswerInputSchema.shape.answer.safeParse(input);
 
   if (parsed.success) {
     return parsed.data;

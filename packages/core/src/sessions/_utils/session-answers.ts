@@ -1,5 +1,6 @@
 import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
+import { restoreCheckpointAnswers } from "../../checkpoints/_utils/checkpoint-answer-evidence";
 import { classifyAnswers } from "../answer-material";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { type ScoredAnswer } from "../brain-power";
@@ -79,6 +80,10 @@ export function getBlockAnswers({
   answers: readonly SessionAnswer[];
   block: StudySessionBlock;
 }): SessionAnswer[] {
-  const itemIds = new Set(getBlockItemIds(readBlockPayload(block)));
-  return answers.filter((answer) => answer.itemId !== null && itemIds.has(answer.itemId));
+  const payload = readBlockPayload(block);
+  const itemIds = new Set(getBlockItemIds(payload));
+
+  return restoreCheckpointAnswers({ answers, payload }).filter(
+    (answer) => answer.itemId !== null && itemIds.has(answer.itemId),
+  );
 }

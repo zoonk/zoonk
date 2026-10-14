@@ -1,6 +1,7 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { z } from "zod";
+import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
 
@@ -49,6 +50,10 @@ const blockPayloadSchema = z.object({
   /** A chapter whose next lesson isn't written yet: it's generated just in time. */
   chapterId: z.string().nullable().default(null),
   checkpoint: checkpointSchema.nullable().default(null),
+  /** A started checkpoint ended without a verdict because none of its questions remained. */
+  checkpointAbandoned: z.boolean().default(false),
+  /** Question identities survive content deletion while a checkpoint is still being played. */
+  checkpointAnswers: z.array(z.object({ attemptId: z.uuid(), itemId: z.uuid() })).default([]),
   drills: z.array(drillSchema).default([]),
   /** "10 more minutes" after the day's session: its Brain Power is capped. */
   extra: z.boolean().default(false),
@@ -59,6 +64,11 @@ const blockPayloadSchema = z.object({
    */
   fullReview: z.boolean().default(false),
   itemIds: z.array(z.string()).default([]),
+  /** The paid completion's evidence survives retries without rescoring its answers. */
+  milestoneReward: z
+    .object({ bossWon: z.boolean(), brainPower: brainPowerRewardSchema })
+    .nullable()
+    .default(null),
   /**
    * Practice for an exam where a wrong answer cancels a right one (Cebraspe): it's scored net and
    * statements can be left blank, as in the exam. Swipe capsules are scored net on their own.
@@ -78,6 +88,16 @@ const blockPayloadSchema = z.object({
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
   skillIds: z.array(z.string()).default([]),
+  /** Focused time survives switching blocks; only the most recently opened clock runs. */
+  timing: z
+    .object({
+      activeAt: z.iso.datetime().nullable(),
+      elapsedMs: z.number().nonnegative(),
+      /** Focus already credited by a lesson run before its block's separate settlement. */
+      recordedMs: z.number().nonnegative().optional(),
+    })
+    .nullable()
+    .default(null),
   title: z.string().nullable().default(null),
   /**
    * A review of the learner's weakest studied topics, none of them due: a day with nothing due and

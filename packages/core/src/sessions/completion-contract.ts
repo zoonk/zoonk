@@ -3,6 +3,7 @@ import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
+import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
 
 const LOGICAL_DATE_LENGTH = 10;
 
@@ -33,7 +34,7 @@ export type TestOutOffer = {
 };
 
 /**
- * The moment after a block: a check mark, the Brain Power earned (with the bonus for all three
+ * The moment after a block: a check mark, the Brain Power earned (with the bonus for all offered
  * missions when it just paid), one more step on the session bar, when a lesson comes back as a capsule, the
  * missions, and any milestone earned (the end of the session shows at most one as a ceremony).
  */
@@ -68,6 +69,14 @@ export type StudyBlockCompletion = {
 const idSchema = z.uuid();
 const countSchema = z.number().int().min(0);
 
+/** Off-session activity points exclude the separately displayed daily mission reward. */
+export const activityBrainPowerSchema = z
+  .int()
+  .min(0)
+  .meta({
+    description: "Brain Power earned by the activity itself, excluding the daily mission bonus.",
+  });
+
 /** A learner's answer to a session question, in any of the formats sessions grade. */
 export const questionAnswerSchema = z
   .union([
@@ -82,14 +91,94 @@ export const questionAnswerSchema = z
   ])
   .meta({ id: "StudyQuestionAnswer" });
 
+export const missionOpensSchema = z
+  .discriminatedUnion("kind", [
+    z.object({ blockId: idSchema, kind: z.literal("block") }),
+    z.object({ kind: z.literal("mistakesPractice") }),
+    z.object({ kind: z.literal("pattern"), patternId: idSchema }),
+    z.object({ kind: z.literal("pronunciation") }),
+    z.object({ chapterId: idSchema, kind: z.literal("call") }),
+    z.object({ kind: z.literal("buddy") }),
+    z.object({ areaId: idSchema, kind: z.literal("areaPractice") }),
+    z.object({ kind: z.literal("mockChooser") }),
+  ])
+  .meta({
+    description:
+      "Where the learner can complete the mission or first step. Opening this target is an explicit learner action; reading missions never starts generation.",
+    id: "StudyMissionOpens",
+  });
+
+const missionDetailSchema = z
+  .object({
+    areaTitle: z.string().optional(),
+    chapterTitle: z.string().optional(),
+    count: countSchema.optional(),
+    minutes: z.number().min(0).optional(),
+    patternTitle: z.string().optional(),
+    rematch: z.boolean().optional(),
+    title: z
+      .string()
+      .optional()
+      .meta({
+        description:
+          "For a mission done in the day's blocks: the queue title of its next block still to do, read with the mission, so a chapter's mission names the lesson it still asks.",
+      }),
+  })
+  .meta({ id: "StudyMissionDetail" });
+
+export const firstStepKindSchema = z.enum(FIRST_STEP_KINDS);
+
+export const missionWaitReasonSchema = z
+  .enum(["challenge", "lessons"])
+  .meta({
+    description:
+      "Why the block this mission or first step opens can't start yet: a phase challenge waits for the day's lessons before it, or for the challenge before it. Absent once it can start.",
+  });
+
 export const missionSchema = z
   .object({
+    detail: missionDetailSchema.optional(),
     done: countSchema,
-    kind: z.enum(["review", "somethingNew", "fixMistake"]),
+    firstStep: z.boolean().optional(),
+    kind: z.enum(MISSION_KINDS),
+    minutes: z
+      .number()
+      .min(0)
+      .optional()
+      .meta({
+        description:
+          "About how many minutes a mission still to do asks: the planned minutes of its unfinished blocks (a waiting challenge's included), or an estimate for work outside the day's blocks. Absent once done.",
+      }),
+    opens: missionOpensSchema.optional(),
     status: z.enum(["todo", "done", "nothingToday"]),
     total: countSchema,
+    waitReason: missionWaitReasonSchema.optional(),
   })
-  .meta({ id: "StudyMission" });
+  .meta({
+    description:
+      "An achievable mission picked when the day's session is built and stored with that session. Reads update progress against the saved target; unavailable kinds are omitted, and an unfinished mission whose planned anchor was removed is dropped. Completed missions remain. A session still running after midnight keeps its original missions. Current responses use todo or done; nothingToday is retained for older clients. Optional target and detail fields let clients open and describe each kind without changing the legacy counters.",
+    id: "StudyMission",
+  });
+
+export const missionMomentSchema = z
+  .object({
+    completed: z
+      .array(z.enum(MISSION_KINDS))
+      .meta({ description: "The day's missions this activity completed" }),
+    fullMeal: z
+      .object({ bonus: z.number().int(), paid: z.boolean() })
+      .meta({ description: "Whether this activity paid the day's bonus for every mission done" }),
+    missions: z
+      .array(missionSchema)
+      .meta({ description: "The day's missions as they stand after the activity" }),
+  })
+  .meta({
+    description:
+      "What an activity outside the day's blocks (a notebook practice, a pattern drill, a pronunciation round, a call, a question to the buddy) did to the day's missions, for the end of its screen. Null when it completed none.",
+    id: "StudyMissionMoment",
+  });
+
+export type MissionMomentView = z.infer<typeof missionMomentSchema>;
 
 export const milestoneSchema = z
   .object({
@@ -128,7 +217,7 @@ export const studyBlockCompletionSchema = z
   .object({
     blockId: idSchema,
     brainPower: countSchema.meta({
-      description: "Earned by the block, with the bonus for all three missions when it just paid",
+      description: "Earned by the block, with the bonus for all offered missions when it just paid",
     }),
     capsulesOpened: countSchema,
     checkpoint: checkpointResultSchema
@@ -139,7 +228,12 @@ export const studyBlockCompletionSchema = z
       .nullable()
       .meta({ description: "The learner-local day a lesson's capsule opens" }),
     correct: countSchema,
-    fullMeal: z.object({ bonus: z.number().int(), paid: z.boolean() }),
+    fullMeal: z
+      .object({ bonus: z.number().int(), paid: z.boolean() })
+      .meta({
+        description:
+          "Completing every offered mission earns the full 50 Brain Power, whether one, two or three were possible. Completion counts from any supported source, including work outside session blocks. An empty mission list has bonus 0 and never pays. Payment remains once per learner-local day across goals.",
+      }),
     milestones: z.array(milestoneSchema),
     missions: z.array(missionSchema),
     netScore: z

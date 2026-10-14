@@ -133,6 +133,8 @@ type StudyAnswerFeedback = {
   /** A saved mistake this answer fixed (answered right on a later day). */
   mistakeFixed: boolean;
   pauseSuggested: boolean;
+  /** Available reinforcement lessons for this checkpoint's misses; null for other blocks. */
+  reinforcementLessons: number | null;
   /** A wrong answer goes to the mistakes notebook on its own. */
   savedToNotebook: boolean;
   /**

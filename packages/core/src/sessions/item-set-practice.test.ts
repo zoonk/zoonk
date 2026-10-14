@@ -16,6 +16,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadListeningSkillIds } from "../exams/listening/listening-skills";
+import { mistakeListInputSchema } from "../mistakes/contract";
+import { listCurrentUserMistakes } from "../mistakes/list-current-user-mistakes";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
@@ -26,6 +28,7 @@ import {
 import { loadPracticeItems } from "./_utils/load-practice";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
+import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
@@ -160,7 +163,7 @@ describe("question sets in practice", () => {
     });
   });
 
-  it("shows a recording's transcript once its last question is answered, never before", async () => {
+  it("shows a recording's transcript only after its last question, even when an earlier miss enters the notebook", async () => {
     const user = await userFixture();
 
     const { goal, skills } = await sessionGoalFixture({
@@ -192,16 +195,32 @@ describe("question sets in practice", () => {
     const ref = { blockId: block.id, sessionId: session.id };
     await startStudyBlock({ ...ref, input: {} });
 
-    const answer = (itemId: string) =>
+    const answer = ({ itemId, selectedIndex }: { itemId: string; selectedIndex: number }) =>
       answerStudyQuestion({
         ...ref,
-        input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId },
+        input: { answer: { selectedIndex }, durationMs: 4000, itemId },
       });
 
-    const first = await answer(itemIds[0] ?? "");
-    const last = await answer(itemIds[1] ?? "");
-
+    const first = await answer({ itemId: itemIds[0] ?? "", selectedIndex: 1 });
     expect(first.status === "ready" && first.feedback.transcript).toBeNull();
+
+    const notebook = await listCurrentUserMistakes(
+      mistakeListInputSchema.parse({ goalId: goal.id }),
+    );
+
+    expect(notebook.status === "ready" && notebook.mistakes).toHaveLength(1);
+
+    expect(
+      notebook.status === "ready" && notebook.mistakes[0]?.snapshot.set?.listening?.transcript,
+    ).toBeNull();
+
+    const inProgress = await getStudyBlock(ref);
+
+    expect(
+      inProgress.status === "ready" && inProgress.detail.questions[0]?.set?.listening?.transcript,
+    ).toBeNull();
+
+    const last = await answer({ itemId: itemIds[1] ?? "", selectedIndex: 0 });
 
     expect(last.status === "ready" && last.feedback.transcript).toStrictEqual([
       { speaker: "Receptionist", text: "Good morning, Riverside Sports Centre. How can I help?" },
@@ -210,6 +229,89 @@ describe("question sets in practice", () => {
       { speaker: "Tom", text: "Tuesday, no, sorry, Thursday the twelfth." },
     ]);
   });
+
+  // A boss's duel ends once it's decided, won (his shield breaks) or lost (it can't break anymore),
+  // which can leave a recording's last question unasked: the duel is over, so what was said shows
+  // as it would after its last question.
+  it.each([
+    { optionIndex: 0, outcome: "won" },
+    { optionIndex: 1, outcome: "lost" },
+  ])(
+    "shows a recording's transcript once a boss's duel is $outcome before its last question",
+    async ({ optionIndex }) => {
+      const user = await userFixture();
+
+      const { goal, skills } = await sessionGoalFixture({
+        itemsPerSkill: 0,
+        lessons: 1,
+        userId: user.id,
+      });
+
+      const skillId = skills[0]?.id ?? "";
+      const audio = await mediaAssetFixture({ durationMs: 40_000, kind: "audio" });
+      const recording = await listeningSetFixture({ mediaAssetId: audio.id });
+
+      const questions = await Promise.all(
+        [0, 1, 2].map((setPosition) =>
+          itemFixture({ content: choiceItemContent(), setId: recording.id, setPosition, skillId }),
+        ),
+      );
+
+      const itemIds = questions.map((item) => item.id);
+      const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+      const block = await studySessionBlockFixture({
+        kind: "checkpoint",
+        payload: {
+          checkpoint: {
+            kind: "boss",
+            mock: false,
+            passMark: 2,
+            phase: 0,
+            rematch: false,
+            timeLimitMinutes: null,
+          },
+          itemIds,
+          skillIds: [skillId],
+        },
+        sessionId: session.id,
+        startedAt: SESSION_NOW,
+        status: "active",
+      });
+
+      mockSession(user.id);
+      const ref = { blockId: block.id, sessionId: session.id };
+
+      const answer = (itemId: string) =>
+        answerStudyQuestion({
+          ...ref,
+          input: { answer: { selectedIndex: optionIndex }, durationMs: 4000, itemId },
+        });
+
+      const first = await answer(itemIds[0] ?? "");
+      expect(first.status === "ready" && first.feedback.transcript).toBeNull();
+
+      // Two right of three win it; two misses leave too few to.
+      const deciding = await answer(itemIds[1] ?? "");
+
+      expect(deciding.status === "ready" && deciding.feedback.transcript).toContainEqual({
+        speaker: "Tom",
+        text: "Tuesday, no, sorry, Thursday the twelfth.",
+      });
+
+      const decided = await getStudyBlock(ref);
+
+      expect(
+        decided.status === "ready" && decided.detail.questions[2]?.set?.listening?.transcript,
+      ).toContainEqual({ speaker: "Tom", text: "Tuesday, no, sorry, Thursday the twelfth." });
+
+      // It settles as it was decided, on the duel's own pass mark.
+      await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
+        completion: { checkpoint: { passMark: 2, passed: optionIndex === 0, total: 2 } },
+        status: "ready",
+      });
+    },
+  );
 
   it("asks a listening skill only its recordings, never a text question or a text set", async () => {
     const { blueprint, goal, listeningSkills, reading, user } = await listeningGoalFixture();

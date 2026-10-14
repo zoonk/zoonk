@@ -1,65 +1,20 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { scheduleMemoryAfterSession } from "../../memory/after-session";
+import { type BrainPowerReward } from "../../milestones/milestone-reward";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
-import { getCompletionEnergyContext } from "../../stats/completion-energy";
-import { BRAIN_POWER_BONUS } from "../brain-power";
-import { type Mission, isFullMeal } from "../missions";
+import { type Mission } from "../missions";
+import { getDayMissions } from "../missions/get-day-missions";
+import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { trackSessionCompleted } from "./session-events";
-import { addSessionBrainPower, recordSessionEnd } from "./session-ledger";
-import { countMistakesFixedToday, getSessionMissions } from "./session-missions";
-import { applySessionProgress } from "./session-progress";
-import { type SessionState } from "./session-snapshot";
+import { recordSessionEnd } from "./session-ledger";
+import { type SessionState, readFullMealReward } from "./session-snapshot";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 type SessionDay = { session: StudySessionRow; timeZone: string; userId: string };
-
-/**
- * Pays the full meal once per learner-local day, whichever goal's session completes the missions.
- * The check runs under the progress lock, so two sessions finishing at once can't both pay it.
- */
-async function payFullMeal({ session, timeZone, userId }: SessionDay): Promise<boolean> {
-  return prisma.$transaction(async (tx) => {
-    const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
-
-    const paidToday = await tx.studySession.count({
-      where: { fullMealAt: { not: null }, localDate: session.localDate, userId },
-    });
-
-    if (paidToday > 0) {
-      return false;
-    }
-
-    await tx.studySession.update({
-      data: { fullMealAt: lock.completedAt },
-      where: { id: session.id },
-    });
-
-    await applySessionProgress(tx, {
-      completion: false,
-      delta: {
-        brainPower: BRAIN_POWER_BONUS.fullMeal,
-        correctAnswers: 0,
-        energyDelta: 0,
-        incorrectAnswers: 0,
-        seconds: 0,
-      },
-      lock,
-      userId,
-    });
-
-    await addSessionBrainPower(tx, {
-      brainPower: BRAIN_POWER_BONUS.fullMeal,
-      sessionId: session.id,
-      userId,
-    });
-
-    return true;
-  });
-}
 
 /**
  * Keeps where the learner stood as the session ended, so its summary says what that session
@@ -88,8 +43,8 @@ async function completeIfFinished({
     (block) => block.status === "completed" || block.status === "skipped",
   );
 
-  if (!finished || session.status === "completed") {
-    return session.status === "completed";
+  if (!finished) {
+    return false;
   }
 
   const endedAt = new Date();
@@ -97,14 +52,30 @@ async function completeIfFinished({
   const end = await measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId });
 
   const completed = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.studySession.updateMany({
-      data: { endedAt, status: "completed" },
-      where: { id: session.id, status: { not: "completed" } },
+    await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${session.id}::uuid FOR NO KEY UPDATE
+    `;
+
+    // Queue writers take this row before inserting/restoring blocks. A separate read after the
+    // lock sees work committed while completion waited, unlike the session read above.
+    const openBlocks = await tx.studySessionBlock.count({
+      where: { sessionId: session.id, status: { in: ["active", "pending"] } },
     });
 
-    if (count === 0) {
-      return false;
+    if (openBlocks > 0) {
+      return { status: "open" as const };
     }
+
+    const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
+
+    if (current.status === "completed") {
+      return { status: "alreadyCompleted" as const };
+    }
+
+    await tx.studySession.update({
+      data: { endedAt, status: "completed" },
+      where: { id: session.id },
+    });
 
     await keepSessionEnd(tx, { end, sessionId: session.id });
 
@@ -119,23 +90,27 @@ async function completeIfFinished({
       userId,
     });
 
-    return true;
+    return { session: current, status: "completed" as const };
   });
 
-  if (!completed) {
+  if (completed.status === "open") {
+    return false;
+  }
+
+  if (completed.status === "alreadyCompleted") {
     return true;
   }
 
   // "10 more minutes" reopens a finished session; finishing it again isn't a new session.
-  if (!session.endedAt) {
-    trackSessionCompleted(session);
+  if (!completed.session.endedAt) {
+    trackSessionCompleted({ ...session, ...completed.session });
   }
 
   await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
   // Memory and the rebalance read a session once, when it first ended or was first stopped: what
   // came after is in the week the next session's read measures.
-  if (!session.endedAt && !session.stoppedAt) {
+  if (!completed.session.endedAt && !completed.session.stoppedAt) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
     await rebalancePlanAfterSession({ goalId: session.goalId, userId });
   }
@@ -145,6 +120,7 @@ async function completeIfFinished({
 
 type SettledSessionDay = {
   fullMealPaid: boolean;
+  fullMealReward: BrainPowerReward | null;
   missions: Mission[];
   session: StudySessionRow;
   sessionCompleted: boolean;
@@ -155,11 +131,17 @@ type SettledSessionDay = {
  * +50 once a day) and the session completes when nothing is left.
  */
 export async function settleSessionDay({
+  rewardMissions = true,
   sessionId,
+  source,
   timeZone,
   userId,
 }: {
+  /** Ending an unasked challenge closes the session without paying a completion reward. */
+  rewardMissions?: boolean;
   sessionId: string;
+  /** The activity that finished the block, when its screen says what it did to the missions. */
+  source?: MissionCompletionSource;
   timeZone: string;
   userId: string;
 }): Promise<SettledSessionDay> {
@@ -168,19 +150,27 @@ export async function settleSessionDay({
     where: { id: sessionId },
   });
 
-  const [answers, fixedToday] = await Promise.all([
+  const [answers, settled] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
-    countMistakesFixedToday({ localDate: session.localDate, timeZone, userId }),
+    rewardMissions
+      ? settleMissions({ sessionId, source, timeZone, userId })
+      : getDayMissions({ session, timeZone }).then((missions) => ({
+          fullMealPaid: false,
+          fullMealReward: null,
+          missions,
+        })),
   ]);
 
-  const answeredItemIds = new Set(
-    answers.flatMap((answer) => (answer.itemId ? [answer.itemId] : [])),
-  );
-
-  const missions = getSessionMissions({ answeredItemIds, blocks: session.blocks, fixedToday });
+  const { missions, fullMealPaid } = settled;
+  const paidReward = settled.fullMealPaid ? settled.fullMealReward : null;
   const day = { session, timeZone, userId };
-  const fullMealPaid = isFullMeal(missions) && !session.fullMealAt && (await payFullMeal(day));
   const sessionCompleted = await completeIfFinished({ ...day, answers });
 
-  return { fullMealPaid, missions, session, sessionCompleted };
+  return {
+    fullMealPaid,
+    fullMealReward: paidReward ?? readFullMealReward(session.startSnapshot),
+    missions,
+    session,
+    sessionCompleted,
+  };
 }

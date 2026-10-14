@@ -18,7 +18,6 @@ import {
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { loadSessionAnswers } from "./_utils/session-answers";
 import { sumSessionSeconds } from "./_utils/session-ledger";
-import { countMistakesFixedToday, getSessionMissions } from "./_utils/session-missions";
 import {
   type SessionState,
   getMovedSkills,
@@ -32,6 +31,7 @@ import { type StudySessionTimeZoneInput } from "./contract";
 import { type ExtraTime } from "./extra-time";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 import { type Mission } from "./missions";
+import { getDayMissions, hasDayMissionBonus } from "./missions/get-day-missions";
 
 const SECONDS_PER_MINUTE = 60;
 
@@ -70,6 +70,11 @@ type StudySessionSummary = {
   newCards: { description: string; name: string; skillId: string }[];
   buddyAte: { fixes: number; newIdeas: number; reviews: number };
   preparation: Change<number | null>;
+  /**
+   * A goal measured in lessons (not an exam): the share of its plan's lessons studied or known,
+   * as the Plan reads it. Null for an exam, and `before` for a session started before it was kept.
+   */
+  progress: Change<number | null>;
   questions: number;
   sessionId: string;
   skillsMoved: SkillMove[];
@@ -136,23 +141,29 @@ export async function getStudySessionSummary({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
 
-  const [answers, after, fixedToday, mistakesSaved, dailyLimit, seconds] = await Promise.all([
-    loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
-    measureSummaryState({ session, timeZone, userId }),
-    countMistakesFixedToday({ localDate: session.localDate, timeZone, userId }),
-    prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
-    getDailyTimeLimitStatus(),
-    sumSessionSeconds(prisma, { sessionId, userId }),
-  ]);
+  const [answers, after, missions, mistakesSaved, dailyLimit, seconds, fullMealEarned] =
+    await Promise.all([
+      loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
+      measureSummaryState({ session, timeZone, userId }),
+      getDayMissions({
+        session,
+        timeZone,
+        ...(isCurrentSession({ now: new Date(), session, timeZone }) && { through: new Date() }),
+      }),
+      prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
+      getDailyTimeLimitStatus(),
+      sumSessionSeconds(prisma, { sessionId, userId }),
+      hasDayMissionBonus({
+        session,
+        timeZone,
+        ...(isCurrentSession({ now: new Date(), session, timeZone }) && { now: new Date() }),
+      }),
+    ]);
 
   const moves = snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [];
   const newSkillIds = moves.filter((move) => move.from === "new").map((move) => move.skillId);
   const names = await loadSkillNames(moves.map((move) => move.skillId));
   const nameOf = (skillId: string) => names.find((skill) => skill.id === skillId);
-
-  const answeredItemIds = new Set(
-    answers.flatMap((answer) => (answer.itemId ? [answer.itemId] : [])),
-  );
 
   const view = toStudySessionView({
     answers,
@@ -160,9 +171,10 @@ export async function getStudySessionSummary({
     dailyLimit,
     dayMinutes: session.plannedMinutes,
     examAccess: { includesMockExams: true, trialEnded: false },
-    missions: getSessionMissions({ answeredItemIds, blocks: session.blocks, fixedToday }),
+    fullMealEarned,
+    missions,
     session,
-    week: [],
+    week: { days: [], time: { studiedMinutes: 0, targetMinutes: 0 } },
   });
 
   const netScoredItemIds = getNetScoredItemIds(session.blocks);
@@ -209,6 +221,7 @@ export async function getStudySessionSummary({
         skillId,
       })),
       preparation: { after: after.preparation, before: snapshot?.preparation ?? null },
+      progress: { after: after.progress, before: snapshot?.progress ?? null },
       questions: answers.length,
       sessionId,
       skillsMoved: moves

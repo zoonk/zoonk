@@ -1,11 +1,25 @@
 import "server-only";
-import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { fillCheckpointQuestions } from "../checkpoints/_utils/fill-checkpoint-questions";
+import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getCompletionEnergyContext } from "../stats/completion-energy";
+import {
+  getBlockElapsedMs,
+  lockStudyBlockClocks,
+  pauseOtherStudyBlocks,
+} from "./_utils/block-timing";
 import { captureSessionSnapshot } from "./_utils/capture-snapshot";
 import { trackSessionStarted } from "./_utils/session-events";
 import { recordSessionStart } from "./_utils/session-ledger";
-import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
+import { type SessionSnapshot } from "./_utils/session-snapshot";
+import {
+  STUDY_SESSION_INCLUDE,
+  type StudySessionRow,
+  findOwnedStudyBlock,
+} from "./_utils/study-session-access";
+import { readBlockPayload } from "./block-payload";
+import { getStoredBlockWait } from "./block-wait";
 import { type StudyBlockStartInput } from "./contract";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
@@ -22,7 +36,9 @@ export type StartStudyBlockResult =
   | { block: StartedStudyBlock; status: "ready" }
   | { status: "blockFinished" }
   | { status: "dailyLimitReached" }
+  | { reason: "challenge" | "lessons"; status: "earlierFirst" }
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "questionsNeeded" }
   | { status: "unauthorized" };
 
@@ -34,41 +50,34 @@ export type StartStudyBlockResult =
 async function openSession({
   now,
   session,
+  snapshot,
   timeZone,
-  userId,
+  tx,
 }: {
   now: Date;
   session: StudySessionRow;
+  snapshot: SessionSnapshot | null;
   timeZone: string;
-  userId: string;
-}) {
-  if (session.startedAt) {
-    await prisma.studySession.updateMany({
-      data: { status: "active" },
-      where: { id: session.id, status: { not: "active" } },
-    });
+  tx: TransactionClient;
+}): Promise<boolean> {
+  const opened = session.startedAt === null;
+  const saved = session.startSnapshot;
 
-    return;
-  }
+  const startSnapshot = {
+    ...(saved !== null && typeof saved === "object" && !Array.isArray(saved) ? saved : {}),
+    ...snapshot,
+  };
 
-  const snapshot = await captureSessionSnapshot({ goalId: session.goalId, now, timeZone, userId });
-
-  const opened = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.studySession.updateMany({
-      data: { startSnapshot: snapshot, startedAt: now, status: "active" },
-      where: { id: session.id, startedAt: null },
-    });
-
-    if (count === 1) {
-      await recordSessionStart(tx, { now, session, timeZone });
-    }
-
-    return count === 1;
+  await tx.studySession.update({
+    data: { ...(opened && { startSnapshot, startedAt: now }), status: "active" },
+    where: { id: session.id },
   });
 
   if (opened) {
-    trackSessionStarted(session);
+    await recordSessionStart(tx, { now, session, timeZone });
   }
+
+  return opened;
 }
 
 /**
@@ -98,34 +107,118 @@ export async function startStudyBlock({
     return { status: "blockFinished" };
   }
 
-  const limit = await getDailyTimeLimitStatus();
+  const checkpoint = readBlockPayload(block).checkpoint;
 
-  if (block.status === "pending" && limit?.reached) {
-    return { status: "dailyLimitReached" };
+  if (
+    block.kind === "checkpoint" &&
+    checkpoint &&
+    !checkpoint.mock &&
+    checkpoint.kind !== "weekly" &&
+    session.goal &&
+    !(await arePhaseChallengesRequired({ goalKind: session.goal.kind, userId }))
+  ) {
+    return { status: "plusRequired" };
   }
 
-  const now = new Date();
+  const snapshotAt = new Date();
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
 
-  const filled = await fillCheckpointQuestions({
-    afterWriting: input.afterWriting,
-    block,
-    goal: session.goal,
-    now,
-    userId,
+  /** Snapshot reads use the global client; finish them before owning any transition locks. */
+  const [limit, snapshot] = await Promise.all([
+    getDailyTimeLimitStatus(),
+    session.startedAt
+      ? null
+      : captureSessionSnapshot({ goalId: session.goalId, now: snapshotAt, timeZone, userId }),
+  ]);
+
+  const result = await prisma.$transaction(async (tx) => {
+    const { completedAt: now } = await getCompletionEnergyContext({
+      timeZone,
+      transaction: tx,
+      userId,
+    });
+
+    const lockedIds = await lockStudyBlockClocks({ blockId, tx, userId });
+
+    const current = await tx.studySessionBlock.findUnique({ where: { id: blockId } });
+
+    if (!current || current.sessionId !== sessionId) {
+      return { status: "notFound" as const };
+    }
+
+    if (current.status === "completed" || current.status === "skipped") {
+      return { status: "blockFinished" as const };
+    }
+
+    if (current.status === "pending" && limit?.reached) {
+      return { status: "dailyLimitReached" as const };
+    }
+
+    await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${sessionId}::uuid FOR NO KEY UPDATE
+    `;
+
+    const locked = await tx.studySession.findFirst({
+      include: STUDY_SESSION_INCLUDE,
+      where: { id: sessionId, userId },
+    });
+
+    if (!locked) {
+      return { status: "notFound" as const };
+    }
+
+    const wait = getStoredBlockWait({ block: current, blocks: locked.blocks });
+
+    if (wait) {
+      return { reason: wait, status: "earlierFirst" as const };
+    }
+
+    const filled = await fillCheckpointQuestions({
+      afterWriting: input.afterWriting,
+      block: current,
+      goal: locked.goal,
+      now,
+      tx,
+      userId,
+    });
+
+    if (!filled) {
+      return { status: "questionsNeeded" as const };
+    }
+
+    const opened = await openSession({ now, session: locked, snapshot, timeZone, tx });
+
+    await pauseOtherStudyBlocks({ blockId, lockedIds, now, tx });
+    /** Filling a checkpoint may have replaced its payload; preserve the questions it just picked. */
+    const filledBlock = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: current.id } });
+
+    const started = await tx.studySessionBlock.update({
+      data: {
+        payload: {
+          ...readBlockPayload(filledBlock),
+          timing: {
+            ...readBlockPayload(filledBlock).timing,
+            activeAt: now.toISOString(),
+            elapsedMs: getBlockElapsedMs({ block: filledBlock, now }),
+          },
+        },
+        startedAt: current.startedAt ?? now,
+        status: "active",
+      },
+      select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
+      where: { id: current.id },
+    });
+
+    return { block: started, opened, session: locked, status: "ready" as const };
   });
 
-  if (!filled) {
-    return { status: "questionsNeeded" };
+  if (result.status !== "ready") {
+    return result;
   }
 
-  await openSession({ now, session, timeZone, userId });
+  if (result.opened) {
+    trackSessionStarted(result.session);
+  }
 
-  const started = await prisma.studySessionBlock.update({
-    data: { startedAt: block.startedAt ?? now, status: "active" },
-    select: { id: true, kind: true, lessonId: true, startedAt: true, status: true },
-    where: { id: block.id },
-  });
-
-  return { block: started, status: "ready" };
+  return { block: result.block, status: "ready" };
 }

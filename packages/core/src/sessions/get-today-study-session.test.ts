@@ -120,7 +120,6 @@ describe(getTodayStudySession, () => {
     expect(session.missions.map((mission) => [mission.kind, mission.status])).toStrictEqual([
       ["review", "todo"],
       ["somethingNew", "todo"],
-      ["fixMistake", "todo"],
     ]);
 
     expect(session.minutes).toStrictEqual({
@@ -160,14 +159,14 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
 
     const { goal } = await sessionGoalFixture({
-      goal: { createdAt: daysAgo(5) },
+      goal: { createdAt: daysAgo(7) },
       lessons: 8,
       userId: user.id,
     });
 
     await Promise.all([
-      dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]),
-      studySessionFixture({ goalId: goal.id, localDate: daysAgo(5), userId: user.id }),
+      dailyProgressFixtureMany([{ date: daysAgo(7), timeSpentSeconds: 900, userId: user.id }]),
+      studySessionFixture({ goalId: goal.id, localDate: daysAgo(7), userId: user.id }),
     ]);
 
     mockSession(user.id);
@@ -176,6 +175,13 @@ describe(getTodayStudySession, () => {
 
     expect(result.status === "ready" && result.session.freshStart).toBe("welcomeBack");
     expect(result.status === "ready" && result.session.minutes.planned).toBeLessThanOrEqual(20);
+    expect(result.status === "ready" ? result.session.missions.length : 0).toBeGreaterThan(0);
+
+    const again = await getTodayStudySession({ goalId: goal.id });
+
+    expect(again.status === "ready" && again.session.missions).toStrictEqual(
+      result.status === "ready" && result.session.missions,
+    );
   });
 
   it("starts nothing over on a goal's first day, even for a learner back from a break", async () => {

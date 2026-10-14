@@ -230,7 +230,7 @@ describe("mistake drills in today's session", () => {
     ).resolves.toMatchObject({ status: "open" });
   });
 
-  it("names the trap after a right answer in a trap drill", async () => {
+  it("does not claim a trap after a right answer in a trap drill", async () => {
     const { block, item, session } = await drillBlockFixture({ kind: "spotTheTrap" });
 
     const result = await answerStudyQuestion({
@@ -240,7 +240,7 @@ describe("mistake drills in today's session", () => {
     });
 
     expect(result).toMatchObject({
-      feedback: { isCorrect: true, mistakeFixed: true, trap: "Applies the rule backwards" },
+      feedback: { isCorrect: true, mistakeFixed: true, trap: null },
       status: "ready",
     });
   });

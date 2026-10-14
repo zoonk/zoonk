@@ -1,129 +1,28 @@
 import "server-only";
-import { type ItemFormat, prisma } from "@zoonk/db";
+import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
+import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
+import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
 import { loadSkillsToRelearn } from "../learner/_utils/load-skill-claims";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { gradeTypedItemAnswer } from "../learner/_utils/typed-grading";
-import { applyPlacement } from "../learner/placement/_utils/apply-placement";
-import { recordLearnerAnswer } from "../learner/record-learner-answer";
+import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
+import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
 import { applyDrillRules } from "../mistakes/drill-answer";
-import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
-import { bringBackMissedLessons } from "../plans/bring-back-missed-lessons";
 import { isLeftBlank } from "./_utils/net-score";
-import { refreshAfterPlacementAnswer } from "./_utils/refresh-plan";
-import { loadSessionAnswers } from "./_utils/session-answers";
+import { recordStudyAnswer } from "./_utils/record-study-answer";
+import { getBlockAnswers, loadSessionAnswers } from "./_utils/session-answers";
 import {
   type GradedSessionAnswer,
   type SessionItem,
   gradeSessionAnswer,
   parseSessionItem,
+  readRecordedAnswer,
 } from "./_utils/session-items";
 import { loadAnsweredTranscript } from "./_utils/set-transcript";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
-import { type BlockDrill, getBlockItemIds, readBlockPayload } from "./block-payload";
+import { getBlockItemIds, readBlockPayload } from "./block-payload";
 import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
 import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
-
-type StudyAnswerRecord = {
-  /** A net-scored statement left blank: no notebook entry, since it isn't a mistake. */
-  blank: boolean;
-  drill: BlockDrill | undefined;
-  drilled: ReturnType<typeof applyDrillRules>;
-  /** The question's format: how much a right placement answer tells (see `meetsKnownBar`). */
-  format: ItemFormat;
-  graded: GradedSessionAnswer;
-  input: StudyAnswerInput;
-  item: SessionItem;
-  /** A placement question of the goal's first week, rather than a learning question. */
-  placement: boolean;
-  /**
-   * A miss on a topic the learner was taken to know and practice hadn't confirmed: its lessons
-   * come back (see `SkillClaim`).
-   */
-  relearn: boolean;
-  session: StudySessionRow;
-  sessionId: string;
-  userId: string;
-};
-
-/**
- * Records the answer: as learning (memory, the notebook, a drilled mistake's fix), or as a
- * diagnostic placement answer, never a notebook entry, after which whatever placement is now sure
- * of skips what the plan no longer needs. A learning answer that misses a topic the plan skipped
- * as known puts its lessons back.
- */
-async function recordStudyAnswer({
-  blank,
-  drill,
-  drilled,
-  format,
-  graded,
-  input,
-  item,
-  placement,
-  relearn,
-  session,
-  sessionId,
-  userId,
-}: StudyAnswerRecord) {
-  const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
-
-  const recorded = await recordLearnerAnswer({
-    answer: graded.recorded,
-    graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
-    isPlacement: placement,
-    itemId: item.id,
-    language: item.language,
-    mistake: blank
-      ? null
-      : {
-          questionText: graded.snapshot.question,
-          snapshot: graded.snapshot,
-          timeLimitMs: drilled.timeLimitMs,
-        },
-    practicedMistakeId: drill?.mistakeId ?? null,
-    purpose: placement ? "diagnostic" : "learning",
-    skillId: item.skillId,
-    studySessionId: sessionId,
-    timeZone,
-    userId,
-  });
-
-  scheduleMistakeCause(recorded.causeRequest);
-
-  if (placement && session.goalId) {
-    const { changeId } = await applyPlacement({
-      answer: item.skillId
-        ? { format, outcome: drilled.isCorrect ? "correct" : "wrong", skillId: item.skillId }
-        : null,
-      goalId: session.goalId,
-      now: new Date(),
-      timeZone,
-      userId,
-    });
-
-    // A skip re-plans as it's announced, and a miss on a topic taken to know brings its lessons back.
-    if (!changeId && !relearn && item.skillId) {
-      refreshAfterPlacementAnswer({
-        answeredAt: recorded.attempt.answeredAt,
-        goalId: session.goalId,
-        skillId: item.skillId,
-        userId,
-      });
-    }
-  }
-
-  if (relearn && session.goalId && item.skillId) {
-    await bringBackMissedLessons({
-      goalId: session.goalId,
-      now: new Date(),
-      skillIds: [item.skillId],
-      timeZone,
-    });
-  }
-
-  return recorded;
-}
 
 /**
  * Whether an answer misses a topic the learner was taken to know without studying it (see
@@ -150,6 +49,41 @@ async function isRelearnMiss({
   });
 
   return taken.has(item.skillId);
+}
+
+/** Replays use the stored answer and avoid grading a changed typed submission with a model. */
+function getStoredCheckpointAnswer({
+  block,
+  previous,
+}: {
+  block: StudySessionBlock;
+  previous: Attempt | null;
+}) {
+  if (block.kind !== "checkpoint" || !previous) {
+    return null;
+  }
+
+  return readRecordedAnswer(previous.answer);
+}
+
+/** A completed checkpoint still acknowledges a retry of an answer it already stored. */
+function canAnswerBlock(block: StudySessionBlock): boolean {
+  return block.status === "active" || (block.kind === "checkpoint" && block.status === "completed");
+}
+
+async function loadAnswerReinforcement({
+  block,
+  userId,
+}: {
+  block: StudySessionBlock;
+  userId: string;
+}): Promise<number | null> {
+  if (block.kind !== "checkpoint") {
+    return null;
+  }
+
+  const lessons = await loadCheckpointReinforcement({ block, userId });
+  return lessons.length;
 }
 
 /**
@@ -212,7 +146,7 @@ export async function answerStudyQuestion({
   const { block, session, userId } = owned;
   const payload = readBlockPayload(block);
 
-  if (block.status !== "active") {
+  if (!canAnswerBlock(block)) {
     return { status: "blockNotActive" };
   }
 
@@ -222,8 +156,14 @@ export async function answerStudyQuestion({
   }
 
   const [row, previous] = await Promise.all([
-    prisma.item.findUnique({ where: { id: input.itemId } }),
-    prisma.attempt.count({ where: { itemId: input.itemId, studySessionId: sessionId, userId } }),
+    prisma.item.findUnique({
+      include: { ...ITEM_IMAGE_INCLUDE, ...ITEM_SET_INCLUDE },
+      where: { id: input.itemId },
+    }),
+    prisma.attempt.findFirst({
+      orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
+      where: { itemId: input.itemId, studySessionId: sessionId, userId },
+    }),
   ]);
 
   const item = row ? parseSessionItem(row) : null;
@@ -232,27 +172,32 @@ export async function answerStudyQuestion({
     return { status: "invalidItem" };
   }
 
-  if (previous > 0) {
+  if (previous && block.kind !== "checkpoint") {
     return { status: "alreadyAnswered" };
   }
 
-  const graded = await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, userId });
+  const storedAnswer = getStoredCheckpointAnswer({ block, previous });
+
+  const graded = storedAnswer
+    ? gradeSessionAnswer({ answer: storedAnswer, blockId: block.id, item })
+    : await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, userId });
 
   const drill = payload.drills.find((candidate) => candidate.itemIds.includes(item.id));
 
   const drilled = applyDrillRules({
+    dontKnow: "dontKnow" in input.answer,
     drill: drill ?? null,
     durationMs: input.durationMs,
     isCorrect: graded.isCorrect,
-    item,
     misconception: graded.snapshot.misconception ?? null,
   });
 
   const blank = isLeftBlank({ answer: input.answer, itemId: item.id, payload });
   const placement = payload.placementItemIds.includes(item.id);
 
-  const recorded = await recordStudyAnswer({
+  const result = await recordStudyAnswer({
     blank,
+    block,
     drill,
     drilled,
     format: row.format,
@@ -266,29 +211,39 @@ export async function answerStudyQuestion({
     userId,
   });
 
-  const [answers, transcript] = await Promise.all([
-    loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
+  if (result.status !== "ready") {
+    return result;
+  }
+
+  const { recorded } = result;
+  const answers = await loadSessionAnswers({ blocks: session.blocks, sessionId, userId });
+
+  const isCheckpoint = block.kind === "checkpoint";
+
+  const [transcript, reinforcementLessons] = await Promise.all([
     loadAnsweredTranscript({
       blockItemIds: getBlockItemIds(payload),
+      duelOver: isBlockDuelDecided({ answers: getBlockAnswers({ answers, block }), payload }),
       itemId: item.id,
       sessionId,
       setId: row.setId,
       userId,
     }),
+    loadAnswerReinforcement({ block, userId }),
   ]);
 
   const { streak } = scoreAnswers({ answers });
-  const isCheckpoint = block.kind === "checkpoint";
 
   return {
     feedback: {
-      blank,
+      blank: isLeftBlank({ answer: recorded.attempt.answer, itemId: item.id, payload }),
       correctAnswer: isCheckpoint ? null : graded.correctAnswer,
       explanation: isCheckpoint ? null : graded.explanation,
       hyperdrive: { level: getHyperdriveLevel(streak), streak },
-      isCorrect: drilled.isCorrect,
+      isCorrect: recorded.attempt.isCorrect,
       mistakeFixed: drill !== undefined && recorded.fixedMistakeIds.includes(drill.mistakeId),
       pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
+      reinforcementLessons,
       savedToNotebook: recorded.mistake !== null,
       transcript,
       trap: isCheckpoint ? null : drilled.trap,

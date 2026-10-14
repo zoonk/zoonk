@@ -8,6 +8,7 @@ import {
 import {
   type CheckpointOutcome,
   getCheckpointOutcome,
+  isBlockDuelDecided,
 } from "../../checkpoints/_utils/checkpoint-outcome";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { recordLearningEvent } from "../../stats/record-learning-event";
@@ -20,7 +21,9 @@ import {
   scoreAnswers,
 } from "../brain-power";
 import { getBlockMinutes } from "../daily-goal";
+import { countAskableQuestions } from "./askable-questions";
 import { getBlockEvents } from "./block-events";
+import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
 import { completePlanItem } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
@@ -46,6 +49,7 @@ type QuestionBlockSettlement = {
 export type SettleQuestionBlockResult =
   | { settlement: QuestionBlockSettlement; status: "ready" }
   | { status: "blockFinished" }
+  | { status: "emptyCheckpoint" }
   | { status: "noAnswers" }
   | { status: "unanswered" };
 
@@ -104,7 +108,7 @@ async function prepareBlock({
   block,
   session,
   userId,
-}: SettleInput): Promise<PreparedBlock | "noAnswers" | "unanswered"> {
+}: SettleInput): Promise<PreparedBlock | "emptyCheckpoint" | "noAnswers" | "unanswered"> {
   const payload = readBlockPayload(block);
 
   const answers = await loadSessionAnswers({
@@ -117,10 +121,36 @@ async function prepareBlock({
   const firstAnsweredAt = own[0]?.answeredAt;
 
   if (!firstAnsweredAt) {
+    const itemIds = getBlockItemIds(payload);
+
+    if (
+      block.status === "active" &&
+      payload.checkpoint &&
+      itemIds.length > 0 &&
+      (await countAskableQuestions({ itemIds })) === 0
+    ) {
+      return "emptyCheckpoint";
+    }
+
     return "noAnswers";
   }
 
-  if (payload.checkpoint && own.length < getBlockItemIds(payload).length) {
+  const answeredIds = new Set(own.flatMap((answer) => (answer.itemId ? [answer.itemId] : [])));
+  const answered = answeredIds.size;
+  const itemIds = getBlockItemIds(payload);
+
+  // A checkpoint short of answers is judged on the questions it can still ask.
+  const questions =
+    payload.checkpoint && answered < itemIds.length
+      ? await countAskableQuestions({ answeredItemIds: answeredIds, itemIds })
+      : itemIds.length;
+
+  // A checkpoint is answered in full, unless a boss's duel was decided before its last question.
+  if (
+    payload.checkpoint &&
+    answered < questions &&
+    !isBlockDuelDecided({ answers: own, payload, questions })
+  ) {
     return "unanswered";
   }
 
@@ -131,7 +161,7 @@ async function prepareBlock({
   const current = await loadCurrentStates({ answers: own, userId });
 
   return {
-    checkpoint: getCheckpointOutcome({ answers: own, payload }),
+    checkpoint: getCheckpointOutcome({ answers: own, payload, questions }),
     correct: own.filter((answer) => answer.isCorrect).length,
     current,
     own,
@@ -204,7 +234,7 @@ async function getBlockBrainPower(
 export async function settleQuestionBlock(input: SettleInput): Promise<SettleQuestionBlockResult> {
   const prepared = await prepareBlock(input);
 
-  if (prepared === "noAnswers" || prepared === "unanswered") {
+  if (prepared === "emptyCheckpoint" || prepared === "noAnswers" || prepared === "unanswered") {
     return { status: prepared };
   }
 
@@ -225,20 +255,23 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
 
     const reward = await getBlockBrainPower(tx, { prepared, session, userId });
 
-    await tx.studySessionBlock.update({
-      data: { brainPower: reward.brainPower },
-      where: { id: block.id },
-    });
+    const currentBlock = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    const currentPayload = readBlockPayload(currentBlock);
 
     const seconds = Math.round(
       getBlockMinutes({
         completedAt: lock.completedAt,
-        estimatedMinutes: block.estimatedMinutes ?? 0,
-        startedAt: block.startedAt,
+        estimatedMinutes: currentBlock.estimatedMinutes ?? 0,
+        startedAt: currentPayload.timing
+          ? new Date(
+              lock.completedAt.getTime() -
+                getBlockElapsedMs({ block: currentBlock, now: lock.completedAt }),
+            )
+          : currentBlock.startedAt,
       }) * SECONDS_PER_MINUTE,
     );
 
-    const { before } = await applySessionProgress(tx, {
+    const brainPowerReward = await applySessionProgress(tx, {
       completion: true,
       delta: {
         brainPower: reward.brainPower,
@@ -249,6 +282,21 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
       },
       lock,
       userId,
+    });
+
+    await tx.studySessionBlock.update({
+      data: {
+        brainPower: reward.brainPower,
+        payload: {
+          ...currentPayload,
+          milestoneReward: {
+            bossWon: checkpoint !== null && checkpoint.kind !== "weekly" && checkpoint.passed,
+            brainPower: brainPowerReward,
+          },
+          timing: pausedBlockTiming({ block: currentBlock, now: lock.completedAt }),
+        },
+      },
+      where: { id: block.id },
     });
 
     const events = getBlockEvents({
@@ -284,7 +332,7 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
       settlement: {
         answers: own,
         brainPower: reward.brainPower,
-        brainPowerBefore: before,
+        brainPowerBefore: brainPowerReward.before,
         capsulesOpened: reward.capsulesOpened,
         checkpoint,
         correct,

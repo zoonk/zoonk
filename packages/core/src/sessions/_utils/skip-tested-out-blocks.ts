@@ -55,13 +55,26 @@ export async function skipTestedOutBlocks({
     return;
   }
 
-  await prisma.studySessionBlock.updateMany({
-    data: { status: "skipped" },
-    where: {
-      kind: "learn",
-      lessonId: { in: lessonIds },
-      session: { goalId, status: { in: OPEN_SESSION_STATUSES } },
-      status: { in: notStarted ? ["active", "pending"] : ["active"] },
-    },
+  await prisma.$transaction(async (tx) => {
+    /** Bulk transitions use the queue's block order rather than the UPDATE scan order. */
+    const blocks = await tx.$queryRaw<{ id: string }[]>`
+      SELECT block.id FROM study_session_blocks AS block
+      JOIN study_sessions AS session ON session.id = block.session_id
+      WHERE block.kind = 'learn' AND block.lesson_id = ANY(${lessonIds}::uuid[])
+        AND session.goal_id = ${goalId}::uuid AND session.status IN ('planned', 'active')
+        AND (block.status = 'active' OR (${notStarted} AND block.status = 'pending'))
+      ORDER BY block.id FOR UPDATE OF block
+    `;
+
+    await tx.studySessionBlock.updateMany({
+      data: { status: "skipped" },
+      where: {
+        id: { in: blocks.map((block) => block.id) },
+        kind: "learn",
+        lessonId: { in: lessonIds },
+        session: { goalId, status: { in: OPEN_SESSION_STATUSES } },
+        status: { in: notStarted ? ["active", "pending"] : ["active"] },
+      },
+    });
   });
 }

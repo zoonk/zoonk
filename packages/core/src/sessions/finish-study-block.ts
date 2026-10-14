@@ -2,7 +2,8 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { completeBlockMoment } from "./_utils/block-completion";
+import { completeBlockMilestones, completeBlockMoment } from "./_utils/block-completion";
+import { finishEmptyCheckpoint } from "./_utils/finish-empty-checkpoint";
 import {
   findLessonFinish,
   getLessonComesBack,
@@ -13,11 +14,13 @@ import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
+import { settleSessionDay } from "./_utils/settle-session-day";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
 import { type CheckpointResultView, type StudyBlockCompletion } from "./completion-contract";
 import { type StudySessionTimeZoneInput } from "./contract";
+import { type MissionCompletionSource } from "./missions/settle-missions";
 
 export type FinishStudyBlockResult =
   | { completion: StudyBlockCompletion; status: "ready" }
@@ -34,6 +37,26 @@ type OwnedBlock = {
   timeZone: string;
   userId: string;
 };
+
+/**
+ * A mock's block is finished by its mock, so what finishing it does to the day's missions (the
+ * mock's mission, the bonus when it was the last) is the mock's to say on its result, on every read
+ * of it that day (see `loadMockMissionMoment`). Other blocks say it in their own completion.
+ */
+async function findMissionSource(
+  block: StudySessionBlock,
+): Promise<MissionCompletionSource | undefined> {
+  if (!readBlockPayload(block).checkpoint?.mock) {
+    return undefined;
+  }
+
+  const mock = await prisma.mockExam.findUnique({
+    select: { id: true },
+    where: { blockId: block.id },
+  });
+
+  return mock ? { id: mock.id, kind: "mockExam" } : undefined;
+}
 
 /** Now the duel is over: each question's right answer and why, the traps included. */
 async function toCheckpointResult({
@@ -86,8 +109,14 @@ async function toCheckpointResult({
   return { ...checkpoint, answers };
 }
 
-async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockResult> {
+async function finishQuestionBlock(
+  owned: OwnedBlock & { source?: MissionCompletionSource },
+): Promise<FinishStudyBlockResult> {
   const settled = await settleQuestionBlock(owned);
+
+  if (settled.status === "emptyCheckpoint") {
+    return finishEmptyCheckpoint(owned);
+  }
 
   if (settled.status !== "ready") {
     return settled;
@@ -138,6 +167,7 @@ async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockR
       total: settlement.total,
     },
     sessionId: owned.session.id,
+    source: owned.source,
     timeZone: owned.timeZone,
     userId: owned.userId,
   });
@@ -232,9 +262,30 @@ export async function finishStudyBlock({
     return finishLessonBlock(context);
   }
 
-  if (owned.block.status === "completed" || owned.block.status === "skipped") {
+  const source = await findMissionSource(owned.block);
+
+  if (owned.block.status === "completed") {
+    /** Rewards commit before milestone writes; a retry resumes both remaining stages. */
+    const settled = await settleSessionDay({ sessionId, source, timeZone, userId: owned.userId });
+    const payload = readBlockPayload(owned.block);
+
+    await completeBlockMilestones({
+      fullMealReward: settled.fullMealReward,
+      payload,
+      reward: payload.milestoneReward,
+      userId: owned.userId,
+    });
+
     return { status: "blockFinished" };
   }
 
-  return finishQuestionBlock(context);
+  if (owned.block.status === "skipped") {
+    if (readBlockPayload(owned.block).checkpointAbandoned) {
+      return finishEmptyCheckpoint(context);
+    }
+
+    return { status: "blockFinished" };
+  }
+
+  return finishQuestionBlock({ ...context, source });
 }

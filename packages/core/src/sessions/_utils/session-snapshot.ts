@@ -1,5 +1,7 @@
 import { MasteryState } from "@zoonk/db";
 import { z } from "zod";
+import { brainPowerRewardSchema } from "../../milestones/milestone-reward";
+import { MISSION_KINDS } from "../missions/catalog";
 
 const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
   learning: 1,
@@ -10,11 +12,29 @@ const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
 
 const rewardSchema = z.enum(["solid", "mastered"]);
 
-/** Where the learner stands at one moment: Brain Power, Energy, preparation and skill states. */
+const legacyMissionCompletionsSchema = z.object({
+  legacyMissionCompletions: z.array(
+    z.object({
+      completedBy: z.object({ id: z.string(), kind: z.string() }),
+      kind: z.enum(MISSION_KINDS),
+    }),
+  ),
+});
+
+/** Attribution for pre-persistence sessions without changing their original mission selection. */
+export function readLegacyMissionCompletions(value: unknown) {
+  return legacyMissionCompletionsSchema.safeParse(value).data?.legacyMissionCompletions ?? [];
+}
+
+/**
+ * Where the learner stands at one moment: Brain Power, Energy, preparation, a goal measured in
+ * lessons' progress (null for an exam, and in states saved before it was kept) and skill states.
+ */
 const sessionStateSchema = z.object({
   brainPower: z.number(),
   energy: z.number(),
   preparation: z.number().nullable(),
+  progress: z.number().nullable().default(null),
   skillStates: z.record(z.string(), z.enum(MasteryState)),
 });
 
@@ -27,8 +47,19 @@ export type SessionState = z.infer<typeof sessionStateSchema>;
  * that wobbles and recovers is never paid twice.
  */
 const sessionSnapshotSchema = sessionStateSchema.extend({
+  fullMealReward: brainPowerRewardSchema.optional(),
+  fullMealSource: z.object({ id: z.string(), kind: z.string() }).optional(),
+  legacyMissionCompletions:
+    legacyMissionCompletionsSchema.shape.legacyMissionCompletions.optional(),
   masteryRewards: z.record(z.string(), rewardSchema).default({}),
 });
+
+/** A full meal's crossing remains readable even when an older session has no start state. */
+const fullMealSnapshotSchema = z.object({ fullMealReward: brainPowerRewardSchema });
+
+export function readFullMealReward(value: unknown) {
+  return fullMealSnapshotSchema.safeParse(value).data?.fullMealReward ?? null;
+}
 
 export type SessionSnapshot = z.infer<typeof sessionSnapshotSchema>;
 
