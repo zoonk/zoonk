@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { getTestEnvironment } from "../../db/src/test-environment";
 
 const CHROMIUM_PROJECT = {
@@ -11,6 +12,8 @@ export function createBaseConfig(options: {
   testDir: string;
   webServerEnv?: Record<string, string>;
 }) {
+  assertBrowserLaunchAllowed();
+
   return defineConfig({
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,

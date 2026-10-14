@@ -85,4 +85,4 @@ jobs:
         run: pnpm --filter @zoonk/db db:setup:e2e
 
       - name: Run E2E tests
-        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm e2e:main --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=2

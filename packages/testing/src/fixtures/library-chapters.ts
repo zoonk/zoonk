@@ -1,7 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { type Chapter, type ChapterSkill, type CourseChapter, prisma } from "@zoonk/db";
+import {
+  type Chapter,
+  type ChapterSkill,
+  type CourseChapter,
+  type CourseLevel,
+  prisma,
+} from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
+import { chapterLessonFixture, lessonSkillFixture, libraryLessonFixture } from "./library-lessons";
+import { skillFixture } from "./skills";
 
 /** Creates a shared Library chapter with a unique identity key and slug. */
 export async function libraryChapterFixture(attrs?: FixtureAttrs<Chapter, "tools">) {
@@ -43,4 +51,35 @@ export async function courseChapterFixture(
 /** Links a skill to a Library chapter that teaches it. */
 export async function chapterSkillFixture(attrs: Pick<ChapterSkill, "chapterId" | "skillId">) {
   return prisma.chapterSkill.create({ data: attrs });
+}
+
+/**
+ * A chapter in each of a course's level bands that a test doesn't fill itself, each with a lesson
+ * teaching a skill of its own, so the course's outline covers every level it spans and a
+ * whole-course start plans from it.
+ */
+export async function courseBandsFixture({
+  courseId,
+  levels,
+}: {
+  courseId: string;
+  levels: readonly CourseLevel[];
+}) {
+  return Promise.all(
+    levels.map(async (level) => {
+      const [chapter, skill, lesson] = await Promise.all([
+        libraryChapterFixture({ level, title: `Test ${level} chapter` }),
+        skillFixture({ name: `Test ${level} skill` }),
+        libraryLessonFixture({ estimatedMinutes: 3, level, title: `Test ${level} lesson` }),
+      ]);
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: chapter.id, courseId, level, position: 0 }),
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+      ]);
+
+      return { chapter, lesson, skill };
+    }),
+  );
 }

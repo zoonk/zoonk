@@ -6,6 +6,7 @@
     "./accessibility/motion": "./src/accessibility/motion.ts",
     "./accessibility/scan": "./src/accessibility/scan.ts",
     "./accessibility/target-size": "./src/accessibility/target-size.ts",
+    "./browser-preflight": "./src/browser-preflight.ts",
     "./fixtures/accounts": "./src/fixtures/accounts.ts",
     "./fixtures/activity-checks": "./src/fixtures/activity-contents/activity-checks.ts",
     "./fixtures/activity-contents": "./src/fixtures/activity-contents.ts",

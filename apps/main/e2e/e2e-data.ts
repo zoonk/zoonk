@@ -50,5 +50,15 @@ async function createCatalogPaginationCourses() {
  */
 export async function prepareE2EData(): Promise<void> {
   await seedV2();
-  await Promise.all([getAiOrganization(), createCatalogPaginationCourses(), resetGuestSpend()]);
+
+  await Promise.all([
+    getAiOrganization(),
+    createCatalogPaginationCourses(),
+    resetGuestSpend(),
+    prisma.liveCallSetting.upsert({
+      create: { admission: "all", freeDailyBudgetMicros: 100_000_000, id: "live" },
+      update: { admission: "all", freeDailyBudgetMicros: 100_000_000 },
+      where: { id: "live" },
+    }),
+  ]);
 }

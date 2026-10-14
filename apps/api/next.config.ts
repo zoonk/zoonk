@@ -8,7 +8,11 @@ import { withWorkflow } from "workflow/next";
 const isE2E = process.env.E2E_TESTING === "true";
 
 const e2eAliases: Record<string, string> = isE2E
-  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
+  ? {
+      "@zoonk/ai/tasks/v2/language/live-call-session":
+        "../../packages/e2e/src/live-call-provider.ts",
+      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
+    }
   : {};
 
 const nextConfig: NextConfig = {

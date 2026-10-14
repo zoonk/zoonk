@@ -33,6 +33,14 @@ const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).fil
   /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
 );
 
+/** These files change a global policy or use a different clock for live-call health. */
+const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-call-lifecycle.test.ts";
+const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
+const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
+const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_CALL_TESTS.includes(file));
+const MISSION_TEST_GROUP = 1;
+const LIVE_CALL_POLICY_TEST_GROUP = 2;
+
 export default defineConfig({
   plugins: [markdownAsText],
   resolve: {
@@ -50,12 +58,28 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          exclude: [...configDefaults.exclude, ...OWN_MOCKS],
+          exclude: [...configDefaults.exclude, ...OWN_MOCKS, ...ORDERED_CALL_TESTS],
           isolate: false,
           name: "shared",
         },
       },
-      { extends: true, test: { include: OWN_MOCKS, name: "own-mocks" } },
+      { extends: true, test: { include: ISOLATED_MOCK_TESTS, name: "own-mocks" } },
+      {
+        extends: true,
+        test: {
+          include: [MISSION_COMPLETION_TEST],
+          name: "mission-completion",
+          sequence: { groupOrder: MISSION_TEST_GROUP },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          include: [LIVE_CALL_POLICY_TEST],
+          name: "live-call-policy",
+          sequence: { groupOrder: LIVE_CALL_POLICY_TEST_GROUP },
+        },
+      },
     ],
     setupFiles: ["./setup-tests.ts"],
     // Tests read and write the real database; on CI two suites share a 4-vCPU runner, where a test

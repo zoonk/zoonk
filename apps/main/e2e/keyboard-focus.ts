@@ -8,15 +8,52 @@ async function isFocused(target: Locator) {
   return target.evaluate((element) => element === document.activeElement).catch(() => false);
 }
 
-/** Keyboard focus shows as an outline or a ring (a box shadow), never as nothing. */
+/**
+ * Keyboard focus can draw its outline or ring on the control or its highlight pseudo-element. Read
+ * until it settles, since a ring can grow in with a short transition.
+ */
 async function expectVisibleFocus(target: Locator) {
-  const visible = await target.evaluate((element) => {
-    const style = getComputedStyle(element);
-    const outline = style.outlineStyle !== "none" && style.outlineWidth !== "0px";
-    return outline || style.boxShadow !== "none";
-  });
+  await expect
+    .poll(
+      () =>
+        target.evaluate((element) => {
+          if (element !== document.activeElement) {
+            return false;
+          }
 
-  expect(visible, "the focused control shows where focus is").toBe(true);
+          /**
+           * The shared goal textarea draws its ring on its GoalField form, whose line is a 1px
+           * shadow it always has: only a wider ring around it shows focus.
+           */
+          const goalField =
+            element instanceof HTMLTextAreaElement
+              ? element.closest('[data-slot="goal-field"]')
+              : null;
+
+          if (goalField) {
+            const { boxShadow } = getComputedStyle(goalField);
+            const spreads = [...boxShadow.matchAll(/(?<spread>\d+(?:\.\d+)?)px(?=,|$)/gu)];
+            return spreads.some((match) => Number(match.groups?.spread) >= 2);
+          }
+
+          return [null, "::before", "::after"].some((pseudo) => {
+            const style = getComputedStyle(element, pseudo);
+
+            if (
+              style.display === "none" ||
+              style.visibility === "hidden" ||
+              style.opacity === "0"
+            ) {
+              return false;
+            }
+
+            const outline = style.outlineStyle !== "none" && style.outlineWidth !== "0px";
+            return outline || style.boxShadow !== "none";
+          });
+        }),
+      { message: "the focused control shows where focus is" },
+    )
+    .toBe(true);
 }
 
 /**

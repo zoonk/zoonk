@@ -21,6 +21,7 @@
     "start": "next start -p 4000",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:workflow": "vitest run --config vitest.workflow.config.mts",
     "typecheck": "next typegen && tsc --noEmit",
     "workflow:inspect": "workflow inspect runs",
     "workflow:web": "workflow web"

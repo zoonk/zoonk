@@ -90,17 +90,23 @@ async function scanScreen(page: Page, where: string): Promise<string[]> {
 }
 
 /**
- * Scans the screen in dark and light. Dark mode is CSS alone (`prefers-color-scheme`), so switching
- * the device's scheme restyles the same screen without reloading it.
+ * Scans the screen in dark and light, on a device asking for more contrast, so the strict-contrast
+ * values are checked too (the regular look also keeps WCAG AA, faint labels included).
+ * Dark mode and contrast are CSS alone (`prefers-color-scheme`, `prefers-contrast`), so switching
+ * them restyles the same screen without reloading it. The device ends with no contrast preference.
  */
 async function scanInEachScheme(page: Page, label: string): Promise<string[]> {
   const found: string[] = [];
 
-  for (const colorScheme of COLOR_SCHEMES) {
-    // oxlint-disable-next-line no-await-in-loop -- The same screen is scanned in each scheme.
-    await page.emulateMedia({ colorScheme });
-    // oxlint-disable-next-line no-await-in-loop -- The same screen is scanned in each scheme.
-    found.push(...(await scanScreen(page, `${label} (${colorScheme})`)));
+  try {
+    for (const colorScheme of COLOR_SCHEMES) {
+      // oxlint-disable-next-line no-await-in-loop -- The same screen is scanned in each scheme.
+      await page.emulateMedia({ colorScheme, contrast: "more" });
+      // oxlint-disable-next-line no-await-in-loop -- The same screen is scanned in each scheme.
+      found.push(...(await scanScreen(page, `${label} (${colorScheme})`)));
+    }
+  } finally {
+    await page.emulateMedia({ contrast: null });
   }
 
   return found;

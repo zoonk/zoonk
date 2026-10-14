@@ -24,5 +24,6 @@ export const getWorld = vi.fn(() =>
         return Promise.resolve({ data: event ? [event] : [] });
       },
     },
+    runs: { list: () => Promise.resolve({ data: [], hasMore: false }) },
   }),
 );
