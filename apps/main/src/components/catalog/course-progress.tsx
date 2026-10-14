@@ -1,6 +1,7 @@
 "use client";
 
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type ReactNode, createContext, use, useEffect, useSyncExternalStore } from "react";
 import { type CourseProgress } from "./course-progress-contract";
@@ -123,7 +124,14 @@ export function CourseGoalSwitch({
   return useCourseProgress()?.followsCourse ? continueLink : startLinks;
 }
 
-/** "Continue the lesson" for a learner partway through it; its first question otherwise. */
+/** One of the question's two versions, in the one place both take. */
+const LESSON_VERSION_CLASS = "col-start-1 row-start-1 flex min-w-0 flex-col";
+
+/**
+ * "Continue the lesson" for a learner partway through it; its first question otherwise. The HTML
+ * has the question, and "Continue the lesson" takes its place, in the room the question holds, once
+ * the browser reads the learner: the card and everything under it stay where they were.
+ */
 export function LessonProgressSwitch({
   continueLesson,
   question,
@@ -131,5 +139,15 @@ export function LessonProgressSwitch({
   continueLesson: ReactNode;
   question: ReactNode;
 }) {
-  return useCourseProgress()?.lessonStarted ? continueLesson : question;
+  const started = useCourseProgress()?.lessonStarted ?? false;
+
+  return (
+    <div className="grid">
+      <div className={cn(LESSON_VERSION_CLASS, started && "invisible")} inert={started}>
+        {question}
+      </div>
+
+      {started && <div className={LESSON_VERSION_CLASS}>{continueLesson}</div>}
+    </div>
+  );
 }

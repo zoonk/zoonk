@@ -126,7 +126,7 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
           <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
         </a>
       ) : (
-        <StartLink className="w-full sm:w-auto" href={href}>
+        <StartLink className="w-full sm:w-auto sm:self-start" href={href}>
           {label}
         </StartLink>
       )}

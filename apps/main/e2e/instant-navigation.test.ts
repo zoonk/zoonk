@@ -40,6 +40,21 @@ async function openSettled(page: Page, path: string) {
   await page.waitForLoadState("networkidle");
 }
 
+/**
+ * Resolves once the page at `path` has come in with a link's prefetch. Set it up before opening the
+ * page with the link: a link below the fold prefetches once it's near the screen, which can be
+ * after the page has settled.
+ */
+async function pagePrefetched(page: Page, path: string) {
+  const response = await page.waitForResponse(
+    (candidate) =>
+      new URL(candidate.url()).pathname === path &&
+      (candidate.request().headers()["next-router-segment-prefetch"] ?? "").endsWith("/__PAGE__"),
+  );
+
+  await response.finished();
+}
+
 /** Taps a link and checks the destination paints from its prefetch, before any server reply. */
 async function tapInstantly({
   content,
@@ -286,6 +301,7 @@ test.describe("Instant navigation", () => {
 
   test("a public course's full outline prefetches its chapter", async ({ page }) => {
     const { chapter, chapterPath, coursePath } = await createPublicNavigationCourse();
+    const prefetched = pagePrefetched(page, chapterPath);
     await openSettled(page, coursePath);
 
     const band = page
@@ -299,7 +315,7 @@ test.describe("Instant navigation", () => {
 
     const link = page.getByRole("heading", { exact: true, name: chapter.title }).getByRole("link");
     await link.scrollIntoViewIfNeeded();
-    await page.waitForLoadState("networkidle");
+    await prefetched;
 
     await instant(page, async () => {
       await link.click();
@@ -312,6 +328,7 @@ test.describe("Instant navigation", () => {
 
   test("a public course's full outline prefetches its written lesson", async ({ page }) => {
     const { coursePath, lesson, lessonPath } = await createPublicNavigationCourse();
+    const prefetched = pagePrefetched(page, lessonPath);
     await openSettled(page, coursePath);
 
     const band = page
@@ -325,7 +342,7 @@ test.describe("Instant navigation", () => {
 
     const link = page.getByRole("link", { exact: true, name: lesson.title });
     await link.scrollIntoViewIfNeeded();
-    await page.waitForLoadState("networkidle");
+    await prefetched;
 
     await instant(page, async () => {
       await link.click();

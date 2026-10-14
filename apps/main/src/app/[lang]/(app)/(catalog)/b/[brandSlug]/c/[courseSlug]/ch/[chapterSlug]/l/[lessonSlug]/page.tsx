@@ -1,4 +1,5 @@
 import { CatalogPageSkeleton } from "@/components/catalog/catalog-page-skeleton";
+import { getLessonStaticParams } from "@/data/catalog/catalog-static-params";
 import { resolveLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { permanentRedirect } from "@/i18n/navigation";
 import { getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
@@ -10,6 +11,13 @@ import { getLibraryLessonMetadata } from "./library-lesson-metadata";
 import { LibraryLessonPage } from "./library-lesson-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
+
+/** Fully static like its course's page; the build writes the first lesson of those chapters. */
+export const ensureStatic = "navigation";
+
+export async function generateStaticParams({ params }: { params: { lang: string } }) {
+  return getLessonStaticParams(params.lang);
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, ...routeParams } = await params;

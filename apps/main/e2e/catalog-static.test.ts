@@ -1,7 +1,10 @@
 import { type Browser, type Page } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -15,7 +18,7 @@ async function createStaticCourse() {
   const { chapters, course, organization } = await catalogCourseFixture({ lessonCounts: [0] });
   const chapter = chapters[0]!;
 
-  const { lesson } = await playableLessonFixture({
+  const { lesson, steps } = await playableLessonFixture({
     lesson: { homeChapterId: chapter.id, title: `Static page lesson ${course.slug}` },
   });
 
@@ -25,7 +28,38 @@ async function createStaticCourse() {
   const chapterPath = `${coursePath}/ch/${chapter.slug}`;
   const lessonPath = `${chapterPath}/l/${lesson.slug}`;
 
-  return { chapter, chapterPath, course, coursePath, lesson, lessonPath };
+  return { chapter, chapterPath, course, coursePath, lesson, lessonPath, steps };
+}
+
+/** A learner partway through a lesson: its run left open a minute ago, its first screen answered. */
+async function startLessonRun({
+  lessonId,
+  stepId,
+  userId,
+}: {
+  lessonId: string;
+  stepId: string;
+  userId: string;
+}) {
+  const run = await learningEventFixture({ contentIds: { lessonId }, seconds: 60, userId });
+
+  await Promise.all([
+    prisma.learningEvent.update({ data: { endedAt: null }, where: { id: run.id } }),
+    attemptFixture({ stepId, userId }),
+  ]);
+}
+
+/** Holds a page's progress reads until `release`, so the page is measured before and after. */
+async function holdProgressReads(page: Page) {
+  const held = Promise.withResolvers<null>();
+
+  await page.route(PROGRESS_PATH, async (route) => {
+    const response = await route.fetch();
+    await held.promise;
+    await route.fulfill({ response });
+  });
+
+  return { release: () => held.resolve(null) };
 }
 
 /** The words of the page as the server sent it, before any script ran (scripts left out). */
@@ -58,6 +92,51 @@ async function openAsLearner(browser: Browser) {
   const user = await createE2EUser(getBaseURL());
   const context = await browser.newContext({ storageState: user.storageState });
   return { context, page: await context.newPage(), user };
+}
+
+function getTryCard(page: Page) {
+  return page.getByRole("region", { name: /^Try a lesson/u });
+}
+
+/**
+ * A learner's try card on a course page, measured with the progress read held (their account's
+ * view settled) and again once it answers: "Continue the lesson" for one partway through the
+ * lesson (`startLesson`), the question otherwise.
+ */
+async function measureTryCard({
+  browser,
+  coursePath,
+  startLesson,
+}: {
+  browser: Browser;
+  coursePath: string;
+  startLesson?: (userId: string) => Promise<void>;
+}) {
+  const { context, page, user } = await openAsLearner(browser);
+
+  try {
+    await startLesson?.(user.id);
+
+    const { release } = await holdProgressReads(page);
+    await page.goto(coursePath);
+    await expect(page.getByText("Start free, no account needed.")).toHaveCount(0);
+
+    const card = getTryCard(page);
+    const before = await card.boundingBox();
+    const answered = page.waitForResponse(PROGRESS_PATH);
+    release();
+    await answered;
+
+    await expect(
+      startLesson
+        ? card.getByRole("link", { name: "Continue the lesson" })
+        : card.getByRole("button", { name: "No" }),
+    ).toBeVisible();
+
+    return { after: await card.boundingBox(), before };
+  } finally {
+    await context.close();
+  }
 }
 
 test.describe("catalog pages and the learner's own bits", () => {
@@ -200,6 +279,56 @@ test.describe("catalog pages and the learner's own bits", () => {
       held.resolve(null);
 
       await expect(page.getByRole("link", { name: "Continue your plan" })).toHaveCount(2);
+    } finally {
+      await context.close();
+    }
+  });
+
+  // "Continue the lesson" takes the question's place in the room the question holds, so a learner's
+  // version arriving after the page shows moves nothing.
+  test("the try card keeps its size and place when the learner's version arrives", async ({
+    browser,
+    page,
+  }) => {
+    const { coursePath, lesson, steps } = await createStaticCourse();
+
+    await page.goto(coursePath);
+    const visitorBox = await getTryCard(page).boundingBox();
+    const visitorSize = { height: visitorBox?.height, width: visitorBox?.width };
+
+    const fresh = await measureTryCard({ browser, coursePath });
+
+    const started = await measureTryCard({
+      browser,
+      coursePath,
+      startLesson: (userId) =>
+        startLessonRun({ lessonId: lesson.id, stepId: steps[0]!.id, userId }),
+    });
+
+    for (const { after, before } of [fresh, started]) {
+      expect(after).toStrictEqual(before);
+      expect({ height: after?.height, width: after?.width }).toStrictEqual(visitorSize);
+    }
+  });
+
+  test("a lesson page's first screen keeps its room when “Continue the lesson” takes its place", async ({
+    browser,
+  }) => {
+    const { lesson, lessonPath, steps } = await createStaticCourse();
+    const { context, page, user } = await openAsLearner(browser);
+    await startLessonRun({ lessonId: lesson.id, stepId: steps[0]!.id, userId: user.id });
+
+    try {
+      const { release } = await holdProgressReads(page);
+      await page.goto(lessonPath);
+      await expect(page.getByText("No sign-up needed.", { exact: false })).toBeVisible();
+
+      const article = page.getByRole("article", { name: lesson.title });
+      const before = await article.boundingBox();
+      release();
+
+      await expect(article.getByRole("link", { name: "Continue the lesson" })).toBeVisible();
+      expect(await article.boundingBox()).toStrictEqual(before);
     } finally {
       await context.close();
     }

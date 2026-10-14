@@ -1,4 +1,5 @@
 import { CatalogPageSkeleton } from "@/components/catalog/catalog-page-skeleton";
+import { getChapterStaticParams } from "@/data/catalog/catalog-static-params";
 import {
   type LibraryChapterRoute,
   resolveChapterRoute,
@@ -13,6 +14,13 @@ import { Suspense } from "react";
 import { LibraryChapterPage } from "./library-chapter-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">;
+
+/** Fully static like its course's page; the build writes each popular course's first chapter. */
+export const ensureStatic = "navigation";
+
+export async function generateStaticParams({ params }: { params: { lang: string } }) {
+  return getChapterStaticParams(params.lang);
+}
 
 /**
  * Chapter copy is written in the course's language; only the page in that language is indexed,
