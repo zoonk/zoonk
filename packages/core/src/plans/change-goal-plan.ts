@@ -8,16 +8,17 @@ import {
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
+import { assertPlanTargetDates } from "./_utils/plan-target-dates";
 import { withPlanRetry } from "./_utils/replan";
 import { findSetBackChange } from "./_utils/set-back";
 import { undoChange } from "./_utils/undo-change";
 import { type PlanChangeInput, type PlanOperation } from "./plan-contract";
 import { type PlanChangeView } from "./plan-view-contract";
-import { type PlanOperationError } from "./planner/plan-operations";
+import { type PlanChangeRefusal } from "./planner/plan-operations";
 
 export type PlanChangeResult =
   | { change: PlanChangeView | null; status: "applied" }
-  | { error: PlanOperationError; status: "invalid" }
+  | PlanChangeRefusal
   /** A focus or "less" that wouldn't do what it asks: nothing saved, and why (see `applySteeringNow`). */
   | { reason: UnchangedFocusReason; status: "unchanged" }
   | { status: "notFound" | "unauthorized" };
@@ -89,6 +90,8 @@ export async function changeGoalPlan({
     if (owned.status !== "ready") {
       return owned;
     }
+
+    assertPlanTargetDates({ context: owned.context, operations: input.operations });
 
     const setBack = await undoSetBack({ context: owned.context, operations: input.operations });
 

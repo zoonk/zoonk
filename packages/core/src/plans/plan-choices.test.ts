@@ -667,6 +667,28 @@ describe("the plan's mock days", () => {
     expect(result).toMatchObject({ change: { effect: { nextMock: { after, before } } } });
   });
 
+  it("says when the mocks ahead fall, only as regular as their planned days are", async () => {
+    // Ana's "Your plan" reads "Mock exams · Sundays" only when every mock ahead is on a Sunday.
+    const { goal, plan } = await setup({ days: 200 });
+
+    setClock(4);
+
+    const [days, viewed] = await Promise.all([
+      listMockDays({ from: day(4), planId: plan.id }),
+      readPlan(goal.id),
+    ]);
+
+    const weekdays = new Set(days.map((date) => new Date(`${date}T00:00:00Z`).getUTCDay()));
+
+    expect(days.length).toBeGreaterThan(1);
+
+    expect(viewed.schedule.mocks).toMatchObject({
+      count: days.length,
+      nextDate: days[0],
+      weekday: weekdays.size === 1 ? [...weekdays][0] : null,
+    });
+  });
+
   it("says nothing about the next mock when a change keeps its day", async () => {
     const { goal } = await setup({ days: 200 });
 

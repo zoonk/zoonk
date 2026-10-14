@@ -59,19 +59,23 @@ export function getItemKey(
     : `item:${item.id}`;
 }
 
-/** On one date: work already kept first, then lessons in queue order, then fixed events. */
-type RankedItem = { item: PlannedItem; rank: number };
+/**
+ * On one date: work already kept first, then a challenge that leads the day (`FixedEvent.leads`),
+ * then lessons in queue order, then fixed events.
+ */
+export type RankedItem = { item: PlannedItem; rank: number };
 
-const KEPT_RANK = 0;
-const UNIT_RANK = 1;
-const EVENT_RANK = 2;
+export const KEPT_RANK = 0;
+export const LEADING_RANK = 1;
+export const UNIT_RANK = 2;
+export const EVENT_RANK = 3;
 
-function getSortDate(item: PlannedItem): number {
+export function getSortDate(item: PlannedItem): number {
   return (item.scheduledFor ?? item.completedAt)?.getTime() ?? 0;
 }
 
 /** Sorting is stable, so items of the same date and rank keep the order they came in. */
-function compareItems(a: RankedItem, b: RankedItem): number {
+export function compareItems(a: RankedItem, b: RankedItem): number {
   return getSortDate(a.item) - getSortDate(b.item) || a.rank - b.rank;
 }
 
@@ -136,7 +140,10 @@ function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
 
 /**
  * Puts finished work, items kept from this week, and newly scheduled lessons and events in one
- * order: by date, then finished first, lessons in queue order, fixed events last. New items reuse
+ * order: by date, then finished first, a challenge that leads its day (the day's lessons come
+ * after it: Today showed the chapter's next lesson a learner was promised for that day before the
+ * challenge, and the plan read the challenge as beside it, asking 15 minutes more), lessons in
+ * queue order, fixed events last. New items reuse
  * the id of the todo item they replace, so an item keeps its identity while its date moves, and
  * the chapter it teaches from: a skill's item linked to a chapter (whose next lesson the session
  * picks) stays that chapter's instead of turning into a stand-in waiting for lessons.
@@ -172,7 +179,10 @@ export function mergePlanItems({
   const ranked: RankedItem[] = [
     ...kept.map((item) => ({ item, rank: KEPT_RANK })),
     ...units.map((unit) => ({ item: withId(fromUnit(unit)), rank: UNIT_RANK })),
-    ...events.map((event) => ({ item: withId(fromEvent(event)), rank: EVENT_RANK })),
+    ...events.map((event) => ({
+      item: withId(fromEvent(event)),
+      rank: event.leads ? LEADING_RANK : EVENT_RANK,
+    })),
   ].filter(({ item, rank }) => rank === KEPT_RANK || isFresh(item));
 
   return fillEventPhases(ranked.toSorted(compareItems).map(({ item }) => item));

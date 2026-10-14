@@ -4,6 +4,7 @@ import { computeChange } from "./_utils/compute-change";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations, loadGraphPartAreas } from "./_utils/part-areas";
+import { assertPlanTargetDates } from "./_utils/plan-target-dates";
 import { type PlanChangeInput } from "./plan-contract";
 import { type PlanChangePreview } from "./plan-preview-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
@@ -40,6 +41,7 @@ export async function previewPlanChange({
   }
 
   const { context } = owned;
+  assertPlanTargetDates({ context, operations: input.operations });
 
   const [result, partAreas] = await Promise.all([
     applyChangeOperations({ context, operations: input.operations }),
@@ -60,6 +62,7 @@ export async function previewPlanChange({
   const { computed, effect, unchanged } = await computeChange({
     context,
     operations: result.operations,
+    reuseReadBuild: true,
     state: result.state,
   });
 

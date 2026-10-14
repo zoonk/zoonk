@@ -1,13 +1,10 @@
+import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { getSubjectShare } from "../../exams/map/exam-map";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
+import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { getSkillArea } from "../planner/graph-areas";
-import { type ExamSubjectShare } from "../planner/plan-feasibility";
 import { type PlanGraph } from "../planner/plan-state";
-
-function getAverage(values: readonly number[]): number | null {
-  return values.length === 0 ? null : values.reduce((sum, value) => sum + value, 0) / values.length;
-}
 
 /** At least half the subjects a plan teaches need a stated share before shares split its time. */
 const MIN_STATED_SHARE = 1 / 2;
@@ -81,7 +78,7 @@ function listSubjectShares({
   }
 
   const shares = structure.subjects.map((subject) => getSubjectShare({ structure, subject }));
-  const fallback = getAverage(shares.filter((share) => share !== null)) ?? 1;
+  const fallback = getSubjectShareFallback(shares);
 
   return structure.subjects
     .map((_, index) => ({

@@ -1,7 +1,8 @@
 import { getCoreLessons } from "./core-first";
 import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraph, type PlanGraphSkill } from "./plan-state";
-import { type PlannerLesson, assignLessonSkills, countStandInLessons } from "./plan-units";
+import { type PlannerLesson, assignLessonSkills } from "./plan-units";
+import { countStandInLessons } from "./stand-in-size";
 
 /**
  * How many lessons a skill's core has (see `getCoreLessons`), from its lessons the plan has,
@@ -15,7 +16,8 @@ export function countCoreLessons({
   skill: PlanGraphSkill;
 }): number {
   return getCoreLessons(
-    outlined + countStandInLessons({ lessons: skill.lessons, taught: outlined }),
+    outlined +
+      countStandInLessons({ lessons: skill.lessons, outlined: skill.outlined, taught: outlined }),
   );
 }
 

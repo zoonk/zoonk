@@ -99,6 +99,7 @@ function enemPlan(focusAreas: string[] = []): BuildPlanInput {
   );
 
   return {
+    fullMockMinutes: 330,
     goal: { dailyMinutes: 180, kind: "exam", targetDate: addDays(TODAY, 16) },
     graph: {
       phases: [{ milestone: null, name: "Preparação" }],
@@ -106,7 +107,7 @@ function enemPlan(focusAreas: string[] = []): BuildPlanInput {
     },
     items: [],
     lessons,
-    mockMinutes: 330,
+    mockMinutes: 165,
     mode: "forced",
     paceFactor: 1,
     prerequisites,
@@ -247,8 +248,25 @@ describe("an exam's written test", () => {
   it("shares the last days with the other parts instead of taking them alone", () => {
     const input = enemPlan();
 
-    // An hour a day for two weeks fits few cores: kept whole, the essay's took the last days.
-    const shares = writtenShareByDay({ ...input, goal: { ...input.goal, dailyMinutes: 60 } });
+    /** At 67 minutes the whole 15-minute boss still leaves the last three lesson days mixed. */
+    const fundedInput = { ...input, goal: { ...input.goal, dailyMinutes: 67 } };
+    const plan = buildPlan(fundedInput);
+
+    const bossMinutes = plan.items
+      .filter((item) => item.kind === "boss")
+      .map((item) => item.minutes);
+
+    const shares = writtenShareByDay(fundedInput);
+
+    expect(bossMinutes.length).toBeGreaterThan(0);
+    expect(bossMinutes.every((minutes) => minutes === 15)).toBe(true);
+
+    expect(plan.mockFunding).toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ date: "2026-10-18", minutes: 165 })]),
+    );
+
+    expect(plan.waitingSkillIds.length).toBeGreaterThan(0);
+    expect(shares.slice(-3)).toHaveLength(3);
 
     expect(shares.slice(-3).every((share) => share < 0.6)).toBe(true);
   });

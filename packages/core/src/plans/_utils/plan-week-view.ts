@@ -1,4 +1,5 @@
 import { type PlanDayView, type PlanItemView, type PlanView } from "../plan-view-contract";
+import { type MockFunding, findMockFundingOn, getMockFundingStart } from "../planner/mock-funding";
 import {
   type StudyCalendar,
   addDays,
@@ -8,7 +9,7 @@ import {
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { type ExistingPlanItem, getItemKey } from "../planner/plan-items";
-import { DAYS_PER_WEEK } from "../planner/plan-state";
+import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
 import { isWorkFinished } from "./work-progress";
 
@@ -100,6 +101,7 @@ export function buildWeekView({
   exam,
   items,
   minutes,
+  overflow = [],
   skillAreas,
   startDate,
   studiedDates,
@@ -112,6 +114,8 @@ export function buildWeekView({
   exam: ExamDayRules | null;
   items: readonly ExistingPlanItem[];
   minutes: ReadonlyMap<string, number>;
+  /** The time the days' checkpoints take past them (`PlanSettings.checkpointOverflow`). */
+  overflow?: PlanSettings["checkpointOverflow"];
   skillAreas: SkillAreas;
   /** The learner-local day the goal started; earlier days were never days to study for it. */
   startDate: Date;
@@ -131,12 +135,14 @@ export function buildWeekView({
       .map((item) => toPlanItemView({ access, item, minutes, skillAreas }));
 
     const dayMinutes =
-      date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, targetDate });
+      date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, overflow, targetDate });
 
     return {
       date: day,
       items: dayItems,
       minutes: dayMinutes,
+      mockFunding:
+        date < startDate ? null : findMockFundingOn({ date, funding: exam?.mockFunding ?? [] }),
       state: getDayState({
         date,
         items: dayItems,
@@ -148,4 +154,43 @@ export function buildWeekView({
   });
 
   return { days, endDate: toIsoDate(getEndOfWeek(today)), startDate: toIsoDate(start) };
+}
+
+/** Announce funded events by their persisted IDs, never by a speculative planner preview. */
+export function buildFundedMocksView({
+  access,
+  funding,
+  items,
+  skillAreas,
+  today,
+}: {
+  access: ItemAccess;
+  funding: readonly MockFunding[];
+  items: readonly ExistingPlanItem[];
+  skillAreas: SkillAreas;
+  today: Date;
+}): PlanItemView[] {
+  const day = toIsoDate(today);
+
+  return items
+    .flatMap((item) => {
+      if (item.kind !== "mock" || item.status !== "todo" || !item.scheduledFor) {
+        return [];
+      }
+
+      const date = toIsoDate(item.scheduledFor);
+      const ledger = funding.find((entry) => entry.date === date);
+
+      if (date <= day || !ledger || getMockFundingStart(ledger) > day) {
+        return [];
+      }
+
+      return [
+        {
+          ...toPlanItemView({ access, item, minutes: new Map(), skillAreas }),
+          minutes: ledger.minutes,
+        },
+      ];
+    })
+    .toSorted((a, b) => (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? ""));
 }

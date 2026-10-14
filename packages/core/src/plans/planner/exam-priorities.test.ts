@@ -37,6 +37,7 @@ function examInput(): BuildPlanInput {
   );
 
   return {
+    fullMockMinutes: 330,
     goal: { dailyMinutes: 37, kind: "exam", targetDate: addDays(TODAY, 30) },
     graph: {
       phases: ["Base", "Core", "Depth", "Review"].map((name) => ({ milestone: null, name })),
@@ -44,7 +45,7 @@ function examInput(): BuildPlanInput {
     },
     items: [],
     lessons: [],
-    mockMinutes: 330,
+    mockMinutes: 165,
     mode: "forced",
     paceFactor: 1,
     prerequisites: new Map([
@@ -80,7 +81,7 @@ function focusInput(settings: Record<string, unknown>): BuildPlanInput {
 
   return {
     ...input,
-    goal: { ...input.goal, dailyMinutes: 22 },
+    goal: { ...input.goal, dailyMinutes: 27 },
     graph: {
       ...input.graph,
       skills: input.graph.skills.map((graphSkill) => ({ ...graphSkill, weight: 3 })),
@@ -98,8 +99,11 @@ function areaMass(skills: readonly PlanGraphSkill[], area: string): number {
 
 describe("an exam plan whose time doesn't fit every topic's core", () => {
   it("leaves out the topics the exam asks least in each subject, whatever their phase", () => {
-    const plan = buildPlan(examInput());
+    const input = examInput();
+    const plan = buildPlan({ ...input, goal: { ...input.goal, dailyMinutes: 45 } });
     const waiting = new Set(plan.waitingSkillIds);
+
+    expect(plan.mockFunding.some((entry) => entry.contributions.length > 0)).toBe(true);
 
     // Some of natural sciences waits: the least asked of it, never what's asked most or what that needs.
     expect(["heat", "optics", "gravitation"].some((id) => waiting.has(id))).toBe(true);
@@ -175,7 +179,14 @@ describe("an exam's subject whose topics past papers rate", () => {
   it("leaves out the topics asked least when the time doesn't fit every core", () => {
     const input = evenInput();
     const graph = weighGraphByTopicFrequency({ graph: input.graph, levels });
-    const plan = buildPlan({ ...input, graph, topicLevels: levels });
+
+    const plan = buildPlan({
+      ...input,
+      goal: { ...input.goal, dailyMinutes: 45 },
+      graph,
+      topicLevels: levels,
+    });
+
     const waiting = new Set(plan.waitingSkillIds);
 
     expect(waiting.has("gravitation") || waiting.has("optics")).toBe(true);
@@ -211,10 +222,10 @@ describe("an exam's subject with several skills on one topic", () => {
 /**
  * Natural sciences with three big topics the exam asks often and four it asks less or that no ranking
  * names, small ones unless `lessons` says otherwise: they cost little, the frequent ones a lot.
- * The default time fits the frequent ones' cores, not every core.
+ * The default time reaches every frequent topic, not every core.
  */
 function frequencyInput({
-  dailyMinutes = 20,
+  dailyMinutes = 27,
   lessons = {},
 }: { dailyMinutes?: number; lessons?: Record<string, number> } = {}): BuildPlanInput {
   const input = examInput();
@@ -276,7 +287,7 @@ describe("an exam's subject whose time doesn't fit every topic's core", () => {
   });
 
   it("gives a part the learner focuses on more time and keeps the rest's frequent topics", () => {
-    const input = frequencyInput({ dailyMinutes: 27, lessons: { evolution: 30, taxonomy: 30 } });
+    const input = frequencyInput({ dailyMinutes: 32, lessons: { evolution: 30, taxonomy: 30 } });
     const biology = ["taxonomy", "evolution"];
 
     const focused = buildPlan({
@@ -303,7 +314,7 @@ describe("an exam's subject whose time fits every core and some depth", () => {
   it("cuts the depth of the topics asked least first", () => {
     // Every topic the same size: the time fits every core and part of the depth.
     const input = frequencyInput({
-      dailyMinutes: 40,
+      dailyMinutes: 75,
       lessons: { evolution: 30, optics: 30, taxonomy: 30, water: 30 },
     });
 
@@ -345,14 +356,14 @@ function placedInput(dailyMinutes: number): BuildPlanInput {
 
 describe("an exam's subject the learner already knows part of", () => {
   it("leaves out a frequent topic they showed they know before a gap asked less", () => {
-    const planned = plannedSkills(buildPlan(placedInput(22)));
+    const planned = plannedSkills(buildPlan(placedInput(27)));
 
     expect(planned.has("taxonomy")).toBe(true);
     expect(planned.has("mechanics")).toBe(false);
     expect(planned.has("heat") && planned.has("electricity")).toBe(true);
   });
 
-  // The test above covers 22 minutes.
+  // The test above covers 27 minutes.
   it("never keeps what they know while a gap waits, whatever their time", () => {
     for (const dailyMinutes of [15, 20, 25, 30]) {
       const planned = plannedSkills(buildPlan(placedInput(dailyMinutes)));

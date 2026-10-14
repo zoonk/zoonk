@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase } from "../planner/plan-state";
-import { buildPhaseViews, findCurrentPhase, getSkillAreas } from "./plan-phase-views";
+import { findCurrentPhase } from "./phase-states";
+import { buildPhaseViews, getSkillAreas } from "./plan-phase-views";
 
 function phase(attrs: Partial<PlanPhase> = {}): PlanPhase {
   return {
@@ -40,6 +41,17 @@ function standIn(position: number, day: string): ExistingPlanItem {
   return { ...lesson(position, 0), scheduledFor: new Date(`${day}T00:00:00.000Z`) };
 }
 
+/** A phase's challenge on `day`. */
+function boss(position: number, phaseIndex: number, status: "done" | "todo", day = "2026-10-16") {
+  return {
+    ...lesson(position, phaseIndex),
+    kind: "boss" as const,
+    scheduledFor: new Date(`${day}T00:00:00.000Z`),
+    skillId: null,
+    status,
+  };
+}
+
 describe(buildPhaseViews, () => {
   const items = [lesson(0, 0), lesson(1, 0), lesson(2, 0), lesson(3, 1)];
 
@@ -48,6 +60,7 @@ describe(buildPhaseViews, () => {
       chapterTitles: new Map(),
       currentPhase: 0,
       estimateMinutes: 600,
+      goalKind: "learn",
       items,
       phases: [phase({ minutes: 90 }), phase({ minutes: 30 })],
       skillAreas: new Map(),
@@ -62,6 +75,7 @@ describe(buildPhaseViews, () => {
       chapterTitles: new Map(),
       currentPhase: 0,
       estimateMinutes: 240,
+      goalKind: "learn",
       items,
       phases: [phase(), phase()],
       skillAreas: new Map(),
@@ -79,6 +93,7 @@ describe(buildPhaseViews, () => {
         ["c", "Ecology"],
       ]),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         chapterLesson(0, "a", "done"),
         chapterLesson(1, "b", "done"),
@@ -101,6 +116,7 @@ describe(buildPhaseViews, () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map([["a", "What you own when you buy a share"]]),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         chapterLesson(0, "a", "todo"),
         { ...lesson(1, 0), titleSnapshot: "Distinguish share issuance from trading" },
@@ -129,6 +145,7 @@ describe(buildPhaseViews, () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [lesson(1, 0), { ...lesson(2, 0), status: "todo" }],
       phases: [phase()],
       skillAreas: getSkillAreas({
@@ -158,6 +175,7 @@ describe(buildPhaseViews, () => {
         ["ch-spin", "Spin"],
       ]),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         { ...chapterLesson(0, "ch-powers", "todo"), skillId: "skill-powers" },
         { ...chapterLesson(1, "ch-spin", "todo"), phase: 1, skillId: "skill-spin" },
@@ -192,6 +210,7 @@ describe(buildPhaseViews, () => {
         ["d", "Functions"],
       ]),
       currentPhase: 1,
+      goalKind: "learn",
       items: [
         chapterLesson(0, "a", "done"),
         { ...chapterLesson(1, "b", "todo"), phase: 1 },
@@ -216,7 +235,7 @@ describe(buildPhaseViews, () => {
   });
 
   // Pedro's Today opened "Where a share's price comes from", of his second phase, while the
-  // Journey marked a chapter of the first: Up next is the chapter of the lesson Today opens, in
+  // Plan marked a chapter of the first: Up next is the chapter of the lesson Today opens, in
   // whichever phase, and the first phase stays the current one while it has work left.
   it("marks the chapter of the lesson Today opens next, even in the next phase", () => {
     const views = buildPhaseViews({
@@ -225,6 +244,7 @@ describe(buildPhaseViews, () => {
         ["b", "Where prices come from"],
       ]),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         chapterLesson(0, "a", "done"),
         chapterLesson(1, "a", "todo"),
@@ -247,17 +267,10 @@ describe(buildPhaseViews, () => {
   });
 
   it("closes each phase with its checkpoint, done once passed", () => {
-    const boss = (position: number, phaseIndex: number, status: "done" | "todo") => ({
-      ...lesson(position, phaseIndex),
-      kind: "boss" as const,
-      scheduledFor: new Date("2026-10-16T00:00:00.000Z"),
-      skillId: null,
-      status,
-    });
-
     const views = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 1,
+      goalKind: "learn",
       items: [lesson(0, 0), boss(1, 0, "done"), lesson(2, 1), boss(3, 1, "todo"), lesson(4, 2)],
       phases: [phase(), phase(), phase()],
       skillAreas: new Map(),
@@ -265,10 +278,186 @@ describe(buildPhaseViews, () => {
     });
 
     expect(views.map((view) => view.checkpoint)).toStrictEqual([
-      { date: "2026-10-16", planItemId: "item-1", state: "done" },
-      { date: "2026-10-16", planItemId: "item-3", state: "upcoming" },
+      { date: "2026-10-16", locked: false, planItemId: "item-1", state: "done", when: "date" },
+      { date: "2026-10-16", locked: false, planItemId: "item-3", state: "upcoming", when: "date" },
       null,
     ]);
+  });
+});
+
+const done = (item: ExistingPlanItem): ExistingPlanItem => ({ ...item, status: "done" });
+
+/** When each phase's challenge comes, every lesson done and each challenge on its own day. */
+function challengeTimings({ days, today }: { days: string[]; today: Date }) {
+  return buildPhaseViews({
+    chapterTitles: new Map(),
+    currentPhase: 0,
+    goalKind: "learn",
+    items: days.flatMap((day, index) => [
+      done(lesson(index * 2, index)),
+      boss(index * 2 + 1, index, "todo", day),
+    ]),
+    phases: days.map(() => phase()),
+    skillAreas: new Map(),
+    today,
+    upNextItemId: null,
+  }).map((phaseView) => phaseView.checkpoint?.when);
+}
+
+/*
+ * The phases read "finished" as the plan's number and status do (code review of the finished
+ * round): the same lessons, the same challenges, and the same rule for a date's past reviews.
+ */
+describe("phases of a finished plan", () => {
+  const TODAY = new Date("2026-10-13T00:00:00.000Z");
+
+  it("leaves out a lesson the Library couldn't write in a plan without a date", () => {
+    const unwritten: ExistingPlanItem = { ...lesson(1, 0), status: "skipped" };
+    const items = [done(lesson(0, 0)), unwritten, boss(2, 0, "done"), done(lesson(3, 1))];
+
+    const view = (targetDate: Date | null) =>
+      buildPhaseViews({
+        chapterTitles: new Map(),
+        currentPhase: 1,
+        goalKind: "learn",
+        items,
+        phases: [phase(), phase()],
+        skillAreas: new Map(),
+        targetDate,
+        today: TODAY,
+        upNextItemId: null,
+      }).map((phaseView) => [phaseView.state, phaseView.lessonsDone, phaseView.lessonsTotal]);
+
+    expect(view(null)).toStrictEqual([
+      ["done", 1, 1],
+      ["done", 1, 1],
+    ]);
+
+    // With a date, missed days set it aside: it's still the learner's to study.
+    expect(view(new Date("2026-10-20T00:00:00.000Z"))).toStrictEqual([
+      ["unfinished", 1, 2],
+      ["done", 1, 1],
+    ]);
+  });
+
+  it("isn't current over a review the plan's date left behind", () => {
+    const review = { ...lesson(2, 1), kind: "review" as const, scheduledFor: TODAY, skillId: null };
+    const pastReview = { ...review, scheduledFor: new Date("2026-10-11T00:00:00.000Z") };
+
+    const states = (items: ExistingPlanItem[]) =>
+      buildPhaseViews({
+        chapterTitles: new Map(),
+        currentPhase: 1,
+        goalKind: "exam",
+        items,
+        phases: [phase(), phase()],
+        skillAreas: new Map(),
+        targetDate: new Date("2026-10-12T00:00:00.000Z"),
+        today: TODAY,
+        upNextItemId: null,
+      }).map((phaseView) => phaseView.state);
+
+    expect(states([done(lesson(0, 0)), done(lesson(1, 1)), pastReview])).toStrictEqual([
+      "done",
+      "done",
+    ]);
+
+    expect(states([done(lesson(0, 0)), done(lesson(1, 1)), review])).toStrictEqual([
+      "done",
+      "current",
+    ]);
+  });
+
+  it("says the next challenge opens in the next session only where sessions offer it", () => {
+    const items = [
+      done(lesson(0, 0)),
+      boss(1, 0, "todo", "2026-10-13"),
+      lesson(2, 1),
+      boss(3, 1, "todo"),
+    ];
+
+    const when = (challengesOpen: boolean) =>
+      buildPhaseViews({
+        challengesOpen,
+        chapterTitles: new Map(),
+        currentPhase: 0,
+        goalKind: "learn",
+        items,
+        phases: [phase(), phase()],
+        skillAreas: new Map(),
+        today: TODAY,
+        upNextItemId: null,
+      }).map((phaseView) => phaseView.checkpoint?.when);
+
+    expect(when(true)).toStrictEqual(["nextSession", "date"]);
+    // Past a free exam plan's first week, sessions hold no challenges: Plus does.
+    expect(when(false)).toStrictEqual(["date", "date"]);
+  });
+
+  /*
+   * Completing lessons early keeps future challenges on their saved days. A session duels each
+   * whose day came; away a few days, every overdue challenge says it comes in the next session.
+   */
+  it("says when each challenge comes, as sessions offer them", () => {
+    const days = ["2026-10-16", "2026-10-18", "2026-10-21"];
+
+    expect(challengeTimings({ days, today: TODAY })).toStrictEqual(["date", "date", "date"]);
+
+    expect(challengeTimings({ days, today: new Date("2026-10-16T00:00:00.000Z") })).toStrictEqual([
+      "nextSession",
+      "date",
+      "date",
+    ]);
+
+    // Two saved days came: both are due, while the third retains its future date.
+    expect(challengeTimings({ days, today: new Date("2026-10-18T00:00:00.000Z") })).toStrictEqual([
+      "nextSession",
+      "nextSession",
+      "date",
+    ]);
+
+    // Every day gone: the next session has them all, none reads a day in the past.
+    expect(challengeTimings({ days, today: new Date("2026-10-25T00:00:00.000Z") })).toStrictEqual([
+      "nextSession",
+      "nextSession",
+      "nextSession",
+    ]);
+  });
+
+  // On its saved day, the Plan names the challenge sessions reach after an unwritten lesson was
+  // skipped; completed lessons do not bring the following challenge ahead of its saved day.
+  it("names the challenge sessions reach, after lessons the Library couldn't write", () => {
+    const unwritten: ExistingPlanItem = { ...lesson(0, 0), status: "skipped" };
+
+    const items = [
+      unwritten,
+      boss(1, 0, "todo", "2026-10-13"),
+      done(lesson(2, 1)),
+      boss(3, 1, "todo"),
+    ];
+
+    const views = buildPhaseViews({
+      chapterTitles: new Map(),
+      currentPhase: 0,
+      goalKind: "learn",
+      items,
+      phases: [phase(), phase()],
+      skillAreas: new Map(),
+      today: TODAY,
+      upNextItemId: null,
+    });
+
+    expect(views.map((phaseView) => phaseView.checkpoint?.when)).toStrictEqual([
+      "nextSession",
+      "date",
+    ]);
+
+    expect(views.map((view) => [view.checkpoint?.planItemId, view.checkpoint?.date])).toStrictEqual(
+      [
+        ["item-1", "2026-10-13"],
+        ["item-3", "2026-10-16"],
+      ],
+    );
   });
 });
 
@@ -288,9 +477,12 @@ function nextPhaseLesson(position: number): ExistingPlanItem {
 }
 
 // Rafaela did one lesson of her Câmara plan's first phase and was away for 30 days: the days she
-// missed set its other lessons aside, and the Journey showed the phase with a check, "done", while
+// missed set its other lessons aside, and the Plan showed the phase with a check, "done", while
 // she'd studied one lesson. The plan moves on to the earliest phase with work left all the same.
 describe("a phase the plan moved past before the learner finished it", () => {
+  // Missed days set lessons aside only in a plan with a deadline, such as her exam's day.
+  const examDate = new Date("2026-12-01T00:00:00.000Z");
+
   it("stays unfinished, saying the lessons studied of the ones the plan gave it", () => {
     const items = [
       chapterLesson(0, "ch-a", "done"),
@@ -308,9 +500,11 @@ describe("a phase the plan moved past before the learner finished it", () => {
         ["ch-next", "Laws"],
       ]),
       currentPhase: findCurrentPhase({ items, phaseCount: 2 }),
+      goalKind: "learn",
       items,
       phases: [phase(), phase()],
       skillAreas: new Map(),
+      targetDate: examDate,
       upNextItemId: "item-4",
     });
 
@@ -335,6 +529,7 @@ describe("a phase the plan moved past before the learner finished it", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: findCurrentPhase({ items, phaseCount: 2 }),
+      goalKind: "learn",
       items,
       phases: [phase(), phase()],
       skillAreas: new Map(),
@@ -356,12 +551,14 @@ describe("a phase the plan moved past before the learner finished it", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: findCurrentPhase({ items, phaseCount: 2 }),
+      goalKind: "learn",
       items,
       phases: [phase(), phase()],
       skillAreas: new Map([
         ["skill-0", "Statistics"],
         ["skill-1", "Statistics"],
       ]),
+      targetDate: examDate,
       upNextItemId: "item-2",
     });
 
@@ -382,6 +579,7 @@ describe("a phase's topics not written yet", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         { ...standIn(0, "2027-03-08"), lessons: 3 },
         { ...standIn(1, "2027-03-02"), lessons: 1 },
@@ -420,6 +618,7 @@ describe("a phase's topics not written yet", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [{ ...standIn(0, "2027-03-08"), lessons: 3 }, standIn(1, "2027-03-02")],
       outlinedUntil: "2027-03-01",
       phases: [phase()],
@@ -439,6 +638,7 @@ describe("a phase's topics not written yet", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [standIn(0, "2027-03-01")],
       outlinedUntil: "2027-03-01",
       phases: [phase()],
@@ -458,6 +658,7 @@ describe("a phase's topics not written yet", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [{ ...standIn(0, "2027-03-08"), lessons: 3 }],
       outlinedUntil: "2027-03-01",
       phases: [phase()],
@@ -475,6 +676,7 @@ describe("a phase's topics not written yet", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
+      goalKind: "learn",
       items: [
         { ...standIn(0, "2027-03-08"), lessons: 3 },
         { ...standIn(1, "2027-03-12"), lessons: 2 },
@@ -506,6 +708,7 @@ describe("a phase's mock exams", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 1,
+      goalKind: "learn",
       items: [
         lesson(0, 0),
         mock(1, "2026-11-02", "done"),
@@ -536,7 +739,7 @@ describe(findCurrentPhase, () => {
   });
 
   // Pedro's plan gave a lesson of the second phase before the last lessons and the challenge of the
-  // first: read from the next thing to do, his Journey said he was in the second phase, and went
+  // first: read from the next thing to do, his Plan said he was in the second phase, and went
   // back to the first once a change planned those lessons first.
   it("is the earliest phase with work left, though a later phase's lesson comes first", () => {
     const checkpoint = { ...lesson(3, 0), kind: "boss" as const, skillId: null };

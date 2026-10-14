@@ -78,6 +78,8 @@ const graphSkillSchema = z.object({
    * and job search): a plan short on time keeps it whole and leaves out other skills' depth first.
    */
   outcome: z.boolean().optional(),
+  /** Its published course outline is all its work; shared lessons never imply new chapters. */
+  outlined: z.boolean().optional(),
   phase: z.int().min(0),
   /**
    * The lessons the plan's last build counted for the skill: its Library lessons and stand-ins,
@@ -115,6 +117,22 @@ const lightWeekSchema = z.object({ endDate: isoDateSchema, startDate: isoDateSch
 
 /** A weekly checkpoint or mock the learner moved to a later day ("Move to Monday"). */
 const movedEventSchema = z.object({ from: isoDateSchema, to: isoDateSchema });
+
+/**
+ * A mock the plan schedules and funds (see `fundMocks`): its date, which exam day it sits (`day`,
+ * null for an exam without days; absent on plans saved before, until their next run) and whether
+ * all of it (`fullLength`), its real length (`getMockClock`), the minutes of what else its day
+ * keeps (a phase's checkpoint, `fixedMinutes`), and what each study day before it sets aside for
+ * it, in minutes, past days as they set it aside. Its session plays this mock, never another day.
+ */
+const mockFundingSchema = z.object({
+  contributions: z.array(z.object({ date: isoDateSchema, minutes: z.number().positive() })),
+  date: isoDateSchema,
+  day: z.number().int().nullable().optional(),
+  fixedMinutes: z.number().min(0).optional(),
+  fullLength: z.boolean().optional(),
+  minutes: z.number().positive(),
+});
 
 /**
  * The part of a focused area the learner named ("more biology and chemistry" in ENEM's natural
@@ -173,6 +191,15 @@ function upgradeBaseChoices(value: unknown): unknown {
 const planSettingsSchema = z.object({
   /** The bases the learner studies another way than for their core (see `BaseChoice`). */
   baseChoices: z.preprocess(upgradeBaseChoices, z.array(baseChoiceSchema)).default([]),
+  /**
+   * The time each day's checkpoints (a phase's, the week's mixed one) take past the learner's time,
+   * as the last planning run laid them out (see `listCheckpointOverflow`): they run whole, and the
+   * day asks for it too, so Today, the plan's week and the session read the same day. Mocks bank
+   * their time instead (`mockFunding`).
+   */
+  checkpointOverflow: z
+    .array(z.object({ date: isoDateSchema, minutes: z.number().positive() }))
+    .default([]),
   difficultyBias: z.enum(DIFFICULTY_BIASES).default("standard"),
   /**
    * The option the learner takes of each of their exam's choices (ENEM's foreign language): the
@@ -189,6 +216,17 @@ const planSettingsSchema = z.object({
    */
   fullCourse: z.boolean().default(false),
   lightWeeks: z.array(lightWeekSchema).default([]),
+  /**
+   * The mocks the last planning run funded, derived from the plan (see `fundMocks`): Today and the
+   * plan's week read each day's time through it (see `getFundedMinutes`), so they agree.
+   */
+  mockFunding: z.array(mockFundingSchema).default([]),
+  /**
+   * The mocks the last planning run moved off a day a phase's checkpoint left without time for
+   * them (see `findRelocation`), derived from the plan, never a learner's move: later runs keep
+   * them there, under the learner's own moves, while their new day stays free.
+   */
+  mockRelocations: z.array(movedEventSchema).default([]),
   movedEvents: z.array(movedEventSchema).default([]),
   /**
    * The exam day the plan took from the exam's notice, or its estimate, when the learner gave no

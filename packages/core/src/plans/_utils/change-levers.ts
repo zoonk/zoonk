@@ -37,8 +37,8 @@ function toStudyLevers(operation: StudyOperation): string[] {
  * focus (which areas get more time, and which less), one area's start or place in the plan, how
  * hard or practice-heavy lessons are, when the written tests are practiced, studying everything
  * after the exam, one base, one language activity, one light week, one moved weekly event, one
- * added skill, one tool, one of the exam's choices, what the exam's notice says, and the plan's
- * phase dates.
+ * added skill, one tool, one of the exam's choices, what the exam's notice says, the plan's
+ * phase dates, and the lessons the learner's time fits.
  */
 function toLevers(operation: PlanOperation): string[] {
   if (isCoreProposal(operation)) {
@@ -77,6 +77,8 @@ function toLevers(operation: PlanOperation): string[] {
       return operation.tools.map((tool) => `tool:${tool.name}`);
     case "setExamChoice":
       return [`examChoice:${operation.group}`];
+    case "fitLessons":
+      return ["fitLessons"];
     default:
       return operation satisfies never;
   }

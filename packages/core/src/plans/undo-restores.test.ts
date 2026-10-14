@@ -1,95 +1,86 @@
 import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { readBlockPayload } from "../sessions/block-payload";
+import { keptEndPlanFixture, readPlan } from "./_test-utils/kept-end-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
+import { parsePlanSettings } from "./planner/plan-state";
 
 const DAY = 86_400_000;
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** The plan as the learner sees it: its phases, and its items in order with their day and status. */
-async function readPlan(planId: string) {
-  const plan = await prisma.plan.findUniqueOrThrow({
-    include: { items: { orderBy: { position: "asc" } } },
-    where: { id: planId },
+/** Today's session as the learner has it: its blocks in order, with what each holds. */
+async function readDaySession(goalId: string) {
+  const session = await prisma.studySession.findFirstOrThrow({
+    include: { blocks: { orderBy: { position: "asc" } } },
+    where: { goalId },
   });
 
   return {
-    items: plan.items.map((item) => ({
-      kind: item.kind,
-      lessonId: item.lessonId,
-      scheduledFor: item.scheduledFor?.toISOString().slice(0, 10),
-      skillId: item.skillId,
-      status: item.status,
+    blocks: session.blocks.map((block) => ({
+      canDo: block.canDo,
+      estimatedMinutes: block.estimatedMinutes,
+      id: block.id,
+      kind: block.kind,
+      lessonId: block.lessonId,
+      payload: block.payload,
+      position: block.position,
+      status: block.status,
     })),
-    phases: plan.phases,
+    id: session.id,
+    plannedMinutes: session.plannedMinutes,
+    status: session.status,
   };
 }
 
-function twoDaysLater(day: string): string {
-  return new Date(Date.parse(`${day}T00:00:00Z`) + 2 * DAY).toISOString().slice(0, 10);
-}
-
-/**
- * A plan of two phases whose first ends two days after its lessons do, as a run that kept the end
- * the learner saw leaves it: its challenge is on that day, and the next phase starts after it.
- * Planned again, that end and challenge move back to the lessons.
- */
-async function setupKeptEnd() {
+/** A built day of a plan whose first topic has an open mistake, so the day fixes it in practice. */
+async function setupDayWithMistake() {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
-    phases: ["Basics", "Next steps"],
-    skills: [
-      { area: "Math", lessons: 6 },
-      { area: "Math", lessons: 6, phase: 1 },
-    ],
+    phases: ["Basics"],
+    skills: [{ area: "Math", lessons: 8 }],
   });
 
-  const { goal, plan } = await unplannedGoalFixture({
+  const { goal } = await unplannedGoalFixture({
     dailyMinutes: 12,
     settings: { startDate: "2020-09-28" },
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
-  mockSession(user.id);
+  const skillId = library.skills[0]?.id ?? "";
 
-  const created = await prisma.plan.findUniqueOrThrow({
-    include: { items: true },
-    where: { id: plan.id },
-  });
-
-  const [first, second] = created.phases as { endDate: string; startDate: string }[];
-  const challenge = created.items.find((item) => item.kind === "boss" && item.phase === 0);
-
-  await Promise.all([
-    prisma.plan.update({
-      data: {
-        phases: [
-          { ...first, endDate: twoDaysLater(first?.endDate ?? "") },
-          { ...second, startDate: twoDaysLater(second?.startDate ?? "") },
-        ],
-      },
-      where: { id: plan.id },
-    }),
-    prisma.planItem.update({
-      data: { scheduledFor: new Date(`${twoDaysLater(first?.endDate ?? "")}T00:00:00Z`) },
-      where: { id: challenge?.id ?? "" },
-    }),
+  const [items] = await Promise.all([
+    Promise.all(
+      Array.from({ length: 3 }, () => itemFixture({ content: choiceItemContent(), skillId })),
+    ),
+    createGoalPlan({ goalId: goal.id, graph: library.graph }),
   ]);
 
-  return { goal, library, plan };
+  await mistakeFixture({
+    createdAt: new Date(NOW.getTime() - DAY),
+    itemId: items[0]?.id,
+    skillId,
+    userId: user.id,
+  });
+
+  mockSession(user.id);
+  await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+
+  return { goal };
 }
 
 describe("undoing a change in the app", () => {
@@ -105,7 +96,7 @@ describe("undoing a change in the app", () => {
   // R38. Planned again from the state before the change, an undo moved what earlier runs kept:
   // after a light week, 243 items and every phase end of a career plan (seed 1005).
   it("puts back the phase end and the days an earlier run kept, not a plan made again", async () => {
-    const { goal, plan } = await setupKeptEnd();
+    const { goal, plan } = await keptEndPlanFixture();
     const shown = await readPlan(plan.id);
 
     const result = await changeGoalPlan({
@@ -131,7 +122,7 @@ describe("undoing a change in the app", () => {
   // skipped lessons as todo rows on day one, beside the lessons laid out without them. Each comes
   // back on the day it had, with every other item as it was.
   it("puts back the lessons a test-out skipped on the days they had", async () => {
-    const { goal, library, plan } = await setupKeptEnd();
+    const { goal, library, plan } = await keptEndPlanFixture();
     const [shown, goalPlan] = await Promise.all([readPlan(plan.id), loadGoalPlan(goal.id)]);
 
     const { changeId } = await markPlanItemsTestedOut({
@@ -200,6 +191,74 @@ describe("undoing a change in the app", () => {
     await expect(readDay()).resolves.toStrictEqual(day);
   });
 
+  // Ana applied "Saturday becomes a rest day" on Today and undid it: the plan came back, but today's
+  // session was built again, with other lessons and without her mistakes practice. Undo gives back
+  // the very day she had, not a new one built like it: its blocks (the same rows, so a screen
+  // showing one still reaches it), their order, the questions they ask and its minutes.
+  it("gives back today's exact session, with its mistakes practice", async () => {
+    const { goal } = await setupDayWithMistake();
+    const day = await readDaySession(goal.id);
+    const practice = day.blocks.find((block) => block.kind === "practice");
+
+    expect(readBlockPayload({ id: "", payload: practice?.payload ?? {} }).drills).toHaveLength(1);
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }] },
+    });
+
+    const change = result.status === "applied" ? result.change : null;
+    await expect(readDaySession(goal.id)).resolves.not.toStrictEqual(day);
+
+    await decidePlanChange({
+      changeId: change?.id ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
+
+    await expect(readDaySession(goal.id)).resolves.toStrictEqual(day);
+  });
+
+  // What the learner did between Apply and Undo is theirs: the lesson they finished stays done, and
+  // the day they had comes back around it, without that lesson twice.
+  it("keeps what the learner did since the change when it gives back today's session", async () => {
+    const { goal } = await setupDayWithMistake();
+    const day = await readDaySession(goal.id);
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }] },
+    });
+
+    const change = result.status === "applied" ? result.change : null;
+    const changed = await readDaySession(goal.id);
+    const done = changed.blocks.find((block) => block.kind === "learn");
+
+    await prisma.studySessionBlock.update({
+      data: { completedAt: NOW, startedAt: NOW, status: "completed" },
+      where: { id: done?.id ?? "" },
+    });
+
+    await decidePlanChange({
+      changeId: change?.id ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
+
+    const after = await readDaySession(goal.id);
+    const pending = day.blocks.filter((block) => block.lessonId !== done?.lessonId);
+
+    expect(after.blocks.find((block) => block.id === done?.id)).toMatchObject({
+      status: "completed",
+    });
+
+    expect(after.blocks.filter((block) => block.id !== done?.id)).toStrictEqual(
+      pending.map((block) => ({ ...block, position: expect.any(Number) })),
+    );
+
+    expect(after.blocks.filter((block) => block.lessonId === done?.lessonId)).toHaveLength(1);
+  });
+
   // Ana set her time to 15 minutes and back to 45 in the editor: the plan, Today and her subjects'
   // shares came back different from the ones she had. Setting the old value back is Undo.
   it("undoes the latest change when the learner sets back by hand what it changed", async () => {
@@ -238,6 +297,62 @@ describe("undoing a change in the app", () => {
     ).resolves.toMatchObject({ change: { id: change?.id, status: "undone" }, status: "applied" });
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
+
+    await expect(
+      prisma.planChange.count({ where: { planId: plan.id, status: "applied" } }),
+    ).resolves.toBe(0);
+  });
+
+  it("restores an exam plan when the learner sets back time that changed its mock funding", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 30 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 45,
+      details: { placementDeclined: true },
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-26"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    const [shown, saved] = await Promise.all([
+      readPlan(plan.id),
+      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+    ]);
+
+    const funding = parsePlanSettings(saved.settings).mockFunding;
+    expect(funding.length).toBeGreaterThan(0);
+
+    const changed = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 15 }] },
+    });
+
+    const change = changed.status === "applied" ? changed.change : null;
+    const reduced = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(parsePlanSettings(reduced.settings).mockFunding).not.toStrictEqual(funding);
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setDailyMinutes", minutes: 45 }] },
+      }),
+    ).resolves.toMatchObject({ change: { id: change?.id, status: "undone" }, status: "applied" });
+
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      settings: saved.settings,
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 45,
+    });
 
     await expect(
       prisma.planChange.count({ where: { planId: plan.id, status: "applied" } }),

@@ -1,12 +1,36 @@
+import { EPSILON, findDayIndex, findDayIndexFrom } from "./day-index";
+import { type StudyPortion, getUnitStudy } from "./interval-study-minutes";
 import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
 import { addDays } from "./plan-calendar";
 import { type QueueUnit } from "./plan-units";
+import { type PlacedBoss, placeBoss, withKeptLessons } from "./whole-boss";
 
 /** Something fixed to a date: a weekly checkpoint or mock, an exam phase checkpoint, a review day. */
 export type FixedEvent = {
+  /**
+   * A phase's challenge right after the lessons it tests on their own day, with no study day left
+   * after them (see `placeBoss`): it takes none of the day's time, all of its own past it.
+   */
+  beside?: boolean;
   key: string;
   kind: "boss" | "checkpoint" | "mock" | "review";
+  /**
+   * An exam's phase challenge on the first study day after the lessons it tests (see
+   * `placeExamBosses`): it leads the day, and the day's lessons come after it.
+   */
+  leads?: boolean;
   minutes: number;
+  /**
+   * A scheduled exam mock: the exam day it sits, once the plan's mocks have their identities (see
+   * `fundMocks`), and whether all of it, by its date's phase. Absent on other events and on a class
+   * test's short mock, whose length its day sets.
+   */
+  mock?: { day?: number | null; fullLength: boolean };
+  /**
+   * The phase it belongs to when not its day's: a phase's challenge on the first study day after
+   * its lessons, in the next phase's window, is still its own phase's.
+   */
+  ownPhase?: number;
   /** A mock exam takes the whole day: no lessons that day. */
   replacesDay: boolean;
   title: string;
@@ -21,6 +45,12 @@ export type DayShape = {
   /** The plan phase the day belongs to, or null when phases follow the lessons (learn plans). */
   phase: number | null;
   /**
+   * Day minutes the day keeps for the teaching its window's challenge tests and the lesson the
+   * learner was promised by it (see `getKeptMinutes`): no mock's funding takes them, and they stay
+   * lesson time.
+   */
+  kept?: number;
+  /**
    * Lesson minutes the day already gives to work an earlier day left (see `carryOver` in
    * `buildPlan`), so the rest of the plan fills only what's left of it.
    */
@@ -28,7 +58,19 @@ export type DayShape = {
   share: number;
 };
 
-export type ScheduledUnit = QueueUnit & { date: Date; studyMinutes: number };
+export type ScheduledUnit = QueueUnit & {
+  /** A phase's challenge right after its lessons on their own day (see `placeBoss`). */
+  beside?: boolean;
+  date: Date;
+  studyMinutes: number;
+  /** The day minutes a lesson takes on each of its days (see `getUnitStudy`); none for a boss. */
+  studyPortions?: StudyPortion[];
+  /**
+   * The day the time it takes ends, when later than its date: a long lesson due on the plan's first
+   * day teaches after it. Absent: its date.
+   */
+  teachingEnd?: Date;
+};
 
 /** A unit the plan can't cover, with the part of its minutes that still fits before the end. */
 export type DroppedUnit = QueueUnit & { fittedMinutes: number };
@@ -36,9 +78,6 @@ export type ScheduledEvent = FixedEvent & { date: Date; phase: number | null };
 
 /** One date of the plan with what it offers. */
 export type PlanDay = { date: Date; shape: DayShape };
-
-/** Floating-point sums of lesson minutes must not push a lesson to the next day. */
-const EPSILON = 1e-6;
 
 /** The plan's dates from its start, each with what it offers, up to its horizon. */
 export function listPlanDays({
@@ -65,116 +104,25 @@ export function getLessonCapacity({ shape }: PlanDay): number {
     return 0;
   }
 
-  const eventMinutes = shape.events.reduce((total, event) => total + event.minutes, 0);
+  const eventMinutes = shape.events
+    .filter((event) => !event.beside)
+    .reduce((total, event) => total + event.minutes, 0);
+
   const capacity = Math.max(0, shape.minutes - eventMinutes) * shape.share;
 
   return Math.max(0, capacity - (shape.reserved ?? 0));
 }
 
-function prefixSums(values: readonly number[]): number[] {
-  return values.reduce<number[]>((sums, value) => {
-    sums.push((sums.at(-1) ?? 0) + value);
+/** Each day's lesson minutes added up from the first day: where in the plan's time a day ends. */
+export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
+  return days.reduce<number[]>((sums, day) => {
+    sums.push((sums.at(-1) ?? 0) + getLessonCapacity(day));
     return sums;
   }, []);
 }
 
-/** Each day's lesson minutes added up from the first day: where in the plan's time a day ends. */
-export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
-  return prefixSums(days.map((day) => getLessonCapacity(day)));
-}
-
-/** The first day whose cumulative capacity reaches `needed`, or -1 when none does. */
-export function findDayIndex({
-  cumulative,
-  needed,
-}: {
-  cumulative: readonly number[];
-  needed: number;
-}) {
-  const search = (low: number, high: number): number => {
-    if (low >= high) {
-      return (cumulative[low] ?? 0) + EPSILON >= needed ? low : -1;
-    }
-
-    const middle = Math.floor((low + high) / 2);
-
-    return (cumulative[middle] ?? 0) + EPSILON >= needed
-      ? search(low, middle)
-      : search(middle + 1, high);
-  };
-
-  return cumulative.length === 0 ? -1 : search(0, cumulative.length - 1);
-}
-
-/**
- * `findDayIndex` for a unit placed after the one that landed on day `from`: what it needs only
- * grows, so no day before `from` reaches it. The search gallops from there (a step, then twice as
- * many) instead of searching every day for each unit: a real-size exam places thousands of units,
- * many times per plan, and each lands on or near the day before it.
- */
-function findDayIndexFrom({
-  cumulative,
-  from,
-  needed,
-}: {
-  cumulative: readonly number[];
-  from: number;
-  needed: number;
-}): number {
-  const last = cumulative.length - 1;
-
-  if (from < 0 || from > last) {
-    return -1;
-  }
-
-  const reaches = (day: number) => (cumulative[day] ?? 0) + EPSILON >= needed;
-
-  const search = (low: number, high: number): number => {
-    if (low >= high) {
-      return low;
-    }
-
-    const middle = Math.floor((low + high) / 2);
-    return reaches(middle) ? search(low, middle) : search(middle + 1, high);
-  };
-
-  const gallop = (low: number, step: number): number => {
-    const high = Math.min(last, low + step - 1);
-
-    if (reaches(high)) {
-      return search(low, high);
-    }
-
-    return high === last ? -1 : gallop(high + 1, step * 2);
-  };
-
-  return gallop(from, 1);
-}
-
 /** Where a unit landed: its day, and where it starts in the plan's cumulative lesson minutes. */
-type PlacedUnit = { dayIndex: number; start: number; unit: QueueUnit };
-
-/**
- * Where in the plan's lesson minutes the next unit starts after one that ends at `needed`, on a
- * day that ends at `dayEnd`: a phase checkpoint closes its day, and a kept phase end's challenge
- * (`heldOn`) takes only its own day's time, even past it (a day the learner rests, or two
- * challenges a half-studied day left on it), so the next day keeps its lessons.
- */
-export function getUsedAfter({
-  dayEnd,
-  needed,
-  unit,
-}: {
-  dayEnd: number | undefined;
-  needed: number;
-  unit: QueueUnit;
-}): number {
-  if (dayEnd === undefined || unit.kind !== "boss") {
-    return needed;
-  }
-
-  return unit.heldOn === undefined ? Math.max(needed, dayEnd) : dayEnd;
-}
+type PlacedUnit = { beside?: boolean; dayIndex: number; start: number; unit: QueueUnit };
 
 /**
  * Where the day that `used` reaches into ends: `used` itself when it ends a day, as nothing used
@@ -230,31 +178,66 @@ function getDueDay({
  * unit that opens a study-cycle day does the same for the day before it, and one placed after days
  * the cycle left without lessons starts after them.
  */
-export function placeUnits({
+export function placeUnits(input: {
+  cumulative: readonly number[];
+  units: readonly QueueUnit[];
+}): PlacedUnit[] {
+  return layUnits(input).placed;
+}
+
+/** Where in the plan's lesson minutes the next unit after these starts at the earliest. */
+export function getUsedAfterUnits(input: {
+  cumulative: readonly number[];
+  units: readonly QueueUnit[];
+}): number {
+  return layUnits(input).used;
+}
+
+function layUnits({
   cumulative,
   units,
 }: {
   cumulative: readonly number[];
   units: readonly QueueUnit[];
-}): PlacedUnit[] {
+}) {
   return units.reduce<{
-    bossEnd: number | null;
+    boss: PlacedBoss | null;
     dayIndex: number;
     placed: PlacedUnit[];
     used: number;
   }>(
     (state, unit) => {
-      const from = unit.kind === "boss" && state.bossEnd !== null ? state.bossEnd : state.used;
+      const boss = placeBoss({
+        cumulative,
+        from: state.dayIndex,
+        previous: state.boss,
+        unit,
+        used: state.used,
+      });
+
+      if (boss) {
+        state.placed.push({
+          beside: boss.beside,
+          dayIndex: boss.dayIndex,
+          start: boss.start,
+          unit,
+        });
+
+        return {
+          boss,
+          dayIndex: Math.max(state.dayIndex, boss.dayIndex),
+          placed: state.placed,
+          used: boss.used,
+        };
+      }
 
       const start = Math.max(
         unit.startsAt ?? 0,
-        unit.opensDay ? getDayEnd({ cumulative, used: from }) : from,
+        unit.opensDay ? getDayEnd({ cumulative, used: state.used }) : state.used,
       );
 
       const needed = start + unit.minutes;
       const found = findDayIndexFrom({ cumulative, from: state.dayIndex, needed });
-      const dayEnd = cumulative[unit.heldOn ?? found];
-
       const first = state.placed.length === 0;
 
       state.placed.push({
@@ -267,15 +250,10 @@ export function placeUnits({
       const { heldOn } = unit;
       const next = heldOn !== undefined && (found === -1 || found > heldOn) ? heldOn : found;
 
-      return {
-        bossEnd: unit.kind === "boss" ? needed : null,
-        dayIndex: next,
-        placed: state.placed,
-        used: getUsedAfter({ dayEnd, needed, unit }),
-      };
+      return { boss: null, dayIndex: next, placed: state.placed, used: needed };
     },
-    { bossEnd: null, dayIndex: 0, placed: [], used: 0 },
-  ).placed;
+    { boss: null, dayIndex: 0, placed: [], used: 0 },
+  );
 }
 
 function fitsWhole({
@@ -298,20 +276,22 @@ function fitsWhole({
  */
 function closeWhatFits({
   cumulative,
+  placed,
   units,
 }: {
   cumulative: readonly number[];
+  placed: readonly PlacedUnit[];
   units: readonly QueueUnit[];
 }): { kept: QueueUnit[]; leftOut: QueueUnit[] } {
   const closing = units.at(-1);
   const before = units.slice(0, -1);
   const unchanged = { kept: [...units], leftOut: [] };
 
-  if (closing?.kind !== "boss" || fitsWhole({ cumulative, units })) {
+  if (closing?.kind !== "boss" || placed.every(({ dayIndex }) => dayIndex >= 0)) {
     return unchanged;
   }
 
-  const fitting = placeUnits({ cumulative, units: before }).filter(({ dayIndex }) => dayIndex >= 0);
+  const fitting = placed.slice(0, -1).filter(({ dayIndex }) => dayIndex >= 0);
 
   const count = findLargestCount({
     high: fitting.length,
@@ -335,14 +315,17 @@ function closeWhatFits({
 /** The units laid on these days with room made for the goal's outcomes (see `makeRoomForOutcomes`). */
 export function makeOutcomeRoom({
   cumulative,
+  placed,
   units,
 }: {
   cumulative: readonly number[];
+  /** This call's original placements, before any outcome cut changes the unit list. */
+  placed?: readonly PlacedUnit[];
   units: readonly QueueUnit[];
 }) {
   return makeRoomForOutcomes({
     dropsOutcome: (list) =>
-      placeUnits({ cumulative, units: list }).some(
+      (list === units && placed ? placed : placeUnits({ cumulative, units: list })).some(
         ({ dayIndex, unit }) => dayIndex < 0 && unit.outcome && !unit.depth,
       ),
     units,
@@ -361,37 +344,65 @@ export function makeOutcomeRoom({
  */
 export function scheduleUnits({
   days,
-  units,
+  units: given,
 }: {
   days: readonly PlanDay[];
   units: readonly QueueUnit[];
 }): { dropped: DroppedUnit[]; events: ScheduledEvent[]; units: ScheduledUnit[] } {
   const cumulative = getCumulativeCapacity(days);
   const capacity = cumulative.at(-1) ?? 0;
+  const units = withKeptLessons({ days, units: given });
 
-  const room = makeOutcomeRoom({ cumulative, units });
-  const closed = closeWhatFits({ cumulative, units: room.kept });
+  const initial = placeUnits({ cumulative, units });
+  const room = makeOutcomeRoom({ cumulative, placed: initial, units });
+
+  const roomPlaced =
+    room.leftOut.length > 0 ? placeUnits({ cumulative, units: room.kept }) : initial;
+
+  const closed = closeWhatFits({ cumulative, placed: roomPlaced, units: room.kept });
   const { kept } = closed;
   const leftOut = [...room.leftOut, ...closed.leftOut];
-  const placed = placeUnits({ cumulative, units: kept });
+  const placed = closed.leftOut.length > 0 ? placeUnits({ cumulative, units: kept }) : roomPlaced;
 
-  const scheduled = placed.flatMap(({ dayIndex, unit }) => {
+  const scheduled = placed.flatMap(({ beside, dayIndex, start, unit }) => {
     const day = days[dayIndex];
 
     if (!day || dayIndex < 0) {
       return [];
     }
 
-    /** Exam phases are time windows: a lesson belongs to the phase of the day it's due. */
-    const phase = day.shape.phase ?? unit.phase;
+    const endDay = Math.max(dayIndex, findDayIndex({ cumulative, needed: start + unit.minutes }));
+    const teachingEnd = unit.kind === "boss" ? day.date : (days[endDay]?.date ?? day.date);
 
+    const { studyMinutes, studyPortions } = getUnitStudy({
+      cumulative,
+      days,
+      dueDate: day.date,
+      overflowShare: day.shape.share,
+      start,
+      unit,
+    });
+
+    /** Exam phases are time windows: a lesson belongs to the phase of the day it's due. */
     return [
-      { ...unit, date: day.date, phase, studyMinutes: unit.minutes / (day.shape.share || 1) },
+      {
+        ...unit,
+        ...(beside ? { beside } : {}),
+        date: day.date,
+        phase: day.shape.phase ?? unit.phase,
+        studyMinutes,
+        ...(studyPortions.length > 0 ? { studyPortions } : {}),
+        ...(teachingEnd > day.date ? { teachingEnd } : {}),
+      },
     ];
   });
 
   const events = days.flatMap((day) =>
-    day.shape.events.map((event) => ({ ...event, date: day.date, phase: day.shape.phase })),
+    day.shape.events.map((event) => ({
+      ...event,
+      date: day.date,
+      phase: event.ownPhase ?? day.shape.phase,
+    })),
   );
 
   return {

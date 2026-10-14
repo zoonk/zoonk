@@ -15,11 +15,17 @@ const KEYED_FIELDS = {
   answeredWrongSkillIds: true,
   bands: true,
   bases: true,
+  bossDays: true,
+  bossFacts: true,
+  bossMinutes: true,
   bringBackSetAside: "Only a learner's change brings set-aside work back, and its plan holds it.",
   carryOver: "What earlier days left, which the plan the run saved already lays out first.",
+  courseStart: true,
   examWindows: "The exam's phases as the saved plan shows them: that plan's own dates.",
+  finishedOn: true,
   fullMockMinutes: true,
   goal: true,
+  goalId: "Which goal a run's warnings name, not anything the plan plans.",
   graph: true,
   heldSkillsLand: "Whether a landing's lessons include next chapters, whose lessons the key reads.",
   items: "The saved plan itself: only the learner's progress in it counts (see `progress`).",
@@ -29,6 +35,7 @@ const KEYED_FIELDS = {
   lessons: true,
   levelFloor: true,
   missedSkillIds: true,
+  mockClocks: true,
   mockMinutes: true,
   mode: "How the run lays the plan out (from today, or after this week), not what it plans.",
   movesPhaseEnds: "Whether the run moves the phase ends shown, which the plan it saves holds.",
@@ -38,9 +45,11 @@ const KEYED_FIELDS = {
   prerequisites: true,
   quickLessons: true,
   readiness: true,
+  requestedMoveDates: "A change's requested move is funded where it asks or refused, never saved.",
   setAsideLeftWork: "Only a new day's settling sets work aside, and the plan it saved holds it.",
   settings: true,
   strongAreas: true,
+  testedTeaching: "A run's own pass before, settling its challenges: not what it plans from.",
   today: "A day that only begins changes nothing; a missed day settles on its own path.",
   todayShown: "Whether the learner saw today's session: the saved plan's today, as it is.",
   topicLevels: true,
@@ -135,11 +144,20 @@ export function getPlanInputsKey({
   /** The plan's items as the run saves them, which the next run reads. */
   items: readonly Pick<PlannedItem, "key" | "status">[];
 }): string {
-  // The graph as a run reads it, without the lessons the last build counted.
+  // The graph as a run reads it, without the lessons the last build counted, and the settings
+  // without the checkpoints' overflow the build derived, which no run reads.
   const read = {
     ...input,
+    // What the bank holds for the bosses; the skills the Library says lessons teach are in the
+    // lessons, and the kept items' in their progress.
+    bossFacts: input.bossFacts && {
+      bank: input.bossFacts.bank,
+      listeningSkillIds: input.bossFacts.listeningSkillIds,
+      survivors: input.bossFacts.survivors,
+    },
     graph: input.graph && withoutPlannedLessons(input.graph),
     lessons: input.lessons && toKeyedLessons(input.lessons),
+    settings: input.settings && { ...input.settings, checkpointOverflow: [] },
   };
 
   const planned = Object.fromEntries(

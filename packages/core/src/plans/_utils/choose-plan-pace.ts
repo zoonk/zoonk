@@ -1,12 +1,12 @@
 import "server-only";
+import { toIsoDate } from "../planner/plan-calendar";
 import { type Pace, choosePace } from "../planner/plan-pace";
-import { loadPaceSamples } from "./pace-samples";
+import { type PlanState } from "../planner/plan-state";
+import { PACE_LESSON_LIMIT, loadPaceSamples } from "./pace-samples";
+import { type PlanContext } from "./plan-context";
 
-/** The course pace compares others on the lessons the learner has coming up. */
-const PACE_LESSON_LIMIT = 500;
-
-/** The pace a plan is computed at: the one it was saved with, else sampled now. */
-export async function choosePlanPace({
+/** The saved pace, or one sampled from the learner's progress now. */
+async function choosePlanPace({
   lessons,
   now,
   pace,
@@ -30,4 +30,34 @@ export async function choosePlanPace({
   });
 
   return choosePace(samples);
+}
+
+/** The settings a run plans with: its pace, the short mock's length, and its start day. */
+export async function choosePlanSettings({
+  context,
+  inputs,
+  now,
+  paceSource,
+  state,
+}: {
+  context: PlanContext;
+  inputs: { lessons: readonly { lessonId: string }[]; shortMockMinutes: number | null };
+  now: Date;
+  paceSource: "sampled" | "saved";
+  state: PlanState;
+}) {
+  const pace = await choosePlanPace({
+    lessons: inputs.lessons,
+    now,
+    pace: paceSource,
+    saved: state.settings.pace,
+    userId: context.goal.userId,
+  });
+
+  return {
+    ...state.settings,
+    pace,
+    shortMockMinutes: inputs.shortMockMinutes,
+    startDate: state.settings.startDate ?? toIsoDate(context.today),
+  };
 }

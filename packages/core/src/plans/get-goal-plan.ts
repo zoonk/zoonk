@@ -1,15 +1,15 @@
 import "server-only";
-import { isValidTimeZone } from "@zoonk/utils/time-zone";
-import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
-import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { loadPlanContext } from "./_utils/plan-context";
+import { loadOwnedPlanContext } from "./_utils/owned-plan";
 import { buildPlanView } from "./_utils/plan-view";
-import { type PlanView } from "./plan-view-contract";
+import { type PlanScreenView, type PlanView } from "./plan-view-contract";
 
 export type GoalPlanResult =
   | { plan: PlanView; status: "ready" }
+  | { status: "notFound" }
+  | { status: "unauthorized" };
+
+export type GoalPlanScreenResult =
+  | { plan: PlanScreenView; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -20,29 +20,24 @@ export type GoalPlanResult =
 export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
   "use cache: private";
 
-  // The request's date doesn't depend on the goal: it's read alongside it.
-  const [owned, { currentInstant, timeZone }] = await Promise.all([
-    findOwnedGoal(goalId),
-    getRequestProgressDateContext(),
-  ]);
+  const loaded = await loadOwnedPlanContext(goalId);
 
-  if (owned.status !== "ready") {
-    return owned;
+  if (loaded.status !== "ready") {
+    return loaded;
   }
 
-  cacheTag(getGoalsCacheTag(owned.userId), getLearnerModelCacheTag(owned.userId));
+  return { plan: await buildPlanView(loaded), status: "ready" };
+}
 
-  const goalZone = owned.goal.timezone;
+/** The same authenticated plan without the separate core-time search screens never display. */
+export async function getGoalPlanScreen(goalId: string): Promise<GoalPlanScreenResult> {
+  "use cache: private";
 
-  const context = await loadPlanContext({
-    goal: owned.goal,
-    now: currentInstant,
-    timeZone: goalZone && isValidTimeZone(goalZone) ? goalZone : timeZone,
-  });
+  const loaded = await loadOwnedPlanContext(goalId);
 
-  if (!context) {
-    return { status: "notFound" };
+  if (loaded.status !== "ready") {
+    return loaded;
   }
 
-  return { plan: await buildPlanView({ context, now: currentInstant }), status: "ready" };
+  return { plan: await buildPlanView({ ...loaded, screen: true }), status: "ready" };
 }

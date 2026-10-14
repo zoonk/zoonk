@@ -9,11 +9,12 @@ import { type PlanOperation } from "../plan-contract";
 import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
-import { type PlanOperationError } from "../planner/plan-operations";
+import { type PlanChangeRefusal } from "../planner/plan-operations";
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { type ComputedChange, computeChange } from "./compute-change";
 import { followPlanToday } from "./follow-plan-today";
+import { findUnfundedMove, hasMissingWeeklyMove } from "./missing-weekly-move";
 import { applyChangeOperations } from "./part-areas";
 import { askPhaseDatesAfterChange } from "./phase-dates-proposal";
 import {
@@ -35,7 +36,7 @@ export type AppliedChange =
       replaced?: string[];
       status: "applied" | "proposed";
     }
-  | { error: PlanOperationError; status: "invalid" };
+  | PlanChangeRefusal;
 
 /** The plan would stay as it is (see `computeChange`): nothing is offered. */
 type UnchangedPlan = { status: "unchanged" };
@@ -205,9 +206,7 @@ async function computeRequest({
   context,
   operations,
 }: Pick<ChangeRequest, "context" | "operations">): Promise<
-  | { change: ComputedChange; status: "computed" }
-  | { error: PlanOperationError; status: "invalid" }
-  | { status: "saved" }
+  { change: ComputedChange; status: "computed" } | PlanChangeRefusal | { status: "saved" }
 > {
   const result = await applyChangeOperations({ context, operations });
 
@@ -227,6 +226,20 @@ async function computeRequest({
     operations: result.operations,
     state: result.state,
   });
+
+  // A stale or inconsistent source day must not save a move with no challenge at its destination.
+  // The caller would otherwise report success, skip today's block and lose its confirmation/Undo.
+  if (hasMissingWeeklyMove({ items: change.computed.built.items, operations })) {
+    // A mock moved where the days before it can't fund it is refused with why (see `fundMocks`).
+    const unfundedMove = findUnfundedMove({
+      operations,
+      unfunded: change.computed.built.mocks.unfundedMocks,
+    });
+
+    return unfundedMove
+      ? { error: "unfundedMove", status: "invalid", unfundedMove }
+      : { error: "badMove", status: "invalid" };
+  }
 
   // How to study bases, when it moves no lesson, is kept for later runs and changes nothing now: a
   // quick lesson for a base whose core the learner studied re-planned the day and let cell theory

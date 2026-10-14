@@ -3,14 +3,17 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { updateGoal } from "../goals/update-goal";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { roundShare } from "./_utils/plan-feasibility-view";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait, startNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
+import { parsePlanSettings } from "./planner/plan-state";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
 /**
@@ -21,16 +24,45 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 const WEEKDAYS = [1, 2, 3, 4, 5];
 
+const WEEKEND_SCHEDULES = [
+  {
+    dailyMinutes: 170,
+    lighter: false,
+    name: "weekend only",
+    studyDays: [0, 6],
+    weekendMinutes: 60,
+  },
+  {
+    dailyMinutes: 200,
+    lighter: true,
+    name: "lighter Tuesday and weekends",
+    studyDays: [0, 2, 6],
+    weekendMinutes: 30,
+  },
+  {
+    dailyMinutes: 115,
+    lighter: false,
+    name: "Monday and weekends",
+    studyDays: [0, 1, 6],
+    weekendMinutes: 30,
+  },
+  {
+    dailyMinutes: 170,
+    lighter: false,
+    name: "rested first Monday",
+    studyDays: [0, 3, 6],
+    weekendMinutes: 30,
+  },
+];
+
 /** A goal due in under two weeks whose 5 minutes a day can't cover its lessons. */
-async function setup() {
+async function setup(lessons = 6, dailyMinutes = 5) {
   const user = await userFixture();
 
-  const library = await planLibraryFixture({
-    skills: [{ lessons: 6 }, { lessons: 6 }, { lessons: 6 }],
-  });
+  const library = await planLibraryFixture({ skills: [{ lessons }, { lessons }, { lessons }] });
 
   const { goal } = await unplannedGoalFixture({
-    dailyMinutes: 5,
+    dailyMinutes,
     settings: { startDate: "2020-09-28" },
     targetDate: new Date("2020-10-09T00:00:00Z"),
     userId: user.id,
@@ -76,7 +108,7 @@ function change(
 
 /*
  * Onboarding's time question recommends the daily time that covers the whole goal by its date, and
- * the plan reveal and the Journey show the time it needs from the same plan: the learner must never
+ * the plan reveal and the Plan show the time it needs from the same plan: the learner must never
  * be told one number before the plan and another right after.
  */
 describe(getPlanTimeAdvice, () => {
@@ -87,6 +119,126 @@ describe(getPlanTimeAdvice, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("recommends the least fitting accepted time when more time adds an exam mock", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ area: "Math", lessons: 0, size: 11, weight: 1 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 60,
+      examBlueprintId: null,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-16T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-09-28T00:00:00Z"),
+      currentInstant: NOW,
+      timeZone: "UTC",
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const studyDays = [0];
+    const advice = await readAdvice(goal.id, studyDays);
+    const preview50 = await readAdvice(goal.id, studyDays, { dailyMinutes: 50 });
+    const preview65 = await readAdvice(goal.id, studyDays, { dailyMinutes: 65 });
+    const preview70 = await readAdvice(goal.id, studyDays, { dailyMinutes: 70 });
+
+    expect(preview50.coveredShare).toBe(1);
+    expect(preview65.coveredShare).toBe(1);
+    expect(preview70.coveredShare).toBe(0.95);
+
+    // Every smaller accepted candidate misses work; funding the added mock makes 70 worse again.
+    for (const dailyMinutes of Array.from({ length: 9 }, (_, index) => (index + 1) * 5)) {
+      // eslint-disable-next-line no-await-in-loop -- Each candidate reads the previous accepted state.
+      const preview = await readAdvice(goal.id, studyDays, { dailyMinutes });
+      expect(preview.coveredShare).toBeLessThan(1);
+
+      // eslint-disable-next-line no-await-in-loop -- Acceptances mutate the same learner's plan.
+      const accepted = await updateGoal({
+        goalId: goal.id,
+        input: { dailyMinutes, studyDays, timeZone: "UTC" },
+      });
+
+      expect(accepted.status).toBe("updated");
+      // eslint-disable-next-line no-await-in-loop -- Read the persisted result before accepting another time.
+      const saved = await readFeasibility(goal.id);
+      expect(saved?.fits).toBe(false);
+      expect(roundShare(saved?.coveredShare ?? 0)).toBe(preview.coveredShare);
+      expect([preview.recommendedMinutes, saved?.recommendedMinutes]).toStrictEqual([50, 50]);
+    }
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { dailyMinutes: 65, studyDays, timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      coveredShare: 1,
+      fits: true,
+      recommendedMinutes: 50,
+    });
+
+    const at65 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    expect(parsePlanSettings(at65.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
+      "2020-10-11",
+    ]);
+
+    const higher = await updateGoal({
+      goalId: goal.id,
+      input: { dailyMinutes: 70, studyDays, timeZone: "UTC" },
+    });
+
+    expect(higher.status).toBe("updated");
+    const saved70 = await readFeasibility(goal.id);
+    expect(saved70?.fits).toBe(false);
+    expect(roundShare(saved70?.coveredShare ?? 0)).toBe(0.95);
+    const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    expect(parsePlanSettings(at70.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
+      "2020-10-04",
+      "2020-10-11",
+    ]);
+
+    const accepted = await updateGoal({
+      goalId: goal.id,
+      input: { dailyMinutes: 50, studyDays, timeZone: "UTC" },
+    });
+
+    expect(accepted.status).toBe("updated");
+    const at50 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    expect(parsePlanSettings(at50.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
+      "2020-10-11",
+    ]);
+
+    const plan = await getGoalPlan(goal.id);
+
+    expect(plan).toMatchObject({
+      plan: {
+        feasibility: { coveredShare: 1, fits: true },
+        schedule: { dailyMinutes: 50, weekdayMinutes: [50, 0, 0, 0, 0, 0, 0] },
+      },
+      status: "ready",
+    });
+
+    expect([
+      advice.recommendedMinutes,
+      preview50.recommendedMinutes,
+      preview65.recommendedMinutes,
+      preview70.recommendedMinutes,
+      saved70?.recommendedMinutes,
+      plan.status === "ready" && plan.plan.feasibility?.recommendedMinutes,
+    ]).toStrictEqual([50, 50, 50, 50, 50, 50]);
   });
 
   it("recommends the time the plan then shows, and that time covers the whole goal", async () => {
@@ -107,6 +259,39 @@ describe(getPlanTimeAdvice, () => {
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({
       coveredShare: 1,
       recommendedMinutes: advice.recommendedMinutes,
+    });
+  });
+
+  // The time question's estimate changes as the learner taps a time: what that time covers by the
+  // date, the share the plan then shows, and never another time recommended.
+  it("says what the time the learner looks at covers, without changing the time recommended", async () => {
+    const { goal, library } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const advice = await readAdvice(goal.id, EVERY_DAY);
+    const recommended = advice.recommendedMinutes ?? 0;
+    const between = Math.max(10, recommended - 5);
+
+    const [some, all] = await Promise.all([
+      readAdvice(goal.id, EVERY_DAY, { dailyMinutes: between }),
+      readAdvice(goal.id, EVERY_DAY, { dailyMinutes: recommended }),
+    ]);
+
+    // The goal's own 5 minutes cover a little, more time more, the recommended time all of it.
+    expect(advice.coveredShare).toBeGreaterThan(0);
+    expect(advice.coveredShare).toBeLessThan(1);
+    expect(some.coveredShare).toBeGreaterThan(advice.coveredShare ?? 1);
+    expect(all.coveredShare).toBe(1);
+
+    expect([some.recommendedMinutes, all.recommendedMinutes]).toStrictEqual([
+      recommended,
+      recommended,
+    ]);
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: between }]);
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      coveredShare: some.coveredShare,
     });
   });
 
@@ -166,6 +351,206 @@ describe(getPlanTimeAdvice, () => {
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
   });
 
+  it("measures a new daily time with the saved weekend time, as applying it does", async () => {
+    const { goal, library } = await setup(18);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await change(goal.id, [
+      { kind: "setDailyMinutes", minutes: 10 },
+      { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+    ]);
+
+    const advice = await getPlanTimeAdvice({ goalId: goal.id, input: { dailyMinutes: 20 } });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: 20 }]);
+
+    const feasibility = await readFeasibility(goal.id);
+
+    if (!feasibility) {
+      throw new Error("Expected plan feasibility");
+    }
+
+    expect(advice).toMatchObject({
+      advice: { coveredShare: feasibility.coveredShare, ready: true },
+      status: "ready",
+    });
+  });
+
+  it("keeps lighter weekdays when recommending time with an unchanged weekend override", async () => {
+    const { goal, library } = await setup(21, 60);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await change(goal.id, [
+      { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+      { kind: "setWeekdayMinutes", minutes: 5, weekdays: [2] },
+    ]);
+
+    const [plain, explicit] = await Promise.all([
+      readAdvice(goal.id, EVERY_DAY),
+      readAdvice(goal.id, EVERY_DAY, { weekendMinutes: 30 }),
+    ]);
+
+    expect(explicit.recommendedMinutes).toBe(plain.recommendedMinutes);
+    expect(explicit.recommendedMinutes).toBeGreaterThan(60);
+
+    const recommended = explicit.recommendedMinutes;
+
+    if (recommended === null) {
+      throw new Error("Expected a daily-time recommendation");
+    }
+
+    const picked = await readAdvice(goal.id, EVERY_DAY, {
+      dailyMinutes: recommended,
+      weekendMinutes: 30,
+    });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: recommended }]);
+
+    const feasibility = await readFeasibility(goal.id);
+
+    expect(picked.coveredShare).toBe(1);
+
+    expect(feasibility).toMatchObject({
+      coveredShare: picked.coveredShare,
+      fits: true,
+      recommendedMinutes: recommended,
+    });
+  });
+
+  it.each(WEEKEND_SCHEDULES)(
+    "matches updateGoal's saved coverage for $name",
+    async ({ dailyMinutes, lighter, studyDays, weekendMinutes }) => {
+      const { goal, library } = await setup(12, 60);
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+      if (lighter) {
+        await change(goal.id, [
+          { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+          { kind: "setWeekdayMinutes", minutes: 5, weekdays: [2] },
+        ]);
+      }
+
+      const input = { dailyMinutes, studyDays, weekendMinutes };
+      const picked = await readAdvice(goal.id, studyDays, input);
+      const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
+      expect(result.status).toBe("updated");
+
+      const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      expect(saved.dailyMinutes).toBe(weekendMinutes);
+
+      await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+        coveredShare: picked.coveredShare,
+      });
+    },
+  );
+
+  it.each(WEEKEND_SCHEDULES)(
+    "offers only an achievable recommendation for $name",
+    async ({ lighter, studyDays, weekendMinutes }) => {
+      const { goal, library } = await setup(12, 60);
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+      if (lighter) {
+        await change(goal.id, [
+          { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+          { kind: "setWeekdayMinutes", minutes: 5, weekdays: [2] },
+        ]);
+      }
+
+      const input = { studyDays, weekendMinutes };
+      const advice = await readAdvice(goal.id, studyDays, input);
+
+      const recommended =
+        advice.recommendedMinutes ?? advice.maximum?.dailyMinutes ?? goal.dailyMinutes;
+
+      const promisedCoverage =
+        advice.recommendedMinutes === null
+          ? roundShare(advice.maximum?.coveredShare ?? advice.coveredShare ?? 0)
+          : 1;
+
+      const picked = await readAdvice(goal.id, studyDays, { ...input, dailyMinutes: recommended });
+
+      const result = await updateGoal({
+        goalId: goal.id,
+        input: { ...input, dailyMinutes: recommended, timeZone: "UTC" },
+      });
+
+      expect(result.status).toBe("updated");
+
+      const feasibility = await readFeasibility(goal.id);
+      expect(feasibility?.coveredShare).toBe(picked.coveredShare);
+
+      expect(feasibility).toMatchObject({
+        coveredShare: promisedCoverage,
+        fits: promisedCoverage === 1,
+      });
+    },
+  );
+
+  it("offers no daily-time increase when weekend-only candidates save the same schedule", async () => {
+    const { goal, library } = await setup(12, 60);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const input = { studyDays: [0, 6], weekendMinutes: 60 };
+
+    const [least, most] = await Promise.all([
+      readAdvice(goal.id, input.studyDays, { ...input, dailyMinutes: 5 }),
+      readAdvice(goal.id, input.studyDays, { ...input, dailyMinutes: 240 }),
+    ]);
+
+    expect(least).toMatchObject({ coveredShare: 0.61, maximum: null, recommendedMinutes: null });
+    expect(most).toStrictEqual(least);
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      coveredShare: least.coveredShare,
+    });
+  });
+
+  it("can recommend more weekday time when the saved scalar is already the weekend maximum", async () => {
+    const { goal, library } = await setup(60, 60);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const input = { dailyMinutes: 5, studyDays: [0, 1, 6], weekendMinutes: 240 };
+    const advice = await readAdvice(goal.id, input.studyDays, input);
+    expect(advice.recommendedMinutes).toBeNull();
+    expect(advice.maximum?.dailyMinutes).toBe(240);
+    expect(advice.maximum?.coveredShare).toBeGreaterThan(advice.coveredShare ?? 1);
+
+    const result = await updateGoal({
+      goalId: goal.id,
+      input: { ...input, dailyMinutes: 240, timeZone: "UTC" },
+    });
+
+    expect(result.status).toBe("updated");
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      coveredShare: roundShare(advice.maximum?.coveredShare ?? 0),
+    });
+  });
+
+  it("can preview and accept replacing all saved study days", async () => {
+    const { goal, library } = await setup(12, 60);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await updateGoal({
+      goalId: goal.id,
+      input: { studyDays: [0, 6], timeZone: "UTC", weekendMinutes: 60 },
+    });
+
+    const input = { dailyMinutes: 20, studyDays: WEEKDAYS };
+    const picked = await readAdvice(goal.id, WEEKDAYS, input);
+    const result = await updateGoal({ goalId: goal.id, input: { ...input, timeZone: "UTC" } });
+    expect(result.status).toBe("updated");
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      coveredShare: picked.coveredShare,
+    });
+  });
+
   it("keeps the number however other learners' lessons went since", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -212,8 +597,10 @@ describe(getPlanTimeAdvice, () => {
     const { goal } = await setup();
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
+      coveredShare: null,
       maximum: null,
       measure: "goal",
+      numbers: null,
       readingNotice: false,
       ready: false,
       recommendedMinutes: null,

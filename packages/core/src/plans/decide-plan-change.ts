@@ -55,6 +55,7 @@ async function acceptProposal({ change, context }: Decision) {
           payload: toPlanChangePayload({
             ...payload,
             effect,
+            fromProposal: true,
             versionAfter: getVersionAfter(context),
           }),
           status: "applied",
@@ -138,8 +139,8 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
 
 /**
  * The learner's answer to a change: OK or no to a proposal, undo an applied change (the latest
- * edit, or a test-out's skipped lessons), or "Got it" on an applied one. Changes that already
- * moved on are a conflict.
+ * edit, or a test-out's skipped lessons; an applied proposal waits for an answer again), or "Got
+ * it" on an applied one. Changes that already moved on are a conflict.
  */
 export async function decidePlanChange({
   changeId,

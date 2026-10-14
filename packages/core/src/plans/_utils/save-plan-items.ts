@@ -4,7 +4,7 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
 import { isStandIn } from "./stand-in-lessons";
 
-/** An item as a plan saves it: `id` is kept for items that were already in the plan. */
+/** An item as a plan saves it: `id` is kept for existing items and items restored by Undo. */
 export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes">;
 
 /**
@@ -44,7 +44,8 @@ async function findLessonFinishes({
  * for another skill once that skill's lessons are outlined) without touching their status, so a
  * lesson finished while the plan was being computed stays finished, but a todo item the run sets
  * aside (`skipped`, see `setAsideLeftWork`) and a set-aside one a learner's change plans again
- * (see `BuildPlanInput.bringBackSetAside`); new items are created. One statement per step. A
+ * (see `BuildPlanInput.bringBackSetAside`); new items are created, with their original ids when
+ * Undo restores them so the day's block payloads still reach them. One statement per step. A
  * stand-in keeps the lessons the plan teaches in its place (`standInLessons`), which every screen
  * counts it as. A new lesson item the learner already finished, such as a guest's lesson from a
  * public page before "Build my plan" made the goal, is done from when it ended, as finishing it
@@ -73,10 +74,11 @@ export async function savePlanItems({
     isStandIn(item) ? (standInLessons.get(item.skillId ?? "") ?? null) : null;
 
   const keptIds = new Set(items.flatMap((item) => (item.id ? [item.id] : [])));
+  const existingIds = new Set(existing.map((item) => item.id));
   const removedIds = existing.filter((item) => !keptIds.has(item.id)).map((item) => item.id);
   const positioned = items.map((item, position) => ({ item, position }));
-  const kept = positioned.filter(({ item }) => item.id !== null);
-  const fresh = positioned.filter(({ item }) => item.id === null);
+  const kept = positioned.filter(({ item }) => item.id !== null && existingIds.has(item.id));
+  const fresh = positioned.filter(({ item }) => item.id === null || !existingIds.has(item.id));
 
   await tx.$executeRaw`
     UPDATE plan_items
@@ -140,6 +142,7 @@ export async function savePlanItems({
       data: fresh.map(({ item, position }) => ({
         chapterId: item.chapterId,
         completedAt: finishOf(item) ?? null,
+        id: item.id ?? undefined,
         kind: item.kind,
         lessonId: item.lessonId,
         lessons: lessonsOf(item),

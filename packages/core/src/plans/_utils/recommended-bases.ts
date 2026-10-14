@@ -1,28 +1,13 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
-import { type PlanBases } from "../planner/plan-bases";
-import { type StoredBaseChoice } from "../planner/plan-state";
+import { toRecommendedBaseChoices } from "../planner/recommended-base-choices";
 import { isPlanReady } from "./apply-plan-change";
 import { withPastBasicsAreas } from "./level-listening-starts";
 import { listListeningPastBasicsAreas } from "./load-listening-starts";
 import { type PlanContext, loadPlanContext } from "./plan-context";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { type ComputedPlan, commitPlan, computePlan, withPlanRetry } from "./replan";
-
-/**
- * The choices the app recommends for the plan's bases (see `adviseOnBases`), as stored: their core
- * is the default, which isn't.
- */
-function toRecommendedChoices(bases: PlanBases): StoredBaseChoice[] {
-  const { recommended } = bases;
-
-  return recommended === "essential"
-    ? []
-    : bases.bases
-        .filter((base) => !base.known)
-        .map((base) => ({ choice: recommended, skillId: base.skillId }));
-}
 
 /**
  * A plan the learner hasn't seen yet starts on the app's recommendation for its bases: every lesson
@@ -38,7 +23,7 @@ export async function startOnRecommendedBases({
   computed: ComputedPlan;
   context: PlanContext;
 }): Promise<ComputedPlan> {
-  const choices = toRecommendedChoices(computed.bases);
+  const choices = toRecommendedBaseChoices(computed.bases);
 
   if (isDeepStrictEqual(choices, computed.state.settings.baseChoices)) {
     return computed;

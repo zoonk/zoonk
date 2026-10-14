@@ -1,7 +1,7 @@
 import { getSkillArea } from "../planner/graph-areas";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanState } from "../planner/plan-state";
-import { getRecommendedTime } from "../time-advice-contract";
+import { getMoreTime, getRecommendedTime } from "../time-advice-contract";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan } from "./replan";
 
@@ -58,13 +58,12 @@ export function getBehindChoices(
   const { feasibility } = computed;
   const dailyTime = computed.state.goal.dailyMinutes;
   const recommended = getRecommendedTime(feasibility);
-  const dailyMinutes = recommended?.dailyMinutes ?? null;
   const { fittingDate } = feasibility;
 
   return {
     canFocus: hasAreasToFocus(computed.state),
     currentMinutes: dailyTime,
-    dailyMinutes: dailyMinutes !== null && dailyMinutes > dailyTime ? dailyMinutes : null,
+    dailyMinutes: getMoreTime({ ...feasibility, dailyMinutes: dailyTime })?.dailyMinutes ?? null,
     fittingDate: fittingDate ? toIsoDate(fittingDate) : null,
     fullDepth: feasibility.recommendedMinutes !== null,
     maximumShare:

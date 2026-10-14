@@ -82,8 +82,19 @@ function examPlan({ daysAway, minutes = 60 }: { daysAway: number; minutes?: numb
 describe("an exam plan's mocks", () => {
   // An exam 8 days away had no mock: its one weekly mock day fell 2 days before the exam, which
   // the days before an exam keep for review.
-  it.each([3, 4, 6, 8, 9, 10, 12])("has one before the exam %i days away", (daysAway) => {
+  it.each([4, 6, 8, 9, 10, 12])("has one before the exam %i days away", (daysAway) => {
     expect(examPlan({ daysAway })).toStrictEqual([]);
+  });
+
+  // A 180-minute mock 3 days away at an hour a day: its own day and the one before hold 120 of it,
+  // so it isn't planned (see `fundMocks`) rather than asking for three hours on an hour's day.
+  it("leaves out a mock the days before it can't fund, 3 days away", () => {
+    const { built } = buildExamPlan({ daysAway: 3 });
+    const planned = built.items.reduce((total, item) => total + item.minutes, 0);
+
+    expect(built.items.filter((item) => item.kind === "mock")).toStrictEqual([]);
+    expect(built.mockFunding).toStrictEqual([]);
+    expect(planned).toBeLessThanOrEqual(60 * 2 + 15 + 0.1);
   });
 
   it.each([21, 35, 60, 120])(

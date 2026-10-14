@@ -276,3 +276,42 @@ describe("work missed days set aside", () => {
     expect(findItem(changed, "skill:s2")?.status).toBe("todo");
   });
 });
+
+describe("an automatic run on the plan a forced one laid out the same day", () => {
+  // The lessons a stand-in this week has on each day, before and after the week's end, as funding
+  // a mock and placing the challenges read them (see `layOutAfterThisWeek`): kept as this week's
+  // work, an automatic run packed its time from its first day, and its challenge read that day as
+  // its end, a fortnight before the forced run's.
+  it("gives a long stand-in across the week's end the same lesson minutes on each day", () => {
+    const wednesday = fromIsoDate("2026-10-14");
+
+    const input = planInput({
+      goal: { dailyMinutes: 15, kind: "exam", targetDate: fromIsoDate("2026-11-29") },
+      graph: {
+        phases: [
+          { milestone: null, name: "Basics" },
+          { milestone: null, name: "Core" },
+        ],
+        skills: [
+          skill("s1", { area: "A", lessons: 20 }),
+          skill("s2", { area: "B", lessons: 6, phase: 1 }),
+        ],
+      },
+      lessons: lessonsOf("s2", 6),
+      mockMinutes: 60,
+      settings: parsePlanSettings({ startDate: toIsoDate(wednesday) }),
+      today: wednesday,
+    });
+
+    const forced = buildPlan(input);
+    const automatic = buildPlan({ ...input, items: store(forced), mode: "automatic" });
+    const standIn = [...(forced.lessonRawMinutes.get("skill:s1") ?? new Map()).keys()];
+
+    expect(standIn.some((date) => date <= "2026-10-18")).toBe(true);
+    expect(standIn.some((date) => date > "2026-10-18")).toBe(true);
+    expect(automatic.lessonRawMinutes).toStrictEqual(forced.lessonRawMinutes);
+    expect(automatic.lessonDayMinutes).toStrictEqual(forced.lessonDayMinutes);
+    expect(automatic.mockFunding).toStrictEqual(forced.mockFunding);
+    expect(layout(automatic)).toStrictEqual(layout(forced));
+  });
+});

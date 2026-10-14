@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { planNumbersSchema } from "./numbers-contract";
 
 const isoDateSchema = z.iso.date();
 
@@ -9,6 +10,15 @@ const isoDateSchema = z.iso.date();
  */
 export const planTimeAdviceSchema = z
   .object({
+    coveredShare: z
+      .number()
+      .min(0)
+      .max(1)
+      .nullable()
+      .meta({
+        description:
+          "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own): a share of the exam's questions and points or of the goal's skills by weight (see measure). The time question's live estimate. Null without a date, or while not ready",
+      }),
     maximum: z
       .object({ coveredShare: z.number().min(0).max(1), dailyMinutes: z.int() })
       .nullable()
@@ -22,6 +32,11 @@ export const planTimeAdviceSchema = z
         description:
           "exam: a share of the exam's questions and points; goal: of the goal's skills by weight",
       }),
+    numbers: planNumbersSchema
+      .nullable()
+      .describe(
+        "The prospective actual schedule for the selected dailyMinutes and study week. Its coverage equals coveredShare; null while not ready.",
+      ),
     readingNotice: z
       .boolean()
       .default(false)
@@ -58,7 +73,7 @@ export type PlanTimeAdvice = z.infer<typeof planTimeAdviceSchema>;
 
 /**
  * The one daily time a plan recommends, everywhere it says one (the time step, the plan's reveal
- * and Journey, its editor, Today): the fewest minutes that study the whole goal in depth by its
+ * and Plan, its editor, Today): the fewest minutes that study the whole goal in depth by its
  * date (`inDepth`), or, when no daily time does, the most time a day with the share it covers
  * (`more`). Null without a date. Pedro's time step said 1h 20min and his reveal 40 min, the time
  * that only brings every topic in: one number, one meaning.
@@ -78,7 +93,29 @@ export function getRecommendedTime({
 }
 
 /**
- * The week the learner would study: the weekdays, Sunday first (0; the plan's own days when
- * absent), and the weekend's own time when it has one apart from the weekdays'.
+ * The daily time worth offering a learner whose plan doesn't cover their goal: the one plans
+ * recommend (see `getRecommendedTime`), only when it's more than they give. Pedro's Plan offered
+ * "10 min a day covers everything" beside his 15: less time, framed as covering more. Null when
+ * no time is worth more; whether their own time covers everything is the plan's `timeCovers`.
  */
-export type PlanTimeAdviceInput = { studyDays?: readonly number[]; weekendMinutes?: number };
+export function getMoreTime({
+  dailyMinutes,
+  ...advice
+}: Pick<PlanTimeAdvice, "maximum" | "recommendedMinutes"> & { dailyMinutes: number }): ReturnType<
+  typeof getRecommendedTime
+> {
+  const target = getRecommendedTime(advice);
+  return target && target.dailyMinutes > dailyMinutes ? target : null;
+}
+
+/**
+ * The week the learner would study: the weekdays, Sunday first (0; the plan's own days when
+ * absent), the weekend's own time when it has one apart from the weekdays', and the weekdays' time
+ * they're looking at (`dailyMinutes`, the goal's own when absent), which says what that time
+ * covers (`coveredShare`) and never changes the time recommended.
+ */
+export type PlanTimeAdviceInput = {
+  dailyMinutes?: number;
+  studyDays?: readonly number[];
+  weekendMinutes?: number;
+};

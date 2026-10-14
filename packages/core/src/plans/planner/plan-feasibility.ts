@@ -1,11 +1,15 @@
 import { once } from "@zoonk/utils/once";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
-import { getKeptBaseChoices } from "./chosen-bases";
-import { findFittingMinutes, planAtMinutes, withDailyMinutes } from "./daily-time-plans";
+import { mayFitInDepthAtMinutes } from "./daily-time-capacity";
+import {
+  type StudyScheduleAt,
+  findFittingMinutes,
+  planAtMinutes,
+  withDailyMinutes,
+} from "./daily-time-plans";
+import { type ExamSubjectShare, getCoverage } from "./feasibility-coverage";
 import { deepensMostAsked, hasEveryTopic } from "./feasibility-topics";
 import { findFittingDate } from "./fitting-date";
-import { getSkillArea } from "./graph-areas";
-import { getBaseChoices } from "./plan-bases";
 import { fromIsoDate } from "./plan-calendar";
 import { getExamWindows } from "./plan-phases";
 import { isExamSchedule } from "./plan-queue";
@@ -76,13 +80,16 @@ export type PlanFeasibility = {
    * settled or finished): what `coveredShare` adds up.
    */
   skillFits: ReadonlyMap<string, number>;
+  /**
+   * The learner's own daily time covers everything by the deadline once the plan is planned again
+   * at it, as `fits` measures it: the plan a switch to their time plans holds every topic, and the
+   * plan as its graph sizes it is whole. True while `fits` is false when the plan as it stands
+   * holds less than their time fits (a date they moved closer, then faster study). Never read off
+   * `recommendedMinutes`: more time a day can cover less (a weekly mock takes a study day), so a
+   * lower time that fits says nothing of theirs. False without a deadline.
+   */
+  timeCovers: boolean;
 };
-
-/**
- * A notice subject the plan teaches: the plan's areas it gathers and its share of the exam, so an
- * exam's coverage counts what its questions are worth.
- */
-export type ExamSubjectShare = { areas: readonly string[]; share: number };
 
 /** A whole percent more is what a learner can see: anything less isn't worth a switch. */
 const PERCENT = 100;
@@ -102,113 +109,6 @@ function getDeadline(input: BuildPlanInput): Date | null {
   const windows = getExamWindows({ planStart, targetDate });
 
   return windows.find((window) => window.kind === "finalStretch")?.startDate ?? targetDate;
-}
-
-type CoveredSkill = { area: string; skillId: string; weight: number };
-
-/**
- * What each skill is worth to an exam: its subject's share of the exam, shared among the subject's
- * skills by their exam weight. Skills outside the notice's subjects (study strategy, say) aren't
- * questions of the exam. Null when no subject has a share.
- */
-function getExamWorth({
-  examSubjects,
-  skills,
-}: {
-  examSubjects: readonly ExamSubjectShare[];
-  skills: readonly CoveredSkill[];
-}): Map<string, number> | null {
-  const worth = examSubjects.flatMap((subject) => {
-    const own = skills.filter((skill) => subject.areas.includes(skill.area));
-    const weight = own.reduce((total, skill) => total + skill.weight, 0);
-
-    return weight > 0
-      ? own.map((skill) => [skill.skillId, (subject.share * skill.weight) / weight] as const)
-      : [];
-  });
-
-  return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
-}
-
-/**
- * How much of each skill fits before the deadline: its finished lessons and what of the rest the
- * plan reaches, as a share of the skill's minutes. A skill with nothing left to plan fits whole.
- */
-function getSkillFits({
-  built,
-  doneMinutes,
-  skills,
-}: {
-  built: BuiltPlan;
-  doneMinutes: ReadonlyMap<string, number>;
-  skills: readonly { skillId: string }[];
-}): Map<string, number> {
-  const minutes = new Map(built.skillMinutes.map((entry) => [entry.skillId, entry]));
-
-  return new Map(
-    skills.map(({ skillId }) => {
-      const entry = minutes.get(skillId);
-      const done = doneMinutes.get(skillId) ?? 0;
-      const total = done + (entry?.total ?? 0);
-      const covered = done + (entry?.covered ?? 0);
-
-      return [skillId, total > 0 ? Math.min(1, Math.max(0, covered / total)) : 1];
-    }),
-  );
-}
-
-/** The bases the learner chose to skip (see `BaseChoice`). */
-function listSkippedBases(input: BuildPlanInput): Set<string> {
-  const choices = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
-
-  return new Set([...choices].flatMap(([skillId, choice]) => (choice === "skip" ? [skillId] : [])));
-}
-
-/**
- * The share of the goal the plan covers before its deadline: each skill counts what it's worth
- * (its share of the exam, else its weight) times the share of its minutes that fit, including
- * what fits of a skill the plan can't finish, so more time always shows more.
- */
-function getCoverage({
-  built,
-  examSubjects,
-  sized,
-}: {
-  built: BuiltPlan;
-  examSubjects: readonly ExamSubjectShare[] | null;
-  sized: SizedPlanInput;
-}): { coveredShare: number; measure: PlanFeasibility["measure"]; skillFits: Map<string, number> } {
-  const { input } = sized;
-  const skipped = new Set(input.settings.skippedAreas);
-  const skippedBases = listSkippedBases(input);
-
-  // What the learner took out (an area, a base they skip) isn't part of what's measured.
-  const skills = input.graph.skills
-    .map((skill) => ({
-      area: getSkillArea({ graph: input.graph, skill }),
-      skillId: skill.skillId,
-      weight: skill.weight ?? 1,
-    }))
-    .filter((skill) => !skipped.has(skill.area) && !skippedBases.has(skill.skillId));
-
-  const examWorth = examSubjects ? getExamWorth({ examSubjects, skills }) : null;
-  const skillFits = getSkillFits({ built, doneMinutes: sized.doneMinutes, skills });
-
-  const worthOf = (skill: CoveredSkill) =>
-    examWorth ? (examWorth.get(skill.skillId) ?? 0) : skill.weight;
-
-  const total = skills.reduce((sum, skill) => sum + worthOf(skill), 0);
-
-  const covered = skills.reduce(
-    (sum, skill) => sum + worthOf(skill) * (skillFits.get(skill.skillId) ?? 1),
-    0,
-  );
-
-  return {
-    coveredShare: total === 0 ? 1 : covered / total,
-    measure: examWorth ? "exam" : "goal",
-    skillFits,
-  };
 }
 
 function isWhole(built: BuiltPlan): boolean {
@@ -270,17 +170,24 @@ function getMaximum({
   examSubjects,
   planAt,
   sized,
+  studyScheduleAt,
 }: {
   coveredShare: number;
   examSubjects: readonly ExamSubjectShare[] | null;
   planAt: (dailyMinutes: number) => BuiltPlan;
   sized: SizedPlanInput;
+  studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility["maximum"] {
-  if (sized.input.goal.dailyMinutes >= MAX_DAILY_MINUTES) {
+  /** A weekend can normalize this scalar to the maximum while weekdays can still increase. */
+  if (!studyScheduleAt && sized.input.goal.dailyMinutes >= MAX_DAILY_MINUTES) {
     return null;
   }
 
-  const atMaximum = { ...sized, input: withDailyMinutes(sized.input, MAX_DAILY_MINUTES) };
+  const atMaximum = {
+    ...sized,
+    input: withDailyMinutes(sized.input, MAX_DAILY_MINUTES, studyScheduleAt),
+  };
+
   const built = planAt(MAX_DAILY_MINUTES);
   const maximum = getCoverage({ built, examSubjects, sized: atMaximum }).coveredShare;
 
@@ -294,25 +201,39 @@ function getMaximum({
  * whatever the learner gives now (when their time covers it, the search starts below it), else
  * what the most time a day covers, unless that reads as everything ("even at 4 h a day, the plan
  * covers 100%" says nothing a learner can use): then the most time is the time that covers
- * everything. Every screen that offers a daily time recommends this one, before the learner
- * chooses (onboarding's time question) and after.
+ * everything. A time covers everything as `fits` says it: the plan as its graph sizes it is whole,
+ * and the plan a switch to that time plans holds every topic (`holdsEveryTopic`). Read from the
+ * graph alone, Pedro's Plan offered "10 min a day covers everything" beside his 15: the Library
+ * wrote four lessons for each topic the graph sized at one, and 10 minutes brought back 3 of the 5
+ * topics his date had left out. Every screen that offers a daily time recommends this one, before
+ * the learner chooses (onboarding's time question) and after.
  */
 function getTarget({
+  built,
   coveredShare,
   examSubjects,
   fits,
+  holdsEveryTopic,
   sized,
+  studyScheduleAt,
 }: {
+  built: BuiltPlan;
   coveredShare: number;
   examSubjects: readonly ExamSubjectShare[] | null;
   fits: boolean;
+  /** The plan a switch to that daily time plans holds every topic. */
+  holdsEveryTopic: (dailyMinutes: number) => boolean;
   sized: SizedPlanInput;
+  studyScheduleAt?: StudyScheduleAt;
 }): Pick<PlanFeasibility, "maximum" | "recommendedMinutes"> {
-  const planAt = planAtMinutes(sized.input);
+  const planAt = planAtMinutes(sized.input, studyScheduleAt);
 
   const recommendedMinutes = findFittingMinutes({
-    above: fits ? 0 : sized.input.goal.dailyMinutes,
+    /** A lower daily time can fit before an extra mock takes away lesson capacity. */
+    above: 0,
     fits: isWhole,
+    holds: holdsEveryTopic,
+    mayFit: mayFitInDepthAtMinutes({ built, sized, studyScheduleAt }),
     planAt,
   });
 
@@ -320,11 +241,16 @@ function getTarget({
     return { maximum: null, recommendedMinutes };
   }
 
-  const maximum = getMaximum({ coveredShare, examSubjects, planAt, sized });
+  const maximum = getMaximum({ coveredShare, examSubjects, planAt, sized, studyScheduleAt });
 
-  return maximum && Math.round(maximum.coveredShare * PERCENT) >= PERCENT
-    ? { maximum: null, recommendedMinutes: maximum.dailyMinutes }
-    : { maximum, recommendedMinutes: null };
+  if (!maximum || Math.round(maximum.coveredShare * PERCENT) < PERCENT) {
+    return { maximum, recommendedMinutes: null };
+  }
+
+  return {
+    maximum: null,
+    recommendedMinutes: holdsEveryTopic(MAX_DAILY_MINUTES) ? MAX_DAILY_MINUTES : null,
+  };
 }
 
 /**
@@ -336,12 +262,15 @@ export function getPlanFeasibility({
   examSubjects = null,
   input,
   planned = buildPlan(input),
+  studyScheduleAt,
 }: {
   /** The notice's subjects with their share of the exam; null for goals that aren't exams. */
   examSubjects?: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
   /** The plan `input` builds, when the caller already built it. */
   planned?: BuiltPlan;
+  /** Evaluate advice candidates through the exact accepted schedule from the original state. */
+  studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility {
   const dated = byDate(input);
   const sized = toSizedPlanInput(dated);
@@ -356,9 +285,27 @@ export function getPlanFeasibility({
   const { coveredShare, measure, skillFits } = getCoverage({ built, examSubjects, sized });
   const fullCourseEndDate = once(() => (deadline && !fits ? getFullCourseEnd(input) : null));
 
+  // The plan as a switch to another daily time plans it, built once per time asked about.
+  const plannedAt = once(() => planAtMinutes(dated, studyScheduleAt));
+
+  const holdsEveryTopic = (dailyMinutes: number) =>
+    hasEveryTopic({ built: plannedAt()(dailyMinutes), known, skills: input.graph.skills });
+
+  const timeCovers = once(
+    () => deadline !== null && isWhole(built) && holdsEveryTopic(input.goal.dailyMinutes),
+  );
+
   const target = once(() =>
     deadline
-      ? getTarget({ coveredShare, examSubjects, fits, sized })
+      ? getTarget({
+          built,
+          coveredShare,
+          examSubjects,
+          fits,
+          holdsEveryTopic,
+          sized,
+          studyScheduleAt,
+        })
       : { maximum: null, recommendedMinutes: null },
   );
 
@@ -377,10 +324,10 @@ export function getPlanFeasibility({
     coreFits
       ? null
       : findFittingMinutes({
-          above: input.goal.dailyMinutes,
+          above: 0,
           fits: (candidate) =>
             hasEveryTopic({ built: candidate, known, skills: input.graph.skills }),
-          planAt: planAtMinutes(dated),
+          planAt: plannedAt(),
         }),
   );
 
@@ -415,5 +362,8 @@ export function getPlanFeasibility({
       return target().recommendedMinutes;
     },
     skillFits,
+    get timeCovers() {
+      return timeCovers();
+    },
   };
 }

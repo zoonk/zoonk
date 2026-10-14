@@ -12,8 +12,6 @@ const MIN_LESSONS: Record<PaceSource, number> = { course: 20, own: 5, typical: 5
 const MIN_FACTOR = 0.5;
 const MAX_FACTOR = 2.5;
 
-const PRECISION: Record<PaceSource, number> = { course: 1, own: 2, typical: 0 };
-
 /**
  * How many lessons the pace learners had before counts as, against the learner's own: their own
  * pace takes over as they finish more, so a few quick (or slow) lessons nudge every estimate
@@ -58,9 +56,4 @@ export function choosePace({ course, own, typical }: Record<PaceSource, PaceSamp
   const factor = Math.min(MAX_FACTOR, Math.max(MIN_FACTOR, ratio));
 
   return { factor: Math.round(factor * 100) / 100, source };
-}
-
-/** "Your plan got more precise": the pace now comes from a closer source than before. */
-export function isMorePrecise({ next, previous }: { next: Pace; previous: Pace | null }): boolean {
-  return previous !== null && PRECISION[next.source] > PRECISION[previous.source];
 }

@@ -2,12 +2,15 @@ import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { findOwnedPlan } from "./_utils/owned-plan";
+import { roundShare } from "./_utils/plan-feasibility-view";
+import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { computePlan } from "./_utils/replan";
 import { getNoticeWaitState } from "./notice-wait";
-import { getWeekdayMinutes, toIsoDate } from "./planner/plan-calendar";
-import { DAYS_PER_WEEK, MIN_DAILY_MINUTES, type PlanState } from "./planner/plan-state";
-import { isWeekend } from "./planner/week-shape";
+import { toIsoDate } from "./planner/plan-calendar";
+import { applyPlanOperations } from "./planner/plan-operations";
+import { MIN_DAILY_MINUTES, type PlanState } from "./planner/plan-state";
+import { getScheduleOperations } from "./planner/schedule-operations";
 import { type PlanTimeAdvice, type PlanTimeAdviceInput } from "./time-advice-contract";
 
 export type PlanTimeAdviceResult =
@@ -15,8 +18,10 @@ export type PlanTimeAdviceResult =
   | { status: "notFound" | "unauthorized" };
 
 const BUILDING: PlanTimeAdvice = {
+  coveredShare: null,
   maximum: null,
   measure: "goal",
+  numbers: null,
   readingNotice: false,
   ready: false,
   recommendedMinutes: null,
@@ -25,62 +30,58 @@ const BUILDING: PlanTimeAdvice = {
 };
 
 /**
- * The weekdays' time the advice starts from when the weekend has its own time: what a weekday
- * takes is what the advice searches, so it starts from the least, which is never the weekend's
- * own time (the plan reads a weekend at the weekdays' time as no time of its own) or the most a
- * day (at which there's no more time to recommend).
+ * An explicit weekend starts the recommendation search at the least daily time. Every candidate
+ * reapplies that override to the original saved calendar, even when it equals the candidate time.
  */
-function getStartingWeekdayMinutes(weekendMinutes: number): number {
-  return weekendMinutes === MIN_DAILY_MINUTES ? MIN_DAILY_MINUTES + 1 : MIN_DAILY_MINUTES;
+function getAdviceWeekdayMinutes({
+  input,
+  state,
+}: {
+  input: PlanTimeAdviceInput;
+  state: PlanState;
+}): number {
+  return input.weekendMinutes === undefined ? state.goal.dailyMinutes : MIN_DAILY_MINUTES;
 }
 
 /**
- * The plan's state studying the week the learner is choosing: these weekdays (the plan's own when
- * absent) at the goal's time a day, or, when the weekend has its own time, the weekend at it and
- * the weekdays at the least time, which the advice then searches (`getStartingWeekdayMinutes`).
- * As it is when the input changes nothing.
+ * Apply the same complete schedule operations as updateGoal, including the scalar normalized
+ * after changing study days or weekends. The scalar also budgets a rested first day.
  */
-function withStudyWeek({ input, state }: { input: PlanTimeAdviceInput; state: PlanState }) {
-  const { studyDays, weekendMinutes } = input;
+function withStudyWeek({
+  dailyMinutes,
+  input,
+  state,
+  goalKind,
+  today,
+}: {
+  dailyMinutes: number;
+  input: PlanTimeAdviceInput;
+  state: PlanState;
+  goalKind: Parameters<typeof applyPlanOperations>[0]["goalKind"];
+  today: Date;
+}): PlanState {
+  const result = applyPlanOperations({
+    goalKind,
+    operations: getScheduleOperations({ input: { ...input, dailyMinutes }, state }),
+    state,
+    today,
+  });
 
-  if (!studyDays && weekendMinutes === undefined) {
-    return state;
+  if ("error" in result) {
+    throw new Error(`Cannot evaluate the study schedule: ${result.error}`);
   }
 
-  const dailyMinutes =
-    weekendMinutes === undefined
-      ? state.goal.dailyMinutes
-      : getStartingWeekdayMinutes(weekendMinutes);
-
-  const calendar = {
-    dailyMinutes: state.goal.dailyMinutes,
-    weekdayMinutes: state.settings.weekdayMinutes,
-  };
-
-  const studies = (weekday: number) =>
-    studyDays ? studyDays.includes(weekday) : getWeekdayMinutes({ calendar, weekday }) > 0;
-
-  const minutesOf = (weekday: number) =>
-    isWeekend(weekday) && weekendMinutes !== undefined ? weekendMinutes : dailyMinutes;
-
-  const weekdayMinutes = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
-    studies(weekday) ? minutesOf(weekday) : 0,
-  );
-
-  const isEveryDay = weekdayMinutes.every((minutes) => minutes === dailyMinutes);
-
-  return {
-    ...state,
-    goal: { ...state.goal, dailyMinutes },
-    settings: { ...state.settings, weekdayMinutes: isEveryDay ? null : weekdayMinutes },
-  };
+  return result.state;
 }
 
 /**
  * The daily time the learner's goal needs (see `PlanTimeAdvice`), in the week they'd study (its
  * days, and the weekend's own time, which a new daily time leaves as it is): what onboarding's time
  * question recommends and picks first, read from the goal's plan as the plan reveal reads it, so
- * the two say the same number. `ready` is false while the plan is being built, while it still
+ * the two say the same number. With it, what the time the learner is looking at covers by the date
+ * (`coveredShare`), the question's live estimate: a second plan when that's another time than the
+ * one the recommendation reads, since a time already at the most a day must not change what's
+ * recommended (see `getMaximum`). `ready` is false while the plan is being built, while it still
  * owes the placement the learner ended before it existed, whose test-outs change what it needs,
  * and while it waits for its exam's notice reading (`readingNotice`, which the time question
  * says), which builds it again when it lands (see `getNoticeWaitState`): DELE's time question said
@@ -111,20 +112,52 @@ export async function getPlanTimeAdvice({
     return { advice: { ...BUILDING, readingNotice: readsNotice }, status: "ready" };
   }
 
-  const [{ feasibility }, dateKind] = await Promise.all([
+  // What the recommendation reads (the week at the goal's time, see `getAdviceWeekdayMinutes`)
+  // and what the time the learner is looking at covers: one plan when they're the same time.
+  const adviceMinutes = getAdviceWeekdayMinutes({ input, state: context.state });
+  const pickedMinutes = input.dailyMinutes ?? context.state.goal.dailyMinutes;
+
+  const stateAt = (dailyMinutes: number) =>
+    withStudyWeek({
+      dailyMinutes,
+      goalKind: context.goal.kind,
+      input,
+      state: context.state,
+      today: context.today,
+    });
+
+  const [recommended, picked, dateKind] = await Promise.all([
     computePlan({
       context,
       mode: "forced",
       pace: "saved",
-      state: withStudyWeek({ input, state: context.state }),
+      state: stateAt(adviceMinutes),
+      /** Every candidate starts from the saved state and retains acceptance's normalized scalar. */
+      studyScheduleAt: (dailyMinutes) => {
+        const state = stateAt(dailyMinutes);
+
+        return {
+          dailyMinutes: state.goal.dailyMinutes,
+          weekdayMinutes: state.settings.weekdayMinutes,
+        };
+      },
     }),
+    pickedMinutes === adviceMinutes
+      ? null
+      : computePlan({ context, mode: "forced", pace: "saved", state: stateAt(pickedMinutes) }),
     loadGoalDateKind(context.goal),
   ]);
 
+  const { feasibility } = recommended;
+  const selected = picked ?? recommended;
+  const pickedFeasibility = selected.feasibility;
+
   return {
     advice: {
+      coveredShare: pickedFeasibility.deadline ? roundShare(pickedFeasibility.coveredShare) : null,
       maximum: feasibility.maximum,
       measure: feasibility.measure,
+      numbers: await buildPlanNumbersView({ computed: selected, context }),
       readingNotice: false,
       ready: true,
       recommendedMinutes: feasibility.recommendedMinutes,

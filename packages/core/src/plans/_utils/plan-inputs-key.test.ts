@@ -32,11 +32,22 @@ const input: Required<BuildPlanInput> = {
       skillId: "fractions",
     },
   ],
+  bossDays: new Map([["boss:0", { beside: false, date: "2026-10-16" }]]),
+  bossFacts: {
+    bank: { recordingSets: [], textCounts: new Map([["fractions", 12]]) },
+    listeningSkillIds: new Set(),
+    rows: { chapterLessons: [], lessonSkills: [] },
+    survivors: new Map(),
+  },
+  bossMinutes: new Map([["boss:0", 15]]),
   bringBackSetAside: true,
   carryOver: { lessonIds: ["fractions-0"] },
+  courseStart: false,
   examWindows: [{ endDate: TODAY, kind: "finalStretch", startDate: TODAY }],
+  finishedOn: new Map([["item-fractions-0", TODAY]]),
   fullMockMinutes: 300,
   goal: { dailyMinutes: 30, kind: "exam", targetDate: new Date("2026-12-18T00:00:00Z") },
+  goalId: "goal-1",
   graph: {
     phases: [{ milestone: null, name: "Basics" }],
     skills: [
@@ -52,6 +63,7 @@ const input: Required<BuildPlanInput> = {
   lessons,
   levelFloor: "beginner",
   missedSkillIds: new Set(["ratios"]),
+  mockClocks: [{ day: 1, fullMinutes: 300, minutes: 150 }],
   mockMinutes: 150,
   mode: "forced",
   movesPhaseEnds: true,
@@ -63,9 +75,16 @@ const input: Required<BuildPlanInput> = {
   readiness: new Map([
     ["fractions", { retrievabilityAtTarget: 0.5, stability: 3, state: "learning" as const }],
   ]),
+  requestedMoveDates: new Set(["2026-10-16"]),
   setAsideLeftWork: true,
   settings: parsePlanSettings({ startDate: "2026-10-12" }),
   strongAreas: new Set(["Math"]),
+  testedTeaching: [
+    {
+      date: "2026-10-20",
+      lessons: new Map([["lesson:fractions-0", new Map([["2026-10-19", 4]])]]),
+    },
+  ],
   today: TODAY,
   todayShown: true,
   topicLevels: [{ level: "high", subject: "Math", topic: "Ratios" }],
@@ -76,13 +95,16 @@ const RUN_FIELDS = new Set([
   "bringBackSetAside",
   "carryOver",
   "examWindows",
+  "goalId",
   "heldSkillsLand",
   "items",
   "landedOnly",
   "mode",
   "movesPhaseEnds",
   "phaseEnds",
+  "requestedMoveDates",
   "setAsideLeftWork",
+  "testedTeaching",
   "today",
   "todayShown",
 ]);
@@ -92,6 +114,37 @@ const item = { key: "lesson:fractions-0" };
 const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
+  it("changes when a course start gives the first day its full lesson budget", () => {
+    expect(getPlanInputsKey({ input: { ...input, courseStart: true }, items: [] })).not.toBe(key);
+  });
+
+  // The first exam day's clock sizes `mockMinutes`; the second day's mocks are sized by their own.
+  it("changes when an exam day's mock clock does, the first day's unchanged", () => {
+    const clocks = [
+      { day: 1, fullMinutes: 300, minutes: 150 },
+      { day: 2, fullMinutes: 300, minutes: 150 },
+    ];
+
+    const before = getPlanInputsKey({ input: { ...input, mockClocks: clocks }, items: [] });
+
+    const after = getPlanInputsKey({
+      input: { ...input, mockClocks: [clocks[0]!, { day: 2, fullMinutes: 330, minutes: 165 }] },
+      items: [],
+    });
+
+    expect(after).not.toBe(before);
+  });
+
+  // The day a lesson was finished is fixed once it's done: a new day reads the same key, and the
+  // learner's day moving (another time zone) dates it again.
+  it("reads the day each finished lesson was done, the same whatever day the run plans", () => {
+    const nextDay = new Date(TODAY.getTime() + 86_400_000);
+    const moved = new Map([["item-fractions-0", nextDay]]);
+
+    expect(getPlanInputsKey({ input: { ...input, today: nextDay }, items: [] })).toBe(key);
+    expect(getPlanInputsKey({ input: { ...input, finishedOn: moved }, items: [] })).not.toBe(key);
+  });
+
   it("reads the same inputs the same way, however their sets and maps are ordered", () => {
     const reordered = { ...input, knownSkillIds: new Set(["ratios", "fractions"]) };
     expect(getPlanInputsKey({ input: reordered, items: [] })).toBe(key);

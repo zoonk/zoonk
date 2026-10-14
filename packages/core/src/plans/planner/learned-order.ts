@@ -21,14 +21,23 @@ type ExtrasPlace = "inPlace" | "last";
 /** A laid-out unit as the queue unit it was, without its day or what of it fit. */
 export function toQueueUnit(
   unit: QueueUnit &
-    Partial<Pick<DroppedUnit & ScheduledUnit, "date" | "fittedMinutes" | "studyMinutes">>,
+    Partial<
+      Pick<
+        DroppedUnit & ScheduledUnit,
+        "beside" | "date" | "fittedMinutes" | "studyMinutes" | "studyPortions" | "teachingEnd"
+      >
+    >,
 ): QueueUnit {
   // The day a kept end held a challenge on is a place in that run's days, not in another's.
   const {
+    afterDay: _afterDay,
+    beside: _beside,
     date: _date,
     fittedMinutes: _fitted,
     heldOn: _held,
     studyMinutes: _study,
+    studyPortions: _portions,
+    teachingEnd: _end,
     ...plain
   } = unit;
 
@@ -73,7 +82,10 @@ function splitByOrder({ rest, sequence }: { rest: readonly QueueUnit[]; sequence
     }
 
     taken.set(unit.key, used + minutes);
-    return [resize(unit, minutes)];
+
+    // A challenge is this run's: where it comes is after this run's lessons (see `placeBoss`).
+    const [ownBoss] = unit.kind === "boss" ? (own ?? []) : [];
+    return [ownBoss ?? resize(unit, minutes)];
   });
 
   const extras = [...restByKey].flatMap(([key, own]) => {

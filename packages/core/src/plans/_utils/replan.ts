@@ -1,35 +1,34 @@
 import "server-only";
 import { type PlanChangeStatus, type TransactionClient, prisma } from "@zoonk/db";
-import { once } from "@zoonk/utils/once";
+import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
+import { readCourseStart } from "../../goals/course-start-details";
 import { getKnownSubjects } from "../../learner/placement/placement-contract";
 import { chooseBases } from "../planner/base-choices";
-import {
-  type BuildPlanInput,
-  type BuiltPlan,
-  type PlanningMode,
-  buildPlan,
-} from "../planner/build-plan";
-import { applyBaseChoices, getKeptBaseChoices } from "../planner/chosen-bases";
+import { type BuiltPlan, type PlanningMode, buildPlan } from "../planner/build-plan";
+import { getChosenStandInLessons } from "../planner/chosen-bases";
 import { withPlannedLessons } from "../planner/core-first";
 import { readCourseWeights } from "../planner/course-weights";
+import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
 import { type PlanBases } from "../planner/plan-bases";
-import { toIsoDate } from "../planner/plan-calendar";
-import { type PlanEffect, getFittedStandInLessons, getPlanEffect } from "../planner/plan-effect";
-import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
+import { type PlanEffect, getFittedStandInLessons } from "../planner/plan-effect";
+import { type PlanFeasibility } from "../planner/plan-feasibility";
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
-import { getStandInLessons } from "../planner/plan-units";
+import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { getSettledSkillIds } from "../planner/settled-skills";
+import { loadRunBossFacts } from "./boss-plan-facts";
 import { isTodayShown, loadPlanCarryOver } from "./carried-lessons";
-import { choosePlanPace } from "./choose-plan-pace";
+import { choosePlanSettings } from "./choose-plan-pace";
 import { chooseExamOptionSkills } from "./exam-option-skills";
+import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
+import { listRequestedMoveDates } from "./missing-weekly-move";
 import {
   type PlanChangeKind,
   type StoredPlanChangePayload,
@@ -37,9 +36,12 @@ import {
 } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getPlanInputsKey, readLanding } from "./plan-inputs-key";
-import { toPlanSnapshot } from "./plan-snapshot";
+import { loadPlanReadAdvice } from "./plan-read-advice";
+import { savePlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
+import { readBuiltPlan } from "./read-built-plan";
+import { type PlanAnalysisPurpose } from "./read-plan-analysis";
 import { PlanConflictError, writePlan } from "./write-plan";
 
 const MINUTES_PER_HOUR = 60;
@@ -76,25 +78,47 @@ export type PlanChangeRecord = {
  * Whether a commit clears the plan's caches: right away from actions, route handlers and
  * workflows (`now`), or not at all when it happens while a page renders (`skip`: building today's
  * session from the Today screen or its prefetch). Next.js throws when a render clears caches,
- * even from `after()`, and there is nothing to clear: the plan's tags only tag
- * `"use cache: private"` reads, which no server keeps between requests, and only a Server Action's
- * revalidation reaches the browser's copies.
+ * even from `after()`. Pure read caches key their full freshly loaded input, so render-time
+ * writes remain fresh without eviction; only a Server Action clears the browser's copies.
  */
 export type PlanTagRevalidation = "now" | "skip";
 
-/** Each stand-in as the plan has it: a base's core, or the one lesson of its quick lesson. */
-function getChosenStandInLessons(input: BuildPlanInput): Map<string, number> {
-  const studied = applyBaseChoices({
-    bases: input.bases ?? [],
-    choices: getKeptBaseChoices(input),
-    graph: input.graph,
-    items: input.items,
-    lessons: input.lessons,
-    quickLessons: input.quickLessons,
-  });
-
-  return getStandInLessons({ lessons: studied.lessons, skills: studied.graph.skills });
-}
+type ComputePlanRequest = {
+  /** A learner's change: work set aside for time comes back where it fits (see `buildPlan`). */
+  bringBackSetAside?: boolean;
+  context: PlanContext;
+  /**
+   * Keep the saved phase end dates (an automatic run's default, and a system change's); false plans
+   * them as the lessons fall, as a learner's change does, or to compare.
+   */
+  keepPhaseDates?: boolean;
+  /** Moving a weekly event also keeps the last phase's challenge, rather than shortening the plan. */
+  keepLastPhaseDate?: boolean;
+  mode: PlanningMode;
+  /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
+  movedEnds?: ReadonlyMap<number, string>;
+  now?: Date;
+  pace?: "sampled" | "saved";
+  /** Phases whose shown end isn't kept: a missed day's settling lets it go (see `computeSettledPlan`). */
+  releasedPhases?: ReadonlySet<number>;
+  /** Read-only consumers can share the same pure build; mutation preconditions stay fresh. */
+  reuseReadBuild?: boolean;
+  /** Only the Plan read requests advice; Progress and effects retain their local lazy analysis. */
+  readAnalysis?: PlanAnalysisPurpose;
+  /**
+   * A new day's settling: work earlier days left that no longer fits is set aside, never deleted
+   * (see `setAsideLeftWork`).
+   */
+  setAsideLeftWork?: boolean;
+  state?: PlanState;
+  /**
+   * For a focus planned from today: the areas it gives less time to. Today's other lessons stay
+   * first, as the learner sees them (see `CarryOver`).
+   */
+  todayExceptAreas?: readonly string[] | null;
+  /** Time-advice candidates scale the saved calendar before applying the learner's overrides. */
+  studyScheduleAt?: StudyScheduleAt;
+};
 
 /**
  * Plans a goal from a state without saving anything: what the plan would be and what changes.
@@ -110,41 +134,18 @@ export async function computePlan({
   context,
   mode,
   keepPhaseDates = mode === "automatic",
+  keepLastPhaseDate = false,
   now = new Date(),
   movedEnds,
   pace: paceSource = "saved",
   releasedPhases,
+  reuseReadBuild = false,
+  readAnalysis,
   setAsideLeftWork = false,
   state = context.state,
   todayExceptAreas = null,
-}: {
-  /** A learner's change: work set aside for time comes back where it fits (see `buildPlan`). */
-  bringBackSetAside?: boolean;
-  context: PlanContext;
-  /**
-   * Keep the saved phase end dates (an automatic run's default, and a system change's); false plans
-   * them as the lessons fall, as a learner's change does, or to compare.
-   */
-  keepPhaseDates?: boolean;
-  mode: PlanningMode;
-  /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
-  movedEnds?: ReadonlyMap<number, string>;
-  now?: Date;
-  pace?: "sampled" | "saved";
-  /** Phases whose shown end isn't kept: a missed day's settling lets it go (see `computeSettledPlan`). */
-  releasedPhases?: ReadonlySet<number>;
-  /**
-   * A new day's settling: work earlier days left that no longer fits is set aside, never deleted
-   * (see `setAsideLeftWork`).
-   */
-  setAsideLeftWork?: boolean;
-  state?: PlanState;
-  /**
-   * For a focus planned from today: the areas it gives less time to. Today's other lessons stay
-   * first, as the learner sees them (see `CarryOver`).
-   */
-  todayExceptAreas?: readonly string[] | null;
-}): Promise<ComputedPlan> {
+  studyScheduleAt,
+}: ComputePlanRequest): Promise<ComputedPlan> {
   // The plan studies only the options the learner takes of their exam's choices.
   const resolved = await resolveMergedSkills(
     await chooseExamOptionSkills({
@@ -202,31 +203,26 @@ export async function computePlan({
     }),
   };
 
-  const pace = await choosePlanPace({
-    lessons: inputs.lessons,
-    now,
-    pace: paceSource,
-    saved: state.settings.pace,
-    userId,
-  });
+  const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
+  const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
 
-  const settings = {
-    ...state.settings,
-    pace,
-    shortMockMinutes: inputs.shortMockMinutes,
-    startDate: state.settings.startDate ?? toIsoDate(context.today),
-  };
+  const { pace } = settings;
 
   // Today's proposal plans the phase ends it moves as the lessons fall (see `movesPhaseEnds`).
   const movesPhaseEnds = !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined;
 
   // The planner studies each base as the learner chose (see `chooseBases`).
-  const chosen = chooseBases({
+  const { advise, input } = chooseBases({
     ...inputs,
+    bossFacts: await bossFacts,
     bringBackSetAside,
     carryOver,
+    courseStart:
+      readCourseStart(isJsonObject(context.goal.details) ? context.goal.details : {}) !== null,
     examWindows: toExamWindows(context.phases),
+    finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
+    goalId: context.goal.id,
     graph: weighGraphForExam({
       areaShares,
       courseWeights: readCourseWeights(context.goal.details),
@@ -241,6 +237,7 @@ export async function computePlan({
     paceFactor: pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
+          includeLast: keepLastPhaseDate,
           items: context.items,
           moved: movedEnds,
           phases: context.phases,
@@ -248,6 +245,7 @@ export async function computePlan({
         })
       : undefined,
     quickLessons: quick,
+    requestedMoveDates: listRequestedMoveDates({ saved: context.state, state }),
     setAsideLeftWork,
     settings,
     today: context.today,
@@ -255,36 +253,52 @@ export async function computePlan({
     topicLevels,
   });
 
-  const { input } = chosen;
-
   // A run whose only news is lessons written for the plan's stand-ins keeps every other item as the
   // plan has it (see `landedOnly`).
   const landing = readLanding({ input, savedKey: context.plan.inputsKey });
 
-  const built = buildPlan({ ...input, ...landing });
+  const builtInput = { ...input, ...landing };
+
+  const built = reuseReadBuild
+    ? await readBuiltPlan({ input: builtInput, userId })
+    : buildPlan(builtInput);
+
   // Measuring what fits builds the plan again as its graph sizes it: Progress never asks.
-  const feasibility = once(() => getPlanFeasibility({ examSubjects, input, planned: built }));
+  const { bases, feasibility } = await loadPlanReadAdvice({
+    advise,
+    examSubjects,
+    input,
+    landing,
+    planned: built,
+    readAnalysis,
+    reuseReadBuild,
+    studyScheduleAt,
+    userId,
+  });
 
-  const standInLessons = getChosenStandInLessons(input);
+  const standInLessons = getChosenStandInLessons(builtInput);
 
-  // What the app recommends for the bases builds the plan with every base in depth: only the plan
-  // screen reads it.
-  const bases = once(chosen.advise);
   const saved = withPlannedLessons({ graph, skillLessons: built.skillLessons });
+
+  const savedSettings = withBuiltSettings({ built, settings });
 
   return {
     get bases() {
       return bases();
     },
     built,
-    effect: getPlanEffect({ after: built.items, before: context.items, standInLessons }),
+    effect: getRunEffect({ built, context, kept: input.phaseEnds, standInLessons }),
     get feasibility() {
       return feasibility();
     },
-    inputsKey: getPlanInputsKey({ input, items: built.items }),
+    inputsKey: getPlanInputsKey({
+      input: { ...input, settings: savedSettings },
+      items: built.items,
+    }),
     pace,
     standInLessons,
-    state: { ...state, graph: saved, settings },
+    // The mocks this build funds are saved with it, so Today reads the same days (see `fundMocks`).
+    state: { ...state, graph: saved, settings: savedSettings },
   };
 }
 
@@ -350,9 +364,7 @@ export async function commitPlan({
     const undoable = created && isUndoableChange(created) ? created.id : restorable;
 
     if (undoable) {
-      await tx.planChangeSnapshot.create({
-        data: { changeId: undoable, plan: toPlanSnapshot(context) },
-      });
+      await savePlanSnapshot({ changeId: undoable, context, tx });
     }
 
     return created?.id ?? null;

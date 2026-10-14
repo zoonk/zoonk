@@ -216,7 +216,7 @@ export function putCoresFirst(
     const before = taken.get(skillId) ?? 0;
     const left = getCoreLessons(totals.get(skillId) ?? 1) - before;
     // The rest of the chapter the learner is in is core, and counts toward its skill's core.
-    const core = unit.inProgress ? lessons : Math.max(0, Math.min(lessons, left));
+    const core = unit.inProgress || unit.coreOnly ? lessons : Math.max(0, Math.min(lessons, left));
     taken.set(skillId, before + lessons);
 
     if (core === lessons) {

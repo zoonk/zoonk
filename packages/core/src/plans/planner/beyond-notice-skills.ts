@@ -23,7 +23,12 @@ export function findBeyondNoticeSkillIds(graph: PlanGraph): Set<string> {
     graph.skills
       .filter(
         (skill) =>
-          !hasTopics(skill) && !skill.outcome && listed.has(getSkillArea({ graph, skill })),
+          !hasTopics(skill) &&
+          // Published outline skills can predate notice topic metadata. Unknown isn't a declared
+          // absence; an explicit empty topics list still says the skill is beyond the notice.
+          !(skill.outlined && skill.topics === undefined) &&
+          !skill.outcome &&
+          listed.has(getSkillArea({ graph, skill })),
       )
       .map((skill) => skill.skillId),
   );

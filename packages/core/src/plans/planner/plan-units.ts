@@ -1,4 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
+import { countStandInLessons } from "./stand-in-size";
 
 /** A Library lesson that teaches some of the goal's skills, in its chapter's order. */
 export type PlannerLesson = {
@@ -26,6 +27,8 @@ export type UnitSkill = {
   name: string;
   /** One of the goal's outcome skills (see `PlanGraphSkill`): its lessons are never left out first. */
   outcome?: boolean;
+  /** Its course outline is complete, even when another skill owns its shared lessons. */
+  outlined?: boolean;
   phase: number;
   /** In an area the learner wants less of: its depth comes after other areas' depth. */
   reduced?: boolean;
@@ -60,7 +63,16 @@ export type QueueUnit = {
    * even past that day's time (see `keepPhaseEnds`): a shown end never moves without the learner.
    */
   heldOn?: number;
+  /**
+   * A phase's challenge: the day of the latest lesson it may test that the run keeps as it is (done,
+   * or this week's), so it comes no sooner than the study day after it (see `placeBoss`).
+   */
+  after?: Date;
+  /** `after`'s place in the days a run lays units on (see `withKeptLessons`). */
+  afterDay?: number;
   chapterId: string | null;
+  /** Already sized to a base's selected core: splitting it again would keep only a ninth. */
+  coreOnly?: boolean;
   /**
    * Lessons past its skill's core, which a plan short on time studies once every skill's core is
    * in (see `putCoresFirst`).
@@ -113,9 +125,6 @@ export type QueueUnit = {
  * plan stays the same length when its stand-ins become lessons. The graph sizes skills in these.
  */
 export const DEFAULT_LESSON_MINUTES = 4;
-
-/** A phase checkpoint is about 10 mixed questions. */
-export const BOSS_MINUTES = 10;
 
 export function getLessonKey(lessonId: string) {
   return `lesson:${lessonId}`;
@@ -185,28 +194,6 @@ function toPlaceholderUnit({
     skillId: skill.skillId,
     title: skill.name,
   } satisfies QueueUnit;
-}
-
-/**
- * A skill taught in part keeps the graph's size while at least this many of its lessons aren't
- * outlined: the fewest a chapter holds, so the skill's next chapter can fill the gap. Smaller gaps
- * are the graph's estimate being rough (skills of small and medium goals miss at most three), so
- * those skills plan only their outlined lessons and the plan can still finish.
- */
-const MIN_STAND_IN_LESSONS = 4;
-
-/**
- * The lessons a skill's stand-in plans, from the graph's size and the Library lessons that teach
- * it: all of them when none does, the rest when a chapter's worth or more is missing, else none.
- * The queue, the estimate, change counts and the next chapters the Library writes all follow it.
- */
-export function countStandInLessons({ lessons, taught }: { lessons: number; taught: number }) {
-  if (taught === 0) {
-    return lessons;
-  }
-
-  const missing = lessons - taught;
-  return missing >= MIN_STAND_IN_LESSONS ? missing : 0;
 }
 
 /**
@@ -328,14 +315,18 @@ export function getStandInLessons({
   skills,
 }: {
   lessons: readonly Pick<PlannerLesson, "chapterId" | "lessonId" | "skillIds">[];
-  skills: readonly Pick<UnitSkill, "index" | "lessons" | "skillId">[];
+  skills: readonly Pick<UnitSkill, "index" | "lessons" | "outlined" | "skillId">[];
 }): Map<string, number> {
   const taught = countAssigned(assignLessonSkills({ lessons, skills }));
 
   return new Map(
     skills.map((skill) => [
       skill.skillId,
-      countStandInLessons({ lessons: skill.lessons, taught: taught.get(skill.skillId) ?? 0 }),
+      countStandInLessons({
+        lessons: skill.lessons,
+        outlined: skill.outlined,
+        taught: taught.get(skill.skillId) ?? 0,
+      }),
     ]),
   );
 }
@@ -427,6 +418,7 @@ export function buildLessonUnits({
 
     const missing = countStandInLessons({
       lessons: skill.lessons,
+      outlined: skill.outlined,
       taught: counts.get(skill.skillId) ?? 0,
     });
 
@@ -439,9 +431,12 @@ export function buildLessonUnits({
  * the checkpoint goes where the next phase begins; the last one closes the plan.
  */
 export function addPhaseCheckpoints({
+  getMinutes,
   phaseNames,
   units,
 }: {
+  /** A phase's boss's minutes (see `getPlannedBossMinutes`). */
+  getMinutes: (phase: number) => number;
   phaseNames: readonly string[];
   units: readonly QueueUnit[];
 }): QueueUnit[] {
@@ -458,7 +453,7 @@ export function addPhaseCheckpoints({
       key: getBossKey(unit.phase),
       kind: "boss",
       lessonId: null,
-      minutes: BOSS_MINUTES,
+      minutes: getMinutes(unit.phase),
       phase: unit.phase,
       skillId: null,
       title: phaseNames[unit.phase] ?? "",

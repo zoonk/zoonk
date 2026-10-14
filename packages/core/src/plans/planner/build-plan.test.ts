@@ -95,12 +95,13 @@ describe(buildPlan, () => {
       titleSnapshot: "Skill s2",
     });
 
+    /** Each text boss runs for 15 minutes, five more than the former scheduler allowance. */
     expect(plan.phases).toStrictEqual([
       {
         endDate: "2026-10-01",
         kind: "learn",
         milestone: "Use the basics",
-        minutes: 38,
+        minutes: 43,
         name: "Basics",
         startDate: "2026-09-28",
       },
@@ -108,7 +109,7 @@ describe(buildPlan, () => {
         endDate: "2026-10-03",
         kind: "learn",
         milestone: null,
-        minutes: 16,
+        minutes: 21,
         name: "Advanced",
         startDate: "2026-10-02",
       },
@@ -116,8 +117,8 @@ describe(buildPlan, () => {
 
     expect(plan.estimate).toStrictEqual({
       endDate: fromIsoDate("2026-10-03"),
-      remainingMinutes: 54,
-      totalMinutes: 54,
+      remainingMinutes: 64,
+      totalMinutes: 64,
     });
   });
 
@@ -341,6 +342,50 @@ describe(buildPlan, () => {
     expect(next.items.map((item) => [item.key, dateOf(item)])).toStrictEqual(
       first.items.map((item) => [item.key, dateOf(item)]),
     );
+  });
+
+  // Pedro switched to the time the Plan recommended, and its next read planned the rest of his
+  // week as he saw it with the last day before his date left: each skill's lessons beyond the one
+  // the graph sizes counted as cores again, came first that day, and left his last phase out.
+  it("keeps every skill the plan just made holds when the next run keeps this week", () => {
+    const today = addDays(TODAY, 1);
+
+    const input = planInput({
+      goal: { dailyMinutes: 30, kind: "learn", targetDate: addDays(today, 7) },
+      graph: {
+        phases: ["First", "Second", "Third", "Fourth"].map((name) => ({ milestone: null, name })),
+        skills: Array.from({ length: 12 }, (_, index) =>
+          skill(`s${index}`, { lessons: 1, phase: Math.floor(index / 3) }),
+        ),
+      },
+      lessons: Array.from({ length: 12 }, (_, index) => lessonsFor(`s${index}`, 4)).flat(),
+      today,
+    });
+
+    // He finished every lesson his 10 minutes a day held, ahead of their days, then switched.
+    const short = buildPlan({ ...input, goal: { ...input.goal, dailyMinutes: 10 } });
+
+    const studied = store(short).map((item) =>
+      item.kind === "lesson" ? { ...item, completedAt: today, status: "done" as const } : item,
+    );
+
+    // As the planning run dates them (see `listFinishedDays`): the day he finished them.
+    const finishedOn = new Map(
+      studied.flatMap((item) => (item.status === "done" ? [[item.id, today] as const] : [])),
+    );
+
+    const first = buildPlan({ ...input, finishedOn, items: studied });
+    const items = store(first);
+
+    const next = buildPlan({
+      ...input,
+      finishedOn,
+      items,
+      mode: "automatic",
+      phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
+    });
+
+    expect(skillsOf(next.items)).toStrictEqual(skillsOf(first.items));
   });
 
   // Career seed 2110: the learner won a phase's challenge weeks early, its last lessons still to
@@ -716,11 +761,14 @@ describe("exam plans", () => {
 
     expect(plan.items.find((item) => item.key === "review:2026-11-07")?.minutes).toBe(15);
 
-    // A phase that ends on the rest day closes the day before; one that ends on a mock day too.
+    // Superseded by C2: a phase's challenge goes on the first study day after the lessons it
+    // tests, past the Saturday mock and the Sunday rest day, instead of closing the day before.
+    // The second keeps testing the s1 lessons it tested when a pass first placed it, which now end
+    // on 10-21 (see `placeExamBosses`): dropping them would test less than the phase taught.
     expect(datesOf({ kind: "boss", plan })).toStrictEqual([
-      "2026-10-02",
-      "2026-10-20",
-      "2026-10-30",
+      "2026-10-05",
+      "2026-10-22",
+      "2026-11-02",
     ]);
   });
 
@@ -913,7 +961,9 @@ describe("learn phases", () => {
     expect(findPhaseOverlaps(plan.phases)).toStrictEqual([]);
   });
 
-  it("starts the next phase on a new day after a phase's checkpoint", () => {
+  // Superseded by C2: a phase's checkpoint leads the first study day after its lessons, and the
+  // next phase goes on that day after it, instead of the checkpoint closing its day.
+  it("starts the next phase on its checkpoint's day, after the checkpoint", () => {
     const plan = buildPlan(
       planInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } }),
     );
@@ -923,7 +973,7 @@ describe("learn phases", () => {
       { date: "2026-09-28", key: "lesson:l2", phase: 0 },
       { date: "2026-09-28", key: "skill:s2", phase: 0 },
       { date: "2026-09-29", key: "boss:0", phase: 0 },
-      { date: "2026-09-30", key: "lesson:l3", phase: 1 },
+      { date: "2026-09-29", key: "lesson:l3", phase: 1 },
       { date: "2026-09-30", key: "boss:1", phase: 1 },
     ]);
 
@@ -956,6 +1006,15 @@ describe("learn phases", () => {
       }),
     );
 
+    expect(standIns(plan)).toStrictEqual([["s2", 6]]);
+
+    expect(plan.items.find((item) => item.key === "skill:s2")?.minutes).toBe(48);
+
+    expect(
+      plan.items.filter((item) => item.kind === "boss").map((item) => item.minutes),
+    ).toStrictEqual([15, 15]);
+
+    /** The whole 15-minute final boss uses Sunday once, beyond its 12-minute base time. */
     expect(plan.phases.map((phase) => [phase.startDate, phase.endDate])).toStrictEqual([
       ["2026-09-28", "2026-09-29"],
       ["2026-09-30", "2026-10-04"],
@@ -1455,6 +1514,13 @@ function store(
   }));
 }
 
+/** The skills a plan's lessons teach. */
+function skillsOf(planned: readonly PlannedItem[]): Set<string> {
+  return new Set(
+    planned.flatMap((item) => (item.kind === "lesson" && item.skillId ? [item.skillId] : [])),
+  );
+}
+
 function lessonsOn(plan: { items: readonly PlannedItem[] }, date: Date) {
   return plan.items
     .filter((item) => item.kind === "lesson" && item.scheduledFor?.getTime() === date.getTime())
@@ -1594,6 +1660,8 @@ describe("work an earlier day left", () => {
   // learner had studied.
   it("keeps a shown phase end on its day when what the day before left fills it", () => {
     const input = planInput({
+      /** A whole 15-minute text boss closes Tuesday after Monday's two lessons. */
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
       graph: {
         phases: [
           { milestone: null, name: "First" },
@@ -1602,25 +1670,49 @@ describe("work an earlier day left", () => {
         skills: [skill("s1"), skill("s2", { lessons: 4, phase: 1 })],
       },
       lessons: [lesson("l1", ["s1"]), lesson("l2", ["s1"]), ...lessonsFor("s2", 4)],
+      /** Tuesday holds its real 15-minute boss plus one six-minute carried lesson. */
+      settings: parsePlanSettings({ weekdayMinutes: [15, 15, 21, 15, 15, 15, 15] }),
     });
 
     const first = buildPlan(input);
     const given = lessonsOn(first, wednesday).slice(0, 2);
     const items = store(first, new Set(lessonsOn(first, monday)));
 
-    const next = buildPlan({
+    const settledInput: BuildPlanInput = {
       ...input,
       carryOver: { lessonIds: given.map((key) => key.replace("lesson:", "")) },
       items,
       phaseEnds: new Map([[0, tuesday]]),
       today: tuesday,
+    };
+
+    const next = buildPlan(settledInput);
+
+    const withoutRoom = buildPlan({
+      ...settledInput,
+      settings: { ...input.settings, weekdayMinutes: [15, 15, 15, 15, 15, 15, 15] },
     });
 
+    const onTuesday = next.items.filter(
+      (item) => item.scheduledFor?.getTime() === tuesday.getTime(),
+    );
+
     expect(first.phases[0]?.endDate).toBe("2026-09-29");
+    expect(first.items.find((item) => item.key === "boss:0")?.minutes).toBe(15);
     expect(given).toHaveLength(2);
     expect(lessonsOn(next, tuesday)[0]).toBe(given[0]);
     expect(next.phases[0]?.endDate).toBe("2026-09-29");
     expect(todoLessons(next)).toStrictEqual(todoLessons({ items }));
+
+    expect(onTuesday.map((item) => [item.key, item.minutes])).toStrictEqual([
+      [given[0], 6],
+      ["boss:0", 15],
+    ]);
+
+    expect(onTuesday.reduce((minutes, item) => minutes + item.minutes, 0)).toBe(21);
+    expect(lessonsOn(withoutRoom, tuesday)).toStrictEqual([]);
+    expect(withoutRoom.phases[0]?.endDate).toBe("2026-09-29");
+    expect(todoLessons(withoutRoom)).toStrictEqual(todoLessons({ items }));
   });
 
   // A language plan's session gave a lesson of a phase weeks ahead (a subject it holds reached

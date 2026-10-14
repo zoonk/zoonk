@@ -1,20 +1,15 @@
 import { type BuildPlanInput } from "./build-plan";
-import { getEndOfWeek } from "./plan-calendar";
-import { DAY_BEFORE_EXAM_MINUTES, WEEKLY_CHECKPOINT_MINUTES } from "./plan-days";
+import { getKeptMinutes } from "./kept-minutes";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
-import { type ExamWindow, findExamWindow, getLearningShare } from "./plan-phases";
-import { BOSS_MINUTES, DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
+import { type ExamWindow } from "./plan-phases";
+import { type QueueUnit } from "./plan-units";
 import {
   type DroppedUnit,
   type PlanDay,
   type ScheduledEvent,
   type ScheduledUnit,
 } from "./schedule-units";
-
-/** Due by the end of this week, days already past included. */
-function isByEndOfWeek({ date, today }: { date: Date | null; today: Date }): boolean {
-  return date !== null && date <= getEndOfWeek(today);
-}
+import { listThisWeekItems } from "./this-week-items";
 
 /** A stand-in: a skill the Library hadn't outlined when the plan was saved, as one item. */
 export function isStandInItem(item: ExistingPlanItem): boolean {
@@ -102,14 +97,7 @@ export function splitExistingItems({
   const written = (skillId: string) =>
     (bySkill.get(skillId) ?? []).flatMap((unit) => (unit.lessonId ? [unit.lessonId] : []));
 
-  const thisWeek =
-    input.mode === "automatic"
-      ? input.items.filter(
-          (item) =>
-            item.status === "todo" &&
-            (keepsRest || isByEndOfWeek({ date: item.scheduledFor, today: input.today })),
-        )
-      : [];
+  const thisWeek = listThisWeekItems({ input, keepsRest });
 
   // A landing-only run replaces only its landing's stand-ins (see `findLanding`).
   const landed = thisWeek.filter(
@@ -149,40 +137,6 @@ export function toKeptItem({
     minutes: getKeptMinutes({ input, item, units, windows }),
     scheduledFor: moveToToday ? input.today : item.scheduledFor,
   };
-}
-
-/**
- * Study minutes of an item the queue no longer schedules, from its unit when there is one. A mock
- * in an exam's final stretch (`windows`) is the whole exam day (see `createExamDays`).
- */
-function getKeptMinutes({
-  input,
-  item,
-  units,
-  windows,
-}: {
-  input: BuildPlanInput;
-  item: ExistingPlanItem;
-  units: ReadonlyMap<string, QueueUnit>;
-  windows: readonly ExamWindow[];
-}): number {
-  const unit = units.get(getItemKey(item));
-  const share = getLearningShare({ phaseKind: "learn", practiceBias: input.settings.practiceBias });
-
-  const isFullMock =
-    item.scheduledFor !== null &&
-    findExamWindow({ date: item.scheduledFor, windows })?.kind === "finalStretch";
-
-  const byKind: Record<ExistingPlanItem["kind"], number> = {
-    boss: BOSS_MINUTES,
-    chapter: 0,
-    checkpoint: WEEKLY_CHECKPOINT_MINUTES,
-    lesson: (unit?.minutes ?? DEFAULT_LESSON_MINUTES * input.paceFactor) / share,
-    mock: isFullMock ? (input.fullMockMinutes ?? input.mockMinutes) : input.mockMinutes,
-    review: DAY_BEFORE_EXAM_MINUTES,
-  };
-
-  return byKind[item.kind];
 }
 
 /**

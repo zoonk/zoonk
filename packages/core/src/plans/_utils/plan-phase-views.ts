@@ -1,12 +1,12 @@
-import { type PlanItemStatus } from "@zoonk/db";
-import {
-  type PlanChapterView,
-  type PlanPhaseCheckpointView,
-  type PlanPhaseView,
-} from "../plan-view-contract";
+import { type Goal, type PlanItemStatus } from "@zoonk/db";
+import { getBossTimings } from "../../checkpoints/_utils/boss-reached";
+import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase } from "../planner/plan-state";
+import { buildCheckpoint } from "./phase-checkpoint";
+import { getPhaseStates } from "./phase-states";
+import { hasPlanDeadline, withinLessonScope } from "./plan-end";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
 import {
   countItemLessons,
@@ -22,45 +22,6 @@ const isTodo = (status: PlanItemStatus) => getWorkProgress(status) === "todo";
 
 const isTestedOut = (item: Pick<ExistingPlanItem, "status">) =>
   getWorkProgress(item.status) === "testedOut";
-
-type PhaseItem = Pick<ExistingPlanItem, "chapterId" | "kind" | "lessonId" | "phase" | "status">;
-
-/** What a phase's work is: its lessons, written or still being written, and its challenge. */
-export const PHASE_WORK_KINDS = new Set<PhaseItem["kind"]>(["boss", "chapter", "lesson"]);
-
-/**
- * The phase the learner is in, the same on Plan, on the map, on Today and on the exam page: the
- * earliest phase with work left, its challenge included, or the last phase once everything is done.
- * A later phase's lesson the plan gives first doesn't move the learner on: read from the next thing
- * to do, Pedro's Journey said he was in the second phase, and went back to the first once a change
- * planned that phase's last lessons first (see `loadCurrentPhases`, its SQL twin).
- */
-export function findCurrentPhase({
-  items,
-  phaseCount,
-}: {
-  items: readonly PhaseItem[];
-  phaseCount: number;
-}): number | null {
-  const left = items.flatMap((item) =>
-    item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) ? [item.phase] : [],
-  );
-
-  if (left.length > 0) {
-    return Math.min(...left);
-  }
-
-  return phaseCount > 0 && items.length > 0 ? phaseCount - 1 : null;
-}
-
-/**
- * The learner finished a phase's work: every lesson and its challenge studied, won or tested out.
- * One whose work was set aside isn't, though the plan moved past it: Rafaela's first phase, one
- * lesson studied before 30 days away set the rest aside, read "done" on her Journey.
- */
-export function isPhaseFinished(items: readonly Pick<PhaseItem, "kind" | "status">[]): boolean {
-  return items.every((item) => !PHASE_WORK_KINDS.has(item.kind) || isWorkFinished(item.status));
-}
 
 /** Each skill's area: the course a stand-in for its lessons is shown under. */
 export type SkillAreas = ReadonlyMap<string, string | null>;
@@ -233,21 +194,6 @@ function getEarliestDate(items: readonly ExistingPlanItem[]): string | null {
   return dates.toSorted()[0] ?? null;
 }
 
-/** The checkpoint that closes the phase, the Trickster's, when it has one. */
-function buildCheckpoint(items: readonly ExistingPlanItem[]): PlanPhaseCheckpointView | null {
-  const boss = items.find((item) => item.kind === "boss");
-
-  if (!boss) {
-    return null;
-  }
-
-  return {
-    date: boss.scheduledFor ? toIsoDate(boss.scheduledFor) : null,
-    planItemId: boss.id,
-    state: isWorkFinished(boss.status) ? "done" : "upcoming",
-  };
-}
-
 /** The phase's mock exams: how many, and the day of the next one still to take. */
 function buildMocks(items: readonly ExistingPlanItem[]): PlanPhaseView["mocks"] {
   const mocks = items.filter((item) => item.kind === "mock");
@@ -259,27 +205,6 @@ function buildMocks(items: readonly ExistingPlanItem[]): PlanPhaseView["mocks"] 
     .toSorted()[0];
 
   return { count: mocks.length, nextDate: next ?? null };
-}
-
-/**
- * Where a phase stands against the current one; every one is done without one. One the plan
- * moved past is done only once the learner finished its work (`isPhaseFinished`): with work set
- * aside it's `unfinished`.
- */
-export function getProgressState({
-  current,
-  finished,
-  index,
-}: {
-  current: number | null;
-  finished: boolean;
-  index: number;
-}) {
-  if (current === null || index < current) {
-    return finished ? ("done" as const) : ("unfinished" as const);
-  }
-
-  return index === current ? ("current" as const) : ("upcoming" as const);
 }
 
 /**
@@ -313,22 +238,32 @@ function getPhaseMinutes({
  * stays calm however big the goal is.
  */
 export function buildPhaseViews({
+  phaseChallengesRequired = true,
+  challengesOpen = true,
   chapterTitles,
   currentPhase,
   estimateMinutes = null,
-  items,
+  goalKind,
+  items: planItems,
   outlinedUntil = null,
   phases,
   shortPlan = null,
   skillAreas,
   skillPhases = new Map(),
+  studiesPastTarget = false,
+  targetDate = null,
   taughtSkillIds = new Set(),
+  today = null,
   upNextItemId,
 }: {
+  phaseChallengesRequired?: boolean;
+  /** Sessions offer phase challenges: not a free exam plan past its first week, where Plus does. */
+  challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
   currentPhase: number | null;
   /** The whole plan's estimate, for phases saved without their own minutes. */
   estimateMinutes?: number | null;
+  goalKind: Goal["kind"];
   items: readonly ExistingPlanItem[];
   /** How far ahead the plan writes lessons (`getOutlinedUntil`): topics after it open early. */
   outlinedUntil?: string | null;
@@ -338,11 +273,34 @@ export function buildPhaseViews({
   skillAreas: SkillAreas;
   /** Each skill's phase in the graph: a learn phase's rows of earlier phases' skills go deeper. */
   skillPhases?: ReadonlyMap<string, number>;
+  /** An exam the learner goes on studying after (see `isPlanFinished`). */
+  studiesPastTarget?: boolean;
+  targetDate?: Date | null;
   /** Stand-in skills chapters already teach (`listTaughtStandInSkills`): none to ask for early. */
   taughtSkillIds?: ReadonlySet<string>;
+  /** The learner's day, for mocks past the date and when each challenge comes. */
+  today?: Date | null;
   /** The plan item of the lesson up next (`findUpNextItem`): its chapter is the current one. */
   upNextItemId: string | null;
 }): PlanPhaseView[] {
+  // The phases count the lessons the plan's number and "finished" count (see `isInLessonScope`).
+  const deadline = hasPlanDeadline({ studiesPastTarget, targetDate });
+  const items = withinLessonScope({ deadline, items: planItems });
+
+  const states = getPhaseStates({
+    currentPhase,
+    goalKind,
+    items: planItems,
+    phaseChallengesRequired,
+    phases,
+    studiesPastTarget,
+    targetDate,
+    today,
+  });
+
+  // Sessions reach a challenge from every lesson before it, so its timing is read from all of them.
+  const timings = challengesOpen && today ? getBossTimings({ items: planItems, today }) : new Map();
+
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);
     const lessons = inPhase.filter((item) => item.kind === "lesson");
@@ -361,7 +319,7 @@ export function buildPhaseViews({
         taughtSkillIds,
         upNextItemId,
       }),
-      checkpoint: buildCheckpoint(inPhase),
+      checkpoint: buildCheckpoint({ items: inPhase, locked: !challengesOpen, timings }),
       endDate: phase.endDate,
       hours: Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10,
       index,
@@ -372,7 +330,7 @@ export function buildPhaseViews({
       name: phase.name,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,
-      state: getProgressState({ current: currentPhase, finished: isPhaseFinished(inPhase), index }),
+      state: states[index] ?? "upcoming",
     };
   });
 }

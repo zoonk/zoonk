@@ -1,5 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
 import { type AddedSkill, type PlanOperation } from "../plan-contract";
+import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { addDays, daysBetween, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
@@ -8,11 +9,25 @@ import { applyStudyOperation, isStudyOperation } from "./study-operations";
 
 export type PlanOperationError =
   | "badMove"
+  | "mockCollision"
   | "noStudyDays"
   | "notExam"
   | "nothingLeft"
   | "pastDate"
+  | "unfundedMove"
   | "unknownArea";
+
+/**
+ * A change the plan refuses, and why. A mock moved to a day whose study days before it can't set
+ * aside its time (`unfundedMove`) says that day and the mock's real length there, so the learner
+ * can pick a later day; one moved to a day that already has the week's event (`mockCollision`)
+ * asks for another day. The plan stays as it was.
+ */
+export type PlanChangeRefusal = {
+  error: PlanOperationError;
+  status: "invalid";
+  unfundedMove?: UnfundedMove;
+};
 
 type OperationResult = { error: PlanOperationError } | { state: PlanState };
 
@@ -320,6 +335,9 @@ function applyOperation({
       });
     case "fitPhaseDates":
       // Nothing the learner set changes: applying it re-plans, which moves the phase dates.
+      return { state };
+    case "fitLessons":
+      // Nothing the learner set changes: applying it re-plans at their time, which brings lessons in.
       return { state };
     case "setExamChoice":
       return { state: setExamChoice({ operation, state }) };

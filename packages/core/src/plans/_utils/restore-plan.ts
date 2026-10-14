@@ -4,7 +4,6 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanContext } from "./plan-context";
 import { type PlanSnapshot, getSnapshotStandInLessons, parsePlanSnapshot } from "./plan-snapshot";
-import { revalidatePlanTags } from "./replan";
 import { writePlan } from "./write-plan";
 
 /** The plan right before a change, which its undo puts back; null when it has none. */
@@ -66,45 +65,35 @@ function restoreStatus({
 /**
  * Puts the plan back as the snapshot has it (see `PlanSnapshot`): its state, phases and numbers,
  * and every item on its day with its status, items the change removed included; items the change
- * added leave. What the learner finished since stays done. `items` are the snapshot's, with what
+ * added leave. Restored items keep their snapshot ids, so today's restored block payloads still
+ * reach them. What the learner finished since stays done. `items` are the snapshot's, with what
  * the undo changes about them (a test-out's skipped lessons, todo again).
  */
 export async function restorePlan({
   context,
-  extraWrites,
   items,
   snapshot,
+  tx,
 }: {
   context: PlanContext;
-  /** Other writes that must land with the plan, such as marking the change undone. */
-  extraWrites: (tx: TransactionClient) => Promise<unknown>;
   items: readonly ExistingPlanItem[];
   snapshot: PlanSnapshot;
+  tx: TransactionClient;
 }): Promise<void> {
-  const current = new Set(context.items.map((item) => item.id));
-
-  await prisma.$transaction(async (tx) => {
-    await writePlan({
-      context,
-      plan: {
-        coveredShare: snapshot.coveredShare,
-        estimateHours: snapshot.estimateHours,
-        inputsKey: snapshot.inputsKey,
-        items: items.map(({ id, position: _position, ...item }) => ({
-          ...item,
-          id: current.has(id) ? id : null,
-        })),
-        phases: snapshot.phases,
-        standInLessons: getSnapshotStandInLessons(snapshot),
-        state: snapshot.state,
-      },
-      tx,
-    });
-
-    await restoreStatus({ items, planId: context.plan.id, status: "todo", tx });
-    await restoreStatus({ items, planId: context.plan.id, status: "skipped", tx });
-    await extraWrites(tx);
+  await writePlan({
+    context,
+    plan: {
+      coveredShare: snapshot.coveredShare,
+      estimateHours: snapshot.estimateHours,
+      inputsKey: snapshot.inputsKey,
+      items: items.map(({ position: _position, ...item }) => item),
+      phases: snapshot.phases,
+      standInLessons: getSnapshotStandInLessons(snapshot),
+      state: snapshot.state,
+    },
+    tx,
   });
 
-  revalidatePlanTags(context.goal.userId);
+  await restoreStatus({ items, planId: context.plan.id, status: "todo", tx });
+  await restoreStatus({ items, planId: context.plan.id, status: "skipped", tx });
 }

@@ -13,14 +13,10 @@ import {
   type PlanSettings,
   type StoredBaseChoice,
 } from "./plan-state";
-import {
-  DEFAULT_LESSON_MINUTES,
-  type PlannerLesson,
-  assignLessonSkills,
-  countStandInLessons,
-} from "./plan-units";
+import { DEFAULT_LESSON_MINUTES, type PlannerLesson, assignLessonSkills } from "./plan-units";
 import { getSettledSkillIds } from "./settled-skills";
 import { keepTeachingOrder } from "./skill-order";
+import { countStandInLessons } from "./stand-in-size";
 
 /**
  * A goal this close (in days) whose time doesn't cover everything in depth gets a quick lesson for
@@ -123,7 +119,12 @@ function listLessonMinutes({
   teaching: ReadonlyMap<string, string>;
 }): number[] {
   const own = lessons.filter((lesson) => teaching.get(lesson.lessonId) === skill.skillId);
-  const standIn = countStandInLessons({ lessons: skill.lessons, taught: own.length });
+
+  const standIn = countStandInLessons({
+    lessons: skill.lessons,
+    outlined: skill.outlined,
+    taught: own.length,
+  });
 
   return [
     ...own.map((lesson) => lesson.minutes),

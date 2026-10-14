@@ -6,10 +6,12 @@ import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
+import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanEffect } from "./planner/plan-effect";
+import { parsePlanSettings } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** A Monday in 2020, before the learning events other tests write, so nobody's pace moves it. */
@@ -26,13 +28,31 @@ const SKILLS = AREAS.flatMap((area) => [
 ]);
 
 /** An exam learner short on time: the plan can't teach every topic by the exam. */
-async function setup({ dailyMinutes, daysAway }: { dailyMinutes: number; daysAway: number }) {
+async function setup({
+  dailyMinutes,
+  daysAway,
+  mockMinutes = null,
+}: {
+  dailyMinutes: number;
+  daysAway: number;
+  mockMinutes?: number | null;
+}) {
   const user = await userFixture();
 
   const blueprint = await examBlueprintFixture({
-    structure: {
+    structure: examStructureSchema.parse({
       formats: [],
-      mock: null,
+      mock:
+        mockMinutes === null
+          ? null
+          : {
+              citations: [citation],
+              order: null,
+              scoring: { description: "Correct answers", method: "raw" },
+              sections: [],
+              timeLimitMinutes: mockMinutes,
+              totalQuestions: 30,
+            },
       rules: [],
       subjects: AREAS.map((area) => ({
         citation,
@@ -41,7 +61,7 @@ async function setup({ dailyMinutes, daysAway }: { dailyMinutes: number; daysAwa
         topics: SKILLS.filter((skill) => skill.area === area).map((skill) => skill.topic),
         weight: null,
       })),
-    },
+    }),
   });
 
   const library = await planLibraryFixture({ phases: ["Basics", "Further"], skills: SKILLS });
@@ -133,9 +153,39 @@ describe("a change the learner didn't make names the topics it moves", () => {
   // Placement found the learner knows mathematics' basics: the time it frees brings mathematics'
   // application into a plan short on time, and the test-out's change says so.
   it("names the topics a test-out brings into the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 5, daysAway: 14 });
+    const { goal, library, plan } = await setup({ dailyMinutes: 5, daysAway: 14, mockMinutes: 30 });
     const before = await plannedTopics({ library, planId: plan.id });
     const [known] = library.skills;
+
+    expect(before.has("Matemática: fundamentos")).toBe(true);
+    expect(before.has("Matemática: aplicação")).toBe(false);
+
+    expect([...before].toSorted()).toStrictEqual(
+      AREAS.map((area) => `${area}: fundamentos`).toSorted(),
+    );
+
+    const initial = await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { phase: "asc" } } },
+      where: { id: plan.id },
+    });
+
+    const funding = parsePlanSettings(initial.settings).mockFunding;
+    expect(funding).toHaveLength(1);
+    expect(funding[0]).toMatchObject({ date: "2020-10-09", minutes: 15 });
+
+    expect(initial.items.filter((item) => item.kind === "mock")).toMatchObject([
+      { scheduledFor: new Date("2020-10-09") },
+    ]);
+
+    expect(
+      initial.items
+        .filter((item) => item.kind === "boss")
+        .map((item) => [item.phase, item.scheduledFor?.toISOString().slice(0, 10)]),
+    ).toStrictEqual([
+      [0, "2020-10-01"],
+      [1, "2020-10-06"],
+      [2, "2020-10-08"],
+    ]);
 
     if (!known) {
       throw new Error("The library has no skills.");

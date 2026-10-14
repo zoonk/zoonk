@@ -5,6 +5,7 @@ import { isAreaOperation } from "../planner/area-operations";
 import { getSkillArea } from "../planner/graph-areas";
 import { type PlanOperationError, applyPlanOperations } from "../planner/plan-operations";
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
+import { hasWeeklyEventCollision } from "./missing-weekly-move";
 import { type PlanContext } from "./plan-context";
 
 /** The plan's areas that are part of another for learners (see `findPartAreas`), by its graph. */
@@ -75,12 +76,23 @@ export async function applyChangeOperations({
   noticeGraph = null,
   operations,
 }: {
-  context: Pick<PlanContext, "goal" | "state" | "today">;
+  context: Pick<PlanContext, "goal" | "items" | "state" | "today">;
   /** The graph a `followNotice` operation follows (see `applyPlanOperations`). */
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
 }): Promise<{ error: PlanOperationError } | { operations: PlanOperation[]; state: PlanState }> {
   const withParts = await loadOperationsWithParts({ context, operations });
+
+  // A move to a day that already has the week's event is refused, before it can drop either.
+  if (
+    hasWeeklyEventCollision({
+      items: context.items,
+      moves: context.state.settings.movedEvents,
+      operations,
+    })
+  ) {
+    return { error: "mockCollision" };
+  }
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,

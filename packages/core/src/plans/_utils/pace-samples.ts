@@ -6,6 +6,8 @@ import { type PaceSample } from "../planner/plan-pace";
 
 /** Recent lessons are enough to know how long lessons take; older ones don't change the average. */
 const RECENT_DAYS = 30;
+/** Enough upcoming lessons to choose a course pace without scanning its entire outline. */
+export const PACE_LESSON_LIMIT = 500;
 const SAMPLE_LIMIT = 5000;
 const OWN_LIMIT = 200;
 
@@ -52,7 +54,7 @@ async function loadSharedSamples({
 }: {
   lessonIds: readonly string[];
   now: Date;
-  userId: string;
+  userId: string | null;
 }): Promise<{ course: PaceSample | null; typical: PaceSample | null }> {
   const since = addDays(now, -RECENT_DAYS);
 
@@ -99,10 +101,10 @@ export async function loadPaceSamples({
 }: {
   lessonIds: readonly string[];
   now: Date;
-  userId: string;
+  userId: string | null;
 }) {
   const [own, shared] = await Promise.all([
-    loadOwnSample(userId),
+    userId ? loadOwnSample(userId) : null,
     loadSharedSamples({ lessonIds, now, userId }),
   ]);
 

@@ -1,11 +1,12 @@
 import { getKnownSubjects, getOwnLevel } from "../../../learner/placement/placement-contract";
+import { listFinishedDays } from "../../_utils/finished-days";
 import { getLevelFloor, keepPastBasicsBands } from "../../_utils/level-bands";
 import { getPlanInputsKey, readLanding } from "../../_utils/plan-inputs-key";
 import { type ComputedPlan } from "../../_utils/replan";
 import { isStandIn } from "../../_utils/stand-in-lessons";
 import { chooseBases } from "../../planner/base-choices";
 import { type BuildPlanInput, type PlanningMode, buildPlan } from "../../planner/build-plan";
-import { applyBaseChoices, getKeptBaseChoices } from "../../planner/chosen-bases";
+import { getChosenStandInLessons } from "../../planner/chosen-bases";
 import { withPlannedLessons } from "../../planner/core-first";
 import { readCourseWeights } from "../../planner/course-weights";
 import { weighGraphForExam } from "../../planner/exam-weights";
@@ -23,7 +24,7 @@ import {
   parsePlanPhases,
   parsePlanSettings,
 } from "../../planner/plan-state";
-import { type PlannerLesson, getStandInLessons } from "../../planner/plan-units";
+import { type PlannerLesson } from "../../planner/plan-units";
 import { getSettledSkillIds } from "../../planner/settled-skills";
 import { listGapSkillIds, readSimEvidence } from "./sim-claims";
 import { type SimPlan, type SimWorld, getSimGoal, getSimPlanCarryOver } from "./sim-world";
@@ -78,11 +79,7 @@ function listPlannedLessons({
   });
 }
 
-/**
- * The saved pace, or one sampled from the learner's lessons. Others' aren't simulated, so everyone's
- * pace (`typical`, which counts the learner's own lessons too) is theirs alone, and no one else's
- * is on the plan's lessons (`course`).
- */
+/** The saved pace or one sampled now; the simulator has only the learner's own lesson times. */
 function getPace({ pace, world }: { pace: "sampled" | "saved"; world: SimWorld }): Pace {
   const saved = world.plan.state.settings.pace;
   const { own } = world.learner;
@@ -155,6 +152,7 @@ function toPlannerInput({
       todayExceptAreas: todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
     },
     examWindows: toExamWindows(plan.phases),
+    finishedOn: listFinishedDays({ items: plan.items, timeZone: "UTC" }),
     fullMockMinutes: inputs.fullMockMinutes,
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: goal.kind, targetDate },
     graph: weighGraphForExam({
@@ -212,19 +210,7 @@ export function computeSimPlan(request: SimPlanRequest): ComputedPlan {
 
   const built = buildPlan({ ...input, ...landing });
 
-  const studied = applyBaseChoices({
-    bases: input.bases ?? [],
-    choices: getKeptBaseChoices(input),
-    graph: input.graph,
-    items: input.items,
-    lessons: input.lessons,
-    quickLessons: input.quickLessons,
-  });
-
-  const standInLessons = getStandInLessons({
-    lessons: studied.lessons,
-    skills: studied.graph.skills,
-  });
+  const standInLessons = getChosenStandInLessons(input);
 
   return {
     bases: chosen.advise(),

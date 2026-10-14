@@ -1,10 +1,13 @@
 import { type PlanChangeStatus, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { type BossTiming } from "../checkpoints/_utils/boss-reached";
 import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
-import { type PlanOperation } from "./plan-contract";
+import { type MockFundingView } from "./mock-funding-contract";
+import { type PlanNumbers } from "./numbers-contract";
+import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
 import { type PlanCourseView } from "./plan-course-contract";
 import { type ToolChoice, type ToolSystem } from "./plan-tools-contract";
 import { type PlanEffect } from "./planner/plan-effect";
@@ -59,7 +62,7 @@ export type PlanChangeView = {
   examDocument: ExamDocument;
   id: string;
   kind: string;
-  /** Lessons a test-out skipped, counted as the Journey counts lessons (`countLessons`). */
+  /** Lessons a test-out skipped, counted as the Plan counts lessons (`countLessons`). */
   lessonsSkipped: number;
   /**
    * The exam day the notice officially sets, when the change moves the goal's date off it: the
@@ -186,21 +189,37 @@ export type ShortExamFocus = (typeof SHORT_EXAM_FOCUSES)[number];
 export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay: number };
 
 /**
- * A plan with nothing left to do: `finished` once every lesson was studied or tested out, `ended`
- * when some were set aside (missed days the plan couldn't fit back, or its date came), with how
- * many lessons stayed out (`setAsideLessons`, 0 when finished). Apps celebrate only `finished`;
- * both show what to study next.
+ * A plan with nothing left to do and every lesson studied or tested out (see `isPlanFinished`):
+ * apps celebrate it and show what to study next. A plan whose date came with lessons left isn't
+ * over: its status says `pastDate`, and `PlanView.pastDateOffer` keeps it going.
  */
-export type PlanEndView = { kind: "ended" | "finished"; setAsideLessons: number };
+type PlanEndView = { kind: "finished" };
+
+/**
+ * A change the Plan offers, with what it does, computed before the learner sees it so Apply is one
+ * tap after its diff: the one that keeps a plan going once its date came with lessons left (see
+ * `pastDateOffer`), or the lessons the learner's own time fits (see `fitOffer`).
+ */
+export type PlanOffer = { effect: PlanEffect; operations: LearnerPlanOperation[] };
 
 /**
  * The checkpoint that closes a phase (the Trickster), by its plan item, whose page is its intro:
  * `done` once passed, its planned day while it's ahead.
  */
 export type PlanPhaseCheckpointView = {
+  /** Still visible in the path, but starting it requires Plus. */
+  locked: boolean;
   date: string | null;
   planItemId: string;
   state: "done" | "upcoming";
+  /**
+   * When it comes, as sessions offer challenges and its page says (see `getBossTimings`): on its
+   * `date`; in the learner's next session (`nextSession`), which duels the first one reached and
+   * any whose day came; or after the challenge before it (`queued`): its phase's lessons are done,
+   * and a session duels the next one once that one is won. Apps say so instead of its date. Always
+   * `date` once won, and past a free exam plan's first week, whose sessions hold no challenges.
+   */
+  when: BossTiming;
 };
 
 export type PlanPhaseView = {
@@ -229,15 +248,19 @@ export type PlanPhaseView = {
    * `current` is the earliest phase with work left (see `findCurrentPhase`). One before it is
    * `done` once the learner finished its work, and `unfinished` while some of it was set aside
    * (missed days the plan couldn't fit back): apps never mark it done, and say the lessons studied
-   * of its total instead.
+   * of its total instead. `leftOut`: the plan holds none of its work, as a date too near for its
+   * topics leaves it (`SyllabusSubject.notPlannedReason` `time`): never done, never ahead, and not
+   * counted among the phases to finish.
    */
-  state: "current" | "done" | "unfinished" | "upcoming";
+  state: "current" | "done" | "leftOut" | "unfinished" | "upcoming";
 };
 
 export type PlanDayView = {
   date: string;
   items: PlanItemView[];
   minutes: number;
+  /** Why this day is lighter; null on unrelated days and the mock's own day. */
+  mockFunding: MockFundingView | null;
   state: "done" | "missed" | "rest" | "today" | "upcoming";
 };
 
@@ -283,6 +306,20 @@ export type PlanBasesView = {
   recommended: Exclude<BaseChoice, "skip">;
 };
 
+/**
+ * When an exam plan's mock exams still to take fall, from their scheduled days: how many, the next
+ * one's day, and only the pattern the days keep: all on one weekday (`weekday`, Sunday 0, null
+ * when they aren't or there's one), each a fixed number of weeks after the last (`everyWeeks`,
+ * null when the gaps differ or there's one). Mocks go on the week's last study day, every week or
+ * every few when a mock is longer than a study day, with a phase's own mock where none falls.
+ */
+export type MockScheduleView = {
+  count: number;
+  everyWeeks: number | null;
+  nextDate: string;
+  weekday: number | null;
+};
+
 /** The plan at three zoom levels (until the goal, this week, and the changes). */
 export type PlanView = {
   access: {
@@ -321,6 +358,8 @@ export type PlanView = {
     remainingHours: number;
     totalHours: number;
   };
+  /** Actual remaining schedule numbers; null until a computed plan is available. */
+  numbers: PlanNumbers | null;
   /**
    * The exam's choices (ENEM's foreign language: English or Spanish), each with its options and
    * the one the learner takes, which they can change from the plan. Empty without choices.
@@ -356,10 +395,15 @@ export type PlanView = {
     measure: "exam" | "goal";
     /** The daily minutes that study everything in depth. */
     recommendedMinutes: number | null;
+    /**
+     * The learner's own daily time covers everything once the plan is planned again at it (see
+     * `PlanFeasibility.timeCovers`): what the plan leaves out comes at their time (`fitOffer`).
+     */
+    timeCovers: boolean;
   } | null;
   /**
-   * Nothing of the plan is left to do (see `getPlanEnd`): time for what to study next. Null while
-   * something is.
+   * Every lesson of the plan is studied or tested out (see `isPlanFinished`): time for what to
+   * study next. Null while something is left, set aside lessons included.
    */
   end: PlanEndView | null;
   goalId: string;
@@ -371,6 +415,21 @@ export type PlanView = {
   notice: "reading" | "usual" | null;
   /** The level the learner gave (nothing yet to advanced), which they can change from the plan. */
   ownLevel: OwnLevel | null;
+  /**
+   * The lessons the learner's own time fits by the plan's date that the plan doesn't hold, as one
+   * change (`fitLessons`, see `loadFitOffer`): once every lesson is done, or once their time covers
+   * everything the plan leaves out. Null otherwise, and when it would add no lesson.
+   */
+  fitOffer: PlanOffer | null;
+  /** Future todo mocks whose saved funding has started, with real item IDs and durations. */
+  fundedMocks: PlanItemView[];
+  /**
+   * The one change that keeps the plan going when its date came with lessons left: a goal's own
+   * date moves to the day the learner's time covers what's left by (`setTargetDate`); an exam's
+   * date is the exam's, so its plan goes on after it at the learner's pace (`setFullCourse`). Null
+   * otherwise, and when no change brings the lessons back.
+   */
+  pastDateOffer: PlanOffer | null;
   phases: PlanPhaseView[];
   planId: string;
   /** False while the planner is still building the plan. */
@@ -388,6 +447,8 @@ export type PlanView = {
      */
     fullCourse: boolean;
     lightWeeks: LightWeek[];
+    /** The mock exams still to take (see `MockScheduleView`); null without one ahead. */
+    mocks: MockScheduleView | null;
     studyDays: number;
     /** The exam day the notice gives when it isn't `targetDate`; null otherwise. */
     noticeDay: NoticeDay | null;
@@ -429,4 +490,9 @@ export type PlanView = {
    * written tests and plans for a test days away.
    */
   writtenPractice: WrittenPractice | null;
+};
+
+/** Screens recommend the time for depth; the full API view also gives time for every topic. */
+export type PlanScreenView = Omit<PlanView, "feasibility"> & {
+  feasibility: Omit<NonNullable<PlanView["feasibility"]>, "coreMinutes"> | null;
 };

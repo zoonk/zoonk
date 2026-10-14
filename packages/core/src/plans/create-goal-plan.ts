@@ -1,22 +1,20 @@
 import "server-only";
 import { type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
-import {
-  getExamEditionDays,
-  getNamedMonthStart,
-  readExamMonth,
-  readExamYear,
-} from "../exams/_utils/exam-edition-days";
-import { findMeantExamDay, getKeptMonthStart } from "../exams/kept-month";
-import { examEditionSchema } from "../library/exams/blueprint-contract";
+import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
+import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
+import { getKeptMonthStart } from "../exams/kept-month";
+import { isCourseDateSkipped } from "../view-models/onboarding/onboarding-steps";
 import { loadPlanContext } from "./_utils/plan-context";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { startOnRecommendedBases } from "./_utils/recommended-bases";
 import { type ComputedPlan, commitPlan, computePlan, withPlanRetry } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
 import { setUpPlanNow } from "./plan-setup";
-import { addDays, fromIsoDate, toIsoDate } from "./planner/plan-calendar";
+import { toIsoDate } from "./planner/plan-calendar";
 import { type PlanGraph, planGraphSchema } from "./planner/plan-state";
+import { getTargetDateBounds } from "./target-date-range";
 
 const MINUTES_PER_HOUR = 60;
 
@@ -76,6 +74,15 @@ async function getExamTarget({
   const goalDate = goal.targetDate ? toIsoDate(goal.targetDate) : null;
   const kept = { asksNotice: false, noticeDate, targetDate: goalDate };
 
+  if (
+    isCourseDateSkipped({
+      details: isJsonObject(goal.details) ? goal.details : {},
+      targetDate: goalDate,
+    })
+  ) {
+    return { asksNotice: false, noticeDate: null, targetDate: null };
+  }
+
   if (goalDate && !(followNotice && goalDate === noticeDate)) {
     return kept;
   }
@@ -84,30 +91,33 @@ async function getExamTarget({
     return kept;
   }
 
-  const noticeDay = await findNoticeNextDay({ goal, goalDate, today });
+  const noticeDay = await findNoticeNextDay({ goal, goalDate });
   const keptMonth = getKeptMonthStart({ details: goal.details, noticeDay, today });
+  // A day past what a plan reaches can't be its date: the goal stays undated, and onboarding asks.
+  const latest = getTargetDateBounds(today).max;
 
   if (keptMonth) {
-    return { asksNotice: true, noticeDate: null, targetDate: keptMonth };
+    return keptMonth <= latest
+      ? { asksNotice: true, noticeDate: null, targetDate: keptMonth }
+      : kept;
   }
 
   const next = noticeDay ?? getNamedMonthStart({ details: goal.details, from: today });
-  return next ? { asksNotice: false, noticeDate: next, targetDate: next } : kept;
+  return next && next <= latest ? { asksNotice: false, noticeDate: next, targetDate: next } : kept;
 }
 
 /**
- * The exam's next day after `today` in its stored notice, of the sitting the learner means (see
+ * The exam's next day after today in its own zone, of the sitting the learner means (see
  * `findMeantExamDay`): the one of the date the plan took from the notice (`goalDate`), else of the
- * month they named, else the next one. Null without one.
+ * month they named, else the next one. Public course days use the same cutoff, independent of
+ * the learner's study timezone. Null without one.
  */
 async function findNoticeNextDay({
   goal,
   goalDate,
-  today,
 }: {
   goal: Goal;
   goalDate: string | null;
-  today: string;
 }): Promise<string | null> {
   if (!goal.examBlueprintId) {
     return null;
@@ -118,15 +128,14 @@ async function findNoticeNextDay({
     where: { id: goal.examBlueprintId },
   });
 
-  const { days } = getExamEditionDays({
-    edition: examEditionSchema.safeParse(blueprint?.edition).data ?? null,
-    examMonth: readExamMonth(goal.details),
-    examYear: readExamYear(goal.details),
-    from: today,
-  });
-
-  const tomorrow = toIsoDate(addDays(fromIsoDate(today), 1));
-  return findMeantExamDay({ days, details: goal.details, from: tomorrow, goalDate })?.date ?? null;
+  return (
+    getPlanExamDays({
+      details: goal.details,
+      edition: blueprint?.edition,
+      goalDate,
+      today: getExamCalendarDay({ edition: blueprint?.edition, now: new Date() }).today,
+    }).days[0]?.date ?? null
+  );
 }
 
 /**

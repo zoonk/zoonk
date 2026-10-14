@@ -7,7 +7,7 @@ import {
   type PlanGraphSkill,
   type StoredBaseChoice,
 } from "./plan-state";
-import { type PlannerLesson, assignLessonSkills } from "./plan-units";
+import { type PlannerLesson, assignLessonSkills, getStandInLessons } from "./plan-units";
 import { countCoreLessons, listStudiedCores } from "./studied-cores";
 
 type ChoiceInput = Pick<
@@ -79,7 +79,7 @@ function sizeBases({
           kept: [...own.slice(0, core), ...started].map((lesson) => lesson.lessonId),
           lessons: core + started.length,
         },
-        quick: { kept: [], lessons: 1 },
+        quick: { kept: [], lessons: skill.outlined && own.length === 0 ? 0 : 1 },
         skip: { kept: [], lessons: 0 },
       }[choice];
 
@@ -95,7 +95,7 @@ function sizeBases({
  * what builds on it no longer waits for it. A choice for a skill that is no longer a base changes
  * nothing. The stored graph never changes: only the planner reads this copy.
  */
-export function applyBaseChoices({
+function applyBaseChoices({
   bases,
   choices,
   graph,
@@ -145,7 +145,15 @@ export function applyBaseChoices({
           return [skill];
         }
 
-        return size.lessons > 0 ? [{ ...skill, lessons: size.lessons }] : [];
+        return size.lessons > 0
+          ? [
+              {
+                ...skill,
+                lessons: size.lessons,
+                ...(chosen.get(skill.skillId) === "quick" ? { outlined: false } : {}),
+              },
+            ]
+          : [];
       }),
     },
     lessons: [
@@ -158,14 +166,19 @@ export function applyBaseChoices({
   };
 }
 
+/** What applying base choices reads of the planner's input (see `applyBaseChoices`). */
+type BaseInput = Pick<BuildPlanInput, "bases" | "graph" | "lessons" | "quickLessons"> & {
+  items: Parameters<typeof findChapterInProgress>[0];
+};
+
 /** The planner's input with each base studied as `choices` say (see `applyBaseChoices`). */
-export function withBaseChoices({
+export function withBaseChoices<TInput extends BaseInput>({
   choices,
   input,
 }: {
   choices: readonly StoredBaseChoice[];
-  input: BuildPlanInput;
-}): BuildPlanInput {
+  input: TInput;
+}): TInput {
   return {
     ...input,
     ...applyBaseChoices({
@@ -183,4 +196,11 @@ export function withBaseChoices({
 export function listQuickBaseIds(input: ChoiceInput): Set<string> {
   const chosen = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
   return new Set([...chosen].flatMap(([skillId, choice]) => (choice === "quick" ? [skillId] : [])));
+}
+
+/** Each stand-in as the plan has it: a base's core, or the one lesson of its quick lesson. */
+export function getChosenStandInLessons(input: BuildPlanInput): Map<string, number> {
+  const studied = withBaseChoices({ choices: getKeptBaseChoices(input), input });
+
+  return getStandInLessons({ lessons: studied.lessons, skills: studied.graph.skills });
 }

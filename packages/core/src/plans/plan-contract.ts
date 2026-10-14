@@ -91,7 +91,13 @@ const planOperationSchema = z
     z
       .object({
         kind: z.literal("setTargetDate"),
-        targetDate: z.iso.date().nullable().meta({ description: "The new date, or null for none" }),
+        targetDate: z.iso
+          .date()
+          .nullable()
+          .meta({
+            description:
+              "The new date, or null for none: after the learner's today (an earlier one is refused with 422 PLAN_CHANGE_INVALID `pastDate`) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+          }),
       })
       .strict(),
     z
@@ -184,6 +190,13 @@ const planOperationSchema = z
       .meta({
         description:
           "How to study some of the plan's bases (`bases`: the skills its topics or final work build on, worth less to the goal than what builds on them). Bases not named keep their choice",
+      }),
+    z
+      .object({ kind: z.literal("fitLessons") })
+      .strict()
+      .meta({
+        description:
+          "Brings in the lessons the learner's own time fits by the plan's date, at the time, date and pace their plan has: the plan is planned again from today as a change of theirs plans it, so topics its date left out, or more depth, come in where they fit. The plan offers it as `fitOffer` (GET /v1/goals/{goalId}/plan) when it adds lessons",
       }),
     z
       .object({
@@ -325,7 +338,7 @@ export const planChangeDecisionInputSchema = z
       .enum(["applied", "declined", "undone", "seen"])
       .meta({
         description:
-          'Accept or decline a proposed change, undo an applied one, or mark an applied one as seen ("Got it"), so the plan stops showing it',
+          'Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen ("Got it"), so the plan stops showing it',
       }),
     timeZone: answerTimeZoneSchema,
   })

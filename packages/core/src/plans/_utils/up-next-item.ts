@@ -41,11 +41,11 @@ function findNextItem<Item extends Omit<UpNextCandidate, "id">>(
 }
 
 /**
- * The lesson the learner does next, the one every screen marks "Up next": Today's, the Journey's,
+ * The lesson the learner does next, the one every screen marks "Up next": Today's, the Plan's,
  * the map's and a chapter's page. It's the plan item of the lesson today's session opens next (the
  * one started, then the first not started); before the day's session is built, or once its lessons
  * are done, it's the plan's next lesson (`findNextItem`). Read from the plan's order alone, Pedro's
- * Journey marked a chapter of his first phase while Today opened a lesson of the second.
+ * Plan marked a chapter of his first phase while Today opened a lesson of the second.
  */
 export function findUpNextItem<Item extends UpNextCandidate>({
   items,

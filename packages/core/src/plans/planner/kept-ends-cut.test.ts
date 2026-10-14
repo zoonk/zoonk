@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
+import { isPlanFinished } from "../_utils/plan-end";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, fromIsoDate } from "./plan-calendar";
@@ -7,11 +9,15 @@ import { parsePlanSettings } from "./plan-state";
 /** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
-/** A learn plan of four phases, one skill each, due in 9 days at 24 minutes a day. */
+/** A learn plan of four phases, one skill each, due in 9 days at 19 minutes a day. */
 const SIZES = [8, 8, 8, 4];
 
 const input: BuildPlanInput = {
-  goal: { dailyMinutes: 24, kind: "learn", targetDate: addDays(TODAY, 9) },
+  /**
+   * The smallest integer day preserving 19 lessons with whole 15-minute text bosses, each the study
+   * day after its lessons and overflowing a shorter day (see `placeBoss`).
+   */
+  goal: { dailyMinutes: 19, kind: "learn", targetDate: addDays(TODAY, 9) },
   graph: {
     phases: SIZES.map((_, index) => ({ milestone: null, name: `Phase ${index + 1}` })),
     skills: SIZES.map((lessons, index) => ({
@@ -65,4 +71,52 @@ describe("a plan short on time whose phase ends a run keeps", () => {
       expect(listLessonIds(next)).toStrictEqual(listLessonIds(made));
     },
   );
+});
+
+// The review's reproduction: this plan fits 19 of the graph's 28 lessons by its date. Every item
+// done, it read "Finished" while its number counted the graph's full depth, 19 of 28 (68%).
+describe("a plan short on time, finished", () => {
+  const made = buildPlan(input);
+
+  const done = made.items.map((item, position) => ({
+    ...item,
+    id: item.key,
+    position,
+    status: "done" as const,
+  }));
+
+  it("reads 100% of the lessons it chose", () => {
+    const { lessons } = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map(),
+      items: done.filter((item) => item.kind === "lesson" || item.kind === "chapter"),
+      knownSkillIds: new Set(),
+      notice: null,
+      pastBasicsSkillIds: new Set(),
+      skills: input.graph.skills.map((skill) => ({ ...skill, area: skill.area ?? "", topics: [] })),
+      skippedAreas: [],
+    });
+
+    expect(input.lessons).toHaveLength(28);
+
+    expect(
+      listLessonIds(buildPlan({ ...input, goal: { ...input.goal, dailyMinutes: 18 } })),
+    ).toHaveLength(18);
+
+    expect(
+      made.items.filter((item) => item.kind === "boss").map((item) => item.minutes),
+    ).toStrictEqual([15, 15, 15, 15]);
+
+    expect(listLessonIds(made)).toHaveLength(19);
+    expect(lessons).toStrictEqual({ done: 19, known: 0, total: 19 });
+
+    expect(
+      isPlanFinished({
+        goalKind: "learn",
+        items: done,
+        targetDate: input.goal.targetDate ?? null,
+        today: TODAY,
+      }),
+    ).toBe(true);
+  });
 });

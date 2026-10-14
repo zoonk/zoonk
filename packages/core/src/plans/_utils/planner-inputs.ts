@@ -25,15 +25,25 @@ export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> 
 
   return {
     ...graph,
-    skills: skills.filter(
-      (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
-    ),
+    skills: skills
+      .filter(
+        (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
+      )
+      .map(({ outlined: _outlined, ...skill }) => ({
+        ...skill,
+        ...(skills
+          .filter((other) => other.skillId === skill.skillId)
+          .every((other) => other.outlined === true)
+          ? { outlined: true }
+          : {}),
+      })),
   };
 }
 
 /** The Library band the skill graph put each skill in (see `PlanBase`). */
 async function loadSkillBands(skillIds: string[]): Promise<Map<string, CourseLevel>> {
   const skills = await prisma.skill.findMany({
+    orderBy: { id: "asc" },
     select: { id: true, level: true },
     where: { id: { in: skillIds } },
   });
@@ -57,7 +67,10 @@ async function loadReadiness({
     return new Map();
   }
 
-  const rows = await prisma.learnerSkill.findMany({ where: { skillId: { in: skillIds }, userId } });
+  const rows = await prisma.learnerSkill.findMany({
+    orderBy: { skillId: "asc" },
+    where: { skillId: { in: skillIds }, userId },
+  });
 
   return new Map(
     rows.map((row) => {
@@ -132,15 +145,15 @@ export async function loadPlannerInputs({
       : new Set<string>();
 
   return {
-    answeredWrongSkillIds: answeredWrong,
+    answeredWrongSkillIds: new Set([...answeredWrong].toSorted()),
     bands,
-    knownSkillIds,
+    knownSkillIds: new Set([...knownSkillIds].toSorted()),
     lessons,
     levelFloor: getLevelFloor(getOwnLevel({ goal })),
-    missedSkillIds,
-    prerequisites,
+    missedSkillIds: new Set([...missedSkillIds].toSorted()),
+    prerequisites: new Map([...prerequisites].toSorted(([a], [b]) => a.localeCompare(b))),
     readiness,
-    strongAreas,
+    strongAreas: new Set([...strongAreas].toSorted()),
     ...exam,
   };
 }

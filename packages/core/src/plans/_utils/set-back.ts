@@ -7,9 +7,19 @@ import { canUndoChange } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanSnapshot } from "./restore-plan";
 
-/** What a learner sets in their plan: their time and date, and the plan's settings. */
+/**
+ * Mock funding, relocations and the checkpoints' overflow come from a planning run, so reversing a choice
+ * hasn't restored them yet.
+ */
 function getChosen(state: PlanState) {
-  return { goal: state.goal, settings: state.settings };
+  const {
+    checkpointOverflow: _checkpointOverflow,
+    mockFunding: _mockFunding,
+    mockRelocations: _mockRelocations,
+    ...settings
+  } = state.settings;
+
+  return { goal: state.goal, settings };
 }
 
 /**

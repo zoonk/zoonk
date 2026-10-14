@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type TopicLevel } from "../../library/exams/topic-frequency";
-import { applyBaseChoices } from "./chosen-bases";
+import { withBaseChoices } from "./chosen-bases";
 import { adviseOnBases, findPlanBases } from "./plan-bases";
 import { fromIsoDate } from "./plan-calendar";
 import { type PlanGraph, type PlanGraphSkill, parsePlanSettings } from "./plan-state";
@@ -245,6 +245,18 @@ describe(findPlanBases, () => {
   });
 });
 
+/** The planner's graph and lessons with base choices, as `withBaseChoices` gives them the plan. */
+function applyBaseChoices({
+  choices,
+  items = [],
+  ...input
+}: Omit<Parameters<typeof withBaseChoices>[0]["input"], "items"> & {
+  choices: Parameters<typeof withBaseChoices>[0]["choices"];
+  items?: Parameters<typeof withBaseChoices>[0]["input"]["items"];
+}) {
+  return withBaseChoices({ choices, input: { ...input, items } });
+}
+
 /** What the planner gets of the base: its graph size and the lessons planned under it. */
 function livingLessons(chosen: ReturnType<typeof applyBaseChoices>) {
   return {
@@ -255,7 +267,7 @@ function livingLessons(chosen: ReturnType<typeof applyBaseChoices>) {
   };
 }
 
-describe(applyBaseChoices, () => {
+describe(withBaseChoices, () => {
   const bases = findBases();
 
   it("keeps a base's core, the first third of its lessons, unless the learner chose otherwise", () => {

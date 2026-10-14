@@ -257,3 +257,26 @@ export function getPhaseDatesMoveMode({
 
   return moving.some((phase) => (date(phase) ?? weekEnd) <= weekEnd) ? "forced" : mode;
 }
+
+/**
+ * The phase ends a run kept (`kept`, the ones the learner saw) that it moved anyway, so the plan
+ * says so: a phase's challenge never comes before or on the day of lessons it tests, so a lesson
+ * that no longer ends by the day before takes the end with it (see `keepPhaseEnd`).
+ */
+export function listReleasedEnds({
+  after,
+  kept,
+  shown,
+}: {
+  after: readonly Pick<PlanPhase, "endDate">[];
+  kept: ReadonlyMap<number, Date> | undefined;
+  shown: readonly PlanPhase[];
+}): PhaseEndMove[] {
+  const ends = kept ?? new Map<number, Date>();
+
+  return listPhaseEndMoves({
+    after,
+    lessonsFirst: new Set(ends.keys()),
+    shown: shown.map((phase, index) => (ends.has(index) ? phase : { ...phase, endDate: null })),
+  });
+}

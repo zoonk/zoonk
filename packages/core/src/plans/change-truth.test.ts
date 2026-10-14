@@ -3,6 +3,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
@@ -37,20 +38,32 @@ const LEFT_OUT = "Inglês: aplicação";
 async function setup({
   dailyMinutes,
   lessonMinutes = [6],
+  mockMinutes = null,
   settings = {},
   skills = SKILLS,
 }: {
   dailyMinutes: number;
   lessonMinutes?: number[];
+  mockMinutes?: number | null;
   settings?: object;
   skills?: typeof SKILLS;
 }) {
   const user = await userFixture();
 
   const blueprint = await examBlueprintFixture({
-    structure: {
+    structure: examStructureSchema.parse({
       formats: [],
-      mock: null,
+      mock:
+        mockMinutes === null
+          ? null
+          : {
+              citations: [citation],
+              order: null,
+              scoring: { description: "Correct answers", method: "raw" },
+              sections: [],
+              timeLimitMinutes: mockMinutes,
+              totalQuestions: 30,
+            },
       rules: [],
       subjects: AREAS.map((area) => ({
         citation,
@@ -59,7 +72,7 @@ async function setup({
         topics: skills.filter((skill) => skill.area === area).map((skill) => skill.topic),
         weight: null,
       })),
-    },
+    }),
   });
 
   const library = await planLibraryFixture({ phases: ["Basics", "Further"], skills });
@@ -376,7 +389,7 @@ describe("more of one subject and less of another", () => {
   // Ana's "more Linguagens", short on time: Linguagens gained 96 lessons and ended in October
   // instead of August, and her card said only that she'd finish it later.
   it("says how many more lessons the subject asked for gets when that ends it later", async () => {
-    const { goal, plan } = await setup({ dailyMinutes: 25 });
+    const { goal, plan } = await setup({ dailyMinutes: 25, mockMinutes: 60 });
     const before = await readAreas(plan.id);
 
     const changed = await change(goal.id, [{ areas: ["Direito"], kind: "focusAreas", parts: [] }]);

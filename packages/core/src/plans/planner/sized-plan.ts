@@ -41,6 +41,24 @@ export function toSizedPlanInput(input: BuildPlanInput): SizedPlanInput {
   const settled = getSettledSkillIds(input);
   const finished = countFinishedLessons(input.items);
 
+  const outlined = new Set(
+    input.graph.skills.flatMap((skill) => (skill.outlined ? [skill.skillId] : [])),
+  );
+
+  const doneLessons = new Set(
+    input.items.filter((item) => isFinishedLesson(item)).map((item) => item.lessonId),
+  );
+
+  // A complete course outline is sized by its written lessons, including shared ones counted
+  // once. Dropping them would turn its outlined skills into zero work and falsely advise deep.
+  const outlinedLessons = input.lessons.flatMap((lesson) => {
+    const skillIds = lesson.skillIds.filter((id) => outlined.has(id) && !settled.has(id));
+
+    return !doneLessons.has(lesson.lessonId) && skillIds.length > 0
+      ? [{ ...lesson, skillIds }]
+      : [];
+  });
+
   const skills = input.graph.skills.map((skill) => ({
     ...skill,
     lessons: settled.has(skill.skillId)
@@ -61,7 +79,7 @@ export function toSizedPlanInput(input: BuildPlanInput): SizedPlanInput {
       ...input,
       graph: { ...input.graph, skills },
       items: [],
-      lessons: [],
+      lessons: outlinedLessons,
       mode: "forced",
       phaseEnds: undefined,
     },

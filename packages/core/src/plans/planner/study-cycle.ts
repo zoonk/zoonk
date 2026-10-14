@@ -1,5 +1,6 @@
+import { findDayIndex } from "./day-index";
 import { type QueueUnit } from "./plan-units";
-import { type PlanDay, findDayIndex, getLessonCapacity } from "./schedule-units";
+import { type PlanDay, getCumulativeCapacity } from "./schedule-units";
 import { splitStandIns } from "./stand-in-parts";
 import {
   EPSILON,
@@ -9,7 +10,7 @@ import {
   placeUnit,
   takeBlock,
 } from "./study-cycle-blocks";
-import { getBudgets, getReserves, isDue } from "./study-cycle-budgets";
+import { getBudgets, getReserves, isDue, toDueDates } from "./study-cycle-budgets";
 import {
   hasCadencedLeft,
   isCadencedBehind,
@@ -31,13 +32,6 @@ import {
 } from "./study-cycle-lanes";
 import { listStartingParts, splitIntoParts, splitWaiting } from "./study-cycle-parts";
 
-function prefixSums(values: readonly number[]): number[] {
-  return values.reduce<number[]>((sums, value) => {
-    sums.push((sums.at(-1) ?? 0) + value);
-    return sums;
-  }, []);
-}
-
 /**
  * The subjects of one day: among the ready ones that have joined, those that have had the least
  * time for what they're worth, the cycle's order breaking ties; a subject joins early only when
@@ -50,12 +44,12 @@ function prefixSums(values: readonly number[]): number[] {
 function chooseLanes({
   context,
   count,
-  date,
+  dateOf,
   state,
 }: {
   context: CycleContext;
   count: number;
-  date: Date | undefined;
+  dateOf: (lane: Lane) => Date | undefined;
   state: CycleState;
 }): Lane[] {
   const open = state.lanes.filter((lane) => lane.units.length > 0);
@@ -73,7 +67,7 @@ function chooseLanes({
     (a, b) => Number(isWaiting(a)) - Number(isWaiting(b)) || a.pass - b.pass || a.order - b.order,
   );
 
-  const due = ranked.slice(count).filter((lane) => isDue({ date, lane }));
+  const due = ranked.slice(count).filter((lane) => isDue({ date: dateOf(lane), lane }));
   const chosen = [...ranked.slice(0, Math.max(0, count - due.length)), ...due];
   const floor = chosen[0]?.pass ?? 0;
 
@@ -164,7 +158,8 @@ function fillDay({
   const dayEnd = context.cumulative[dayIndex] ?? 0;
   const cadenced = listOpenCadenced({ dayIndex, state });
   const count = Math.max(1, getSubjectsPerDay(day?.shape.minutes ?? 0) - cadenced.length);
-  const chosen = chooseLanes({ context, count, date: day?.date, state });
+  const dateOf = toDueDates({ context, dayIndex, state });
+  const chosen = chooseLanes({ context, count, dateOf, state });
   const room = dayEnd - state.used;
   const start = state.used;
   const from = state.placed.length;
@@ -176,7 +171,8 @@ function fillDay({
       isUnitReady({ context, left: state.left, unit: lane.units[0] }),
   );
 
-  const lead = behind ?? first;
+  // The subject holding the chapter in progress's next lesson, due by this day, goes first (R10).
+  const lead = behind ?? chosen.find((lane) => isDue({ date: dateOf(lane), lane })) ?? first;
   const head = lead?.units[0];
 
   // A lesson longer than the day goes when its subject is the most due, and takes the days it
@@ -199,8 +195,8 @@ function fillDay({
 
   takeCadencedBlocks({ context, dayEnd, dayIndex, lanes: cadenced, state });
 
-  const budgets = getBudgets({ chosen, date: day?.date, left: dayEnd - state.used });
-  const reserves = getReserves({ chosen, date: day?.date });
+  const budgets = getBudgets({ chosen, date: day?.date, dateOf, left: dayEnd - state.used });
+  const reserves = getReserves({ chosen, date: day?.date, dateOf });
 
   const taken = new Map(
     chosen.map((lane) => [
@@ -321,7 +317,7 @@ export function arrangeStudyCycle({
   const context: CycleContext = {
     areas: new Map(units.flatMap((unit) => (unit.skillId ? [[unit.skillId, unit.area]] : []))),
     counts,
-    cumulative: prefixSums(days.map((day) => getLessonCapacity(day))),
+    cumulative: getCumulativeCapacity(days),
     days,
     prerequisites,
   };

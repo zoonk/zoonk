@@ -1,4 +1,4 @@
-import { type PlanView } from "../plan-view-contract";
+import { type PlanScreenView, type PlanView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
 
@@ -7,12 +7,19 @@ function toIsoOrNull(date: Date | null): string | null {
 }
 
 /** Shares go out as whole percentages' worth, so the screens never show "14.7%". */
-function roundShare(share: number): number {
+export function roundShare(share: number): number {
   return Math.round(share * 100) / 100;
 }
 
 /** What fits in the learner's time, as the plan view says it. */
 export function toFeasibilityView(feasibility: PlanFeasibility): PlanView["feasibility"] {
+  return { ...toScreenFeasibilityView(feasibility), coreMinutes: feasibility.coreMinutes };
+}
+
+/** Omit the unused core-time search before it runs, rather than hiding its result afterward. */
+export function toScreenFeasibilityView(
+  feasibility: PlanFeasibility,
+): NonNullable<PlanScreenView["feasibility"]> {
   const { maximum } = feasibility;
 
   return {
@@ -23,7 +30,6 @@ export function toFeasibilityView(feasibility: PlanFeasibility): PlanView["feasi
         }
       : null,
     coreFits: feasibility.coreFits,
-    coreMinutes: feasibility.coreMinutes,
     coveredShare: roundShare(feasibility.coveredShare),
     deadline: toIsoOrNull(feasibility.deadline),
     deepensMostAsked: feasibility.deepensMostAsked,
@@ -35,5 +41,6 @@ export function toFeasibilityView(feasibility: PlanFeasibility): PlanView["feasi
       : null,
     measure: feasibility.measure,
     recommendedMinutes: feasibility.recommendedMinutes,
+    timeCovers: feasibility.timeCovers,
   };
 }

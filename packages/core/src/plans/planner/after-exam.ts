@@ -1,18 +1,20 @@
 import { type GoalKind } from "@zoonk/db";
+import { MAX_PLAN_DAYS } from "../target-date-range";
+import { type ExamBossDays, listBossEvents } from "./exam-boss-days";
+import { type FundedMocks, type MockFunding, fundMocks } from "./mock-funding";
+import { type MockClock, type MockResolution } from "./mock-identity";
 import { type StudyCalendar, addDays, getWeeklyEventWeekday } from "./plan-calendar";
 import { createLearnDays } from "./plan-days";
 import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import {
   type DroppedUnit,
+  type PlanDay,
   type ScheduledEvent,
   type ScheduledUnit,
   listPlanDays,
   scheduleUnits,
 } from "./schedule-units";
-
-/** Ten years is past any real goal at any pace; what doesn't fit by then isn't planned. */
-export const MAX_PLAN_DAYS = 3650;
 
 /**
  * The days an exam plan that studies everything spans after the exam, and the minutes its work
@@ -28,6 +30,11 @@ export type AfterExamSpan = { end: Date; minutes: number; start: Date };
 export type AfterExam = {
   dropped: DroppedUnit[];
   events: ScheduledEvent[];
+  /**
+   * The mocks its days fund after the exam, as the ones before it (see `fundMocks`), with what they
+   * settle; the plan keeps those its lessons reach.
+   */
+  funded: FundedMocks;
   span: AfterExamSpan | null;
   units: ScheduledUnit[];
 };
@@ -62,16 +69,37 @@ function toPlainUnit(unit: DroppedUnit): QueueUnit {
  */
 export function continueAfterExam({
   before,
+  bossDays,
+  bossMinutes = () => 0,
   calendar,
+  clocks,
+  cursor,
   dropped,
   goal,
   mockMinutes,
   phase,
+  resolution = null,
+  saved,
   settings,
   start,
 }: {
+  /** Each exam day's mock clock (see `MockClock`). */
+  clocks?: readonly MockClock[];
+  /** The exam day of the plan's mock before these days (see `fundMocks`). */
+  cursor?: number | null;
+  /** What earlier passes settled about the run's mocks (see `resolvePlannedMocks`). */
+  resolution?: MockResolution | null;
+  /** The saved mocks no mock before the exam continued (see `matchSavedMocks`). */
+  saved: readonly MockFunding[];
   /** What the plan scheduled before the exam. */
   before: readonly Pick<QueueUnit, "key">[];
+  /**
+   * Where the run's phase challenges go (see `placeExamBosses`): one whose own teaching ends after
+   * the exam goes on the day after it here, its phase's still.
+   */
+  bossDays?: ExamBossDays;
+  /** A phase's challenge's minutes (see `getPlannedBossMinutes`). */
+  bossMinutes?: (phase: number) => number;
   calendar: StudyCalendar;
   /** What the plan couldn't fit before its final stretch, in the order it cut it. */
   dropped: readonly DroppedUnit[];
@@ -79,7 +107,7 @@ export function continueAfterExam({
   /** The exam's weekly mock, which goes on after it. */
   mockMinutes: number;
   phase: number;
-  settings: Pick<PlanSettings, "fullCourse" | "practiceBias">;
+  settings: Pick<PlanSettings, "fullCourse" | "movedEvents" | "practiceBias">;
   /** The first day this run schedules new work on. */
   start: Date;
 }): AfterExam | null {
@@ -101,11 +129,23 @@ export function continueAfterExam({
     targetDate: null,
   });
 
-  const days = listPlanDays({
-    describeDay: (date) => ({ ...learnDay(date), phase }),
-    horizonDays: MAX_PLAN_DAYS,
-    start: firstDay,
+  const describeDay = (date: Date) => {
+    const day = learnDay(date);
+    const bosses = bossDays ? listBossEvents({ bossDays, bossMinutes, date }) : [];
+    return { ...day, events: [...day.events, ...bosses], phase };
+  };
+
+  // The weekly mocks after the exam take their time from the days before them too (see `fundMocks`).
+  const funded = fundMocks({
+    clocks,
+    cursor,
+    days: listPlanDays({ describeDay, horizonDays: MAX_PLAN_DAYS, start: firstDay }),
+    funding: saved,
+    moves: settings.movedEvents,
+    resolution,
   });
+
+  const { days } = funded;
 
   const started = new Set(before.map((unit) => unit.key));
 
@@ -114,9 +154,19 @@ export function continueAfterExam({
     units: dropped.filter((unit) => unit.kind === "lesson").map((unit) => toPlainUnit(unit)),
   });
 
-  const first = schedule.units[0]?.date;
-  const last = schedule.units.at(-1)?.date;
-  const events = schedule.events.filter((event) => last !== undefined && event.date <= last);
+  // A phase's challenge stays whatever the lessons here: it closes teaching before it.
+  const lastUnit = schedule.units.at(-1)?.date;
+
+  const events = schedule.events.filter(
+    (event) => event.kind === "boss" || (lastUnit !== undefined && event.date <= lastUnit),
+  );
+
+  const dates = [...schedule.units, ...events]
+    .map((item) => item.date)
+    .toSorted((a, b) => a.getTime() - b.getTime());
+
+  const first = dates[0];
+  const last = dates.at(-1);
 
   const minutes = [
     ...schedule.units.map((unit) => unit.studyMinutes),
@@ -126,7 +176,25 @@ export function continueAfterExam({
   return {
     dropped: schedule.dropped,
     events,
+    funded,
     span: first && last ? { end: last, minutes, start: first } : null,
     units: schedule.units.filter((unit) => !started.has(unit.key)),
   };
+}
+
+/**
+ * The days after the exam a phase's challenge can go on (see `listStudyDays`): the plan's days
+ * there up to its last work, and the first one after it with study time, where a challenge whose
+ * teaching ends on that last day goes.
+ */
+export function listAfterExamDays(afterExam: AfterExam | null): PlanDay[] {
+  const end = afterExam?.span?.end;
+
+  if (!afterExam || !end) {
+    return [];
+  }
+
+  const { days } = afterExam.funded;
+  const next = days.findIndex((day) => day.date > end && day.shape.minutes > 0);
+  return days.slice(0, next === -1 ? days.length : next + 1);
 }

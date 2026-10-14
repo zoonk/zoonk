@@ -1,12 +1,14 @@
 import { isDeepStrictEqual } from "node:util";
+import { getEstimateChange } from "../../_utils/estimate-change";
 import { getFallingBehind } from "../../_utils/falling-behind";
+import { parsePlanChangePayload } from "../../_utils/plan-change-payload";
 import { isPlanUnchanged } from "../../_utils/plan-unchanged";
 import { type ComputedPlan } from "../../_utils/replan";
-import { getSeenEffect, withSeenTopics } from "../../_utils/seen-effect";
+import { withSeenTopics } from "../../_utils/seen-effect";
+import { listCarriedItemIds } from "../../planner/carried-items";
 import { carriesGiven } from "../../planner/carry-over";
 import { listPhaseEndMoves } from "../../planner/phase-dates-move";
 import { addDays, toIsoDate } from "../../planner/plan-calendar";
-import { isMorePrecise } from "../../planner/plan-pace";
 import { readSimEvidence } from "./sim-claims";
 import { updateSimPhaseDates, withdrawUnneededSimProposal } from "./sim-phase-dates";
 import { commitSimPlan, computeSimPlan } from "./sim-planner";
@@ -105,7 +107,7 @@ function systemChange({
   };
 }
 
-/** An automatic run's change: topics it brings in or leaves out, else a closer pace. */
+/** Use the real seen-count threshold and payload for automatic estimate notices. */
 function getAutomaticChange({
   computed,
   day,
@@ -115,18 +117,17 @@ function getAutomaticChange({
   day: string;
   world: SimWorld;
 }): SimChange | null {
-  const seen = getSeenEffect({ computed, shown: world.plan.items });
+  const change = getEstimateChange({ computed, context: toSimContext(world) });
 
-  if (seen.topicsAdded || seen.topicsLeftOut) {
-    return systemChange({
-      computed: { effect: { ...computed.effect, ...seen } },
-      day,
-      kind: "coverageChanged",
-    });
-  }
-
-  return isMorePrecise({ next: computed.pace, previous: world.plan.state.settings.pace })
-    ? systemChange({ computed, day, kind: "estimateUpdated" })
+  return change
+    ? {
+        day,
+        effect: parsePlanChangePayload(change.payload).effect,
+        kind: change.kind,
+        operations: [],
+        source: "system",
+        status: "applied",
+      }
     : null;
 }
 
@@ -173,7 +174,7 @@ export function refreshSimPlan({
       change: {
         ...systemChange({ computed, day, kind: "missedDays" }),
         behind: getFallingBehind({ computed, context }),
-        carriedItemIds: left.map((item) => item.id),
+        carriedItemIds: listCarriedItemIds({ items: computed.built.items, left }),
         effect: {
           ...withSeenTopics({ computed, shown: world.plan.items }),
           ...(phaseEnds.length > 0 && { phaseEnds }),

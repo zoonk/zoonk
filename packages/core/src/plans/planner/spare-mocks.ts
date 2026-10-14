@@ -108,7 +108,14 @@ export function addSpareMocks({
     const day = toIsoDate(event.date);
 
     return event.kind === "review" && placed.has(day)
-      ? { ...event, key: `mock:${day}`, kind: "mock", minutes: mockMinutes, replacesDay: true }
+      ? {
+          ...event,
+          key: `mock:${day}`,
+          kind: "mock",
+          minutes: mockMinutes,
+          mock: { fullLength: true },
+          replacesDay: true,
+        }
       : event;
   });
 }

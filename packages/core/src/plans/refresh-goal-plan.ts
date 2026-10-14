@@ -2,23 +2,20 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
-import {
-  loadCarryOver,
-  loadTodaySettledItemIds,
-  wasLastDayStudied,
-} from "./_utils/carried-lessons";
-import { getCoverageChange } from "./_utils/coverage-change";
+import { wasLastDayStudied } from "./_utils/carried-lessons";
+import { getEstimateChange } from "./_utils/estimate-change";
 import { getFallingBehind } from "./_utils/falling-behind";
+import { loadLeftWork } from "./_utils/left-work";
 import {
   updatePhaseDatesProposal,
   withdrawUnneededPhaseDatesProposal,
 } from "./_utils/phase-dates-proposal";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { areLessonsFinished } from "./_utils/plan-end";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import {
   type ComputedPlan,
-  type PlanChangeRecord,
   type PlanTagRevalidation,
   commitPlan,
   computePlan,
@@ -27,49 +24,14 @@ import {
 import { withSeenTopics } from "./_utils/seen-effect";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
-import { type CarryOver, carriesGiven } from "./planner/carry-over";
+import { listCarriedItemIds } from "./planner/carried-items";
 import { listPhaseEndMoves } from "./planner/phase-dates-move";
 import { addDays } from "./planner/plan-calendar";
-import { isMorePrecise } from "./planner/plan-pace";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
 
 /** Plain notes for logs and admin; the apps say these changes from their kind and numbers. */
 const LEFT_WORK_NOTE = "Lessons earlier days left come first; the rest of the plan moved forward.";
-const MORE_PRECISE_NOTE = "The estimate now uses a closer pace.";
-
-const LEARN_KINDS = new Set(["chapter", "lesson"]);
-
-/**
- * The work earlier days left that today doesn't start with yet: lessons due before today, and
- * lessons the last study day gave the learner that the plan has after today. Once today settled
- * them, those that didn't fit today come first tomorrow: they aren't left again (`settledToday`).
- */
-function findLeftWork({
-  carryOver,
-  context,
-  settledToday,
-}: {
-  carryOver: CarryOver;
-  context: PlanContext;
-  settledToday: boolean;
-}) {
-  const given = new Set(settledToday ? [] : carryOver.lessonIds);
-  const carries = carriesGiven(context.items);
-  const { today } = context;
-
-  return context.items.filter(
-    (item) =>
-      item.status === "todo" &&
-      LEARN_KINDS.has(item.kind) &&
-      item.scheduledFor !== null &&
-      (item.scheduledFor < today ||
-        (item.lessonId !== null &&
-          given.has(item.lessonId) &&
-          item.scheduledFor > today &&
-          carries(item))),
-  );
-}
 
 /** The earlier days that left work: the days it was due, or the last study day for the rest. */
 function countLeftDays({ context, left }: { context: PlanContext; left: PlanContext["items"] }) {
@@ -117,7 +79,10 @@ async function settleLeftWork({
       kind: "missedDays",
       payload: toPlanChangePayload({
         behind: getFallingBehind({ computed, context }),
-        carriedItemIds: left.map((item) => item.id),
+        carriedItemIds: listCarriedItemIds({
+          items: computed.built.items,
+          left: left.filter((item) => item.kind !== "boss"),
+        }),
         days: countLeftDays({ context, left }),
         effect: {
           ...withSeenTopics({ computed, shown: context.items }),
@@ -138,23 +103,38 @@ async function settleLeftWork({
   return { status: "refreshed" };
 }
 
-function getPaceChange({
+/**
+ * Every lesson of a plan the learner saw laid out is done and the run would add some: no run the
+ * learner didn't ask for does that. Pedro won his first challenge with every lesson done, and the
+ * session's new pace added 4 lessons to his plan, so it went from 100% to 67% and never reached
+ * "Finished". The Plan offers what the learner's time fits instead (see `loadFitOffer`). A plan
+ * never laid out holds only what placement settled, and is laid out on its first read.
+ */
+function addsLessonsAfterLessonsDone({
   computed,
   context,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
-}): PlanChangeRecord | null {
-  if (!isMorePrecise({ next: computed.pace, previous: context.state.settings.pace })) {
-    return null;
+}): boolean {
+  const { goal, items, state } = context;
+
+  if (!isLaidOut(context)) {
+    return false;
   }
 
-  return {
-    kind: "estimateUpdated",
-    payload: toPlanChangePayload({ effect: computed.effect, source: "system" }),
-    reason: MORE_PRECISE_NOTE,
-    status: "applied",
-  };
+  const done = areLessonsFinished({
+    items,
+    studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
+    targetDate: goal.targetDate,
+  });
+
+  return (
+    done &&
+    computed.built.items.some(
+      (item) => (item.kind === "lesson" || item.kind === "chapter") && item.status === "todo",
+    )
+  );
 }
 
 /**
@@ -195,13 +175,16 @@ async function computeRefreshedPlan({
  * Keeps an active goal's plan current, and only changes it when something did: a new day settles
  * what earlier days left (see `settleLeftWork`); lessons the Library outlined since take their
  * skill's place, this week's in place of their stand-ins; and after a session (`sampled`), the pace
- * the learner's progress sets moves what comes after this week (a closer pace is announced once),
- * or from tomorrow when this week no longer holds its work (see `computeRefreshedPlan`).
- * A refresh that changes which topics the plan teaches records it for Today to say (see
- * `getCoverageChange`).
+ * the learner's progress sets moves what comes after this week, or from tomorrow
+ * when this week no longer holds its work (see `computeRefreshedPlan`).
+ * A refresh says how many more or fewer lessons fit when the net count the learner saw changes
+ * past the shared threshold (see `getEstimateChange`), including closer pace data, drift within
+ * its source, and written lessons replacing estimates. Its diff keeps the topics and lesson names.
  * All of them keep the phase end dates the learner saw, and Today asks before moving them when
- * keeping them leaves lessons out by the goal's date (see `updatePhaseDatesProposal`); only a
- * change the learner makes moves them.
+ * keeping them leaves lessons out by the goal's date (see `updatePhaseDatesProposal`), except when
+ * lessons a phase's challenge tests slip past its day: the challenge comes the first study day
+ * after them, and the change names the end that moved (see `getEstimateChange`). Once every lesson is done, a run that would add lessons
+ * changes nothing: the Plan offers them (see `addsLessonsAfterLessonsDone`).
  * Opening a screen reads the saved pace (`saved`), so a day that only begins changes nothing. Writes
  * nothing when the run plans from what the saved plan was planned from (see `getPlanInputsKey`):
  * laid out another way than the run that saved it, an OAB plan a focus re-planned that morning
@@ -244,12 +227,7 @@ export async function refreshGoalPlan({
       return { status: context ? "notReady" : "notFound" };
     }
 
-    const [carryOver, settledIds] = await Promise.all([
-      loadCarryOver({ goalId, today: context.today }),
-      loadTodaySettledItemIds(context),
-    ]);
-
-    const left = findLeftWork({ carryOver, context, settledToday: settledIds !== null });
+    const left = await loadLeftWork(context);
 
     if (left.length > 0) {
       return settleLeftWork({ context, left, pace, revalidation });
@@ -266,7 +244,12 @@ export async function refreshGoalPlan({
       return { status: "unchanged" };
     }
 
-    const change = getCoverageChange({ computed, context }) ?? getPaceChange({ computed, context });
+    if (addsLessonsAfterLessonsDone({ computed, context })) {
+      return { status: "unchanged" };
+    }
+
+    const change = getEstimateChange({ computed, context });
+
     const unchanged = !change && isPlanUnchanged({ computed, context });
 
     await (unchanged

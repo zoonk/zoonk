@@ -2,20 +2,20 @@ import { type GoalKind } from "@zoonk/db";
 import { markAnnouncedUnits } from "./announced-lessons";
 import { getAreaRates } from "./area-rates";
 import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
+import { type BossMinutes, getPlannedBossMinutes } from "./boss-minutes";
 import { putChapterInProgressFirst } from "./chapter-in-progress";
 import { getAreaFoundationIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
+import { type PlanBase } from "./plan-bases";
 import { type ExistingPlanItem } from "./plan-items";
 import { getLearningShare } from "./plan-phases";
 import { type PlanGraph, type PlanGraphSkill, type PlanSettings } from "./plan-state";
 import {
-  BOSS_MINUTES,
   DEFAULT_LESSON_MINUTES,
   type PlannerLesson,
   type QueueUnit,
   addPhaseCheckpoints,
   assignLessonSkills,
   buildLessonUnits,
-  countStandInLessons,
 } from "./plan-units";
 import { getSettledSkillIds } from "./settled-skills";
 import {
@@ -26,10 +26,16 @@ import {
   keepTeachingOrder,
   orderSkills,
 } from "./skill-order";
+import { countStandInLessons } from "./stand-in-size";
+
+const EPSILON = 1e-6;
 
 type QueueInput = {
   /** What the questions a class test's material announces ask (see `findAnnouncedLessonIds`). */
   announcements?: readonly string[];
+  bases?: readonly PlanBase[];
+  /** What each boss runs, by its key (see `getPlannedBossMinutes`). */
+  bossMinutes?: BossMinutes;
   goal: { kind: GoalKind; targetDate: Date | null };
   graph: PlanGraph;
   items: readonly Pick<
@@ -86,7 +92,12 @@ function getSkillMinutes({
   const lessons = taught.get(skill.skillId) ?? [];
 
   const outlined = lessons.reduce((total, lesson) => total + lesson.minutes, 0);
-  const standIn = countStandInLessons({ lessons: skill.lessons, taught: lessons.length });
+
+  const standIn = countStandInLessons({
+    lessons: skill.lessons,
+    outlined: skill.outlined,
+    taught: lessons.length,
+  });
 
   return (outlined + standIn * DEFAULT_LESSON_MINUTES) * input.paceFactor;
 }
@@ -323,6 +334,18 @@ export function buildPlanQueue(queueInput: QueueInput): {
     skills: rankSkills(input),
   });
 
+  const essentialMinutes = new Map(
+    (input.bases ?? []).map((base) => [base.skillId, base.minutes.essential]),
+  );
+
+  const coreOnly = new Set(
+    ordered
+      .filter(
+        (skill) => skill.minutes <= (essentialMinutes.get(skill.skillId) ?? -Infinity) + EPSILON,
+      )
+      .map((skill) => skill.skillId),
+  );
+
   const lessonUnits = putChapterInProgressFirst({
     items: input.items,
     lessons: input.lessons,
@@ -340,9 +363,9 @@ export function buildPlanQueue(queueInput: QueueInput): {
     }),
   });
 
-  const units = isExam
-    ? keepWrittenTestsIn({ graph: input.graph, units: lessonUnits })
-    : lessonUnits;
+  const units = (
+    isExam ? keepWrittenTestsIn({ graph: input.graph, units: lessonUnits }) : lessonUnits
+  ).map((unit) => (coreOnly.has(unit.skillId ?? "") ? { ...unit, coreOnly: true } : unit));
 
   const rates = isExam ? getAreaRates({ graph: input.graph, skills: ordered }) : null;
   const ranks = new Map(ordered.map((skill) => [skill.skillId, skill.rank]));
@@ -358,9 +381,12 @@ export function buildPlanQueue(queueInput: QueueInput): {
   const share = getLearningShare({ phaseKind: "learn", practiceBias: input.settings.practiceBias });
 
   const withCheckpoints = addPhaseCheckpoints({
+    getMinutes: (phase) =>
+      getPlannedBossMinutes({ bossMinutes: input.bossMinutes, goalKind: input.goal.kind, phase }) *
+      share,
     phaseNames: input.graph.phases.map((phase) => phase.name),
     units,
-  }).map((unit) => (unit.kind === "boss" ? { ...unit, minutes: BOSS_MINUTES * share } : unit));
+  });
 
   return {
     focused,

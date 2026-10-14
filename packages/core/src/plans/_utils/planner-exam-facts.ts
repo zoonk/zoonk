@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { type ExamChoice, toChosenStructure } from "../../exams/choices/exam-choices";
-import { getWeeklyMockMinutes } from "../../exams/mocks/mock-plan";
+import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
 import {
   examEditionSchema,
@@ -10,7 +10,8 @@ import {
 } from "../../library/exams/blueprint-contract";
 import { listAnnouncedQuestions } from "../../library/exams/material-formats";
 import { type TopicLevel, listTopicLevels } from "../../library/exams/topic-frequency";
-import { type ExamSubjectShare } from "../planner/plan-feasibility";
+import { type ExamSubjectShare } from "../planner/feasibility-coverage";
+import { type MockClock } from "../planner/mock-identity";
 import { type PlanGraph } from "../planner/plan-state";
 import { getAreaShares, getExamSubjectShares } from "./exam-subject-shares";
 
@@ -29,6 +30,8 @@ type ExamFacts = {
   /** The final stretch's mock: the real exam day, its written test included. */
   fullMockMinutes: number;
   /** The weekly mock on regular weeks: half the exam's first day. */
+  /** Each exam day's mock clock, in the order the plan's mocks take turns (see `MockClock`). */
+  mockClocks: MockClock[];
   mockMinutes: number;
   shortMockMinutes: number | null;
   /** How often the exam asks its notice's topics, where its past papers or a lookup say. */
@@ -80,6 +83,7 @@ async function loadNoticeFacts({
     areaShares: parsed ? getAreaShares({ graph, structure: parsed }) : null,
     examSubjects: parsed ? getExamSubjectShares({ graph, structure: parsed }) : null,
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
+    mockClocks: listMockClocks(structure),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
@@ -109,6 +113,7 @@ export function loadExamFacts({
     areaShares: null,
     examSubjects: null,
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
+    mockClocks: listMockClocks(null),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
     shortMockMinutes: null,
     topicLevels: [],

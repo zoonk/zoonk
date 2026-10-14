@@ -7,8 +7,8 @@ import {
 } from "../library/tools/find-or-create-setup-lesson";
 import { applyChangeNow } from "./_utils/apply-plan-change";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
+import { findCurrentPhase } from "./_utils/phase-states";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
-import { findCurrentPhase } from "./_utils/plan-phase-views";
 import { type PlanTool, findToolAnchorSkill, loadPlanTools } from "./_utils/plan-tools";
 import { withPlanRetry } from "./_utils/replan";
 import { type PlanOperation, type PlanToolChoiceInput } from "./plan-contract";

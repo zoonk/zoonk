@@ -38,6 +38,8 @@ export function getSubjectsPerDay(minutes: number): number {
  */
 export type Lane = {
   area: string;
+  /** Due markers keep their references while the pending units are reordered or removed. */
+  dueUnits: readonly QueueUnit[];
   /** The study day (counted among days with lesson time) it joins the cycle on. */
   joinDay: number;
   order: number;
@@ -266,6 +268,7 @@ export function toLanes({
 
     return {
       area,
+      dueUnits: own.filter((unit) => unit.dueBy),
       joinDay: last > first ? Math.round(((phase - first) / (last - first)) * joinWindow) : 0,
       order,
       pass: 0,

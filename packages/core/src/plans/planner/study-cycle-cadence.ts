@@ -1,6 +1,7 @@
 import { type QueueUnit } from "./plan-units";
 import { getLessonCapacity } from "./schedule-units";
 import { EPSILON, takeBlock } from "./study-cycle-blocks";
+import { getDueMinutes } from "./study-cycle-budgets";
 import {
   type CadencedArea,
   type CadencedLane,
@@ -52,6 +53,7 @@ export function toCadencedLanes({
     return [
       {
         area,
+        dueUnits: own.filter((unit) => unit.dueBy),
         joinDay: 0,
         minutes,
         openDays,
@@ -105,7 +107,9 @@ export function listOpenCadenced({
  * part is shorter than its next lesson has none of it, unless the area is behind its even spread
  * (see `isCadencedBehind`): then it takes one lesson. Taking one every day, at 10 minutes a day
  * the essay took every day's only lesson until its minutes ran out, and day one opened with it
- * instead of the learner's gaps. What it builds on in other subjects comes first in theirs.
+ * instead of the learner's gaps. What it builds on in other subjects comes first in theirs. An area
+ * holding the chapter in progress's next lesson takes at least the time to reach it by the day the
+ * learner saw it on (`getDueMinutes`): "less essay" moved the essay chapter's next lesson a day.
  */
 export function takeCadencedBlocks({
   context,
@@ -126,7 +130,9 @@ export function takeCadencedBlocks({
     pullPrerequisites({ context, lane, lanes: [...state.lanes, lane], left: state.left });
 
     const share = Math.min(1, lane.quota / Math.max(lane.openLeft[dayIndex] ?? 0, EPSILON));
-    const budget = room * share;
+    // The chapter in progress's next lesson keeps the day the learner saw (R10), as in the rotation.
+    const due = getDueMinutes({ date: context.days[dayIndex]?.date, lane });
+    const budget = Math.max(room * share, due);
     const head = lane.units[0];
 
     if (head && head.minutes > budget + EPSILON && !isCadencedBehind({ dayIndex, lane })) {

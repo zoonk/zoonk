@@ -1,4 +1,5 @@
 import { type BuildPlanInput } from "./build-plan";
+import { findDayIndex } from "./day-index";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
@@ -9,9 +10,10 @@ import {
   type ScheduledUnit,
   getCumulativeCapacity,
   getLessonCapacity,
-  getUsedAfter,
+  getUsedAfterUnits,
   placeUnits,
 } from "./schedule-units";
+import { withKeptLessons } from "./whole-boss";
 
 /** Floating-point sums of lesson minutes must not push a lesson past its phase's end. */
 const EPSILON = 1e-6;
@@ -20,7 +22,7 @@ const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 /**
  * The end dates a learn plan's phases were last saved with, which the learner saw on the plan's
- * reveal and on Journey, by phase: every phase but the last, whose end the goal's finish says,
+ * reveal and on Plan, by phase: every phase but the last (included for a weekly event move), whose end the goal's finish says,
  * whose challenge is still to do on that day, or won early while the phase's lessons are still to
  * do (career 2110 won one three weeks early, and its phase then ended on its last lesson left, two
  * days sooner). None for an exam, whose phases are windows of the calendar that never move. A plan
@@ -29,11 +31,14 @@ const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
  * challenge in on that day, and the run after it left it out again.
  */
 export function getShownPhaseEnds({
+  includeLast = false,
   items,
   moved = new Map(),
   phases,
   released = new Set(),
 }: {
+  /** A weekly event move keeps every phase challenge; other replans can estimate the final end. */
+  includeLast?: boolean;
   items: readonly Pick<ExistingPlanItem, "kind" | "phase" | "scheduledFor" | "status">[];
   /** The ends moving the phase dates puts on other days, by phase (see `moveStrainedEnds`). */
   moved?: ReadonlyMap<number, string>;
@@ -58,13 +63,11 @@ export function getShownPhaseEnds({
 
   const won = listWonPhases(items);
 
-  const shown = phases
-    .slice(0, -1)
-    .flatMap((phase, index) =>
-      phase.endDate && (won.has(index) || challengeDays.has(`${index}:${phase.endDate}`))
-        ? [[index, phase.endDate] as const]
-        : [],
-    );
+  const shown = (includeLast ? phases : phases.slice(0, -1)).flatMap((phase, index) =>
+    phase.endDate && (won.has(index) || challengeDays.has(`${index}:${phase.endDate}`))
+      ? [[index, phase.endDate] as const]
+      : [],
+  );
 
   return new Map(
     [...new Map([...shown, ...moved])].flatMap(([index, date]) =>
@@ -82,25 +85,21 @@ function findEndDay({ date, days }: { date: Date; days: readonly PlanDay[] }): n
   return index === -1 ? null : index;
 }
 
-/** Where in the plan's lesson minutes the next unit after these starts at the earliest. */
-function getUsedMinutes({
+/**
+ * Where the day the units before a challenge end on ends: the rest of it stays free, as on a plan
+ * that lays the challenge out the study day after them (see `placeBoss`).
+ */
+function getDayEndAfter({
   cumulative,
   units,
 }: {
   cumulative: readonly number[];
   units: readonly QueueUnit[];
 }): number {
-  const last = placeUnits({ cumulative, units }).at(-1);
+  const used = getUsedAfterUnits({ cumulative, units });
+  const day = used <= EPSILON ? -1 : findDayIndex({ cumulative, needed: used });
 
-  if (!last) {
-    return 0;
-  }
-
-  return getUsedAfter({
-    dayEnd: cumulative[last.dayIndex],
-    needed: last.start + last.unit.minutes,
-    unit: last.unit,
-  });
+  return day === -1 ? used : Math.max(used, cumulative[day] ?? used);
 }
 
 /**
@@ -194,9 +193,9 @@ function keepAfterEarlierChallenges({
 
 /**
  * Puts one phase's challenge on the day the phase ends: no earlier when its lessons take less time
- * than planned (the time left goes to the phase's own depth, else its last days get lighter), and
- * no later when they take more (its lessons that don't fit by then come right after the
- * challenge, in the next phase's time).
+ * than planned (the time left goes to the phase's own depth, else its last days get lighter). When
+ * they take more, so a lesson before it no longer ends by the day before, the end isn't kept: the
+ * challenge never tests what the learner isn't taught yet, nor on the day it's taught.
  */
 function keepPhaseEnd({
   boss,
@@ -213,14 +212,25 @@ function keepPhaseEnd({
   const before = units.slice(0, index);
   const after = units.slice(index + 1);
 
-  // On its own day: one with less time than the challenge (a day the learner rests) takes none
-  // from the day before, whose lessons stay before it.
-  const start = Math.max(cumulative[endDay - 1] ?? 0, (cumulative[endDay] ?? 0) - boss.minutes);
+  // It leads its own day, a day after the lessons before it (see `placeBoss`).
+  const start = cumulative[endDay - 1] ?? 0;
 
   const late = placeUnits({ cumulative, units: before }).findIndex(
     ({ dayIndex, start: unitStart, unit }) =>
       dayIndex < 0 || unitStart + unit.minutes > start + EPSILON,
   );
+
+  // A lesson before it that no longer ends by the day before (a missed day left it, or it took
+  // longer, or the run keeps it on that day or later, `after`) would be tested before it's taught,
+  // or the same day: the end isn't kept, and the challenge comes the first study day after its
+  // lessons, Today offering the dates' move.
+  const lateLesson =
+    (late !== -1 && before.slice(late).some((unit) => LEARN_KINDS.has(unit.kind))) ||
+    (boss.afterDay ?? -1) >= endDay;
+
+  if (lateLesson) {
+    return [...units];
+  }
 
   // Earlier phases' challenges that no longer fit by this end (a day left them undone) come first,
   // right before this one (see `keepAfterEarlierChallenges`).
@@ -244,8 +254,7 @@ function keepPhaseEnd({
   const pulled = pullPhaseDepth({
     later: after,
     phase: boss.phase,
-    room:
-      (cumulative[endDay - 1] ?? 0) - boss.minutes - getUsedMinutes({ cumulative, units: before }),
+    room: start - getDayEndAfter({ cumulative, units: before }),
   });
 
   const pulledKeys = new Set(pulled.map((unit) => unit.key));
@@ -270,17 +279,18 @@ function keepPhaseEnd({
 export function keepPhaseEnds({
   days,
   ends,
-  units,
+  units: given,
 }: {
   days: readonly PlanDay[];
   ends: ReadonlyMap<number, Date>;
   units: readonly QueueUnit[];
 }): QueueUnit[] {
   if (ends.size === 0) {
-    return [...units];
+    return [...given];
   }
 
   const cumulative = getCumulativeCapacity(days);
+  const units = withKeptLessons({ days, units: given });
 
   const pinned = units.flatMap((unit) => {
     const date = unit.kind === "boss" ? ends.get(unit.phase) : undefined;
