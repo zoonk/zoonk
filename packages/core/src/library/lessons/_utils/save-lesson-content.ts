@@ -1,5 +1,6 @@
 import "server-only";
 import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
+import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
@@ -8,6 +9,7 @@ import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
 import { lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
+import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
 import { toStepData } from "./step-data";
 
 /** One checked screen, ready to store. */
@@ -23,6 +25,28 @@ export type LessonScreenToSave = {
   skillId: string | null;
   provenance: LibraryProvenance;
 };
+
+function repairScreenSkill({
+  lessonId,
+  lessonSkillIds,
+  screen,
+}: {
+  lessonId: string;
+  lessonSkillIds: string[];
+  screen: LessonScreenToSave;
+}): LessonScreenToSave {
+  if (!isNotebookQuestionStep(screen)) {
+    return screen;
+  }
+
+  const skillId = getLessonScreenSkillId({ lessonSkillIds, skillId: screen.skillId });
+
+  if (!skillId) {
+    throw new Error(`Cannot publish question screens: lesson ${lessonId} has no linked skill.`);
+  }
+
+  return { ...screen, skillId };
+}
 
 async function createMathItem({
   language,
@@ -62,9 +86,45 @@ async function writeScreens(
   {
     language,
     lessonId,
-    screens,
+    screens: uncheckedScreens,
   }: { language: string; lessonId: string; screens: LessonScreenToSave[] },
 ): Promise<number> {
+  const links = await tx.lessonSkill.findMany({
+    orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+    where: { lessonId },
+  });
+
+  const lessonSkillIds = links.map((link) => link.skillId);
+
+  const skills = await tx.skill.findMany({
+    where: {
+      id: {
+        in: [
+          ...new Set(
+            uncheckedScreens.flatMap((screen) =>
+              screen.skillId && isUuid(screen.skillId) ? [screen.skillId] : [],
+            ),
+          ),
+        ],
+      },
+    },
+  });
+
+  // Skill merges flatten existing pointers to the survivor (`mergeSkillForAdmin`), including
+  // the identity a writer loaded before the merge. Keep that identity when the lesson teaches it.
+  const survivorIds = new Map(skills.map((skill) => [skill.id, skill.mergedIntoId ?? skill.id]));
+
+  const screens = uncheckedScreens.map((screen) =>
+    repairScreenSkill({
+      lessonId,
+      lessonSkillIds,
+      screen: {
+        ...screen,
+        skillId: screen.skillId ? (survivorIds.get(screen.skillId) ?? null) : null,
+      },
+    }),
+  );
+
   const version = await startLessonVersion(tx, lessonId);
 
   const itemIds = await Promise.all(

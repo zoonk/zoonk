@@ -1,7 +1,17 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
@@ -176,6 +186,51 @@ describe(listCourses, () => {
     expect(firstPage).toHaveLength(3);
     expect(secondPage).toHaveLength(2);
     expect(secondPage.some((course) => firstPageIds.has(course.id))).toBe(false);
+  });
+
+  it("counts each course's shared lessons and adds up their estimated minutes", async () => {
+    const language = createTestLanguage();
+
+    const [{ chapters, course, organization }, owner] = await Promise.all([
+      catalogCourseFixture({ language, lessonCounts: [3, 2] }),
+      userFixture(),
+    ]);
+
+    const [longLesson, privateLesson, privateChapter] = await Promise.all([
+      libraryLessonFixture({ estimatedMinutes: 12, language }),
+      libraryLessonFixture({ language, ownerId: owner.id, visibility: "private" }),
+      libraryChapterFixture({ language, ownerId: owner.id, visibility: "private" }),
+    ]);
+
+    const [privateChapterLesson, emptyCourse] = await Promise.all([
+      libraryLessonFixture({ language }),
+      courseFixture({ isPublished: true, language, organizationId: organization.id }),
+      chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: longLesson.id }),
+      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 2 }),
+    ]);
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: chapters[1]!.id, lessonId: privateLesson.id }),
+      chapterLessonFixture({ chapterId: privateChapter.id, lessonId: privateChapterLesson.id }),
+    ]);
+
+    const [list, page] = await Promise.all([
+      listCourses({ language, limit: 100 }),
+      listCoursesPage({ language, limit: 100 }),
+    ]);
+
+    const expected = [
+      { estimatedMinutes: 5 * 4 + 12, id: course.id, lessonCount: 6 },
+      { estimatedMinutes: 0, id: emptyCourse.id, lessonCount: 0 },
+    ];
+
+    const totals = (courses: typeof list) =>
+      courses
+        .map(({ estimatedMinutes, id, lessonCount }) => ({ estimatedMinutes, id, lessonCount }))
+        .toSorted((a, b) => b.lessonCount - a.lessonCount);
+
+    expect(totals(list)).toStrictEqual(expected);
+    expect(totals(page.courses)).toStrictEqual(expected);
   });
 
   it("sorts courses by popularity", async () => {

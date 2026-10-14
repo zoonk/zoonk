@@ -208,6 +208,7 @@ describe(createStepImage, () => {
     const [step, existing] = await Promise.all([
       libraryStepFixture({ content: explanation(), lessonId: lesson.id }),
       mediaAssetFixture({
+        createdAt: new Date("2020-01-01T00:00:00Z"),
         prompt: describeImageScene(scene),
         reuseKey: stepKey(scene),
         styleVersion: IMAGE_STYLE_VERSION,
@@ -226,6 +227,15 @@ describe(createStepImage, () => {
 
     await expect(prisma.step.findUnique({ where: { id: step.id } })).resolves.toMatchObject({
       mediaAssetId: existing.id,
+      pictureAvailableAt: expect.any(Date),
+    });
+
+    const linked = await prisma.step.findUniqueOrThrow({ where: { id: step.id } });
+    expect(linked.pictureAvailableAt?.getTime()).toBeGreaterThan(existing.createdAt.getTime());
+    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "none" });
+
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
+      pictureAvailableAt: linked.pictureAvailableAt,
     });
   });
 

@@ -37,10 +37,10 @@ type DetailsCourse = NonNullable<Awaited<ReturnType<typeof findCourse>>>;
  * What the course's public page still lacks. Filled fields are never rewritten, not even a landing
  * page stored in an older shape: the change that moved the shape migrates it.
  */
-function findMissingDetails(course: DetailsCourse) {
+function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyOnly: boolean }) {
   return {
-    categories: course.categories.length === 0,
-    description: !course.description,
+    categories: !copyOnly && course.categories.length === 0,
+    description: !copyOnly && !course.description,
     landingPage: course.landingPage === null,
   };
 }
@@ -64,7 +64,7 @@ function getCategories({
   return course.targetLanguage ? [LANGUAGE_CATEGORY] : (details?.categories ?? []);
 }
 
-/** The details run that wrote the course page's copy, kept apart from the run that named the course. */
+/** The run that wrote the landing copy; metadata-only fills must not replace its provenance. */
 function toDetailsProvenanceData(provenance: LibraryProvenance) {
   return {
     detailsGeneratedAt: new Date(provenance.generatedAt),
@@ -93,7 +93,7 @@ async function saveMissingDetails({
       data: {
         ...(missing.description && details && { description: details.description }),
         ...(missing.landingPage && details && { landingPage: details.landingPage }),
-        ...(generated && toDetailsProvenanceData(generated.provenance)),
+        ...(missing.landingPage && generated && toDetailsProvenanceData(generated.provenance)),
       },
       where: { id: course.id },
     }),
@@ -119,7 +119,9 @@ async function saveMissingDetails({
 export async function writeCourseDetails({
   analytics,
   courseId,
+  copyOnly = false,
 }: {
+  copyOnly?: boolean;
   analytics?: DetailsAnalytics;
   courseId: string;
 }): Promise<"skipped" | "written"> {
@@ -129,7 +131,7 @@ export async function writeCourseDetails({
     return "skipped";
   }
 
-  const missing = findMissingDetails(course);
+  const missing = findMissingDetails({ copyOnly, course });
 
   if (!missing.categories && !missing.description && !missing.landingPage) {
     return "skipped";

@@ -201,6 +201,38 @@ describe(writeLessonContent, () => {
     }
   });
 
+  it("stores the sentence each question rests on when its quote is on that screen, and leaves out one that isn't", async () => {
+    const { lesson, workflowRunId } = await createClaimedLesson();
+    const written = writtenTemperatureLesson();
+    const application = written.screens[7];
+
+    if (application?.kind !== "check") {
+      throw new Error("The application is a check.");
+    }
+
+    // The application quotes the worked example in words it doesn't have.
+    mockDraft(
+      withScreen(written, 7, {
+        ...application,
+        basis: { quote: "Climb to zero first, then keep going.", screen: 3 },
+      }),
+    );
+
+    await writeLessonContent({ lessonId: lesson.id, workflowRunId });
+    const steps = await listSteps(lesson.id);
+
+    expect(steps.map((step) => (step.content as { basis?: unknown }).basis)).toStrictEqual([
+      undefined,
+      undefined,
+      undefined,
+      { position: 1, quote: "A rise always moves **up** the thermometer." },
+      undefined,
+      undefined,
+      { position: 4, quote: "Count the degrees to zero, then the degrees after it." },
+      undefined,
+    ]);
+  });
+
   it("fixes what the code checks found, then records the fix's run on the screens it changed", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
@@ -679,6 +711,7 @@ describe(writeLessonContent, () => {
     const written = writtenTemperatureLesson();
 
     const repeated = withScreen(written, 7, {
+      basis: null,
       context: "It's −12 °C on a winter morning in Chicago, and it will warm up 15 degrees.",
       image: null,
       kind: "check",

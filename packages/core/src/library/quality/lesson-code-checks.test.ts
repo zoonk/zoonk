@@ -266,6 +266,7 @@ describe(checkWrittenLesson, () => {
 
   it("reports content that breaks the step contract or the activity rules", () => {
     const twoCorrect: WrittenScreen = {
+      basis: null,
       context: null,
       image: null,
       kind: "check",

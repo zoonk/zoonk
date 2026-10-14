@@ -4,6 +4,7 @@ import { clampQueryItems } from "@zoonk/db/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
+import { withOutlineTotals } from "./_utils/course-outline-totals";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -57,12 +58,14 @@ async function findCourses({
     }),
   });
 
-  return courses.filter((course) => hasBrandOrganization(course));
+  return withOutlineTotals(courses.filter((course) => hasBrandOrganization(course)));
 }
 
 /**
  * Lists the cached catalog of listed courses (`getListedCourseWhere`) in a stable popularity order
- * so web and API consumers share filtering, cursor pagination, and invalidation.
+ * so web and API consumers share filtering, cursor pagination, and invalidation. Each course
+ * carries its lesson count and estimated minutes; they follow outline changes within the default
+ * revalidation, like the listing itself.
  */
 export async function listCourses(params: ListCoursesInput) {
   "use cache";

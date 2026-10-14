@@ -96,9 +96,43 @@ describe(shuffleAnswerOptions, () => {
 });
 
 describe(findOptionPositionReferences, () => {
+  it.each([
+    "Você compara as razões: o primeiro tipo tem 0,6 kg/L e o segundo, 0,75 kg/L. Com o segundo tipo, 80 L comportam 60 kg.",
+    "El primer tipo tiene 0,6 kg/L y el segundo, 0,75 kg/L.",
+    "Le premier type contient 0,6 kg/L et le deuxième, 0,75 kg/L.",
+    "Der erste Typ enthält 0,6 kg/L und der zweite, 0,75 kg/L.",
+  ])("keeps conjunctions introducing content ordinals: %s", (reason) => {
+    expect(findOptionPositionReferences(reason)).toStrictEqual([]);
+  });
+
+  it.each([
+    "É o segundo.",
+    "A resposta e\u0301 a u\u0301ltima.",
+    "La respuesta es el segundo.",
+    "La respuesta es la última.",
+    "La respuesta sería la segunda.",
+    "La respuesta será la segunda.",
+    "La réponse est le deuxième.",
+    "Die Antwort ist der zweite.",
+  ])("still finds a position named with a verb: %s", (reason) => {
+    expect(findOptionPositionReferences(reason)).toHaveLength(1);
+  });
+
+  it.each([
+    "This is the second law of thermodynamics.",
+    "Esta é uma equação de segundo grau.",
+    "O conflito foi a segunda guerra mundial.",
+    "Esta es la segunda ley de la termodinámica.",
+    "C'est le deuxième principe de la thermodynamique.",
+    "Das ist der zweite Hauptsatz der Thermodynamik.",
+    "José o segundo, chamado assim por seu pai, chegou.",
+  ])("keeps ordinals and verb-like word endings in content: %s", (reason) => {
+    expect(findOptionPositionReferences(reason)).toStrictEqual([]);
+  });
+
   it("finds feedback that points at an option by its place, which shuffling changes", () => {
     expect(findOptionPositionReferences("A anotação segura é a segunda.")).toStrictEqual([
-      "e a segunda",
+      "é a segunda",
     ]);
 
     expect(findOptionPositionReferences("A primeira opção ignora o prazo.")).toStrictEqual([
@@ -116,7 +150,7 @@ describe(findOptionPositionReferences, () => {
     expect(findOptionPositionReferences("Option C forgets the fee.")).toStrictEqual(["Option C"]);
 
     expect(findOptionPositionReferences("La respuesta correcta es la última.")).toStrictEqual([
-      "es la ultima",
+      "es la última",
     ]);
   });
 

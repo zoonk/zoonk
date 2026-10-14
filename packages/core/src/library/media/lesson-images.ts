@@ -92,7 +92,7 @@ async function linkStepImage({
   stepId: string;
 }): Promise<void> {
   await prisma.step.updateMany({
-    data: { mediaAssetId },
+    data: { mediaAssetId, pictureAvailableAt: new Date() },
     where: { id: stepId, mediaAssetId: null },
   });
 

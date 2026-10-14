@@ -23,6 +23,7 @@ export function toStepData(step: LibraryStepInput) {
     itemId: step.itemId ?? null,
     kind: step.kind,
     mediaAssetId: step.mediaAssetId ?? null,
+    pictureAvailableAt: step.mediaAssetId ? new Date() : null,
     sentenceId: step.sentenceId ?? null,
     skillId: step.skillId ?? null,
     wordId: step.wordId ?? null,

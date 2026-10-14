@@ -11,7 +11,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getCourseCurriculumCacheTag, getLibraryChapterCacheTag } from "../../cache/tags";
 import { getLibraryCourse } from "./get-library-course";
 
@@ -123,4 +123,34 @@ describe(getLibraryCourse, () => {
     await expect(getLibraryCourse({ courseId: randomUUID() })).resolves.toBeNull();
     await expect(getLibraryCourse({ courseId: "course" })).resolves.toBeNull();
   });
+
+  it.each([false, true])(
+    "keeps a private course owner-only after its owner reads it (published: %s)",
+    async (isPublished) => {
+      const [owner, other] = await Promise.all([userFixture(), userFixture()]);
+      const course = await courseFixture({ isPublished, userId: owner.id, visibility: "private" });
+
+      mockSession(owner.id);
+
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+        id: course.id,
+      });
+
+      mockSession(other.id);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+      await expect(getLibraryCourse({ courseId: randomUUID() })).resolves.toBeNull();
+
+      mockGuestSession(other.id);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+
+      mockSession(null);
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toBeNull();
+
+      mockSession(owner.id);
+
+      await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+        id: course.id,
+      });
+    },
+  );
 });

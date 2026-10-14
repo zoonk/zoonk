@@ -9,6 +9,7 @@ import {
 } from "../../cache/tags";
 import { getAdminAccess } from "../../users/get-admin-access";
 import { findSurvivingSkill } from "./_utils/find-surviving-skill";
+import { lockSkillAttribution } from "./_utils/lock-skill-attribution";
 
 export type SkillMergeResult =
   | { learners: number; status: "merged"; survivorId: string }
@@ -129,6 +130,8 @@ async function moveLinks(tx: TransactionClient, { duplicate, survivor }: SkillPa
 
 async function mergeInto(pair: SkillPair) {
   return prisma.$transaction(async (tx) => {
+    await lockSkillAttribution({ mode: "merge", tx });
+
     const userIds = await moveLearnerSkills(tx, pair);
     await movePointers(tx, pair);
     const lessonIds = await moveLinks(tx, pair);

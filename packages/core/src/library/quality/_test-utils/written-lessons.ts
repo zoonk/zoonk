@@ -142,6 +142,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         visual: null,
       },
       {
+        basis: { quote: "A rise always moves **up** the thermometer.", screen: 2 },
         context: null,
         correctReason: "You start at {start} °C and move {rise} degrees up.",
         kind: "mathCheck",
@@ -188,6 +189,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
         acceptedAnswers: [],
+        basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
         context: null,
         keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
         kind: "typedAnswer",
@@ -196,6 +198,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         visual: null,
       },
       {
+        basis: null,
         context:
           "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
         image: null,

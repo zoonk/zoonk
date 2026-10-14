@@ -16,6 +16,7 @@ function explanation(text: string): WrittenScreen {
 
 function check(question: string, option = "Two"): WrittenScreen {
   return {
+    basis: null,
     context: null,
     image: null,
     kind: "check",

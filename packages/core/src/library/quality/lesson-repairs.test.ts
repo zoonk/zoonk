@@ -5,6 +5,7 @@ import { repairWrittenLesson } from "./lesson-repairs";
 
 function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
   return {
+    basis: null,
     context: "| Sensor | mm |\n|---|---|\n| **A | 49,8 |",
     image: null,
     kind: "check",
@@ -33,6 +34,34 @@ describe(repairWrittenLesson, () => {
     expect(repaired.screens[0]).toMatchObject({
       context: "| Sensor | mm |\n|---|---|\n| A | 49,8 |",
       options: [{ reason: "Porque sim.", text: "Sensor A" }],
+    });
+  });
+
+  it("repairs a question's basis quote like the line it copies, so it still matches", () => {
+    const explanation = {
+      exampleLineIdea: null,
+      explore: null,
+      image: null,
+      kind: "explanation" as const,
+      text: "O sensor A erra menos que [o sensor B](https://example.com).",
+      title: "Precisão",
+      visual: null,
+    };
+
+    const question = {
+      ...check([{ isCorrect: true, text: "Sensor A" }]),
+      basis: { quote: "O sensor A erra menos que [o sensor B](https://example.com).", screen: 1 },
+    };
+
+    const repaired = repairWrittenLesson({
+      language: "pt",
+      lesson: { screens: [explanation, question], summary: ["Ideia."] },
+    });
+
+    expect(repaired.screens[0]).toMatchObject({ text: "O sensor A erra menos que o sensor B." });
+
+    expect(repaired.screens[1]).toMatchObject({
+      basis: { quote: "O sensor A erra menos que o sensor B.", screen: 1 },
     });
   });
 

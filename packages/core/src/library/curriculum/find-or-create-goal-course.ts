@@ -1,19 +1,13 @@
 import "server-only";
-import { type Course, type CourseFormat, type TransactionClient, prisma, sql } from "@zoonk/db";
+import { type Course, type CourseFormat, type TransactionClient, prisma } from "@zoonk/db";
+import { lockCourseHome } from "@zoonk/db/course-home";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { normalizeString } from "@zoonk/utils/string";
+import { normalizeString, pickAvailableSlug } from "@zoonk/utils/string";
 import { getCourseSlugForTitle } from "../../courses/course-slug";
-import {
-  type LibraryProvenance,
-  pickAvailableSlug,
-  toProvenanceData,
-} from "../_utils/library-rows";
+import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { findCourseByTitle } from "../identity/kinds/course-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
-
-/** Namespaces the course-creation lock so it never collides with other advisory locks. */
-const COURSE_LOCK_NAMESPACE = 51_882;
 
 type CourseScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage"> &
   Partial<Pick<CurriculumScope, "generalGoal">>;
@@ -32,17 +26,6 @@ async function getCourseHome(ownerId: string | null) {
   });
 
   return { homeId: organization.id, organizationId: organization.id };
-}
-
-/**
- * Serializes new courses in one home. A goal naming a course another goal is creating waits, then
- * finds that course instead of creating a second one under the next free slug, and two new
- * courses never pick the same slug. It's held for one lookup and one insert.
- */
-async function lockCourseHome(tx: TransactionClient, homeId: string): Promise<void> {
-  await tx.$queryRaw(
-    sql`SELECT pg_advisory_xact_lock(${COURSE_LOCK_NAMESPACE}::int, hashtext(${homeId}))::text`,
-  );
 }
 
 async function getAvailableSlug(
@@ -77,7 +60,7 @@ async function createCourse({
   const { homeId, organizationId } = await getCourseHome(scope.ownerId);
 
   return prisma.$transaction(async (tx) => {
-    await lockCourseHome(tx, homeId);
+    await lockCourseHome({ homeId, transaction: tx });
 
     const existing = await findCourseByTitle({ ...scope, title }, tx);
 

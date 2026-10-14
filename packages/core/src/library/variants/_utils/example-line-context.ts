@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { MemoryCategory, prisma } from "@zoonk/db";
-import { getMemoryForTask } from "../../../memory/get-memory-for-task";
+import { findMemoryForTask } from "../../../memory/get-memory-for-task";
 
 /**
  * Example lines read everything memory keeps about the learner (owner, 7 Oct 2026: "examples
@@ -40,7 +40,7 @@ export async function loadExampleLineContext({
 }): Promise<ExampleLineContext | null> {
   const [profile, facts] = await Promise.all([
     prisma.userLearningProfile.findUnique({ include: { activeGoal: true }, where: { userId } }),
-    getMemoryForTask({ categories: EXAMPLE_LINE_CATEGORIES, language, userId }),
+    findMemoryForTask({ categories: EXAMPLE_LINE_CATEGORIES, language, userId }),
   ]);
 
   const goal = profile?.activeGoal?.status === "active" ? profile.activeGoal.title : null;

@@ -13,6 +13,7 @@ import {
 } from "../../quality/lesson-quality-gate";
 import { repairWrittenLesson } from "../../quality/lesson-repairs";
 import { formatMaterialPages } from "../../sources/material-pages";
+import { addQuestionBases } from "../../steps/question-bases";
 import { type ConvertedScreen } from "../../steps/written-screens";
 import { getFixReach } from "./fix-reach";
 import { type LessonWritingInputs } from "./lesson-writing-inputs";
@@ -55,7 +56,11 @@ export function getLessonDocuments(inputs: LessonWritingInputs) {
   return getLessonDocumentKind(inputs) === "material" ? inputs.material : inputs.sources;
 }
 
-/** One version's screens as stored rows: each with its provenance, citation and skill. */
+/**
+ * One version's screens as stored rows: each with its provenance, citation and skill, and each
+ * question with the sentence it rests on when that holds (`addQuestionBases`), naming its reading
+ * screen by the position it's stored at.
+ */
 export function toScreensToSave({
   citations,
   inputs,
@@ -67,11 +72,27 @@ export function toScreensToSave({
   screens: readonly ConvertedScreen[];
   version: WrittenVersion;
 }): LessonScreenToSave[] {
-  return screens.flatMap((screen, index) => {
-    const provenance = version.provenanceByScreen[index];
-    const skillIndex = inputs.spec.screens[index]?.skills[0];
+  const stored = screens.flatMap((screen, index) =>
+    screen.ok && version.provenanceByScreen[index] ? [index] : [],
+  );
 
-    if (!screen.ok || !provenance) {
+  const positions = screens.map((_, index) => {
+    const position = stored.indexOf(index);
+    return position === -1 ? null : position;
+  });
+
+  const withBases = addQuestionBases({ lesson: version.lesson, positions, screens });
+
+  return stored.flatMap((index) => {
+    const screen = withBases[index];
+    const provenance = version.provenanceByScreen[index];
+
+    const skillId =
+      inputs.spec.screens[index]?.skills
+        .map((skillIndex) => inputs.skillIds[skillIndex])
+        .find((id) => Boolean(id)) ?? null;
+
+    if (!screen?.ok || !provenance) {
       return [];
     }
 
@@ -82,7 +103,7 @@ export function toScreensToSave({
         kind: screen.kind,
         mathItem: screen.mathItem,
         provenance,
-        skillId: skillIndex === undefined ? null : (inputs.skillIds[skillIndex] ?? null),
+        skillId,
       },
     ];
   });

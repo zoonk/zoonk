@@ -23,13 +23,14 @@ export function getPlaceholders(text: string): string[] {
 
 /**
  * Shows at most four decimals, so 40 / 3 reads 13.3333 instead of 13.333333333333334, with the
- * text's own decimal separator ("2,5" in Portuguese). Digits aren't grouped, so a number reads the
- * same way the learner types it back.
+ * text's own separators: "2,5" and "40.000.000" in Portuguese, "40,000,000" in English. Numbers of
+ * four digits or fewer stay ungrouped, so a year reads 2025, never 2.025. The answer box takes a
+ * number typed either way (`parseLocalizedNumber`).
  */
 function formatValue({ language, value }: { language: string; value: number }): string {
   return new Intl.NumberFormat(language, {
     maximumFractionDigits: MAX_DISPLAY_DECIMALS,
-    useGrouping: false,
+    useGrouping: "min2",
   }).format(value);
 }
 

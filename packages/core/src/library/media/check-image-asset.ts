@@ -84,7 +84,10 @@ async function removePicture(asset: CheckedAsset) {
       data: { updatedAt: new Date() },
       where: { optionPictures: { some: { mediaAssetId: asset.id } } },
     }),
-    prisma.step.updateMany({ data: { mediaAssetId: null }, where: { mediaAssetId: asset.id } }),
+    prisma.step.updateMany({
+      data: { mediaAssetId: null, pictureAvailableAt: null },
+      where: { mediaAssetId: asset.id },
+    }),
     // Its option rows go with it (they cascade), so those options show their description.
     prisma.mediaAsset.delete({ where: { id: asset.id } }),
   ]);

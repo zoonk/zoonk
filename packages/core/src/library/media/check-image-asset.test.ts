@@ -24,7 +24,12 @@ async function shownPicture() {
   ]);
 
   const [step, item] = await Promise.all([
-    libraryStepFixture({ lessonId: lesson.id, mediaAssetId: asset.id, position: 0 }),
+    libraryStepFixture({
+      lessonId: lesson.id,
+      mediaAssetId: asset.id,
+      pictureAvailableAt: new Date("2020-01-01T00:00:00Z"),
+      position: 0,
+    }),
     itemFixture({ mediaAssetId: asset.id, skillId: skill.id }),
   ]);
 
@@ -86,6 +91,7 @@ describe(checkImageAsset, () => {
     // rows changed, so cached lessons read them again.
     expect(stored.url).not.toBe(asset.url);
     expect(screen.mediaAssetId).toBe(asset.id);
+    expect(screen.pictureAvailableAt).toStrictEqual(step.pictureAvailableAt);
     expect(question.mediaAssetId).toBe(asset.id);
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
   });
@@ -108,6 +114,7 @@ describe(checkImageAsset, () => {
     // The screen shows its description instead; a question never goes without its picture.
     expect(stored).toBeNull();
     expect(screen.mediaAssetId).toBeNull();
+    expect(screen.pictureAvailableAt).toBeNull();
     expect(question).toBeNull();
   });
 

@@ -28,21 +28,30 @@ export async function moveOnWithoutLesson(
     where: { lessonId, status: "todo" },
   });
 
-  await Promise.all([
-    tx.planItem.updateMany({
-      data: { status: "skipped" },
-      where: { id: { in: items.map((item) => item.id) }, status: "todo" },
-    }),
-    tx.studySessionBlock.updateMany({
-      data: { status: "skipped" },
-      where: {
-        kind: "learn",
-        lessonId,
-        session: { status: { in: OPEN_SESSION_STATUSES } },
-        status: { in: ["active", "pending"] },
-      },
-    }),
-  ]);
+  /** Queue changes lock blocks before plan items; use the same order to avoid a cycle. */
+  const blocks = await tx.$queryRaw<{ id: string }[]>`
+    SELECT block.id FROM study_session_blocks AS block
+    JOIN study_sessions AS session ON session.id = block.session_id
+    WHERE block.kind = 'learn' AND block.lesson_id = ${lessonId}::uuid
+      AND session.status IN ('planned', 'active') AND block.status IN ('active', 'pending')
+    ORDER BY block.id FOR UPDATE OF block
+  `;
+
+  await tx.studySessionBlock.updateMany({
+    data: { status: "skipped" },
+    where: {
+      id: { in: blocks.map((block) => block.id) },
+      kind: "learn",
+      lessonId,
+      session: { status: { in: OPEN_SESSION_STATUSES } },
+      status: { in: ["active", "pending"] },
+    },
+  });
+
+  await tx.planItem.updateMany({
+    data: { status: "skipped" },
+    where: { id: { in: items.map((item) => item.id) }, status: "todo" },
+  });
 
   return [...new Set(items.map((item) => item.plan.goal.userId))];
 }

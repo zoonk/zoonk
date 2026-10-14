@@ -52,9 +52,9 @@ type LessonWritingState =
   | { inputs: LessonWritingInputs; status: "ready" };
 
 /**
- * Spec skills are matched to the lesson's Library skills by name. When names
- * differ but the counts match, the order the lesson's skills were linked in is
- * the spec's order, since both come from the same spec.
+ * The spec may rename, merge or drop outline skills; lesson links have no spec position.
+ * Match names where possible. Publishing repairs an unmatched question's skill from the lesson's
+ * current links, after considering every skill the screen references (`toScreensToSave`).
  */
 function matchSpecSkills({
   lessonSkills,
@@ -64,21 +64,14 @@ function matchSpecSkills({
   specSkills: readonly LessonSpecSkill[];
 }): (string | null)[] {
   const byName = new Map(lessonSkills.map((skill) => [skill.normalizedName, skill.id]));
-  const sameCount = lessonSkills.length === specSkills.length;
-
-  return specSkills.map(
-    (skill, index) =>
-      byName.get(normalizeString(skill.name)) ??
-      (sameCount ? lessonSkills[index]?.id : undefined) ??
-      null,
-  );
+  return specSkills.map((skill) => byName.get(normalizeString(skill.name)) ?? null);
 }
 
 async function findLessonToWrite(lessonId: string) {
   return prisma.lesson.findUnique({
     include: {
       homeChapter: { include: { homeCourse: { include: { categories: true } } } },
-      skills: { include: { skill: true }, orderBy: { createdAt: "asc" } },
+      skills: { include: { skill: true }, orderBy: [{ createdAt: "asc" }, { skillId: "asc" }] },
     },
     omit: { summary: true },
     where: { id: lessonId },

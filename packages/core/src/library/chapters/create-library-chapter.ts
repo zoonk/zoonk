@@ -1,11 +1,10 @@
 import "server-only";
 import { type Chapter, type CourseLevel, prisma } from "@zoonk/db";
 import { assertIdentityKeyScope } from "@zoonk/utils/identity-key";
-import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { normalizeString, pickAvailableSlug, toSlug } from "@zoonk/utils/string";
 import {
   type LibraryProvenance,
   createOrFindByIdentity,
-  pickAvailableSlug,
   toLibraryVisibility,
   toProvenanceData,
 } from "../_utils/library-rows";

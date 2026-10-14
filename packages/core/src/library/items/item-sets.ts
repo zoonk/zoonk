@@ -1,7 +1,7 @@
 import { type ItemSet, type ItemSetKind, type MediaAsset, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { toListeningSetView } from "../listening/listening-set-view";
-import { getItemAudienceFilter } from "./item-field";
+import { getItemAudienceFilter, getPublicItemFilter, getPublicMaterialFilters } from "./item-field";
 import { parseItemSetContent } from "./item-set-content";
 import { type ItemSetView } from "./item-set-view";
 
@@ -30,14 +30,23 @@ export async function listItemSetsForSkills({
 }: {
   examBlueprintId: string | null;
   skillIds: readonly string[];
-  userId: string;
+  /**
+   * Null for no learner (a public estimate's): no answers to read, the sets in written order, and
+   * only public material (see `getPublicItemFilter`).
+   */
+  userId: string | null;
 }): Promise<ItemSetPick[]> {
   const sets = await prisma.itemSet.findMany({
     include: {
       items: {
         orderBy: { setPosition: "asc" },
         select: { id: true, skillId: true },
-        where: getItemAudienceFilter({ examBlueprintId, inSets: true }),
+        where: {
+          AND: [
+            getItemAudienceFilter({ examBlueprintId, inSets: true }),
+            ...(userId ? [] : [getPublicItemFilter()]),
+          ],
+        },
       },
     },
     orderBy: { id: "asc" },
@@ -45,14 +54,17 @@ export async function listItemSetsForSkills({
       NOT: { kind: "audio", mediaAssetId: null },
       OR: [{ examBlueprintId: null }, ...(examBlueprintId ? [{ examBlueprintId }] : [])],
       items: { some: { skillId: { in: [...skillIds] } } },
+      ...(userId ? {} : { AND: getPublicMaterialFilters() }),
     },
   });
 
-  const answers = await prisma.attempt.groupBy({
-    _max: { answeredAt: true },
-    by: ["itemId"],
-    where: { itemId: { in: sets.flatMap((set) => set.items.map((item) => item.id)) }, userId },
-  });
+  const answers = userId
+    ? await prisma.attempt.groupBy({
+        _max: { answeredAt: true },
+        by: ["itemId"],
+        where: { itemId: { in: sets.flatMap((set) => set.items.map((item) => item.id)) }, userId },
+      })
+    : [];
 
   const lastAnswers = new Map(answers.map((answer) => [answer.itemId, answer._max.answeredAt]));
 

@@ -77,6 +77,7 @@ describe(toStepContent, () => {
 
   it("keeps each option's picture on a question whose options are pictures, never on a version", () => {
     const doorways = {
+      basis: null,
       context: null,
       image: null,
       kind: "check" as const,

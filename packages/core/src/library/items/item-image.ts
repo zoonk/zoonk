@@ -1,4 +1,5 @@
 import { type MediaAsset } from "@zoonk/db";
+import { z } from "zod";
 
 type ItemImageAsset = Pick<MediaAsset, "height" | "url" | "width">;
 
@@ -11,7 +12,16 @@ export const ITEM_IMAGE_INCLUDE = {
 } as const;
 
 /** A question's picture as learners see it: the drawn file, with the writer's alt text. */
-export type ItemImage = { alt: string; height: number | null; url: string; width: number | null };
+export const itemImageSchema = z
+  .object({
+    alt: z.string().meta({ description: "What the picture shows, for screen readers" }),
+    height: z.int().nullable(),
+    url: z.string(),
+    width: z.int().nullable(),
+  })
+  .meta({ description: "Show it with the question: its words point at it", id: "QuestionImage" });
+
+export type ItemImage = z.infer<typeof itemImageSchema>;
 
 /**
  * The picture a stored question shows, or null without one. Questions about a figure are stored

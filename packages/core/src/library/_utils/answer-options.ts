@@ -82,8 +82,8 @@ const ORDINALS = [
   "quarto",
   "quinta",
   "quinto",
-  "ultima",
-  "ultimo",
+  "última",
+  "último",
   "first",
   "second",
   "third",
@@ -93,11 +93,11 @@ const ORDINALS = [
   "primera",
   "tercera",
   "cuarta",
-  "premiere",
-  "deuxieme",
-  "troisieme",
-  "quatrieme",
-  "derniere",
+  "première",
+  "deuxième",
+  "troisième",
+  "quatrième",
+  "dernière",
   "erste",
   "zweite",
   "dritte",
@@ -105,21 +105,24 @@ const ORDINALS = [
   "letzte",
 ].join("|");
 
+const PLAIN_ORDINALS = withoutAccents(ORDINALS);
+
 /** Words that only ever name an answer option, unlike "answer" or "statement". */
 const OPTION_NOUNS = ["opcao", "alternativa", "option", "choice", "opcion"].join("|");
 
 /** "the second option", Portuguese "a alternativa C", "it's the second." */
-const POSITION_PATTERNS: readonly { cased: boolean; pattern: RegExp }[] = [
-  { cased: false, pattern: new RegExp(`\\b(?:${ORDINALS}) (?:${OPTION_NOUNS})\\b`, "gu") },
+const POSITION_PATTERNS: readonly { form: "plain" | "lower" | "accented"; pattern: RegExp }[] = [
+  { form: "lower", pattern: new RegExp(`\\b(?:${PLAIN_ORDINALS}) (?:${OPTION_NOUNS})\\b`, "gu") },
   {
-    cased: true,
+    form: "plain",
     pattern:
       /\b(?:[Oo]pcao|[Aa]lternativa|[Ll]etra|[Oo]ption|[Cc]hoice|[Ll]etter|[Oo]pcion|[Ll]ettre)\s+\(?[A-E]\)?(?![\p{L}\p{N}])/gu,
   },
   {
-    cased: false,
+    /** Folding Portuguese "é" (is) to "e" would confuse it with the conjunction "e" (and). */
+    form: "accented",
     pattern: new RegExp(
-      `\\b(?:e|seria|era|foi|is|was|es|sera|est|ist) (?:a|o|the|la|el|le|die|der) (?:${ORDINALS})(?=\\s*(?:[.,;:!?)]|$))`,
+      `(?<![\\p{L}\\p{N}])(?:é|ser[ií]a|era|foi|is|was|es|ser[aá]|est|ist) (?:a|o|the|la|el|le|die|der) (?:${ORDINALS}|${PLAIN_ORDINALS})(?=\\s*(?:[.,;:!?)]|$))`,
       "gu",
     ),
   },
@@ -136,9 +139,14 @@ function withoutAccents(text: string): string {
  */
 export function findOptionPositionReferences(text: string): string[] {
   const plain = withoutAccents(text);
-  const lower = plain.toLowerCase();
 
-  return POSITION_PATTERNS.flatMap(({ cased, pattern }) =>
-    [...(cased ? plain : lower).matchAll(pattern)].map((match) => match[0]),
+  const forms = {
+    accented: text.normalize("NFC").toLowerCase(),
+    lower: plain.toLowerCase(),
+    plain,
+  };
+
+  return POSITION_PATTERNS.flatMap(({ form, pattern }) =>
+    [...forms[form].matchAll(pattern)].map((match) => match[0]),
   );
 }

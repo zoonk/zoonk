@@ -12,6 +12,23 @@ function repairScreenMarkdown(screen: WrittenScreen): WrittenScreen {
   );
 }
 
+/** A question's basis quotes a line of an earlier screen, so it's repaired like that line. */
+function repairBasisQuote(screen: WrittenScreen): WrittenScreen {
+  if (screen.kind !== "check" && screen.kind !== "mathCheck" && screen.kind !== "typedAnswer") {
+    return screen;
+  }
+
+  return screen.basis
+    ? {
+        ...screen,
+        basis: {
+          ...screen.basis,
+          quote: repairMarkdown({ layout: "inline", text: screen.basis.quote }),
+        },
+      }
+    : screen;
+}
+
 /** The options left after twins go, or all of them when too few would be left. */
 function keepDistinct<TOption extends { isCorrect: boolean; text: string }>({
   language,
@@ -46,8 +63,9 @@ function repairOptions({
  * What code repairs in a written lesson before its checks run, so no fix pass is spent on it:
  * Markdown a learner would see as marks, taken out by how each text shows (`repairMarkdown`), and
  * an option that says what another one says, dropped while two or more stay (of twins, the right
- * one stays). Em dashes go when its screens are stored (`normalizeStepContentValue`). What code
- * can't repair is left for the checks to report.
+ * one stays). A question's basis quote is repaired like the line it copies. Em dashes go when its
+ * screens are stored (`normalizeStepContentValue`). What code can't repair is left for the checks
+ * to report.
  */
 export function repairWrittenLesson({
   language,
@@ -59,7 +77,7 @@ export function repairWrittenLesson({
   return {
     ...lesson,
     screens: lesson.screens.map((screen) =>
-      repairOptions({ language, screen: repairScreenMarkdown(screen) }),
+      repairOptions({ language, screen: repairBasisQuote(repairScreenMarkdown(screen)) }),
     ),
     summary: lesson.summary.map((idea) => repairMarkdown({ layout: "inline", text: idea })),
   };

@@ -10,7 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getStepExampleLine } from "./get-step-example-line";
+import { getStepExampleLine, requestStepExampleLine } from "./get-step-example-line";
 
 const slotContent = {
   exampleLineSlot: { idea: "A discount on something the learner buys." },
@@ -77,10 +77,29 @@ function shareFact(userId: string, statement = "Works at a pharmacy") {
 }
 
 describe(getStepExampleLine, () => {
+  it("reads a missing example without generating, spending help, or marking facts used", async () => {
+    const learner = await createLearner();
+    const step = await createExplanation();
+    const fact = await shareFact(learner.id);
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual({
+      canRequest: true,
+      line: null,
+      status: "ready",
+    });
+
+    expect(generateExampleLines).not.toHaveBeenCalled();
+    await expect(prisma.stepExampleLine.count({ where: { userId: learner.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+    ).resolves.toMatchObject({ lastUsedAt: null });
+  });
+
   it("requires a session and a visible explanation screen", async () => {
     mockSession(null);
 
-    await expect(getStepExampleLine({ stepId: randomUUID() })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: randomUUID() })).resolves.toStrictEqual({
       status: "unauthorized",
     });
 
@@ -88,7 +107,7 @@ describe(getStepExampleLine, () => {
     const lesson = await libraryLessonFixture();
     const check = await libraryStepFixture({ kind: "check", lessonId: lesson.id });
 
-    await expect(getStepExampleLine({ stepId: check.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: check.id })).resolves.toStrictEqual({
       status: "notFound",
     });
   });
@@ -103,7 +122,8 @@ describe(getStepExampleLine, () => {
 
     await shareFact(learner.id);
 
-    await expect(getStepExampleLine({ stepId: noSlot.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: noSlot.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: null,
       status: "ready",
     });
@@ -111,7 +131,16 @@ describe(getStepExampleLine, () => {
     const stranger = await userFixture();
     mockSession(stranger.id);
 
+    // Nothing to ask for: a read says so, so the player offers no example to someone who shares
+    // nothing.
     await expect(getStepExampleLine({ stepId: withSlot.id })).resolves.toStrictEqual({
+      canRequest: false,
+      line: null,
+      status: "ready",
+    });
+
+    await expect(requestStepExampleLine({ stepId: withSlot.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: null,
       status: "ready",
     });
@@ -124,7 +153,16 @@ describe(getStepExampleLine, () => {
 
     await shareFact(guest.id);
 
-    await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual({
+      canRequest: true,
+      line: null,
+      status: "ready",
+    });
+
+    await expect(requestStepExampleLine({ stepId: step.id })).resolves.toStrictEqual(
+      GUEST_OUT_OF_HELP,
+    );
+
     expect(generateExampleLines).not.toHaveBeenCalled();
   });
 
@@ -170,10 +208,11 @@ describe(getStepExampleLine, () => {
 
     mockLines(["Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10."]);
 
-    const first = await getStepExampleLine({ stepId: step.id });
+    const first = await requestStepExampleLine({ stepId: step.id });
     const second = await getStepExampleLine({ stepId: step.id });
 
     expect(first).toStrictEqual({
+      canRequest: false,
       line: "Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.",
       status: "ready",
     });
@@ -210,16 +249,18 @@ describe(getStepExampleLine, () => {
 
     // The player can ask for two screens of a lesson before either line is written.
     const [onDiscount, onInterest] = await Promise.all([
-      getStepExampleLine({ stepId: discount.id }),
-      getStepExampleLine({ stepId: interest.id }),
+      requestStepExampleLine({ stepId: discount.id }),
+      requestStepExampleLine({ stepId: interest.id }),
     ]);
 
     expect(onDiscount).toStrictEqual({
+      canRequest: false,
       line: "Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.",
       status: "ready",
     });
 
     expect(onInterest).toStrictEqual({
+      canRequest: false,
       line: "Se você parcelar um celular de R$ 1.000 em 10 vezes de R$ 110, paga R$ 100 de juros.",
       status: "ready",
     });
@@ -229,9 +270,12 @@ describe(getStepExampleLine, () => {
     );
 
     // Asked again, every screen reads what's stored: no new call.
-    await expect(getStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual(onInterest);
+    await expect(requestStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual(
+      onInterest,
+    );
 
-    await expect(getStepExampleLine({ stepId: plain.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: plain.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: null,
       status: "ready",
     });
@@ -239,7 +283,7 @@ describe(getStepExampleLine, () => {
     expect(generateExampleLines).toHaveBeenCalledOnce();
 
     // A slot left on a screen that isn't an explanation gets no line.
-    await expect(getStepExampleLine({ stepId: check.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: check.id })).resolves.toStrictEqual({
       status: "notFound",
     });
   });
@@ -250,21 +294,31 @@ describe(getStepExampleLine, () => {
     await shareFact(learner.id);
 
     mockLines(["Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.", null]);
-    await getStepExampleLine({ stepId: discount.id });
+    await requestStepExampleLine({ stepId: discount.id });
 
     await shareFact(learner.id, "Moved to Toronto");
+
+    await expect(getStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
+      canRequest: true,
+      line: null,
+      status: "ready",
+    });
+
+    expect(generateExampleLines).toHaveBeenCalledOnce();
 
     mockLines([
       "Em Toronto, 25% off num casaco de 80 dólares poupa 20.",
       "Se você parcelar uma bicicleta de 1.000 dólares em Toronto, os juros somam 100.",
     ]);
 
-    await expect(getStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: "Se você parcelar uma bicicleta de 1.000 dólares em Toronto, os juros somam 100.",
       status: "ready",
     });
 
-    await expect(getStepExampleLine({ stepId: discount.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: discount.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: "Em Toronto, 25% off num casaco de 80 dólares poupa 20.",
       status: "ready",
     });
@@ -292,20 +346,28 @@ describe(getStepExampleLine, () => {
     const [older, newer] = await Promise.all([createExplanation(), createExplanation()]);
 
     mockLines(["Na farmácia, um desconto de 10% numa caixa de R$ 30 tira R$ 3."]);
-    await getStepExampleLine({ stepId: older.id });
+    await requestStepExampleLine({ stepId: older.id });
     mockLines(["No caixa da farmácia, o troco de R$ 50 por R$ 38 é R$ 12."]);
-    await getStepExampleLine({ stepId: newer.id });
+    await requestStepExampleLine({ stepId: newer.id });
 
     // A lesson whose discount screen already has its line, and whose interest screen doesn't yet.
     const current = await libraryLessonFixture({ contentStatus: "completed", language: "pt" });
     const discount = await libraryStepFixture({ content: slotContent, lessonId: current.id });
     mockLines(["Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10."]);
-    await getStepExampleLine({ stepId: discount.id });
+    await requestStepExampleLine({ stepId: discount.id });
 
     const interest = await libraryStepFixture({ content: interestContent, lessonId: current.id });
     mockLines([null]);
 
+    await expect(requestStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
+      canRequest: false,
+      line: null,
+      status: "ready",
+    });
+
+    // Written as none: reading it again offers nothing to ask for.
     await expect(getStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: null,
       status: "ready",
     });
@@ -322,7 +384,8 @@ describe(getStepExampleLine, () => {
     );
 
     // The discount screen keeps the line the learner already read.
-    await expect(getStepExampleLine({ stepId: discount.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: discount.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: "Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.",
       status: "ready",
     });
@@ -337,7 +400,8 @@ describe(getStepExampleLine, () => {
       learningProfileFixture({ memoryEnabled: false, userId: learner.id }),
     ]);
 
-    await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual({
+    await expect(requestStepExampleLine({ stepId: step.id })).resolves.toStrictEqual({
+      canRequest: false,
       line: null,
       status: "ready",
     });

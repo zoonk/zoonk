@@ -33,6 +33,7 @@ function explanation(text: string): WrittenScreen {
 
 function check(question: string, options: [string, string] = ["Yes", "No"]): WrittenScreen {
   return {
+    basis: null,
     context: null,
     image: null,
     kind: "check",
@@ -47,6 +48,7 @@ function check(question: string, options: [string, string] = ["Yes", "No"]): Wri
 
 function mathCheck(values: Record<string, number>): WrittenScreen {
   return {
+    basis: null,
     context: "Uma ação custa {buy} para comprar e {sell} para vender.",
     correctReason: "Você paga {buy} e recebe {sell}.",
     kind: "mathCheck",

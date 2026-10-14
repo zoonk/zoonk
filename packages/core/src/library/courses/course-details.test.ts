@@ -65,6 +65,45 @@ describe(writeCourseDetails, () => {
     );
   });
 
+  it("rewrites copy only while keeping an empty description and category set", async () => {
+    const course = await outlinedCourse();
+
+    await expect(writeCourseDetails({ copyOnly: true, courseId: course.id })).resolves.toBe(
+      "written",
+    );
+
+    const stored = await readCourse(course.id);
+
+    expect(stored).toMatchObject({
+      categories: [],
+      description: null,
+      landingPage: details.landingPage,
+    });
+  });
+
+  it.each(["older-landing-copy", null])(
+    "keeps %s landing-copy provenance when filling only metadata",
+    async (promptVersion) => {
+      const course = await outlinedCourse({
+        detailsPromptVersion: promptVersion,
+        landingPage: storedLandingPage,
+      });
+
+      await expect(writeCourseDetails({ courseId: course.id })).resolves.toBe("written");
+      const stored = await readCourse(course.id);
+
+      expect(stored).toMatchObject({
+        description: details.description,
+        detailsGeneratedAt: null,
+        detailsPromptVersion: promptVersion,
+        detailsRunId: null,
+        landingPage: storedLandingPage,
+      });
+
+      expect(stored.categories.map((item) => item.category)).toStrictEqual(["health", "science"]);
+    },
+  );
+
   it("writes the description, landing copy and categories of a new shared course from its outline", async () => {
     const course = await outlinedCourse();
 

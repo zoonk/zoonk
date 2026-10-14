@@ -4,6 +4,7 @@ import { findRepeatedQuestions } from "./repeated-questions";
 
 function check(question: string): WrittenScreen {
   return {
+    basis: null,
     context: null,
     image: null,
     kind: "check",
@@ -18,6 +19,7 @@ function check(question: string): WrittenScreen {
 
 function mathCheck(question: string): WrittenScreen {
   return {
+    basis: null,
     context: null,
     correctReason: "You add {rise} to {start}.",
     kind: "mathCheck",

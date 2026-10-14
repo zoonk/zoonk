@@ -27,30 +27,6 @@ export function toLibraryVisibility(ownerId: string | null) {
   return { ownerId, visibility: ownerId ? ("private" as const) : ("public" as const) };
 }
 
-/**
- * Slugs only need to be unique inside their home (an owner, course or chapter), so a repeated
- * title gets the first free numbered suffix there.
- */
-export function pickAvailableSlug({
-  base,
-  taken,
-}: {
-  base: string;
-  taken: readonly string[];
-}): string {
-  const takenSlugs = new Set(taken);
-
-  if (!takenSlugs.has(base)) {
-    return base;
-  }
-
-  const suffix = Array.from({ length: takenSlugs.size + 1 }, (_, index) => index + 2).find(
-    (candidate) => !takenSlugs.has(`${base}-${candidate}`),
-  );
-
-  return `${base}-${suffix}`;
-}
-
 /** One retry covers a slug taken by a different item between reading free slugs and inserting. */
 const CREATE_ATTEMPTS = 2;
 

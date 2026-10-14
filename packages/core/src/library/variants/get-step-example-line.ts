@@ -4,6 +4,7 @@ import { type StepExampleLine, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
+import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
 import { getSession } from "../../users/get-session";
 import { toProvenanceData } from "../_utils/library-rows";
 import { canViewLibraryRow } from "../_utils/library-visibility";
@@ -14,7 +15,17 @@ type StepExampleLineResult =
   | { status: "unauthorized" }
   | { status: "notFound" }
   | RefusedUsage
-  | { line: string | null; status: "ready" };
+  | {
+      /**
+       * Whether asking for a line (`requestStepExampleLine`) can write one: the screen has a slot,
+       * the learner shares facts, and no line was written from them yet. A screen whose line was
+       * written as none, or a learner who shares nothing, has nothing to ask for. Asking can still
+       * be refused by the learner's help allowance.
+       */
+      canRequest: boolean;
+      line: string | null;
+      status: "ready";
+    };
 
 type LessonLines =
   | { status: "unauthorized" }
@@ -148,6 +159,8 @@ async function writeLessonLines({
     return usage;
   }
 
+  await markMemoryFactsUsed({ ids: context.facts.map((fact) => fact.id), now: new Date(), userId });
+
   const { data, provenance } = await generateExampleLines({
     analytics: { contentScope: "personal", distinctId: userId },
     earlierLines: [
@@ -198,18 +211,30 @@ function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
 }
 
 /**
- * The example line for the signed-in learner on one explanation: a sentence that ties the idea to
- * their own life, built from what they shared. A lesson's lines are written together the first
- * time one of its screens asks, so each screen tells a different moment, and kept until the
- * learner's facts or goal change; memory marks the facts it hands over as used. `line` is null
- * when the screen has no slot, the learner shared nothing, or nothing they shared fits in a moment
- * this lesson's other lines and their recent ones didn't already use. New lines are claimed as one
- * small AI help, so only a POST (`POST /v1/me/example-lines/{stepId}`, which the web player calls
- * from the browser) may call this.
+ * Reads only saved lines matching the learner's current facts and goal, and whether asking could
+ * write a missing one. Never starts AI work.
  */
-export async function getStepExampleLine({
+export function getStepExampleLine({ stepId }: { stepId: string }): Promise<StepExampleLineResult> {
+  return resolveStepExampleLine({ create: false, stepId });
+}
+
+/**
+ * Explicitly requests a personal example. Missing lines for the lesson are written together and
+ * claimed as one small AI help. Call only from a learner action through a POST.
+ */
+export function requestStepExampleLine({
   stepId,
 }: {
+  stepId: string;
+}): Promise<StepExampleLineResult> {
+  return resolveStepExampleLine({ create: true, stepId });
+}
+
+async function resolveStepExampleLine({
+  create,
+  stepId,
+}: {
+  create: boolean;
   stepId: string;
 }): Promise<StepExampleLineResult> {
   const session = await getSession();
@@ -230,7 +255,7 @@ export async function getStepExampleLine({
     : null;
 
   if (!context) {
-    return { line: null, status: "ready" };
+    return { canRequest: false, line: null, status: "ready" };
   }
 
   const cached = await prisma.stepExampleLine.findUnique({
@@ -238,7 +263,11 @@ export async function getStepExampleLine({
   });
 
   if (cached?.contextKey === context.key) {
-    return { line: cached.text, status: "ready" };
+    return { canRequest: false, line: cached.text, status: "ready" };
+  }
+
+  if (!create) {
+    return { canRequest: true, line: null, status: "ready" };
   }
 
   const written = await writeLessonLinesOnce({
@@ -254,6 +283,7 @@ export async function getStepExampleLine({
   }
 
   return {
+    canRequest: false,
     line: written.lines.find((row) => row.stepId === stepId)?.text ?? null,
     status: "ready",
   };

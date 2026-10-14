@@ -296,6 +296,63 @@ describe(createItems, () => {
     ]);
   });
 
+  it.each([
+    {
+      language: "pt",
+      position: "A resposta é o segundo.",
+      reason:
+        "Você compara as razões: o primeiro tipo tem 0,6 kg/L e o segundo, 0,75 kg/L. Com o segundo tipo, 80 L comportam 60 kg.",
+    },
+    {
+      language: "es",
+      position: "La respuesta es el segundo.",
+      reason: "El primer tipo tiene 0,6 kg/L y el segundo, 0,75 kg/L.",
+    },
+    {
+      language: "fr",
+      position: "La réponse est le deuxième.",
+      reason: "Le premier type contient 0,6 kg/L et le deuxième, 0,75 kg/L.",
+    },
+    {
+      language: "de",
+      position: "Die Antwort ist der zweite.",
+      reason: "Der erste Typ enthält 0,6 kg/L und der zweite, 0,75 kg/L.",
+    },
+  ])("stores content ordinals but rejects option positions in $language", async (testCase) => {
+    const skill = await skillFixture({ language: testCase.language });
+    const good = generatedMultipleChoice();
+
+    const withReason = (reason: string) => ({
+      ...good,
+      options: good.options.map((option) => (option.isCorrect ? { ...option, reason } : option)),
+    });
+
+    const { created, rejected } = await createItems({
+      format: "multipleChoice",
+      items: [withReason(testCase.reason), withReason(testCase.position)],
+      language: testCase.language,
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(rejected).toStrictEqual([
+      {
+        index: 1,
+        problems: [expect.stringContaining("A reason points at an option by its place")],
+      },
+    ]);
+
+    expect(created).toHaveLength(1);
+    const stored = await prisma.item.findMany({ where: { skillId: skill.id } });
+    expect(stored).toHaveLength(1);
+
+    expect(stored[0]?.content).toMatchObject({
+      options: expect.arrayContaining([
+        expect.objectContaining({ isCorrect: true, reason: testCase.reason }),
+      ]),
+    });
+  });
+
   it("repairs what code can before storing: Markdown learners would see and an option written twice", async () => {
     const skill = await skillFixture();
     const [right, wrong] = generatedMultipleChoice().options;

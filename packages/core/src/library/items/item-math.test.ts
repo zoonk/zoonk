@@ -80,6 +80,46 @@ describe(withNewNumbers, () => {
     expect(result.steps).toStrictEqual(["Desconto: 2,05."]);
   });
 
+  it("groups the digits of large numbers the way the question's language does", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: (12_500 / 40e6) * 100,
+      commonMistakes: [{ expression: "owned / total", misconception: "No percent", reason: "No." }],
+      solution: "owned / total * 100",
+      steps: [{ expression: "total - owned", text: "{total} − {owned} = {result}" }],
+      variables: [
+        { max: 12_500, min: 12_500, name: "owned", step: 500, unit: null, value: 12_500 },
+        { max: 40e6, min: 40e6, name: "total", step: 5e6, unit: null, value: 40e6 },
+      ],
+    };
+
+    const shares = "Uma empresa tem {total} ações e você tem {owned}.";
+
+    expect(withNewNumbers({ language: "pt", math, question: shares })).toMatchObject({
+      question: "Uma empresa tem 40.000.000 ações e você tem 12.500.",
+      steps: ["40.000.000 − 12.500 = 39.987.500"],
+    });
+
+    expect(withNewNumbers({ language: "en", math, question: shares }).question).toBe(
+      "Uma empresa tem 40,000,000 ações e você tem 12,500.",
+    );
+  });
+
+  it("leaves four-digit numbers such as years ungrouped", () => {
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 2030,
+      commonMistakes: [{ expression: "year", misconception: "Same year", reason: "No." }],
+      solution: "year + 5",
+      steps: [],
+      variables: [{ max: 2025, min: 2025, name: "year", step: 1, unit: null, value: 2025 }],
+    };
+
+    expect(
+      withNewNumbers({ language: "pt", math, question: "Em {year}, mais 5 anos?" }),
+    ).toMatchObject({ question: "Em 2025, mais 5 anos?" });
+  });
+
   it("keeps the checked numbers when no new draw works", () => {
     // Doubling and squaring agree at 0 and at 2, so every draw would let the mistake pass.
     const math: GeneratedMathProblem = {

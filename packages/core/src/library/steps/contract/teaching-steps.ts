@@ -87,6 +87,16 @@ export const workedExampleContentSchema = z
   })
   .strict();
 
+/**
+ * The sentence of an earlier reading screen (a hook's text, an explanation or a worked example)
+ * that decides a question's right answer, and that screen's `position` in the lesson: after a
+ * wrong answer, "From the lesson" marks it when it shows that screen. Code stores one only after
+ * finding the quote on that screen (`findQuestionBases`).
+ */
+const questionBasisSchema = z
+  .object({ position: z.number().int().min(0), quote: explanationSchema })
+  .strict();
+
 const MAX_PICTURE_OPTIONS = 4;
 
 /**
@@ -166,6 +176,7 @@ function numberedOptionsIssue(content: {
  */
 export const checkContentSchema = z
   .object({
+    basis: questionBasisSchema.optional(),
     context: richTextSchema.optional(),
     image: stepImageRequestSchema.optional(),
     options: choiceOptionsSchema(checkOptionSchema),
@@ -188,6 +199,7 @@ export const checkContentSchema = z
 export const typedAnswerContentSchema = z
   .object({
     acceptedAnswers: z.array(optionTextSchema).max(MAX_KEY_POINTS).optional(),
+    basis: questionBasisSchema.optional(),
     context: richTextSchema.optional(),
     keyPoints: z.array(explanationSchema).min(1).max(MAX_KEY_POINTS),
     question: promptSchema,
