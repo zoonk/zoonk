@@ -10,13 +10,20 @@ import { type Page, expect, test } from "./fixtures";
  * The way into onboarding: a goal sent from the home page or `/start` is saved as a draft and read,
  * the address keeps the draft so a refresh shows the same screen, and visitors who already started
  * keep the home page with a way back. Understandings are stored the way a real one is (the cache),
- * so these run without the AI task; the E2E API isn't reachable, so words nobody read yet can't
- * start, which is how a failed start looks.
+ * so these run without the AI task. Words nobody read yet fail to be read: the run doesn't start
+ * when no API is reachable, and fails on the E2E API, which has no AI. Both offer to try again.
  */
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const DRAFT_URL = /\/start\?draft=[0-9a-f-]{36}$/u;
+
+/**
+ * A read that failed: its run didn't start (no API is reachable), or stopped (the E2E API has no
+ * AI, and its run gives up only after the workflow's step retries).
+ */
+const FAILED_READ = /^This didn't (?:start|finish)$/u;
+const FAILED_READ_TIMEOUT = 15_000;
 
 function uniqueWords(words: string) {
   return `${words} ${randomUUID().slice(0, 8)}`;
@@ -81,7 +88,7 @@ test.describe("Coming back", () => {
   }) => {
     const question = uniqueWords("why does ice float on water?");
     await sendGoal(page, question);
-    await expect(page.getByText("This didn't start")).toBeVisible();
+    await expect(page).toHaveURL(DRAFT_URL);
 
     const draft = await findDraft(question);
 
@@ -135,14 +142,18 @@ test.describe("Coming back", () => {
     const goal = uniqueWords("learn to juggle five balls");
     await sendGoal(page, goal);
 
-    // Nobody read these words before and the API can't be reached: the draft is saved, unread.
+    // Nobody read these words before and reading them failed: the draft is saved, unread.
     await expect(page).toHaveURL(DRAFT_URL);
-    await expect(page.getByText("This didn't start")).toBeVisible();
+    await expect(page.getByText(FAILED_READ)).toBeVisible({ timeout: FAILED_READ_TIMEOUT });
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
     const draft = await findDraft(goal);
     const runId = `e2e-understanding-${randomUUID()}`;
-    await prisma.onboardingDraft.update({ data: { runId }, where: { id: draft.id } });
+
+    await prisma.onboardingDraft.update({
+      data: { runId, status: "understanding" },
+      where: { id: draft.id },
+    });
 
     const release = Promise.withResolvers<null>();
 
@@ -199,7 +210,7 @@ test.describe("Coming back", () => {
   test("try again moves on once the words can be read", async ({ page }) => {
     const goal = uniqueWords("learn to whistle with two fingers");
     await sendGoal(page, goal);
-    await expect(page.getByText("This didn't start")).toBeVisible();
+    await expect(page.getByText(FAILED_READ)).toBeVisible({ timeout: FAILED_READ_TIMEOUT });
 
     // The words got read after all (the cache has them now): trying again shows the card.
     const draft = await findDraft(goal);
