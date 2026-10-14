@@ -1,6 +1,25 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
+ * A page's column: from the frame's left edge (40px from the sidebar from `lg`) across the whole
+ * room beside the sidebar, or up to the aside on a page with one, as app shells with a sidebar lay
+ * out their pages (Apple's web apps, Khan Academy, Linear). A wide screen gives the page more room,
+ * never a wider margin: grids gain columns, rows and charts grow, and what has to stay readable
+ * (prose, a form, a conversation) keeps its measure on the same left edge. Every page's container
+ * takes it (`Page`, `DetailLayout`, a section), so every title, tab row and section starts at one
+ * place on every page.
+ */
+export const PAGE_COLUMN_CLASS = "w-full min-w-0";
+
+/**
+ * An inbox page's width from `lg` (the mistakes notebook): its list (20rem), the gap and the pane's
+ * hairline and inset (4rem and 1px), then an entry at the column's measure. The whole page, its
+ * header included, ends with the entries, so its main action lines up with them rather than with
+ * the screen's edge, which on a wide screen sat far past the last word.
+ */
+export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
+
+/**
  * The page templates' building blocks, one source for every page's structure: a page opens with
  * its large title (`PageHeader`) and holds its content in sections, each named by a bold header
  * (`PageSection`), so a learner always sees where they are and what's on the page.
@@ -27,36 +46,52 @@ import { cn } from "@zoonk/ui/lib/utils";
  * ```
  */
 export function Page({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col gap-8", className)} data-slot="page" {...props} />;
+  return (
+    <div
+      className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-7", className)}
+      data-slot="page"
+      {...props}
+    />
+  );
 }
 
 /** A tab's, a section's or a settings page's large title, with one control beside it at most. */
 export function PageHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("flex items-end justify-between gap-4 px-1", className)}
+      className={cn("flex items-end justify-between gap-4", className)}
       data-slot="page-header"
       {...props}
     />
   );
 }
 
+/**
+ * The title's column. A page with nothing to say over its title keeps the eyebrow's line empty,
+ * so every page's title sits at the same height and moving between pages never moves it.
+ */
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-col gap-1", className)}
+      className={cn(
+        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
+        className,
+      )}
       data-slot="page-header-content"
       {...props}
     />
   );
 }
 
-/** The context above the title: the date, the goal and its day. */
+/**
+ * The context above the title (the date, the goal and its day): the quietest line on the page, in
+ * the mono face.
+ */
 export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground text-[0.8125rem] font-semibold tracking-wide uppercase",
+        "text-faint font-mono text-xs leading-4 uppercase max-sm:text-[0.71875rem]",
         className,
       )}
       data-slot="page-eyebrow"
@@ -68,14 +103,7 @@ export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) 
 /** The page's name: the tab, the section or the setting the learner is on. */
 export function PageTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
-    <h1
-      className={cn(
-        "text-[2.125rem] leading-[1.1] font-bold tracking-tight text-balance",
-        className,
-      )}
-      data-slot="page-title"
-      {...props}
-    >
+    <h1 className={cn("text-title", className)} data-slot="page-title" {...props}>
       {children}
     </h1>
   );
@@ -86,7 +114,7 @@ export function PageSubtitle({ className, ...props }: React.ComponentProps<"div"
   return (
     <div
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[0.9375rem]",
+        "text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-sm",
         className,
       )}
       data-slot="page-subtitle"
@@ -114,7 +142,7 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
   return (
     <div
       className={cn(
-        "flex min-h-7 flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-1",
+        "flex min-h-6 flex-wrap items-center justify-between gap-x-3 gap-y-0.5",
         className,
       )}
       data-slot="page-section-header"
@@ -123,10 +151,14 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
   );
 }
 
+/**
+ * A section's name as a quiet label over its content, so the content leads: "YOUR PATH",
+ * "PRACTICE ANYTIME".
+ */
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
-      className={cn("min-w-0 text-xl font-bold tracking-tight text-balance", className)}
+      className={cn("text-label min-w-0 text-balance", className)}
       data-slot="page-section-title"
       {...props}
     >
@@ -139,7 +171,7 @@ export function PageSectionTitle({ children, className, ...props }: React.Compon
 export function PageSectionDetail({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground min-w-0 text-sm tabular-nums", className)}
+      className={cn("text-muted-foreground min-w-0 font-mono text-xs tabular-nums", className)}
       data-slot="page-section-detail"
       {...props}
     />
@@ -150,10 +182,7 @@ export function PageSectionDetail({ className, ...props }: React.ComponentProps<
 export function PageSectionLabel({ children, className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
-      className={cn(
-        "text-muted-foreground -mb-1 px-4 pt-1 text-[0.8125rem] font-medium",
-        className,
-      )}
+      className={cn("text-muted-foreground -mb-1 pt-1 text-[0.8125rem] font-medium", className)}
       data-slot="page-section-label"
       {...props}
     >
@@ -167,7 +196,7 @@ export function PageSectionFooter({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground px-4 text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
+        "text-muted-foreground text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
         className,
       )}
       data-slot="page-section-footer"

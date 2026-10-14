@@ -6,28 +6,37 @@ import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { SURFACE_CLASS } from "./surface";
+import { CHIP_CLASS } from "./chip";
+import {
+  NoticeCard,
+  NoticeCardActions,
+  NoticeCardContent,
+  NoticeCardDescription,
+  NoticeCardLeading,
+  NoticeCardTitle,
+} from "./notice-card";
 
 /**
  * A feature the learner's plan doesn't include, marked where it shows: a row, a card's title, a
  * path's mock. Plus features are never hidden: free learners and guests see them as Plus learners
  * do, with this mark, and they open as usual to a page that says what Plus unlocks. Screen readers
- * hear "Available with Plus".
+ * hear "Available with Plus" (or `label`, where it marks the learner's own plan). The one way the app draws Plus: a quiet 22px chip on a strong
+ * hairline, neither green (right, done) nor blue (information), since a plan is neither.
  */
-export function PlusMark({ className }: { className?: string }) {
+export function PlusMark({
+  className,
+  label,
+}: {
+  className?: string;
+  /** What screen readers hear, where the mark is the learner's own plan ("Plus"). */
+  label?: string;
+}) {
   const t = useExtracted();
 
   return (
-    <span
-      className={cn(
-        "bg-muted text-muted-foreground inline-flex h-5 shrink-0 items-center gap-1 rounded-full px-2 text-xs font-medium",
-        className,
-      )}
-      data-slot="plus-mark"
-    >
-      <SparklesIcon aria-hidden="true" className="size-3" />
+    <span className={cn(CHIP_CLASS, className)} data-slot="plus-mark">
       <span aria-hidden="true">{t("Plus")}</span>
-      <span className="sr-only">{t("Available with Plus")}</span>
+      <span className="sr-only">{label ?? t("Available with Plus")}</span>
     </span>
   );
 }
@@ -36,7 +45,7 @@ export function PlusMark({ className }: { className?: string }) {
  * The one notice for what the learner's plan doesn't include: "Available with Plus", what Plus
  * unlocks here in one line (`children`), and "See Plus" to the Plus page (the host's `upgrade`
  * route, or `href`). At most one on a page, inline where the locked things are, never a pop-up.
- * `inset` drops its surface for use inside a card or a step that already has one; `cta={false}`
+ * `inset` drops its panel for use inside a card or a step that already has one; `cta={false}`
  * drops its link where the screen's main action already goes to Plus (a task's "See Plus").
  * `title` replaces "Available with Plus" where something the free plan had ends (a free exam
  * plan's first week).
@@ -60,34 +69,29 @@ export function PlusNotice({
   const routes = useLearnRoutes();
 
   return (
-    <div
-      className={cn(
-        "flex items-start gap-3 text-sm leading-5",
-        !inset && cn(SURFACE_CLASS, "p-4"),
-        className,
-      )}
+    <NoticeCard
+      className={cn(inset && "bg-transparent p-0 ring-0", className)}
       data-slot="plus-notice"
     >
-      <span
-        aria-hidden="true"
-        className="bg-muted text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg"
-      >
-        <SparklesIcon className="size-4" />
-      </span>
+      <NoticeCardLeading className="text-muted-foreground">
+        <SparklesIcon />
+      </NoticeCardLeading>
 
-      <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
-        <p className="font-medium">{title ?? t("Available with Plus")}</p>
-        {children && <p className="text-muted-foreground text-pretty">{children}</p>}
+      <NoticeCardContent>
+        <NoticeCardTitle>{title ?? t("Available with Plus")}</NoticeCardTitle>
+        {children && <NoticeCardDescription>{children}</NoticeCardDescription>}
 
         {cta && (
-          <LearnLink
-            className={cn(buttonVariants({ size: "sm", variant: "outline" }), "mt-2")}
-            href={href ?? routes.upgrade}
-          >
-            {t("See Plus")}
-          </LearnLink>
+          <NoticeCardActions>
+            <LearnLink
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+              href={href ?? routes.upgrade}
+            >
+              {t("See Plus")}
+            </LearnLink>
+          </NoticeCardActions>
         )}
-      </div>
-    </div>
+      </NoticeCardContent>
+    </NoticeCard>
   );
 }

@@ -3,10 +3,11 @@
 import { type ChapterLessonView } from "@zoonk/core/view-models/chapter/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useFormatDuration } from "../_utils/time-format";
 import {
+  CURRENT_ROW_CLASS,
   LIST_GROUP_CLASS,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -56,33 +57,28 @@ function LessonRow({
   lesson: ListedLesson;
   position: number;
 }) {
-  const t = useExtracted();
+  const formatDuration = useFormatDuration();
 
   return (
     <ListRowLink
-      className={cn(isNext && "bg-muted/50")}
+      className={cn(isNext && CURRENT_ROW_CLASS)}
       href={href}
+      lessonWritten={lesson.written}
       prefetch={lesson.written ? true : "auto"}
     >
       <ListRowLeading>
         <LessonMark isNext={isNext} lesson={lesson} />
       </ListRowLeading>
-      <ListRowContent className="min-h-13 py-2.5">
-        <ListRowTitle
-          className={cn(
-            lesson.state === "done" && "text-muted-foreground",
-            isNext && "font-semibold",
-          )}
-        >
-          <span className="text-muted-foreground font-normal tabular-nums">{`${position}. `}</span>
+      <ListRowContent>
+        <ListRowTitle className={cn(lesson.state === "done" && "text-muted-foreground")}>
+          <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">{`${position}. `}</span>
           {lesson.title}
         </ListRowTitle>
-        {isNext && <ListRowDescription aria-hidden="true">{t("Up next")}</ListRowDescription>}
       </ListRowContent>
       {(lesson.plusRequired || lesson.minutes > 0) && (
         <ListRowTrailing>
-          {lesson.plusRequired && <PlusMark />}
-          {lesson.minutes > 0 && t("{minutes, number} min", { minutes: lesson.minutes })}
+          {lesson.plusRequired && <PlusMark className="font-sans" />}
+          {lesson.minutes > 0 && formatDuration(lesson.minutes)}
         </ListRowTrailing>
       )}
     </ListRowLink>
@@ -90,20 +86,19 @@ function LessonRow({
 }
 
 /**
- * A unit's or chapter's lessons under their header, in teaching order, numbered, each with its
- * mark and minutes; the next one is the page's "Continue", and is marked "Up next" only when it's
- * the one Today opens next (`upNext`), so two pages never both say "Up next" for different
- * lessons. Every lesson opens in the player, so a lesson a session schedules out of order is
- * always one tap away.
+ * A unit's or chapter's lessons under their header, flat, in teaching order, numbered, each with
+ * its mark and minutes; the next one is the page's "Start" or "Continue", highlighted as "Up next"
+ * when the host enables the mark (`upNext`). Every lesson opens in the player, so a lesson a
+ * session schedules out of order is always one tap away.
  */
 export function LessonList({
   lessonHref,
   lessons,
-  upNext = true,
+  upNext = false,
 }: {
   lessonHref: (lessonId: string) => string;
   lessons: readonly ListedLesson[];
-  /** The page holds the lesson Today opens next, which it marks "Up next". */
+  /** Mark the lesson chosen as next by the host view. */
   upNext?: boolean;
 }) {
   const t = useExtracted();
@@ -120,7 +115,11 @@ export function LessonList({
 
       <ol className={LIST_GROUP_CLASS}>
         {lessons.map((lesson, index) => (
-          <li data-state={lesson.state} key={lesson.lessonId}>
+          <li
+            aria-current={upNext && lesson.state === "next" ? "step" : undefined}
+            data-state={lesson.state}
+            key={lesson.lessonId}
+          >
             <LessonRow
               href={lessonHref(lesson.lessonId)}
               isNext={upNext && lesson.state === "next"}
@@ -131,5 +130,29 @@ export function LessonList({
         ))}
       </ol>
     </PageSection>
+  );
+}
+
+/**
+ * A chapter's or unit's lessons as one segmented bar, one segment per lesson, green once done, so
+ * the aside shows at a glance how far the learner is ("1 of 3").
+ */
+export function LessonProgress({
+  lessons,
+}: {
+  lessons: readonly Pick<ListedLesson, "lessonId" | "state">[];
+}) {
+  return (
+    <span aria-hidden="true" className="flex h-1 w-full gap-[3px]" data-slot="lesson-progress">
+      {lessons.map((lesson) => (
+        <span
+          className={cn(
+            "min-w-1 flex-1 rounded-[2px]",
+            lesson.state === "done" ? "bg-success" : "bg-surface-3",
+          )}
+          key={lesson.lessonId}
+        />
+      ))}
+    </span>
   );
 }

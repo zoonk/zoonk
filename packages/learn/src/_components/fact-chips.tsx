@@ -8,16 +8,11 @@ export function FactChips({ className, ...props }: React.ComponentProps<"ul">) {
   return <ul className={cn("flex flex-wrap gap-2", className)} data-slot="fact-chips" {...props} />;
 }
 
-/** One fact: an icon (decorative, `aria-hidden`) and a few words. */
+/** A chip's look: 22px, the stronger line. */
+const FACT_CHIP_CLASS =
+  "text-muted-foreground ring-input inline-flex h-5.5 items-center gap-1 rounded-md px-2 text-[0.71875rem] font-medium tabular-nums ring-1 ring-inset [&>svg]:size-3 [&>svg]:shrink-0";
+
+/** One fact as a chip (22px, the stronger line): an icon (decorative, `aria-hidden`) and a few words. */
 export function FactChip({ className, ...props }: React.ComponentProps<"li">) {
-  return (
-    <li
-      className={cn(
-        "bg-muted text-foreground [&>svg]:text-muted-foreground inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium tabular-nums [&>svg]:size-4 [&>svg]:shrink-0",
-        className,
-      )}
-      data-slot="fact-chip"
-      {...props}
-    />
-  );
+  return <li className={cn(FACT_CHIP_CLASS, className)} data-slot="fact-chip" {...props} />;
 }

@@ -22,9 +22,43 @@ function getPathAndSearch(url: string): string {
   return `${pathname}${search}`;
 }
 
-/** Called by the host on each of the app's pages, so a section knows where to go back to. */
-export function markAppEntry(): void {
-  getNavigation()?.updateCurrentEntry({ state: APP_ENTRY_STATE });
+function getPathname(url: string): string {
+  return new URL(url, globalThis.location.href).pathname;
+}
+
+function getAppSection(entry: NavigationHistoryEntry | null): string | undefined {
+  const state: unknown = entry?.getState();
+
+  if (typeof state !== "object" || state === null || !("zoonkAppSection" in state)) {
+    return undefined;
+  }
+
+  return typeof state.zoonkAppSection === "string" ? state.zoonkAppSection : undefined;
+}
+
+/** One of the app's pages outside this section or page, whose own views (tabs) don't count. */
+function isOtherAppPage({
+  entry,
+  here,
+  section,
+}: {
+  entry: NavigationHistoryEntry;
+  here: string;
+  section?: string;
+}): boolean {
+  return (
+    entry.url !== null &&
+    isAppEntry(entry) &&
+    getPathname(entry.url) !== here &&
+    !(section !== undefined && getAppSection(entry) === section)
+  );
+}
+
+/** Called by the host on each app page; the host groups pages that belong to one section. */
+export function markAppEntry(section?: string): void {
+  getNavigation()?.updateCurrentEntry({
+    state: { ...APP_ENTRY_STATE, ...(section !== undefined && { zoonkAppSection: section }) },
+  });
 }
 
 /**
@@ -53,26 +87,47 @@ export function cameFromApp(): boolean {
   const navigation = getNavigation();
   const index = navigation?.currentEntry?.index ?? 0;
   const previous = index > 0 ? navigation?.entries()[index - 1] : null;
-  return previous ? isAppEntry(previous) : false;
+  const section = getAppSection(navigation?.currentEntry ?? null);
+
+  return previous
+    ? isAppEntry(previous) && !(section !== undefined && getAppSection(previous) === section)
+    : false;
 }
 
 /** Calls `onChange` when the current history entry changes, for a bar that reads `cameFromApp`. */
 export function subscribeToHistory(onChange: () => void): () => void {
   const navigation = getNavigation();
-  navigation?.addEventListener("currententrychange", onChange);
-  return () => navigation?.removeEventListener("currententrychange", onChange);
+  const controller = new AbortController();
+
+  const notify = () => {
+    /** Next writes history during an insertion effect; notify React after that commit. */
+    queueMicrotask(() => {
+      if (!controller.signal.aborted) {
+        onChange();
+      }
+    });
+  };
+
+  navigation?.addEventListener("currententrychange", notify, { signal: controller.signal });
+  return () => controller.abort();
 }
 
 /**
- * Leaves a section (settings, statistics, the catalog) for the last app page the learner was on
- * before it, however many of the section's pages they went through. Returns whether it found one;
- * otherwise the link goes to its default.
+ * Leaves a section (settings, statistics, the catalog), or a page the sidebar lists (the mistakes
+ * notebook), for the last app page the learner was on before it, however many of the section's
+ * pages or of the page's own views (the notebook's tabs) they went through. Returns whether it
+ * found one; otherwise the link goes to its default.
  */
 export function goBackToApp(): boolean {
   const navigation = getNavigation();
   const index = navigation?.currentEntry?.index ?? 0;
   const entries = navigation?.entries().slice(0, index) ?? [];
-  const entry = entries.findLast((candidate) => isAppEntry(candidate));
+  const here = getPathname(globalThis.location.href);
+  const section = getAppSection(navigation?.currentEntry ?? null);
+
+  const entry = entries.findLast((candidate) =>
+    isOtherAppPage({ entry: candidate, here, section }),
+  );
 
   if (!(navigation && entry)) {
     return false;

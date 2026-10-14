@@ -1,13 +1,13 @@
 "use client";
 
-import { FastForwardIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { FreeWeekOverNotice } from "./free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "./help-limit-notice";
-import { KindTile } from "./kind-tile";
+import { KindDot } from "./kind-tile";
 import {
   ListRowButton,
   ListRowContent,
@@ -79,17 +79,27 @@ export function TestOutStartStatus({
   return null;
 }
 
-/** "Already know this? Take the test": nothing asks first. */
-export function TestOutStartLink({ onStart }: { onStart: () => Promise<TestOutStart> }) {
+/**
+ * "Already know this? Take the test": a quiet line, its action in the text color; nothing asks
+ * first.
+ */
+export function TestOutStartLink({
+  className,
+  onStart,
+}: {
+  /** The line's size and room: 14px by default, 12px as a third line of Today's next block. */
+  className?: string;
+  onStart: () => Promise<TestOutStart>;
+}) {
   const t = useExtracted();
   const { isPending, opening, result, start } = useTestOutStart(onStart);
 
   return (
     <div className="flex flex-col items-start gap-2">
-      <p className="text-muted-foreground text-sm">
+      <p className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}{" "}
         <button
-          className="text-foreground focus-visible:ring-ring/50 -my-2 inline-flex min-h-11 items-center rounded font-medium underline underline-offset-4 outline-none focus-visible:ring-[3px] disabled:opacity-60"
+          className="text-foreground focus-visible:ring-ring/50 -my-2 inline-flex min-h-11 items-center rounded font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] disabled:opacity-60"
           disabled={opening}
           onClick={start}
           type="button"
@@ -125,7 +135,7 @@ export function TestOutStartRow({
     <>
       <ListRowButton disabled={opening} onClick={start}>
         <ListRowLeading>
-          <KindTile icon={FastForwardIcon} kind="practice" />
+          <KindDot kind="practice" />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle className="flex items-center gap-2">
@@ -140,7 +150,7 @@ export function TestOutStartRow({
         </ListRowContent>
       </ListRowButton>
 
-      <div className="px-4 empty:hidden [&:has(>*)]:pb-3">
+      <div className="empty:hidden in-data-[list=panel]:px-4 [&:has(>*)]:pb-3">
         <TestOutStartStatus isPending={isPending} result={result} />
       </div>
     </>

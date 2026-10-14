@@ -12,9 +12,10 @@ type MarkedChapter = {
 };
 
 /**
- * A chapter's mark in a list: a filled play for the next one, a ring for one begun, a filled check
- * once done, a skip mark once done without studying it (`skipped`: the learner showed they know
- * it), an empty circle ahead. The Journey's path and a subject's chapters use the same marks.
+ * A chapter's mark in a list, in `StatusMark`'s marks: the learner's blue dot for the next one, a
+ * small ring for one begun, a green check once done, a skip mark once done without studying it
+ * (`skipped`: the learner showed they know it), a faint dot ahead. The Plan's path and a
+ * subject's chapters use the same marks.
  */
 export function ChapterMark({
   chapter,
@@ -34,8 +35,8 @@ export function ChapterMark({
 
   if (state !== "done" && !writing && lessonsDone > 0 && lessonsTotal > 0) {
     return (
-      <span className="flex size-6 shrink-0 items-center justify-center">
-        <ProgressRing className="size-5" share={lessonsDone / lessonsTotal} />
+      <span className="flex size-4 shrink-0 items-center justify-center">
+        <ProgressRing className="size-3.5" share={lessonsDone / lessonsTotal} />
         <span className="sr-only">
           {t(
             "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",

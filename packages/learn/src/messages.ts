@@ -31,10 +31,13 @@ export async function learnMessages(locale: string): Promise<LearnMessages> {
  * (`useExtracted("goalErrors")`), since goals start from public pages too, the plan's phase names
  * (`useExtracted("planPhases")`), since a shared plan's public page names them, and the belt names
  * (`useExtracted("belts")`) and the goal switcher's (`useExtracted("goalSwitcher")`), since a
- * signed-in learner's top bar shows their avatar and their goals on public pages too.
+ * signed-in learner's top bar shows their avatar and their goals on public pages too. The buddy's
+ * names (`useExtracted("buddyNames")`) also name the command palette's actions on every page.
  * Apps ship these everywhere and the rest of the catalog only where learn screens render.
  */
 export async function learnSiteMessages(locale: string): Promise<LearnMessages> {
-  const { belts, feedback, goalErrors, goalSwitcher, planPhases } = await learnMessages(locale);
-  return { belts, feedback, goalErrors, goalSwitcher, planPhases };
+  const { belts, buddyNames, feedback, goalErrors, goalSwitcher, planPhases } =
+    await learnMessages(locale);
+
+  return { belts, buddyNames, feedback, goalErrors, goalSwitcher, planPhases };
 }

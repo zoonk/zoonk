@@ -6,57 +6,90 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
+import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
-import { WIDE_PAGE_CLASS } from "../shell/learn-shell";
+import { PageWithAside } from "../shell/learn-shell";
+import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
 /**
- * A page opened from a tab (a subject, a chapter, a unit, the exam): its identity first (a tile,
- * the group it belongs to, its name and a line of facts), one main action right under it with the
- * page's other actions beside it, then its sections. From `lg` the identity and the action stay in
- * a column on the left while the sections scroll on the right, as main's course pages do.
+ * A page opened from a tab (a subject, a chapter, a unit, the exam, the mistakes notebook), as
+ * Linear's issue view: its bar (`bar`, the way back), its header (the group it belongs to as a mono
+ * eyebrow, its name, a mono line of facts) with its one main action and its "…" beside the name
+ * from `md` (under it, the main action full width, on a phone), then its sections flat on the page.
+ * Its properties (`aside`: coverage, details, practice) sit in the full-height aside from 72rem,
+ * and follow the sections in the same column under it. The bar sits in the page's own column, so
+ * from 72rem it ends where the aside begins.
  *
  * ```tsx
- * <DetailLayout>
+ * <DetailLayout
+ *   aside={<DetailAsideSection title="Details" titleId="…">…</DetailAsideSection>}
+ *   asideLabel="About this chapter"
+ *   bar={<LearnPageBar back={{ href: "/plan", label: "Plan" }} title="Circuits" />}
+ * >
  *   <DetailAside>
  *     <DetailHero>
- *       <KindTile kind="lesson" size="lg" />
  *       <DetailHeroText>
  *         <DetailEyebrow>Chapter 5</DetailEyebrow>
  *         <DetailTitle>Circuits</DetailTitle>
- *         <DetailFacts>4 lessons</DetailFacts>
+ *         <DetailFacts>4 lessons · 26 min · 50% done</DetailFacts>
  *       </DetailHeroText>
+ *       <DetailActions>
+ *         <DetailContinueLink href="/learn/1" started />
+ *         <DetailMenu label="Chapter options">…menu items…</DetailMenu>
+ *       </DetailActions>
  *     </DetailHero>
- *     <DetailActions>
- *       <DetailContinueLink href="/learn/1" share={0.5} started />
- *       <DetailMenu label="Chapter options">…menu items…</DetailMenu>
- *     </DetailActions>
  *   </DetailAside>
  *   <DetailContent>…sections…</DetailContent>
  * </DetailLayout>
  * ```
  */
-export function DetailLayout({ className, ...props }: React.ComponentProps<"div">) {
+export function DetailLayout({
+  aside,
+  asideLabel = "",
+  bar,
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"article"> & {
+  /** The page's properties, beside its sections from 72rem. */
+  aside?: React.ReactNode;
+  /** The aside's accessible name. */
+  asideLabel?: string;
+  /** The page's bar (`LearnPageBar`), over its header. */
+  bar?: React.ReactNode;
+}) {
+  const page = (
+    <article className="flex min-w-0 flex-col gap-8" {...props}>
+      {bar}
+      <div
+        className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}
+        data-slot="detail-layout"
+      >
+        {children}
+      </div>
+    </article>
+  );
+
+  if (!aside) {
+    return page;
+  }
+
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-8 lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:items-start lg:gap-14",
-        WIDE_PAGE_CLASS,
-        className,
-      )}
-      data-slot="detail-layout"
-      {...props}
-    />
+    <PageWithAside aside={aside} asideLabel={asideLabel}>
+      {page}
+    </PageWithAside>
   );
 }
 
-/** The identity column: the hero and its actions, in sight while the sections scroll from `lg`. */
+/** The page's header and what it says first, on top of its sections. */
 export function DetailAside({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-col gap-5 lg:sticky lg:top-24", className)}
+      className={cn("flex min-w-0 flex-col gap-5", className)}
       data-slot="detail-aside"
       {...props}
     />
@@ -73,11 +106,17 @@ export function DetailContent({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-/** The page's tile beside its name on phones, above it from `lg`. */
+/**
+ * The page's header: the eyebrow, the name and the facts, and its actions (`DetailActions`) beside
+ * them from `md`, under them on a phone.
+ */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("flex items-start gap-4 lg:flex-col lg:gap-5", className)}
+      className={cn(
+        "flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        className,
+      )}
       data-slot="detail-hero"
       {...props}
     />
@@ -95,37 +134,22 @@ export function DetailHeroText({ className, ...props }: React.ComponentProps<"di
 }
 
 /** What the page belongs to: "Chapter 5", the notice's group, the unit's level. */
-export function DetailEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground text-sm font-medium", className)}
-      data-slot="detail-eyebrow"
-      {...props}
-    />
-  );
-}
+export { PageEyebrow as DetailEyebrow } from "./page";
 
 export function DetailTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
-    <h1
-      className={cn(
-        "text-[1.75rem] leading-tight font-bold tracking-tight text-balance lg:text-3xl",
-        className,
-      )}
-      data-slot="detail-title"
-      {...props}
-    >
+    <h1 className={cn("text-title text-balance", className)} data-slot="detail-title" {...props}>
       {children}
     </h1>
   );
 }
 
-/** A line of facts under the name, separated by dots. */
+/** A line of facts under the name, separated by dots, in the mono face as every number is. */
 export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center gap-x-1.5 pt-1 text-sm",
+        "text-muted-foreground flex flex-wrap items-center gap-x-1.5 pt-1 font-mono text-xs tabular-nums",
         className,
       )}
       data-slot="detail-facts"
@@ -134,11 +158,11 @@ export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) 
   );
 }
 
-/** The main action, then the page's other actions (an icon button, its "…"). */
+/** The main action, then the page's other actions (its "…"), at the end of the title's row. */
 export function DetailActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex items-center gap-2", className)}
+      className={cn("flex items-center gap-2 md:shrink-0", className)}
       data-slot="detail-actions"
       {...props}
     />
@@ -146,18 +170,21 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 }
 
 /**
- * A detail page's main action, exactly as main's course pages draw their Continue (the default
- * button filling the row), for one that's a button rather than a link.
+ * A detail page's main action: the primary button at its 44px, as wide as the row beside the
+ * page's "…" on a phone, as wide as its words from `md`, for one that's a link or a button.
  */
-export const DETAIL_PRIMARY_CLASS = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
+export const DETAIL_PRIMARY_CLASS = cn(
+  buttonVariants({ size: "lg" }),
+  "min-w-0 flex-1 md:flex-none md:px-5",
+);
 
 /** The "…" beside a detail page's main action (an `icon` button), as tall as it. */
-export const DETAIL_MENU_TRIGGER_CLASS = "shrink-0";
+export const DETAIL_MENU_TRIGGER_CLASS = "size-11 shrink-0";
 
 /**
- * The page's other actions beside its main one, as main's course pages have them: an outline "…"
- * the height of the main action, opening a menu of `children` (`DropdownMenuItem`s, or
- * `ContentVoteMenuItems`). `onOpenChange` lets a screen pause its keys while the menu is open.
+ * The page's other actions beside its main one: an outline "…" the height of the main action,
+ * opening a menu of `children` (`DropdownMenuItem`s, or `ContentVoteMenuItems`). `onOpenChange`
+ * lets a screen pause its keys while the menu is open.
  */
 export function DetailMenu({
   children,
@@ -186,57 +213,97 @@ export function DetailMenu({
 }
 
 /**
- * The main action's words exactly as main's course pages write them: the label, then how far the
- * learner is in small muted numbers (the whole phrase for screen readers), or a chevron when
- * there's no progress to tell.
- */
-export function DetailPrimaryLabel({ label, share }: { label: string; share?: number | null }) {
-  const t = useExtracted();
-
-  if (share === undefined || share === null) {
-    return (
-      <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
-      </span>
-    );
-  }
-
-  const percent = String(Math.round(Math.min(Math.max(share, 0), 1) * 100));
-
-  return (
-    <span className="inline-flex min-w-0 items-baseline justify-center gap-1.5 leading-none">
-      <span className="min-w-0 truncate leading-none">{label}</span>
-      <span
-        aria-hidden="true"
-        className="text-primary-foreground/65 text-[0.7rem] leading-none font-medium tabular-nums"
-      >
-        {`${percent}%`}
-      </span>
-      <span className="sr-only">{t("{percent}% complete", { percent })}</span>
-    </span>
-  );
-}
-
-/**
- * "Continue 32%" (or "Start 0%"): the page's way in, with how far the learner is in it beside the
- * label, as main's course pages say it, instead of a separate bar.
+ * "Continue" (or "Start"): the page's way in, which Enter follows from anywhere on the page, its
+ * ⏎ shown on devices with a keyboard at hand. How far the learner is sits in the facts line, never
+ * inside the button.
  */
 export function DetailContinueLink({
   href,
-  share,
+  lessonWritten,
   started,
 }: {
   href: string;
-  /** How much of the page's lessons or topics is done, between 0 and 1. */
-  share: number;
+  lessonWritten?: boolean;
   started: boolean;
 }) {
   const t = useExtracted();
+  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink className={DETAIL_PRIMARY_CLASS} href={href}>
-      <DetailPrimaryLabel label={started ? t("Continue") : t("Start")} share={share} />
+    <LearnLink
+      className={DETAIL_PRIMARY_CLASS}
+      href={href}
+      lessonWritten={lessonWritten}
+      prefetch={lessonWritten === false ? "auto" : true}
+      ref={ref}
+    >
+      {started ? t("Continue") : t("Start")}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </LearnLink>
+  );
+}
+
+/** "33% done": how far the learner is in a page's lessons or topics, for its facts line. */
+export function useDoneShare() {
+  const t = useExtracted();
+
+  return (share: number): string =>
+    t("{percent}% done", { percent: String(Math.round(Math.min(Math.max(share, 0), 1) * 100)) });
+}
+
+/**
+ * A block of the aside: its label, then its content (a page's coverage, its properties, more to
+ * do). Under 72rem it follows the sections as one of them.
+ */
+export function DetailAsideSection({
+  children,
+  className,
+  detail,
+  title,
+  titleId,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** A quiet count beside the label ("180 q"). */
+  detail?: React.ReactNode;
+  title: string;
+  titleId: string;
+}) {
+  return (
+    <PageSection aria-labelledby={titleId} className={cn("gap-2.5", className)}>
+      <PageSectionHeader>
+        <PageSectionTitle id={titleId}>{title}</PageSectionTitle>
+        {detail && (
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">{detail}</span>
+        )}
+      </PageSectionHeader>
+      {children}
+    </PageSection>
+  );
+}
+
+/** A page's properties, one row each (see `DetailProperty`). */
+export function DetailProperties({ children }: { children: React.ReactNode }) {
+  return <dl className="flex flex-col">{children}</dl>;
+}
+
+/**
+ * One property, Linear's way: its name muted on the left, its value on the right (`mono` for a
+ * number or a date).
+ */
+export function DetailProperty({
+  children,
+  label,
+  mono = false,
+}: {
+  children: React.ReactNode;
+  label: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex min-h-8.5 items-center justify-between gap-3 text-[0.8125rem]">
+      <dt className="text-muted-foreground min-w-0 truncate">{label}</dt>
+      <dd className={cn("min-w-0 text-right", mono && "font-mono tabular-nums")}>{children}</dd>
+    </div>
   );
 }

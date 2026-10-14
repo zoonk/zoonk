@@ -20,8 +20,21 @@ export function toLocalIsoDate(date: Date): string {
 
 /** Whole days from the viewer's today to a view model's calendar day, never below zero. */
 export function daysUntilIsoDate({ isoDate, today }: { isoDate: string; today: Date }): number {
+  return Math.max(0, countDaysUntil({ isoDate, today }));
+}
+
+/** Whole days from the browser's `today` to a YYYY-MM-DD date, negative once it passed. */
+function countDaysUntil({ isoDate, today }: { isoDate: string; today: Date }): number {
   const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.max(0, Math.round((isoDateToUtc(isoDate).getTime() - start) / MS_PER_DAY));
+  return Math.round((isoDateToUtc(isoDate).getTime() - start) / MS_PER_DAY);
+}
+
+/**
+ * The date is behind the browser's `today`: a goal's date that passed has no days left to count
+ * ("The day is here" read every day after Lucas's).
+ */
+export function hasIsoDatePassed({ isoDate, today }: { isoDate: string; today: Date }): boolean {
+  return countDaysUntil({ isoDate, today }) < 0;
 }
 
 /** Whole days from `from` to `to`, both YYYY-MM-DD. */

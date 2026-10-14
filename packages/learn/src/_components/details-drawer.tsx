@@ -13,35 +13,40 @@ import {
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
+/** How the drawer opens: a quiet text link, or a secondary action in the task's `TaskActions` row. */
+const TRIGGER: Record<"link" | "secondary", React.ReactElement> = {
+  link: (
+    <Button
+      className="text-muted-foreground hover:text-foreground self-start px-0 underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
+      size="lg"
+      variant="ghost"
+    />
+  ),
+  secondary: <Button className="shrink-0" size="xl" variant="outline" />,
+};
+
 /**
  * Detail that can wait (the questions with their answers, every criterion's comment) behind a
- * quiet text link, in a sheet from the bottom, so the screen keeps to its one thing.
+ * quiet text link, or a secondary action beside the main one (`trigger="secondary"`), in a sheet
+ * from the bottom, so the screen keeps to its one thing.
  */
 export function DetailsDrawer({
   children,
   label,
   title,
+  trigger = "link",
 }: {
   children: React.ReactNode;
-  /** The link's words, "See the questions". */
+  /** The trigger's words, "See the questions". */
   label: string;
   title: string;
+  trigger?: "link" | "secondary";
 }) {
   const t = useExtracted();
 
   return (
     <Drawer>
-      <DrawerTrigger
-        render={
-          <Button
-            className="text-muted-foreground hover:text-foreground mx-auto underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
-            size="lg"
-            variant="ghost"
-          />
-        }
-      >
-        {label}
-      </DrawerTrigger>
+      <DrawerTrigger render={TRIGGER[trigger]}>{label}</DrawerTrigger>
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">

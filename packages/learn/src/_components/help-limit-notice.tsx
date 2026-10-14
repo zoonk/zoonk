@@ -90,9 +90,9 @@ function LimitNoticeBody({
       <p className={TEXT_CLASS}>{message}</p>
 
       {needsAccount(limit) ? (
-        <LinkComponent className={action} href={routes.signUp}>
+        <a className={action} href={routes.signUp}>
           {t("Create a free account")}
-        </LinkComponent>
+        </a>
       ) : (
         <LinkComponent className={action} href={routes.upgrade}>
           {t("See Plus")}

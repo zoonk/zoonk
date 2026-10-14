@@ -4,24 +4,35 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
 /**
- * Where the learner is in a few steps (onboarding's screens, a result told in steps): one dot per
- * step, the current one a longer pill, announced as "Step 2 of 4".
+ * Where the learner is in a few steps (onboarding's screens, a result told in steps): one short
+ * segment per step, the ones behind a quiet gray (green means right everywhere else), the current
+ * one in the text color, announced as "Step 2 of 4".
  */
-export function StepDots({ current, total }: { current: number; total: number }) {
+export function StepDots({
+  className,
+  current,
+  total,
+}: {
+  className?: string;
+  current: number;
+  total: number;
+}) {
   const t = useExtracted();
 
   return (
     <div
       aria-label={t("Step {current, number} of {total, number}", { current: current + 1, total })}
-      className="flex items-center gap-1.5"
+      className={cn("flex w-24 items-center gap-[3px]", className)}
       data-slot="step-dots"
       role="img"
     >
       {Array.from({ length: total }, (_, index) => (
         <span
           className={cn(
-            "bg-foreground/20 h-1.5 rounded-full transition-[width,background-color] motion-reduce:transition-none",
-            index === current ? "bg-foreground w-5" : "w-1.5",
+            "h-1 flex-1 rounded-xs transition-colors motion-reduce:transition-none",
+            index < current && "bg-foreground/25",
+            index === current && "bg-foreground",
+            index > current && "bg-surface-3",
           )}
           key={index}
         />

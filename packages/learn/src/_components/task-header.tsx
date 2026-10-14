@@ -3,22 +3,29 @@
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLocale } from "next-intl";
+import { useSyncExternalStore } from "react";
 
 /**
  * The header of every full-screen task (a lesson, a block of questions, a practice, a test-out, a
- * checkpoint, a mock): close on the left, the task's title centered with one quiet line under it
- * (its minutes, or "1 of 3"), the "…" menu on the right and one thin bar for how far into the task
- * the learner is. The sides take the same room, so the title stays centered.
+ * checkpoint, a mock): close on the left, the task's title centered, the "…" menu on the right and,
+ * under them, how far into the task the learner is. The sides take the same room, so the title
+ * stays centered.
  */
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("shrink-0", className)} data-slot="task-header" {...props} />;
 }
 
-/** The header's row: close, the title and the menu, in that order. */
+/**
+ * The header's row: close, the title and the menu, in that order, in the task's column at every
+ * size, so the close and the menu sit on the column's edges instead of the screen's corners.
+ */
 export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("flex items-center gap-2 px-3 py-2 sm:px-4 xl:py-3", className)}
+      className={cn(
+        "max-w-column mx-auto flex w-full items-center gap-2 px-4 py-2 xl:py-3",
+        className,
+      )}
       {...props}
     />
   );
@@ -45,35 +52,159 @@ export function TaskHeaderSide({
 }
 
 /**
- * The task's name is the page's heading. It's never cut: a long one balances over two lines, with
- * the quiet line (`detail`) under it.
+ * The header's ghost icon buttons (close on the left, the "…" menu on the right) reach past the
+ * column by their padding, so their glyphs sit on the text edge, as the content under them does.
  */
-export function TaskHeaderTitle({ detail, title }: { detail: React.ReactNode; title: string }) {
+export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
+
+/**
+ * The task's name is the page's heading. It's never cut: a long one balances over two lines. How
+ * far the learner is shows in the bar under the header, so the title stands alone; only a task
+ * that runs on a clock (a call) keeps a quiet line (`detail`) under it.
+ */
+export function TaskHeaderTitle({
+  announce = true,
+  detail,
+  title,
+}: {
+  /**
+   * Whether screen readers hear the quiet line when it changes; off for a line that changes on its
+   * own, like a call's clock every second.
+   */
+  announce?: boolean;
+  detail?: React.ReactNode;
+  title: string;
+}) {
   return (
     <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
       <h1 className="text-foreground text-sm leading-5 font-medium">{title}</h1>
-      <p aria-live="polite" className="text-muted-foreground text-xs leading-4 tabular-nums">
-        {detail}
-      </p>
+      {detail && (
+        <p
+          aria-live={announce ? "polite" : undefined}
+          className="text-muted-foreground font-mono text-[0.6875rem] leading-4 tabular-nums"
+        >
+          {detail}
+        </p>
+      )}
     </div>
   );
 }
 
-/** One thin bar under the header for the task in view, never the whole session. */
+/**
+ * How far into the task in view the learner is, never the whole session: one 4px bar under the
+ * header, in the task's column, for a task told as one run (a mock's questions, a test-out).
+ */
 export function TaskHeaderProgress({ label, value }: { label: string; value: number }) {
   const locale = useLocale();
 
   return (
     <ProgressRoot
       aria-label={label}
-      className="gap-0"
+      className="max-w-column mx-auto w-full gap-0 px-4 pb-1"
       data-slot="task-header-progress"
       locale={locale}
       value={Math.min(100, Math.max(0, value))}
     >
-      <ProgressTrack className="h-1 rounded-none">
-        <ProgressIndicator />
+      <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
+        <ProgressIndicator className="bg-foreground rounded-xs" />
       </ProgressTrack>
     </ProgressRoot>
+  );
+}
+
+/**
+ * Where a screen stands in a task told screen by screen: still ahead, the one in view, read, done
+ * (a step of the day finished), or answered right or wrong the first time.
+ */
+export type TaskSegment = "ahead" | "current" | "done" | "read" | "right" | "wrong";
+
+/** From this many screens, the segments sit a hairline apart so each keeps some width on phones. */
+const DENSE_SEGMENTS = 40;
+
+/**
+ * Only answers carry color, so green and red stand out: a read screen is a quiet gray, the one in
+ * view is half filled on the track, and what's ahead is the bare track.
+ */
+const SEGMENT_CLASS: Record<TaskSegment, string> = {
+  ahead: "bg-surface-3",
+  current: "bg-surface-3",
+  done: "bg-success",
+  read: "bg-foreground/25",
+  right: "bg-success",
+  wrong: "bg-destructive",
+};
+
+/**
+ * The task's progress as one short segment per screen, under the header and as wide as the task's
+ * column: read screens fill in quietly, answers fill green when right and red when wrong, so the
+ * learner sees how it's going at a glance. Segments share the width evenly, or by `weights` (the
+ * day's blocks by their minutes, as Today draws them). Still one progress bar for screen readers
+ * (`label`, `value` in percent).
+ */
+export function TaskHeaderSegments({
+  label,
+  segments,
+  value,
+  weights,
+}: {
+  label: string;
+  segments: readonly TaskSegment[];
+  value: number;
+  /** Each segment's share of the width, in the same order; even without them. */
+  weights?: readonly number[];
+}) {
+  const locale = useLocale();
+
+  return (
+    <ProgressRoot
+      aria-label={label}
+      className="max-w-column mx-auto w-full px-4 pb-1"
+      data-slot="task-header-segments"
+      locale={locale}
+      value={Math.min(100, Math.max(0, value))}
+    >
+      <span
+        aria-hidden="true"
+        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-[3px]")}
+      >
+        {segments.map((segment, index) => (
+          <span
+            className={cn(
+              "flex min-w-0 flex-1 overflow-hidden rounded-xs transition-colors motion-reduce:transition-none",
+              SEGMENT_CLASS[segment],
+            )}
+            data-segment={segment}
+            // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
+            key={index}
+            style={weights ? { flexGrow: Math.max(1, weights[index] ?? 1) } : undefined}
+          >
+            {segment === "current" && <span className="bg-foreground/50 w-1/2" />}
+          </span>
+        ))}
+      </span>
+    </ProgressRoot>
+  );
+}
+
+/** Where a task's aside shows (`TaskAside`): Tailwind's `lg`. */
+const ASIDE_QUERY = "(min-width: 64rem)";
+
+function subscribeToAsideQuery(onChange: () => void) {
+  const query = globalThis.matchMedia(ASIDE_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+/**
+ * Whether the screen is wide enough for the task's aside, for what has to behave differently
+ * there, not just look different (the buddy docked in the aside instead of a drawer). Layout stays
+ * in CSS: this is false on the server and while hydrating. It lives with the header, the task
+ * chrome's client module.
+ */
+export function useTaskAsideShown(): boolean {
+  return useSyncExternalStore(
+    subscribeToAsideQuery,
+    () => globalThis.matchMedia(ASIDE_QUERY).matches,
+    () => false,
   );
 }

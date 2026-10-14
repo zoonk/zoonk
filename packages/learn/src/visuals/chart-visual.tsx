@@ -275,7 +275,7 @@ export function ChartVisualView({
 
   return (
     <figure
-      className={cn("bg-card flex w-full flex-col gap-3 rounded-2xl border p-4", className)}
+      className={cn("bg-card flex w-full flex-col gap-3 rounded-xl border p-4", className)}
       data-slot="chart-visual"
     >
       <figcaption className="text-foreground text-sm font-semibold text-balance">

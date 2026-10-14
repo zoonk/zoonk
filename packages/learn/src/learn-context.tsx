@@ -9,10 +9,18 @@ type LearnRoute = string;
 
 export type LearnLinkComponentProps = {
   "aria-current"?: "page";
+  /** Lines that say more about the link than its name, such as a row's line under its name. */
+  "aria-describedby"?: string;
+  /** A name said in one run, where the link's words would read as separate parts. */
+  "aria-label"?: string;
+  /** A link that stands for a whole card is named by the card's own words. */
+  "aria-labelledby"?: string;
   /** Optional so a link can be a menu item's `render` element, which supplies the children. */
   children?: ReactNode;
   className?: string;
   href: LearnRoute;
+  /** A known written lesson opens directly; other lesson clicks may need to request writing. */
+  lessonWritten?: boolean;
   /** Runs before the host navigates; preventing its default keeps the link from navigating. */
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /**

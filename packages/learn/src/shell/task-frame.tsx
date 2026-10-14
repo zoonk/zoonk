@@ -1,83 +1,184 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@zoonk/ui/components/alert-dialog";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { useEnterClick, useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useRef, useState } from "react";
 import {
+  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderProgress,
+  TaskHeaderSegments,
   TaskHeaderSide,
+  type TaskSegment,
 } from "../_components/task-header";
+import {
+  TASK_MAIN_ACTION_CLASS,
+  TaskActionBar,
+  TaskAside,
+  type TaskAsideWidth,
+  TaskBody,
+  getTaskAsideRootProps,
+} from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
+
+/**
+ * What leaving asks first, when it would leave something unsent behind (an essay being written):
+ * the question, what happens to the work, and the two answers, in the screen's own words.
+ */
+export type TaskExitConfirmation = {
+  cancel: string;
+  confirm: string;
+  description: string;
+  title: string;
+};
 
 function TaskCloseLink({
   beforeExit,
   closeOnEscape,
+  confirmExit,
   href,
   toApp,
 }: {
   beforeExit?: () => Promise<unknown> | null;
   closeOnEscape: boolean;
+  confirmExit?: TaskExitConfirmation | null;
   href: string | null;
   toApp: boolean;
 }) {
   const t = useExtracted();
   const ref = useEscapeClick<HTMLAnchorElement>({ enabled: closeOnEscape });
+  const [confirming, setConfirming] = useState(false);
+  // Once the learner chose to leave (or the saves were waited for), the link's next click leaves.
+  const leaving = useRef(false);
 
   if (!href) {
     return <span aria-hidden="true" className="size-9 shrink-0" />;
   }
 
+  const leave = (link: HTMLAnchorElement | null) => {
+    leaving.current = true;
+    link?.click();
+  };
+
   // A task opened from several pages leaves for the one it was opened from, as it was. Work still
-  // being saved finishes first: the same link is followed once it has.
+  // being saved finishes first: the same link is followed once it has. Unsent work asks first.
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
       event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
-    const saving = isPlainClick ? beforeExit?.() : null;
+    if (!isPlainClick) {
+      return;
+    }
+
+    if (confirmExit && !leaving.current) {
+      event.preventDefault();
+      setConfirming(true);
+      return;
+    }
+
+    const saving = leaving.current ? null : beforeExit?.();
 
     if (saving) {
       event.preventDefault();
       const link = event.currentTarget;
-      void saving.finally(() => link.click());
+      void saving.finally(() => leave(link));
       return;
     }
 
-    if (toApp && isPlainClick && goBackToApp()) {
+    if (toApp && goBackToApp()) {
       event.preventDefault();
     }
   };
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "icon", variant: "ghost" }), "shrink-0")}
-      href={href}
-      onClick={onClick}
-      ref={ref}
-    >
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Leave")}</span>
-    </LearnLink>
+    <>
+      <LearnLink
+        className={cn(
+          buttonVariants({ size: "icon", variant: "ghost" }),
+          "shrink-0",
+          TASK_HEADER_ICON_CLASS.start,
+        )}
+        href={href}
+        onClick={onClick}
+        ref={ref}
+      >
+        <XIcon aria-hidden="true" />
+        <span className="sr-only">{t("Leave")}</span>
+      </LearnLink>
+
+      {confirmExit && (
+        <AlertDialog onOpenChange={setConfirming} open={confirming}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{confirmExit.title}</AlertDialogTitle>
+              <AlertDialogDescription>{confirmExit.description}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{confirmExit.cancel}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  setConfirming(false);
+                  leave(ref.current);
+                }}
+              >
+                {confirmExit.confirm}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+    </>
   );
 }
 
 /**
- * A focused task has the whole screen, like a lesson: the same header as every full-screen task
- * (leave on the left, its title in the middle, an action on the right, one thin bar under it), one
- * column and one main action. On phones the action sits at the bottom, where the thumb is; on wide
- * screens the content and its action stay together as one group in the middle, instead of the
- * action floating at the bottom of an empty viewport. Checkpoints, mock exams, essays, calls and
- * pattern drills all use it.
+ * What helps with a task beside it from `lg` (see `TaskAside`): its label and a quiet fact on its
+ * header row, what only wide screens show there (`children`: the day's queue, the answer sheet,
+ * the Trickster), and its foot level with the action bar (`footer`: Hand in). A question's own
+ * text moves into it with `TaskAsideContent` instead.
+ */
+export type TaskFrameAside = {
+  children?: React.ReactNode;
+  footer?: React.ReactNode;
+  /** Its name for screen readers. */
+  label: string;
+  meta?: React.ReactNode;
+  title?: React.ReactNode;
+  width?: TaskAsideWidth;
+};
+
+/**
+ * A focused task has the whole screen, like a lesson, and every task wears the same chrome: one
+ * header (leave on the left, its title in the middle, an action on the right, its progress under
+ * them), one column starting at the top, and its actions pinned to the bottom over a hairline, at
+ * every screen size, so the main action is always in the same place. From `lg` an `aside` can sit
+ * beside the column, full height behind a hairline, with what helps with the task. Checkpoints,
+ * mock exams, essays, calls, pattern drills and results told in steps all use it.
  */
 export function TaskFrame({
+  aside,
   beforeExit,
   children,
   closeOnEscape = false,
+  confirmExit = null,
   exitHref,
   exitToApp = false,
   footer,
@@ -85,6 +186,7 @@ export function TaskFrame({
   headerTitle,
   progress,
 }: {
+  aside?: TaskFrameAside | null;
   /**
    * Work still being saved when the learner leaves (a mock's last answer): a promise the exit waits
    * for, so leaving never drops it; null when nothing is in flight.
@@ -93,54 +195,81 @@ export function TaskFrame({
   children: React.ReactNode;
   /** Escape leaves too, for a screen with nothing to lose (a result); never mid-task. */
   closeOnEscape?: boolean;
+  /** Leaving asks this first, while it would leave unsent work behind; null leaves at once. */
+  confirmExit?: TaskExitConfirmation | null;
   /** Null while leaving would lose work, such as a call being saved. */
   exitHref: string | null;
   /**
-   * Leaving goes back to the app page the task was opened from (Today, the Journey, the exam),
+   * Leaving goes back to the app page the task was opened from (Today, the Plan, the exam),
    * when the browser has it; `exitHref` otherwise.
    */
   exitToApp?: boolean;
+  /** The pinned action bar's content: a `TaskActions` row, with quiet lines around it. */
   footer?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
-  /** Where the learner is, from 0 to 100, as a thin bar under the header. */
-  progress?: { label: string; value: number };
+  /**
+   * Where the learner is, from 0 to 100, as a thin bar under the header; with `segments`, one
+   * segment per question instead, green or red once answered; or a bar of the task's own (`bar`),
+   * like the Trickster's shield.
+   */
+  progress?:
+    | { bar: React.ReactNode }
+    | { label: string; segments?: readonly TaskSegment[]; value: number };
 }) {
+  const asideRoot = aside
+    ? getTaskAsideRootProps({ footer: Boolean(aside.footer), width: aside.width })
+    : null;
+
   return (
-    <div className="bg-background text-foreground flex min-h-dvh flex-col" data-slot="task-frame">
-      <TaskHeader>
+    <div
+      className={cn("bg-background text-foreground flex min-h-dvh flex-col", asideRoot?.className)}
+      data-aside={asideRoot?.["data-aside"]}
+      data-slot="task-frame"
+    >
+      <TaskHeader className="bg-background sticky top-0 z-20">
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <TaskCloseLink
               beforeExit={beforeExit}
               closeOnEscape={closeOnEscape}
+              confirmExit={confirmExit}
               href={exitHref}
               toApp={exitToApp}
             />
           </TaskHeaderSide>
-          <div className="text-muted-foreground flex min-w-0 shrink justify-center text-center text-sm text-balance">
+          <div className="text-foreground flex min-w-0 shrink justify-center text-center text-sm font-medium text-balance">
             {headerTitle}
           </div>
           <TaskHeaderSide align="end">{headerEnd}</TaskHeaderSide>
         </TaskHeaderBar>
 
-        {progress && <TaskHeaderProgress label={progress.label} value={progress.value} />}
+        {progress && "bar" in progress && progress.bar}
+
+        {progress && "segments" in progress && progress.segments && (
+          <TaskHeaderSegments
+            label={progress.label}
+            segments={progress.segments}
+            value={progress.value}
+          />
+        )}
+
+        {progress && "value" in progress && !progress.segments && (
+          <TaskHeaderProgress label={progress.label} value={progress.value} />
+        )}
       </TaskHeader>
 
-      <div
-        className="flex flex-1 flex-col lg:justify-center-safe lg:py-10"
-        data-slot="task-frame-body"
-      >
-        <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 pt-2 pb-6 lg:flex-none">
-          {children}
-        </main>
+      <main className="flex flex-1 flex-col" data-slot="task-frame-body">
+        <TaskBody>{children}</TaskBody>
+      </main>
 
-        {footer && (
-          <div className="mx-auto flex w-full max-w-xl flex-col gap-2 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            {footer}
-          </div>
-        )}
-      </div>
+      {footer && <TaskActionBar>{footer}</TaskActionBar>}
+
+      {aside && (
+        <TaskAside footer={aside.footer} label={aside.label} meta={aside.meta} title={aside.title}>
+          {aside.children}
+        </TaskAside>
+      )}
     </div>
   );
 }
@@ -150,7 +279,7 @@ export function TaskSaveError({ onRetry }: { onRetry: () => void }) {
   const t = useExtracted();
 
   return (
-    <p className="text-destructive text-center text-sm" role="alert">
+    <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't go through. Your answers are kept.")}{" "}
       <button className="font-semibold underline" onClick={onRetry} type="button">
         {t("Try again")}
@@ -159,43 +288,95 @@ export function TaskSaveError({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-/** A task's one main action. Enter presses it. */
+/**
+ * Whether an element is drawn: a main action one screen size hides (`lg:hidden`) leaves Enter to
+ * the one that size shows.
+ */
+function isShown(element: HTMLElement | null): boolean {
+  return element !== null && element.getClientRects().length > 0;
+}
+
+/**
+ * A task's one main action, in its `TaskActions` row: the bar's free width on a phone, its label's
+ * from `lg`. Enter presses it while it's shown.
+ */
 export function TaskMainButton({
   busy = false,
   children,
+  className,
   disabled = false,
   onClick,
 }: {
   /** Its request is on its way: a spinner beside the label (say what's happening), not dimmed. */
   busy?: boolean;
   children: React.ReactNode;
+  /** Only to show it at some screen sizes (`lg:hidden`). */
+  className?: string;
   disabled?: boolean;
   onClick: () => void;
 }) {
-  const isDisabled = disabled || busy;
+  const ref = useRef<HTMLButtonElement>(null);
+  const mounted = useIsMounted();
+  const isDisabled = disabled || busy || !mounted;
 
-  useEnterKey(onClick, { enabled: !isDisabled });
+  useEnterKey(() => (isShown(ref.current) ? onClick() : false), { enabled: !isDisabled });
 
   return (
     <Button
-      className={cn("w-full", busy && "disabled:opacity-100")}
+      aria-keyshortcuts="Enter"
+      className={cn(TASK_MAIN_ACTION_CLASS, busy && "disabled:opacity-100", className)}
       disabled={isDisabled}
       onClick={onClick}
+      ref={ref}
       size="xl"
     >
       {busy && <Spinner aria-hidden="true" />}
       {children}
+      {!busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
     </Button>
   );
 }
 
-/** A link styled as a task's main action, for leaving it once it's done. Enter follows it. */
-export function TaskMainLink({ children, href }: { children: React.ReactNode; href: string }) {
-  const ref = useEnterClick<HTMLAnchorElement>();
+/**
+ * A link styled as a task's main action, for leaving it once it's done. Enter follows it while
+ * it's shown. A task opened from several pages (`toApp`) goes back to the one it was opened from,
+ * as the ✕ does.
+ */
+export function TaskMainLink({
+  children,
+  className,
+  href,
+  toApp = false,
+}: {
+  children: React.ReactNode;
+  /** Only to show it at some screen sizes (`max-lg:hidden`). */
+  className?: string;
+  href: string;
+  toApp?: boolean;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  useEnterKey(() => (isShown(ref.current) ? ref.current?.click() : false));
+
+  const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const isPlainClick =
+      event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+
+    if (toApp && isPlainClick && goBackToApp()) {
+      event.preventDefault();
+    }
+  };
 
   return (
-    <LearnLink className={cn(buttonVariants({ size: "xl" }), "w-full")} href={href} ref={ref}>
+    <LearnLink
+      aria-keyshortcuts="Enter"
+      className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS, className)}
+      href={href}
+      onClick={onClick}
+      ref={ref}
+    >
       {children}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </LearnLink>
   );
 }

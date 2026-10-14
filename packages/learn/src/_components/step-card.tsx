@@ -4,16 +4,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 export const STEP_TITLE_SLOT = "step-title";
 
 /**
- * One step's surface: its anchor (art, a kind tile or a big number) first, then its title and what
- * supports it, centered as one group.
+ * One step of a result told in steps, straight on the page (no card around it): its anchor (art
+ * or a big number) when it has one, then its title and what supports it, left-aligned to the
+ * task's column like every other page.
  */
 export function StepCard({ className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
-      className={cn(
-        "bg-card flex flex-col items-center gap-5 rounded-3xl border px-6 py-8 text-center shadow-xs sm:px-8",
-        className,
-      )}
+      className={cn("flex flex-col items-start gap-5 text-left", className)}
       data-slot="step-card"
       {...props}
     />
@@ -24,20 +22,17 @@ export function StepCard({ className, ...props }: React.ComponentProps<"section"
 export function StepHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col items-center gap-1.5", className)}
+      className={cn("flex flex-col items-start gap-1.5", className)}
       data-slot="step-header"
       {...props}
     />
   );
 }
 
+/** The quiet label above the title ("TODAY'S SESSION"), in the section-label face. */
 export function StepEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <p
-      className={cn("text-muted-foreground text-sm font-medium text-balance", className)}
-      data-slot="step-eyebrow"
-      {...props}
-    />
+    <p className={cn("text-label text-balance", className)} data-slot="step-eyebrow" {...props} />
   );
 }
 
@@ -45,10 +40,7 @@ export function StepEyebrow({ className, ...props }: React.ComponentProps<"p">) 
 export function StepTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
-      className={cn(
-        "text-3xl font-bold tracking-tight text-balance outline-none sm:text-4xl",
-        className,
-      )}
+      className={cn("text-title outline-none", className)}
       data-slot={STEP_TITLE_SLOT}
       tabIndex={-1}
       {...props}
@@ -65,7 +57,7 @@ export function StepTitle({ children, className, ...props }: React.ComponentProp
 export function StepTitleNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-5xl tabular-nums", className)}
+      className={cn("font-mono text-5xl font-medium tracking-[-0.04em] tabular-nums", className)}
       data-slot="step-title-number"
       {...props}
     />
@@ -96,23 +88,23 @@ export function StepDetail({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-/** A few facts of the same kind, one per row, on a soft panel inside the card. */
+/** A few facts of the same kind, one per row, as a flat list with hairlines between the rows. */
 export function StepRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
-      className={cn("bg-muted/50 flex w-full flex-col rounded-2xl px-4 text-left", className)}
+      className={cn("flex w-full flex-col text-left", className)}
       data-slot="step-rows"
       {...props}
     />
   );
 }
 
-/** One row: an icon or a tile, its words, and what it's worth at the end. */
+/** One row: a muted icon or a dot, its words, and what it's worth at the end (mono). */
 export function StepRow({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       className={cn(
-        "border-border flex min-h-12 items-center gap-3 border-b py-3 text-sm last:border-b-0 [&>svg]:size-4 [&>svg]:shrink-0",
+        "border-border [&>svg]:text-muted-foreground flex min-h-11 items-center gap-3 border-b py-2.75 text-sm last:border-b-0 [&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}
       data-slot="step-row"

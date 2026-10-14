@@ -61,7 +61,7 @@ export function LessonNotWrittenNotice({
 
   return (
     <div
-      className={cn("bg-muted/60 flex flex-col items-start gap-3 rounded-2xl p-4", className)}
+      className={cn("bg-muted/60 flex flex-col items-start gap-3 rounded-xl p-4", className)}
       role="status"
     >
       {reason.status === "refused" && (

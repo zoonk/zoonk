@@ -56,7 +56,7 @@ export function Disclosure({
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="flex flex-col gap-5 px-4 pt-1 pb-4">{children}</div>
+        <div className="flex flex-col gap-5 pt-1 pb-4 in-data-[list=panel]:px-4">{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );

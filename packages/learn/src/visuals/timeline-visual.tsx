@@ -14,7 +14,7 @@ export function TimelineVisualView({
 }) {
   return (
     <figure
-      className={cn("bg-card flex w-full flex-col gap-4 rounded-2xl border p-4", className)}
+      className={cn("bg-card flex w-full flex-col gap-4 rounded-xl border p-4", className)}
       data-slot="timeline-visual"
     >
       <figcaption className="text-foreground text-sm font-semibold text-balance">

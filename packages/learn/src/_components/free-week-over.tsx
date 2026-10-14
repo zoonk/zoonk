@@ -6,7 +6,7 @@ import { PlusNotice } from "./plus-lock";
 
 /**
  * What a free exam plan past its first week keeps and what Plus opens, said the same way wherever
- * the learner meets it: Today, the Journey, a lesson or a challenge.
+ * the learner meets it: Today, the Plan, a lesson or a challenge.
  */
 export function useFreeWeekOverCopy(): { body: string; title: string } {
   const t = useExtracted();
