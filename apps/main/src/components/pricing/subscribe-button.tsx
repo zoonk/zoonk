@@ -1,8 +1,8 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
@@ -35,6 +35,7 @@ function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {
 /**
  * "Subscribe" for a signed-in learner on the free plan: checkout starts with the period the card's
  * billing switch shows, which the server rendered as native radios. Stripe confirms the price.
+ * The auth client loads on the tap, so the pricing page doesn't ship it up front.
  */
 export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
   const t = useExtracted();
@@ -51,17 +52,25 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
       properties: { billingPeriod: period, plan: "plus" },
     });
 
-    const { error } = await authClient.subscription.upgrade({
-      annual: period === "yearly",
-      cancelUrl: "/subscription",
-      locale: STRIPE_LOCALE_OVERRIDES[locale],
-      plan: "plus",
-      successUrl: "/subscription?stripe_checkout=complete",
+    const { data: refusal, error } = await safeAsync(async () => {
+      const { authClient } = await import("@zoonk/auth/client");
+
+      const { error: upgradeError } = await authClient.subscription.upgrade({
+        annual: period === "yearly",
+        cancelUrl: "/subscription",
+        locale: STRIPE_LOCALE_OVERRIDES[locale],
+        plan: "plus",
+        successUrl: "/subscription?stripe_checkout=complete",
+      });
+
+      return upgradeError;
     });
 
-    if (error) {
+    const failure = error ?? refusal;
+
+    if (failure) {
       setRequestState("error");
-      logError("Subscription upgrade failed", { error });
+      logError("Subscription upgrade failed", { error: failure });
     }
   };
 

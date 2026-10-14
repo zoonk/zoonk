@@ -1,12 +1,22 @@
-import { authClient } from "@zoonk/auth/client";
+import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
 /**
  * Only a check that answered "no session" makes a guest. A check that failed (a rate limit, a
  * network error) says nothing about the session, and signing in anonymously then would replace a
- * signed-in learner's session with a new guest: callers show a retryable error instead.
+ * signed-in learner's session with a new guest: callers show a retryable error instead. The auth
+ * client loads on the first tap that needs it, so the pages whose links can start a lesson
+ * (every lesson link, the public pages' starts) don't ship it up front.
  */
 async function startGuestSession(): Promise<boolean> {
+  const { data: auth, error: loadError } = await safeAsync(() => import("@zoonk/auth/client"));
+
+  if (loadError) {
+    logError("[ensureGuestSession] Could not load the auth client:", loadError);
+    return false;
+  }
+
+  const { authClient } = auth;
   const { data, error: checkError } = await authClient.getSession();
 
   if (checkError) {
