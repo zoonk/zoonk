@@ -19,7 +19,7 @@ type PersistenceInput = {
   viewer: EntitlementViewer;
 };
 
-type PersistedSession = { active: boolean; newlySettledSeconds?: number };
+type PersistedSession = { active: boolean; alreadyClosed?: boolean; newlySettledSeconds?: number };
 
 async function canActivateSession({
   current,
@@ -114,7 +114,7 @@ async function persistSessionOnce(input: PersistenceInput): Promise<PersistedSes
       });
     }
 
-    return { active };
+    return { active, alreadyClosed: current.state === "closed" };
   });
 }
 

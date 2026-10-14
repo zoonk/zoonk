@@ -1,7 +1,11 @@
 import { type Page } from "@playwright/test";
+import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 
 export const CHARACTER_REPLY = "Yes, it's still available.";
 export const CHARACTER_CHECK_IN = "Hello? Are you still there?";
+
+/** Its session name marks the fake peer, which the lane's provider bridge answers at once. */
+const FAKE_PEER_OFFER = LIVE_CALL_SDP_OFFER.replace("\r\ns=-\r\n", "\r\ns=e2e-browser-peer\r\n");
 
 /** Platform controls keep the actual broker and server reservation untouched. */
 function installPeerControls({ holdAnswer }: { holdAnswer: boolean }) {
@@ -191,7 +195,7 @@ function installChannelFactory({
   Object.assign(globalThis, { e2eLiveCreateChannel: createChannel });
 }
 
-function installPeer({ mode }: { mode: "answers" | "drops" | "silent" }) {
+function installPeer({ mode, sdp }: { mode: "answers" | "drops" | "silent"; sdp: string }) {
   class FakePeer {
     private readonly receive = (event: Event) => {
       if (event instanceof CustomEvent) {
@@ -258,7 +262,7 @@ function installPeer({ mode }: { mode: "answers" | "drops" | "silent" }) {
       this.captureTrack = track;
       return this.sender;
     }
-    offer = { sdp: "v=0\r\ns=e2e-browser-peer\r\n", type: "offer" };
+    offer = { sdp, type: "offer" };
     createOffer = () => Promise.resolve(this.offer);
 
     createDataChannel() {
@@ -339,7 +343,7 @@ export async function answerLiveCalls(
     reply: CHARACTER_REPLY,
   });
 
-  await page.addInitScript(installPeer, { mode: behavior });
+  await page.addInitScript(installPeer, { mode: behavior, sdp: FAKE_PEER_OFFER });
 
   return {
     asked: asked.promise,

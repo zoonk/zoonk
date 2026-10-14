@@ -23,6 +23,38 @@ export const RENTING_SCENARIO = {
   title: "Ligar para marcar uma visita",
 };
 
+const TEST_DTLS_FINGERPRINT =
+  "sha-256 6B:8B:F0:65:5F:78:E2:51:3B:AC:6F:F3:3F:46:1B:35:DC:B8:5F:64:1A:24:C2:43:F0:A1:58:D0:A1:2C:19:08";
+
+/** A browser's WebRTC offer, audio plus the events channel, as a live call's SDP endpoint takes it. */
+export const LIVE_CALL_SDP_OFFER = [
+  "v=0",
+  "o=- 4611731400430051336 2 IN IP4 127.0.0.1",
+  "s=-",
+  "t=0 0",
+  "a=group:BUNDLE 0 1",
+  "a=msid-semantic: WMS",
+  "m=audio 9 UDP/TLS/RTP/SAVPF 111",
+  "c=IN IP4 0.0.0.0",
+  "a=ice-ufrag:Zk3e",
+  "a=ice-pwd:asd88fgpdd777uzjYhagZg7a",
+  `a=fingerprint:${TEST_DTLS_FINGERPRINT}`,
+  "a=setup:actpass",
+  "a=mid:0",
+  "a=sendrecv",
+  "a=rtcp-mux",
+  "a=rtpmap:111 opus/48000/2",
+  "m=application 9 UDP/DTLS/SCTP webrtc-datachannel",
+  "c=IN IP4 0.0.0.0",
+  "a=ice-ufrag:Zk3e",
+  "a=ice-pwd:asd88fgpdd777uzjYhagZg7a",
+  `a=fingerprint:${TEST_DTLS_FINGERPRINT}`,
+  "a=setup:actpass",
+  "a=mid:1",
+  "a=sctp-port:5000",
+  "",
+].join("\r\n");
+
 /**
  * A Portuguese speaker learning English: a course with two units (arriving, then renting, each with
  * two lessons), an active language goal on it with a plan, and the renting unit's call cached at A2.

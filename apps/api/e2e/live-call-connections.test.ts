@@ -6,10 +6,17 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import {
+  LIVE_CALL_SDP_OFFER,
+  RENTING_SCENARIO,
+  languageGoalFixture,
+} from "@zoonk/testing/fixtures/language";
 import { TEST_LIVE_SDP_ANSWER } from "../../../packages/e2e/src/live-call-provider";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
+
+/** A structurally valid WebRTC offer: the no-spend provider answers it. */
+const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 /** The lane's Next alias replaces only @zoonk/ai with a fixed no-spend provider answer. */
 async function callFixture(prefix: string) {
@@ -88,11 +95,11 @@ test.describe("Live-call connection HTTP contract", () => {
 
       expect(replay.seconds).toBeLessThanOrEqual(setup.seconds);
 
-      const hidden = await stranger.api.post(setup.sessionUrl, { data: { sdp: "offer" } });
+      const hidden = await stranger.api.post(setup.sessionUrl, { data: OFFER });
       expect(hidden.status()).toBe(404);
 
       const answer = await learner.api.post(setup.sessionUrl, {
-        data: { sdp: "offer", sessionConfig: { instructions: "untrusted" } },
+        data: { ...OFFER, sessionConfig: { instructions: "untrusted" } },
       });
 
       const session = await readBody({
@@ -103,7 +110,7 @@ test.describe("Live-call connection HTTP contract", () => {
 
       expect(session.sdp).toBe(TEST_LIVE_SDP_ANSWER);
       expect(answer.headers()["cache-control"]).toBe("no-store");
-      const duplicate = await learner.api.post(setup.sessionUrl, { data: { sdp: "offer" } });
+      const duplicate = await learner.api.post(setup.sessionUrl, { data: OFFER });
       expect(duplicate.status()).toBe(409);
       await expect(duplicate.json()).resolves.toMatchObject({ error: { code: "CONNECTION_USED" } });
 
@@ -126,7 +133,7 @@ test.describe("Live-call connection HTTP contract", () => {
       await expect(statusOf(anonymous.post(learner.path))).resolves.toBe(401);
 
       await expect(
-        statusOf(anonymous.post(`${learner.path}/${randomUUID()}/sdp`, { data: { sdp: "offer" } })),
+        statusOf(anonymous.post(`${learner.path}/${randomUUID()}/sdp`, { data: OFFER })),
       ).resolves.toBe(401);
 
       await expect(
@@ -143,12 +150,20 @@ test.describe("Live-call connection HTTP contract", () => {
         statusOf(learner.api.post(setup.sessionUrl, { data: { sdp: "" } })),
       ).resolves.toBe(400);
 
+      await expect(
+        statusOf(learner.api.post(setup.sessionUrl, { data: { sdp: "x" } })),
+      ).resolves.toBe(400);
+
+      await expect(
+        prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+      ).resolves.toMatchObject({ providerStartedAt: null, state: "pending" });
+
       await prisma.liveCallConnection.update({
         data: { workflowRunId: null },
         where: { id: setup.connectionId },
       });
 
-      const untimed = await learner.api.post(setup.sessionUrl, { data: { sdp: "offer" } });
+      const untimed = await learner.api.post(setup.sessionUrl, { data: OFFER });
       expect(untimed.status()).toBe(503);
       await expect(untimed.json()).resolves.toMatchObject({ error: { code: "CALL_RETRYABLE" } });
 
@@ -157,7 +172,7 @@ test.describe("Live-call connection HTTP contract", () => {
         where: { id: setup.connectionId },
       });
 
-      const expired = await learner.api.post(setup.sessionUrl, { data: { sdp: "offer" } });
+      const expired = await learner.api.post(setup.sessionUrl, { data: OFFER });
       expect(expired.status()).toBe(409);
 
       await expect(expired.json()).resolves.toMatchObject({
@@ -216,9 +231,9 @@ test.describe("Live-call connection HTTP contract", () => {
 
       expect(replacement.connectionId).not.toBe(first.connectionId);
 
-      await expect(
-        statusOf(learner.api.post(first.sessionUrl, { data: { sdp: "offer" } })),
-      ).resolves.toBe(409);
+      await expect(statusOf(learner.api.post(first.sessionUrl, { data: OFFER }))).resolves.toBe(
+        409,
+      );
 
       const completion = await learner.api.post(
         `/v1/language-conversations/${learner.conversationId}/completions`,
@@ -255,9 +270,9 @@ test.describe("Live-call connection HTTP contract", () => {
         status: 201,
       });
 
-      await expect(
-        statusOf(learner.api.post(first.sessionUrl, { data: { sdp: "offer" } })),
-      ).resolves.toBe(201);
+      await expect(statusOf(learner.api.post(first.sessionUrl, { data: OFFER }))).resolves.toBe(
+        201,
+      );
 
       const replacement = await readBody({
         response: await learner.api.post(learner.path),
@@ -289,7 +304,7 @@ test.describe("Live-call connection HTTP contract", () => {
       expect(slot.connectionId).toBe(replacement.connectionId);
 
       await expect(
-        statusOf(learner.api.post(replacement.sessionUrl, { data: { sdp: "offer" } })),
+        statusOf(learner.api.post(replacement.sessionUrl, { data: OFFER })),
       ).resolves.toBe(201);
 
       await learner.api.post(`${learner.path}/${replacement.connectionId}/end`);

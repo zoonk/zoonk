@@ -1,17 +1,58 @@
 import "server-only";
+import { APICallError } from "ai";
 import { type LiveCallSessionClosed } from "./_utils/live-call-closed-event";
 import { getLiveCallModel } from "./_utils/live-call-provider";
 import { closeLiveCallSideband } from "./_utils/live-call-sideband";
+import { LIVE_CALL_CREATE_TIMEOUT_MS, LiveCallCreationRefusedError } from "./live-call-creation";
 
-const CREATE_TIMEOUT_MS = 30_000;
 const CLOSE_TIMEOUT_MS = 15_000;
+
+const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
+const NOT_FOUND = 404;
+const CONTENT_TOO_LARGE = 413;
+const UNSUPPORTED_MEDIA_TYPE = 415;
+const UNPROCESSABLE_CONTENT = 422;
+const TOO_MANY_REQUESTS = 429;
+
+/**
+ * Answers the provider sends before creating anything: a bad request, credentials, a missing model,
+ * an oversized or unreadable body, or a rate limit. Timeouts, conflicts, server errors, dropped
+ * connections and unreadable successes stay ambiguous, since the session may exist.
+ */
+const NO_SESSION_STATUSES = new Set<number>([
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONTENT_TOO_LARGE,
+  UNSUPPORTED_MEDIA_TYPE,
+  UNPROCESSABLE_CONTENT,
+  TOO_MANY_REQUESTS,
+]);
+
+function toCreationError(error: unknown): unknown {
+  if (
+    APICallError.isInstance(error) &&
+    error.statusCode !== undefined &&
+    NO_SESSION_STATUSES.has(error.statusCode)
+  ) {
+    return new LiveCallCreationRefusedError(error.statusCode, { cause: error });
+  }
+
+  return error;
+}
 
 export type { LiveCallSessionClosed } from "./_utils/live-call-closed-event";
 export { isLiveCallAvailable } from "./_utils/live-call-provider";
 
 export type LiveCallSession = { sdp: string; sessionId: string };
 
-/** Callers authorize and fence the reservation; browser configuration never enters this boundary. */
+/**
+ * Callers authorize and fence the reservation; browser configuration never enters this boundary.
+ * Rejects with `LiveCallCreationRefusedError` only when the provider proved it created no session.
+ */
 export async function createLiveCallSession({
   instructions,
   sdp,
@@ -21,8 +62,8 @@ export async function createLiveCallSession({
   sdp: string;
   voice: string;
 }): Promise<LiveCallSession> {
-  return getLiveCallModel().doCreateWebRTCSession({
-    abortSignal: AbortSignal.timeout(CREATE_TIMEOUT_MS),
+  const created = getLiveCallModel().doCreateWebRTCSession({
+    abortSignal: AbortSignal.timeout(LIVE_CALL_CREATE_TIMEOUT_MS),
     sdp,
     sessionConfig: {
       instructions,
@@ -58,6 +99,10 @@ export async function createLiveCallSession({
       },
       voice,
     },
+  });
+
+  return created.catch((error: unknown) => {
+    throw toCreationError(error);
   });
 }
 

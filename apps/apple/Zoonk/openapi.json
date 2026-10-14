@@ -6042,7 +6042,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Redeems the owned reservation once for a server-created GPT-Live WebRTC session. Rechecks admission, Plus and the absolute deadline and requires a persisted Workflow receipt. Browser sessionConfig is ignored. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks. No provider key or token is returned.",
+        "description": "Redeems the owned reservation once for a server-created GPT-Live WebRTC session. Rechecks admission, Plus and the absolute deadline and requires a persisted Workflow receipt. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When the provider refuses to create the session, the reservation is released at once (CALL_RETRYABLE): reserve again. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks. No provider key or token is returned.",
         "operationId": "redeemLanguageConversationSdp",
         "summary": "Exchange a live conversation SDP offer",
         "parameters": [
@@ -6450,7 +6450,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Admins only. Disables admission before closing a bounded batch of up to 25 unresolved connections, prioritizing never-attempted and least-recently-attempted rows. Returns attempted, confirmed closed, and remaining counts. Repeat while remaining is positive. Failed or ambiguous provider closure retains the slot and cost liability; the original deadline run and existing daily sweep keep recovery available. No feedback or rewards are awarded.",
+        "description": "Admins only. Disables admission before closing a bounded batch of up to 25 unresolved connections, prioritizing never-attempted and least-recently-attempted rows. Returns attempted, confirmed closed, and remaining counts. Repeat while remaining is positive. Failed or ambiguous provider closure retains the slot and cost liability; the original deadline run and existing daily sweep keep recovery available. A connection the provider never gave an ID closes once its deadline has passed and no creation request can still return one, keeping its estimated cost. No feedback or rewards are awarded.",
         "operationId": "closeAllLiveCalls",
         "summary": "Disable and close live calls (admins)",
         "responses": {
@@ -22373,7 +22373,8 @@
           "sdp": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 100000
+            "maxLength": 100000,
+            "description": "The browser's WebRTC SDP offer, with an audio section"
           },
           "sessionConfig": {
             "description": "Ignored: configuration is owned by the server"

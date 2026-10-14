@@ -1,11 +1,14 @@
 import "server-only";
+import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
 import {
   closeLiveCallSession,
   createLiveCallSession,
 } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
-import { prisma } from "@zoonk/db";
+import { type LiveCallConnection, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getAllowanceCacheTag } from "../../cache/tags";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
@@ -13,6 +16,7 @@ import { toConversationView } from "./_utils/conversation-view";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import { persistLiveCallSession } from "./_utils/persist-live-call-session";
+import { settleLiveCall } from "./_utils/settle-live-call";
 import { closeLiveCallConnection } from "./close-live-call-connection";
 import { type LiveCallSdpInput } from "./conversation-contract";
 
@@ -30,6 +34,34 @@ export type RedeemLiveCallSdpResult =
         | "previousConnectionClosing"
         | "retryable";
     };
+
+/** The provider proved it created nothing: the call never started, so its slot, time and money return. */
+async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<void> {
+  await prisma.$transaction(async (transaction) => {
+    await lockUsageForViewer({ transaction, userId: connection.userId });
+
+    const current = await transaction.liveCallConnection.findUniqueOrThrow({
+      where: { id: connection.id },
+    });
+
+    if (
+      current.generation !== connection.generation ||
+      current.state === "closed" ||
+      current.providerSessionId !== null
+    ) {
+      return;
+    }
+
+    await transaction.liveCallConnection.update({
+      data: { providerStartedAt: null },
+      where: { id: current.id },
+    });
+
+    await settleLiveCall({ connection: current, now: new Date(), seconds: null, transaction });
+  });
+
+  revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
+}
 
 /** Session auth, receipt and a single-use fence precede every provider creation request. */
 export async function redeemLiveCallSdp({
@@ -132,6 +164,12 @@ export async function redeemLiveCallSdp({
     }),
   );
 
+  if (created.error instanceof LiveCallCreationRefusedError) {
+    await releaseRefusedLiveCall(prepared.connection);
+    return { status: "retryable" };
+  }
+
+  /** Lost responses and timeouts may have started a session: it stays liable until cleanup. */
   if (!created.data) {
     await closeLiveCallConnection({ connectionId, generation: prepared.connection.generation });
     return { status: "retryable" };
@@ -163,6 +201,12 @@ export async function redeemLiveCallSdp({
       throw retained.error;
     }
 
+    return { status: "previousConnectionClosing" };
+  }
+
+  if (persisted.data.alreadyClosed) {
+    /** Cleanup already closed the ID-less row with its estimated cost; still end the late session. */
+    await safeAsync(() => closeLiveCallSession(provider.sessionId));
     return { status: "previousConnectionClosing" };
   }
 

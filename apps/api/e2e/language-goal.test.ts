@@ -6,12 +6,16 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
+  LIVE_CALL_SDP_OFFER,
   RENTING_SCENARIO,
   alphabetLessonFixture,
   languageGoalFixture,
 } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+
+/** A structurally valid WebRTC offer: the no-spend provider answers it. */
+const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 /** A call from yesterday, in seconds. */
@@ -398,7 +402,7 @@ test.describe("Language goal API", () => {
 
     expect(reserved.status()).toBe(201);
     const setup = languageConversationSetupSchema.parse(await reserved.json());
-    const connected = await apiContext.post(setup.sessionUrl, { data: { sdp: "offer" } });
+    const connected = await apiContext.post(setup.sessionUrl, { data: OFFER });
     expect(connected.status()).toBe(201);
 
     // Only the character spoke, so no objective or feedback model is called.

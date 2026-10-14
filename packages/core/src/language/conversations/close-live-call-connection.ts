@@ -7,7 +7,12 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../entitlements/limits";
-import { accrueLiveCallLiability, settleLiveCall } from "./_utils/settle-live-call";
+import { canSettleWithoutProvider } from "./_utils/live-call-policy";
+import {
+  accrueLiveCallLiability,
+  settleLiveCall,
+  settleUnconfirmableLiveCall,
+} from "./_utils/settle-live-call";
 import { type CloseLiveCallResult } from "./live-call-contract";
 
 /** Trusted workflow/system boundary; callers must never choose a learner's current slot. */
@@ -63,6 +68,11 @@ export async function closeLiveCallConnection({
       },
       where: { id: connectionId },
     });
+
+    if (canSettleWithoutProvider({ connection, now })) {
+      await settleUnconfirmableLiveCall({ connection, now, transaction });
+      return { status: "closed" as const };
+    }
 
     await accrueLiveCallLiability({ connection, now, transaction });
     return { connection, status: "prepared" as const };

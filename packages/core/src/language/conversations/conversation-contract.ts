@@ -12,6 +12,7 @@ import {
   examTaskSnapshotSchema,
   examTaskViewSchema,
 } from "../exam-speaking/speaking-contract";
+import { isWebRtcAudioOffer } from "./_utils/webrtc-offer";
 
 const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
@@ -311,7 +312,12 @@ export type LanguageConversationConnectInput = z.infer<
 
 export const liveCallSdpInputSchema = z
   .object({
-    sdp: z.string().min(1).max(MAX_SDP_LENGTH),
+    sdp: z
+      .string()
+      .min(1)
+      .max(MAX_SDP_LENGTH)
+      .refine(isWebRtcAudioOffer, { message: "Expected a WebRTC offer with an audio section" })
+      .meta({ description: "The browser's WebRTC SDP offer, with an audio section" }),
     sessionConfig: z
       .unknown()
       .optional()

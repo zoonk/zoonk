@@ -9,9 +9,12 @@ import { languageConversationSetupSchema } from "@zoonk/core/language/conversati
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { LIVE_CALL_SDP_OFFER, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { createBearerAdmin, createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
+
+/** A structurally valid WebRTC offer: the no-spend provider answers it. */
+const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 const ADMISSION = "/v1/live-calls/admission";
 const CLOSE_ALL = "/v1/live-calls/close-all";
@@ -168,7 +171,7 @@ test("admin controls use API credentials, require the admin role and disable adm
       status: 201,
     });
 
-    const answered = await learner.api.post(setup.sessionUrl, { data: { sdp: "offer" } });
+    const answered = await learner.api.post(setup.sessionUrl, { data: OFFER });
     expect(answered.status()).toBe(201);
 
     const active = await readBody({

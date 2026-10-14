@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
+import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
 import {
   closeLiveCallSession,
   createLiveCallSession,
@@ -84,6 +85,18 @@ function redeem({
 
 function connection(connectionId: string) {
   return prisma.liveCallConnection.findUniqueOrThrow({ where: { id: connectionId } });
+}
+
+/** A possibly billing connection past the health threshold that cleanup never confirmed closed. */
+function stuckConnection({ conversation, user }: Awaited<ReturnType<typeof liveCallFixture>>) {
+  return liveCallHistoryFixture({
+    closedAt: null,
+    conversationId: conversation.id,
+    deadlineAt: new Date(Date.now() - 301_000),
+    liabilityMicros: 135_000,
+    state: "closing",
+    userId: user.id,
+  });
 }
 
 function usage({ conversationId, userId }: { conversationId: string; userId: string }) {
@@ -1320,7 +1333,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     },
   );
 
-  it("keeps an ID-less ambiguous creation's slot and liability through recovery", async () => {
+  it("holds an ID-less ambiguous creation liable, then closes it at its deadline with the estimated cost kept", async () => {
     const { conversation, user } = await liveCallFixture();
     mockSession(user.id);
     const setup = await reserve(conversation.id);
@@ -1333,13 +1346,9 @@ describe("server-owned live-call reservation and cleanup", () => {
       redeem({ connectionId: setup.connectionId, conversationId: conversation.id }),
     ).resolves.toStrictEqual({ status: "retryable" });
 
-    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 1000));
+    const held = await connection(setup.connectionId);
 
-    await expect(
-      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
-    ).resolves.toStrictEqual({ status: "closing" });
-
-    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+    expect(held).toMatchObject({
       costConfidence: "unconfirmed",
       liabilityMicros: 135_000,
       providerSessionId: null,
@@ -1357,7 +1366,130 @@ describe("server-owned live-call reservation and cleanup", () => {
       }),
     ).resolves.toStrictEqual({ status: "previousConnectionClosing" });
 
+    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 1000));
+
+    await expect(
+      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closed" });
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costConfidence: "estimated",
+      liabilityMicros: 0,
+      providerSessionId: null,
+      settledMicros: 135_000,
+      state: "closed",
+    });
+
+    await expect(
+      prisma.freeCallSpendDay.findUnique({ where: { day: held.freeSpendDay! } }),
+    ).resolves.toMatchObject({ spentMicros: 135_000 });
+
+    await expect(
+      usage({ conversationId: conversation.id, userId: user.id }),
+    ).resolves.toMatchObject({ costMicros: 135_000, seconds: 0 });
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
     expect(closeLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("releases a provider-refused creation as never started, so cleanup never pauses other learners", async () => {
+    const [refused, other] = await Promise.all([liveCallFixture(), liveCallFixture()]);
+    mockSession(refused.user.id);
+    const setup = await reserve(refused.conversation.id);
+    vi.mocked(createLiveCallSession).mockRejectedValueOnce(new LiveCallCreationRefusedError(400));
+
+    await expect(
+      redeem({ connectionId: setup.connectionId, conversationId: refused.conversation.id }),
+    ).resolves.toStrictEqual({ status: "retryable" });
+
+    const released = await connection(setup.connectionId);
+
+    expect(released).toMatchObject({
+      costConfidence: "confirmed",
+      liabilityMicros: 0,
+      providerSessionId: null,
+      providerStartedAt: null,
+      settledMicros: 0,
+      state: "closed",
+    });
+
+    await expect(
+      prisma.freeCallSpendDay.findUnique({ where: { day: released.freeSpendDay! } }),
+    ).resolves.toMatchObject({ spentMicros: 0 });
+
+    await expect(
+      prisma.liveCallSlot.findUnique({ where: { userId: refused.user.id } }),
+    ).resolves.toMatchObject({ connectionId: null });
+
+    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 301_000));
+
+    await expect(
+      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closed" });
+
+    mockSession(other.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: other.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    mockSession(refused.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: refused.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    expect(closeLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("ends a late provider session whose ID-less row was already closed with its estimated cost", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const setup = await reserve(conversation.id);
+    const providerStarted = Promise.withResolvers<boolean>();
+    const created = Promise.withResolvers<{ sdp: string; sessionId: string }>();
+
+    vi.mocked(createLiveCallSession).mockImplementation(() => {
+      providerStarted.resolve(true);
+      return created.promise;
+    });
+
+    const redemption = redeem({
+      connectionId: setup.connectionId,
+      conversationId: conversation.id,
+    });
+
+    await providerStarted.promise;
+    vi.setSystemTime(new Date(new Date(setup.deadlineAt).getTime() + 1000));
+
+    await expect(
+      recoverLiveCallConnection({ connectionId: setup.connectionId, generation: setup.generation }),
+    ).resolves.toStrictEqual({ status: "closed" });
+
+    created.resolve({ sdp: ANSWER, sessionId: `late-${randomUUID()}` });
+    await expect(redemption).resolves.toStrictEqual({ status: "previousConnectionClosing" });
+    const closed = await connection(setup.connectionId);
+
+    expect(closed).toMatchObject({
+      costConfidence: "estimated",
+      providerSessionId: expect.stringMatching(/^late-/u),
+      settledMicros: 135_000,
+      state: "closed",
+    });
+
+    expect(closeLiveCallSession).toHaveBeenCalledExactlyOnceWith(closed.providerSessionId);
   });
 
   it("retries a failed provider receipt without recreating the session and retains it for durable close recovery", async () => {
@@ -1784,29 +1916,37 @@ describe("server-owned live-call reservation and cleanup", () => {
     ).resolves.toMatchObject({ costMicros: 510_000, seconds: 120 });
   });
 
-  it("suspends new calls when a possibly billing connection is overdue beyond the health threshold", async () => {
-    const [overdue, learner] = await Promise.all([liveCallFixture(), liveCallFixture()]);
+  it("keeps calls open while one learner's connection is stuck and pauses them once several learners' are", async () => {
+    const [open, paused, first, second, third] = await Promise.all([
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+      liveCallFixture(),
+    ]);
 
-    await liveCallHistoryFixture({
-      closedAt: null,
-      conversationId: overdue.conversation.id,
-      deadlineAt: new Date(Date.now() - 301_000),
-      liabilityMicros: 135_000,
-      state: "closing",
-      userId: overdue.user.id,
-    });
-
-    mockSession(learner.user.id);
+    await stuckConnection(first);
+    mockSession(open.user.id);
 
     await expect(
       connectLanguageConversation({
-        conversationId: learner.conversation.id,
+        conversationId: open.conversation.id,
+        scheduleDeadline: deadlineScheduler(),
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await Promise.all([stuckConnection(second), stuckConnection(third)]);
+    mockSession(paused.user.id);
+
+    await expect(
+      connectLanguageConversation({
+        conversationId: paused.conversation.id,
         scheduleDeadline: deadlineScheduler(),
       }),
     ).resolves.toStrictEqual({ status: "callsPaused" });
 
     await expect(
-      usage({ conversationId: learner.conversation.id, userId: learner.user.id }),
+      usage({ conversationId: paused.conversation.id, userId: paused.user.id }),
     ).resolves.toBeNull();
   });
 
@@ -2093,16 +2233,12 @@ describe("server-owned live-call reservation and cleanup", () => {
     });
   });
 
-  it("reports globally unhealthy cleanup even when the blocking provider row is beyond the bounded admin list", async () => {
-    const [admin, blocking, ...pending] = await Promise.all([
+  it("reports globally unhealthy cleanup even when the stuck provider rows are beyond the bounded admin list", async () => {
+    const [admin, stuck, pending] = await Promise.all([
       liveCallFixture({ role: "admin" }),
-      liveCallFixture(),
-      ...Array.from({ length: 100 }, () => liveCallFixture()),
+      Promise.all(Array.from({ length: 3 }, () => liveCallFixture())),
+      Promise.all(Array.from({ length: 100 }, () => liveCallFixture())),
     ]);
-
-    if (!admin || !blocking) {
-      throw new Error("Cleanup health fixtures were not created");
-    }
 
     await Promise.all(
       pending.map(({ conversation, user }) =>
@@ -2116,13 +2252,7 @@ describe("server-owned live-call reservation and cleanup", () => {
       ),
     );
 
-    const blocked = await liveCallHistoryFixture({
-      closedAt: null,
-      conversationId: blocking.conversation.id,
-      deadlineAt: new Date(Date.now() - 301_000),
-      state: "closing",
-      userId: blocking.user.id,
-    });
+    const blocked = await Promise.all(stuck.map((fixture) => stuckConnection(fixture)));
 
     mockLiveCallAdminSession(admin.user);
     const result = await getLiveCallAdmission();
@@ -2133,7 +2263,10 @@ describe("server-owned live-call reservation and cleanup", () => {
     }
 
     expect(result.connections).toHaveLength(100);
-    expect(result.connections).not.toContainEqual(expect.objectContaining({ id: blocked.id }));
+
+    blocked.forEach(({ id }) => {
+      expect(result.connections).not.toContainEqual(expect.objectContaining({ id }));
+    });
 
     expect(result.connections).not.toContainEqual(
       expect.objectContaining({ cleanupBlocking: true }),

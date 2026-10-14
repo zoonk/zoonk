@@ -58,12 +58,12 @@ function ConnectionNote({ connection }: { connection: LiveCallConnectionRow }) {
 }
 
 /**
- * Core decides both marks: past its deadline, or past it long enough that new calls are refused
- * until it closes. Red is kept for the second.
+ * Core decides both marks: past its deadline, or past it long enough to count as stuck (stuck
+ * connections of several learners at once pause new calls). Red is kept for the second.
  */
 function DeadlineBadge({ connection }: { connection: LiveCallConnectionRow }) {
   if (connection.cleanupBlocking) {
-    return <Badge variant="destructive">Blocks new calls</Badge>;
+    return <Badge variant="destructive">Stuck</Badge>;
   }
 
   return connection.overdue ? <Badge variant="outline">Past deadline</Badge> : null;
@@ -101,8 +101,9 @@ function ConnectionRow({ connection }: { connection: LiveCallConnectionRow }) {
 
 /**
  * Why a new call can be refused as paused whatever the switch says: the API has no provider key,
- * or a connection past its deadline hasn't confirmed closing (core's check covers every connection,
- * not only the rows listed below).
+ * or connections of several learners past their deadlines haven't confirmed closing (core's check
+ * covers every connection, not only the rows listed below). One learner's stuck connection only
+ * holds that learner's next call.
  */
 function AdmissionHealth({ controls }: { controls: LiveCallControls }) {
   return (
@@ -117,8 +118,8 @@ function AdmissionHealth({ controls }: { controls: LiveCallControls }) {
 
       {controls.cleanupHealthy ? null : (
         <li className="text-destructive-text">
-          New calls are refused as paused while a connection past its deadline hasn’t confirmed
-          closing. Its row says “Blocks new calls”.
+          New calls are refused as paused while connections of several learners past their deadlines
+          haven’t confirmed closing. Their rows say “Stuck”.
         </li>
       )}
     </ul>

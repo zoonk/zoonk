@@ -53,7 +53,7 @@ export const liveCallAdminPaths = {
     post: {
       ...common,
       description:
-        "Admins only. Disables admission before closing a bounded batch of up to 25 unresolved connections, prioritizing never-attempted and least-recently-attempted rows. Returns attempted, confirmed closed, and remaining counts. Repeat while remaining is positive. Failed or ambiguous provider closure retains the slot and cost liability; the original deadline run and existing daily sweep keep recovery available. No feedback or rewards are awarded.",
+        "Admins only. Disables admission before closing a bounded batch of up to 25 unresolved connections, prioritizing never-attempted and least-recently-attempted rows. Returns attempted, confirmed closed, and remaining counts. Repeat while remaining is positive. Failed or ambiguous provider closure retains the slot and cost liability; the original deadline run and existing daily sweep keep recovery available. A connection the provider never gave an ID closes once its deadline has passed and no creation request can still return one, keeping its estimated cost. No feedback or rewards are awarded.",
       operationId: "closeAllLiveCalls",
       responses: {
         "200": jsonResponse(liveCallCloseAllResponseSchema, "The disabled-admission close batch"),

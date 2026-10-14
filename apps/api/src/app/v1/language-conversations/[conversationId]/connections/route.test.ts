@@ -16,6 +16,7 @@ import {
   liveCallSdpResponseSchema,
 } from "@zoonk/core/language/conversations/contract";
 import { prisma } from "@zoonk/db";
+import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -51,7 +52,7 @@ function redeemCall(conversationId: string, connectionId: string, body?: unknown
   return redeem(
     request(
       `/v1/language-conversations/${conversationId}/connections/${connectionId}/sdp`,
-      body ?? { sdp: "offer" },
+      body ?? { sdp: LIVE_CALL_SDP_OFFER },
     ),
     { params: Promise.resolve({ connectionId, conversationId }) },
   );
@@ -119,7 +120,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(saved.workflowRunId).toBeTruthy();
 
     const answer = await redeemCall(conversationId, setup.connectionId, {
-      sdp: "offer",
+      sdp: LIVE_CALL_SDP_OFFER,
       sessionConfig: { instructions: "untrusted", model: "untrusted" },
     });
 
@@ -128,7 +129,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(liveCallSdpResponseSchema.parse(await answer.json()).sdp).toBe("answer");
 
     expect(createLiveCallSession).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ sdp: "offer", voice: setup.voice }),
+      expect.objectContaining({ sdp: LIVE_CALL_SDP_OFFER, voice: setup.voice }),
     );
 
     expect(vi.mocked(createLiveCallSession).mock.calls[0]?.[0].instructions).not.toBe("untrusted");
@@ -220,6 +221,22 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     expect(start).not.toHaveBeenCalled();
     expect(createLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("refuses a malformed SDP offer before the provider-started state", async () => {
+    const { conversationId } = await authenticatedCallFixture();
+    const setup = await setupOf(reserveCall(conversationId));
+
+    await expect(
+      statusOf(redeemCall(conversationId, setup.connectionId, { sdp: "x" })),
+    ).resolves.toBe(400);
+
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ providerStartedAt: null, state: "pending" });
+
+    expect(createLiveCallSession).not.toHaveBeenCalled();
+    await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
   });
 
   it("accepts a zero-byte body stream and still reaches authorization for an empty POST", async () => {
