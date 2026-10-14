@@ -215,3 +215,24 @@ export function replaceNamePlaceholder(text: string, name: string | null): strin
 
   return capitalizeFirst(stripped);
 }
+
+/** Repeated titles get the first free numbered suffix inside their owner, course or chapter. */
+export function pickAvailableSlug({
+  base,
+  taken,
+}: {
+  base: string;
+  taken: readonly string[];
+}): string {
+  const takenSlugs = new Set(taken);
+
+  if (!takenSlugs.has(base)) {
+    return base;
+  }
+
+  const suffix = Array.from({ length: takenSlugs.size + 1 }, (_, index) => index + 2).find(
+    (candidate) => !takenSlugs.has(`${base}-${candidate}`),
+  );
+
+  return `${base}-${suffix}`;
+}
