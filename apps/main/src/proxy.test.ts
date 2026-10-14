@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { API_URL } from "@zoonk/utils/url";
@@ -148,6 +149,129 @@ describe("catalog pages that don't exist", () => {
     );
 
     expect(known.headers.get("x-middleware-rewrite")).toBeNull();
+  });
+});
+
+describe("pricing in the visitor's currency", () => {
+  it("serves the pricing page's variant in the currency of the visitor's country at /pricing", async () => {
+    const [brazil, germany, prefixed] = await Promise.all([
+      proxy(
+        new NextRequest("https://www.zoonk.com/pricing", {
+          headers: { "accept-language": "en-US", "x-vercel-ip-country": "BR" },
+        }),
+      ),
+      proxy(
+        new NextRequest("https://www.zoonk.com/pricing?ref=nav", {
+          headers: { "accept-language": "en-US", "x-vercel-ip-country": "DE" },
+        }),
+      ),
+      proxy(
+        new NextRequest("https://www.zoonk.com/pt/pricing", {
+          headers: { "accept-language": "pt-BR", "x-vercel-ip-country": "BR" },
+        }),
+      ),
+    ]);
+
+    expect(brazil.headers.get("x-middleware-rewrite")).toBe("https://www.zoonk.com/en/pricing/brl");
+
+    expect(germany.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/en/pricing/eur?ref=nav",
+    );
+
+    expect(prefixed.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/pt/pricing/brl",
+    );
+
+    expect(prefixed.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
+  });
+
+  it("reads the country from the browser's language without the platform's header", async () => {
+    const response = await proxy(
+      new NextRequest("https://www.zoonk.com/pt/pricing", {
+        headers: { "accept-language": "pt-BR,pt;q=0.9" },
+      }),
+    );
+
+    expect(response.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/pt/pricing/brl",
+    );
+  });
+
+  it("keeps the default currency's page, and other countries' default, at /pricing itself", async () => {
+    const [unitedStates, unknown] = await Promise.all([
+      proxy(
+        new NextRequest("https://www.zoonk.com/pricing", {
+          headers: { "accept-language": "en-US", "x-vercel-ip-country": "US" },
+        }),
+      ),
+      proxy(
+        new NextRequest("https://www.zoonk.com/pricing", {
+          headers: { "accept-language": "en-US", "x-vercel-ip-country": "ZZ" },
+        }),
+      ),
+    ]);
+
+    expect(unitedStates.headers.get("x-middleware-rewrite")).toBe(
+      "https://www.zoonk.com/en/pricing",
+    );
+
+    expect(unknown.headers.get("x-middleware-rewrite")).toBe("https://www.zoonk.com/en/pricing");
+  });
+
+  it("names no alternates for a currency variant asked for by its own address", async () => {
+    const [variant, page] = await Promise.all([
+      proxy(new NextRequest("https://www.zoonk.com/pt/pricing/brl")),
+      proxy(new NextRequest("https://www.zoonk.com/pt/pricing")),
+    ]);
+
+    expect(variant.headers.get("link")).toBeNull();
+    expect(page.headers.get("link")).toContain("/pricing");
+  });
+
+  it("leaves a language redirect alone", async () => {
+    const response = await proxy(
+      new NextRequest("https://www.zoonk.com/pricing", {
+        headers: { cookie: "ZOONK_LOCALE=pt", "x-vercel-ip-country": "BR" },
+      }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("https://www.zoonk.com/pt/pricing");
+  });
+});
+
+describe("static pages set no cookies", () => {
+  const sessionCookie = `${getSessionCookieName({ secure: true })}=token`;
+
+  it.each([
+    "/",
+    "/pricing",
+    "/pt/pricing",
+    "/privacy",
+    "/terms",
+    "/courses",
+    "/courses/science",
+    "/b/ai/c/computer-science",
+  ])("answers %s without Set-Cookie, for a visitor and for a session", async (path) => {
+    const language = path.startsWith("/pt") ? "pt-BR" : "en-US";
+
+    const responses = await Promise.all(
+      [undefined, sessionCookie].map((cookie) =>
+        proxy(
+          new NextRequest(`https://www.zoonk.com${path}`, {
+            headers: {
+              "accept-language": language,
+              "x-vercel-ip-country": "BR",
+              ...(cookie && { cookie }),
+            },
+          }),
+        ),
+      ),
+    );
+
+    for (const response of responses) {
+      expect(response.headers.get("set-cookie")).toBeNull();
+    }
   });
 });
 

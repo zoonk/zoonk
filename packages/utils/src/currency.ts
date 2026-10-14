@@ -1,5 +1,5 @@
 /** The currency Plus is billed in for each country (ISO 3166-1 alpha-2); any other country pays in `DEFAULT_CURRENCY`. */
-export const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
+const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
   AD: "eur",
   AT: "eur",
   AU: "aud",

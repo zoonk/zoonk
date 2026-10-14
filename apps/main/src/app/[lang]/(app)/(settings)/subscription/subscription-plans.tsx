@@ -1,7 +1,8 @@
 import { BILLING_PERIOD_PARAM, readBillingPeriod } from "@/components/pricing/plus-plan";
 import { PlusPricing } from "@/components/pricing/plus-pricing";
 import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
-import { getPlusPriceTable } from "@/data/subscriptions/get-plus-price-table";
+import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
+import { getRequestBillingCurrency } from "@/data/subscriptions/get-request-billing-currency";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { getSession } from "@zoonk/core/users/session";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
@@ -36,7 +37,7 @@ export async function SubscriptionPlans({
     searchParams,
     getSession(),
     getCurrentPlusSubscription(),
-    getPlusPriceTable(),
+    getRequestBillingCurrency().then((currency) => getPlusPrices(currency)),
     getAllowance(),
   ]);
 
@@ -74,8 +75,9 @@ export async function SubscriptionPlans({
 
       <PlusPricing
         defaultPeriod={readBillingPeriod(query[BILLING_PERIOD_PARAM])}
-        prices={prices}
+        monthlyPrice={prices.monthlyPrice}
         viewerState={{ status: getOfferViewer({ hasAccount, hasSession: Boolean(session) }) }}
+        yearlyPrice={prices.yearlyPrice}
       />
     </Page>
   );

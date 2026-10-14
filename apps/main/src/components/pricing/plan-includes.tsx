@@ -1,6 +1,5 @@
 import { CheckMark } from "@/components/public/check-mark";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { type ReactNode } from "react";
 
 /**
  * What a plan includes: one big line that sums it up, then a few short lines, each with the quiet
@@ -34,7 +33,7 @@ export function PlanIncludes({
 }
 
 /** A plan's price, big in the mono face, with what it's per beside it. */
-export function PlanPrice({ amount, per }: { amount: ReactNode; per?: string }) {
+export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   return (
     <p className="flex items-baseline gap-2">
       <span className="font-mono text-[2.75rem] leading-none font-medium tracking-[-0.04em] tabular-nums">

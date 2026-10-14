@@ -115,16 +115,16 @@ describe(readCookie, () => {
   });
 
   it("reads a cookie's decoded value by its exact name", () => {
-    vi.stubGlobal("document", { cookie: "zoonk-country-old=PT; zoonk-country=BR;other=a%20b" });
+    vi.stubGlobal("document", { cookie: "zoonk-hint-old=no; zoonk-hint=yes;other=a%20b" });
 
-    expect(readCookie("zoonk-country")).toBe("BR");
+    expect(readCookie("zoonk-hint")).toBe("yes");
     expect(readCookie("other")).toBe("a b");
   });
 
   it("has nothing for a cookie that isn't set", () => {
     vi.stubGlobal("document", { cookie: "other=1" });
 
-    expect(readCookie("zoonk-country")).toBeNull();
+    expect(readCookie("zoonk-hint")).toBeNull();
   });
 
   it("keeps a value it can't decode as it is", () => {

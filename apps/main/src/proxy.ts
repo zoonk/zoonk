@@ -1,12 +1,12 @@
 import { hasSessionCookie } from "@zoonk/auth/cookies";
+import { DEFAULT_CURRENCY } from "@zoonk/utils/currency";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
-import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale-request";
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { proxyApiRequest } from "./lib/api-proxy";
+import { getBillingCurrency } from "./lib/billing-currency";
 import { getCatalogNotFound } from "./lib/catalog-not-found";
-import { VISITOR_COUNTRY_COOKIE } from "./lib/visitor-country";
 
 const localizedMiddleware = createMiddleware(routing);
 const HOME_PATH = new RegExp(`^/(?:${SUPPORTED_LOCALES.join("|")})?$`, "u");
@@ -16,31 +16,49 @@ const CATALOG_PATH = new RegExp(
   "u",
 );
 
+/** The pricing page once next-intl resolved its language: `/{locale}/pricing`. */
+const PRICING_PATH = new RegExp(`^/(?<locale>${SUPPORTED_LOCALES.join("|")})/pricing/?$`, "u");
+
 /**
- * Keeps the visitor's country in a cookie the browser reads (`VISITOR_COUNTRY_COOKIE`), set only
- * when it changed: the platform's geo header, else the region of the language the browser prefers.
- * Static pages can't read the request, so the pricing page picks its currency from this.
+ * A pricing page's currency variant asked for by its own address. Its page names `/pricing` as
+ * canonical with its language alternates, so next-intl's alternates for the variant's address go.
  */
-function keepVisitorCountry({
+const PRICING_VARIANT_PATH = new RegExp(
+  `^/(?:(?:${SUPPORTED_LOCALES.join("|")})/)?pricing/[^/]+/?$`,
+  "u",
+);
+
+/**
+ * Serves the pricing page in the visitor's currency (`getBillingCurrency`) at its one address:
+ * a rewrite to the page's static variant for that currency (`pricing/[currency]`), so every
+ * variant is cached for everyone billed in it and the response sets no cookie. The default
+ * currency is `/pricing` itself. Null for any other page, and for a redirect next-intl decided.
+ */
+function getPricingRewrite({
   request,
   response,
 }: {
   request: NextRequest;
   response: NextResponse;
-}) {
-  const country =
-    request.headers.get("x-vercel-ip-country") ??
-    getCountryFromAcceptLanguage(request.headers.get("accept-language"));
-
-  if (request.cookies.get(VISITOR_COUNTRY_COOKIE)?.value === country) {
-    return;
+}): NextResponse | null {
+  if (response.headers.has("location")) {
+    return null;
   }
 
-  response.cookies.set(VISITOR_COUNTRY_COOKIE, country, {
-    path: "/",
-    sameSite: "lax",
-    secure: request.nextUrl.protocol === "https:",
-  });
+  const resolvedUrl = new URL(response.headers.get("x-middleware-rewrite") ?? request.url);
+  const locale = PRICING_PATH.exec(resolvedUrl.pathname)?.groups?.locale;
+  const currency = getBillingCurrency(request.headers);
+
+  if (!locale || currency === DEFAULT_CURRENCY) {
+    return null;
+  }
+
+  resolvedUrl.pathname = `/${locale}/pricing/${currency}`;
+
+  const headers = new Headers(response.headers);
+  headers.delete("x-middleware-next");
+
+  return NextResponse.rewrite(resolvedUrl, { headers });
 }
 
 /**
@@ -54,7 +72,6 @@ export default async function proxy(request: NextRequest) {
   }
 
   const response = localizedMiddleware(request);
-  keepVisitorCountry({ request, response });
 
   /**
    * Resolve the home page's language before sending a session browser to Today, in one hop and
@@ -78,7 +95,10 @@ export default async function proxy(request: NextRequest) {
     return redirect;
   }
 
-  if (CATALOG_PATH.test(request.nextUrl.pathname)) {
+  if (
+    CATALOG_PATH.test(request.nextUrl.pathname) ||
+    PRICING_VARIANT_PATH.test(request.nextUrl.pathname)
+  ) {
     response.headers.delete("link");
   }
 
@@ -86,7 +106,11 @@ export default async function proxy(request: NextRequest) {
     return response;
   }
 
-  return (await getCatalogNotFound({ localized: response, request })) ?? response;
+  return (
+    getPricingRewrite({ request, response }) ??
+    (await getCatalogNotFound({ localized: response, request })) ??
+    response
+  );
 }
 
 export const config = {

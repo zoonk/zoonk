@@ -193,26 +193,26 @@ test.describe("Pricing for visitors", () => {
     await expect(page.getByRole("heading", { level: 2, name: "6. Fair use" })).toBeInViewport();
   });
 
-  test("prices the plans in the currency of the visitor's country, on a page load and after a client navigation", async ({
+  test("serves a visitor from another country their pricing at /pricing, on a page load and after a client navigation", async ({
     browser,
   }) => {
-    // Without the platform's country header, the country comes from the browser's language.
+    // Brazil, by the browser's language without the platform's country header: the proxy serves
+    // the page's variant in reais at the same address.
     const context = await browser.newContext({ locale: "pt-BR" });
     const page = await context.newPage();
-    const currencyScope = page.locator("[data-billing-currency]").first();
+    const heading = page.getByRole("heading", { level: 1, name: /^Comece grátis\./u });
 
     await page.goto("/pricing");
     await expect(page).toHaveURL(/\/pt\/pricing$/u);
-    await expect(currencyScope).toHaveAttribute("data-billing-currency", "brl");
-
-    const cookies = await context.cookies();
-    expect(cookies.find((cookie) => cookie.name === "zoonk-country")?.value).toBe("BR");
+    await expect(heading).toBeVisible();
+    await expect(page.getByRole("region", { exact: true, name: "Plus" })).toBeVisible();
 
     await page.goto("/pt/privacy");
     await page.getByRole("banner").getByRole("link", { name: "Preços" }).click();
 
     await expect(page).toHaveURL(/\/pt\/pricing$/u);
-    await expect(currencyScope).toHaveAttribute("data-billing-currency", "brl");
+    await expect(heading).toBeVisible();
+    await expect(page.getByRole("region", { exact: true, name: "Plus" })).toBeVisible();
 
     await context.close();
   });
