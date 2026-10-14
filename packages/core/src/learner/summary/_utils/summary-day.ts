@@ -110,8 +110,9 @@ async function countDayMissions({
 }
 
 /**
- * What the active goal's saved day gives the summary: today's queue, the missions ring, and when
- * a day carried over from the night before stops being the learner's (`carriedUntil`).
+ * What the active goal's saved day gives the summary: today's queue, the missions ring, when a day
+ * carried over from the night before stops being the learner's (`carriedUntil`), and the day they
+ * describe (`dayDate`: that carried day's, else today's).
  */
 export async function loadActiveGoalDay({
   goal,
@@ -132,11 +133,12 @@ export async function loadActiveGoalDay({
   timeZone: string;
 }): Promise<{
   carriedUntil: Date | null;
+  dayDate: Date;
   missions: { done: number; total: number } | null;
   today: LearnerSummaryToday | null;
 }> {
   if (!goal) {
-    return { carriedUntil: null, missions: null, today: null };
+    return { carriedUntil: null, dayDate: localDate, missions: null, today: null };
   }
 
   const day = findSavedDay({ goal, localDate, now, sessions, timeZone });
@@ -144,6 +146,7 @@ export async function loadActiveGoalDay({
 
   return {
     carriedUntil: carried ? getCarryOverEnd(day) : null,
+    dayDate: day?.localDate ?? localDate,
     missions: await countDayMissions({ day, goal, now, readyMistakesOn, timeZone }),
     today: getSummaryToday({ day, goal, phaseChallengesRequired }),
   };

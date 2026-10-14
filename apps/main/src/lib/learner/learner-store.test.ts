@@ -26,6 +26,7 @@ function summaryOf(userId: string, activeGoalId: string | null = null): LearnerS
       name: null,
       studiedToday: false,
     },
+    day: null,
     goals: [],
     identity: {
       expiresAt: SIGNED_IN_AT + 2 * DAY_MS,

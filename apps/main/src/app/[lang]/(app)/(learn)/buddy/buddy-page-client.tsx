@@ -108,7 +108,13 @@ export function BuddyPageClient({
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId);
   useRefreshWhenOld(readAt);
-  useReportTabMissions({ missions: status.today?.missions ?? null, readAt, userId: viewerId });
+
+  useReportTabMissions({
+    day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },
+    missions: status.today?.missions ?? null,
+    readAt,
+    userId: viewerId,
+  });
 
   return (
     <BuddyScreen

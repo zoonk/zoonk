@@ -150,6 +150,11 @@ export const buddyStatusResponseSchema = z
     today: z
       .object({
         fullMeal: z.object({ bonus: countSchema, earned: z.boolean() }),
+        goalId: z.uuid().meta({ description: "The goal whose session the missions are" }),
+        localDate: logicalDateSchema.meta({
+          description:
+            "That session's learner-local date, the night before's while it carries over",
+        }),
         missions: z.array(missionSchema),
       })
       .nullable()

@@ -6,7 +6,8 @@ export type BuddyStatusView = Extract<BuddyStatusResult, { status: "ready" }>["b
 
 export type BuddyGlassesProgress = BuddyStatusView["glasses"][number];
 
-export type BuddyToday = NonNullable<BuddyStatusView["today"]>;
+/** Today's missions and the full meal they add up to, as the buddy and Today draw them. */
+export type BuddyToday = Pick<NonNullable<BuddyStatusView["today"]>, "fullMeal" | "missions">;
 
 export type BuddyMission = BuddyToday["missions"][number];
 

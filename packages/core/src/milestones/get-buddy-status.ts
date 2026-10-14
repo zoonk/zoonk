@@ -17,7 +17,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { getStartOfWeek } from "../plans/planner/plan-calendar";
+import { getStartOfWeek, toIsoDate } from "../plans/planner/plan-calendar";
 import { type ResolvedBuddy, resolveProfileBuddy } from "../profile/default-buddy";
 import { hasEnergyStarted } from "../progress/_utils/energy-started";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
@@ -37,7 +37,16 @@ import { type GlassesProgress, getGlassesProgress } from "./milestone-rules";
 const DAYS_PER_WEEK = 7;
 
 /** Today's achievable missions and their completion bonus, from the active goal's session. */
-type BuddyToday = { fullMeal: { bonus: number; earned: boolean }; missions: Mission[] };
+/**
+ * Today's missions, and which goal's session and learner-local day (`YYYY-MM-DD`) they are, so a
+ * client showing them beside other reads can tell they're the same day's.
+ */
+type BuddyToday = {
+  fullMeal: { bonus: number; earned: boolean };
+  goalId: string;
+  localDate: string;
+  missions: Mission[];
+};
 
 /**
  * The buddy's page: its Energy (and whether it naps, is awake or glows), its stage and how far the
@@ -94,16 +103,16 @@ async function loadToday({
   timeZone: string;
   userId: string;
 }): Promise<{ today: BuddyToday; firstSteps: FirstSteps | null } | null> {
-  const carried = goalId
-    ? await findCarriedOverSession({ goalId, now: new Date(), timeZone, userId })
-    : null;
+  if (!goalId) {
+    return null;
+  }
 
-  const current = goalId
-    ? await prisma.studySession.findUnique({
-        include: STUDY_SESSION_INCLUDE,
-        where: { userGoalDate: { goalId, localDate, userId } },
-      })
-    : null;
+  const carried = await findCarriedOverSession({ goalId, now: new Date(), timeZone, userId });
+
+  const current = await prisma.studySession.findUnique({
+    include: STUDY_SESSION_INCLUDE,
+    where: { userGoalDate: { goalId, localDate, userId } },
+  });
 
   const session = carried && !current?.startedAt ? carried : current;
 
@@ -120,7 +129,12 @@ async function loadToday({
 
   return {
     firstSteps,
-    today: { fullMeal: { bonus: getMissionBonus(missions), earned }, missions },
+    today: {
+      fullMeal: { bonus: getMissionBonus(missions), earned },
+      goalId,
+      localDate: toIsoDate(session.localDate),
+      missions,
+    },
   };
 }
 

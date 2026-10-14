@@ -36833,6 +36833,28 @@
             "additionalProperties": false,
             "description": "The buddy as the tabs draw it"
           },
+          "day": {
+            "nullable": true,
+            "description": "The active goal's learner-local study day that `today` and `missions` describe (the night before's while a day carries over midnight); null without an active goal",
+            "type": "object",
+            "properties": {
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "localDate": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "goalId",
+              "localDate"
+            ],
+            "additionalProperties": false
+          },
           "goals": {
             "type": "array",
             "items": {
@@ -37031,6 +37053,7 @@
           "activeGoalId",
           "analytics",
           "buddy",
+          "day",
           "goals",
           "identity",
           "level",
@@ -70202,6 +70225,18 @@
                 ],
                 "additionalProperties": false
               },
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "The goal whose session the missions are"
+              },
+              "localDate": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                "description": "That session's learner-local date, the night before's while it carries over"
+              },
               "missions": {
                 "type": "array",
                 "items": {
@@ -70211,6 +70246,8 @@
             },
             "required": [
               "fullMeal",
+              "goalId",
+              "localDate",
               "missions"
             ],
             "additionalProperties": false

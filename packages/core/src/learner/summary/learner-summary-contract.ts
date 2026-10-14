@@ -40,6 +40,13 @@ type LearnerSummaryBuddy = {
   studiedToday: boolean;
 };
 
+/**
+ * The active goal's study day that `today` and `missions` describe: the goal and its learner-local
+ * date (`YYYY-MM-DD`), the night before's while a day carries over midnight. A page's read of the
+ * same day (Today's, the buddy's) names it the same way.
+ */
+export type LearnerSummaryDay = { goalId: string; localDate: string };
+
 /** Today's saved session: the blocks left and the one up next, which "Continue" opens. */
 export type LearnerSummaryToday = {
   blocksLeft: number;
@@ -77,6 +84,8 @@ export type LearnerSummary = {
   activeGoalId: string | null;
   analytics: LearnerSummaryAnalytics;
   buddy: LearnerSummaryBuddy;
+  /** The study day `today` and `missions` describe; null without an active goal. */
+  day: LearnerSummaryDay | null;
   goals: LearnerSummaryGoal[];
   identity: LearnerIdentity;
   /** The belt and level, or null before any learning. */

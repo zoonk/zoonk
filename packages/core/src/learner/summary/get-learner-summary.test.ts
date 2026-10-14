@@ -139,7 +139,13 @@ describe(getLearnerSummary, () => {
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
-    expect(counts.result).toMatchObject({ missions: null, today: null });
+    // An unsaved day is still today's: Today names the day it builds the same way.
+    expect(counts.result).toMatchObject({
+      day: { goalId: goal.id, localDate: "2026-03-10" },
+      missions: null,
+      today: null,
+    });
+
     expect(counts.writes).toBe(0);
 
     const [sessions, savedItem] = await Promise.all([
@@ -169,6 +175,7 @@ describe(getLearnerSummary, () => {
         name: null,
         studiedToday: false,
       },
+      day: null,
       goals: [],
       identity: {
         expiresAt: SESSION_ENDS_AT.getTime(),
@@ -220,6 +227,7 @@ describe(getLearnerSummary, () => {
 
     expect(counts.result).toMatchObject({
       activeGoalId: goal.id,
+      day: { goalId: goal.id, localDate: TODAY.toISOString().slice(0, 10) },
       goals: [{ id: goal.id, isActive: true, kind: "learn", status: "active", title: goal.title }],
       // The lesson is done, one review of two, one mistake fixed of two.
       missions: { done: 1, total: 3 },
@@ -351,6 +359,9 @@ describe(getLearnerSummary, () => {
     const summary = await getLearnerSummary();
 
     expect(summary?.today).toMatchObject({ blocksLeft: 1, next: { sessionId: yesterday.id } });
+
+    // Its missions are the night before's day, and say so.
+    expect(summary?.day).toStrictEqual({ goalId: goal.id, localDate: "2026-03-09" });
   });
 
   it("leaves a free language plan's locked challenge out of the day and finds its speaking paper", async () => {

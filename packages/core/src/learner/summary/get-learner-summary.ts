@@ -231,7 +231,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       })
     : undefined;
 
-  const [day, ready] = await Promise.all([
+  const [goalDay, ready] = await Promise.all([
     loadActiveGoalDay({
       goal: activeGoal,
       localDate,
@@ -258,6 +258,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       username: user.username,
     },
     ...getSummaryProgress({ facts, localDate, profile, timeZone }),
+    day: activeGoal ? { goalId: activeGoal.id, localDate: toIsoDate(goalDay.dayDate) } : null,
     goals: listed,
     identity: {
       expiresAt: session.session.expiresAt.getTime(),
@@ -265,9 +266,9 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       signedInAt: session.session.createdAt.getTime(),
       userId,
     },
-    missions: day.missions,
+    missions: goalDay.missions,
     nextChangeAt: getNextChangeAt({
-      carriedUntil: day.carriedUntil,
+      carriedUntil: goalDay.carriedUntil,
       localDate,
       now,
       sessionExpiresAt: session.session.expiresAt,
@@ -279,6 +280,6 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     revision: String(user.learnerRevision),
     tier: getTier({ isAnonymous, subscription }),
     timeZone: getSavedTimeZone(activeGoal),
-    today: day.today,
+    today: goalDay.today,
   };
 }

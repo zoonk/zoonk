@@ -377,6 +377,9 @@ describe(getBuddyStatus, () => {
       buddy: {
         today: {
           fullMeal: { bonus: 50, earned: false },
+          // Which goal's day they are, as the learner summary names its own.
+          goalId: goal.id,
+          localDate: session.localDate.toISOString().slice(0, 10),
           missions: [{ kind: "somethingNew", status: "done" }],
         },
       },

@@ -13,6 +13,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
+import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
@@ -73,7 +74,16 @@ export function TodayClient({
   const router = useRouter();
   useRefreshWhenOld(readAt);
   useFollowTimeZone(today.goal.id);
-  useReportTabMissions({ missions: today.session.missions, readAt, userId: today.userId });
+
+  useReportTabMissions({
+    day: {
+      goalId: today.session.goalId ?? today.goal.id,
+      localDate: toStudyDayDate(today.session.localDate),
+    },
+    missions: today.session.missions,
+    readAt,
+    userId: today.userId,
+  });
 
   const refreshOnPlanChange = useRefreshOnPlanChange({
     goalId: today.goal.id,

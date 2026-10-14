@@ -47,6 +47,13 @@ const learnerSummarySchema = z
         studiedToday: z.boolean(),
       })
       .meta({ description: "The buddy as the tabs draw it" }),
+    day: z
+      .object({ goalId: z.uuid(), localDate: z.iso.date() })
+      .nullable()
+      .meta({
+        description:
+          "The active goal's learner-local study day that `today` and `missions` describe (the night before's while a day carries over midnight); null without an active goal",
+      }),
     goals: z
       .array(learnerSummaryGoalSchema)
       .meta({ description: "Goals not archived, the active one first, then oldest first" }),
