@@ -38,9 +38,9 @@ async function FocusTestBody({ searchParams }: Props) {
 
   const result = await getFocusTest({ goalId });
 
-  // No focus to choose (a plan of one area) or not the learner's goal: the Journey holds the plan.
+  // No focus to choose (a plan of one area) or not the learner's goal: the Plan holds the plan.
   if (result.status !== "ready") {
-    redirect({ href: "/journey", locale });
+    redirect({ href: "/plan", locale });
     return null;
   }
 
@@ -48,8 +48,8 @@ async function FocusTestBody({ searchParams }: Props) {
     <FocusTestClient
       generationId={readParam(query[FOCUS_TEST_RUN_PARAM])}
       page={{
-        closeHref: goalParam ? `/start/${goalId}` : "/journey",
-        doneHref: "/journey",
+        closeHref: goalParam ? `/start/${goalId}` : "/plan",
+        doneHref: "/plan",
         goalId,
         goalParam: goalParam && isUuid(goalParam) ? goalParam : null,
       }}
@@ -63,13 +63,13 @@ function FocusTestSkeleton() {
   return (
     <main className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between px-3 py-2 sm:px-4">
-        <Skeleton className="size-9 rounded-full" />
+        <Skeleton className="size-9 rounded-lg" />
         <Skeleton className="h-4 w-32" />
         <span className="size-9" />
       </header>
-      <section className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-4 px-4 py-6">
-        <Skeleton className="h-80 w-full rounded-3xl" />
-        <Skeleton className="h-14 w-full rounded-full" />
+      <section className="max-w-column mx-auto flex w-full flex-1 flex-col gap-4 px-4 py-6">
+        <Skeleton className="h-80 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full" />
       </section>
     </main>
   );

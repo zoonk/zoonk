@@ -16,9 +16,12 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { normalizeString } from "@zoonk/utils/string";
+import { courseResourceSchema } from "../src/lib/openapi/schemas/catalog-resources";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { readBody } from "./helpers/response";
 
 const baseURL = process.env.E2E_BASE_URL ?? "";
 
@@ -54,7 +57,87 @@ async function createLanguageCourse() {
   return { course, language, organization, uniqueId };
 }
 
+function examDateAfter(days: number) {
+  return new Date(Date.now() + days * 86_400_000).toISOString().slice(0, 10);
+}
+
+function examEdition(dates: string[], timeZone = "America/Sao_Paulo") {
+  return {
+    citations: [],
+    dates: dates.map((value) => ({
+      citation: { passage: "Exam day", sourceId: "notice" },
+      date: value,
+      kind: "exam",
+      label: "Exam",
+    })),
+    noticeUrl: null,
+    questionCount: null,
+    sourceHash: null,
+    timeZone,
+    year: Number(dates[0]?.slice(0, 4)),
+  };
+}
+
 test.describe("Catalog resource API", () => {
+  test("course detail exposes upcoming exam days and reads revised notice dates without a stale cache", async () => {
+    const [organization, apiContext] = await Promise.all([
+      organizationFixture({ kind: "brand" }),
+      newApiContext(),
+    ]);
+
+    const course = await courseFixture({
+      format: "exam",
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const days = [examDateAfter(21), examDateAfter(28)];
+    const blueprint = await examBlueprintFixture({ edition: examEdition(days.toReversed()) });
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: blueprint.id,
+        generatedAt: new Date(),
+        graph: { phases: [], skills: [] },
+        model: "fixture",
+        primaryCourseId: course.id,
+        promptVersion: "fixture",
+        runId: "fixture",
+      },
+    });
+
+    const first = await readBody({
+      response: await apiContext.get(`/v1/courses/${course.id}`),
+      schema: courseResourceSchema,
+    });
+
+    expect(first.exam).toStrictEqual({ days, estimated: false, timeZone: "America/Sao_Paulo" });
+
+    const revised = [examDateAfter(35), examDateAfter(42)];
+
+    await prisma.examBlueprint.update({
+      data: { edition: examEdition(revised, "Asia/Tokyo") },
+      where: { id: blueprint.id },
+    });
+
+    const second = await readBody({
+      response: await apiContext.get(`/v1/courses/${course.id}`),
+      schema: courseResourceSchema,
+    });
+
+    expect(second.exam).toStrictEqual({ days: revised, estimated: false, timeZone: "Asia/Tokyo" });
+
+    const ordinary = await courseFixture({ isPublished: true, organizationId: organization.id });
+
+    const withoutExam = await readBody({
+      response: await apiContext.get(`/v1/courses/${ordinary.id}`),
+      schema: courseResourceSchema,
+    });
+
+    expect(withoutExam.exam).toBeNull();
+    await apiContext.dispose();
+  });
+
   test("browses published courses by language and category without a search query", async () => {
     const { course, language } = await createLanguageCourse();
 
@@ -79,6 +162,47 @@ test.describe("Catalog resource API", () => {
     expect(body.data).toHaveLength(1);
     expect(body.data[0]).toMatchObject({ id: course.id, language, title: course.title });
     expect(body.pagination).toEqual({ hasMore: false, nextCursor: null });
+
+    await apiContext.dispose();
+  });
+
+  test("lists each course's lessons and minutes, and the courses per category", async () => {
+    const language = randomUUID().slice(0, 8);
+    const { course } = await catalogCourseFixture({ language, lessonCounts: [3, 2] });
+
+    await Promise.all([
+      courseCategoryFixture({ category: "science", courseId: course.id }),
+      courseCategoryFixture({ category: "tech", courseId: course.id }),
+    ]);
+
+    const apiContext = await newApiContext();
+
+    const [coursesResponse, countsResponse] = await Promise.all([
+      apiContext.get(`/v1/courses?language=${language}`),
+      apiContext.get(`/v1/catalog/categories?language=${language}`),
+    ]);
+
+    expect(coursesResponse.status()).toBe(200);
+    expect(countsResponse.status()).toBe(200);
+
+    const courses = await coursesResponse.json();
+    const counts = await countsResponse.json();
+
+    // Five lessons of the fixture's 4 minutes each.
+    expect(courses.data).toStrictEqual([
+      expect.objectContaining({ estimatedMinutes: 20, id: course.id, lessonCount: 5 }),
+    ]);
+
+    expect(counts.total).toBe(1);
+    expect(counts.categories).toHaveLength(15);
+
+    expect(counts.categories).toEqual(
+      expect.arrayContaining([
+        { category: "arts", courseCount: 0 },
+        { category: "science", courseCount: 1 },
+        { category: "tech", courseCount: 1 },
+      ]),
+    );
 
     await apiContext.dispose();
   });
@@ -227,6 +351,7 @@ test.describe("Catalog resource API", () => {
     await expect(courseResponse.json()).resolves.toEqual({
       categories: ["tech"],
       description: course.description,
+      exam: null,
       format: course.format,
       generationId: course.outlineRunId,
       generationStatus: "completed",

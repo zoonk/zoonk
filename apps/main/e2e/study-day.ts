@@ -32,7 +32,7 @@ export const LESSON_CAN_DO = "You'll work out a discount in your head";
 
 /** A written lesson with one check, or one still waiting to be written. */
 async function createLesson({ written }: { written: boolean }) {
-  const lesson = { canDo: LESSON_CAN_DO, title: LESSON_TITLE };
+  const lesson = { canDo: LESSON_CAN_DO, estimatedMinutes: 3, title: LESSON_TITLE };
 
   if (!written) {
     return libraryLessonFixture(lesson);
@@ -232,6 +232,27 @@ export async function pastFreeWeek(goalId: string) {
   });
 }
 
+/** A mission as a session stores it when its day is built (core's `MissionPick`). */
+type StoredMission = {
+  anchor: Record<string, string>;
+  detail?: Record<string, number | string>;
+  firstStep?: boolean;
+  kind: string;
+  opens?: Record<string, string>;
+  total: number;
+};
+
+/**
+ * Gives a test day the missions a session picks when it's built, instead of the ones a session
+ * from before stored picks reads from its blocks.
+ */
+export async function saveMissions(sessionId: string, picks: StoredMission[]) {
+  await prisma.studySession.update({
+    data: { missions: { picks, version: 1 } },
+    where: { id: sessionId },
+  });
+}
+
 /** Opens a page signed in as the learner, in a browser context of its own. */
 export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
   const context = await browser.newContext({ storageState: user.storageState });
@@ -252,9 +273,25 @@ export async function continueWithEnter(page: Page) {
   }).toPass({ timeout: 5000 });
 }
 
-/** Answers a quick question with its first option (always the right one) and moves on. */
+/** Checks the picked answer with Enter, once the pinned Check is ready for it. */
+export async function checkWithEnter(page: Page) {
+  await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
+  await page.keyboard.press("Enter");
+}
+
+/** Picks a session question's option by its words and checks it, as a tap and Check do. */
+export async function pickAndCheck(page: Page, option: RegExp | string) {
+  await page.getByRole("radio", { name: option }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+}
+
+/**
+ * Answers a quick question with its first option (always the right one): its number picks it and
+ * Enter checks it, as in the lesson. Then it moves on.
+ */
 export async function answerRight(page: Page, question: RegExp | string) {
   await expect(page.getByRole("heading", { name: question })).toBeVisible();
   await page.keyboard.press("1");
+  await checkWithEnter(page);
   await continueWithEnter(page);
 }

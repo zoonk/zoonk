@@ -44,7 +44,7 @@ export const goalMapPaths = {
   "/goals/{goalId}/map": {
     get: {
       description:
-        "The map of the field for a goal, drawn by code from its skill graph: every skill with its mastery (New, Learning, Solid, Mastered, fading) and prerequisites, grouped by chapter, phase and course, with where the learner is now. It also carries refresh mode (the skills fading now, first for refresh goals), the course the plan is built from with its levels, and, once every lesson is done, what to study next.",
+        "The map of the field for a goal, drawn by code from its skill graph: every skill with its mastery (New, Learning, Solid, Mastered, fading) and prerequisites, grouped by chapter, phase and course, with where the learner is now. It also carries refresh mode (the skills fading now, first for refresh goals), the course the plan is built from with its levels, and, once the plan is finished (every lesson and every phase's challenge), what to study next.",
       operationId: "getGoalMap",
       requestParams: { path: goalPathParamsSchema },
       responses: {

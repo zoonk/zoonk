@@ -23,7 +23,7 @@ async function findSeededPlan(email: string) {
 /**
  * A plan's link opened by someone else: the subject and the plan's shape, never the owner's name
  * or progress, noindex, and a way to start their own plan from it. The owner landing on their
- * Journey is in journey.test.ts, after sharing it.
+ * Plan is in journey.test.ts, after sharing it.
  */
 test.describe("Plan links", () => {
   test("visitors see the plan's shape without the owner, and onboarding starts from the plan", async ({
@@ -37,6 +37,11 @@ test.describe("Plan links", () => {
 
     await expect(page.getByText("A study plan someone shared with you")).toBeVisible();
     await expect(page.getByText(/phases? · \d+ skills?/u)).toBeVisible();
+
+    // The phases are the course pages' numbered rows, one per phase.
+    const phases = page.getByRole("region", { name: "A study plan" }).getByRole("listitem");
+    await expect(phases.first()).toContainText("1");
+    expect(await phases.count()).toBeGreaterThan(1);
     // An exam's phases have no name of their own: they're named by what they're for, as on the plan.
     await expect(page.getByText("Fill the gaps", { exact: true })).toBeVisible();
     await expect(page.getByText("Ana Souza")).toBeHidden();
@@ -61,9 +66,9 @@ test.describe("Plan links", () => {
     await page.getByRole("link", { name: "Start from this plan" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/start\\?goal=.+&plan=${plan.id}$`, "u"));
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue(subject);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(subject);
 
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("button", { name: "Build my plan" }).click();
     await page.getByRole("button", { name: "Looks right" }).click();
     await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 
@@ -87,10 +92,12 @@ test.describe("Plan links", () => {
 
     await page.goto(`/plan-link/${plan.id}`);
 
-    await page.getByLabel("How much time a day?").selectOption("30");
+    // The time is a chip, picked by tapping it as onboarding's are.
+    await page.getByText("30 min", { exact: true }).click();
+    await expect(page.getByRole("radio", { exact: true, name: "30 min" })).toBeChecked();
     await page.getByRole("button", { name: "Start from this plan" }).click();
 
-    await expect(page).toHaveURL(/\/journey$/u);
+    await expect(page).toHaveURL(/\/plan$/u);
 
     await expect
       .poll(async () =>

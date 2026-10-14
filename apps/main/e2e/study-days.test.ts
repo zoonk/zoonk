@@ -24,7 +24,7 @@ test.describe("Study days", () => {
   }) => {
     // Ana studies every day of the week.
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      await page.goto("/journey");
+      await page.goto("/plan");
       await page.getByRole("button", { name: "Adjust plan" }).click();
 
       const days = page

@@ -84,9 +84,9 @@ function toolsCard(page: Page) {
     .getByRole("region", { name: "You'll use" });
 }
 
-/** Tools live in the plan's editor, which the Journey's "Adjust plan" opens. */
+/** Tools live in the plan's editor, which the Plan's "Adjust plan" opens. */
 async function openPlanEditor(page: Page) {
-  await page.goto("/journey");
+  await page.goto("/plan");
   await page.getByRole("button", { name: "Adjust plan" }).click();
 }
 
@@ -213,7 +213,7 @@ test.describe("Plan tools on the plan reveal", () => {
 
     await page.goto(`/start/${goal.id}`);
 
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
     await expect(page.getByRole("region", { name: "You'll use" })).toHaveCount(0);
   });
 });

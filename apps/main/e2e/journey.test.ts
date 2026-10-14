@@ -15,14 +15,15 @@ import { z } from "zod";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
-import { openAs } from "./study-day";
+import { carryLessons, createStudyDay, openAs } from "./study-day";
 
 /**
- * The Journey replaces Plan, Progress and Content: where the learner stands in one number (its
- * details in a sheet), the plan's fit when it needs adjusting, the path of phases (a timeline for a
- * goal with subjects, the current one open to its chapters otherwise) with its checkpoint, the goal
- * as the finish, the goal's subjects, and the mistakes to fix. The "…" adjusts the plan and holds
- * what's done now and then. `journey-syllabus.test.ts` covers subjects in depth.
+ * The Plan replaces Plan, Progress and Content: where the learner stands in two
+ * numbers (their details in sheets), the one thing the plan wants them to know or decide, the
+ * phases as a roadmap, what's next on the path, the plan's settings, and the goal's subjects (or,
+ * for a goal without them, its path of phases with the current one open to its chapters). The "…"
+ * adjusts the plan and holds what's done now and then. `journey-syllabus.test.ts` covers subjects
+ * in depth.
  */
 
 const phasesSchema = z.array(z.object({ endDate: z.iso.date() }));
@@ -31,22 +32,88 @@ const phasesSchema = z.array(z.object({ endDate: z.iso.date() }));
 const ALL_ANSWERED = [...ONBOARDING_QUESTIONS, "buddy", "placement"];
 
 const STATUS =
-  /(?:Keeping pace|Needs adjusting|One day (?:ahead|behind)|\d+ days (?:ahead|behind))/u;
+  /Pace\s*(?:On pace|Ahead|Behind|Too tight)\s*(?:.+ a day|Needs adjusting|One day (?:ahead|behind)|\d+ days (?:ahead|behind)|\d+ lessons? to catch up)/u;
+
+/** A preset's time as the editor writes it: "45 min", "1 hr", "1 hr 30 min". */
+function minutesLabel(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+
+  if (hours === 0) {
+    return `${rest} min`;
+  }
+
+  return rest === 0 ? `${hours} hr` : `${hours} hr ${rest} min`;
+}
+
+/** The editor's one-hour preset, whether or not it's the time plans recommend. */
+const ONE_HOUR = /^1 hr\s*(?:all in depth|recommended)?$/u;
 
 /** A list row's least height: a tap target with room for its title. */
 const MIN_ROW_HEIGHT = 44;
 
+/** How long a change that plans again may take before the editor says what it did, under load. */
+const REPLAN_TIMEOUT_MS = 15_000;
+
 async function openJourney(page: Page) {
-  await page.goto("/journey");
+  await page.goto("/plan");
   await expect(page.locator('[data-slot="journey"]')).toBeVisible();
 }
 
 function journeyPath(page: Page) {
-  return page.getByRole("list", { name: "Your journey" });
+  return page.getByRole("list", { name: "Your path" });
+}
+
+/** The two numbers, drawn as tiles under 72rem and in the aside from it: the one on screen. */
+function standingNumbers(page: Page) {
+  return page.locator('[data-slot="journey-standing"]').filter({ visible: true });
+}
+
+/** The Plan's one suggestion, as the aside's panel at the tests' desktop width. */
+function suggestionPanel(page: Page) {
+  return page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
+}
+
+/**
+ * "Adjust plan" beside the Plan's title. A plan that no longer fits offers one in its suggestion
+ * too, so it's the one in the page's column.
+ */
+function adjustPlanButton(page: Page) {
+  return page.locator('[data-slot="journey"]').getByRole("button", { name: "Adjust plan" });
+}
+
+/**
+ * The roadmap's day labels under its bands (today, each phase's first day, the exam's day, the
+ * road's end), left to right.
+ */
+async function readRoadmapAxis(page: Page) {
+  const labels = await page
+    .locator('[data-slot="plan-roadmap"]')
+    .filter({ visible: true })
+    .locator(":scope > ol > li")
+    .evaluateAll((phases) =>
+      phases.flatMap((phase) =>
+        // Only the labels the axis shows: a band too short for one leaves it out of the layout.
+        [...(phase.lastElementChild?.children ?? [])]
+          .filter((label) => label.getClientRects().length > 0)
+          .map((label) => ({
+            text: label.textContent ?? "",
+            x: label.getBoundingClientRect().left,
+          })),
+      ),
+    );
+
+  return labels.toSorted((first, second) => first.x - second.x).map((label) => label.text);
+}
+
+/** "Choose where to focus", one of the coverage suggestion's other options. */
+async function chooseFocusFromPlan(page: Page) {
+  await suggestionPanel(page).getByRole("button", { name: "Other options" }).click();
+  await page.getByRole("menuitem", { name: "Choose where to focus" }).click();
 }
 
 async function openMenu(page: Page) {
-  await page.getByRole("button", { name: "Journey options" }).click();
+  await page.getByRole("button", { name: "Plan options" }).click();
   return page.getByRole("menu");
 }
 
@@ -92,46 +159,60 @@ test.describe("Journey", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await openJourney(page);
 
-      // One number and its status; the details wait behind it.
-      const hero = page.locator('[data-slot="journey-hero"]');
-      await expect(hero).toContainText(/^\d+%\s*Your preparation/u);
-      await expect(hero).toContainText(STATUS);
+      // Two numbers: her preparation and her pace, each a button to what's behind it.
+      const standing = standingNumbers(page);
+      await expect(standing).toContainText(/^Preparation\s*\d+%/u);
+      await expect(standing).toContainText(STATUS);
+      const hero = standing.getByRole("button", { name: /^Preparation/u });
 
-      // The path is a timeline: every phase, then the goal itself.
-      const path = journeyPath(page);
-      const nodes = path.locator(":scope > li");
-      await expect(nodes).toHaveCount(5);
-      await expect(nodes.first()).toContainText("Foundations");
-      await expect(nodes.last()).toHaveAttribute("data-state", "finish");
+      // The roadmap: every phase as a band as long as its days, the one she's in raised.
+      const roadmap = page.getByRole("region", { exact: true, name: "Phases" });
+      const bands = roadmap.locator('[data-slot="roadmap-band"]');
+      await expect(bands).toHaveCount(4);
+      await expect(bands.first()).toContainText("Foundations");
+      await expect(roadmap.locator('[aria-current="step"]')).toContainText(", you are here");
 
-      // The phase she's in holds its next mock and the challenge that closes it, not chapters:
-      // those live under her exam's subjects.
-      const current = path.locator('li[aria-current="step"]');
-      await expect(current).toContainText(", you are here");
-
-      await expect(current.getByRole("link", { name: /^Mock exam/u })).toHaveAttribute(
-        "href",
-        "/exam",
+      // Its band is named in one run, never "Foundations , you are here".
+      await expect(roadmap.locator('[aria-current="step"]')).toHaveAccessibleName(
+        /\S, you are here$/u,
       );
 
-      await expect(current.getByRole("link", { name: /^Phase challenge/u })).toHaveAttribute(
+      // A band opens what its phase holds: its dates and lessons, its mocks and its challenge.
+      await bands.nth(1).click();
+      const phase = page.getByRole("dialog", { name: "Fill the gaps" });
+      await expect(phase).toContainText(/\d+ of \d+ lessons?/u);
+      await page.keyboard.press("Escape");
+      await expect(phase).toBeHidden();
+
+      // What's next on her path, three rows to act on: her next mock, the challenge that closes
+      // the phase she's in, and the exam itself, which opens what's on it. Chapters live under her
+      // exam's subjects.
+      const next = page.getByRole("region", { name: "Next on your path" });
+
+      // Her next mock is long and the plan already saves time for it, so it opens its own intro
+      // (funded-mock.test.ts follows it); a mock without saved time opens what's on her exam.
+      await expect(next.getByRole("link", { name: /^Mock exam/u })).toHaveAttribute(
         "href",
         /^\/challenge\/[\da-f-]{36}$/u,
       );
 
-      await expect(path.getByRole("link", { name: /Up next/u })).toHaveCount(0);
-      await expect(path.getByText(/^\d+ mock exams?$/u).first()).toBeVisible();
-
-      // The finish is the exam, which opens what's on it.
-      await expect(nodes.last().getByRole("link", { name: /About the exam/u })).toHaveAttribute(
+      await expect(next.getByRole("link", { name: /^Phase challenge/u })).toHaveAttribute(
         "href",
-        "/exam",
+        /^\/challenge\/[\da-f-]{36}$/u,
       );
 
-      // What's on the exam: the notice's subjects in its words, each opening its page, with the
-      // foreign language she takes inside Linguagens, as the notice counts it.
-      const syllabus = page.getByRole("region", { name: "What's on the exam" });
-      await expect(syllabus.getByText(/^5 subjects · \d+ topics$/u)).toBeVisible();
+      await expect(next.getByRole("link").last()).toHaveAttribute("href", "/exam");
+      await expect(page.getByText("Up next", { exact: true })).toHaveCount(0);
+
+      // Her plan's settings at a glance beside it, each opening "Adjust plan" at itself.
+      const settings = page.getByRole("region", { exact: true, name: "Your plan" });
+      await expect(settings.getByRole("button", { name: /^Time a day/u })).toBeVisible();
+      await expect(settings.getByRole("button", { name: /^Study days/u })).toBeVisible();
+
+      // The subjects: the notice's subjects in its words, each opening its page, with the foreign
+      // language she takes inside Linguagens, as the notice counts it.
+      const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
+      await expect(syllabus.getByText(/^5 subjects · \d+ topics/u)).toBeVisible();
 
       // Her plan's own area beyond the notice (exam strategy) comes after the notice's subjects.
       await expect(syllabus.getByRole("list").getByRole("link")).toHaveText([
@@ -147,14 +228,17 @@ test.describe("Journey", () => {
       await expect(syllabus.getByRole("link", { name: "download.inep.gov.br" })).toBeVisible();
 
       // What the old tabs listed lives elsewhere now: mocks and the mistakes notebook are practiced
-      // from Today.
-      await expect(page.getByRole("link", { name: /^Mistakes notebook/u })).toHaveCount(0);
+      // from Today (and the notebook opens from the sidebar too), not from the Plan's page.
+      await expect(
+        page.getByRole("main").getByRole("link", { name: /^Mistakes notebook/u }),
+      ).toHaveCount(0);
+
       await expect(page.getByRole("link", { name: /^Take a mock exam/u })).toHaveCount(0);
       await expect(page.getByRole("region", { name: "This week" })).toHaveCount(0);
       await expect(page.getByRole("link", { name: /^Weekly summary/u })).toHaveCount(0);
       await expect(page.getByRole("textbox", { name: /Search/u })).toHaveCount(0);
 
-      await expectAccessibleScreen(page, "the Journey");
+      await expectAccessibleScreen(page, "the Plan");
 
       // The details behind the number, at a glance: the estimate after her mock, on ENEM's scale,
       // the four parts as rings and the one or two things still to do, then back to where she was.
@@ -174,7 +258,7 @@ test.describe("Journey", () => {
       await expect(sheet).toBeHidden();
       await expect(hero).toBeFocused();
 
-      // "Adjust plan" sits in the card's action row; the "…" beside it holds what's done now and then.
+      // "Adjust plan" sits beside the title; the "…" after it holds what's done now and then.
       await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
       const menu = await openMenu(page);
       await expect(menu.getByRole("menuitem").first()).toHaveText("About the exam");
@@ -199,7 +283,7 @@ test.describe("Journey", () => {
       // notice's words alone, with no second index beside them, each with where she stands on it;
       // the ones past exams asked most say so.
       await syllabus.getByRole("link", { name: /^Matemática e suas Tecnologias/u }).click();
-      await expect(page).toHaveURL(/\/journey\/matematica-e-suas-tecnologias$/u);
+      await expect(page).toHaveURL(/\/plan\/matematica-e-suas-tecnologias$/u);
 
       await expect(
         page.getByRole("heading", { level: 1, name: "Matemática e suas Tecnologias" }),
@@ -223,14 +307,14 @@ test.describe("Journey", () => {
         /^\/content\/chapters\/[\da-f-]{36}\?from=matematica-e-suas-tecnologias$/u,
       );
 
-      // A chapter's way back is the subject it was opened from; the subject's is the Journey.
+      // A chapter's way back is the subject it was opened from; the subject's is the Plan.
       await chapter.click();
       const back = page.getByRole("main").getByRole("link", { name: "Back to Matemática" });
-      await expect(back).toHaveAttribute("href", "/journey/matematica-e-suas-tecnologias");
+      await expect(back).toHaveAttribute("href", "/plan/matematica-e-suas-tecnologias");
       await back.click();
 
-      await page.getByRole("main").getByRole("link", { name: "Back to Journey" }).click();
-      await expect(page).toHaveURL(/\/journey$/u);
+      await page.getByRole("main").getByRole("link", { name: "Back to Plan" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
     });
   });
 
@@ -241,7 +325,8 @@ test.describe("Journey", () => {
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await openJourney(page);
-      await page.locator('[data-slot="journey-hero"]').click();
+      const preparation = standingNumbers(page).getByRole("button", { name: /^Preparation/u });
+      await preparation.click();
       const sheet = page.getByRole("dialog", { name: "Your preparation" });
       const parts = sheet.getByRole("region", { name: "How it's measured" }).getByRole("listitem");
 
@@ -265,19 +350,47 @@ test.describe("Journey", () => {
       );
 
       // Only what's left, never a checklist: her mock exam is done, so it isn't there. No second
-      // count of skills beside Coverage's.
+      // count of skills beside Coverage's. Hundreds of hours read in whole hours: "About 231 hr
+      // 37 min" was a precision no estimate has.
       await expect(
         sheet.getByRole("region", { name: "Still to do" }).getByRole("listitem"),
       ).toHaveText([
-        /^Get the topics that weigh most to Solid(?:\s*About .+ in your plan)?$/u,
+        /^Get the topics that weigh most to Solid\s*About \d+\shr in your plan$/u,
         /^Keep what you studied fresh\s*\d+ skills? fading, back in your reviews$/u,
       ]);
     });
   });
 
+  // At 1180 px Ana's mock exams row read "Aos domingos, a cada 4 semar", cut mid-word with no
+  // ellipsis: the aside is narrow there. Every setting's value shows whole, wrapping if it must.
+  test("the plan's settings show their values whole in a narrow aside", async ({ browser }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+      await page.setViewportSize({ height: 820, width: 1180 });
+      await page.goto("/pt/plan");
+      await expect(page.locator('[data-slot="journey"]')).toBeVisible();
+
+      const values = page
+        .locator('[data-slot="plan-properties"]')
+        .filter({ visible: true })
+        .locator("li > * > span:last-child");
+
+      await expect(values.first()).toBeVisible();
+
+      const cut = await values.evaluateAll((spans) =>
+        spans
+          .filter(
+            (span) => span.scrollWidth > span.clientWidth || span.scrollHeight > span.clientHeight,
+          )
+          .map((span) => span.textContent),
+      );
+
+      expect(cut).toStrictEqual([]);
+    });
+  });
+
   test("the old tabs and the subject map lead to the Journey", async ({ browser }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
-      // The old pages answer with a redirect, so following each one ends on the Journey.
+      // The old pages answer with a redirect, so following each one ends on the Plan.
       const landed = await Promise.all(
         ["/plan", "/progress", "/content", "/content/map"].map(async (path) => {
           const response = await page.request.get(path);
@@ -285,11 +398,11 @@ test.describe("Journey", () => {
         }),
       );
 
-      expect(landed).toStrictEqual(["/journey", "/journey", "/journey", "/journey"]);
+      expect(landed).toStrictEqual(["/plan", "/plan", "/plan", "/plan"]);
 
       await page.goto("/pt/plan");
-      await expect(page).toHaveURL(/\/pt\/journey$/u);
-      await expect(page.getByRole("heading", { level: 2, name: "Sua trilha" })).toBeVisible();
+      await expect(page).toHaveURL(/\/pt\/plan$/u);
+      await expect(page.locator("#plan-title")).toBeVisible();
     });
   });
 
@@ -297,52 +410,82 @@ test.describe("Journey", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      // The exam moved two months away, and Ana cut her time to 10 minutes a day in the editor,
+      // The exam moved two months away, and Ana cut her time to 15 minutes a day in the editor,
       // which plans again (a time written to the database would leave her old plan in place).
-      await prisma.goal.update({
-        data: { targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY) },
-        where: { id: user.goalId },
-      });
+      const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY);
 
+      await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
+
+      // Until it plans again, her plan no longer fits, and the Plan's suggestion says so with an
+      // "Adjust plan" of its own. Its road keeps its own end, with the exam's day where the exam
+      // falls on it, so its days read in order and show how far past the exam it runs.
       await openJourney(page);
-      await page.getByRole("button", { name: "Adjust plan" }).click();
-      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const minutes = editor.getByLabel("Time a day");
+      const runningPast = await readRoadmapAxis(page);
+      expect(runningPast.some((label) => label.endsWith("· exam"))).toBe(true);
+      expect(runningPast.at(-1)).not.toContain("exam");
 
-      await minutes.selectOption("10");
+      await adjustPlanButton(page).click();
+      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
+
+      // A preset is picked by tapping its time: its radio, invisible over it, lets the tap through.
+      await minutes.getByText("15 min", { exact: true }).click();
 
       await expect(
-        editor.getByRole("status").filter({ hasText: "Daily time changed to 10 min." }),
-      ).toBeVisible();
+        editor.getByRole("status").filter({ hasText: "Daily time changed to 15 min." }),
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await editor.getByRole("button", { name: "Close" }).click();
       await expect(editor).toBeHidden();
 
-      // Ten minutes don't reach every topic: it says so, and the one time plans recommend, the
-      // number the time step said, not a second "every topic" time.
-      await expect(
-        page.getByText(
-          "10 min a day doesn't reach every topic: the ones that come up least are left out.",
-        ),
-      ).toBeVisible();
+      // Planned again, the road ends at the exam. A last band narrower than 8rem drops the
+      // "· exam" suffix to keep its dates apart; its flag and the legend still name the exam.
+      const examDate = new Intl.DateTimeFormat("en", {
+        day: "numeric",
+        month: "short",
+        timeZone: "UTC",
+      }).format(targetDate);
 
-      await expect(
-        page.getByText(
-          /^To study everything in depth: .+ a day\.$|^Even at .+ a day, you'd study about \d+% of everything in depth by your date\.$/u,
-        ),
-      ).toBeVisible();
+      await expect
+        .poll(async () => {
+          const axis = await readRoadmapAxis(page);
+          return axis.at(-1)?.replace(/ · exam$/u, "");
+        })
+        .toBe(examDate);
+
+      await expect(page.getByText("Exam day", { exact: true })).toBeVisible();
+
+      const replanned = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
+      const replannedPhases = phasesSchema.parse(replanned.phases);
+
+      expect(replannedPhases.at(-1)?.endDate).toBe(
+        new Date(targetDate.getTime() - MS_PER_DAY).toISOString().slice(0, 10),
+      );
+
+      // Fifteen minutes don't cover it all: the Plan's one suggestion says what they cover, and
+      // offers the one time plans recommend, the number the time step said, not a second "every
+      // topic" time.
+      const suggestion = suggestionPanel(page);
+
+      await expect(suggestion).toContainText(
+        /15\smin a day (?:doesn't reach every topic|studies every topic of the exam)/u,
+      );
+
+      await expect(suggestion.getByRole("heading")).toHaveText(
+        /a day covers (?:everything|about \d+%) in depth$/u,
+      );
 
       await expect(page.getByText(/^To study every topic:/u)).toHaveCount(0);
 
-      // The buddy's "Choose where to focus" opens the Journey with the sheet open; Esc closes it.
-      await page.goto("/journey?focus=choose");
+      // The buddy's "Choose where to focus" opens the Plan with the sheet open; Esc closes it.
+      await page.goto("/plan?focus=choose");
       await expect(page.getByRole("dialog", { name: "Where to focus" })).toBeVisible();
       await page.keyboard.press("Escape");
       await expect(page.getByRole("dialog", { name: "Where to focus" })).toBeHidden();
 
-      // Where her few minutes go is hers to choose: the sheet says what the focus did, with an
-      // undo, before it closes.
-      await page.getByRole("button", { name: "Choose where to focus" }).click();
+      // Where her few minutes go is hers to choose, from the suggestion's other options: the sheet
+      // says what the focus did, with an undo, before it closes.
+      await chooseFocusFromPlan(page);
       const focus = page.getByRole("dialog", { name: "Where to focus" });
 
       await focus.getByRole("checkbox", { name: "Matemática" }).click();
@@ -356,12 +499,21 @@ test.describe("Journey", () => {
 
       await expect.poll(() => loadFocusAreas(user.goalId)).toContain("Matemática");
 
-      await page.getByRole("button", { name: "Adjust plan" }).click();
+      await adjustPlanButton(page).click();
 
-      await expect(minutes.getByRole("option", { name: /\(recommended\)/u })).toHaveCount(1);
+      // One preset is the time that covers it all (or the most), and says so.
+      await expect(
+        minutes.getByRole("radio", { name: /(?:all in depth|recommended)$/u }),
+      ).toHaveCount(1);
+
       await expectAccessibleScreen(page, "the plan editor");
 
-      await minutes.selectOption("60");
+      await minutes.getByText("1 hr", { exact: true }).click();
+
+      // While the new time plans again, the old time's coverage doesn't stay under it: its place
+      // says what the new one covers is being worked out.
+      const workingOut = editor.getByText("Working out what your time covers…");
+      await expect(workingOut).toBeVisible();
 
       await expect
         .poll(async () => {
@@ -370,10 +522,12 @@ test.describe("Journey", () => {
         })
         .toBe(60);
 
-      // What the new time covers shows right under it.
+      // What the new time covers shows right under it, once it's planned.
+      await expect(workingOut).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
+
       await expect(
         editor.getByText(
-          /^(?<coverage>Covers your whole goal\.|1h a day (?<reach>studies every topic|doesn't reach every topic))/u,
+          /^(?<coverage>Covers your whole goal\.|1\shr a day (?<reach>studies every topic|doesn't reach every topic))/u,
         ),
       ).toBeVisible();
 
@@ -396,9 +550,89 @@ test.describe("Journey", () => {
       await expect(editor).toBeHidden();
 
       // "Adjust plan" opens the same editor again, with what she chose.
-      await page.getByRole("button", { name: "Adjust plan" }).click();
-      await expect(editor.getByLabel("Time a day")).toHaveValue("60");
+      await adjustPlanButton(page).click();
+      await expect(minutes.getByRole("radio", { name: ONE_HOUR })).toBeChecked();
     });
+  });
+
+  test("the Plan's suggestion keeps the keyboard's place through Apply and Undo, and its result stays while the learner is on it", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      // Two months to her exam at 15 minutes a day: the Plan offers the time that covers it all.
+      await prisma.goal.update({
+        data: { targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY) },
+        where: { id: user.goalId },
+      });
+
+      await page.clock.install();
+      await openJourney(page);
+      await adjustPlanButton(page).click();
+      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+      await editor.getByRole("radiogroup", { name: "Time a day" }).getByText("15 min").click();
+
+      await expect(
+        editor.getByRole("status").filter({ hasText: "Daily time changed to 15 min." }),
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
+
+      await editor.getByRole("button", { name: "Close" }).click();
+      await expect(editor).toBeHidden();
+
+      const panel = suggestionPanel(page);
+      const suggestion = page.locator('[data-slot="suggestion"]').filter({ visible: true });
+      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
+
+      await panel.getByRole("button", { name: "Preview" }).click();
+      const apply = panel.getByRole("button", { name: "Apply" });
+      await apply.focus();
+      await page.keyboard.press("Enter");
+
+      // Apply gives way to what it did: the suggestion takes the keyboard, not the page.
+      await expect(panel.getByRole("heading")).toHaveText("Plan updated");
+      await expect(suggestion).toBeFocused();
+
+      // Past the moment a result usually stays, it's still there while Undo has the keyboard.
+      const undo = panel.getByRole("button", { name: "Undo" });
+      await undo.focus();
+      await page.clock.fastForward(20_000);
+      await expect(undo).toBeFocused();
+
+      // Undo puts the plan back and the suggestion with it, as Gmail's undo gives the message
+      // back: the offer returns at once, and the keyboard lands on it.
+      await page.keyboard.press("Enter");
+      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
+      await expect(panel.getByRole("button", { name: "Preview" })).toBeVisible();
+      await expect(suggestion).toBeFocused();
+    });
+  });
+
+  test("a paused goal has no pace to keep, so its pace sheet offers nothing to catch up", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createStudyDay();
+    await carryLessons({ count: 2, goalId: goal.id });
+
+    const page = await openAs(browser, user);
+    await openJourney(page);
+
+    // Behind, the sheet says what comes first.
+    await expect(
+      standingNumbers(page).getByRole("button", { name: /^Pace Behind/u }),
+    ).toBeVisible();
+
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+    await openJourney(page);
+
+    await standingNumbers(page)
+      .getByRole("button", { exact: true, name: "Pace Paused Nothing is planned" })
+      .click();
+
+    const sheet = page.getByRole("dialog", { name: "Your pace" });
+    await expect(sheet.getByText("Paused", { exact: true })).toBeVisible();
+    await expect(sheet.getByText("Nothing is planned until you resume it.")).toBeVisible();
+    await expect(sheet.getByText(/catch up|keeping pace again/u)).toHaveCount(0);
+
+    await page.context().close();
   });
 
   test("a goal no daily time covers by its date says what the most time reaches, and moves the date to cover it all", async ({
@@ -411,21 +645,40 @@ test.describe("Journey", () => {
 
       await openJourney(page);
 
-      const notice = page.locator('[data-slot="plan-notice"]');
+      // The plan he had no longer fits the month left, which the Plan's suggestion says first. The
+      // next one offers the date his time covers it all by, and says honestly what the most time
+      // a day would reach by his: no time to switch to.
+      const suggestion = suggestionPanel(page);
+      await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
+      const slot = page.getByRole("group", { name: "Plan suggestion" });
+      const next = slot.getByRole("button", { exact: true, name: "Next" });
+      const previous = slot.getByRole("button", { exact: true, name: "Previous" });
+
+      await next.focus();
+      await next.press("Enter");
+      await expect(next).toBeFocused();
 
       const honest =
         /^Even at .+ a day, you'd study about \d+% of everything in depth by your date\.$/u;
 
-      await expect(notice.getByText(honest)).toBeVisible();
-      await expect(notice.getByRole("button", { name: /^Switch to/u })).toHaveCount(0);
+      await expect(suggestion.getByText(honest)).toBeVisible();
+      await expect(suggestion.getByRole("heading")).toHaveText(/^Your time covers everything by /u);
+      await expect(suggestion.getByRole("button", { name: /^Switch to/u })).toHaveCount(0);
 
-      await page.getByRole("button", { name: "Adjust plan" }).click();
+      await previous.focus();
+      await previous.press("Enter");
+      await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
+      await expect(previous).toBeFocused();
+
+      await adjustPlanButton(page).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
 
       // The most time a day is the one recommended, honestly, with what moving the date does.
       await expect(
-        editor.getByLabel("Time a day").getByRole("option", { name: /\(recommended\)/u }),
-      ).toHaveAttribute("value", "240");
+        editor
+          .getByRole("radiogroup", { name: "Time a day" })
+          .getByRole("radio", { name: /^4 hr\s*recommended$/u }),
+      ).toBeVisible();
 
       await expect(editor.getByText(honest)).toBeVisible();
 
@@ -481,7 +734,7 @@ test.describe("Journey", () => {
       });
 
       await openJourney(page);
-      await page.getByRole("button", { name: "Choose where to focus" }).click();
+      await chooseFocusFromPlan(page);
       const focus = page.getByRole("dialog", { name: "Where to focus" });
 
       // The subject in focus says which part of it.
@@ -514,7 +767,7 @@ test.describe("Journey", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       // Ana takes English, which ENEM counts inside Linguagens: it's never a subject of its own.
       await openJourney(page);
-      await page.getByRole("button", { name: "Choose where to focus" }).click();
+      await chooseFocusFromPlan(page);
       const focus = page.getByRole("dialog", { name: "Where to focus" });
 
       // Linguagens' row names its parts, so only a row of English's own starts with its name.
@@ -526,8 +779,13 @@ test.describe("Journey", () => {
       await focus.getByRole("checkbox", { name: "Linguagens" }).click();
       await focus.getByRole("button", { name: "Focus on these" }).click();
 
+      // It says what the focus did once the plan is made again, which can take a while.
       const status = focus.getByRole("status");
-      await expect(status).toContainText("More time for Ciências da Natureza and Linguagens.");
+
+      await expect(status).toContainText("More time for Ciências da Natureza and Linguagens.", {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect(status).not.toContainText("Língua Inglesa");
       await focus.getByRole("button", { name: "Done" }).click();
       await expect(focus).toBeHidden();
@@ -537,7 +795,7 @@ test.describe("Journey", () => {
         .toStrictEqual(["Ciências da Natureza", "Linguagens", "Língua Inglesa"]);
 
       // Taking Linguagens out of her focus takes her English out with it.
-      await page.getByRole("button", { name: "Choose where to focus" }).click();
+      await chooseFocusFromPlan(page);
       await focus.getByRole("checkbox", { name: "Linguagens" }).click();
       await focus.getByRole("button", { name: "Focus on these" }).click();
       await expect(focus.getByRole("status")).toBeVisible();
@@ -576,16 +834,19 @@ test.describe("Journey", () => {
 
       await expect.poll(loadWeek).toStrictEqual([120, 30, 30, 30, 30, 30, 120]);
 
-      // The weekdays change on their own, and the weekend keeps what she gave it.
-      await editor.getByLabel("Time a day").selectOption("45");
+      // The weekdays change on their own, and the weekend keeps what she gave it. The editor saves
+      // one change at a time: the weekend's is saved before the page shows it.
+      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
+      await expect(minutes.locator("xpath=..")).toHaveAttribute("aria-busy", "false");
+      await minutes.getByText("45 min", { exact: true }).click();
 
       await expect.poll(loadWeek).toStrictEqual([120, ...weekdays.map(() => 45), 120]);
 
       await expect(toggle).toBeChecked();
 
       // Switched off once the change is saved, the weekend goes back to the weekdays' new time.
-      await expect(editor.getByLabel("Time a day")).toHaveValue("45");
-      await expect(editor.getByLabel("Time a day")).toBeEnabled();
+      await expect(minutes.getByRole("radio", { name: /^45 min/u })).toBeChecked();
+      await expect(minutes.locator("xpath=..")).toHaveAttribute("aria-busy", "false");
       await toggle.click();
       await expect(weekend).toBeHidden();
       await expect.poll(loadWeek).toBeNull();
@@ -618,43 +879,47 @@ test.describe("Journey", () => {
           .toSorted();
       };
 
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+      const ownTime = minutesLabel(goal.dailyMinutes);
+      const own = new RegExp(`^${ownTime}(?:\\s|$)`, "u");
+      const otherTime = goal.dailyMinutes === 15 ? "30 min" : "15 min";
+
       await openJourney(page);
       await page.getByRole("button", { name: "Adjust plan" }).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const minutes = editor.getByLabel("Time a day");
-      const own = await minutes.inputValue();
+      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
       const before = await loadPlanItems();
-      const other = own === "15" ? "20" : "15";
 
-      await minutes.selectOption(other);
+      await minutes.getByText(otherTime, { exact: true }).click();
 
-      // The editor says what the change did, under its controls, with a way back.
+      // The editor says what the change did, by its controls, with a way back, once the plan is
+      // made again.
       await expect(
-        editor.getByRole("status").filter({ hasText: `Daily time changed to ${other} min.` }),
-      ).toBeVisible();
+        editor.getByRole("status").filter({ hasText: `Daily time changed to ${otherTime}.` }),
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await editor.getByRole("button", { name: "Undo" }).click();
 
       await expect(
         editor.getByRole("status").filter({ hasText: "Undone. Your plan is back as it was." }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
-      await expect(minutes).toHaveValue(own);
+      await expect(minutes.getByRole("radio", { name: own })).toBeChecked();
       await expect(editor.getByRole("button", { name: "Undo" })).toHaveCount(0);
       await expect.poll(loadPlanItems).toStrictEqual(before);
 
       // Setting the old time back by hand is the same Undo, not a plan made again.
-      await minutes.selectOption(other);
+      await minutes.getByText(otherTime, { exact: true }).click();
 
       await expect(
-        editor.getByRole("status").filter({ hasText: `Daily time changed to ${other} min.` }),
-      ).toBeVisible();
+        editor.getByRole("status").filter({ hasText: `Daily time changed to ${otherTime}.` }),
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
-      await minutes.selectOption(own);
+      await minutes.getByText(ownTime, { exact: true }).click();
 
       await expect(
         editor.getByRole("status").filter({ hasText: "Undone. Your plan is back as it was." }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect.poll(loadPlanItems).toStrictEqual(before);
     });
@@ -684,7 +949,7 @@ test.describe("Journey", () => {
       expect(copied).toMatch(new RegExp(`/plan-link/${plan.id}$`, "u"));
 
       await page.goto(`/plan-link/${plan.id}`);
-      await expect(page).toHaveURL(/\/journey$/u);
+      await expect(page).toHaveURL(/\/plan$/u);
     });
   });
 
@@ -696,11 +961,8 @@ test.describe("Journey", () => {
 
       const phases = phasesSchema.parse(plan.phases);
 
-      const toMonth = new Intl.DateTimeFormat("en", {
-        month: "long",
-        timeZone: "UTC",
-        year: "numeric",
-      });
+      // The Plan writes an estimate by its short month, with the year when it's a year away.
+      const toMonth = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" });
 
       // "About" its last phase's end: the graph sizes the end (lessons of the average length), so it
       // can land days before the end the seed's longer hand-written lessons give its phases.
@@ -711,8 +973,9 @@ test.describe("Journey", () => {
       await openJourney(page);
 
       const nodes = journeyPath(page).locator(":scope > li");
+      const about = new RegExp(`About (?:${months.join("|")})(?: \\d{4})?`, "u");
       await expect(nodes).toHaveCount(phases.length + 1);
-      await expect(nodes.last()).toContainText(new RegExp(`About (${months.join("|")})`, "u"));
+      await expect(nodes.last()).toContainText(about);
 
       // Placement settled her basics: one row says how many skills she already knows, skipped,
       // never a run-on list of their names. It sits with the chapters behind "N more chapters".
@@ -767,14 +1030,25 @@ test.describe("Journey", () => {
 
       await openJourney(page);
 
-      const nodes = journeyPath(page).locator(":scope > li");
-      const finish = nodes.last();
+      // The road ends at the exam, its day to be confirmed: no "About Sep 2027" beside it, which
+      // is when the plan ends, not the exam's day.
+      const finish = page
+        .getByRole("region", { name: "Next on your path" })
+        .getByRole("link")
+        .last();
 
-      await expect(finish).toHaveAttribute("data-state", "finish");
+      await expect(finish).toHaveAttribute("href", "/exam");
       await expect(finish).toContainText("Date to be confirmed");
-      // No "About September 2027" beside the exam: that's when the plan ends, not the exam's day.
       await expect(finish.getByText(/About [A-Z]/u)).toHaveCount(0);
-      await expect(nodes.nth(-2)).toContainText(/Until about \w+/u);
+
+      // Its last phase says when the plan ends: its band on the roadmap opens its days.
+      await page
+        .getByRole("region", { exact: true, name: "Phases" })
+        .locator('[data-slot="roadmap-band"]')
+        .last()
+        .click();
+
+      await expect(page.getByRole("dialog")).toContainText(/ – [A-Z][a-z]{2} \d{1,2}/u);
     });
   });
 
@@ -798,6 +1072,39 @@ test.describe("Journey", () => {
 
       await ask.click();
       await expect(page).toHaveURL(/\/buddy$/u);
+    });
+  });
+
+  // On Ana's phone, "Adjust" acted from the line and the pager waited in a sheet that never
+  // opened: her plan's second suggestion stayed out of reach until she changed her plan.
+  test("on a phone, a suggestion that acts from its line still leads to the next one", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      await prisma.goal.update({
+        data: { targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY) },
+        where: { id: user.goalId },
+      });
+
+      await page.setViewportSize({ height: 844, width: 390 });
+      await openJourney(page);
+      const slot = page.locator('[data-slot="plan-suggestion"]').filter({ visible: true });
+      const pager = slot.locator('[data-slot="suggestion-pager"]').filter({ visible: true });
+
+      await expect(slot).toContainText("Your plan no longer fits in the time left.");
+      await expect(slot.getByRole("button", { exact: true, name: "Adjust" })).toBeVisible();
+      await expect(pager).toHaveText(/1 of 2/u);
+
+      await pager.getByRole("button", { name: "Next" }).click();
+      await expect(pager).toHaveText(/2 of 2/u);
+      await expect(pager.getByRole("button", { name: "Next" })).toBeFocused();
+      await expect(slot).toContainText(/a day covers (?:everything|about \d+%) in depth/u);
+
+      // The sheet holds the one suggestion it opened for: moving on happens under the line.
+      await slot.getByRole("button", { exact: true, name: "View" }).click();
+      const sheet = page.getByRole("dialog", { name: /a day covers/u });
+      await expect(sheet).toBeVisible();
+      await expect(sheet.getByRole("button", { exact: true, name: "Next" })).toHaveCount(0);
     });
   });
 
@@ -852,15 +1159,21 @@ test.describe("Journey", () => {
   });
 
   // Rafaela studied one lesson of her first phase, then was away for a month: the days she missed
-  // set its other lessons aside, and her Journey marked the phase done. The plan moves on to the
+  // set its other lessons aside, and her Plan marked the phase done. The plan moves on to the
   // next phase, and the one it left says how far she got, never a check.
   test("a phase whose lessons were set aside after days away isn't marked done", async ({
     browser,
   }) => {
     const user = await createE2EUser(getBaseURL());
 
+    // Missed days set lessons aside only in a plan with a date to fit them by.
     const [goal, chapters] = await Promise.all([
-      goalFixture({ timezone: "UTC", title: "Learn ratios", userId: user.id }),
+      goalFixture({
+        targetDate: toUTCMidnight(new Date(Date.now() + 60 * MS_PER_DAY)),
+        timezone: "UTC",
+        title: "Learn ratios",
+        userId: user.id,
+      }),
       Promise.all(
         ["Ratios", "Proportions", "Rates"].map((title) => libraryChapterFixture({ title })),
       ),
@@ -896,17 +1209,138 @@ test.describe("Journey", () => {
     const left = path.locator(":scope > li", { hasText: "Ratio basics" });
     await expect(left).toHaveAttribute("data-state", "unfinished");
     await expect(left).toContainText("1 of 2 lessons done");
+    // Under its name, why it isn't checked: what the missed days set aside.
+    await expect(left.getByText("1 lesson was left out", { exact: true })).toBeVisible();
     await expect(left).not.toContainText(", done");
 
     await expect(path.locator(':scope > li[aria-current="step"]')).toContainText("Rates");
-    await expect(page.getByText("Phase 2 of 2")).toBeVisible();
+    await expect(page.getByText("phase 2 of 2").filter({ visible: true })).toBeVisible();
 
     await page.context().close();
   });
 
-  // Missed days set the plan's last lesson aside: nothing is left, but the plan ended rather than
-  // finished. The Journey says so plainly, never "You finished your plan", and the plan can change.
-  test("a plan whose last lesson was set aside ends without a celebration", async ({ browser }) => {
+  // Pedro moved his date and Lucas took his past-date offer while their Plans stayed open: each
+  // path kept the phase it first opened and left the one the plan goes on in shut until a reload.
+  // Switching goals on the Plan shows it every time: the path is the same list for every goal.
+  test("the path opens the phase where the plan goes on, switching goals included", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+
+    /** A goal whose plan has two phases of two chapters, its next chapter in phase `next`. */
+    const pathGoal = async ({ next, title }: { next: 0 | 1; title: string }) => {
+      const [goal, chapters] = await Promise.all([
+        goalFixture({ timezone: "UTC", title, userId: user.id }),
+        Promise.all(
+          ["one", "two", "three", "four"].map((name) =>
+            libraryChapterFixture({ title: `${title}: ${name}` }),
+          ),
+        ),
+      ]);
+
+      const plan = await planFixture({
+        goalId: goal.id,
+        phases: [{ name: `${title} basics` }, { name: `${title} in depth` }],
+      });
+
+      await Promise.all(
+        chapters.map((chapter, position) =>
+          planItemFixture({
+            chapterId: chapter.id,
+            phase: position < 2 ? 0 : 1,
+            planId: plan.id,
+            position,
+            status: position < next * 2 ? "done" : "todo",
+          }),
+        ),
+      );
+
+      return goal;
+    };
+
+    const ratios = await pathGoal({ next: 1, title: "Ratios" });
+    await pathGoal({ next: 0, title: "Rates" });
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: ratios.id, userId: user.id }),
+      studySessionFixture({ goalId: ratios.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await openJourney(page);
+    const path = journeyPath(page);
+
+    // Ratios goes on in its second phase, open to its chapters.
+    await expect(path.getByRole("link", { name: /Ratios: three/u })).toBeVisible();
+
+    await page.getByRole("button", { name: /^Current goal: Ratios/u }).click();
+    await page.getByRole("menuitemradio", { name: /Rates/u }).click();
+
+    // Rates goes on in its first phase: that one opens, its second stays shut.
+    await expect(path.getByRole("link", { name: /Rates: one/u })).toBeVisible();
+    await expect(path.getByRole("link", { name: /Rates: three/u })).toBeHidden();
+
+    await page.context().close();
+  });
+
+  // Pedro's first phase, shut while his next lesson sat in the second, read "Lessons done ·
+  // challenge Oct 21" beside "3 / 7": its other lessons came later in the plan. Only a phase whose
+  // lessons are all done says so.
+  test("a phase the plan comes back to later never says its lessons are done", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+
+    const [goal, chapters] = await Promise.all([
+      goalFixture({ timezone: "UTC", title: "Learn ratios", userId: user.id }),
+      Promise.all(
+        ["Ratios", "Rates", "Proportions"].map((title) => libraryChapterFixture({ title })),
+      ),
+    ]);
+
+    const [plan] = await Promise.all([
+      planFixture({ goalId: goal.id, phases: [{ name: "Ratio basics" }, { name: "Motion" }] }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      studySessionFixture({ goalId: goal.id, userId: user.id }),
+    ]);
+
+    // Ratios done; next, Rates in the second phase; then the first phase's Proportions and its
+    // challenge, later.
+    const [ratios, rates, proportions] = chapters;
+
+    await Promise.all([
+      planItemFixture({
+        chapterId: ratios?.id,
+        phase: 0,
+        planId: plan.id,
+        position: 0,
+        status: "done",
+      }),
+      planItemFixture({ chapterId: rates?.id, phase: 1, planId: plan.id, position: 1 }),
+      planItemFixture({ chapterId: proportions?.id, phase: 0, planId: plan.id, position: 2 }),
+      planItemFixture({
+        kind: "boss",
+        phase: 0,
+        planId: plan.id,
+        position: 3,
+        scheduledFor: toUTCMidnight(new Date(Date.now() + 8 * MS_PER_DAY)),
+        titleSnapshot: "Challenge 1",
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await openJourney(page);
+
+    const first = journeyPath(page).locator(":scope > li").first();
+    await expect(first).toContainText("1 of 2 lessons done");
+    await expect(first).not.toContainText("Lessons done");
+
+    await page.context().close();
+  });
+
+  // Pedro finished his plan: its pace reads "Finished", never days ahead of dates it no longer
+  // needs, on the Plan, its pace sheet and Today, and a pause doesn't change it.
+  test("a finished plan keeps its finished pace when paused", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
 
     const [goal, chapters] = await Promise.all([
@@ -921,7 +1355,7 @@ test.describe("Journey", () => {
     ]);
 
     await Promise.all(
-      (["done", "skipped"] as const).map((status, position) =>
+      (["testedOut", "done"] as const).map((status, position) =>
         planItemFixture({ chapterId: chapters[position]?.id, planId: plan.id, position, status }),
       ),
     );
@@ -929,12 +1363,27 @@ test.describe("Journey", () => {
     const page = await openAs(browser, user);
     await openJourney(page);
 
-    const ended = page.getByRole("region", { name: "Your plan ended" });
-    await expect(ended).toContainText("1 lesson was left out");
-    await expect(page.getByText("You finished your plan")).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "You finished your plan" })).toBeVisible();
 
-    await ended.getByRole("button", { name: "Adjust plan" }).click();
-    await expect(page.getByRole("dialog", { name: "Adjust your plan" })).toBeVisible();
+    const paceButton = page.getByRole("button", { exact: true, name: "Pace Finished" });
+    await expect(paceButton).toBeVisible();
+    await paceButton.click();
+    const sheet = page.getByRole("dialog", { name: "Your pace" });
+    await expect(sheet.getByText("Plan finished", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    // Today's eyebrow and the pace sheet read the same core status.
+    await page.goto("/today");
+    await expect(page.getByText(/Plan finished/u)).toBeVisible();
+
+    // A paused goal still keeps its completed plan's truthful pace on a return visit.
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+    await page.setViewportSize({ height: 844, width: 390 });
+    await openJourney(page);
+    await expect(paceButton).toBeVisible();
+    await paceButton.click();
+    await expect(sheet.getByText("Plan finished", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
 
     await page.context().close();
   });
@@ -947,13 +1396,16 @@ test.describe("Journey", () => {
     await openJourney(page);
 
     // A goal learned for its own sake reads as a share of the way, never as exam preparation.
-    const hero = page.locator('[data-slot="journey-hero"]');
-    await expect(hero).toContainText(/^0%\s*Your progress/u);
-    await expect(hero).not.toContainText("preparation");
+    const standing = standingNumbers(page);
+    await expect(standing).toContainText(/^Progress\s*0%/u);
+    await expect(standing).not.toContainText(/preparation/iu);
+    const hero = standing.getByRole("button", { name: /^Progress/u });
 
+    // The chapter up next is the path's highlighted row: no chip says it again.
     const row = journeyPath(page).getByRole("link", { name: /Percentages/u });
     await expect(row).toHaveAttribute("href", `/content/chapters/${chapter.id}`);
-    await expect(row).toContainText("Up next");
+    await expect(row.locator("xpath=ancestor::li[1]")).toHaveAttribute("aria-current", "step");
+    await expect(row).not.toContainText("Up next");
 
     await hero.click();
     const sheet = page.getByRole("dialog", { name: "Your progress" });
@@ -1001,11 +1453,11 @@ test.describe("Journey without a plan yet", () => {
 
     const page = await openAs(browser, user);
     await followRun({ events, page, runId });
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    await expect(
-      page.getByRole("heading", { name: "Building your plan for Quantum physics" }),
-    ).toBeVisible();
+    // The Plan keeps its title while it's built; its eyebrow says so.
+    await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
+    await expect(page.getByText("Quantum physics · Building your plan")).toBeVisible();
 
     await expect(page.locator('[data-slot="journey-preparing"]')).toBeVisible();
     await expectAccessibleScreen(page, "the Journey while its plan is built");
@@ -1035,10 +1487,13 @@ test.describe("Journey without a plan yet", () => {
     });
 
     const page = await openAs(browser, user);
-    await page.goto("/journey");
+    await page.goto("/plan");
+
+    // The page keeps its title; its questions are the one way to its plan.
+    await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
 
     await expect(
-      page.getByRole("heading", { level: 1, name: "Your plan comes after a few questions" }),
+      page.getByRole("heading", { level: 2, name: "Your plan comes after a few questions" }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute(
@@ -1046,15 +1501,18 @@ test.describe("Journey without a plan yet", () => {
       `/start/${goal.id}`,
     );
 
-    // A learner with only a quick explanation has no way to a goal to show: they start one.
+    // A learner with only a quick explanation has no plan to show: the Plan stays, and they
+    // start a goal right there.
     const explainer = await createLearnerWithGoal({
       kind: "explain",
       title: "Why the sky is blue",
     });
 
     const explainPage = await openAs(browser, explainer.user);
-    await explainPage.goto("/journey");
-    await expect(explainPage).toHaveURL(/\/start$/u);
+    await explainPage.goto("/plan");
+    await expect(explainPage).toHaveURL(/\/plan$/u);
+    await expect(explainPage.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
+    await expect(explainPage.getByRole("textbox", { name: "I want to" })).toBeVisible();
     await explainPage.context().close();
 
     await page.context().close();
@@ -1081,9 +1539,7 @@ test.describe("Plan reveal", () => {
 
       await page.goto(`/start/${goal.id}`);
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: "Your plan is ready" }),
-      ).toBeVisible();
+      await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
       await expect(page.getByText(/^\d+ days$/u)).toBeVisible();
       await expect(page.getByText("10 min a day", { exact: true })).toBeVisible();
@@ -1096,7 +1552,7 @@ test.describe("Plan reveal", () => {
 
       // What's on her exam, the moment she decides to trust the plan: every subject of the
       // notice and its topics, her foreign language inside Linguagens, one tap away.
-      await page.getByRole("button", { name: /^5 subjects from the notice\s*\d+ topics/u }).click();
+      await page.getByRole("button", { name: "See topics" }).click();
 
       const structure = page.getByRole("dialog", { name: "What you'll study" });
       await structure.getByRole("button", { name: /^Matemática e suas Tecnologias/u }).click();
@@ -1108,14 +1564,14 @@ test.describe("Plan reveal", () => {
       await page.keyboard.press("Escape");
       await expect(structure).toBeHidden();
 
-      // The path shows only its phases and the goal: nothing to open yet.
-      const nodes = journeyPath(page).locator(":scope > li");
-      await expect(nodes).toHaveCount(5);
-      await expect(journeyPath(page).getByRole("button")).toHaveCount(0);
-      await expect(journeyPath(page).getByRole("link")).toHaveCount(0);
+      // The phases show as bands as long as their days: nothing to open yet.
+      const phases = page.getByRole("region", { exact: true, name: "Phases" });
+      await expect(phases.getByRole("listitem")).toHaveCount(4);
+      await expect(phases.getByRole("button")).toHaveCount(0);
+      await expect(phases.getByRole("link")).toHaveCount(0);
 
       // One tap to the time plans recommend: everything in depth, or as much as a day can hold.
-      const switchTime = page.getByRole("button", { name: /^Switch to .+ a day$/u });
+      const switchTime = page.getByRole("button", { name: /^Use .+ a day$/u });
       await switchTime.click();
 
       await expect(

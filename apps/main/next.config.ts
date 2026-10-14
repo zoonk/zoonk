@@ -10,9 +10,15 @@ const CACHE_IMAGE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
-// Swap @zoonk/auth for E2E-specific config during E2E builds
+// Substitute authentication and external AI boundaries only in E2E builds.
 const e2eAliases: Record<string, string> = isE2E
-  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
+  ? {
+      "@zoonk/ai/tasks/v2/language/assess-pronunciation":
+        "../../packages/e2e/src/pronunciation-grader.ts",
+      "@zoonk/ai/tasks/v2/language/live-call-session":
+        "../../packages/e2e/src/live-call-provider.ts",
+      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
+    }
   : {};
 
 /** Paths without a locale are the default language; the others start with their locale. */
@@ -37,16 +43,18 @@ const oldStartRedirects = localePrefixes.flatMap((prefix) => [
 
 /**
  * Pages folded into others: the language setting lives in Appearance, "My courses" gave way to
- * Today, where a learner's goals and their courses are, and the Journey replaced the Plan,
- * Progress and Content tabs and the subject map. Chapter and unit pages keep their URLs. Help
- * lives at `/support`, and `/help` is the address people guess.
+ * Today, where a learner's goals and their courses are, and the Plan holds what the Progress and
+ * Content tabs and the subject map had. The Plan was called the Journey for a while, so its old
+ * addresses (a subject's page too) lead to the same page. Chapter and unit pages keep their URLs.
+ * Help lives at `/support`, and `/help` is the address people guess.
  */
 const movedPageRedirects = localePrefixes.flatMap((prefix) => [
   { destination: `${prefix}/settings/appearance`, permanent: true, source: `${prefix}/language` },
   { destination: `${prefix}/today`, permanent: true, source: `${prefix}/my` },
   { destination: `${prefix}/support`, permanent: true, source: `${prefix}/help` },
-  ...["/plan", "/progress", "/content", "/content/map"].map((path) => ({
-    destination: `${prefix}/journey`,
+  { destination: `${prefix}/plan/:rest*`, permanent: true, source: `${prefix}/journey/:rest*` },
+  ...["/progress", "/content", "/content/map"].map((path) => ({
+    destination: `${prefix}/plan`,
     permanent: true,
     source: `${prefix}${path}`,
   })),

@@ -18,7 +18,7 @@ import { openAs } from "./study-day";
  * after it, keeping its date; any other goal without its deadline, which can come back).
  */
 
-/** Every onboarding screen before the plan, so the goal has its Journey. */
+/** Every onboarding screen before the plan, so the goal has its Plan. */
 const ALL_ANSWERED = [...ONBOARDING_QUESTIONS, "buddy", "placement"];
 
 async function loadPlanSettings(goalId: string) {
@@ -66,8 +66,8 @@ async function openLearnerWithBases(
 
   await page.goto("/today");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await page.goto("/journey");
-  await expect(page.getByRole("heading", { name: "Journey" })).toBeVisible();
+  await page.goto("/plan");
+  await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
 
   return { ...fixture, page };
 }
@@ -166,15 +166,16 @@ test.describe("Plan choices", () => {
     await editor.getByRole("button", { name: "Close" }).click();
     await expect(editor).toBeHidden();
 
-    // Studying everything keeps the exam's date: it says when everything ends, after the exam.
-    const studyEverything = page.getByRole("button", { name: "Study everything" });
-    await expect(studyEverything).toContainText("Keeps going after the exam");
-
-    await studyEverything.click();
+    // Studying everything keeps the exam's date: its sheet, one of the Plan suggestion's other
+    // options, says when everything ends, after the exam, before she chooses it.
+    const suggestion = page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
+    await suggestion.getByRole("button", { name: "Other options" }).click();
+    await page.getByRole("menuitem", { name: "Study everything after the exam" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
+    await expect(everything).toContainText("Every topic, even after the exam, at your own pace.");
 
     await expect(
-      everything.getByText(/^At 15 min a day, you finish in .+, after the exam on .+\.$/u),
+      everything.getByText(/^At 15\smin a day, you finish in .+, after the exam on .+\.$/u),
     ).toBeVisible();
 
     await expectAccessibleScreen(page, "the study everything sheet");
@@ -189,18 +190,19 @@ test.describe("Plan choices", () => {
     await expect(everything).toBeHidden();
     await expect.poll(() => loadPlanSettings(goal.id)).toMatchObject({ fullCourse: true });
 
-    // The path goes on past the exam, its mocks there for the next sitting, and the plan can end
-    // at the exam again in one tap.
-    const path = page.getByRole("list", { name: "Your journey" });
-    await expect(path.getByRole("listitem").last()).toContainText("After the exam");
+    // The path goes on past the exam, its mocks there for the next sitting, and the Plan's
+    // suggestion ends it at the exam again, once she's seen what that moves.
+    const next = page.getByRole("region", { name: "Next on your path" });
+    const after = next.getByRole("listitem").last();
+    await expect(after).toContainText("After the exam");
+    await expect(after).toContainText(/\d+ mock exams? for the next sitting/u);
 
-    await expect(path.getByRole("listitem").last()).toContainText(
-      /\d+ mock exams? for the next sitting/u,
-    );
+    await expect(suggestion.getByRole("heading")).toHaveText(/after the exam on /u);
+    await suggestion.getByRole("button", { name: "Preview" }).click();
+    await suggestion.getByRole("button", { name: "Apply" }).click();
 
-    await page.getByRole("button", { name: "Only until the exam" }).click();
     await expect.poll(() => loadPlanSettings(goal.id)).toMatchObject({ fullCourse: false });
-    await expect(path.getByText("After the exam")).toHaveCount(0);
+    await expect(next.getByText("After the exam")).toHaveCount(0);
 
     await page.context().close();
   });
@@ -248,10 +250,13 @@ test.describe("Plan choices", () => {
   }) => {
     const { goal, page } = await openLearnerWithBases(browser, { days: 20, kind: "learn" });
 
-    await page.getByRole("button", { name: "Study everything" }).click();
+    // Studying everything is one of the Plan suggestion's other options.
+    const suggestion = page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
+    await suggestion.getByRole("button", { name: "Other options" }).click();
+    await page.getByRole("menuitem", { exact: true, name: "Study everything" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
 
-    await expect(everything.getByText(/^At 15 min a day, you finish in .+\.$/u)).toBeVisible();
+    await expect(everything.getByText(/^At 15\smin a day, you finish in .+\.$/u)).toBeVisible();
     await expect(everything.getByText(/^Your deadline of .+ comes off your plan\./u)).toBeVisible();
 
     await everything.getByRole("button", { name: "Study everything" }).click();
@@ -297,14 +302,14 @@ test.describe("Plan choices", () => {
     await page.goto("/today");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.goto(`/start/${goal.id}`);
-    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
-    // One tap to the time that covers everything, and Adjust for the rest: never four buttons
-    // that read alike.
-    const notice = page.locator('[data-slot="plan-notice"]');
-    await expect(notice.getByRole("button")).toHaveText([/^Switch to .+ a day$/u, "Adjust"]);
+    // One honest sentence on what her time covers, with one tap to the time that covers more and
+    // the topics one tap away; Adjust holds the rest: never four buttons that read alike.
+    const coverage = page.locator('[data-slot="reveal-coverage"]');
+    await expect(coverage.getByRole("button")).toHaveText([/^Use .+ a day$/u, "See topics"]);
 
-    await notice.getByRole("button", { name: "Adjust" }).click();
+    await page.getByRole("button", { exact: true, name: "Adjust" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
 
     await expect(

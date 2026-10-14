@@ -112,9 +112,9 @@ test.describe("The focus test", () => {
 
     await followRun({ events, page, runId });
 
-    // Where to focus offers the test first, then choosing by hand.
-    await page.goto("/journey");
-    await page.getByRole("button", { name: "Choose where to focus" }).click();
+    // Where to focus (the Plan's sheet, as the buddy opens it) offers the test first, then
+    // choosing by hand.
+    await page.goto("/plan?focus=choose");
 
     await page
       .getByRole("dialog", { name: "Where to focus" })
@@ -190,7 +190,7 @@ test.describe("The focus test", () => {
     await expect.poll(() => loadFocusAreas(goal.id)).toStrictEqual([]);
 
     await page.getByRole("link", { name: "See your plan" }).click();
-    await expect(page).toHaveURL(/\/journey$/u);
+    await expect(page).toHaveURL(/\/plan$/u);
     await page.context().close();
   });
 
@@ -249,7 +249,7 @@ test.describe("The focus test", () => {
 
     const page = await openAs(browser, user);
     await page.goto("/focus-test");
-    await expect(page).toHaveURL(/\/journey$/u);
+    await expect(page).toHaveURL(/\/plan$/u);
     await page.context().close();
   });
 });

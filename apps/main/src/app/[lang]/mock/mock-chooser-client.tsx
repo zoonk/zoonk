@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
@@ -10,6 +11,7 @@ import {
   type MockStart,
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
@@ -21,7 +23,6 @@ const PREPARING_RETRY_MS = 3000;
 const PREPARING_TRIES = 60;
 
 type ChooserPage = {
-  exitHref: string;
   goalId: string;
   /** A diagnostic mock as placement, in onboarding; otherwise the mocks to pick from. */
   placement: boolean;
@@ -54,7 +55,12 @@ async function requestMockWriting({
   const path = `/goals/${encodeURIComponent(page.goalId)}/mocks/generations`;
 
   const ask = async (tries: number): Promise<QuestionWriting> => {
-    const writing = await requestQuestionWriting(path, toChoice(start));
+    // A request that never answers reads as a failed one, as a refused start does.
+    const { data: writing } = await safeAsync(() => requestQuestionWriting(path, toChoice(start)));
+
+    if (!writing) {
+      return { status: "failed" };
+    }
 
     if (writing.status !== "preparing" || tries <= 1) {
       return writing;
@@ -108,20 +114,44 @@ type Writing = { generationId: string; start: MockStart };
 /**
  * Wires the mocks to pick from (or the placement mock) to their actions in the learner's timezone:
  * Start runs the mock and opens it; a bank short of its questions has them written first (the
- * screen follows the run), then the mock starts with what there is.
+ * page follows the run), then the mock starts with what there is. `bar` is the chooser page's bar,
+ * with the way back to where it was opened.
  */
-export function MockChooserClient({ page, view }: { page: ChooserPage; view: MockOptionsView }) {
+export function MockChooserClient({
+  bar,
+  page,
+  view,
+}: {
+  bar: React.ReactNode;
+  page: ChooserPage;
+  view: MockOptionsView;
+}) {
   const router = useRouter();
   const [busy, startTransition] = useTransition();
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
 
-  const startMock = ({ acceptFewer, start }: { acceptFewer: boolean; start: MockStart }) =>
-    startAnytimeMockAction(page.goalId, {
-      ...toChoice(start),
-      acceptFewer,
-      timeZone: getLocalTimeZone(),
-    });
+  /**
+   * A start the server couldn't answer (a busy server's transaction that never began, a dropped
+   * connection) is a failed start: the chooser says so with Start ready again, never an error page.
+   */
+  const startMock = async ({
+    acceptFewer,
+    start,
+  }: {
+    acceptFewer: boolean;
+    start: MockStart;
+  }): Promise<MockStartOutcome> => {
+    const { data: outcome } = await safeAsync(() =>
+      startAnytimeMockAction(page.goalId, {
+        ...toChoice(start),
+        acceptFewer,
+        timeZone: getLocalTimeZone(),
+      }),
+    );
+
+    return outcome ?? { status: "failed" };
+  };
 
   const open = ({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) => {
     if ("id" in outcome) {
@@ -174,8 +204,9 @@ export function MockChooserClient({ page, view }: { page: ChooserPage; view: Moc
     });
 
   const screen = {
+    bar,
     busy,
-    hrefs: { exit: page.exitHref, plus: "/subscription" },
+    hrefs: { mock: MOCK_ENTRY_HREFS.mock, plus: "/subscription" },
     onStart: begin,
     placement: page.placement,
     view,

@@ -16,6 +16,9 @@ import { openAs } from "./study-day";
  * its chapter once its outline lands, without a refresh, and an own-words edit that hangs says so.
  */
 
+/** What the path says of its phase's lessons still being written, under its rows. */
+const WRITING_LINE = "More lessons for this phase are being written.";
+
 /** Stand-ins are read again every 10 seconds while lessons are being written. */
 const WRITING_REFRESH_MS = 10_000;
 
@@ -71,7 +74,7 @@ async function createPlanBeingWritten(goalId: string) {
 }
 
 test.describe("Lessons being written in the plan", () => {
-  test("the lesson being written turns into its chapter on the Journey on its own", async ({
+  test("the lesson being written turns into its chapter on the Plan on its own", async ({
     browser,
   }) => {
     const { goal, user } = await createPlanLearner();
@@ -79,11 +82,11 @@ test.describe("Lessons being written in the plan", () => {
 
     const page = await openAs(browser, user);
     await page.clock.install();
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    // The phase the learner is in is open, with the lessons still being written in it.
-    const path = page.getByRole("list", { name: "Your journey" });
-    await expect(path.getByText("Lessons on the way")).toBeVisible();
+    // The phase the learner is in is open, saying its lessons are still being written.
+    const path = page.getByRole("list", { name: "Your path" });
+    await expect(path.getByText(WRITING_LINE)).toBeVisible();
     await expect(path.getByRole("link")).toHaveCount(0);
 
     // The outline lands; the plan's next read, without a refresh, shows its chapter.
@@ -95,11 +98,11 @@ test.describe("Lessons being written in the plan", () => {
       `/content/chapters/${chapter.id}`,
     );
 
-    await expect(path.getByText("Lessons on the way")).toBeHidden();
+    await expect(path.getByText(WRITING_LINE)).toBeHidden();
     await page.context().close();
   });
 
-  // An open Journey waiting on lessons used to read itself whole every 10 seconds (~500 queries
+  // An open Plan waiting on lessons used to read itself whole every 10 seconds (~500 queries
   // each time): it asks whether anything changed, and reads itself again only when it did.
   test("while nothing lands, the Journey asks whether it changed instead of reading itself again", async ({
     browser,
@@ -109,10 +112,10 @@ test.describe("Lessons being written in the plan", () => {
 
     const page = await openAs(browser, user);
     await page.clock.install();
-    await page.goto("/journey");
+    await page.goto("/plan");
 
-    const path = page.getByRole("list", { name: "Your journey" });
-    await expect(path.getByText("Lessons on the way")).toBeVisible();
+    const path = page.getByRole("list", { name: "Your path" });
+    await expect(path.getByText(WRITING_LINE)).toBeVisible();
 
     const requests = { asked: 0, readsAfterAsking: 0 };
 
@@ -137,7 +140,7 @@ test.describe("Lessons being written in the plan", () => {
     }).toPass();
 
     expect(requests.readsAfterAsking).toBe(0);
-    await expect(path.getByText("Lessons on the way")).toBeVisible();
+    await expect(path.getByText(WRITING_LINE)).toBeVisible();
     await page.context().close();
   });
 });

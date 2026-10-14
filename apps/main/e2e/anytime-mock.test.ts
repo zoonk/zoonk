@@ -1,3 +1,4 @@
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -8,10 +9,18 @@ import {
   createAnytimeMockLearner,
 } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
-import { continueToLastStep, continueToStep } from "./result-steps";
+import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
 const knowsMathematics = (question: { area: string }) => question.area === "Mathematics";
+
+/** Picks a mock as a learner does, with a tap on its row: the radio itself is for assistive tech. */
+function pickMock(page: Page, name: RegExp) {
+  return page
+    .locator("label")
+    .filter({ has: page.getByRole("radio", { name }) })
+    .click();
+}
 
 test.describe("Mocks whenever the learner wants", () => {
   test("one subject from the exam page, at the exam's pace; its result says each topic and skips what it showed they know only once they say so", async ({
@@ -28,14 +37,14 @@ test.describe("Mocks whenever the learner wants", () => {
     // Each mock with its honest size: the day, half of it, and each subject.
     await expect(page.getByRole("heading", { level: 1, name: "Take a mock exam" })).toBeVisible();
     await expect(page.getByRole("radio", { name: /^Full exam/u })).toBeChecked();
-    await expect(page.getByText("16 questions · about 24 min")).toBeVisible();
+    await expect(page.getByText("16 q · ~24 min")).toBeVisible();
     await expect(page.getByRole("radio", { name: /^Half the exam/u })).toBeVisible();
     await expectAccessibleScreen(page, "the mocks to pick from");
 
     // The exam's mocks answer to their number; Enter starts the one picked.
     await page.keyboard.press("2");
     await expect(page.getByRole("radio", { name: /^Half the exam/u })).toBeChecked();
-    await page.getByRole("radio", { name: /^Mathematics/u }).click();
+    await pickMock(page, /^Mathematics/u);
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/mock\/[\w-]+$/u);
@@ -54,20 +63,23 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
     // How each topic went, the one that went worst first.
-    await continueToStep(page, "By topic", { keyboard: true });
-    await expect(page.getByText("0 of 4")).toBeVisible();
-    await expect(page.getByText("4 of 4")).toBeVisible();
+    const topics = page.getByRole("region", { name: "By topic" });
+    await expect(topics).toBeVisible();
+    await expect(topics.getByText("0 of 4")).toBeVisible();
+    await expect(topics.getByText("4 of 4")).toBeVisible();
 
     // The plan changes only once the learner says so.
-    await continueToStep(page, /^You got everything right in/u);
+    const after = page.getByRole("complementary", { name: "After this mock exam" });
+    const change = after.getByRole("group", { name: /^You got everything right in/u });
+    await expect(change).toBeVisible();
 
     await expect(
       prisma.planItem.count({ where: { planId: plan.id, status: "testedOut" } }),
     ).resolves.toBe(0);
 
     await expectAccessibleScreen(page, "a mock's offer to skip lessons");
-    await page.getByRole("button", { name: "Skip the lesson" }).click();
-    await expect(page.getByRole("status")).toHaveText(/^Done: 1 lesson off your plan\./u);
+    await change.getByRole("button", { name: "Apply" }).click();
+    await expect(change.getByRole("status")).toHaveText(/^Done: 1 lesson off your plan\./u);
 
     await expect
       .poll(() =>
@@ -79,6 +91,87 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.goto("/exam");
     await page.getByRole("link", { name: /^Mock exam 1/u }).click();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
+
+    // A hard reload draws the wide screen's one page from the server, before any script runs: the
+    // questions on it, the plan beside it, no steps to go through.
+    await page.route(/\/_next\/static\/chunks\/.+\.js/u, (route) => route.abort());
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Questions to review" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue" })).toBeHidden();
+    await expect(page.getByRole("img", { name: /^Step 1 of/u })).toBeHidden();
+  });
+
+  // A Start the server never answered (its transaction couldn't begin on a busy server) left the
+  // chooser on "Getting it ready…", then on an error page.
+  test("a Start that doesn't go through says so and starts on the next tap", async ({
+    browser,
+  }) => {
+    const { user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+    let dropped = false;
+
+    await page.goto("/mock/new");
+
+    // The connection drops once, on the Start's own request.
+    await page.route("**/mock/new", async (route) => {
+      if (
+        !dropped &&
+        route.request().method() === "POST" &&
+        route.request().headers()["next-action"]
+      ) {
+        dropped = true;
+        await route.abort();
+        return;
+      }
+
+      await route.fallback();
+    });
+
+    const start = page.getByRole("button", { exact: true, name: "Start" });
+    await start.click();
+
+    await expect(page.getByText("We couldn't start the mock. Try again.")).toBeVisible();
+    await expect(start).toBeEnabled();
+    await expect.poll(() => prisma.mockExam.count({ where: { userId: user.id } })).toBe(0);
+
+    await start.click();
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+    await page.context().close();
+  });
+
+  // Ana left her mock with 4 of 45 answered: "Continue your mock exam" was its only trace on the
+  // exam's page.
+  test("a mock left running leads the exam's mocks, with what's answered and the time left", async ({
+    browser,
+  }) => {
+    const { answers, user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+
+    await page.goto("/mock/new");
+    await pickMock(page, /^Mathematics/u);
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+
+    await answerMockQuestions({ answers, count: 2, knows: () => true, page });
+    const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
+
+    await expect.poll(() => prisma.mockExamAnswer.count({ where: { mockExamId: mockId } })).toBe(2);
+
+    await page.goto("/exam");
+
+    const running = page.getByRole("list", { name: "Mock exams" }).getByRole("listitem").first();
+
+    await expect(running).toHaveAttribute("aria-current", "step");
+    await expect(running).toHaveText(/^Mock exam 1.*\d+\smin left$/u);
+
+    // The row opens the mock where she left it.
+    await running.getByRole("link").click();
+    await expect(page).toHaveURL(new RegExp(`/mock/${mockId}$`, "u"));
+    await expect(page.getByText(/^Question 3 of 8/u)).toBeVisible();
+
+    await page.goBack();
+    await expect(running.getByText("Mathematics · 2 of 8 answered")).toBeVisible();
   });
 
   test("the full exam with its written test: the essay on its own clock, the score and the notice's pass mark at once, then the essay's grade", async ({
@@ -94,8 +187,14 @@ test.describe("Mocks whenever the learner wants", () => {
 
     // The whole exam day, the discursive test with its own half hour included.
     await expect(page.getByRole("radio", { name: /^Full exam/u })).toBeChecked();
-    await expect(page.getByText("8 questions + Prova discursiva · about 42 min")).toBeVisible();
-    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByText("+ Prova discursiva", { exact: true })).toBeVisible();
+    await expect(page.getByText("8 q · ~42 min")).toBeVisible();
+
+    // The main action keeps its 44px however the bar lays it out.
+    const start = page.getByRole("button", { name: "Start" });
+    const startBox = await start.boundingBox();
+    expect(startBox?.height).toBe(44);
+    await start.click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
     await answerMockQuestions({ answers, knows: () => true, page });
@@ -211,9 +310,10 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.getByRole("button", { name: "Start" }).click();
 
-    // Each section says what may be used in it, as the notice does.
+    // Each section says what may be used in it, as the notice does, in its answer sheet.
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
-    await expect(page.getByText(SECTION_TOOLS.Mathematics)).toBeVisible();
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+    await expect(sheet.getByText(SECTION_TOOLS.Mathematics)).toBeVisible();
     await answerMockQuestions({ answers, knows: () => true, page });
     await page.getByRole("button", { name: "Hand in this section" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
@@ -225,8 +325,11 @@ test.describe("Mocks whenever the learner wants", () => {
       /^(?:10:00|9:\d\d)$/u,
     );
 
-    await expect(page.getByText("Next: Languages · 12 min")).toBeVisible();
-    await expect(page.getByText(SECTION_TOOLS.Languages)).toBeVisible();
+    const breakBody = page.getByRole("main");
+    await expect(breakBody.getByText("Next: Languages", { exact: true })).toBeVisible();
+    await expect(breakBody.getByText("12 min", { exact: true })).toBeVisible();
+    await expect(breakBody.getByText(SECTION_TOOLS.Languages)).toBeVisible();
+    await expect(page.getByRole("complementary", { name: "Sections" })).toBeVisible();
     await expectAccessibleScreen(page, "a mock's break between sections");
     await page.reload();
     await expect(page.getByRole("heading", { level: 1, name: "Break" })).toBeVisible();
@@ -234,12 +337,11 @@ test.describe("Mocks whenever the learner wants", () => {
     // Like the real exam, the next section can start before the break ends.
     await page.getByRole("button", { name: "Start the next section" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
-    await expect(page.getByText(SECTION_TOOLS.Languages)).toBeVisible();
+    await expect(sheet.getByText(SECTION_TOOLS.Languages)).toBeVisible();
 
     // Two wrong and six left blank: each wrong answer takes a quarter point, a blank one nothing.
     await answerMockQuestions({ answers, count: 2, knows: () => false, page });
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in the mock exam" }).click();
+    await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 
     await expect(
@@ -247,9 +349,11 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
 
     await expect(page.getByText("Net score out of 16", { exact: false })).toBeVisible();
-    await expect(page.getByText("8 right", { exact: true })).toBeVisible();
-    await expect(page.getByText("2 wrong", { exact: true })).toBeVisible();
-    await expect(page.getByText("6 blank", { exact: true })).toBeVisible();
+    // Right, wrong and blank, each its own tile.
+    const tile = (text: RegExp) => page.getByRole("listitem").filter({ hasText: text });
+    await expect(tile(/^Right 8$/u)).toBeVisible();
+    await expect(tile(/^Wrong 2$/u)).toBeVisible();
+    await expect(tile(/^Blank 6$/u)).toBeVisible();
 
     await expect(
       page.getByText("Lab practical can't be part of a mock: it's a practical test."),
@@ -271,25 +375,27 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "Previous" })).toBeDisabled();
+    // The row under the question opens only the next one, never ahead of it.
+    await expect(page.getByRole("button", { exact: true, name: "Question 3" })).toBeDisabled();
     await answerMockQuestions({ answers, knows: () => false, page });
 
-    // At the last question, the review opens every question again, for one change.
+    // At the last question, the review opens every question again, for one change: ← goes back.
     await expect(page.getByText("Review: you can change 1 more answer.")).toBeVisible();
-    await page.getByRole("button", { name: "Previous" }).click();
+    await page.keyboard.press("ArrowLeft");
     await expect(page.getByText(/^Question 7 of 16/u)).toBeVisible();
 
-    const heading = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
+    const main = page.getByRole("main");
+    const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
     await page.getByRole("radio", { name: answers.get(heading.trim())?.right }).click();
     await expect(page.getByText("Review: no more answers can change.")).toBeVisible();
 
-    await page.getByRole("button", { name: "Previous" }).click();
+    await page.getByRole("button", { exact: true, name: "Question 6" }).click();
     await expect(page.getByText(/^Question 6 of 16/u)).toBeVisible();
     await expect(page.getByRole("radio").first()).toBeDisabled();
     await expectAccessibleScreen(page, "a mock section's review with its changes used");
 
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in this section" }).click();
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+    await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 
     // Each question has its own clock: when it runs out, the next one opens.
@@ -297,8 +403,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("timer", { name: "Time left for this question" })).toBeVisible();
     await expect(page.getByText(/^Question 10 of 16/u)).toBeVisible({ timeout: 6000 });
 
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in the mock exam" }).click();
+    await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 
     // The one change in the review is the only right answer.
@@ -358,9 +463,7 @@ test.describe("Mocks whenever the learner wants", () => {
       page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*10\.25 of 11$/u }),
     ).toBeVisible();
 
-    await continueToLastStep(page);
-    await page.getByRole("button", { name: "See the question" }).click();
-    const review = page.getByRole("dialog", { name: "Questions to review" });
+    const review = page.getByRole("region", { name: "Questions to review" });
     await expect(review.getByText("Partly right: it earned part of its points.")).toBeVisible();
     await expect(review.getByText("2 + 2 = 4; 3 × 3 = 9")).toBeVisible();
   });
@@ -372,7 +475,7 @@ test.describe("Mocks whenever the learner wants", () => {
     const page = await openAs(browser, user);
 
     await page.goto("/mock/new");
-    await page.getByRole("radio", { name: /^Mathematics/u }).click();
+    await pickMock(page, /^Mathematics/u);
     await page.getByRole("button", { name: "Start" }).click();
 
     const text = page.getByRole("region", { name: TEXT_SET.title });
@@ -389,14 +492,15 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText(/^Question 4 of 8/u)).toBeVisible();
     await expect(text).toBeHidden();
 
-    await page.getByRole("button", { name: "Answer sheet" }).click();
-    await page.getByRole("dialog").getByRole("button", { name: "Hand in the mock exam" }).click();
+    await page
+      .getByRole("complementary", { name: "Answer sheet" })
+      .getByRole("button", { exact: true, name: "Hand in" })
+      .click();
+
     await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
-    await continueToLastStep(page);
-    await page.getByRole("button", { name: "See the 8 questions" }).click();
-    const review = page.getByRole("dialog", { name: "Questions to review" });
+    const review = page.getByRole("region", { name: "Questions to review" });
 
     await expect(review.getByRole("region", { name: TEXT_SET.title })).toHaveCount(3);
   });
@@ -409,7 +513,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     async function startMathematics() {
       await page.goto("/mock/new");
-      await page.getByRole("radio", { name: /^Mathematics/u }).click();
+      await pickMock(page, /^Mathematics/u);
       await page.getByRole("button", { name: "Start" }).click();
       await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     }
@@ -429,13 +533,21 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText(/repeat/u)).toBeHidden();
     await handIn({ knows: false, number: 1 });
 
+    // Beside the options, how the last mock went, opening its result.
+    await page.goto("/mock/new");
+    const lastMock = page.getByRole("link", { name: /^Mock exam 1/u });
+    await expect(lastMock).toContainText("0 of 8 right");
+    await lastMock.click();
+    await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
+
     // Today's new questions for mocks are used: the same mock starts at once with the questions
     // answered before, and says so in one line. As often as the learner likes.
     await usageRecordsFixture({ count: 2, kind: "mockQuestions", userId: user.id });
 
     await startMathematics();
 
-    await expect(page.getByText("8 questions repeat, missed ones first.")).toBeVisible();
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+    await expect(sheet.getByText("8 questions repeat, missed ones first.")).toBeVisible();
 
     await handIn({ knows: true, number: 2 });
 
@@ -445,7 +557,7 @@ test.describe("Mocks whenever the learner wants", () => {
     // The exam page shows each mock's score over time. Eight questions of a subject, then two
     // mocks of repeats, are too little to call a subject better: it says what a trend waits for.
     await page.goto("/exam");
-    const progress = page.getByRole("region", { name: "Your progress" });
+    const progress = page.getByRole("region", { name: "How your mocks went" });
 
     await expect(progress.getByText("Right answers in Mock exam 3")).toBeVisible();
 
@@ -472,8 +584,13 @@ test.describe("Mocks whenever the learner wants", () => {
     await expectAccessibleScreen(page, "the exam page's mock progress");
 
     // Mocks of one subject say nothing about the whole exam yet: no estimated score, and why.
-    await page.goto("/journey");
-    await page.locator('[data-slot="journey-hero"]').click();
+    await page.goto("/plan");
+
+    await page
+      .locator('[data-slot="journey-standing"]')
+      .filter({ visible: true })
+      .getByRole("button", { name: /^Preparation/u })
+      .click();
 
     await expect(page.getByRole("dialog", { name: "Your preparation" })).toContainText(
       "Take more mock exams of the whole exam or half of it to see your estimated score.",
@@ -482,7 +599,7 @@ test.describe("Mocks whenever the learner wants", () => {
     // A full mock is the real exam: answered questions never pad it. With every Mathematics
     // question answered and nothing more to write today, the chooser says what's ready first.
     await page.goto("/mock/new");
-    await page.getByRole("radio", { name: /^Full exam/u }).click();
+    await pickMock(page, /^Full exam/u);
     await page.getByRole("button", { name: "Start" }).click();
 
     await expect(
@@ -495,7 +612,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
     await expect(
-      page.getByText("This mock asks 8 of 16 questions: there weren't enough new ones yet."),
+      sheet.getByText("This mock asks 8 of 16 questions: there weren't enough new ones yet."),
     ).toBeVisible();
 
     await expect(page.getByText(/repeat/u)).toBeHidden();
@@ -504,9 +621,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.goto("/exam");
 
     await expect(
-      page
-        .getByRole("list", { name: "Your mock exams" })
-        .getByText(/Full exam, 8 of 16 questions/u),
+      page.getByRole("list", { name: "Mock exams" }).getByText(/Full exam, 8 of 16 questions/u),
     ).toBeVisible();
   });
 
@@ -520,7 +635,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText(/^Mock exams come with Plus/u)).toBeVisible();
     await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(1);
 
-    await expect(page.getByRole("region", { name: "Your progress" })).toContainText(
+    await expect(page.getByRole("region", { name: "How your mocks went" })).toContainText(
       "Each mock's score over time, and how each subject is going.",
     );
 
@@ -593,9 +708,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("radio", { name: /^About 15 min \(recommended\)/u })).toBeChecked();
     await expect(page.getByRole("radio", { name: /^About 24 min/u })).not.toBeChecked();
 
-    await expect(
-      page.getByText("10 questions · A quick check. Your first days fine-tune it."),
-    ).toBeVisible();
+    await expect(page.getByText("A quick check. Your first days fine-tune it.")).toBeVisible();
 
     await expectAccessibleScreen(page, "the placement mock");
 
