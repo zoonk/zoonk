@@ -1,6 +1,7 @@
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { findFreshMistakePattern } from "../../../language/patterns/find-fresh-pattern";
-import { resolveTodaySession } from "../../../sessions/_utils/today-session";
+import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
+import { findSavedDaySession } from "../../../sessions/_utils/saved-day-session";
 import { isFullMeal } from "../../../sessions/missions";
 import { readMissionDocument } from "../../../sessions/missions/catalog";
 import { getDayMissions, hasDayMissionBonus } from "../../../sessions/missions/get-day-missions";
@@ -13,15 +14,13 @@ export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: s
     return pattern;
   }
 
-  const built = await prisma.planItem.count({ where: { plan: { goalId: goal.id } } });
+  const now = new Date();
+  const timeZone = getAnswerTimeZone({ goal });
+  const session = await findSavedDaySession({ goalId: goal.id, now, timeZone, userId });
 
-  if (built === 0) {
+  if (!session) {
     return pattern;
   }
-
-  // Resolve the same day as Today, including a carried session. A concurrent first read must not
-  // show the suggestion simply because Today's other read hasn't saved its picks yet.
-  const { session, timeZone } = await resolveTodaySession({ goal, userId });
 
   const covered = readMissionDocument(session.missions)?.picks.some(
     (pick) => pick.kind === "pattern" && pick.anchor.patternId === pattern.id,
@@ -33,7 +32,7 @@ export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: s
 
   const [missions, earned] = await Promise.all([
     getDayMissions({ session, timeZone }),
-    hasDayMissionBonus({ now: new Date(), session, timeZone }),
+    hasDayMissionBonus({ now, session, timeZone }),
   ]);
 
   // The card replaces its unfinished rows with an earned-elsewhere line. Keep the drill's

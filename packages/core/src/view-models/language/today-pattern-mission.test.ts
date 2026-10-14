@@ -7,23 +7,27 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageTodayView } from "./get-language-today-view";
 
-async function setup(missionPattern: "same" | "other", done = false) {
-  const { goal, user } = await languageGoalFixture();
-  mockSession(user.id);
-
-  const pattern = await prisma.mistakePattern.create({
+function createPattern({ goalId, userId }: { goalId: string; userId: string }) {
+  return prisma.mistakePattern.create({
     data: {
       content: { contrast: [], drill: [], examples: [], rule: "Use for with durations." },
-      goalId: goal.id,
+      goalId,
       kind: "pattern",
       language: "en",
       model: "test",
       promptVersion: "test",
       runId: "test",
       title: "since and for",
-      userId: user.id,
+      userId,
     },
   });
+}
+
+async function setup(missionPattern: "same" | "other", done = false) {
+  const { goal, user } = await languageGoalFixture();
+  mockSession(user.id);
+
+  const pattern = await createPattern({ goalId: goal.id, userId: user.id });
 
   await studySessionFixture({
     goalId: goal.id,
@@ -47,6 +51,35 @@ async function setup(missionPattern: "same" | "other", done = false) {
 }
 
 describe("Today's pattern prompt", () => {
+  it("keeps an unopened day's pattern without saving a session or changing its plan", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const pattern = await createPattern({ goalId: goal.id, userId: user.id });
+    const where = { userId: user.id };
+
+    const before = await prisma.goal.findUniqueOrThrow({
+      include: { plan: { include: { items: { orderBy: { position: "asc" } } } } },
+      where: { id: goal.id },
+    });
+
+    await expect(prisma.studySession.count({ where })).resolves.toBe(0);
+
+    await expect(getLanguageTodayView({ goalId: goal.id })).resolves.toMatchObject({
+      status: "ready",
+      today: { pattern: { id: pattern.id } },
+    });
+
+    await expect(prisma.studySession.count({ where })).resolves.toBe(0);
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({
+        include: { plan: { include: { items: { orderBy: { position: "asc" } } } } },
+        where: { id: goal.id },
+      }),
+    ).resolves.toStrictEqual(before);
+  });
+
   it.each([false, true])(
     "does not repeat the day's same pattern mission (done: %s)",
     async (done) => {
