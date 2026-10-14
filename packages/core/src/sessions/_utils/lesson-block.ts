@@ -1,10 +1,12 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
@@ -16,6 +18,11 @@ import {
 import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
+
+/** A completed block's retry must roll back the revision acquired before checking it. */
+class LessonBlockUnchangedError extends Error {
+  override name = "LessonBlockUnchangedError";
+}
 
 /** The lesson a ledger row finished, from its plain content ids. */
 export function readFinishedLessonId(contentIds: unknown): string | null {
@@ -122,30 +129,47 @@ export async function markLessonBlockDone({
   lessonId: string | null;
   userId: string;
 }): Promise<boolean> {
-  const { done, languageGoals } = await prisma.$transaction(async (tx) => {
-    const now = new Date();
+  const { data: result, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId });
 
-    const { count } = await tx.studySessionBlock.updateMany({
-      data: {
-        brainPower,
-        completedAt: now,
-        lessonId: block.lessonId ?? lessonId,
-        status: "completed",
-      },
-      where: { id: block.id, status: { in: ["active", "pending"] } },
-    });
+      const now = new Date();
 
-    const goals: CheckedLanguageGoal[] =
-      count === 1 && lessonId ? await completeLessonPlanItems(tx, { lessonId, now, userId }) : [];
+      const { count } = await tx.studySessionBlock.updateMany({
+        data: {
+          brainPower,
+          completedAt: now,
+          lessonId: block.lessonId ?? lessonId,
+          status: "completed",
+        },
+        where: { id: block.id, status: { in: ["active", "pending"] } },
+      });
 
-    return { done: count === 1, languageGoals: goals };
-  });
+      if (count === 0) {
+        throw new LessonBlockUnchangedError("The lesson block was already settled");
+      }
 
-  if (lessonId) {
-    scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
+      const goals: CheckedLanguageGoal[] = lessonId
+        ? await completeLessonPlanItems(tx, { lessonId, now, userId })
+        : [];
+
+      return { languageGoals: goals };
+    }),
+  );
+
+  if (error instanceof LessonBlockUnchangedError) {
+    return false;
   }
 
-  return done;
+  if (error) {
+    throw error;
+  }
+
+  if (lessonId) {
+    scheduleLessonCanDos({ goals: result.languageGoals, lessonId, userId });
+  }
+
+  return true;
 }
 
 /**

@@ -1,15 +1,12 @@
 import "server-only";
-import {
-  type MasteryState,
-  type StudySessionBlock,
-  type TransactionClient,
-  prisma,
-} from "@zoonk/db";
+import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import {
   type CheckpointOutcome,
   getCheckpointOutcome,
   isBlockDuelDecided,
 } from "../../checkpoints/_utils/checkpoint-outcome";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { recordLearningEvent } from "../../stats/record-learning-event";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../block-payload";
@@ -24,6 +21,7 @@ import { getBlockMinutes } from "../daily-goal";
 import { countAskableQuestions } from "./askable-questions";
 import { getBlockEvents } from "./block-events";
 import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
+import { loadBlockSkillStates } from "./load-block-skill-states";
 import { completePlanItem } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
@@ -32,6 +30,11 @@ import { getMasteryRewards, readSessionSnapshot, withPaidRewards } from "./sessi
 import { type StudySessionRow } from "./study-session-access";
 
 const SECONDS_PER_MINUTE = 60;
+
+/** The loser must roll back its early revision mark along with the no-transition settlement. */
+class QuestionBlockUnchangedError extends Error {
+  override name = "QuestionBlockUnchangedError";
+}
 
 type QuestionBlockSettlement = {
   answers: SessionAnswer[];
@@ -53,25 +56,6 @@ export type SettleQuestionBlockResult =
   | { status: "noAnswers" }
   | { status: "unanswered" };
 
-async function loadCurrentStates({
-  answers,
-  userId,
-}: {
-  answers: readonly SessionAnswer[];
-  userId: string;
-}) {
-  const skillIds = [
-    ...new Set(answers.flatMap((answer) => (answer.skillId ? [answer.skillId] : []))),
-  ];
-
-  const rows = await prisma.learnerSkill.findMany({
-    select: { skillId: true, state: true },
-    where: { skillId: { in: skillIds }, userId },
-  });
-
-  return Object.fromEntries(rows.map((row): [string, MasteryState] => [row.skillId, row.state]));
-}
-
 /** Brain Power extra blocks already earned today, across the learner's sessions. */
 async function loadExtraEarnedToday(
   tx: TransactionClient,
@@ -90,7 +74,7 @@ async function loadExtraEarnedToday(
 type PreparedBlock = {
   checkpoint: CheckpointOutcome | null;
   correct: number;
-  current: Record<string, MasteryState>;
+  current: Awaited<ReturnType<typeof loadBlockSkillStates>>;
   own: SessionAnswer[];
   payload: BlockPayload;
   scored: ReturnType<typeof scoreAnswers>;
@@ -158,7 +142,7 @@ async function prepareBlock({
     (answer) => !own.includes(answer) && answer.answeredAt < firstAnsweredAt,
   );
 
-  const current = await loadCurrentStates({ answers: own, userId });
+  const current = await loadBlockSkillStates({ answers: own, userId });
 
   return {
     checkpoint: getCheckpointOutcome({ answers: own, payload, questions }),
@@ -241,108 +225,127 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
   const { block, session, timeZone, userId } = input;
   const { checkpoint, correct, own, payload, scored } = prepared;
 
-  const result = await prisma.$transaction(async (tx): Promise<SettleQuestionBlockResult> => {
-    const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
+  const { data: result, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx): Promise<SettleQuestionBlockResult> => {
+      await markLearnerChanged(tx, { planInputs: true, userId });
 
-    const { count } = await tx.studySessionBlock.updateMany({
-      data: { completedAt: lock.completedAt, status: "completed" },
-      where: { id: block.id, status: { in: ["active", "pending"] } },
-    });
+      const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
-    if (count === 0) {
-      return { status: "blockFinished" };
-    }
+      const { count } = await tx.studySessionBlock.updateMany({
+        data: { completedAt: lock.completedAt, status: "completed" },
+        where: { id: block.id, status: { in: ["active", "pending"] } },
+      });
 
-    const reward = await getBlockBrainPower(tx, { prepared, session, userId });
+      if (count === 0) {
+        throw new QuestionBlockUnchangedError("The question block was already settled");
+      }
 
-    const currentBlock = await tx.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
-    const currentPayload = readBlockPayload(currentBlock);
+      const reward = await getBlockBrainPower(tx, { prepared, session, userId });
 
-    const seconds = Math.round(
-      getBlockMinutes({
-        completedAt: lock.completedAt,
-        estimatedMinutes: currentBlock.estimatedMinutes ?? 0,
-        startedAt: currentPayload.timing
-          ? new Date(
-              lock.completedAt.getTime() -
-                getBlockElapsedMs({ block: currentBlock, now: lock.completedAt }),
-            )
-          : currentBlock.startedAt,
-      }) * SECONDS_PER_MINUTE,
-    );
+      const currentBlock = await tx.studySessionBlock.findUniqueOrThrow({
+        where: { id: block.id },
+      });
 
-    const brainPowerReward = await applySessionProgress(tx, {
-      completion: true,
-      delta: {
-        brainPower: reward.brainPower,
-        correctAnswers: correct,
-        energyDelta: getAnswersEnergyDelta({ correct, incorrect: own.length - correct }),
-        incorrectAnswers: own.length - correct,
-        seconds,
-      },
-      lock,
-      userId,
-    });
+      const currentPayload = readBlockPayload(currentBlock);
 
-    await tx.studySessionBlock.update({
-      data: {
-        brainPower: reward.brainPower,
-        payload: {
-          ...currentPayload,
-          milestoneReward: {
-            bossWon: checkpoint !== null && checkpoint.kind !== "weekly" && checkpoint.passed,
-            brainPower: brainPowerReward,
-          },
-          timing: pausedBlockTiming({ block: currentBlock, now: lock.completedAt }),
+      const seconds = Math.round(
+        getBlockMinutes({
+          completedAt: lock.completedAt,
+          estimatedMinutes: currentBlock.estimatedMinutes ?? 0,
+          startedAt: currentPayload.timing
+            ? new Date(
+                lock.completedAt.getTime() -
+                  getBlockElapsedMs({ block: currentBlock, now: lock.completedAt }),
+              )
+            : currentBlock.startedAt,
+        }) * SECONDS_PER_MINUTE,
+      );
+
+      const brainPowerReward = await applySessionProgress(tx, {
+        completion: true,
+        delta: {
+          brainPower: reward.brainPower,
+          correctAnswers: correct,
+          energyDelta: getAnswersEnergyDelta({ correct, incorrect: own.length - correct }),
+          incorrectAnswers: own.length - correct,
+          seconds,
         },
-      },
-      where: { id: block.id },
-    });
+        lock,
+        userId,
+      });
 
-    const events = getBlockEvents({
-      answers: own,
-      block,
-      brainPower: reward.brainPower,
-      payload,
-      points: scored.points,
-      seconds,
-    });
+      await tx.studySessionBlock.update({
+        data: {
+          brainPower: reward.brainPower,
+          payload: {
+            ...currentPayload,
+            milestoneReward: {
+              bossWon: checkpoint !== null && checkpoint.kind !== "weekly" && checkpoint.passed,
+              brainPower: brainPowerReward,
+            },
+            timing: pausedBlockTiming({ block: currentBlock, now: lock.completedAt }),
+          },
+        },
+        where: { id: block.id },
+      });
 
-    await Promise.all(
-      events.map((event) =>
-        recordLearningEvent(tx, {
-          ...event,
-          endedAt: lock.completedAt,
-          goalId: session.goalId,
-          startedAt: block.startedAt ?? lock.completedAt,
-          timeZone,
-          userId,
-        }),
-      ),
-    );
-
-    // A checkpoint won, a weekly challenge finished or a review day practiced checks its item off.
-    const done = checkpoint ? checkpoint.passed || checkpoint.kind === "weekly" : true;
-
-    if (payload.planItemId && done) {
-      await completePlanItem(tx, { now: lock.completedAt, planItemId: payload.planItemId, userId });
-    }
-
-    return {
-      settlement: {
+      const events = getBlockEvents({
         answers: own,
+        block,
         brainPower: reward.brainPower,
-        brainPowerBefore: brainPowerReward.before,
-        capsulesOpened: reward.capsulesOpened,
-        checkpoint,
-        correct,
+        payload,
+        points: scored.points,
         seconds,
-        topHyperdrive: scored.topLevel,
-        total: own.length,
-      },
-      status: "ready",
-    };
-  });
+      });
+
+      await Promise.all(
+        events.map((event) =>
+          recordLearningEvent(tx, {
+            ...event,
+            endedAt: lock.completedAt,
+            goalId: session.goalId,
+            startedAt: block.startedAt ?? lock.completedAt,
+            timeZone,
+            userId,
+          }),
+        ),
+      );
+
+      // A checkpoint won, a weekly challenge finished or a review day practiced checks its item off.
+      const done = checkpoint ? checkpoint.passed || checkpoint.kind === "weekly" : true;
+
+      if (payload.planItemId && done) {
+        await completePlanItem(tx, {
+          now: lock.completedAt,
+          planItemId: payload.planItemId,
+          userId,
+        });
+      }
+
+      return {
+        settlement: {
+          answers: own,
+          brainPower: reward.brainPower,
+          brainPowerBefore: brainPowerReward.before,
+          capsulesOpened: reward.capsulesOpened,
+          checkpoint,
+          correct,
+          seconds,
+          topHyperdrive: scored.topLevel,
+          total: own.length,
+        },
+        status: "ready",
+      };
+    }),
+  );
+
+  if (error instanceof QuestionBlockUnchangedError) {
+    return { status: "blockFinished" };
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (result.status === "ready") {
     trackBlockCompleted({ block, seconds: result.settlement.seconds, session });

@@ -1,5 +1,7 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { readBlockPayload } from "../block-payload";
 import { type FinishStudyBlockResult } from "../finish-study-block";
 import { getMissionBonus } from "../missions";
@@ -7,6 +9,11 @@ import { pausedBlockTiming } from "./block-timing";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 import { type StudySessionRow } from "./study-session-access";
+
+/** A duplicate abandonment rolls back the revision mark taken before its block transition. */
+class EmptyCheckpointUnchangedError extends Error {
+  override name = "EmptyCheckpointUnchangedError";
+}
 
 /** A started duel with nothing left to ask ends without judging or rewarding an empty attempt. */
 export async function finishEmptyCheckpoint({
@@ -24,21 +31,35 @@ export async function finishEmptyCheckpoint({
   const now = new Date();
 
   if (!payload.checkpointAbandoned) {
-    const { count } = await prisma.studySessionBlock.updateMany({
-      data: {
-        completedAt: now,
-        payload: {
-          ...payload,
-          checkpointAbandoned: true,
-          timing: pausedBlockTiming({ block, now }),
-        },
-        status: "skipped",
-      },
-      where: { id: block.id, status: "active" },
-    });
+    const { error } = await safeAsync(() =>
+      prisma.$transaction(async (tx) => {
+        await markLearnerChanged(tx, { planInputs: true, userId });
 
-    if (count === 0) {
+        const { count } = await tx.studySessionBlock.updateMany({
+          data: {
+            completedAt: now,
+            payload: {
+              ...payload,
+              checkpointAbandoned: true,
+              timing: pausedBlockTiming({ block, now }),
+            },
+            status: "skipped",
+          },
+          where: { id: block.id, status: "active" },
+        });
+
+        if (count === 0) {
+          throw new EmptyCheckpointUnchangedError("The empty checkpoint was already settled");
+        }
+      }),
+    );
+
+    if (error instanceof EmptyCheckpointUnchangedError) {
       return { status: "blockFinished" };
+    }
+
+    if (error) {
+      throw error;
     }
   }
 
