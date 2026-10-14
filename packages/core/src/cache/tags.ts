@@ -9,6 +9,25 @@ export const CACHE_LIFE_PROFILES = {
 
 export const COURSE_LIST_CACHE_TAG = "catalog-courses";
 
+const SHARED_CONTENT_PREFIXES = [
+  "course:",
+  "course-route:",
+  "course-curriculum:",
+  "library-chapter:",
+  "library-lesson:",
+  "skill:",
+  "media-asset:",
+  "exam-blueprint:",
+];
+
+/** Only shared content crosses app caches; a learner's private tags stay in the writing app. */
+export function isSharedContentTag(tag: string): boolean {
+  return (
+    tag === COURSE_LIST_CACHE_TAG ||
+    SHARED_CONTENT_PREFIXES.some((prefix) => tag.startsWith(prefix) && tag.length > prefix.length)
+  );
+}
+
 /** Identifies every cached view of one course without coupling callers to tag formatting. */
 export function getCourseCacheTag(courseId: string): string {
   return `course:${courseId}`;
