@@ -59,6 +59,7 @@
     "./courses/list": "./src/courses/list-courses.ts",
     "./courses/list-current-user": "./src/courses/list-current-user-courses.ts",
     "./courses/published-editions": "./src/courses/list-published-course-editions.ts",
+    "./courses/rename": "./src/courses/rename-course.ts",
     "./entitlements/contract": "./src/entitlements/contract.ts",
     "./entitlements/get-allowance": "./src/entitlements/get-allowance.ts",
     "./entitlements/goal-start-limit": "./src/entitlements/find-goal-start-limit.ts",

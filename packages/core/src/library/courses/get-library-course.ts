@@ -1,7 +1,7 @@
 import "server-only";
 import { CourseLevel, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../../cache/tags";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
 
@@ -25,12 +25,13 @@ const outlineLessonSelect = {
 } as const;
 
 /**
- * Tagged by the course alone: a chapter's change refreshes the outlines that place it through
- * their course's curriculum tag (`getChapterCacheTags`), since a course can hold more chapters
- * than one cache entry has tags for.
+ * Kept for the catalog's lifetime, like the public pages that list it. Tagged by the course alone:
+ * a chapter's change refreshes the outlines that place it through their course's curriculum tag
+ * (`getChapterCacheTags`), since a course can hold more chapters than one cache entry has tags for.
  */
 async function getCachedLibraryCourse(courseId: string) {
   "use cache";
+  cacheLife("catalog");
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
 
   return prisma.course.findUnique({

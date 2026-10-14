@@ -5,7 +5,7 @@ import * as database from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { cacheTag, revalidateTag } from "next/cache";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
@@ -67,7 +67,7 @@ function courseCachePlatform(code: string) {
     "../cache/tags": courseTags,
     "../navigation/decode-route-param": routeParams,
     "@zoonk/db": database,
-    "next/cache": { cacheTag },
+    "next/cache": { cacheLife, cacheTag },
     "private-next-rsc-cache-wrapper": { cache },
     "private-next-rsc-server-reference": { registerServerReference: (read: unknown) => read },
     react: { cache: (read: unknown) => read },
@@ -179,6 +179,22 @@ describe(getCourse, () => {
     expect(result).toBeNull();
   });
 
+  // A course page is the same for everyone and never reads a session, so a learner's private
+  // course has none, even under a brand.
+  it("returns null when the course is private", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+      visibility: "private",
+    });
+
+    const result = await getCourse({ brandSlug: organization.slug, courseSlug: course.slug });
+
+    expect(result).toBeNull();
+  });
+
   it("returns null when the course belongs to a non-brand organization", async () => {
     const organization = await organizationFixture({ kind: "school" });
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
@@ -236,7 +252,7 @@ describe("the complete course route cache", () => {
     vi.mocked(revalidateTag).mockReset();
   });
 
-  it("reuses the complete normalized read in one request and reads another app's writes on the next", async () => {
+  it("shares one normalized read across requests until a write expires its tags", async () => {
     const platform = courseCachePlatform(compiled.code);
     const organization = await organizationFixture({ kind: "brand" });
 
@@ -249,33 +265,43 @@ describe("the complete course route cache", () => {
     const params = { brandSlug: organization.slug, courseSlug: course.slug };
     const first = await platform.getCourse(params);
     expect(first?.id).toBe(course.id);
+    expect(cacheLife).toHaveBeenCalledWith("catalog");
 
-    /** Another app writes the same database but cannot expire this app's shared cache. */
-    const changed = await prisma.course.update({
-      data: {
-        categories: { create: { category: "languages" } },
-        title: "Updated by another app",
-        updatedAt: new Date(course.updatedAt.getTime() + 1),
-      },
+    // A write whose tags don't reach this app shows once the catalog's lifetime ends, not before.
+    await prisma.course.update({
+      data: { categories: { create: { category: "languages" } }, title: "Updated elsewhere" },
       where: { id: course.id },
     });
 
-    const sameRequest = await platform.getCourse({
+    platform.nextRequest();
+
+    const encoded = await platform.getCourse({
       ...params,
       courseSlug: encodeURIComponent(course.slug),
     });
 
-    expect(sameRequest?.title).toBe(first?.title);
-    expect(sameRequest?.categories).toStrictEqual(first?.categories);
+    expect(encoded?.title).toBe(first?.title);
+    expect(encoded?.categories).toStrictEqual(first?.categories);
 
-    platform.nextRequest();
-    const nextRequest = await platform.getCourse(params);
-    expect(nextRequest?.title).toBe(changed.title);
-    expect(nextRequest?.categories.map((item) => item.category)).toStrictEqual(["languages"]);
+    revalidateCacheTags([getCourseCacheTag(course.id)]);
 
-    await prisma.course.update({ data: { isPublished: false }, where: { id: course.id } });
-    platform.nextRequest();
+    const edited = await platform.getCourse(params);
+    expect(edited?.title).toBe("Updated elsewhere");
+    expect(edited?.categories.map((item) => item.category)).toStrictEqual(["languages"]);
+
+    // A rename expires the old route's tag: its address stops naming the course at once.
+    await prisma.course.update({
+      data: { slug: `${course.slug}-renamed` },
+      where: { id: course.id },
+    });
+
+    revalidateCacheTags([getCourseRouteCacheTag(params)]);
+
     await expect(platform.getCourse(params)).resolves.toBeNull();
+
+    await expect(
+      platform.getCourse({ ...params, courseSlug: `${course.slug}-renamed` }),
+    ).resolves.toMatchObject({ id: course.id });
   });
 
   it("expires a cached route miss when the real outline mutation publishes the course", async () => {

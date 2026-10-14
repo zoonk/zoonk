@@ -1,24 +1,24 @@
 import "server-only";
 import { getCourseRouteWhere, prisma } from "@zoonk/db";
-import { cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
 
 /**
- * Caches one normalized public course route and tags the resolved resource so
- * route misses and course updates can both be invalidated precisely.
+ * Caches one normalized public course route for the catalog's lifetime and tags the route and the
+ * course it resolves to: publishing, renaming or unpublishing expires the route's tags, so a cached
+ * "not found" never hides a newly published course, and a course's edits expire its own tag. A
+ * write whose tags don't reach this app shows within the catalog's lifetime. Only shared courses:
+ * the pages that read it are the same for everyone and never read a session.
  */
-async function getCachedCourse(params: {
-  brandSlug: string;
-  courseSlug: string;
-  version: string | null;
-}) {
+async function getCachedCourse(params: { brandSlug: string; courseSlug: string }) {
   "use cache";
+  cacheLife("catalog");
   cacheTag(getCourseRouteCacheTag(params));
 
   const course = await prisma.course.findFirst({
     include: { categories: true, organization: true },
-    where: getCourseRouteWhere(params),
+    where: { ...getCourseRouteWhere(params), visibility: "public" },
   });
 
   if (course) {
@@ -29,29 +29,11 @@ async function getCachedCourse(params: {
 }
 
 /**
- * Includes the fresh version check in runtime prefetches and same-request reuse. Keeping it
- * private makes each new request check writes from apps whose tag expiry cannot reach this cache.
- */
-async function getCurrentCourse(params: { brandSlug: string; courseSlug: string }) {
-  "use cache: private";
-
-  const current = await prisma.course.findFirst({
-    select: { id: true, updatedAt: true },
-    where: getCourseRouteWhere(params),
-  });
-
-  return getCachedCourse({
-    ...params,
-    version: current ? `${current.id}:${current.updatedAt.getTime()}` : null,
-  });
-}
-
-/**
  * Loads the public course identified by the brand and course slugs used in catalog routes.
- * Normalizing before both cache boundaries lets encoded and decoded routes share their entries.
+ * Normalizing before the cache boundary lets encoded and decoded routes share their entry.
  */
 export async function getCourse(params: { brandSlug: string; courseSlug: string }) {
-  return getCurrentCourse({
+  return getCachedCourse({
     brandSlug: decodeRouteParam(params.brandSlug),
     courseSlug: decodeRouteParam(params.courseSlug),
   });

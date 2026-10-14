@@ -5,17 +5,18 @@ import { getSecondsToMidnight } from "./calendar-day";
 /** How often a day's cache is worked out again within its day (seconds): its data can change. */
 const REVALIDATE_SECONDS = 3600;
 
-/**
- * How long a router keeps a prefetched page before asking again (seconds), and the shortest life
- * a day's cache gets: Next leaves a cache that expires sooner out of the page's prerender.
- */
+/** How long a browser keeps a page it fetched before asking again (seconds). */
 const STALE_SECONDS = 300;
 
+/** How long past its midnight a day's cache is still served while the next day's is worked out. */
+const NEXT_DAY_SECONDS = 86_400;
+
 /**
- * Inside a `"use cache"` scope that reads today's date: worked out again every hour, and dropped at
- * the next midnight in any of `timeZones` (the days it counts in), or in five minutes when that
- * midnight is sooner (the shortest life a prerendered cache keeps). So a day's countdown may
- * outlast midnight by a few minutes, plus the five a browser may keep a page it fetched.
+ * Inside a `"use cache"` scope that reads today's date: worked out again every hour, and at the
+ * next midnight in any of `timeZones` (the days it counts in). Nobody waits for that: the day's copy
+ * is kept a day longer, so the first visitor after midnight gets it at once, a countdown one day
+ * behind for that one view, while the new day's is worked out behind it. A browser may also keep
+ * a page it fetched for five minutes past midnight.
  */
 export function cacheUntilMidnight(timeZones: readonly string[]) {
   const now = new Date();
@@ -24,8 +25,9 @@ export function cacheUntilMidnight(timeZones: readonly string[]) {
     ...timeZones.map((timeZone) => getSecondsToMidnight({ now, timeZone })),
   );
 
-  const expire = Math.max(STALE_SECONDS, toMidnight);
-  const revalidate = Math.min(REVALIDATE_SECONDS, expire - 1);
-
-  cacheLife({ expire, revalidate, stale: Math.min(STALE_SECONDS, revalidate) });
+  cacheLife({
+    expire: toMidnight + NEXT_DAY_SECONDS,
+    revalidate: Math.max(1, Math.min(REVALIDATE_SECONDS, toMidnight)),
+    stale: STALE_SECONDS,
+  });
 }
