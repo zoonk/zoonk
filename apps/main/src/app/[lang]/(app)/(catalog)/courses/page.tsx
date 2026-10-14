@@ -2,18 +2,17 @@ import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
+import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { CourseListClient } from "./course-list-client";
 import { CourseListSkeleton } from "./course-list-skeleton";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/courses">): Promise<Metadata> {
-  const { lang } = await params;
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
+  const language = await lang();
 
   return {
-    alternates: { canonical: getLocalizedUrl({ href: "/courses", language: lang }) },
+    alternates: { canonical: getLocalizedUrl({ href: "/courses", language }) },
     description: t(
       "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more.",
     ),

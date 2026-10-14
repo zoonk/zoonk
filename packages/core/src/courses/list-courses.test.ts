@@ -136,6 +136,47 @@ describe(listCourses, () => {
     expect(returnedCourse?.organization).toMatchObject({ slug: organization.slug });
   });
 
+  it("returns only what a course card shows, keeping internal course and organization fields out", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      isPublished: true,
+      language,
+      organizationId: organization.id,
+    });
+
+    const [list, page] = await Promise.all([
+      listCourses({ language }),
+      listCoursesPage({ language }),
+    ]);
+
+    const cardKeys = [
+      "description",
+      "estimatedMinutes",
+      "id",
+      "imageUrl",
+      "language",
+      "lessonCount",
+      "organization",
+      "slug",
+      "targetLanguage",
+      "title",
+    ];
+
+    for (const listed of [list[0], page.courses[0]]) {
+      expect(listed?.id).toBe(course.id);
+      expect(Object.keys(listed ?? {}).toSorted()).toStrictEqual(cardKeys);
+
+      expect(Object.keys(listed?.organization ?? {}).toSorted()).toStrictEqual([
+        "id",
+        "logo",
+        "name",
+        "slug",
+      ]);
+    }
+  });
+
   it("uses the default page size", async () => {
     const language = createTestLanguage();
     const organization = await organizationFixture({ kind: "brand" });

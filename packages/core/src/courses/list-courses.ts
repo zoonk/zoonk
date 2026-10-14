@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseGetPayload, type Organization, getListedCourseWhere, prisma } from "@zoonk/db";
+import { type CourseGetPayload, getListedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
@@ -17,8 +17,27 @@ type ListCoursesInput = {
 
 type ListCoursesPageInput = Omit<ListCoursesInput, "cursor"> & { offset?: number };
 
-type CourseListRow = CourseGetPayload<{ include: { organization: true } }>;
-type PublishedBrandCourse = Omit<CourseListRow, "organization"> & { organization: Organization };
+/**
+ * What a course card shows (its link, mark, words and numbers) and the public parts of its brand.
+ * The catalog list reaches the browser and the API, so internal fields (generation runs, prompt
+ * versions, landing-page content, billing) stay out.
+ */
+const COURSE_CARD_SELECT = {
+  description: true,
+  id: true,
+  imageUrl: true,
+  language: true,
+  organization: { select: { id: true, logo: true, name: true, slug: true } },
+  slug: true,
+  targetLanguage: true,
+  title: true,
+} as const;
+
+type CourseListRow = CourseGetPayload<{ select: typeof COURSE_CARD_SELECT }>;
+
+type PublishedBrandCourse = Omit<CourseListRow, "organization"> & {
+  organization: NonNullable<CourseListRow["organization"]>;
+};
 
 /**
  * Narrows the nullable Prisma relation after the brand-organization predicate
@@ -47,10 +66,10 @@ async function findCourses({
   take: number;
 }) {
   const courses = await prisma.course.findMany({
-    include: { organization: true },
     orderBy: [{ userCount: "desc" }, { id: "desc" }],
     ...(cursor && { cursor: { id: cursor }, skip: 1 }),
     ...(offset !== undefined && { skip: Math.max(Math.trunc(offset), 0) }),
+    select: COURSE_CARD_SELECT,
     take,
     where: getListedCourseWhere({
       language,
