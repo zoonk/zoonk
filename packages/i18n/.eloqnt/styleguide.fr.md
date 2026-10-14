@@ -1,106 +1,88 @@
 # `fr` styleguide
 
-- Use an informal, approachable register. Address the user as "tu".
-- Use standard French spelling and grammar.
+## Voice and locale
+
+- Use French for France and informal “tu”.
+- Localize illustrative exam examples for France, such as the bac.
+- Treat “Puissance Mentale” as a product name without an article in short labels and headings.
 
 ## Glossary
 
-- "course": "cours"
-- "chapter": "chapitre"
-- "lesson": "leçon"
-- "hello@zoonk.com": "hello@zoonk.com"
-- "exam": "examen"
-- "Brain Power": "Puissance Mentale"
-- "BP": "PM"
-- "Energy": "Énergie"
-- "score": "Score"
-- "listening": "écoute"
-- "step": "étape"
-- "plan" (the subscription, Free or Plus): "formule" (plural "formules"; never "forfait" or "offre")
-- "Free" (the free plan, next to "Plus"): "gratuite" ("Free and Plus" = "gratuite et Plus", "the free plan" = "la formule gratuite")
-- "Guardian" (a parent or guardian who follows a young learner): "Parent ou tuteur"
-- "session" (a day's study session): "séance" (a sign-in session stays "session")
+- “course”: “cours”
+- “chapter”: “chapitre”
+- “lesson”: “leçon”
+- “exam”: “examen”
+- “goal”: “objectif”
+- “plan” (study plan): “plan”, not “programme” or “parcours”; subscription plan: “formule”
+- “Free” (subscription): “gratuite”
+- “Guardian”: “Parent ou tuteur”
+- “session” (study): “séance”; sign-in session: “session”
+- “check” (an answer): “vérifier”
+- “write” (Zoonk generating content): “préparer”; learner writing: “écrire”
+- “share” (personal facts): “dire”
+- “Brain Power”: “Puissance Mentale”
+- “BP”: “PM”
+- “Energy”: “Énergie”
+- “score”: “Score”
+- “step”: “étape”
+- “listening”: “écoute”
+- “Speaking”: “Expression orale”
+- “mind map”: “carte mentale”
 
-### Learning features
+## Feature names and states
 
-- "Today" (tab): "Aujourd’hui"
-- "Plan" (tab): "Plan"
-- "plan" (the learner's study plan, as in "your plan"): "plan" ("your plan" = "ton plan"; never "programme" or "parcours")
-- "Progress" (tab): "Progrès"
-- "Content" (tab): "Contenu"
-- "Cards" (study cards): "Fiches"
-- "Time capsules": "Capsules temporelles"
-- "Missions": "Missions"
-- "Hyperdrive": "Hyperpropulsion"
-- "Mistakes notebook": "Carnet d’erreurs"
-- "New" (mastery state): "Nouveau"
-- "Learning" (mastery state): "En cours"
-- "Solid" (mastery state): "Solide"
-- "Mastered" (mastery state): "Maîtrisé"
-- "Preparation": "Préparation"
-- "Boss": "Boss"
-- "the Trickster": "le Farceur"
-- "Big Challenge": "Grand Défi"
-- "Phase challenge" (the quiz at the end of a phase or a language unit, against the Trickster, that checks what it taught): "Défi" ("Phase challenge" = "Défi de la phase", "Phase {phase} challenge" = "Défi de la phase {phase}", "Final challenge" = "Défi final", "Unit challenge" = "Défi de l'unité", "a phase challenge" = "un défi de phase", "Challenge passed" = "Défi réussi"; never "contrôle", "point de contrôle", "bilan" or "étape")
-- "Weekly challenge" (the weekly checkpoint, also called the Big Challenge): "Défi hebdomadaire"
-- "Mock exam" (a timed practice exam in the real format, for exam goals and the IELTS and TOEFL speaking mocks alike; "mock" alone means the same): "Examen blanc" (plural "examens blancs"; "IELTS speaking mock" = "Examen blanc oral de l'IELTS"; never "simulation")
-- "Full meal": "Repas complet"
-- "Logbook": "Journal de bord"
-- "Fading" (label for a skill or card that needs a review): "À revoir" (as a verb, "is fading" = "s'estompe")
-- "Gold" (a card remembered on 3 different days): "Or" ("turns gold" = "devient dorée")
-- "Overview" (course level, next to "Beginner", "Intermediate" and "Advanced"): "Vue d’ensemble"
-- "buddy" (the learner's companion): "compagnon"
-- "buddies": "compagnons"
+- “Today”: “Aujourd’hui”
+- “Buddy”: “Compagnon”
+- “Progress”: “Progrès”
+- “Content”: “Contenu”
+- “Cards”: “Fiches”, not “cartes”
+- “Time capsules”: “Capsules temporelles”
+- “Missions”: “Missions”
+- Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”, “Travailler {area}”; “Practice” and “Review” stay distinct: “S’entraîner” / “Réviser”
+- “essay”: “rédaction”, not “dissertation”
+- “Hyperdrive”: “Hyperpropulsion”
+- “Mistakes notebook”: “Carnet d’erreurs”
+- “To fix” / “Fixed” (notebook tabs): “À corriger” / “Corrigées”
+- “practice mistakes”: “réviser tes erreurs”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Nouveau” / “En cours” / “Solide” / “Maîtrisé”
+- “Known before”: “Déjà connus”; “Known” (progress legend): “Déjà acquis”
+- “Preparation”: “Préparation”
+- “Boss”: “Boss”
+- “the Trickster”: “le Farceur”
+- “Broken” / “Held” (shield): “Brisé” / “A tenu”
+- “Big Challenge”: “Grand Défi”
+- “Phase challenge”: “Défi de la phase”, not “contrôle”, “bilan”, or “étape”
+- “Weekly challenge”: “Défi hebdomadaire”
+- “Mock exam”, including speaking mocks: “Examen blanc”, not “simulation”
+- “Full meal”: “Repas complet”
+- “Logbook”: “Journal de bord”
+- “Fading” (needs review): “À revoir”
+- “Gold” (card remembered on three different days): “Or”
+- “Overview” (course level): “Vue d’ensemble”
+- “Focus test”: “Test de priorités”
 
-### Buddy names
+## Plan terminology
 
-- "Zu" (alien): "Zu"
-- "Noodle" (brain): "Caboche"
-- "Beep" (robot): "Bip"
-- "Otto" (octopus): "Octave"
+- “Pace”: “Rythme”
+- “Paused”: “En pause”
+- “Finished”: “Terminé”
+- “Past date”: “Date passée”, not “Clos” or “Expiré”
+- “Needs adjusting”: “À ajuster”
+- “Too tight”: “Trop serré”
+- “Even across skills”: “Équilibré entre les compétences”
+- “Ahead” / “Behind”: “En avance” / “En retard”
+- “left out”: “laissé de côté”, not “passé” or “sauté”
+- “Daily time”: “Durée quotidienne”, not “Temps par jour”
+- “Next date”: “Prochaine date”
 
-### Shared UI text
+## Buddy names
 
-The app shows one translation for text that appears in more than one catalog, so use exactly these:
+- “Zu”: “Zu”
+- “Noodle”: “Caboche”
+- “Beep”: “Bip”
+- “Otto”: “Octave”
 
-- "Answer feedback": "Retour sur ta réponse"
-- "Answer options": "Options de réponse"
-- "Correct!": "Bonne réponse !"
-- "Create your free account to continue.": "Crée ton compte gratuit pour continuer."
-- "Done:": "Fait :"
-- "Explain it more simply": "Explique-le plus simplement"
-- "Fix a mistake": "Corriger une erreur"
-- "Got it": "Compris"
-- "I want to go deeper": "Je veux aller plus loin"
-- "Listen": "Écouter"
-- "Mistake pattern": "Erreur récurrente"
-- "Play the message": "Écouter le message"
-- "Practice mistakes": "Réviser tes erreurs"
-- "Quick explanations": "Explications rapides"
-- "Say it again": "Répète encore"
-- "See how it went": "Voir le résultat"
-- "Skip for now": "Passer pour l’instant"
-- "Start a goal": "Commencer un objectif"
-- "Start a new goal": "Commencer un nouvel objectif"
-- "Start with your goal": "Commence par ton objectif"
-- "Tap and say it out loud": "Appuie et dis-le à voix haute"
-- "That didn't work. Try again in a moment.": "Ça n’a pas fonctionné. Réessaie dans un instant."
-- "Today's session": "Séance du jour"
-- "Top Hyperdrive": "Niveau max d'Hyperpropulsion"
-- "We couldn't read your goal. Try again in a moment.": "On n’a pas réussi à comprendre ton objectif. Réessaie dans un instant."
-- "Writing practice": "Exercice d’écriture"
-- "You're starting goals quickly. Try again in a few minutes.": "Tu commences de nouveaux objectifs trop vite. Réessaie dans quelques minutes."
-- "You've sent as many new goals as your plan allows today. Try again tomorrow.": "Tu as atteint la limite de nouveaux objectifs autorisée par ta formule pour aujourd’hui. Réessaie demain."
-- "You've started as many new goals as your plan allows today. Try again tomorrow.": "Tu as atteint la limite de nouveaux objectifs que tu peux commencer aujourd’hui avec ta formule. Réessaie demain."
-- "{completed} of {total} done today": "{completed} étapes sur {total} terminées aujourd'hui"
+## Formatting preferences
 
-## Special Cases
-
-- French spacing: put a no-break space (U+00A0), never a regular space, before "?", "!", ";" and ":" and inside « », so the mark never starts a line on its own.
-- For belt colors, use feminine forms. For example, "White Belt" = "Ceinture Blanche", "Yellow Belt" = "Ceinture Jaune", etc. If it's color alone in the context of belts, use "Yellow" = "Jaune", "White" = "Blanche", etc.
-- Treat "Puissance Mentale" as a product-like term in short labels and headings. For example, write "Qu'est-ce que Puissance Mentale ?" instead of adding a leading article.
-- Use an article or possessive with "Puissance Mentale" only when the sentence sounds more natural with one. For example, "Tu as augmenté ta Puissance Mentale".
-- Study cards are "fiches", never "cartes".
-- Use France's context for examples and exam names, such as the "bac", instead of US ones like the SAT. For example, "pass the SAT" = "réussir le bac". The bac is in June, so keep exam months true to France's calendar.
-- Statements in exams where a wrong answer cancels a right one are judged right or wrong, not true or false: "{judgment, select, right {Right} other {Wrong}}" = "{judgment, select, right {Correct} other {Incorrect}}". Other uses of "right" and "wrong" keep their usual translations.
-- Zero takes the singular in French ("0 leçon"): an `=0` branch the English has uses the singular form, "{count, plural, =0 {# lessons} one {# lesson} other {# lessons}}" = "{count, plural, =0 {# leçon} one {# leçon} other {# leçons}}". Its words are those of the `one` branch: never add words to tell the branches apart ("0 carte mentale", never "0 carte mentale au total"). A `many` branch (large round numbers) uses the words of the `other` branch.
+- Match the app's compact durations: “2 h 30 min”, “30 s”.
+- Use a no-break space (U+00A0) before “?”, “!”, “;”, and “:” and inside « ».

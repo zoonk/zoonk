@@ -42,7 +42,7 @@ export function MessageStatusForm({
       </div>
       <span
         aria-live="polite"
-        className="text-destructive text-right text-xs empty:hidden"
+        className="text-destructive-text text-right text-xs empty:hidden"
         key={state.submissionId}
       >
         {state.error}

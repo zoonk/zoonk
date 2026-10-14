@@ -2,38 +2,36 @@
 
 ## Audience
 
-Zoonk helps anyone learn anything, with a focus on people outside privileged environments — small towns, under-resourced communities, first-time learners. Write for them: clear, welcoming, and free of jargon.
+Zoonk helps anyone learn anything, especially people in small towns, under-resourced communities, and first-time learners. Write clear, welcoming text without jargon.
 
 ## Voice and tone
 
-- Simple, concise, everyday language. Prefer common words over formal or technical ones.
-- Practical and encouraging. Motivate without being condescending.
-- Friendly and light, in the spirit of products like Duolingo.
-- Praise effort and strategy, not talent.
-- Never scold or guilt people for a break, a mistake, or a missed day.
+- Use simple, concise, everyday language.
+- Be practical, friendly, and encouraging without being condescending.
+- Praise effort and strategy, not talent. Never scold or guilt learners for mistakes, breaks, or missed days.
+- Use “…” for ellipses. Avoid em dashes.
 
 ## Honest progress
 
-- Never promise a result: no pass, score, admission, certificate, or job. This applies to the product, marketing, and translations.
-- Describe preparation, not outcomes. Say "Preparation", not "Readiness", and "Still needed to reach your goal", not "You'll be ready when".
-- Show an estimated score only as a range after a mock exam, labeled "Estimated".
+- Describe preparation without promising a pass, score, admission, certificate, or job. Use “Preparation”, not “Readiness”.
+- Estimated scores appear only as ranges after mock exams, labeled “Estimated”.
 
-## Goals
+## Product terminology
 
-- A learner starts a goal: "Start a goal", "Start a new goal", "You can't start another goal right now". Never add, set or create one.
+- Learners “start” a goal, rather than add, set, or create one.
+- Cards are flashcards for studying, not playing cards.
+- Buddies are learning partners, not pets. Their localized names are proper names.
+- “Known” and “Known before” mean the learner knew something before studying it in Zoonk.
+- In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.
+- Keep the brand name “Zoonk” unchanged. Use each locale's glossary consistently across web, lesson player, Apple, and Android catalogs, including inflected forms.
 
-## Feature names
+## Plan language
 
-- Use the feature names in each language's glossary everywhere they appear, including lowercase, plural and inside longer phrases, labels and settings: "Phase {phase} boss" uses the glossary word for "Boss". Never leave a feature name in English unless the glossary keeps it in English.
-- Study cards are flashcards. Never call them by the word for playing cards, and never describe them with card-game words such as hand, deal, or rarity.
-- Buddies are friendly partners who learn with the learner, not pets or animals. Use the glossary's word for "buddy", never the word for a pet.
-- Buddy names are proper names. Use each language's buddy names from its glossary instead of translating the English ones.
+- “Finished” means the learner completed the plan. “Past date” means its date passed with lessons remaining; the plan stays available for adjustment.
+- “Left out” means the plan omitted content for lack of time. “Skipped” means a test showed prior knowledge; “Skip” is the learner's choice.
+- Describe proposed changes as proposals, and applied changes as completed actions.
 
-## Do not translate
+## Placeholder context
 
-- The brand name "Zoonk"
-
-## Punctuation
-
-- Use the ellipsis character "…" instead of three periods "..." for loading states and other UI copy.
-- Never use em dashes "—". Use a comma, a colon or a period, as the source text does.
+- Learners can choose buddy names and goal titles. Their gender and number are unknown; use neutral wording around names and the word for “goal” when a title needs agreement.
+- Duration placeholders such as “{time}” already include localized units; do not add units around them.

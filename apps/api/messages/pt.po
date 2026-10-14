@@ -51,6 +51,11 @@ msgid "Sign in or create an account"
 msgstr "Entre ou crie uma conta"
 
 #: src/app/auth/login/page.tsx
+msgctxt "o_pwJP"
+msgid "That sign-in expired. Try again."
+msgstr "Esse link de acesso expirou. Tente de novo."
+
+#: src/app/auth/login/page.tsx
 msgctxt "4wpUNc"
 msgid "Or"
 msgstr "Ou"
@@ -121,9 +126,14 @@ msgid "Send a new code"
 msgstr "Enviar novo código"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "3WXGFW"
-msgid "Didn't get it? Send a new code"
-msgstr "Não recebeu? Peça um novo código"
+msgctxt "X1bhjS"
+msgid "Didn't get it?"
+msgstr "Não recebeu?"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "qs4xBq"
+msgid "Send again"
+msgstr "Enviar de novo"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
@@ -146,9 +156,14 @@ msgid "Create your profile"
 msgstr "Crie seu perfil"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "jN5Gqb"
-msgid "Your name and a username. You can change both later in your profile."
-msgstr "Seu nome e um nome de usuário. Você pode mudar os dois depois no perfil."
+msgctxt "SmuYUd"
+msgid "What should we call you?"
+msgstr "Como devemos chamar você?"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "y9wzAs"
+msgid "You can change it later in your profile."
+msgstr "Você pode mudar isso depois no seu perfil."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
@@ -169,6 +184,21 @@ msgstr "{username} já está em uso"
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
 msgstr "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9j8lDu"
+msgid "Your username: @{username}"
+msgstr "Seu nome de usuário: @{username}"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "UJWPJj"
+msgid "Change username"
+msgstr "Mudar nome de usuário"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "BY343C"
+msgid "Change"
+msgstr "Mudar"
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"
@@ -218,7 +248,7 @@ msgstr "Abaixo, você pode escolher em que focar ou fazer um teste rápido que e
 #: src/lib/tutor-confirmation.ts
 msgctxt "ejo0Qg"
 msgid "Below you can start a short practice call whenever you're ready."
-msgstr "Abaixo, você pode começar uma chamada rápida para praticar quando quiser."
+msgstr "Abaixo, você pode começar uma conversa rápida para praticar quando quiser."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "c7OWI5"

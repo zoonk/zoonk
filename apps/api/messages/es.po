@@ -51,6 +51,11 @@ msgid "Sign in or create an account"
 msgstr "Inicia sesión o crea una cuenta"
 
 #: src/app/auth/login/page.tsx
+msgctxt "o_pwJP"
+msgid "That sign-in expired. Try again."
+msgstr "Ese inicio de sesión ha caducado. Inténtalo de nuevo."
+
+#: src/app/auth/login/page.tsx
 msgctxt "4wpUNc"
 msgid "Or"
 msgstr "O"
@@ -121,9 +126,14 @@ msgid "Send a new code"
 msgstr "Enviar un código nuevo"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "3WXGFW"
-msgid "Didn't get it? Send a new code"
-msgstr "¿No te ha llegado? Envía un código nuevo"
+msgctxt "X1bhjS"
+msgid "Didn't get it?"
+msgstr "¿No te ha llegado?"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "qs4xBq"
+msgid "Send again"
+msgstr "Volver a enviar"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
@@ -146,9 +156,14 @@ msgid "Create your profile"
 msgstr "Crea tu perfil"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "jN5Gqb"
-msgid "Your name and a username. You can change both later in your profile."
-msgstr "Tu nombre y un nombre de usuario. Más adelante podrás cambiar ambos en tu perfil."
+msgctxt "SmuYUd"
+msgid "What should we call you?"
+msgstr "¿Cómo te llamamos?"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "y9wzAs"
+msgid "You can change it later in your profile."
+msgstr "Puedes cambiarlo más adelante en tu perfil."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
@@ -169,6 +184,21 @@ msgstr "El nombre de usuario {username} ya está en uso"
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
 msgstr "De 3 a 30 caracteres. Solo letras, números y guiones bajos."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9j8lDu"
+msgid "Your username: @{username}"
+msgstr "Tu nombre de usuario: @{username}"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "UJWPJj"
+msgid "Change username"
+msgstr "Cambiar nombre de usuario"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "BY343C"
+msgid "Change"
+msgstr "Cambiar"
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"

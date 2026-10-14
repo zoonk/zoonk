@@ -220,8 +220,6 @@ msgstr "Quelle:"
 #: src/activities/_components/activity-feedback.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 #: src/activities/pattern-table/pattern-row.tsx
-#: src/components/inline-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "QAJ_Tl"
 msgid "Correct answer:"
 msgstr "Richtige Antwort:"
@@ -229,7 +227,6 @@ msgstr "Richtige Antwort:"
 #: src/activities/_components/activity-feedback.tsx
 #: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Deine Antwort:"
@@ -241,7 +238,7 @@ msgid "Answer:"
 msgstr "Antwort:"
 
 #: src/activities/_components/activity-feedback.tsx
-#: src/components/inline-feedback.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Rückmeldung zur Antwort"
@@ -295,7 +292,7 @@ msgstr "Deine Schätzung: {value}"
 #: src/activities/_components/activity-guess-scale.tsx
 msgctxt "ihtBFm"
 msgid "Your guess"
-msgstr "Deine Schätzung"
+msgstr "Deine Vermutung"
 
 #: src/activities/_components/activity-guess-scale.tsx
 msgctxt "8RsqoE"
@@ -465,9 +462,9 @@ msgid "{note} minor seventh"
 msgstr "{note}-Mollseptakkord"
 
 #: src/activities/area-model/area-model-activity.tsx
-msgctxt "8BGkFK"
-msgid "Split into {count} parts: {parts}."
-msgstr "Aufgeteilt in {count} Teile: {parts}."
+msgctxt "hL2YKx"
+msgid "Split into {count, plural, one {# part} other {# parts}}: {parts}."
+msgstr "Aufgeteilt in {count, plural, one {# Teil} other {# Teile}}: {parts}."
 
 #: src/activities/area-model/area-model-activity.tsx
 msgctxt "zXtGVv"
@@ -782,9 +779,9 @@ msgid "Pick a cause, then pick what it led to."
 msgstr "Wähle eine Ursache und dann die Wirkung."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "UsFJ3A"
-msgid "{count} of {total} links"
-msgstr "{count} von {total} Verknüpfungen"
+msgctxt "m4T6j3"
+msgid "{count} of {total, plural, one {# link} other {# links}}"
+msgstr "{count} von {total, plural, one {# Verknüpfung} other {# Verknüpfungen}}"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "qbRyCu"
@@ -863,14 +860,14 @@ msgid "Line {number}, yours to edit"
 msgstr "Zeile {number} zum Bearbeiten"
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "Xtp3VI"
-msgid "A {language} program of {count} lines. Run it to see what it prints."
-msgstr "Ein {language}-Programm mit {count} Zeilen. Führe es aus, um zu sehen, was es ausgibt."
+msgctxt "-O566k"
+msgid "A {language} program of {count, plural, one {# line} other {# lines}}. Run it to see what it prints."
+msgstr "Ein {language}-Programm mit {count, plural, one {# Zeile} other {# Zeilen}}. Führe es aus, um zu sehen, was es ausgibt."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "46pcVH"
-msgid "A {language} program of {count} lines. Edit your lines, run it, and compare its output with the expected output: {expected}"
-msgstr "Ein {language}-Programm mit {count} Zeilen. Bearbeite deine Zeilen, führe es aus und vergleiche die Ausgabe mit der erwarteten Ausgabe: {expected}"
+msgctxt "t2s1c-"
+msgid "A {language} program of {count, plural, one {# line} other {# lines}}. Edit your lines, run it, and compare its output with the expected output: {expected}"
+msgstr "Ein {language}-Programm mit {count, plural, one {# Zeile} other {# Zeilen}}. Bearbeite deine Zeilen, führe das Programm aus und vergleiche die Ausgabe mit der erwarteten Ausgabe: {expected}"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "qpwrn5"
@@ -1028,19 +1025,19 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Feld {number}, {row} und {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "Sx_zdo"
-msgid "{count} of {total} squares: {what}"
-msgstr "{count} von {total} Feldern: {what}"
+msgctxt "5cNGIS"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
+msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}}: {what}"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "vQ-Abi"
-msgid "{count} of {total} squares right"
-msgstr "{count} von {total} Kästchen richtig"
+msgctxt "d2pFBx"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
+msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} richtig"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "Q20WRf"
-msgid "{count} of {total} squares filled"
-msgstr "{count} von {total} Feldern ausgefüllt"
+msgctxt "7Pftj-"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
+msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} ausgefüllt"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "hyp4AH"
@@ -1083,9 +1080,9 @@ msgid "The key leads to"
 msgstr "Der Schlüssel führt zu"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "vs7pqs"
-msgid "You reached {outcome} after {count} questions."
-msgstr "Nach {count} Fragen bist du bei {outcome} angekommen."
+msgctxt "PTXFe3"
+msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
+msgstr "Du hast {outcome} nach {count, plural, =0 {# Fragen} one {# Frage} other {# Fragen}} erreicht."
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "MtII9q"
@@ -1881,9 +1878,9 @@ msgid "Built: {formula}"
 msgstr "Aufgebaut: {formula}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "uky4Sk"
-msgid "{atom}: {used} of {valence} bonds"
-msgstr "{atom}: {used} von {valence} Bindungen"
+msgctxt "ymqUu2"
+msgid "{atom}: {used} of {valence, plural, =0 {# bonds} one {# bond} other {# bonds}}"
+msgstr "{atom}: {used} von {valence, plural, =0 {# Bindungen} one {# Bindung} other {# Bindungen}}"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "18z35m"
@@ -2066,6 +2063,7 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "Die Musik konnte nicht geladen werden. Überprüfe deine Verbindung und versuche es erneut."
 
 #: src/activities/notation-player/notation-player-activity.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "Stopp"
@@ -2358,6 +2356,16 @@ msgctxt "GYbMfc"
 msgid "{count, plural, one {# step} other {# steps}} to put in order."
 msgstr "{count, plural, one {# Schritt} other {# Schritte}} in die richtige Reihenfolge bringen."
 
+#: src/activities/random-simulation/chance-charts.tsx
+msgctxt "a5msuh"
+msgid "Yes"
+msgstr "Ja"
+
+#: src/activities/random-simulation/chance-charts.tsx
+msgctxt "oUWADl"
+msgid "No"
+msgstr "Nein"
+
 #: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "YuYZWw"
 msgid "{runs} runs of {trial}"
@@ -2434,9 +2442,9 @@ msgid "Running {count} of {runs}…"
 msgstr "Berechne {count} von {runs}…"
 
 #: src/activities/random-simulation/use-sampling-format.ts
-msgctxt "t4sTE6"
-msgid "±{value} points"
-msgstr "±{value} Prozentpunkte"
+msgctxt "vUQRu0"
+msgid "±{value} {count, plural, =0 {points} one {point} other {points}}"
+msgstr "±{value} {count, plural, =0 {Prozentpunkte} one {Prozentpunkt} other {Prozentpunkte}}"
 
 #: src/activities/random-simulation/use-sampling-format.ts
 msgctxt "_dayPZ"
@@ -2536,9 +2544,9 @@ msgid "Tap {tap} was missed."
 msgstr "Tipp Nummer {tap} wurde verpasst."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
-msgctxt "olxqib"
-msgid "{onTime} of {total} taps on time."
-msgstr "{onTime} von {total} Tipps im Takt."
+msgctxt "DDydNj"
+msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
+msgstr "{onTime} von {total, plural, =0 {# Schlägen} one {# Schlag} other {# Schlägen}} im Takt."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "73IJ_a"
@@ -2686,6 +2694,7 @@ msgid "Table {name}"
 msgstr "Tabelle {name}"
 
 #: src/activities/step-solver/step-solver-activity.tsx
+#: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
 msgctxt "huCHmk"
 msgid "Steps"
@@ -2864,15 +2873,16 @@ msgid "Position {position}: {item}. Tap to remove."
 msgstr "Position {position}: {item}. Tippe, um zu entfernen."
 
 #: src/components/arrange-words-answer-area.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Deine Antwort"
 
 #: src/components/arrange-words-answer-area.tsx
-msgctxt "7R_rOB"
-msgid "Tap words to build your answer"
-msgstr "Tippe Wörter an, um deine Antwort zu bilden"
+msgctxt "PKEwrP"
+msgid "Pick words to build your answer"
+msgstr "Wähle Wörter aus, um deine Antwort zusammenzustellen"
 
 #: src/components/arrange-words.tsx
 #: src/components/fill-blank-word-bank.tsx
@@ -2902,9 +2912,10 @@ msgstr "Was hörst du?"
 
 #: src/components/listening-step.tsx
 #: src/components/reading-step.tsx
-msgctxt "19nXyC"
-msgid "Translate this sentence:"
-msgstr "Übersetze diesen Satz:"
+#: src/components/translation-step.tsx
+msgctxt "wCy_Tc"
+msgid "Translate"
+msgstr "Übersetzen"
 
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
@@ -2926,6 +2937,16 @@ msgctxt "lYWSeP"
 msgid "Play pronunciation"
 msgstr "Aussprache abspielen"
 
+#: src/components/play-audio-button.tsx
+msgctxt "tFFMkF"
+msgid "Pause"
+msgstr "Pause"
+
+#: src/components/play-audio-button.tsx
+msgctxt "J3ca41"
+msgid "Play"
+msgstr "Abspielen"
+
 #: src/components/player-choice-scene.tsx
 msgctxt "akd-cv"
 msgid "Answer options"
@@ -2935,11 +2956,6 @@ msgstr "Antwortmöglichkeiten"
 msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "Welches davon bedeutet das?"
-
-#: src/components/translation-step.tsx
-msgctxt "fpO9TK"
-msgid "Translate:"
-msgstr "Übersetze:"
 
 #: src/components/verdict-label.tsx
 msgctxt "Bk6B6r"
@@ -3033,6 +3049,7 @@ msgid "See Plus"
 msgstr "Plus ansehen"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/item-tutor-aside.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Zurück"
@@ -3065,9 +3082,9 @@ msgid "That's a lot of learning today"
 msgstr "Heute hast du schon viel gelernt"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "cpWkiT"
-msgid "Check your connection and try again. Nothing you did was lost."
-msgstr "Prüfe deine Verbindung und versuche es erneut. Nichts von dem, was du gemacht hast, ist verloren gegangen."
+msgctxt "jdlHSh"
+msgid "Try again in a moment. Nothing you did was lost."
+msgstr "Versuch es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren gegangen."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3101,20 +3118,14 @@ msgid "Sign in"
 msgstr "Anmelden"
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "O1bdNC"
-msgid "You started a lot of lessons in a short time. This one opens in {seconds} seconds."
-msgstr "Du hast in kurzer Zeit viele Lektionen gestartet. Diese kannst du in {seconds} Sekunden öffnen."
+msgctxt "fKzrQy"
+msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "Du hast in kurzer Zeit viele Lektionen begonnen. Diese Lektion ist in {seconds, plural, =0 {# Sekunden} one {# Sekunde} other {# Sekunden}} verfügbar."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
 msgid "Take a short break"
 msgstr "Mach kurz Pause"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/feedback/lesson-result-notes.tsx
-msgctxt "r6_UUR"
-msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Diese Idee kommt {when, select, today {heute später in der Wiederholung} tomorrow {morgen in der Wiederholung} weekday {am {day} in der Wiederholung} other {in einer Wiederholung am {day}}} wieder dran"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "ornlwe"
@@ -3125,6 +3136,11 @@ msgstr "{correct} von {answered} richtig"
 msgctxt "moNgIg"
 msgid "+{points} Brain Power"
 msgstr "+{points} Brain Power"
+
+#: src/lesson/completion/lesson-completion-moment.tsx
+msgctxt "GgV_JT"
+msgid "Review on {date}"
+msgstr "Wiederholung am {date}"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "sgeE0r"
@@ -3156,6 +3172,11 @@ msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "Dein Fortschritt konnte noch nicht gespeichert werden."
 
+#: src/lesson/completion/lesson-completion-ready.tsx
+msgctxt "2O2sfp"
+msgid "Finish"
+msgstr "Abschließen"
+
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "j5DG16"
 msgid "This one is tricky. {name} can explain it another way."
@@ -3169,6 +3190,7 @@ msgstr "Brauchst du gerade etwas mehr Zeit? {name} kann es dir anders erklären.
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/lesson/tutor/ask-tutor-button.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/item-tutor.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
 msgstr "Frag {name}"
@@ -3184,6 +3206,7 @@ msgid "Explain first"
 msgstr "Zuerst erklären"
 
 #: src/lesson/controls/summary-sheet.tsx
+#: src/lesson/lesson-aside.tsx
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "y7Zy67"
 msgid "Lesson summary"
@@ -3215,9 +3238,9 @@ msgid "We couldn't explain it right now. Try again in a moment."
 msgstr "Deine Antwort konnten wir gerade nicht erklären. Versuch es gleich noch einmal."
 
 #: src/lesson/feedback/lesson-key-points.tsx
-msgctxt "byIRGP"
-msgid "{met} of {total} key points"
-msgstr "{met} von {total} Kernpunkten"
+msgctxt "YO_0e_"
+msgid "{met} of {total, plural, =0 {# key points} one {# key point} other {# key points}}"
+msgstr "{met} von {total, plural, =0 {# Kernpunkten} one {# Kernpunkt} other {# Kernpunkten}}"
 
 #: src/lesson/feedback/lesson-key-points.tsx
 msgctxt "usytt1"
@@ -3237,7 +3260,7 @@ msgstr "Zu deinen Fehlern hinzugefügt · kommt am Ende dieser Lektion wieder dr
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Zu deinen Fehlern hinzugefügt"
+msgstr "In deinem Fehlerheft gespeichert"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
@@ -3250,9 +3273,14 @@ msgid "This question comes back at the end of the lesson"
 msgstr "Diese Frage kommt am Ende der Lektion noch einmal dran"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
+msgctxt "r6_UUR"
+msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
+msgstr "Diese Idee kommt {when, select, today {heute später in der Wiederholung} tomorrow {morgen in der Wiederholung} weekday {am {day} in der Wiederholung} other {in einer Wiederholung am {day}}} wieder dran"
+
+#: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"
 msgid "{count} right in a row"
-msgstr "{count} richtige Antworten in Folge"
+msgstr "{count} Mal hintereinander richtig"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "xdf2SR"
@@ -3293,6 +3321,11 @@ msgstr "Jede Frage wird mehrmals am Tag überprüft. Vergleiche deine Antwort mi
 msgctxt "bqVpRG"
 msgid "Spelled:"
 msgstr "Schreibweise:"
+
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "mhiTW7"
+msgid "Correct answer"
+msgstr "Richtige Antwort"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "RDZVQL"
@@ -3339,15 +3372,67 @@ msgctxt "QriCsD"
 msgid "Previous screen"
 msgstr "Vorheriger Bildschirm"
 
+#: src/lesson/lesson-aside.tsx
+#: src/lesson/steps/worked-example-content.tsx
+msgctxt "ZpQ6us"
+msgid "Result"
+msgstr "Ergebnis"
+
+#: src/lesson/lesson-aside.tsx
+msgctxt "aEhjYg"
+msgid "Outline"
+msgstr "Übersicht"
+
+#: src/lesson/lesson-aside.tsx
+msgctxt "pOflKA"
+msgid ", read"
+msgstr ", gelesen"
+
+#: src/lesson/lesson-aside.tsx
+msgctxt "k8sSVy"
+msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
+msgstr "{count, plural, one {# kurze Frage am Ende} other {# kurze Fragen am Ende}}"
+
+#: src/lesson/lesson-aside.tsx
+msgctxt "fl3kLl"
+msgid "screen {number}"
+msgstr "Bildschirm {number}"
+
+#: src/lesson/lesson-aside.tsx
+msgctxt "chnAWh"
+msgid "Help with this screen"
+msgstr "Hilfe zu diesem Bildschirm"
+
+#: src/lesson/lesson-aside.tsx
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "C9sbYe"
+msgid "From the lesson"
+msgstr "Aus der Lektion"
+
+#: src/lesson/lesson-leave.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "Vorerst aufhören?"
+
+#: src/lesson/lesson-leave.tsx
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "Deine Antwort wurde noch nicht überprüft und wird deshalb nicht gespeichert."
+
+#: src/lesson/lesson-leave.tsx
+msgctxt "xNSBn4"
+msgid "Keep writing"
+msgstr "Weiterschreiben"
+
+#: src/lesson/lesson-leave.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "Verlassen"
+
 #: src/lesson/lesson-player-header.tsx
 msgctxt "fp5tEg"
 msgid "Close lesson"
 msgstr "Lektion schließen"
-
-#: src/lesson/lesson-player-header.tsx
-msgctxt "8jbBlb"
-msgid "{minutes, number} min"
-msgstr "{minutes, number} Min."
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "dYp90P"
@@ -3389,6 +3474,16 @@ msgctxt "KC15MC"
 msgid "Your answer here didn't save. Answer it again to finish the lesson."
 msgstr "Deine Antwort wurde hier nicht gespeichert. Gib sie noch einmal ein, um die Lektion abzuschließen."
 
+#: src/lesson/lesson-stage.tsx
+msgctxt "rKXfRV"
+msgid "This question was waiting for its picture. Answer it to finish the lesson."
+msgstr "Diese Frage hat auf ihr Bild gewartet. Beantworte sie, um die Lektion abzuschließen."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "VbY3en"
+msgid "No more writing in this lesson."
+msgstr "In dieser Lektion musst du nichts mehr schreiben."
+
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
 msgid "Your options"
@@ -3425,9 +3520,9 @@ msgid "Skills practiced"
 msgstr "Geübte Fähigkeiten"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "zlTrIE"
-msgid "Practice “{skill}” · 5 min"
-msgstr "„{skill}“ üben · 5 Min."
+msgctxt "gvZdep"
+msgid "Practice “{skill}” · {time}"
+msgstr "„{skill}“ üben · {time}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "M55cZV"
@@ -3499,6 +3594,26 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Dein Beispiel"
 
+#: src/lesson/steps/example-line.tsx
+msgctxt "2FLKIW"
+msgid "Nothing you've shared fits this idea."
+msgstr "Nichts von dem, was du geteilt hast, passt zu dieser Idee."
+
+#: src/lesson/steps/example-line.tsx
+msgctxt "QuO5Vn"
+msgid "Writing your example…"
+msgstr "Dein Beispiel wird erstellt…"
+
+#: src/lesson/steps/example-line.tsx
+msgctxt "uvr2Ko"
+msgid "Show an example from my life"
+msgstr "Ein Beispiel aus meinem Leben zeigen"
+
+#: src/lesson/steps/example-line.tsx
+msgctxt "S-INtb"
+msgid "No example is available right now."
+msgstr "Gerade ist kein Beispiel verfügbar."
+
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"
@@ -3537,19 +3652,14 @@ msgid "Tap and say it out loud"
 msgstr "Tippe und sprich laut"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "e6OXMf"
-msgid "Stop and check"
-msgstr "Aufnahme stoppen und prüfen"
+msgctxt "7Y6Yvq"
+msgid "Record"
+msgstr "Aufnehmen"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "XTP9lr"
-msgid "Start speaking"
-msgstr "Jetzt sprechen"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "T1F6Co"
-msgid "Listening… {seconds}s. Tap to stop."
-msgstr "Aufnahme läuft… {seconds} s. Tippe zum Stoppen."
+msgctxt "CzQFwa"
+msgid "Listening… Tap Stop to check."
+msgstr "Ich höre zu… Tippe auf „Stopp“, um deine Antwort zu prüfen."
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3587,14 +3697,19 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, one {# Idee, die du aus dieser Lektion mitnimmst} other {# Ideen, die du aus dieser Lektion mitnimmst}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "fXQnWK"
-msgid "Skip writing"
-msgstr "Schreiben überspringen"
+msgctxt "DPTzG-"
+msgid "Can't write now"
+msgstr "Ich kann gerade nicht schreiben"
 
 #: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "In deinen eigenen Worten"
+
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Das weiß ich noch nicht"
 
 #: src/lesson/steps/word-hints.tsx
 msgctxt "YgghdL"
@@ -3606,15 +3721,67 @@ msgctxt "FnrKiE"
 msgid "Pronunciation tip:"
 msgstr "Aussprachetipp:"
 
-#: src/lesson/steps/worked-example-content.tsx
-msgctxt "ZpQ6us"
-msgid "Result"
-msgstr "Ergebnis"
-
 #: src/lesson/steps/worked-example-step.tsx
 msgctxt "RW_YMt"
 msgid "Worked example"
 msgstr "Beispiel mit Lösungsweg"
+
+#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/item-tutor-aside.tsx
+msgctxt "nete1_"
+msgid "Ask {name} about your answer"
+msgstr "Frag {name} zu deiner Antwort"
+
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "_Kuebo"
+msgid "Ask {name} about this screen"
+msgstr "Frag {name} zu diesem Bildschirm"
+
+#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/item-tutor-aside.tsx
+#: src/questions/lesson-question-composer.tsx
+msgctxt "iPfRms"
+msgid "Ask a question"
+msgstr "Frage stellen"
+
+#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/lesson-question-thread.tsx
+msgctxt "OK6Mb4"
+msgid "Create a free account to ask questions"
+msgstr "Erstelle ein kostenloses Konto, um Fragen zu stellen"
+
+#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/item-tutor-aside.tsx
+msgctxt "8ToTqX"
+msgid "Suggested questions"
+msgstr "Fragenvorschläge"
+
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "UIUcbm"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, one {# Frage} other {# Fragen}}"
+
+#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/item-tutor-aside.tsx
+msgctxt "LxqaIF"
+msgid "Questions to {name}"
+msgstr "Fragen an {name}"
+
+#: src/lesson/tutor/tutor-quote.tsx
+#: src/questions/item-tutor.tsx
+msgctxt "NvBay_"
+msgid "About “<question></question>”"
+msgstr "Zu „<question></question>“"
+
+#: src/lesson/tutor/tutor-quote.tsx
+msgctxt "YXoOph"
+msgid "You wrote <strong>{answer}</strong> on “<question></question>”"
+msgstr "Du hast bei „<question></question>“ <strong>{answer}</strong> geschrieben"
+
+#: src/lesson/tutor/tutor-quote.tsx
+msgctxt "x-V0mZ"
+msgid "You picked <strong>{answer}</strong> on “<question></question>”"
+msgstr "Du hast bei „<question></question>“ <strong>{answer}</strong> ausgewählt"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"
@@ -3630,6 +3797,21 @@ msgstr "Frag {name} zu dieser Probeprüfung"
 msgctxt "tLlk0f"
 msgid "Ask {name} about your plan"
 msgstr "Frag {name} zu deinem Plan"
+
+#: src/questions/ask-tutor.tsx
+msgctxt "dHV3p3"
+msgid "Ask {name} about this subject"
+msgstr "Frag {name} zu diesem Thema"
+
+#: src/questions/item-tutor-aside.tsx
+msgctxt "Fp8B9R"
+msgid "Ask {name} about this question"
+msgstr "Frag {name} zu dieser Frage"
+
+#: src/questions/item-tutor.tsx
+msgctxt "_DwRra"
+msgid "About your answer to “<question></question>”"
+msgstr "Zu deiner Antwort auf „<question></question>“"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "pLRK5_"
@@ -3652,6 +3834,21 @@ msgid "Ask about your plan…"
 msgstr "Stell eine Frage zu deinem Plan…"
 
 #: src/questions/lesson-question-composer.tsx
+msgctxt "uDwgZF"
+msgid "Ask about this subject…"
+msgstr "Frag etwas zu diesem Thema…"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "TCh0B4"
+msgid "Ask about this question…"
+msgstr "Frag etwas zu dieser Frage…"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "wBr6ON"
+msgid "Ask about your answer…"
+msgstr "Frag etwas zu deiner Antwort…"
+
+#: src/questions/lesson-question-composer.tsx
 msgctxt "6sIYgs"
 msgid "Ask about the lesson content…"
 msgstr "Frag etwas zum Inhalt der Lektion…"
@@ -3667,9 +3864,9 @@ msgid "Send"
 msgstr "Senden"
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "iPfRms"
-msgid "Ask a question"
-msgstr "Frage stellen"
+msgctxt "uw7M-z"
+msgid "⏎ send · ⇧⏎ new line"
+msgstr "⏎ senden · ⇧⏎ neue Zeile"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "2P8sqa"
@@ -3697,34 +3894,14 @@ msgid "Take a short break, then ask again."
 msgstr "Leg kurz eine Pause ein und frag dann noch einmal."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "aFV0Wu"
-msgid "Create your free account to continue."
-msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Etwas ist schiefgelaufen. Versuch es noch einmal."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "t_JN0k"
-msgid "Create a free account to ask the tutor."
-msgstr "Erstelle ein kostenloses Konto, um dem Tutor Fragen zu stellen."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "inAMZa"
-msgid "{period, select, day {You've asked all of today's questions. Ask again tomorrow.} month {You've asked all of this month's questions. Ask again next month.} other {You've asked all your questions.}}"
-msgstr "{period, select, day {Du hast alle Fragen für heute gestellt. Frag morgen wieder.} month {Du hast alle Fragen für diesen Monat gestellt. Frag nächsten Monat wieder.} other {Du hast alle deine Fragen gestellt.}}"
-
-#: src/questions/lesson-question-errors.tsx
 msgctxt "EaucLA"
 msgid "View plans"
 msgstr "Abos ansehen"
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "huqKGl"
-msgid "Create account"
-msgstr "Konto erstellen"
 
 #: src/questions/lesson-question-markdown.tsx
 msgctxt "13bnyN"
@@ -3777,6 +3954,16 @@ msgid "Ask questions about your plan"
 msgstr "Stell Fragen zu deinem Plan"
 
 #: src/questions/lesson-question-panel.tsx
+msgctxt "zoFfdl"
+msgid "Ask questions about this subject"
+msgstr "Stell Fragen zu diesem Thema"
+
+#: src/questions/lesson-question-panel.tsx
+msgctxt "uF5ZgT"
+msgid "Ask about this question"
+msgstr "Frag etwas zu dieser Frage"
+
+#: src/questions/lesson-question-panel.tsx
 msgctxt "J9Kkha"
 msgid "Close questions"
 msgstr "Fragen schließen"
@@ -3790,36 +3977,6 @@ msgstr "Zur neuesten Frage scrollen"
 msgctxt "RIj9BB"
 msgid "Loading questions…"
 msgstr "Fragen werden geladen…"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "DMPOmk"
-msgid "Walk me through this answer"
-msgstr "Erkläre mir diese Antwort Schritt für Schritt"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "hE0dmj"
-msgid "What will I be able to do after this chapter?"
-msgstr "Was werde ich nach diesem Kapitel können?"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "nd7C7Y"
-msgid "What should I practice first?"
-msgstr "Was sollte ich zuerst üben?"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "CIXN98"
-msgid "Why did I miss these questions?"
-msgstr "Warum habe ich diese Fragen falsch beantwortet?"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "pSjxNB"
-msgid "Why am I studying this today?"
-msgstr "Warum lerne ich das heute?"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "jbL50j"
-msgid "What comes next?"
-msgstr "Was kommt als Nächstes?"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "x8F_ZU"
@@ -3837,6 +3994,16 @@ msgid "Questions about your plan"
 msgstr "Fragen zu deinem Plan"
 
 #: src/questions/lesson-question-thread.tsx
+msgctxt "6QK3he"
+msgid "Questions about this subject"
+msgstr "Fragen zu diesem Thema"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "UQ_Pn_"
+msgid "Questions about this question"
+msgstr "Fragen zu dieser Frage"
+
+#: src/questions/lesson-question-thread.tsx
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "Fragen zu dieser Lektion"
@@ -3847,14 +4014,9 @@ msgid "What would you like help with?"
 msgstr "Wobei brauchst du Hilfe?"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "6lUOBa"
-msgid "{name} is an AI tutor and can make mistakes."
-msgstr "{name} ist ein KI-Tutor und kann Fehler machen."
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Erstelle ein kostenloses Konto, um Fragen zu stellen"
+msgctxt "beYYXL"
+msgid "{name} is an AI study buddy and can make mistakes."
+msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "wMoDaY"
@@ -3874,12 +4036,12 @@ msgstr "Zu deiner Antwort"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "xY7fiy"
 msgid "About this chapter"
-msgstr "Zu diesem Kapitel"
+msgstr "Über dieses Kapitel"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
-msgstr "Zu dieser Lektion"
+msgstr "Über diese Lektion"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "zRzcwu"
@@ -3897,9 +4059,29 @@ msgid "About this part"
 msgstr "Über diesen Teil"
 
 #: src/questions/lesson-question-turn.tsx
+msgctxt "XHGiOR"
+msgid "About this subject"
+msgstr "Über dieses Thema"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "aEX9_r"
+msgid "About this question"
+msgstr "Zu dieser Frage"
+
+#: src/questions/lesson-question-turn.tsx
 msgctxt "KQvwZ5"
 msgid "We couldn't finish this answer."
 msgstr "Diese Antwort konnte nicht fertiggestellt werden."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "plrEVt"
+msgid "Get answer"
+msgstr "Antwort abrufen"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "TtobyB"
+msgid "This one wasn't answered."
+msgstr "Diese Frage wurde nicht beantwortet."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "1A8Z_l"
@@ -3975,3 +4157,53 @@ msgstr "Gib mir ein weiteres Beispiel"
 msgctxt "tutorSuggestions.AcKlQI"
 msgid "Explain it more simply"
 msgstr "Erklär es einfacher"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "DMPOmk"
+msgid "Walk me through this answer"
+msgstr "Erkläre mir diese Antwort Schritt für Schritt"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "hE0dmj"
+msgid "What will I be able to do after this chapter?"
+msgstr "Was werde ich nach diesem Kapitel können?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "nd7C7Y"
+msgid "What should I practice first?"
+msgstr "Was sollte ich zuerst üben?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "CIXN98"
+msgid "Why did I miss these questions?"
+msgstr "Warum habe ich diese Fragen falsch beantwortet?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "pSjxNB"
+msgid "Why am I studying this today?"
+msgstr "Warum lerne ich das heute?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "jbL50j"
+msgid "What comes next?"
+msgstr "Was kommt als Nächstes?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "rhcjoX"
+msgid "What's left to study here?"
+msgstr "Was muss ich hier noch lernen?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "RALXsD"
+msgid "Does my plan cover all of it?"
+msgstr "Deckt mein Plan alles ab?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "5OmtVj"
+msgid "What is this question asking?"
+msgstr "Was wird in dieser Frage gefragt?"
+
+#: src/questions/use-tutor-suggestions.ts
+msgctxt "1B46Ux"
+msgid "What idea is this question about?"
+msgstr "Um welche Idee geht es in dieser Frage?"
