@@ -272,7 +272,11 @@ test.describe("Learning tabs frame", () => {
     await page.goto("/today");
 
     const main = page.getByRole("main");
-    const todayTitle = await main.getByRole("heading", { level: 1, name: "Today" }).boundingBox();
+    const todayHeading = main.getByRole("heading", { level: 1, name: "Today" });
+
+    // Measured once painted: a title not in sight yet has no box.
+    await expect(todayHeading).toBeVisible();
+    const todayTitle = await todayHeading.boundingBox();
 
     const gatedPages = [
       {
@@ -325,7 +329,10 @@ test.describe("Learning tabs frame", () => {
 
     // Moving from Today to the Plan keeps the large title in its place.
     await page.goto("/plan");
-    const planTitle = await main.getByRole("heading", { level: 1, name: "Plan" }).boundingBox();
+    const planHeading = main.getByRole("heading", { level: 1, name: "Plan" });
+
+    await expect(planHeading).toBeVisible();
+    const planTitle = await planHeading.boundingBox();
 
     expect(planTitle?.y).toBe(todayTitle?.y);
   });
