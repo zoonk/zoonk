@@ -1,3 +1,4 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { type BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { ACCESS_ERROR_CODES } from "../access-contract";
@@ -12,6 +13,26 @@ const guardPlusPurchase = createAuthMiddleware(async (context) => {
     throw new APIError("FORBIDDEN", {
       code: ACCESS_ERROR_CODES.guestPurchaseNotAllowed,
       message: "Create an account before subscribing.",
+    });
+  }
+});
+
+/**
+ * A brand's slug and kind are in every one of its courses' public addresses, which search results,
+ * shared links and the catalog's caches (kept by address) point to. Moving or deleting a brand
+ * needs a deliberate migration with redirects and cache expiry, which doesn't exist yet, so the
+ * auth API does neither: an update that sends a slug or a kind is refused whatever it targets,
+ * and its other fields (the name, the logo) still change here.
+ */
+const guardBrandAddress = createAuthMiddleware(async (context) => {
+  const body: unknown = context.body;
+  const data = isJsonObject(body) ? body.data : null;
+  const sendsAddress = isJsonObject(data) && ("slug" in data || "kind" in data);
+
+  if (context.path === "/organization/delete" || sendsAddress) {
+    throw new APIError("FORBIDDEN", {
+      code: ACCESS_ERROR_CODES.brandAddressLocked,
+      message: "Brand addresses can't change here.",
     });
   }
 });
@@ -37,7 +58,7 @@ const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
   await linkGuestAccount({ account: newSession.user, guestUserId: guest.id });
 });
 
-/** Guest and purchase rules that apply to the whole auth surface, not one endpoint. */
+/** Guest, purchase and brand rules that apply to the whole auth surface, not one endpoint. */
 export function accessGuardsPlugin() {
   return {
     hooks: {
@@ -51,6 +72,11 @@ export function accessGuardsPlugin() {
         {
           handler: guardPlusPurchase,
           matcher: (context) => context.path === "/subscription/upgrade",
+        },
+        {
+          handler: guardBrandAddress,
+          matcher: (context) =>
+            context.path === "/organization/update" || context.path === "/organization/delete",
         },
       ],
     },
