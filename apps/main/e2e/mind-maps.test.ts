@@ -189,8 +189,9 @@ test.describe("Mind maps", () => {
     await expect(viewer).toBeHidden();
     await expect(reference.getByRole("button", { name: "Full screen" })).toBeFocused();
 
-    // Every map of the goal, from the Journey.
-    await page.goto("/journey");
+    // Every map of the goal, from the Plan: on a laptop through the sidebar's link, since the
+    // Plan's own "More" shows only without a sidebar.
+    await page.goto("/plan");
     await page.getByRole("link", { name: /^Mind maps/u }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Mind maps" })).toBeVisible();
 
@@ -241,8 +242,9 @@ test.describe("Mind maps", () => {
 
     const page = await openAs(browser, user);
 
-    // Nothing was written to draw a map from, so the Journey doesn't offer an empty page.
-    await page.goto("/journey");
+    // Nothing was written to draw a map from, so neither the Plan nor its sidebar offers an empty
+    // page.
+    await page.goto("/plan");
     await expect(page.locator('[data-slot="journey"]')).toBeVisible();
     await expect(page.getByRole("link", { name: /^Mind maps/u })).toHaveCount(0);
 
@@ -326,4 +328,62 @@ test.describe("Mind maps", () => {
       await page.context().close();
     });
   }
+
+  test("before any chapter is finished, names the plan's next chapter, whose map comes first, and opens it", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const suffix = randomUUID().slice(0, 6);
+
+    const [goal, chapter, ...lessons] = await Promise.all([
+      goalFixture({ timezone: "UTC", title: `Biology ${suffix}`, userId: user.id }),
+      libraryChapterFixture({ title: `Cell parts ${suffix}` }),
+      ...[1, 2].map((index) =>
+        libraryLessonFixture({
+          contentStatus: "completed",
+          title: `Cell lesson ${index} ${suffix}`,
+        }),
+      ),
+    ]);
+
+    const [plan] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      ...lessons.map((lesson, position) =>
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+      ),
+    ]);
+
+    // One of the chapter's two lessons is done: no chapter is finished, so there's no map yet.
+    await Promise.all(
+      lessons.map((lesson, position) =>
+        planItemFixture({
+          chapterId: chapter.id,
+          lessonId: lesson.id,
+          planId: plan.id,
+          position,
+          status: position === 0 ? "done" : "todo",
+          titleSnapshot: lesson.title,
+        }),
+      ),
+    );
+
+    const page = await openAs(browser, user);
+    await page.goto("/mind-maps");
+
+    // Instead of a generic "Keep studying", the page says which map comes first and opens it.
+    const empty = page.locator('[data-slot="mind-maps-empty"]');
+    await expect(empty.getByText("No mind maps yet")).toBeVisible();
+
+    await expect(
+      empty.getByText(`Your first one comes after ${chapter.title}: 1 lesson left.`),
+    ).toBeVisible();
+
+    await expect(empty.getByRole("link", { name: "Continue" })).toHaveAttribute(
+      "href",
+      `/content/chapters/${chapter.id}`,
+    );
+
+    await page.context().close();
+  });
 });

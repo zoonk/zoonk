@@ -1,21 +1,19 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { cn } from "@zoonk/ui/lib/utils";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
-import {
-  CheckCircle2Icon,
-  MinusCircleIcon,
-  NotebookPenIcon,
-  SparklesIcon,
-  XCircleIcon,
-  ZapIcon,
-} from "lucide-react";
+import { ChevronsUpIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
+import { type DiffLine, DiffLines } from "../../_components/diff-lines";
+import {
+  FeedbackExplanation,
+  FeedbackNote,
+  FeedbackPanel,
+  FeedbackVerdict,
+} from "../../_components/feedback-panel";
 import { ItemCitationNote } from "../../_components/item-citation";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
-import { ItemLine, ItemText } from "../../questions/item-text";
+import { ItemText } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import {
   type StudyAnswerFeedback,
@@ -83,7 +81,10 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
   };
 }
 
-/** How to solve a math problem, step by step with the numbers the learner saw. */
+/**
+ * How to solve a math problem, step by step with the numbers the learner saw, as a mono diff: the
+ * steps as quiet lines and the result as the added line, so the eye lands on where they lead.
+ */
 export function WorkedSteps({ steps }: { steps: string[] }) {
   const t = useExtracted();
 
@@ -91,16 +92,15 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
     return null;
   }
 
+  const lines = steps.map((step, index): DiffLine => ({
+    kind: index === steps.length - 1 ? "added" : "context",
+    text: toPlainItemLine(step),
+  }));
+
   return (
-    <div className="flex flex-col gap-1 text-sm">
-      <p className="font-medium">{t("How to solve it")}</p>
-      <ol className="text-muted-foreground list-decimal space-y-0.5 pl-5 leading-relaxed">
-        {steps.map((step) => (
-          <li key={step}>
-            <ItemLine text={step} />
-          </li>
-        ))}
-      </ol>
+    <div className="flex flex-col">
+      <p className="sr-only">{t("How to solve it")}</p>
+      <DiffLines labels={{ added: t("Result"), removed: t("Your step") }} lines={lines} />
     </div>
   );
 }
@@ -109,8 +109,8 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
 const SHOWN_STREAK = 3;
 
 /**
- * The right answer in words, only where the question doesn't mark it: choice questions light the
- * right option, other formats say it here.
+ * The right answer in words, only where the question doesn't mark it: choice and true-or-false
+ * questions mark the right option, other formats say it here.
  */
 function useCorrectAnswerLine({
   feedback,
@@ -123,7 +123,11 @@ function useCorrectAnswerLine({
 }): string | null {
   const answerText = useAnswerText(trueFalseLabels);
 
-  if (feedback.isCorrect || question.format === "multipleChoice") {
+  if (
+    feedback.isCorrect ||
+    question.format === "multipleChoice" ||
+    question.format === "trueFalse"
+  ) {
     return null;
   }
 
@@ -131,7 +135,7 @@ function useCorrectAnswerLine({
 }
 
 /**
- * One quiet note under the grade: the mistake was fixed, or saved to come back, tomorrow unless
+ * The panel's last line when a mistake moved: fixed, or saved to come back, tomorrow unless
  * tomorrow is the exam.
  */
 function MistakeNote({
@@ -144,14 +148,7 @@ function MistakeNote({
   const t = useExtracted();
 
   if (feedback.mistakeFixed) {
-    return (
-      <p className="text-success flex items-start gap-2 text-sm">
-        <LineMarker>
-          <SparklesIcon aria-hidden="true" className="size-4" />
-        </LineMarker>
-        {t("Mistake fixed. It leaves your notebook.")}
-      </p>
-    );
+    return <FeedbackNote>{t("Mistake fixed. It leaves your notebook.")}</FeedbackNote>;
   }
 
   if (!feedback.savedToNotebook) {
@@ -159,51 +156,49 @@ function MistakeNote({
   }
 
   return (
-    <p className="text-muted-foreground flex items-start gap-2 text-sm">
-      <LineMarker>
-        <NotebookPenIcon aria-hidden="true" className="size-4" />
-      </LineMarker>
+    <FeedbackNote>
       {examTomorrow
         ? t("Saved to your mistakes")
         : t("Saved to your mistakes · it comes back tomorrow")}
-    </p>
+    </FeedbackNote>
   );
 }
 
-/** Right, wrong, or left blank where a wrong answer costs a point: blank is neither, never red. */
-function useGrade(feedback: StudyAnswerFeedback) {
+/**
+ * The verdict's words and tone: right, wrong, or left blank where a wrong answer costs a point
+ * (blank is neither, never red). Mistake practice says its verdicts the same way.
+ */
+export function useVerdict({ blank = false, isCorrect }: { blank?: boolean; isCorrect: boolean }) {
   const t = useExtracted();
 
-  if (feedback.isCorrect) {
-    return {
-      Icon: CheckCircle2Icon,
-      label: t("Correct!"),
-      surface: "border-success/40 bg-success/5",
-      text: "text-success",
-    };
+  if (isCorrect) {
+    return { label: t("Correct!"), tone: "right" as const };
   }
 
-  if (feedback.blank) {
-    return {
-      Icon: MinusCircleIcon,
-      label: t("Left blank"),
-      surface: "border-border bg-muted/40",
-      text: "text-foreground",
-    };
+  if (blank) {
+    return { label: t("Left blank"), tone: "neutral" as const };
   }
 
-  return {
-    Icon: XCircleIcon,
-    label: t("Not quite"),
-    surface: "border-destructive/30 bg-destructive/5",
-    text: "text-destructive",
-  };
+  return { label: t("Not quite"), tone: "wrong" as const };
+}
+
+/** "3 right in a row", Hyperdrive's quiet mark beside a right answer's verdict. */
+function StreakNote({ streak }: { streak: number }) {
+  const t = useExtracted();
+
+  return (
+    <span className="flex items-center gap-1 font-mono">
+      <ChevronsUpIcon aria-hidden="true" className="size-3.5" />
+      {t("{count} right in a row", { count: String(streak) })}
+    </span>
+  );
 }
 
 /**
- * The grade after an answer: right, wrong or left blank (with the streak once it's three or more),
- * why, the right answer where the question doesn't show it, and one quiet note when a mistake was
- * saved or fixed.
+ * The grade after an answer, on the quiet feedback panel: right, wrong or left blank (with the
+ * streak once it's three or more), the right answer where the question doesn't show it, why, how
+ * to solve it, the passage it quotes, the drill's notes, and last one quiet line when a mistake
+ * was saved or fixed.
  */
 export function QuestionFeedback({
   children,
@@ -223,48 +218,37 @@ export function QuestionFeedback({
   const t = useExtracted();
   const correct = useCorrectAnswerLine({ feedback, question, trueFalseLabels });
   const streak = feedback.isCorrect ? feedback.hyperdrive.streak : 0;
-  const { Icon, label, surface, text } = useGrade(feedback);
+  const verdict = useVerdict(feedback);
 
   return (
-    <section
-      aria-label={t("Answer feedback")}
-      aria-live="polite"
-      className={cn("flex flex-col gap-2 rounded-2xl border p-4", surface)}
-    >
-      <p className="flex items-center justify-between gap-3">
-        <span className={cn("flex items-center gap-2 font-semibold", text)}>
-          <Icon aria-hidden="true" className="size-5" />
-          {label}
-        </span>
+    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
+      <FeedbackVerdict
+        end={streak >= SHOWN_STREAK ? <StreakNote streak={streak} /> : null}
+        tone={verdict.tone}
+      >
+        {verdict.label}
+      </FeedbackVerdict>
 
-        {streak >= SHOWN_STREAK && (
-          <span className="text-muted-foreground flex items-center gap-1 text-xs font-medium tabular-nums">
-            <ZapIcon aria-hidden="true" className="size-3.5" />
-            {t("{count} right in a row", { count: String(streak) })}
-          </span>
-        )}
-      </p>
-
-      {correct && <p className="text-sm">{t("Right answer: {answer}", { answer: correct })}</p>}
+      {correct && (
+        <FeedbackExplanation>
+          {t("Right answer: {answer}", { answer: correct })}
+        </FeedbackExplanation>
+      )}
 
       {feedback.explanation && (
-        <ItemText
-          className="text-muted-foreground text-sm leading-relaxed"
-          text={feedback.explanation}
-        />
+        <FeedbackExplanation>
+          <ItemText text={feedback.explanation} />
+        </FeedbackExplanation>
       )}
 
       {!feedback.isCorrect && <WorkedSteps steps={feedback.workedSteps} />}
 
       {question.citation && (
-        <ItemCitationNote
-          citation={question.citation}
-          className="bg-background/60 rounded-xl px-3 py-2"
-        />
+        <ItemCitationNote citation={question.citation} className="text-muted-foreground text-xs" />
       )}
 
       {children}
       <MistakeNote examTomorrow={examTomorrow} feedback={feedback} />
-    </section>
+    </FeedbackPanel>
   );
 }

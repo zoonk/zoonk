@@ -1,23 +1,20 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import {
-  ListRow,
+  ListRowButton,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
 import { PracticeOutcomeMessage } from "../_components/practice-outcome-message";
 import { usePracticeRun } from "../_utils/use-practice-run";
 import { useChapterScreen } from "./chapter-context";
 
 /**
- * The chapter's open mistakes as a row of its "Practice" list, only when there are some, with
- * "Practice now" on its skills.
+ * General practice on a chapter that has open mistakes. The notebook owns targeted mistake
+ * correction; this row adds area practice or opens the next teaching lesson.
  */
 export function ChapterMistakes() {
   const t = useExtracted();
@@ -31,26 +28,16 @@ export function ChapterMistakes() {
 
   return (
     <>
-      <ListRow>
+      <ListRowButton disabled={isPending} onClick={practice}>
         <ListRowLeading>
-          <KindTile kind="mistakes" />
+          <KindDot kind="practice" />
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{t("Mistakes notebook")}</ListRowTitle>
-          <ListRowDescription>
-            {t("{count, plural, one {# from this chapter} other {# from this chapter}}", {
-              count: open,
-            })}
-          </ListRowDescription>
+          <ListRowTitle>{t("Practice this chapter")}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing>
-          <Button disabled={isPending} onClick={practice} size="sm" variant="outline">
-            {t("Practice now")}
-          </Button>
-        </ListRowTrailing>
-      </ListRow>
+      </ListRowButton>
 
-      <div className="px-4 empty:hidden [&:has(>*)]:pb-3">
+      <div className="empty:hidden in-data-[list=panel]:px-4 [&:has(>*)]:pb-3">
         <PracticeOutcomeMessage
           dailyCap={t(
             "That's all the bonus practice for today. Tomorrow's session picks this chapter up.",

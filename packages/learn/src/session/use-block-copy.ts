@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { type StudyBlock } from "./session-types";
+import { useReviewTitle } from "./use-review-title";
 
 type BlockCopyInput = Pick<
   StudyBlock,
@@ -18,12 +19,6 @@ type BlockCopyInput = Pick<
   | "title"
   | "weakest"
 >;
-
-/**
- * A review up to this long is a quick one. A longer one, as on a day nothing but reviews fills
- * (a free exam plan past its first week), is named plainly, its minutes beside it.
- */
-const QUICK_REVIEW_MAX_MINUTES = 15;
 
 /** What a checkpoint is called. */
 function useCheckpointTitle() {
@@ -76,6 +71,7 @@ function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
 export function useBlockTitle() {
   const t = useExtracted();
   const checkpointTitle = useCheckpointTitle();
+  const reviewTitle = useReviewTitle();
 
   return (block: BlockCopyInput): string => {
     if (block.checkpoint) {
@@ -88,7 +84,7 @@ export function useBlockTitle() {
     }
 
     if (block.kind === "review") {
-      return block.estimatedMinutes > QUICK_REVIEW_MAX_MINUTES ? t("Reviews") : t("Quick review");
+      return reviewTitle(block.estimatedMinutes);
     }
 
     if (block.kind === "learn") {

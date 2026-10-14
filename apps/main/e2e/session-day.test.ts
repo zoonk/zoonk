@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
@@ -11,6 +13,7 @@ import { continueToLastStep, continueToStep } from "./result-steps";
 import {
   LESSON_TITLE,
   answerRight,
+  checkWithEnter,
   continueWithEnter,
   createStudyDay,
   openAs,
@@ -20,10 +23,13 @@ import {
 /** The next step reads the session again every 5 seconds while its lesson is written. */
 const WAITING_REFRESH_MS = 5000;
 
-/** A lesson's moment sits under the player's heading (the lesson's title); a block's is the page's. */
-async function expectMoment(page: Page, title: string, { level = 1 }: { level?: 1 | 2 } = {}) {
-  await expect(page.getByRole("heading", { level, name: title })).toBeVisible();
-  await expect(page.getByRole("main").getByText("Brain Power")).toBeVisible();
+/**
+ * A moment sits under its header's heading: the lesson's title in the player, "Today's session"
+ * between a session's blocks.
+ */
+async function expectMoment(page: Page, title: string) {
+  await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^\+\d+ Brain Power$/u)).toBeVisible();
 }
 
 /**
@@ -85,7 +91,7 @@ async function createFirstWeekDay() {
 
 /** The placement question says what it's for and takes "I don't know yet"; the capsules follow. */
 async function answerPlacement(page: Page) {
-  await expect(page).toHaveURL(/\/session$/u);
+  await expect(page).toHaveURL((url) => url.pathname === "/session");
   await expect(page.getByRole("heading", { name: /^Placement:/u })).toBeVisible();
 
   await expect(
@@ -116,7 +122,12 @@ async function playCapsules(page: Page) {
   await expect(page.getByRole("progressbar", { name: /^Question \d of \d$/u })).toBeVisible();
 
   await expectAccessibleScreen(page, "a capsule");
+
+  // A number picks, as in the lesson; nothing is graded until Check (or Enter).
   await page.keyboard.press("1");
+  await expect(page.getByRole("radio", { checked: true })).toHaveCount(1);
+  await expect(page.getByRole("region", { name: "Answer feedback" })).toBeHidden();
+  await checkWithEnter(page);
 
   await expect(
     page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!"),
@@ -144,24 +155,118 @@ async function playLesson(page: Page) {
   await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
   await page.keyboard.press("Enter");
 
-  await expectMoment(page, "Lesson complete", { level: 2 });
+  await expectMoment(page, "Lesson complete");
   await expectUpNext(page, "Mixed practice");
 
-  await expect(
-    page.getByRole("progressbar", { name: "Today's session: 2 of 3 done" }),
-  ).toBeVisible();
+  // The session's header takes the lesson's: the day's bar, not a second one under the title.
+  await expect(page.getByRole("progressbar", { name: "2 of 3 done" })).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(1);
 
   await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
 /** The day's last block: its last answer goes straight to the summary, one tap fewer. */
 async function playPractice(page: Page) {
-  await expect(page).toHaveURL(/\/session$/u);
+  await expect(page).toHaveURL((url) => url.pathname === "/session");
   await answerRight(page, /^Practice one/u);
   await answerRight(page, /^Practice two/u);
 }
 
+test("reopening a fully answered block waits for Finish before completing the session", async ({
+  browser,
+}) => {
+  const { session, user } = await createStudyDay({ reviewDone: true });
+
+  const block = await prisma.studySessionBlock.findFirstOrThrow({
+    where: { kind: "practice", sessionId: session.id },
+  });
+
+  const payload = block.payload as { itemIds: string[] };
+
+  await Promise.all([
+    prisma.studySessionBlock.updateMany({
+      data: { status: "completed" },
+      where: { kind: "learn", sessionId: session.id },
+    }),
+    prisma.studySessionBlock.update({
+      data: { startedAt: new Date(), status: "active" },
+      where: { id: block.id },
+    }),
+    ...payload.itemIds.map((itemId) =>
+      attemptFixture({ itemId, studySessionId: session.id, userId: user.id }),
+    ),
+  ]);
+
+  const page = await openAs(browser, user);
+  await page.goto("/session");
+  await expect(page.getByRole("button", { exact: true, name: "Finish" })).toBeVisible();
+
+  await expect(
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+  ).resolves.toMatchObject({ status: "active" });
+
+  await page.reload();
+
+  // Enabled once the page is interactive, so Enter reaches it.
+  await expect(page.getByRole("button", { exact: true, name: "Finish" })).toBeEnabled();
+
+  await expect(
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+  ).resolves.toMatchObject({ status: "active" });
+
+  await page.keyboard.press("Enter");
+
+  await expect
+    .poll(async () => {
+      const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+      return saved.status;
+    })
+    .toBe("completed");
+
+  await page.context().close();
+});
+
 test.describe("Today's session", () => {
+  test("a review's moment does not offer the next chapter's test after it was failed today", async ({
+    browser,
+  }) => {
+    const { goal, lesson, session, user } = await createStudyDay();
+    const chapter = await libraryChapterFixture();
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { lessonId: lesson.id, sessionId: session.id },
+    });
+
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { chapterId: chapter.id },
+        where: { lessonId: lesson.id, plan: { goalId: goal.id } },
+      }),
+      prisma.studySessionBlock.update({
+        data: { payload: { ...(block.payload as object), chapterId: chapter.id } },
+        where: { id: block.id },
+      }),
+      learningEventFixture({
+        contentIds: { chapterId: chapter.id },
+        correctAnswers: 1,
+        goalId: goal.id,
+        incorrectAnswers: 7,
+        kind: "questions",
+        lessonKind: "testOut",
+        userId: user.id,
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await playCapsules(page);
+    await expectMoment(page, "Review done");
+    await expect(page.getByRole("button", { name: "Take the test" })).toHaveCount(0);
+    await expect(page.getByRole("main").getByText("Already know this?")).toHaveCount(0);
+    await page.context().close();
+  });
+
   test("plays a full day by keyboard: placement, capsules, the lesson, practice and the summary", async ({
     browser,
   }) => {
@@ -176,12 +281,13 @@ test.describe("Today's session", () => {
     await playCapsules(page);
     await expectMoment(page, "Review done");
 
-    // The moment: what it earned, the day's progress on its bar, and what's next right above
-    // the button that opens it.
+    // The moment: what it earned, the day's progress on the header's bar, and what's next right
+    // above the button that opens it, with the day's queue beside it on a wide screen.
     await expectUpNext(page, LESSON_TITLE);
+    await expect(page.getByRole("progressbar", { name: "1 of 3 done" })).toBeVisible();
 
     await expect(
-      page.getByRole("progressbar", { name: "Today's session: 1 of 3 done" }),
+      page.getByRole("complementary", { name: "Today's session" }).getByText(LESSON_TITLE),
     ).toBeVisible();
 
     await expectAccessibleScreen(page, "the capsules' moment");
@@ -190,23 +296,43 @@ test.describe("Today's session", () => {
     await playLesson(page);
     await playPractice(page);
 
-    // The summary says one thing at a time: the session done with its numbers first.
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
-    await expect(page.getByText(/^\d+ questions$/u)).toBeVisible();
+    // The summary on one screen: the session done with its numbers, and on a wide screen what
+    // it earned beside them.
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+
+    await expect(
+      page
+        .getByRole("main")
+        .getByRole("listitem")
+        .filter({ hasText: /^Right\b/u }),
+    ).toHaveText(/^Right \d+\/\d+/u);
+
     await expectAccessibleScreen(page, "the session's summary");
 
-    // A review and something new, with nothing to fix: two missions, so no bonus for all three.
+    // Finishing both offered missions earns the full completion bonus, with no fix required.
+    const earned = page.getByRole("complementary", { name: "Earned today" });
+    await expect(earned.getByText(/Brain Power$/u)).toBeVisible();
+    await expect(earned.getByText("+50", { exact: true })).toBeVisible();
+    await expect(earned.getByText(/^\d+ right in a row$/u)).toBeVisible();
+
+    // The main action keeps its 44px however the bar lays it out.
+    const finish = page.getByRole("link", { name: "Finish" });
+    await expect(finish).toBeVisible();
+    const wideBox = await finish.boundingBox();
+    expect(wideBox?.height).toBe(44);
+
+    // On a phone what it earned beyond its Brain Power is a step of its own, with Back (← too).
+    await page.setViewportSize({ height: 844, width: 390 });
     await continueToStep(page, /Brain Power$/u, { keyboard: true });
     await expect(page.getByRole("heading", { level: 1, name: /Brain Power$/u })).toBeFocused();
-    await expect(page.getByText("All three done", { exact: true })).toHaveCount(0);
-    await expect(page.getByText(/^\d+ right in a row$/u)).toBeVisible();
-
-    // Back goes to the step before, by the arrow key too; the last step's Finish goes to Today.
     await page.keyboard.press("ArrowLeft");
     await expect(page.getByRole("heading", { level: 1, name: /Brain Power$/u })).toBeHidden();
     await continueToLastStep(page, { keyboard: true });
-    await expect(page.getByRole("button", { name: "Finish" })).toBeVisible();
 
+    // Finish is a link back to Today, and Enter follows it.
+    await expect(finish).toBeVisible();
+    const phoneBox = await finish.boundingBox();
+    expect(phoneBox?.height).toBe(44);
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
     await page.context().close();
@@ -239,12 +365,54 @@ test.describe("Today's session", () => {
     expect(blocks.map((block) => block.status)).toStrictEqual(["completed", "pending", "pending"]);
 
     // Today picks the session up where it stopped.
-    await page.getByRole("button", { name: "Finish" }).click();
+    await page.getByRole("link", { name: "Finish" }).click();
     await expect(page).toHaveURL(/\/today$/u);
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
     await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+    await page.context().close();
+  });
+
+  test("opens any block from Today's queue: the last one first counts, and Continue keeps the day's order", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    await expect(card.locator('[data-slot="today-next"]')).toContainText(/^Quick review/u);
+
+    // The day's last block, picked first: its row opens it, and the session plays that block.
+    await card.getByRole("button", { exact: true, name: "Mixed practice" }).click();
+    await expect(page).toHaveURL((url) => url.pathname === "/session");
+    await answerRight(page, /^Practice one/u);
+    await answerRight(page, /^Practice two/u);
+
+    // Its moment says what's next in the day's order: the review the learner went past.
+    await expectUpNext(page, "Quick review");
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: session.id },
+    });
+
+    expect(blocks.map((block) => block.status)).toStrictEqual(["pending", "pending", "completed"]);
+
+    // Today shows it done, a row that opens nothing now, and Continue starts the day in order.
+    await page.goto("/today");
+
+    await expect(card.getByRole("list").getByRole("listitem")).toHaveText([
+      /^Mixed practice, done/u,
+      /^Quick review/u,
+      /^Discounts/u,
+    ]);
+
+    await expect(card.getByRole("button", { name: /^Mixed practice/u })).toHaveCount(0);
+    await expect(card.locator('[data-slot="today-next"]')).toContainText(/^Quick review/u);
+    await card.getByRole("button", { name: /^Continue/u }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Quick review" })).toBeVisible();
     await page.context().close();
   });
 
@@ -275,7 +443,7 @@ test.describe("Today's session", () => {
 
     await page.goto("/session");
 
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await continueToLastStep(page);
 
     // Nothing new to practice, so the bonus time goes to the plan's lesson left earlier.
@@ -314,7 +482,7 @@ test.describe("Today's session", () => {
     await page.getByRole("button", { name: /^Start/u }).click();
     await playPractice(page);
 
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await continueToLastStep(page);
     await page.getByRole("button", { name: /^Study \d+ more minutes/u }).click();
 
@@ -324,7 +492,7 @@ test.describe("Today's session", () => {
     await answerRight(page, /^Bonus one/u);
 
     // Its last answer ends the day again.
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await expect(page.getByRole("button", { name: "Keep going" })).toHaveCount(0);
     await page.context().close();
   });
@@ -455,6 +623,41 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
+  test("a failed writing request stays on Today with an immediate retry", async ({ browser }) => {
+    const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+    await page.route("**/v1/library/lessons/*/generations", (route) => route.abort());
+    await page.goto("/today");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect(
+      page.getByRole("region", { name: "Today's session" }).getByRole("alert"),
+    ).toHaveText("We couldn't open the next step. Try again.");
+
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.context().close();
+  });
+
+  test("a Plus-only lesson response offers Plus instead of a writing spinner", async ({
+    browser,
+  }) => {
+    const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+
+    await page.route("**/v1/library/lessons/*/generations", (route) =>
+      route.fulfill({
+        json: { error: { code: "PLUS_REQUIRED", message: "Plus required" } },
+        status: 402,
+      }),
+    );
+
+    await page.goto("/today");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeHidden();
+    await page.context().close();
+  });
+
   test("says why the lesson can't be written now instead of waiting", async ({ browser }) => {
     const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
     const page = await openAs(browser, user);
@@ -485,7 +688,7 @@ test.describe("Today's session", () => {
   test("asks a guest out of new lessons to create an account, straight from Today", async ({
     browser,
   }) => {
-    const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
 
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
 
@@ -494,9 +697,19 @@ test.describe("Today's session", () => {
     await refuseLessonWriting(page, { limit: 1, period: "total", tier: "guest" });
     await page.goto("/today");
 
-    await page.getByRole("button", { name: /^Continue/u }).click();
+    // The refusal must come from the browser's request, not compete with server preparation.
+    await Promise.all([
+      page.waitForRequest(
+        (request) =>
+          request.method() === "POST" &&
+          new URL(request.url()).pathname === `/v1/library/lessons/${lesson.id}/generations`,
+      ),
+      page.getByRole("button", { name: /^Continue/u }).click(),
+    ]);
 
-    await expect(page).toHaveURL(/\/session\?limit=guest$/u);
+    await expect(page).toHaveURL(
+      (url) => url.pathname === "/session" && url.searchParams.get("limit") === "guest",
+    );
 
     await expect(
       page.getByText(

@@ -14,14 +14,12 @@ import {
   DetailTitle,
 } from "../_components/detail-page";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
-import { KindTile } from "../_components/kind-tile";
 import {
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -31,8 +29,11 @@ import { MapTile } from "./mind-map-tiles";
 export type { MindMapLimit } from "../_components/help-limit-notice";
 export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
 
-/** Where the page leads: back to the Journey, a chapter's page, and Today to keep studying. */
+/** Where the page leads: back to the Plan, a chapter's page, and Today to keep studying. */
 export type MindMapsHrefs = { back: string; chapter: (chapterId: string) => string; today: string };
+
+/** The plan's next chapter, whose map comes once the learner finishes it, with its lessons left. */
+export type NextMindMap = { chapterId: string; lessonsLeft: number; title: string };
 
 type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };
 
@@ -70,7 +71,7 @@ function MapSection({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-x-4">
         {group.maps.map((mindMap) => (
           <MapTile
             actions={actions}
@@ -85,42 +86,59 @@ function MapSection({
   );
 }
 
-function EmptyMaps({ hrefs }: { hrefs: MindMapsHrefs }) {
+/**
+ * Before any chapter is finished: how maps come and the way to the first one, the plan's next
+ * chapter with its lessons left ("Continue" opens it); without one in sight, back to studying.
+ */
+function EmptyMaps({ hrefs, next }: { hrefs: MindMapsHrefs; next: NextMindMap | null }) {
   const t = useExtracted();
 
   return (
-    <Surface className="flex flex-col items-start gap-3 p-5" data-slot="mind-maps-empty">
-      <KindTile kind="mindMap" />
+    <div className="flex flex-col items-start gap-3" data-slot="mind-maps-empty">
       <div className="flex flex-col gap-1">
         <p className="text-[0.9375rem] font-medium">{t("No mind maps yet")}</p>
-        <p className="text-muted-foreground text-sm text-pretty">
+        <p className="text-muted-foreground text-[0.8125rem] text-pretty">
           {t("Finish a chapter to make its mind map: its main ideas in one picture.")}
         </p>
+        {next && (
+          <p className="text-[0.8125rem] text-pretty">
+            {t(
+              "{count, plural, one {Your first one comes after {chapter}: # lesson left.} other {Your first one comes after {chapter}: # lessons left.}}",
+              { chapter: next.title, count: next.lessonsLeft },
+            )}
+          </p>
+        )}
       </div>
-      <LearnLink className={buttonVariants({ variant: "outline" })} href={hrefs.today}>
-        {t("Keep studying")}
+      <LearnLink
+        className={buttonVariants({ size: "sm", variant: "outline" })}
+        href={next ? hrefs.chapter(next.chapterId) : hrefs.today}
+      >
+        {next ? t("Continue") : t("Keep studying")}
       </LearnLink>
-    </Surface>
+    </div>
   );
 }
 
 /**
  * A goal's mind maps, for reviewing what the learner studied: every chapter they finished under its
- * subject, each map's thumbnail opening it full screen, and a tap to make the ones that don't exist
- * yet. While their maps are at their plan's cap (`cap`), the taps stay in sight and wait, and the
+ * subject, a gallery as wide as the page allows, each map's thumbnail opening it full screen, and a
+ * tap to make the ones that don't exist yet. While their maps are at their plan's cap (`cap`), the taps stay in sight and wait, and the
  * page says so once, with the one thing to do. Before any chapter is finished, it says how maps
- * come.
+ * come and which chapter's map comes first.
  */
 export function MindMapsScreen({
   actions,
   cap = null,
   hrefs,
   mindMaps,
+  next = null,
 }: {
   actions: MindMapActions;
   cap?: MindMapLimit | null;
   hrefs: MindMapsHrefs;
   mindMaps: GoalMindMapsView;
+  /** The plan's next chapter, named while no map exists yet; null when there's none to open. */
+  next?: NextMindMap | null;
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -129,41 +147,39 @@ export function MindMapsScreen({
   const capped = cap !== null && drawn < mindMaps.chapters.length;
 
   return (
-    <article className="flex flex-col gap-8" data-slot="mind-maps">
-      <LearnPageBar back={{ href: hrefs.back, label: t("Journey") }} title={t("Mind maps")} />
+    <DetailLayout
+      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+      data-slot="mind-maps"
+    >
+      <DetailAside>
+        <DetailHero>
+          <DetailHeroText>
+            <DetailEyebrow>{mindMaps.goal.title}</DetailEyebrow>
+            <DetailTitle>{t("Mind maps")}</DetailTitle>
+            {mindMaps.chapters.length > 0 && (
+              <DetailFacts>
+                {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: drawn })}
+              </DetailFacts>
+            )}
+          </DetailHeroText>
+        </DetailHero>
+        {capped && cap && (
+          <MindMapLimitNotice limit={cap} linkComponent={LearnLink} routes={routes} />
+        )}
+      </DetailAside>
 
-      <DetailLayout>
-        <DetailAside>
-          <DetailHero>
-            <KindTile kind="mindMap" size="lg" />
-            <DetailHeroText>
-              <DetailEyebrow>{mindMaps.goal.title}</DetailEyebrow>
-              <DetailTitle>{t("Mind maps")}</DetailTitle>
-              {mindMaps.chapters.length > 0 && (
-                <DetailFacts>
-                  {t("{count, plural, =0 {# maps} one {# map} other {# maps}}", { count: drawn })}
-                </DetailFacts>
-              )}
-            </DetailHeroText>
-          </DetailHero>
-          {capped && cap && (
-            <MindMapLimitNotice limit={cap} linkComponent={LearnLink} routes={routes} />
-          )}
-        </DetailAside>
-
-        <DetailContent>
-          {groups.length === 0 && <EmptyMaps hrefs={hrefs} />}
-          {groups.map((group) => (
-            <MapSection
-              actions={actions}
-              capped={capped}
-              group={group}
-              hrefs={hrefs}
-              key={group.key}
-            />
-          ))}
-        </DetailContent>
-      </DetailLayout>
-    </article>
+      <DetailContent>
+        {groups.length === 0 && <EmptyMaps hrefs={hrefs} next={next} />}
+        {groups.map((group) => (
+          <MapSection
+            actions={actions}
+            capped={capped}
+            group={group}
+            hrefs={hrefs}
+            key={group.key}
+          />
+        ))}
+      </DetailContent>
+    </DetailLayout>
   );
 }

@@ -1,76 +1,73 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeyboardCallback, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ItemLine } from "../../questions/item-text";
+import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
-import { type StudyQuestionAnswer } from "../session-types";
+import { parseRichBlocks } from "../../rich-text/rich-text-parser";
+import { QuestionTitle } from "./question-title";
 
-/** How far a card moves before letting go answers it. */
+/** How far a card moves before letting go picks its answer. */
 const SWIPE_THRESHOLD_PX = 90;
 const TILT_DEGREES_PER_PX = 0.06;
-const LEFT_ARROW = "←";
-const RIGHT_ARROW = "→";
-const DOWN_ARROW = "↓";
 
-const FALSE_ANSWER: StudyQuestionAnswer = { isTrue: false };
-const TRUE_ANSWER: StudyQuestionAnswer = { isTrue: true };
-const BLANK_ANSWER: StudyQuestionAnswer = { dontKnow: true };
+/** A statement's answer: true, false, or left blank where a wrong answer costs a point. */
+type TrueFalseAnswer = { dontKnow: true } | { isTrue: boolean };
+
+/** What the options show once graded: the right answer (when the grade says it) and the pick. */
+export type TrueFalseResult = { answer: TrueFalseAnswer; correct: boolean | null };
+
+type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true"; keys: string };
+
+const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false", keys: "ArrowLeft" };
+const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true", keys: "ArrowRight" };
+const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank", keys: "ArrowDown" };
+
+/** The answers in the order they read, so the number keys follow them: false, blank, true. */
+const THREE_OPTIONS = [FALSE_OPTION, BLANK_OPTION, TRUE_OPTION];
+const TWO_OPTIONS = [FALSE_OPTION, TRUE_OPTION];
 
 const SCREEN_KEY = { mode: "none", screen: true } as const;
 
-/**
- * The arrows swipe the card (← false, → true, ↓ blank), and number keys answer in the order the
- * buttons read, as they do on every other question.
- */
-function useAnswerKeys({
-  allowBlank,
-  enabled,
-  onAnswer,
-}: {
-  allowBlank: boolean;
-  enabled: boolean;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
-}) {
-  const answers = allowBlank
-    ? [FALSE_ANSWER, BLANK_ANSWER, TRUE_ANSWER]
-    : [FALSE_ANSWER, TRUE_ANSWER];
-
-  function answerWith(answer: StudyQuestionAnswer) {
-    return () => (enabled ? onAnswer(answer) : false);
+function isSameAnswer(a: TrueFalseAnswer | null, b: TrueFalseAnswer): boolean {
+  if (!a) {
+    return false;
   }
 
-  useKeyboardCallback("ArrowLeft", answerWith(FALSE_ANSWER), SCREEN_KEY);
-  useKeyboardCallback("ArrowRight", answerWith(TRUE_ANSWER), SCREEN_KEY);
-  useKeyboardCallback("ArrowDown", allowBlank ? answerWith(BLANK_ANSWER) : () => false, SCREEN_KEY);
-
-  useNumberKeys({
-    count: answers.length,
-    enabled,
-    onPick: (index) => {
-      const answer = answers[index];
-
-      if (answer) {
-        onAnswer(answer);
-      }
-    },
-  });
+  return "isTrue" in a ? "isTrue" in b && a.isTrue === b.isTrue : "dontKnow" in b;
 }
 
-/** Drag the statement left for false or right for true; the buttons do the same. */
-function useSwipe({
-  enabled,
-  onAnswer,
-}: {
-  enabled: boolean;
-  onAnswer: (isTrue: boolean) => void;
-}) {
+function getOptionResult({ option, result }: { option: Option; result: TrueFalseResult | null }) {
+  if (!result) {
+    return null;
+  }
+
+  if (
+    result.correct !== null &&
+    "isTrue" in option.answer &&
+    option.answer.isTrue === result.correct
+  ) {
+    return "right";
+  }
+
+  // A blank is neither right nor wrong: it stays picked, never red.
+  return isSameAnswer(result.answer, option.answer) && "isTrue" in option.answer ? "wrong" : null;
+}
+
+/** Once graded, only the pick and the right answer stay, so the feedback fits under them. */
+function isShown({ option, result }: { option: Option; result: TrueFalseResult | null }) {
+  if (!result) {
+    return true;
+  }
+
+  return getOptionResult({ option, result }) !== null || isSameAnswer(result.answer, option.answer);
+}
+
+/** Drag the statement left to pick false or right to pick true; the options do the same. */
+function useSwipe({ enabled, onSwipe }: { enabled: boolean; onSwipe: (isTrue: boolean) => void }) {
   const [drag, setDrag] = useState<{ originX: number; x: number } | null>(null);
   const offset = drag ? drag.x - drag.originX : 0;
 
@@ -92,7 +89,7 @@ function useSwipe({
         setDrag(null);
 
         if (Math.abs(offset) >= SWIPE_THRESHOLD_PX) {
-          onAnswer(offset > 0);
+          onSwipe(offset > 0);
         }
       },
     },
@@ -102,35 +99,76 @@ function useSwipe({
 
 /**
  * A true-or-false statement, answered in the goal's exam's words (Cebraspe's are right or wrong).
- * Rapid-fire capsules answer it with two buttons; swipe capsules and practice for net-scored exams
- * add "Leave blank", since a wrong answer cancels a right one.
+ * The statement sits on a card the learner can swipe (left false, right true), and the answers
+ * sit under it as options with their keys (the numbers, or the arrows; ↓ leaves it blank). Swipe
+ * capsules and practice for net-scored exams add "Leave blank", since a wrong answer cancels a
+ * right one. A swipe, a tap or a key picks; the host gets the pick and its Check sends it.
  */
 export function TrueFalseQuestion({
   allowBlank,
   disabled,
-  onAnswer,
+  onChange,
+  result,
   statement,
   trueFalseLabels,
 }: {
   allowBlank: boolean;
   disabled: boolean;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
+  onChange: (answer: TrueFalseAnswer | null) => void;
+  result: TrueFalseResult | null;
   statement: string;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
-  const swipe = useSwipe({ enabled: !disabled, onAnswer: (isTrue) => onAnswer({ isTrue }) });
+  const [picked, setPicked] = useState<TrueFalseAnswer | null>(null);
+  const locked = disabled || result !== null;
+  const hasTable = parseRichBlocks(statement).some((block) => block.kind === "table");
+  const canSwipe = !locked && !hasTable;
+  const options = allowBlank ? THREE_OPTIONS : TWO_OPTIONS;
+  const shownPick = result?.answer ?? picked;
 
-  useAnswerKeys({ allowBlank, enabled: !disabled, onAnswer });
+  const pick = (answer: TrueFalseAnswer) => {
+    const next = isSameAnswer(picked, answer) ? null : answer;
+    setPicked(next);
+    onChange(next);
+  };
+
+  // A swipe or an arrow picks its side, and doing it again keeps it picked.
+  const pickSide = (answer: TrueFalseAnswer) => {
+    setPicked(answer);
+    onChange(answer);
+  };
+
+  const swipe = useSwipe({ enabled: canSwipe, onSwipe: (isTrue) => pickSide({ isTrue }) });
+  const sideKey = (option: Option) => () => (locked ? false : pickSide(option.answer));
+
+  useKeyboardCallback("ArrowLeft", sideKey(FALSE_OPTION), SCREEN_KEY);
+  useKeyboardCallback("ArrowRight", sideKey(TRUE_OPTION), SCREEN_KEY);
+  useKeyboardCallback("ArrowDown", allowBlank ? sideKey(BLANK_OPTION) : () => false, SCREEN_KEY);
+
+  useNumberKeys({
+    count: options.length,
+    enabled: !locked,
+    onPick: (index) => {
+      const option = options[index];
+
+      if (!option) {
+        return false;
+      }
+
+      pick(option.answer);
+    },
+  });
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col gap-4">
       <div
         className={cn(
-          "bg-background flex min-h-48 w-full touch-pan-y items-center justify-center rounded-3xl border p-6 text-center shadow-sm select-none",
+          "bg-card ring-border flex min-h-32 w-full items-start rounded-xl p-5 text-left ring-1 select-none ring-inset",
           "motion-safe:transition-transform",
-          !disabled && "cursor-grab active:cursor-grabbing",
+          hasTable ? "touch-auto" : "touch-pan-y",
+          canSwipe && "cursor-grab active:cursor-grabbing",
         )}
         style={{
           transform: swipe.offset
@@ -139,57 +177,26 @@ export function TrueFalseQuestion({
         }}
         {...swipe.handlers}
       >
-        <p className="text-xl leading-snug font-semibold text-balance">
-          <ItemLine text={statement} />
-        </p>
+        <QuestionTitle className="min-w-0 flex-1" muted={result !== null} text={statement} />
       </div>
 
-      {/* On phones False and True share a row and "Leave blank" goes under them, so the three fit
-          in every language; wider screens keep one row, blank in the middle. */}
-      <div className="grid w-full grid-cols-2 items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
-        <Button
-          aria-keyshortcuts="ArrowLeft 1"
-          className="h-12 rounded-full"
-          disabled={disabled}
-          onClick={() => onAnswer({ isTrue: false })}
-          size="lg"
-          variant="outline"
-        >
-          <XIcon aria-hidden="true" />
-          {answerLabel(false)}
-          <ShortcutKbd>{LEFT_ARROW}</ShortcutKbd>
-        </Button>
-
-        {allowBlank ? (
-          <Button
-            aria-keyshortcuts="ArrowDown 2"
-            className="col-span-2 row-start-2 h-12 rounded-full sm:col-span-1 sm:row-start-auto"
-            disabled={disabled}
-            onClick={() => onAnswer({ dontKnow: true })}
-            size="lg"
-            variant="ghost"
-          >
-            <MinusIcon aria-hidden="true" />
-            {t("Leave blank")}
-            <ShortcutKbd>{DOWN_ARROW}</ShortcutKbd>
-          </Button>
-        ) : (
-          <span className="hidden sm:block" />
+      <AnswerOptionGroup>
+        {options.map((option, index) =>
+          isShown({ option, result }) ? (
+            <AnswerOption
+              aria-keyshortcuts={`${option.keys} ${index + 1}`}
+              disabled={locked}
+              key={option.key}
+              marker={index + 1}
+              onClick={() => pick(option.answer)}
+              picked={isSameAnswer(shownPick, option.answer)}
+              result={getOptionResult({ option, result })}
+            >
+              {"isTrue" in option.answer ? answerLabel(option.answer.isTrue) : t("Leave blank")}
+            </AnswerOption>
+          ) : null,
         )}
-
-        <Button
-          aria-keyshortcuts={allowBlank ? "ArrowRight 3" : "ArrowRight 2"}
-          className="h-12 rounded-full"
-          disabled={disabled}
-          onClick={() => onAnswer({ isTrue: true })}
-          size="lg"
-          variant="outline"
-        >
-          <CheckIcon aria-hidden="true" />
-          {answerLabel(true)}
-          <ShortcutKbd>{RIGHT_ARROW}</ShortcutKbd>
-        </Button>
-      </div>
+      </AnswerOptionGroup>
     </div>
   );
 }

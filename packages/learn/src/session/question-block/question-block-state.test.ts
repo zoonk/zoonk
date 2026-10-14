@@ -37,6 +37,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   answered: 0,
   brainPower: 0,
   canDo: null,
+  canTestOut: false,
   capsules: [],
   chapterId: null,
   checkpoint: null,
@@ -57,6 +58,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   status: "active",
   subject: null,
   title: null,
+  waitReason: null,
   weakest: false,
 };
 
@@ -72,6 +74,7 @@ const feedback: StudyAnswerFeedback = {
   isCorrect: true,
   mistakeFixed: false,
   pauseSuggested: false,
+  reinforcementLessons: null,
   savedToNotebook: false,
   transcript: null,
   trap: null,
@@ -88,7 +91,7 @@ describe(createQuestionBlockState, () => {
     expect(state.phase).toStrictEqual({ kind: "answering" });
   });
 
-  it("goes straight to the block's end when every question was answered", () => {
+  it("waits for an explicit finish when reopening a fully answered block", () => {
     const state = createQuestionBlockState(
       detailWith([
         question("a", { blank: false, isCorrect: true }),
@@ -96,7 +99,7 @@ describe(createQuestionBlockState, () => {
       ]),
     );
 
-    expect(state.phase).toStrictEqual({ kind: "finishing" });
+    expect(state.phase).toStrictEqual({ kind: "finishReady" });
   });
 });
 

@@ -17,6 +17,7 @@ import { useId } from "react";
 import { toMindMapDownloadHref, toMindMapFileName, toMindMapSrc } from "./_utils/mind-map-urls";
 import { MAX_SCALE, fitSide } from "./_utils/pan-zoom";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
+import { MindMapOutline } from "./mind-map-outline";
 import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
@@ -76,7 +77,7 @@ function ZoomControls({
         variant="outline"
       >
         <ScanIcon aria-hidden="true" data-icon="inline-start" />
-        <span aria-hidden="true" className="tabular-nums">
+        <span aria-hidden="true" className="font-mono text-xs tabular-nums">
           {Math.round(scale * PERCENT)}%
         </span>
       </Button>
@@ -139,8 +140,9 @@ function ZoomFrame({
 /**
  * A mind map full screen, to read its small print: pinch or scroll to zoom, drag to move, a double
  * tap to zoom in or back out, the keyboard too, and buttons for every one of those. The bar closes
- * it (Escape too) and saves the picture. Screen readers hear the picture's short alt and the whole
- * map in words as its description.
+ * it (Escape too) and saves the picture. From 72rem the map in words sits beside the picture,
+ * behind a hairline, to read along. Screen readers hear the picture's short alt and the whole map
+ * in words as its description, once: the outline beside it is for the eyes.
  */
 export function MindMapViewer({
   image,
@@ -197,12 +199,27 @@ export function MindMapViewer({
             {alt} {t("Pinch, scroll or use + and - to zoom; drag or use the arrows to move.")}
           </DialogDescription>
           <MindMapDescription id={descriptionId} outline={outline} />
-          <ZoomFrame
-            alt={alt}
-            descriptionId={outline ? descriptionId : undefined}
-            image={image}
-            zoom={zoom}
-          />
+
+          <div className="flex min-h-0 flex-1">
+            <div className="flex min-w-0 flex-1 flex-col">
+              <ZoomFrame
+                alt={alt}
+                descriptionId={outline ? descriptionId : undefined}
+                image={image}
+                zoom={zoom}
+              />
+            </div>
+
+            {outline && (
+              <aside
+                aria-hidden="true"
+                className="border-border hidden w-80 shrink-0 overflow-y-auto border-l px-6 py-6 min-[72rem]:block"
+                data-slot="mind-map-viewer-outline"
+              >
+                <MindMapOutline outline={outline} />
+              </aside>
+            )}
+          </div>
         </DialogPopup>
       </DialogPortal>
     </Dialog>

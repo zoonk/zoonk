@@ -6,7 +6,7 @@ import { type TestOutStart } from "../_components/test-out-start-link";
 import { type AreaPracticeOutcome } from "../_utils/use-practice-run";
 
 /**
- * Where a chapter's page links: back where the learner came from (the Journey, or the subject they
+ * Where a chapter's page links: back where the learner came from (the Plan, or the subject they
  * opened it from, named by `backLabel`), and the lesson player (lesson id appended).
  */
 export type ChapterHrefs = { back: string; backLabel?: string; lessonBasePath: string };

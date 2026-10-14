@@ -1,93 +1,138 @@
 "use client";
 
+import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { KindTile } from "../../_components/kind-tile";
-import { StepCard, StepEyebrow, StepHeader, StepTitle } from "../../_components/step-card";
-import { Steps, type StepsItem } from "../../_components/steps";
+import { useEffect, useRef, useState } from "react";
+import { StepDots } from "../../_components/step-dots";
+import { StepsBackButton, focusStepTitle } from "../../_components/steps";
+import { TaskActions } from "../../_components/task-layout";
+import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { OpenNextStep } from "../open-next-step";
-import { getRisenSkills } from "./risen-skills";
-import { FinishButton, SummaryOptions } from "./summary-actions";
+import { SessionHeader } from "../session-header";
+import {
+  FinishLink,
+  KeepGoingButton,
+  KeepGoingFailed,
+  SeeMistakesLink,
+  SummaryOptions,
+  useKeepGoing,
+} from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
-import { ChangeStep, DoneStep, usePreparationChange } from "./summary-parts";
-import { RewardsStep, hasRewards } from "./summary-rewards";
+import { DoneStep } from "./summary-parts";
+import { EarnedToday, RewardsStep, hasRewardsBeyondBrainPower } from "./summary-rewards";
 
-/** Tomorrow's lesson, so the day ends knowing what comes next. */
-function TomorrowStep({ title }: { title: string }) {
-  const t = useExtracted();
-
-  return (
-    <StepCard>
-      <KindTile kind="lesson" size="lg" />
-      <StepHeader>
-        <StepEyebrow>{t("Tomorrow")}</StepEyebrow>
-        <StepTitle>{title}</StepTitle>
-      </StepHeader>
-    </StepCard>
-  );
-}
-
-/** The summary's steps, each only when it has something to say. */
-function useSummaryItems(): StepsItem[] {
+/**
+ * The phone's second step, what the day earned, when it earned more than its Brain Power: Continue
+ * opens it, Back (or ←) returns. Wide screens show it in the aside instead, so their main action
+ * is Finish from the first screen.
+ */
+function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const stopped = useIsStopped();
   const { summary } = useSessionSummary();
-  const change = usePreparationChange();
-  const rises = getRisenSkills(summary.skillsMoved);
+  const [open, setOpen] = useState(false);
+  const opened = useRef(false);
+  const exists = !stopped && hasRewardsBeyondBrainPower(summary);
 
-  // Stopped for today, the rest of the session waits: one step, what's done so far.
-  if (stopped) {
-    return [{ content: <DoneStep />, id: "done" }];
-  }
+  useKeyboardCallback("ArrowLeft", () => (open ? setOpen(false) : false), {
+    mode: "none",
+    screen: true,
+  });
 
-  return [
-    { content: <DoneStep />, id: "done" },
-    (change || rises.length > 0) && { content: <ChangeStep />, id: "change" },
-    hasRewards(summary) && { content: <RewardsStep />, id: "rewards" },
-    summary.tomorrow && {
-      content: <TomorrowStep title={summary.tomorrow.title} />,
-      id: "tomorrow",
-    },
-  ].filter((item) => item !== null && item !== false);
+  // A step the learner moves to takes the focus, but the first one keeps it where the browser put it.
+  useEffect(() => {
+    if (opened.current || open) {
+      opened.current = true;
+      focusStepTitle(stepRef.current);
+    }
+  }, [open, stepRef]);
+
+  return { close: () => setOpen(false), exists, open: exists && open, show: () => setOpen(true) };
 }
 
 /**
- * The session's one milestone (a belt, the buddy growing, glasses) as its own full-screen moment,
- * as the learner reaches the last step: after what the day earned, before what comes next.
- */
-function useWithCeremony(items: StepsItem[]): StepsItem[] {
-  const { ceremony, summary } = useSessionSummary();
-  const milestone = summary.ceremony;
-  const last = items.at(-1);
-
-  if (!ceremony || !milestone || !last) {
-    return items;
-  }
-
-  return [...items.slice(0, -1), { ...last, moment: (close) => ceremony(milestone, close) }];
-}
-
-/**
- * The end of the session, one thing at a time: the session done with its numbers, what changed
- * (the goal's number, the skills that rose), what it earned, then tomorrow with Finish. Right
- * after "Stop for today", one step: what's done so far, with Finish and Keep going. A session
- * with a block still waiting that the learner didn't stop (the host read the day before "10 more
- * minutes" added it) goes straight on to that block.
+ * The end of the session on one screen: the day done with its four numbers, the skills that rose
+ * and tomorrow's lesson, with "See mistakes" beside Finish, a link back to Today. From `lg` what
+ * the day earned sits in the aside beside it; a phone gives it a step of its own (Continue) only
+ * when there's more than the Brain Power the numbers show. Right after "Stop for today", what's
+ * done so far, with Keep going beside Finish. The session's one milestone (a belt, the buddy
+ * growing, glasses) opens over it first, as its own full-screen moment. A session with a block
+ * still waiting that the learner didn't stop (the host read the day before "10 more minutes" added
+ * it) goes straight on to that block.
  */
 export function SummarySteps() {
   const t = useExtracted();
   const stopped = useIsStopped();
-  const { actions, exitHref, summary } = useSessionSummary();
-  const items = useWithCeremony(useSummaryItems());
+  const { actions, ceremony, exitHref, mistakesHref, summary } = useSessionSummary();
+  const stepRef = useRef<HTMLDivElement>(null);
+  const rewards = useRewardsStep(stepRef);
+  const keepGoing = useKeepGoing();
+  const [momentShown, setMomentShown] = useState(false);
+
+  // Once the milestone's moment is gone, the summary's title takes the focus, so the summary reads
+  // on from there.
+  useEffect(() => {
+    if (momentShown) {
+      focusStepTitle(stepRef.current);
+    }
+  }, [momentShown]);
 
   if (!stopped && !summary.finished) {
-    return <OpenNextStep onOpen={actions.keepGoing} status={t("Getting it ready…")} />;
+    return (
+      <OpenNextStep
+        exitHref={exitHref}
+        header={<SessionHeader exitHref={exitHref} />}
+        readNext={actions.refresh}
+        status={t("Getting it ready…")}
+      />
+    );
   }
 
+  const milestone = summary.ceremony;
+  const canSeeMistakes = mistakesHref !== null && summary.mistakesSaved > 0;
+  const continuesToRewards = rewards.exists && !rewards.open;
+
   return (
-    <Steps
+    <TaskFrame
+      aside={{ children: <EarnedToday />, label: t("Earned today"), title: t("Earned today") }}
+      closeOnEscape
       exitHref={exitHref}
-      finalAction={<FinishButton />}
-      finalOptions={<SummaryOptions />}
-      items={items}
-    />
+      footer={
+        <>
+          <KeepGoingFailed keepGoing={keepGoing} />
+
+          <TaskActions>
+            {rewards.open && <StepsBackButton onClick={rewards.close} />}
+            {!rewards.open && canSeeMistakes && <SeeMistakesLink href={mistakesHref} />}
+            {stopped && <KeepGoingButton keepGoing={keepGoing} />}
+
+            {continuesToRewards && (
+              <TaskMainButton className="lg:hidden" onClick={rewards.show}>
+                {t("Continue")}
+              </TaskMainButton>
+            )}
+
+            <FinishLink className={continuesToRewards ? "max-lg:hidden" : undefined} />
+          </TaskActions>
+
+          <SummaryOptions />
+        </>
+      }
+      headerTitle={
+        rewards.exists ? (
+          <StepDots className="lg:hidden" current={rewards.open ? 1 : 0} total={2} />
+        ) : null
+      }
+    >
+      <div
+        className="flex flex-col gap-4"
+        data-slot="steps-step"
+        key={rewards.open ? "rewards" : "done"}
+        ref={stepRef}
+      >
+        {rewards.open ? <RewardsStep /> : <DoneStep />}
+      </div>
+
+      {ceremony && milestone && !momentShown && ceremony(milestone, () => setMomentShown(true))}
+    </TaskFrame>
   );
 }

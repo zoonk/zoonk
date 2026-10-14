@@ -1,9 +1,10 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { HistoryIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Callout } from "../../_components/callout";
+import { FeedbackNote } from "../../_components/feedback-panel";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type StudyQuestion } from "../session-types";
@@ -59,10 +60,31 @@ function useTimeMachineText({
 }
 
 /**
- * When the learner last met a capsule question, in one quiet line: when, before they answer, and
- * how far they've come, after.
+ * When the learner last met a capsule question, in one quiet line above it before they answer. The
+ * answer's own panel says how far they've come (`TimeMachineNote`), so the result speaks from one
+ * place.
  */
 export function TimeMachine({
+  format,
+  machine,
+  trueFalseLabels,
+}: {
+  format: StudyQuestion["format"];
+  machine: TimeMachineView;
+  trueFalseLabels: TrueFalseLabels;
+}) {
+  const text = useTimeMachineText({ format, trueFalseLabels })({ machine, result: null });
+
+  return (
+    <Callout>
+      <HistoryIcon aria-hidden="true" />
+      <p>{text}</p>
+    </Callout>
+  );
+}
+
+/** After the answer, the same history as the feedback panel's quiet last line. */
+export function TimeMachineNote({
   format,
   machine,
   result,
@@ -70,17 +92,9 @@ export function TimeMachine({
 }: {
   format: StudyQuestion["format"];
   machine: TimeMachineView;
-  result: AnswerResult;
+  result: Exclude<AnswerResult, null>;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const text = useTimeMachineText({ format, trueFalseLabels })({ machine, result });
-
-  return (
-    <p className="text-muted-foreground flex items-start gap-2 text-sm" aria-live="polite">
-      <LineMarker>
-        <HistoryIcon aria-hidden="true" className="size-4" />
-      </LineMarker>
-      {text}
-    </p>
-  );
+  return <FeedbackNote>{text}</FeedbackNote>;
 }

@@ -11,7 +11,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { statement } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
-import { openAs } from "./study-day";
+import { checkWithEnter, openAs } from "./study-day";
 
 const PAIRS = [
   { left: "10% of 50", right: "5" },
@@ -98,7 +98,10 @@ test.describe("Capsules", () => {
       page.getByText("A wrong answer cancels a right one. Not sure? Leave it blank."),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: /^True/u }).click();
+    // A tap picks, and Check sends it.
+    await page.getByRole("radio", { name: /^True/u }).click();
+    await expect(page.getByRole("radio", { name: /^True/u })).toBeChecked();
+    await page.getByRole("button", { name: /^Check/u }).click();
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await expect(page.getByText("1 right")).toBeVisible();
     await page.keyboard.press("Enter");
@@ -107,14 +110,17 @@ test.describe("Capsules", () => {
     // reads as left blank, not as a mistake.
     await expect(page.getByText(/^Second statement/u)).toBeVisible();
     await page.keyboard.press("2");
+    await checkWithEnter(page);
     await expect(feedback.getByText("Left blank")).toBeVisible();
     await expect(page.getByText("0 wrong")).toBeVisible();
     await expect(page.getByText("net 1")).toBeVisible();
     await page.keyboard.press("Enter");
 
-    // False on a true statement, swiped from the keyboard: the net drops back to zero.
+    // False on a true statement, picked with the arrow the card swipes to: the net drops back
+    // to zero.
     await expect(page.getByText(/^Third statement/u)).toBeVisible();
     await page.keyboard.press("ArrowLeft");
+    await checkWithEnter(page);
     await expect(page.getByText("net 0")).toBeVisible();
     await page.keyboard.press("Enter");
 
@@ -137,14 +143,16 @@ test.describe("Capsules", () => {
       await page.keyboard.press(String(rights.indexOf(pair.right) + 1));
     }
 
-    // Enter checks, then moves on.
+    // The last pair moves the focus to Check, so Enter checks, then moves on.
     await page.keyboard.press("Enter");
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await page.keyboard.press("Enter");
     // The day's last block opens the summary: only the statements count in the net (one right, one
     // left blank, one wrong), never the matching question.
-    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
-    await expect(page.getByText("Net score 0", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+
+    await expect(page.getByRole("listitem").filter({ hasText: "Right" })).toContainText("net 0");
+
     await page.context().close();
   });
 });

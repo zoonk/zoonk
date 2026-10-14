@@ -2,11 +2,13 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
-import { type StudyMomentView, type StudySession } from "./session-types";
+import { SessionHeader } from "./session-header";
+import { getSessionQueue } from "./session-queue-rows";
+import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
 import { StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
 import { useSessionAction } from "./use-session-action";
@@ -38,21 +40,21 @@ function SavedMoment({
   useMomentEvents({ missionsBefore: session.missions, moment });
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4">
-      <StudyMoment
-        finishedChapterId={
-          session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
-        }
-        inLessonPlayer
-        kind="learn"
-        moment={moment}
-        next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
-        onContinue={onContinue}
-        onStartTestOut={onStartTestOut}
-        onStop={onStop}
-        testedOut={testedOut}
-      />
-    </div>
+    <StudyMoment
+      blocks={session.blocks}
+      missionsBefore={session.missions}
+      finishedChapterId={
+        session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
+      }
+      inLessonPlayer
+      kind="learn"
+      moment={moment}
+      next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+      onContinue={onContinue}
+      onStartTestOut={onStartTestOut}
+      onStop={onStop}
+      testedOut={testedOut}
+    />
   );
 }
 
@@ -65,33 +67,62 @@ function OutsideSession({ onContinue }: { onContinue: () => Promise<boolean> }) 
   const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4 py-6 lg:justify-center-safe">
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center lg:flex-none">
-        <span className="bg-success/10 text-success animate-in zoom-in-50 fade-in flex size-20 items-center justify-center rounded-full duration-500 ease-out motion-reduce:animate-none">
-          <CheckIcon aria-hidden="true" className="size-10" strokeWidth={2.5} />
-        </span>
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl" role="status">
+    <>
+      <TaskBody>
+        <h2 className="text-title" role="status">
           {t("Lesson complete")}
         </h2>
-      </div>
+      </TaskBody>
 
-      <EnterButton className="mt-8" disabled={isPending} onClick={run}>
-        {t("Continue")}
-      </EnterButton>
+      <TaskActionBar>
+        {failed && (
+          <p className="text-destructive-text text-sm" role="alert">
+            {t("We couldn't open the next step. Try again.")}
+          </p>
+        )}
 
-      {failed && (
-        <p className="text-destructive mt-3 text-center text-sm" role="alert">
-          {t("We couldn't open the next step. Try again.")}
-        </p>
-      )}
-    </div>
+        <TaskActions>
+          <EnterButton disabled={isPending} onClick={run}>
+            {t("Continue")}
+          </EnterButton>
+        </TaskActions>
+      </TaskActionBar>
+    </>
   );
 }
 
 /**
- * A lesson's completion moment when it's one of today's blocks, the same as every block's: the
- * check, its Brain Power and what's next, when it comes back, the session bar, then one tap back
- * into the session. The host puts it in the lesson player's completion slot.
+ * The header over a lesson's completion moment when it's one of today's blocks: the session's,
+ * with the day as one segment per block (each as long as its minutes when the day's `blocks` are
+ * given), like between every other block, in place of the lesson's own segments. Nothing until
+ * the lesson is saved (the lesson's header stays meanwhile).
+ */
+export function LessonMomentHeader({
+  blocks,
+  completion,
+  exitHref,
+}: {
+  blocks?: readonly StudyBlock[];
+  completion: LessonMomentCompletion;
+  exitHref: string;
+}) {
+  const moment = completion.result?.studyBlock ?? null;
+
+  if (!moment) {
+    return null;
+  }
+
+  const queue = blocks
+    ? getSessionQueue({ blocks, finishedId: moment.blockId, nextId: moment.nextBlockId }).rows
+    : undefined;
+
+  return <SessionHeader exitHref={exitHref} queue={queue} sessionBar={moment.sessionBar} />;
+}
+
+/**
+ * A lesson's completion moment when it's one of today's blocks, the same as every block's: what it
+ * earned and when it comes back, the session bar, what's next, then one tap back into the
+ * session. The host puts it in the lesson player's completion slot, under the player's header.
  */
 export function LessonMoment({
   completion,
@@ -114,17 +145,14 @@ export function LessonMoment({
 
   if (completion.status === "failed") {
     return (
-      <div
-        className="mx-auto my-auto flex w-full max-w-xl flex-col items-center gap-4 px-4 py-8 text-center"
-        role="alert"
-      >
-        <p className="text-lg font-medium text-balance">
+      <TaskBody className="items-start" role="alert">
+        <p className="text-[0.9375rem] font-medium text-balance">
           {t("We couldn't save your progress yet.")}
         </p>
         <Button onClick={onRetry} size="lg" variant="outline">
           {t("Try again")}
         </Button>
-      </div>
+      </TaskBody>
     );
   }
 
@@ -134,15 +162,11 @@ export function LessonMoment({
 
   if (!moment) {
     return (
-      <div
-        className="mx-auto my-auto flex w-full max-w-xl flex-col items-center gap-6 px-4 py-8"
-        role="status"
-      >
-        <Skeleton className="size-20 rounded-full" />
-        <Skeleton className="h-9 w-2/3" />
-        <Skeleton className="h-8 w-48 rounded-full" />
+      <TaskBody role="status">
+        <Skeleton className="h-8 w-2/3" />
+        <Skeleton className="h-4 w-48" />
         <span className="sr-only">{t("Saving your progress…")}</span>
-      </div>
+      </TaskBody>
     );
   }
 

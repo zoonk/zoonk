@@ -4,10 +4,15 @@ import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
+import {
+  DetailAside,
+  DetailAsideSection,
+  DetailContent,
+  DetailLayout,
+} from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
 import { type MindMapLimit } from "../_components/help-limit-notice";
-import { LessonList } from "../_components/lesson-list";
+import { LessonList, LessonProgress } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
@@ -40,6 +45,7 @@ export type ChapterMindMap = {
 };
 
 const PRACTICE_TITLE_ID = "chapter-practice-title";
+const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
 /**
@@ -102,11 +108,11 @@ function ChapterSummary({
   );
 }
 
-/** What the learner can do about the chapter besides its lessons: skip it with a test, fix its mistakes. */
+/** Other study actions on the chapter: general practice and testing past lessons already known. */
 function ChapterPractice() {
   const t = useExtracted();
   const { actions, chapter } = useChapterScreen();
-  const canTestOut = chapter.chapter.state !== "done";
+  const canTestOut = chapter.testOut.available;
 
   if (!canTestOut && chapter.mistakes.open === 0) {
     return null;
@@ -132,6 +138,29 @@ function ChapterPractice() {
   );
 }
 
+/** How far the learner is in the chapter, as one segment per lesson ("1 of 3"), in the aside. */
+function ChapterProgress() {
+  const t = useExtracted();
+  const { chapter } = useChapterScreen();
+  const { lessons } = chapter;
+  const done = lessons.filter((lesson) => lesson.state === "done").length;
+
+  if (lessons.length === 0) {
+    return null;
+  }
+
+  return (
+    <DetailAsideSection
+      className="hidden min-[72rem]:flex"
+      detail={t("{done, number} of {total, number}", { done, total: lessons.length })}
+      title={t("Progress")}
+      titleId={PROGRESS_TITLE_ID}
+    >
+      <LessonProgress lessons={lessons} />
+    </DetailAsideSection>
+  );
+}
+
 function ChapterBody({
   mindMap,
   renderLessonText,
@@ -139,44 +168,51 @@ function ChapterBody({
   mindMap: ChapterMindMap | null;
   renderLessonText: (text: string) => React.ReactNode;
 }) {
+  const t = useExtracted();
   const { chapter, hrefs } = useChapterScreen();
 
   return (
-    <div className="flex flex-col gap-8" data-slot="chapter">
-      <ChapterBar />
-
-      <DetailLayout>
-        <DetailAside>
-          <ChapterHeader />
-        </DetailAside>
-
-        <DetailContent>
-          {chapter.lessons.length > 0 && (
-            <LessonList
-              lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
-              lessons={chapter.lessons}
-              // Only the chapter holding Today's next lesson says "Up next" for it.
-              upNext={chapter.chapter.state === "current"}
-            />
-          )}
+    <DetailLayout
+      aside={
+        <>
+          <ChapterProgress />
           <ChapterPractice />
           <ChapterSummary mindMap={mindMap} renderLessonText={renderLessonText} />
-        </DetailContent>
-      </DetailLayout>
-    </div>
+        </>
+      }
+      asideLabel={t("About this chapter")}
+      bar={<ChapterBar />}
+      data-slot="chapter"
+    >
+      <DetailAside>
+        <ChapterHeader />
+      </DetailAside>
+
+      <DetailContent>
+        {chapter.lessons.length > 0 && (
+          <LessonList
+            lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
+            lessons={chapter.lessons}
+            // In any chapter, the lesson "Start" or "Continue" opens is marked as next.
+            upNext
+          />
+        )}
+      </DetailContent>
+    </DetailLayout>
   );
 }
 
 /**
- * A chapter of the learner's plan: its number and lessons done, the next lesson first, the rest in
- * order, a test that skips a chapter the learner may already know, then folded away its skills
- * and the summaries its lessons left, and its mistakes when there are some.
+ * A chapter of the learner's plan: its number and lessons done with "Continue" beside its name, its
+ * lessons in order (the next one marked), and in the aside from 72rem (after the lessons under
+ * it) how far the learner is, a test that skips a chapter they may already know, its mistakes when
+ * there are some, and for reference its mind map, its skills and the summaries its lessons left.
  *
  * ```tsx
  * <ChapterScreen
  *   actions={{ practice, startTestOut }}
  *   chapter={chapter}
- *   hrefs={{ back: "/journey", lessonBasePath: "/learn" }}
+ *   hrefs={{ back: "/plan", lessonBasePath: "/learn" }}
  *   renderLessonText={(text) => <LessonRichText text={text} />}
  * />
  * ```

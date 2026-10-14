@@ -1,13 +1,8 @@
 "use client";
 
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { EnterButton } from "../../_components/enter-button";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useRef, useState } from "react";
+import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { ItemLine } from "../../questions/item-text";
 import {
   type OptionSelect,
@@ -16,112 +11,105 @@ import {
   isMultiPick,
   togglePick,
 } from "../../questions/pick-rule";
-import { type StudyQuestionAnswer } from "../session-types";
+import { useFocusCheckWhenComplete } from "./question-actions";
 
 /** What the options show once graded: the right ones, and the ones the learner picked. */
 export type ChoiceResult = { correct: readonly number[]; picked: readonly number[] };
 
-function optionState({ index, result }: { index: number; result: ChoiceResult | null }) {
+/** A choice question's answer: its one pick, or its picks when it asks for several. */
+type ChoicePick = { selectedIndex: number } | { selectedIndexes: number[] };
+
+function getOptionResult({ index, result }: { index: number; result: ChoiceResult | null }) {
   if (!result) {
-    return "idle";
+    return null;
   }
 
   if (result.correct.includes(index)) {
-    return "correct";
+    return "right";
   }
 
-  return result.picked.includes(index) ? "wrong" : "idle";
+  return result.picked.includes(index) ? "wrong" : null;
 }
 
 /**
- * A multiple-choice question. One tap (or number key) answers a question with one right option;
- * one that asks for several (`select`: a number, or "all") toggles options, then Check (or Enter)
- * sends them, once as many as it asks are picked.
+ * Once graded, only the learner's picks and the right answers stay, so the feedback fits under
+ * them. A grade that doesn't say which option was right keeps them all.
+ */
+function isShown({ index, result }: { index: number; result: ChoiceResult | null }) {
+  if (!result || result.correct.length === 0) {
+    return true;
+  }
+
+  return result.correct.includes(index) || result.picked.includes(index);
+}
+
+/**
+ * A multiple-choice question, one option under the other with its number key. A tap (or the
+ * number) picks an option and tapping it again clears it; one that asks for several (`select`: a
+ * number, or "all") toggles them. The host gets the answer once it's complete (null before), and
+ * its Check sends it. Once graded, the right option says "Correct" and a wrong pick "Your answer".
  */
 export function ChoiceQuestion({
   disabled,
-  onAnswer,
+  onChange,
   options,
   result,
   select,
 }: {
   disabled: boolean;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
-  options: string[];
+  onChange: (answer: ChoicePick | null) => void;
+  options: readonly string[];
   result: ChoiceResult | null;
   select: OptionSelect | null;
 }) {
-  const t = useExtracted();
   const [picks, setPicks] = useState<number[]>([]);
+  const groupRef = useRef<HTMLDivElement>(null);
   const locked = disabled || result !== null;
   const multi = isMultiPick(select);
-  const ready = multi && isCompletePick({ picks, select });
-  const check = () => onAnswer({ selectedIndexes: picks });
+  const shownPicks = result?.picked ?? picks;
+
+  useFocusCheckWhenComplete({
+    complete: multi && isCompletePick({ picks, select }),
+    containerRef: groupRef,
+  });
 
   const pick = (index: number) => {
-    if (!multi) {
-      onAnswer({ selectedIndex: index });
+    if (multi) {
+      const next = togglePick(picks, index);
+      setPicks(next);
+      onChange(isCompletePick({ picks: next, select }) ? { selectedIndexes: next } : null);
       return;
     }
 
-    setPicks(togglePick(picks, index));
+    const cleared = picks[0] === index;
+    setPicks(cleared ? [] : [index]);
+    onChange(cleared ? null : { selectedIndex: index });
   };
 
   useNumberKeys({ count: options.length, enabled: !locked, onPick: pick });
-  useEnterKey(check, { enabled: !locked && ready });
 
   return (
     <div className="flex flex-col gap-3">
       {multi && <PickRule select={select} />}
 
-      <ul className="grid gap-2.5 sm:grid-cols-2">
-        {options.map((option, index) => {
-          const state = optionState({ index, result });
-
-          return (
-            <li key={option}>
-              <button
-                aria-keyshortcuts={String(index + 1)}
-                aria-pressed={multi ? picks.includes(index) : undefined}
-                className={cn(
-                  "focus-visible:ring-ring flex min-h-14 w-full items-start gap-3 rounded-2xl border px-4 py-4 text-left font-medium transition-colors outline-none focus-visible:ring-2 disabled:cursor-default",
-                  "bg-background hover:bg-muted/60",
-                  "aria-pressed:border-foreground aria-pressed:bg-muted",
-                  state === "correct" && "border-success bg-success/10 aria-pressed:border-success",
-                  state === "wrong" &&
-                    "border-destructive bg-destructive/10 aria-pressed:border-destructive",
-                )}
-                disabled={locked}
-                onClick={() => pick(index)}
-                type="button"
-              >
-                {/* The key hint only shows with a keyboard, so its line box does too. */}
-                <span className="hidden h-lh flex-none items-center lg:pointer-fine:flex">
-                  <ShortcutKbd>{String(index + 1)}</ShortcutKbd>
-                </span>
-                <span className="flex-1">
-                  <ItemLine text={option} />
-                </span>
-                {state !== "idle" && (
-                  <LineMarker>
-                    {state === "correct" ? (
-                      <CheckIcon aria-label={t("Right answer")} className="size-4" />
-                    ) : (
-                      <XIcon aria-label={t("Your answer")} className="size-4" />
-                    )}
-                  </LineMarker>
-                )}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      {multi && result === null && (
-        <EnterButton disabled={disabled || !ready} onClick={check} type="button">
-          {t("Check")}
-        </EnterButton>
-      )}
+      <AnswerOptionGroup ref={groupRef} role={multi ? "group" : "radiogroup"}>
+        {options.map((option, index) =>
+          isShown({ index, result }) ? (
+            <AnswerOption
+              aria-keyshortcuts={String(index + 1)}
+              disabled={locked}
+              key={option}
+              marker={index + 1}
+              onClick={() => pick(index)}
+              picked={shownPicks.includes(index)}
+              result={getOptionResult({ index, result })}
+              role={multi ? "checkbox" : "radio"}
+            >
+              <ItemLine text={option} />
+            </AnswerOption>
+          ) : null,
+        )}
+      </AnswerOptionGroup>
     </div>
   );
 }

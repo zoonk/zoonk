@@ -4,10 +4,10 @@ import { type GoalMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
-import { KindTile } from "../_components/kind-tile";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { toMindMapSrc } from "./_utils/mind-map-urls";
@@ -15,7 +15,7 @@ import { type MindMapActions } from "./mind-map-actions";
 import { MindMapViewer } from "./mind-map-viewer";
 import { useMindMapRequest } from "./use-mind-map-request";
 
-const TILE_CLASS = "aspect-square w-full rounded-xl";
+const TILE_CLASS = "aspect-square w-full rounded-option";
 
 /** The chapter's number and name under its tile. */
 function TileCaption({ mindMap }: { mindMap: GoalMindMapView }) {
@@ -23,7 +23,7 @@ function TileCaption({ mindMap }: { mindMap: GoalMindMapView }) {
 
   return (
     <span className="flex flex-col gap-0.5 text-left">
-      <span className="text-muted-foreground text-[0.8125rem]">
+      <span className="text-muted-foreground font-mono text-[0.6875rem] leading-4 font-medium tracking-[0.06em] uppercase">
         {t("Chapter {number, number}", { number: mindMap.position })}
       </span>
       <span className="line-clamp-2 text-[0.9375rem] leading-snug font-medium">
@@ -57,7 +57,7 @@ function MapPictureTile({ mindMap }: { mindMap: GoalMindMapView }) {
           alt={alt}
           className={cn(
             TILE_CLASS,
-            "ring-foreground/10 bg-muted object-cover ring-1 transition-opacity group-hover:opacity-90",
+            "ring-border bg-card object-cover ring-1 transition-opacity group-hover:opacity-90",
           )}
           decoding="async"
           height={image.height}
@@ -92,10 +92,10 @@ function MapInWordsTile({ href, mindMap }: { href: string; mindMap: GoalMindMapV
         <span
           className={cn(
             TILE_CLASS,
-            "bg-muted/50 ring-foreground/10 flex flex-col items-center justify-center gap-2 ring-1",
+            "bg-card ring-border flex flex-col items-center justify-center gap-2 ring-1",
           )}
         >
-          <KindTile kind="mindMap" />
+          <NetworkIcon aria-hidden="true" className="text-muted-foreground size-5" />
           <span className="text-muted-foreground text-[0.8125rem]">{t("As text")}</span>
         </span>
         <TileCaption mindMap={mindMap} />
@@ -137,10 +137,10 @@ function MapRequestTile({
       <span
         className={cn(
           TILE_CLASS,
-          "flex flex-col items-center justify-center gap-3 border border-dashed p-3 text-center",
+          "border-border flex flex-col items-center justify-center gap-3 border border-dashed p-3 text-center",
         )}
       >
-        <KindTile kind="mindMap" />
+        <NetworkIcon aria-hidden="true" className="text-muted-foreground size-5" />
 
         {isGenerating && (
           <span

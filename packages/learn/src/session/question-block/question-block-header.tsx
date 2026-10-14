@@ -1,83 +1,89 @@
 "use client";
 
-import { type ContentVoteTarget } from "@zoonk/core/feedback/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
+  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
-  TaskHeaderProgress,
+  TaskHeaderSegments,
   TaskHeaderSide,
   TaskHeaderTitle,
+  type TaskSegment,
 } from "../../_components/task-header";
-import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { LearnLink } from "../../learn-link";
 
 const PERCENT = 100;
 
 /**
- * The block's header, the same as every full-screen task's: close (answers are kept), the
- * block's name as Today shows it with how far into it the learner is, the question's "…" menu to
- * report a problem, and one bar for the block's questions.
+ * The block's close: answers are saved as they go, so it just leaves, and Escape closes like the
+ * lesson player's close.
  */
-export function QuestionBlockHeader({
-  exitHref,
-  index,
-  title,
-  total,
-  voteTarget,
-}: {
-  exitHref: string;
-  index: number;
-  title: string;
-  total: number;
-  /** The question to report, when it can be reported now. */
-  voteTarget: ContentVoteTarget | null;
-}) {
+export function QuestionBlockClose({ href }: { href: string }) {
   const t = useExtracted();
-  const current = Math.min(index + 1, total);
-  // Answers are saved as they go, so Escape closes like the lesson player's close.
   const closeRef = useEscapeClick<HTMLAnchorElement>();
 
   return (
-    <TaskHeader>
+    <LearnLink
+      aria-keyshortcuts="Escape"
+      aria-label={t("Close. Your answers are saved.")}
+      className={cn(
+        buttonVariants({ size: "icon", variant: "ghost" }),
+        TASK_HEADER_ICON_CLASS.start,
+      )}
+      href={href}
+      prefetch={false}
+      ref={closeRef}
+    >
+      <XIcon aria-hidden="true" />
+    </LearnLink>
+  );
+}
+
+/**
+ * The header of a run of questions (a session block, mistake practice), the same as every
+ * full-screen task's: close on the left, the run's name in the middle, the question's "…" menu on
+ * the right, and one segment per question under it, green or red once answered. It stays at the
+ * top while a long question scrolls.
+ */
+export function QuestionBlockHeader({
+  close,
+  index,
+  menu,
+  segments,
+  title,
+  total,
+}: {
+  close: React.ReactNode;
+  index: number;
+  /** The question's menu, when it can be reported now. */
+  menu?: React.ReactNode;
+  /** Each question's place: answered right or wrong, the one in view, or ahead. */
+  segments: readonly TaskSegment[];
+  title: string;
+  total: number;
+}) {
+  const t = useExtracted();
+  const current = Math.min(index + 1, total);
+
+  return (
+    <TaskHeader className="bg-background sticky top-0 z-20">
       <TaskHeaderBar>
-        <TaskHeaderSide align="start">
-          <LearnLink
-            aria-keyshortcuts="Escape"
-            aria-label={t("Close. Your answers are saved.")}
-            className={buttonVariants({ size: "icon", variant: "ghost" })}
-            href={exitHref}
-            prefetch={false}
-            ref={closeRef}
-          >
-            <XIcon aria-hidden="true" />
-          </LearnLink>
-        </TaskHeaderSide>
-
-        <TaskHeaderTitle
-          detail={t("{current} of {total}", { current: String(current), total: String(total) })}
-          title={title}
-        />
-
-        <TaskHeaderSide align="end">
-          {voteTarget && (
-            <ContentVoteMenu
-              label={t("Question options")}
-              screen="question-block"
-              target={voteTarget}
-              votes={false}
-            />
-          )}
-        </TaskHeaderSide>
+        <TaskHeaderSide align="start">{close}</TaskHeaderSide>
+        <TaskHeaderTitle title={title} />
+        <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>
 
-      <TaskHeaderProgress
-        label={t("Question {current, number} of {total, number}", { current, total })}
-        value={total === 0 ? 0 : (index / total) * PERCENT}
-      />
+      {total > 0 && (
+        <TaskHeaderSegments
+          label={t("Question {current, number} of {total, number}", { current, total })}
+          segments={segments}
+          value={(index / total) * PERCENT}
+        />
+      )}
     </TaskHeader>
   );
 }

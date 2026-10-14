@@ -1,14 +1,19 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { CalendarClockIcon, CheckIcon, ScaleIcon, ZapIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
-import { FactChip, FactChips } from "../_components/fact-chips";
-import { KindTile } from "../_components/kind-tile";
+import { KindMark } from "../_components/kind-tile";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
+import { TaskMeta } from "../_components/task-meta";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
+import { useFormatDuration } from "../_utils/time-format";
+import { MissionMoment } from "../missions/mission-moment";
 import { getBlockKind } from "./block-kind";
-import { SessionBar } from "./session-bar";
+import { SessionFrame } from "./session-frame";
+import { SessionHeader } from "./session-header";
+import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
+import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { TestOutOffer } from "./test-out-offer";
 import { useBlockTitle } from "./use-block-copy";
@@ -31,119 +36,116 @@ function useMomentTitle({ kind, testedOut }: { kind: MomentKind; testedOut: bool
 }
 
 /**
- * A lesson's ideas are sealed until their review: the day they come back, as a date (never a
- * weekday that could be this one or the next).
- */
-function ComesBackChip({ date }: { date: string }) {
-  const t = useExtracted();
-  const format = useFormatter();
-
-  const day = format.dateTime(new Date(`${date}T00:00:00Z`), {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
-
-  return (
-    <FactChip>
-      <CalendarClockIcon aria-hidden="true" />
-      {t("Review on {date}", { date: day })}
-    </FactChip>
-  );
-}
-
-/**
- * What the block earned, as chips: its net score when it's scored like an exam where a wrong
- * answer cancels a right one, its Brain Power (never "+0") and the day a lesson comes back.
+ * What the block earned, as one mono line: its Brain Power (never "+0"), the day a lesson comes
+ * back (as a date, never a weekday that could be this one or the next) and its net score when it's
+ * scored like an exam where a wrong answer cancels a right one.
  */
 function MomentFacts({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
+  const format = useFormatter();
 
-  const hasFacts = moment.netScore !== null || moment.brainPower > 0 || moment.comesBackOn !== null;
+  const facts = [
+    moment.brainPower > 0 &&
+      t("+{points} Brain Power", { points: format.number(moment.brainPower) }),
+    moment.comesBackOn &&
+      t("Review on {date}", {
+        date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
+          day: "numeric",
+          month: "short",
+          timeZone: "UTC",
+        }),
+      }),
+    // The block's right and wrong statements were counted live while answering.
+    moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
+  ];
 
-  if (!hasFacts) {
-    return null;
-  }
-
-  return (
-    <FactChips className="justify-center">
-      {moment.netScore !== null && (
-        <FactChip>
-          <ScaleIcon aria-hidden="true" />
-          {/* The block's right and wrong statements were counted live while answering. */}
-          {t("Net score {net}", { net: String(moment.netScore) })}
-        </FactChip>
-      )}
-
-      {moment.brainPower > 0 && (
-        <FactChip>
-          <ZapIcon aria-hidden="true" />
-          {t("+{points} Brain Power", { points: String(moment.brainPower) })}
-        </FactChip>
-      )}
-
-      {moment.comesBackOn && <ComesBackChip date={moment.comesBackOn} />}
-    </FactChips>
-  );
+  return <TaskMeta facts={facts} />;
 }
 
-/** What Continue opens, right above it: the next block with its kind's tile. */
+/**
+ * What Continue opens: the next block as the list's highlighted "next" row, its kind's dot, its
+ * name and its minutes.
+ */
 function NextBlock({ block }: { block: StudyBlock }) {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
 
   return (
-    <div
-      className="bg-muted/60 flex items-center gap-3 rounded-2xl p-3 text-left"
-      data-slot="study-moment-next"
-    >
-      <KindTile kind={getBlockKind(block)} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-muted-foreground text-xs font-medium">{t("Up next")}</span>
-        <span className="truncate text-sm font-medium">{blockTitle(block)}</span>
+    <section className="flex flex-col gap-2" data-slot="study-moment-next">
+      <h3 className="text-label">{t("Up next")}</h3>
+      <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75">
+        <KindMark kind={getBlockKind(block)} />
+        <span className="min-w-0 flex-1 truncate text-sm font-medium">{blockTitle(block)}</span>
+        <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+          {formatDuration(block.estimatedMinutes)}
+        </span>
       </div>
-      <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
-        {t("{minutes} min", { minutes: String(block.estimatedMinutes) })}
-      </span>
-    </div>
+    </section>
   );
 }
 
-function StopButton({ onStop }: { onStop: () => Promise<boolean> }) {
-  const t = useExtracted();
-  const { failed, isPending, run } = useSessionAction({ action: onStop });
-
+function ActionFailed({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <Button
-        className="min-h-11 self-center"
-        disabled={isPending}
-        onClick={run}
-        size="lg"
-        variant="ghost"
-      >
-        {t("Stop for today")}
-      </Button>
-
-      {failed && (
-        <p className="text-destructive text-center text-sm" role="alert">
-          {t("We couldn't stop the session. Try again.")}
-        </p>
-      )}
-    </>
+    <p className="text-destructive-text text-sm" role="alert">
+      {children}
+    </p>
   );
 }
 
 /**
- * The quick moment between the session's blocks: a check that pops in, what the block earned as
- * chips and the day's progress on the session bar (the only place the whole session shows), then
- * what comes next right above the one button that opens it (or Enter). "Stop for today" leaves the
- * rest for later. The full summary waits for the end of the session. On phones the button sits at
- * the bottom; on wide screens the moment and its button stay together in the middle.
+ * The moment's action bar: "Stop for today" beside Continue (what's done counts, the rest waits on
+ * Today), or "See what changed" alone once the session is done.
+ */
+function MomentActions({
+  onContinue,
+  onStop,
+  sessionCompleted,
+}: {
+  onContinue: () => Promise<boolean>;
+  onStop: () => Promise<boolean>;
+  sessionCompleted: boolean;
+}) {
+  const t = useExtracted();
+  const proceed = useSessionAction({ action: onContinue, enterKey: true });
+  const stop = useSessionAction({ action: onStop });
+
+  return (
+    <TaskActionBar>
+      {proceed.failed && (
+        <ActionFailed>{t("We couldn't open the next step. Try again.")}</ActionFailed>
+      )}
+      {stop.failed && <ActionFailed>{t("We couldn't stop the session. Try again.")}</ActionFailed>}
+
+      <TaskActions>
+        {!sessionCompleted && (
+          <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
+            {t("Stop for today")}
+          </Button>
+        )}
+
+        <EnterButton disabled={proceed.isPending} onClick={proceed.run}>
+          {sessionCompleted ? t("See what changed") : t("Continue")}
+        </EnterButton>
+      </TaskActions>
+    </TaskActionBar>
+  );
+}
+
+/**
+ * The quick moment between the session's blocks, with the same chrome as every task: the day's
+ * session bar in the header, then on the page what the block was ("Review done"), what it earned
+ * in one mono line, and what comes next as the highlighted next row. The action bar holds "Stop
+ * for today" beside Continue (or Enter). From `lg` the aside lists the day's queue, as Today does.
+ * The full summary waits for the end of the session. Inside the lesson player the host's
+ * completion header shows the day (`LessonMomentHeader`) and the queue takes the player's aside.
  */
 export function StudyMoment({
+  blocks,
+  exitHref,
   inLessonPlayer = false,
   kind,
+  missionsBefore,
   moment,
   next,
   finishedChapterId = null,
@@ -152,11 +154,17 @@ export function StudyMoment({
   onStop,
   testedOut = false,
 }: {
+  /** The day's blocks, for its queue beside the moment. */
+  blocks: readonly StudyBlock[];
+  /** Where leaving goes, for the moment's own header; inside the lesson player it has none. */
+  exitHref?: string;
   /** The chapter of the lesson just finished: a next lesson in another one starts a chapter. */
   finishedChapterId?: string | null;
   /** Inside the lesson player, whose header holds the page's heading (the lesson's title). */
   inLessonPlayer?: boolean;
   kind: MomentKind;
+  /** The day's missions before the block, so the moment says which one it completed. */
+  missionsBefore?: StudyMomentView["missions"];
   moment: StudyMomentView;
   /** The block that comes next, shown above Continue. */
   next: StudyBlock | null;
@@ -170,61 +178,69 @@ export function StudyMoment({
   onStop: () => Promise<boolean>;
   testedOut?: boolean;
 }) {
-  const t = useExtracted();
   const title = useMomentTitle({ kind, testedOut });
-  const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
-  const Title = inLessonPlayer ? "h2" : "h1";
   const nextBlock = moment.sessionCompleted ? null : next;
   const offer = onStartTestOut ? moment.testOutOffer : null;
+  const hasHeader = !inLessonPlayer && exitHref !== undefined;
+
+  const queue = getSessionQueue({
+    blocks,
+    finishedId: moment.blockId,
+    nextId: nextBlock?.id ?? null,
+  });
+
+  const aside = useSessionQueueAside(queue);
 
   // A next lesson that starts a chapter can be skipped from here too, unless a test is offered.
   const nextChapterId =
-    !offer && nextBlock?.kind === "learn" && nextBlock.chapterId !== finishedChapterId
+    !offer && nextBlock?.canTestOut && nextBlock.chapterId !== finishedChapterId
       ? nextBlock.chapterId
       : null;
 
-  return (
-    <section className="flex flex-1 flex-col py-6 lg:justify-center-safe" data-slot="study-moment">
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center lg:flex-none">
-        <span className="bg-success/10 text-success animate-in zoom-in-50 fade-in flex size-20 items-center justify-center rounded-full duration-500 ease-out motion-reduce:animate-none">
-          <CheckIcon aria-hidden="true" className="size-10" strokeWidth={2.5} />
-        </span>
-
-        <div className="flex flex-col items-center gap-4" role="status">
-          <Title className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            {title}
-          </Title>
+  const content = (
+    <>
+      <TaskBody data-slot="study-moment">
+        <div className="flex flex-col gap-2" role="status">
+          <h2 className="text-title">{title}</h2>
           <MomentFacts moment={moment} />
         </div>
 
-        <SessionBar
-          className="max-w-xs"
-          completed={moment.sessionBar.completed}
-          total={moment.sessionBar.total}
+        <MissionMoment
+          before={missionsBefore}
+          fullMeal={moment.fullMeal}
+          missions={moment.missions}
         />
 
-        {offer && onStartTestOut && <TestOutOffer offer={offer} onStart={onStartTestOut} />}
-      </div>
-
-      <div className="flex flex-col gap-3 pt-8">
         {nextBlock && <NextBlock block={nextBlock} />}
+
+        {offer && onStartTestOut && <TestOutOffer offer={offer} onStart={onStartTestOut} />}
 
         {nextChapterId && onStartTestOut && (
           <TestOutStartLink onStart={() => onStartTestOut(nextChapterId)} />
         )}
+      </TaskBody>
 
-        <EnterButton disabled={isPending} onClick={run}>
-          {moment.sessionCompleted ? t("See what changed") : t("Continue")}
-        </EnterButton>
+      <MomentActions
+        onContinue={onContinue}
+        onStop={onStop}
+        sessionCompleted={moment.sessionCompleted}
+      />
+    </>
+  );
 
-        {failed && (
-          <p className="text-destructive text-center text-sm" role="alert">
-            {t("We couldn't open the next step. Try again.")}
-          </p>
-        )}
+  if (!hasHeader) {
+    return (
+      <>
+        <SessionQueueAsideContent queue={queue} />
+        {content}
+      </>
+    );
+  }
 
-        {!moment.sessionCompleted && <StopButton onStop={onStop} />}
-      </div>
-    </section>
+  return (
+    <SessionFrame aside={aside}>
+      <SessionHeader exitHref={exitHref} queue={queue.rows} sessionBar={moment.sessionBar} />
+      {content}
+    </SessionFrame>
   );
 }

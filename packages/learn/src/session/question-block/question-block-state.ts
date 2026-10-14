@@ -12,6 +12,7 @@ export type QuestionBlockPhase =
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
   | { kind: "answerFailed" }
   | { kind: "finishing" }
+  | { kind: "finishReady" }
   | { kind: "finishFailed" }
   | { kind: "finished"; moment: StudyMomentView };
 
@@ -37,7 +38,7 @@ function firstUnanswered(detail: StudyBlockDetail): number {
   return index === -1 ? detail.questions.length : index;
 }
 
-/** A block resumes at its first unanswered question; one fully answered goes straight to its end. */
+/** A fully answered block still needs a click before completion can start any AI work. */
 export function createQuestionBlockState(detail: StudyBlockDetail): QuestionBlockState {
   const index = firstUnanswered(detail);
 
@@ -45,7 +46,7 @@ export function createQuestionBlockState(detail: StudyBlockDetail): QuestionBloc
     answers: {},
     hyperdrive: 1,
     index,
-    phase: index >= detail.questions.length ? { kind: "finishing" } : { kind: "answering" },
+    phase: index >= detail.questions.length ? { kind: "finishReady" } : { kind: "answering" },
   };
 }
 

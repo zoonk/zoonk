@@ -11,7 +11,7 @@ import { Maximize2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
-import { KindTile } from "../_components/kind-tile";
+import { KindDot } from "../_components/kind-tile";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -148,9 +148,9 @@ function MindMapRequestCard({
   const isCapped = limit !== null && limit.status !== "slowDown";
 
   return (
-    <Surface className="flex flex-col gap-4 p-4" data-slot="mind-map-request">
-      <div className="flex items-start gap-3">
-        <KindTile kind="mindMap" />
+    <div className="flex flex-col gap-4" data-slot="mind-map-request">
+      <div className="flex items-baseline gap-3">
+        <KindDot className="-translate-y-px" kind="mindMap" />
         <div
           className="flex min-w-0 flex-col gap-0.5"
           role={shown === "generating" ? "status" : undefined}
@@ -173,7 +173,8 @@ function MindMapRequestCard({
           className="self-start"
           disabled={isPending || isCapped}
           onClick={isFailure ? retry : create}
-          variant={isFailure ? "outline" : "default"}
+          size="sm"
+          variant="outline"
         >
           {isPending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
           {copy.action}
@@ -181,7 +182,7 @@ function MindMapRequestCard({
       )}
 
       {limit && <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
-    </Surface>
+    </div>
   );
 }
 
@@ -217,11 +218,11 @@ export function MindMapCard({
   }
 
   return (
-    <Surface className="flex flex-col gap-4 p-4" data-slot="mind-map-text">
+    <div className="flex flex-col gap-4" data-slot="mind-map-text">
       <p className={STATE_TEXT_CLASS}>
         {t("Its picture had mistakes, so here's the mind map as text.")}
       </p>
       <MindMapOutline outline={mindMap.outline} />
-    </Surface>
+    </div>
   );
 }

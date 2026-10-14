@@ -13,6 +13,9 @@ import { createQuestionBlockState, questionBlockReducer } from "./question-block
 /** Hyperdrive starts to count from a double. */
 const FIRST_HYPERDRIVE_LEVEL = 2;
 
+/** A request that didn't reach the server reads as failed, with its retry, never as stuck. */
+const FAILED = { status: "failed" } as const;
+
 export type QuestionBlockActions = {
   answer: (input: {
     answer: StudyQuestionAnswer;
@@ -50,7 +53,7 @@ export function useQuestionBlock({
   }, []);
 
   const finish = useEffectEvent(async () => {
-    const outcome = await actions.finish();
+    const outcome = await actions.finish().catch(() => FAILED);
 
     if (outcome.status === "finished") {
       dispatch({ moment: outcome.moment, type: "finished" });
@@ -83,11 +86,13 @@ export function useQuestionBlock({
 
     dispatch({ type: "check" });
 
-    const outcome = await actions.answer({
-      answer,
-      durationMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
-      itemId: question.itemId,
-    });
+    const outcome = await actions
+      .answer({
+        answer,
+        durationMs: Math.max(minDurationMs, Math.round(performance.now() - shownAt.current)),
+        itemId: question.itemId,
+      })
+      .catch(() => FAILED);
 
     if (outcome.status === "answered") {
       trackHyperdrive(outcome.feedback.hyperdrive.level);

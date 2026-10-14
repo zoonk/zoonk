@@ -6,10 +6,25 @@ import { type StudyMomentView, type StudySession } from "./session-types";
 
 type Mission = StudySession["missions"][number];
 
+/**
+ * Each mission as analytics names it: the first three keep the names their events always had, so
+ * a mission's history reads as one line; the rest are named as core names them.
+ */
 const MISSION_EVENT_NAMES = {
+  askBuddy: "askBuddy",
+  call: "call",
+  challenge: "challenge",
+  essay: "essay",
+  finishChapter: "finishChapter",
   fixMistake: "fix",
+  mock: "mock",
+  pattern: "pattern",
+  practice: "practice",
+  pronunciation: "pronunciation",
   review: "review",
   somethingNew: "new",
+  weakSpot: "weakSpot",
+  weeklyChallenge: "weeklyChallenge",
 } as const satisfies Record<Mission["kind"], string>;
 
 function isDone(mission: Mission | undefined): boolean {

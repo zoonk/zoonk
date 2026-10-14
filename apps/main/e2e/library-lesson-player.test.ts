@@ -36,13 +36,29 @@ async function answerHook(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-/** The tutor opens over the screen and Escape closes only the tutor, never the lesson. */
+/**
+ * The buddy is beside the screen on a wide screen, its composer at the foot of the lesson's aside;
+ * on a tablet in portrait it opens in a drawer over the screen, and Escape closes only the drawer,
+ * never the lesson.
+ */
 async function openAndCloseTutor(page: Page, { expectText }: { expectText: string }) {
-  await page.getByRole("button", { name: "Ask Buddy" }).click();
-  const tutor = page.getByRole("dialog", { name: "Buddy" });
+  await expect(
+    page
+      .getByRole("complementary", { name: "Help with this screen" })
+      .getByRole("textbox", { name: "Ask a question" }),
+  ).toHaveAttribute("placeholder", "Ask Zu about this screen");
+
+  const wide = page.viewportSize();
+  await page.setViewportSize({ height: 1180, width: 820 });
+  await page.getByRole("button", { name: "Ask Zu" }).click();
+  const tutor = page.getByRole("dialog", { name: "Zu" });
   await expect(tutor.getByText(expectText)).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(tutor).toBeHidden();
+
+  if (wide) {
+    await page.setViewportSize(wide);
+  }
 }
 
 async function readExplanationWithHelp(page: Page) {
@@ -156,13 +172,27 @@ async function createChapterLearner(browser: Browser) {
   ]);
 
   const context = await browser.newContext({ storageState: user.storageState });
+  const page = await context.newPage();
+
+  // These two lessons are already written. Their click asks the separate API for readiness;
+  // without its narrow external mock the lane's API sink correctly refuses the request.
+  await Promise.all(
+    [first, second].map(({ lesson }) =>
+      page.route(`**/v1/library/lessons/${lesson.id}/generations`, (route) =>
+        route.fulfill({
+          body: JSON.stringify({ status: "ready" }),
+          contentType: "application/json",
+        }),
+      ),
+    ),
+  );
 
   return {
     chapterId: chapter.id,
     context,
     first: first.lesson,
     firstItemId: firstItem.id,
-    page: await context.newPage(),
+    page,
     second: second.lesson,
   };
 }
@@ -188,10 +218,10 @@ test.describe("Library lesson player", () => {
 
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-    // Brain Power v2: 2, 4 and 6 for three right answers in a row, and 10 for finishing.
-    const facts = page.locator('[data-slot="lesson-completion"]').getByRole("listitem");
-    await expect(facts.filter({ hasText: "3 of 3 right" })).toBeVisible();
-    await expect(facts.filter({ hasText: "+22 Brain Power" })).toBeVisible();
+    // Brain Power v2: 2, 4 and 6 for three right answers in a row, and 10 for finishing, said in
+    // the moment's one line of facts.
+    const facts = page.locator('[data-slot="lesson-completion-facts"]');
+    await expect(facts).toHaveText(/^3 of 3 right · \+22 Brain Power/u);
 
     // A lesson outside the learner's plan goes back to Today.
     await expect(page.getByRole("link", { name: /^Continue/u })).toHaveAttribute(

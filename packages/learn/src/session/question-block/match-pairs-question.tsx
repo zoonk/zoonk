@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { ANSWER_TONE } from "../../_components/answer-tone";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
-import { type StudyQuestionAnswer } from "../session-types";
+import { useFocusCheckWhenComplete } from "./question-actions";
 
 /** Each left entry's pick, as an index into the right column; -1 while unmatched. */
 type Matches = number[];
@@ -18,7 +18,7 @@ const UNMATCHED = -1;
 function PairBadge({ number }: { number: number }) {
   return (
     <LineMarker aria-hidden="true">
-      <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full text-xs font-bold tabular-nums">
+      <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums">
         {number}
       </span>
     </LineMarker>
@@ -34,58 +34,45 @@ function EntryText({ text }: { text: string }) {
   );
 }
 
+/** An entry, drawn like an answer option: a strong line, a firm ring while it's the one in play. */
 const entryClass =
-  "focus-visible:ring-ring bg-background flex min-h-12 w-full items-start gap-2 rounded-2xl border px-3 py-3.5 text-left text-sm font-medium outline-none focus-visible:ring-2 disabled:cursor-default";
-
-/**
- * Once the last pair is matched from the keyboard, focus moves to Check, so Enter checks instead
- * of undoing the pair that was just made.
- */
-function useFocusCheckWhenComplete({
-  complete,
-  listRef,
-}: {
-  complete: boolean;
-  listRef: React.RefObject<HTMLDivElement | null>;
-}) {
-  const checkRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (complete && listRef.current?.contains(document.activeElement)) {
-      checkRef.current?.focus();
-    }
-  }, [complete, listRef]);
-
-  return checkRef;
-}
+  "rounded-option ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
 
 /**
  * Match pairs: pick an entry on the left, then its match on the right. Tapping a matched entry
  * undoes it. Every entry is a button, so it works the same with a keyboard; number keys pick in
- * the column in play (the left one, then the right one) and Enter checks once all are matched.
+ * the column in play (the left one, then the right one). The host gets the pairs once all are
+ * matched (null before), and its Check sends them.
  */
 export function MatchPairsQuestion({
   disabled,
   left,
-  onAnswer,
+  onChange,
   right,
 }: {
   disabled: boolean;
-  left: string[];
-  onAnswer: (answer: StudyQuestionAnswer) => void;
-  right: string[];
+  left: readonly string[];
+  onChange: (answer: { matches: number[] } | null) => void;
+  right: readonly string[];
 }) {
   const t = useExtracted();
   const [matches, setMatches] = useState<Matches>(() => left.map(() => UNMATCHED));
   const [selected, setSelected] = useState<number | null>(null);
-  const complete = matches.every((match) => match !== UNMATCHED);
   const listRef = useRef<HTMLDivElement>(null);
-  const checkRef = useFocusCheckWhenComplete({ complete, listRef });
-  const check = () => onAnswer({ matches });
+
+  useFocusCheckWhenComplete({
+    complete: matches.every((match) => match !== UNMATCHED),
+    containerRef: listRef,
+  });
+
+  const updateMatches = (next: Matches) => {
+    setMatches(next);
+    onChange(next.every((match) => match !== UNMATCHED) ? { matches: next } : null);
+  };
 
   const pickLeft = (index: number) => {
     if (matches[index] !== UNMATCHED) {
-      setMatches(matches.map((match, position) => (position === index ? UNMATCHED : match)));
+      updateMatches(matches.map((match, position) => (position === index ? UNMATCHED : match)));
       return;
     }
 
@@ -96,7 +83,7 @@ export function MatchPairsQuestion({
     const owner = matches.indexOf(rightIndex);
 
     if (owner !== UNMATCHED) {
-      setMatches(matches.map((match, position) => (position === owner ? UNMATCHED : match)));
+      updateMatches(matches.map((match, position) => (position === owner ? UNMATCHED : match)));
       return;
     }
 
@@ -104,7 +91,7 @@ export function MatchPairsQuestion({
       return;
     }
 
-    setMatches(matches.map((match, position) => (position === selected ? rightIndex : match)));
+    updateMatches(matches.map((match, position) => (position === selected ? rightIndex : match)));
     setSelected(null);
   };
 
@@ -114,69 +101,52 @@ export function MatchPairsQuestion({
     onPick: (index) => (selected === null ? pickLeft(index) : pickRight(index)),
   });
 
-  useEnterKey(check, { enabled: !disabled && complete });
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3" ref={listRef}>
-        <ul aria-label={t("Match these")} className="flex flex-col gap-2">
-          {left.map((entry, index) => (
+    <div className="grid grid-cols-2 gap-3" ref={listRef}>
+      <ul aria-label={t("Match these")} className="flex flex-col gap-2">
+        {left.map((entry, index) => (
+          <li key={entry}>
+            <button
+              aria-pressed={selected === index}
+              className={cn(entryClass, selected === index && ANSWER_TONE.picked)}
+              disabled={disabled}
+              onClick={() => pickLeft(index)}
+              type="button"
+            >
+              {matches[index] !== UNMATCHED && <PairBadge number={index + 1} />}
+              <EntryText text={entry} />
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <ul aria-label={t("With these")} className="flex flex-col gap-2">
+        {right.map((entry, index) => {
+          const owner = matches.indexOf(index);
+
+          return (
             <li key={entry}>
               <button
-                aria-pressed={selected === index}
-                className={cn(
-                  entryClass,
-                  selected === index && "border-foreground ring-foreground ring-1",
-                )}
-                disabled={disabled}
-                onClick={() => pickLeft(index)}
+                aria-label={
+                  owner === UNMATCHED
+                    ? toPlainItemLine(entry)
+                    : t("{entry}, matched with {other}", {
+                        entry: toPlainItemLine(entry),
+                        other: toPlainItemLine(left[owner] ?? ""),
+                      })
+                }
+                className={entryClass}
+                disabled={disabled || (selected === null && owner === UNMATCHED)}
+                onClick={() => pickRight(index)}
                 type="button"
               >
-                {matches[index] !== UNMATCHED && <PairBadge number={index + 1} />}
+                {owner !== UNMATCHED && <PairBadge number={owner + 1} />}
                 <EntryText text={entry} />
               </button>
             </li>
-          ))}
-        </ul>
-
-        <ul aria-label={t("With these")} className="flex flex-col gap-2">
-          {right.map((entry, index) => {
-            const owner = matches.indexOf(index);
-
-            return (
-              <li key={entry}>
-                <button
-                  aria-label={
-                    owner === UNMATCHED
-                      ? toPlainItemLine(entry)
-                      : t("{entry}, matched with {other}", {
-                          entry: toPlainItemLine(entry),
-                          other: toPlainItemLine(left[owner] ?? ""),
-                        })
-                  }
-                  className={entryClass}
-                  disabled={disabled || (selected === null && owner === UNMATCHED)}
-                  onClick={() => pickRight(index)}
-                  type="button"
-                >
-                  {owner !== UNMATCHED && <PairBadge number={owner + 1} />}
-                  <EntryText text={entry} />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <Button
-        className="h-12 rounded-full"
-        disabled={disabled || !complete}
-        onClick={check}
-        ref={checkRef}
-        size="lg"
-      >
-        {t("Check")}
-      </Button>
+          );
+        })}
+      </ul>
     </div>
   );
 }

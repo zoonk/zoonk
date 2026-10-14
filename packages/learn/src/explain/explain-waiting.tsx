@@ -1,29 +1,35 @@
 "use client";
 
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ChevronRightIcon,
-  CircleHelpIcon,
-  GraduationCapIcon,
-  LightbulbIcon,
-  XIcon,
-} from "lucide-react";
+import { CircleHelpIcon, GraduationCapIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useRef, useState } from "react";
+import {
+  ListGroup,
+  ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
+  ListRowLeading,
+  ListRowLink,
+  ListRowTitle,
+} from "../_components/list-group";
 import { usePoll } from "../_utils/use-poll";
+import { type GenerationRun } from "../generation/generation-run";
+import { GenerationWait } from "../generation/generation-wait";
 import { LearnLink } from "../learn-link";
-import { type GenerationProgress, GenerationSteps } from "../onboarding/generation-progress";
 import {
   OnboardingColumn,
+  OnboardingFooter,
   OnboardingFrame,
+  OnboardingHeading,
   OnboardingPrimaryButton,
+  OnboardingSubject,
   OnboardingTitle,
-  OnboardingTopBar,
 } from "../onboarding/onboarding-frame";
+import { useQuickExplanationLabel } from "./quick-explanation-label";
 
 /** A fallback: the host shows the explanation as soon as its run says it can be read. */
 const POLL_MS = 5000;
@@ -32,7 +38,7 @@ const SLOW_MS = 45_000;
 /** About five short screens: the outline's rows, each its own width, before titles are written. */
 const PLACEHOLDER_WIDTHS = ["w-3/5", "w-2/5", "w-1/2", "w-2/3", "w-1/3"];
 
-/** The outline: numbered screens (placeholders until written), then the one question. */
+/** The outline: numbered screens as flat rows (placeholders until written), then the one question. */
 function Outline({ titles }: { titles: string[] }) {
   const t = useExtracted();
 
@@ -42,10 +48,10 @@ function Outline({ titles }: { titles: string[] }) {
       : PLACEHOLDER_WIDTHS.map((width, index) => ({ id: width, number: index + 1, title: null }));
 
   return (
-    <ol aria-label={t("What's coming")} className="flex flex-col gap-2.5">
+    <ol aria-label={t("What's coming")} className="flex flex-col text-sm [&>li+li]:border-t">
       {rows.map((row) => (
-        <li className="flex items-center gap-3" key={row.id}>
-          <span className="bg-muted flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium tabular-nums">
+        <li className="flex min-h-11 items-center gap-3 py-2" key={row.id}>
+          <span className="text-faint w-4 shrink-0 font-mono text-xs tabular-nums">
             {row.number}
           </span>
           {row.title ?? (
@@ -57,61 +63,41 @@ function Outline({ titles }: { titles: string[] }) {
         </li>
       ))}
 
-      <li className="text-muted-foreground flex items-center gap-3">
-        <CircleHelpIcon aria-hidden="true" className="size-6 shrink-0 p-0.5" />
+      <li className="text-muted-foreground flex min-h-11 items-center gap-3 py-2">
+        <CircleHelpIcon aria-hidden="true" className="size-4 shrink-0" />
         {t("1 quick question at the end")}
       </li>
     </ol>
   );
 }
 
-const DEEPER_ROW_CLASS =
-  "bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 w-full items-center gap-3 rounded-3xl px-4 py-3 text-left ring-1 outline-none focus-visible:ring-[3px]";
-
-/** "I want to learn this in depth" and what that builds, with where the row leads at its end. */
-function DeeperRowContent({ description }: { description: string }) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <span className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-xl">
-        <GraduationCapIcon aria-hidden="true" className="size-5" />
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="font-medium">{t("I want to learn this in depth")}</span>
-        <span className="text-muted-foreground text-sm">{description}</span>
-      </span>
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-    </>
-  );
-}
-
 /**
- * Where the learner can go instead: the subject's course start page, which asks their level before
- * anything is created, or onboarding with the subject as the goal when there's no course.
+ * Where the learner can go instead, as a row of its own with what that builds: the subject's
+ * course start page, which asks their level before anything is created, or onboarding with the
+ * subject as the goal when there's no course.
  */
 export function ExplainDeeperLink({ description, href }: { description: string; href: string }) {
-  return (
-    <LearnLink className={DEEPER_ROW_CLASS} href={href}>
-      <DeeperRowContent description={description} />
-    </LearnLink>
-  );
-}
-
-function WritingStatus({ progress }: { progress: GenerationProgress | null }) {
   const t = useExtracted();
 
-  if (progress && progress.status !== "waiting") {
-    return <GenerationSteps kind="explanation" progress={progress} />;
-  }
-
   return (
-    <div aria-live="polite" className="flex items-center gap-3" role="status">
-      <Spinner className="size-5" />
-      <span className="font-medium">{t("Writing your explanation…")}</span>
-    </div>
+    <ListGroup>
+      <ListRowLink href={href}>
+        <ListRowLeading>
+          <ListRowIcon>
+            <GraduationCapIcon />
+          </ListRowIcon>
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("I want to learn this in depth")}</ListRowTitle>
+          <ListRowDescription>{description}</ListRowDescription>
+        </ListRowContent>
+      </ListRowLink>
+    </ListGroup>
   );
 }
+
+/** A host that doesn't follow the run live shows the same wait, on its first step. */
+const UNFOLLOWED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
 /**
  * Before a quick explanation: the question, each step of writing it as it happens, and the
@@ -139,9 +125,10 @@ export function ExplainWaiting({
   onRetry: () => Promise<void>;
   onStart: () => void;
   /** The run writing it, when the host follows it live. */
-  progress: GenerationProgress | null;
+  progress: GenerationRun | null;
 }) {
   const t = useExtracted();
+  const quickExplanation = useQuickExplanationLabel();
   const startedAt = useRef(0);
   const [isSlow, setIsSlow] = useState(false);
   const ready = Boolean(explanation.lesson);
@@ -157,48 +144,29 @@ export function ExplainWaiting({
   });
 
   return (
-    <OnboardingFrame>
-      <OnboardingTopBar
-        end={
+    <OnboardingFrame
+      bar={{
+        end: (
           <LearnLink
             aria-label={t("Close")}
-            className="hover:bg-muted focus-visible:ring-ring/50 flex size-11 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
+            className={buttonVariants({ size: "icon-bar", variant: "ghost" })}
             href={closeHref}
           >
             <XIcon aria-hidden="true" className="size-5" />
           </LearnLink>
-        }
-      />
-
+        ),
+      }}
+    >
       <OnboardingColumn>
-        <div className="bg-card ring-foreground/10 flex flex-col gap-5 rounded-3xl p-5 ring-1 sm:p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15">
-              <LightbulbIcon
-                aria-hidden="true"
-                className="size-5 text-amber-700 dark:text-amber-400"
-              />
-            </span>
-            <span className="flex flex-col">
-              <span className="text-muted-foreground text-xs">
-                {t("Quick explanation · 5 min")}
-              </span>
-              <OnboardingTitle className="text-xl sm:text-2xl">{explanation.title}</OnboardingTitle>
-            </span>
-          </div>
-
-          {!ready && <WritingStatus progress={progress} />}
-
-          <Outline titles={explanation.outline} />
-
+        <OnboardingHeading>
+          <OnboardingSubject>{quickExplanation}</OnboardingSubject>
+          <OnboardingTitle>{explanation.title}</OnboardingTitle>
           <p className="text-muted-foreground text-sm">{t("No plan to set up.")}</p>
+        </OnboardingHeading>
 
-          {ready && (
-            <OnboardingPrimaryButton autoFocus onClick={onStart}>
-              {t("See explanation")}
-            </OnboardingPrimaryButton>
-          )}
-        </div>
+        {!ready && <GenerationWait kind="explanation" run={progress ?? UNFOLLOWED_RUN} />}
+
+        <Outline titles={explanation.outline} />
 
         {deeper}
 
@@ -207,10 +175,18 @@ export function ExplainWaiting({
             <p className="text-muted-foreground text-sm">
               {t("This is taking longer than usual.")}
             </p>
-            <Button onClick={onRetry} variant="outline">
+            <Button onClick={onRetry} size="sm" variant="outline">
               {t("Try again")}
             </Button>
           </div>
+        )}
+
+        {ready && (
+          <OnboardingFooter>
+            <OnboardingPrimaryButton autoFocus onClick={onStart}>
+              {t("See explanation")}
+            </OnboardingPrimaryButton>
+          </OnboardingFooter>
         )}
       </OnboardingColumn>
     </OnboardingFrame>

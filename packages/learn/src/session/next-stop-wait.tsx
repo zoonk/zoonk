@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import {
   type LessonNotWritten,
   LessonNotWrittenNotice,
@@ -91,28 +91,22 @@ function WritingProgress({
   );
 }
 
+/**
+ * The lesson being written, followed live; refreshed every few seconds so the wait shows live, with
+ * a way to ask again when writing stopped or looks stuck.
+ */
 export function Waiting({
   actions,
-  alternative,
   block,
   generationId,
   lesson,
 }: {
   actions: NextStopActions;
-  alternative: StudyBlock | null;
   block: StudyBlock;
   generationId: string | null;
   lesson: NextStopLesson;
 }) {
-  const t = useExtracted();
-  const title = useBlockTitle();
   const stuck = useLooksStuck(lesson);
-
-  // While the lesson is written, the ready block is the next step, so Enter starts it.
-  const other = useSessionAction({
-    action: () => (alternative ? actions.start(alternative.id) : Promise.resolve(false)),
-    enterKey: alternative !== null,
-  });
 
   useWaitingRefresh({ enabled: true, refresh: actions.refresh });
 
@@ -128,67 +122,62 @@ export function Waiting({
       ) : (
         <WritingProgress actions={actions} block={block} generationId={generationId} />
       )}
-
-      {alternative && (
-        <Button
-          className="h-auto min-h-12 w-full rounded-full py-2 text-base text-balance whitespace-normal"
-          disabled={other.isPending}
-          onClick={other.run}
-          size="lg"
-          variant="outline"
-        >
-          {t("Do {title} while you wait", { title: title(alternative) })}
-        </Button>
-      )}
     </div>
   );
 }
 
 /**
- * The lesson won't be written now: why, with its one thing to do, in the wait's place, and a ready
- * block to do instead. Nothing polls: only the learner's next tap can change it.
+ * The lesson won't be written now: why, with its one thing to do, in the wait's place. Nothing
+ * polls: only the learner's next tap can change it.
  */
 export function NotWritten({
   actions,
-  alternative,
   block,
   reason,
 }: {
   actions: NextStopActions;
-  alternative: StudyBlock | null;
   block: StudyBlock;
   reason: LessonNotWritten;
 }) {
-  const t = useExtracted();
-  const title = useBlockTitle();
   const routes = useLearnRoutes();
 
-  // With nothing to wait for, the ready block is the next step, so Enter starts it.
-  const other = useSessionAction({
-    action: () => (alternative ? actions.start(alternative.id) : Promise.resolve(false)),
-    enterKey: alternative !== null,
-  });
+  return (
+    <LessonNotWrittenNotice
+      linkComponent={LearnLink}
+      onRetry={() => void actions.start(block.id)}
+      reason={reason}
+      routes={routes}
+    />
+  );
+}
+
+/**
+ * A ready block to do while the lesson is written ("while you wait") or instead of one that won't
+ * be written now ("instead"): the screen's next step, so it's the main action and Enter starts it.
+ */
+export function AlternativeButton({
+  actions,
+  alternative,
+  reason,
+}: {
+  actions: NextStopActions;
+  alternative: StudyBlock;
+  reason: "instead" | "whileWaiting";
+}) {
+  const t = useExtracted();
+  const title = useBlockTitle();
+
+  const other = useSessionAction({ action: () => actions.start(alternative.id), enterKey: true });
 
   return (
-    <div className="flex flex-col gap-5">
-      <LessonNotWrittenNotice
-        linkComponent={LearnLink}
-        onRetry={() => void actions.start(block.id)}
-        reason={reason}
-        routes={routes}
-      />
-
-      {alternative && (
-        <Button
-          className="h-auto min-h-12 w-full rounded-full py-2 text-base text-balance whitespace-normal"
-          disabled={other.isPending}
-          onClick={other.run}
-          size="lg"
-          variant="outline"
-        >
-          {t("Do {title} instead", { title: title(alternative) })}
-        </Button>
-      )}
-    </div>
+    <EnterButton
+      className="h-auto min-h-11 py-2 text-balance whitespace-normal"
+      disabled={other.isPending}
+      onClick={other.run}
+    >
+      {reason === "instead"
+        ? t("Do {title} instead", { title: title(alternative) })
+        : t("Do {title} while you wait", { title: title(alternative) })}
+    </EnterButton>
   );
 }

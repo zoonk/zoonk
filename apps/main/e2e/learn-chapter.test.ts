@@ -23,7 +23,7 @@ function readChangeStatus(changeId: string) {
     .then((change) => change.status);
 }
 
-/** The day's bonus practice played out: the block "Practice now" added, then a second one. */
+/** The day's bonus practice used up: the block practice added, then a second one. */
 async function useUpBonusPractice(goalId: string) {
   const added = await prisma.studySessionBlock.findFirstOrThrow({
     orderBy: { createdAt: "desc" },
@@ -50,6 +50,54 @@ async function useUpBonusPractice(goalId: string) {
 }
 
 test.describe("Chapter page", () => {
+  test("marks the first lesson of an unstarted chapter Up next, matching Start", async ({
+    browser,
+  }, testInfo) => {
+    await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
+      const chapterId = await findPlanChapterId(user.goalId, "Vectors");
+
+      await page.goto(`/content/chapters/${chapterId}`);
+      await expect(page.getByRole("heading", { level: 1, name: "Vectors" })).toBeVisible();
+
+      const lessons = page.getByRole("region", { name: "Lessons" });
+      await expect(lessons.getByText("0 of 2", { exact: true })).toBeVisible();
+
+      const next = lessons.getByRole("link", {
+        name: /^Up next 1\. Arrows with size and direction/u,
+      });
+
+      await expect(next).toHaveCount(1);
+      await expect(lessons.getByRole("img", { exact: true, name: "Up next" })).toHaveCount(1);
+
+      await expect(page.getByRole("link", { exact: true, name: "Start" })).toHaveAttribute(
+        "href",
+        (await next.getAttribute("href")) ?? "",
+      );
+
+      await expect(
+        lessons.getByRole("link", { name: /^Coming up 2\. Adding vectors/u }),
+      ).toBeVisible();
+
+      await page.setViewportSize({ height: 1000, width: 390 });
+      await expect(next).toBeVisible();
+
+      await page.screenshot({
+        animations: "disabled",
+        fullPage: true,
+        path: testInfo.outputPath("unstarted-chapter-390.png"),
+      });
+
+      await page.setViewportSize({ height: 1000, width: 1440 });
+      await expect(next).toBeVisible();
+
+      await page.screenshot({
+        animations: "disabled",
+        fullPage: true,
+        path: testInfo.outputPath("unstarted-chapter-1440.png"),
+      });
+    });
+  });
+
   test("shows the chapter's lessons, mistakes and skills, takes a report and a question, and practices it up to the day's cap", async ({
     browser,
   }) => {
@@ -62,18 +110,20 @@ test.describe("Chapter page", () => {
 
       const chapterUrl = new RegExp(`/content/chapters/${chapterId}$`, "u");
 
-      // Chapters open from the Journey, which is the way back.
+      // Chapters open from the Plan, which is the way back.
       await page.goto(`/content/chapters/${chapterId}`);
       await expect(page.getByRole("heading", { level: 1, name: CHAPTER })).toBeVisible();
 
       await expect(
-        page.getByRole("main").getByRole("link", { name: "Back to Journey" }),
-      ).toHaveAttribute("href", "/journey");
+        page.getByRole("main").getByRole("link", { name: "Back to Plan" }),
+      ).toHaveAttribute("href", "/plan");
 
       // Numbered as her course lists it (its tenth chapter), not by where her plan teaches it.
       await expect(page.getByText("Chapter 10", { exact: true })).toBeVisible();
-      // Its one way in, with how far she is in it, right under its name.
-      await expect(page.getByRole("link", { name: /^Continue\s*33% complete$/u })).toHaveAttribute(
+      // Its one way in right under its name, with how far she is in it in its facts.
+      await expect(page.getByText(/^3 lessons(?: · About \d+\smin)? · 33% done$/u)).toBeVisible();
+
+      await expect(page.getByRole("link", { exact: true, name: "Continue" })).toHaveAttribute(
         "href",
         /\/learn\/[\da-f-]{36}$/u,
       );
@@ -123,7 +173,7 @@ test.describe("Chapter page", () => {
 
       // "Ask" is about the chapter as a whole, and closing it hands focus back to it.
       const tutor = await askSuggestion({
-        ask: "Ask Buddy about this chapter",
+        ask: "Ask Zu about this chapter",
         description: "Ask questions about this chapter",
         page,
         suggestion: "What will I be able to do after this chapter?",
@@ -142,20 +192,22 @@ test.describe("Chapter page", () => {
       await page.keyboard.press("Escape");
       await expect(tutor).toBeHidden();
 
-      await expect(
-        page.getByRole("button", { name: "Ask Buddy about this chapter" }),
-      ).toBeFocused();
+      await expect(page.getByRole("button", { name: "Ask Zu about this chapter" })).toBeFocused();
 
-      // Her open mistake is on this chapter's skills: practice adds a bonus block on them, or
-      // opens its next lesson once today's session has already asked every question on them.
-      await expect(page.getByText("1 from this chapter", { exact: true })).toBeVisible();
-      await page.getByRole("button", { name: "Practice now" }).click();
+      // General chapter practice adds a bonus block or opens its next lesson once today's
+      // session has already asked every question. Targeted corrections live in the notebook.
+      const practiceMistakes = page.getByRole("button", {
+        exact: true,
+        name: "Practice this chapter",
+      });
+
+      await practiceMistakes.click();
       await expect(page).toHaveURL(/\/(?:session|learn\/[^/?]+\?session=)/u);
 
       // Bonus practice stops at two blocks a day: after both, the tap says so and adds none.
       const sessionId = await useUpBonusPractice(user.goalId);
       await page.goto(`/content/chapters/${chapterId}`);
-      await page.getByRole("button", { name: "Practice now" }).click();
+      await practiceMistakes.click();
 
       await expect(
         page.getByRole("status").filter({ hasText: "That's all the bonus practice for today." }),
@@ -198,7 +250,7 @@ test.describe("Chapter page", () => {
       await page.goto(`/content/chapters/${chapterId}`);
 
       const tutor = await askSuggestion({
-        ask: "Ask Buddy about this chapter",
+        ask: "Ask Zu about this chapter",
         description: "Ask questions about this chapter",
         page,
         suggestion: "What will I be able to do after this chapter?",
@@ -211,9 +263,7 @@ test.describe("Chapter page", () => {
 
       await card.getByRole("button", { name: "Apply" }).click();
 
-      await expect(card.getByRole("status")).toHaveText(
-        "It's in your plan, and today's session follows it.",
-      );
+      await expect(card.getByRole("status")).toHaveText("Your plan follows it from now on.");
 
       await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
     });

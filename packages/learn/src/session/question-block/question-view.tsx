@@ -10,7 +10,7 @@ import { MatchPairsQuestion } from "./match-pairs-question";
 import { NumericQuestion } from "./numeric-question";
 import { OrderQuestion, type OrderResult } from "./order-question";
 import { type QuestionBlockPhase } from "./question-block-state";
-import { TrueFalseQuestion } from "./true-false-question";
+import { TrueFalseQuestion, type TrueFalseResult } from "./true-false-question";
 import { TypedQuestion } from "./typed-question";
 
 /** The options an answer picks: one, several, or none for another shape. */
@@ -26,14 +26,31 @@ function getPicks(answer: StudyQuestionAnswer | null): number[] {
   return "selectedIndexes" in answer ? answer.selectedIndexes : [];
 }
 
-/** What a graded choice question marks: the right options, and the ones the learner picked. */
+/**
+ * What a graded choice question marks: the right options, and the ones the learner picked (none
+ * for "I'm not sure", which still shows the right one).
+ */
 function getChoiceResult(phase: QuestionBlockPhase): ChoiceResult | null {
   if (phase.kind !== "feedback") {
     return null;
   }
 
-  const picked = getPicks(phase.answer);
-  return picked.length > 0 ? { correct: getPicks(phase.feedback.correctAnswer), picked } : null;
+  return { correct: getPicks(phase.feedback.correctAnswer), picked: getPicks(phase.answer) };
+}
+
+/** What a graded statement marks: its right answer, and the learner's (a blank included). */
+function getTrueFalseResult(phase: QuestionBlockPhase): TrueFalseResult | null {
+  if (phase.kind !== "feedback") {
+    return null;
+  }
+
+  const { answer } = phase;
+  const correct = phase.feedback.correctAnswer;
+
+  return {
+    answer: "isTrue" in answer ? { isTrue: answer.isTrue } : { dontKnow: true },
+    correct: correct && "isTrue" in correct ? correct.isTrue : null,
+  };
 }
 
 /** Where a graded ordering question put each step, and where each one goes. */
@@ -71,15 +88,21 @@ export function isNetScoredQuestion({
   return capsule ? capsule.format === "swipe" : detail.block.netScored;
 }
 
-/** The question's answer control for its format; the key resets it for every question. */
+/**
+ * The question's answer control for its format; the key resets it for every question. It hands
+ * the host the answer as it's made (`onChange`, null until complete) for the host's Check, and a
+ * typed answer straight away when Enter sends it from its field (`onSubmit`).
+ */
 export function QuestionView({
   detail,
-  onAnswer,
+  onChange,
+  onSubmit,
   phase,
   question,
 }: {
   detail: StudyBlockDetail;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
+  onChange: (answer: StudyQuestionAnswer | null) => void;
+  onSubmit: (answer: StudyQuestionAnswer) => void;
   phase: QuestionBlockPhase;
   question: StudyQuestion;
 }) {
@@ -90,7 +113,8 @@ export function QuestionView({
       <NumericQuestion
         disabled={locked}
         entry={question.entry}
-        onAnswer={onAnswer}
+        onChange={onChange}
+        onSubmit={onSubmit}
         result={getAnswerMark(phase)}
         unit={question.unit}
       />
@@ -98,14 +122,21 @@ export function QuestionView({
   }
 
   if (question.format === "typed") {
-    return <TypedQuestion disabled={locked} onAnswer={onAnswer} result={getAnswerMark(phase)} />;
+    return (
+      <TypedQuestion
+        disabled={locked}
+        onChange={onChange}
+        onSubmit={onSubmit}
+        result={getAnswerMark(phase)}
+      />
+    );
   }
 
   if (question.format === "order") {
     return (
       <OrderQuestion
         disabled={locked}
-        onAnswer={onAnswer}
+        onChange={onChange}
         result={getOrderResult(phase)}
         steps={question.options ?? []}
       />
@@ -117,7 +148,7 @@ export function QuestionView({
       <MatchPairsQuestion
         disabled={locked}
         left={question.left ?? []}
-        onAnswer={onAnswer}
+        onChange={onChange}
         right={question.right ?? []}
       />
     );
@@ -128,7 +159,8 @@ export function QuestionView({
       <TrueFalseQuestion
         allowBlank={isNetScoredQuestion({ detail, question })}
         disabled={locked}
-        onAnswer={onAnswer}
+        onChange={onChange}
+        result={getTrueFalseResult(phase)}
         statement={question.question}
         trueFalseLabels={detail.trueFalseLabels}
       />
@@ -138,7 +170,7 @@ export function QuestionView({
   return (
     <ChoiceQuestion
       disabled={locked}
-      onAnswer={onAnswer}
+      onChange={onChange}
       options={question.options ?? []}
       result={getChoiceResult(phase)}
       select={question.select}

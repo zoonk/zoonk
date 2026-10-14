@@ -1,3 +1,4 @@
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -13,6 +14,32 @@ import { createStudyDay, openAs } from "./study-day";
 
 /** A chapter of Maya's plan, opened directly. */
 const CHAPTER = "Exponents and scientific notation";
+
+async function readPhoneTitleTop(tab: Page) {
+  await tab.setViewportSize({ height: 844, width: 390 });
+  await tab.goto("/today");
+
+  await expect(tab.getByRole("banner")).toBeVisible();
+  await expect(tab.locator('[data-slot="today-skeleton"]')).toHaveCount(0);
+
+  const title = tab.getByRole("main").getByRole("heading", { level: 1, name: "Today" });
+  await expect(title).toBeVisible();
+
+  const box = await title.boundingBox();
+  return box?.y;
+}
+
+/**
+ * A task link that leads nowhere says so inside the task's frame, as its loading screen drew it
+ * (the ✕ to leave), instead of the public site's header and footer.
+ */
+async function expectTaskNotFound(tab: Page, path: string) {
+  await tab.goto(path);
+
+  await expect(tab.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+  await expect(tab.getByRole("contentinfo")).toHaveCount(0);
+  await expect(tab.getByRole("link", { name: "Leave" })).toBeVisible();
+}
 
 /** A learner with two planned goals, 40 and 15 minutes a day, on the first. */
 async function createTwoGoalLearner() {
@@ -90,15 +117,15 @@ test.describe("Learning tabs frame", () => {
 
     await expect.poll(() => readActiveGoalId(user.id)).toBe(second.id);
 
-    // Before a buddy is picked, its tab is called Buddy.
-    await page.getByRole("link", { exact: true, name: "Buddy" }).click();
+    // Before a buddy is picked, its tab shows the default buddy, Zu.
+    await page.getByRole("link", { exact: true, name: "Zu" }).click();
     await expect(page).toHaveURL(/\/buddy$/u);
 
     await expect(page.getByRole("button", { name: /Current goal: Learn to cook/u })).toBeVisible();
 
     // The palette offers only the goals to switch to, not the one on screen.
     const palette = await openPaletteWithKeyboard(page);
-    const goals = palette.getByRole("group", { name: "Goals" });
+    const goals = palette.getByRole("group", { name: "Your goals" });
 
     await expect(goals.getByRole("option")).toHaveText(["Switch to Bake sourdough bread"]);
 
@@ -131,17 +158,17 @@ test.describe("Learning tabs frame", () => {
     await page.keyboard.press("Escape");
 
     // On the goal's own page it's clear which goal changes.
-    await page.goto("/journey");
-    const openMenu = () => page.getByRole("button", { name: "Journey options" }).click();
+    await page.goto("/plan");
+    const openMenu = () => page.getByRole("button", { name: "Plan options" }).click();
 
     await openMenu();
     await page.getByRole("menuitem", { name: "Pause this goal" }).click();
 
     await expect.poll(() => readGoalStatus(first.id)).toBe("paused");
 
-    // Paused, the Journey says so, with the way back right there.
-    const notice = page.getByText("This goal is on pause. Nothing is planned until you resume it.");
-    await expect(notice).toBeVisible();
+    // Paused, the Plan's one suggestion says so, with the way back right there.
+    const notice = page.getByRole("region", { name: "Bake sourdough bread is paused" });
+    await expect(notice).toContainText("Nothing is planned until you resume it.");
 
     await trigger.click();
 
@@ -174,7 +201,7 @@ test.describe("Learning tabs frame", () => {
     await page.getByRole("menuitem", { name: "Archive this goal" }).click();
     await confirm.getByRole("button", { name: "Archive" }).click();
 
-    // The archived goal leaves its Journey for Today, which moves to the goal still active.
+    // The archived goal leaves its Plan for Today, which moves to the goal still active.
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("button", { name: /Current goal: Learn to cook/u })).toBeVisible();
     await expect.poll(() => readActiveGoalId(user.id)).toBe(second.id);
@@ -207,14 +234,154 @@ test.describe("Learning tabs frame", () => {
     await page.context().close();
   });
 
-  test("visitors without a goal are invited to start one", async ({ page }) => {
-    await page.goto("/buddy");
+  test("a learner whose only goal is a quick explanation finds it in the goal menu", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const title = "What does “the market is up 2%” mean?";
+    const goal = await goalFixture({ kind: "explain", title, userId: user.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
-    await expect(page.getByRole("heading", { name: "Start with a goal" })).toBeVisible();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
 
-    await expect(
-      page.getByRole("main").getByRole("link", { name: "Start a goal" }),
-    ).toHaveAttribute("href", "/start");
+    await page
+      .getByRole("complementary", { name: "Sidebar" })
+      .getByRole("button", { name: "Start a goal" })
+      .click();
+
+    await expect(page.getByText("Quick explanations")).toBeVisible();
+
+    await expect(page.getByRole("menuitem", { name: title })).toHaveAttribute(
+      "href",
+      `/explain/${goal.id}`,
+    );
+
+    await expect(page.getByRole("menuitem", { name: "Start a new goal" })).toHaveAttribute(
+      "href",
+      "/start",
+    );
+
+    await page.context().close();
+  });
+
+  test("visitors keep each page's title and what it is, with the way in right under it", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 860, width: 1280 });
+    await page.goto("/today");
+
+    const main = page.getByRole("main");
+    const todayTitle = await main.getByRole("heading", { level: 1, name: "Today" }).boundingBox();
+
+    const gatedPages = [
+      {
+        description: "What you'll study each day until your goal, and what it covers.",
+        path: "/plan",
+        title: "Plan",
+      },
+      {
+        description: "Your buddy answers your questions and adjusts your plan.",
+        path: "/buddy",
+        title: "Your buddy",
+      },
+      {
+        description: "The questions you got wrong, why, and practice until you get them right.",
+        path: "/mistakes",
+        title: "Mistakes notebook",
+      },
+    ];
+
+    for (const { description, path, title } of gatedPages) {
+      // oxlint-disable-next-line no-await-in-loop -- One page after the other, in one tab.
+      await page.goto(path);
+
+      // A visitor may have goals in an account: the page keeps its title and says what it is,
+      // then they log in and come back here, or start free.
+      const heading = main.getByRole("heading", { level: 1, name: title });
+
+      // oxlint-disable-next-line no-await-in-loop -- Checks this page before the next one.
+      await expect(heading).toBeVisible();
+      // oxlint-disable-next-line no-await-in-loop -- Checks this page before the next one.
+      await expect(main.getByText(description)).toBeVisible();
+
+      // oxlint-disable-next-line no-await-in-loop -- Checks this page before the next one.
+      await expect(
+        main.getByRole("heading", { level: 2, name: "Log in to continue" }),
+      ).toBeVisible();
+
+      // oxlint-disable-next-line no-await-in-loop -- Checks this page before the next one.
+      await expect(main.getByRole("link", { name: "Log in" })).toHaveAttribute(
+        "href",
+        `/login?next=${encodeURIComponent(path)}`,
+      );
+
+      // oxlint-disable-next-line no-await-in-loop -- Checks this page before the next one.
+      await expect(main.getByRole("link", { name: "Start free" })).toHaveAttribute(
+        "href",
+        "/start",
+      );
+    }
+
+    // Moving from Today to the Plan keeps the large title in its place.
+    await page.goto("/plan");
+    const planTitle = await main.getByRole("heading", { level: 1, name: "Plan" }).boundingBox();
+
+    expect(planTitle?.y).toBe(todayTitle?.y);
+  });
+
+  // A tab's own page draws the top bar from its first paint, and a page with its own bar (the
+  // notebook's) never shows it: either way the title stays where it first painted.
+  for (const path of ["/today", "/mistakes"]) {
+    test(`on a phone, ${path}'s title never moves while the page loads`, async ({ page }) => {
+      // Where the title is on every frame from the first one it's in, as the page streams in.
+      await page.addInitScript(() => {
+        const tops: number[] = [];
+        Object.defineProperty(globalThis, "zoonkTitleTops", { value: tops });
+
+        const record = () => {
+          const title = document.querySelector("main h1");
+
+          if (title) {
+            tops.push(Math.round(title.getBoundingClientRect().top));
+          }
+
+          if (document.readyState !== "complete" || tops.length < 10) {
+            requestAnimationFrame(record);
+          }
+        };
+
+        requestAnimationFrame(record);
+      });
+
+      await page.setViewportSize({ height: 844, width: 390 });
+      await page.goto(path);
+      await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
+
+      const tops = await page.evaluate(
+        () => (globalThis as unknown as { zoonkTitleTops: number[] }).zoonkTitleTops,
+      );
+
+      expect(tops.length).toBeGreaterThan(0);
+      expect(new Set(tops)).toStrictEqual(new Set([tops[0]]));
+    });
+  }
+
+  test("on a phone, a visitor's title sits where a learner's does: the top bar keeps one height", async ({
+    browser,
+    page,
+  }) => {
+    const { user } = await createStudyDay();
+    const learnerPage = await openAs(browser, user);
+
+    // The learner's goal and level are 36px and a visitor's "Log in" 44px; the bar's row is 44px.
+    const learnerTop = await readPhoneTitleTop(learnerPage);
+    const visitorTop = await readPhoneTitleTop(page);
+
+    expect(visitorTop).toBeDefined();
+    expect(visitorTop).toBe(learnerTop);
+
+    await learnerPage.context().close();
   });
 });
 
@@ -223,7 +390,7 @@ test.describe("Learning tabs frame", () => {
  * at the bottom under it (phones and tablets held upright), where the thumb is.
  */
 test.describe("Learning tabs", () => {
-  test("on a laptop, Today, Journey and the buddy sit in the middle of the top bar, and the keyboard moves through them", async ({
+  test("on a laptop, the sidebar holds the goal, search, Today, the Plan and the buddy, the study shortcuts and the account, in keyboard order", async ({
     browser,
   }) => {
     const { user } = await createStudyDay({ buddy: true });
@@ -233,45 +400,73 @@ test.describe("Learning tabs", () => {
     await page.setViewportSize({ height: 860, width: 1280 });
     await page.goto("/today");
 
-    const bar = page.getByRole("banner");
-    const tabs = bar.getByRole("navigation", { name: "Learning tabs" });
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+    const tabs = sidebar.getByRole("navigation", { name: "Learning tabs" });
+    const study = sidebar.getByRole("navigation", { name: "Study" });
 
-    await expect(tabs.getByRole("link")).toHaveText(["Today", "Journey", /^Zu/u]);
+    await expect(tabs.getByRole("link")).toHaveText([/^Today/u, "Plan", /^Zu/u]);
 
-    await expect(tabs.getByRole("link", { exact: true, name: "Today" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    // Today ends with what's left of the day's session.
+    const today = tabs.getByRole("link", { name: /^Today/u });
 
-    await expect(tabs.getByRole("link", { name: "Journey" })).toHaveAttribute("href", "/journey");
+    await expect(today).toHaveAttribute("aria-current", "page");
+    await expect(today).toHaveAccessibleName(/^Today\s*\d+ activit(?:y|ies) left$/u);
+
+    await expect(tabs.getByRole("link", { name: "Plan" })).toHaveAttribute("href", "/plan");
     await expect(tabs.getByRole("link", { name: /^Zu/u })).toHaveAttribute("href", "/buddy");
 
-    // The goal on the left; the learner's belt and level (opening Statistics) and the account on
-    // the right. Energy lives on the buddy's page, and nothing else waits at the bottom.
-    const level = bar.getByRole("link", { name: /^\w+ belt, level \d+\. Statistics$/u });
+    // The goal's own places (an exam's page) between the notebook and the statistics, then the
+    // catalog, which every learner has.
+    await expect(study.getByRole("link")).toHaveText([
+      /^Mistakes notebook/u,
+      "Exam",
+      "Statistics",
+      "Explore courses",
+    ]);
 
-    await expect(bar.getByRole("button", { name: /Current goal: E2E exam/u })).toBeVisible();
-    await expect(level).toHaveAttribute("href", "/stats");
-    await expect(bar.getByRole("button", { name: "User menu" })).toBeVisible();
+    // The goal and search on top; the account at the end, one row with the learner's name and
+    // their belt and level that opens the account menu (Statistics is above, and in the menu).
+    // Energy lives on the buddy's page, and the phone's bars are gone.
+    const account = sidebar.getByRole("button", { name: /, \w+ belt, level \d+, User menu$/u });
+
+    await expect(sidebar.getByRole("button", { name: /Current goal: E2E exam/u })).toBeVisible();
+    await expect(account).toBeVisible();
+    await expect(sidebar.getByRole("link", { name: /belt, level/u })).toHaveCount(0);
     await expect(page.getByRole("link", { name: /Energy/u })).toHaveCount(0);
     await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(1);
+    await expect(page.getByRole("banner")).toHaveCount(0);
 
-    // Tab order is reading order: the goal, the three tabs, the level, the account. Enter opens a
-    // tab.
-    await bar.getByRole("button", { name: /Current goal/u }).focus();
+    // The first stop skips the frame: past it, the next stop is the page's main action.
     await page.keyboard.press("Tab");
-    await expect(tabs.getByRole("link", { exact: true, name: "Today" })).toBeFocused();
+    await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("main")).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(tabs.getByRole("link", { name: "Journey" })).toBeFocused();
+    await expect(page.getByRole("main").getByRole("button", { name: /^Start/u })).toBeFocused();
+
+    // Tab order is reading order: the goal, search, the three tabs, the study shortcuts and the
+    // account. Enter opens a tab.
+    await sidebar.getByRole("button", { name: /Current goal/u }).focus();
+    await page.keyboard.press("Tab");
+    await expect(sidebar.getByRole("button", { name: "Search or ask…" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(today).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(tabs.getByRole("link", { name: "Plan" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(tabs.getByRole("link", { name: /^Zu/u })).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(level).toBeFocused();
+    await expect(study.getByRole("link", { name: /^Mistakes notebook/u })).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(bar.getByRole("button", { name: "User menu" })).toBeFocused();
+    await expect(study.getByRole("link", { name: "Exam" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(study.getByRole("link", { name: "Statistics" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(study.getByRole("link", { name: "Explore courses" })).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(account).toBeFocused();
 
-    await page.keyboard.press("Shift+Tab");
-    await page.keyboard.press("Shift+Tab");
+    await tabs.getByRole("link", { name: /^Zu/u }).focus();
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL(/\/buddy$/u);
@@ -294,7 +489,7 @@ test.describe("Learning tabs", () => {
     await expect(bar.getByRole("button", { name: /Current goal: E2E exam/u })).toBeVisible();
     await expect(bar.getByRole("button", { name: "User menu" })).toBeVisible();
     await expect(bar.getByRole("navigation")).toHaveCount(0);
-    await expect(tabs.getByRole("link")).toHaveText(["Today", "Journey", /^Zu/u]);
+    await expect(tabs.getByRole("link")).toHaveText(["Today", "Plan", /^Zu/u]);
 
     const barBox = await tabs.boundingBox();
     expect(barBox!.y + barBox!.height).toBeCloseTo(844, 0);
@@ -334,10 +529,11 @@ test.describe("Learning tabs", () => {
     await expect.poll(() => background("Zu")).not.toBe("rgba(0, 0, 0, 0)");
     await expect.poll(() => background("Today")).toBe("rgba(0, 0, 0, 0)");
 
-    // Adding a goal is a step of its own, without the tabs.
+    // Starting a goal happens in the app too, with no tab bar: until the plan exists the tabs would
+    // only lead to a half-made one, and onboarding's bar has the way back.
     await page.goto("/start");
-    await expect(page.getByRole("textbox", { name: "Your goal" })).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
+    await expect(tabs).toHaveCount(0);
     await page.context().close();
   });
 });
@@ -357,13 +553,17 @@ test.describe("Pages opened from a tab", () => {
 
       await page.getByRole("link", { name: /^Mistakes notebook/u }).click();
       await expect(page).toHaveURL(/\/mistakes$/u);
-      await expect(page.getByRole("heading", { level: 1, name: "3 to fix" })).toBeVisible();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Mistakes notebook" }),
+      ).toBeVisible();
 
       // Nothing from the app bar: the goal and the account belong to the tabs' own pages.
       await expect(page.getByRole("button", { name: /Current goal/u })).toHaveCount(0);
       await expect(page.getByRole("button", { name: "User menu" })).toHaveCount(0);
 
-      const back = page.getByRole("link", { name: "Back to Today" });
+      // Its way back returns to the page it was opened from, whichever it was: Today here.
+      const back = page.getByRole("link", { exact: true, name: "Back" });
       await expect(back).toHaveAttribute("href", "/today");
 
       const tabs = page.getByRole("navigation", { name: "Learning tabs" });
@@ -379,7 +579,7 @@ test.describe("Pages opened from a tab", () => {
     });
   });
 
-  test("on a laptop, the page's bar keeps the tabs in its middle and its actions on the right", async ({
+  test("on a laptop, the page's bar keeps the way back and its actions while the sidebar keeps the tabs", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
@@ -389,26 +589,64 @@ test.describe("Pages opened from a tab", () => {
       await page.goto(`/content/chapters/${chapterId}`);
       await expect(page.getByRole("heading", { level: 1, name: CHAPTER })).toBeVisible();
 
-      await expect(page.getByRole("button", { name: /Current goal/u })).toHaveCount(0);
-      await expect(page.getByRole("link", { name: "Back to Journey" })).toBeVisible();
-
+      // The sidebar keeps the goal and the tabs; the page's bar has the way back and its actions.
       await expect(
-        page.getByRole("button", { name: "Ask Buddy about this chapter" }),
+        page
+          .getByRole("complementary", { name: "Sidebar" })
+          .getByRole("button", { name: /Current goal/u }),
       ).toBeVisible();
+
+      await expect(page.getByRole("link", { name: "Back to Plan" })).toBeVisible();
+
+      await expect(page.getByRole("button", { name: "Ask Zu about this chapter" })).toBeVisible();
 
       await expect(page.getByRole("button", { name: "Chapter options" })).toBeVisible();
 
       const tabs = page.getByRole("navigation", { name: "Learning tabs" });
       await expect(tabs).toHaveCount(1);
 
-      await expect(tabs.getByRole("link", { name: "Journey" })).toHaveAttribute(
+      await expect(tabs.getByRole("link", { name: "Plan" })).toHaveAttribute(
         "aria-current",
         "page",
       );
 
-      // Opened directly, there's no page to return to: the way back leads to the Journey.
-      await page.getByRole("link", { name: "Back to Journey" }).click();
-      await expect(page).toHaveURL(/\/journey$/u);
+      // Opened directly, there's no page to return to: the way back leads to the Plan.
+      await page.getByRole("link", { name: "Back to Plan" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
     });
+  });
+
+  test("a page from an old link says it isn't there inside the app, keeping the tabs and the way back", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+      await page.setViewportSize({ height: 844, width: 390 });
+      await page.goto("/plan/not-a-subject");
+
+      await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+
+      // The app's frame stays around the message, instead of the public site's footer.
+      const tabs = page.getByRole("navigation", { name: "Learning tabs" });
+
+      await expect(tabs.getByRole("link", { exact: true, name: "Plan" })).toHaveAttribute(
+        "aria-current",
+        "page",
+      );
+
+      await expect(page.getByRole("contentinfo")).toHaveCount(0);
+
+      await page.getByRole("link", { name: "Back to Plan" }).click();
+      await expect(page).toHaveURL(/\/plan$/u);
+    });
+  });
+
+  test("a task from an old link says it isn't there in the task's own frame, and leaving goes to Today", async ({
+    authenticatedPage: page,
+  }) => {
+    await expectTaskNotFound(page, `/learn/${crypto.randomUUID()}`);
+    await expectTaskNotFound(page, `/mock/${crypto.randomUUID()}`);
+
+    await page.getByRole("link", { name: "Leave" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
   });
 });

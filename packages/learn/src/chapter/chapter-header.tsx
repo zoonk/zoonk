@@ -9,18 +9,22 @@ import {
   DetailHero,
   DetailHeroText,
   DetailTitle,
+  useDoneShare,
 } from "../_components/detail-page";
-import { KindTile } from "../_components/kind-tile";
+import { useFormatDuration } from "../_utils/time-format";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useChapterScreen } from "./chapter-context";
 
-/** "11 lessons · About 40 min": how much the chapter holds. */
+/** "11 lessons · About 40 min · 33% done": how much the chapter holds and how far the learner is. */
 function ChapterFacts() {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const doneShare = useDoneShare();
   const { chapter } = useChapterScreen();
   const { lessons } = chapter;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
+  const done = lessons.filter((lesson) => lesson.state === "done").length;
 
   if (lessons.length === 0) {
     return null;
@@ -28,16 +32,17 @@ function ChapterFacts() {
 
   const facts = [
     t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
-    minutes > 0 && t("About {minutes, number} min", { minutes }),
+    minutes > 0 && t("About {time}", { time: formatDuration(minutes) }),
+    doneShare(done / lessons.length),
   ].filter(Boolean);
 
   return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
 }
 
 /**
- * The chapter's tile, its subject and number there (as the subject's page numbers it), its title,
- * how much it holds, then "Continue" into the next lesson with how far the learner is in the
- * chapter and the chapter's "…" beside it.
+ * The chapter's subject and number there (as the subject's page numbers it), its title, how much it
+ * holds and how far the learner is, and "Continue" into the next lesson with the chapter's "…"
+ * beside it (beside the title from `md`).
  */
 export function ChapterHeader() {
   const t = useExtracted();
@@ -47,28 +52,25 @@ export function ChapterHeader() {
   const next = lessons.find((lesson) => lesson.state === "next");
 
   return (
-    <>
-      <DetailHero>
-        <KindTile kind="lesson" size="lg" />
-        <DetailHeroText>
-          <DetailEyebrow>
-            {chapter.chapter.subject
-              ? t("{subject} · Chapter {number, number}", {
-                  number: chapter.chapter.position,
-                  subject: chapter.chapter.subject.name,
-                })
-              : t("Chapter {number, number}", { number: chapter.chapter.position })}
-          </DetailEyebrow>
-          <DetailTitle>{chapter.chapter.title}</DetailTitle>
-          <ChapterFacts />
-        </DetailHeroText>
-      </DetailHero>
+    <DetailHero>
+      <DetailHeroText>
+        <DetailEyebrow>
+          {chapter.chapter.subject
+            ? t("{subject} · Chapter {number, number}", {
+                number: chapter.chapter.position,
+                subject: chapter.chapter.subject.name,
+              })
+            : t("Chapter {number, number}", { number: chapter.chapter.position })}
+        </DetailEyebrow>
+        <DetailTitle>{chapter.chapter.title}</DetailTitle>
+        <ChapterFacts />
+      </DetailHeroText>
 
       <DetailActions className="empty:hidden">
         {next && (
           <DetailContinueLink
             href={`${hrefs.lessonBasePath}/${next.lessonId}`}
-            share={lessons.length > 0 ? done / lessons.length : 0}
+            lessonWritten={next.written}
             started={done > 0}
           />
         )}
@@ -80,12 +82,12 @@ export function ChapterHeader() {
           votes={false}
         />
       </DetailActions>
-    </>
+    </DetailHero>
   );
 }
 
 /**
- * The chapter's bar: back to the Journey (or the subject it was opened from), and "Ask" on the
+ * The chapter's bar: back to the Plan (or the subject it was opened from), and "Ask" on the
  * right; the chapter's "…" sits beside its main action.
  */
 export function ChapterBar() {
@@ -94,7 +96,7 @@ export function ChapterBar() {
 
   return (
     <LearnPageBar
-      back={{ href: hrefs.back, label: hrefs.backLabel ?? t("Journey") }}
+      back={{ href: hrefs.back, label: hrefs.backLabel ?? t("Plan") }}
       title={chapter.chapter.title}
     >
       {ask}

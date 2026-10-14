@@ -5,7 +5,11 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
@@ -99,6 +103,89 @@ async function writeLessonElsewhere(lessonId: string) {
   await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
 }
 
+test("directly loading and reloading an unwritten lesson never requests generation", async ({
+  userWithoutProgress: page,
+}) => {
+  const lesson = await libraryLessonFixture();
+  const asked = await answerLessonWriting(page, [{ events: [], id: `e2e-${randomUUID()}` }]);
+
+  await page.goto(`/learn/${lesson.id}`);
+  await expect(page.getByText("This lesson isn't written yet")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeVisible();
+  expect(asked).toStrictEqual([]);
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeVisible();
+  expect(asked).toStrictEqual([]);
+});
+
+test("the in-app lesson click starts writing before navigating without an extra step", async ({
+  browser,
+}) => {
+  const { unwritten: lesson, user } = await createWaitingLearner();
+  const chapter = await libraryChapterFixture();
+  await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
+
+  await prisma.planItem.updateMany({
+    data: { chapterId: chapter.id },
+    where: { lessonId: lesson.id },
+  });
+
+  const page = await openAs(browser, user);
+  const runId = `e2e-${randomUUID()}`;
+
+  const asked = await answerLessonWriting(page, [
+    { events: [lessonStep("writeLesson", "started")], id: runId },
+  ]);
+
+  await page.goto(`/content/chapters/${chapter.id}`);
+  await page.getByRole("link", { exact: true, name: "Start" }).click();
+  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?generation=${runId}$`, "u"));
+  await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeHidden();
+  expect(asked).toStrictEqual([runId]);
+  await page.context().close();
+});
+
+test("a late writing response doesn't reopen a lesson the learner left", async ({ browser }) => {
+  const { unwritten: lesson, user } = await createWaitingLearner();
+  const chapter = await libraryChapterFixture();
+
+  await Promise.all([
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
+    prisma.planItem.updateMany({ data: { chapterId: chapter.id }, where: { lessonId: lesson.id } }),
+  ]);
+
+  const page = await openAs(browser, user);
+  const answer = Promise.withResolvers<null>();
+  const answered = Promise.withResolvers<null>();
+  const asked: string[] = [];
+
+  await page.route("**/v1/library/lessons/*/generations", async (route) => {
+    asked.push(route.request().url());
+    await answer.promise;
+    await route.fulfill({ json: { status: "ready" } });
+    answered.resolve(null);
+  });
+
+  await page.goto(`/content/chapters/${chapter.id}`);
+
+  const chapterView = page
+    .getByRole("article", { includeHidden: true })
+    .filter({ has: page.getByRole("heading", { includeHidden: true, name: chapter.title }) });
+
+  const start = chapterView.getByRole("link", { includeHidden: true, name: /^Start\b/u });
+  await start.click();
+  await expect.poll(() => asked.length).toBe(1);
+  await page.getByRole("link", { name: "Back to Plan" }).click();
+  await expect(page).toHaveURL(/\/plan$/u);
+  answer.resolve(null);
+  await answered.promise;
+  await expect(start).not.toHaveAttribute("aria-busy", "true");
+  await expect(page).toHaveURL(/\/plan$/u);
+  await page.context().close();
+});
+
 test("opens a lesson once another app writes it, though this app saw it unwritten", async ({
   userWithoutProgress: page,
 }) => {
@@ -108,6 +195,7 @@ test("opens a lesson once another app writes it, though this app saw it unwritte
 
   await failLessonWriting(page);
   await page.goto(`/learn/${unwritten.id}`);
+  await page.getByRole("button", { name: "Start this lesson" }).click();
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
   await writeLessonElsewhere(unwritten.id);
@@ -132,6 +220,7 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
   // A later review takes it out of play, straight in the database: it waits to be written again.
   await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
   await page.reload();
+  await page.getByRole("button", { name: "Start this lesson" }).click();
 
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
   await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
@@ -164,10 +253,18 @@ test.describe("A lesson still being written", () => {
       lessonStep("writeLesson", "started"),
     ];
 
-    await answerLessonWriting(page, [{ events, id: `e2e-lesson-${randomUUID()}` }]);
+    const runId = `e2e-lesson-${randomUUID()}`;
+
+    await prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: unwritten.id },
+    });
+
+    const asked = await answerLessonWriting(page, [{ events, id: runId }]);
     await page.goto(`/learn/${unwritten.id}`);
 
     await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+    expect(asked).toStrictEqual([]);
     const phases = page.getByRole("list", { name: "Writing your lesson" });
 
     await expect(phases.getByRole("listitem")).toHaveText([
@@ -205,6 +302,7 @@ test.describe("A lesson still being written", () => {
     ]);
 
     await page.goto(`/learn/${unwritten.id}`);
+    await page.getByRole("button", { name: "Start this lesson" }).click();
 
     // Never a dead end: it can be tried again, or swapped for the plan's next written lesson.
     await expect(page.getByText("This didn't finish")).toBeVisible();
@@ -241,9 +339,14 @@ test.describe("A lesson still being written", () => {
     );
 
     await page.goto(`/learn/${unwritten.id}`);
+    await page.getByRole("button", { name: "Start this lesson" }).click();
 
     await expect(page.getByRole("status").getByText("This lesson isn't available")).toBeVisible();
-    await expect(page.getByText("Something ready to do instead:")).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Ready to do instead" }),
+    ).toBeVisible();
+
     await expect(page.getByRole("link", { name: written.title })).toBeVisible();
     await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
     await page.context().close();

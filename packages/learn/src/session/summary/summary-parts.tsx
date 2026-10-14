@@ -1,224 +1,290 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
-import {
-  CheckIcon,
-  ClockIcon,
-  ListChecksIcon,
-  PauseIcon,
-  ScaleIcon,
-  TargetIcon,
-} from "lucide-react";
-import { useExtracted } from "next-intl";
-import { FactChip, FactChips } from "../../_components/fact-chips";
-import { Meter } from "../../_components/meter";
+import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { BrainIcon, RotateCcwIcon, TargetIcon, TrendingUpIcon } from "lucide-react";
+import { useExtracted, useFormatter } from "next-intl";
+import { KindDot } from "../../_components/kind-tile";
+import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
+  StepDetail,
   StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
   StepTitle,
-  StepTitleLabel,
-  StepTitleNumber,
 } from "../../_components/step-card";
 import { useFormatShare } from "../../_utils/percent";
 import { hasShareMoved } from "../../_utils/share-moved";
+import { useFormatDuration } from "../../_utils/time-format";
+import { useBeltName } from "../../_utils/use-belt-name";
 import { useStateLabel } from "../../_utils/use-state-label";
 import { type StudySessionSummary } from "../session-types";
 import { getRisenSkills } from "./risen-skills";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
-const PERCENT = 100;
+/** The time in the title, in the mono face like every number. */
+function renderMono(chunks: React.ReactNode) {
+  return <span className="font-mono font-medium tracking-[-0.04em]">{chunks}</span>;
+}
 
-/** The session's numbers as chips: time, questions, how many right, and a net score when scored so. */
-function SessionFacts() {
+/** "Done in 49 min"; a day stopped early can be shorter than a minute, and "0" would read as none. */
+function DoneTitle() {
   const t = useExtracted();
-  const formatShare = useFormatShare();
+  const formatDuration = useFormatDuration();
   const { summary } = useSessionSummary();
 
+  if (summary.minutes < 1) {
+    return t("Done in under a minute");
+  }
+
+  return t.rich("Done in <mono>{time}</mono>", {
+    mono: renderMono,
+    time: formatDuration(summary.minutes),
+  });
+}
+
+/**
+ * Where the goal stands after the session, in its one measure as the Plan says it: an exam's
+ * preparation, another goal's progress in its plan's lessons, with how the session moved it. A
+ * language goal says its level elsewhere.
+ */
+function useGoalNumber() {
+  const t = useExtracted();
+  const { goalKind, summary } = useSessionSummary();
+
+  if (goalKind === "language") {
+    return null;
+  }
+
+  const forExam = goalKind === "exam";
+  const { after, before } = forExam ? summary.preparation : summary.progress;
+
+  if (after === null) {
+    return null;
+  }
+
+  const start = before ?? after;
+
+  return {
+    change: hasShareMoved({ after, before: start }) ? { after, before: start } : null,
+    label: forExam ? t("Preparation") : t("Progress"),
+    value: after,
+  };
+}
+
+/** "27/31", the total quieter than what was right. */
+function RightAnswersValue({ correct, questions }: { correct: number; questions: number }) {
+  const format = useFormatter();
+
   return (
-    <FactChips className="justify-center">
-      {summary.netScore !== null && (
-        <FactChip>
-          <ScaleIcon aria-hidden="true" />
-          {t("Net score {net}", { net: String(summary.netScore) })}
-        </FactChip>
-      )}
-      <FactChip>
-        <ClockIcon aria-hidden="true" />
-        {/* A day stopped early can be shorter than a minute; "0 min" would read as nothing done. */}
-        {summary.minutes > 0
-          ? t("{minutes} min", { minutes: String(summary.minutes) })
-          : t("Under a minute")}
-      </FactChip>
-      {summary.questions > 0 && (
-        <FactChip>
-          <ListChecksIcon aria-hidden="true" />
-          {t("{count, plural, one {# question} other {# questions}}", { count: summary.questions })}
-        </FactChip>
-      )}
-      {summary.accuracy !== null && (
-        <FactChip>
-          <TargetIcon aria-hidden="true" />
-          {t("{share} right", { share: formatShare(summary.accuracy) })}
-        </FactChip>
-      )}
-    </FactChips>
+    <>
+      {format.number(correct)}
+      <span className="text-muted-foreground">{`/${format.number(questions)}`}</span>
+    </>
   );
 }
 
-/** A check that lands for a finished session; a pause for one stopped for today. */
-function DoneMark() {
-  const stopped = useIsStopped();
+/** What was right, as a share, and the net score where a wrong answer cancels a right one. */
+function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
+  const t = useExtracted();
+  const formatShare = useFormatShare();
 
   return (
-    <span
-      className={cn(
-        "motion-safe:animate-badge-land flex size-16 items-center justify-center rounded-2xl",
-        stopped ? "bg-muted text-foreground" : "bg-success/15 text-success",
+    <>
+      {summary.accuracy !== null && (
+        <span className="text-success-text font-mono tabular-nums">
+          {formatShare(summary.accuracy)}
+        </span>
       )}
-    >
-      {stopped ? (
-        <PauseIcon aria-hidden="true" className="size-8" />
-      ) : (
-        <CheckIcon aria-hidden="true" className="size-8" strokeWidth={2.5} />
+      {summary.accuracy !== null && summary.netScore !== null && " · "}
+      {summary.netScore !== null && (
+        <span className="font-mono tabular-nums">
+          {t("net {net}", { net: String(summary.netScore) })}
+        </span>
       )}
+    </>
+  );
+}
+
+/** "Back Oct 14 and Oct 16": the days the session's ideas come back for review. */
+function ComesBackDetail({ comesBack }: { comesBack: StudySessionSummary["comesBack"] }) {
+  const t = useExtracted();
+  const format = useFormatter();
+
+  if (comesBack.length === 0) {
+    return null;
+  }
+
+  const days = comesBack.map(({ date }) =>
+    format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
+  );
+
+  return t("Back {days}", { days: format.list(days, { type: "conjunction" }) });
+}
+
+/** The belt the session's Brain Power counts toward, with its color as a dot. */
+function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {
+  const t = useExtracted();
+  const beltName = useBeltName();
+  const { color, level } = belt.after;
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <BeltIndicator color={color} label={beltName(color)} size="sm" />
+      {t("{belt}, level {level}", { belt: beltName(color), level: String(level) })}
     </span>
   );
 }
 
-/** "Session complete" with its numbers; right after stopping, "Done for now" with what's done. */
-export function DoneStep() {
-  const t = useExtracted();
-  const stopped = useIsStopped();
-
-  return (
-    <StepCard>
-      <DoneMark />
-      <StepTitle>{stopped ? t("Done for now") : t("Session complete")}</StepTitle>
-      <SessionFacts />
-    </StepCard>
-  );
-}
-
 /**
- * Preparation before and after, as one bar with the gain lit: the part that was there in the
- * foreground, today's gain in green.
+ * The day's four numbers, two by two on a phone and in one row from `md`: right answers (with the
+ * share and, in an exam scored net, the net score), the goal's number and how it moved, what
+ * goes to review and when it comes back, and the Brain Power earned toward the belt. Each only
+ * when it means something for this goal: a language goal says its level elsewhere. The icons stay
+ * quiet; the lines under the numbers carry the color.
  */
-function PreparationBar({ after, before }: { after: number; before: number }) {
-  const low = Math.min(before, after);
+function SessionNumbers() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const formatShare = useFormatShare();
+  const { summary } = useSessionSummary();
+  const goalNumber = useGoalNumber();
 
   return (
-    <Meter className="relative h-2.5 w-full max-w-xs">
-      <div
-        className="bg-foreground absolute inset-y-0 left-0 rounded-full"
-        style={{ width: `${low * PERCENT}%` }}
-      />
-      {after > before && (
-        <div
-          className="bg-success motion-safe:animate-energy-charge absolute inset-y-0 origin-left rounded-full"
-          style={{ left: `${before * PERCENT}%`, width: `${(after - before) * PERCENT}%` }}
+    <StatTiles className="md:grid-cols-4 md:[&>li:last-child:nth-child(odd)]:col-span-1">
+      {summary.questions > 0 && (
+        <StatTile
+          detail={<RightAnswersDetail summary={summary} />}
+          icon={<TargetIcon />}
+          label={t("Right")}
+          tone="success"
+          value={<RightAnswersValue correct={summary.correct} questions={summary.questions} />}
         />
       )}
-    </Meter>
-  );
-}
 
-/** What preparation is called for this goal, under its number. */
-function usePreparationLabel(): string {
-  const t = useExtracted();
-  const { goalKind } = useSessionSummary();
+      {goalNumber && (
+        <StatTile
+          detail={
+            goalNumber.change && (
+              <span className="text-success-text font-mono tabular-nums">
+                {`${formatShare(goalNumber.change.before)} → ${formatShare(goalNumber.change.after)}`}
+              </span>
+            )
+          }
+          icon={<TrendingUpIcon />}
+          label={goalNumber.label}
+          tone="success"
+          value={formatShare(goalNumber.value)}
+        />
+      )}
 
-  return goalKind === "exam" ? t("ready for the exam") : t("of the way");
-}
+      <StatTile
+        detail={<ComesBackDetail comesBack={summary.comesBack} />}
+        icon={<RotateCcwIcon />}
+        label={t("To review")}
+        value={format.number(summary.mistakesSaved)}
+      />
 
-/** "29% → 33%": the goal's hero number before and after today, big, with the gain lit. */
-function PreparationChange({ after, before }: { after: number; before: number }) {
-  const t = useExtracted();
-  const formatShare = useFormatShare();
-  const label = usePreparationLabel();
-
-  return (
-    <>
-      <StepHeader>
-        <StepEyebrow>{t("What changed")}</StepEyebrow>
-        <StepTitle className="flex flex-col items-center gap-1">
-          <StepTitleNumber>
-            <span className="text-muted-foreground">{`${formatShare(before)} → `}</span>
-            {formatShare(after)}
-          </StepTitleNumber>
-          <StepTitleLabel className="text-base">{label}</StepTitleLabel>
-        </StepTitle>
-      </StepHeader>
-      <PreparationBar after={after} before={before} />
-    </>
+      <StatTile
+        detail={summary.belt && <BeltDetail belt={summary.belt} />}
+        icon={<BrainIcon />}
+        label={t("Brain Power")}
+        tone="brain"
+        value={t("+{points}", { points: format.number(summary.brainPower) })}
+      />
+    </StatTiles>
   );
 }
 
 /** The state a skill rose to stands out from the one it left. */
 function renderNewState(chunks: React.ReactNode) {
-  return <span className="text-foreground font-medium">{chunks}</span>;
+  return <span className="text-foreground">{chunks}</span>;
 }
 
-/** "Percentages: Learning → Solid": each skill that rose, in the same words as everywhere. */
-function SkillRises({ rises }: { rises: StudySessionSummary["skillsMoved"] }) {
+/** "Percentages · Learning → Solid": each skill that rose, in the same words as everywhere. */
+function SkillRises() {
   const t = useExtracted();
   const stateLabel = useStateLabel();
+  const { summary } = useSessionSummary();
+  const rises = getRisenSkills(summary.skillsMoved);
 
   if (rises.length === 0) {
     return null;
   }
 
   return (
-    <StepRows>
-      {rises.map((move) => (
-        <StepRow className="justify-between" key={move.skillId}>
-          <span className="min-w-0 font-medium">{move.name}</span>
-          <span className="text-muted-foreground shrink-0">
-            {t.rich("{from} → <strong>{to}</strong>", {
-              from: stateLabel({ state: move.from }),
-              strong: renderNewState,
-              to: stateLabel({ state: move.to }),
-            })}
-          </span>
-        </StepRow>
-      ))}
-    </StepRows>
+    <section className="flex w-full flex-col gap-1">
+      <h2 className="text-label">{t("Skills that rose")}</h2>
+
+      <StepRows>
+        {rises.map((move) => (
+          <StepRow className="justify-between" key={move.skillId}>
+            <span className="min-w-0 truncate font-medium">{move.name}</span>
+            <span className="text-muted-foreground shrink-0 font-mono text-xs">
+              {t.rich("{from} → <strong>{to}</strong>", {
+                from: stateLabel({ state: move.from }),
+                strong: renderNewState,
+                to: stateLabel({ state: move.to }),
+              })}
+            </span>
+          </StepRow>
+        ))}
+      </StepRows>
+    </section>
   );
 }
 
-/** The goal's preparation when the session moved it; a language goal says its level elsewhere. */
-export function usePreparationChange(): { after: number; before: number } | null {
-  const { goalKind, summary } = useSessionSummary();
-  const { after, before } = summary.preparation;
+/** Tomorrow's lesson as the summary's last row, so the day ends knowing what comes next. */
+function TomorrowRow() {
+  const t = useExtracted();
+  const stopped = useIsStopped();
+  const { summary } = useSessionSummary();
 
-  if (goalKind === "language" || after === null) {
+  if (stopped || !summary.tomorrow) {
     return null;
   }
 
-  const start = before ?? after;
-  return hasShareMoved({ after, before: start }) ? { after, before: start } : null;
+  return (
+    <section className="flex w-full flex-col gap-1">
+      <h2 className="text-label">{t("Tomorrow")}</h2>
+
+      <StepRows>
+        <StepRow>
+          <KindDot kind="lesson" />
+          <span className="min-w-0 flex-1 truncate font-medium">{summary.tomorrow.title}</span>
+        </StepRow>
+      </StepRows>
+    </section>
+  );
 }
 
 /**
- * What changed, big: the goal's number before and after, then at most two skills that rose. Only
- * when the session moved either.
+ * The day's payoff on one screen, on the page: "Done in 49 min", the day's four numbers, the
+ * skills that rose and tomorrow's lesson. Right after "Stop for today", "Done for now" with the
+ * minutes so far.
  */
-export function ChangeStep() {
+export function DoneStep() {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
+  const stopped = useIsStopped();
   const { summary } = useSessionSummary();
-  const change = usePreparationChange();
-  const rises = getRisenSkills(summary.skillsMoved);
 
   return (
-    <StepCard>
-      {change ? (
-        <PreparationChange after={change.after} before={change.before} />
-      ) : (
-        <StepTitle>{t("What changed")}</StepTitle>
-      )}
-      <SkillRises rises={rises} />
+    <StepCard className="items-stretch">
+      <StepHeader>
+        <StepEyebrow>{t("Today's session")}</StepEyebrow>
+        <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
+        {stopped && summary.minutes >= 1 && (
+          <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
+            {t("{time} so far", { time: formatDuration(summary.minutes) })}
+          </StepDetail>
+        )}
+      </StepHeader>
+
+      <SessionNumbers />
+      <SkillRises />
+      <TomorrowRow />
     </StepCard>
   );
 }

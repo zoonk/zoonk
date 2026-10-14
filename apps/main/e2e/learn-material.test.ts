@@ -35,7 +35,7 @@ async function openPaperclip(page: Page) {
 }
 
 async function confirmGoal(page: Page, prompt: string) {
-  await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   await page.getByRole("button", { name: "Looks right" }).click();
   await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 
@@ -82,10 +82,12 @@ test.describe("Studying your own material", () => {
     await expect(page.getByRole("list", { name: "Your material" }).getByText(title)).toBeVisible();
     await expect(page.getByRole("heading", { name: "What do you want to do?" })).toBeVisible();
 
-    // Without a choice, an empty box can't start anything.
-    await expect(page.getByRole("button", { name: "Start with your goal" })).toBeDisabled();
+    // Without a choice, an empty box starts nothing: "Build my plan" puts the cursor in the box.
+    await page.getByRole("button", { name: "Build my plan" }).click();
+    await expect(page.getByRole("textbox", { name: "I want to" })).toBeFocused();
+    await expect(page.getByRole("heading", { name: "What do you want to do?" })).toBeVisible();
     await page.getByRole("radio", { name: /Prepare for an exam/u }).click();
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("button", { name: "Build my plan" }).click();
 
     // The card says the plan is built from what they gave, before they confirm it.
     const materialRow = page.getByRole("listitem").filter({ hasText: "Your material" });
@@ -163,8 +165,8 @@ test.describe("Studying your own material", () => {
 
     await expect(page.getByRole("list", { name: "Your material" }).getByText(title)).toBeVisible();
     await page.getByRole("radio", { name: /Understand this material/u }).click();
-    await page.getByRole("textbox", { name: "Your goal" }).fill(words);
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("textbox", { name: "I want to" }).fill(words);
+    await page.getByRole("button", { name: "Build my plan" }).click();
 
     const goal = await confirmGoal(page, words);
 
@@ -197,7 +199,7 @@ test.describe("Studying your own material", () => {
     await page.getByRole("textbox", { name: "Your text" }).fill("Glycolysis nets 2 ATP.");
     await page.getByRole("button", { name: "Add text" }).click();
     await page.getByRole("radio", { name: /Ask questions/u }).click();
-    await page.getByRole("button", { name: "Start with your goal" }).click();
+    await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page.getByRole("heading", { name: "Ask about your material" })).toBeVisible();
 

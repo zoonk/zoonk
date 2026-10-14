@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { TaskAsideContent } from "../../_components/task-layout";
 import { type ListeningQuestions } from "../../listening/listening-stimulus";
 import { DrillAnswerNotes } from "../../mistakes/drill/drill-answer-notes";
 import { NotSureButton, ShowAnswersButton } from "../../mistakes/drill/drill-controls";
@@ -14,14 +15,17 @@ import {
   isReadFirst,
 } from "../../mistakes/drill/drill-types";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
-import { ItemLine, ItemSupport } from "../../questions/item-text";
+import { ItemSupport } from "../../questions/item-text";
 import {
   type StudyAnswerFeedback,
   type StudyBlockDetail,
   type StudyQuestion,
+  type StudyQuestionAnswer,
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
+import { CheckButton } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
+import { QuestionTitle } from "./question-title";
 import { QuestionView } from "./question-view";
 import { QuotedSource } from "./quoted-source";
 import { type useQuestionBlock } from "./use-question-block";
@@ -127,10 +131,10 @@ function getRecordingQuestions({
 }
 
 /**
- * A recording above its set's questions. Keyed by its set, it stays mounted from the set's first
- * question to its last, so it keeps playing while the learner answers along and reads each
- * answer's feedback, as in the exam. Its plays count in this block, as practice: one cut off by a
- * reload comes back once.
+ * A recording above its set's questions, beside them from `lg`. Keyed by its set, it stays
+ * mounted from the set's first question to its last, so it keeps playing while the learner
+ * answers along and reads each answer's feedback, as in the exam. Its plays count in this block,
+ * as practice: one cut off by a reload comes back once.
  */
 function BlockRecording({
   detail,
@@ -146,14 +150,15 @@ function BlockRecording({
   }
 
   return (
-    <ItemSetStimulus
-      askedIn={detail.block.id}
-      key={question.set.id}
-      practice
-      questions={getRecordingQuestions({ detail, question })}
-      set={question.set}
-      transcript={phase.kind === "feedback" ? phase.feedback.transcript : null}
-    />
+    <TaskAsideContent key={question.set.id}>
+      <ItemSetStimulus
+        askedIn={detail.block.id}
+        practice
+        questions={getRecordingQuestions({ detail, question })}
+        set={question.set}
+        transcript={phase.kind === "feedback" ? phase.feedback.transcript : null}
+      />
+    </TaskAsideContent>
   );
 }
 
@@ -162,51 +167,105 @@ function hasTextStimulus(question: StudyQuestion): boolean {
   return Boolean(question.set) && !question.set?.listening;
 }
 
-function QuestionText({ continued, question }: { continued: boolean; question: StudyQuestion }) {
+/**
+ * What the question is read with (its set's text, case or chart, then its own context, picture or
+ * chart): above the question on a phone, in the aside beside it from `lg`. A recording's question
+ * keeps its own context in the column, since the recording has the aside.
+ */
+function QuestionMaterial({
+  continued,
+  question,
+}: {
+  continued: boolean;
+  question: StudyQuestion;
+}) {
+  const support = (
+    <ItemSupport
+      className="text-muted-foreground text-sm leading-relaxed"
+      context={question.context}
+      image={question.image}
+      visual={question.visual}
+    />
+  );
+
+  if (question.set?.listening) {
+    return support;
+  }
+
+  if (!question.set && !question.context && !question.image && !question.visual) {
+    return null;
+  }
+
+  return (
+    <TaskAsideContent className="flex flex-col gap-4" key={question.itemId}>
+      {question.set && hasTextStimulus(question) && (
+        <ItemSetStimulus continued={continued} set={question.set} />
+      )}
+      {support}
+    </TaskAsideContent>
+  );
+}
+
+function QuestionText({
+  continued,
+  graded,
+  question,
+}: {
+  continued: boolean;
+  graded: boolean;
+  question: StudyQuestion;
+}) {
   return (
     <>
       <PlacementNote question={question} />
       <QuotedSource question={question} />
-      {question.set && hasTextStimulus(question) && (
-        <ItemSetStimulus continued={continued} key={question.itemId} set={question.set} />
-      )}
-      <ItemSupport
-        className="text-muted-foreground text-sm leading-relaxed"
-        context={question.context}
-        image={question.image}
-        visual={question.visual}
-      />
-      {question.format !== "trueFalse" && (
-        <h2 className="text-xl leading-snug font-semibold">
-          <ItemLine text={question.question} />
-        </h2>
-      )}
+      <QuestionMaterial continued={continued} question={question} />
+      {question.format !== "trueFalse" && <QuestionTitle muted={graded} text={question.question} />}
     </>
   );
 }
 
 /**
+ * The answer Check would send for the question in view, as the learner makes it: null until it's
+ * complete. It starts over with every question.
+ */
+export function useDraftAnswer(index: number) {
+  const [draft, setDraft] = useState<{ answer: StudyQuestionAnswer | null; index: number }>({
+    answer: null,
+    index,
+  });
+
+  return {
+    answer: draft.index === index ? draft.answer : null,
+    set: (answer: StudyQuestionAnswer | null) => setDraft({ answer, index }),
+  };
+}
+
+type DraftAnswer = ReturnType<typeof useDraftAnswer>;
+
+/**
  * The current question, played the way its mistake's drill calls for: the idea first for
  * a content gap, the question before its answers for a misread, a clock for a timed drill and "I'm
- * not sure" where guessing is the habit. Other questions play as they are.
+ * not sure" where guessing is the habit. Other questions play as they are. Its actions sit in the
+ * block's pinned bar (`BlockQuestionActions`).
  */
 export function BlockQuestion({
   blockDrill,
   detail,
+  draft,
   lessonHref,
   question,
   run,
 }: {
   blockDrill: BlockDrill;
   detail: StudyBlockDetail;
+  draft: DraftAnswer;
   lessonHref: LessonHref | null;
   question: StudyQuestion;
   run: Run;
 }) {
-  const t = useExtracted();
   const { phase } = run.state;
   const { drill, stage } = blockDrill;
-  const answering = phase.kind === "answering" || phase.kind === "answerFailed";
 
   if (drill && stage === "idea") {
     return <DrillIntro drill={drill} lessonHref={lessonHref} onStart={blockDrill.start} />;
@@ -231,60 +290,79 @@ export function BlockQuestion({
 
       <BlockRecording detail={detail} phase={phase} question={question} />
 
-      <section
-        aria-label={question.question}
-        className="flex flex-col gap-4 rounded-3xl"
-        key={question.itemId}
-      >
+      <section aria-label={question.question} className="flex flex-col gap-4" key={question.itemId}>
         {stage === "reading" ? (
           <>
             <QuotedSource question={question} />
-            {question.set && hasTextStimulus(question) && (
-              <ItemSetStimulus
-                continued={isSetContinued({ detail, index: run.state.index })}
-                key={question.itemId}
-                set={question.set}
-              />
-            )}
-            <ItemSupport
-              className="text-muted-foreground text-sm leading-relaxed"
-              context={question.context}
-              image={question.image}
-              visual={question.visual}
+            <QuestionMaterial
+              continued={isSetContinued({ detail, index: run.state.index })}
+              question={question}
             />
-            <h2 className="text-xl leading-snug font-semibold">
-              <ItemLine text={question.question} />
-            </h2>
+            <QuestionTitle text={question.question} />
           </>
         ) : (
           <>
             <QuestionText
               continued={isSetContinued({ detail, index: run.state.index })}
+              graded={phase.kind === "feedback"}
               question={question}
             />
             <QuestionView
               detail={detail}
-              onAnswer={(answer) => void run.submit(answer)}
+              onChange={draft.set}
+              onSubmit={(answer) => void run.submit(answer)}
               phase={phase}
               question={question}
             />
           </>
         )}
       </section>
+    </>
+  );
+}
 
-      {stage === "reading" && <ShowAnswersButton onReveal={blockDrill.reveal} />}
+/**
+ * The question's actions in the block's pinned bar: "Show the answers" for a misread still being
+ * read; otherwise Check (once the answer is complete) with the honest way out beside it where it
+ * applies ("I'm not sure" in a no-guessing drill, "I don't know yet" on a placement question). A
+ * gap's idea screen has its own Start.
+ */
+export function BlockQuestionActions({
+  blockDrill,
+  draft,
+  question,
+  run,
+}: {
+  blockDrill: BlockDrill;
+  draft: DraftAnswer;
+  question: StudyQuestion;
+  run: Run;
+}) {
+  const t = useExtracted();
+  const { phase } = run.state;
+  const { drill, stage } = blockDrill;
+  const answering = phase.kind === "answering" || phase.kind === "answerFailed";
+  const notSure = () => void run.submit(NOT_SURE);
 
-      {drill?.kind === "noGuessing" && stage === "open" && answering && (
-        <NotSureButton disabled={false} onClick={() => void run.submit(NOT_SURE)} />
+  if (stage === "reading") {
+    return <ShowAnswersButton onReveal={blockDrill.reveal} />;
+  }
+
+  return (
+    <>
+      {drill?.kind === "noGuessing" && answering && (
+        <NotSureButton disabled={false} onClick={notSure} />
       )}
 
       {question.placement && !drill && answering && (
-        <NotSureButton
-          disabled={false}
-          label={t("I don't know yet")}
-          onClick={() => void run.submit(NOT_SURE)}
-        />
+        <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
       )}
+
+      <CheckButton
+        busy={phase.kind === "checking"}
+        disabled={!answering || draft.answer === null}
+        onCheck={() => (draft.answer ? void run.submit(draft.answer) : undefined)}
+      />
     </>
   );
 }

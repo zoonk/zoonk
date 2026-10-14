@@ -46,7 +46,7 @@ export function MindMapOutline({ className, outline }: { className?: string; out
           <li className="flex gap-3" key={branch.title}>
             <span
               aria-hidden="true"
-              className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums"
+              className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-medium tabular-nums"
             >
               {index + 1}
             </span>

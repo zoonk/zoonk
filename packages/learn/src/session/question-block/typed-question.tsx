@@ -1,39 +1,29 @@
 "use client";
 
-import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { EnterButton } from "../../_components/enter-button";
 import { TypedAnswerField } from "../../questions/typed-answer-field";
-import { type StudyQuestionAnswer } from "../session-types";
 
 /**
- * A short typed answer (a word, a number, a term): type it, then Check (or Enter). An empty
- * answer can't be sent. Once graded, the field locks and marks the answer right or wrong.
+ * A short typed answer (a word, a number, a term). The host gets it as it's typed (null while
+ * it's empty) and its Check sends it; Enter in the field sends it too. Once graded, the field
+ * locks and marks the answer right or wrong.
  */
 export function TypedQuestion({
   disabled,
-  onAnswer,
+  onChange,
+  onSubmit,
   result,
 }: {
   disabled: boolean;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
+  onChange: (answer: { text: string } | null) => void;
+  onSubmit: (answer: { text: string }) => void;
   result: "correct" | "wrong" | null;
 }) {
-  const t = useExtracted();
-  const [ready, setReady] = useState(false);
-
   return (
     <TypedAnswerField
       locked={disabled || result !== null}
-      onChange={(text) => setReady(text.length > 0)}
-      onSubmit={(text) => onAnswer({ text })}
+      onChange={(text) => onChange(text ? { text } : null)}
+      onSubmit={(text) => onSubmit({ text })}
       result={result}
-    >
-      {result === null && (
-        <EnterButton disabled={disabled || !ready} type="submit">
-          {t("Check")}
-        </EnterButton>
-      )}
-    </TypedAnswerField>
+    />
   );
 }

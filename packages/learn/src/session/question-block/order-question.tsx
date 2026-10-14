@@ -1,121 +1,103 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { EnterButton } from "../../_components/enter-button";
+import { useRef, useState } from "react";
+import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { ItemLine } from "../../questions/item-text";
-import { type StudyQuestionAnswer } from "../session-types";
+import { useFocusCheckWhenComplete } from "./question-actions";
 
 /** Each step's place once graded: the learner's place was its right one, or not. */
 export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] };
 
-function PlaceBadge({ place }: { place: number }) {
+function stepResult({ index, result }: { index: number; result: OrderResult | null }) {
+  if (!result) {
+    return null;
+  }
+
+  return result.order.indexOf(index) === result.correctOrder.indexOf(index) ? "right" : "wrong";
+}
+
+/** The place a step got, on its right: a filled number once placed, and whether it was right. */
+function PlaceTag({ place, result }: { place: number; result: "right" | "wrong" | null }) {
+  const t = useExtracted();
+
   return (
-    <LineMarker aria-hidden="true">
-      <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full text-xs font-bold tabular-nums">
-        {place}
+    <span className="flex items-center">
+      <span
+        aria-hidden="true"
+        className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums"
+      >
+        {place + 1}
       </span>
-    </LineMarker>
+      {result && (
+        <span className="sr-only">{result === "right" ? t("Right place") : t("Wrong place")}</span>
+      )}
+    </span>
   );
 }
 
-function stepState({ index, result }: { index: number; result: OrderResult | null }) {
-  if (!result) {
-    return "idle";
-  }
-
-  return result.order.indexOf(index) === result.correctOrder.indexOf(index) ? "correct" : "wrong";
-}
-
 /**
- * An ordering question: tap the steps in the order they go, and each one shows its place. Tapping
- * a placed step takes it out. Number keys tap the steps as shown, and Check (or Enter) sends the
- * order once every step has its place. Once graded, each step shows whether its place was right.
+ * An ordering question: tap the steps in the order they go, and each one shows its place on its
+ * right. Tapping a placed step takes it out. Number keys tap the steps as shown. The host gets the
+ * order once every step has its place (null before), and its Check sends it. Once graded, each
+ * step's ring says whether its place was right.
  */
 export function OrderQuestion({
   disabled,
-  onAnswer,
+  onChange,
   result,
   steps,
 }: {
   disabled: boolean;
-  onAnswer: (answer: StudyQuestionAnswer) => void;
+  onChange: (answer: { order: number[] } | null) => void;
   result: OrderResult | null;
-  steps: string[];
+  steps: readonly string[];
 }) {
   const t = useExtracted();
   const [order, setOrder] = useState<number[]>([]);
+  const groupRef = useRef<HTMLDivElement>(null);
   const locked = disabled || result !== null;
-  const complete = order.length === steps.length;
   const placed = result?.order ?? order;
-  const check = () => onAnswer({ order });
+
+  useFocusCheckWhenComplete({ complete: order.length === steps.length, containerRef: groupRef });
 
   const tap = (index: number) => {
-    setOrder(order.includes(index) ? order.filter((step) => step !== index) : [...order, index]);
+    const next = order.includes(index) ? order.filter((step) => step !== index) : [...order, index];
+
+    setOrder(next);
+    onChange(next.length === steps.length ? { order: next } : null);
   };
 
   useNumberKeys({ count: steps.length, enabled: !locked, onPick: tap });
-  useEnterKey(check, { enabled: !locked && complete });
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-muted-foreground text-sm font-medium">{t("Tap the steps in order.")}</p>
 
-      <ul className="flex flex-col gap-2">
+      <AnswerOptionGroup ref={groupRef} role="group">
         {steps.map((step, index) => {
           const place = placed.indexOf(index);
-          const state = stepState({ index, result });
+          const placeResult = stepResult({ index, result });
 
           return (
-            <li key={step}>
-              <button
-                aria-keyshortcuts={String(index + 1)}
-                aria-pressed={place !== -1}
-                className={cn(
-                  "focus-visible:ring-ring bg-background flex min-h-14 w-full items-start gap-3 rounded-2xl border px-4 py-4 text-left font-medium transition-colors outline-none focus-visible:ring-2 disabled:cursor-default",
-                  "hover:bg-muted/60 aria-pressed:border-foreground",
-                  state === "correct" && "border-success bg-success/10 aria-pressed:border-success",
-                  state === "wrong" &&
-                    "border-destructive bg-destructive/10 aria-pressed:border-destructive",
-                )}
-                disabled={locked}
-                onClick={() => tap(index)}
-                type="button"
-              >
-                {place === -1 ? (
-                  <LineMarker aria-hidden="true">
-                    <span className="border-border size-6 rounded-full border border-dashed" />
-                  </LineMarker>
-                ) : (
-                  <PlaceBadge place={place + 1} />
-                )}
-                <span className="flex-1">
-                  <ItemLine text={step} />
-                </span>
-                {state !== "idle" && (
-                  <LineMarker>
-                    {state === "correct" ? (
-                      <CheckIcon aria-label={t("Right place")} className="size-4" />
-                    ) : (
-                      <XIcon aria-label={t("Wrong place")} className="size-4" />
-                    )}
-                  </LineMarker>
-                )}
-              </button>
-            </li>
+            <AnswerOption
+              aria-checked={place !== -1}
+              aria-keyshortcuts={String(index + 1)}
+              disabled={locked}
+              key={step}
+              marker={index + 1}
+              onClick={() => tap(index)}
+              picked={place !== -1}
+              result={placeResult}
+              role="checkbox"
+              tag={place === -1 ? null : <PlaceTag place={place} result={placeResult} />}
+            >
+              <ItemLine text={step} />
+            </AnswerOption>
           );
         })}
-      </ul>
-
-      {result === null && (
-        <EnterButton disabled={disabled || !complete} onClick={check} type="button">
-          {t("Check")}
-        </EnterButton>
-      )}
+      </AnswerOptionGroup>
     </div>
   );
 }
