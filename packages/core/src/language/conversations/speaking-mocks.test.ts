@@ -3,8 +3,16 @@ import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaki
 import { scoreSpeakingMock } from "@zoonk/ai/tasks/v2/language/speaking-mock-score";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanupTestCalls,
+  connectTestCall,
+  reserveTestCall,
+  setupTestCalls,
+  testCallCompletionInput,
+} from "../../_test-utils/connect-test-call";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
@@ -78,6 +86,10 @@ async function examGoalFixture(reason: string) {
     where: { id: setup.goal.id },
   });
 
+  await prisma.subscription.create({
+    data: { plan: "plus", provider: "zoonk", referenceId: setup.user.id, status: "active" },
+  });
+
   mockSession(setup.user.id);
   return setup;
 }
@@ -96,17 +108,17 @@ async function startMock(goalId: string) {
     throw new Error(`Couldn't start: ${started.status}`);
   }
 
-  // Connecting (which claims call time, tested with the calls) is when a call starts.
-  await prisma.languageConversation.update({
-    data: { startedAt: new Date() },
-    where: { id: started.conversationId },
-  });
+  await connectTestCall(started.conversationId);
 
   return started.conversationId;
 }
 
 describe("speaking mocks", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+    await setupTestCalls();
+
     vi.mocked(generateSpeakingMockScenario).mockResolvedValue({
       ...GENERATED,
       data: TOEFL_SCENARIO,
@@ -119,6 +131,8 @@ describe("speaking mocks", () => {
       userPrompt: "",
     });
   });
+
+  afterEach(cleanupTestCalls);
 
   it("starts an IELTS mock with its own examiner and topic for a goal preparing for IELTS", async () => {
     const { goal } = await examGoalFixture("Vou fazer o IELTS em março");
@@ -197,8 +211,15 @@ describe("speaking mocks", () => {
       userPrompt: "",
     });
 
-    const first = await completeLanguageConversation({ conversationId, input: COMPLETION });
-    const again = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const first = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
+
+    const again = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(scoreSpeakingMock).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ exam: "toefl", learnerLanguage: "pt", turns: TURNS }),
@@ -239,7 +260,10 @@ describe("speaking mocks", () => {
       return { ...GENERATED, data: { met: [] }, userPrompt: "" };
     });
 
-    const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const result = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(order).toStrictEqual(["score started", "goals checked"]);
     expect(scoreSpeakingMock).toHaveBeenCalledWith(expect.objectContaining({ exam: "ielts" }));
@@ -276,7 +300,13 @@ describe("speaking mocks", () => {
     const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
     const conversationId = started.status === "ready" ? started.conversationId : "";
 
-    await completeLanguageConversation({ conversationId, input: COMPLETION });
+    await reserveTestCall(conversationId);
+
+    await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
+
     await waitForDeferredWork();
 
     expect(scoreSpeakingMock).not.toHaveBeenCalled();
@@ -294,7 +324,11 @@ describe("speaking mocks", () => {
       userPrompt: "",
     });
 
-    await completeLanguageConversation({ conversationId: first, input: COMPLETION });
+    await completeLanguageConversation({
+      conversationId: first,
+      input: testCallCompletionInput(first, COMPLETION),
+    });
+
     await waitForDeferredWork();
 
     expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
@@ -327,6 +361,10 @@ describe("speaking mocks", () => {
     // The learner's speaking moved up to B1: the A2 mock waiting for them no longer fits.
     await prisma.languageSkillLevel.create({
       data: { language: "en", score: 2, skill: "speaking", startScore: 1, userId: user.id },
+    });
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
 
     const started = await startMock(goal.id);

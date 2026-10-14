@@ -5,28 +5,28 @@ import {
   type SpeakingMockExam,
   type SpeakingMockFeedback,
 } from "@zoonk/core/language/conversations/contract";
+import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
-import { InfoIcon, LightbulbIcon } from "lucide-react";
+import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useTransition } from "react";
-import { Callout } from "../../_components/callout";
 import { DetailsDrawer } from "../../_components/details-drawer";
-import { KindTile } from "../../_components/kind-tile";
 import {
   StepCard,
   StepDetail,
   StepEyebrow,
   StepHeader,
-  StepRow,
-  StepRows,
   StepTitle,
   StepTitleLabel,
   StepTitleNumber,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { MissionMoment } from "../../missions/mission-moment";
 import { TaskMainLink } from "../../shell/task-frame";
+import { CallNote } from "./call-note";
 import { useConversationTitle, useCriterionName } from "./conversation-labels";
+import { EstimateNote, ResultRow, ResultRows } from "./result-rows";
 
 const BAND_DIGITS = 1;
 
@@ -73,7 +73,6 @@ function BandStep({
   return (
     <>
       <StepCard>
-        <KindTile kind="conversation" size="lg" />
         <StepHeader>
           <StepTitle className="flex flex-col items-center gap-1.5">
             <StepTitleLabel>{title}</StepTitleLabel>
@@ -83,10 +82,7 @@ function BandStep({
         </StepHeader>
       </StepCard>
 
-      <Callout>
-        <InfoIcon aria-hidden="true" />
-        <p>{t("An estimate from one short mock, not an official score.")}</p>
-      </Callout>
+      <EstimateNote>{t("An estimate from one short mock, not an official score.")}</EstimateNote>
     </>
   );
 }
@@ -100,21 +96,21 @@ function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
   return (
     <StepCard>
       <StepTitle>{t("By criterion")}</StepTitle>
-      <StepRows>
+      <ResultRows>
         {feedback.criteria.map((criterion) => (
-          <StepRow className="justify-between" key={criterion.criterion}>
+          <ResultRow key={criterion.criterion}>
             <span className="flex min-w-0 items-center gap-2 font-medium">
               {criterionName(criterion.criterion)}
               {criterion.criterion === feedback.focus && (
                 <Badge variant="outline">{t("Focus")}</Badge>
               )}
             </span>
-            <span className="shrink-0 font-semibold whitespace-nowrap tabular-nums">
+            <span className="shrink-0 font-mono font-medium whitespace-nowrap tabular-nums">
               {range(criterion)}
             </span>
-          </StepRow>
+          </ResultRow>
         ))}
-      </StepRows>
+      </ResultRows>
     </StepCard>
   );
 }
@@ -134,10 +130,10 @@ function FocusStep({ criterion }: { criterion: Criterion }) {
         </StepHeader>
       </StepCard>
 
-      <Callout>
+      <CallNote>
         <LightbulbIcon aria-hidden="true" />
-        <p>{criterion.tip}</p>
-      </Callout>
+        <span>{criterion.tip}</span>
+      </CallNote>
     </>
   );
 }
@@ -168,7 +164,6 @@ function NoScoreStep() {
 
   return (
     <StepCard>
-      <KindTile kind="conversation" size="lg" />
       <StepTitle>{t("This mock has no score")}</StepTitle>
       <StepDetail>{t("Try another one when you're ready.")}</StepDetail>
     </StepCard>
@@ -194,36 +189,67 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
 
 /**
  * After a speaking mock, one thing at a time: the estimated band on its exam's scale (IELTS 0 to
- * 9, TOEFL 1 to 6), each criterion's band, then the one to work on first with what was heard and a
- * concrete tip. Every criterion's comments wait behind a link, and another try is one tap away.
- * It's an estimate from a short mock, never an official score, and says so.
+ * 9, TOEFL 1 to 6) with what the call did to the day's missions, each criterion's band, then the
+ * one to work on first with what was heard and a concrete tip. Every criterion's comments wait
+ * behind a link, and another try is one tap away. It's an estimate from a short mock, never an
+ * official score, and says so.
  */
 export function SpeakingMockResult({
   conversation,
   exitHref,
   feedback,
+  missionMoment,
   nextHref,
   onTryAgain,
 }: {
   conversation: LanguageConversationView;
   exitHref: string;
   feedback: SpeakingMockFeedback | null;
+  /** What the call just did to the day's missions; null when it did nothing or was opened later. */
+  missionMoment: MissionMomentView | null;
   nextHref: string;
   onTryAgain: (() => Promise<void>) | null;
 }) {
   const t = useExtracted();
   const focus = feedback?.criteria.find((criterion) => criterion.criterion === feedback.focus);
 
+  // Last on the first step, as a call's result has it under its stars.
+  const moment = missionMoment && (
+    <MissionMoment
+      completed={missionMoment.completed}
+      fullMeal={missionMoment.fullMeal}
+      missions={missionMoment.missions}
+    />
+  );
+
   const items: StepsItem[] = feedback
     ? [
-        { content: <BandStep conversation={conversation} feedback={feedback} />, id: "band" },
+        {
+          content: (
+            <>
+              <BandStep conversation={conversation} feedback={feedback} />
+              {moment}
+            </>
+          ),
+          id: "band",
+        },
         feedback.criteria.length > 0 && {
           content: <CriteriaStep feedback={feedback} />,
           id: "criteria",
         },
         focus && { content: <FocusStep criterion={focus} />, id: "focus" },
       ].filter((item) => item !== false && item !== undefined)
-    : [{ content: <NoScoreStep />, id: "noScore" }];
+    : [
+        {
+          content: (
+            <>
+              <NoScoreStep />
+              {moment}
+            </>
+          ),
+          id: "noScore",
+        },
+      ];
 
   return (
     <Steps

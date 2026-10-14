@@ -1,32 +1,41 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { parseBody } from "@/lib/body-parser";
 import { conversationRefusalError } from "@/lib/language-errors";
+import { scheduleLiveCallDeadline } from "@/lib/live-call-deadline";
 import { languageConversationPathParamsSchema } from "@/lib/openapi/schemas/language";
 import { parsePathParams } from "@/lib/path-params";
 import { connectLanguageConversation } from "@zoonk/core/language/conversations/connect";
-import { NextResponse } from "next/server";
+import { languageConversationConnectInputSchema } from "@zoonk/core/language/conversations/contract";
+import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/**
- * Opens the call: holds its length from the day's call time on the learner's plan and returns a
- * short-lived token for GPT-Live with the Live WebSocket to open and how long the call may run.
- * The app talks to the model directly with it.
- */
+/** Reserves the call and persists a durable deadline receipt before any SDP can be redeemed. */
 async function connectConversation(
-  _request: Request,
+  request: NextRequest,
   context: RouteContext<"/v1/language-conversations/[conversationId]/connections">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: languageConversationPathParamsSchema,
-  });
+  const [body, path] = await Promise.all([
+    parseBody(request, languageConversationConnectInputSchema, { emptyBody: {} }),
+    context.params.then((params) =>
+      parsePathParams({ params, schema: languageConversationPathParamsSchema }),
+    ),
+  ]);
 
   if (!path.success) {
     return errors.validation(path.error);
   }
 
-  const result = await connectLanguageConversation(path.data.conversationId);
+  if (!body.success) {
+    return errors.validation(body.error);
+  }
+
+  const result = await connectLanguageConversation({
+    conversationId: path.data.conversationId,
+    input: body.data,
+    scheduleDeadline: scheduleLiveCallDeadline,
+  });
 
   if (result.status !== "ready") {
     return conversationRefusalError(result);

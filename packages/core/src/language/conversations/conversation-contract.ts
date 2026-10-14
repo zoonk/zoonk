@@ -6,12 +6,14 @@ import {
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
+import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
 import {
   examSpeakingFeedbackSchema,
   examTaskSnapshotSchema,
   examTaskViewSchema,
 } from "../exam-speaking/speaking-contract";
 
+const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
 
 /** The longest call: an exam task's official time, up to DALF C1's 20-minute interview. */
@@ -188,6 +190,12 @@ const conversationTurnsSchema = z
 
 export const languageConversationCompletionInputSchema = z
   .object({
+    connectionId: z
+      .uuid()
+      .meta({
+        description:
+          "The originating connection reservation; preserve it when completing this attempt",
+      }),
     spokenSeconds: z.int().min(0).max(MAX_SPOKEN_SECONDS),
     timeZone: answerTimeZoneSchema,
     turns: conversationTurnsSchema,
@@ -199,7 +207,7 @@ export const languageConversationCompletionInputSchema = z
       .optional()
       .meta({
         description:
-          "The voice session's length that GPT-Live reported in `session.closed` (usage.seconds), for cost tracking; leave it out when the call closed without it",
+          "The voice session's length that GPT-Live reported in `session.closed` (usage.seconds), for diagnostics only; server-confirmed usage owns cost tracking",
       }),
   })
   .strict()
@@ -233,12 +241,18 @@ export const languageConversationViewSchema = z
     instructions: z.string().nullable(),
     kind: z.enum(["practice", "checkpoint", "speakingMock", "examSpeaking"]),
     level: z.enum(CEFR_LEVELS),
+    locked: z
+      .boolean()
+      .meta({
+        description:
+          "A checkpoint call (including a completed result) or an unfinished certificate exam speaking call requires Plus; completed feedback remains readable and practice calls are never locked",
+      }),
     minutes: z.int().min(1).max(MAX_CALL_MINUTES),
     objectives: z.array(objectiveViewSchema),
     openingLine: z.string(),
     result: z
       .object({
-        brainPower: z.int(),
+        brainPower: activityBrainPowerSchema,
         feedback: conversationFeedbackSchema.nullable(),
         passed: z.boolean(),
         spokenSeconds: z.int(),
@@ -257,47 +271,58 @@ export const languageConversationViewSchema = z
 export type LanguageConversationView = z.infer<typeof languageConversationViewSchema>;
 
 /**
- * What the app needs to open the call: GPT-Live's native Live WebSocket on AI Gateway, opened
- * with these subprotocols, whose first event is `session.start` with this model, the
- * conversation's instructions, PCM16 audio at 24 kHz and client delegation. The call runs for
- * `seconds` from when its session starts: the app wraps it up shortly before and ends it then.
+ * A call just finished: the call with its result, and what it did to the day's missions (a call
+ * can be one of them), so its end can say so. Older servers send no moment.
  */
+export const completedLanguageConversationSchema = languageConversationViewSchema
+  .extend({ missionMoment: missionMomentSchema.nullable().default(null) })
+  .meta({ id: "CompletedLanguageConversation" });
+
+export type CompletedLanguageConversation = z.infer<typeof completedLanguageConversationSchema>;
+
+/** A reservation can be redeemed only after its server deadline job has a durable receipt. */
 export const languageConversationSetupSchema = z
   .object({
-    endsAtLimit: z
-      .enum(["day", "month"])
-      .nullable()
-      .meta({
-        description:
-          "The call time on the learner's plan the call reaches before its length ends, today's (`day`) or this month's (`month`); say so when it wraps up. Null when it runs its full length",
-      }),
-    expiresAt: z
-      .number()
-      .int()
-      .nullable()
-      .meta({ description: "When the token stops working, in Unix seconds; connect before then" }),
-    model: z.string().meta({ description: "The model to name in `session.start`" }),
-    protocols: z
-      .array(z.string())
-      .meta({
-        description: "WebSocket subprotocols to open the connection with; they carry the token",
-      }),
-    seconds: z
-      .int()
-      .min(1)
-      .meta({
-        description:
-          "How long the call may run from when its session starts: its length, what's left of it after a dropped connection, or less when it reaches the plan's call time",
-      }),
-    token: z.string().meta({ description: "Single-use and short-lived; never store it" }),
-    url: z.string().meta({ description: "The WebSocket URL to open" }),
-    voice: z
-      .string()
-      .meta({ description: "The voice to set in `session.start` (`audio.output.voice`)" }),
+    connectionId: z.uuid(),
+    deadlineAt: z.iso.datetime(),
+    endsAtLimit: z.enum(["day", "month"]).nullable(),
+    generation: z.int().positive(),
+    seconds: z.int().positive(),
+    sessionUrl: z.string(),
+    voice: z.string(),
   })
   .meta({ id: "LanguageConversationSetup" });
 
 export type LanguageConversationSetup = z.infer<typeof languageConversationSetupSchema>;
+
+export const languageConversationConnectInputSchema = z
+  .object({
+    requestId: z
+      .uuid()
+      .optional()
+      .meta({ description: "Reuse the same ID when retrying one reservation request" }),
+    takeover: z.boolean().optional(),
+  })
+  .strict()
+  .meta({ id: "LanguageConversationConnectInput" });
+export type LanguageConversationConnectInput = z.infer<
+  typeof languageConversationConnectInputSchema
+>;
+
+export const liveCallSdpInputSchema = z
+  .object({
+    sdp: z.string().min(1).max(MAX_SDP_LENGTH),
+    sessionConfig: z
+      .unknown()
+      .optional()
+      .meta({ description: "Ignored: configuration is owned by the server" }),
+  })
+  .strict()
+  .meta({ id: "LiveCallSdpInput" });
+export type LiveCallSdpInput = z.infer<typeof liveCallSdpInputSchema>;
+export const liveCallSdpResponseSchema = z
+  .object({ sdp: z.string(), sessionId: z.string() })
+  .meta({ id: "LiveCallSdpResponse" });
 
 export const languageConversationObjectiveCheckInputSchema = z
   .object({ turns: conversationTurnsSchema })

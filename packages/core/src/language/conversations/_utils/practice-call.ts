@@ -5,6 +5,7 @@ import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
 import { sumCallSeconds } from "../../../entitlements/_utils/usage-counts";
 import { conversationScenarioSchema } from "../conversation-contract";
 import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths";
+import { readLiveCallAdmission } from "./live-call-policy";
 
 /** Who the learner talks to in the unit's call, once a call at their level was written. */
 async function findCharacter({ chapterId, level }: { chapterId: string; level: string }) {
@@ -21,15 +22,18 @@ async function findCharacter({ chapterId, level }: { chapterId: string; level: s
 }
 
 /** The lengths the signed-in learner can pick now, from their plan and the call time they used. */
-async function loadCallLengths(): Promise<PracticeCallLengths> {
+async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolean }> {
   const viewer = await getEntitlementViewer();
   const tier = viewer?.tier ?? "guest";
 
   if (!viewer || tier === "guest") {
-    return toPracticeCallLengths({ left: null, tier });
+    return { ...toPracticeCallLengths({ left: null, tier }), paused: false };
   }
 
-  const used = await sumCallSeconds({ client: prisma, now: new Date(), userId: viewer.userId });
+  const [used, admission] = await Promise.all([
+    sumCallSeconds({ client: prisma, now: new Date(), userId: viewer.userId }),
+    readLiveCallAdmission({ transaction: prisma, userId: viewer.userId }),
+  ]);
 
   const left = getCallTimeLeft({
     kind: "conversation",
@@ -38,7 +42,7 @@ async function loadCallLengths(): Promise<PracticeCallLengths> {
     usedToday: used.today,
   });
 
-  return toPracticeCallLengths({ left, tier });
+  return { ...toPracticeCallLengths({ left, tier }), paused: admission === null };
 }
 
 /**

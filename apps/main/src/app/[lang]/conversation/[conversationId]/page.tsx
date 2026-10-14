@@ -1,6 +1,8 @@
+import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { redirect } from "@/i18n/navigation";
+import { withQuery } from "@/lib/with-query";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -17,25 +19,31 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Conversation") };
 }
 
+/**
+ * The intro's own shape in the task chrome (close, the eyebrow, title and situation, who answers,
+ * Start in the bar, and the goals beside them from `lg`), so nothing moves when it arrives.
+ */
 function ConversationSkeleton() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-      <Skeleton className="size-9 rounded-full" />
-      <Skeleton className="mx-auto size-20 rounded-full" />
-      <Skeleton className="h-8 w-2/3" />
-      <Skeleton className="h-32 w-full rounded-3xl" />
-      <Skeleton className="mt-auto h-14 w-full rounded-full" />
-    </main>
+    <TaskSkeleton aside={<Skeleton className="h-32 w-full" />}>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-3 w-28" />
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-5 w-full" />
+      </div>
+      <Skeleton className="h-9 w-48" />
+      <Skeleton className="h-32 w-full lg:hidden" />
+    </TaskSkeleton>
   );
 }
 
 async function ConversationContent({ params, searchParams }: Props) {
-  const [{ conversationId, lang }, query] = await Promise.all([params, searchParams]);
+  const [{ conversationId }, query] = await Promise.all([params, searchParams]);
 
   const result = await getLanguageConversation(conversationId);
 
   if (result.status === "unauthorized") {
-    redirect({ href: "/login", locale: lang });
+    return <AuthGateScreen next={withQuery(`/conversation/${conversationId}`, query)} />;
   }
 
   if (result.status !== "ready") {

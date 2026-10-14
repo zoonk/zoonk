@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { conversationRefusalError, languageError } from "@/lib/language-errors";
+import { conversationRefusalError } from "@/lib/language-errors";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
 import { startLanguageConversation } from "@zoonk/core/language/conversations/start";
 import { type NextRequest, NextResponse } from "next/server";
@@ -22,12 +22,8 @@ async function createLanguageConversation(request: NextRequest) {
 
   const result = await startLanguageConversation(parsed.data);
 
-  if (result.status === "limitReached") {
-    return conversationRefusalError(result);
-  }
-
   if (result.status !== "ready") {
-    return languageError(result.status, "Unit or checkpoint not found");
+    return conversationRefusalError(result, "Unit or checkpoint not found");
   }
 
   return NextResponse.json(

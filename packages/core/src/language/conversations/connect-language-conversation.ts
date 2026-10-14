@@ -1,81 +1,140 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
-import { createLiveConversationToken } from "@zoonk/ai/tasks/v2/language/live-conversation-token";
 import { prisma } from "@zoonk/db";
-import { claimUsage } from "../../entitlements/claim-usage";
-import { type UsageDecision } from "../../entitlements/contract";
-import { getSession } from "../../users/get-session";
-import { type LanguageConversationSetup } from "./conversation-contract";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getAllowanceCacheTag } from "../../cache/tags";
+import { claimLiveCallUsageForViewer } from "../../entitlements/_utils/claim-usage-for-viewer";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { LIVE_CALL_GRACE_SECONDS } from "../../entitlements/limits";
+import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
+import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
+import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
+import { attachLiveCallDeadline } from "./_utils/live-call-timer";
+import {
+  type LanguageConversationConnectInput,
+  type LanguageConversationSetup,
+} from "./conversation-contract";
 import { findOwnedConversation } from "./get-language-conversation";
-
-const SECONDS_PER_MINUTE = 60;
+import { type LiveCallDeadlineScheduler, type LiveCallRefusal } from "./live-call-contract";
 
 export type ConnectLanguageConversationResult =
-  | Exclude<UsageDecision, { status: "allowed" }>
-  | { setup: LanguageConversationSetup; status: "ready" }
-  | { status: "conversationEnded" }
-  | { status: "notFound" };
+  | LiveCallRefusal
+  | Exclude<StartStudyBlockResult, { status: "ready" }>
+  | { setup: LanguageConversationSetup; status: "ready" };
 
-/**
- * Opens the call: each connection holds the call's length from the call time on the learner's plan,
- * today's and this month's (guests have none; with less left, it holds what's left and the call
- * ends early, and with under a minute left, calls wait for the next day or month), and the app gets
- * a short-lived, single-use token for GPT-Live, the voice for the call's language and how long the
- * call may run.
- * Calling again after a drop starts the call over: what the dropped connection ran stays counted.
- * A call claimed on an earlier day can't connect again. The call itself runs between the browser
- * and the model; our key never leaves the server.
- */
-export async function connectLanguageConversation(
-  conversationId: string,
-): Promise<ConnectLanguageConversationResult> {
-  const session = await getSession();
+async function startCheckpointBlock(
+  studyBlockId: string | null,
+): Promise<Exclude<StartStudyBlockResult, { status: "ready" }> | null> {
+  if (!studyBlockId) {
+    return null;
+  }
 
-  if (!session) {
+  const block = await prisma.studySessionBlock.findUnique({ where: { id: studyBlockId } });
+
+  if (!block) {
+    return { status: "notFound" };
+  }
+
+  const started = await startStudyBlock({
+    blockId: studyBlockId,
+    input: {},
+    sessionId: block.sessionId,
+  });
+
+  return started.status === "ready" ? null : started;
+}
+
+/** Timer receipt is persisted before this reservation can spend anything at the SDP boundary. */
+export async function connectLanguageConversation({
+  conversationId,
+  input = {},
+  scheduleDeadline,
+}: {
+  conversationId: string;
+  input?: LanguageConversationConnectInput;
+  scheduleDeadline: LiveCallDeadlineScheduler;
+}): Promise<ConnectLanguageConversationResult> {
+  const viewer = await getEntitlementViewer();
+
+  if (!viewer) {
     return { status: "unauthorized" };
   }
 
-  const userId = session.user.id;
-  const owned = await findOwnedConversation({ conversationId, userId });
+  const owned = await findOwnedConversation({ conversationId, userId: viewer.userId });
 
   if (!owned) {
     return { status: "notFound" };
   }
 
-  if (owned.row.status !== "ready") {
+  if (owned.row.status !== "ready" || owned.row.completionStartedAt !== null) {
     return { status: "conversationEnded" };
   }
 
-  const callSeconds = owned.row.minutes * SECONDS_PER_MINUTE;
-
-  const decision = await claimUsage({
-    kind: "conversation",
-    seconds: callSeconds,
-    targetId: conversationId,
-  });
-
-  if (decision.status !== "allowed") {
-    return decision;
+  if (isPlusOnlyLiveCall(owned.row.kind) && viewer.tier !== "plus") {
+    return { status: "plusRequired" };
   }
 
-  const seconds = decision.heldSeconds ?? callSeconds;
+  if (owned.row.kind === "checkpoint") {
+    const started = await startCheckpointBlock(owned.row.studyBlockId);
+
+    if (started) {
+      return started;
+    }
+  }
+
+  const requestId = input.requestId ?? randomUUID();
+
+  const previous = await endPreviousLiveCall({
+    conversationId,
+    requestId,
+    takeover: input.takeover,
+    userId: viewer.userId,
+  });
+
+  if (previous) {
+    return previous;
+  }
+
+  const result = await claimLiveCallUsageForViewer({
+    conversationId,
+    now: new Date(),
+    requestId,
+    viewer,
+  });
+
+  if (result.status !== "reserved") {
+    return result;
+  }
+
+  const current = await attachLiveCallDeadline({ connection: result.connection, scheduleDeadline });
+
+  if (!current) {
+    return { status: "retryable" };
+  }
+
+  const seconds = Math.min(
+    current.heldSeconds,
+    Math.max(
+      0,
+      Math.ceil((current.deadlineAt.getTime() - Date.now()) / 1000) - LIVE_CALL_GRACE_SECONDS,
+    ),
+  );
 
   if (seconds === 0) {
     return { status: "conversationEnded" };
   }
 
-  const connection = await createLiveConversationToken();
-
-  await prisma.languageConversation.updateMany({
-    data: { startedAt: new Date() },
-    where: { id: conversationId, startedAt: null },
-  });
+  revalidateCacheTags([getAllowanceCacheTag(viewer.userId)]);
 
   return {
     setup: {
-      ...connection,
-      endsAtLimit: decision.shortenedBy ?? null,
+      connectionId: current.id,
+      deadlineAt: current.deadlineAt.toISOString(),
+      endsAtLimit: result.endsAtLimit,
+      generation: current.generation,
       seconds,
+      sessionUrl: `/v1/language-conversations/${conversationId}/connections/${current.id}/sdp`,
       voice: getLiveConversationVoice(owned.row.targetLanguage),
     },
     status: "ready",

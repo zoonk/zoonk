@@ -3,29 +3,29 @@
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { LearnerBubble } from "@zoonk/ui/components/message";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ClockIcon,
-  LifeBuoyIcon,
-  LightbulbIcon,
-  MicIcon,
-  MicOffIcon,
-  PhoneOffIcon,
-  SendIcon,
-} from "lucide-react";
+import { ClockIcon, LightbulbIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { LIST_GROUP_CLASS } from "../../_components/list-group";
+import { SectionLabel } from "../../_components/section-label";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { formatClock } from "../../_utils/clock";
 import { TaskFrame } from "../../shell/task-frame";
 import { useTaskRoleNoun } from "../exam-speaking/exam-speaking-labels";
-import { CallObjectives } from "./call-objectives";
-import { CharacterAvatar } from "./conversation-parts";
+import { CallControls, CallStatus } from "./call-control";
+import { CallNote } from "./call-note";
+import { CallObjectives, countMetGoals } from "./call-objectives";
+import { CharacterRow } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
 const MS_PER_SECOND = 1000;
 
+/**
+ * What was said, as the buddy's chats show it: the character's words as plain text on the left,
+ * the learner's in a soft bubble on the right.
+ */
 function Transcript({
   call,
   conversation,
@@ -36,26 +36,30 @@ function Transcript({
   const t = useExtracted();
 
   return (
-    <div aria-label={t("Conversation")} className="flex flex-col gap-2" role="log">
-      {call.turns.map((turn, index) => (
-        <p
-          className={cn(
-            "max-w-[85%] rounded-2xl px-4 py-2.5",
-            turn.speaker === "learner"
-              ? "bg-primary text-primary-foreground self-end"
-              : "bg-muted self-start",
-          )}
-          // Turns only grow at the end, so their position identifies them.
-          // oxlint-disable-next-line react/no-array-index-key
-          key={index}
-          lang={conversation.targetLanguage}
-        >
-          <span className="sr-only">
-            {turn.speaker === "learner" ? t("You:") : `${conversation.character.name}:`}{" "}
-          </span>
-          {turn.text}
-        </p>
-      ))}
+    <div aria-label={t("Conversation")} className="flex flex-col gap-3" role="log">
+      {call.turns.map((turn, index) =>
+        turn.speaker === "learner" ? (
+          <LearnerBubble
+            // Turns only grow at the end, so their position identifies them.
+            // oxlint-disable-next-line react/no-array-index-key
+            key={index}
+            lang={conversation.targetLanguage}
+          >
+            <span className="sr-only">{t("You:")} </span>
+            {turn.text}
+          </LearnerBubble>
+        ) : (
+          <p
+            className="max-w-[80%] self-start text-[0.9375rem] leading-relaxed text-pretty"
+            // oxlint-disable-next-line react/no-array-index-key
+            key={index}
+            lang={conversation.targetLanguage}
+          >
+            <span className="sr-only">{`${conversation.character.name}:`} </span>
+            {turn.text}
+          </p>
+        ),
+      )}
     </div>
   );
 }
@@ -90,7 +94,7 @@ function TypedReply({ call }: { call: LiveCall }) {
         placeholder={t("Or type your reply")}
         value={text}
       />
-      <Button disabled={!canSend || !text.trim()} size="icon" type="submit">
+      <Button className="size-11" disabled={!canSend || !text.trim()} size="icon" type="submit">
         <SendIcon aria-hidden="true" />
         <span className="sr-only">{t("Send")}</span>
       </Button>
@@ -98,111 +102,79 @@ function TypedReply({ call }: { call: LiveCall }) {
   );
 }
 
-/** What the microphone is doing, under its button: the call's one status line. */
-function useMicLabel({ call, name }: { call: LiveCall; name: string }) {
+/** The phrases Help offers, in a list to glance at while talking. */
+function Phrases({ conversation }: { conversation: LanguageConversationView }) {
   const t = useExtracted();
-
-  // "Try again" calls before the first ring: it's already calling.
-  if (call.phase === "connecting" || call.phase === "idle") {
-    return t("Calling…");
-  }
-
-  if (call.micBlocked) {
-    return t("Microphone off");
-  }
-
-  if (call.muted) {
-    return t("Muted");
-  }
-
-  return call.isPlaying ? t("{name} is talking…", { name }) : t("Listening…");
-}
-
-/**
- * A round call control with its name under it, like a phone's. The microphone's line says what
- * it's doing instead, so its button is named on its own.
- */
-function CallControl({
-  children,
-  className,
-  disabled = false,
-  label,
-  name,
-  onClick,
-  pressed,
-  size = "md",
-  variant,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-  label: string;
-  name?: string;
-  onClick: () => void;
-  pressed?: boolean;
-  size?: "lg" | "md";
-  variant: "default" | "destructive" | "outline";
-}) {
-  const labelId = useId();
+  const titleId = useId();
 
   return (
-    <div className="flex w-20 flex-col items-center gap-1.5">
-      <Button
-        aria-label={name}
-        aria-labelledby={name ? undefined : labelId}
-        aria-pressed={pressed}
-        className={cn(
-          "rounded-full",
-          size === "lg" ? "size-18 [&_svg]:size-7" : "size-13 [&_svg]:size-5",
-          className,
-        )}
-        disabled={disabled}
-        onClick={onClick}
-        size="icon"
-        type="button"
-        variant={variant}
-      >
-        {children}
-      </Button>
-      <span
-        aria-live={name ? "polite" : undefined}
-        className="text-muted-foreground text-center text-xs leading-4 text-balance"
-        id={labelId}
-      >
-        {label}
-      </span>
+    <div className="flex flex-col gap-2">
+      <SectionLabel id={titleId}>{t("Phrases you can use")}</SectionLabel>
+      <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
+        {conversation.hints.map((hint) => (
+          <li
+            className="py-2.5 text-[0.9375rem] leading-snug text-pretty"
+            key={hint}
+            lang={conversation.targetLanguage}
+          >
+            {hint}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-function MicControl({ call, name }: { call: LiveCall; name: string }) {
-  const t = useExtracted();
-  const label = useMicLabel({ call, name });
-  const isOff = call.micBlocked || call.muted;
-  const canMute = call.phase === "live" && !call.micBlocked;
-
+/** An 8px dot before the clock: green once the call is live, quiet while it's still ringing. */
+function LiveDot({ live }: { live: boolean }) {
   return (
-    <CallControl
-      className={cn(call.isCapturing && !isOff && "motion-safe:animate-pulse")}
-      disabled={!canMute}
-      label={label}
-      name={t("Mute")}
-      onClick={call.toggleMute}
-      pressed={call.muted}
-      size="lg"
-      variant={isOff ? "outline" : "default"}
-    >
-      {isOff ? <MicOffIcon aria-hidden="true" /> : <MicIcon aria-hidden="true" />}
-    </CallControl>
+    <span
+      aria-hidden="true"
+      className={cn(
+        "me-1.5 inline-block size-2 rounded-full align-[0.05em] transition-colors duration-150 motion-reduce:transition-none",
+        live ? "bg-success" : "bg-muted-foreground/40",
+      )}
+    />
   );
 }
 
+/** A limit takes priority over the next goal's tip, wherever the call's context sits. */
+function CallTip({
+  limitNear,
+  next,
+}: {
+  limitNear: LiveCall["limitNear"];
+  next: LanguageConversationView["objectives"][number] | undefined;
+}) {
+  const t = useExtracted();
+
+  if (limitNear) {
+    return (
+      <CallNote role="status">
+        <ClockIcon aria-hidden="true" />
+        <span>
+          {limitNear === "month"
+            ? t("Your call time for this month is almost up.")
+            : t("Your call time for today is almost up.")}
+        </span>
+      </CallNote>
+    );
+  }
+
+  return next ? (
+    <CallNote>
+      <LightbulbIcon aria-hidden="true" />
+      <span>{t("Tip: {goal}", { goal: next.description })}</span>
+    </CallNote>
+  ) : null;
+}
+
 /**
- * The call itself, like a phone call: the character, the goals as they're met, what was said and a
- * tip for the next goal (or, when the plan's call time is running out, that it is); the call's title
- * and its clock on top; at the bottom a typed reply and three controls (Help with phrases to use,
- * the microphone, which mutes, and End). Nothing is graded while talking. An exam task shows its
- * card where the goals would be.
+ * The call itself: who the learner talks to, the goals as they're met, what was said with the
+ * call's status under it, and a tip for the next goal (or, when the plan's call time is running
+ * out, that it is); the call's title and its clock on top; in the action bar a typed reply and
+ * three controls (Help with phrases to use, the microphone, which mutes, and End). Nothing is
+ * graded while talking. An exam task shows its card where the goals would be.
  */
 export function ConversationLive({
   call,
@@ -219,9 +191,7 @@ export function ConversationLive({
 }) {
   const t = useExtracted();
   const roleNoun = useTaskRoleNoun();
-  const { character } = conversation;
-
-  const { examTask } = conversation;
+  const { character, examTask } = conversation;
 
   const next = examTask
     ? undefined
@@ -234,75 +204,64 @@ export function ConversationLive({
 
   return (
     <TaskFrame
+      aside={{
+        children: (
+          <>
+            <CallObjectives conversation={conversation} met={call.metLabels} titled={false} />
+            <CallTip limitNear={call.limitNear} next={next} />
+            {usedHelp && <Phrases conversation={conversation} />}
+          </>
+        ),
+        label: t("Call goals and phrases"),
+        // Named in the aside's header row, level with the call's, as every task's aside is.
+        meta: examTask
+          ? undefined
+          : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
+        title: examTask ? undefined : t("Goals of the call"),
+      }}
       exitHref={null}
       footer={
         <>
           <TypedReply call={call} />
-          <div className="flex items-start justify-center gap-6 pt-2">
-            <CallControl label={t("Help")} onClick={onHelp} variant="outline">
-              <LifeBuoyIcon aria-hidden="true" />
-            </CallControl>
-            <MicControl call={call} name={character.name} />
-            <CallControl label={t("End")} onClick={onEnd} variant="destructive">
-              <PhoneOffIcon aria-hidden="true" />
-            </CallControl>
-          </div>
+          <CallControls call={call} onEnd={onEnd} onHelp={onHelp} />
         </>
       }
-      headerTitle={<TaskHeaderTitle detail={clock} title={conversation.title} />}
+      headerTitle={
+        <TaskHeaderTitle
+          announce={false}
+          detail={
+            <>
+              <LiveDot live={call.phase === "live"} />
+              {clock}
+            </>
+          }
+          title={conversation.title}
+        />
+      }
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <CharacterAvatar name={character.name} size="lg" talking={call.isPlaying} />
-        <div>
-          <p className="font-semibold">{character.name}</p>
-          <p className="text-muted-foreground text-sm">
-            {examTask
-              ? roleNoun(examTask.task.role)
-              : t("{role} · {place}", { place: character.place, role: character.role })}
-          </p>
-        </div>
+      <CharacterRow
+        detail={
+          examTask
+            ? roleNoun(examTask.task.role)
+            : t("{role} · {place}", { place: character.place, role: character.role })
+        }
+        name={character.name}
+        talking={call.isPlaying}
+      />
+
+      <div className="lg:hidden">
+        <CallObjectives conversation={conversation} met={call.metLabels} />
       </div>
 
-      <CallObjectives conversation={conversation} met={call.metLabels} />
+      <div className="flex flex-col gap-3">
+        <Transcript call={call} conversation={conversation} />
+        <CallStatus call={call} name={character.name} />
+      </div>
 
-      <Transcript call={call} conversation={conversation} />
-
-      {call.limitNear ? (
-        <p
-          className="bg-muted text-foreground flex items-start gap-2 self-center rounded-2xl px-3 py-1.5 text-sm"
-          role="status"
-        >
-          <LineMarker>
-            <ClockIcon aria-hidden="true" className="size-4" />
-          </LineMarker>
-          {call.limitNear === "month"
-            ? t("Your call time for this month is almost up.")
-            : t("Your call time for today is almost up.")}
-        </p>
-      ) : (
-        next && (
-          <p className="bg-warning/10 text-foreground flex items-start gap-2 self-center rounded-2xl px-3 py-1.5 text-sm">
-            <LineMarker>
-              <LightbulbIcon aria-hidden="true" className="size-4" />
-            </LineMarker>
-            {t("Tip: {goal}", { goal: next.description })}
-          </p>
-        )
-      )}
-
-      {usedHelp && (
-        <ul aria-label={t("Phrases you can use")} className="flex flex-col gap-1.5">
-          {conversation.hints.map((hint) => (
-            <li
-              className="bg-muted rounded-xl px-3 py-2 text-sm"
-              key={hint}
-              lang={conversation.targetLanguage}
-            >
-              {hint}
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="flex flex-col gap-6 lg:hidden">
+        <CallTip limitNear={call.limitNear} next={next} />
+        {usedHelp && <Phrases conversation={conversation} />}
+      </div>
     </TaskFrame>
   );
 }

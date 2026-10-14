@@ -1,6 +1,6 @@
 "use client";
 
-import { type ConversationTurn } from "@zoonk/core/language/conversations/contract";
+import { type LanguageConversationCompletionInput } from "@zoonk/core/language/conversations/contract";
 import { formatTypedReplyCue } from "@zoonk/core/language/conversations/live-call-cues";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { type LiveCallSession, sendLiveCallCue, setLiveCallMuted } from "./live-call-session";
@@ -112,30 +112,43 @@ export function useCallMute(liveSession: LiveCallSession | null) {
   return { muted, toggleMute };
 }
 
-/** What a finished call saves: what was said, how long the learner spoke, and the billed session. */
-type LiveCallSummary = { spokenSeconds: number; turns: ConversationTurn[]; voiceSeconds?: number };
+/**
+ * What a finished call saves: the connection it ran on (this run's own, never a newer one), what
+ * was said, how long the learner spoke, and the session length GPT-Live reported, kept only to
+ * compare with what the server confirmed.
+ */
+type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
 
-/** Waits for GPT-Live to confirm the call closed, then returns what the call saves. */
+/**
+ * Has the server close the call, then returns what it saves; null while the server hasn't
+ * confirmed the close, so nothing is reviewed or rewarded before it has and the transcript stays
+ * here for another try.
+ */
 export function useCallFinish({
-  closing,
-  session,
-  stopAudio,
+  getConnectionId,
+  release,
+  sessionRef,
   turnsRef,
 }: {
-  closing: RefObject<Promise<unknown> | null>;
-  session: LiveCallSession | null;
-  stopAudio: () => void;
+  getConnectionId: () => string | null;
+  release: () => Promise<boolean>;
+  sessionRef: RefObject<LiveCallSession | null>;
   turnsRef: RefObject<TranscriptTurn[]>;
 }) {
-  return async (): Promise<LiveCallSummary> => {
-    await closing.current;
-    stopAudio();
-    const voiceSeconds = session?.getSnapshot().session?.usage?.seconds;
+  return useCallback(async (): Promise<LiveCallSummary | null> => {
+    const connectionId = getConnectionId();
+
+    if (!connectionId || !(await release())) {
+      return null;
+    }
+
+    const voiceSeconds = sessionRef.current?.getSnapshot().session?.usage?.seconds;
 
     return {
+      connectionId,
       spokenSeconds: getSpokenSeconds(turnsRef.current),
       turns: toConversationTurns(turnsRef.current),
       ...(voiceSeconds === undefined ? {} : { voiceSeconds: Math.round(voiceSeconds) }),
     };
-  };
+  }, [getConnectionId, release, sessionRef, turnsRef]);
 }

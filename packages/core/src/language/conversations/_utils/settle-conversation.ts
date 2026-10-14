@@ -1,13 +1,16 @@
 import "server-only";
-import { type LearningEventKind, prisma } from "@zoonk/db";
+import { type LearningEventKind, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-results";
+import { getBlockElapsedMs, pausedBlockTiming } from "../../../sessions/_utils/block-timing";
 import { completePlanItem } from "../../../sessions/_utils/plan-items";
 import { applySessionProgress } from "../../../sessions/_utils/session-progress";
+import { readBlockPayload } from "../../../sessions/block-payload";
 import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
 import { getConversationBrainPower } from "../conversation-rules";
+import { COMPLETION_REVIEW_LEASE_MS } from "./completion-review-lease";
 import { type WrittenFeedback } from "./conversation-feedback";
 import { type ConversationRow, getCheckpointOutcome } from "./conversation-view";
 
@@ -19,7 +22,10 @@ const LEDGER_KINDS = {
   speakingMock: "mock",
 } as const satisfies Record<ConversationRow["kind"], LearningEventKind>;
 
+const MS_PER_SECOND = 1000;
+
 type ConversationSettlement = {
+  completionStartedAt?: Date;
   bossKind: "boss" | "finalBoss";
   feedback: WrittenFeedback | null;
   objectives: number;
@@ -31,6 +37,17 @@ type ConversationSettlement = {
   userId: string;
 };
 
+function completionSettlementWhere({ row, completionStartedAt }: ConversationSettlement) {
+  return {
+    id: row.id,
+    status: "ready" as const,
+    ...(completionStartedAt && {
+      completionStartedAt,
+      updatedAt: { gt: new Date(Date.now() - COMPLETION_REVIEW_LEASE_MS) },
+    }),
+  };
+}
+
 function getLessonKind({ bossKind, row }: Pick<ConversationSettlement, "bossKind" | "row">) {
   if (row.kind === "checkpoint") {
     return CHECKPOINT_LEDGER_KINDS[bossKind];
@@ -39,15 +56,17 @@ function getLessonKind({ bossKind, row }: Pick<ConversationSettlement, "bossKind
   return row.kind === "speakingMock" || row.kind === "examSpeaking" ? row.kind : null;
 }
 
-async function findBlockContext(studyBlockId: string | null) {
+async function findBlockContext(tx: TransactionClient, studyBlockId: string | null) {
   if (!studyBlockId) {
     return null;
   }
 
-  return prisma.studySessionBlock.findUnique({
-    select: { id: true, payload: true, sessionId: true },
-    where: { id: studyBlockId },
-  });
+  /** Queue changes take the block before a linked conversation and can replace its payload. */
+  await tx.$queryRaw`
+    SELECT id FROM study_session_blocks WHERE id = ${studyBlockId}::uuid FOR UPDATE
+  `;
+
+  return tx.studySessionBlock.findUnique({ where: { id: studyBlockId } });
 }
 
 function readPlanItemId(payload: unknown): string | null {
@@ -72,10 +91,18 @@ export async function settleConversation(input: ConversationSettlement): Promise
   const brainPower = getConversationBrainPower({ checkpoint, objectivesMet: objectivesMet.length });
   const missed = input.objectives - objectivesMet.length;
 
-  const block = await findBlockContext(row.studyBlockId);
-
   return prisma.$transaction(async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
+    const block = await findBlockContext(tx, row.studyBlockId);
+    const payload = block ? readBlockPayload(block) : null;
+    /** Billing and the call keep actual speech; study metrics only count its focused time. */
+    const seconds =
+      block && payload?.timing
+        ? Math.min(
+            spokenSeconds,
+            Math.floor(getBlockElapsedMs({ block, now: lock.completedAt }) / MS_PER_SECOND),
+          )
+        : spokenSeconds;
 
     const { count } = await tx.languageConversation.updateMany({
       data: {
@@ -87,7 +114,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
         usedHelp: input.usedHelp,
         ...feedback?.provenance,
       },
-      where: { id: row.id, status: "ready" },
+      where: completionSettlementWhere(input),
     });
 
     if (count === 0) {
@@ -101,7 +128,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
         correctAnswers: objectivesMet.length,
         energyDelta: getAnswersEnergyDelta({ correct: objectivesMet.length, incorrect: missed }),
         incorrectAnswers: missed,
-        seconds: spokenSeconds,
+        seconds,
       },
       lock,
       userId,
@@ -124,7 +151,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
       incorrectAnswers: missed,
       kind: LEDGER_KINDS[row.kind],
       lessonKind: getLessonKind({ bossKind, row }),
-      seconds: spokenSeconds,
+      seconds,
       startedAt: row.startedAt ?? lock.completedAt,
       timeZone,
       titleSnapshot: row.titleSnapshot,
@@ -133,7 +160,14 @@ export async function settleConversation(input: ConversationSettlement): Promise
 
     if (block) {
       await tx.studySessionBlock.updateMany({
-        data: { brainPower, completedAt: lock.completedAt, status: "completed" },
+        data: {
+          brainPower,
+          completedAt: lock.completedAt,
+          ...(payload?.timing && {
+            payload: { ...payload, timing: pausedBlockTiming({ block, now: lock.completedAt }) },
+          }),
+          status: "completed",
+        },
         where: { id: block.id, status: { in: ["active", "pending"] } },
       });
     }

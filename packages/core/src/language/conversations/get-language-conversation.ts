@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getSession } from "../../users/get-session";
+import { withConversationAccess } from "./_utils/conversation-access";
 import { type ConversationRow, toConversationView } from "./_utils/conversation-view";
 import { type LanguageConversationView } from "./conversation-contract";
 
@@ -53,7 +54,11 @@ export async function getLanguageConversation(
   }
 
   const owned = await findOwnedConversation({ conversationId, userId: session.user.id });
-  const conversation = owned ? toConversationView(owned) : null;
+  const conversation = await withConversationAccess(owned ? toConversationView(owned) : null);
 
-  return conversation ? { conversation, status: "ready" } : { status: "notFound" };
+  if (!conversation) {
+    return { status: "notFound" };
+  }
+
+  return { conversation, status: "ready" };
 }

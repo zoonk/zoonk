@@ -1,5 +1,4 @@
 import { Experimental_OpenAIRealtimeModelLive as OpenAIRealtimeModelLive } from "@ai-sdk/openai";
-import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
 import {
   Experimental_AbstractRealtimeSession as AbstractRealtimeSession,
   type Experimental_RealtimeServerEvent as RealtimeServerEvent,
@@ -9,12 +8,6 @@ import {
 
 type Listener = () => void;
 
-/** GPT-Live's only WebSocket format in the browser: PCM16, the same both ways. */
-const PCM_24K = { rate: 24_000, type: "audio/pcm" } as const;
-
-/** GPT-Live confirms the session's final usage within about five seconds of `session.close`. */
-const CLOSE_TIMEOUT_MS = 5000;
-
 /**
  * GPT-Live usually starts a session within a second or two. One that hasn't started after this
  * isn't going to, so the call says it didn't connect and offers another try instead of ringing.
@@ -22,13 +15,26 @@ const CLOSE_TIMEOUT_MS = 5000;
 const CONNECT_TIMEOUT_MS = 15_000;
 
 /**
+ * GPT-Live's events, read and written in the browser. Our server creates each session with its
+ * model, instructions, voice and allowed events, so the browser never reaches OpenAI itself: the
+ * offer goes to our own route, and this model only encodes and decodes the call's events.
+ */
+const LIVE_EVENTS = new OpenAIRealtimeModelLive("gpt-live-1", {
+  baseURL: "",
+  headers: () => ({}),
+  provider: "openai.live",
+});
+
+/**
  * The AI SDK's realtime session with a store React can subscribe to: the session calls
  * `setState` whenever its status, audio state or Live session state change, and subscribers
- * re-read it.
+ * re-read it. A call silenced on this side (`silence`) stays silent while its peer waits for the
+ * server to close it.
  */
 export class LiveCallSession extends AbstractRealtimeSession {
   private readonly listeners = new Set<Listener>();
   private snapshot: RealtimeState;
+  private silenced = false;
 
   constructor(options: RealtimeSessionOptions) {
     super(options);
@@ -38,9 +44,26 @@ export class LiveCallSession extends AbstractRealtimeSession {
   protected setState<TKey extends keyof RealtimeState>(key: TKey, value: RealtimeState[TKey]) {
     this.snapshot = { ...this.snapshot, [key]: value };
 
+    // The SDK plays the character's track whenever it arrives, even after the call was silenced
+    // (an answer still on its way when the learner ended or left): it's paused again at once.
+    if (this.silenced && key === "isPlaying" && value === true) {
+      this.stopPlayback();
+    }
+
     for (const listener of this.listeners) {
       listener();
     }
+  }
+
+  /**
+   * Silences the call on this side for good when it ends: the learner's audio stops going out and
+   * the character's stops playing, now and if its track only arrives later, while our server
+   * closes the session. The peer stays until the server confirms.
+   */
+  silence() {
+    this.silenced = true;
+    this.stopAudioCapture();
+    this.stopPlayback();
   }
 
   subscribe = (listener: Listener): (() => void) => {
@@ -58,38 +81,22 @@ export class LiveCallSession extends AbstractRealtimeSession {
 }
 
 /**
- * A call on GPT-Live's native Live protocol through AI Gateway: the AI SDK's session streams the
- * microphone as PCM16 at 24 kHz, plays the audio back, and closes gracefully for the final usage.
- * The browser opens the WebSocket itself with the token in its subprotocols, and the codec sends
- * `session.start` with the conversation's instructions and client delegation, the only kind the
- * gateway supports.
+ * A call on GPT-Live over WebRTC, its session created by our server: the AI SDK posts the
+ * browser's offer to `sessionUrl`, our same-origin route, and connects with the answer it returns.
+ * The microphone (or silence) goes out as the call's audio track, and the character's voice plays
+ * back as media. The call is closed by our server, never from the browser.
  */
 export function createLiveCallSession({
-  instructions,
   onEvent,
-  setup,
+  sessionUrl,
 }: {
-  instructions: string;
   onEvent: (event: RealtimeServerEvent) => void;
-  setup: LanguageConversationSetup;
+  sessionUrl: string;
 }): LiveCallSession {
   return new LiveCallSession({
-    api: { protocols: setup.protocols, websocket: setup.url },
-    closeTimeoutMs: CLOSE_TIMEOUT_MS,
-    // Only the Live event codec runs in the browser; the gateway URL and token come from setup.
-    model: new OpenAIRealtimeModelLive(setup.model, {
-      baseURL: setup.url,
-      headers: () => ({}),
-      provider: "gateway.live",
-    }),
+    api: { session: sessionUrl },
+    model: LIVE_EVENTS,
     onEvent,
-    sessionConfig: {
-      inputAudioFormat: PCM_24K,
-      instructions,
-      outputAudioFormat: PCM_24K,
-      providerOptions: { openai: { delegation: { type: "client" }, store: false } },
-      voice: setup.voice,
-    },
     startupTimeoutMs: CONNECT_TIMEOUT_MS,
   });
 }

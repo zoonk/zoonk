@@ -1,0 +1,102 @@
+enum LiveCallAdmission {
+  off
+  staff
+  all
+}
+
+enum LiveCallState {
+  pending
+  creating
+  active
+  closing
+  closed
+}
+
+enum LiveCallCostConfidence {
+  reserved
+  unconfirmed
+  confirmed
+  estimated
+}
+
+enum LiveCallLimitPeriod {
+  day
+  month
+}
+
+enum LiveCallEndReason {
+  deadline
+  completion
+  reconnect
+  takeover
+  admin
+  expired
+  timerFailed @map("timer_failed")
+}
+
+model LiveCallSetting {
+  id                    String            @id
+  admission             LiveCallAdmission @default(off)
+  freeDailyBudgetMicros Int               @default(0) @map("free_daily_budget_micros")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @default(now()) @updatedAt @map("updated_at")
+
+  @@map("live_call_settings")
+}
+
+/// Reservations and refunds stay on the original UTC day, even when a call closes later.
+model FreeCallSpendDay {
+  day         DateTime @id @db.Date
+  spentMicros Int      @default(0) @map("spent_micros")
+
+  @@map("free_call_spend_days")
+}
+
+/// Plain learner, conversation and usage IDs keep provider cleanup and liability recoverable
+/// after account or conversation deletion. Only confirmed termination releases a started slot.
+model LiveCallConnection {
+  id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId                String                 @map("user_id") @db.Uuid
+  conversationId        String                 @map("conversation_id") @db.Uuid
+  generation            Int
+  requestId             String                 @map("request_id") @db.Uuid
+  state                 LiveCallState          @default(pending)
+  deadlineAt            DateTime               @map("deadline_at")
+  workflowRunId         String?                @map("workflow_run_id")
+  providerSessionId     String?                @unique @map("provider_session_id")
+  attemptNumber         Int                    @map("attempt_number")
+  heldSeconds           Int                    @map("held_seconds")
+  shortenedBy           LiveCallLimitPeriod?   @map("shortened_by")
+  priorUsageSeconds     Int                    @default(0) @map("prior_usage_seconds")
+  reservedMicros        Int                    @map("reserved_micros")
+  settledMicros         Int                    @default(0) @map("settled_micros")
+  liabilityMicros       Int                    @map("liability_micros")
+  costConfidence        LiveCallCostConfidence @default(reserved) @map("cost_confidence")
+  freeSpendDay          DateTime?              @map("free_spend_day") @db.Date
+  usageRecordId         String                 @map("usage_record_id") @db.Uuid
+  endReason             LiveCallEndReason?     @map("end_reason")
+  closeAttempts         Int                    @default(0) @map("close_attempts")
+  providerStartedAt     DateTime?              @map("provider_started_at")
+  closedAt              DateTime?              @map("closed_at")
+  lastCloseAt           DateTime?              @map("last_close_at")
+  recoveryUnconfirmedAt DateTime?              @map("recovery_unconfirmed_at")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at")
+  slot                  LiveCallSlot?
+
+  @@unique([userId, requestId])
+  @@index([userId, createdAt])
+  @@index([conversationId, createdAt])
+  @@index([state, deadlineAt])
+  @@map("live_call_connections")
+}
+
+/// A persistent generation fences retries and stale timers without a partial-index preview flag.
+model LiveCallSlot {
+  userId       String              @id @map("user_id") @db.Uuid
+  generation   Int                 @default(0)
+  connectionId String?             @unique @map("connection_id") @db.Uuid
+  connection   LiveCallConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+
+  @@map("live_call_slots")
+}

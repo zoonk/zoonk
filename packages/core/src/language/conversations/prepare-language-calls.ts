@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { findCheckpointUnit, toCheckpointScenarioUnit } from "./_utils/checkpoint-block";
 import { getSpeakingLevel } from "./_utils/conversation-goal";
 import { getUnitScenario } from "./_utils/conversation-scenario";
@@ -28,7 +29,12 @@ export async function prepareCheckpointCall({ goalId, userId }: LearnerGoal): Pr
 
   const targetLanguage = goal?.targetLanguage;
 
-  if (!goal || !targetLanguage || !boss) {
+  if (
+    !goal ||
+    !targetLanguage ||
+    !boss ||
+    !(await arePhaseChallengesRequired({ goalKind: goal.kind, userId }))
+  ) {
     return;
   }
 

@@ -98,41 +98,42 @@ model PronunciationReview {
 /// block. An exam speaking task (`examSpeaking`) is one task of a certificate's speaking paper;
 /// the tasks of one whole paper share a `sectionId`.
 model LanguageConversation {
-  id             String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId         String                     @map("user_id") @db.Uuid
-  user           User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goalId         String?                    @map("goal_id") @db.Uuid
-  goal           Goal?                      @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  id                  String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId              String                     @map("user_id") @db.Uuid
+  user                User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId              String?                    @map("goal_id") @db.Uuid
+  goal                Goal?                      @relation(fields: [goalId], references: [id], onDelete: SetNull)
   /// The unit the call practices; null for a speaking mock.
-  chapterId      String?                    @map("chapter_id") @db.Uuid
-  chapter        Chapter?                   @relation(fields: [chapterId], references: [id], onDelete: SetNull)
-  studyBlockId   String?                    @unique @map("study_block_id") @db.Uuid
-  studyBlock     StudySessionBlock?         @relation(fields: [studyBlockId], references: [id], onDelete: SetNull)
-  sectionId      String?                    @map("section_id") @db.Uuid
-  kind           LanguageConversationKind
-  status         LanguageConversationStatus @default(ready)
+  chapterId           String?                    @map("chapter_id") @db.Uuid
+  chapter             Chapter?                   @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  studyBlockId        String?                    @unique @map("study_block_id") @db.Uuid
+  studyBlock          StudySessionBlock?         @relation(fields: [studyBlockId], references: [id], onDelete: SetNull)
+  sectionId           String?                    @map("section_id") @db.Uuid
+  kind                LanguageConversationKind
+  status              LanguageConversationStatus @default(ready)
   /// The learner's language, for the scenario's notes and the feedback.
-  language       String                     @db.VarChar(10)
-  targetLanguage String                     @map("target_language") @db.VarChar(10)
+  language            String                     @db.VarChar(10)
+  targetLanguage      String                     @map("target_language") @db.VarChar(10)
   /// The CEFR band the character speaks at.
-  level          String                     @db.VarChar(3)
-  minutes        Int                        @db.SmallInt
-  scenario       Json
-  titleSnapshot  String                     @map("title_snapshot")
+  level               String                     @db.VarChar(3)
+  minutes             Int                        @db.SmallInt
+  scenario            Json
+  titleSnapshot       String                     @map("title_snapshot")
   /// The live voice model that ran the call.
-  liveModel      String?                    @map("live_model")
-  objectivesMet  String[]                   @default([]) @map("objectives_met")
-  usedHelp       Boolean                    @default(false) @map("used_help")
-  spokenSeconds  Int                        @default(0) @map("spoken_seconds")
-  feedback       Json?
-  model          String?
-  promptVersion  String?                    @map("prompt_version")
-  runId          String?                    @map("run_id")
-  generatedAt    DateTime?                  @map("generated_at")
-  startedAt      DateTime?                  @map("started_at")
-  endedAt        DateTime?                  @map("ended_at")
-  createdAt      DateTime                   @default(now()) @map("created_at")
-  updatedAt      DateTime                   @default(now()) @updatedAt @map("updated_at")
+  liveModel           String?                    @map("live_model")
+  objectivesMet       String[]                   @default([]) @map("objectives_met")
+  usedHelp            Boolean                    @default(false) @map("used_help")
+  spokenSeconds       Int                        @default(0) @map("spoken_seconds")
+  feedback            Json?
+  model               String?
+  promptVersion       String?                    @map("prompt_version")
+  runId               String?                    @map("run_id")
+  generatedAt         DateTime?                  @map("generated_at")
+  startedAt           DateTime?                  @map("started_at")
+  completionStartedAt DateTime?                  @map("completion_started_at")
+  endedAt             DateTime?                  @map("ended_at")
+  createdAt           DateTime                   @default(now()) @map("created_at")
+  updatedAt           DateTime                   @default(now()) @updatedAt @map("updated_at")
 
   @@index([userId, createdAt])
   @@index([goalId])

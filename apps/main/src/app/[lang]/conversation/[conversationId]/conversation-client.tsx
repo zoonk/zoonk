@@ -9,17 +9,19 @@ import {
   ConversationScreen,
 } from "@zoonk/learn/language/conversation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { useLocale } from "next-intl";
 import { useMemo } from "react";
 import {
   checkObjectivesAction,
   completeConversationAction,
   connectConversationAction,
+  endConversationConnectionAction,
 } from "./conversation-actions";
 
 /**
  * Where a call leads: a checkpoint back to today's session, which opens the next block; practice
  * back to its unit; an exam task to the exam screen it was started from, or else to the speaking
- * practice page, where its "Next" opens the paper's next task; a speaking mock to the Journey.
+ * practice page, where its "Next" opens the paper's next task; a speaking mock to the Plan.
  */
 function getHrefs({
   conversation,
@@ -53,7 +55,7 @@ function getHrefs({
     return { exit: "/speaking", next: "/speaking", nextTask: (task) => `/speaking?task=${task}` };
   }
 
-  return { exit: "/journey", next: "/journey" };
+  return { exit: "/plan", next: "/plan" };
 }
 
 /**
@@ -72,6 +74,7 @@ export function ConversationClient({
   fromMock: string | null;
 }) {
   const router = useRouter();
+  const locale = useLocale();
   const startConversation = useStartLanguageConversation(fromExam ? { from: "exam" } : {});
   const { examTask, goalId, id, kind } = conversation;
   const examTaskKey = examTask && examTask.sectionId === null ? examTask.task.key : null;
@@ -81,7 +84,8 @@ export function ConversationClient({
       checkObjectives: (turns) => checkObjectivesAction(id, { turns }),
       complete: (input) =>
         completeConversationAction(id, { ...input, timeZone: getLocalTimeZone() }),
-      connect: () => connectConversationAction(id),
+      connect: (input) => connectConversationAction({ conversationId: id, input, locale }),
+      end: (connectionId) => endConversationConnectionAction(id, connectionId),
       ...(kind === "speakingMock" && goalId
         ? {
             startAgain: async () => {
@@ -98,7 +102,7 @@ export function ConversationClient({
           }
         : {}),
     }),
-    [examTaskKey, goalId, id, kind, startConversation],
+    [examTaskKey, goalId, id, kind, locale, startConversation],
   );
 
   return (

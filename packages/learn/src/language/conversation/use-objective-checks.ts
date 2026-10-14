@@ -4,10 +4,16 @@ import {
   type ConversationTurn,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { formatObjectivesProgressCue } from "@zoonk/core/language/conversations/live-call-cues";
+import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type LiveCallSession, sendLiveCallCue } from "./live-call-session";
 
 /** The character's answer has settled once its transcript stays quiet this long. */
 const REPLY_SETTLED_MS = 1500;
+
+type CheckObjectives = (turns: ConversationTurn[]) => Promise<string[] | null>;
+
+const skipObjectiveChecks = () => Promise.resolve(null);
 
 /**
  * The call's goals, marked while the learner talks: once the character has answered a learner
@@ -15,13 +21,13 @@ const REPLY_SETTLED_MS = 1500;
  * One check runs at a time; a turn that ends meanwhile is checked right after it. `onChange` hears
  * every change, so the voice model can be told where the learner is.
  */
-export function useObjectiveChecks({
+function useObjectiveChecks({
   checkObjectives,
   conversation,
   getTurns,
   onChange,
 }: {
-  checkObjectives: (turns: ConversationTurn[]) => Promise<string[] | null>;
+  checkObjectives: CheckObjectives;
   conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
   onChange: (met: string[]) => void;
@@ -91,4 +97,42 @@ export function useObjectiveChecks({
   useEffect(() => clearSettle, [clearSettle]);
 
   return { metLabels, onCharacterTurn, onLearnerTurn };
+}
+
+/**
+ * The call's goals, checked after each of the character's answers, and GPT-Live told where the
+ * learner is so it wraps up once everything is done.
+ */
+export function useCallObjectives({
+  checkObjectives,
+  conversation,
+  getTurns,
+  sessionRef,
+}: {
+  checkObjectives: CheckObjectives;
+  conversation: LanguageConversationView;
+  getTurns: () => ConversationTurn[];
+  sessionRef: RefObject<LiveCallSession | null>;
+}) {
+  const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
+
+  const onChange = useCallback(
+    (met: string[]) => {
+      if (sessionRef.current) {
+        sendLiveCallCue({
+          channel: "thinking",
+          content: formatObjectivesProgressCue({
+            met,
+            open: labels.filter((label) => !met.includes(label)),
+          }),
+          session: sessionRef.current,
+        });
+      }
+    },
+    [labels, sessionRef],
+  );
+
+  // An exam task's one goal is the task itself, graded when the call ends: nothing to check.
+  const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
+  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
 }

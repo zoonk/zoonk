@@ -2,35 +2,30 @@
 
 import {
   type ConversationTurn,
-  type LanguageConversationSetup,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import {
-  LIVE_CALL_NO_BACKEND_CUE,
-  formatObjectivesProgressCue,
-} from "@zoonk/core/language/conversations/live-call-cues";
-import {
-  type Experimental_RealtimeServerEvent as RealtimeServerEvent,
-  type Experimental_RealtimeState as RealtimeState,
-} from "ai";
+import { type Experimental_RealtimeState as RealtimeState } from "ai";
 import {
   type RefObject,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
 } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
+import { getCallEndsAt } from "./call-deadline";
 import {
   type LiveCallSession,
   createLiveCallSession,
   openCallAudio,
-  sendLiveCallCue,
   watchConnection,
 } from "./live-call-session";
-import { addTranscriptFragment } from "./live-call-transcript";
+import {
+  type CallConnectionActions,
+  type ConversationConnection,
+  useCallConnection,
+} from "./use-call-connection";
 import {
   type LiveCallPhase,
   useCallFinish,
@@ -39,25 +34,31 @@ import {
   useCallTranscript,
   useTypedReplies,
 } from "./use-call-controls";
-import { useCallClock, useOpeningCue } from "./use-call-cues";
+import { type CallLength, useCallClock, useOpeningCue } from "./use-call-cues";
+import { useCallEvents } from "./use-call-events";
 import { useCallMicrophone } from "./use-call-microphone";
-import { useObjectiveChecks } from "./use-objective-checks";
+import { useCallObjectives } from "./use-objective-checks";
 
 /**
  * Why a call couldn't go on: it never connected, it dropped after connecting, it's past the time it
- * could reopen, or the plan's call time is used (`CallLimit` says which).
+ * could reopen, the plan's call time is used (`CallLimit` says which), it's a call the learner's
+ * plan leaves to Plus (Plus lapsed since it was opened), calls are paused, or another call of the
+ * learner's is open (in another tab or on another device).
  */
-export type LiveCallError = "connect" | "dropped" | "ended" | "limit";
+export type LiveCallError =
+  | "callInProgress"
+  | "callsPaused"
+  | "connect"
+  | "dropped"
+  | "ended"
+  | "limit"
+  | "plusRequired";
 
-/** Opening a call: the setup for GPT-Live, or why it can't be made. */
-export type ConversationConnection =
-  | { setup: LanguageConversationSetup; status: "ready" }
-  | { limit: CallLimit; status: "limit" }
-  | { status: "ended" | "failed" };
-
-/** What the host does for the call: charge and open it, and mark its goals from the transcript. */
-export type LiveCallActions = {
-  connect: () => Promise<ConversationConnection>;
+/**
+ * What the host does for the call: reserve it, close it on the server, and mark its goals from the
+ * transcript.
+ */
+export type LiveCallActions = CallConnectionActions & {
   /** Every goal met so far, from what was said; null when the check didn't run. */
   checkObjectives: (turns: ConversationTurn[]) => Promise<string[] | null>;
 };
@@ -76,12 +77,11 @@ const noSubscription = () => () => {
 
 const emptySnapshot = () => EMPTY_STATE;
 
-const skipObjectiveChecks = () => Promise.resolve(null);
-
 function toConnectionError(
   status: Exclude<ConversationConnection["status"], "ready">,
 ): LiveCallError {
-  if (status === "failed") {
+  // A last connection still closing after the second try is a call that didn't connect yet.
+  if (status === "failed" || status === "previousConnectionClosing") {
     return "connect";
   }
 
@@ -89,55 +89,17 @@ function toConnectionError(
 }
 
 /**
- * The call's goals, checked after each of the character's answers, and GPT-Live told where the
- * learner is so it wraps up once everything is done.
- */
-function useCallObjectives({
-  checkObjectives,
-  conversation,
-  getTurns,
-  sessionRef,
-}: {
-  checkObjectives: LiveCallActions["checkObjectives"];
-  conversation: LanguageConversationView;
-  getTurns: () => ConversationTurn[];
-  sessionRef: RefObject<LiveCallSession | null>;
-}) {
-  const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
-
-  const onChange = useCallback(
-    (met: string[]) => {
-      if (sessionRef.current) {
-        sendLiveCallCue({
-          channel: "thinking",
-          content: formatObjectivesProgressCue({
-            met,
-            open: labels.filter((label) => !met.includes(label)),
-          }),
-          session: sessionRef.current,
-        });
-      }
-    },
-    [labels, sessionRef],
-  );
-
-  // An exam task's one goal is the task itself, graded when the call ends: nothing to check.
-  const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
-  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
-}
-
-/**
  * Why the call stopped, while it's stopped, and the plan's call time that ran out when that's why:
- * the microphone closes and the call shows the problem until it starts again.
+ * the call is closed on the server and the call shows the problem until it starts again.
  */
 function useCallProblem({
   phase,
+  release,
   setPhase,
-  stopAudio,
 }: {
   phase: LiveCallPhase;
+  release: () => Promise<boolean>;
   setPhase: (phase: LiveCallPhase) => void;
-  stopAudio: () => void;
 }) {
   const [problem, setProblem] = useState<{ error: LiveCallError; limit: CallLimit | null } | null>(
     null,
@@ -145,11 +107,11 @@ function useCallProblem({
 
   const fail = useCallback(
     (error: LiveCallError, limit: CallLimit | null = null) => {
-      stopAudio();
+      void release();
       setProblem({ error, limit });
       setPhase("failed");
     },
-    [setPhase, stopAudio],
+    [release, setPhase],
   );
 
   const shown = phase === "failed" ? problem : null;
@@ -158,12 +120,56 @@ function useCallProblem({
 }
 
 /**
- * Runs a live call on GPT-Live in the browser: the host charges the call and returns a short-lived
- * token, the browser streams the microphone to GPT-Live and plays its voice, the transcript builds
- * up from both sides, the goals are checked once the character answers each learner turn, and the
- * call wraps up at its length. The microphone is optional and can be muted: typing always works,
- * even while the call connects (those replies go out once it does). A call that doesn't connect
- * within a few seconds fails with a way to try again.
+ * Ending the call. `hangUp` silences it at once on this side (the microphone, what's sent and what
+ * plays) and ends the call. `release` silences it and has the server close it: true once the
+ * server confirmed, and only then does the browser drop its peer, so the server collects the
+ * session's end itself.
+ */
+function useCallEnding({
+  endConnection,
+  sessionRef,
+  setPhase,
+  stopAudio,
+}: {
+  endConnection: () => Promise<boolean>;
+  sessionRef: RefObject<LiveCallSession | null>;
+  setPhase: (phase: LiveCallPhase) => void;
+  stopAudio: () => void;
+}) {
+  const silence = useCallback(() => {
+    stopAudio();
+    sessionRef.current?.silence();
+  }, [sessionRef, stopAudio]);
+
+  const release = useCallback(async () => {
+    silence();
+    const closed = await endConnection();
+
+    if (closed) {
+      sessionRef.current?.dispose();
+    }
+
+    return closed;
+  }, [endConnection, sessionRef, silence]);
+
+  const hangUp = useCallback(() => {
+    silence();
+    setPhase("ended");
+  }, [setPhase, silence]);
+
+  return { hangUp, release };
+}
+
+/**
+ * Runs a live call on GPT-Live in the browser. The microphone opens first (or silence, so typing
+ * still works), then the host reserves the call on the server, which fixes its absolute deadline
+ * and creates the session; the browser sends its audio and plays the character's voice over
+ * WebRTC. The transcript builds up from both sides, the goals are checked once the character
+ * answers each learner turn, and the call wraps up before its deadline. Ending it, from here or by
+ * the server, silences it at once; the server then closes it and confirms before the peer goes and
+ * before anything is saved. Typing always works, even while the call connects (those replies go
+ * out once it does). A call that doesn't connect within a few seconds fails with a way to try
+ * again.
  */
 export function useLiveCall({
   actions,
@@ -176,8 +182,10 @@ export function useLiveCall({
   const { phase, phaseRef, setPhase } = useCallPhase();
   const { getTurns, savedTurns, turnsRef, updateTurns } = useCallTranscript();
   const sessionRef = useRef<LiveCallSession | null>(null);
-  const closing = useRef<Promise<unknown> | null>(null);
+  const attempt = useRef(0);
   const { blocked: micBlocked, keep: keepAudio, stop: stopAudio } = useCallMicrophone();
+  const connection = useCallConnection(actions);
+  const { end: endConnection, getConnectionId, reserve } = connection;
 
   const objectives = useCallObjectives({
     checkObjectives: actions.checkObjectives,
@@ -188,10 +196,7 @@ export function useLiveCall({
 
   const { metLabels, onCharacterTurn } = objectives;
 
-  const hangUp = useCallback(() => {
-    closing.current ??= sessionRef.current?.close().catch(() => null) ?? null;
-    setPhase("ended");
-  }, [setPhase]);
+  const { hangUp, release } = useCallEnding({ endConnection, sessionRef, setPhase, stopAudio });
 
   const opening = useOpeningCue(conversation.openingLine);
 
@@ -216,7 +221,7 @@ export function useLiveCall({
     emptySnapshot,
   );
 
-  const { error, fail, limit } = useCallProblem({ phase, setPhase, stopAudio });
+  const { error, fail, limit } = useCallProblem({ phase, release, setPhase });
 
   const liveSession = phase === "live" ? session : null;
 
@@ -230,93 +235,107 @@ export function useLiveCall({
 
   const { muted, toggleMute } = useCallMute(liveSession);
 
-  const handleEvent = useCallback(
-    (created: LiveCallSession, event: RealtimeServerEvent, setup: LanguageConversationSetup) => {
-      if (event.type === "session-started") {
-        startClock(setup);
-        setPhase("live");
-        opening.open(created);
-        sendWaitingReplies(created);
+  const failToConnect = useCallback(() => fail("connect"), [fail]);
+
+  const handleEvent = useCallEvents({
+    hangUp,
+    onCharacterTurn,
+    onClosedEarly: failToConnect,
+    onLearnerTurn,
+    opening,
+    phaseRef,
+    sendWaitingReplies,
+    sessionRef,
+    setPhase,
+    startClock,
+    turnsRef,
+    updateTurns,
+  });
+
+  const start = useCallback(
+    async (takeover = false) => {
+      // Each start is its own attempt, and leaving the screen cancels it for good: a microphone or
+      // a reservation that arrives later is let go, even if the screen is shown again meanwhile.
+      const mine = attempt.current + 1;
+      attempt.current = mine;
+      const isCurrent = () => attempt.current === mine;
+
+      setPhase("connecting");
+
+      // The microphone comes first: the server's deadline starts when the call is reserved, so the
+      // permission prompt never takes time from the call. A blocked microphone still sends silence.
+      const audio = await openCallAudio();
+
+      if (!isCurrent()) {
+        audio.stop();
+        return;
       }
 
-      if (event.type === "transcript-fragment") {
-        const speaker = event.speaker === "user" ? "learner" : "character";
-        const { delta, endMs, startMs } = event;
-        updateTurns(addTranscriptFragment(turnsRef.current, { delta, endMs, speaker, startMs }));
-
-        if (speaker === "learner") {
-          onLearnerTurn();
-        } else {
-          opening.cancel();
-          onCharacterTurn();
-        }
+      if (!keepAudio(audio)) {
+        return;
       }
 
-      if (event.type === "delegation-created") {
-        sendLiveCallCue({
-          channel: "thinking",
-          content: LIVE_CALL_NO_BACKEND_CUE,
-          delegationId: event.delegationId,
-          session: created,
-        });
+      const answer = await reserve({ isCurrent, takeover });
+
+      // The start was cancelled meanwhile; a reservation it got was ended, so it never connects.
+      if (!answer || !isCurrent()) {
+        return;
       }
 
-      if (event.type === "session-closed" && phaseRef.current === "live") {
-        setPhase("ended");
+      if (answer.status !== "ready") {
+        fail(toConnectionError(answer.status), "limit" in answer ? answer.limit : null);
+        return;
       }
+
+      const { setup } = answer;
+
+      const length: CallLength = {
+        endsAt: getCallEndsAt({
+          deadlineAt: setup.deadlineAt,
+          now: Date.now(),
+          seconds: setup.seconds,
+        }),
+        endsAtLimit: setup.endsAtLimit,
+      };
+
+      const created: LiveCallSession = createLiveCallSession({
+        onEvent: (event) => handleEvent(created, event, length),
+        sessionUrl: setup.sessionUrl,
+      });
+
+      watchConnection({
+        isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
+        onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
+        session: created,
+      });
+
+      sessionRef.current = created;
+      setSession(created);
+      // The session reports its own failures through its state, which `watchConnection` follows;
+      // only a second connect on one session rejects, and this run connects each session once.
+      void created.connect({ stream: audio.stream }).catch(() => null);
     },
-    [
-      onCharacterTurn,
-      onLearnerTurn,
-      opening,
-      phaseRef,
-      sendWaitingReplies,
-      setPhase,
-      startClock,
-      turnsRef,
-      updateTurns,
-    ],
+    [fail, handleEvent, keepAudio, phaseRef, reserve, setPhase],
   );
 
-  const start = useCallback(async () => {
-    setPhase("connecting");
+  const finish = useCallFinish({ getConnectionId, release, sessionRef, turnsRef });
 
-    // The microphone prompt and charging the call don't wait on each other: a failed call closes
-    // the microphone, and a blocked microphone still leaves typing.
-    const [audio, connection] = await Promise.all([
-      openCallAudio(),
-      actions.connect().catch(() => ({ status: "failed" as const })),
-    ]);
+  // Leaving the screen ends the call too. A screen kept hidden in an Activity shows the call as
+  // dropped when it's back, with its transcript, since the call can't go on from there.
+  useEffect(
+    () => () => {
+      // Cancels a start still waiting on the microphone or its reservation. React's first setup
+      // and cleanup in Strict Mode run before any start, so they cancel nothing.
+      attempt.current += 1;
 
-    if (!keepAudio(audio)) {
-      return;
-    }
-
-    if (connection.status !== "ready") {
-      fail(toConnectionError(connection.status), "limit" in connection ? connection.limit : null);
-      return;
-    }
-
-    const created: LiveCallSession = createLiveCallSession({
-      instructions: conversation.instructions ?? "",
-      onEvent: (event) => handleEvent(created, event, connection.setup),
-      setup: connection.setup,
-    });
-
-    watchConnection({
-      isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
-      onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
-      session: created,
-    });
-
-    sessionRef.current = created;
-    setSession(created);
-    void created.connect({ stream: audio.stream });
-  }, [actions, conversation.instructions, fail, handleEvent, keepAudio, phaseRef, setPhase]);
-
-  const finish = useCallFinish({ closing, session, stopAudio, turnsRef });
-
-  useEffect(() => () => session?.dispose(), [session]);
+      if (phaseRef.current === "connecting" || phaseRef.current === "live") {
+        fail(phaseRef.current === "live" ? "dropped" : "connect");
+      } else {
+        void release();
+      }
+    },
+    [fail, phaseRef, release],
+  );
 
   return {
     elapsedSeconds,
@@ -332,6 +351,7 @@ export function useLiveCall({
     micBlocked,
     muted,
     phase,
+    reconnecting: connection.reconnecting,
     sendText,
     start,
     toggleMute,

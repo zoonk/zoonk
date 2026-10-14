@@ -167,6 +167,7 @@ export function toConversationView({
     instructions,
     kind: row.kind,
     level: row.level,
+    locked: false,
     minutes: row.minutes,
     objectives: data.objectives.map((objective) => ({
       ...objective,

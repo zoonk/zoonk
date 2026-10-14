@@ -59,8 +59,11 @@ export function useOpeningCue(openingLine: string) {
   return useMemo(() => ({ cancel, open }), [cancel, open]);
 }
 
-/** How long a connected call may run, as the server set it when the call connected. */
-type CallLength = Pick<LanguageConversationSetup, "endsAtLimit" | "seconds">;
+/**
+ * When a connected call's own length ends, on this device's clock (`getCallEndsAt`, from the
+ * server's absolute deadline), and the plan's call time it reaches by then, if any.
+ */
+export type CallLength = { endsAt: number } & Pick<LanguageConversationSetup, "endsAtLimit">;
 
 /** What the app tells the voice model when the call has run this long, as an examiner keeps time. */
 type TimedCue = { atSeconds: number; say: string };
@@ -68,13 +71,15 @@ type TimedCue = { atSeconds: number; say: string };
 const NO_CUES: readonly TimedCue[] = [];
 
 /**
- * The call's clock while it's live. It runs for the call's length, or for what the server let it
- * run when it connected (`startClock`), which is less when it reaches the plan's call time. Near
- * the end the character wraps up, and when that's the plan's call time running out, today's or this
- * month's, `limitNear` says which; just after the end the call ends on its own. A learner quiet for a while (nothing said
- * or typed, `markLearnerActive` marks both) is asked once whether they're there, and the call ends
- * if they stay quiet: the voice session is paid by the second, silence included. An exam task's
- * `cues` go out once each when the call has run that long (the examiner moving to the questions).
+ * The call's clock while it's live. It runs until the call's length ends as the server's deadline
+ * fixed it (`startClock`), so the time spent connecting is already gone and nothing starts it over;
+ * the limit shown is what's left of it when the call went live, less than the call's length when
+ * it reaches the plan's call time. Near the end the character wraps up, and when that's the plan's
+ * call time running out, today's or this month's, `limitNear` says which; just after the end the
+ * call ends on its own, before the server's deadline. A learner quiet for a while (nothing said or
+ * typed, `markLearnerActive` marks both) is asked once whether they're there, and the call ends if
+ * they stay quiet: the voice session is paid by the second, silence included. An exam task's `cues`
+ * go out once each when the call has run that long (the examiner moving to the questions).
  */
 export function useCallClock({
   cues = NO_CUES,
@@ -95,7 +100,12 @@ export function useCallClock({
   const lastLearnerAt = useRef(0);
   const nudged = useRef(false);
   const cuesSent = useRef(0);
-  const limitSeconds = length?.seconds ?? minutes * SECONDS_PER_MINUTE;
+  const endsAt = length?.endsAt ?? null;
+
+  const limitSeconds =
+    endsAt === null || startedAt === null
+      ? minutes * SECONDS_PER_MINUTE
+      : Math.max(0, Math.round((endsAt - startedAt) / MS_PER_SECOND));
 
   const startClock = useCallback((connected: CallLength) => {
     const connectedAt = Date.now();
@@ -111,7 +121,7 @@ export function useCallClock({
   }, []);
 
   useEffect(() => {
-    if (!session || startedAt === null) {
+    if (!session || startedAt === null || endsAt === null) {
       return;
     }
 
@@ -128,7 +138,7 @@ export function useCallClock({
         sendLiveCallCue({ content: cue.say, session });
       }
 
-      if (!wrappedUp.current && elapsed >= limitSeconds - WRAP_UP_SECONDS) {
+      if (!wrappedUp.current && tick >= endsAt - WRAP_UP_SECONDS * MS_PER_SECOND) {
         wrappedUp.current = true;
         setWrappingUp(true);
         sendLiveCallCue({ content: LIVE_CALL_WRAP_UP_CUE, session });
@@ -139,13 +149,13 @@ export function useCallClock({
         sendLiveCallCue({ content: LIVE_CALL_SILENCE_CUE, session });
       }
 
-      if (elapsed >= limitSeconds + GRACE_SECONDS || quiet >= SILENCE_END_SECONDS) {
+      if (tick >= endsAt + GRACE_SECONDS * MS_PER_SECOND || quiet >= SILENCE_END_SECONDS) {
         hangUp();
       }
     }, TICK_MS);
 
     return () => clearInterval(timer);
-  }, [cues, hangUp, limitSeconds, session, startedAt]);
+  }, [cues, endsAt, hangUp, session, startedAt]);
 
   const elapsedSeconds = startedAt === null ? 0 : Math.floor((now - startedAt) / MS_PER_SECOND);
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type CallLimit, CallLimitNotice } from "../../_components/help-limit-notice";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
+import { CallOffMessage } from "./conversation-parts";
 
 /**
  * The plan's call time is used: until when, and the one thing to do about it (a free account for
@@ -31,17 +31,8 @@ export function CallLimitMessage({
   };
 
   return (
-    <div
-      className={cn("flex flex-col items-center gap-2 py-10 text-center", className)}
-      role="alert"
-    >
-      <p className="text-lg font-semibold text-balance">{title ?? titles[limit.period]}</p>
-      <CallLimitNotice
-        className="items-center text-balance"
-        limit={limit}
-        linkComponent={LearnLink}
-        routes={routes}
-      />
-    </div>
+    <CallOffMessage className={className} title={title ?? titles[limit.period]}>
+      <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+    </CallOffMessage>
   );
 }

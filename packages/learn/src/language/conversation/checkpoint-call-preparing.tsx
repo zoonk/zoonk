@@ -7,6 +7,7 @@ import {
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { TaskActions } from "../../_components/task-layout";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
@@ -25,10 +26,10 @@ function toRun({ retry, state }: { retry: () => void; state: WriteState }): Gene
 }
 
 /**
- * A language goal's checkpoint whose call isn't written yet: a session's preparation usually
- * writes it ahead, so this is rare. Opening the screen writes nothing; the learner's tap starts
- * writing it for their speaking level, the wait shows it happening, and the host opens the call
- * once it's ready (false when it didn't start).
+ * A language goal's checkpoint whose call isn't written yet, on the page as a call's intro is: a
+ * session's preparation usually writes it ahead, so this is rare. Opening the screen writes
+ * nothing; the learner's tap starts writing it for their speaking level, the wait shows it
+ * happening, and the host opens the call once it's ready (false when it didn't start).
  */
 export function CheckpointCallPreparing({
   exitHref,
@@ -54,28 +55,23 @@ export function CheckpointCallPreparing({
       <TaskFrame
         exitHref={exitHref}
         footer={
-          <TaskMainButton onClick={() => void start()}>
-            <PhoneIcon aria-hidden="true" />
-            {t("Get the call ready")}
-          </TaskMainButton>
+          <TaskActions>
+            <TaskMainButton onClick={() => void start()}>
+              <PhoneIcon aria-hidden="true" />
+              {t("Get the call ready")}
+            </TaskMainButton>
+          </TaskActions>
         }
         headerTitle={title}
       >
-        <div className="flex flex-col items-center gap-3 rounded-3xl px-4 py-6 text-center">
-          <span
-            aria-hidden="true"
-            className="bg-muted grid size-20 shrink-0 place-items-center rounded-full"
-          >
-            <PhoneIcon className="size-8" />
-          </span>
-          <h1 className="text-2xl font-semibold tracking-tight text-balance">{unitTitle}</h1>
-        </div>
-
-        <p className="text-muted-foreground">
-          {t(
-            "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
-          )}
-        </p>
+        <header className="flex flex-col gap-2">
+          <h1 className="text-title text-balance">{unitTitle}</h1>
+          <p className="text-muted-foreground text-pretty">
+            {t(
+              "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
+            )}
+          </p>
+        </header>
       </TaskFrame>
     );
   }

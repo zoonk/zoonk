@@ -1,7 +1,10 @@
 import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
-import { createLiveConversationToken } from "@zoonk/ai/tasks/v2/language/live-conversation-token";
+import {
+  closeLiveCallSession,
+  createLiveCallSession,
+} from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -11,14 +14,21 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanupTestCalls,
+  connectTestCall,
+  reserveTestCall,
+  setupTestCalls,
+  testCallCompletionInput,
+} from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
-import { connectLanguageConversation } from "./connect-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
+import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
 import { startLanguageConversation } from "./start-language-conversation";
 
 const PROVENANCE = {
@@ -63,14 +73,6 @@ const PRACTICE_SECONDS = 120;
 const TEN_MINUTES_MS = 600_000;
 const DAY_MS = 86_400_000;
 
-const CONNECTION = {
-  expiresAt: 1_790_000_000,
-  model: "openai/gpt-live-1",
-  protocols: ["ai-gateway-realtime.v1", "ai-gateway-auth.vcst_test"],
-  token: "vcst_test",
-  url: "wss://ai-gateway.vercel.sh/v1/live/sessions",
-};
-
 /** The objective model's answer: these labels met, each with the learner's words. */
 function objectivesAnswer(labels: string[]) {
   return {
@@ -95,13 +97,15 @@ async function startPractice(chapterId: string) {
 /** A practice call the learner started and connected, as the app does before talking. */
 async function connectPractice(chapterId: string) {
   const conversationId = await startPractice(chapterId);
-  await connectLanguageConversation(conversationId);
+  await connectTestCall(conversationId);
   return conversationId;
 }
 
 describe("language conversations", () => {
-  beforeEach(() => {
-    vi.mocked(createLiveConversationToken).mockResolvedValue(CONNECTION);
+  beforeEach(async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+    await setupTestCalls();
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
       objectivesAnswer(["Is it available?", "Book a viewing"]),
@@ -115,6 +119,8 @@ describe("language conversations", () => {
       userPrompt: "",
     });
   });
+
+  afterEach(cleanupTestCalls);
 
   it("starts a unit's practice call from its cached scenario at the learner's level", async () => {
     const { goal, renting, user } = await languageGoalFixture();
@@ -154,19 +160,66 @@ describe("language conversations", () => {
       status: "notFound",
     });
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toStrictEqual({
-      status: "notFound",
-    });
+    await expect(reserveTestCall(conversationId)).resolves.toStrictEqual({ status: "notFound" });
   });
 
-  it("connects with a short-lived GPT-Live token and holds the call's length from the day's call time", async () => {
+  it("reserves a durable deadline without provider spend, then creates the server-owned session", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toStrictEqual({
-      setup: { ...CONNECTION, endsAtLimit: null, seconds: PRACTICE_SECONDS, voice: "marin" },
+    const reserved = await reserveTestCall(conversationId);
+
+    expect(reserved).toMatchObject({
+      setup: {
+        connectionId: expect.any(String),
+        deadlineAt: expect.any(String),
+        endsAtLimit: null,
+        generation: 1,
+        seconds: PRACTICE_SECONDS,
+        voice: "marin",
+      },
       status: "ready",
+    });
+
+    expect(createLiveCallSession).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
+    ).resolves.toMatchObject({ startedAt: null });
+
+    if (reserved.status !== "ready") {
+      throw new Error("Expected reservation");
+    }
+
+    expect(reserved.setup.sessionUrl).toBe(
+      `/v1/language-conversations/${conversationId}/connections/${reserved.setup.connectionId}/sdp`,
+    );
+
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: reserved.setup.connectionId } }),
+    ).resolves.toMatchObject({
+      providerSessionId: null,
+      state: "pending",
+      workflowRunId: `test-deadline-${reserved.setup.connectionId}`,
+    });
+
+    await expect(
+      redeemLiveCallSdp({
+        connectionId: reserved.setup.connectionId,
+        conversationId,
+        input: { sdp: "test-offer", sessionConfig: { instructions: "untrusted" } },
+      }),
+    ).resolves.toMatchObject({
+      sdp: "test-answer",
+      sessionId: expect.any(String),
+      status: "ready",
+    });
+
+    expect(createLiveCallSession).toHaveBeenCalledExactlyOnceWith({
+      instructions: expect.stringContaining(RENTING_SCENARIO.character.name),
+      sdp: "test-offer",
+      voice: "marin",
     });
 
     const [usage, row] = await Promise.all([
@@ -191,15 +244,12 @@ describe("language conversations", () => {
     });
 
     const conversationId = started.status === "ready" ? started.conversationId : "";
-    await connectLanguageConversation(conversationId);
+    await connectTestCall(conversationId);
 
-    // It dropped, and the learner called again half a minute after the first connection.
-    await prisma.usageRecord.updateMany({
-      data: { createdAt: new Date(Date.now() - 30_000) },
-      where: { targetId: conversationId },
-    });
+    // The provider confirms the first connection ran for half a minute before reconnecting.
+    vi.setSystemTime(new Date(Date.now() + 30_000));
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
       setup: { endsAtLimit: null, seconds: 60 },
       status: "ready",
     });
@@ -222,7 +272,7 @@ describe("language conversations", () => {
       where: { targetId: conversationId },
     });
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toStrictEqual({
+    await expect(reserveTestCall(conversationId)).resolves.toStrictEqual({
       status: "conversationEnded",
     });
   });
@@ -239,13 +289,13 @@ describe("language conversations", () => {
       userId: user.id,
     });
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
       setup: { endsAtLimit: "day", seconds: 90 },
       status: "ready",
     });
   });
 
-  it("stops at the free plan's daily call time and never mints a token past it", async () => {
+  it("stops at the free plan's daily call time without creating a provider session", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
@@ -257,12 +307,12 @@ describe("language conversations", () => {
       userId: user.id,
     });
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
       limit: { limit: FREE_CALL_SECONDS, resource: "callSeconds" },
       status: "limitReached",
     });
 
-    expect(createLiveConversationToken).not.toHaveBeenCalled();
+    expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
   it("keeps only what a finished call ran in the day's call time", async () => {
@@ -270,12 +320,16 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    await prisma.usageRecord.updateMany({
-      data: { createdAt: new Date(Date.now() - 45_000) },
-      where: { targetId: conversationId },
+    vi.mocked(closeLiveCallSession).mockResolvedValueOnce({
+      reason: "close_requested",
+      seconds: 45,
+      status: "closed",
     });
 
-    await completeLanguageConversation({ conversationId, input: COMPLETION });
+    await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     const record = await prisma.usageRecord.findFirstOrThrow({
       where: { targetId: conversationId },
@@ -284,6 +338,16 @@ describe("language conversations", () => {
     expect(record.seconds).toBeGreaterThanOrEqual(45);
     expect(record.seconds).toBeLessThanOrEqual(47);
     expect(record.costMicros).toBe(10_000 + Math.round((record.seconds * 50_000) / 60));
+
+    await expect(
+      prisma.liveCallConnection.findMany({ where: { conversationId } }),
+    ).resolves.toMatchObject([
+      { costConfidence: "confirmed", settledMicros: record.costMicros, state: "closed" },
+    ]);
+
+    const [closedAt] = vi.mocked(closeLiveCallSession).mock.invocationCallOrder;
+    const [reviewedAt] = vi.mocked(writeConversationFeedback).mock.invocationCallOrder;
+    expect(closedAt).toBeLessThan(reviewedAt ?? 0);
   });
 
   it("gives guests no live calls", async () => {
@@ -292,11 +356,11 @@ describe("language conversations", () => {
     const conversationId = await startPractice(renting.id);
     mockGuestSession(user.id);
 
-    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+    await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
       status: "limitReached",
     });
 
-    expect(createLiveConversationToken).not.toHaveBeenCalled();
+    expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
   it("marks the goals the learner's words achieved and keeps them for the call", async () => {
@@ -390,8 +454,13 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
 
+    await reserveTestCall(conversationId);
+
     await expect(
-      completeLanguageConversation({ conversationId, input: COMPLETION }),
+      completeLanguageConversation({
+        conversationId,
+        input: testCallCompletionInput(conversationId, COMPLETION),
+      }),
     ).resolves.toMatchObject({
       conversation: { result: { brainPower: 0, feedback: null, spokenSeconds: 0 } },
       status: "completed",
@@ -406,8 +475,15 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    const first = await completeLanguageConversation({ conversationId, input: COMPLETION });
-    const again = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const first = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
+
+    const again = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(first).toMatchObject({
       conversation: {
@@ -460,7 +536,10 @@ describe("language conversations", () => {
       objectivesAnswer(["Book a viewing"]),
     );
 
-    const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const result = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(result).toMatchObject({
       conversation: { objectives: [{ met: false }, { met: true }, { met: true }] },
@@ -477,7 +556,10 @@ describe("language conversations", () => {
     const conversationId = await connectPractice(renting.id);
     vi.mocked(writeConversationFeedback).mockRejectedValue(new Error("model down"));
 
-    const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const result = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(result).toMatchObject({
       conversation: { result: { feedback: null }, status: "completed" },
@@ -486,6 +568,11 @@ describe("language conversations", () => {
 
   it("plays a language goal's checkpoint as the unit's call and closes it when won", async () => {
     const { goal, plan, user } = await languageGoalFixture();
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
+
     mockSession(user.id);
 
     const [boss, session] = await Promise.all([
@@ -516,13 +603,16 @@ describe("language conversations", () => {
     expect(again).toStrictEqual(first);
 
     const conversationId = first.status === "ready" ? first.conversationId : "";
-    await connectLanguageConversation(conversationId);
+    await connectTestCall(conversationId);
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
       objectivesAnswer(RENTING_SCENARIO.objectives.map((item) => item.label)),
     );
 
-    const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
+    const result = await completeLanguageConversation({
+      conversationId,
+      input: testCallCompletionInput(conversationId, COMPLETION),
+    });
 
     expect(result).toMatchObject({
       conversation: { kind: "checkpoint", minutes: 1, result: { passed: true, stars: 3 } },
@@ -542,8 +632,20 @@ describe("language conversations", () => {
   it("schedules a language goal's reached boss as a call, with no questions to pick", async () => {
     const { items, plan, user } = await languageGoalFixture();
 
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
+
     await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
-    const boss = await planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 });
+    // C2 reaches a boss only on its saved day, even when its lessons were completed ahead.
+    const boss = await planItemFixture({
+      kind: "boss",
+      phase: 1,
+      planId: plan.id,
+      position: 10,
+      scheduledFor: new Date("2026-10-13"),
+    });
+
     const planItems = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
     const scheduled = await loadSessionBosses({
