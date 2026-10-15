@@ -1718,22 +1718,22 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "See your answer accuracy and weekly trend over the past 90 days."
 
-#: src/app/[lang]/(app)/(stats)/score/score-chart-client.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
 msgstr "Weekly score trend"
 
-#: src/app/[lang]/(app)/(stats)/score/score-chart-client.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "i2_Jga"
 msgid "{score} across {count, plural, one {# answer} other {# answers}}"
 msgstr "{score} across {count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(app)/(stats)/score/score-chart-client.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "l-oCrn"
 msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
 msgstr "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
 
-#: src/app/[lang]/(app)/(stats)/score/score-chart-client.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-chart-plot.tsx
 msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# answer} other {# answers}}"
@@ -3637,6 +3637,57 @@ msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 
+#: src/components/pricing/plan-prices.tsx
+msgctxt "u2XWYU"
+msgid "Billing period"
+msgstr "Billing period"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "Monthly"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "Yearly"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "EMZyX7"
+msgid "save {amount}"
+msgstr "save {amount}"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "Lxn0Fm"
+msgid "Price shown at checkout"
+msgstr "Price shown at checkout"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "Rw82_V"
+msgid "per month"
+msgstr "per month"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "PMrrSl"
+msgid "Billed every month."
+msgstr "Billed every month."
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "qxHg3H"
+msgid "per year"
+msgstr "per year"
+
+#: src/components/pricing/plan-prices.tsx
+msgctxt "8fp1TZ"
+msgid "That's <mono>{amount}</mono> a month."
+msgstr "That's <mono>{amount}</mono> a month."
+
+#: src/components/pricing/plan-prices.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "0I_Rwu"
+msgid "Get Plus"
+msgstr "Get Plus"
+
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "ktRBJl"
 msgid "Your whole exam plan, every day to the exam"
@@ -3663,60 +3714,9 @@ msgid "Every goal · every lesson"
 msgstr "Every goal · every lesson"
 
 #: src/components/pricing/plus-plan.tsx
-#: src/components/public/course-start-failure.tsx
-msgctxt "0I_Rwu"
-msgid "Get Plus"
-msgstr "Get Plus"
-
-#: src/components/pricing/plus-plan.tsx
 msgctxt "PFGLfW"
 msgid "Manage your plan"
 msgstr "Manage your plan"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "Lxn0Fm"
-msgid "Price shown at checkout"
-msgstr "Price shown at checkout"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "Rw82_V"
-msgid "per month"
-msgstr "per month"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "PMrrSl"
-msgid "Billed every month."
-msgstr "Billed every month."
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "qxHg3H"
-msgid "per year"
-msgstr "per year"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "8fp1TZ"
-msgid "That's <mono>{amount}</mono> a month."
-msgstr "That's <mono>{amount}</mono> a month."
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "u2XWYU"
-msgid "Billing period"
-msgstr "Billing period"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "wYsv4Z"
-msgid "Monthly"
-msgstr "Monthly"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "dqD39h"
-msgid "Yearly"
-msgstr "Yearly"
-
-#: src/components/pricing/plus-plan.tsx
-msgctxt "EMZyX7"
-msgid "save {amount}"
-msgstr "save {amount}"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
