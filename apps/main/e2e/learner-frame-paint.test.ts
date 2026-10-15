@@ -3,6 +3,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
 
 /** Main's session hint (`SESSION_HINT_COOKIE` in `apps/main/src/lib/learner/session-hint.ts`). */
@@ -155,6 +156,45 @@ test.describe("Learner frame before the summary", () => {
     // The learner's own goal and account fill the places the page kept for them.
     await expect.poll(() => frameBoxes(page)).toStrictEqual(before);
     await expect.poll(() => sawLogin(page)).toBe(false);
+
+    await context.close();
+  });
+
+  test("lists a learner's own places in the palette while their summary is read", async ({
+    browser,
+  }) => {
+    const user = await createGoalLearner();
+    const context = await browser.newContext({ storageState: user.storageState });
+    const page = await openCatalog(context);
+    const read = await holdSummaryRead(page);
+
+    await page.goto("/courses");
+    await read.sent;
+
+    const palette = await openPaletteWithKeyboard(page);
+    const places = palette.getByRole("group", { name: "Go to" }).getByRole("option");
+    const buddy = { exact: true, name: "Zu" };
+
+    // The places every learner has, never a visitor's way in; the buddy waits for its name.
+    await expect(places.first()).toHaveText("Today");
+    await expect(palette.getByRole("option", { name: "Log in" })).toHaveCount(0);
+    await expect(palette.getByRole("option", { name: "Pricing" })).toHaveCount(0);
+    await expect(palette.getByRole("option", buddy)).toHaveCount(0);
+
+    // The summary arrives while it's open (the frame behind it takes the learner's goal): its rows
+    // wait, so Enter opens the row in sight.
+    const frameGoal = page.locator('[data-slot="learn-sidebar-header"]');
+    await read.release();
+    await expect(frameGoal).toContainText("Bake sourdough bread");
+    await expect(palette.getByRole("option").first()).toHaveText("Today");
+
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/today$/u);
+
+    // Opened again, it's the learner's whole palette.
+    const reopened = await openPaletteWithKeyboard(page);
+    const reopenedPlaces = reopened.getByRole("group", { name: "Go to" });
+    await expect(reopenedPlaces.getByRole("option", buddy)).toBeVisible();
 
     await context.close();
   });

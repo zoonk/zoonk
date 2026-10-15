@@ -1,8 +1,12 @@
 "use client";
 
 import { CommandPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette";
-import { type LearnerPalette } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups";
+import {
+  type LearnerPalette,
+  UNREAD_LEARNER_PALETTE,
+} from "@/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups";
 import { switchGoal } from "@/app/[lang]/(app)/(learn)/_components/switch-goal";
+import { hasSessionHint } from "@/lib/learner/session-hint";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 
@@ -34,20 +38,24 @@ function toLearnerPalette(summary: LearnerSummary): LearnerPalette {
 
 /**
  * The palette itself, loaded on the first request: a learner's or a guest's with their actions,
- * places and other goals; the public pages' until the learner is read, or for a visitor.
+ * places and other goals (the places every learner has until they're read); the public pages' for
+ * a visitor.
  */
 export default function AppCommandPaletteDialog() {
   const learner = useLearnerSummary();
-  const summary = learner.status === "ready" ? learner.summary : null;
 
-  if (!summary) {
-    return <CommandPalette isLoggedIn={false} />;
+  if (learner.status === "ready") {
+    return (
+      <CommandPalette
+        isLoggedIn={!learner.summary.identity.isAnonymous}
+        learner={toLearnerPalette(learner.summary)}
+      />
+    );
   }
 
-  return (
-    <CommandPalette
-      isLoggedIn={!summary.identity.isAnonymous}
-      learner={toLearnerPalette(summary)}
-    />
-  );
+  if (learner.status !== "visitor" && hasSessionHint()) {
+    return <CommandPalette isLoggedIn={false} learner={UNREAD_LEARNER_PALETTE} />;
+  }
+
+  return <CommandPalette isLoggedIn={false} />;
 }

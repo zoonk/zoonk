@@ -1,5 +1,6 @@
 "use client";
 
+import { switchGoal } from "@/app/[lang]/(app)/(learn)/_components/switch-goal";
 import { getMenu } from "@/lib/menu";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
@@ -20,17 +21,34 @@ import {
  * the keyboard, saved by the host's action as the goal switcher saves them) and quick explanations
  * (newest first, each opening itself); the active goal's places as the sidebar lists them; today's
  * next block, for "Continue"; and whether the buddy can take a question (`canAskBuddy`: the active
- * goal is one it tutors), with its own name when the learner gave it one.
+ * goal is one it tutors), with its own name when the learner gave it one. Until the learner is
+ * read the buddy is `null`: its row waits for its name, as its tab does.
  */
 export type LearnerPalette = {
   activeGoalId: string | null;
-  buddy: Pick<LearnBuddy, "kind" | "name">;
+  buddy: Pick<LearnBuddy, "kind" | "name"> | null;
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
   goals: { id: string; kind: string; title: string }[];
   onSwitchGoal: (goalId: string) => Promise<void>;
   places: LearnerSummary["places"];
   today: LearnerSummary["today"];
+};
+
+/**
+ * A browser whose session hint says it holds a session, before its learner is read (or when the
+ * read failed): the places every learner has, as the frame's sidebar lists them then, with no
+ * counts, goals or next block yet. Never a visitor's way in.
+ */
+export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
+  activeGoalId: null,
+  buddy: null,
+  canAskBuddy: false,
+  explanations: [],
+  goals: [],
+  onSwitchGoal: switchGoal,
+  places: { exam: false, mindMaps: false, readyMistakes: 0, speaking: false },
+  today: null,
 };
 
 /** Rows a learner only has in some cases are left out as `false` or `null` while listed. */
@@ -117,12 +135,13 @@ export function useLearnerPaletteGroups({
   const goTo = [
     createNavigationPaletteItem({ id: "today", label: t("Today"), menu: getMenu("today") }),
     createNavigationPaletteItem({ id: "journey", label: t("Plan"), menu: getMenu("journey") }),
-    createNavigationPaletteItem({
-      id: "buddy",
-      keywords: t("Buddy"),
-      label: buddy,
-      menu: getMenu("buddy"),
-    }),
+    learner.buddy &&
+      createNavigationPaletteItem({
+        id: "buddy",
+        keywords: t("Buddy"),
+        label: buddy,
+        menu: getMenu("buddy"),
+      }),
     createNavigationPaletteItem({
       count: places.readyMistakes,
       id: "mistakes",

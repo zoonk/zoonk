@@ -22,11 +22,11 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { listenForCommandPaletteOpen } from "./command-palette-event";
 import { usePaletteGroups } from "./command-palette-groups";
 import { type PaletteItem, getPaletteItemSearchValue } from "./command-palette-items";
-import { type LearnerPalette } from "./command-palette-learner-groups";
+import { type LearnerPalette, UNREAD_LEARNER_PALETTE } from "./command-palette-learner-groups";
 import { PaletteResultGroup } from "./command-palette-options";
 import { type PaletteSearchResults, searchPaletteAction } from "./search-courses-action";
 
@@ -69,6 +69,33 @@ function useContinueFromPalette() {
  */
 type CommandPaletteProps = { isLoggedIn: boolean; learner?: LearnerPalette };
 
+/**
+ * Who the palette is for while it's open. One opened before the learner was read keeps the places
+ * every learner has until they type or open it again: the rows their summary adds above (the next
+ * block, a question for the buddy) would move the highlighted row from under their Enter. Anyone
+ * else's palette (a visitor's, another learner's) shows at once.
+ */
+function useShownLearner({
+  isLoggedIn,
+  isOpen,
+  learner,
+  query,
+}: CommandPaletteProps & { isOpen: boolean; query: string }): CommandPaletteProps {
+  const [shown, setShown] = useState({ learner, query });
+
+  const waits =
+    isOpen &&
+    query === shown.query &&
+    shown.learner === UNREAD_LEARNER_PALETTE &&
+    learner !== undefined;
+
+  if (!waits && (shown.learner !== learner || shown.query !== query)) {
+    setShown({ learner, query });
+  }
+
+  return waits ? { isLoggedIn: false, learner: UNREAD_LEARNER_PALETTE } : { isLoggedIn, learner };
+}
+
 export function CommandPalette(props: CommandPaletteProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -99,6 +126,8 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   /** The search fields and the account menu's "Search" open this palette too. */
   useEffect(() => listenForCommandPaletteOpen(open), [open]);
 
+  const shown = useShownLearner({ isLoggedIn, isOpen, learner, query });
+
   function runPaletteItem(item: PaletteItem) {
     if (item.kind === "logout") {
       void logout();
@@ -116,7 +145,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
 
     if (item.kind === "goal") {
       startGoalSwitch(async () => {
-        await learner?.onSwitchGoal(item.goalId);
+        await shown.learner?.onSwitchGoal(item.goalId);
       });
 
       return;
@@ -132,7 +161,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
     runPaletteItem(item);
   }
 
-  const paletteGroups = usePaletteGroups({ isLoggedIn, learner, query, results });
+  const paletteGroups = usePaletteGroups({ ...shown, query, results });
 
   /**
    * The dialog may close from Escape, Cancel or an outside press. The search hook owns
