@@ -3,11 +3,12 @@ import { type Mistake, type MistakeCause, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { readGoalPlan } from "../learner/_utils/read-goal-plan";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getOwnedGoal } from "../learner/get-owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
+import { getScopeSkillIds } from "./_utils/mistake-scope";
 import { type MistakeAvailability, type MistakeListInput } from "./contract";
 import { loadMistakePracticeAvailability } from "./mistake-availability";
 import { type MistakeLesson, findMistakeLessons } from "./mistake-lessons";
@@ -46,21 +47,6 @@ export type CurrentUserMistakes =
     }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-async function getScopeSkillIds(input: MistakeListInput): Promise<string[] | null> {
-  if (input.skillId) {
-    return [input.skillId];
-  }
-
-  if (!input.goalId) {
-    return null;
-  }
-
-  // A goal skill's lessons usually teach finer skills, where their screens' misses land
-  // (`memberSkillIds`): the notebook lists those with the goal's own, as Today's practice drills them.
-  const plan = await readGoalPlan(input.goalId);
-  return [...new Set(plan.skills.flatMap((skill) => skill.memberSkillIds))];
-}
 
 async function countMistakes(where: {
   skillId?: { in: string[] };
@@ -108,7 +94,7 @@ export async function listCurrentUserMistakes(
   const userId = session.user.id;
   cacheTag(getLearnerModelCacheTag(userId));
 
-  const owned = input.goalId ? await findOwnedGoal(input.goalId) : null;
+  const owned = input.goalId ? await getOwnedGoal(input.goalId) : null;
 
   if (owned && owned.status !== "ready") {
     return owned;

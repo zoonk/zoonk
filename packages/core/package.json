@@ -413,6 +413,7 @@
     "./mind-maps/list": "./src/mind-maps/list-goal-mind-maps.ts",
     "./mind-maps/request": "./src/mind-maps/request-chapter-mind-map.ts",
     "./mistakes/contract": "./src/mistakes/contract.ts",
+    "./mistakes/count-goal": "./src/mistakes/count-goal-mistakes.ts",
     "./mistakes/drills": "./src/mistakes/mistake-drills.ts",
     "./mistakes/list-current-user": "./src/mistakes/list-current-user-mistakes.ts",
     "./mistakes/practice": "./src/mistakes/get-mistake-practice.ts",

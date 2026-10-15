@@ -7,7 +7,7 @@ import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { countCurrentUserMemory } from "@zoonk/core/memory/count";
 import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
-import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
+import { countOpenGoalMistakes } from "@zoonk/core/mistakes/count-goal";
 import { getSession } from "@zoonk/core/users/session";
 import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
 import { PageWithAside } from "@zoonk/learn/shell";
@@ -53,8 +53,8 @@ async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string 
 
 /** Whether the learner has an open mistake in the goal, for a first suggestion. */
 async function hasOpenMistake(goalId: string): Promise<boolean> {
-  const result = await listCurrentUserMistakes({ goalId, limit: 1, offset: 0, status: "open" });
-  return result.status === "ready" && result.counts.open > 0;
+  const result = await countOpenGoalMistakes({ goalId });
+  return result.status === "ready" && result.open > 0;
 }
 
 async function BuddyContent() {
