@@ -79,13 +79,16 @@ function toLessonsTeachingSql({
   language: string;
   query: Sql;
 }): Sql {
-  // Each `OFFSET 0` keeps Postgres from merging a step into the others and reordering them.
+  // Each `OFFSET 0` keeps Postgres from merging steps. Resolve each lesson by id before applying
+  // eligibility: otherwise it can scan a language/level index again for every linked lesson.
   return sql`SELECT l.id FROM ${toIndexedMatchesSql({ document: SKILL_DOCUMENT, query })}
     CROSS JOIN LATERAL (
       SELECT ls.lesson_id FROM lesson_skills ls WHERE ls.skill_id = s.id OFFSET 0
     ) ls
     CROSS JOIN LATERAL (
-      SELECT l.id FROM library_lessons l WHERE l.id = ls.lesson_id AND ${eligible} OFFSET 0
+      SELECT l.id FROM (
+        SELECT * FROM library_lessons l WHERE l.id = ls.lesson_id OFFSET 0
+      ) l WHERE ${eligible} OFFSET 0
     ) l
     WHERE s.language = ${language}`;
 }
