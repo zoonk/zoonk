@@ -1,4 +1,6 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
@@ -8,7 +10,6 @@ import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { findPlanChapter } from "./_utils/plan-chapter";
 import { TestOutClient, TestOutPreparingClient } from "./test-out-client";
@@ -53,7 +54,11 @@ async function TestOutBody({ params, searchParams }: Props) {
   ]);
 
   if (result.status !== "ready" && result.status !== "plusRequired") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   const page = {

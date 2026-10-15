@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
@@ -9,7 +11,6 @@ import { getSession } from "@zoonk/core/users/session";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MistakePracticeClient } from "./practice-client";
@@ -21,6 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 type Props = PageProps<"/[lang]/mistakes/practice">;
+
+/**
+ * The run's full screen, around the run and its placeholder only: the sign-in screen and the
+ * not-found answer bring their own `main`.
+ */
+function PracticeMain({ children }: { children: React.ReactNode }) {
+  return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
+}
 
 /** "Practice this skill" opens practice with `?skill=` and the skill's id; anything else is ignored. */
 function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined {
@@ -57,16 +66,22 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
   const result = await getMistakePractice({ goalId: goal.id, skillId });
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (
-    <MistakePracticeClient
-      goalId={goal.id}
-      practice={result.practice}
-      trueFalseLabels={result.trueFalseLabels}
-      tutor={tutor}
-    />
+    <PracticeMain>
+      <MistakePracticeClient
+        goalId={goal.id}
+        practice={result.practice}
+        trueFalseLabels={result.trueFalseLabels}
+        tutor={tutor}
+      />
+    </PracticeMain>
   );
 }
 
@@ -110,11 +125,15 @@ function PracticeSkeleton() {
 export default function MistakePracticePage({ searchParams }: Props) {
   return (
     <MainLearnProvider>
-      <main className="bg-background flex min-h-dvh flex-col">
-        <Suspense fallback={<PracticeSkeleton />}>
-          <PracticeBody searchParams={searchParams} />
-        </Suspense>
-      </main>
+      <Suspense
+        fallback={
+          <PracticeMain>
+            <PracticeSkeleton />
+          </PracticeMain>
+        }
+      >
+        <PracticeBody searchParams={searchParams} />
+      </Suspense>
     </MainLearnProvider>
   );
 }

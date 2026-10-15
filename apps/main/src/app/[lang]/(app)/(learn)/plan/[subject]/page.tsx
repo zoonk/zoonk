@@ -1,3 +1,4 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
@@ -7,9 +8,9 @@ import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract"
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../../_components/learn-no-goal";
+import { LearnNotFound } from "../../_components/learn-not-found";
 import { SubjectScreenClient } from "./subject-screen-client";
 
 type Props = PageProps<"/[lang]/plan/[subject]">;
@@ -75,7 +76,11 @@ async function SubjectBody({ params }: Props) {
   }
 
   if (result.status !== "ready" || !subject) {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   // "Ask" opens the buddy's conversation with the player's components.

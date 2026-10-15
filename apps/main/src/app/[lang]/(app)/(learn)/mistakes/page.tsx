@@ -1,3 +1,4 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
@@ -8,9 +9,9 @@ import { MistakesNotebook } from "@zoonk/learn/mistakes";
 import { INBOX_PAGE_CLASS } from "@zoonk/learn/page";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
+import { LearnNotFound } from "../_components/learn-not-found";
 
 type Props = PageProps<"/[lang]/mistakes">;
 
@@ -70,7 +71,11 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   ]);
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

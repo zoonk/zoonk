@@ -1,7 +1,8 @@
 import {
-  CatalogNotFoundPage,
+  CatalogNotFound,
   getCatalogNotFoundMetadata,
 } from "@/components/catalog/catalog-not-found";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { getChapterStaticParams } from "@/data/catalog/catalog-static-params";
 import {
   type LibraryChapterRoute,
@@ -88,7 +89,11 @@ export default async function ChapterPage({ params }: Props) {
   const route = await resolveChapterRoute(routeParams);
 
   if (route.kind === "notFound") {
-    return <CatalogNotFoundPage />;
+    return (
+      <NotFoundPage>
+        <CatalogNotFound />
+      </NotFoundPage>
+    );
   }
 
   if (route.kind === "redirect") {

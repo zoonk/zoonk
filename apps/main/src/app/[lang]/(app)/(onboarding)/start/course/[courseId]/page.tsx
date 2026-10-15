@@ -1,3 +1,4 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
@@ -24,9 +25,9 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { OnboardingNotFound } from "../../../_components/onboarding-not-found";
 import { getGoalLimitReason } from "../../goal-limit-reason";
 import { COURSE_START_ERROR_PARAM } from "../course-start-params";
 import { CourseStartScreen } from "./course-start-screen";
@@ -99,7 +100,11 @@ async function CourseStartContent({ params, searchParams }: Props) {
   ]);
 
   if (!course) {
-    notFound();
+    return (
+      <NotFoundPage>
+        <OnboardingNotFound />
+      </NotFoundPage>
+    );
   }
 
   // Their goal on this course already: back to it, without asking their level again.

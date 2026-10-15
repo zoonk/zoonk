@@ -1,4 +1,5 @@
 import { AuthGatePage } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
@@ -14,8 +15,8 @@ import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LearnNotFound } from "../../../_components/learn-not-found";
 import { isCurrentUnit } from "../../units/[chapterId]/current-unit";
 import { UnitScreenClient } from "../../units/[chapterId]/unit-screen-client";
 import { ChapterScreenClient } from "./chapter-screen-client";
@@ -52,7 +53,11 @@ async function UnitInPlace({ chapterId, tutor }: { chapterId: string; tutor: Tut
   const [unit, plan] = await Promise.all([getLanguageUnitView({ chapterId }), getPlanTabView()]);
 
   if (unit.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (
@@ -91,7 +96,11 @@ async function ChapterBody({ params, searchParams }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   if (language.status === "ready") {

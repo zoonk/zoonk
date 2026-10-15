@@ -1,4 +1,5 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
@@ -8,8 +9,8 @@ import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LearnNotFound } from "../../_components/learn-not-found";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -63,7 +64,11 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
   }
 
   if (result.status === "invalidCursor") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   const t = await getExtracted();

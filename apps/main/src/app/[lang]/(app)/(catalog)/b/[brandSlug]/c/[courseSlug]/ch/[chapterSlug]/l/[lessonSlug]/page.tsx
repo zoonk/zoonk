@@ -1,7 +1,8 @@
 import {
-  CatalogNotFoundPage,
+  CatalogNotFound,
   getCatalogNotFoundMetadata,
 } from "@/components/catalog/catalog-not-found";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { getLessonStaticParams } from "@/data/catalog/catalog-static-params";
 import { resolveLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { permanentRedirect } from "@/i18n/navigation";
@@ -48,7 +49,11 @@ export default async function LessonPage({ params }: Props) {
   const route = await resolveLessonRoute(routeParams);
 
   if (route.kind === "notFound") {
-    return <CatalogNotFoundPage />;
+    return (
+      <NotFoundPage>
+        <CatalogNotFound />
+      </NotFoundPage>
+    );
   }
 
   if (route.kind === "redirect") {
@@ -58,7 +63,11 @@ export default async function LessonPage({ params }: Props) {
   const lesson = await getPublicLibraryLesson({ lessonId: route.lesson.id });
 
   if (!lesson) {
-    return <CatalogNotFoundPage />;
+    return (
+      <NotFoundPage>
+        <CatalogNotFound />
+      </NotFoundPage>
+    );
   }
 
   return <LibraryLessonPage lesson={lesson} locale={locale} params={routeParams} route={route} />;

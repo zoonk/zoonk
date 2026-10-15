@@ -1,3 +1,4 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getReachedCap } from "@zoonk/core/entitlements/contract";
@@ -9,9 +10,9 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
+import { LearnNotFound } from "../_components/learn-not-found";
 import { MindMapsClient } from "./mind-maps-client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,7 +64,11 @@ async function MindMapsBody() {
   ]);
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   // Only a goal without maps yet names the chapter whose map comes first: the plan is read then.

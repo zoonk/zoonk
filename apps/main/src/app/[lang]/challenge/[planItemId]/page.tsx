@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { withQuery } from "@/lib/with-query";
@@ -8,7 +10,6 @@ import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { ChallengeClient } from "./challenge-client";
@@ -58,7 +59,11 @@ async function ChallengeContent({ params, searchParams }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   const { challenge } = result;

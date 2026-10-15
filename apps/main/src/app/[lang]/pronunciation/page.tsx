@@ -1,12 +1,13 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { withQuery } from "@/lib/with-query";
 import { getPronunciationReviews } from "@zoonk/core/language/pronunciation/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PronunciationClient } from "./pronunciation-client";
 
@@ -45,7 +46,11 @@ async function PronunciationContent({ searchParams }: Pick<Props, "searchParams"
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

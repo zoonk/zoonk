@@ -1,16 +1,7 @@
-import { NotFoundMessage } from "@/components/public/not-found-message";
 import { FallbackPageBar } from "./_components/fallback-page-bar";
+import { LearnNotFound } from "./_components/learn-not-found";
 
-/**
- * A page of the app that isn't there (a subject or a chapter from an old link) says so inside the
- * app's frame, as a failed page does: the sidebar and the tabs stay, instead of swapping the whole
- * screen for the public 404 after the frame has painted.
- */
+/** A page of the app that isn't there, shown by the browser where a page threw `notFound()`. */
 export default function NotFound() {
-  return (
-    <>
-      <FallbackPageBar />
-      <NotFoundMessage />
-    </>
-  );
+  return <LearnNotFound bar={<FallbackPageBar />} />;
 }

@@ -1,12 +1,13 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
+import { LearnNotFound } from "../_components/learn-not-found";
 import { ExamScreenClient } from "./exam-screen-client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,7 +33,11 @@ async function ExamContent() {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

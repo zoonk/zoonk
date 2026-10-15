@@ -1,7 +1,8 @@
 import {
-  CatalogNotFoundPage,
+  CatalogNotFound,
   getCatalogNotFoundMetadata,
 } from "@/components/catalog/catalog-not-found";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { getCourseStaticParams } from "@/data/catalog/catalog-static-params";
 import { type LibraryCourseRoute, resolveCourseRoute } from "@/data/catalog/resolve-catalog-route";
 import { getCourseUrl } from "@/lib/public/public-canonical";
@@ -88,7 +89,11 @@ export default async function CoursePage({ params }: Props) {
   const route = await resolveCourseRoute(routeParams);
 
   if (route.kind === "notFound") {
-    return <CatalogNotFoundPage />;
+    return (
+      <NotFoundPage>
+        <CatalogNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

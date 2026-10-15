@@ -6,6 +6,7 @@ import {
   previewPlanChangeAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { AuthGate } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
 import { getGoalPlanScreen } from "@zoonk/core/plans/get";
@@ -24,9 +25,9 @@ import { StepsSkeleton } from "@zoonk/learn/onboarding/skeletons";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { OnboardingNotFound } from "../../_components/onboarding-not-found";
 import { StepsClient } from "./steps-client";
 
 type Props = PageProps<"/[lang]/start/[goalId]">;
@@ -67,7 +68,11 @@ async function StepsContent({ params }: Props) {
   const { goalId, lang } = await params;
 
   if (!isUuid(goalId)) {
-    notFound();
+    return (
+      <NotFoundPage>
+        <OnboardingNotFound />
+      </NotFoundPage>
+    );
   }
 
   const [result, session] = await Promise.all([getOnboarding({ goalId }), getSession()]);
@@ -77,7 +82,11 @@ async function StepsContent({ params }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <OnboardingNotFound />
+      </NotFoundPage>
+    );
   }
 
   if (result.onboarding.goal.kind === "explain") {

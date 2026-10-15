@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
@@ -9,7 +11,6 @@ import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { CheckpointCallClient } from "./checkpoint-call-client";
@@ -84,7 +85,11 @@ async function CheckpointContent({ params, searchParams }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   const { checkpoint } = result;
@@ -99,7 +104,11 @@ async function CheckpointContent({ params, searchParams }: Props) {
     (checkpoint.status === "skipped" && !checkpoint.endedWithoutQuestions)
   ) {
     if (!checkpoint.planItemId) {
-      notFound();
+      return (
+        <NotFoundPage>
+          <TaskNotFound />
+        </NotFoundPage>
+      );
     }
 
     redirect({ href: `/challenge/${checkpoint.planItemId}${sessionReturn.search}`, locale: lang });

@@ -1,6 +1,8 @@
 import { CatalogAsideBlock } from "@/components/catalog/catalog-aside";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { HERO_CLASS, HERO_LEAD_CLASS, HERO_TITLE_CLASS } from "@/components/public/landing-styles";
 import { NumberedRows } from "@/components/public/numbered-rows";
+import { PublicNotFound } from "@/components/public/public-not-found";
 import { PublicPage, PublicPageSkeleton } from "@/components/public/public-page";
 import { StartBlock, getStartControlClassName } from "@/components/public/public-start";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
@@ -15,7 +17,6 @@ import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { ArrowRightIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PlanLinkTracker } from "./plan-link-tracker";
 import { startPlanAction } from "./start-plan-action";
@@ -52,7 +53,11 @@ async function PlanLinkBody({ params }: Props) {
   const [result, session] = await Promise.all([getPlanLink(planId), getSession()]);
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <PublicNotFound />
+      </NotFoundPage>
+    );
   }
 
   if (result.owner) {
@@ -74,66 +79,68 @@ async function PlanLinkBody({ params }: Props) {
   );
 
   return (
-    <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
-      <PlanLinkTracker planId={planId} />
+    <PublicPage>
+      <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
+        <PlanLinkTracker planId={planId} />
 
-      <div className="min-w-0">
-        <p className="text-muted-foreground text-sm font-medium sm:text-[15px]">
-          {t("A study plan someone shared with you")}
-        </p>
+        <div className="min-w-0">
+          <p className="text-muted-foreground text-sm font-medium sm:text-[15px]">
+            {t("A study plan someone shared with you")}
+          </p>
 
-        <h1 className={cn(HERO_TITLE_CLASS, "mt-3 sm:mt-4")} id="plan-link-title">
-          {outline.subject?.title ?? t("A study plan")}
-        </h1>
+          <h1 className={cn(HERO_TITLE_CLASS, "mt-3 sm:mt-4")} id="plan-link-title">
+            {outline.subject?.title ?? t("A study plan")}
+          </h1>
 
-        {outline.subject?.description && (
-          <p className={HERO_LEAD_CLASS}>{outline.subject.description}</p>
-        )}
-
-        {session ? (
-          <div className="mt-7 flex max-w-sm flex-col gap-3 sm:mt-9">
-            {/* The time presets are onboarding's own, with the learn catalog's words. */}
-            <ClientMessagesProvider scope="learn">
-              <StartPlanForm action={startPlanAction.bind(null, planId)} />
-            </ClientMessagesProvider>
-            <p className="text-muted-foreground text-[13px] sm:text-sm">{makeItYours}</p>
-          </div>
-        ) : (
-          <StartBlock note={makeItYours}>
-            <Link
-              className={getStartControlClassName()}
-              href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
-            >
-              {t("Start from this plan")}
-              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-            </Link>
-          </StartBlock>
-        )}
-      </div>
-
-      {/* The plan's phases as the course pages draw an outline: flat numbered rows, each with
-            what it reaches and its size, where the plan starts on a soft fill. */}
-      <div className="lg:mt-3">
-        <CatalogAsideBlock
-          facts={t(
-            "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}",
-            { ...counts, time: duration(Math.max(1, approximateMinutes(outline.hours))) },
+          {outline.subject?.description && (
+            <p className={HERO_LEAD_CLASS}>{outline.subject.description}</p>
           )}
-          id="plan-link-phases"
-          title={t("A study plan")}
-        >
-          <NumberedRows
-            rows={outline.phases.map((phase, index) => ({
-              description: phase.milestone ?? undefined,
-              id: String(index),
-              title: <PlanPhaseName phase={{ index, kind: phase.kind, name: phase.name }} />,
-              trailing: phaseSize(phase.hours) ?? undefined,
-            }))}
-            startId="0"
-          />
-        </CatalogAsideBlock>
-      </div>
-    </section>
+
+          {session ? (
+            <div className="mt-7 flex max-w-sm flex-col gap-3 sm:mt-9">
+              {/* The time presets are onboarding's own, with the learn catalog's words. */}
+              <ClientMessagesProvider scope="learn">
+                <StartPlanForm action={startPlanAction.bind(null, planId)} />
+              </ClientMessagesProvider>
+              <p className="text-muted-foreground text-[13px] sm:text-sm">{makeItYours}</p>
+            </div>
+          ) : (
+            <StartBlock note={makeItYours}>
+              <Link
+                className={getStartControlClassName()}
+                href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
+              >
+                {t("Start from this plan")}
+                <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+              </Link>
+            </StartBlock>
+          )}
+        </div>
+
+        {/* The plan's phases as the course pages draw an outline: flat numbered rows, each with
+              what it reaches and its size, where the plan starts on a soft fill. */}
+        <div className="lg:mt-3">
+          <CatalogAsideBlock
+            facts={t(
+              "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}",
+              { ...counts, time: duration(Math.max(1, approximateMinutes(outline.hours))) },
+            )}
+            id="plan-link-phases"
+            title={t("A study plan")}
+          >
+            <NumberedRows
+              rows={outline.phases.map((phase, index) => ({
+                description: phase.milestone ?? undefined,
+                id: String(index),
+                title: <PlanPhaseName phase={{ index, kind: phase.kind, name: phase.name }} />,
+                trailing: phaseSize(phase.hours) ?? undefined,
+              }))}
+              startId="0"
+            />
+          </CatalogAsideBlock>
+        </div>
+      </section>
+    </PublicPage>
   );
 }
 
@@ -141,9 +148,7 @@ async function PlanLinkBody({ params }: Props) {
 export default function PlanLinkPage(props: Props) {
   return (
     <Suspense fallback={<PublicPageSkeleton />}>
-      <PublicPage>
-        <PlanLinkBody {...props} />
-      </PublicPage>
+      <PlanLinkBody {...props} />
     </Suspense>
   );
 }

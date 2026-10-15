@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
@@ -10,7 +12,6 @@ import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { MockClient } from "./mock-client";
@@ -66,7 +67,11 @@ async function MockContent({ params, searchParams }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   const { mock } = result;
@@ -78,7 +83,11 @@ async function MockContent({ params, searchParams }: Props) {
   // Before it starts, it's introduced (and started) by its challenge page, by its plan item.
   if (mock.status === "ready") {
     if (!mock.planItemId) {
-      notFound();
+      return (
+        <NotFoundPage>
+          <TaskNotFound />
+        </NotFoundPage>
+      );
     }
 
     redirect({ href: `/challenge/${mock.planItemId}${sessionReturn.search}`, locale: lang });

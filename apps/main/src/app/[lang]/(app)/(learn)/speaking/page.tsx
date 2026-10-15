@@ -1,13 +1,14 @@
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { redirect } from "@/i18n/navigation";
 import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
+import { LearnNotFound } from "../_components/learn-not-found";
 import { SpeakingClient } from "./speaking-client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -48,7 +49,11 @@ async function SpeakingContent() {
   }
 
   if (result.status !== "ready" || !result.progress.speaking) {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   return <SpeakingClient goalId={result.progress.goal.id} paper={result.progress.speaking} />;

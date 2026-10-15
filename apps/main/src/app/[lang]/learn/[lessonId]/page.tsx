@@ -175,6 +175,11 @@ async function getRouting({
   return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
+/**
+ * A missing task's message is left to the browser here, unlike other task pages (`NotFoundPage`):
+ * drawing the task's frame on the server too makes this page's scripts carry the frame's code
+ * twice, about 11 KB more on every visit.
+ */
 async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
   const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);

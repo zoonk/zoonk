@@ -1,14 +1,6 @@
-import { NotFoundMessage } from "@/components/public/not-found-message";
-import { PublicPage } from "@/components/public/public-page";
+import { PublicNotFound } from "@/components/public/public-not-found";
 
-/**
- * A page that called `notFound()` keeps the public top bar and footer and says what happened in
- * plain words, instead of the framework's bare 404.
- */
+/** A page that isn't there, shown by the browser where a page threw `notFound()`. */
 export default function NotFound() {
-  return (
-    <PublicPage className="flex flex-col">
-      <NotFoundMessage />
-    </PublicPage>
-  );
+  return <PublicNotFound />;
 }

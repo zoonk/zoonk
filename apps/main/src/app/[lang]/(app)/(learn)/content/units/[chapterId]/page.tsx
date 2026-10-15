@@ -1,12 +1,13 @@
 import { AuthGatePage } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { getLanguageUnitView } from "@zoonk/core/view-models/language/unit";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LearnNotFound } from "../../../_components/learn-not-found";
 import { isCurrentUnit } from "./current-unit";
 import { UnitScreenClient } from "./unit-screen-client";
 
@@ -39,7 +40,11 @@ async function UnitBody({ params }: Props) {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

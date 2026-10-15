@@ -1,16 +1,6 @@
-import { NotFoundMessage } from "@/components/public/not-found-message";
-import { LearnPageBar } from "@zoonk/learn/bar";
+import { OnboardingNotFound } from "./_components/onboarding-not-found";
 
-/**
- * A goal's onboarding or a course's start that isn't there (an old or mistyped link) says so
- * inside the app's frame, as its other pages do: the sidebar and the tabs stay, and under `lg` the
- * bar's way back to the app page the learner came from.
- */
-export default function OnboardingNotFound() {
-  return (
-    <>
-      <LearnPageBar back={{ href: "/today" }} root />
-      <NotFoundMessage />
-    </>
-  );
+/** An onboarding page that isn't there, shown by the browser where a page threw `notFound()`. */
+export default function NotFound() {
+  return <OnboardingNotFound />;
 }

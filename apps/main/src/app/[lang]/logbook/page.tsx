@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getWeeklyRecap } from "@zoonk/core/milestones/weekly-recap";
 import { getSession } from "@zoonk/core/users/session";
@@ -8,7 +10,6 @@ import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 /** The week of one learner: nothing here is for search. */
@@ -49,7 +50,11 @@ async function LogbookContent() {
   }
 
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <TaskNotFound />
+      </NotFoundPage>
+    );
   }
 
   return (

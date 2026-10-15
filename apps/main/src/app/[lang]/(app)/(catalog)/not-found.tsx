@@ -1,6 +1,6 @@
-import { CatalogNotFoundMessage } from "@/components/catalog/catalog-not-found";
+import { CatalogNotFound } from "@/components/catalog/catalog-not-found";
 
 /** A catalog page that isn't there, shown by the browser where a page threw `notFound()`. */
-export default function CatalogNotFound() {
-  return <CatalogNotFoundMessage />;
+export default function NotFound() {
+  return <CatalogNotFound />;
 }
