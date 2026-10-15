@@ -4,7 +4,7 @@ import {
   placementQuerySchema,
 } from "@zoonk/core/learner/placement/contract";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { z } from "zod";
 import {
   chapterTestOutResponseSchema,

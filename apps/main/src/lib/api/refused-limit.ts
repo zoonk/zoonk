@@ -1,4 +1,4 @@
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 

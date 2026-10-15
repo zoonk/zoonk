@@ -1,4 +1,4 @@
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";

@@ -1,10 +1,10 @@
 "use client";
 
 import { postFromBrowser } from "@/lib/api/browser-api";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
-import { spokenAnswerGradeSchema } from "@zoonk/core/library/language/spoken-answer-contract";
+import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
+import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type SpokenAnswerOutcome } from "@zoonk/player/lesson/types";
-import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 
@@ -21,27 +21,16 @@ async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOu
   const body = await readBody(response);
 
   if (response.ok) {
-    const grade = spokenAnswerGradeSchema.safeParse(body);
-    return grade.success ? { grade: grade.data, status: "graded" } : { status: "failed" };
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The API validates successful responses with spokenAnswerGradeSchema.
+    const grade = body as SpokenAnswerGrade | null;
+    return grade ? { grade, status: "graded" } : { status: "failed" };
   }
 
   if (isJsonObject(body) && getString(body.error, "code") === LESSON_PLAYER_ERROR_CODES.noSpeech) {
     return { status: "noSpeech" };
   }
 
-  const refusal = getUsageRefusal(body);
-
-  if (refusal?.kind === "slowDown") {
-    return { retryAfterSeconds: refusal.retryAfterSeconds, status: "slowDown" };
-  }
-
-  if (refusal?.kind === "signUpRequired") {
-    return { status: "signUpRequired" };
-  }
-
-  return refusal
-    ? { period: refusal.period, status: "limitReached", tier: refusal.tier }
-    : { status: "failed" };
+  return readRefusedLimit({ body, status: response.status }) ?? { status: "failed" };
 }
 
 /**

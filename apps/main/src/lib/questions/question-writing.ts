@@ -1,7 +1,7 @@
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";

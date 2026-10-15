@@ -192,6 +192,7 @@
     "./lesson-player/complete": "./src/lesson-player/complete-library-lesson.ts",
     "./lesson-player/completion-input-contract": "./src/lesson-player/completion-input-contract.ts",
     "./lesson-player/contract": "./src/lesson-player/contract.ts",
+    "./lesson-player/error-codes": "./src/lesson-player/error-codes.ts",
     "./lesson-player/get": "./src/lesson-player/get-playable-library-lesson.ts",
     "./lesson-player/grade": "./src/lesson-player/grade-step-answer.ts",
     "./lesson-player/picture-policy": "./src/lesson-player/picture-policy.ts",

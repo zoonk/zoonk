@@ -3,7 +3,7 @@
 import { postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 

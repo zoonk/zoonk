@@ -1,5 +1,5 @@
 import { type UsageDecision } from "@zoonk/core/entitlements/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
 
 type RefusedUsage = Exclude<UsageDecision, { status: "allowed" }>;

@@ -2,7 +2,7 @@
 
 import { postAsLearner } from "@/lib/api/learner-api";
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
   type OnboardingDraftView,
   goalUnderstandingInputSchema,

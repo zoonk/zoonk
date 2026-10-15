@@ -3,7 +3,10 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { toApiImageUrl } from "@/lib/file-urls";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
-import { speechClipRequestSchema } from "@/lib/openapi/schemas/speech-clips";
+import {
+  speechClipRequestSchema,
+  speechClipResponseSchema,
+} from "@/lib/openapi/schemas/speech-clips";
 import { requestSpeechClip } from "@zoonk/core/audio/speech-clip";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -24,7 +27,9 @@ async function postSpeechClip(request: NextRequest) {
   const result = await requestSpeechClip(body.data);
 
   if (result.status === "ready") {
-    return NextResponse.json({ ...result.clip, url: toApiImageUrl(result.clip.url) });
+    return NextResponse.json(
+      speechClipResponseSchema.parse({ ...result.clip, url: toApiImageUrl(result.clip.url) }),
+    );
   }
 
   if (result.status === "invalid") {

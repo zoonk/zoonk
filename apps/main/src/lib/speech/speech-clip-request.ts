@@ -1,9 +1,9 @@
 "use client";
 
 import { postFromBrowser } from "@/lib/api/browser-api";
-import { speechClipSchema } from "@zoonk/core/audio/speech-clip-contract";
+import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { type SpeechClip } from "@zoonk/core/audio/speech-clip-contract";
 import { type SpeechClipOutcome } from "@zoonk/learn/speech/provider";
-import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { toWebOwnFileUrl } from "@zoonk/utils/user-blobs";
 
 const FAILED: SpeechClipOutcome = { limit: null, status: "failed" };
@@ -17,29 +17,12 @@ async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcom
   const body = await readBody(response);
 
   if (response.ok) {
-    const clip = speechClipSchema.safeParse(body);
-    return clip.success ? { status: "ready", url: toWebOwnFileUrl(clip.data.url) } : FAILED;
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The API validates successful responses with speechClipResponseSchema.
+    const clip = body as SpeechClip | null;
+    return clip ? { status: "ready", url: toWebOwnFileUrl(clip.url) } : FAILED;
   }
 
-  const refusal = getUsageRefusal(body);
-
-  if (refusal?.kind === "slowDown") {
-    return {
-      limit: { retryAfterSeconds: refusal.retryAfterSeconds, status: "slowDown" },
-      status: "failed",
-    };
-  }
-
-  if (refusal?.kind === "signUpRequired") {
-    return { limit: { status: "signUpRequired" }, status: "failed" };
-  }
-
-  return refusal
-    ? {
-        limit: { period: refusal.period, status: "limitReached", tier: refusal.tier },
-        status: "failed",
-      }
-    : FAILED;
+  return { limit: readRefusedLimit({ body, status: response.status }), status: "failed" };
 }
 
 /**

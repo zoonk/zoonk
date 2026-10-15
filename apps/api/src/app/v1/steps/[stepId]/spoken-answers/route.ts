@@ -5,9 +5,12 @@ import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { gradeSpokenAnswer } from "@zoonk/core/library/language/grade-spoken-answer";
-import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
+import {
+  spokenAnswerFieldsSchema,
+  spokenAnswerGradeSchema,
+} from "@zoonk/core/library/language/spoken-answer-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -92,7 +95,7 @@ async function createSpokenAnswer(
     });
   }
 
-  return NextResponse.json(result.grade);
+  return NextResponse.json(spokenAnswerGradeSchema.parse(result.grade));
 }
 
 export const POST = withApiErrorBoundary(createSpokenAnswer);
