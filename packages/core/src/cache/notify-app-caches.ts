@@ -5,14 +5,30 @@ import { logError } from "@zoonk/utils/logger";
 import {
   APP_CACHE_SECRET_HEADER,
   MAX_APP_CACHE_TAGS,
+  appCacheTagSchema,
   appCacheTagsSchema,
 } from "./app-cache-contract";
 
 const ATTEMPTS = 3;
+const MAX_LOG_TAG_LENGTH = 256;
 const REQUEST_TIMEOUT_MS = 2000;
 const CLIENT_ERROR_START = 400;
 const SERVER_ERROR_START = 500;
 const TOO_MANY_REQUESTS = 429;
+
+function isValidNotificationTag(tag: string): boolean {
+  if (appCacheTagSchema.safeParse(tag).success) {
+    return true;
+  }
+
+  /** Escape control characters and bound the log; never include request headers or configuration. */
+  logError(
+    "Rejected Main cache notification tag",
+    JSON.stringify(tag.slice(0, MAX_LOG_TAG_LENGTH)),
+  );
+
+  return false;
+}
 
 async function sendBatch({
   secret,
@@ -74,7 +90,7 @@ async function send(tags: readonly string[]): Promise<void> {
   }
 
   const url = new URL("/api/cache/tags", mainURL);
-  const uniqueTags = [...new Set(tags)];
+  const uniqueTags = [...new Set(tags)].filter((tag) => isValidNotificationTag(tag));
 
   for (let start = 0; start < uniqueTags.length; start += MAX_APP_CACHE_TAGS) {
     // oxlint-disable-next-line eslint/no-await-in-loop -- Limit delivery concurrency; a failed batch never blocks later batches.

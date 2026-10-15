@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import { appCacheTagSchema } from "./app-cache-contract";
+
 /**
  * Every app importing cached core reads must register the same named profiles.
  * @public App build configuration consumes this supported profile contract.
@@ -12,6 +15,7 @@ export const COURSE_LIST_CACHE_TAG = "catalog-courses";
 const SHARED_CONTENT_PREFIXES = [
   "course:",
   "course-route:",
+  "course-route-hash:",
   "course-curriculum:",
   "library-chapter:",
   "library-lesson:",
@@ -35,7 +39,18 @@ export function getCourseCacheTag(courseId: string): string {
 
 /** Identifies a course lookup even when the route does not resolve to a row yet. */
 export function getCourseRouteCacheTag(input: { brandSlug: string; courseSlug: string }): string {
-  return `course-route:${input.brandSlug}:${input.courseSlug}`;
+  const tag = `course-route:${input.brandSlug}:${input.courseSlug}`;
+
+  if (appCacheTagSchema.safeParse(tag).success) {
+    return tag;
+  }
+
+  /** Legacy slugs stay byte for byte; hash the pair into a distinct, bounded tag namespace. */
+  const hash = createHash("sha256")
+    .update(JSON.stringify([input.brandSlug, input.courseSlug]))
+    .digest("hex");
+
+  return `course-route-hash:${hash}`;
 }
 
 /** Identifies cached chapter navigation and outlines owned by one course. */

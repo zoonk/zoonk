@@ -29,15 +29,25 @@ test.describe("Cross-app cache hook", () => {
 
     markedRoutes.forEach((route) => expect(route).toMatch(/\p{M}/u));
 
+    const legacyRoutes = ["legacy slug % value", "x".repeat(300)].map((courseSlug) =>
+      getCourseRouteCacheTag({ brandSlug: "cache-hook", courseSlug }),
+    );
+
     const response = await request.post("/api/cache/tags", {
       data: {
-        tags: [tag, tag, `library-lesson:cache-hook-${crypto.randomUUID()}`, ...markedRoutes],
+        tags: [
+          tag,
+          tag,
+          `library-lesson:cache-hook-${crypto.randomUUID()}`,
+          ...markedRoutes,
+          ...legacyRoutes,
+        ],
       },
       headers: SECRET_HEADERS,
     });
 
     expect(response.status()).toBe(200);
-    expect(await response.json()).toStrictEqual({ revalidated: 4 });
+    expect(await response.json()).toStrictEqual({ revalidated: 6 });
     expect(response.headers()["cache-control"]).toBe("no-store");
     expect(response.headers()["set-cookie"]).toBeUndefined();
   });

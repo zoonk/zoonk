@@ -5,15 +5,19 @@ import * as database from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { appCacheTagsSchema } from "../cache/app-cache-contract";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import * as courseTags from "../cache/tags";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { finishCourseOutline } from "../library/curriculum/course-outline-state";
 import * as routeParams from "../navigation/decode-route-param";
+import { getSession } from "../users/get-session";
 import { getCourse } from "./get-course-by-slug";
+import { renameCourseForAdmin } from "./rename-course";
 
 type CacheEntry = { result: Promise<unknown>; tags: Set<string> };
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
@@ -251,6 +255,52 @@ describe("the complete course route cache", () => {
     vi.mocked(cacheTag).mockReset();
     vi.mocked(revalidateTag).mockReset();
   });
+
+  it.each(["legacy slug % value", "x".repeat(300)])(
+    "uses a hook-compatible tag for a legacy route and expires the cached address on rename: %s",
+    async (legacySlug) => {
+      const platform = courseCachePlatform(compiled.code);
+
+      const [organization, admin] = await Promise.all([
+        organizationFixture({ kind: "brand" }),
+        userFixture({ role: "admin" }),
+      ]);
+
+      const course = await courseFixture({
+        isPublished: true,
+        organizationId: organization.id,
+        slug: legacySlug,
+      });
+
+      vi.mocked(getSession).mockResolvedValue(
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the admin identity and role are read.
+        { user: { id: admin.id, role: "admin" } } as Awaited<ReturnType<typeof getSession>>,
+      );
+
+      const params = { brandSlug: organization.slug, courseSlug: course.slug };
+      const tag = getCourseRouteCacheTag(params);
+      expect(appCacheTagsSchema.safeParse({ tags: [tag] }).success).toBe(true);
+      await expect(platform.getCourse(params)).resolves.toMatchObject({ id: course.id });
+      expect(cacheTag).toHaveBeenCalledWith(tag);
+
+      await expect(
+        renameCourseForAdmin({ courseId: course.id, slug: course.slug, title: "Legacy title" }),
+      ).resolves.toMatchObject({ slug: legacySlug, status: "renamed" });
+
+      await expect(platform.getCourse(params)).resolves.toMatchObject({ title: "Legacy title" });
+
+      await expect(
+        renameCourseForAdmin({ courseId: course.id, slug: "compatible-address", title: "Renamed" }),
+      ).resolves.toMatchObject({ status: "renamed" });
+
+      expect(revalidateTag).toHaveBeenCalledWith(tag, { expire: 0 });
+      await expect(platform.getCourse(params)).resolves.toBeNull();
+
+      await expect(
+        platform.getCourse({ ...params, courseSlug: "compatible-address" }),
+      ).resolves.toMatchObject({ id: course.id, title: "Renamed" });
+    },
+  );
 
   it("shares one normalized read across requests until a write expires its tags", async () => {
     const platform = courseCachePlatform(compiled.code);

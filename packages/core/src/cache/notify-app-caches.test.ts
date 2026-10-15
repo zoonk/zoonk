@@ -2,15 +2,19 @@ import { type Server, createServer } from "node:http";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { logError } from "@zoonk/utils/logger";
 import { revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getCourseSlugForTitle } from "../courses/course-slug";
+import { renameCourseForAdmin } from "../courses/rename-course";
 import { finishCourseOutline } from "../library/curriculum/course-outline-state";
+import { getSession } from "../users/get-session";
 import { APP_CACHE_SECRET_HEADER } from "./app-cache-contract";
 import { notifyAppCaches } from "./notify-app-caches";
 import { revalidateCacheTags } from "./revalidate-cache-tags";
+import { getCourseRouteCacheTag } from "./tags";
 
 const servers: Server[] = [];
 
@@ -94,6 +98,105 @@ describe(notifyAppCaches, () => {
       expect.stringContaining("503"),
     );
   });
+
+  it("rejects invalid tags individually without discarding valid invalidations", async () => {
+    const requests = await endpoint([200]);
+    const invalid = ["course-route:brand:legacy slug", "", `course:${"x".repeat(256)}`];
+
+    await expect(
+      notifyAppCaches(["course:before", ...invalid, "catalog-courses", invalid[0] ?? ""]),
+    ).resolves.toBeUndefined();
+
+    expect(requests.map((request) => request.body)).toStrictEqual([
+      { tags: ["course:before", "catalog-courses"] },
+    ]);
+
+    expect(logError).toHaveBeenCalledTimes(invalid.length);
+
+    expect(logError).toHaveBeenCalledWith(
+      "Rejected Main cache notification tag",
+      JSON.stringify(invalid[0]),
+    );
+
+    expect(JSON.stringify(vi.mocked(logError).mock.calls)).not.toContain("local-cache-test-secret");
+  });
+
+  it("partitions the valid tags after filtering and logs an invalid-only batch", async () => {
+    const requests = await endpoint([200]);
+    const tags = Array.from({ length: 257 }, (_, index) => `course:valid-${index}`);
+    await notifyAppCaches([...tags.slice(0, 127), "course:bad tag", ...tags.slice(127)]);
+
+    expect(requests.map((request) => request.body)).toStrictEqual([
+      { tags: tags.slice(0, 128) },
+      { tags: tags.slice(128, 256) },
+      { tags: tags.slice(256) },
+    ]);
+
+    await expect(notifyAppCaches(["course:bad tag"])).resolves.toBeUndefined();
+    expect(requests).toHaveLength(3);
+    expect(logError).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(["legacy slug % value", "x".repeat(300)])(
+    "forwards a real rename with an unchanged legacy address and then its replacement: %s",
+    async (legacySlug) => {
+      const requests = await endpoint([200]);
+      const deferred: (() => unknown)[] = [];
+
+      vi.mocked(after).mockImplementation((task) => {
+        if (typeof task === "function") {
+          deferred.push(task);
+        }
+      });
+
+      const [organization, admin] = await Promise.all([
+        organizationFixture({ kind: "brand" }),
+        userFixture({ role: "admin" }),
+      ]);
+
+      const course = await courseFixture({
+        isPublished: true,
+        organizationId: organization.id,
+        slug: legacySlug,
+      });
+
+      vi.mocked(getSession).mockResolvedValue(
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the admin identity and role are read.
+        { user: { id: admin.id, role: "admin" } } as Awaited<ReturnType<typeof getSession>>,
+      );
+
+      await expect(
+        renameCourseForAdmin({ courseId: course.id, slug: legacySlug, title: "Legacy title" }),
+      ).resolves.toMatchObject({ slug: legacySlug, status: "renamed" });
+
+      await expect(
+        renameCourseForAdmin({ courseId: course.id, slug: "compatible-address", title: "Renamed" }),
+      ).resolves.toMatchObject({ status: "renamed" });
+
+      await Promise.all(deferred.map((task) => task()));
+
+      const oldTag = getCourseRouteCacheTag({
+        brandSlug: organization.slug,
+        courseSlug: legacySlug,
+      });
+
+      const newTag = getCourseRouteCacheTag({
+        brandSlug: organization.slug,
+        courseSlug: "compatible-address",
+      });
+
+      expect(requests).toHaveLength(2);
+
+      expect(requests.map((request) => request.body)).toStrictEqual(
+        expect.arrayContaining([
+          { tags: [`course:${course.id}`, "catalog-courses", oldTag] },
+          { tags: [`course:${course.id}`, "catalog-courses", oldTag, newTag] },
+        ]),
+      );
+
+      expect(logError).not.toHaveBeenCalled();
+    },
+  );
 
   it("deduplicates large invalidations and delivers every bounded partition", async () => {
     const requests = await endpoint([200]);
