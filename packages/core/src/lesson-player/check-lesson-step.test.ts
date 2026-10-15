@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -14,10 +14,19 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getUsageRule } from "../entitlements/limits";
+import { applyLevelEvidence } from "../language/levels/skill-level-rules";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
+import type * as SkillLevelRules from "../language/levels/skill-level-rules";
+
+// A write that fails for a moment (a dropped connection) can't be made safely with the real
+// database: a test makes a language level's evidence fail once.
+vi.mock("../language/levels/skill-level-rules", async (importOriginal) => {
+  const actual = await importOriginal<typeof SkillLevelRules>();
+  return { ...actual, applyLevelEvidence: vi.fn(actual.applyLevelEvidence) };
+});
 
 async function setupRun(options?: Parameters<typeof setupPlayableLesson>[0]) {
   const setup = await setupPlayableLesson(options);
@@ -27,19 +36,109 @@ async function setupRun(options?: Parameters<typeof setupPlayableLesson>[0]) {
 
 function check({
   answer,
+  attemptId,
   runId,
   stepId,
   usedHelp,
 }: {
   answer: LessonStepAnswer;
+  attemptId?: string;
   runId: string;
   stepId: string;
   usedHelp?: boolean;
 }) {
   return checkLessonStep({
-    input: { answer, durationMs: 8000, runId, timeZone: "UTC", usedHelp },
+    input: { answer, attemptId, durationMs: 8000, runId, timeZone: "UTC", usedHelp },
     stepId,
   });
+}
+
+/**
+ * Runs `writes` while the learner's row is locked, and lets them go once `waiters` of them wait
+ * on it: what they read before writing, they all read before any of them wrote.
+ */
+async function whileLearnerLocked<T>({
+  userId,
+  waiters,
+  writes,
+}: {
+  userId: string;
+  waiters: number;
+  writes: () => Promise<T>;
+}): Promise<T> {
+  const holder = Promise.withResolvers<number>();
+  const release = Promise.withResolvers<null>();
+
+  const holding = prisma.$transaction(
+    async (tx) => {
+      const [{ pid }] = await tx.$queryRaw<[{ pid: number }]>`SELECT pg_backend_pid() AS pid`;
+      await tx.$queryRaw`SELECT id FROM users WHERE id = ${userId}::uuid FOR UPDATE`;
+      holder.resolve(pid);
+      await release.promise;
+    },
+    { timeout: 30_000 },
+  );
+
+  const pid = await holder.promise;
+  const result = writes();
+
+  await vi.waitFor(
+    async () => {
+      // A second waiter queues behind the first, so count everyone waiting down the line.
+      const [{ count }] = await prisma.$queryRaw<[{ count: number }]>`
+        WITH RECURSIVE waiting(pid) AS (
+          SELECT pid FROM pg_stat_activity WHERE ${pid}::int = ANY(pg_blocking_pids(pid))
+          UNION
+          SELECT activity.pid FROM pg_stat_activity AS activity
+          JOIN waiting ON waiting.pid = ANY(pg_blocking_pids(activity.pid))
+        )
+        SELECT count(*)::int AS count FROM waiting
+      `;
+
+      expect(count).toBe(waiters);
+    },
+    { interval: 20, timeout: 10_000 },
+  );
+
+  release.resolve(null);
+  await holding;
+  return result;
+}
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({
+    select: { learnerRevision: true },
+    where: { id: userId },
+  });
+
+  return user.learnerRevision;
+}
+
+/** A model's grade of a written answer. */
+function typedGrade({
+  feedback,
+  isCorrect,
+  score,
+}: {
+  feedback: string;
+  isCorrect: boolean;
+  score: number;
+}): Awaited<ReturnType<typeof gradeTypedAnswer>> {
+  return {
+    data: {
+      corrections: [],
+      feedback,
+      isCorrect,
+      keyPoints: [{ met: isCorrect, text: "The cloud shows where it's likely to be found" }],
+      method: "model",
+      score,
+      spelling: null,
+    },
+    provenance: null,
+    systemPrompt: "",
+    usage: null,
+    userPrompt: "",
+  };
 }
 
 describe(checkLessonStep, () => {
@@ -128,6 +227,444 @@ describe(checkLessonStep, () => {
       status: "open",
       stepId: step.id,
     });
+  });
+
+  it("records an answer sent again with its id once, and gives the same result", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const attemptId = randomUUID();
+    const answer = { kind: "check", optionId: "size" } as const;
+
+    const first = await check({ answer, attemptId, runId: run.id, stepId });
+    const revision = await readRevision(user.id);
+    const again = await check({ answer, attemptId, runId: run.id, stepId });
+
+    expect(first).toMatchObject({ result: { savedMistake: true }, status: "checked" });
+    expect(again).toStrictEqual(first);
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
+
+    await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(readRevision(user.id)).resolves.toBe(revision);
+  });
+
+  it("records the same answer sent twice at once a single time", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const attemptId = randomUUID();
+    const answer = { kind: "check", optionId: "size" } as const;
+    const revision = await readRevision(user.id);
+
+    // Both requests look for the id before either records it, then queue on the learner's row.
+    const outcomes = await whileLearnerLocked({
+      userId: user.id,
+      waiters: 2,
+      writes: () =>
+        Promise.all([
+          check({ answer, attemptId, runId: run.id, stepId }),
+          check({ answer, attemptId, runId: run.id, stepId }),
+        ]),
+    });
+
+    expect(outcomes).toStrictEqual([outcomes[0], outcomes[0]]);
+    expect(outcomes[0]).toMatchObject({ result: { savedMistake: true }, status: "checked" });
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
+
+    await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(readRevision(user.id)).resolves.toBe(revision + 1n);
+  });
+
+  it("keeps two learners' answers apart when they send the same id", async () => {
+    const [mine, theirs] = await Promise.all([setupRun(), setupRun()]);
+    const attemptId = randomUUID();
+    const answer = { kind: "check", optionId: "likely" } as const;
+
+    mockSession(mine.user.id);
+
+    const myOutcome = await check({
+      answer,
+      attemptId,
+      runId: mine.run.id,
+      stepId: stepOfKind(mine.steps, "check").id,
+    });
+
+    mockSession(theirs.user.id);
+
+    const theirOutcome = await check({
+      answer: { kind: "check", optionId: "size" },
+      attemptId,
+      runId: theirs.run.id,
+      stepId: stepOfKind(theirs.steps, "check").id,
+    });
+
+    expect(myOutcome).toMatchObject({ result: { isCorrect: true }, status: "checked" });
+    expect(theirOutcome).toMatchObject({ result: { isCorrect: false, savedMistake: true } });
+
+    const counts = await Promise.all(
+      [mine.user.id, theirs.user.id].map((userId) => prisma.attempt.count({ where: { userId } })),
+    );
+
+    expect(counts).toStrictEqual([1, 1]);
+  });
+
+  it("records an answer to another screen sent with an id already used here", async () => {
+    const { lesson, run, user } = await setupRun({ steps: ["check", "check"] });
+
+    const [first, second] = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: lesson.id },
+    });
+
+    const attemptId = randomUUID();
+    const answer = { kind: "check", optionId: "likely" } as const;
+
+    await check({ answer, attemptId, runId: run.id, stepId: first?.id ?? "" });
+    await check({ answer, attemptId, runId: run.id, stepId: second?.id ?? "" });
+    // Sent again, the other screen's answer is recorded once too.
+    await check({ answer, attemptId, runId: run.id, stepId: second?.id ?? "" });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(2);
+  });
+
+  it("doesn't record an answer whose run was finished while it was graded", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const revision = await readRevision(user.id);
+
+    vi.mocked(gradeTypedAnswer).mockImplementationOnce(async () => {
+      // The learner finished the lesson while the answer was still being graded.
+      await prisma.learningEvent.update({ data: { endedAt: new Date() }, where: { id: run.id } });
+
+      return {
+        data: {
+          corrections: [],
+          feedback: "Both ideas are there.",
+          isCorrect: true,
+          keyPoints: [{ met: true, text: "We can't know the electron's exact position or path" }],
+          method: "model",
+          score: 1,
+          spelling: null,
+        },
+        provenance: null,
+        systemPrompt: "",
+        usage: null,
+        userPrompt: "",
+      };
+    });
+
+    const outcome = await check({
+      answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    expect(outcome).toStrictEqual({ status: "runEnded" });
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(readRevision(user.id)).resolves.toBe(revision);
+  });
+
+  it("doesn't record a grade the screen stopped waiting for once the answer checked after it was recorded", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const entered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+
+    vi.mocked(gradeTypedAnswer).mockImplementationOnce(async () => {
+      entered.resolve(null);
+      await release.promise;
+      return typedGrade({ feedback: "Only half of it.", isCorrect: false, score: 0.4 });
+    });
+
+    const slow = check({
+      answer: { kind: "typedAnswer", text: "It's where the electron is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    await entered.promise;
+
+    // The screen stopped waiting; the learner rewrote the answer and checked it again.
+    vi.mocked(gradeTypedAnswer).mockResolvedValueOnce(
+      typedGrade({ feedback: "Both ideas are there.", isCorrect: true, score: 1 }),
+    );
+
+    await expect(
+      check({
+        answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+        attemptId: randomUUID(),
+        runId: run.id,
+        stepId,
+      }),
+    ).resolves.toMatchObject({ result: { isCorrect: true }, status: "checked" });
+
+    release.resolve(null);
+
+    await expect(slow).resolves.toMatchObject({
+      result: { isCorrect: false, savedMistake: false },
+      status: "checked",
+    });
+
+    await expect(
+      prisma.attempt.findMany({ select: { isCorrect: true }, where: { stepId, userId: user.id } }),
+    ).resolves.toStrictEqual([{ isCorrect: true }]);
+  });
+
+  it("keeps an earlier answer first when its slow grade is saved before the answer checked after it", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const graders = [Promise.withResolvers<null>(), Promise.withResolvers<null>()] as const;
+    const entered = [Promise.withResolvers<null>(), Promise.withResolvers<null>()] as const;
+
+    vi.mocked(gradeTypedAnswer)
+      .mockImplementationOnce(async () => {
+        entered[0].resolve(null);
+        await graders[0].promise;
+        return typedGrade({ feedback: "Only half of it.", isCorrect: false, score: 0.4 });
+      })
+      .mockImplementationOnce(async () => {
+        entered[1].resolve(null);
+        await graders[1].promise;
+        return typedGrade({ feedback: "Both ideas are there.", isCorrect: true, score: 1 });
+      });
+
+    const earlier = check({
+      answer: { kind: "typedAnswer", text: "It's where the electron is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    await entered[0].promise;
+
+    const later = check({
+      answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    });
+
+    await entered[1].promise;
+
+    graders[0].resolve(null);
+    await expect(earlier).resolves.toMatchObject({ result: { isCorrect: false } });
+    graders[1].resolve(null);
+    await expect(later).resolves.toMatchObject({ result: { isCorrect: true } });
+
+    await expect(
+      prisma.attempt.findMany({
+        orderBy: { answeredAt: "asc" },
+        select: { isCorrect: true },
+        where: { stepId, userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ isCorrect: false }, { isCorrect: true }]);
+  });
+
+  it("records an answer given just before midnight and saved after another screen's answer on its skill", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-01T23:59:50Z"));
+
+    try {
+      const { lesson, run, skill, user } = await setupRun({
+        steps: ["typedAnswer", "typedAnswer"],
+      });
+
+      const [first, second] = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { lessonId: lesson.id },
+      });
+
+      const entered = Promise.withResolvers<null>();
+      const release = Promise.withResolvers<null>();
+
+      vi.mocked(gradeTypedAnswer)
+        .mockImplementationOnce(async () => {
+          entered.resolve(null);
+          await release.promise;
+          return typedGrade({ feedback: "Only half of it.", isCorrect: false, score: 0.4 });
+        })
+        .mockResolvedValueOnce(
+          typedGrade({ feedback: "Both ideas are there.", isCorrect: true, score: 1 }),
+        );
+
+      const beforeMidnight = check({
+        answer: { kind: "typedAnswer", text: "It's where the electron is" },
+        runId: run.id,
+        stepId: first?.id ?? "",
+      });
+
+      await entered.promise;
+
+      // The next screen, on the same skill, is answered and saved after midnight.
+      vi.setSystemTime(new Date("2026-09-02T00:00:05Z"));
+
+      await expect(
+        check({
+          answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+          runId: run.id,
+          stepId: second?.id ?? "",
+        }),
+      ).resolves.toMatchObject({ result: { isCorrect: true }, status: "checked" });
+
+      release.resolve(null);
+
+      await expect(beforeMidnight).resolves.toMatchObject({
+        result: { isCorrect: false },
+        status: "checked",
+      });
+
+      // Each answer keeps when it was given and its own day; only the skill's memory moves on.
+      await expect(
+        prisma.attempt.findMany({
+          orderBy: { answeredAt: "asc" },
+          select: { answeredAt: true, localDate: true },
+          where: { userId: user.id },
+        }),
+      ).resolves.toStrictEqual([
+        { answeredAt: new Date("2026-09-01T23:59:50Z"), localDate: new Date("2026-09-01") },
+        { answeredAt: new Date("2026-09-02T00:00:05Z"), localDate: new Date("2026-09-02") },
+      ]);
+
+      await expect(
+        prisma.learnerSkill.findFirstOrThrow({
+          select: { lastReviewedAt: true },
+          where: { skillId: skill.id, userId: user.id },
+        }),
+      ).resolves.toStrictEqual({ lastReviewedAt: new Date("2026-09-02T00:00:05Z") });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("gives a written answer sent twice at once the saved grade, never the other request's words", async () => {
+    const { run, steps } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const entered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+
+    const sent = {
+      answer: { kind: "typedAnswer", text: "We only know where it probably is" },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId,
+    } as const;
+
+    vi.mocked(gradeTypedAnswer)
+      .mockImplementationOnce(async () => {
+        entered.resolve(null);
+        await release.promise;
+        return typedGrade({ feedback: "The first grader's words.", isCorrect: true, score: 1 });
+      })
+      .mockResolvedValueOnce(
+        typedGrade({ feedback: "The second grader's words.", isCorrect: true, score: 0.8 }),
+      );
+
+    const first = check(sent);
+    await entered.promise;
+    const second = await check(sent);
+    release.resolve(null);
+
+    expect(second).toMatchObject({
+      result: { feedback: "The second grader's words.", score: 0.8 },
+    });
+
+    await expect(first).resolves.toMatchObject({
+      result: { checked: true, feedback: null, isCorrect: true, keyPoints: null, score: 0.8 },
+      status: "checked",
+    });
+  });
+
+  it("saves a language answer with its evidence or neither, so one sent again saves both", async () => {
+    const [user, { lesson, steps, word }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    const sent = {
+      answer: { kind: "translation", selectedOptionId: word.id },
+      attemptId: randomUUID(),
+      runId: run.id,
+      stepId: stepOfKind(steps, "translation").id,
+    } as const;
+
+    vi.mocked(applyLevelEvidence).mockImplementationOnce(() => {
+      throw new Error("Connection terminated unexpectedly");
+    });
+
+    await expect(check(sent)).rejects.toThrow("Connection terminated unexpectedly");
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await expect(check(sent)).resolves.toMatchObject({
+      result: { isCorrect: true },
+      status: "checked",
+    });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+
+    await expect(
+      prisma.languageSkillLevel.findMany({
+        select: { windowCorrect: true, windowTotal: true },
+        where: { userId: user.id },
+      }),
+    ).resolves.toStrictEqual([{ windowCorrect: 1, windowTotal: 1 }]);
+
+    await expect(
+      prisma.learnerWord.count({ where: { userId: user.id, wordId: word.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("gives a written answer the model graded its saved verdict when it's sent again", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+    const attemptId = randomUUID();
+    const answer = { kind: "typedAnswer", text: "We only know where it probably is" } as const;
+
+    vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
+      data: {
+        corrections: [],
+        feedback: "Both ideas are there.",
+        isCorrect: true,
+        keyPoints: [
+          { met: true, text: "We can't know the electron's exact position or path" },
+          { met: true, text: "The cloud shows where it's likely to be found" },
+        ],
+        method: "model",
+        score: 1,
+        spelling: null,
+      },
+      provenance: null,
+      systemPrompt: "",
+      usage: null,
+      userPrompt: "",
+    });
+
+    const first = await check({ answer, attemptId, runId: run.id, stepId });
+    const again = await check({ answer, attemptId, runId: run.id, stepId });
+
+    expect(first).toMatchObject({ result: { checked: true, isCorrect: true, score: 1 } });
+    expect(again).toMatchObject({ result: { checked: true, isCorrect: true, score: 1 } });
+    expect(gradeTypedAnswer).toHaveBeenCalledOnce();
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
+  });
+
+  it("says a miss sent again was saved when its question was already in the notebook", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "check").id;
+    const attemptId = randomUUID();
+    const answer = { kind: "check", optionId: "size" } as const;
+
+    await mistakeFixture({ createdAt: new Date(Date.now() - 86_400_000), stepId, userId: user.id });
+
+    const first = await check({ answer, attemptId, runId: run.id, stepId });
+    const again = await check({ answer, attemptId, runId: run.id, stepId });
+
+    expect(first).toMatchObject({ result: { savedMistake: true } });
+    expect(again).toStrictEqual(first);
   });
 
   it("saves a miss on a screen without its own skill under the lesson's first skill, so the notebook lists it", async () => {

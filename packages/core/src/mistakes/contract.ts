@@ -51,15 +51,38 @@ export const mistakePracticeInputSchema = z
 
 export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 
+/** More answers than one run can hold; a run asks at most a few questions per mistake. */
+const MAX_PRACTICE_ANSWERS = 50;
+
 export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema
-  .extend({ timeZone: answerTimeZoneSchema })
+  .extend({
+    attemptId: z
+      .uuid()
+      .optional()
+      .describe("Your id for this answer: sent again with it (a retry), it's recorded once"),
+    run: z
+      .object({
+        answerIds: z
+          .array(z.uuid())
+          .max(MAX_PRACTICE_ANSWERS - 1)
+          .meta({ description: "The run's earlier answers, as their answers returned them" }),
+        goalId: z
+          .uuid()
+          .optional()
+          .meta({ description: "The goal the run practiced, when scoped" }),
+      })
+      .strict()
+      .optional()
+      .meta({
+        description:
+          "The run this answer is part of. The answer then counts the run toward today, as finishing it with every answer so far does, so a run left halfway still counts without a finish after each answer",
+      }),
+    timeZone: answerTimeZoneSchema,
+  })
   .strict()
   .meta({ id: "MistakePracticeAnswerInput" });
 
 export type MistakePracticeAnswerInput = z.infer<typeof mistakePracticeAnswerInputSchema>;
-
-/** More answers than one run can hold; a run asks at most a few questions per mistake. */
-const MAX_PRACTICE_ANSWERS = 50;
 
 export const mistakePracticeFinishInputSchema = z
   .object({

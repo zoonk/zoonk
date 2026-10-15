@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma, sql } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { countGradesLeft } from "../essays/_utils/essay-drafts";
+import { claimEssayGrades, releaseEssayGradeClaims } from "../essays/_utils/essay-grade-claims";
 import { gradeEssayText, recordEssayGrade } from "../essays/_utils/grade-essay-answer";
 import { readMockEssayText } from "./_utils/mock-answers";
 import { loadMockEssayItems } from "./_utils/mock-essays";
@@ -10,21 +11,15 @@ import { getEssayItemIds } from "./_utils/mock-sections";
 import { type MockSitting, type OwnedMock, findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
-/** Namespaces the per-mock essay-grading lock so it never collides with other advisory locks. */
-const ESSAY_LOCK_NAMESPACE = 51_883;
-
-/**
- * Three essays graded at once take about as long as one (up to half a minute with a fallback
- * model); a second request waits that long for the first one's grades instead of paying again.
- */
-const ESSAY_GRADING_TIMEOUT_MS = 180_000;
-
 export type GradeMockEssaysResult = {
   status: "graded" | "limitReached" | "notFinished" | "notFound" | "unauthorized";
 };
 
-/** The essays written and not graded yet, with what grading them needs. */
-async function listUngradedEssays(mock: MockSitting) {
+/**
+ * The essays written and not graded yet, with what grading them needs and the id each grade is
+ * recorded under: the same for every request that grades this mock, so they claim it once.
+ */
+async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId: string }) {
   const itemIds = getEssayItemIds(mock.conditions);
 
   const [items, graded] = await Promise.all([
@@ -41,15 +36,19 @@ async function listUngradedEssays(mock: MockSitting) {
     const text = readMockEssayText(draft?.answer);
     const isGraded = graded.some((attempt) => attempt.itemId === itemId);
 
+    const attemptId = getAnswerAttemptId({ key: mock.id, questionId: itemId, userId });
+
     return essay && text && !isGraded
-      ? [{ ...essay, durationMs: draft?.durationMs ?? 0, text }]
+      ? [{ ...essay, attemptId, durationMs: draft?.durationMs ?? 0, text }]
       : [];
   });
 }
 
 /**
  * Grades the essays at once (independent model calls), then records them one after another, so
- * two essays on the same skill update its memory in order.
+ * two essays on the same skill update its memory in order. Every grade settles before any is
+ * recorded or fails the request: one that failed doesn't drop the others, nor free their claims
+ * while they're still being graded.
  */
 async function gradeEssays({
   essays,
@@ -62,7 +61,7 @@ async function gradeEssays({
   owned: OwnedMock;
   timeZone: string;
 }) {
-  const grades = await Promise.all(
+  const grades = await Promise.allSettled(
     essays.map((essay) =>
       gradeEssayText({
         blueprint: owned.blueprint,
@@ -78,12 +77,13 @@ async function gradeEssays({
   await essays.reduce(
     (previous, essay, index) =>
       previous.then(async () => {
-        const grade = grades[index];
+        const graded = grades[index];
 
-        if (grade) {
+        if (graded?.status === "fulfilled") {
           await recordEssayGrade({
+            attemptId: essay.attemptId,
             durationMs: essay.durationMs,
-            grade,
+            grade: graded.value,
             item: essay.item,
             mockExamId: mock.id,
             studySessionId: owned.block?.sessionId ?? null,
@@ -95,14 +95,20 @@ async function gradeEssays({
       }),
     Promise.resolve(),
   );
+
+  const failed = grades.find((graded) => graded.status === "rejected");
+
+  if (failed) {
+    throw failed.reason;
+  }
 }
 
 /**
  * Grades a finished full mock's essays with the exam's official rubric, the model call its
  * hand-in leaves for right after, so the objective result shows at once: each essay written and
  * not graded yet, within the day's essay grades (`limitReached` keeps the rest for another day).
- * Grading the same mock twice at once grades it once: the second request waits and finds the
- * grades.
+ * Each grade is claimed before the model is called (`claimEssayGrades`), so grading the same mock
+ * twice at once grades it once: the second request waits and finds the grades.
  */
 export async function gradeMockEssays({
   blockId,
@@ -124,26 +130,29 @@ export async function gradeMockEssays({
     return { status: "notFinished" };
   }
 
+  const { userId } = owned;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
+  const ungraded = await listUngradedEssays({ mock, userId });
 
-  return prisma.$transaction(
-    async (tx): Promise<GradeMockEssaysResult> => {
-      await tx.$queryRaw(
-        sql`SELECT pg_advisory_xact_lock(${ESSAY_LOCK_NAMESPACE}::int, hashtext(${mock.id}))::text`,
-      );
+  const claims = await claimEssayGrades({
+    attemptIds: ungraded.map((essay) => essay.attemptId),
+    localDate,
+    userId,
+  });
 
-      const [ungraded, left] = await Promise.all([
-        listUngradedEssays(mock),
-        countGradesLeft({ localDate, userId: owned.userId }),
-      ]);
-
-      const now = ungraded.slice(0, left);
-
-      await gradeEssays({ essays: now, mock, owned, timeZone });
-
-      return { status: now.length < ungraded.length ? "limitReached" : "graded" };
-    },
-    { timeout: ESSAY_GRADING_TIMEOUT_MS },
+  const claimed = ungraded.filter((essay) =>
+    claims.some((claim) => claim.attemptId === essay.attemptId && claim.status === "claimed"),
   );
+
+  try {
+    await gradeEssays({ essays: claimed, mock, owned, timeZone });
+  } finally {
+    // A grade that wasn't recorded frees its claim, so the essay can be graded again.
+    await releaseEssayGradeClaims({ attemptIds: claimed.map((essay) => essay.attemptId), userId });
+  }
+
+  return {
+    status: claims.some((claim) => claim.status === "limitReached") ? "limitReached" : "graded",
+  };
 }

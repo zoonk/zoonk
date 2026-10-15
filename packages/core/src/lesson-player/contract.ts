@@ -61,6 +61,10 @@ export type LessonStepAnswer = z.infer<typeof lessonStepAnswerSchema>;
 export const lessonStepCheckInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
+    attemptId: z
+      .uuid()
+      .optional()
+      .describe("Your id for this answer: sent again with it (a retry), it's recorded once"),
     durationMs: answerDurationSchema,
     runId: lessonRunIdSchema,
     timeZone: answerTimeZoneSchema,

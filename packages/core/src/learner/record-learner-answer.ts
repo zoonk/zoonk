@@ -35,6 +35,11 @@ export type LearnerAnswer = {
   /** The learner's raw answer, stored on the attempt. */
   answer: JsonObject;
   answeredAt?: Date;
+  /**
+   * The attempt's id, chosen by the app that sent the answer, so an answer sent again (a retry
+   * after a dropped response) can't be recorded twice: the second insert fails on the id.
+   */
+  attemptId?: string;
   graded: GradedAnswer;
   /**
    * An answer to one of placement's questions, in placement itself or inside a first-week session:

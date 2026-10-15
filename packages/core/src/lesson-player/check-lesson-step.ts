@@ -1,17 +1,36 @@
 import "server-only";
-import { type StepKind, prisma } from "@zoonk/db";
+import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { recordLanguageStepEvidence } from "../language/levels/record-language-evidence";
+import {
+  afterLanguageStepEvidence,
+  loadLanguageStepEvidence,
+  writeLanguageStepEvidence,
+} from "../language/levels/record-language-evidence";
+import {
+  findSavedAttempt,
+  getAnswerAttemptId,
+  recordAnswerOnce,
+} from "../learner/_utils/answer-once";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { canGradeWithModel } from "../learner/_utils/model-grading";
-import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
 import { getSession } from "../users/get-session";
+import {
+  type ComesBackInput,
+  checkSaved,
+  checkWithoutRecording,
+  getComesBack,
+  toCheckResult,
+} from "./_utils/check-results";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
 import { findPlayableStepRow, getAnswerSkillId, isOwnExplanation } from "./_utils/lesson-rows";
-import { findLessonRun, getRunStudySessionId } from "./_utils/lesson-runs";
+import {
+  findLessonRun,
+  getRunStudySessionId,
+  hasAnswerSince,
+  lockOpenRun,
+} from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
-import { getScreenComesBack } from "./_utils/plan-skill-review";
 import { getStepQuestion } from "./_utils/step-question";
 import {
   type LessonStepAnswer,
@@ -62,76 +81,6 @@ function getAnsweredKind({ answer, kind }: { answer: LessonStepAnswer; kind: Ste
   return kind === "spokenAnswer" && answer.kind === "listening" ? "listening" : kind;
 }
 
-function toCheckResult({
-  nextReviewAt,
-  savedMistake,
-  verdict,
-}: {
-  nextReviewAt: Date | null;
-  savedMistake: boolean;
-  verdict: LessonAnswerVerdict;
-}): LessonStepCheckResult {
-  return {
-    checked: verdict.checked,
-    correctAnswer: verdict.correctAnswer,
-    corrections: verdict.corrections,
-    feedback: verdict.feedback,
-    isCorrect: verdict.isCorrect,
-    keyPoints: verdict.keyPoints,
-    nextReviewAt: nextReviewAt?.toISOString() ?? null,
-    savedMistake,
-    score: verdict.score,
-    spelling: verdict.spelling,
-  };
-}
-
-type ComesBackInput = Omit<Parameters<typeof getScreenComesBack>[0], "ownDue"> & {
-  explanation: boolean;
-};
-
-/**
- * When the screen's idea comes back (see `getScreenComesBack`). A quick explanation never comes
- * back in a review (reviews come with a study plan's sessions, which explanations aren't part of),
- * so its screens don't say when their skill does.
- */
-function getComesBack({
-  explanation,
-  ownDue,
-  ...input
-}: ComesBackInput & { ownDue: Date | null }): Promise<Date | null> | null {
-  return explanation ? null : getScreenComesBack({ ...input, ownDue });
-}
-
-/**
- * An answer past the run's cap, or a written one nothing checked, isn't recorded: the verdict,
- * with when the idea already comes back and no new mistake.
- */
-async function checkWithoutRecording({
-  skillId,
-  verdict,
-  ...comesBack
-}: ComesBackInput & {
-  skillId: string | null;
-  verdict: LessonAnswerVerdict;
-}): Promise<LessonStepCheckOutcome> {
-  const learnerSkill =
-    skillId && !comesBack.explanation
-      ? await prisma.learnerSkill.findFirst({
-          select: { due: true },
-          where: { skillId, userId: comesBack.userId },
-        })
-      : null;
-
-  return {
-    result: toCheckResult({
-      nextReviewAt: await getComesBack({ ...comesBack, ownDue: learnerSkill?.due ?? null }),
-      savedMistake: false,
-      verdict,
-    }),
-    status: "checked",
-  };
-}
-
 /**
  * Grades the answer. Only a recorded typed answer asks a model, within the day's model-graded
  * answers to the screen; past those, or past the run's cap, code grades it.
@@ -151,6 +100,145 @@ async function gradeRunAnswer({
   return gradeLessonAnswer({ answer, lesson, step, useModel, userId });
 }
 
+type PlayableStepRow = NonNullable<Awaited<ReturnType<typeof findPlayableStepRow>>>;
+
+/**
+ * Records a graded answer as learning, once under its id, with its language evidence in the same
+ * transaction, and says what it saved and when its idea comes back. It's recorded as answered when
+ * it arrived (`receivedAt`), and not at all once its run finished, nor when an answer to the screen
+ * that arrived after it was recorded first: a grade the screen stopped waiting for doesn't count
+ * after the answer the learner checked again, and one that's saved first stays the first answer.
+ */
+async function recordCheck({
+  attemptId,
+  comesBack,
+  input,
+  receivedAt,
+  row,
+  run,
+  skillId,
+  step,
+  verdict,
+}: {
+  attemptId?: string;
+  comesBack: ComesBackInput;
+  input: LessonStepCheckInput;
+  receivedAt: Date;
+  row: PlayableStepRow;
+  run: NonNullable<Awaited<ReturnType<typeof findLessonRun>>>;
+  skillId: string | null;
+  step: Parameters<typeof getStepQuestion>[0];
+  verdict: LessonAnswerVerdict;
+}): Promise<LessonStepCheckOutcome> {
+  const questionText = getStepQuestion(step);
+  const answeredKind = getAnsweredKind({ answer: input.answer, kind: row.kind });
+
+  const evidence = await loadLanguageStepEvidence({
+    isCorrect: verdict.isCorrect,
+    lesson: row.lesson,
+    step: { ...row, kind: answeredKind },
+    userId: comesBack.userId,
+  });
+
+  const outcome = await recordAnswerOnce({
+    answer: {
+      answer: input.answer,
+      // When it arrived, not when its grade was saved: answers to a screen keep the order they
+      // were sent in, however long each one's grade took.
+      answeredAt: receivedAt,
+      attemptId,
+      graded: {
+        durationMs: input.durationMs,
+        expectedDurationMs: EXPECTED_ANSWER_MS[answeredKind],
+        isCorrect: verdict.isCorrect,
+        score: verdict.score,
+        usedHint: input.usedHelp ?? false,
+      },
+      itemId: row.itemId,
+      language: row.lesson.language,
+      mistake: questionText
+        ? {
+            questionText,
+            snapshot: {
+              answer: verdict.answerText,
+              correctAnswer: verdict.correctAnswer,
+              explanation: verdict.feedback,
+              format: answeredKind,
+              question: questionText,
+            },
+          }
+        : null,
+      purpose: "learning",
+      skillId,
+      stepId: row.id,
+      studySessionId: getRunStudySessionId(run),
+      targetLanguage: row.lesson.targetLanguage,
+      timeZone: comesBack.timeZone,
+      userId: comesBack.userId,
+    },
+    refuse: async (transaction: TransactionClient) => {
+      if (!(await lockOpenRun(transaction, run.id))) {
+        return "runEnded";
+      }
+
+      const overtaken = await hasAnswerSince(transaction, {
+        attemptId,
+        since: receivedAt,
+        stepId: row.id,
+        userId: comesBack.userId,
+      });
+
+      return overtaken ? "overtaken" : null;
+    },
+    withAnswer: evidence
+      ? (transaction) => writeLanguageStepEvidence(transaction, evidence)
+      : undefined,
+  });
+
+  if (outcome.status === "refused") {
+    return outcome.refusal === "runEnded"
+      ? { status: "runEnded" }
+      : {
+          result: await checkWithoutRecording({ ...comesBack, skillId, verdict }),
+          status: "checked",
+        };
+  }
+
+  // Sent twice at once: the other request recorded it, with its own grade.
+  if (outcome.status === "saved") {
+    const result = await checkSaved({
+      ...comesBack,
+      fromCode: row.kind !== "typedAnswer",
+      hasQuestion: questionText !== null,
+      saved: outcome.saved,
+      skillId,
+      verdict,
+    });
+
+    return { result, status: "checked" };
+  }
+
+  const { recorded } = outcome;
+
+  scheduleMistakeCause(recorded.causeRequest);
+
+  if (evidence) {
+    afterLanguageStepEvidence(evidence);
+  }
+
+  return {
+    result: toCheckResult({
+      nextReviewAt: await getComesBack({
+        ...comesBack,
+        ownDue: recorded.learnerSkill?.due ?? null,
+      }),
+      savedMistake: recorded.mistake !== null,
+      verdict,
+    }),
+    status: "checked",
+  };
+}
+
 /**
  * Grades one answer to a lesson screen on the server and records it as learning: the attempt on
  * the learner's day, the review of the skill it trains and, when wrong, an entry in the mistakes
@@ -158,8 +246,10 @@ async function gradeRunAnswer({
  * use the grader (not counted as small AI help: grading must stay right, and the plan's lesson
  * caps bound it), or code alone past a few graded answers to the screen a day, where an answer
  * code doesn't recognize is shown as not checked and isn't recorded. Answers count toward an open
- * run of the screen's lesson, and toward its session when the run was started from one. A screen
- * answered more often than a run allows is graded by code and not recorded.
+ * run of the screen's lesson, and toward its session when the run was started from one; one
+ * finished while the answer was graded isn't recorded. A screen answered more often than a run
+ * allows is graded by code and not recorded. An answer sent with its `attemptId` is recorded once,
+ * and sent again it gets what it saved.
  */
 export async function checkLessonStep({
   input,
@@ -168,6 +258,8 @@ export async function checkLessonStep({
   input: LessonStepCheckInput;
   stepId: string;
 }): Promise<LessonStepCheckOutcome> {
+  // When the answer arrived: a later answer to the screen recorded before it is newer (`recordCheck`).
+  const receivedAt = new Date();
   const session = await getSession();
 
   if (!session) {
@@ -186,19 +278,28 @@ export async function checkLessonStep({
     return { status: "notFound" };
   }
 
-  if (run.endedAt) {
-    return { status: "runEnded" };
-  }
-
   const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
 
   if (!step || !isAnswerableStep(step)) {
     return { status: "invalid" };
   }
 
+  const attemptId = input.attemptId
+    ? getAnswerAttemptId({ key: input.attemptId, questionId: row.id, userId })
+    : undefined;
+
+  const saved = attemptId ? await findSavedAttempt({ attemptId, userId }) : null;
+
+  // An answer saved before its run finished still gets what it saved when it's sent again.
+  if (run.endedAt && !saved) {
+    return { status: "runEnded" };
+  }
+
+  // An answer sent again is graded by code alone: it was graded and recorded the first time.
   const isRecorded =
+    !saved &&
     (await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId })) <
-    MAX_ANSWERS_PER_STEP_IN_RUN;
+      MAX_ANSWERS_PER_STEP_IN_RUN;
 
   const verdict = await gradeRunAnswer({
     answer: input.answer,
@@ -227,63 +328,26 @@ export async function checkLessonStep({
     userId,
   };
 
-  if (!isRecorded || !verdict.checked) {
-    return checkWithoutRecording({ ...comesBack, skillId, verdict });
+  if (saved) {
+    return {
+      result: await checkSaved({
+        ...comesBack,
+        fromCode: true,
+        hasQuestion: getStepQuestion(step) !== null,
+        saved,
+        skillId,
+        verdict,
+      }),
+      status: "checked",
+    };
   }
 
-  const questionText = getStepQuestion(step);
-  const answeredKind = getAnsweredKind({ answer: input.answer, kind: row.kind });
+  if (!isRecorded || !verdict.checked) {
+    return {
+      result: await checkWithoutRecording({ ...comesBack, skillId, verdict }),
+      status: "checked",
+    };
+  }
 
-  const recorded = await recordLearnerAnswer({
-    answer: input.answer,
-    graded: {
-      durationMs: input.durationMs,
-      expectedDurationMs: EXPECTED_ANSWER_MS[answeredKind],
-      isCorrect: verdict.isCorrect,
-      score: verdict.score,
-      usedHint: input.usedHelp ?? false,
-    },
-    itemId: row.itemId,
-    language: row.lesson.language,
-    mistake: questionText
-      ? {
-          questionText,
-          snapshot: {
-            answer: verdict.answerText,
-            correctAnswer: verdict.correctAnswer,
-            explanation: verdict.feedback,
-            format: answeredKind,
-            question: questionText,
-          },
-        }
-      : null,
-    purpose: "learning",
-    skillId,
-    stepId: row.id,
-    studySessionId: getRunStudySessionId(run),
-    targetLanguage: row.lesson.targetLanguage,
-    timeZone,
-    userId,
-  });
-
-  scheduleMistakeCause(recorded.causeRequest);
-
-  await recordLanguageStepEvidence({
-    isCorrect: verdict.isCorrect,
-    lesson: row.lesson,
-    step: { ...row, kind: answeredKind },
-    userId,
-  });
-
-  return {
-    result: toCheckResult({
-      nextReviewAt: await getComesBack({
-        ...comesBack,
-        ownDue: recorded.learnerSkill?.due ?? null,
-      }),
-      savedMistake: recorded.mistake !== null,
-      verdict,
-    }),
-    status: "checked",
-  };
+  return recordCheck({ attemptId, comesBack, input, receivedAt, row, run, skillId, step, verdict });
 }

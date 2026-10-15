@@ -14,6 +14,7 @@ export function createLearnerAttempt({
 }) {
   return transaction.attempt.create({
     data: {
+      ...(input.attemptId && { id: input.attemptId }),
       answer: input.answer,
       answeredAt,
       durationMs: input.graded.durationMs,

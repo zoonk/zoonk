@@ -83,6 +83,19 @@ describe(reviewSkillMemory, () => {
     expect(memory.due?.getTime()).toBeGreaterThan(new Date("2026-09-02T03:00:00Z").getTime());
   });
 
+  it("counts an answer saved after a later review of the skill as reviewed with it, across midnight", () => {
+    const reviewed = review(
+      learn(NEW_SKILL_MEMORY, "2026-09-01T12:00:00Z"),
+      "2026-09-02T03:00:05Z",
+    );
+
+    // Given at 23:59:50 in São Paulo, before that review, but saved after it.
+    const late = review(reviewed, "2026-09-02T02:59:50Z", WRONG);
+
+    expect(late.lastReviewedAt).toStrictEqual(reviewed.lastReviewedAt);
+    expect(late.lapses).toBe(reviewed.lapses + 1);
+  });
+
   it("keeps stability for another right answer on the same local day", () => {
     const first = review(NEW_SKILL_MEMORY, "2026-09-01T23:00:00Z");
     // 21:30 in São Paulo is still September 1st there, although it is September 2nd in UTC.

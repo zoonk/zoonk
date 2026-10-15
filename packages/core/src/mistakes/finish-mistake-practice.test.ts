@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
@@ -38,15 +39,19 @@ async function setup() {
 
 async function answer({
   answer: choice,
+  attemptId,
   itemId,
   mistakeId,
+  run,
 }: {
   answer: { selectedIndex: number };
+  attemptId?: string;
   itemId: string;
   mistakeId: string;
+  run?: { answerIds: string[]; goalId?: string };
 }): Promise<string> {
   const result = await answerMistakePractice({
-    input: { answer: choice, durationMs: 20_000, itemId, timeZone: "UTC" },
+    input: { answer: choice, attemptId, durationMs: 20_000, itemId, run, timeZone: "UTC" },
     mistakeId,
   });
 
@@ -171,6 +176,80 @@ describe(finishMistakePractice, () => {
 
     expect(runs).toMatchObject([{ brainPower: 6, correctAnswers: 2, incorrectAnswers: 0 }]);
     expect(runs[0]?.contentIds).toStrictEqual({ answerIds: `${first},${second}` });
+  });
+
+  it("counts the run as each answer that names it is saved, and the end adds nothing twice", async () => {
+    freezeClock();
+
+    const { extra, mistake, original, user } = await setup();
+    const run = { answerIds: [] };
+    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id, run });
+
+    // A run left after its first answer already counts, without a finish.
+    await expect(loadRuns(user.id)).resolves.toMatchObject([{ brainPower: 2, correctAnswers: 1 }]);
+    await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
+
+    const second = await answer({
+      answer: RIGHT,
+      itemId: extra.id,
+      mistakeId: mistake.id,
+      run: { answerIds: [first] },
+    });
+
+    await expect(
+      finishMistakePractice({ answerIds: [first, second], ended: true, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ result: { brainPower: 6, correct: 2, total: 2 }, status: "ready" });
+
+    await expect(loadToday(user.id)).resolves.toMatchObject({
+      brainPowerEarned: 6,
+      correctAnswers: 2,
+      interactiveCompleted: 1,
+    });
+
+    await expect(loadRuns(user.id)).resolves.toMatchObject([
+      { brainPower: 6, correctAnswers: 2, incorrectAnswers: 0 },
+    ]);
+  });
+
+  it("records and counts an answer sent again with its id once", async () => {
+    freezeClock();
+
+    const { mistake, original, user } = await setup();
+    const attemptId = randomUUID();
+    const sent = { answer: RIGHT, attemptId, itemId: original.id, mistakeId: mistake.id };
+
+    // The first response never arrived, so the run still lists no answers when it's sent again.
+    const first = await answer({ ...sent, run: { answerIds: [] } });
+    const again = await answer({ ...sent, run: { answerIds: [] } });
+
+    expect(again).toBe(first);
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+
+    await expect(loadRuns(user.id)).resolves.toMatchObject([
+      { brainPower: 2, correctAnswers: 1, incorrectAnswers: 0 },
+    ]);
+
+    await expect(loadToday(user.id)).resolves.toMatchObject({
+      brainPowerEarned: 2,
+      correctAnswers: 1,
+      interactiveCompleted: 1,
+    });
+  });
+
+  it("saves an answer whose run can't be counted, such as one filed under another learner's goal", async () => {
+    const { mistake, original, user } = await setup();
+    const other = await userFixture();
+    const theirs = await goalFixture({ userId: other.id });
+
+    await answer({
+      answer: RIGHT,
+      itemId: original.id,
+      mistakeId: mistake.id,
+      run: { answerIds: [], goalId: theirs.id },
+    });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(loadRuns(user.id)).resolves.toStrictEqual([]);
   });
 
   it("won't count another learner's answers", async () => {

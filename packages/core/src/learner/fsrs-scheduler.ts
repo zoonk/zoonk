@@ -160,7 +160,7 @@ export function reviewSkillMemory({
   answer,
   learning = false,
   memory,
-  reviewedAt,
+  reviewedAt: answeredAt,
   timeZone,
 }: {
   answer: GradedAnswer;
@@ -169,6 +169,13 @@ export function reviewSkillMemory({
   reviewedAt: Date;
   timeZone: string;
 }): SkillMemory {
+  // A review never goes back before the last one: an answer given first but saved after a later
+  // review of the skill (its grade took longer) counts as reviewed with that one.
+  const reviewedAt =
+    memory.lastReviewedAt && memory.lastReviewedAt > answeredAt
+      ? memory.lastReviewedAt
+      : answeredAt;
+
   const today = getDateInTimeZone({ date: reviewedAt, timeZone });
   const rating = getRating({ answer, memory });
   const { card } = scheduler.next(toCard({ memory, timeZone, today }), today, GRADES[rating]);

@@ -87,7 +87,8 @@ function readRunAnswerIds(event: Pick<LearningEvent, "contentIds">): string[] {
   return typeof answerIds === "string" ? answerIds.split(ANSWER_ID_SEPARATOR) : [];
 }
 
-function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
+/** The notebook entries an answer fixed, as recording it saved them on the attempt. */
+export function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
   if (typeof answer !== "object" || answer === null || Array.isArray(answer)) {
     return [];
   }

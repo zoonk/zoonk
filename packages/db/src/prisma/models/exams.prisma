@@ -92,3 +92,20 @@ model ExamResult {
   @@index([examBlueprintId, reportedAt])
   @@map("exam_results")
 }
+
+/// An essay draft being graded, claimed before the grader is called, so the same draft sent twice at
+/// once is graded once: the other request waits for its grade instead of paying for another. A claim
+/// counts toward the day's essay grades until its grade is recorded (the same transaction deletes
+/// it) or grading fails (which deletes it too). `id` is the attempt id the grade is recorded under.
+/// A claim older than any grade takes was left by a request that crashed, and can be taken again.
+model EssayGradeClaim {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The learner's day the grade counts toward.
+  localDate DateTime @map("local_date") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, localDate])
+  @@map("essay_grade_claims")
+}

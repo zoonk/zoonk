@@ -57,6 +57,49 @@ export async function lockLessonRuns(
   );
 }
 
+/**
+ * Locks the run against its completion and says whether it's still open: an answer that took a
+ * while to grade isn't recorded once the run was finished without it.
+ */
+export async function lockOpenRun(transaction: TransactionClient, runId: string): Promise<boolean> {
+  const open = await transaction.$queryRaw<{ id: string }[]>`
+    SELECT "id" FROM "learning_events"
+    WHERE "id" = ${runId}::uuid AND "ended_at" IS NULL
+    FOR SHARE
+  `;
+
+  return open.length > 0;
+}
+
+/**
+ * Whether the learner recorded another answer to this screen that arrived after `since` (when an
+ * answer to it arrived; lesson answers are recorded as answered when they arrive): that one was
+ * given later, so the answer that arrived first is out of date, such as a grade the screen stopped
+ * waiting for before the learner checked again. The answer itself, sent again under its id
+ * (`attemptId`), isn't another answer.
+ */
+export async function hasAnswerSince(
+  transaction: TransactionClient,
+  {
+    attemptId,
+    since,
+    stepId,
+    userId,
+  }: { attemptId?: string; since: Date; stepId: string; userId: string },
+): Promise<boolean> {
+  const later = await transaction.attempt.findFirst({
+    select: { id: true },
+    where: {
+      answeredAt: { gt: since },
+      stepId,
+      userId,
+      ...(attemptId && { id: { not: attemptId } }),
+    },
+  });
+
+  return later !== null;
+}
+
 /** The lessons among these the learner ever started, finished or not. */
 export async function loadStartedLessonIds({
   lessonIds,

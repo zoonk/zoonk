@@ -1,5 +1,12 @@
 import "server-only";
-import { type MistakeStatus, prisma } from "@zoonk/db";
+import { type Attempt, type Mistake, type MistakeStatus, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
+import {
+  findSavedAttempt,
+  getAnswerAttemptId,
+  recordAnswerOnce,
+} from "../learner/_utils/answer-once";
 import {
   type ChoiceItem,
   getChoiceCorrectAnswer,
@@ -9,12 +16,14 @@ import {
 } from "../learner/_utils/choice-items";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { loadSkillSurvivors } from "../learner/_utils/update-learner-skill";
-import { recordLearnerAnswer } from "../learner/record-learner-answer";
+import { type LearnerAnswer } from "../learner/record-learner-answer";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
 import { getSession } from "../users/get-session";
+import { readFixedMistakeIds } from "./_utils/practice-runs";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { applyDrillRules } from "./drill-answer";
+import { finishMistakePractice } from "./finish-mistake-practice";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { scheduleMistakeCause } from "./resolve-mistake-cause";
 
@@ -99,12 +108,100 @@ async function findPracticeItem({
   return owners.includes(item.skillId) ? parseChoiceItem(item) : null;
 }
 
+/** What a practice answer saved: its id, its verdict and the notebook entries it fixed. */
+type SavedPracticeAnswer = {
+  answerId: string;
+  fixedMistakeIds: string[];
+  isCorrect: boolean;
+  mistakeStatus: MistakeStatus;
+};
+
+/** An answer saved earlier, sent again: what it saved then, never recorded twice. */
+function fromSavedAttempt({
+  attempt,
+  mistake,
+}: {
+  attempt: Pick<Attempt, "answer" | "id" | "isCorrect">;
+  mistake: Pick<Mistake, "status">;
+}): SavedPracticeAnswer {
+  return {
+    answerId: attempt.id,
+    fixedMistakeIds: readFixedMistakeIds(attempt.answer),
+    isCorrect: attempt.isCorrect,
+    mistakeStatus: mistake.status,
+  };
+}
+
+/**
+ * Records the practice answer and schedules its cause, once when it came with an id: the same
+ * answer sent twice at once gets what the first one saved.
+ */
+async function recordPracticeAnswer({
+  answer,
+  mistake,
+}: {
+  answer: LearnerAnswer;
+  mistake: Pick<Mistake, "id" | "status">;
+}): Promise<SavedPracticeAnswer> {
+  const outcome = await recordAnswerOnce({ answer });
+
+  if (outcome.status === "saved") {
+    return fromSavedAttempt({ attempt: outcome.saved, mistake });
+  }
+
+  if (outcome.status !== "recorded") {
+    throw new Error("A practice answer has no run or block to close");
+  }
+
+  const { recorded } = outcome;
+  scheduleMistakeCause(recorded.causeRequest);
+
+  return {
+    answerId: recorded.attempt.id,
+    fixedMistakeIds: recorded.fixedMistakeIds,
+    isCorrect: recorded.attempt.isCorrect,
+    mistakeStatus: recorded.mistake?.id === mistake.id ? recorded.mistake.status : mistake.status,
+  };
+}
+
+/**
+ * Counts the run with this answer toward today, as `finishMistakePractice` does. The answer is
+ * saved either way: a count that fails is made by the run's next answer or its finish, which count
+ * every answer no count has yet.
+ */
+async function countRunSoFar({
+  answerId,
+  input,
+}: {
+  answerId: string;
+  input: MistakePracticeAnswerInput;
+}): Promise<void> {
+  const { run, timeZone } = input;
+
+  if (!run) {
+    return;
+  }
+
+  const { error } = await safeAsync(() =>
+    finishMistakePractice({
+      answerIds: [...run.answerIds, answerId],
+      goalId: run.goalId,
+      timeZone,
+    }),
+  );
+
+  if (error) {
+    logError("[answerMistakePractice] Failed to count the run:", error);
+  }
+}
+
 /**
  * Grades one answer from "Practice mistakes" and records it as learning, by the rules of the
  * mistake's drill (a timed drill's answer that takes the whole time box is wrong). Right on a later
  * day than the mistake, it fixes the entry (and any open entry for the same question); wrong, it
- * goes back in the notebook, with a new entry only for a question that wasn't there yet. The run
- * counts toward today when it's finished (`finishMistakePractice`).
+ * goes back in the notebook, with a new entry only for a question that wasn't there yet. An answer
+ * that names its run counts the run toward today as it goes; finishing the run
+ * (`finishMistakePractice`) counts it too.
  */
 export async function answerMistakePractice({
   input,
@@ -143,39 +240,48 @@ export async function answerMistakePractice({
     misconception: graded.snapshot.misconception ?? null,
   });
 
-  const recorded = await recordLearnerAnswer({
-    answer: input.answer,
-    graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
-    itemId: item.id,
-    language: item.language,
-    mistake: {
-      questionText: getQuestionText(item),
-      snapshot: graded.snapshot,
-      timeLimitMs: drilled.timeLimitMs,
-    },
-    practicedMistakeId: mistake.id,
-    purpose: "learning",
-    skillId: item.skillId,
-    timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
-    userId,
-  });
+  const attemptId = input.attemptId
+    ? getAnswerAttemptId({ key: input.attemptId, questionId: mistake.id, userId })
+    : undefined;
 
-  scheduleMistakeCause(recorded.causeRequest);
+  const earlier = attemptId ? await findSavedAttempt({ attemptId, userId }) : null;
 
-  const fixed = recorded.fixedMistakeIds.includes(mistake.id);
+  const saved = earlier
+    ? fromSavedAttempt({ attempt: earlier, mistake })
+    : await recordPracticeAnswer({
+        answer: {
+          answer: input.answer,
+          attemptId,
+          graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
+          itemId: item.id,
+          language: item.language,
+          mistake: {
+            questionText: getQuestionText(item),
+            snapshot: graded.snapshot,
+            timeLimitMs: drilled.timeLimitMs,
+          },
+          practicedMistakeId: mistake.id,
+          purpose: "learning",
+          skillId: item.skillId,
+          timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+          userId,
+        },
+        mistake,
+      });
 
-  const currentStatus =
-    recorded.mistake?.id === mistake.id ? recorded.mistake.status : mistake.status;
+  await countRunSoFar({ answerId: saved.answerId, input });
+
+  const fixed = saved.fixedMistakeIds.includes(mistake.id);
 
   return {
     feedback: {
-      answerId: recorded.attempt.id,
+      answerId: saved.answerId,
       correctAnswer: getChoiceCorrectAnswer(item),
       explanation: graded.snapshot.explanation ?? null,
       fixed,
-      fixedMistakeIds: recorded.fixedMistakeIds,
-      isCorrect: drilled.isCorrect,
-      mistakeStatus: fixed ? "fixed" : currentStatus,
+      fixedMistakeIds: saved.fixedMistakeIds,
+      isCorrect: saved.isCorrect,
+      mistakeStatus: fixed ? "fixed" : saved.mistakeStatus,
       trap: drilled.trap,
     },
     status: "ready",

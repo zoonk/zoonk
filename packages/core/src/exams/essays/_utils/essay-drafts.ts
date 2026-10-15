@@ -2,9 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type EssayDraft, essayAnswerSchema } from "../essay-contract";
 
-/** Essays a learner can have graded in a day: plenty to write and rewrite, bounded for cost. */
-const DAILY_ESSAY_GRADES = 6;
-
 /** The block's graded drafts, latest first. */
 export async function loadEssayDrafts({
   itemId,
@@ -28,19 +25,4 @@ export async function loadEssayDrafts({
       ? [{ grade: answer.grade, submittedAt: attempt.answeredAt.toISOString(), text: answer.text }]
       : [];
   });
-}
-
-/** Essay grades the learner has left today, on their local day. */
-export async function countGradesLeft({
-  localDate,
-  userId,
-}: {
-  localDate: Date;
-  userId: string;
-}): Promise<number> {
-  const graded = await prisma.attempt.count({
-    where: { item: { format: "essay" }, localDate, userId },
-  });
-
-  return Math.max(0, DAILY_ESSAY_GRADES - graded);
 }

@@ -10,6 +10,12 @@ const MAX_WRITING_MS = 5_400_000;
 
 export const essaySubmissionInputSchema = z
   .object({
+    attemptId: z
+      .uuid()
+      .optional()
+      .describe(
+        "Your id for this draft: sent again with it (a retry), it's graded and recorded once",
+      ),
     durationMs: z.int().min(0).max(MAX_WRITING_MS).meta({ description: "Time spent writing" }),
     text: z.string().trim().min(1).max(MAX_ESSAY_CHARACTERS),
     timeZone: answerTimeZoneSchema,

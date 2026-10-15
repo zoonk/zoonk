@@ -2,7 +2,8 @@ import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
-import { countGradesLeft, loadEssayDrafts } from "./_utils/essay-drafts";
+import { loadEssayDrafts } from "./_utils/essay-drafts";
+import { countGradesLeft } from "./_utils/essay-grade-claims";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import { type EssayView } from "./essay-contract";
 import { getEssayRubric } from "./essay-rubric";
@@ -35,6 +36,7 @@ export async function getEssay({
     loadEssayDrafts({ itemId: item.id, sessionId, userId }),
     countGradesLeft({
       localDate: getDateInTimeZone({ date: currentInstant, timeZone: zone }),
+      now: currentInstant,
       userId,
     }),
   ]);

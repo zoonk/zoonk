@@ -1,3 +1,4 @@
+import { setTimeout as wait } from "node:timers/promises";
 import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { prisma } from "@zoonk/db";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -6,10 +7,12 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { DAY_MS, SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { startStudyBlock } from "../../sessions/start-study-block";
+import { endEssayGradeClaim } from "./_utils/essay-grade-claims";
 import { getEssay } from "./get-essay";
 import { submitEssay } from "./submit-essay";
 
@@ -130,7 +133,115 @@ async function startedWritingBlock() {
 
   await startStudyBlock({ blockId, input: {}, sessionId });
 
-  return { blockId, otherBlockId, user };
+  return { blockId, otherBlockId, sessionId, user };
+}
+
+/** The grader's answer, once `release` lets it go: a grade that takes a while. */
+function holdGrader() {
+  const release = Promise.withResolvers<null>();
+  const entered = Promise.withResolvers<null>();
+
+  vi.mocked(gradeEssay).mockImplementation(async () => {
+    entered.resolve(null);
+    await release.promise;
+    return { data: GRADE, provenance: null, systemPrompt: "", usage: null, userPrompt: "" };
+  });
+
+  return { entered: entered.promise, release: () => release.resolve(null) };
+}
+
+/** The writing block's day, and `count` of its essay grades already used on it. */
+async function useGrades({ count, userId }: { count: number; userId: string }) {
+  const essay = await prisma.item.findFirstOrThrow({ where: { format: "essay" } });
+
+  const { localDate } = await prisma.studySession.findFirstOrThrow({
+    orderBy: { localDate: "desc" },
+    where: { userId },
+  });
+
+  await prisma.attempt.createMany({
+    data: Array.from({ length: count }, () => ({
+      answer: {},
+      durationMs: 1000,
+      hour: 12,
+      isCorrect: true,
+      itemId: essay.id,
+      localDate,
+      userId,
+      weekday: localDate.getUTCDay(),
+    })),
+  });
+
+  return localDate;
+}
+
+/**
+ * Another request recording a draft's grade, paused inside its transaction after ending the draft's
+ * claim and saving its attempt, until `commit`. `blocked` resolves once another backend waits on it.
+ */
+async function recordingGrade({
+  attemptId,
+  localDate,
+  userId,
+}: {
+  attemptId: string;
+  localDate: Date;
+  userId: string;
+}) {
+  const essay = await prisma.item.findFirstOrThrow({ where: { format: "essay" } });
+  const holding = Promise.withResolvers<number>();
+  const commit = Promise.withResolvers<null>();
+
+  await prisma.essayGradeClaim.create({
+    data: { createdAt: new Date(), id: attemptId, localDate, userId },
+  });
+
+  const recording = prisma.$transaction(
+    async (tx) => {
+      const [{ pid }] = await tx.$queryRaw<[{ pid: number }]>`SELECT pg_backend_pid() AS pid`;
+      await endEssayGradeClaim(tx, { attemptId, userId });
+
+      await tx.attempt.create({
+        data: {
+          answer: { grade: GRADE, text: "My essay about it." },
+          durationMs: 1000,
+          hour: 12,
+          id: attemptId,
+          isCorrect: true,
+          itemId: essay.id,
+          localDate,
+          userId,
+          weekday: localDate.getUTCDay(),
+        },
+      });
+
+      holding.resolve(pid);
+      await commit.promise;
+    },
+    { timeout: 30_000 },
+  );
+
+  const pid = await holding.promise;
+
+  const blocked = vi.waitFor(
+    async () => {
+      const [{ count }] = await prisma.$queryRaw<[{ count: number }]>`
+        SELECT count(*)::int AS count FROM pg_stat_activity
+        WHERE ${pid}::int = ANY(pg_blocking_pids(pid))
+      `;
+
+      expect(count).toBeGreaterThan(0);
+    },
+    { interval: 20, timeout: 10_000 },
+  );
+
+  return {
+    blocked,
+    commit: async () => {
+      commit.resolve(null);
+      await recording;
+    },
+  };
 }
 
 describe("essays in sessions", () => {
@@ -278,6 +389,197 @@ describe("essay drafts and access", () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.mocked(gradeEssay).mockReset();
+  });
+
+  it("grades and records a draft sent again with its id once", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const input = { attemptId: crypto.randomUUID(), durationMs: 1000, text: "My essay about it." };
+
+    const first = await submitEssay({ blockId, input });
+    const again = await submitEssay({ blockId, input });
+
+    expect(first).toMatchObject({ grade: { total: { score: 720 } }, status: "graded" });
+    expect(again).toStrictEqual(first);
+    expect(gradeEssay).toHaveBeenCalledOnce();
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(getEssay({ blockId })).resolves.toMatchObject({ essay: { gradesLeft: 5 } });
+  });
+
+  it("grades a draft sent twice at once a single time, and the second request gets its grade", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const grader = holdGrader();
+    const input = { attemptId: crypto.randomUUID(), durationMs: 1000, text: "My essay about it." };
+
+    const first = submitEssay({ blockId, input });
+    await grader.entered;
+    const second = submitEssay({ blockId, input });
+
+    // The second request waits for the first one's grade instead of grading the draft again.
+    await wait(300);
+    grader.release();
+
+    const [graded, again] = await Promise.all([first, second]);
+
+    expect(graded).toMatchObject({ grade: { total: { score: 720 } }, status: "graded" });
+    expect(again).toStrictEqual(graded);
+    expect(gradeEssay).toHaveBeenCalledOnce();
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(getEssay({ blockId })).resolves.toMatchObject({ essay: { gradesLeft: 5 } });
+  });
+
+  it("grades drafts sent at once only up to the day's essay grades", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    await useGrades({ count: 5, userId: user.id });
+    const grader = holdGrader();
+
+    const sent = ["My first essay.", "Another essay."].map((text) =>
+      submitEssay({ blockId, input: { attemptId: crypto.randomUUID(), durationMs: 1000, text } }),
+    );
+
+    await grader.entered;
+    await wait(300);
+    grader.release();
+
+    const outcomes = await Promise.all(sent);
+
+    expect(outcomes.map((outcome) => outcome.status).toSorted()).toStrictEqual([
+      "graded",
+      "limitReached",
+    ]);
+
+    expect(gradeEssay).toHaveBeenCalledOnce();
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(6);
+  });
+
+  it("makes a draft sent again while its grade is being recorded wait for it, then replay it", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const key = crypto.randomUUID();
+    const localDate = await useGrades({ count: 0, userId: user.id });
+
+    const recording = await recordingGrade({
+      attemptId: getAnswerAttemptId({ key, questionId: blockId, userId: user.id }),
+      localDate,
+      userId: user.id,
+    });
+
+    const again = submitEssay({
+      blockId,
+      input: { attemptId: key, durationMs: 1000, text: "My essay about it." },
+    });
+
+    // The claim waits for the recording instead of reading between its two halves.
+    await recording.blocked;
+    await recording.commit();
+
+    await expect(again).resolves.toMatchObject({
+      grade: { total: { score: 720 } },
+      status: "graded",
+    });
+
+    expect(gradeEssay).not.toHaveBeenCalled();
+  });
+
+  it("makes a draft sent while the day's last grade is being recorded wait, then refuses it", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const localDate = await useGrades({ count: 5, userId: user.id });
+
+    const recording = await recordingGrade({
+      attemptId: crypto.randomUUID(),
+      localDate,
+      userId: user.id,
+    });
+
+    const other = submitEssay({
+      blockId,
+      input: { attemptId: crypto.randomUUID(), durationMs: 1000, text: "Another essay." },
+    });
+
+    await recording.blocked;
+    await recording.commit();
+
+    await expect(other).resolves.toStrictEqual({ status: "limitReached" });
+    expect(gradeEssay).not.toHaveBeenCalled();
+  });
+
+  it("grades a draft again after its grade failed", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const input = { attemptId: crypto.randomUUID(), durationMs: 1000, text: "My essay about it." };
+
+    vi.mocked(gradeEssay).mockRejectedValueOnce(new Error("The grader is down"));
+
+    await expect(submitEssay({ blockId, input })).rejects.toThrow("The grader is down");
+
+    await expect(submitEssay({ blockId, input })).resolves.toMatchObject({ status: "graded" });
+    expect(gradeEssay).toHaveBeenCalledTimes(2);
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(prisma.essayGradeClaim.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("grades a draft whose earlier request crashed mid-grade once that claim expired", async () => {
+    const { blockId, user } = await startedWritingBlock();
+    const key = crypto.randomUUID();
+    const localDate = await useGrades({ count: 0, userId: user.id });
+
+    // A request that crashed while grading left its claim, long enough ago to have expired.
+    await prisma.essayGradeClaim.create({
+      data: {
+        createdAt: new Date(Date.now() - 400_000),
+        id: getAnswerAttemptId({ key, questionId: blockId, userId: user.id }),
+        localDate,
+        userId: user.id,
+      },
+    });
+
+    await expect(
+      submitEssay({ blockId, input: { attemptId: key, durationMs: 1000, text: "My essay." } }),
+    ).resolves.toMatchObject({ status: "graded" });
+
+    expect(gradeEssay).toHaveBeenCalledOnce();
+    await expect(prisma.essayGradeClaim.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("holds no lock or transaction while the model grades, only the draft's claim", async () => {
+    const { blockId, user } = await startedWritingBlock();
+
+    vi.mocked(gradeEssay).mockImplementationOnce(async () => {
+      const [{ claims, locks }] = await prisma.$queryRaw<[{ claims: number; locks: number }]>`
+        SELECT
+          (SELECT count(*)::int FROM essay_grade_claims WHERE user_id = ${user.id}::uuid) AS claims,
+          (SELECT count(*)::int FROM pg_locks
+            WHERE locktype = 'advisory' AND classid = 51883
+              AND objid = (hashtext(${user.id})::bigint & 4294967295)::oid) AS locks
+      `;
+
+      expect({ claims, locks }).toStrictEqual({ claims: 1, locks: 0 });
+      return { data: GRADE, provenance: null, systemPrompt: "", usage: null, userPrompt: "" };
+    });
+
+    await expect(
+      submitEssay({ blockId, input: { durationMs: 1000, text: "My essay about it." } }),
+    ).resolves.toMatchObject({ status: "graded" });
+
+    expect(gradeEssay).toHaveBeenCalledOnce();
+  });
+
+  it("doesn't record a rewrite graded while the learner skipped it and the block was settled", async () => {
+    const { blockId, sessionId, user } = await startedWritingBlock();
+
+    await submitEssay({ blockId, input: { durationMs: 1000, text: "My essay about it." } });
+
+    vi.mocked(gradeEssay).mockImplementationOnce(async () => {
+      await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
+        status: "ready",
+      });
+
+      return { data: GRADE, provenance: null, systemPrompt: "", usage: null, userPrompt: "" };
+    });
+
+    await expect(
+      submitEssay({ blockId, input: { durationMs: 1000, text: "My rewrite about it." } }),
+    ).resolves.toStrictEqual({ status: "blockNotActive" });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("starts today's writing block when a draft is sent, but never another day's", async () => {
