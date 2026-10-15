@@ -1,4 +1,5 @@
 import { BRAIN_POWER_BONUS } from "./brain-power";
+import { type DayBlockRef } from "./day-block";
 import { type MissionDetail, type MissionKind, type MissionOpens } from "./missions/catalog";
 
 /**
@@ -31,6 +32,11 @@ export type Mission = {
    * day's lessons before it, or for the challenge before it.
    */
   waitReason?: "challenge" | "lessons";
+};
+
+/** An unopened mission identifies actual work, never a database block that does not exist yet. */
+export type DayMission = Omit<Mission, "opens"> & {
+  opens?: Exclude<Mission["opens"], { kind: "block" }> | { kind: "block"; ref: DayBlockRef };
 };
 
 export type MissionInput = {

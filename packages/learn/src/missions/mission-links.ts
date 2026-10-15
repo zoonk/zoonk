@@ -1,8 +1,7 @@
 "use client";
 
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
-import { type DayMission } from "@zoonk/core/sessions/day-view";
-import { type Mission } from "@zoonk/core/sessions/missions";
+import { type DayMission, type Mission } from "@zoonk/core/sessions/missions";
 import { useTransition } from "react";
 
 /**
