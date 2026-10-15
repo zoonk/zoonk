@@ -26,7 +26,7 @@ import { usePlanChange } from "./use-plan-change";
 
 const AREA_ROW_CLASS = cn(
   "border-border bg-card flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none",
-  "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
+  "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
   CHOICE_CARD_PICKED_CLASS,
 );
 
@@ -83,16 +83,18 @@ function FocusTestLink({ href }: { href: string }) {
 /**
  * A subject to pick, with what's part of it (the language the learner takes, inside ENEM's
  * languages area), and the part of it in focus when the learner named one ("Only Biology and
- * Chemistry"): choosing subjects again keeps it.
+ * Chemistry"): choosing subjects again keeps it. It stays as picked while the picks save.
  */
 function AreaChoice({
   checked,
+  disabled,
   name,
   onCheckedChange,
   part,
   parts,
 }: {
   checked: boolean;
+  disabled: boolean;
   name: string;
   onCheckedChange: (checked: boolean) => void;
   part: string | null;
@@ -114,7 +116,12 @@ function AreaChoice({
           <span className="text-muted-foreground text-sm">{t("Only {part}", { part })}</span>
         )}
       </span>
-      <Checkbox checked={checked} className="size-5" onCheckedChange={onCheckedChange} />
+      <Checkbox
+        checked={checked}
+        className="size-5"
+        disabled={disabled}
+        onCheckedChange={onCheckedChange}
+      />
     </label>
   );
 }
@@ -122,8 +129,8 @@ function AreaChoice({
 /**
  * The plan's subjects to pick from, the ones in focus checked, with the action under the list that
  * scrolls: what the learner picks gets its depth first, and every other topic stays in the plan.
- * Saving goes through the plan's own change, and the sheet says what it did, or that nothing
- * changed and why.
+ * Saving goes through the plan's own change, which plans again and can take seconds: the action
+ * says it's saving meanwhile, then the sheet says what it did, or that nothing changed and why.
  */
 function FocusChoices({ onSaved }: { onSaved: () => void }) {
   const t = useExtracted();
@@ -188,6 +195,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
             {areas.map((area) => (
               <AreaChoice
                 checked={chosen.includes(area.name)}
+                disabled={isPending}
                 key={area.name}
                 name={area.name}
                 onCheckedChange={(checked) => {
@@ -215,7 +223,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           form={formId}
           type="submit"
         >
-          {t("Focus on these")}
+          {isPending ? t("Saving…") : t("Focus on these")}
         </Button>
 
         {failed && <PlanFailedMessage />}

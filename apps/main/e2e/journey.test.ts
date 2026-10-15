@@ -777,9 +777,28 @@ test.describe("Journey", () => {
       await expect(focus.getByRole("checkbox", { exact: true, name: "Matemática" })).toBeVisible();
 
       await focus.getByRole("checkbox", { name: "Linguagens" }).click();
-      await focus.getByRole("button", { name: "Focus on these" }).click();
 
-      // It says what the focus did once the plan is made again, which can take a while.
+      // It says what the focus did once the plan is made again, which can take a while: until
+      // then its action says it's saving, and the picks stay as they're saved. The save waits here
+      // until the sheet has said so.
+      const saving = Promise.withResolvers<boolean>();
+
+      await page.route(
+        (url) => url.pathname === "/plan",
+        async (route) => {
+          if (route.request().postData()?.includes('"focusAreas"')) {
+            await saving.promise;
+          }
+
+          await route.fallback();
+        },
+      );
+
+      await focus.getByRole("button", { name: "Focus on these" }).click();
+      await expect(focus.getByRole("button", { name: "Saving…" })).toBeDisabled();
+      await expect(focus.getByRole("checkbox", { name: "Linguagens" })).toBeDisabled();
+      saving.resolve(true);
+
       const status = focus.getByRole("status");
 
       await expect(status).toContainText("More time for Ciências da Natureza and Linguagens.", {
