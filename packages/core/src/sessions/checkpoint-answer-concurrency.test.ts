@@ -13,6 +13,22 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 
+/** Keep foreign queues traversable, but count only this worker's active test connections. */
+function readOwnWaiters(holderPid: number) {
+  return prisma.$queryRaw<{ pid: number }[]>`
+    WITH RECURSIVE waiting AS (
+      SELECT pid FROM pg_stat_activity
+      WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+      UNION
+      SELECT activity.pid FROM pg_stat_activity activity JOIN waiting
+        ON waiting.pid = ANY(pg_blocking_pids(activity.pid))
+      WHERE activity.datname = current_database()
+    )
+    SELECT activity.pid FROM pg_stat_activity activity JOIN waiting USING (pid)
+    WHERE activity.application_name = current_setting('application_name')
+      AND activity.application_name <> ''`;
+}
+
 async function setup(kind: "checkpoint" | "practice" = "checkpoint") {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
   const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
@@ -145,6 +161,7 @@ describe("checkpoint answer recording", () => {
           async () => prisma.$queryRaw<{ pid: number }[]>`
         SELECT pid FROM pg_stat_activity
         WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+          AND application_name = current_setting('application_name') AND application_name <> ''
       `,
           { interval: 10, timeout: 4000 },
         )
@@ -153,19 +170,7 @@ describe("checkpoint answer recording", () => {
       void submit(1).then(replay.resolve, replay.reject);
 
       await expect
-        .poll(
-          async () => prisma.$queryRaw<{ pid: number }[]>`
-        WITH RECURSIVE waiting AS (
-          SELECT pid FROM pg_stat_activity
-          WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
-          UNION
-          SELECT activity.pid FROM pg_stat_activity activity JOIN waiting
-            ON waiting.pid = ANY(pg_blocking_pids(activity.pid))
-          WHERE activity.datname = current_database()
-        ) SELECT pid FROM waiting
-      `,
-          { interval: 10, timeout: 4000 },
-        )
+        .poll(() => readOwnWaiters(holderPid), { interval: 10, timeout: 4000 })
         .toHaveLength(2);
 
       await expect(
@@ -271,39 +276,66 @@ describe("checkpoint answer recording", () => {
       const held = Promise.allSettled([holding]);
       void holding.catch(ready.reject);
       const holderPid = await ready.promise;
+      // More foreign waiters than the expected two prevents an unscoped poll passing early.
+      const foreignName = `checkpoint-foreign:${item.id}`;
+
+      const foreign = Promise.allSettled(
+        Array.from({ length: 3 }, () =>
+          prisma.$transaction(
+            async (tx) => {
+              await tx.$queryRaw`SELECT set_config('application_name', ${foreignName}, true)`;
+              await tx.$queryRaw`SELECT id FROM items WHERE id = ${item.id}::uuid FOR KEY SHARE`;
+            },
+            { timeout: 12_000 },
+          ),
+        ),
+      );
+
+      const startSubmissions = Promise.withResolvers<null>();
 
       const submissions = Promise.allSettled([
-        submit(0),
-        answerStudyQuestion({
-          blockId: otherBlock.id,
-          input: { answer: { selectedIndex: 1 }, durationMs: 1000, itemId: item.id },
-          sessionId: session.id,
-        }),
+        startSubmissions.promise.then(() => submit(0)),
+        startSubmissions.promise.then(() =>
+          answerStudyQuestion({
+            blockId: otherBlock.id,
+            input: { answer: { selectedIndex: 1 }, durationMs: 1000, itemId: item.id },
+            sessionId: session.id,
+          }),
+        ),
       ]);
 
       try {
         await expect
           .poll(
             async () => prisma.$queryRaw<{ pid: number }[]>`
-        WITH RECURSIVE waiting AS (
-          SELECT pid FROM pg_stat_activity
-          WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
-          UNION
-          SELECT activity.pid FROM pg_stat_activity activity JOIN waiting
-            ON waiting.pid = ANY(pg_blocking_pids(activity.pid))
-          WHERE activity.datname = current_database()
-        ) SELECT pid FROM waiting
-      `,
+              SELECT pid FROM pg_stat_activity
+              WHERE datname = current_database() AND application_name = ${foreignName}
+                AND ${holderPid} = ANY(pg_blocking_pids(pid))
+            `,
             { interval: 10, timeout: 4000 },
           )
+          .toHaveLength(3);
+
+        startSubmissions.resolve(null);
+
+        await expect
+          .poll(() => readOwnWaiters(holderPid), { interval: 10, timeout: 4000 })
           .toHaveLength(2);
       } finally {
+        startSubmissions.resolve(null);
         release.resolve(null);
         await held;
         await submissions;
+        await foreign;
       }
 
       await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
+
+      await expect(foreign).resolves.toMatchObject([
+        { status: "fulfilled" },
+        { status: "fulfilled" },
+        { status: "fulfilled" },
+      ]);
 
       const attempts = await prisma.attempt.findMany({
         where: { itemId: item.id, studySessionId: session.id, userId: user.id },
@@ -401,6 +433,7 @@ describe("checkpoint answer recording", () => {
             async () => prisma.$queryRaw<{ pid: number }[]>`
           SELECT pid FROM pg_stat_activity
           WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+            AND application_name = current_setting('application_name') AND application_name <> ''
             AND query ~* 'study_session_blocks'
         `,
             { interval: 10, timeout: 4000 },

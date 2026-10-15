@@ -1,6 +1,9 @@
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { boundaries, resetBoundaries } from "./src/_test-utils/test-boundaries";
 
+// Shared workers keep their pools between files; label connections before the first one opens.
+process.env.PGAPPNAME = `zoonk-core-test:${process.pid}:${process.env.VITEST_POOL_ID ?? "main"}`;
+
 vi.mock("server-only", () => ({}));
 
 // The edges every test replaces, declared once (see `src/_test-utils/test-boundaries.ts`).
