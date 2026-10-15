@@ -3,6 +3,7 @@
 import { captureException } from "@sentry/nextjs";
 import { useEffect } from "react";
 import { PageErrorMessage } from "./page-error-message";
+import { getPageRetry } from "./page-retry";
 
 /**
  * A page of the app's frame (the tabs, the catalog, settings) that failed: the message takes the
@@ -19,5 +20,5 @@ export function FramePageError({
     captureException(error);
   }, [error]);
 
-  return <PageErrorMessage inFrame onRetry={retry} />;
+  return <PageErrorMessage inFrame onRetry={getPageRetry({ error, retry })} />;
 }

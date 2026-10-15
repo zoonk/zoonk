@@ -310,6 +310,43 @@ test.describe("Quick explanations", () => {
     });
   });
 
+  test("a player that didn't load comes back with Try again", async ({ browser }) => {
+    await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      const path = `/explain/${persona.goalId}`;
+      const response = await page.request.get(path);
+      const html = await response.text();
+
+      // The player loads on its own: its code is what the page preloads at low priority and doesn't
+      // load as one of its own scripts.
+      const hrefs = (pattern: RegExp) =>
+        [...html.matchAll(pattern)].map(({ groups }) => groups?.href?.split("?")[0]);
+
+      const pageScripts = new Set(hrefs(/<script [^>]*src="(?<href>[^"]+)"/gu));
+
+      const playerChunks = [...html.matchAll(/<link [^>]*rel="preload"[^>]*>/gu)]
+        .map(([tag]) => tag)
+        .filter((tag) => tag.includes('as="script"') && /fetchPriority="low"/iu.test(tag))
+        .map((tag) => /href="(?<href>[^"?]+)/u.exec(tag)?.groups?.href)
+        .filter((href) => href && !pageScripts.has(href));
+
+      expect(playerChunks.length).toBeGreaterThan(0);
+
+      // Offline for a moment: the player's code doesn't arrive, and the page says so.
+      const isPlayerChunk = (url: URL) => playerChunks.includes(url.pathname);
+      await page.route(isPlayerChunk, (route) => route.abort("internetdisconnected"));
+      await page.goto(path);
+      await expect(page.getByText("This page didn't load")).toBeVisible();
+
+      // Back online, "Try again" brings the explanation back.
+      await page.unroute(isPlayerChunk);
+      await page.getByRole("button", { name: "Try again" }).click();
+
+      await expect(
+        page.getByRole("main", { name: "Lesson content" }).getByText("The market isn't one price"),
+      ).toBeVisible();
+    });
+  });
+
   test("a learner with only quick explanations starts a goal on Today", async ({ browser }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page }) => {
       await page.goto("/today");

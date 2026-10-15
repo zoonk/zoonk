@@ -1,6 +1,7 @@
 "use client";
 
 import { PageErrorMessage } from "@/components/errors/page-error-message";
+import { getPageRetry } from "@/components/errors/page-retry";
 import { Link } from "@/i18n/navigation";
 import { captureException } from "@sentry/nextjs";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -28,7 +29,7 @@ export default function PageError({
           {t("Go to the home page")}
         </Link>
       }
-      onRetry={retry}
+      onRetry={getPageRetry({ error, retry })}
     />
   );
 }

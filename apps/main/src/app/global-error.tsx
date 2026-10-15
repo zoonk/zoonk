@@ -1,5 +1,6 @@
 "use client";
 
+import { getPageRetry } from "@/components/errors/page-retry";
 import { captureException } from "@sentry/nextjs";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { Suspense, lazy, useEffect } from "react";
@@ -33,7 +34,7 @@ export default function GlobalError({
       </head>
       <body className="bg-background text-foreground font-sans antialiased">
         <Suspense fallback={null}>
-          <GlobalErrorContent onRetry={retry} />
+          <GlobalErrorContent onRetry={getPageRetry({ error, retry })} />
         </Suspense>
       </body>
     </html>
