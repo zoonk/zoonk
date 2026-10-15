@@ -44,10 +44,15 @@ function toDrawn(pictures: readonly LessonPicture[]): Record<string, PlayableSte
   );
 }
 
+/** The screens a picture key belongs to (`pictureKey`), once each. */
+function toStepIds(keys: readonly string[]): string[] {
+  return [...new Set(keys.map((key) => key.split(":")[0] ?? key))];
+}
+
 /**
  * Pictures are drawn in the background right after a lesson is written, so a learner who opens
- * it at once can reach a screen before its picture. While any is pending, this asks the host for
- * the lesson's pictures every few seconds and hands them to the screens as they arrive.
+ * it at once can reach a screen before its picture. While any is pending, this asks the host every
+ * few seconds for the screens still waiting, and hands their pictures to them as they arrive.
  */
 export function LessonPicturesProvider({
   children,
@@ -81,7 +86,8 @@ export function LessonPicturesProvider({
     let cancelled = false;
 
     const poll = async () => {
-      const pictures = (await getLessonPictures?.().catch(() => [])) ?? [];
+      const asked = getWaitingKeys({ drawn: drawnRef.current, now: Date.now(), startedAt, steps });
+      const pictures = (await getLessonPictures?.(toStepIds(asked)).catch(() => [])) ?? [];
 
       if (cancelled) {
         return;

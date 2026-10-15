@@ -10,6 +10,7 @@ import { logError } from "@zoonk/utils/logger";
 import { z } from "zod";
 
 const idSchema = z.uuid();
+const stepIdsSchema = z.array(z.uuid()).optional();
 
 /**
  * The web player's completion: the same core capability as `POST /v1/library/lessons/{id}/completions`.
@@ -48,15 +49,23 @@ export async function completeLibraryLessonAction({
 
 /**
  * The lesson's pictures drawn so far, for screens whose picture was still being drawn when the
- * page loaded. Read fresh: the API's workflow draws them, and this app's cached lesson doesn't
- * have them yet (the public API's lesson read returns them as they're drawn).
+ * page loaded: those of the screens still waiting (`stepIds`), or every screen's without it. Read
+ * fresh: the API's workflow draws them, and this app's cached lesson doesn't have them yet (the
+ * public API's lesson read returns them as they're drawn).
  */
-export async function getLessonPicturesAction(lessonId: string): Promise<LessonPicture[]> {
-  if (!idSchema.safeParse(lessonId).success) {
+export async function getLessonPicturesAction(
+  lessonId: string,
+  stepIds?: unknown,
+): Promise<LessonPicture[]> {
+  const steps = stepIdsSchema.safeParse(stepIds);
+
+  if (!idSchema.safeParse(lessonId).success || !steps.success) {
     return [];
   }
 
-  const { data, error } = await safeAsync(() => getLessonPictures({ lessonId }));
+  const { data, error } = await safeAsync(() =>
+    getLessonPictures({ lessonId, stepIds: steps.data }),
+  );
 
   if (error) {
     logError("[getLessonPicturesAction] Failed to read a lesson's pictures:", error);

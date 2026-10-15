@@ -151,9 +151,10 @@ export type LessonPlayerAdapters = {
   requestExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
   /**
    * The lesson's pictures drawn so far, asked for while a screen's picture is still being drawn
-   * (`imagePending`). Without it, those screens show without their picture.
+   * (`imagePending`): only those of the screens still waiting (`stepIds`), or every screen's
+   * without it (a run picked up again). Without it, those screens show without their picture.
    */
-  getLessonPictures?: () => Promise<LessonPicture[]>;
+  getLessonPictures?: (stepIds?: string[]) => Promise<LessonPicture[]>;
   /** Shares the explanation of a wrong typed answer ("Explain answer"). */
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
   /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */

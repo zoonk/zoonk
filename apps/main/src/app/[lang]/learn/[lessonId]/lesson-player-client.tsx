@@ -76,7 +76,7 @@ function createAdapters({
     },
     explainAnswer: requestAnswerExplanation,
     getExampleLine,
-    getLessonPictures: () => getLessonPicturesAction(lessonId),
+    getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId }),
     requestExampleLine,
     startLesson: (input) => startLibraryLesson({ lessonId, runId: input?.runId, studySessionId }),

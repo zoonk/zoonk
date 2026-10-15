@@ -86,6 +86,8 @@ describe("picture options", () => {
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("radio").first()).toBeDisabled();
+    // Each ask names only the screen still waiting, not the whole lesson.
+    expect(getLessonPictures).toHaveBeenLastCalledWith([step.id]);
 
     // The picture is drawn, and the next ask, a few seconds later, brings it.
     getLessonPictures.mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);

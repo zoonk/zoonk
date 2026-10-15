@@ -66,6 +66,27 @@ describe(getLessonPictures, () => {
     ]);
   });
 
+  it("hands over only the screens still waiting, not every picture drawn so far", async () => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        { content: check, kind: "check" },
+        { content: check, kind: "check" },
+      ],
+    });
+
+    const [shown, waiting] = steps;
+    const [first, second] = await Promise.all([mediaAssetFixture({}), mediaAssetFixture({})]);
+
+    await Promise.all([
+      prisma.step.update({ data: { mediaAssetId: first.id }, where: { id: shown?.id } }),
+      prisma.step.update({ data: { mediaAssetId: second.id }, where: { id: waiting?.id } }),
+    ]);
+
+    const pictures = await getLessonPictures({ lessonId: lesson.id, stepIds: [waiting!.id] });
+
+    expect(pictures.map((drawn) => drawn.stepId)).toStrictEqual([waiting?.id]);
+  });
+
   it("marks an explanation's picture pending too, since a screen asks only for pictures it needs", async () => {
     const { lesson } = await playableLessonFixture({
       steps: [
