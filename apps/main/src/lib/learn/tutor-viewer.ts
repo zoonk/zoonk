@@ -1,5 +1,5 @@
 import "server-only";
-import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
+import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getSession } from "@zoonk/core/users/session";
 import { getLearnerBuddy } from "./learner-buddy";
 
@@ -13,11 +13,11 @@ export async function getTutorViewer() {
   const [session, buddy] = await Promise.all([getSession(), getLearnerBuddy()]);
   const canAsk = Boolean(session && !session.user.isAnonymous);
 
-  if (!session) {
+  if (!canAsk) {
     return { buddy, canAsk, goalId: null };
   }
 
-  const goals = await listCurrentUserGoals();
+  const goalId = await getActiveGoalId();
 
-  return { buddy, canAsk, goalId: canAsk ? (goals?.activeGoalId ?? null) : null };
+  return { buddy, canAsk, goalId };
 }
