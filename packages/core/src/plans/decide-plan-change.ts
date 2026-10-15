@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { replaceWaitingProposals } from "./_utils/apply-plan-change";
 import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -11,7 +12,7 @@ import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
 import { commitPlan, revalidatePlanTags } from "./_utils/replan";
 import { undoChange } from "./_utils/undo-change";
-import { withPlanRetry } from "./plan-conflict";
+import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 import { type PlanChangeDecisionInput } from "./plan-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
@@ -51,7 +52,7 @@ async function acceptProposal({ change, context }: Decision) {
     computed,
     context,
     extraWrites: async (tx) => {
-      await tx.planChange.update({
+      const { count } = await tx.planChange.updateMany({
         data: {
           payload: toPlanChangePayload({
             ...payload,
@@ -61,8 +62,13 @@ async function acceptProposal({ change, context }: Decision) {
           }),
           status: "applied",
         },
-        where: { id: change.id },
+        where: { id: change.id, planId: context.plan.id, status: "proposed" },
       });
+
+      if (count === 0) {
+        /** A decision committed during compute; the retry reads it as a conflict. */
+        throw new PlanConflictError();
+      }
 
       await replaceWaitingProposals({
         applied: true,
@@ -89,9 +95,20 @@ async function acceptProposal({ change, context }: Decision) {
 }
 
 async function decline({ change, context }: Decision) {
-  await prisma.planChange.update({ data: { status: "declined" }, where: { id: change.id } });
-  revalidatePlanTags(context.goal.userId);
-  return null;
+  const refusal = await writeLearnerChange({ userId: context.goal.userId }, async (tx) => {
+    const { count } = await tx.planChange.updateMany({
+      data: { status: "declined" },
+      where: { id: change.id, planId: context.plan.id, status: "proposed" },
+    });
+
+    return count === 0 ? unchanged({ status: "conflict" }) : null;
+  });
+
+  if (!refusal) {
+    revalidatePlanTags(context.goal.userId);
+  }
+
+  return refusal;
 }
 
 /** "Got it": the learner read an applied change, so the plan stops showing it. Nothing else moves. */
@@ -100,17 +117,37 @@ async function markSeen({ change, context }: Decision) {
     return { status: "conflict" as const };
   }
 
-  await prisma.planChange.update({
-    data: {
-      payload: toPlanChangePayload({
-        ...parsePlanChangePayload(change.payload),
-        seenAt: new Date().toISOString(),
-      }),
-    },
-    where: { id: change.id },
+  const outcome = await writeLearnerChange({ userId: context.goal.userId }, async (tx) => {
+    const current = await tx.planChange.findFirst({
+      where: { id: change.id, planId: context.plan.id },
+    });
+
+    if (current?.status !== "applied") {
+      return unchanged("conflict");
+    }
+
+    const payload = parsePlanChangePayload(current.payload);
+
+    if (payload.seenAt !== null) {
+      return unchanged("alreadySeen");
+    }
+
+    await tx.planChange.update({
+      data: { payload: toPlanChangePayload({ ...payload, seenAt: new Date().toISOString() }) },
+      where: { id: change.id },
+    });
+
+    return "seen" as const;
   });
 
-  revalidatePlanTags(context.goal.userId);
+  if (outcome === "conflict") {
+    return { status: "conflict" as const };
+  }
+
+  if (outcome === "seen") {
+    revalidatePlanTags(context.goal.userId);
+  }
+
   return null;
 }
 
