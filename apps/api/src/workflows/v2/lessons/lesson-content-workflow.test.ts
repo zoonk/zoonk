@@ -6,8 +6,10 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
+import { admitPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
   chapterSkillFixture,
   libraryChapterFixture,
@@ -19,7 +21,7 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sleep } from "workflow";
+import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
@@ -50,6 +52,15 @@ async function outlinedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] 
   return lesson;
 }
 
+async function plannedLesson() {
+  const [lesson, user] = await Promise.all([outlinedLesson(), userFixture()]);
+  const goal = await goalFixture({ userId: user.id });
+  // An outline can have todo lessons before the initial full plan is ready.
+  const plan = await planFixture({ goalId: goal.id, phases: [] });
+  const item = await planItemFixture({ lessonId: lesson.id, planId: plan.id });
+  return { goal, item, lesson };
+}
+
 function runOwner({ active }: { active: boolean }) {
   vi.mocked(getRun).mockReturnValue({
     exists: Promise.resolve(true),
@@ -68,6 +79,76 @@ describe(lessonContentWorkflow, () => {
     vi.mocked(checkLessonQuality).mockResolvedValue(
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
     );
+  });
+
+  it.each(["done", "testedOut", "skipped", "paused", "deleted"] as const)(
+    "does not claim or generate a lesson made obsolete by %s before the run starts",
+    async (change) => {
+      const { goal, item, lesson } = await plannedLesson();
+      const pick = { goalId: goal.id, lessonIds: [lesson.id] };
+      await expect(admitPlanLessons(pick)).resolves.toStrictEqual([lesson.id]);
+      const before = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+
+      if (change === "paused") {
+        await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+      } else if (change === "deleted") {
+        await prisma.goal.delete({ where: { id: goal.id } });
+      } else {
+        await prisma.planItem.update({ data: { status: change }, where: { id: item.id } });
+      }
+
+      await expect(
+        lessonContentWorkflow({
+          analytics: { goalId: goal.id },
+          lessonId: lesson.id,
+          planGoalId: goal.id,
+        }),
+      ).resolves.toStrictEqual({ lessonId: lesson.id, status: "missing" });
+
+      expect(generateLessonSpec).not.toHaveBeenCalled();
+      expect(writeLessonDraft).not.toHaveBeenCalled();
+      expect(createHook).not.toHaveBeenCalled();
+      expect(start).not.toHaveBeenCalled();
+      expect(getStreamedEvents()).toStrictEqual([]);
+
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      ).resolves.toStrictEqual(before);
+    },
+  );
+
+  it("writes an on-demand Library lesson outside the active goal used for cost attribution", async () => {
+    const { goal } = await plannedLesson();
+    const lesson = await outlinedLesson();
+
+    await expect(
+      admitPlanLessons({ goalId: goal.id, lessonIds: [lesson.id] }),
+    ).resolves.toStrictEqual([]);
+
+    await expect(
+      lessonContentWorkflow({
+        analytics: { distinctId: goal.userId, goalId: goal.id },
+        lessonId: lesson.id,
+      }),
+    ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
+  });
+
+  it("writes a lesson its goal still has to do when the queued run starts", async () => {
+    const { goal, lesson } = await plannedLesson();
+
+    await expect(
+      lessonContentWorkflow({
+        analytics: { goalId: goal.id },
+        lessonId: lesson.id,
+        planGoalId: goal.id,
+      }),
+    ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
+
+    expect(generateLessonSpec).toHaveBeenCalledOnce();
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
   });
 
   it("plans and writes a lesson, streams its progress and starts its pictures and model checks in the background", async () => {

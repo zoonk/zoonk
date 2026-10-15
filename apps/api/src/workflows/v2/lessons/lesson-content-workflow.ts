@@ -15,7 +15,7 @@ import {
   getLessonContentHookToken,
   lessonContentResultSchema,
 } from "./lesson-content-result";
-import { claimLessonContentStep } from "./steps/claim-lesson-content-step";
+import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import { lessonProgressStep } from "./steps/lesson-progress-step";
 import { readLessonStatusStep } from "./steps/read-lesson-status-step";
@@ -24,6 +24,8 @@ import { type LessonSpecOutcome, writeLessonSpecStep } from "./steps/write-lesso
 
 export type LessonContentInput = {
   lessonId: string;
+  /** The plan that picked this lesson; cost attribution alone does not require plan membership. */
+  planGoalId?: string;
   /** The learner and goal the lesson is being made for, so its cost adds up per learner. */
   analytics?: ContentAnalytics;
   /** Made for an exam goal, so the reasoning check always runs (after publishing). */
@@ -209,6 +211,11 @@ export async function lessonContentWorkflow(
   "use workflow";
 
   const { lessonId } = input;
+
+  if (!(await admitLessonContentStep({ goalId: input.planGoalId, lessonId }))) {
+    return { lessonId, status: "missing" };
+  }
+
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(getLessonContentHookToken(lessonId));
 

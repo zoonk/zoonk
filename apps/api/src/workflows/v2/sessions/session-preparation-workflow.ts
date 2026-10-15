@@ -130,10 +130,12 @@ async function startLessonWork({
 
   await Promise.all([
     ...lessonIds.map((lessonId) =>
-      start(lessonContentWorkflow, [{ analytics, forExam, lessonId }]),
+      start(lessonContentWorkflow, [{ analytics, forExam, lessonId, planGoalId: input.goalId }]),
     ),
     ...laterLessonIds.map((lessonId) =>
-      start(lessonContentWorkflow, [{ analytics, forExam, lessonId, wait: "later" }]),
+      start(lessonContentWorkflow, [
+        { analytics, forExam, lessonId, planGoalId: input.goalId, wait: "later" },
+      ]),
     ),
     ...mergeCourseRequests([...extensions, ...outlines]).map((request) =>
       start(courseOutlineWorkflow, [

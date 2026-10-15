@@ -231,11 +231,17 @@ describe(sessionPreparationWorkflow, () => {
     // Today's next lesson is minutes away, so it's written at the standard tier; tomorrow's is
     // hours away, so it's written at the flex tier, about half the price.
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-      { analytics, forExam: false, lessonId: todayLesson.id },
+      { analytics, forExam: false, lessonId: todayLesson.id, planGoalId: goal.id },
     ]);
 
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-      { analytics, forExam: false, lessonId: tomorrowLesson.id, wait: "later" },
+      {
+        analytics,
+        forExam: false,
+        lessonId: tomorrowLesson.id,
+        planGoalId: goal.id,
+        wait: "later",
+      },
     ]);
 
     expect(vi.mocked(createHook)).toHaveBeenCalledWith({ token: `session-prep:${user.id}` });

@@ -83,7 +83,9 @@ async function writeLessons({
     lessonIds.length > 0 ? await admitPlanLessonsStep({ goalId, lessonIds }) : lessonIds;
 
   await Promise.all(
-    admitted.map((lessonId) => start(lessonContentWorkflow, [{ ...writer, lessonId, wait }])),
+    admitted.map((lessonId) =>
+      start(lessonContentWorkflow, [{ ...writer, lessonId, planGoalId: goalId, wait }]),
+    ),
   );
 
   return admitted;

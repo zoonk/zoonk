@@ -3,6 +3,7 @@ import {
   getLessonGenerationState,
   releaseStaleLessonClaims,
 } from "@zoonk/core/library/generation/state";
+import { admitPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
 import { isRunActive } from "../../_shared/run-activity";
 
 /** `setAside`: every draft the lesson gets was held back, so nothing writes it again. */
@@ -64,4 +65,20 @@ export async function claimLessonContentStep(input: {
 
   // Another run claimed it between the release and this claim: follow that one.
   return { runId: (await readOwner(input.lessonId)) ?? "", status: "running" };
+}
+
+/** A queued plan lesson is checked again before this run takes any token or generation claim. */
+export async function admitLessonContentStep(input: {
+  goalId?: string;
+  lessonId: string;
+}): Promise<boolean> {
+  "use step";
+
+  // Library work without a goal still uses the same per-lesson claim below.
+  if (!input.goalId) {
+    return true;
+  }
+
+  const admitted = await admitPlanLessons({ goalId: input.goalId, lessonIds: [input.lessonId] });
+  return admitted.includes(input.lessonId);
 }

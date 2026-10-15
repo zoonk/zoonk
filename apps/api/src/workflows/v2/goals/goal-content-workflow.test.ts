@@ -713,7 +713,13 @@ describe(goalContentWorkflow, () => {
 
       for (const [index, lessonId] of result.speculativeLessonIds.entries()) {
         expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-          { analytics, forExam: false, lessonId, wait: index === 0 ? "learner" : "soon" },
+          {
+            analytics,
+            forExam: false,
+            lessonId,
+            planGoalId: goal.id,
+            wait: index === 0 ? "learner" : "soon",
+          },
         ]);
       }
 
@@ -829,6 +835,7 @@ describe(goalContentWorkflow, () => {
           analytics: { distinctId: user.id, goalId: goal.id },
           forExam: false,
           lessonId: lesson.id,
+          planGoalId: goal.id,
           wait: "learner",
         },
       ]);
@@ -911,6 +918,7 @@ describe(goalContentWorkflow, () => {
           analytics: { distinctId: user.id, goalId: goal.id },
           forExam: false,
           lessonId: moved.lessonId,
+          planGoalId: goal.id,
           wait: "learner",
         },
       ]);
