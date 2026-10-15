@@ -4,7 +4,7 @@ import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-
 import { PlanConflictError } from "../../plans/_utils/write-plan";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type PlannedStudyDay } from "./plan-study-day";
-import { saveSelectedPlan } from "./save-selected-plan";
+import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { type SessionDayContext } from "./session-placement";
@@ -36,6 +36,8 @@ export async function persistStudyDay({
     selection.computed !== null ||
     selection.inputKeyUpdate !== undefined;
 
+  const prepared = prepareSelectedPlanSave({ selection, shown: persistsPlan });
+
   try {
     return await prisma.$transaction(async (tx) => {
       if (persistsPlan) {
@@ -57,7 +59,7 @@ export async function persistStudyDay({
         throw new StudyDayUnchangedError("stale");
       }
 
-      const planVersion = await saveSelectedPlan({ selection, shown: persistsPlan, tx });
+      const planVersion = await saveSelectedPlan({ context: selection.context, prepared, tx });
       const rows = await tx.planItem.findMany({ where: { planId: selection.context.plan.id } });
       const ids = new Map(rows.map((item) => [getItemKey(item), item.id]));
 

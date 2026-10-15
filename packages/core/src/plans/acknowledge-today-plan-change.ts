@@ -3,7 +3,11 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { saveSelectedPlan } from "../sessions/_utils/save-selected-plan";
+import {
+  type PreparedSelectedPlanSave,
+  prepareSelectedPlanSave,
+  saveSelectedPlan,
+} from "../sessions/_utils/save-selected-plan";
 import { type SelectedDayPlan, selectDayPlan } from "../sessions/_utils/selected-day-plan";
 import { isSelectedPlanCurrent } from "../sessions/_utils/selected-plan-current";
 import { getSelectedPlanNotice } from "../sessions/_utils/selected-plan-notice";
@@ -28,11 +32,13 @@ class NoticeSelectionChangedError extends Error {
 
 async function persistAcknowledgment({
   input,
+  prepared,
   selection,
   timeZone,
   userId,
 }: {
   input: ComputedInput;
+  prepared: PreparedSelectedPlanSave;
   selection: SelectedDayPlan;
   timeZone: string;
   userId: string;
@@ -58,8 +64,8 @@ async function persistAcknowledgment({
 
       await saveSelectedPlan({
         acknowledge: { revision: input.revision, studyDay: input.shownDate },
-        selection,
-        shown: true,
+        context: selection.context,
+        prepared,
         tx,
       });
 
@@ -119,11 +125,23 @@ async function acknowledgeComputed({
 
   const selection = await selectDayPlan({ goal, now, timeZone });
 
-  if (!selection || !getSelectedPlanNotice({ now, selection })) {
+  if (!selection) {
     return { status: "retryable" };
   }
 
-  const changeId = await persistAcknowledgment({ input, selection, timeZone, userId });
+  const prepared = prepareSelectedPlanSave({ selection, shown: true });
+
+  if (
+    !getSelectedPlanNotice({
+      change: prepared.kind === "computed" ? prepared.change : null,
+      now,
+      selection,
+    })
+  ) {
+    return { status: "retryable" };
+  }
+
+  const changeId = await persistAcknowledgment({ input, prepared, selection, timeZone, userId });
   return changeId ? acknowledgmentResult({ changeId, userId }) : { status: "retryable" };
 }
 

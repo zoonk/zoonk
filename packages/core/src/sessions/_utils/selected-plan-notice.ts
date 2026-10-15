@@ -2,15 +2,18 @@ import { getExamDocument } from "../../exams/exam-document";
 import { isAutomaticPlanChange } from "../../plans/_utils/automatic-plan-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { isDateReached } from "../../plans/_utils/plan-end";
+import { type PlanChangeRecord } from "../../plans/_utils/replan";
 import { type TodayPlanChangeView } from "../../plans/_utils/today-plan-change";
 import { getSelectedPlanChange } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
 
 /** The exact mandatory change that the selected plan's next POST will publish. No row is invented. */
 export function getSelectedPlanNotice({
+  change: preparedChange,
   now,
   selection,
 }: {
+  change?: PlanChangeRecord | null;
   now: Date;
   selection: SelectedDayPlan | null;
 }): TodayPlanChangeView | null {
@@ -18,7 +21,7 @@ export function getSelectedPlanNotice({
     return null;
   }
 
-  const change = getSelectedPlanChange(selection);
+  const change = preparedChange === undefined ? getSelectedPlanChange(selection) : preparedChange;
 
   if (!change || change.status !== "applied") {
     return null;

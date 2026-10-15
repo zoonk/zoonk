@@ -57,15 +57,21 @@ export function getBehindChoices(
 ): BehindChoices {
   const { feasibility } = computed;
   const dailyTime = computed.state.goal.dailyMinutes;
-  const recommended = getRecommendedTime(feasibility);
+  // Spreading feasibility would also run its unused, lazy alternative-plan searches.
+  const advice = {
+    maximum: feasibility.maximum,
+    recommendedMinutes: feasibility.recommendedMinutes,
+  };
+
+  const recommended = getRecommendedTime(advice);
   const { fittingDate } = feasibility;
 
   return {
     canFocus: hasAreasToFocus(computed.state),
     currentMinutes: dailyTime,
-    dailyMinutes: getMoreTime({ ...feasibility, dailyMinutes: dailyTime })?.dailyMinutes ?? null,
+    dailyMinutes: getMoreTime({ ...advice, dailyMinutes: dailyTime })?.dailyMinutes ?? null,
     fittingDate: fittingDate ? toIsoDate(fittingDate) : null,
-    fullDepth: feasibility.recommendedMinutes !== null,
+    fullDepth: advice.recommendedMinutes !== null,
     maximumShare:
       recommended?.kind === "more" ? toWholePercent(recommended.coveredShare) / PERCENT : null,
     measure: feasibility.measure,
