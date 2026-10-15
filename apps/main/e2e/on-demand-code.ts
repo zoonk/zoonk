@@ -1,4 +1,4 @@
-import { type BrowserContext, type Page, expect } from "@playwright/test";
+import { type BrowserContext, type Locator, type Page, expect } from "@playwright/test";
 
 /**
  * Helpers for pages whose code loads on demand (a chart, the lesson player): what a learner saw on
@@ -89,6 +89,42 @@ export async function slowCodeFromNow(page: Page) {
 
     await route.continue();
   });
+}
+
+/**
+ * A slow device: from now on, the script holding `marker` (code only that part of the page needs)
+ * waits to arrive until `release()` (or the page closes), while the page's other code and its
+ * styles arrive as usual. `held()` says whether the page has asked for it yet.
+ */
+export async function holdCodeWith({ marker, page }: { marker: string; page: Page }) {
+  const code = Promise.withResolvers<null>();
+  let held = false;
+  const release = () => code.resolve(null);
+  page.once("close", release);
+
+  await page.route(/\/_next\/static\/chunks\/[^?]+\.js(?:\?.*)?$/u, async (route) => {
+    const response = await route.fetch();
+    const body = await response.text();
+
+    if (body.includes(marker)) {
+      held = true;
+      await code.promise;
+    }
+
+    await route.fulfill({ body, response });
+  });
+
+  return { held: () => held, release };
+}
+
+/** Whether React has hydrated what `locator` finds (it marks every node it takes over). */
+export function isHydrated(locator: Locator): Promise<boolean> {
+  return locator.evaluate((node) => Object.keys(node).some((key) => key.startsWith("__react")));
+}
+
+/** Waits until React has hydrated what `locator` finds, so a tap on it is the page's to handle. */
+export async function expectHydrated(locator: Locator) {
+  await expect.poll(() => isHydrated(locator)).toBe(true);
 }
 
 /** How long without a request in flight before the page's loads count as settled. */

@@ -2,11 +2,16 @@
 
 import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useId } from "react";
 import { TutorMessage, useTutorIdentity } from "../conversation/tutor-identity";
 import { LearnLink } from "../learn-link";
 import { MAX_GOAL_LENGTH } from "../onboarding/entry/goal-entry";
-import { GoalField, GoalFieldSubmit, GoalFieldText } from "../onboarding/entry/goal-field";
+import {
+  GoalField,
+  GoalFieldSubmit,
+  GoalFieldText,
+  useGoalFieldAction,
+} from "../onboarding/entry/goal-field";
 import { useLocalGoalExample } from "../onboarding/entry/use-local-goal-example";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
@@ -73,8 +78,7 @@ export function BuddyGoalStart({
   const buddy = toLearnBuddy({ buddy: status.buddy, status });
   const identity = useTutorIdentity(buddy);
   const examples = useGoalExamples();
-  const [goal, setGoal] = useState(draft);
-  const trimmed = goal.trim();
+  const goal = useGoalFieldAction({ onSend });
 
   // The hello says the buddy is an AI, since it opens the conversation (EU AI Act art. 50;
   // Decreto 12.880/2026 art. 11 for minors).
@@ -102,31 +106,23 @@ export function BuddyGoalStart({
       )}
 
       <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
-        <GoalChips examples={examples} onPick={setGoal} />
+        <GoalChips examples={examples} onPick={goal.fill} />
 
-        <GoalField
-          onSubmit={(event) => {
-            event.preventDefault();
-
-            if (trimmed) {
-              onSend(trimmed);
-            }
-          }}
-        >
+        <GoalField action={goal.action}>
           <label className="sr-only" htmlFor={fieldId}>
             {t("Your goal")}
           </label>
 
           <GoalFieldText
             autoFocusOnPointer
+            defaultValue={draft}
             id={fieldId}
             maxLength={MAX_GOAL_LENGTH}
-            onChange={(event) => setGoal(event.target.value)}
             placeholder={t("What you want to learn")}
-            value={goal}
+            {...goal.field}
           />
 
-          <GoalFieldSubmit disabled={!trimmed}>{t("Build my plan")}</GoalFieldSubmit>
+          <GoalFieldSubmit>{t("Build my plan")}</GoalFieldSubmit>
         </GoalField>
       </div>
     </div>

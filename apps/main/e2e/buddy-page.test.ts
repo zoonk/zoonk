@@ -24,6 +24,7 @@ import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { captureMissionEnding } from "./mission-ending-captures";
+import { expectHydrated, holdCodeWith, isHydrated } from "./on-demand-code";
 import { createStudyDay, openAs, saveMissions } from "./study-day";
 import { fulfillTutorAnswer, toProposal } from "./tutor-answer";
 
@@ -858,6 +859,37 @@ test.describe("Buddy tab", () => {
     await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(goal)}`);
     await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(goal);
   });
+
+  for (const tap of ["before", "after"] as const) {
+    test(`a goal typed before the buddy's page is ready is sent by a tap ${tap} it is`, async ({
+      userWithoutProgress: page,
+    }) => {
+      const goal = `understand quantum physics ${randomUUID().slice(0, 8)}`;
+
+      // A slow device: the buddy shows its goal box before the box's code has arrived.
+      const code = await holdCodeWith({ marker: "buddy-goal-start", page });
+      await page.goto("/buddy", { waitUntil: "domcontentloaded" });
+      await expect.poll(code.held).toBe(true);
+      const main = page.getByRole("main");
+      await main.getByRole("textbox", { name: "Your goal" }).fill(goal);
+      const send = main.getByRole("button", { name: /^Build my plan/u });
+      await expect(isHydrated(send)).resolves.toBe(false);
+
+      if (tap === "before") {
+        await send.click();
+      }
+
+      code.release();
+
+      if (tap === "after") {
+        await expectHydrated(send);
+        await send.click();
+      }
+
+      await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(goal)}`);
+      await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(goal);
+    });
+  }
 
   test("on a wide screen the buddy's day stays beside a readable thread and the composer opens focused", async ({
     browser,

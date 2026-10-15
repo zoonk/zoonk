@@ -5,6 +5,7 @@ import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
+import { expectHydrated, followRequests, holdCodeWith, isHydrated } from "./on-demand-code";
 
 /**
  * The way into onboarding: a goal sent from the home page or `/start` is saved as a draft and read,
@@ -135,6 +136,43 @@ test.describe("Coming back", () => {
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
   });
+
+  for (const tap of ["before", "after"] as const) {
+    test(`a goal typed before Today's form is ready is sent by a tap ${tap} it is`, async ({
+      page,
+    }) => {
+      const goal = uniqueWords(`understand quantum physics, tapped ${tap}`);
+      await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
+
+      // Today shows its start form before the form's own code (which only Today without a goal
+      // loads) has arrived.
+      const code = await holdCodeWith({ marker: "startUnderstanding", page });
+      await page.goto("/today", { waitUntil: "domcontentloaded" });
+      await expect.poll(code.held).toBe(true);
+      const requests = followRequests(page);
+      await page.getByRole("textbox", { name: "I want to" }).fill(goal);
+      const send = page.getByRole("button", { name: "Build my plan" });
+      await expect(isHydrated(send)).resolves.toBe(false);
+
+      // Nothing seems to happen, so the learner taps again: the goal is still sent once.
+      if (tap === "before") {
+        await send.click();
+        await send.click();
+      }
+
+      code.release();
+
+      if (tap === "after") {
+        await expectHydrated(send);
+        await send.click();
+      }
+
+      await expect(page).toHaveURL(/\/today\?draft=[0-9a-f-]{36}$/u);
+      await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
+      await requests.settled();
+      await expect(prisma.onboardingDraft.count({ where: { prompt: goal } })).resolves.toBe(1);
+    });
+  }
 
   test("a start that failed offers to try again, and a refresh follows the read to the card", async ({
     page,

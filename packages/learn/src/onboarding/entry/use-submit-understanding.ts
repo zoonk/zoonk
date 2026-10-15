@@ -34,27 +34,40 @@ export function useSubmitUnderstanding({
 
   function cancel() {
     submitted.current?.abort();
+    submitted.current = null;
     setIsSubmitting(false);
   }
 
+  /**
+   * One goal on its way at a time: another send while it is (two taps the page replays once its
+   * code has arrived) would save a second draft. Cancelling, or the send ending, lets the next go.
+   */
   async function send(goal: string) {
-    submitted.current?.abort();
+    if (submitted.current) {
+      return;
+    }
+
     const controller = new AbortController();
     submitted.current = controller;
+
+    try {
+      await sendOnce({ goal, signal: controller.signal });
+    } finally {
+      if (submitted.current === controller) {
+        submitted.current = null;
+      }
+    }
+  }
+
+  async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
     setIsSubmitting(true);
     const sentAt = Date.now();
     analytics.track({ name: "Goal Typed", properties: { has_attachment: hasAttachment } });
     onSending(goal);
 
-    const outcome = await sendGoal({
-      goal,
-      language: locale,
-      onDraft,
-      signal: controller.signal,
-      understanding,
-    });
+    const outcome = await sendGoal({ goal, language: locale, onDraft, signal, understanding });
 
-    if (controller.signal.aborted) {
+    if (signal.aborted) {
       return;
     }
 

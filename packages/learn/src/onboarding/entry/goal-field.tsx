@@ -12,6 +12,55 @@ import { useEffect, useRef } from "react";
  */
 export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
 
+/** The words' name in a goal form's data. */
+const GOAL_FIELD = "goal";
+
+/**
+ * How a goal box sends: through a form action, with the words the box holds. A tap before the
+ * form's code has arrived (a slow device) is sent once it has, with what was typed until then, so
+ * the box is uncontrolled (`defaultValue`, with `field` spread on it) and `action` goes to
+ * `GoalField`. With nothing to send it puts the cursor in the box instead: the button is never
+ * greyed out.
+ */
+export function useGoalFieldAction({
+  canSendEmpty = false,
+  onSend,
+}: {
+  /** Material is attached and what to do with it chosen, so the words are optional. */
+  canSendEmpty?: boolean;
+  onSend: (goal: string) => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const send = (words: string) => {
+    const goal = words.trim();
+
+    if (goal || canSendEmpty) {
+      onSend(goal);
+      return;
+    }
+
+    ref.current?.focus();
+  };
+
+  const action = (data: FormData) => {
+    const words = data.get(GOAL_FIELD);
+    send(typeof words === "string" ? words : "");
+  };
+
+  // Words put in the box (an example, to change before sending), with the cursor after them.
+  const fill = (words: string) => {
+    const field = ref.current;
+
+    if (field) {
+      field.value = words;
+      field.focus();
+    }
+  };
+
+  return { action, field: { name: GOAL_FIELD, ref }, fill, send };
+}
+
 /**
  * The panel onboarding's boxes are written in (the goal, a rewrite of it, a question about the
  * learner's material): the stronger line, which takes the app's field focus while its words have

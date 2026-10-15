@@ -5,7 +5,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useRef, useState } from "react";
+import { useId } from "react";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
@@ -15,7 +15,13 @@ import {
 } from "../onboarding-frame";
 import { useOnboardingSection } from "../onboarding-host";
 import { GoalExamples } from "./goal-examples";
-import { GoalField, GoalFieldLabel, GoalFieldSubmit, GoalFieldText } from "./goal-field";
+import {
+  GoalField,
+  GoalFieldLabel,
+  GoalFieldSubmit,
+  GoalFieldText,
+  useGoalFieldAction,
+} from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
@@ -69,17 +75,7 @@ export function GoalEntry({
   const section = useOnboardingSection();
   const example = useLocalGoalExample();
   const inputId = useId();
-  const fieldRef = useRef<HTMLTextAreaElement>(null);
-  const [goal, setGoal] = useState(defaultGoal);
-
-  const submit = (value: string) => {
-    if (value.trim() || canSubmitEmpty) {
-      onSubmit(value.trim());
-      return;
-    }
-
-    fieldRef.current?.focus();
-  };
+  const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
 
   return (
     <OnboardingColumn className={cn(section && "gap-4")}>
@@ -102,27 +98,20 @@ export function GoalEntry({
 
       {/* The landing's field: "I want to", then the words. On phones the words keep the
           field's width, the paperclip and "Build my plan" under them; from tablets one row. */}
-      <GoalField
-        className="flex-col items-stretch sm:flex-row sm:items-end"
-        onSubmit={(event) => {
-          event.preventDefault();
-          submit(goal);
-        }}
-      >
+      <GoalField action={goal.action} className="flex-col items-stretch sm:flex-row sm:items-end">
         <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
           <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
           <GoalFieldText
             autoFocusOnPointer
+            defaultValue={defaultGoal}
             id={inputId}
             maxLength={MAX_GOAL_LENGTH}
-            onChange={(event) => setGoal(event.target.value)}
             placeholder={t(
               "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
               example,
             )}
-            ref={fieldRef}
-            value={goal}
+            {...goal.field}
           />
         </div>
 
@@ -149,7 +138,7 @@ export function GoalEntry({
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
       {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
-      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={submit} />
+      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
     </OnboardingColumn>
   );
 }
