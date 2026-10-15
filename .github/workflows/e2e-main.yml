@@ -13,12 +13,25 @@ permissions:
 
 jobs:
   e2e:
+    name: e2e (${{ matrix.suite }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      # Playwright shards only top-level projects and runs their dependencies whole in each shard,
+      # so the dependent live-call-states project runs in its own job instead of under --shard.
       matrix:
-        shard: [1, 2, 3, 4]
+        include:
+          - suite: chromium 1/4
+            args: --project=chromium --shard=1/4
+          - suite: chromium 2/4
+            args: --project=chromium --shard=2/4
+          - suite: chromium 3/4
+            args: --project=chromium --shard=3/4
+          - suite: chromium 4/4
+            args: --project=chromium --shard=4/4
+          - suite: live-call-states
+            args: --project=live-call-states --no-deps
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
@@ -90,4 +103,4 @@ jobs:
 
       # The supervisor times build:e2e and gates its artifacts before starting Playwright.
       - name: Build, check performance budgets, and run E2E tests
-        run: pnpm e2e:main --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=2
+        run: pnpm e2e:main ${{ matrix.args }} --workers=2
