@@ -77,7 +77,7 @@ function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
  * (`visitor`) stand there, as in the sidebar and the catalog's bar; the search field's palette
  * holds what the menu would. Nothing of a level before the learner has one.
  * Without the level link (as in onboarding) the avatar wears the belt as a dot. Energy lives on
- * the buddy's tab, and search opens with Cmd/Ctrl+K or from the avatar's menu.
+ * the buddy's tab, and search opens with Cmd/Ctrl+K or from the field under the bar.
  */
 export function LearnBarEnd({
   stats = false,

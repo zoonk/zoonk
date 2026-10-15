@@ -352,7 +352,7 @@ test.describe("Buddy tab", () => {
       "/logbook",
     );
 
-    // Statistics open from the account menu and the level in the top bar, not from here.
+    // Statistics open from the sidebar and the level in the top bar, not from here.
     await expect(page.getByRole("menuitem", { name: "Statistics" })).toHaveCount(0);
 
     await page.getByRole("menuitem", { name: /^Glasses\s*2 of 6$/u }).click();
