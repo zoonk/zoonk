@@ -10,6 +10,9 @@ import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-pl
 
 export type CheckContext = { answer: LessonStepAnswer; step: PlayableLibraryStep };
 
+/** An answer graded on the device, with the id it's saved under however often it's sent. */
+type RecordContext = CheckContext & { attemptId: string };
+
 /**
  * How long a grade the screen waits on may take. A typed answer is graded in a second or two
  * (Flash Lite, 1.2 s p50 in its eval), but a busy server has queued it for 25 s: past `slowMs` the
@@ -43,25 +46,35 @@ export function useStepGrading({
   adapters,
   dispatch,
   ensureRun,
+  keepGrade,
   state,
   trackCheck,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
   ensureRun: () => Promise<string | null>;
+  /** Sends a grade at once; the screen's later saves and the completion wait for it. */
+  keepGrade: <T>(grade: { request: Promise<T>; stepId: string }) => Promise<T>;
   state: LessonPlayerState;
-  trackCheck: (check: () => Promise<boolean>) => void;
+  trackCheck: (save: { check: () => Promise<boolean>; stepId: string }) => void;
 }) {
   const recordInBackground = useCallback(
-    ({ answer, step }: CheckContext) => {
+    ({ answer, attemptId, step }: RecordContext) => {
       const usedHelp = state.helped.includes(step.id);
       const durationMs = getAnswerDurationMs(state.stepStartedAt);
 
-      trackCheck(async () => {
+      const check = async () => {
         const runId = await ensureRun();
 
         const outcome = runId
-          ? await adapters.checkStep({ answer, durationMs, runId, stepId: step.id, usedHelp })
+          ? await adapters.checkStep({
+              answer,
+              attemptId,
+              durationMs,
+              runId,
+              stepId: step.id,
+              usedHelp,
+            })
           : null;
 
         // A refusal never changes on a retry: the completion goes on, and the server's answers
@@ -74,9 +87,11 @@ export function useStepGrading({
           return false;
         }
 
-        dispatch({ result: outcome.result, stepId: step.id, type: "checkConfirmed" });
+        dispatch({ attemptId, result: outcome.result, stepId: step.id, type: "checkConfirmed" });
         return true;
-      });
+      };
+
+      trackCheck({ check, stepId: step.id });
     },
     [adapters, dispatch, ensureRun, state.helped, state.stepStartedAt, trackCheck],
   );
@@ -87,13 +102,26 @@ export function useStepGrading({
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
 
-      const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.typed, async () => {
-        const runId = await ensureRun();
+      // "Check again" after a timeout is a new grade, so each grade has its own id.
+      const attemptId = crypto.randomUUID();
 
-        return runId
-          ? adapters.checkStep({ answer, durationMs, runId, stepId: step.id, usedHelp })
-          : null;
-      });
+      const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.typed, () =>
+        keepGrade({
+          request: ensureRun().then((runId) =>
+            runId
+              ? adapters.checkStep({
+                  answer,
+                  attemptId,
+                  durationMs,
+                  runId,
+                  stepId: step.id,
+                  usedHelp,
+                })
+              : null,
+          ),
+          stepId: step.id,
+        }),
+      );
 
       if (outcome?.status === "checked") {
         const answerText = "text" in answer ? answer.text : "";
@@ -112,7 +140,7 @@ export function useStepGrading({
 
       dispatch({ stepId: step.id, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, state.helped, state.stepStartedAt],
+    [adapters, dispatch, ensureRun, keepGrade, state.helped, state.stepStartedAt],
   );
 
   const submitSpokenAnswer = useCallback(
@@ -134,10 +162,14 @@ export function useStepGrading({
       dispatch({ stepId, type: "checkStarted" });
       const { gradeSpokenAnswer } = adapters;
 
-      const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, async () => {
-        await ensureRun();
-        return gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId });
-      });
+      const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
+        keepGrade({
+          request: ensureRun().then(() =>
+            gradeSpokenAnswer({ audio, durationMs: spokenMs, stepId }),
+          ),
+          stepId,
+        }),
+      );
 
       if (outcome?.status === "graded") {
         dispatch({
@@ -160,7 +192,7 @@ export function useStepGrading({
 
       dispatch({ issue, stepId, type: "checkFailed" });
     },
-    [adapters, dispatch, ensureRun, state.phase, state.steps],
+    [adapters, dispatch, ensureRun, keepGrade, state.phase, state.steps],
   );
 
   return { gradeOnServer, recordInBackground, submitSpokenAnswer };

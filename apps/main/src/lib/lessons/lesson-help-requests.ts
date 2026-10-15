@@ -1,7 +1,8 @@
 "use client";
 
 import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
-import { type ExampleLine } from "@zoonk/player/lesson/types";
+import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { type AnswerExplanationOutcome, type ExampleLine } from "@zoonk/player/lesson/types";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
 async function readBody(response: Response): Promise<unknown> {
@@ -37,4 +38,35 @@ export async function requestExampleLine({
   return readExampleLine(
     await postFromBrowser({ path: `/v1/me/example-lines/${encodeURIComponent(stepId)}` }),
   );
+}
+
+/**
+ * "Explain answer" on a wrong typed answer, asked from the browser so it never holds up the
+ * lesson's answers while the explanation is written. A refusal says which allowance ran out;
+ * anything else that isn't an explanation is a failure the learner can try again.
+ */
+export async function requestAnswerExplanation({
+  answer,
+  stepId,
+}: {
+  answer: string;
+  stepId: string;
+}): Promise<AnswerExplanationOutcome> {
+  const response = await postFromBrowser({
+    body: { answer },
+    path: `/v1/steps/${encodeURIComponent(stepId)}/answer-explanations`,
+  });
+
+  if (!response) {
+    return { status: "failed" };
+  }
+
+  const body = await readBody(response);
+  const explanation = response.ok ? getString(body, "explanation") : null;
+
+  if (explanation) {
+    return { explanation, status: "explained" };
+  }
+
+  return readRefusedLimit({ body, status: response.status }) ?? { status: "failed" };
 }

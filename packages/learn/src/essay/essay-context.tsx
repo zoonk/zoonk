@@ -7,8 +7,12 @@ import { createContext, use } from "react";
 export type EssayActions = {
   /** Finishes the writing block and goes on with the session; false when it didn't go through. */
   finish: () => Promise<boolean>;
-  /** Grades a draft; null when it couldn't be graded, "limitReached" when today's grades ran out. */
+  /**
+   * Grades a draft; null when it couldn't be graded, "limitReached" when today's grades ran out.
+   * A draft sent again after that keeps its `attemptId`, so the server grades it once.
+   */
   submit: (input: {
+    attemptId: string;
     durationMs: number;
     text: string;
   }) => Promise<EssayDraft | "limitReached" | null>;

@@ -6,12 +6,19 @@ import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
-/** One practice answer: which mistake, which question, the answer and how long it took. */
+/**
+ * One practice answer: which mistake, which question, the answer and how long it took. Its
+ * `attemptId` is the question's in this run, kept when the answer is checked again after a request
+ * that didn't get through, so the server records one answer per question.
+ */
 export type MistakePracticeAnswer = {
   answer: ChoiceAnswer;
+  attemptId: string;
   durationMs: number;
   itemId: string;
   mistakeId: string;
+  /** The run's earlier answers, so the answer counts the run toward today as it goes. */
+  runAnswerIds: string[];
 };
 
 /** The grade of one answer, the trap a trap drill names, and the answer's id the run counts. */

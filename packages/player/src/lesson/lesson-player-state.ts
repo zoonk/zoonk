@@ -101,7 +101,7 @@ export type LessonPlayerState = {
 export type LessonPlayerAction =
   | { answer: LessonPlayerAnswer | null; stepId: string; type: "selectAnswer" }
   | { counts: boolean; result: LessonStepResult; stepId: string; type: "checkResolved" }
-  | { result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
+  | { attemptId: string; result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
   | { kinds: PlayableLibraryStep["kind"][]; stepIds?: string[]; type: "skipKinds" }
   | { stepIds: string[]; type: "skipSteps" }

@@ -15,17 +15,18 @@ const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
 /**
- * How the host grades and counts a run. `finish` gets every answer so far after each answer, so a
- * run left halfway still counts, and once more with `ended` at the end or when the learner stops.
+ * How the host grades and counts a run. Each answer comes with the run's earlier answers, so saving
+ * it counts the run so far and a run left halfway still counts; `finish` counts the whole run once
+ * more at the end or when the learner stops, and says what it earned.
  */
 export type MistakePracticeActions = {
   answer: (answer: MistakePracticeAnswer) => Promise<MistakePracticeFeedback>;
-  finish: (run: { answerIds: string[]; ended: boolean }) => Promise<MistakePracticeSummary | null>;
+  finish: (run: { answerIds: string[] }) => Promise<MistakePracticeSummary | null>;
 };
 
 /**
  * Runs "Practice mistakes": each mistake's drill question by question, graded on the server, with
- * the run counted toward today as it goes and once more when it ends.
+ * the run counted toward today as each answer is saved and once more when it ends.
  */
 export function useMistakePractice({
   actions,
@@ -38,6 +39,8 @@ export function useMistakePractice({
   const { steps } = state;
   const step = steps[state.index];
   const shownAt = useRef(0);
+  // The id the question on screen is saved under, however often its answer is sent.
+  const attempt = useRef<{ id: string; index: number } | null>(null);
 
   useEffect(() => {
     shownAt.current = Date.now();
@@ -48,7 +51,7 @@ export function useMistakePractice({
     const summary =
       state.answerIds.length === 0
         ? null
-        : await actions.finish({ answerIds: state.answerIds, ended: true }).catch(() => null);
+        : await actions.finish({ answerIds: state.answerIds }).catch(() => null);
 
     dispatch({ summary, type: "ended" });
   });
@@ -69,14 +72,20 @@ export function useMistakePractice({
 
     dispatch({ answer, timedOut, type: "check" });
 
+    if (attempt.current?.index !== state.index) {
+      attempt.current = { id: crypto.randomUUID(), index: state.index };
+    }
+
     // A request that didn't get through (the network dropped) reads as not saved, with the answer
     // kept to check again, never as a Check that spins forever.
     const feedback = await actions
       .answer({
         answer,
+        attemptId: attempt.current.id,
         durationMs: timedOut ? Math.max(durationMs, limitMs) : durationMs,
         itemId: step.question.itemId,
         mistakeId: step.entry.mistakeId,
+        runAnswerIds: state.answerIds,
       })
       .catch(() => null);
 
@@ -86,10 +95,6 @@ export function useMistakePractice({
     }
 
     dispatch({ feedback, mistakeId: step.entry.mistakeId, type: "answered" });
-
-    void actions
-      .finish({ answerIds: [...state.answerIds, feedback.answerId], ended: false })
-      .catch(() => null);
   };
 
   return {

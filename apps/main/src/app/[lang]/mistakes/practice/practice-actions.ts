@@ -1,54 +1,10 @@
 "use server";
 
-import {
-  mistakePracticeAnswerInputSchema,
-  mistakePracticeFinishInputSchema,
-} from "@zoonk/core/mistakes/contract";
-import { answerMistakePractice } from "@zoonk/core/mistakes/practice-answer";
+import { mistakePracticeFinishInputSchema } from "@zoonk/core/mistakes/contract";
 import { finishMistakePractice } from "@zoonk/core/mistakes/practice-finish";
-import {
-  type MistakePracticeFeedback,
-  type MistakePracticeSummary,
-} from "@zoonk/learn/mistakes/practice";
+import { type MistakePracticeSummary } from "@zoonk/learn/mistakes/practice";
 
-/** Grades one practice answer through core, which records it and fixes the mistake when it sticks. */
-export async function answerMistakePracticeAction({
-  mistakeId,
-  ...answer
-}: {
-  answer: unknown;
-  durationMs: unknown;
-  itemId: unknown;
-  mistakeId: string;
-  timeZone: unknown;
-}): Promise<MistakePracticeFeedback> {
-  const input = mistakePracticeAnswerInputSchema.safeParse(answer);
-
-  if (!input.success) {
-    return null;
-  }
-
-  const result = await answerMistakePractice({ input: input.data, mistakeId });
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const { feedback } = result;
-
-  return {
-    answerId: feedback.answerId,
-    correctAnswer: feedback.correctAnswer,
-    explanation: feedback.explanation,
-    fixed: feedback.fixed,
-    fixedMistakeIds: feedback.fixedMistakeIds,
-    isCorrect: feedback.isCorrect,
-    mistakeStatus: feedback.mistakeStatus,
-    trap: feedback.trap,
-  };
-}
-
-/** Counts the run toward today through core: after each answer, and once more when it ends. */
+/** Counts the whole run toward today through core once it ends (its answers counted it as they went). */
 export async function finishMistakePracticeAction(
   input: unknown,
 ): Promise<MistakePracticeSummary | null> {

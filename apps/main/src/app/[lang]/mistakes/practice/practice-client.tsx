@@ -2,11 +2,13 @@
 
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
+import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
+import { postToApp } from "@/lib/http/post-to-app";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
-import { MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
+import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type ComponentProps } from "react";
-import { answerMistakePracticeAction, finishMistakePracticeAction } from "./practice-actions";
+import { finishMistakePracticeAction } from "./practice-actions";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
@@ -29,14 +31,27 @@ export function MistakePracticeClient({
 }) {
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
+  useRefreshAfterAppWrites();
 
   return (
     <MistakePracticeRun
       actions={{
-        answer: (answer) =>
-          answerMistakePracticeAction({ ...answer, timeZone: getLocalTimeZone() }),
+        answer: ({ mistakeId, runAnswerIds, ...answer }) =>
+          postToApp<MistakePracticeFeedback>({
+            body: {
+              ...answer,
+              run: { answerIds: runAnswerIds, goalId },
+              timeZone: getLocalTimeZone(),
+            },
+            path: `/api/me/mistakes/${encodeURIComponent(mistakeId)}/answers`,
+          }),
         finish: (run) =>
-          finishMistakePracticeAction({ ...run, goalId, timeZone: getLocalTimeZone() }),
+          finishMistakePracticeAction({
+            ...run,
+            ended: true,
+            goalId,
+            timeZone: getLocalTimeZone(),
+          }),
       }}
       backHref="/mistakes"
       lessonHref={lessonHref}

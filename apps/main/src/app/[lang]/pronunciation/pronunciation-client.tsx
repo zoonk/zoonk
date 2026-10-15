@@ -1,15 +1,21 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
+import { postToApp } from "@/lib/http/post-to-app";
 import { type PronunciationReviewsView } from "@zoonk/core/language/pronunciation/contract";
-import { PronunciationReviewScreen } from "@zoonk/learn/language/pronunciation";
+import {
+  type PronunciationAnswerOutcome,
+  PronunciationReviewScreen,
+} from "@zoonk/learn/language/pronunciation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
-import { answerPronunciationAction, finishPronunciationRoundAction } from "./pronunciation-actions";
+import { finishPronunciationRoundAction } from "./pronunciation-actions";
 
 /** The review round, saved in the learner's timezone so it counts toward their day. */
 export function PronunciationClient({ reviews }: { reviews: PronunciationReviewsView }) {
   const { bfcacheId } = useRouter();
+  useRefreshAfterAppWrites();
 
   const actions = useMemo(
     () => ({
@@ -27,10 +33,13 @@ export function PronunciationClient({ reviews }: { reviews: PronunciationReviews
         const form = new FormData();
         form.set("audio", audio);
         form.set("durationMs", String(durationMs));
-        form.set("reviewId", reviewId);
         form.set("roundId", roundId);
         form.set("timeZone", getLocalTimeZone());
-        return answerPronunciationAction(form);
+
+        return postToApp<PronunciationAnswerOutcome>({
+          body: form,
+          path: `/api/pronunciation-reviews/${encodeURIComponent(reviewId)}/answers`,
+        }).then((outcome): PronunciationAnswerOutcome => outcome ?? { status: "failed" });
       },
       finish: (roundId: string) =>
         finishPronunciationRoundAction(roundId, {

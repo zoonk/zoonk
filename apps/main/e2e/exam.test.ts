@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Route } from "@playwright/test";
+import { type Request, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
@@ -22,18 +22,17 @@ import { openAs } from "./study-day";
 const NOT_THROUGH = "That didn't go through. Your answers are saved. Try again in a moment.";
 
 /**
- * Holds every Server Action whose body matches, like a server that doesn't answer, until
- * `release`; later ones go through. With the page's clock run ahead, a wait shows it's bounded.
+ * Holds every POST `matches` picks, like a server that doesn't answer, until `release`; later ones
+ * go through. With the page's clock run ahead, a wait shows it's bounded.
  */
-async function holdServerActions(page: Page, matches: (body: string) => boolean) {
+async function holdPosts(page: Page, matches: (request: Request) => boolean) {
   const held: Route[] = [];
   let holding = true;
 
   await page.route("**/*", async (route) => {
     const request = route.request();
-    const isAction = request.method() === "POST" && request.headers()["next-action"];
 
-    if (holding && isAction && matches(request.postData() ?? "")) {
+    if (holding && request.method() === "POST" && matches(request)) {
       held.push(route);
       return;
     }
@@ -46,7 +45,19 @@ async function holdServerActions(page: Page, matches: (body: string) => boolean)
       holding = false;
       await Promise.all(held.map((route) => route.abort().catch(() => null)));
     },
+    /** Lets later POSTs through, still holding the ones already held. */
+    stopHolding: () => {
+      holding = false;
+    },
   };
+}
+
+/** Holds every Server Action whose body matches (see `holdPosts`). */
+function holdServerActions(page: Page, matches: (body: string) => boolean) {
+  return holdPosts(
+    page,
+    (request) => Boolean(request.headers()["next-action"]) && matches(request.postData() ?? ""),
+  );
 }
 
 /** The Plan's first number, preparation, as the aside draws it at the tests' desktop width. */
@@ -413,9 +424,17 @@ test.describe("Exam goal", () => {
         "Além disso, as famílias podem participar de encontros mensais, fortalecendo o hábito de ler em casa e na comunidade.",
       ].join(" ");
 
+      const isSubmission = (request: Request) =>
+        new URL(request.url()).pathname === `/api/essays/${essay.blockId}/submissions`;
+
       // The first send is held, so its wait shows it's bounded; the next one reaches grading.
       await page.clock.install();
-      const grading = await holdServerActions(page, (body) => body.includes(draft));
+
+      const grading = await holdPosts(
+        page,
+        (request) => isSubmission(request) && (request.postData() ?? "").includes(draft),
+      );
+
       await page.goto(`/essay/${essay.blockId}`);
 
       // The grade in two steps: the estimated range with each criterion, then the next step and
@@ -467,7 +486,10 @@ test.describe("Exam goal", () => {
         "That didn't go through. Your text is still here. Try again in a moment.",
       );
 
+      const firstSend = page.waitForRequest(isSubmission);
       await send.click();
+      const firstRequest = await firstSend;
+      const { attemptId } = firstRequest.postDataJSON() as { attemptId: string };
       await expect(page.getByRole("button", { name: "Grading…" })).toBeDisabled();
       await page.clock.fastForward(21_000);
 
@@ -488,14 +510,54 @@ test.describe("Exam goal", () => {
       );
 
       await send.click();
-      await graded;
+
+      // The same text sent again keeps its id, so the server grades and records it once.
+      const resent = await graded;
+      expect(resent.request().postDataJSON()).toMatchObject({ attemptId });
 
       await expect(failed).toBeVisible();
       await expect(send).toBeEnabled();
       await expect(rewrite).toHaveValue(draft);
 
-      await page.getByRole("button", { name: "Skip the rewrite" }).click();
+      // A rewrite the screen stopped waiting for is still being graded when the learner sends a
+      // different one and then skips the rest: the block is finished only once both settled, so
+      // it counts whatever they recorded, and nothing more is sent once it's being finished.
+      const earlier = await holdPosts(page, isSubmission);
+      await send.click();
+      await page.clock.fastForward(91_000);
+      await expect(failed).toBeVisible();
+      earlier.stopHolding();
+
+      const other = `${draft} Por fim, a escola deve acompanhar os resultados a cada semestre.`;
+      await rewrite.fill(other);
+      await expect(rewrite).toHaveValue(other);
+      const otherGraded = page.waitForResponse((response) => isSubmission(response.request()));
+      await send.click();
+      await otherGraded;
+      await expect(failed).toBeVisible();
+
+      const order: string[] = [];
+
+      page.on("request", (request) => {
+        if (request.headers()["next-action"] && request.postData()?.includes(essay.blockId)) {
+          order.push("finish");
+        }
+      });
+
+      page.on("requestfailed", (request) => {
+        if (isSubmission(request)) {
+          order.push("settled");
+        }
+      });
+
+      const skip = page.getByRole("button", { name: "Skip the rewrite" });
+      await skip.click();
+      await expect(skip).toBeDisabled();
+      await expect(send).toBeDisabled();
+
+      await earlier.release();
       await expect(page).not.toHaveURL(/\/essay\//u);
+      expect(order.slice(0, 2)).toStrictEqual(["settled", "finish"]);
     });
   });
 

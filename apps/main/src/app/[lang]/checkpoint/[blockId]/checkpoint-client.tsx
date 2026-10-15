@@ -1,9 +1,8 @@
 "use client";
 
-import {
-  answerStudyQuestionAction,
-  finishStudyBlockAction,
-} from "@/lib/session/study-session-actions";
+import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
+import { sendStudyAnswer } from "@/lib/session/study-answer-request";
+import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { type CheckpointActions, CheckpointScreen } from "@zoonk/learn/checkpoint";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -11,8 +10,8 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 /**
- * Wires the started checkpoint to the session's block actions (the ones the session screen uses to
- * answer and finish) in the learner's timezone. Leaving goes to Today; once done, it continues
+ * Wires the started checkpoint to the session's answer route and its block finish, in the
+ * learner's timezone. Leaving goes to Today; once done, it continues
  * where the page says: back to the session it was opened from, or Today.
  */
 export function CheckpointClient({
@@ -24,17 +23,14 @@ export function CheckpointClient({
 }) {
   const { blockId, sessionId } = checkpoint;
   const router = useRouter();
+  useRefreshAfterAppWrites();
 
   const actions = useMemo<CheckpointActions>(() => {
     const ids = { blockId, sessionId };
 
     return {
       answer: async (input) => {
-        const outcome = await answerStudyQuestionAction({
-          ...ids,
-          ...input,
-          timeZone: getLocalTimeZone(),
-        });
+        const outcome = await sendStudyAnswer({ ...ids, ...input });
 
         if (outcome.status !== "answered") {
           router.refresh();

@@ -24,9 +24,14 @@ export type LessonPlayerAnswer = LessonStepAnswer | { kind: "hook"; optionId: st
 /** How a spoken answer came out, word by word. */
 export type SpokenAnswerHeard = Pick<SpokenAnswerGrade, "transcript" | "words" | "wordsToPractice">;
 
-/** The verdict on one screen as the learner sees it, with their answer as text. */
+/**
+ * The verdict on one screen as the learner sees it, with their answer as text. `attemptId` is the
+ * id an answer graded on the device is saved under, so the server's late word on an earlier answer
+ * to the same screen can't change this one.
+ */
 export type LessonStepResult = LessonStepCheckResult & {
   answerText: string | null;
+  attemptId?: string;
   heard: SpokenAnswerHeard | null;
 };
 
@@ -117,8 +122,13 @@ export type ExampleLine = { canRequest: boolean; line: string | null };
  * Optional adapters turn their controls off when missing.
  */
 export type LessonPlayerAdapters = {
+  /**
+   * Saves or grades one answer. `attemptId` is the answer's own id: sent again after a failure, it
+   * keeps it, so the server records the answer once.
+   */
   checkStep: (input: {
     answer: LessonStepAnswer;
+    attemptId: string;
     durationMs: number;
     runId: string;
     stepId: string;

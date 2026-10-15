@@ -5,9 +5,16 @@ import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { useRouter } from "@/i18n/navigation";
+import { forgetAppWrites } from "@/lib/http/app-write-ledger";
+import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
-import { getExampleLine, requestExampleLine } from "@/lib/lessons/lesson-help-requests";
+import {
+  getExampleLine,
+  requestAnswerExplanation,
+  requestExampleLine,
+} from "@/lib/lessons/lesson-help-requests";
+import { checkLessonStep } from "@/lib/lessons/lesson-step-check";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
@@ -25,12 +32,7 @@ import {
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
-import {
-  checkLessonStepAction,
-  completeLibraryLessonAction,
-  explainAnswerAction,
-  getLessonPicturesAction,
-} from "./lesson-player-actions";
+import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
 
 const ROUTES = { signUp: "/login", upgrade: "/subscription" };
@@ -57,10 +59,22 @@ function createAdapters({
   studySessionId: string | null;
 }): LessonPlayerAdapters {
   return {
-    checkStep: (input) => checkLessonStepAction({ ...input, timeZone: getLocalTimeZone() }),
-    completeLesson: (input) =>
-      completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
-    explainAnswer: explainAnswerAction,
+    checkStep: checkLessonStep,
+    completeLesson: async (input) => {
+      const outcome = await completeLibraryLessonAction({
+        ...input,
+        lessonId,
+        timeZone: getLocalTimeZone(),
+      });
+
+      // Saving the completion changed cached data, so the router dropped every kept page already.
+      if (outcome.status === "completed") {
+        forgetAppWrites();
+      }
+
+      return outcome;
+    },
+    explainAnswer: requestAnswerExplanation,
     getExampleLine,
     getLessonPictures: () => getLessonPicturesAction(lessonId),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId }),
@@ -70,7 +84,7 @@ function createAdapters({
 }
 
 /**
- * Hosts the lesson player: the app's server actions, its routes and the public API as adapters,
+ * Hosts the lesson player: the app's routes, its server actions and the public API as adapters,
  * its links and its analytics.
  */
 export function LessonPlayerClient({
@@ -126,6 +140,7 @@ export function LessonPlayerClient({
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
+  useRefreshAfterAppWrites();
 
   const adapters = useMemo(
     () => createAdapters({ lessonId: lesson.id, studySessionId }),

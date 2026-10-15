@@ -48,12 +48,18 @@ export function useLessonPlayerActions({
   state,
   track,
 }: ActionsInput): LessonPlayerActions {
-  const { ensureRun, flushChecks, track: trackCheck } = useLessonRun({ adapters, dispatch });
+  const {
+    ensureRun,
+    flushChecks,
+    keepGrade,
+    track: trackCheck,
+  } = useLessonRun({ adapters, dispatch });
 
   const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
     adapters,
     dispatch,
     ensureRun,
+    keepGrade,
     state,
     trackCheck,
   });
@@ -151,14 +157,16 @@ export function useLessonPlayerActions({
       track(event);
     }
 
+    const attemptId = crypto.randomUUID();
+
     dispatch({
       counts: true,
-      result: fromLocalGrade(graded),
+      result: { ...fromLocalGrade(graded), attemptId },
       stepId: step.id,
       type: "checkResolved",
     });
 
-    recordInBackground({ answer, step });
+    recordInBackground({ answer, attemptId, step });
   }, [dispatch, ensureRun, gradeOnServer, language, recordInBackground, state, track]);
 
   return useMemo(

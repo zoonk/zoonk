@@ -77,7 +77,8 @@ function confirmCheck(
 ): LessonPlayerState {
   const current = state.results[action.stepId];
 
-  if (!current) {
+  // The screen was answered again since: what the server says about the earlier answer is old.
+  if (!current || current.attemptId !== action.attemptId) {
     return state;
   }
 

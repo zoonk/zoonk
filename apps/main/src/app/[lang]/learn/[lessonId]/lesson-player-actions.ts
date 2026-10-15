@@ -1,64 +1,15 @@
 "use server";
 
-import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
 import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
-import {
-  type LessonPicture,
-  answerExplanationInputSchema,
-  lessonStepCheckInputSchema,
-} from "@zoonk/core/lesson-player/contract";
+import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
 import { getLessonPictures } from "@zoonk/core/lesson-player/pictures";
-import { explainAnswer } from "@zoonk/core/library/items/explain-answer";
-import {
-  type AnswerExplanationOutcome,
-  type LessonCheckOutcome,
-  type LessonCompletionOutcome,
-} from "@zoonk/player/lesson/types";
+import { type LessonCompletionOutcome } from "@zoonk/player/lesson/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { z } from "zod";
 
 const idSchema = z.uuid();
-
-/**
- * The web player's step check: the same core capability as `POST /v1/steps/{stepId}/checks`.
- * An error is a failure the player sends again; a finished run or an answer that doesn't fit the
- * screen is a refusal, which no retry changes.
- */
-export async function checkLessonStepAction({
-  stepId,
-  ...rawInput
-}: {
-  answer: unknown;
-  durationMs: number;
-  runId: string;
-  stepId: string;
-  timeZone: string;
-  usedHelp: boolean;
-}): Promise<LessonCheckOutcome> {
-  const input = lessonStepCheckInputSchema.safeParse(rawInput);
-
-  // An answer that doesn't fit the contract never will: sending it again would only loop.
-  if (!input.success || !idSchema.safeParse(stepId).success) {
-    return { status: "refused" };
-  }
-
-  const { data: outcome, error } = await safeAsync(() =>
-    checkLessonStep({ input: input.data, stepId }),
-  );
-
-  if (error) {
-    logError("[checkLessonStepAction] Failed to check an answer:", error);
-    return { status: "failed" };
-  }
-
-  if (outcome.status === "checked") {
-    return { result: outcome.result, status: "checked" };
-  }
-
-  return { status: "refused" };
-}
 
 /**
  * The web player's completion: the same core capability as `POST /v1/library/lessons/{id}/completions`.
@@ -93,42 +44,6 @@ export async function completeLibraryLessonAction({
   }
 
   return outcome.status === "invalid" ? { status: "incomplete" } : { status: "failed" };
-}
-
-/** "Explain answer": the same core capability as `POST /v1/steps/{stepId}/answer-explanations`. */
-export async function explainAnswerAction({
-  answer,
-  stepId,
-}: {
-  answer: string;
-  stepId: string;
-}): Promise<AnswerExplanationOutcome> {
-  const input = answerExplanationInputSchema.safeParse({ answer });
-
-  if (!input.success || !idSchema.safeParse(stepId).success) {
-    return { status: "failed" };
-  }
-
-  const { data: result, error } = await safeAsync(() =>
-    explainAnswer({ answer: input.data.answer, target: { stepId } }),
-  );
-
-  if (error) {
-    logError("[explainAnswerAction] Failed to explain an answer:", error);
-    return { status: "failed" };
-  }
-
-  if (result.status === "explained") {
-    return { explanation: result.explanation, status: "explained" };
-  }
-
-  if (result.status === "limitReached") {
-    return { period: result.limit.period, status: "limitReached", tier: result.limit.tier };
-  }
-
-  return result.status === "slowDown" || result.status === "signUpRequired"
-    ? result
-    : { status: "failed" };
 }
 
 /**

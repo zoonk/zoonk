@@ -101,8 +101,9 @@ function useKeptText(blockId: string): string | null {
  * The learner's text and sending it for grading: the text is kept on screen whatever happens, and
  * on the device as it's typed until it's graded (opening the essay again brings it back), writing
  * time runs from the first keystroke, and a grade that fails or takes too long lets the learner
- * send it again. `unsent` is text that leaving would leave behind; `gradesLeft` counts the grades
- * this visit used, so Send says it's waiting for tomorrow before a send is refused.
+ * send it again, under the same id when the text didn't change, so the server grades it once.
+ * `unsent` is text that leaving would leave behind; `gradesLeft` counts the grades this visit
+ * used, so Send says it's waiting for tomorrow before a send is refused.
  */
 function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
   const { actions, drafts, essay } = useEssayScreen();
@@ -114,6 +115,8 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
   const [status, setStatus] = useState<Status>("idle");
   // Writing time runs from the first keystroke, not from when the screen opened.
   const startedAt = useRef<number | null>(null);
+  // The last text sent that wasn't graded on screen, with the id it goes again under.
+  const ungraded = useRef<{ attemptId: string; text: string } | null>(null);
   const words = countWords(text);
   const gradesLeft = Math.max(0, essay.gradesLeft - (drafts.length - essay.drafts.length));
 
@@ -122,11 +125,16 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
 
     const durationMs = startedAt.current === null ? 0 : Date.now() - startedAt.current;
 
+    const attemptId =
+      ungraded.current?.text === text ? ungraded.current.attemptId : crypto.randomUUID();
+
+    ungraded.current = { attemptId, text };
+
     // A request that fails outright or takes too long reads as "couldn't grade": the text stays
     // and Send works again.
     const settled = await settleWithin({
       ms: GRADING_BOUNDS.timeoutMs,
-      request: () => actions.submit({ durationMs, text }),
+      request: () => actions.submit({ attemptId, durationMs, text }),
     }).catch(() => null);
 
     const result = settled?.status === "settled" ? settled.value : null;
@@ -138,6 +146,7 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
 
     setStatus("idle");
     startedAt.current = null;
+    ungraded.current = null;
     clearUnsentText(essay.blockId);
     onGraded(result);
   }
@@ -191,7 +200,8 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
 
 /**
  * The writing screen's pinned action bar: sending the text for grading, and once a draft is
- * graded, skipping the rewrite beside it (going on with the session).
+ * graded, skipping the rewrite beside it (going on with the session). Nothing more is sent once
+ * the block is being finished.
  */
 function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   const t = useExtracted();
@@ -221,7 +231,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
         )}
         <Button
           className={cn(TASK_MAIN_ACTION_CLASS, pending && "disabled:opacity-100")}
-          disabled={!writer.canSend}
+          disabled={!writer.canSend || finishing.pending}
           onClick={() => void writer.send()}
           size="xl"
         >

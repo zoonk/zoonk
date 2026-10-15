@@ -30,14 +30,23 @@ function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]): Less
   );
 }
 
-function answerCheck(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
+function answerCheck(
+  stepId: string,
+  isCorrect: boolean,
+  attemptId = `${stepId}-attempt`,
+): LessonPlayerAction[] {
   return [
     {
       answer: { kind: "check", optionId: isCorrect ? "right" : "wrong" },
       stepId,
       type: "selectAnswer",
     },
-    { counts: true, result: stepResult(isCorrect), stepId, type: "checkResolved" },
+    {
+      counts: true,
+      result: { ...stepResult(isCorrect), attemptId },
+      stepId,
+      type: "checkResolved",
+    },
   ];
 }
 
@@ -514,6 +523,7 @@ describe(lessonPlayerReducer, () => {
     const state = play([checkStep("quiz")], answerCheck("quiz", true));
 
     const confirmed = lessonPlayerReducer(state, {
+      attemptId: "quiz-attempt",
       result: {
         ...stepResult(true),
         nextReviewAt: "2026-10-02T00:00:00.000Z",
@@ -524,6 +534,28 @@ describe(lessonPlayerReducer, () => {
     });
 
     expect(confirmed.results.quiz?.nextReviewAt).toBe("2026-10-02T00:00:00.000Z");
+  });
+
+  it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
+    const again = play(
+      [checkStep("quiz")],
+      [...answerCheck("quiz", true, "first"), ...answerCheck("quiz", true, "second")],
+    );
+
+    expect(again.results.quiz?.attemptId).toBe("second");
+
+    const late = lessonPlayerReducer(again, {
+      attemptId: "first",
+      result: {
+        ...stepResult(false),
+        nextReviewAt: "2026-10-02T00:00:00.000Z",
+        savedMistake: true,
+      },
+      stepId: "quiz",
+      type: "checkConfirmed",
+    });
+
+    expect(late.results.quiz).toStrictEqual(again.results.quiz);
   });
 
   it("tracks the run and the completion as the server answers", () => {
