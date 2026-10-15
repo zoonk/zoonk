@@ -28,7 +28,7 @@ import {
 import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { asPersona } from "./learn-personas";
-import { openAs } from "./study-day";
+import { openAs, readDayNames } from "./study-day";
 
 /** What the plan-edit model said of the learner's words, stored with the change. */
 const PROPOSAL = "Twenty-five minutes a day keeps your plan on track for the exam.";
@@ -406,7 +406,7 @@ test.describe("Today's plan change", () => {
       await page.goto("/today");
       const day = page.getByRole("region", { name: "Today's session" }).getByRole("listitem");
       await expect(day.first()).toBeVisible();
-      const shown = await day.allTextContents();
+      const names = await readDayNames(day);
       const blocks = await readBlocks();
 
       const change = await planChangeFixture({
@@ -428,7 +428,7 @@ test.describe("Today's plan change", () => {
       await expect.poll(readBlocks).not.toStrictEqual(blocks);
       await note.getByRole("button", { name: "Undo" }).click();
       await expect.poll(readBlocks).toStrictEqual(blocks);
-      await expect(day).toHaveText(shown);
+      await expect.poll(() => readDayNames(day)).toStrictEqual(names);
 
       // Undo gives the suggestion back too, waiting for her answer as before Apply: she read
       // "Undone" with no way back to it until she reloaded.
