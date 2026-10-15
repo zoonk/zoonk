@@ -6,6 +6,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { scheduleMistakePatternCheck } from "../patterns/find-mistake-pattern";
 import {
@@ -90,7 +91,8 @@ export async function recordLanguageSkillEvidence({
 }): Promise<void> {
   const startScore = await loadStartScore({ language, skill, userId });
 
-  await prisma.$transaction((tx) =>
+  // The level shows on the learner's language screens, so each answer raises their revision.
+  await writeLearnerChange({ userId }, (tx) =>
     addSkillEvidence(tx, { evidence, language, skill, startScore, userId }),
   );
 }
@@ -190,5 +192,8 @@ export async function recordLanguageStepEvidence(
   }
 
   afterLanguageStepEvidence(evidence);
-  await prisma.$transaction((tx) => writeLanguageStepEvidence(tx, evidence));
+
+  await writeLearnerChange({ userId: evidence.skill.userId }, (tx) =>
+    writeLanguageStepEvidence(tx, evidence),
+  );
 }

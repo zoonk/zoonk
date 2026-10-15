@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import {
@@ -52,6 +53,7 @@ describe("mock exams", () => {
     expect(JSON.stringify(questions)).not.toContain("isCorrect");
 
     const [first, second, third, ...rest] = questions;
+    const beforeAnswers = await readLearnerRevision(goal.userId);
 
     await saveMockAnswer({
       blockId,
@@ -77,6 +79,9 @@ describe("mock exams", () => {
       blockId,
       input: { answer: null, durationMs: 10_000, flagged: false, itemId: third?.itemId ?? "" },
     });
+
+    // Each saved answer is on the sheet a reload or another device opens: one change each.
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(beforeAnswers + 3n);
 
     await Promise.all(
       rest.map((question) =>
@@ -213,8 +218,9 @@ describe("mock exams", () => {
   });
 
   it("takes no answers once a section's time has run out", async () => {
-    const { blockId } = await scheduledMockSetup();
+    const { blockId, goal } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
+    const started = await readLearnerRevision(goal.userId);
 
     const running = await runningMock(blockId);
     const itemId = running.current?.questions[0]?.itemId ?? "";
@@ -228,6 +234,8 @@ describe("mock exams", () => {
       }),
     ).resolves.toStrictEqual({ status: "timeUp" });
 
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(started);
+
     await submitMockSection({ blockId, input: {}, section: 0 });
     const finished = await getMock(blockId);
 
@@ -235,6 +243,28 @@ describe("mock exams", () => {
       blank: 9,
       unansweredAtTimeout: 9,
     });
+  });
+
+  it("changes nothing when the same draft is saved again", async () => {
+    const { blockId, goal } = await scheduledMockSetup();
+    await startMock({ blockId, input: {} });
+
+    const running = await runningMock(blockId);
+    const itemId = running.current?.questions[0]?.itemId ?? "";
+    const draft = { answer: { selectedIndex: 1 }, durationMs: 4000, flagged: false, itemId };
+
+    await saveMockAnswer({ blockId, input: draft });
+    const saved = await readLearnerRevision(goal.userId);
+
+    // A retry whose first response was lost sends the same draft.
+    await expect(saveMockAnswer({ blockId, input: draft })).resolves.toStrictEqual({
+      status: "saved",
+    });
+
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(saved);
+
+    await saveMockAnswer({ blockId, input: { ...draft, flagged: true } });
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(saved + 1n);
   });
 
   it("is not found for another learner", async () => {

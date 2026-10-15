@@ -11,6 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
+import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import { getLanguageTodayView } from "../../view-models/language/get-language-today-view";
@@ -92,6 +93,36 @@ describe(schedulePronunciationReviews, () => {
     );
 
     expect(reviews).toHaveLength(2);
+    // Both words land on the learner's review list in one change.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+  });
+});
+
+describe("pronunciation review revisions", () => {
+  it("changes nothing when a word already coming back tomorrow is missed again today", async () => {
+    const { user, word } = await learnerWithWord();
+
+    const schedule = () =>
+      schedulePronunciationReviews({
+        targetLanguage: "en",
+        timeZone: TIME_ZONE,
+        userId: user.id,
+        userLanguage: "pt",
+        words: [word.word],
+      });
+
+    vi.useFakeTimers({ now: new Date("2026-09-28T12:00:00.000Z"), toFake: ["Date"] });
+
+    try {
+      const [first] = await schedule();
+      await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+
+      // Same rung, same day back and same language: the review list doesn't change.
+      await expect(schedule()).resolves.toStrictEqual([first]);
+      await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
@@ -177,6 +208,7 @@ describe(answerPronunciationReview, () => {
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
 
     expect(assessPronunciation).not.toHaveBeenCalled();
+    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("climbs a rung when the word is said right and records it as time spoken", async () => {
@@ -212,6 +244,8 @@ describe(answerPronunciationReview, () => {
       isCorrect: true,
       targetLanguage: "en",
     });
+    // The help it used, the answer and the word's new rung each commit one change.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
   });
 
   it("starts the word over when it still sounds different", async () => {

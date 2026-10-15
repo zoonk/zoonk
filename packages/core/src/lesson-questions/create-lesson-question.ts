@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MissionMomentView } from "../sessions/completion-contract";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
@@ -53,6 +54,8 @@ async function settleAskedQuestion({
   await settleLearnerMissions({ source, timeZone, userId });
   return loadMissionMoment({ source, timeZone, userId });
 }
+
+type PersistedQuestionOutcome = ReturnType<typeof getCreateLessonQuestionOutcome>;
 
 function getCreateLessonQuestionOutcome({
   question,
@@ -107,7 +110,8 @@ async function persistLessonQuestion({
 }) {
   const threadWhere = { ...getSubjectThreadColumn(subject), userId };
 
-  return prisma.$transaction(async (transaction) => {
+  // A new question shows on the thread; a retried request or a blocked one changes nothing.
+  return writeLearnerChange<PersistedQuestionOutcome>({ userId }, async (transaction) => {
     await transaction.lessonQuestionThread.createMany({
       data: [{ ...threadWhere, kind: subject.kind }],
       skipDuplicates: true,
@@ -123,7 +127,9 @@ async function persistLessonQuestion({
     });
 
     if (existingQuestion) {
-      return getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint });
+      return unchanged(
+        getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
+      );
     }
 
     const unfinishedQuestion = await transaction.lessonQuestion.findFirst({
@@ -132,7 +138,7 @@ async function persistLessonQuestion({
     });
 
     if (unfinishedQuestion) {
-      return { status: "conflict" as const };
+      return unchanged({ status: "conflict" });
     }
 
     const [created] = await Promise.all([

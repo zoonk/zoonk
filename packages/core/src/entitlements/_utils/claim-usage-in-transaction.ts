@@ -1,13 +1,15 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
-import { type UsageDecision } from "../contract";
 import { getEstimatedCostMicros } from "../limits";
-import { holdCallTimeAgain } from "./call-time";
+import { type UsageClaim, holdCallTimeAgain } from "./call-time";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
 import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
 
-/** Shares the entitlement claim with atomic live-call reservation, never a separate commit. */
+/**
+ * Shares the entitlement claim with atomic live-call reservation, never a separate commit. Says
+ * whether it wrote, so a retried target or a refusal can leave the learner's revision alone.
+ */
 export async function claimUsageInTransaction({
   generated,
   kind,
@@ -24,14 +26,14 @@ export async function claimUsageInTransaction({
   targetId: string;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
-}): Promise<UsageDecision> {
+}): Promise<UsageClaim> {
   const existing = await transaction.usageRecord.findUnique({
     where: { userUsageTarget: { kind, targetId, userId: viewer.userId } },
   });
 
   if (existing) {
     return seconds === undefined
-      ? { status: "allowed" }
+      ? { decision: { status: "allowed" }, recorded: false }
       : holdCallTimeAgain({ now, record: existing, seconds, transaction, viewer });
   }
 
@@ -55,13 +57,13 @@ export async function claimUsageInTransaction({
   const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
 
   if (decision.status !== "allowed") {
-    return decision;
+    return { decision, recorded: false };
   }
 
   const takesGuestBudget = viewer.isGuest && costMicros > 0;
 
   if (takesGuestBudget && !(await claimGuestSpend({ costMicros, now, transaction }))) {
-    return { status: "signUpRequired" };
+    return { decision: { status: "signUpRequired" }, recorded: false };
   }
 
   await transaction.usageRecord.create({
@@ -77,10 +79,13 @@ export async function claimUsageInTransaction({
   });
 
   if (!hold) {
-    return decision;
+    return { decision, recorded: true };
   }
 
-  return hold.shortenedBy
-    ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
-    : { ...decision, heldSeconds: held };
+  return {
+    decision: hold.shortenedBy
+      ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
+      : { ...decision, heldSeconds: held },
+    recorded: true,
+  };
 }

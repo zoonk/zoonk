@@ -2,7 +2,8 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { waitForBlockedStatement } from "../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import {
@@ -55,23 +56,6 @@ function write({
 async function revision(userId: string) {
   const row = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
   return row.learnerRevision;
-}
-
-/** Query a real waiter; the test never guesses when the contender has reached its first lock. */
-async function waitingQuery(holderPID: number) {
-  const state: { query: string | null } = { query: null };
-
-  await vi.waitFor(async () => {
-    const [blocked] = await prisma.$queryRaw<{ query: string }[]>`
-      SELECT query FROM pg_stat_activity
-      WHERE ${holderPID}::int = ANY(pg_blocking_pids(pid))
-    `;
-
-    expect(blocked).toBeDefined();
-    state.query = blocked?.query ?? null;
-  });
-
-  return state.query;
 }
 
 describe("memory write learner revisions", () => {
@@ -199,7 +183,7 @@ describe("memory write learner revisions", () => {
       const attempt = write({ factId: fact.id, userId: user.id, writer });
 
       try {
-        await expect(waitingQuery(pid)).resolves.toMatch(/UPDATE users SET learner_revision/u);
+        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
       } finally {
         resume.resolve(null);
         const outcomes = await Promise.allSettled([first, attempt]);

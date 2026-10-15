@@ -1,7 +1,9 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { isDeepStrictEqual } from "node:util";
+import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
 import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
   LEVEL_TEST_PREPARING_SECONDS,
@@ -43,17 +45,33 @@ export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestPro
   return parsed.success ? parsed.data : { answers: [], counted: 0, speaking: null };
 }
 
-/** Keeps the test's answers on the goal, next to what onboarding already stored. */
+/**
+ * Keeps the test's answers on the goal, next to what onboarding already stored. `from` is the
+ * progress the change was made from: when another submission saved first (a double tap, another
+ * tab), the change no longer applies and nothing is saved. Returns whether it saved.
+ */
 export async function saveLevelTestProgress({
+  from,
   goal,
   progress,
 }: {
-  goal: Pick<Goal, "details" | "id">;
+  from: LevelTestProgress;
+  goal: Pick<Goal, "id" | "userId">;
   progress: LevelTestProgress;
-}) {
-  await prisma.goal.update({
-    data: { details: { ...readGoalDetails(goal), levelTest: progress } },
-    where: { id: goal.id },
+}): Promise<boolean> {
+  return writeLearnerChange({ userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    if (!isDeepStrictEqual(readLevelTestProgress(current), from)) {
+      return unchanged(false);
+    }
+
+    await tx.goal.update({
+      data: { details: { ...readGoalDetails(current), levelTest: progress } },
+      where: { id: goal.id },
+    });
+
+    return true;
   });
 }
 

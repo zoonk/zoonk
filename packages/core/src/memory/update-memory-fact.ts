@@ -1,10 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type MemoryFact } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { scheduleSensitivityCheck } from "./_utils/fact-sensitivity";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
@@ -14,9 +13,20 @@ import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contra
 /** A fact the learner wrote or corrected is what they said, so it's as certain as a fact can be. */
 const LEARNER_CONFIDENCE = 1;
 
-/** A concurrent deactivation after the plain ownership read must roll back the revision too. */
-class MemoryFactUnavailableError extends Error {
-  override name = "MemoryFactUnavailableError";
+/** Whether the fact already reads as this correction would leave it. */
+function isSameCorrection({
+  fact,
+  input,
+}: {
+  fact: Pick<MemoryFact, "category" | "confidence" | "origin" | "statement">;
+  input: MemoryFactUpdateInput;
+}): boolean {
+  return (
+    fact.origin === "said" &&
+    fact.confidence === LEARNER_CONFIDENCE &&
+    (input.category === undefined || input.category === fact.category) &&
+    (input.statement === undefined || input.statement === fact.statement)
+  );
 }
 
 export type MemoryFactUpdateResult =
@@ -48,60 +58,51 @@ export async function updateMemoryFact({
 
   const userId = session.user.id;
 
-  const { data: fact, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      const existing = await tx.memoryFact.findFirst({
-        select: { id: true },
-        where: { id: factId, status: "active", userId },
-      });
+  const saved = await writeLearnerChange({ userId }, async (tx) => {
+    // Read under the revision lock: a concurrent save or delete of this fact finished first.
+    const existing = await tx.memoryFact.findFirst({
+      where: { id: factId, status: "active", userId },
+    });
 
-      if (!existing) {
-        return null;
-      }
+    if (!existing) {
+      return unchanged(null);
+    }
 
-      await markLearnerChanged(tx, { planInputs: false, userId });
+    // The same correction saved again leaves the fact, its example lines and the revision alone.
+    if (isSameCorrection({ fact: existing, input })) {
+      return unchanged({ changed: false, fact: existing });
+    }
 
-      const { count } = await tx.memoryFact.updateMany({
-        data: {
-          category: input.category,
-          confidence: LEARNER_CONFIDENCE,
-          origin: "said",
-          statement: input.statement,
-        },
-        where: { id: factId, status: "active", userId },
-      });
+    await tx.memoryFact.update({
+      data: {
+        category: input.category,
+        confidence: LEARNER_CONFIDENCE,
+        origin: "said",
+        statement: input.statement,
+      },
+      where: { id: factId },
+    });
 
-      if (count === 0) {
-        throw new MemoryFactUnavailableError();
-      }
+    const updated = await tx.memoryFact.findUniqueOrThrow({ where: { id: factId } });
 
-      const updated = await tx.memoryFact.findUniqueOrThrow({ where: { id: factId } });
+    if (input.statement !== undefined) {
+      await forgetExampleLines({ client: tx, userId });
+    }
 
-      if (input.statement !== undefined) {
-        await forgetExampleLines({ client: tx, userId });
-      }
+    return { changed: true, fact: updated };
+  });
 
-      return updated;
-    }),
-  );
-
-  if (error instanceof MemoryFactUnavailableError) {
+  if (!saved) {
     return { status: "notFound" };
   }
 
-  if (error) {
-    throw error;
+  if (saved.changed) {
+    revalidateCacheTags([getMemoryCacheTag(userId)]);
   }
 
-  if (!fact) {
-    return { status: "notFound" };
+  if (saved.changed && input.statement !== undefined) {
+    scheduleSensitivityCheck(saved.fact);
   }
 
-  revalidateCacheTags([getMemoryCacheTag(userId)]);
-
-  if (input.statement !== undefined) {
-    scheduleSensitivityCheck(fact);
-  }
-
-  return { fact: toMemoryFactView(fact), status: "updated" };
+  return { fact: toMemoryFactView(saved.fact), status: "updated" };
 }

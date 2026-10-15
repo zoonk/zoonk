@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { listeningContentSchema } from "../../library/listening/listening-content";
 import { readMockPlays } from "./_utils/mock-plays";
 import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
@@ -66,7 +67,10 @@ export async function recordMockPlay({
     return { status: "invalidSet" };
   }
 
-  const counted = await prisma.$queryRaw<{ played: number }[]>`
+  // A play left is on the recording's screen, so a counted one is a learner change; a refused one
+  // (used up, or the section moved on) changes nothing.
+  const counted = await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
+    const rows = await tx.$queryRaw<{ played: number }[]>`
     UPDATE mock_exams
     SET listening_plays = jsonb_set(
           listening_plays,
@@ -80,6 +84,9 @@ export async function recordMockPlay({
       AND COALESCE((listening_plays ->> ${setId}::text)::int, 0) < ${limit}
     RETURNING (listening_plays ->> ${setId}::text)::int AS played
   `;
+
+    return rows.length > 0 ? rows : unchanged(rows);
+  });
 
   const played = counted[0]?.played;
 

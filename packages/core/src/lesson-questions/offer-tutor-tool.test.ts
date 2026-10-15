@@ -12,6 +12,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { normalizeString } from "@zoonk/utils/string";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readLearnerRevision } from "../_test-utils/learner-revision";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -213,8 +214,19 @@ describe("app tools the buddy offers", () => {
   it("offers the test of the area's next chapter and keeps it with the answer", async () => {
     const { goal, library } = await setup();
     const asked = await askBuddy(goal.id);
+    const before = await readLearnerRevision(goal.userId);
 
     const result = await offerTutorTool({ ...asked, area: "english", tool: "chapterTest" });
+
+    // The offer shows with the answer on the buddy's thread: one change.
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(before + 1n);
+
+    // The same offer again, from the same answer, changes nothing.
+    await expect(
+      offerTutorTool({ ...asked, area: "english", tool: "chapterTest" }),
+    ).resolves.toStrictEqual(result);
+
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(before + 1n);
 
     expect(result).toMatchObject({
       offer: {
@@ -247,6 +259,7 @@ describe("app tools the buddy offers", () => {
   it("says when a tool can't help now instead of offering it", async () => {
     const { goal } = await setup({ dailyMinutes: 120 });
     const asked = await askBuddy(goal.id);
+    const before = await readLearnerRevision(goal.userId);
 
     // Law's chapter has one lesson left: a test wouldn't skip enough to be worth it.
     await expect(
@@ -267,6 +280,8 @@ describe("app tools the buddy offers", () => {
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.questionId } }),
     ).resolves.toMatchObject({ toolOffer: null });
+
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(before);
   });
 
   it("only lets the generation answering the learner's own question offer a tool", async () => {

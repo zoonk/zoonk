@@ -7,6 +7,7 @@ import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { toProvenanceData } from "../../library/_utils/library-rows";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
@@ -70,27 +71,27 @@ async function checkForPattern({ language, userId }: { language: string; userId:
     return snapshot && mistake ? [{ id: mistake.id, snapshot }] : [];
   });
 
-  await prisma.mistakePattern.create({
-    data: {
-      content: {
-        contrast: data.contrast,
-        drill: data.drill,
-        examples: shown.map(({ snapshot }) => ({
-          answer: snapshot.answer ?? "",
-          correctAnswer: snapshot.correctAnswer ?? "",
-          format: snapshot.format ?? "",
-        })),
-        rule: data.rule,
-      },
-      goalId: goal?.id ?? null,
-      kind: data.kind,
-      language,
-      mistakeIds: shown.map(({ id }) => id),
-      title: data.title,
-      userId,
-      ...toProvenanceData(provenance),
+  const pattern = {
+    content: {
+      contrast: data.contrast,
+      drill: data.drill,
+      examples: shown.map(({ snapshot }) => ({
+        answer: snapshot.answer ?? "",
+        correctAnswer: snapshot.correctAnswer ?? "",
+        format: snapshot.format ?? "",
+      })),
+      rule: data.rule,
     },
-  });
+    goalId: goal?.id ?? null,
+    kind: data.kind,
+    language,
+    mistakeIds: shown.map(({ id }) => id),
+    title: data.title,
+    userId,
+    ...toProvenanceData(provenance),
+  };
+
+  await writeLearnerChange({ userId }, (tx) => tx.mistakePattern.create({ data: pattern }));
 
   // Today shows the new pattern.
   revalidateCacheTags([getUserProgressCacheTag(userId)]);

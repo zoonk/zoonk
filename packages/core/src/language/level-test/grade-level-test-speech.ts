@@ -97,7 +97,10 @@ export async function gradeLevelTestSpeech({
   }
 
   const next = { ...progress, speaking: { level: step.speaking.level, score: match.score } };
-  await saveLevelTestProgress({ goal: owned.goal, progress: next });
+  // Another submission of the sentence saved first: the test has moved on from it.
+  if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
+    return { status: "invalid" };
+  }
 
   return {
     heard: { score: match.score, transcript, words: match.words },

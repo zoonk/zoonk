@@ -8,6 +8,7 @@ import {
 } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
+import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
@@ -207,6 +208,7 @@ describe("a mock's listening section", () => {
     });
 
     await submitMockSection({ blockId, input: { timeZone: "UTC" }, section: 0 });
+    const listening = await readLearnerRevision(goal.userId);
 
     await expect(recordMockPlay({ blockId, setId: first })).resolves.toStrictEqual({
       played: 1,
@@ -226,6 +228,9 @@ describe("a mock's listening section", () => {
     ]);
 
     expect(both.map((result) => result.status).toSorted()).toStrictEqual(["counted", "usedUp"]);
+
+    // Only the two counted plays changed what the recordings' screens show.
+    await expect(readLearnerRevision(goal.userId)).resolves.toBe(listening + 2n);
 
     // Any tab or device opens the section with the plays already used.
     const result = await getMock(blockId);

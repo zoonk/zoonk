@@ -28,7 +28,7 @@ export async function claimLiveCallTime({
   });
 
   if (!record) {
-    return claimUsageInTransaction({
+    const claim = await claimUsageInTransaction({
       generated: false,
       kind: "conversation",
       now,
@@ -37,6 +37,8 @@ export async function claimLiveCallTime({
       transaction,
       viewer,
     });
+
+    return claim.decision;
   }
 
   if (record.createdAt < getUsagePeriodStarts(now).day) {

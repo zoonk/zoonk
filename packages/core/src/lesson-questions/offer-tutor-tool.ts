@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type Goal, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -13,6 +14,7 @@ import { loadDoneUnitIds } from "../language/units/can-do-events";
 import { findCurrentUnit, loadLanguageUnits } from "../language/units/language-units";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { countSkippableItems, getChapterSkills } from "../learner/test-out/_utils/chapter-items";
 import { loadBlockedTestOutChapters } from "../learner/test-out/_utils/offer-eligibility";
 import { getGoalPlan } from "../plans/get-goal-plan";
@@ -305,10 +307,27 @@ export async function offerTutorTool({
     return result;
   }
 
-  const saved = await prisma.lessonQuestion.updateMany({
-    data: { toolOffer: result.offer },
-    where: { generationRevision: revision, id: questionId, status: "running" },
-  });
+  // The offer shows with the answer; a generation that lost its claim, or offers the same again,
+  // changes nothing.
+  return writeLearnerChange<TutorToolResult>({ userId: session.user.id }, async (tx) => {
+    const answering = await tx.lessonQuestion.findFirst({
+      select: { toolOffer: true },
+      where: { generationRevision: revision, id: questionId, status: "running" },
+    });
 
-  return saved.count > 0 ? result : { status: "notFound" };
+    if (!answering) {
+      return unchanged({ status: "notFound" });
+    }
+
+    if (isDeepStrictEqual(answering.toolOffer, result.offer)) {
+      return unchanged(result);
+    }
+
+    await tx.lessonQuestion.update({
+      data: { toolOffer: result.offer },
+      where: { id: questionId },
+    });
+
+    return result;
+  });
 }

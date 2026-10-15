@@ -1,5 +1,6 @@
 import { type UsageKind, prisma } from "@zoonk/db";
 import { type LiveCallReservationResult } from "../../language/conversations/live-call-contract";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type UsageDecision } from "../contract";
 import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
@@ -15,7 +16,8 @@ import { lockUsageForViewer } from "./usage-lock";
  * spent asks the guest to create a free account (`signUpRequired`). A live call's connection
  * (`seconds`) holds up to that much of the plan's call time (today's and this month's) and
  * returns what it holds; connecting the same call again holds its length again
- * (`holdCallTimeAgain`).
+ * (`holdCallTimeAgain`). A use it records raises the learner's revision, which it marks before
+ * taking the usage lock (plans, then learners, then everything else, in every writer).
  */
 export async function claimUsageForViewer({
   generated,
@@ -32,10 +34,10 @@ export async function claimUsageForViewer({
   targetId: string;
   viewer: EntitlementViewer;
 }): Promise<UsageDecision> {
-  return prisma.$transaction(async (transaction) => {
+  return writeLearnerChange({ userId: viewer.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-    return claimUsageInTransaction({
+    const claim = await claimUsageInTransaction({
       generated,
       kind,
       now,
@@ -44,6 +46,9 @@ export async function claimUsageForViewer({
       transaction,
       viewer,
     });
+
+    // A retried target or a refusal records nothing, so it leaves the revision alone.
+    return claim.recorded ? claim.decision : unchanged(claim.decision);
   });
 }
 

@@ -1,11 +1,12 @@
 import "server-only";
 import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
-import { type MistakeCause, prisma } from "@zoonk/db";
+import { type MistakeCause } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { after } from "next/server";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../cache/tags";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MistakeCauseRequest } from "./record-mistake";
 
 /**
@@ -29,10 +30,21 @@ async function resolveMistakeCause({
 
   const { cause } = data.data;
 
-  await prisma.mistake.updateMany({ data: { cause }, where: { cause: null, id: mistakeId } });
-  revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+  // The notebook shows the cause; one set meanwhile stays, and changes nothing.
+  const saved = await writeLearnerChange({ userId }, async (tx) => {
+    const { count } = await tx.mistake.updateMany({
+      data: { cause },
+      where: { cause: null, id: mistakeId },
+    });
 
-  return cause;
+    return count > 0 ? cause : unchanged(null);
+  });
+
+  if (saved) {
+    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+  }
+
+  return saved;
 }
 
 /**

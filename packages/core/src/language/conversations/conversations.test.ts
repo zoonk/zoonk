@@ -23,6 +23,11 @@ import {
   testCallCompletionInput,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import {
+  holdLearnerRevision,
+  readLearnerRevision,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
@@ -368,6 +373,7 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
     const turns = TURNS.slice(0, 2);
+    const before = await readLearnerRevision(user.id);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Is it available?"]),
@@ -376,6 +382,9 @@ describe("language conversations", () => {
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns } }),
     ).resolves.toStrictEqual({ objectivesMet: ["Is it available?"], status: "ready" });
+
+    // The call screen shows each goal met as it's met: one change per check that met one.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Book a viewing"]),
@@ -387,6 +396,8 @@ describe("language conversations", () => {
       objectivesMet: ["Is it available?", "Book a viewing"],
       status: "ready",
     });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     // The second check only asked about the goals still open.
     expect(vi.mocked(checkConversationObjectives).mock.calls[1]?.[0]).toMatchObject({
@@ -401,6 +412,39 @@ describe("language conversations", () => {
     });
   });
 
+  it("marks a goal two overlapping checks both found only once", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    const check = () =>
+      checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
+
+    vi.mocked(checkConversationObjectives).mockResolvedValue(
+      objectivesAnswer(["Is it available?"]),
+    );
+
+    const writer = holdLearnerRevision({ userId: user.id });
+    const pid = await writer.pid;
+    const before = await readLearnerRevision(user.id);
+    const both = Promise.all([check(), check()]);
+    await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+    writer.release();
+    await writer.done;
+
+    await expect(both).resolves.toStrictEqual([
+      { objectivesMet: ["Is it available?"], status: "ready" },
+      { objectivesMet: ["Is it available?"], status: "ready" },
+    ]);
+
+    await expect(
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
+    ).resolves.toMatchObject({ objectivesMet: ["Is it available?"] });
+
+    // The held writer's change and the goal met once.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+  });
+
   it("keeps the goals already met when a check fails", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
@@ -408,6 +452,7 @@ describe("language conversations", () => {
 
     await checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
     vi.mocked(checkConversationObjectives).mockRejectedValueOnce(new Error("model down"));
+    const before = await readLearnerRevision(user.id);
 
     await expect(
       checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
@@ -415,6 +460,9 @@ describe("language conversations", () => {
       objectivesMet: ["Is it available?", "Book a viewing"],
       status: "ready",
     });
+
+    // A check that met nothing new changes nothing.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 
   it("checks goals only for the learner's connected call while it runs", async () => {

@@ -49,7 +49,11 @@ export async function answerLanguageLevelTest({
     ],
   };
 
-  await saveLevelTestProgress({ goal: owned.goal, progress: next });
+  // Only the question the test is asking can be answered: a submission that lost a race to
+  // another answering it is no longer for the current one.
+  if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
+    return { status: "invalid" };
+  }
 
   return {
     status: "ready",

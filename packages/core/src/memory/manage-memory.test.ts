@@ -162,6 +162,25 @@ describe(updateMemorySettings, () => {
     await updateMemorySettings({ enabled: true });
     await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
     await expect(learnerRevision(user.id)).resolves.toBe(2n);
+
+    // Turning on what's already on changes nothing.
+    await expect(updateMemorySettings({ enabled: true })).resolves.toStrictEqual({
+      enabled: true,
+      status: "updated",
+    });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(2n);
+  });
+
+  it("changes nothing for a learner without a profile who keeps memory on", async () => {
+    const user = await useLearner();
+
+    await expect(updateMemorySettings({ enabled: true })).resolves.toStrictEqual({
+      enabled: true,
+      status: "updated",
+    });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("creates the profile for a learner who has none yet", async () => {
@@ -289,6 +308,19 @@ describe(updateMemoryFact, () => {
 
     await updateMemoryFact({ factId: fact.id, input: { category: "preferences" } });
     await expect(learnerRevision(user.id)).resolves.toBe(2n);
+
+    // Saving the same correction again changes nothing.
+    await expect(
+      updateMemoryFact({
+        factId: fact.id,
+        input: { category: "preferences", statement: "Studies after 9 pm on weekdays" },
+      }),
+    ).resolves.toMatchObject({
+      fact: { category: "preferences", statement: "Studies after 9 pm on weekdays" },
+      status: "updated",
+    });
+
+    await expect(learnerRevision(user.id)).resolves.toBe(2n);
   });
 
   it("leaves the fact untouched when its revision cannot advance", async () => {
@@ -377,10 +409,15 @@ describe("memory and answer transaction lock order", () => {
         learningProfileFixture({ userId: user.id }),
       ]);
 
-      const saveMemory = () =>
+      // Each batch asks for the other value: its first save changes it, the rest find it already
+      // so and roll their revision back, all still taking the revision lock first.
+      const saveMemory = (batch: number) =>
         kind === "settings"
-          ? updateMemorySettings({ enabled: false })
-          : updateMemoryFact({ factId: fact.id, input: { category: "preferences" } });
+          ? updateMemorySettings({ enabled: batch % 2 === 1 })
+          : updateMemoryFact({
+              factId: fact.id,
+              input: { category: batch % 2 === 0 ? "preferences" : "routine" },
+            });
 
       const saveAnswer = () =>
         recordLearnerAnswer({
@@ -399,8 +436,8 @@ describe("memory and answer transaction lock order", () => {
           { length: Math.min(CONCURRENT_PAIRS, TOTAL_PAIRS - start) },
           (_, offset) =>
             (start + offset) % 2 === 0
-              ? [saveMemory(), saveAnswer()]
-              : [saveAnswer(), saveMemory()],
+              ? [saveMemory(start / CONCURRENT_PAIRS), saveAnswer()]
+              : [saveAnswer(), saveMemory(start / CONCURRENT_PAIRS)],
         ).flat();
 
         try {
@@ -412,7 +449,9 @@ describe("memory and answer transaction lock order", () => {
         }
       }
 
-      await expect(learnerRevision(user.id)).resolves.toBe(40n);
+      // One per answer, and one per batch of memory saves.
+      const batches = BigInt(Math.ceil(TOTAL_PAIRS / CONCURRENT_PAIRS));
+      await expect(learnerRevision(user.id)).resolves.toBe(BigInt(TOTAL_PAIRS) + batches);
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),

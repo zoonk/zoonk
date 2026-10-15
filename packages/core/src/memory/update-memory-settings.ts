@@ -1,8 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { type MemorySettingsUpdateInput } from "./memory-contract";
@@ -23,8 +22,14 @@ export async function updateMemorySettings(
 
   const userId = session.user.id;
 
-  await prisma.$transaction(async (tx) => {
-    await markLearnerChanged(tx, { planInputs: false, userId });
+  const changed = await writeLearnerChange({ userId }, async (tx) => {
+    // Read under the revision lock, so a concurrent switch can't make this one look unchanged.
+    const profile = await tx.userLearningProfile.findUnique({ where: { userId } });
+
+    // Memory is on until the learner turns it off; asking for what it already is changes nothing.
+    if ((profile?.memoryEnabled ?? true) === input.enabled) {
+      return unchanged(false);
+    }
 
     await tx.userLearningProfile.upsert({
       create: { memoryEnabled: input.enabled, userId },
@@ -35,9 +40,13 @@ export async function updateMemorySettings(
     if (!input.enabled) {
       await forgetExampleLines({ client: tx, userId });
     }
+
+    return true;
   });
 
-  revalidateCacheTags([getMemoryCacheTag(userId)]);
+  if (changed) {
+    revalidateCacheTags([getMemoryCacheTag(userId)]);
+  }
 
   return { enabled: input.enabled, status: "updated" };
 }

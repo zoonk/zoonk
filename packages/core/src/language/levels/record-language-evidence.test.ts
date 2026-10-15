@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { after } from "next/server";
 import { describe, expect, it } from "vitest";
+import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { recordLanguageStepEvidence } from "./record-language-evidence";
 
 const ENGLISH_BEGINNER = { level: "beginner" as const, targetLanguage: "en" };
@@ -45,6 +46,8 @@ describe(recordLanguageStepEvidence, () => {
       windowCorrect: 1,
       windowTotal: 1,
     });
+    // The level is on the learner's language screens, so the answer raises the revision once.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("remembers a word learned once, and looks for a pattern after a wrong answer", async () => {
@@ -78,6 +81,8 @@ describe(recordLanguageStepEvidence, () => {
 
     await expect(prisma.learnerWord.count({ where: { userId: user.id } })).resolves.toBe(1);
     expect(after).toHaveBeenCalledOnce();
+    // One level change per answer; the word list has no screen, so it adds none.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
   });
 
   it("counts every answer given at the same moment, even before the skill has a level", async () => {

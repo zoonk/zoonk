@@ -4,6 +4,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { after } from "next/server";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fillMissingAudio } from "../../library/language/_utils/language-audio";
 import { schedulePronunciationMiss, toReviewWord } from "./pronunciation-rules";
 
@@ -93,15 +94,37 @@ export async function schedulePronunciationReviews({
 
   const schedule = schedulePronunciationMiss({ now: new Date(), timeZone });
 
-  const reviews = await Promise.all(
-    rows.map((row) =>
-      prisma.pronunciationReview.upsert({
-        create: { ...schedule, language: targetLanguage, userId, userLanguage, wordId: row.id },
-        update: { ...schedule, userLanguage },
-        where: { userWord: { userId, wordId: row.id } },
-      }),
-    ),
-  );
+  // The words land on the learner's review list together, as one change; words already coming
+  // back on that day from the first rung change nothing.
+  const reviews = await writeLearnerChange({ userId }, async (tx) => {
+    const existing = await tx.pronunciationReview.findMany({
+      where: { userId, wordId: { in: rows.map((row) => row.id) } },
+    });
+
+    const scheduled = rows.map((row) => existing.find((review) => review.wordId === row.id));
+
+    const same = scheduled.every(
+      (review) =>
+        review &&
+        review.stage === schedule.stage &&
+        review.dueAt?.getTime() === schedule.dueAt?.getTime() &&
+        review.userLanguage === userLanguage,
+    );
+
+    if (same) {
+      return unchanged(scheduled.flatMap((review) => (review ? [review] : [])));
+    }
+
+    return Promise.all(
+      rows.map((row) =>
+        tx.pronunciationReview.upsert({
+          create: { ...schedule, language: targetLanguage, userId, userLanguage, wordId: row.id },
+          update: { ...schedule, userLanguage },
+          where: { userWord: { userId, wordId: row.id } },
+        }),
+      ),
+    );
+  });
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 

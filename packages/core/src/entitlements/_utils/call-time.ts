@@ -9,6 +9,9 @@ import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
 
+/** A claim's decision, and whether it wrote: an unchanged claim leaves the learner's revision alone. */
+export type UsageClaim = { decision: UsageDecision; recorded: boolean };
+
 /**
  * What a call's record keeps once it ends, or once it connects again: the time since it was first
  * claimed, up to what it held. The server's clock measures it, so a client can't report a shorter
@@ -37,9 +40,9 @@ export async function holdCallTimeAgain({
   seconds: number;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
-}): Promise<UsageDecision> {
+}): Promise<UsageClaim> {
   if (record.createdAt < getUsagePeriodStarts(now).day) {
-    return { heldSeconds: 0, status: "allowed" };
+    return { decision: { heldSeconds: 0, status: "allowed" }, recorded: false };
   }
 
   const ran = getCallSecondsRun({ now, record });
@@ -56,7 +59,7 @@ export async function holdCallTimeAgain({
   const requested = challenge ? Math.min(seconds, Math.max(0, challenge.seconds - ran)) : seconds;
 
   if (requested === 0) {
-    return { heldSeconds: 0, status: "allowed" };
+    return { decision: { heldSeconds: 0, status: "allowed" }, recorded: false };
   }
 
   const counts = await countUsage({
@@ -78,8 +81,16 @@ export async function holdCallTimeAgain({
 
   if (left && left.seconds < MIN_CALL_SECONDS) {
     return {
-      limit: { limit: left.limit, period: left.period, resource: "callSeconds", tier: viewer.tier },
-      status: "limitReached",
+      decision: {
+        limit: {
+          limit: left.limit,
+          period: left.period,
+          resource: "callSeconds",
+          tier: viewer.tier,
+        },
+        status: "limitReached",
+      },
+      recorded: false,
     };
   }
 
@@ -98,7 +109,10 @@ export async function holdCallTimeAgain({
     where: { id: record.id },
   });
 
-  return hold.shortenedBy
-    ? { heldSeconds: hold.heldSeconds, shortenedBy: hold.shortenedBy, status: "allowed" }
-    : { heldSeconds: hold.heldSeconds, status: "allowed" };
+  return {
+    decision: hold.shortenedBy
+      ? { heldSeconds: hold.heldSeconds, shortenedBy: hold.shortenedBy, status: "allowed" }
+      : { heldSeconds: hold.heldSeconds, status: "allowed" },
+    recorded: true,
+  };
 }

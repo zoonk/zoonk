@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { readSavedScenario } from "./_utils/conversation-view";
 import { findNewlyMetObjectives } from "./_utils/objective-check";
@@ -62,18 +62,37 @@ export async function checkLanguageConversationObjectives({
     ? []
     : await findNewlyMetObjectives({ row, scenario, turns: input.turns, userId });
 
-  if (newlyMet.length > 0) {
-    await prisma.languageConversation.updateMany({
-      data: { objectivesMet: { push: newlyMet } },
-      where: { id: row.id, status: "ready" },
-    });
-  }
+  // Read the goals met again under the revision lock: an overlapping check may have just marked
+  // the same one, and a call that ended meanwhile keeps its goals. Either changes nothing.
+  const labels =
+    newlyMet.length === 0
+      ? row.objectivesMet
+      : await writeLearnerChange({ userId }, async (tx) => {
+          const current = await tx.languageConversation.findUniqueOrThrow({
+            select: { objectivesMet: true, status: true },
+            where: { id: row.id },
+          });
+
+          const fresh = newlyMet.filter((label) => !current.objectivesMet.includes(label));
+
+          if (current.status !== "ready" || fresh.length === 0) {
+            return unchanged(current.objectivesMet);
+          }
+
+          // Completion doesn't take the revision lock: the status guard keeps a call that just
+          // ended from gaining goals after its rewards were counted.
+          const { count } = await tx.languageConversation.updateMany({
+            data: { objectivesMet: { push: fresh } },
+            where: { id: row.id, status: "ready" },
+          });
+
+          return count > 0
+            ? [...current.objectivesMet, ...fresh]
+            : unchanged(current.objectivesMet);
+        });
 
   return {
-    objectivesMet: getMetObjectives({
-      labels: [...row.objectivesMet, ...newlyMet],
-      objectives: scenario.objectives,
-    }),
+    objectivesMet: getMetObjectives({ labels, objectives: scenario.objectives }),
     status: "ready",
   };
 }

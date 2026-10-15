@@ -1,5 +1,7 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { DbNull, prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { judgeForwardOnlySave } from "./_utils/mock-navigation";
 import { findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
 import { type MockAnswerInput } from "./mock-answer-contract";
@@ -138,10 +140,26 @@ export async function saveMockAnswer({
     flagged: input.flagged,
   };
 
-  await prisma.mockExamAnswer.upsert({
-    create: { ...draft, itemId: input.itemId, mockExamId: mock.id },
-    update: { ...draft, ...(move.changed ? { changes: { increment: 1 } } : {}) },
-    where: { mockItem: { itemId: input.itemId, mockExamId: mock.id } },
+  // The answer sheet shows it on a reload or another device, so a save that changes it is a
+  // learner change; the same draft again (a retry whose response was lost) changes nothing.
+  await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
+    const where = { mockItem: { itemId: input.itemId, mockExamId: mock.id } };
+    const saved = await tx.mockExamAnswer.findUnique({ where });
+
+    if (
+      saved &&
+      isDeepStrictEqual(saved.answer, input.answer ?? null) &&
+      saved.durationMs === input.durationMs &&
+      saved.flagged === input.flagged
+    ) {
+      return unchanged(saved);
+    }
+
+    return tx.mockExamAnswer.upsert({
+      create: { ...draft, itemId: input.itemId, mockExamId: mock.id },
+      update: { ...draft, ...(move.changed ? { changes: { increment: 1 } } : {}) },
+      where,
+    });
   });
 
   return { status: "saved" };

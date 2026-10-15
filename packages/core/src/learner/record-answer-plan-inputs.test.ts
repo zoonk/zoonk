@@ -151,10 +151,12 @@ describe("answer input freshness", () => {
       expect(plan.inputVersion).toBe(old.inputVersion + (plan.goal.userId === user.id ? 6 : 0));
     }
 
+    // Per lesson: the answer, the one new run, and the lesson start the allowance counts once (the
+    // racing start reuses both). Counting the start doesn't change what plans read.
     expect(after.users).toStrictEqual(
       before.users.map((row) => ({
         ...row,
-        learnerRevision: row.learnerRevision + (row.id === user.id ? 6n : 0n),
+        learnerRevision: row.learnerRevision + (row.id === user.id ? 9n : 0n),
       })),
     );
 

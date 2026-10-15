@@ -8,6 +8,11 @@ import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
+import {
+  holdLearnerRevision,
+  readLearnerRevision,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
@@ -72,6 +77,7 @@ describe("language level test", () => {
     });
 
     expect(wrongQuestion).toStrictEqual({ status: "invalid" });
+    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
 
     const answered = await answerLanguageLevelTest({
       goalId: goal.id,
@@ -79,6 +85,8 @@ describe("language level test", () => {
     });
 
     expect(answered).toMatchObject({ status: "ready", test: { answered: 1, lastCorrect: true } });
+    // The answer is saved on the goal the test screen reads: one change.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
 
     const answeredLevels =
       answered.status === "ready" && answered.test.status === "ready"
@@ -108,6 +116,32 @@ describe("language level test", () => {
     expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
+  });
+
+  it("saves one of two submissions of the same question that raced, and refuses the other", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const answer = () =>
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: 1, questionId: "reading-A2-0" },
+      });
+
+    // Both read the test before either saves: another write holds the learner's revision.
+    const writer = holdLearnerRevision({ userId: user.id });
+    const pid = await writer.pid;
+    const both = Promise.all([answer(), answer()]);
+    await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+    writer.release();
+    await writer.done;
+
+    const results = await both;
+    expect(results.map((result) => result.status).toSorted()).toStrictEqual(["invalid", "ready"]);
+
+    // The held writer's change and the one saved answer.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
   });
 
   // Marcos' level test took him minutes that his statistics never showed.

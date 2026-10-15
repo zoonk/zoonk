@@ -6,6 +6,7 @@ import { replaceEmDashes } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MemoryChange } from "../memory/memory-contract";
 import { getSession } from "../users/get-session";
 import {
@@ -39,6 +40,7 @@ async function getQuestionAnswerAccess({
   return thread ? findThreadSubject({ thread, userId }) : { status: "notFound" as const };
 }
 
+/** The thread shows a failed answer with "Try again"; a stale revision changes nothing. */
 function markClaimedLessonQuestionAnswerFailed({
   questionId,
   revision,
@@ -48,9 +50,18 @@ function markClaimedLessonQuestionAnswerFailed({
   revision: number;
   userId: string;
 }) {
-  return prisma.lessonQuestion.updateMany({
-    data: { status: "failed" },
-    where: { generationRevision: revision, id: questionId, status: "running", thread: { userId } },
+  return writeLearnerChange({ userId }, async (tx) => {
+    const updated = await tx.lessonQuestion.updateMany({
+      data: { status: "failed" },
+      where: {
+        generationRevision: revision,
+        id: questionId,
+        status: "running",
+        thread: { userId },
+      },
+    });
+
+    return updated.count > 0 ? updated : unchanged(updated);
   });
 }
 
@@ -75,10 +86,9 @@ async function claimTutorUsage({
   }
 }
 
-type ClaimedQuestion = Extract<
-  Awaited<ReturnType<typeof claimAnswerInTransaction>>,
-  { status: "ready" }
->["claim"];
+type AnswerClaimOutcome = Awaited<ReturnType<typeof claimAnswerInTransaction>>;
+
+type ClaimedQuestion = Extract<AnswerClaimOutcome, { status: "ready" }>["claim"];
 
 /**
  * A new answer counts against the learner's `tutorMessage` allowance (guests sign up first), even
@@ -164,9 +174,14 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   const now = new Date();
 
-  const claimed = await prisma.$transaction((transaction) =>
-    claimAnswerInTransaction({ input, now, transaction, userId }),
-  );
+  // Writing (or a shared answer) shows on the thread; a refused claim changes nothing.
+  const claimed = await writeLearnerChange<AnswerClaimOutcome>({ userId }, async (transaction) => {
+    const result = await claimAnswerInTransaction({ input, now, transaction, userId });
+
+    return result.status === "conflict" || result.status === "notFound"
+      ? unchanged(result)
+      : result;
+  });
 
   if (claimed.status !== "ready") {
     return claimed;
@@ -245,7 +260,8 @@ function saveCompletedAnswer({
     runId: completion.runId,
   };
 
-  return prisma.$transaction(async (transaction) => {
+  // The answer shows on the thread; a stale revision saves nothing.
+  return writeLearnerChange({ userId }, async (transaction) => {
     const updated = await transaction.lessonQuestion.updateMany({
       data: {
         ...provenance,
@@ -280,7 +296,7 @@ function saveCompletedAnswer({
       });
     }
 
-    return updated.count;
+    return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 }
 

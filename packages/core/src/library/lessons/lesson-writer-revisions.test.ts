@@ -12,7 +12,8 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import {
@@ -124,22 +125,6 @@ async function revision(userId: string) {
 async function inputVersion(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
   return plan.inputVersion;
-}
-
-/** Wait for actual PostgreSQL contention; no delay stands in for transaction readiness. */
-async function waitingQuery(holderPID: number) {
-  const observed: { query: string | null } = { query: null };
-
-  await vi.waitFor(async () => {
-    const [blocked] = await prisma.$queryRaw<{ query: string }[]>`
-      SELECT query FROM pg_stat_activity WHERE ${holderPID}::int = ANY(pg_blocking_pids(pid))
-    `;
-
-    expect(blocked).toBeDefined();
-    observed.query = blocked?.query ?? null;
-  });
-
-  return observed.query;
 }
 
 async function unchanged(context: Awaited<ReturnType<typeof fixture>>) {
@@ -276,7 +261,7 @@ describe("lesson writer learner revisions", () => {
     const attempt = write({ ...context, writer });
 
     try {
-      await expect(waitingQuery(pid)).resolves.toMatch(/FROM plans AS plan[\s\S]*FOR UPDATE/u);
+      await waitForBlockedStatement(pid, /FROM plans AS plan[\s\S]*FOR UPDATE/u);
     } finally {
       resume.resolve(null);
       const outcomes = await Promise.allSettled([first, attempt]);

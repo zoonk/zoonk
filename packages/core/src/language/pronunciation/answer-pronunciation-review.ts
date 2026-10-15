@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import {
   type SpokenAudio,
@@ -112,10 +113,12 @@ export async function answerPronunciationReview({
     timeZone,
   });
 
-  await prisma.pronunciationReview.update({
-    data: { ...next, lastReviewedAt: now },
-    where: { id: review.id },
-  });
+  await writeLearnerChange({ userId }, (tx) =>
+    tx.pronunciationReview.update({
+      data: { ...next, lastReviewedAt: now },
+      where: { id: review.id },
+    }),
+  );
 
   return {
     grade: {
