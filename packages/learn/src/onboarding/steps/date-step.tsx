@@ -8,6 +8,7 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useKeptTyping } from "../../use-kept-typing";
 import { StepForm } from "./step-form";
 
 type StepProps = {
@@ -95,6 +96,7 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
   const inputId = useId();
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
+  const kept = useKeptTyping(setDate);
   const mountedAt = useMountTime();
   const today = toLocalIsoDate(mountedAt);
 
@@ -124,6 +126,7 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
           aria-describedby={noteId}
           className="h-11 text-base md:text-[0.9375rem]"
           id={inputId}
+          {...kept.field}
           max={bounds.max}
           min={bounds.min}
           onChange={(event) => setDate(event.target.value)}

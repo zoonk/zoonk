@@ -5,6 +5,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
+import { useKeptTyping } from "../../use-kept-typing";
 
 /**
  * The words in the field and anything stacked in the same place (the landing's rotating examples)
@@ -117,7 +118,8 @@ export function GoalFieldLabel({
 /**
  * The goal's words: one line that grows with them. Enter sends (Shift+Enter breaks the line). On
  * a device with a mouse or trackpad it takes focus when it shows (`autoFocusOnPointer`); on a phone
- * it waits for a tap, so the keyboard doesn't cover what's under it.
+ * it waits for a tap, so the keyboard doesn't cover what's under it. Words typed before its code
+ * arrived stay, instead of the words it came with (`useKeptTyping`).
  */
 export function GoalFieldText({
   autoFocusOnPointer = false,
@@ -131,6 +133,14 @@ export function GoalFieldText({
 }) {
   const ownRef = useRef<HTMLTextAreaElement>(null);
   const fieldRef = ref ?? ownRef;
+
+  const kept = useKeptTyping((typed) => {
+    const field = fieldRef.current;
+
+    if (field && field.value !== typed) {
+      field.value = typed;
+    }
+  });
 
   useEffect(() => {
     if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
@@ -163,6 +173,8 @@ export function GoalFieldText({
       ref={fieldRef}
       rows={1}
       {...props}
+      {...kept.field}
+      defaultValue={kept.typed ?? props.defaultValue}
     />
   );
 }

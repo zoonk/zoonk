@@ -217,8 +217,12 @@ export function FollowUpsStep({
           autoFocus={index === 0}
           key={question}
           label={question}
+          // From the answers as they are by then: two fields' words kept from before the step's
+          // code arrived come in at once.
           onChange={(value) =>
-            setAnswers(answers.map((answer, position) => (position === index ? value : answer)))
+            setAnswers((current) =>
+              current.map((answer, position) => (position === index ? value : answer)),
+            )
           }
           placeholder={t("Your answer")}
           value={answers[index] ?? ""}

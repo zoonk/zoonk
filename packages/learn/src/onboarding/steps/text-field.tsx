@@ -3,12 +3,14 @@
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useId } from "react";
+import { useKeptTyping } from "../../use-kept-typing";
 
 const MAX_ANSWER_LENGTH = 200;
 
 /**
  * Only a screen's first field takes focus; the others wait for the learner. Its text stays 16px on
- * phones, where iOS Safari zooms into smaller fields.
+ * phones, where iOS Safari zooms into smaller fields. Words typed before its code arrived count
+ * (`useKeptTyping`).
  */
 export function TextField({
   autoFocus = true,
@@ -24,6 +26,7 @@ export function TextField({
   value: string;
 }) {
   const inputId = useId();
+  const kept = useKeptTyping(onChange);
 
   return (
     <div className="flex flex-col gap-2">
@@ -32,6 +35,7 @@ export function TextField({
         autoFocus={autoFocus}
         className="h-11 text-base md:text-[0.9375rem]"
         id={inputId}
+        {...kept.field}
         maxLength={MAX_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

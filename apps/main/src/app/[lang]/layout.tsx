@@ -14,6 +14,7 @@ import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import { IdentityCoverBridge } from "./identity-cover-bridge";
 import { IdentityCoverScript } from "./identity-cover-script";
+import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
@@ -60,6 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       <head>
         <SignedInHintScript />
         <IdentityCoverScript />
+        <KeepTypingScript />
       </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the

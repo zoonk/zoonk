@@ -49,6 +49,7 @@
     "./journey/resume-effect": "./src/journey/resume-effect.tsx",
     "./diff-lines": "./src/_components/diff-lines.tsx",
     "./day-segments": "./src/today/day-segments.tsx",
+    "./kept-typing-script": "./src/kept-typing-script.ts",
     "./kind-tile": "./src/_components/kind-tile.tsx",
     "./language/checkpoint-call": "./src/language/conversation/checkpoint-call-preparing.tsx",
     "./language/no-speech": "./src/language/no-speech-message.ts",
