@@ -5,6 +5,7 @@ import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
 import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/public-hrefs";
+import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
@@ -21,7 +22,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { connection } from "next/server";
+import { cacheTag } from "next/cache";
 import { Suspense } from "react";
 import { OnboardingNotFound } from "../../../_components/onboarding-not-found";
 import { getGoalLimitReason } from "../../goal-limit-reason";
@@ -82,18 +83,34 @@ function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null
     : null;
 }
 
-async function CourseStartContent({ params, searchParams }: Props) {
-  // Their goal on the course and whether they can start another are read fresh for each visit.
-  await connection();
-  const t = await getExtracted();
-  const [{ courseId, lang }, query] = await Promise.all([params, searchParams]);
+/**
+ * What the start page shows this browser: the course, the learner's goal already on it and the goal
+ * limit they reached. Kept for the browser, so the page opens from its prefetch: both learner facts
+ * are only said up front, like a seat map, and starting checks them again (an existing goal is
+ * opened, a limit reached meanwhile is said).
+ */
+async function loadCourseStart(courseId: string) {
+  "use cache: private";
 
-  const [course, existing, limit, session] = await Promise.all([
+  const session = await getSession();
+
+  if (session) {
+    cacheTag(getGoalsCacheTag(session.user.id), getAllowanceCacheTag(session.user.id));
+  }
+
+  const [course, existing, limit] = await Promise.all([
     loadStartableCourse(courseId),
     findCourseGoalStart(courseId),
     findGoalStartLimit(),
-    getSession(),
   ]);
+
+  return { course, existing, hasSession: Boolean(session), limit };
+}
+
+async function CourseStartContent({ params, searchParams }: Props) {
+  const t = await getExtracted();
+  const [{ courseId, lang }, query] = await Promise.all([params, searchParams]);
+  const { course, existing, hasSession, limit } = await loadCourseStart(courseId);
 
   if (!course) {
     return (
@@ -124,7 +141,7 @@ async function CourseStartContent({ params, searchParams }: Props) {
       <LearnerWitness />
       <OnboardingPage
         backHref="/courses"
-        barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
+        barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
       >
         <CourseStartScreen
           chapter={chapter ? { id: chapter.id, title: chapter.title } : null}

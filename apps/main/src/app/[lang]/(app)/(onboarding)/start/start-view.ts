@@ -1,8 +1,10 @@
-import { getTutorViewer } from "@/lib/learn/tutor-viewer";
+import { getAllowanceCacheTag, getGoalsCacheTag } from "@zoonk/core/cache-tags";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
+import { getSession } from "@zoonk/core/users/session";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { isUuid } from "@zoonk/utils/uuid";
+import { cacheTag } from "next/cache";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
 /** The draft when it's the learner's own; anyone else's, or none, starts fresh. */
@@ -17,26 +19,32 @@ async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | 
 
 /**
  * What the start form needs, wherever it shows (`/start`, or Today for a learner without a goal):
- * the buddy who answers questions about attached material, the draft to show again, and the goal
- * limit already reached, if any. A guest whose one goal is taken needs an account first.
+ * whether there's a session and it can attach material (an account), the draft to show again, and
+ * the goal limit already reached, if any. A guest whose one goal is taken needs an account first.
+ * Kept for the learner's browser, so the page opens from its prefetch: the limit is only said up
+ * front, like a seat map, and creating a goal checks it again and says so when it was reached
+ * meanwhile.
  */
 export async function loadStartView(draftId: string | null) {
-  const [tutor, draft, goalLimit] = await Promise.all([
-    getTutorViewer(),
-    loadDraft(draftId),
-    findGoalStartLimit(),
-  ]);
+  "use cache: private";
 
+  const session = await getSession();
+
+  if (session) {
+    cacheTag(getGoalsCacheTag(session.user.id), getAllowanceCacheTag(session.user.id));
+  }
+
+  const [draft, goalLimit] = await Promise.all([loadDraft(draftId), findGoalStartLimit()]);
   const isGuestLimit = goalLimit?.tier === "guest";
 
   return {
-    buddy: tutor.buddy,
-    canAttach: tutor.canAsk,
+    canAttach: Boolean(session && !session.user.isAnonymous),
     draft,
     goalLimit:
       goalLimit && !isGuestLimit
         ? getGoalLimitReason({ limit: goalLimit, status: "limitReached" })
         : null,
+    hasSession: Boolean(session),
     needsAccount: isGuestLimit,
   };
 }

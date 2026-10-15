@@ -2,14 +2,12 @@ import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
 import { GOAL_PARAM, PLAN_PARAM } from "@/lib/public/public-hrefs";
-import { getSession } from "@zoonk/core/users/session";
 import { OnboardingPage } from "@zoonk/learn/onboarding/frame";
 import { StartEntrySkeleton } from "@zoonk/learn/onboarding/skeletons";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
-import { connection } from "next/server";
 import { Suspense } from "react";
 import { StartClient } from "./start-client";
 import { DRAFT_PARAM, START_AGAIN_PARAM } from "./start-params";
@@ -32,11 +30,9 @@ function readParam(value: string | string[] | undefined): string | null {
 }
 
 async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
-  // Whether the learner can start another goal is read fresh for each visit: render per request.
-  await connection();
-  const [language, query, session] = await Promise.all([lang(), searchParams, getSession()]);
+  const [language, query] = await Promise.all([lang(), searchParams]);
 
-  const { buddy, canAttach, draft, goalLimit, needsAccount } = await loadStartView(
+  const { canAttach, draft, goalLimit, hasSession, needsAccount } = await loadStartView(
     readParam(query[DRAFT_PARAM]),
   );
 
@@ -53,15 +49,14 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
     <>
       <LearnerWitness />
       <OnboardingPage
-        backHref={session ? "/today" : "/"}
-        barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
+        backHref={hasSession ? "/today" : "/"}
+        barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
       >
         <StartClient
           // "Start over" comes back here with a new key, so nothing typed before is kept, and
           // opening another draft shows that one.
           key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}`}
-          buddy={buddy}
-          canAttach={canAttach}
+                    canAttach={canAttach}
           defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
           goalLimit={goalLimit}
           initialDraft={draft}

@@ -229,6 +229,55 @@ test.describe("Instant navigation", () => {
     });
   });
 
+  test("a public course's Build my plan opens its start page at once", async ({ page }) => {
+    const { course, coursePath } = await createPublicNavigationCourse();
+    await openSettled(page, coursePath);
+
+    await instant(page, async () => {
+      await page
+        .getByRole("link", { name: "Build my plan" })
+        .filter({ visible: true })
+        .first()
+        .click();
+
+      await page.waitForURL(new RegExp(`/start/course/${course.id}`, "u"));
+      await expectPainted(page);
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "How much do you already know?" }),
+      ).toBeVisible();
+    });
+  });
+
+  test("Start a new goal opens the start page at once, with the goal limit said up front", async ({
+    browser,
+  }) => {
+    const { user } = await createChapterLearner();
+    const page = await openAs(browser, user);
+    await openSettled(page, "/stats");
+
+    const prefetched = pagePrefetched(page, "/start");
+
+    await page
+      .getByRole("complementary", { name: "Sidebar" })
+      .getByRole("button", { name: /Learn percentages/u })
+      .click();
+
+    await prefetched;
+
+    await instant(page, async () => {
+      await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+      await page.waitForURL(/\/start$/u);
+      await expectPainted(page);
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "What do you want to achieve?" }),
+      ).toBeVisible();
+
+      await expect(page.getByText(/The free plan follows one goal at a time/u)).toBeVisible();
+    });
+  });
+
   test("a public course's edition notice prefetches the edition in the app language", async ({
     page,
   }) => {

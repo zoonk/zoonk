@@ -131,15 +131,14 @@ async function TodayFirstGoal() {
   const t = await getExtracted();
   const locale = await getLocale();
   const { start, context } = await loadFirstGoalView(locale);
-  const { buddy, canAttach, draft, goalLimit, needsAccount } = start;
+  const { canAttach, draft, goalLimit, needsAccount } = start;
 
   return (
     <>
       <LearnerWitness />
 
       <LazyStartClient
-        buddy={buddy}
-        canAttach={canAttach}
+                canAttach={canAttach}
         defaultGoal=""
         embedded
         goalLimit={goalLimit}

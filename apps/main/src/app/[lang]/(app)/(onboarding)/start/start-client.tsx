@@ -1,6 +1,6 @@
 "use client";
 
-import { type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -15,7 +15,6 @@ import {
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 export function StartClient({
-  buddy,
   canAttach,
   defaultGoal,
   embedded = false,
@@ -25,8 +24,6 @@ export function StartClient({
   needsAccount,
   planId,
 }: {
-  /** The learner's resolved buddy, who answers questions about their material. */
-  buddy: TutorViewer["buddy"];
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach: boolean;
   defaultGoal: string;
@@ -43,6 +40,11 @@ export function StartClient({
   planId: string | null;
 }) {
   const navigation = useOnboardingNavigation();
+  // The buddy who answers questions about attached material, as the frame's summary has it. It's
+  // drawn only beside an answer, seconds after the page opened; until the summary is in (or when it
+  // couldn't be read) the flow draws the default buddy, the one a learner who never chose has.
+  const learner = useLearnerSummary();
+  const buddy = learner.status === "ready" ? learner.summary.buddy : null;
 
   const flow = (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
