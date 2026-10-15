@@ -1,15 +1,14 @@
+import { createHash } from "node:crypto";
 import { type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { estimateDailyNeed, readFixedDays } from "./daily-need";
+import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
 import { type ExamSubjectShare } from "./feasibility-coverage";
-import { getBaseChoices } from "./plan-bases";
+import { mayCostToKeepPhaseDates } from "./phase-dates-move";
+import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
 import { getCoverage } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
-
-/** A goal this close (in days) studies its bases with a quick lesson by default (see `getDefaultBaseChoice`). */
-const CLOSE_TO_DATE_DAYS = 60;
 
 /**
  * The last day new lessons count by: an exam's final stretch start as this build laid it out, else
@@ -26,14 +25,6 @@ function getDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput
   return finalStretch?.startDate ?? toIsoDate(targetDate);
 }
 
-/**
- * How a goal studies its bases unless the learner chose otherwise: each for its core, or with a
- * quick lesson when its date is close, by the date alone. Never every lesson by default.
- */
-function getDefaultBaseChoice(daysLeft: number | null): "essential" | "quick" {
-  return daysLeft !== null && daysLeft <= CLOSE_TO_DATE_DAYS ? "quick" : "essential";
-}
-
 /** The plan's bases with the choice this build studied each with (see `SelectedSummary.bases`). */
 function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
   const bases = input.bases ?? [];
@@ -47,6 +38,7 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
 
   return {
     bases: bases.map((base) => ({
+      area: base.area,
       choice: choices.get(base.skillId) ?? "essential",
       known: base.known,
       minutes: {
@@ -54,6 +46,8 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
         essential: base.minutes.essential,
         quick: input.quickLessons?.has(base.skillId) ? base.minutes.quick : null,
       },
+      name: base.name,
+      neededFor: base.neededFor,
       skillId: base.skillId,
     })),
     daysLeft,
@@ -116,10 +110,44 @@ function listSourceSkillIds({
 }
 
 /**
+ * Whether keeping the phase dates this build kept may cost the learner something (see
+ * `mayCostToKeepPhaseDates`), with what says so, as a key: a card the learner resolved stays
+ * resolved until it changes (see `SelectedSummary.phaseDates`). A build that planned its phase
+ * dates again kept none, so nothing to say.
+ */
+function readPhaseDates({
+  built,
+  input,
+}: {
+  built: BuiltPlan;
+  input: BuildPlanInput;
+}): SelectedSummary["phaseDates"] {
+  const kept = input.phaseEnds !== undefined && input.phaseEnds.size > 0;
+
+  if (!kept || !mayCostToKeepPhaseDates(built)) {
+    return { structureKey: null, trigger: false };
+  }
+
+  const structure = {
+    dropped: built.droppedSkillIds.toSorted(),
+    endsBeforeLessons: built.endsBeforeLessons.toSorted((a, b) => a - b),
+    strained: built.strainedEnds
+      .map(({ phase, resting, room }) => ({ phase, resting, room }))
+      .toSorted((a, b) => a.phase - b.phase),
+  };
+
+  return {
+    structureKey: createHash("sha256").update(JSON.stringify(structure)).digest("hex"),
+    trigger: true,
+  };
+}
+
+/**
  * The facts a saved plan keeps of its one selected build (see `SelectedSummary`): what it covers
- * of the chosen requirement by the deadline, about how much daily time that requirement needs,
- * the requirement's size, the bases' choices, when the schedule ends and what it read. Reads only
- * this build and its input: no other plan is built.
+ * of the chosen requirement by the deadline, about how much daily time that requirement needs and
+ * when it would all be done, the requirement's size, the bases' choices, when the schedule ends,
+ * whether keeping its phase dates may cost something and what it read. Reads only this build and
+ * its input: no other plan is built.
  */
 export function summarizeSelectedPlan({
   built,
@@ -136,25 +164,34 @@ export function summarizeSelectedPlan({
   const settled = listSettled(input);
   const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
 
+  const { targetDate } = input.goal;
+
   return {
     bases: summarizeBases(input),
-    coverage: deadline
-      ? getCoverage({
-          built,
-          deadline,
-          examSubjects,
-          input,
-          requirement: requirementBySkill,
-          settled,
-        })
-      : null,
-    dailyNeed: deadline
-      ? estimateDailyNeed({
-          fixed: readFixedDays({ built, deadline, input }),
-          remaining: requirement.remainingRaw,
-        })
-      : { basis: "estimated", minutes: null, reason: "noDeadline" },
+    coverage:
+      deadline && targetDate
+        ? getCoverage({
+            built,
+            deadline,
+            examSubjects,
+            input,
+            requirement: requirementBySkill,
+            settled,
+            targetDate: toIsoDate(targetDate),
+          })
+        : null,
     endDate: getEndDate(built),
+    forecast: {
+      basis: "estimated",
+      dailyNeed: deadline
+        ? estimateDailyNeed({
+            fixed: readFixedDays({ built, deadline, input }),
+            remaining: requirement.remainingRaw,
+          })
+        : { basis: "estimated", minutes: null, reason: "noDeadline" },
+      finish: estimateFinish({ built, input, remaining: requirement.remainingRaw }),
+    },
+    phaseDates: readPhaseDates({ built, input }),
     requirement,
     sourceSkillIds: listSourceSkillIds({ built, input }),
     totalMinutes: built.estimate.totalMinutes,

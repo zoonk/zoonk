@@ -92,7 +92,7 @@ describe("selected plan persistence", () => {
       expect.arrayContaining(library.skills.map(({ id }) => id)),
     );
 
-    expect(summary?.selected.totalMinutes).toBe(saved.estimateHours! * 60);
+    expect(summary?.selected?.totalMinutes).toBe(saved.estimateHours! * 60);
 
     const longLesson = saved.items.find((item) => item.lessonId === library.lessons[0]!.id);
     const facts = readSelectedItemFacts(longLesson?.facts);

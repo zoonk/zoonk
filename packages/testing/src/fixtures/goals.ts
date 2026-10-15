@@ -26,7 +26,11 @@ export async function goalFixture(attrs: FixtureAttrs<Goal, "details"> & Pick<Go
 
 /** Creates the plan of a goal with one phase. */
 export async function planFixture(
-  attrs: FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> & Pick<Plan, "goalId">,
+  attrs: FixtureAttrs<
+    Plan,
+    "graph" | "layoutKeys" | "pendingPace" | "phases" | "settings" | "summary"
+  > &
+    Pick<Plan, "goalId">,
 ) {
   return prisma.plan.create({
     data: { phases: [{ name: "Test phase", summary: "Test phase summary" }], ...attrs },

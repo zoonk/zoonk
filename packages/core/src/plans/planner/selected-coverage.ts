@@ -1,4 +1,4 @@
-import { type SelectedSummary } from "../_utils/selected-summary-contract";
+import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
 import { type ExamSubjectShare, getExamWorth } from "./feasibility-coverage";
@@ -12,7 +12,7 @@ import { type SkillRequirement, isCredited } from "./selected-requirement";
 /** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
 
-type SelectedSkill = NonNullable<SelectedSummary["coverage"]>["skills"][number];
+type SelectedSkill = SelectedCoverage["skills"][number];
 
 /**
  * The skills the plan measures: the graph's, without the ones the learner took out on purpose (an
@@ -134,6 +134,53 @@ function listCoveredStandIns({
   }, new Map<string, number>());
 }
 
+/**
+ * The lessons still to do the plan counts less than whole by the deadline (one running past it, or
+ * after it), each once with the measured skills it counts for (see `SelectedCoverage.shortLessons`):
+ * finishing one is the only completion that changes what the plan covers. A lesson the plan doesn't
+ * hold has no item to finish, so it isn't listed.
+ */
+function listShortLessons({
+  built,
+  covered,
+  requirement,
+  skills,
+}: {
+  built: BuiltPlan;
+  covered: ReadonlyMap<string, number>;
+  requirement: ReadonlyMap<string, SkillRequirement>;
+  skills: readonly SelectedSkill[];
+}): SelectedCoverage["shortLessons"] {
+  const held = new Set(
+    built.items.flatMap((item) => (item.lessonId && item.status === "todo" ? [item.lessonId] : [])),
+  );
+
+  const lessons = Map.groupBy(
+    skills
+      .filter((skill) => skill.state === "measured")
+      .flatMap((skill) =>
+        [...(requirement.get(skill.skillId)?.lessons ?? [])].map(([lessonId, requiredRaw]) => ({
+          lessonId,
+          requiredRaw,
+          skillId: skill.skillId,
+        })),
+      ),
+    (entry) => entry.lessonId,
+  );
+
+  return [...lessons]
+    .map(([lessonId, entries]) => ({
+      countedRaw: covered.get(lessonId) ?? 0,
+      lessonId,
+      requiredRaw: entries[0]?.requiredRaw ?? 0,
+      skillIds: entries.map((entry) => entry.skillId).toSorted(),
+    }))
+    .filter(
+      (lesson) => held.has(lesson.lessonId) && lesson.countedRaw < lesson.requiredRaw - EPSILON,
+    )
+    .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
+}
+
 /** How much of a skill counts as covered: all of a settled one, none of an unknown one. */
 function getSkillValue(skill: SelectedSkill): number {
   if (skill.state === "settled") {
@@ -148,7 +195,8 @@ function getSkillValue(skill: SelectedSkill): number {
  * `SelectedSummary.coverage`): each in-scope skill's covered raw minutes over its required ones,
  * weighted by what it's worth, a settled skill counted whole and one with no requirement data
  * counted as none (never as covered). `fits` holds only when every topic is in, every in-scope
- * skill is covered whole and none is unknown.
+ * skill is covered whole and none is unknown. It keeps the goal's date it measured against, and the
+ * lessons it counts less than whole (see `listShortLessons`).
  */
 export function getCoverage({
   built,
@@ -157,6 +205,7 @@ export function getCoverage({
   input,
   requirement,
   settled,
+  targetDate,
 }: {
   built: BuiltPlan;
   deadline: string;
@@ -164,7 +213,8 @@ export function getCoverage({
   input: BuildPlanInput;
   requirement: ReadonlyMap<string, SkillRequirement>;
   settled: ReadonlySet<string>;
-}): NonNullable<SelectedSummary["coverage"]> {
+  targetDate: string;
+}): SelectedCoverage {
   const scope = listScope({ examSubjects, input });
 
   const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
@@ -216,6 +266,8 @@ export function getCoverage({
     deadline,
     fits: coreFits && total > 0 && whole,
     measure: scope.measure,
+    shortLessons: listShortLessons({ built, covered: lessons, requirement, skills }),
     skills,
+    targetDate,
   };
 }

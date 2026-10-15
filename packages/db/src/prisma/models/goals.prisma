@@ -28,6 +28,17 @@ enum PlanItemStatus {
   testedOut @map("tested_out")
 }
 
+/// Why a stored plan may not reflect its inputs yet (see `Plan.pendingAdaptation`).
+enum PlanAdaptationReason {
+  content
+  goalSource @map("goal_source")
+  calendar
+  pace
+  evidence
+  account
+  rebalance
+}
+
 /// One piece of a new plan's setup, done once after the plan is built (see `Plan.setupTasks`).
 enum PlanSetupTask {
   placement
@@ -124,56 +135,71 @@ model Goal {
 /// Every change is a `PlanChange` with a one-sentence reason and an undo. Provenance is set when a model
 /// wrote the phases.
 model Plan {
-  id                  String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  goalId              String          @unique @map("goal_id") @db.Uuid
-  goal                Goal            @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  phases              Json            @default("[]")
-  graph               Json            @default("{}")
-  settings            Json            @default("{}")
-  estimateHours       Float?          @map("estimate_hours")
-  version             Int             @default(1)
+  id                  String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  goalId              String                 @unique @map("goal_id") @db.Uuid
+  goal                Goal                   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  phases              Json                   @default("[]")
+  graph               Json                   @default("{}")
+  settings            Json                   @default("{}")
+  estimateHours       Float?                 @map("estimate_hours")
+  version             Int                    @default(1)
   /// Source input writers increment this independently of plan edits and Undo.
-  inputVersion        Int             @default(0) @map("input_version")
-  /// Versioned selected-build facts; a legacy or stale value is rebuilt without render writes.
+  inputVersion        Int                    @default(0) @map("input_version")
+  /// The selected build's facts, valid for the plan version they were posted with (see
+  /// `readPlanSummary`); a legacy value reads as pending, never as a plan with no work.
   summary             Json?
   /// Full pre-cut skill dependencies, including aliases, for content-writer invalidation.
-  sourceSkillIds      String[]        @default([]) @map("source_skill_ids") @db.Uuid
+  sourceSkillIds      String[]               @default([]) @map("source_skill_ids") @db.Uuid
   model               String?
-  promptVersion       String?         @map("prompt_version")
-  runId               String?         @map("run_id")
-  generatedAt         DateTime?       @map("generated_at")
+  promptVersion       String?                @map("prompt_version")
+  runId               String?                @map("run_id")
+  generatedAt         DateTime?              @map("generated_at")
   /// When the goal's last run building this plan gave up before it had skills; cleared when a new
   /// run starts, so placement and the plan stop waiting and offer to try again.
-  buildFailedAt       DateTime?       @map("build_failed_at")
+  buildFailedAt       DateTime?              @map("build_failed_at")
   /// When the run that built the plan finished writing placement's questions (some may have
   /// failed); until then, a skill's missing questions are still coming.
-  placementPreparedAt DateTime?       @map("placement_prepared_at")
+  placementPreparedAt DateTime?              @map("placement_prepared_at")
   /// An exam plan built before research read the exam's notice waits for that reading until this
   /// time: the plan reveal says it's reading the notice, and a reading that lands in time becomes
   /// part of the plan. Past it, the plan shows the exam's usual structure and the reading arrives
   /// as a change the learner applies. Null when nothing is waited for (the plan was built from
   /// the notice, the reading landed, or research ended without one).
-  noticeWaitUntil     DateTime?       @map("notice_wait_until")
+  noticeWaitUntil     DateTime?              @map("notice_wait_until")
   /// When the plan stopped waiting for its exam's notice: the reading landed in the plan, arrived as
   /// a change to apply, or research ended without one. A notice recorded before then is the plan's
   /// own (it shaped the plan or that change), so Today never shows it as news.
-  noticeWaitEndedAt   DateTime?       @map("notice_wait_ended_at")
+  noticeWaitEndedAt   DateTime?              @map("notice_wait_ended_at")
   /// What the plan covered of its goal by its date when it was last planned (0 to 1, the share its
   /// feasibility reads), so a new day can tell the learner when falling behind puts the date at
   /// risk. Null for plans without a date.
-  coveredShare        Float?          @map("covered_share")
+  coveredShare        Float?                 @map("covered_share")
   /// The key of what the plan was last planned from (the planner's input and the learner's
   /// progress): a system refresh that would plan from the same writes nothing, so opening the app
   /// with nothing new never moves the plan. Null until a run saves one.
-  inputsKey           String?         @map("inputs_key")
+  inputsKey           String?                @map("inputs_key")
   /// What a new plan still owes once it's built, each once: the placement the learner ended before
   /// the plan existed (`placement`), fitting the plan to the routine memory holds (`routine`), and
   /// asking about the notice's exam day in another month than the one the learner named (`notice`).
   /// A task leaves the list in the same transaction as its effect, so a retry or a later request
   /// finishes what's left and never repeats one. Empty once the plan is set up.
-  setupTasks          PlanSetupTask[] @default([]) @map("setup_tasks")
-  createdAt           DateTime        @default(now()) @map("created_at")
-  updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at")
+  setupTasks          PlanSetupTask[]        @default([]) @map("setup_tasks")
+  /// Why the stored plan may not reflect its inputs yet: each input writer adds its reason in the
+  /// transaction that marks the plan's inputs changed, and only the write that lays the plan out
+  /// again (or finds its inputs unchanged) clears the reasons it took in. Undo never touches it.
+  pendingAdaptation   PlanAdaptationReason[] @default([]) @map("pending_adaptation")
+  /// The pace a session's end sampled that the stored plan doesn't use yet (with the `pace`
+  /// reason): the layout that takes it into `settings.pace` clears both. Null when none waits.
+  pendingPace         Json?                  @map("pending_pace")
+  /// The versioned scope and placement keys the stored layout was planned from (see
+  /// `getPlanInputKeys`), compared before any build. Null until a layout writes them.
+  layoutKeys          Json?                  @map("layout_keys")
+  /// The input version a write last verified the stored plan against its inputs at (a layout, an
+  /// acknowledgment, a re-key, or Open's day once its gate checked): equal to `inputVersion`, no
+  /// input moved since. Null when never checked, and after an undo.
+  checkedInputVersion Int?                   @map("checked_input_version")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at")
   items               PlanItem[]
   changes             PlanChange[]
 

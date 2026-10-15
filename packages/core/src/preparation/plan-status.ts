@@ -5,11 +5,13 @@ import {
   isDateReached,
   isPlanFinished,
 } from "../plans/_utils/plan-end";
+import {
+  type PlanAdjustment,
+  type PlanLifecycle,
+  type PlanPace,
+} from "../plans/plan-assessment-contract";
 import { daysBetween } from "../plans/planner/plan-calendar";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
-
-/** What the learner can change when the plan no longer fits. */
-type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
 
 /**
  * The learner's pace against their plan: keeping pace, ahead (by how many days), a bit behind
@@ -79,24 +81,48 @@ export function getMinutesPerItem({
     : DEFAULT_MINUTES_PER_PLAN_ITEM;
 }
 
-function getNeedsAdjusting(targetDate: Date | null): PlanStatus {
+/** What the learner can change when the plan doesn't fit. */
+export function getPlanAdjustments(targetDate: Date | null): PlanAdjustment[] {
   const options: PlanAdjustment[] = ["addTime", "narrowScope"];
-  return { kind: "needsAdjusting", options: targetDate ? [...options, "moveDate"] : options };
+  return targetDate ? [...options, "moveDate"] : options;
 }
 
-function isPastTarget({
+function getNeedsAdjusting(targetDate: Date | null): PlanStatus {
+  return { kind: "needsAdjusting", options: getPlanAdjustments(targetDate) };
+}
+
+/** The items the plan needs done: its phases' challenges only where they're required. */
+function listRequired({
   items,
+  phaseChallengesRequired,
+}: {
+  items: readonly PlanStatusItem[];
+  phaseChallengesRequired: boolean;
+}) {
+  return phaseChallengesRequired ? items : items.filter((item) => item.kind !== "boss");
+}
+
+/**
+ * Whether the stored plan has work still to do after the goal's date, unless the learner chose to
+ * go on after it (`studiesPastTarget`): the plan doesn't fit by the date, whatever its pace.
+ */
+export function hasWorkAfterDate({
+  items,
+  phaseChallengesRequired,
   studiesPastTarget,
   targetDate,
 }: {
   items: readonly PlanStatusItem[];
+  phaseChallengesRequired: boolean;
   studiesPastTarget: boolean;
   targetDate: Date | null;
-}) {
+}): boolean {
   return (
     !studiesPastTarget &&
     targetDate !== null &&
-    items.some((item) => !isFinished(item) && item.scheduledFor && item.scheduledFor > targetDate)
+    listRequired({ items, phaseChallengesRequired }).some(
+      (item) => !isFinished(item) && item.scheduledFor && item.scheduledFor > targetDate,
+    )
   );
 }
 
@@ -116,17 +142,123 @@ function isDue({ item, today }: { item: PlanStatusItem; today: Date }): boolean 
 }
 
 /**
- * Compares finished plan items with those due by today. A day's worth of items either way
- * is the tolerance; beyond it the learner is ahead, or behind with a fix that fits before the
- * target date. Past work is never counted twice: items finished early count as ahead. Lessons
- * earlier days left (`catchUp`) mean the learner is behind until they're done, whatever the dates
- * say: a new day moves them first, so the dates alone would read as keeping pace. A plan whose
- * every lesson is studied or tested out and every challenge won is finished, whatever its dates:
- * Pedro's plan, done two weeks early, read "13 days ahead" beside "You finished your plan". One
- * whose date came with lessons left is past its date, never "Ended": Lucas's plan stopped there
- * with 13 lessons he never studied. One whose every lesson is done with challenges left says so,
- * even past its date, never "Too tight": Pedro's read "Finished" beside "0 of 4 phases done".
- * Returns null while nothing is scheduled, and for a plan only Plus moves (`freeWeekOver`).
+ * Where a plan's life stands (see `PlanLifecycle`), or null while it goes on. A plan whose every
+ * lesson is studied or tested out and every challenge won is finished, whatever its dates: Pedro's
+ * plan, done two weeks early, read "13 days ahead" beside "You finished your plan". One whose date
+ * came with lessons left is past its date, never "Ended": Lucas's plan stopped there with 13
+ * lessons he never studied. One whose every lesson is done with challenges left says so, even past
+ * its date, never "Too tight": Pedro's read "Finished" beside "0 of 4 phases done". A plan only
+ * Plus moves (`freeWeekOver`) is only ever finished.
+ */
+export function getPlanLifecycle({
+  freeWeekOver,
+  goalKind,
+  items,
+  phaseChallengesRequired,
+  studiesPastTarget,
+  targetDate,
+  today,
+}: {
+  freeWeekOver: boolean;
+  goalKind: Goal["kind"];
+  items: readonly PlanStatusItem[];
+  phaseChallengesRequired: boolean;
+  studiesPastTarget: boolean;
+  targetDate: Date | null;
+  today: Date;
+}): PlanLifecycle | null {
+  const ends = { goalKind, items, phaseChallengesRequired, studiesPastTarget, targetDate, today };
+
+  if (isPlanFinished(ends)) {
+    return { kind: "finished" };
+  }
+
+  if (freeWeekOver) {
+    return null;
+  }
+
+  const lessons = countLessonsLeft(items);
+
+  if (lessons > 0 && isDateReached({ studiesPastTarget, targetDate, today })) {
+    return { kind: "pastDate", lessons };
+  }
+
+  const challenges = countChallengesLeft(ends);
+  return challenges > 0 ? { challenges, kind: "challengesLeft" } : null;
+}
+
+/**
+ * Compares finished plan items with those due by today. A day's worth of items either way is the
+ * tolerance; beyond it the learner is ahead, or behind with a fix that fits before the target
+ * date when a small one does. Past work is never counted twice: items finished early count as
+ * ahead. Lessons earlier days left (`catchUp`) mean the learner is behind until they're done,
+ * whatever the dates say: a new day moves them first, so the dates alone would read as keeping
+ * pace. Null while nothing is scheduled, and for a plan only Plus moves (`freeWeekOver`): it has
+ * no pace to keep.
+ */
+export function getPlanPace({
+  catchUp,
+  freeWeekOver,
+  items,
+  minutesPerItem,
+  phaseChallengesRequired,
+  targetDate,
+  today,
+}: {
+  /** Lessons earlier days left that aren't done yet (see `loadCatchUpItems`). */
+  catchUp: number;
+  freeWeekOver: boolean;
+  items: readonly PlanStatusItem[];
+  minutesPerItem: number;
+  phaseChallengesRequired: boolean;
+  targetDate: Date | null;
+  /** The learner-local date, as a UTC-midnight label like `scheduledFor`. */
+  today: Date;
+}): PlanPace | null {
+  const scheduled = listRequired({ items, phaseChallengesRequired }).filter(
+    (item) => item.scheduledFor !== null,
+  );
+
+  const days = new Set(scheduled.map((item) => item.scheduledFor?.getTime())).size;
+
+  if (freeWeekOver || days === 0) {
+    return null;
+  }
+
+  if (catchUp > 0) {
+    return { catchUp: null, kind: "behind", lessons: catchUp };
+  }
+
+  const itemsPerDay = scheduled.length / days;
+  const expected = scheduled.filter((item) => isDue({ item, today })).length;
+  const lead = scheduled.filter((item) => isFinished(item)).length - expected;
+
+  if (lead >= itemsPerDay) {
+    return { days: Math.floor(lead / itemsPerDay), kind: "ahead" };
+  }
+
+  if (lead > -itemsPerDay) {
+    return { kind: "onPace" };
+  }
+
+  const catchUpDays = Math.ceil((-lead * minutesPerItem) / CATCH_UP_EXTRA_MINUTES);
+
+  const fits =
+    catchUpDays <= MAX_CATCH_UP_DAYS &&
+    catchUpDays <= (targetDate ? daysBetween(today, targetDate) : Number.POSITIVE_INFINITY);
+
+  return {
+    catchUp: fits ? { days: catchUpDays, extraMinutesPerDay: CATCH_UP_EXTRA_MINUTES } : null,
+    kind: "behind",
+    lessons: null,
+  };
+}
+
+/**
+ * The plan's status as one value, for its readers until they read `PlanAssessment` (whose fit says
+ * whether the plan reaches the goal, and its pace only how the learner keeps it): its lifecycle,
+ * else work after its date (needs adjusting), else its pace, one too far behind for a small fix
+ * needing adjusting too.
  */
 export function getPlanStatus({
   phaseChallengesRequired = true,
@@ -159,30 +291,8 @@ export function getPlanStatus({
   /** The learner-local date, as a UTC-midnight label like `scheduledFor`. */
   today: Date;
 }): PlanStatus | null {
-  if (
-    isPlanFinished({
-      goalKind,
-      items,
-      phaseChallengesRequired,
-      studiesPastTarget,
-      targetDate,
-      today,
-    })
-  ) {
-    return { kind: "finished" };
-  }
-
-  if (freeWeekOver) {
-    return null;
-  }
-
-  const lessons = countLessonsLeft(items);
-
-  if (lessons > 0 && isDateReached({ studiesPastTarget, targetDate, today })) {
-    return { kind: "pastDate", lessons };
-  }
-
-  const challenges = countChallengesLeft({
+  const lifecycle = getPlanLifecycle({
+    freeWeekOver,
     goalKind,
     items,
     phaseChallengesRequired,
@@ -191,53 +301,41 @@ export function getPlanStatus({
     today,
   });
 
-  if (challenges > 0) {
-    return { challenges, kind: "challengesLeft" };
+  if (lifecycle) {
+    return lifecycle;
   }
 
-  const required = phaseChallengesRequired ? items : items.filter((item) => item.kind !== "boss");
-  const scheduled = required.filter((item) => item.scheduledFor !== null);
-  const days = new Set(scheduled.map((item) => item.scheduledFor?.getTime())).size;
+  const pace = getPlanPace({
+    catchUp,
+    freeWeekOver,
+    items,
+    minutesPerItem,
+    phaseChallengesRequired,
+    targetDate,
+    today,
+  });
 
-  if (days === 0) {
+  if (!pace) {
     return null;
   }
 
-  if (isPastTarget({ items: required, studiesPastTarget, targetDate })) {
+  if (hasWorkAfterDate({ items, phaseChallengesRequired, studiesPastTarget, targetDate })) {
     return getNeedsAdjusting(targetDate);
   }
 
-  if (catchUp > 0) {
-    return { days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: catchUp };
-  }
-
-  const itemsPerDay = scheduled.length / days;
-
-  const expected = scheduled.filter((item) => isDue({ item, today })).length;
-
-  const lead = scheduled.filter((item) => isFinished(item)).length - expected;
-
-  if (lead >= itemsPerDay) {
-    return { days: Math.floor(lead / itemsPerDay), kind: "ahead" };
-  }
-
-  if (lead > -itemsPerDay) {
+  if (pace.kind === "onPace") {
     return { kind: "onTrack" };
   }
 
-  const catchUpDays = Math.ceil((-lead * minutesPerItem) / CATCH_UP_EXTRA_MINUTES);
-
-  if (
-    catchUpDays <= MAX_CATCH_UP_DAYS &&
-    catchUpDays <= (targetDate ? daysBetween(today, targetDate) : Number.POSITIVE_INFINITY)
-  ) {
-    return {
-      days: catchUpDays,
-      extraMinutesPerDay: CATCH_UP_EXTRA_MINUTES,
-      kind: "behind",
-      lessons: null,
-    };
+  if (pace.kind === "ahead") {
+    return pace;
   }
 
-  return getNeedsAdjusting(targetDate);
+  if (pace.lessons !== null) {
+    return { days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: pace.lessons };
+  }
+
+  return pace.catchUp
+    ? { ...pace.catchUp, kind: "behind", lessons: null }
+    : getNeedsAdjusting(targetDate);
 }

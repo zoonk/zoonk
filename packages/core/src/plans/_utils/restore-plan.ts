@@ -4,6 +4,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type ContextPlanItem, type PlanContext } from "./plan-context";
 import { type PlanSnapshot, getSnapshotStandInLessons, parsePlanSnapshot } from "./plan-snapshot";
+import { reduceRestoredSummary } from "./plan-summary";
 import { writePlan } from "./write-plan";
 
 /** The plan right before a change, which its undo puts back; null when it has none. */
@@ -66,8 +67,10 @@ function restoreStatus({
  * Puts the plan back as the snapshot has it (see `PlanSnapshot`): its state, phases and numbers,
  * and every item on its day with its status, items the change removed included; items the change
  * added leave. Restored items keep their snapshot ids, so today's restored block payloads still
- * reach them. What the learner finished since stays done. `items` are the snapshot's, with what
- * the undo changes about them (a test-out's skipped lessons, todo again).
+ * reach them. What the learner finished since stays done, and the restored summary counts it (see
+ * `reduceRestoredSummary`). The plan's pending adaptation stays as it is, and the plan reads as not
+ * checked against its inputs since. `items` are the snapshot's, with what the undo changes about
+ * them (a test-out's skipped lessons, todo again).
  */
 export async function restorePlan({
   context,
@@ -80,18 +83,36 @@ export async function restorePlan({
   snapshot: PlanSnapshot;
   tx: TransactionClient;
 }): Promise<void> {
+  // What stays credited once restored: the snapshot's own finished items, and what the learner
+  // finished since, which stays done (see `restoreStatus`); a test-out the undo takes back doesn't.
+  const finished = new Set(
+    context.items.flatMap((item) => (item.status === "done" ? [item.id] : [])),
+  );
+
+  const summary = reduceRestoredSummary({
+    completed: items.filter(
+      (item) => finished.has(item.id) || item.status === "done" || item.status === "testedOut",
+    ),
+    planVersion: context.plan.version + 1,
+    summary: snapshot.summary,
+  });
+
   await writePlan({
     context,
     plan: {
-      coveredShare: snapshot.coveredShare,
+      coveredShare: summary
+        ? (summary.selected.coverage?.coveredShare ?? null)
+        : snapshot.coveredShare,
       estimateHours: snapshot.estimateHours,
+      inputsChecked: false,
       inputsKey: snapshot.inputsKey,
       items: items.map(({ position: _position, ...item }) => item),
+      layoutKeys: snapshot.layoutKeys,
       phases: snapshot.phases,
       sourceSkillIds: snapshot.sourceSkillIds,
       standInLessons: getSnapshotStandInLessons(snapshot),
       state: snapshot.state,
-      summary: snapshot.summary,
+      summary,
     },
     tx,
   });

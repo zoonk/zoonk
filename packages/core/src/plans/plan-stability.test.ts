@@ -116,9 +116,9 @@ async function assertRetainedSummary({
       .at(-1) ?? null;
 
   expect(summary).not.toBeNull();
-  expect(summary?.selected.endDate).toBe(end);
+  expect(summary?.selected?.endDate).toBe(end);
 
-  expect(summary?.selected.totalMinutes).toBe(
+  expect(summary?.selected?.totalMinutes).toBe(
     Math.round(plan.items.reduce((total, item) => total + (item.minutes ?? 0), 0)),
   );
 }

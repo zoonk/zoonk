@@ -16,7 +16,8 @@ import {
   planStateSchema,
 } from "../planner/plan-state";
 import { type ContextPlanItem, type PlanContext } from "./plan-context";
-import { type SavedPlanSummary, savedPlanSummarySchema } from "./plan-summary";
+import { type PlanInputKeys, readLayoutKeys } from "./plan-input-classes";
+import { type PlanSummary, planSummarySchema } from "./plan-summary";
 import { readSelectedItemFacts, selectedItemFactsSchema } from "./selected-item-contract";
 import { isStandIn } from "./stand-in-lessons";
 
@@ -41,10 +42,17 @@ const planSnapshotSchema = z.object({
   estimateHours: z.number().nullable(),
   inputsKey: z.string().nullable().default(null),
   items: z.array(snapshotItemSchema),
+  layoutKeys: z
+    .unknown()
+    .optional()
+    .transform((value) => readLayoutKeys(value)),
   phases: z.unknown(),
   sourceSkillIds: z.array(z.string()).default([]),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
-  summary: savedPlanSummarySchema.nullable().default(null),
+  summary: z
+    .unknown()
+    .optional()
+    .transform((value) => planSummarySchema.safeParse(value).data ?? null),
   todaySession: daySessionSnapshotSchema.nullable().default(null),
 });
 
@@ -61,10 +69,13 @@ export type PlanSnapshot = {
   /** What the plan was planned from, which the undo gives back with it (see `getPlanInputsKey`). */
   inputsKey: string | null;
   items: ContextPlanItem[];
+  /** The keys of what the plan was planned from, which the undo gives back with it (see `getPlanInputKeys`). */
+  layoutKeys: PlanInputKeys | null;
   phases: PlanPhase[];
   sourceSkillIds: string[];
   state: PlanState;
-  summary: SavedPlanSummary | null;
+  /** The plan's summary when it described the plan (see `readPlanSummary`); null for a legacy one. */
+  summary: PlanSummary | null;
   /** Today's session when the change was made; null when it wasn't built yet. */
   todaySession: DaySessionSnapshot | null;
 };
@@ -96,10 +107,11 @@ function toPlanSnapshot({
       status: item.status,
       titleSnapshot: item.titleSnapshot,
     })),
+    layoutKeys: readLayoutKeys(context.plan.layoutKeys),
     phases: context.phases,
     sourceSkillIds: context.plan.sourceSkillIds,
     state: context.state,
-    summary: savedPlanSummarySchema.safeParse(context.plan.summary).data ?? null,
+    summary: planSummarySchema.safeParse(context.plan.summary).data ?? null,
     todaySession,
   };
 }

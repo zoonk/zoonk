@@ -1,9 +1,9 @@
-import { type SelectedSummary } from "../_utils/selected-summary-contract";
+import { type DailyNeed, type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { findDayMock, getSpendable } from "./mock-day";
-import { toIsoDate } from "./plan-calendar";
-import { createDays, getPlanStart } from "./plan-run-days";
+import { addDays, getStudyMinutes, toIsoDate } from "./plan-calendar";
+import { createDays, getCalendar, getPlanStart } from "./plan-run-days";
 import { type DayShape, type PlanDay, getLessonCapacity } from "./schedule-units";
 
 /** Floating-point sums of minutes must not read a capacity that holds the work as short. */
@@ -12,7 +12,10 @@ const EPSILON = 1e-6;
 /** The most a day has: the about-N search never asks for more (see `estimateDailyNeed`). */
 const DAY_MINUTES = 1440;
 
-type DailyNeed = SelectedSummary["dailyNeed"];
+/** How far the finish forecast looks: about three years of study days (see `estimateFinish`). */
+const FINISH_HORIZON_DAYS = 1100;
+
+type Finish = SelectedSummary["forecast"]["finish"];
 
 /** A mock among the fixed days (see `FixedDays`): its day, length, and what past days set aside for it. */
 type FixedMock = { at: number; clock: number; past: number };
@@ -207,4 +210,57 @@ export function readFixedDays({
   };
 
   return { days, minutesAt, mocks };
+}
+
+/**
+ * About when `remaining` raw lesson minutes are all done, from the layout's study day: on each of
+ * the layout's days the lesson time it gives new work (see `getLessonCapacity`), and on a day it
+ * doesn't lay out or closes to new lessons (an exam's final stretch, past a deadline) the learner's
+ * own study time at the share of its last lesson day. An estimate as of the layout: the plan's
+ * reviews, events and cuts can place the work otherwise.
+ */
+export function estimateFinish({
+  built,
+  input,
+  remaining,
+}: {
+  built: BuiltPlan;
+  input: BuildPlanInput;
+  remaining: number;
+}): Finish {
+  if (remaining <= EPSILON) {
+    return { date: null, reason: "nothingLeft" };
+  }
+
+  const today = toIsoDate(input.today);
+  const calendar = getCalendar(input);
+  const ahead = built.planDays.filter((day) => toIsoDate(day.date) >= today);
+  const laidOut = new Map(ahead.map((day) => [toIsoDate(day.date), day]));
+  const share = ahead.findLast((day) => day.shape.open)?.shape.share ?? 1;
+
+  const capacityOn = (date: Date) => {
+    const day = laidOut.get(toIsoDate(date));
+
+    return day?.shape.open ? getLessonCapacity(day) : getStudyMinutes({ calendar, date }) * share;
+  };
+
+  const days = Array.from({ length: FINISH_HORIZON_DAYS }, (_, offset) =>
+    addDays(input.today, offset),
+  );
+
+  const capacities = days.map((date) => capacityOn(date));
+
+  const sums = capacities.reduce<number[]>((totals, capacity) => {
+    totals.push((totals.at(-1) ?? 0) + capacity);
+    return totals;
+  }, []);
+
+  const at = sums.findIndex((sum) => sum >= remaining - EPSILON);
+  const date = days[at];
+
+  if (date) {
+    return { date: toIsoDate(date) };
+  }
+
+  return { date: null, reason: (sums.at(-1) ?? 0) <= EPSILON ? "noStudyDays" : "beyondHorizon" };
 }

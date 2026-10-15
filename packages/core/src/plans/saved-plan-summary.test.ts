@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
-import {
-  type PlanSummaryBasis,
-  type SavedPlanSummary,
-  readFreshPlanSummary,
-} from "./_utils/plan-summary";
+import { type SavedPlanSummary, readFreshPlanSummary } from "./_utils/plan-summary";
 
-const basis: PlanSummaryBasis = {
+type LegacyBasis = SavedPlanSummary["basis"];
+
+const basis: LegacyBasis = {
   inputVersion: 4,
   planId: "plan-a",
   planVersion: 7,
@@ -14,7 +12,8 @@ const basis: PlanSummaryBasis = {
   userId: "learner-a",
 };
 
-const summary: SavedPlanSummary = {
+/** A summary as the last layout before v2 saved it: its daily need beside its coverage. */
+const summary = {
   basis,
   schemaVersion: 1,
   selected: {
@@ -28,12 +27,15 @@ const summary: SavedPlanSummary = {
   },
 };
 
+/** What the legacy reader reads of it: its basis, and no facts a v2 reader takes. */
+const read: SavedPlanSummary = { basis, schemaVersion: 1, selected: null };
+
 describe("saved plan freshness", () => {
   it("reuses actual selected facts only for the same owned plan and complete input basis", () => {
-    expect(readFreshPlanSummary({ basis, value: summary })).toStrictEqual(summary);
+    expect(readFreshPlanSummary({ basis, value: summary })).toStrictEqual(read);
   });
 
-  it.each<Partial<PlanSummaryBasis>>([
+  it.each<Partial<LegacyBasis>>([
     { inputVersion: 5 },
     { planId: "plan-b" },
     { planVersion: 8 },
@@ -48,7 +50,11 @@ describe("saved plan freshness", () => {
     const other = { ...basis, userId: "learner-b" };
     const ownSummary = { ...summary, basis: other };
 
-    expect(readFreshPlanSummary({ basis: other, value: ownSummary })).toStrictEqual(ownSummary);
+    expect(readFreshPlanSummary({ basis: other, value: ownSummary })).toStrictEqual({
+      ...read,
+      basis: other,
+    });
+
     expect(readFreshPlanSummary({ basis: other, value: summary })).toBeNull();
   });
 

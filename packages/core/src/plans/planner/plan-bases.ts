@@ -274,6 +274,11 @@ export type PlanBases = {
   recommended: Exclude<BaseChoice, "skip">;
 };
 
+/** The date-only default; exact effects of another base choice belong to its preview POST. */
+export function getDefaultBaseChoice(daysLeft: number | null): "essential" | "quick" {
+  return daysLeft !== null && daysLeft <= CLOSE_TO_DATE_DAYS ? "quick" : "essential";
+}
+
 /**
  * What the app recommends for the plan's bases: every lesson when the learner's time covers
  * everything with every base in depth (`fits`); otherwise a quick lesson for each when the date is

@@ -149,6 +149,34 @@ function toKeyedLessons(lessons: readonly PlannerLesson[]) {
     .toSorted((a, b) => compareText(a.lessonId, b.lessonId));
 }
 
+/** The hash of a value as JSON that says the same thing the same way (see `toStable`). */
+export function hashKeyed(value: unknown): string {
+  return createHash("sha256")
+    .update(JSON.stringify(toStable(value)))
+    .digest("hex");
+}
+
+/**
+ * A planning run's input as every key reads it: the graph without the lessons the last build
+ * counted, the Library's lessons by id without their chapter, what the bank holds for the bosses,
+ * and the settings without the checkpoints' overflow the build derived, which no run reads.
+ */
+export function readKeyedInput(input: BuildPlanInput) {
+  return {
+    ...input,
+    // What the bank holds for the bosses; the skills the Library says lessons teach are in the
+    // lessons, and the kept items' in their progress.
+    bossFacts: input.bossFacts && {
+      bank: input.bossFacts.bank,
+      listeningSkillIds: input.bossFacts.listeningSkillIds,
+      survivors: input.bossFacts.survivors,
+    },
+    graph: input.graph && withoutPlannedLessons(input.graph),
+    lessons: input.lessons && toKeyedLessons(input.lessons),
+    settings: input.settings && { ...input.settings, checkpointOverflow: [] },
+  };
+}
+
 /**
  * What a planning run plans from, which a later run reads the same way when nothing new happened:
  * what the planner reads (see `KEYED_FIELDS`: the goal's time and date, the graph, the settings and
@@ -165,24 +193,8 @@ export function getPlanInputsKey({
   /** The plan's items as the run saves them, which the next run reads. */
   items: readonly Pick<PlannedItem, "key" | "status">[];
 }): string {
-  // The graph as a run reads it, without the lessons the last build counted, and the settings
-  // without the checkpoints' overflow the build derived, which no run reads.
-  const read = {
-    ...input,
-    // What the bank holds for the bosses; the skills the Library says lessons teach are in the
-    // lessons, and the kept items' in their progress.
-    bossFacts: input.bossFacts && {
-      bank: input.bossFacts.bank,
-      listeningSkillIds: input.bossFacts.listeningSkillIds,
-      survivors: input.bossFacts.survivors,
-    },
-    graph: input.graph && withoutPlannedLessons(input.graph),
-    lessons: input.lessons && toKeyedLessons(input.lessons),
-    settings: input.settings && { ...input.settings, checkpointOverflow: [] },
-  };
-
   const planned = Object.fromEntries(
-    Object.entries(read).filter(([field]) => PLANNED_FIELDS.has(field)),
+    Object.entries(readKeyedInput(input)).filter(([field]) => PLANNED_FIELDS.has(field)),
   );
 
   const progress = items
@@ -192,11 +204,7 @@ export function getPlanInputsKey({
 
   const rescueDays = getMissedMockRescueDays(input);
 
-  return createHash("sha256")
-    .update(
-      JSON.stringify(toStable({ planned, progress, ...(rescueDays.length > 0 && { rescueDays }) })),
-    )
-    .digest("hex");
+  return hashKeyed({ planned, progress, ...(rescueDays.length > 0 && { rescueDays }) });
 }
 
 /**

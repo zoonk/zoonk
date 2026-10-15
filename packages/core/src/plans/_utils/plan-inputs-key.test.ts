@@ -114,6 +114,14 @@ const item = { key: "lesson:fractions-0" };
 const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
+  // The scope and placement keys share its reading (`readKeyedInput`, `hashKeyed`): sharing it
+  // changed no stored key, so a plan saved before still reads as unchanged.
+  it("keeps the bytes of the keys plans were saved with", () => {
+    expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
+      "d963076eec90be5f7caa22cf68020899712fc712b284e1603769dc682b7942cb",
+    );
+  });
+
   it("changes when a course start gives the first day its full lesson budget", () => {
     expect(getPlanInputsKey({ input: { ...input, courseStart: true }, items: [] })).not.toBe(key);
   });

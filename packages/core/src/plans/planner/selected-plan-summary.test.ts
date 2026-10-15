@@ -244,7 +244,7 @@ describe(summarizeSelectedPlan, () => {
 
     expect(summary.coverage).toBeNull();
 
-    expect(summary.dailyNeed).toStrictEqual({
+    expect(summary.forecast.dailyNeed).toStrictEqual({
       basis: "estimated",
       minutes: null,
       reason: "noDeadline",
@@ -268,7 +268,7 @@ describe(summarizeSelectedPlan, () => {
       measure: "goal",
     });
 
-    expect(summary.dailyNeed.minutes).toBeGreaterThan(0);
+    expect(summary.forecast.dailyNeed.minutes).toBeGreaterThan(0);
   });
 
   it("covers none of a skill the date cuts, and doesn't fit", () => {
@@ -383,5 +383,119 @@ describe(summarizeSelectedPlan, () => {
   it("requires a base's core when the learner studies it essentially, and all of it in depth", () => {
     expect(requiredOf(null)).toBe(9 * DEFAULT_LESSON_MINUTES);
     expect(requiredOf("deep")).toBe(26 * DEFAULT_LESSON_MINUTES);
+  });
+
+  // An exam the learner studies whole: what doesn't fit before the exam goes on after it, held but
+  // counted none by the deadline. Finishing one of those early is what changes what the plan covers.
+  it("posts the goal's date it measured and the held lessons it counts short", () => {
+    const input = learnInput({
+      fullMockMinutes: 60,
+      goal: { dailyMinutes: 10, kind: "exam", targetDate: fromIsoDate("2026-10-09") },
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [skill("s1", { area: "A", weight: 1 }), skill("s2", { area: "A", weight: 1 })],
+      },
+      lessons: ["l1", "l2", "l3", "l4", "l5", "l6"].map((lessonId, index) =>
+        lesson(lessonId, [index % 2 === 0 ? "s1" : "s2"], 12),
+      ),
+      mockMinutes: 30,
+      settings: parsePlanSettings({ fullCourse: true, startDate: "2026-09-28" }),
+    });
+
+    const built = buildPlan(input);
+    const coverage = summarizeSelectedPlan({ built, examSubjects: null, input }).coverage;
+
+    const after = built.items.flatMap((item) =>
+      item.lessonId &&
+      item.scheduledFor &&
+      toIsoDate(item.scheduledFor) >= (coverage?.deadline ?? "")
+        ? [item.lessonId]
+        : [],
+    );
+
+    expect(coverage?.targetDate).toBe("2026-10-09");
+    expect(coverage?.fits).toBe(false);
+    expect(after.length).toBeGreaterThan(0);
+
+    expect(coverage?.shortLessons.map((short) => short.lessonId)).toStrictEqual(after.toSorted());
+
+    coverage?.shortLessons.forEach((short) => {
+      expect(short).toMatchObject({ countedRaw: 0, requiredRaw: 12 });
+    });
+  });
+
+  it("lists no short lesson when every lesson is laid before the date", () => {
+    expect(coverageOf(learnInput()).shortLessons).toStrictEqual([]);
+  });
+
+  it("forecasts when the work left would be done at the plan's own days", () => {
+    const summary = summarize(learnInput());
+
+    const bigger = summarize(
+      learnInput({ lessons: [...learnInput().lessons, lesson("l5", ["s2"], 30)] }),
+    );
+
+    const finishOf = ({ forecast }: typeof summary) =>
+      forecast.finish.date ? fromIsoDate(forecast.finish.date).getTime() : Number.NaN;
+
+    expect(summary.forecast.basis).toBe("estimated");
+    expect(finishOf(summary)).toBeGreaterThanOrEqual(TODAY.getTime());
+    expect(finishOf(bigger)).toBeGreaterThanOrEqual(finishOf(summary));
+
+    const finished = learnInput({
+      items: ["l1", "l2", "l3", "l4"].map((lessonId) =>
+        existing({ id: lessonId, lessonId, skillId: "s1", status: "done" }),
+      ),
+    });
+
+    expect(summarize(finished).forecast.finish).toStrictEqual({
+      date: null,
+      reason: "nothingLeft",
+    });
+  });
+
+  it("raises the phase-dates card only for a build that kept dates that cost something", () => {
+    const cut = learnInput({
+      goal: { dailyMinutes: 5, kind: "learn", targetDate: fromIsoDate("2026-09-30") },
+      lessons: [lesson("l1", ["s1"], 6), lesson("l2", ["s1"], 6), lesson("l3", ["s2"], 6)],
+    });
+
+    expect(summarize(cut).phaseDates).toStrictEqual({ structureKey: null, trigger: false });
+
+    const kept = {
+      ...cut,
+      mode: "automatic" as const,
+      phaseEnds: new Map([[0, fromIsoDate("2026-09-29")]]),
+    };
+
+    const built = buildPlan(kept);
+    const phaseDates = summarizeSelectedPlan({ built, examSubjects: null, input: kept }).phaseDates;
+
+    const costs =
+      built.droppedSkillIds.length + built.strainedEnds.length + built.endsBeforeLessons.length > 0;
+
+    expect(costs).toBe(true);
+    expect(phaseDates.trigger).toBe(true);
+    expect(phaseDates.structureKey).toMatch(/^[0-9a-f]{64}$/u);
+
+    expect(
+      summarizeSelectedPlan({ built, examSubjects: null, input: kept }).phaseDates,
+    ).toStrictEqual(phaseDates);
+  });
+
+  // The Plan shows each base as the layout studied it, without reading the Library again.
+  it("keeps what each base is, beside how the layout studied it", () => {
+    const { input } = chooseBases(baseExamInput("deep"));
+    const summary = summarizeSelectedPlan({ built: buildPlan(input), examSubjects: null, input });
+
+    expect(summary.bases?.bases).toStrictEqual([
+      expect.objectContaining({
+        area: "Bio",
+        choice: "deep",
+        name: "Skill base",
+        neededFor: ["top"],
+        skillId: "base",
+      }),
+    ]);
   });
 });
