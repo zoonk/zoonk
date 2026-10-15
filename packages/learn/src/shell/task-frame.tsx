@@ -1,20 +1,11 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@zoonk/ui/components/alert-dialog";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -38,17 +29,10 @@ import {
 } from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
+import { type TaskExitConfirmation } from "./task-exit-dialog";
 
-/**
- * What leaving asks first, when it would leave something unsent behind (an essay being written):
- * the question, what happens to the work, and the two answers, in the screen's own words.
- */
-export type TaskExitConfirmation = {
-  cancel: string;
-  confirm: string;
-  description: string;
-  title: string;
-};
+/** Only a screen with work to lose asks before leaving, so the question's dialog is loaded then. */
+const exitDialog = createOnDemand(() => import("./task-exit-dialog"));
 
 function TaskCloseLink({
   beforeExit,
@@ -68,6 +52,7 @@ function TaskCloseLink({
   const [confirming, setConfirming] = useState(false);
   // Once the learner chose to leave (or the saves were waited for), the link's next click leaves.
   const leaving = useRef(false);
+  const dialog = exitDialog.useModule({ enabled: Boolean(confirmExit) });
 
   if (!href) {
     return <span aria-hidden="true" className="size-9 shrink-0" />;
@@ -90,6 +75,8 @@ function TaskCloseLink({
 
     if (confirmExit && !leaving.current) {
       event.preventDefault();
+      // Asks as soon as the dialog's code is here (a load that failed is tried again).
+      void exitDialog.load();
       setConfirming(true);
       return;
     }
@@ -124,26 +111,16 @@ function TaskCloseLink({
         <span className="sr-only">{t("Leave")}</span>
       </LearnLink>
 
-      {confirmExit && (
-        <AlertDialog onOpenChange={setConfirming} open={confirming}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{confirmExit.title}</AlertDialogTitle>
-              <AlertDialogDescription>{confirmExit.description}</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{confirmExit.cancel}</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  setConfirming(false);
-                  leave(ref.current);
-                }}
-              >
-                {confirmExit.confirm}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      {confirmExit && dialog && (
+        <dialog.TaskExitDialog
+          confirmation={confirmExit}
+          onLeave={() => {
+            setConfirming(false);
+            leave(ref.current);
+          }}
+          onOpenChange={setConfirming}
+          open={confirming}
+        />
       )}
     </>
   );
