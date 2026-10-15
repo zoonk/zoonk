@@ -9,9 +9,10 @@ import { useLocale } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Reads a submitted goal, then opens its draft or starts a question's explanation from that click.
- * Loaded on the first tap, so the page doesn't
- * ship the account and actions code to visitors who only read it.
+ * Sends a typed goal, then opens its draft, where `/start` waits for it to be read and carries the
+ * click on. A question read at once (stored from someone's earlier words) starts its explanation
+ * from that click instead. Loaded on the first tap, so the page doesn't ship the account and
+ * actions code to visitors who only read it.
  */
 async function sendHomeGoal({
   goal,
@@ -22,13 +23,13 @@ async function sendHomeGoal({
   language: string;
   signal: AbortSignal;
 }) {
-  const [{ WEB_ONBOARDING_ACTIONS }, { getClassifiedKind, getExplanationGoalInput, sendGoal }] =
-    await Promise.all([
-      import("@/app/[lang]/(app)/(onboarding)/start/onboarding-client-actions"),
-      import("@zoonk/learn/onboarding/understanding-start"),
-    ]);
-
-  const sentAt = Date.now();
+  const [
+    { WEB_ONBOARDING_ACTIONS },
+    { getClassifiedKind, getExplanationGoalInput, sendGoal, takeSentGoal },
+  ] = await Promise.all([
+    import("@/app/[lang]/(app)/(onboarding)/start/onboarding-client-actions"),
+    import("@zoonk/learn/onboarding/understanding-start"),
+  ]);
 
   const outcome = await sendGoal({
     goal,
@@ -41,6 +42,8 @@ async function sendHomeGoal({
     return { explanationId: null, outcome };
   }
 
+  // Read at once: this click goes on here, so `/start` doesn't carry it on again.
+  const sentAt = takeSentGoal(outcome.draft.id) ?? Date.now();
   const { understanding } = outcome.draft;
 
   if (!understanding) {
@@ -70,7 +73,7 @@ async function sendHomeGoal({
   return { explanationId: explanation?.status === "created" ? explanation.goalId : null, outcome };
 }
 
-/** The home page's way into onboarding: the typed goal is saved and read, then `/start` opens on it. */
+/** The home page's way into onboarding: the typed goal is saved, then `/start` opens on its wait. */
 export function useSendGoal() {
   const locale = useLocale();
   const router = useRouter();
@@ -113,7 +116,6 @@ export function useSendGoal() {
     }
 
     if (outcome.status === "started" || outcome.status === "startFailed") {
-      // The original click finished its read; the draft resumes here if it needs another action.
       router.push(getDraftHref(outcome.draft.id));
       return;
     }

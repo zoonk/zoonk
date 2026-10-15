@@ -6,9 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type UnderstandingActions } from "../onboarding-actions";
-import { getClassifiedKind, sendGoal } from "./understanding-start";
+import { getClassifiedKind, sendGoal, takeSentGoal } from "./understanding-start";
 
-/** The continuation belongs to the submit handler, and is cancelled on leaving or changing goals. */
+/**
+ * Sending a typed goal from this screen (cancelled on leaving or changing goals), and carrying the
+ * click on once its words are read (`settle`): wherever it was sent, this tab's own draft says how
+ * it was classified, and a question goes straight on to its explanation.
+ */
 export function useSubmitUnderstanding({
   hasAttachment,
   onDraft,
@@ -61,11 +65,10 @@ export function useSubmitUnderstanding({
 
   async function sendOnce({ goal, signal }: { goal: string; signal: AbortSignal }) {
     setIsSubmitting(true);
-    const sentAt = Date.now();
     analytics.track({ name: "Goal Typed", properties: { has_attachment: hasAttachment } });
     onSending(goal);
 
-    const outcome = await sendGoal({ goal, language: locale, onDraft, signal, understanding });
+    const outcome = await sendGoal({ goal, language: locale, signal, understanding });
 
     if (signal.aborted) {
       return;
@@ -79,9 +82,14 @@ export function useSubmitUnderstanding({
     }
 
     onDraft(outcome.draft);
-    const read = outcome.draft.status === "understood" ? outcome.draft.understanding : null;
+  }
 
-    if (!read) {
+  /** A draft on screen: once it's read, the click that sent it from this tab goes on, once. */
+  function settle(draft: OnboardingDraftView) {
+    const read = draft.status === "understood" ? draft.understanding : null;
+    const sentAt = read ? takeSentGoal(draft.id) : null;
+
+    if (!read || sentAt === null) {
       return;
     }
 
@@ -94,9 +102,9 @@ export function useSubmitUnderstanding({
     });
 
     if (read.status === "explain") {
-      onExplanation({ draft: outcome.draft, question: read.question });
+      onExplanation({ draft, question: read.question });
     }
   }
 
-  return { cancel, isSubmitting, send };
+  return { cancel, isSubmitting, send, settle };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
@@ -166,6 +166,17 @@ function GoalStartFlow({
     onSending: (goal) => setState({ goal, kind: "sending" }),
     understanding: actions.understanding,
   });
+
+  // A draft this tab's click sent, shown once its words are read (sent here or from the home page,
+  // read while it showed, or already read when this page opened), carries the click on, once.
+  const shownDraft = state.kind === "draft" ? state.draft : null;
+  const settleShown = useEffectEvent((draft: OnboardingDraftView) => submission.settle(draft));
+
+  useEffect(() => {
+    if (shownDraft) {
+      settleShown(shownDraft);
+    }
+  }, [shownDraft]);
 
   const submit = useSubmitGoal({
     attached,
