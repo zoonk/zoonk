@@ -1,4 +1,4 @@
-import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getSession } from "@zoonk/core/users/session";
 import { type SettingsPagesShown } from "./settings-links";
 
@@ -9,9 +9,13 @@ import { type SettingsPagesShown } from "./settings-links";
  * "Subscription" says "Plus" when that's the plan.
  */
 export async function getSettingsPagesShown(): Promise<SettingsPagesShown> {
-  const [session, allowance] = await Promise.all([getSession(), getAllowance()]);
+  const [session, subscription] = await Promise.all([getSession(), getActiveSubscription()]);
 
   const hasAccount = Boolean(session && !session.user.isAnonymous);
 
-  return { plus: allowance?.tier === "plus", showLogout: hasAccount, showProfile: hasAccount };
+  return {
+    plus: hasAccount && Boolean(subscription),
+    showLogout: hasAccount,
+    showProfile: hasAccount,
+  };
 }

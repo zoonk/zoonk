@@ -1,4 +1,4 @@
-import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
+import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getSession } from "@zoonk/core/users/session";
 import { getExtracted } from "next-intl/server";
 
@@ -8,13 +8,11 @@ import { getExtracted } from "next-intl/server";
  */
 export async function SettingsEyebrow() {
   const t = await getExtracted();
-  const [session, allowance] = await Promise.all([getSession(), getAllowance()]);
+  const [session, subscription] = await Promise.all([getSession(), getActiveSubscription()]);
 
   if (!session || session.user.isAnonymous) {
     return null;
   }
 
-  return allowance?.tier === "plus"
-    ? t("{email} · Plus", { email: session.user.email })
-    : session.user.email;
+  return subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email;
 }
