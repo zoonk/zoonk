@@ -1,6 +1,7 @@
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { cacheTag, io } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { getActiveSubscriptionQuery, readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 
 /**
@@ -27,17 +28,7 @@ export function findActiveSubscriptionForUser({
   now: Date;
   userId: string;
 }) {
-  return client.subscription.findFirst({
-    orderBy: { id: "desc" },
-    where: {
-      OR: [
-        { provider: { not: "apple" } },
-        { endedAt: null, periodEnd: { gt: now }, provider: "apple" },
-      ],
-      referenceId: userId,
-      status: { in: ["active", "trialing"] },
-    },
-  });
+  return client.subscription.findFirst(getActiveSubscriptionQuery({ now, userId }));
 }
 
 /**
@@ -56,7 +47,7 @@ export async function getActiveSubscription() {
   }
 
   cacheTag(getUserSubscriptionCacheTag(session.user.id));
-  return findActiveSubscription(session.user.id);
+  return readActiveSubscription(session.user.id);
 }
 
 /**
