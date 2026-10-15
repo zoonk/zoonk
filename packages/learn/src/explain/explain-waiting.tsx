@@ -6,7 +6,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon, GraduationCapIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import {
   ListGroup,
   ListRowContent,
@@ -16,9 +16,9 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { usePoll } from "../_utils/use-poll";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
+import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { LearnLink } from "../learn-link";
 import {
   OnboardingColumn,
@@ -31,8 +31,6 @@ import {
 } from "../onboarding/onboarding-frame";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
-/** A fallback: the host shows the explanation as soon as its run says it can be read. */
-const POLL_MS = 5000;
 /** The first screen usually shows within about 20 seconds; after this, offer to try again. */
 const SLOW_MS = 45_000;
 /** About five short screens: the outline's rows, each its own width, before titles are written. */
@@ -100,10 +98,38 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
 const UNFOLLOWED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
 /**
+ * Reads the page again until it shows the explanation, as other generation waits do: rarely while
+ * the run is followed (an explanation another run wrote shows too), then soon once the run says it
+ * can be read.
+ */
+function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: () => void }) {
+  useRefreshUntilShown({ isReady, refresh: onCheck });
+  return null;
+}
+
+/** Whether the wait has gone on longer than the first screen usually takes. */
+function useTakingLong(waiting: boolean): boolean {
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!waiting) {
+      return;
+    }
+
+    const timer = setTimeout(() => setSlow(true), SLOW_MS);
+    return () => clearTimeout(timer);
+  }, [waiting]);
+
+  return waiting && slow;
+}
+
+/**
  * Before a quick explanation: the question, each step of writing it as it happens, and the
  * outline taking shape (about five screens and one question) until its titles are written. The
- * page asks again until it's ready; then "See explanation" starts it. A slow start can be
- * restarted, and a whole plan for the subject is one tap away (the host's `deeper` control).
+ * run's own progress is the wait: the host reads the page once it says the explanation can be read,
+ * and the page reads itself again only as a fallback. Then "See explanation" starts it. A slow
+ * start can be restarted, and a whole plan for the subject is one tap away (the host's `deeper`
+ * control).
  */
 export function ExplainWaiting({
   closeHref,
@@ -129,19 +155,8 @@ export function ExplainWaiting({
 }) {
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
-  const startedAt = useRef(0);
-  const [isSlow, setIsSlow] = useState(false);
   const ready = Boolean(explanation.lesson);
-
-  usePoll({
-    active: !ready,
-    intervalMs: POLL_MS,
-    onPoll: () => {
-      startedAt.current ||= Date.now();
-      setIsSlow(Date.now() - startedAt.current > SLOW_MS);
-      onCheck();
-    },
-  });
+  const isSlow = useTakingLong(!ready);
 
   return (
     <OnboardingFrame
@@ -165,6 +180,7 @@ export function ExplainWaiting({
         </OnboardingHeading>
 
         {!ready && <GenerationWait kind="explanation" run={progress ?? UNFOLLOWED_RUN} />}
+        {!ready && <RefreshUntilShown isReady={progress?.status === "ready"} onCheck={onCheck} />}
 
         <Outline titles={explanation.outline} />
 

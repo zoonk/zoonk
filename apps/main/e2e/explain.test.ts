@@ -9,6 +9,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { openPaletteWithKeyboard } from "./command-palette";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
+import { followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
 import {
   AT_ONCE_MS,
@@ -110,14 +111,21 @@ test.describe("Quick explanations", () => {
       { entityId: goal.id, status: "started", step: "writeExplanation" },
     ];
 
-    await page.route(`**/v1/generations/${runId}/events**`, (route) =>
-      route.fulfill({
-        body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""),
-        contentType: "text/event-stream",
-        status: 200,
-      }),
-    );
+    await followRun({ events, page, runId });
 
+    // Full reads of the page while it waits (not prefetches of other pages).
+    const pageReads: string[] = [];
+
+    page.on("request", (request) => {
+      const headers = request.headers();
+      const isPage = new URL(request.url()).pathname.endsWith(`/explain/${goal.id}`);
+
+      if (isPage && headers.rsc === "1" && !headers["next-router-prefetch"]) {
+        pageReads.push(request.url());
+      }
+    });
+
+    await page.clock.install();
     await page.goto(`/explain/${goal.id}`);
 
     // The wait's phases, as every generation wait draws them: done ones say so, and the one
@@ -141,8 +149,13 @@ test.describe("Quick explanations", () => {
       `/start?goal=${encodeURIComponent("I want to understand how a microwave works in depth")}`,
     );
 
-    // The explanation is saved while the stream is silent: the page's own check, every five
-    // seconds, fills the outline in with its screens, and it starts on a tap.
+    // The run's progress is the wait: the page doesn't read itself again while it's followed.
+    await page.clock.fastForward(15_000);
+    expect(pageReads).toStrictEqual([]);
+
+    // The explanation is saved while the stream is silent (another run wrote it): the page's
+    // fallback check, twenty seconds in, fills the outline in with its screens, and it starts on
+    // a tap.
     const played = await playableLessonFixture({
       steps: ["explanation", "explanation", "check", "summary"],
     });
@@ -154,9 +167,11 @@ test.describe("Quick explanations", () => {
       titleSnapshot: "How a microwave works",
     });
 
+    await page.clock.fastForward(6000);
+
     await expect(
       page.getByRole("list", { name: "What's coming" }).getByText("A cloud, not a little ball"),
-    ).toHaveCount(2, { timeout: 10_000 });
+    ).toHaveCount(2);
 
     await page.getByRole("button", { name: "See explanation" }).click();
     await expect(page.getByText("A cloud, not a little ball").first()).toBeVisible();
