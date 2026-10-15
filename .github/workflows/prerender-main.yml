@@ -51,6 +51,10 @@ jobs:
       - name: Setup E2E database
         run: pnpm --filter @zoonk/db db:setup:e2e
 
+      # Direct workspace builds bypass Turbo's Prisma-generation prerequisite.
+      - name: Generate Prisma client
+        run: pnpm --filter @zoonk/db db:generate
+
       - name: Build the central E2E API
         run: pnpm --filter api build:e2e
         env:
