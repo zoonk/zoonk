@@ -1,9 +1,10 @@
 "use client";
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
+import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/start";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { PageEyebrow } from "../../_components/page";
 import { SectionLabel } from "../../_components/section-label";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
@@ -12,9 +13,59 @@ import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challeng
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
+import { CallProblem } from "./call-problem";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
 import { loadLiveCallSession } from "./use-live-call";
+
+/** The same intro and Start click, before the start command has created the conversation. */
+export function CheckpointCallIntro({
+  conversation,
+  onStart,
+}: {
+  conversation: LanguageConversationIntro;
+  onStart: () => Promise<"cancelled" | "failed" | "plusRequired" | "ready">;
+}) {
+  const title = useConversationTitle(conversation);
+  const [outcome, setOutcome] = useState<"failed" | "plusRequired" | null>(null);
+  const starting = useRef(false);
+
+  const start = async () => {
+    if (starting.current) {
+      return;
+    }
+
+    starting.current = true;
+    const result = await onStart().catch(() => "failed" as const);
+    starting.current = false;
+
+    if (result === "failed" || result === "plusRequired") {
+      setOutcome(result);
+    }
+  };
+
+  if (outcome === "failed") {
+    return (
+      <CallProblem
+        error="connect"
+        exitHref="/today"
+        limit={null}
+        onEnd={() => void start()}
+        onRetry={() => void start()}
+        onTakeover={() => void start()}
+        title={title}
+      />
+    );
+  }
+
+  return (
+    <CallIntro
+      conversation={conversation}
+      exitHref="/today"
+      footer={<CallIntroFooter locked={outcome === "plusRequired"} onStart={() => void start()} />}
+    />
+  );
+}
 
 /**
  * Before the call, on the page: how long it lasts and the level it's written for, its title and
@@ -86,7 +137,7 @@ function CallIntro({
   exitHref,
   footer,
 }: {
-  conversation: LanguageConversationView;
+  conversation: LanguageConversationIntro;
   exitHref: string;
   footer: ReactNode;
 }) {

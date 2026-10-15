@@ -18,8 +18,26 @@ import {
   findWaitingSpeakingMock,
   writeSpeakingMock,
 } from "./_utils/speaking-mock";
-import { type LanguageConversationStartInput } from "./conversation-contract";
+import {
+  type LanguageConversationStartInput,
+  type LanguageConversationView,
+} from "./conversation-contract";
 import { getCheckpointMinutes } from "./conversation-rules";
+
+/** The existing intro, before a checkpoint has a learner-owned conversation. */
+export type LanguageConversationIntro = Pick<
+  LanguageConversationView,
+  | "character"
+  | "exam"
+  | "examTask"
+  | "kind"
+  | "level"
+  | "minutes"
+  | "objectives"
+  | "situation"
+  | "targetLanguage"
+  | "title"
+>;
 
 type StartedCall =
   | { conversationId: string; status: "ready" }
@@ -45,6 +63,7 @@ export type OpenLanguageCheckpointCallResult =
   | StartedCall
   | CheckpointRefusal
   | { status: "plusRequired" }
+  | { intro: LanguageConversationIntro; status: "notStarted" }
   | { status: "preparing"; unitTitle: string };
 
 async function startPractice({
@@ -123,7 +142,7 @@ async function startCheckpoint({
     return checkpoint;
   }
 
-  const { targetLanguage } = checkpoint;
+  const { goal, targetLanguage, unit } = checkpoint;
 
   const session = await prisma.studySession.findFirst({
     include: { blocks: true },
@@ -161,7 +180,6 @@ async function startCheckpoint({
       : { status: "notFound" };
   }
 
-  const { goal, unit } = checkpoint;
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
 
   const scenario = write
@@ -172,8 +190,24 @@ async function startCheckpoint({
       })
     : await findUnitScenario({ chapterId: unit.chapterId, level });
 
-  if (!scenario) {
-    return { status: "preparing", unitTitle: unit.title };
+  if (!scenario || !write) {
+    return scenario
+      ? {
+          intro: {
+            character: scenario.character,
+            exam: null,
+            examTask: null,
+            kind: "checkpoint",
+            level,
+            minutes: getCheckpointMinutes(level),
+            objectives: scenario.objectives.map((objective) => ({ ...objective, met: false })),
+            situation: scenario.situation,
+            targetLanguage,
+            title: scenario.title,
+          },
+          status: "notStarted",
+        }
+      : { status: "preparing", unitTitle: unit.title };
   }
 
   try {
@@ -183,7 +217,7 @@ async function startCheckpoint({
       kind: "checkpoint",
       language: goal.language,
       level,
-      markChanged: write,
+      markChanged: true,
       minutes: getCheckpointMinutes(level),
       scenario,
       studyBlockId: blockId,
@@ -252,7 +286,9 @@ export async function startLanguageConversation(
   if (input.kind === "checkpoint") {
     const started = await startCheckpoint({ blockId: input.blockId, userId, write: true });
     // Writing the unit's call never leaves it preparing.
-    return started.status === "preparing" ? { status: "notFound" } : started;
+    return started.status === "preparing" || started.status === "notStarted"
+      ? { status: "notFound" }
+      : started;
   }
 
   if (input.kind === "speakingMock") {
@@ -267,11 +303,8 @@ export async function startLanguageConversation(
 }
 
 /**
- * A language checkpoint's call as its screen opens: the call already made for the block, or a new
- * one from the unit's call when it's written (a session's preparation writes it ahead). Nothing is
- * written by a model here, since opening a screen never starts generation: `preparing` means the
- * unit's call isn't written yet, and starting the checkpoint (`startLanguageConversation`) writes
- * it.
+ * A language checkpoint's saved call or its read-only intro. Opening a screen creates nothing:
+ * the learner's Start POST creates the conversation, writing its scenario only when still needed.
  */
 export async function openLanguageCheckpointCall(
   blockId: string,

@@ -68,11 +68,13 @@ export function ConversationClient({
   conversation,
   fromExam,
   fromMock,
+  startWithCall = false,
 }: {
   conversation: LanguageConversationView;
   fromExam: boolean;
   /** The mock whose speaking section the call is a task of, which it leads back to. */
   fromMock: string | null;
+  startWithCall?: boolean;
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -113,6 +115,7 @@ export function ConversationClient({
       conversation={conversation}
       hrefs={getHrefs({ conversation, fromExam, fromMock })}
       onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
+      startWithCall={startWithCall}
     />
   );
 }

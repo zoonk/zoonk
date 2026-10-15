@@ -131,7 +131,9 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   await page.context().close();
 });
 
-test("a Plus learner's phase challenge keeps its written call", async ({ browser }, testInfo) => {
+test("a Plus learner's written challenge creates its call only on Start", async ({
+  browser,
+}, testInfo) => {
   const { block, boss, user } = await createLanguageChallenge({ final: false, plus: true });
   const page = await openAs(browser, user);
   await answerLiveCalls(page, "answers");
@@ -143,13 +145,22 @@ test("a Plus learner's phase challenge keeps its written call", async ({ browser
   await expect(page.getByText(/\d+ questions/u)).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath("plus-call-intro.png") });
 
-  await expect(page).toHaveURL(/\/conversation\//u);
+  await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
   await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
+  await expect(prisma.aiCall.count({ where: { userId: user.id } })).resolves.toBe(0);
+  await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
   await page.getByRole("button", { name: "Start the call" }).click();
 
   await expect(
     page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling"),
   ).toBeVisible();
+
+  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(1);
 
   await page.getByRole("button", { exact: true, name: "End" }).click();
   await expect(page.getByRole("img", { name: "2 of 3 stars" })).toBeVisible();
@@ -170,6 +181,89 @@ test("a Plus learner's phase challenge keeps its written call", async ({ browser
 
   await page.context().close();
 });
+
+// oxlint-disable-next-line vitest/prefer-each -- Playwright has no test.each.
+for (const returnBeforeResponse of [true, false]) {
+  test(`leaving cancels a checkpoint Start resolved ${returnBeforeResponse ? "after" : "before"} returning`, async ({
+    browser,
+  }) => {
+    const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+    const page = await openAs(browser, user);
+    await answerLiveCalls(page, "answers");
+    await page.goto(`/checkpoint/${block.id}`);
+    await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+
+    const held = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+    const delivered = Promise.withResolvers<null>();
+    const secondStart = Promise.withResolvers<null>();
+    const requests = { starts: 0 };
+
+    const firstResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        Boolean(response.request().postData()?.includes(block.id)),
+    );
+
+    await page.route(`**/checkpoint/${block.id}`, async (route) => {
+      if (route.request().method() !== "POST" || !route.request().postData()?.includes(block.id)) {
+        await route.continue();
+        return;
+      }
+
+      requests.starts += 1;
+
+      if (requests.starts !== 1) {
+        secondStart.resolve(null);
+        await route.continue();
+        return;
+      }
+
+      const response = await route.fetch();
+      held.resolve(null);
+      await release.promise;
+      await route.fulfill({ response });
+      delivered.resolve(null);
+    });
+
+    try {
+      await page.getByRole("button", { name: "Start the call" }).click();
+      await held.promise;
+      await page.getByRole("link", { name: "Leave" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+
+      if (returnBeforeResponse) {
+        await page.goBack();
+        await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+      }
+
+      release.resolve(null);
+      await delivered.promise;
+      const response = await firstResponse;
+      await response.finished();
+
+      if (!returnBeforeResponse) {
+        await page.goBack();
+      }
+
+      await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(
+        0,
+      );
+
+      await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+      await page.getByRole("button", { name: "Start the call" }).click();
+      await secondStart.promise;
+      expect(requests.starts).toBe(2);
+
+      await expect(
+        page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling"),
+      ).toBeVisible();
+    } finally {
+      release.resolve(null);
+      await page.context().close();
+    }
+  });
+}
 
 test("a learner whose Plus lapses while the call intro is open sees the lock on Start", async ({
   browser,
@@ -192,13 +286,13 @@ test("a learner whose Plus lapses while the call intro is open sees the lock on 
   );
 
   await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
-  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(1);
+  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
   await expect(prisma.aiCall.count({ where: { userId: user.id } })).resolves.toBe(0);
   await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
   await page.context().close();
 });
 
-test("an unfinished checkpoint call bookmark shows the Plus lock after the subscription lapses", async ({
+test("an unstarted checkpoint bookmark shows the Plus lock after the subscription lapses", async ({
   browser,
 }, testInfo) => {
   const { block, nextLesson, user } = await createLanguageChallenge({
@@ -209,8 +303,8 @@ test("an unfinished checkpoint call bookmark shows the Plus lock after the subsc
 
   const page = await openAs(browser, user);
   await page.goto(`/checkpoint/${block.id}`);
-  await expect(page).toHaveURL(/\/conversation\//u);
   await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
   const bookmark = page.url();
 
   await prisma.subscription.updateMany({

@@ -54,6 +54,7 @@
     "./language/checkpoint-call": "./src/language/conversation/checkpoint-call-preparing.tsx",
     "./language/no-speech": "./src/language/no-speech-message.ts",
     "./language/conversation": "./src/language/conversation/conversation-screen.tsx",
+    "./language/conversation-intro": "./src/language/conversation/conversation-intro.tsx",
     "./language/pattern": "./src/language/pattern/language-pattern-screen.tsx",
     "./language/pronunciation": "./src/language/pronunciation/pronunciation-review-screen.tsx",
     "./language/speaking": "./src/language/exam-speaking/speaking-practice-screen.tsx",

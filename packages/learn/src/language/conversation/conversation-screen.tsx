@@ -197,6 +197,7 @@ export function ConversationScreen({
   conversation,
   hrefs,
   onSaved,
+  startWithCall = false,
 }: {
   actions: ConversationActions;
   conversation: LanguageConversationView;
@@ -207,6 +208,8 @@ export function ConversationScreen({
    * calls did to the day's missions: see `MockView.missionMoment`).
    */
   onSaved?: () => void;
+  /** Continues a Start click that first had to create the checkpoint's conversation. */
+  startWithCall?: boolean;
 }) {
   // The call as it was last saved here: once it ends, with what it did to the day's missions.
   const [view, setView] = useState<CompletedLanguageConversation>({
@@ -214,7 +217,11 @@ export function ConversationScreen({
     missionMoment: null,
   });
 
-  const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>(FIRST_RUN);
+  const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>({
+    ...FIRST_RUN,
+    startWith: startWithCall ? "call" : "intro",
+  });
+
   const { result } = view;
 
   if (result && view.kind === "speakingMock") {

@@ -14,7 +14,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { CheckpointCallClient } from "./checkpoint-call-client";
+import { CheckpointCallClient, CheckpointCallPreviewClient } from "./checkpoint-call-client";
 import { CheckpointClient } from "./checkpoint-client";
 
 type Props = PageProps<"/[lang]/checkpoint/[blockId]">;
@@ -69,6 +69,15 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   if (call.status === "ready") {
     redirect({ href: `/conversation/${call.conversationId}`, locale: lang });
+  }
+
+  if (call.status === "notStarted") {
+    return (
+      <MainLearnProvider>
+        <LearnerWitness />
+        <CheckpointCallPreviewClient blockId={blockId} intro={call.intro} />
+      </MainLearnProvider>
+    );
   }
 
   if (call.status === "preparing") {
