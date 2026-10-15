@@ -183,7 +183,7 @@ export async function loadSessionBuildInput(
      */
     keepsBlocks?: boolean;
     selection?: SelectedDayPlan;
-    dayPlan?: Awaited<ReturnType<typeof loadDayPlan>>;
+    dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
   },
 ): Promise<SessionBuildInput> {
   const { goal, keepsBlocks = false, localDate, now, timeZone, userId } = context;

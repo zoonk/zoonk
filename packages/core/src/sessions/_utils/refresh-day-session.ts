@@ -4,6 +4,7 @@ import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { hasSameContent } from "./day-block-content";
+import { loadDayPlan } from "./day-plan";
 import { loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -106,24 +107,27 @@ function withoutKept({
   };
 }
 
-/** The new blocks for the rest of the day, never a second block of a kind the day keeps. */
-export async function planRestOfDay({
+/** The new blocks and the exact plan facts they were built from. */
+async function planRestOfDayWithPlan({
   day,
   kept,
 }: {
   day: DaySession;
   kept: readonly StudySessionBlock[];
-}): Promise<PlannedBlock[]> {
+}) {
   const { goal, session, timeZone } = day;
 
-  const input = await loadSessionBuildInput({
+  const context = {
     goal,
-    keepsBlocks: kept.length > 0,
     localDate: session.localDate,
     now: new Date(),
     timeZone,
     userId: session.userId,
-  });
+  };
+
+  /** Share the queue's plan with its missions without a second read or a loading waterfall. */
+  const dayPlan = loadDayPlan(context);
+  const input = await loadSessionBuildInput({ ...context, dayPlan, keepsBlocks: kept.length > 0 });
 
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
   const { blocks } = buildSessionBlocks(
@@ -132,7 +136,19 @@ export async function planRestOfDay({
 
   const keptKinds = new Set(kept.map((block) => block.kind));
 
-  return blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind));
+  return {
+    blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
+    plan: await dayPlan,
+  };
+}
+
+/** The new blocks for the rest of the day, never a second block of a kind the day keeps. */
+export async function planRestOfDay(input: {
+  day: DaySession;
+  kept: readonly StudySessionBlock[];
+}): Promise<PlannedBlock[]> {
+  const { blocks } = await planRestOfDayWithPlan(input);
+  return blocks;
 }
 
 export function hasSameBlocks({
@@ -163,11 +179,12 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
   const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
-  const planned = await planRestOfDay({ day, kept });
+  const { blocks: planned, plan } = await planRestOfDayWithPlan({ day, kept });
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
   const facts = await loadRebuildMissionFacts({
     blocks: planned,
+    dayPlan: plan,
     goal: day.goal,
     kept: kept.length,
     session,

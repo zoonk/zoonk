@@ -3,6 +3,7 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
+import { type loadDayPlan } from "../_utils/day-plan";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { type PlannedBlock } from "../session-builder";
@@ -19,6 +20,7 @@ const SECONDS_PER_MINUTE = 60;
 /** Candidate facts load before queue locks; saved targets and progress are checked under the lock. */
 export async function loadRebuildMissionFacts({
   blocks,
+  dayPlan,
   goal,
   kept,
   session,
@@ -26,6 +28,7 @@ export async function loadRebuildMissionFacts({
   unchanged,
 }: {
   blocks: readonly PlannedBlock[];
+  dayPlan: Awaited<ReturnType<typeof loadDayPlan>>;
   goal: Goal;
   kept: number;
   session: StudySessionRow;
@@ -38,6 +41,7 @@ export async function loadRebuildMissionFacts({
 
   return loadDayMissionFacts({
     blocks,
+    dayPlan,
     goal,
     localDate: session.localDate,
     plannedMinutes: blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
