@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { getTestEnvironment } from "../../packages/db/src/test-environment.ts";
+import { stopChildProcess } from "./stop-child-process.mts";
 
 const STARTUP_TIMEOUT_MS = 60_000;
 const STARTUP_OUTPUT_CHARACTERS = 8192;
@@ -69,25 +70,14 @@ export async function startLiveCallApi(lane: string) {
     exited.resolve(null);
   });
 
+  function close() {
+    return stopChildProcess({ child, exited: exited.promise, name: "E2E API" });
+  }
+
   try {
-    const url = await ready.promise;
-
-    return {
-      close: async () => {
-        if (child.exitCode === null && child.signalCode === null) {
-          child.kill("SIGTERM");
-        }
-
-        await exited.promise;
-      },
-      url,
-    };
+    return { close, url: await ready.promise };
   } catch (error) {
-    if (child.exitCode === null && child.signalCode === null) {
-      child.kill("SIGTERM");
-    }
-
-    await exited.promise;
+    await close();
     throw error;
   } finally {
     clearTimeout(timer);
