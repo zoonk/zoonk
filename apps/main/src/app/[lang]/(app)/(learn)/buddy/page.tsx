@@ -4,7 +4,7 @@ import { getReadAt } from "@/lib/learn/read-at";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
-import { getCurrentUserMemory } from "@zoonk/core/memory/get";
+import { countCurrentUserMemory } from "@zoonk/core/memory/count";
 import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { getSession } from "@zoonk/core/users/session";
@@ -84,11 +84,11 @@ async function BuddyContent() {
 
   const canAsk = !session.user.isAnonymous;
 
-  const [hasMistake, thread, readAt, memory] = await Promise.all([
+  const [hasMistake, thread, readAt, memoryCount] = await Promise.all([
     hasOpenMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
     getReadAt(),
-    getCurrentUserMemory(),
+    countCurrentUserMemory(),
   ]);
 
   // The conversation is the lesson tutor's, so the tab needs the player's messages.
@@ -99,7 +99,7 @@ async function BuddyContent() {
         goalId={goal.id}
         hasEarlierQuestions={earlierQuestions}
         initialThread={thread}
-        memoryCount={memory?.facts.length ?? 0}
+        memoryCount={memoryCount ?? 0}
         readAt={readAt}
         situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
         status={result.buddy}

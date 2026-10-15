@@ -392,6 +392,7 @@
     "./lookahead/skill-outline-contract": "./src/lookahead/skill-outline-contract.ts",
     "./lookahead/speculative-lessons": "./src/lookahead/speculative-lessons.ts",
     "./memory/contract": "./src/memory/memory-contract.ts",
+    "./memory/count": "./src/memory/count-current-user-memory.ts",
     "./memory/delete-fact": "./src/memory/delete-memory-fact.ts",
     "./memory/erase-fact": "./src/memory/erase-memory-fact.ts",
     "./memory/export": "./src/memory/export-current-user-memory.ts",
