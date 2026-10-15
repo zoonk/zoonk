@@ -182,7 +182,19 @@ describe(startMockSpeaking, () => {
   it("marks before competing paper attachments and keeps only one marker", async () => {
     const { goal } = await speakingSetup();
     const paper = paperFixture();
-    vi.mocked(startSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
+    const papersReady = Promise.withResolvers<null>();
+    let startedPapers = 0;
+
+    vi.mocked(startSpeakingSection).mockImplementation(async () => {
+      startedPapers += 1;
+
+      if (startedPapers === 2) {
+        papersReady.resolve(null);
+      }
+
+      return { section: paper, status: "ready" };
+    });
+
     vi.mocked(getSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
 
     const started = await startAnytimeMock({
@@ -199,19 +211,31 @@ describe(startMockSpeaking, () => {
     const held = holdLearnerRevision({ userId: goal.userId });
     const pid = await held.pid;
 
-    const requests = Promise.all([
+    const requests = [
       startMockSpeaking({ blockId: started.id }),
       startMockSpeaking({ blockId: started.id }),
-    ]);
+    ];
+
+    const drained = Promise.allSettled(requests);
+
+    for (const request of requests) {
+      // An early refusal or error must still release the holder and drain the other contender.
+      void request.then(
+        () => papersReady.resolve(null),
+        (error: unknown) => papersReady.reject(error),
+      );
+    }
 
     try {
+      // Ownership reads and paper generation finish before timing the marker-lock observation.
+      await papersReady.promise;
       await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
     } finally {
       held.release();
-      await held.done;
+      await Promise.all([held.done, drained]);
     }
 
-    await expect(requests).resolves.toStrictEqual([
+    await expect(Promise.all(requests)).resolves.toStrictEqual([
       { section: paper, status: "ready" },
       { section: paper, status: "ready" },
     ]);

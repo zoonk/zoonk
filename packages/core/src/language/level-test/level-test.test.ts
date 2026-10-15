@@ -40,7 +40,7 @@ const BANK: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "Diga" })),
 };
 
-async function saveBank() {
+async function saveBank(targetLanguage = "en") {
   await prisma.languageLevelTest.upsert({
     create: {
       content: BANK,
@@ -48,10 +48,10 @@ async function saveBank() {
       model: "test",
       promptVersion: "test",
       runId: "test",
-      targetLanguage: "en",
+      targetLanguage,
     },
     update: { content: BANK },
-    where: { languagePair: { language: "pt", targetLanguage: "en" } },
+    where: { languagePair: { language: "pt", targetLanguage } },
   });
 }
 
@@ -431,5 +431,41 @@ describe("language level test", () => {
     mockSession(user.id);
 
     await expect(getLanguageLevelTest(other.id)).resolves.toStrictEqual({ status: "notLanguage" });
+  });
+});
+
+describe("level-test skill selection admission", () => {
+  it("marks the second transaction's reading score but keeps an equal-score window reset revision-only", async () => {
+    await saveBank("ja");
+    const { goal, user, plan } = await languageGoalFixture();
+    await prisma.goal.update({ data: { targetLanguage: "ja" }, where: { id: goal.id } });
+    mockSession(user.id);
+    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 2,
+    });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
+    await finishLanguageLevelTest(goal.id);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
+
+    await prisma.languageSkillLevel.update({
+      data: { windowCeiling: 1.5, windowCorrect: 2, windowTotal: 3 },
+      where: { userLanguageSkill: { language: "ja", skill: "reading", userId: user.id } },
+    });
+
+    await finishLanguageLevelTest(goal.id);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 2,
+    });
+
+    await expect(
+      prisma.languageSkillLevel.findUniqueOrThrow({
+        where: { userLanguageSkill: { language: "ja", skill: "reading", userId: user.id } },
+      }),
+    ).resolves.toMatchObject({ score: 1, windowCeiling: null, windowCorrect: 0, windowTotal: 0 });
   });
 });

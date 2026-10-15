@@ -1,5 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { isDeepStrictEqual } from "node:util";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { findContentProvenance } from "./_utils/content-provenance";
 import { type ContentVote, toContentVote } from "./_utils/content-vote-view";
@@ -39,10 +40,25 @@ export async function voteOnContent(input: ContentVoteInput): Promise<VoteOnCont
     vote,
   };
 
-  const feedback = await prisma.contentFeedback.upsert({
-    create: { ...data, contentId, contentKind, userId },
-    update: data,
-    where: { userContent: { contentId, contentKind, userId } },
+  const feedback = await writeLearnerChange({ userId }, async (tx) => {
+    const current = await tx.contentFeedback.findUnique({
+      where: { userContent: { contentId, contentKind, userId } },
+    });
+
+    if (
+      current &&
+      Object.entries(data).every(([key, value]) =>
+        isDeepStrictEqual(Reflect.get(current, key), value),
+      )
+    ) {
+      return unchanged(current);
+    }
+
+    return tx.contentFeedback.upsert({
+      create: { ...data, contentId, contentKind, userId },
+      update: data,
+      where: { userContent: { contentId, contentKind, userId } },
+    });
   });
 
   return { status: "voted", vote: toContentVote({ ...feedback, vote }) };

@@ -1517,4 +1517,48 @@ describe("plan changes the buddy proposes", () => {
       status: "proposed",
     });
   });
+
+  it("marks the decline when a real answer claim is lost while the model is proposing", async () => {
+    const { goal, plan, user } = await setup();
+
+    mockWords({
+      leftOut: [],
+      operations: [{ kind: "setDailyMinutes", minutes: 20 }],
+      summary: "Twenty minutes a day.",
+      understood: true,
+    });
+
+    const asked = await askBuddy({ goalId: goal.id, question: "20 minutes a day" });
+    const words = vi.mocked(interpretPlanEdit).getMockImplementation();
+
+    if (!words) {
+      throw new Error("The model response is mocked");
+    }
+
+    vi.mocked(interpretPlanEdit).mockImplementationOnce(async (input) => {
+      await prisma.lessonQuestion.update({
+        data: { generationRevision: { increment: 1 } },
+        where: { id: asked.questionId },
+      });
+
+      return words(input);
+    });
+
+    const before = await readRevision(user.id);
+
+    await expect(
+      proposeTutorPlanChange({ ...asked, request: "20 minutes a day" }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(readRevision(user.id)).resolves.toBe(before + 2n);
+
+    await expect(
+      prisma.planChange.findFirstOrThrow({ where: { planId: plan.id } }),
+    ).resolves.toMatchObject({ status: "declined" });
+  });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}

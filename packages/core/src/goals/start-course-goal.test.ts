@@ -593,6 +593,64 @@ describe(startCourseGoal, () => {
     },
   );
 
+  it("marks the default exam date with its notice setting and leaves a repeated start unchanged", async () => {
+    const [course, user, blueprint] = await Promise.all([
+      publicCourse({ format: "exam" }),
+      userFixture(),
+      examBlueprintFixture({
+        edition: {
+          citations: [],
+          dates: [
+            {
+              citation: { passage: "", sourceId: "notice" },
+              date: "2020-11-08",
+              kind: "exam",
+              label: "Exam",
+            },
+          ],
+          noticeUrl: null,
+          questionCount: null,
+          sourceHash: null,
+          year: 2020,
+        },
+      }),
+    ]);
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: blueprint.id,
+        generatedAt: NOW,
+        graph: {},
+        model: "test",
+        primaryCourseId: course.id,
+        promptVersion: "test",
+        runId: randomUUID(),
+      },
+    });
+
+    mockSession(user.id);
+
+    const before = await readRevision(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: {} });
+
+    expect(result).toMatchObject({
+      goal: { kind: "exam", targetDate: "2020-11-08" },
+      status: "created",
+    });
+
+    await expect(readRevision(user.id)).resolves.toBe(before + 4n);
+    const goalId = result.status === "created" ? result.goal.id : "";
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { goalId } })).resolves.toMatchObject({
+      inputVersion: 2,
+      settings: { noticeDate: "2020-11-08" },
+    });
+
+    await startCourseGoal({ courseId: course.id, input: {} });
+    await expect(readRevision(user.id)).resolves.toBe(before + 4n);
+  });
+
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
     const [course, user] = await Promise.all([
       publicCourse({ format: "exam", title: "OAB" }),
@@ -737,3 +795,8 @@ describe(startCourseGoal, () => {
     });
   });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}

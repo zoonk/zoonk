@@ -2,9 +2,12 @@ import "server-only";
 import { type CheckLessonQualityParams } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { loadLessonWritingContext } from "../lessons/_utils/lesson-writing-inputs";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
@@ -129,6 +132,11 @@ export function toLaterReviewProblems(
     .map((issue) => ({ problem: `${issue.problem} Fix: ${issue.fix}`, screen: issue.screen }));
 }
 
+/** Another writer that pulled the lesson first must leave no admission marks behind. */
+class LessonPullLostError extends Error {
+  override name = "LessonPullLostError";
+}
+
 /**
  * Takes a published lesson out of play until it's written again (a source it was built on
  * changed): nobody opens it until a new version passes the gate, and learners playing it finish
@@ -136,14 +144,49 @@ export function toLaterReviewProblems(
  * is left alone.
  */
 export async function pullLessonForFix(lessonId: string): Promise<boolean> {
-  const { count } = await prisma.lesson.updateMany({
-    data: { contentStatus: "failed" },
-    where: { contentStatus: "completed", id: lessonId },
-  });
+  const { data: pulled, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const current = await tx.lesson.findFirst({
+        include: { skills: { select: { skillId: true } } },
+        omit: { spec: true, summary: true },
+        where: { contentStatus: "completed", id: lessonId },
+      });
 
-  if (count > 0) {
+      if (!current) {
+        return false;
+      }
+
+      const planIds = await resolvePlanInputDependents(tx, {
+        lessonIds: [lessonId],
+        skillIds: current.skills.map(({ skillId }) => skillId),
+      });
+
+      await markPlansChanged(tx, { planIds });
+
+      const { count } = await tx.lesson.updateMany({
+        data: { contentStatus: "failed" },
+        where: { contentStatus: "completed", id: lessonId },
+      });
+
+      if (count === 0) {
+        throw new LessonPullLostError();
+      }
+
+      return true;
+    }),
+  );
+
+  if (error instanceof LessonPullLostError) {
+    return false;
+  }
+
+  if (error) {
+    throw error;
+  }
+
+  if (pulled) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
   }
 
-  return count > 0;
+  return pulled;
 }

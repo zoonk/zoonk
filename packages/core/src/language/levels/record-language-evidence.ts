@@ -6,7 +6,9 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
-import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { safeAsync } from "@zoonk/utils/error";
+import { usesNonLatinScript } from "@zoonk/utils/languages";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { findLearnerLanguageGoal, readGoalDetails } from "../_utils/language-goal";
 import { scheduleMistakePatternCheck } from "../patterns/find-mistake-pattern";
 import {
@@ -16,6 +18,13 @@ import {
   getStartScore,
   getStepLanguageSkill,
 } from "./skill-level-rules";
+
+const MAX_EVIDENCE_ATTEMPTS = 3;
+
+/** A changed admission classification must release its marks before taking different plan locks. */
+class EvidenceAdmissionChangedError extends Error {
+  override name = "EvidenceAdmissionChangedError";
+}
 
 /** Screens that teach a word: a right answer means the learner knows it. */
 const WORD_STEP_KINDS = new Set<StepKind>(["translation", "vocabulary"]);
@@ -77,6 +86,61 @@ async function addSkillEvidence(
   });
 }
 
+/** Only the non-Latin reading score is consumed by the session builder's alphabet selection. */
+async function changesSelection(tx: TransactionClient, input: SkillEvidence): Promise<boolean> {
+  if (input.skill !== "reading" || !usesNonLatinScript(input.language)) {
+    return false;
+  }
+
+  const current = await tx.languageSkillLevel.findUnique({
+    where: {
+      userLanguageSkill: { language: input.language, skill: input.skill, userId: input.userId },
+    },
+  });
+
+  const state = current ?? {
+    score: input.startScore,
+    startScore: input.startScore,
+    windowCeiling: null,
+    windowCorrect: 0,
+    windowTotal: 0,
+  };
+
+  return applyLevelEvidence(state, input.evidence).score !== (current?.score ?? 0);
+}
+
+/** Match profile admission: reread after the first marker and roll back before changing lock scope. */
+async function writeEvidence({
+  attempt = 1,
+  skill,
+  write,
+}: {
+  attempt?: number;
+  skill: SkillEvidence;
+  write: (tx: TransactionClient) => Promise<void>;
+}): Promise<void> {
+  const { error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const planInputs = await changesSelection(tx, skill);
+      await markLearnerChanged(tx, { planInputs, userId: skill.userId });
+
+      if (planInputs !== (await changesSelection(tx, skill))) {
+        throw new EvidenceAdmissionChangedError();
+      }
+
+      await write(tx);
+    }),
+  );
+
+  if (error instanceof EvidenceAdmissionChangedError && attempt < MAX_EVIDENCE_ATTEMPTS) {
+    return writeEvidence({ attempt: attempt + 1, skill, write });
+  }
+
+  if (error) {
+    throw error;
+  }
+}
+
 /** Adds evidence to one skill's level, in its own transaction (see `addSkillEvidence`). */
 export async function recordLanguageSkillEvidence({
   evidence,
@@ -91,10 +155,8 @@ export async function recordLanguageSkillEvidence({
 }): Promise<void> {
   const startScore = await loadStartScore({ language, skill, userId });
 
-  // The level shows on the learner's language screens, so each answer raises their revision.
-  await writeLearnerChange({ userId }, (tx) =>
-    addSkillEvidence(tx, { evidence, language, skill, startScore, userId }),
-  );
+  const input = { evidence, language, skill, startScore, userId };
+  await writeEvidence({ skill: input, write: (tx) => addSkillEvidence(tx, input) });
 }
 
 /**
@@ -193,7 +255,8 @@ export async function recordLanguageStepEvidence(
 
   afterLanguageStepEvidence(evidence);
 
-  await writeLearnerChange({ userId: evidence.skill.userId }, (tx) =>
-    writeLanguageStepEvidence(tx, evidence),
-  );
+  await writeEvidence({
+    skill: evidence.skill,
+    write: (tx) => writeLanguageStepEvidence(tx, evidence),
+  });
 }

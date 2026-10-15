@@ -3,8 +3,17 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import {
+  holdLearnerRevision,
+  readLearnerRevision,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
@@ -178,5 +187,110 @@ describe("alphabet intro", () => {
     });
 
     await expect(skipAlphabetIntro(topic.id)).resolves.toStrictEqual({ status: "notLanguage" });
+  });
+});
+
+describe("alphabet skip admission", () => {
+  it("marks selection once, preserves current details, and serializes a duplicate skip before block locks", async () => {
+    const { goal, user, plan } = await japaneseGoal();
+    const language = `x${crypto.randomUUID().slice(0, 8)}`;
+
+    const [alphabet, session] = await Promise.all([
+      libraryLessonFixture({
+        contentStatus: "completed",
+        identityKey: getAlphabetIdentityKey("ja"),
+        language,
+        targetLanguage: "ja",
+      }),
+      studySessionFixture({ goalId: goal.id, userId: user.id }),
+      prisma.goal.update({ data: { language }, where: { id: goal.id } }),
+    ]);
+
+    const [pending, active] = await Promise.all([
+      studySessionBlockFixture({
+        lessonId: alphabet.id,
+        position: 0,
+        sessionId: session.id,
+        status: "pending",
+      }),
+      studySessionBlockFixture({
+        lessonId: alphabet.id,
+        position: 1,
+        sessionId: session.id,
+        status: "active",
+      }),
+    ]);
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (tx) => {
+        await tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${pending.id}::uuid FOR UPDATE`;
+
+        await tx.goal.update({
+          data: { details: { ...(goal.details as object), concurrent: "kept" } },
+          where: { id: goal.id },
+        });
+      },
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+    const skips = Promise.all([skipAlphabetIntro(goal.id), skipAlphabetIntro(goal.id)]);
+
+    try {
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, /SELECT plan.id FROM plans/u);
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, skips]);
+    }
+
+    await expect(skips).resolves.toStrictEqual([{ status: "skipped" }, { status: "skipped" }]);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      details: { alphabetIntro: "skipped", concurrent: "kept", targetLevel: "B1+" },
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: pending.id } }),
+    ).resolves.toMatchObject({ status: "skipped" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: active.id } }),
+    ).resolves.toMatchObject({ status: "active" });
+
+    await skipAlphabetIntro(goal.id);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
+  });
+
+  it("rolls back admission if the goal becomes ineligible while it waits", async () => {
+    const { goal, user, plan } = await japaneseGoal();
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (tx) =>
+        tx.goal.update({ data: { targetLanguage: "en" }, where: { id: goal.id } }),
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+    const skip = skipAlphabetIntro(goal.id);
+
+    try {
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, skip]);
+    }
+
+    await expect(skip).resolves.toStrictEqual({ status: "notLanguage" });
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+    });
   });
 });

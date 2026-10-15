@@ -76,7 +76,18 @@ describe(findCourseWeightsLookup, () => {
     });
 
     await expect(copyStoredCourseWeights({ goalId: goal.id, lookup })).resolves.toBe(false);
+
+    const revisionBefore = await readRevision(goal.userId);
+
     await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
+    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
+
+    await Promise.all([
+      copyStoredCourseWeights({ goalId: goal.id, lookup }),
+      copyStoredCourseWeights({ goalId: goal.id, lookup }),
+    ]);
+
+    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
@@ -227,3 +238,8 @@ describe(copyStoredCourseWeights, () => {
     ]);
   });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}

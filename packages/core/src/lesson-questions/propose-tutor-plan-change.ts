@@ -1,6 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { toProvenanceData } from "../library/_utils/library-rows";
 import { isPlanReady, proposeChange } from "../plans/_utils/apply-plan-change";
 import { type PlanChangeCaution, findChangeCautions } from "../plans/_utils/change-cautions";
@@ -40,21 +40,36 @@ async function linkToAnswer({
   changeId,
   questionId,
   revision,
+  userId,
 }: {
   changeId: string;
   questionId: string;
   revision: number;
+  userId: string;
 }): Promise<boolean> {
-  const linked = await prisma.lessonQuestion.updateMany({
-    data: { planChangeId: changeId },
-    where: { generationRevision: revision, id: questionId, status: "running" },
+  return writeLearnerChange({ userId }, async (tx) => {
+    const question = await tx.lessonQuestion.findUnique({ where: { id: questionId } });
+
+    if (question?.generationRevision === revision && question.status === "running") {
+      if (question.planChangeId === changeId) {
+        return unchanged(true);
+      }
+
+      await tx.lessonQuestion.update({
+        data: { planChangeId: changeId },
+        where: { id: questionId },
+      });
+
+      return true;
+    }
+
+    const declined = await tx.planChange.updateMany({
+      data: { status: "declined" },
+      where: { id: changeId, status: "proposed" },
+    });
+
+    return declined.count > 0 ? false : unchanged(false);
   });
-
-  if (linked.count === 0) {
-    await prisma.planChange.update({ data: { status: "declined" }, where: { id: changeId } });
-  }
-
-  return linked.count > 0;
 }
 
 async function proposeForGoal({
@@ -173,7 +188,7 @@ export async function proposeTutorPlanChange({
     return proposed;
   }
 
-  const linked = await linkToAnswer({ ...proposed, questionId, revision });
+  const linked = await linkToAnswer({ ...proposed, questionId, revision, userId: session.user.id });
   revalidatePlanTags(session.user.id);
 
   if (!linked) {

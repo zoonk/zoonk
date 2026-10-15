@@ -30,11 +30,23 @@ export async function markPlanInputsChanged(
   return planIds;
 }
 
-/** Raises the revision clients compare to know a learner's summary changed. */
+/**
+ * Raises the revision clients compare to know a learner's summary changed. Revision-only writers
+ * that update plans lock those owned plans here first, without invalidating their planning inputs.
+ */
 export async function markLearnerRevision(
   tx: LearnerRevisionTransaction,
-  { userId }: { userId: string },
+  { lockPlanIds = [], userId }: { lockPlanIds?: readonly string[]; userId: string },
 ): Promise<{ learnerRevision: bigint }> {
+  if (lockPlanIds.length > 0) {
+    await tx.$queryRaw`
+      SELECT plan.id FROM plans AS plan
+      JOIN goals AS goal ON goal.id = plan.goal_id
+      WHERE plan.id = ANY(${[...lockPlanIds]}::uuid[]) AND goal.user_id = ${userId}::uuid
+      ORDER BY plan.id FOR UPDATE OF plan
+    `;
+  }
+
   const [user] = await tx.$queryRaw<{ learnerRevision: bigint }[]>`
     UPDATE users SET learner_revision = learner_revision + 1
     WHERE id = ${userId}::uuid

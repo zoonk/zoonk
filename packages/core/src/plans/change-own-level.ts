@@ -1,16 +1,16 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getOwnLevel } from "../learner/placement/placement-contract";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { applyChangeNow } from "./_utils/apply-plan-change";
 import { findFoundationOperations } from "./_utils/own-level-foundations";
 import { findLevelTestOuts } from "./_utils/own-level-test-outs";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
-import { type PlanContext } from "./_utils/plan-context";
+import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
 import { withPlanRetry } from "./_utils/replan";
 import {
   OWN_LEVEL_SOURCE,
@@ -39,14 +39,22 @@ function getDirection({ from, to }: { from: OwnLevel | null; to: OwnLevel }) {
 }
 
 async function saveLevel({ context, level }: { context: PlanContext; level: OwnLevel }) {
-  const details = isJsonObject(context.goal.details) ? context.goal.details : {};
+  const saved = await writeLearnerChange(
+    { planInputs: true, userId: context.goal.userId },
+    async (tx) => {
+      const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
+      const details = isJsonObject(goal.details) ? goal.details : {};
 
-  await prisma.goal.update({
-    data: { details: { ...details, level } },
-    where: { id: context.goal.id },
-  });
+      if (details.level === level) {
+        return unchanged(goal);
+      }
+
+      return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
+    },
+  );
 
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
+  return saved;
 }
 
 /** Adds the foundations a lower level needs, with an undo; null when there's nothing to add. */
@@ -92,10 +100,15 @@ export async function changeOwnLevel({
     const { context } = owned;
     const direction = getDirection({ from: getOwnLevel({ goal: context.goal }), to: input.level });
 
-    await saveLevel({ context, level: input.level });
+    const goal = await saveLevel({ context, level: input.level });
+    const current = await loadPlanContext({ goal, timeZone: context.timeZone });
+
+    if (!current) {
+      return { status: "notFound" as const };
+    }
 
     const [change, testOuts] = await Promise.all([
-      direction === "lower" ? addFoundations(context) : null,
+      direction === "lower" ? addFoundations(current) : null,
       direction === "higher"
         ? loadGoalPlan(goalId).then((plan) => findLevelTestOuts({ level: input.level, plan }))
         : [],

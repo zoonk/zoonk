@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { followPlanChangeToday } from "../../sessions/_utils/refresh-day-session";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
@@ -29,15 +29,18 @@ export async function followPlanToday({
     return;
   }
 
-  const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+  await writeLearnerChange({ userId: context.goal.userId }, async (tx) => {
+    const change = await tx.planChange.findUniqueOrThrow({ where: { id: changeId } });
+    const payload = parsePlanChangePayload(change.payload);
+    const todaySession = refresh === "rebuilt" ? "changed" : "unchanged";
 
-  await prisma.planChange.update({
-    data: {
-      payload: toPlanChangePayload({
-        ...parsePlanChangePayload(change.payload),
-        todaySession: refresh === "rebuilt" ? "changed" : "unchanged",
-      }),
-    },
-    where: { id: changeId },
+    if (payload.todaySession === todaySession) {
+      return unchanged(null);
+    }
+
+    await tx.planChange.update({
+      data: { payload: toPlanChangePayload({ ...payload, todaySession }) },
+      where: { id: changeId },
+    });
   });
 }

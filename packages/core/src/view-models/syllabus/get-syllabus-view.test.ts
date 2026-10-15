@@ -11,7 +11,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
@@ -578,7 +578,16 @@ describe(getSyllabusView, () => {
   // Both subjects studied whole, three new questions right in each and no mock yet: the goal read
   // 55% over subjects at 27%. Its six answers counted for the goal; each subject's three, too few,
   // didn't.
-  it("keeps the goal's preparation within its subjects' when each has only a few answers", async () => {
+  it("keeps the goal's preparation within its subjects' when each has only a few answers", async ({
+    onTestFinished,
+  }) => {
+    // Both independent reads compare the same instant; recall decays between real clock samples.
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
     const { goal, skills, user } = await signedInExamLearner({ topics: false });
     const studied = [skills.orthography, skills.cohesion, skills.principles];
     const answered = [skills.orthography, skills.principles];

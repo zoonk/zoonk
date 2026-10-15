@@ -4,6 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { arePhaseChallengesRequired } from "../checkpoints/_utils/phase-challenge-access";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { loadPlanCourse } from "../plans/_utils/plan-course";
 import { isPlanFinished } from "../plans/_utils/plan-end";
 import { parsePlanSettings } from "../plans/planner/plan-state";
@@ -110,7 +111,16 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     return { status: "noNextLevel" };
   }
 
-  await prisma.goal.update({ data: { status: "completed" }, where: { id: goal.id } });
+  await writeLearnerChange({ planInputs: true, userId: owned.userId }, async (tx) => {
+    const updated = await tx.goal.updateMany({
+      data: { status: "completed" },
+      where: { id: goal.id, status: { not: "completed" } },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
+  });
 
   const created = await createGoals(
     {
@@ -135,7 +145,16 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
   const [next] = created.status === "created" ? created.goals : [];
 
   if (!next) {
-    await prisma.goal.update({ data: { status: goal.status }, where: { id: goal.id } });
+    await writeLearnerChange({ planInputs: true, userId: owned.userId }, async (tx) => {
+      const current = await tx.goal.findUnique({ where: { id: goal.id } });
+
+      if (!current || current.status === goal.status) {
+        return unchanged(null);
+      }
+
+      await tx.goal.update({ data: { status: goal.status }, where: { id: goal.id } });
+    });
+
     return { status: "refused" };
   }
 

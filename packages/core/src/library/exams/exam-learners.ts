@@ -1,6 +1,7 @@
 import "server-only";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
 import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
 import { readTestedLanguage } from "./blueprint-language";
@@ -60,16 +61,33 @@ export async function linkGoalToExamBlueprint({
 
   const targetLanguage = blueprint ? readTestedLanguage(blueprint.structure) : null;
 
-  const { count } = await prisma.goal.updateMany({
-    data: { examBlueprintId },
-    where: { id: goalId },
-  });
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
-  if (count > 0 && targetLanguage) {
-    await prisma.goal.updateMany({ data: { targetLanguage }, where: { id: goalId, kind: "exam" } });
+  if (!goal) {
+    return false;
   }
 
-  return count > 0;
+  return writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUnique({ where: { id: goalId } });
+
+    if (!current) {
+      return unchanged(false);
+    }
+
+    const language =
+      current.kind === "exam" && targetLanguage ? targetLanguage : current.targetLanguage;
+
+    if (current.examBlueprintId === examBlueprintId && current.targetLanguage === language) {
+      return unchanged(true);
+    }
+
+    await tx.goal.update({
+      data: { examBlueprintId, targetLanguage: language },
+      where: { id: goalId },
+    });
+
+    return true;
+  });
 }
 
 /**
@@ -78,9 +96,21 @@ export async function linkGoalToExamBlueprint({
  * that material instead of a public exam's checklist and rules. A private blueprint stays.
  */
 export async function unlinkGoalFromSharedExam(goalId: string): Promise<void> {
-  await prisma.goal.updateMany({
-    data: { examBlueprintId: null },
-    where: { examBlueprint: { is: { visibility: "public" } }, id: goalId },
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+    const updated = await tx.goal.updateMany({
+      data: { examBlueprintId: null },
+      where: { examBlueprint: { is: { visibility: "public" } }, id: goalId },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
   });
 }
 

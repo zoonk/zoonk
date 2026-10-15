@@ -1,10 +1,15 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
@@ -61,37 +66,59 @@ async function publishSteps({
   steps: readonly ExplanationStep[];
   workflowRunId: string;
 }): Promise<boolean> {
-  const saved = await prisma.$transaction(async (tx) => {
-    const claimed = await tx.lesson.updateMany({
-      data: {
-        contentStatus: "completed",
-        relatedQuestions: explanation.goFurther.relatedQuestions,
-        summary: { ideas: explanation.recap.map((text) => ({ text })) },
-      },
-      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-    });
+  const lostClaim = new Error("The explanation publication claim was lost");
 
-    if (claimed.count === 0) {
-      return false;
-    }
+  const { data: saved, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const linkedSkills = await tx.lessonSkill.findMany({ where: { lessonId } });
 
-    const version = await startLessonVersion(tx, lessonId);
+      /** Explicit skills include plans that still refer to a merged skill's identity. */
+      const planIds = await resolvePlanInputDependents(tx, {
+        lessonIds: [lessonId],
+        skillIds: linkedSkills.map(({ skillId: linkedSkillId }) => linkedSkillId),
+      });
 
-    await tx.step.createMany({
-      data: steps.map((step, position) => ({
-        content: step.content,
-        contractVersion: STEP_CONTRACT_VERSION,
-        kind: step.kind,
-        lessonId,
-        position,
-        skillId,
-        version,
-        ...toProvenanceData(provenance),
-      })),
-    });
+      await markPlansChanged(tx, { planIds });
 
-    return true;
-  });
+      const claimed = await tx.lesson.updateMany({
+        data: {
+          contentStatus: "completed",
+          relatedQuestions: explanation.goFurther.relatedQuestions,
+          summary: { ideas: explanation.recap.map((text) => ({ text })) },
+        },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
+
+      if (claimed.count === 0) {
+        throw lostClaim;
+      }
+
+      const version = await startLessonVersion(tx, lessonId);
+
+      await tx.step.createMany({
+        data: steps.map((step, position) => ({
+          content: step.content,
+          contractVersion: STEP_CONTRACT_VERSION,
+          kind: step.kind,
+          lessonId,
+          position,
+          skillId,
+          version,
+          ...toProvenanceData(provenance),
+        })),
+      });
+
+      return true;
+    }),
+  );
+
+  if (error === lostClaim) {
+    return false;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (saved) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
@@ -197,25 +224,59 @@ export async function linkExplanationToGoal({
     },
   });
 
-  const goal = await prisma.goal.findUnique({
-    select: { details: true, primaryCourseId: true, userId: true },
-    where: { id: goalId },
-  });
+  await saveExplanationLink({ courseId, goalId, relatedQuestions });
+}
+
+async function saveExplanationLink({
+  courseId,
+  goalId,
+  relatedQuestions,
+}: {
+  courseId: string | null;
+  goalId: string;
+  relatedQuestions: string[];
+}): Promise<void> {
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
     return;
   }
 
-  const details = isJsonObject(goal.details) ? goal.details : {};
+  const planInputs = goal.primaryCourseId === null && courseId !== null;
 
-  await prisma.goal.update({
-    data: {
-      details: { ...details, relatedQuestions },
-      // Without a course the column is left alone: a new explanation's course is linked on its own.
-      primaryCourseId: goal.primaryCourseId ?? courseId ?? undefined,
-    },
-    where: { id: goalId },
+  const retry = await writeLearnerChange({ planInputs, userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUnique({ where: { id: goalId } });
+
+    if (!current) {
+      return unchanged(false);
+    }
+
+    // A concurrent course link changes which locks this write needs; retry in the global order.
+    if ((current.primaryCourseId === null && courseId !== null) !== planInputs) {
+      return unchanged(true);
+    }
+
+    const details = isJsonObject(current.details) ? current.details : {};
+    const primaryCourseId = current.primaryCourseId ?? courseId;
+
+    if (
+      primaryCourseId === current.primaryCourseId &&
+      isDeepStrictEqual(details.relatedQuestions, relatedQuestions)
+    ) {
+      return unchanged(false);
+    }
+
+    await tx.goal.update({
+      data: { details: { ...details, relatedQuestions }, primaryCourseId },
+      where: { id: goalId },
+    });
+
+    return false;
   });
+
+  if (retry) {
+    return saveExplanationLink({ courseId, goalId, relatedQuestions });
+  }
 
   revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
 }
@@ -250,7 +311,16 @@ export async function linkGoFurtherCourse({
     return;
   }
 
-  await prisma.goal.update({ data: { primaryCourseId: courseId }, where: { id: goalId } });
+  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+    const updated = await tx.goal.updateMany({
+      data: { primaryCourseId: courseId },
+      where: { id: goalId, primaryCourseId: null },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
+  });
 
   revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
 }

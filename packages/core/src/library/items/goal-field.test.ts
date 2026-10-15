@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type WorkFieldResult, classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveGoalField } from "./goal-field";
@@ -44,8 +44,12 @@ describe(resolveGoalField, () => {
     const goal = await goalWith({ purpose: "work", role: "Enfermeira de UTI", tasks: "Escalas" });
     mockField("nursing");
 
+    const revisionBefore = await readRevision(goal.userId);
+
     await expect(resolveGoalField({ goalId: goal.id })).resolves.toBe("nursing");
     await expect(resolveGoalField({ goalId: goal.id })).resolves.toBe("nursing");
+
+    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
 
     expect(classifyWorkField).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -62,6 +66,26 @@ describe(resolveGoalField, () => {
       purpose: "work",
       role: "Enfermeira de UTI",
     });
+  });
+
+  it("keeps the planning version when new role wording resolves to the same field", async () => {
+    const goal = await goalWith({ purpose: "work", role: "Store manager" });
+    const plan = await planFixture({ goalId: goal.id });
+    mockField("retail");
+    await resolveGoalField({ goalId: goal.id });
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const details = await readDetails(goal.id);
+
+    await prisma.goal.update({
+      data: { details: { ...details, role: "Retail manager" } },
+      where: { id: goal.id },
+    });
+
+    mockField("retail");
+    await resolveGoalField({ goalId: goal.id });
+    const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(after.inputVersion).toBe(before.inputVersion);
+    expect(after.inputVersion).toBe(plan.inputVersion + 1);
   });
 
   it("sorts a career change by the role the learner wants", async () => {
@@ -123,3 +147,8 @@ describe(resolveGoalField, () => {
     expect(classifyWorkField).not.toHaveBeenCalled();
   });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}

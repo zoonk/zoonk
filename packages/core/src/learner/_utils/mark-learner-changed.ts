@@ -8,14 +8,19 @@ import {
 /** Each learner-visible writer calls this once, in the transaction that owns its domain write. */
 export async function markLearnerChanged(
   tx: LearnerRevisionTransaction,
-  { userId, planInputs = false }: { userId: string; planInputs?: boolean },
+  {
+    lockPlanIds = [],
+    planInputs = false,
+    userId,
+  }: { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
 ): Promise<{ learnerRevision: bigint }> {
   if (planInputs) {
     /** Always acquire plan locks before the learner row, including in mixed writer transactions. */
     await markPlanInputsChanged(tx, { userIds: [userId] });
   }
 
-  return markLearnerRevision(tx, { userId });
+  /** Planning-input writes already hold every owned plan; revision-only plan writes opt in. */
+  return markLearnerRevision(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
 }
 
 /** A shared-content writer marks dependent plans, without returning another learner's revision. */

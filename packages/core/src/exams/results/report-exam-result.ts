@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -6,6 +7,7 @@ import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { proposeNoticeChange } from "../../plans/notice-plan-change";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
@@ -152,10 +154,24 @@ export async function reportExamResult({
     score: input.score,
   };
 
-  const row = await prisma.examResult.upsert({
-    create: { ...data, goalId, userId },
-    update: data,
-    where: { goalId },
+  const row = await writeLearnerChange({ userId }, async (tx) => {
+    const current = await tx.examResult.findUnique({ where: { goalId } });
+    const { reportedAt: _reportedAt, ...result } = data;
+
+    if (
+      current &&
+      Object.entries(result).every(([key, value]) =>
+        isDeepStrictEqual(Reflect.get(current, key), value),
+      )
+    ) {
+      return unchanged(current);
+    }
+
+    return tx.examResult.upsert({
+      create: { ...data, goalId, userId },
+      update: data,
+      where: { goalId },
+    });
   });
 
   revalidateCacheTags([getLearnerModelCacheTag(userId)]);

@@ -1,8 +1,11 @@
 import "server-only";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
 import { moveOnWithoutLesson } from "../generation/hold-back-lesson";
 import {
@@ -273,6 +276,10 @@ export async function citePublishedLesson({
   return count;
 }
 
+class PublishedLessonReplacedError extends Error {
+  override name = "PublishedLessonReplacedError";
+}
+
 /**
  * Takes a published lesson out of play after its background check found something wrong that no
  * fix and no fresh draft could put right: it's set aside like a lesson whose last draft was held
@@ -286,18 +293,41 @@ export async function setAsidePublishedLesson({
   lessonId: string;
   version: number;
 }): Promise<boolean> {
-  const userIds = await prisma.$transaction(async (tx) => {
-    if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {
-      return null;
-    }
+  const { data: userIds, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const existing = await tx.step.findFirst({
+        select: { version: true },
+        where: { lesson: { contentStatus: "completed" }, lessonId, ...CURRENT_STEPS },
+      });
 
-    await tx.lesson.update({
-      data: { contentStatus: "failed", setAsideAt: new Date() },
-      where: { id: lessonId },
-    });
+      if (existing?.version !== version) {
+        return null;
+      }
 
-    return moveOnWithoutLesson(tx, lessonId);
-  });
+      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
+      await markPlansChanged(tx, { planIds });
+
+      /** Lock content only after plans and owners; a replaced version rolls admission back. */
+      if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {
+        throw new PublishedLessonReplacedError();
+      }
+
+      await tx.lesson.update({
+        data: { contentStatus: "failed", setAsideAt: new Date() },
+        where: { id: lessonId },
+      });
+
+      return moveOnWithoutLesson(tx, lessonId);
+    }),
+  );
+
+  if (error instanceof PublishedLessonReplacedError) {
+    return false;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (!userIds) {
     return false;

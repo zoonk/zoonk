@@ -2,6 +2,7 @@ import "server-only";
 import { type QuestionFormat } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ExamStructure, examStructureSchema, toAnswerFormat } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { isPassageInDocument } from "./passage-check";
@@ -68,12 +69,25 @@ export async function recordGoalNoticeFormats({
     return;
   }
 
-  // Merged in place: onboarding writes the learner's answers into the same details meanwhile.
-  await prisma.$executeRaw`
-    UPDATE goals
-    SET details = jsonb_set(details, '{noticeFormats}', ${JSON.stringify(cited)}::jsonb)
-    WHERE id = ${goalId}::uuid
-  `;
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
+    // Merged in place: onboarding writes the learner's answers into the same details meanwhile.
+    const count = await tx.$executeRaw`
+      UPDATE goals
+      SET details = jsonb_set(details, '{noticeFormats}', ${JSON.stringify(cited)}::jsonb)
+      WHERE id = ${goalId}::uuid
+        AND details->'noticeFormats' IS DISTINCT FROM ${JSON.stringify(cited)}::jsonb
+    `;
+
+    if (count === 0) {
+      return unchanged(null);
+    }
+  });
 }
 
 /**

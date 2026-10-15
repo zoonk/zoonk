@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { revalidatePlanTags } from "./_utils/replan";
 import { type PlanView } from "./plan-view-contract";
 
@@ -58,9 +59,28 @@ export async function startNoticeWait({
   goalId: string;
   now?: Date;
 }): Promise<void> {
-  await prisma.plan.updateMany({
-    data: { noticeWaitUntil: new Date(now.getTime() + NOTICE_WAIT_MS) },
-    where: { goalId },
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
+  });
+
+  if (!goal?.plan) {
+    return;
+  }
+
+  const planId = goal.plan.id;
+
+  const until = new Date(now.getTime() + NOTICE_WAIT_MS);
+
+  await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
+    const updated = await tx.plan.updateMany({
+      data: { noticeWaitUntil: until },
+      where: { OR: [{ noticeWaitUntil: null }, { noticeWaitUntil: { not: until } }], id: planId },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
   });
 
   await revalidateGoalPlan(goalId);
@@ -78,12 +98,33 @@ export async function claimNoticeLanding({
   goalId: string;
   now?: Date;
 }): Promise<boolean> {
-  const { count } = await prisma.plan.updateMany({
-    data: { noticeWaitUntil: new Date(now.getTime() + LANDING_MS) },
-    where: { goalId, noticeWaitUntil: { gt: now } },
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
   });
 
-  return count > 0;
+  if (!goal?.plan) {
+    return false;
+  }
+
+  const planId = goal.plan.id;
+
+  return writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
+    const plan = await tx.plan.findUnique({ where: { id: planId } });
+
+    if (!plan?.noticeWaitUntil || plan.noticeWaitUntil <= now) {
+      return unchanged(false);
+    }
+
+    const until = new Date(now.getTime() + LANDING_MS);
+
+    if (plan.noticeWaitUntil.getTime() === until.getTime()) {
+      return unchanged(true);
+    }
+
+    await tx.plan.update({ data: { noticeWaitUntil: until }, where: { id: plan.id } });
+    return true;
+  });
 }
 
 /**
@@ -92,10 +133,28 @@ export async function claimNoticeLanding({
  * plan's own, never news on Today (see `listGoalChangeNotices`).
  */
 export async function endNoticeWait(goalId: string): Promise<void> {
-  const { count } = await prisma.plan.updateMany({
-    data: { noticeWaitEndedAt: new Date(), noticeWaitUntil: null },
-    where: { goalId, noticeWaitUntil: { not: null } },
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
   });
+
+  if (!goal?.plan) {
+    return;
+  }
+
+  const planId = goal.plan.id;
+
+  const count = await writeLearnerChange(
+    { lockPlanIds: [planId], userId: goal.userId },
+    async (tx) => {
+      const updated = await tx.plan.updateMany({
+        data: { noticeWaitEndedAt: new Date(), noticeWaitUntil: null },
+        where: { id: planId, noticeWaitUntil: { not: null } },
+      });
+
+      return updated.count > 0 ? updated.count : unchanged(0);
+    },
+  );
 
   if (count > 0) {
     await revalidateGoalPlan(goalId);

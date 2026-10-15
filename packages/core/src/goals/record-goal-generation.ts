@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 
 /**
  * Remembers the run writing a goal's curriculum (or its quick explanation), so onboarding and the
@@ -14,13 +15,35 @@ export async function recordGoalGeneration({
   generationId: string;
   goalId: string;
 }): Promise<void> {
-  await prisma.$transaction([
-    prisma.goal.updateMany({ data: { generationRunId: generationId }, where: { id: goalId } }),
-    prisma.plan.updateMany({
-      data: { buildFailedAt: null },
-      where: { buildFailedAt: { not: null }, goalId },
-    }),
-  ]);
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
+  });
+
+  if (!goal) {
+    return;
+  }
+
+  await writeLearnerChange(
+    { lockPlanIds: goal.plan ? [goal.plan.id] : [], userId: goal.userId },
+    async (tx) => {
+      const current = await tx.goal.findUnique({ where: { id: goalId } });
+      const plan = goal.plan ? await tx.plan.findUnique({ where: { id: goal.plan.id } }) : null;
+
+      if (!current || (current.generationRunId === generationId && !plan?.buildFailedAt)) {
+        return unchanged(null);
+      }
+
+      await tx.goal.updateMany({ data: { generationRunId: generationId }, where: { id: goalId } });
+
+      if (plan) {
+        await tx.plan.updateMany({
+          data: { buildFailedAt: null },
+          where: { buildFailedAt: { not: null }, id: plan.id },
+        });
+      }
+    },
+  );
 }
 
 /**
@@ -29,5 +52,25 @@ export async function recordGoalGeneration({
  * that failed leaves the plan it had).
  */
 export async function recordGoalBuildFailure(goalId: string): Promise<void> {
-  await prisma.plan.updateMany({ data: { buildFailedAt: new Date() }, where: { goalId } });
+  const goal = await prisma.goal.findUnique({
+    include: { plan: { select: { id: true } } },
+    where: { id: goalId },
+  });
+
+  if (!goal?.plan) {
+    return;
+  }
+
+  const planId = goal.plan.id;
+
+  await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
+    const updated = await tx.plan.updateMany({
+      data: { buildFailedAt: new Date() },
+      where: { buildFailedAt: null, id: planId },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
+  });
 }

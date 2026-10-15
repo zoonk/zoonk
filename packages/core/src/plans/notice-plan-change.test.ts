@@ -11,6 +11,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposeNoticeChange } from "./notice-plan-change";
+import { NOTICE_SOURCE } from "./plan-change-contract";
 import { type PlanGraph, parsePlanGraph } from "./planner/plan-state";
 
 /** A Monday in 2020, before the learning events other tests write. */
@@ -611,4 +612,44 @@ describe(proposeNoticeChange, () => {
       status: "ready",
     });
   });
+
+  it("marks replacement of obsolete waiting notices once, with no planning-input bump", async () => {
+    const { goal, user } = await plannedExam({
+      days: ["2020-11-08"],
+      targetDate: "2020-11-08",
+      year: 2020,
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const waiting = await planChangeFixture({
+      payload: { operations: [], source: NOTICE_SOURCE },
+      planId: plan.id,
+      status: "proposed",
+    });
+
+    const before = await readRevision(user.id);
+
+    await Promise.all([
+      proposeNoticeChange({ goalId: goal.id }),
+      proposeNoticeChange({ goalId: goal.id }),
+    ]);
+
+    await expect(readRevision(user.id)).resolves.toBe(before + 1n);
+    await expect(readInputVersion(plan.id)).resolves.toBe(plan.inputVersion);
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: waiting.id } }),
+    ).resolves.toMatchObject({ status: "replaced" });
+  });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}
+
+async function readInputVersion(planId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+  return plan.inputVersion;
+}

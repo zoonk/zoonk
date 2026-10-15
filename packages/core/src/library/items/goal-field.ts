@@ -4,6 +4,7 @@ import { type WorkFieldParams, classifyWorkField } from "@zoonk/ai/tasks/v2/item
 import { type WorkField, isWorkField } from "@zoonk/ai/tasks/v2/items/work-fields";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type GoalFieldInput, getGoalField, getGoalFieldInput } from "./item-field";
 
 /** A short fingerprint is enough to tell one set of role answers from another. */
@@ -30,11 +31,43 @@ async function saveGoalField({
   goalId: string;
   source: string;
 }) {
-  await prisma.$executeRaw`
-    UPDATE goals
-    SET details = details || ${JSON.stringify({ field, fieldSource: source })}::jsonb
-    WHERE id = ${goalId}::uuid
-  `;
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  const planInputs = getGoalField(goal.details) !== field;
+
+  const retry = await writeLearnerChange({ planInputs, userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUnique({ where: { id: goalId } });
+    const input = getGoalFieldInput(current?.details);
+    const details = isJsonObject(current?.details) ? current.details : {};
+
+    if (
+      !input ||
+      hashFieldInput(input) !== source ||
+      (details.fieldSource === source && details.field === field)
+    ) {
+      return unchanged(false);
+    }
+
+    if ((getGoalField(current?.details) !== field) !== planInputs) {
+      return unchanged(true);
+    }
+
+    await tx.$executeRaw`
+      UPDATE goals
+      SET details = details || ${JSON.stringify({ field, fieldSource: source })}::jsonb
+      WHERE id = ${goalId}::uuid
+    `;
+
+    return false;
+  });
+
+  if (retry) {
+    await saveGoalField({ field, goalId, source });
+  }
 }
 
 /**

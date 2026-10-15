@@ -1,6 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { loadNoticeDay } from "../exams/_utils/notice-day";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { examEditionSchema, readStoredSourceHash } from "../library/exams/blueprint-contract";
 import { proposeChange } from "./_utils/apply-plan-change";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
@@ -173,9 +174,15 @@ async function proposeForGoal({
   const changesNothing = proposed === null || proposed.status === "unchanged";
 
   if (earlier.waitingIds.length > 0 && changesNothing) {
-    await prisma.planChange.updateMany({
-      data: { status: "replaced" },
-      where: { id: { in: earlier.waitingIds }, status: "proposed" },
+    await writeLearnerChange({ userId: context.goal.userId }, async (tx) => {
+      const updated = await tx.planChange.updateMany({
+        data: { status: "replaced" },
+        where: { id: { in: earlier.waitingIds }, planId: context.plan.id, status: "proposed" },
+      });
+
+      if (updated.count === 0) {
+        return unchanged(null);
+      }
     });
 
     revalidatePlanTags(context.goal.userId);

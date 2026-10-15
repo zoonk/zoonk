@@ -9,6 +9,8 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { assertIdentityKeyScope } from "@zoonk/utils/identity-key";
 import { normalizeString, pickAvailableSlug, toSlug } from "@zoonk/utils/string";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import {
   type LibraryProvenance,
   createOrFindByIdentity,
@@ -90,27 +92,32 @@ function pickLessonSlug({ taken, title }: { taken: readonly string[]; title: str
 }
 
 async function insertLesson({ input, slug }: { input: CreateLibraryLessonInput; slug: string }) {
-  return prisma.lesson.create({
-    data: {
-      canDo: input.canDo,
-      description: input.description,
-      estimatedMinutes: input.estimatedMinutes,
-      homeChapterId: input.homeChapterId,
-      identityKey: input.identityKey,
-      language: input.language,
-      level: input.level,
-      normalizedTitle: normalizeString(input.title),
-      skills: { create: [...new Set(input.skillIds)].map((skillId) => ({ skillId })) },
-      slug,
-      spec: input.spec,
-      specRunId: input.specRunId,
-      specStatus: input.specStatus,
-      targetLanguage: input.targetLanguage,
-      title: input.title,
-      ...toLibraryVisibility(input.ownerId),
-      ...toProvenanceData(input.provenance),
-    },
-    omit: lessonOmit,
+  return prisma.$transaction(async (tx) => {
+    const planIds = await resolvePlanInputDependents(tx, { skillIds: input.skillIds });
+    await markPlansChanged(tx, { planIds });
+
+    return tx.lesson.create({
+      data: {
+        canDo: input.canDo,
+        description: input.description,
+        estimatedMinutes: input.estimatedMinutes,
+        homeChapterId: input.homeChapterId,
+        identityKey: input.identityKey,
+        language: input.language,
+        level: input.level,
+        normalizedTitle: normalizeString(input.title),
+        skills: { create: [...new Set(input.skillIds)].map((skillId) => ({ skillId })) },
+        slug,
+        spec: input.spec,
+        specRunId: input.specRunId,
+        specStatus: input.specStatus,
+        targetLanguage: input.targetLanguage,
+        title: input.title,
+        ...toLibraryVisibility(input.ownerId),
+        ...toProvenanceData(input.provenance),
+      },
+      omit: lessonOmit,
+    });
   });
 }
 

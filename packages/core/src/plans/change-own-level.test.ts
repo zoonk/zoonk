@@ -171,4 +171,25 @@ describe(changeOwnLevel, () => {
     mockSession(null);
     await expect(change(goal.id, "basic")).resolves.toStrictEqual({ status: "unauthorized" });
   });
+
+  it("marks a saved own level once and serializes duplicate saves without another planning bump", async () => {
+    const { goal, plan, user } = await setup();
+    const before = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    const planBefore = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await Promise.all([change(goal.id, "advanced"), change(goal.id, "advanced")]);
+    await expect(readRevision(user.id)).resolves.toBe(before.learnerRevision + 1n);
+    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 1);
+    await change(goal.id, "advanced");
+    await expect(readRevision(user.id)).resolves.toBe(before.learnerRevision + 1n);
+  });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}
+
+async function readInputVersion(planId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+  return plan.inputVersion;
+}

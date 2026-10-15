@@ -4,6 +4,7 @@ import { type StepExampleLine, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { markMemoryFactsUsed } from "../../memory/_utils/mark-facts-used";
 import { getSession } from "../../users/get-session";
 import { toProvenanceData } from "../_utils/library-rows";
@@ -175,11 +176,12 @@ async function writeLessonLines({
 
   const missingIds = missing.map((screen) => screen.id);
 
-  await prisma.$transaction([
-    prisma.stepExampleLine.deleteMany({
+  await writeLearnerChange({ userId }, async (tx) => {
+    const removed = await tx.stepExampleLine.deleteMany({
       where: { contextKey: { not: context.key }, stepId: { in: missingIds }, userId },
-    }),
-    prisma.stepExampleLine.createMany({
+    });
+
+    const created = await tx.stepExampleLine.createMany({
       data: missing.map((screen, index) => ({
         ...toProvenanceData(provenance),
         contextKey: context.key,
@@ -188,8 +190,12 @@ async function writeLessonLines({
         userId,
       })),
       skipDuplicates: true,
-    }),
-  ]);
+    });
+
+    if (removed.count === 0 && created.count === 0) {
+      return unchanged(null);
+    }
+  });
 
   return {
     lines: await loadCurrentLines({ contextKey: context.key, stepIds, userId }),

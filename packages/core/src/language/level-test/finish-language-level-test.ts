@@ -1,10 +1,13 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
+import { type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
+import { safeAsync } from "@zoonk/utils/error";
+import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
@@ -30,61 +33,110 @@ export type FinishLanguageLevelTestResult =
   | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
 
+class SkillLevelsAdmissionError extends Error {
+  override name = "SkillLevelsAdmissionError";
+  readonly reason: "unchanged" | "retry";
+
+  constructor(reason: "unchanged" | "retry") {
+    super(`Skill levels admission: ${reason}`);
+    this.reason = reason;
+  }
+}
+
+const MAX_SKILL_LEVEL_ATTEMPTS = 3;
+
+type SaveSkillLevelsInput = { language: string; scores: LevelTestScores; userId: string };
+
+async function readSkillLevelsChange(
+  transaction: TransactionClient,
+  { language, scores, userId }: SaveSkillLevelsInput,
+) {
+  const levels = listLevelTestLevels(scores);
+
+  const existing = await transaction.languageSkillLevel.findMany({
+    where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
+  });
+
+  const changed = levels.some(({ score, skill }) => {
+    const row = existing.find((level) => level.skill === skill);
+
+    return (
+      row?.score !== score ||
+      row.startScore !== score ||
+      row.windowCeiling !== null ||
+      row.windowCorrect !== 0 ||
+      row.windowTotal !== 0
+    );
+  });
+
+  const reading = levels.find(({ skill }) => skill === "reading");
+  const previousReading = existing.find(({ skill }) => skill === "reading");
+
+  return {
+    changed,
+    planInputs:
+      usesNonLatinScript(language) &&
+      reading !== undefined &&
+      reading.score !== (previousReading?.score ?? 0),
+  };
+}
+
 /**
  * The test's levels become where each skill starts; a new test starts them over. A skill the test
  * gave no level (speaking, when the sentence was skipped) keeps what lessons showed, or starts
  * from the goal's level once the learner speaks.
  */
-async function saveSkillLevels({
-  language,
-  scores,
-  userId,
-}: {
-  language: string;
-  scores: LevelTestScores;
-  userId: string;
-}) {
-  await writeLearnerChange({ userId }, async (transaction) => {
-    const levels = listLevelTestLevels(scores);
+async function saveSkillLevels(input: SaveSkillLevelsInput, attempt = 1): Promise<void> {
+  const { language, scores, userId } = input;
 
-    const existing = await transaction.languageSkillLevel.findMany({
-      where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
-    });
+  const { error } = await safeAsync(() =>
+    prisma.$transaction(async (transaction) => {
+      const initial = await readSkillLevelsChange(transaction, input);
 
-    const equal = levels.every(({ score, skill }) => {
-      const row = existing.find((level) => level.skill === skill);
+      if (!initial.changed) {
+        return;
+      }
 
-      return (
-        row?.score === score &&
-        row.startScore === score &&
-        row.windowCeiling === null &&
-        row.windowCorrect === 0 &&
-        row.windowTotal === 0
+      await markLearnerChanged(transaction, { planInputs: initial.planInputs, userId });
+      const current = await readSkillLevelsChange(transaction, input);
+
+      if (!current.changed) {
+        throw new SkillLevelsAdmissionError("unchanged");
+      }
+
+      if (initial.planInputs !== current.planInputs) {
+        throw new SkillLevelsAdmissionError("retry");
+      }
+
+      await Promise.all(
+        listLevelTestLevels(scores).map(({ score, skill }) =>
+          transaction.languageSkillLevel.upsert({
+            create: { language, score, skill, startScore: score, userId },
+            update: {
+              score,
+              startScore: score,
+              windowCeiling: null,
+              windowCorrect: 0,
+              windowTotal: 0,
+            },
+            where: { userLanguageSkill: { language, skill, userId } },
+          }),
+        ),
       );
-    });
+    }),
+  );
 
-    if (equal) {
-      return unchanged(null);
-    }
+  if (error instanceof SkillLevelsAdmissionError && error.reason === "unchanged") {
+    return;
+  }
 
-    await Promise.all(
-      levels.map(({ score, skill }) =>
-        transaction.languageSkillLevel.upsert({
-          create: { language, score, skill, startScore: score, userId },
-          update: {
-            score,
-            startScore: score,
-            windowCeiling: null,
-            windowCorrect: 0,
-            windowTotal: 0,
-          },
-          where: { userLanguageSkill: { language, skill, userId } },
-        }),
-      ),
-    );
+  if (error instanceof SkillLevelsAdmissionError && attempt < MAX_SKILL_LEVEL_ATTEMPTS) {
+    return saveSkillLevels(input, attempt + 1);
+  }
 
-    return null;
-  });
+  if (error) {
+    throw error;
+  }
 }
 
 /**

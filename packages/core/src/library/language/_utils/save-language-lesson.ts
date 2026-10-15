@@ -1,13 +1,21 @@
 import "server-only";
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
+import { markPlansChanged } from "../../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { toStepData } from "../../lessons/_utils/step-data";
 import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type LanguageStepToSave } from "./language-lesson-steps";
+
+/** A superseded publication must roll its plan and learner marks back too. */
+class LanguageLessonClaimLostError extends Error {
+  override name = "LanguageLessonClaimLostError";
+}
 
 type SaveLanguageLessonInput = {
   content: LanguageLessonContent;
@@ -77,49 +85,77 @@ function toLessonSentences({
 export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promise<boolean> {
   const { content, lessonId, provenance, skillId, steps, workflowRunId } = input;
 
-  const saved = await prisma.$transaction(async (tx) => {
-    const claimed = await tx.lesson.updateMany({
-      data: {
-        contentStatus: "completed",
-        summary: { ideas: content.summary.map((text) => ({ text })) },
-      },
-      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-    });
+  const { data: saved, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const current = await tx.lesson.findFirst({
+        include: { skills: { select: { skillId: true } } },
+        omit: { spec: true, summary: true },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
 
-    if (claimed.count === 0) {
-      return false;
-    }
+      if (!current) {
+        return false;
+      }
 
-    const [version] = await Promise.all([
-      startLessonVersion(tx, lessonId),
-      tx.lessonWord.deleteMany({ where: { lessonId } }),
-      tx.lessonSentence.deleteMany({ where: { lessonId } }),
-    ]);
+      /** Explicit skills also resolve older plans that still refer to a merged skill's identity. */
+      const planIds = await resolvePlanInputDependents(tx, {
+        lessonIds: [lessonId],
+        skillIds: current.skills.map(({ skillId: linkedSkillId }) => linkedSkillId),
+      });
 
-    await Promise.all([
-      tx.lessonWord.createMany({ data: toLessonWords(input) }),
-      tx.lessonSentence.createMany({ data: toLessonSentences(input) }),
-      tx.step.createMany({
-        data: steps.map((step, position) => ({
-          ...toStepData({
-            content: step.content,
-            contractVersion: STEP_CONTRACT_VERSION,
-            kind: step.kind,
+      await markPlansChanged(tx, { planIds });
+
+      const claimed = await tx.lesson.updateMany({
+        data: {
+          contentStatus: "completed",
+          summary: { ideas: content.summary.map((text) => ({ text })) },
+        },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
+
+      if (claimed.count === 0) {
+        throw new LanguageLessonClaimLostError();
+      }
+
+      const [version] = await Promise.all([
+        startLessonVersion(tx, lessonId),
+        tx.lessonWord.deleteMany({ where: { lessonId } }),
+        tx.lessonSentence.deleteMany({ where: { lessonId } }),
+      ]);
+
+      await Promise.all([
+        tx.lessonWord.createMany({ data: toLessonWords(input) }),
+        tx.lessonSentence.createMany({ data: toLessonSentences(input) }),
+        tx.step.createMany({
+          data: steps.map((step, position) => ({
+            ...toStepData({
+              content: step.content,
+              contractVersion: STEP_CONTRACT_VERSION,
+              kind: step.kind,
+              position,
+              provenance,
+              sentenceId: step.sentenceId,
+              skillId,
+              wordId: step.wordId,
+            }),
+            lessonId,
             position,
-            provenance,
-            sentenceId: step.sentenceId,
-            skillId,
-            wordId: step.wordId,
-          }),
-          lessonId,
-          position,
-          version,
-        })),
-      }),
-    ]);
+            version,
+          })),
+        }),
+      ]);
 
-    return true;
-  });
+      return true;
+    }),
+  );
+
+  if (error instanceof LanguageLessonClaimLostError) {
+    return false;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (saved) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);

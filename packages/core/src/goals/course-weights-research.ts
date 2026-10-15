@@ -6,6 +6,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../cache/tags";
 import { getCutoffTarget } from "../exams/cutoffs/cutoff-target";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { type CourseWeights, readCourseWeightSubjects } from "../plans/planner/course-weights";
 
@@ -121,18 +122,26 @@ async function copyToGoal({
     subjects: readCourseWeightSubjects(stored.subjects),
   };
 
-  const updated = await prisma.$queryRaw<{ user_id: string }[]>`
-    UPDATE goals
-    SET details = jsonb_set(details, '{courseWeights}', ${JSON.stringify(courseWeights)}::jsonb),
-      updated_at = ${new Date()}
-    WHERE id = ${goalId}::uuid
-    RETURNING user_id
-  `;
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
-  const [goal] = updated;
+  if (!goal) {
+    return;
+  }
 
-  if (goal) {
-    revalidateCacheTags([getGoalsCacheTag(goal.user_id)]);
+  const count = await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+    const updated = await tx.$executeRaw`
+      UPDATE goals
+      SET details = jsonb_set(details, '{courseWeights}', ${JSON.stringify(courseWeights)}::jsonb),
+        updated_at = ${new Date()}
+      WHERE id = ${goalId}::uuid
+        AND details->'courseWeights' IS DISTINCT FROM ${JSON.stringify(courseWeights)}::jsonb
+    `;
+
+    return updated > 0 ? updated : unchanged(0);
+  });
+
+  if (count > 0) {
+    revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
   }
 }
 

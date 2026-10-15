@@ -89,6 +89,28 @@ describe(markLearnerChanged, () => {
     await expect(revision(other.id)).resolves.toBe(0n);
   });
 
+  it("locks requested owned plans before the learner without invalidating planning inputs", async () => {
+    const user = await userFixture();
+    const plans = await Promise.all([plan(user.id), plan(user.id)]);
+    const { client, statements } = observeStatements();
+
+    await client.$transaction((tx) =>
+      markLearnerChanged(tx, {
+        lockPlanIds: [plans[1]!.id, plans[0]!.id, plans[1]!.id],
+        userId: user.id,
+      }),
+    );
+
+    expect(statements[0]).toMatch(/SELECT plan\.id[\s\S]*ORDER BY plan\.id FOR UPDATE OF plan/u);
+    expect(statements[1]).toMatch(/UPDATE users/u);
+    expect(statements.some((query) => query.includes("input_version"))).toBe(false);
+    await expect(revision(user.id)).resolves.toBe(1n);
+
+    await expect(
+      prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),
+    ).resolves.toMatchObject(plans.map(() => ({ inputVersion: 0, version: 1 })));
+  });
+
   it("serializes concurrent transactions without losing increments", async () => {
     const user = await userFixture();
 

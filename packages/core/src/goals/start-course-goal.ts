@@ -5,6 +5,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
 import { getTargetDateBounds } from "../plans/target-date-range";
@@ -203,10 +204,12 @@ async function setDefaultExamDate({
   exam,
   goal,
   input,
+  userId,
 }: {
   exam: Awaited<ReturnType<typeof loadCourseExam>>;
   goal: Pick<GoalView, "id" | "kind">;
   input: CourseGoalStartInput;
+  userId: string;
 }): Promise<void> {
   // A date the learner gave, or their "no date", is theirs.
   const day =
@@ -222,17 +225,26 @@ async function setDefaultExamDate({
 
   const goalId = goal.id;
 
-  const plan = await prisma.plan.findUniqueOrThrow({
-    select: { settings: true },
-    where: { goalId },
+  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const [current, plan] = await Promise.all([
+      tx.goal.findUniqueOrThrow({ where: { id: goalId } }),
+      tx.plan.findUniqueOrThrow({ where: { goalId } }),
+    ]);
+
+    const settings = isJsonObject(plan.settings) ? plan.settings : {};
+    const targetDate = fromIsoDate(day);
+
+    if (current.targetDate?.getTime() === targetDate.getTime() && settings.noticeDate === day) {
+      return unchanged(null);
+    }
+
+    await tx.goal.update({ data: { targetDate }, where: { id: goalId } });
+
+    await tx.plan.update({
+      data: { settings: { ...settings, noticeDate: day } },
+      where: { goalId },
+    });
   });
-
-  const settings = isJsonObject(plan.settings) ? plan.settings : {};
-
-  await prisma.$transaction([
-    prisma.goal.update({ data: { targetDate: fromIsoDate(day) }, where: { id: goalId } }),
-    prisma.plan.update({ data: { settings: { ...settings, noticeDate: day } }, where: { goalId } }),
-  ]);
 }
 
 /**
@@ -309,7 +321,7 @@ export async function startCourseGoal({
     return { status: created.status === "unauthorized" ? "unauthorized" : "notFound" };
   }
 
-  await setDefaultExamDate({ exam, goal, input });
+  await setDefaultExamDate({ exam, goal, input, userId });
 
   // The level the start page asked is onboarding's answer, saved as its own screen saves it.
   if (input.level !== undefined) {

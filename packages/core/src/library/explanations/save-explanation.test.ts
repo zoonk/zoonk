@@ -1,13 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getExplanation } from "../../view-models/explain/get-explanation";
+import { createLibraryLesson } from "../lessons/create-library-lesson";
 import { marketExplanation } from "./_test-utils/market-explanation";
 import { loadExplainGoal } from "./explain-goal";
 import { toExplanationSteps } from "./explanation-steps";
@@ -45,9 +47,11 @@ async function explainGoal() {
 async function saveMarketExplanation({
   ownerId,
   skillId,
+  workflowRunId = randomUUID(),
 }: {
   ownerId: string | null;
   skillId: string;
+  workflowRunId?: string;
 }) {
   const explanation = marketExplanation();
 
@@ -57,7 +61,7 @@ async function saveMarketExplanation({
     scope: { language: "en", ownerId },
     skillId,
     steps: toExplanationSteps(explanation).steps,
-    workflowRunId: randomUUID(),
+    workflowRunId,
   });
 }
 
@@ -99,6 +103,154 @@ describe(saveExplanationLesson, () => {
     );
   });
 
+  it.each(["current skill", "merged alias"] as const)(
+    "marks creation and publication separately for plans retaining the %s, never on replay",
+    async (dependency) => {
+      const [owner, other, unrelated, skill] = await Promise.all([
+        userFixture(),
+        userFixture(),
+        userFixture(),
+        skillFixture(),
+      ]);
+
+      const graphSkill =
+        dependency === "merged alias" ? await skillFixture({ mergedIntoId: skill.id }) : skill;
+
+      const goals = await Promise.all([
+        goalFixture({ userId: owner.id }),
+        goalFixture({ userId: owner.id }),
+        goalFixture({ userId: other.id }),
+        goalFixture({ userId: unrelated.id }),
+      ]);
+
+      const plans = await Promise.all(
+        goals.map((goal, index) =>
+          planFixture({
+            goalId: goal.id,
+            graph: { skills: index < 3 ? [{ skillId: graphSkill.id }] : [] },
+            sourceSkillIds: [],
+          }),
+        ),
+      );
+
+      async function expectMarks(writes: number) {
+        await expect(readRevision(owner.id)).resolves.toBe(BigInt(writes));
+        await expect(readRevision(other.id)).resolves.toBe(BigInt(writes));
+        await expect(readRevision(unrelated.id)).resolves.toBe(0n);
+
+        const updated = await prisma.plan.findMany({
+          where: { id: { in: plans.map((plan) => plan.id) } },
+        });
+
+        expect(
+          plans.map((plan) => {
+            const current = updated.find((row) => row.id === plan.id);
+
+            return { inputVersion: current?.inputVersion, version: current?.version };
+          }),
+        ).toStrictEqual(
+          plans.map((plan, index) => ({
+            inputVersion: plan.inputVersion + (index < 3 ? writes : 0),
+            version: plan.version,
+          })),
+        );
+      }
+
+      const explanation = marketExplanation();
+
+      const outline = await createLibraryLesson({
+        description: explanation.screens[0]?.title ?? explanation.title,
+        estimatedMinutes: 4,
+        homeChapterId: null,
+        identityKey: scopeIdentityKey({
+          key: buildLessonIdentityKey({
+            courseId: null,
+            level: "overview",
+            skillIds: [skill.id],
+            targetLanguage: null,
+          }),
+          ownerId: null,
+        }),
+        language: "en",
+        level: "overview",
+        ownerId: null,
+        provenance,
+        skillIds: [skill.id],
+        targetLanguage: null,
+        title: explanation.title,
+      });
+
+      expect(outline.created).toBe(true);
+      expect(outline.lesson.contentStatus).toBe("pending");
+      await expectMarks(1);
+
+      const saved = await saveMarketExplanation({ ownerId: null, skillId: skill.id });
+      expect(saved).toStrictEqual({ lessonId: outline.lesson.id, status: "saved" });
+      await expectMarks(2);
+
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: outline.lesson.id } }),
+      ).resolves.toMatchObject({ contentStatus: "completed" });
+
+      await expect(
+        saveMarketExplanation({ ownerId: null, skillId: skill.id }),
+      ).resolves.toStrictEqual({ lessonId: saved.lessonId, status: "reused" });
+
+      await expectMarks(2);
+    },
+  );
+
+  it("rolls back publication markers when a real generation claim is lost while waiting for a plan lock", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const saved = await saveMarketExplanation({ ownerId: null, skillId: skill.id });
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, graph: { skills: [{ skillId: skill.id }] } });
+
+    await prisma.lesson.update({
+      data: { contentStatus: "failed" },
+      where: { id: saved.lessonId },
+    });
+
+    const ready = Promise.withResolvers<number>();
+    const release = Promise.withResolvers<null>();
+
+    const holder = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      ready.resolve(backend?.pid ?? 0);
+      await release.promise;
+    });
+
+    const holderPid = await ready.promise;
+    const workflowRunId = randomUUID();
+    const publishing = saveMarketExplanation({ ownerId: null, skillId: skill.id, workflowRunId });
+
+    try {
+      await vi.waitFor(async () => {
+        const [waiting] = await prisma.$queryRaw<{ blocked: boolean }[]>`
+          SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))) AS blocked
+        `;
+
+        expect(waiting?.blocked).toBe(true);
+      });
+
+      await prisma.lesson.update({
+        data: { contentRunId: randomUUID() },
+        where: { id: saved.lessonId },
+      });
+    } finally {
+      release.resolve(null);
+      await holder;
+    }
+
+    await expect(publishing).resolves.toStrictEqual({ lessonId: saved.lessonId, status: "busy" });
+    await expect(readRevision(user.id)).resolves.toBe(0n);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+    });
+  });
+
   it("keeps a personal question's explanation private to its learner", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const skill = await skillFixture({ ownerId: user.id, visibility: "private" });
@@ -136,6 +288,26 @@ describe(linkExplanationToGoal, () => {
       answered: false,
       question: "what does it mean when the market is up 2%?",
     });
+
+    await linkExplanationToGoal({
+      courseId: course.id,
+      goalId: goal.id,
+      relatedQuestions: marketExplanation().goFurther.relatedQuestions,
+      skill: { id: skill.id, name: skill.name },
+      title: "What “the market is up 2%” means",
+    });
+
+    const revisionBefore = await readRevision(user.id);
+
+    await linkExplanationToGoal({
+      courseId: course.id,
+      goalId: goal.id,
+      relatedQuestions: ["A new follow-up"],
+      skill: { id: skill.id, name: skill.name },
+      title: "What “the market is up 2%” means",
+    });
+
+    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
 
     await linkExplanationToGoal({
       courseId: course.id,
@@ -198,8 +370,12 @@ describe(linkGoFurtherCourse, () => {
       explanation: { goFurther: { course: null }, lesson: { id: saved.lessonId }, status: "ready" },
     });
 
+    const revisionBefore = await readRevision(user.id);
+
     await linkGoFurtherCourse({ courseId: first.id, goalId: goal.id, lessonId: saved.lessonId });
+    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
     await linkGoFurtherCourse({ courseId: second.id, goalId: goal.id, lessonId: saved.lessonId });
+    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
 
     await expect(getExplanation({ goalId: goal.id })).resolves.toMatchObject({
       explanation: { goFurther: { course: { title: "Investing" } } },
@@ -259,3 +435,8 @@ describe(findExplanationGoFurther, () => {
     });
   });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}

@@ -7,11 +7,16 @@ import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import {
+  holdLearnerRevision,
+  readLearnerRevision,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-revision";
 import { writeLessonContent } from "../lessons/write-lesson-content";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
@@ -494,5 +499,133 @@ describe(setAsidePublishedLesson, () => {
 
     // A version that was replaced meanwhile isn't set aside.
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
+  });
+});
+
+async function setAsideScope() {
+  const [user, other, untouched, lesson, skill] = await Promise.all([
+    userFixture(),
+    userFixture(),
+    userFixture(),
+    libraryLessonFixture({ contentStatus: "completed" }),
+    skillFixture(),
+  ]);
+
+  await Promise.all([
+    libraryStepFixture({ lessonId: lesson.id, version: 1 }),
+    lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+  ]);
+
+  const goals = await Promise.all([
+    goalFixture({ userId: user.id }),
+    goalFixture({ userId: user.id }),
+    goalFixture({ userId: other.id }),
+    goalFixture({ userId: untouched.id }),
+  ]);
+
+  const plans = await Promise.all(
+    goals.map((goal) =>
+      planFixture({ goalId: goal.id, sourceSkillIds: goal.userId === user.id ? [skill.id] : [] }),
+    ),
+  );
+
+  const [item] = await Promise.all([
+    planItemFixture({ lessonId: lesson.id, planId: plans[0]!.id }),
+    planItemFixture({ lessonId: lesson.id, planId: plans[2]!.id }),
+  ]);
+
+  return { item: item!, lesson, other, plans, untouched, user };
+}
+
+describe("set-aside selection admission", () => {
+  it("marks dependent plans and each owner once, and leaves rejected and repeated calls unchanged", async () => {
+    const { user, other, untouched, lesson, plans } = await setAsideScope();
+    await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
+    await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(true);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+    await expect(readLearnerRevision(other.id)).resolves.toBe(1n);
+    await expect(readLearnerRevision(untouched.id)).resolves.toBe(0n);
+
+    await Promise.all(
+      plans.map((plan) =>
+        expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+          inputVersion: plan.inputVersion + Number(plan.id !== plans[3]!.id),
+        }),
+      ),
+    );
+
+    await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(false);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+  });
+
+  it("marks before the lesson lock and rolls back a version that loses while admission waits", async () => {
+    const { user, other, lesson, plans, item } = await setAsideScope();
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (tx) => {
+        await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR UPDATE`;
+        await tx.step.updateMany({ data: { version: 2 }, where: { lessonId: lesson.id } });
+      },
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+    const pending = setAsidePublishedLesson({ lessonId: lesson.id, version: 1 });
+
+    try {
+      await waitForBlockedStatement(pid, /SELECT id FROM users/u);
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, pending]);
+    }
+
+    await expect(pending).resolves.toBe(false);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+    await expect(readLearnerRevision(other.id)).resolves.toBe(0n);
+
+    await Promise.all(
+      plans.map((plan) =>
+        expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+          inputVersion: plan.inputVersion,
+        }),
+      ),
+    );
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: item.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ contentStatus: "completed", setAsideAt: null });
+  });
+
+  it("commits one selection change for two set-aside requests that race", async () => {
+    const { user, other, lesson, plans } = await setAsideScope();
+    const holder = holdLearnerRevision({ userId: user.id });
+    const pid = await holder.pid;
+
+    const calls = Promise.all([
+      setAsidePublishedLesson({ lessonId: lesson.id, version: 1 }),
+      setAsidePublishedLesson({ lessonId: lesson.id, version: 1 }),
+    ]);
+
+    try {
+      await waitForBlockedStatement(pid, /SELECT id FROM users/u);
+      await waitForBlockedStatement(pid, /SELECT plan.id, goal.user_id/u);
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, calls]);
+    }
+
+    const outcomes = await calls;
+    expect(outcomes.toSorted()).toStrictEqual([false, true]);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
+    await expect(readLearnerRevision(other.id)).resolves.toBe(1n);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: plans[0]!.id } }),
+    ).resolves.toMatchObject({ inputVersion: plans[0]!.inputVersion + 1 });
   });
 });

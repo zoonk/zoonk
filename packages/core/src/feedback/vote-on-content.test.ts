@@ -300,4 +300,20 @@ describe(voteOnContent, () => {
 
     await expect(listVotes(user.id)).resolves.toStrictEqual([]);
   });
+
+  it("marks a changed vote once and rolls back an identical concurrent vote", async () => {
+    const [user, step] = await Promise.all([userFixture(), createLibraryStep()]);
+    mockSession(user.id);
+    const before = await readRevision(user.id);
+    const input = { contentId: step.id, contentKind: "step" as const, vote: "up" as const };
+    await Promise.all([voteOnContent(input), voteOnContent(input)]);
+    await expect(readRevision(user.id)).resolves.toBe(before + 1n);
+    await voteOnContent({ ...input, contentId: randomUUID() });
+    await expect(readRevision(user.id)).resolves.toBe(before + 1n);
+  });
 });
+
+async function readRevision(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  return user.learnerRevision;
+}
