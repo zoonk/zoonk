@@ -18,6 +18,7 @@ import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readActiveGoal, readLearningProfile } from "../learner/facts/learning-profile";
 import { getRequestInstant } from "../learner/facts/request-instant";
+import { readUserProgress } from "../learner/facts/user-progress";
 import { getStartOfWeek, toIsoDate } from "../plans/planner/plan-calendar";
 import { type ResolvedBuddy, resolveProfileBuddy } from "../profile/default-buddy";
 import { hasEnergyStarted } from "../progress/_utils/energy-started";
@@ -151,7 +152,7 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
   const weekStart = getStartOfWeek(today);
 
   const [progress, todayRow, counts, thisWeek, todayMissions, energyStarted] = await Promise.all([
-    measureProgress({ now, timeZone, userId }),
+    measureProgress({ now, progress: readUserProgress(userId), timeZone, userId }),
     prisma.dailyProgress.findUnique({ where: { userDate: { date: today, userId } } }),
     loadMilestoneCounts(userId),
     loadBuddyDiet({
