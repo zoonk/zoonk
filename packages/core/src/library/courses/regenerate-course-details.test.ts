@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/v2/courses/details";
+import {
+  generateCourseDetails,
+  getCourseDetailsPromptVersion,
+} from "@zoonk/ai/tasks/v2/courses/details";
 import { DbNull, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
@@ -10,6 +13,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
+import { details, outlinedCourse, provenance } from "./_test-utils/course-details";
+import { writeCourseDetails } from "./course-details";
 import {
   getCourseDetailsRegenerationPreview,
   regenerateCourseDetails,
@@ -37,6 +42,7 @@ async function adminSession() {
 
 async function staleCourse(attrs?: Parameters<typeof courseFixture>[0]) {
   const course = await courseFixture({
+    detailsModel: null,
     detailsPromptVersion: "old-details",
     landingPage,
     visibility: "public",
@@ -47,6 +53,22 @@ async function staleCourse(attrs?: Parameters<typeof courseFixture>[0]) {
   await courseChapterFixture({ chapterId: chapter.id, courseId: course.id });
 
   return course;
+}
+
+/** Other suites can add courses between calls, so workflow activity must be read afresh. */
+async function otherCoursesInFlight({
+  owned,
+  inFlight = [],
+}: {
+  owned: string[];
+  inFlight?: string[];
+}) {
+  const others = await prisma.course.findMany({
+    select: { id: true },
+    where: { id: { notIn: owned } },
+  });
+
+  return new Set([...others.map((course) => course.id), ...inFlight]);
 }
 
 /** These tests share a DB with other files: remove only their unique course rows. */
@@ -97,7 +119,12 @@ describe(regenerateCourseDetails, () => {
       staleCourse({ visibility: "private" }),
       staleCourse({ detailsPromptVersion: null }),
       staleCourse({ landingPage: DbNull }),
-      courseFixture({ detailsPromptVersion: "old-details", landingPage, visibility: "public" }),
+      courseFixture({
+        detailsModel: null,
+        detailsPromptVersion: "old-details",
+        landingPage,
+        visibility: "public",
+      }),
     ]);
 
     try {
@@ -304,12 +331,8 @@ describe(regenerateCourseDetails, () => {
 
     const owned = courses.map((course) => course.id);
 
-    const otherCourses = await prisma.course.findMany({
-      select: { id: true },
-      where: { id: { notIn: owned } },
-    });
     // Workflow activity is the external boundary; other suites' courses stay protected.
-    const active = async () => new Set(otherCourses.map((course) => course.id));
+    const active = () => otherCoursesInFlight({ owned });
     const startCourseDetails = vi.fn().mockResolvedValue(null);
 
     try {
@@ -360,13 +383,27 @@ describe(regenerateCourseDetails, () => {
 
     const owned = courses.map((course) => course.id);
 
-    const others = await prisma.course.findMany({
-      select: { id: true },
-      where: { id: { notIn: owned } },
-    });
+    const generatedCourses: string[] = [];
 
-    const active = async () => new Set([...others.map((course) => course.id), courses[2]!.id]);
+    vi.mocked(generateCourseDetails).mockResolvedValue(
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The writer reads the generated data and provenance only.
+      { data: details, provenance } as Awaited<ReturnType<typeof generateCourseDetails>>,
+    );
+
+    /** Run the writer suite's shared producer after the ID query and before sweep selection. */
+    const active = async () => {
+      const inFlight = await otherCoursesInFlight({ inFlight: [courses[2]!.id], owned });
+      const course = await outlinedCourse();
+      generatedCourses.push(course.id);
+      await expect(writeCourseDetails({ courseId: course.id })).resolves.toBe("written");
+      return inFlight;
+    };
+
     const startCourseDetails = vi.fn().mockResolvedValue(null);
+
+    /** Another suite can finish generated copy after this test first reads workflow activity. */
+    await active();
+    const lateCourse = await staleCourse({ detailsPromptVersion: null });
 
     try {
       await expect(
@@ -401,8 +438,65 @@ describe(regenerateCourseDetails, () => {
       await expect(
         regenerateCourseDetails({ getInFlightCourseIds: active, startCourseDetails }),
       ).resolves.toMatchObject({ courseIds: [] });
+
+      expect(startCourseDetails).not.toHaveBeenCalledWith(lateCourse.id);
+
+      const retained = await prisma.course.findMany({ where: { id: { in: generatedCourses } } });
+
+      expect(retained).toHaveLength(generatedCourses.length);
+
+      for (const course of retained) {
+        expect(startCourseDetails).not.toHaveBeenCalledWith(course.id);
+
+        expect(course).toMatchObject({
+          detailsModel: provenance.model,
+          detailsPromptVersion: getCourseDetailsPromptVersion(),
+          landingPage: details.landingPage,
+        });
+      }
     } finally {
-      await removeCourses(owned);
+      await removeCourses([...owned, lateCourse.id, ...generatedCourses]);
+    }
+  });
+
+  it("leaves authored fixtures outside recovery when another suite creates them with an old clock", async () => {
+    await adminSession();
+    const promptVersion = randomUUID();
+    const old = new Date(Date.now() - 65 * 60 * 1000);
+    const others = await prisma.course.findMany({ select: { id: true } });
+    const active = async () => new Set(others.map((course) => course.id));
+
+    /** Match the estimate suite's public, outlined, empty fixture created after the snapshot. */
+    const course = await courseFixture({
+      createdAt: old,
+      detailsPromptVersion: promptVersion,
+      landingPage: DbNull,
+      updatedAt: old,
+      visibility: "public",
+    });
+
+    const chapter = await libraryChapterFixture();
+
+    await courseChapterFixture({ chapterId: chapter.id, courseId: course.id });
+
+    const startCourseDetails = vi.fn().mockResolvedValue(null);
+
+    try {
+      await expect(
+        regenerateCourseDetails({
+          getInFlightCourseIds: active,
+          promptVersion,
+          startCourseDetails,
+        }),
+      ).resolves.toMatchObject({ courseIds: [] });
+
+      expect(startCourseDetails).not.toHaveBeenCalled();
+
+      await expect(
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+      ).resolves.toMatchObject({ landingPage: null, updatedAt: old });
+    } finally {
+      await removeCourses([course.id]);
     }
   });
 
@@ -412,10 +506,10 @@ describe(regenerateCourseDetails, () => {
     const [course, curated, outlineFree, privateCourses] = await Promise.all([
       staleCourse({ detailsGeneratedAt: new Date(1), detailsPromptVersion: promptVersion }),
       staleCourse({ detailsModel: "zoonk/hand-written", landingPage: DbNull }),
-      courseFixture({ landingPage: DbNull, visibility: "public" }),
+      courseFixture({ detailsModel: null, landingPage: DbNull, visibility: "public" }),
       Promise.all(
         Array.from({ length: MAX_DAILY_COURSE_COPY_REWRITES }, () =>
-          courseFixture({ landingPage: DbNull, visibility: "private" }),
+          courseFixture({ detailsModel: null, landingPage: DbNull, visibility: "private" }),
         ),
       ),
     ]);

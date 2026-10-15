@@ -60,6 +60,7 @@ describe(dailySweepsWorkflow, () => {
     const [course, chapter] = await Promise.all([
       courseFixture({
         detailsGeneratedAt: new Date(1),
+        detailsModel: null,
         detailsPromptVersion: "old-sweep-copy",
         landingPage: { audience: [], outcomes: [], valueProposition: "Old copy" },
         visibility: "public",

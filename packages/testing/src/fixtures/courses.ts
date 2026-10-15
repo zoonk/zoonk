@@ -6,6 +6,8 @@ export async function courseFixture(attrs?: FixtureAttrs<Course, "landingPage">)
   return prisma.course.create({
     data: {
       description: "Test course description",
+      /** Authored fixtures must not become sweep candidates when another suite uses an old clock. */
+      detailsModel: "zoonk/hand-written",
       language: "en",
       normalizedTitle: "test course",
       slug: `test-course-${randomUUID()}`,
