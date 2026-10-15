@@ -12,6 +12,7 @@ import {
   listSoonStandInCourseIds,
 } from "@zoonk/core/lookahead/plan-outline-needs";
 import {
+  admitPlanLessons,
   pickPlanStartToWrite,
   pickSpeculativeLessons,
 } from "@zoonk/core/lookahead/speculative-lessons";
@@ -123,6 +124,19 @@ export async function pickSpeculativeLessonsStep(input: {
   "use step";
 
   return pickSpeculativeLessons(input);
+}
+
+/**
+ * The lessons of `lessonIds` to start writing now: one the learner finished, or placement tested
+ * out, since it was picked is left out (see `admitPlanLessons`).
+ */
+export async function admitPlanLessonsStep(input: {
+  goalId: string;
+  lessonIds: string[];
+}): Promise<string[]> {
+  "use step";
+
+  return admitPlanLessons(input);
 }
 
 /**

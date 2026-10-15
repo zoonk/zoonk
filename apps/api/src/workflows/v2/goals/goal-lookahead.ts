@@ -6,6 +6,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import {
+  admitPlanLessonsStep,
   pickPlanStartToWriteStep,
   pickSpeculativeLessonsStep,
   readGoalLookaheadStep,
@@ -19,6 +20,9 @@ const MAX_OUTLINE_POLLS = 48;
 const FOLLOW_POLLS = 60;
 
 type PlanOpening = (string | null)[];
+
+/** Where the saved plan started at the last look (`undefined` before the first), and what started. */
+type Followed = { saved: string | null | undefined; started: string[] };
 
 function hasFirstLesson(opening: PlanOpening): boolean {
   return typeof opening[0] === "string";
@@ -60,21 +64,29 @@ function toWriter({
 }
 
 /**
- * `learner` for the plan's first lesson, which the learner opens the moment placement ends; the
- * others are minutes away.
+ * Starts writing the lessons the plan still has the learner do (see `admitPlanLessonsStep`), and
+ * returns them: `learner` for the plan's first lesson, which the learner opens the moment
+ * placement ends; the others are minutes away.
  */
-function writeLessons({
+async function writeLessons({
+  goalId,
   lessonIds,
   wait = "soon",
   writer,
 }: {
+  goalId: string;
   lessonIds: string[];
   wait?: CallWait;
   writer: LessonWriter;
-}) {
-  return Promise.all(
-    lessonIds.map((lessonId) => start(lessonContentWorkflow, [{ ...writer, lessonId, wait }])),
+}): Promise<string[]> {
+  const admitted =
+    lessonIds.length > 0 ? await admitPlanLessonsStep({ goalId, lessonIds }) : lessonIds;
+
+  await Promise.all(
+    admitted.map((lessonId) => start(lessonContentWorkflow, [{ ...writer, lessonId, wait }])),
   );
+
+  return admitted;
 }
 
 /**
@@ -101,22 +113,29 @@ export async function startLikelyLessons({
   }
 
   const { speculativeLessons: count } = await readGoalLookaheadStep(goalId);
-  const pick = (): Promise<string[][]> => pickSpeculativeLessonsStep({ count, goalId, ownLevel });
+  const pick = () => pickSpeculativeLessonsStep({ count, goalId, ownLevel });
 
   await waitForOpening({ done: hasFirstLesson, goalId });
   const [firstGuess = []] = await pick();
-  const first = firstGuess.slice(0, 1);
-  await writeLessons({ lessonIds: first, wait: "learner", writer });
+
+  const first = await writeLessons({
+    goalId,
+    lessonIds: firstGuess.slice(0, 1),
+    wait: "learner",
+    writer,
+  });
 
   await waitForOpening({ done: isOpeningOutlined, goalId });
   const guesses = await pick();
+
   const unstarted = guesses.map((guess) => guess.filter((lessonId) => !first.includes(lessonId)));
+
   const leads = unstarted.slice(1).flatMap((guess) => guess.slice(0, 1));
   const rest = unstarted.flat().filter((lessonId) => !leads.includes(lessonId));
 
-  await writeLessons({ lessonIds: [...leads, ...rest], writer });
+  const started = await writeLessons({ goalId, lessonIds: [...leads, ...rest], writer });
 
-  return [...first, ...leads, ...rest];
+  return [...first, ...started];
 }
 
 /**
@@ -124,7 +143,10 @@ export async function startLikelyLessons({
  * what they know, and each band that lands re-plans with its real lessons. For a few minutes, the
  * plan's first lesson is written the moment the start moves to one nobody started, so it's ready
  * when the learner opens it; one already written ends its run at once. The learner's own lesson
- * waits until placement ends (`pickPlanStartToWrite`). Guests never trigger speculative work.
+ * waits until placement ends (`pickPlanStartToWrite`). Each look reads where the saved plan
+ * starts, and only a start that moved is picked again, from the plan brought up to date: a plan
+ * still waiting for a band's lessons never sends the writer to the lesson before them. Guests
+ * never trigger speculative work.
  */
 export async function followPlanStart({
   context,
@@ -141,17 +163,31 @@ export async function followPlanStart({
 
   const writer = toWriter({ context, inputs });
 
-  await repeatUntil<string[]>({
-    done: () => false,
-    run: async (previous = started) => {
-      const first = await pickPlanStartToWriteStep(inputs.goal.id);
+  const initial: Followed = { saved: undefined, started };
 
-      if (!first || previous.includes(first)) {
+  await repeatUntil<Followed>({
+    done: () => false,
+    run: async (previous = initial) => {
+      const [saved = null] = await readPlanOpeningStep(inputs.goal.id);
+
+      if (saved === previous.saved) {
         return previous;
       }
 
-      await writeLessons({ lessonIds: [first], wait: "learner", writer });
-      return [...previous, first];
+      const first = await pickPlanStartToWriteStep(inputs.goal.id);
+
+      if (!first || previous.started.includes(first)) {
+        return { saved, started: previous.started };
+      }
+
+      const written = await writeLessons({
+        goalId: inputs.goal.id,
+        lessonIds: [first],
+        wait: "learner",
+        writer,
+      });
+
+      return { saved, started: [...previous.started, ...written] };
     },
     times: FOLLOW_POLLS,
     wait: () => sleep(OUTLINE_POLL),

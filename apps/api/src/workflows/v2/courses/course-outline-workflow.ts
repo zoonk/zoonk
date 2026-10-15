@@ -7,6 +7,7 @@ import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
 import { courseIconWorkflow } from "./course-details-workflow";
@@ -14,9 +15,11 @@ import { startCourseDetailsRun } from "./start-course-details-run";
 import { type BandPlan } from "./steps/band-outline";
 import {
   finishCourseOutlineStep,
+  listWaitingGoalsStep,
+  logReplanFailureStep,
   placeContinuationsStep,
   planOutlineBandStep,
-  replanWaitingGoalsStep,
+  replanWaitingGoalStep,
   saveOutlineChapterStep,
   writeOutlineBandStep,
 } from "./steps/course-outline-steps";
@@ -75,6 +78,57 @@ function toPosition({
 }
 
 /**
+ * Goals waiting on the band's skills re-plan with its lessons, each in a step of its own. A goal
+ * still failing once its step's retries run out leaves the band written, not failed: the goal
+ * keeps a usable plan on stand-ins, which its next refresh replaces, so it's logged and recorded
+ * instead.
+ */
+async function replanWaitingGoals({
+  context,
+  goalIds,
+  skillIds,
+}: {
+  context: RunContext;
+  goalIds: string[];
+  skillIds: string[];
+}): Promise<void> {
+  const waiting = await listWaitingGoalsStep({ goalIds, skillIds });
+
+  const outcomes = await Promise.allSettled(
+    waiting.map((goalId) => retryPlanConflicts(replanWaitingGoalStep, goalId)),
+  );
+
+  const failures = waiting.flatMap((goalId, index) => {
+    const outcome = outcomes[index];
+
+    if (outcome?.status !== "rejected") {
+      return [];
+    }
+
+    const reason: unknown = outcome.reason;
+    return [{ goalId, reason }];
+  });
+
+  const [first] = failures;
+
+  if (first) {
+    await Promise.all([
+      logReplanFailureStep({
+        courseId: context.courseId,
+        error: first.reason instanceof Error ? first.reason.message : String(first.reason),
+        goalIds: failures.map(({ goalId }) => goalId),
+        skillIds,
+      }),
+      trackGenerationFailedStep({
+        analytics: context.analytics,
+        contentKind: "course",
+        task: "waiting-goals-replan",
+      }),
+    ]);
+  }
+}
+
+/**
  * Writes one band: the outline, then every chapter in parallel steps, then re-plans waiting goals.
  * The skills the band continues are the new chapters' skills too, so their stand-ins shrink. In a
  * band a learner waits on, the chapter teaching their first lesson's skill was saved while the rest
@@ -103,7 +157,8 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
     await placeContinuationsStep({ chapterIds, chapters, courseId: context.courseId, plan });
   }
 
-  await replanWaitingGoalsStep({
+  await replanWaitingGoals({
+    context,
     goalIds: early?.goalIds ?? [],
     skillIds: skills.map((skill) => skill.id),
   });

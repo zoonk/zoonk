@@ -78,11 +78,14 @@ async function streamWaitedBand({
         }),
       );
 
-      const goalIds = await replanGoalsWaitingOnSkills({
+      const replanned = await replanGoalsWaitingOnSkills({
         skillIds: plan.skills
           .filter((skill) => chapter.skillKeys.includes(skill.key))
           .map((skill) => skill.id),
       });
+
+      // A goal whose re-plan failed here plans the whole band with the others once it's written.
+      const goalIds = [...replanned.goalIds, ...replanned.failedGoalIds];
 
       return { chapterId: saved.chapterId, goalIds, position };
     },

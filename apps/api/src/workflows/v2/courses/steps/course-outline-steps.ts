@@ -9,7 +9,10 @@ import {
   releaseStaleCourseOutline,
 } from "@zoonk/core/library/curriculum/course-outline-state";
 import { placeContinuations } from "@zoonk/core/library/curriculum/place-continuations";
-import { replanGoalsWaitingOnSkills } from "@zoonk/core/library/curriculum/replan-waiting-goals";
+import {
+  listGoalsWaitingOnSkills,
+  replanWaitingGoal,
+} from "@zoonk/core/library/curriculum/replan-waiting-goals";
 import {
   type OutlineChapter,
   type SavedOutlineChapter,
@@ -22,8 +25,11 @@ import {
   getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
 import { planSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
+import { logError } from "@zoonk/utils/logger";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
+import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 import { isRunActive } from "../../_shared/run-activity";
 import {
   type BandInput,
@@ -231,14 +237,44 @@ export async function placeContinuationsStep({
 }
 
 /**
- * Goals waiting on these skills (any learner's) now plan the real lessons instead of stand-ins,
- * and goals re-planned from the band's first chapter plan the whole band.
+ * The goals waiting on these skills (any learner's), and the goals re-planned from the band's first
+ * chapter, which plan the whole band now (see `listGoalsWaitingOnSkills`).
  */
-export async function replanWaitingGoalsStep(input: {
+export async function listWaitingGoalsStep(input: {
   goalIds: string[];
   skillIds: string[];
 }): Promise<string[]> {
   "use step";
 
-  return replanGoalsWaitingOnSkills(input);
+  return listGoalsWaitingOnSkills(input);
+}
+
+/**
+ * One goal waiting on the band plans its real lessons instead of stand-ins (see
+ * `replanWaitingGoal`). A plan that kept changing meanwhile comes back as a conflict, for the run
+ * to plan it again later, each goal on its own (see `retryPlanConflicts`).
+ */
+export async function replanWaitingGoalStep(goalId: string): Promise<PlanStepOutcome<null>> {
+  "use step";
+
+  return catchPlanConflict(async () => {
+    await replanWaitingGoal(goalId);
+    return null;
+  });
+}
+
+/**
+ * Goals still couldn't take the band's lessons once their steps' retries ran out: the band stays
+ * written and the plans usable, on stand-ins until their next refresh, so the failure is only
+ * said, loudly, with the ids to find it by.
+ */
+export async function logReplanFailureStep(failure: {
+  courseId: string;
+  error: string;
+  goalIds: string[];
+  skillIds: string[];
+}): Promise<void> {
+  "use step";
+
+  logError("[courseOutlineWorkflow] Goals waiting on a band couldn't take its lessons:", failure);
 }

@@ -938,9 +938,10 @@ describe(replanGoalsWaitingOnSkills, () => {
       workflowRunId: randomUUID(),
     });
 
-    await expect(replanGoalsWaitingOnSkills({ skillIds: [first.id] })).resolves.toStrictEqual([
-      goal.id,
-    ]);
+    await expect(replanGoalsWaitingOnSkills({ skillIds: [first.id] })).resolves.toStrictEqual({
+      failedGoalIds: [],
+      goalIds: [goal.id],
+    });
 
     const items = await prisma.planItem.findMany({
       orderBy: { position: "asc" },
@@ -1001,7 +1002,7 @@ describe(replanGoalsWaitingOnSkills, () => {
     // A band landed for another course: the goal is asked to re-plan, and nothing in it moves.
     await expect(
       replanGoalsWaitingOnSkills({ goalIds: [goal.id], skillIds: [] }),
-    ).resolves.toStrictEqual([goal.id]);
+    ).resolves.toStrictEqual({ failedGoalIds: [], goalIds: [goal.id] });
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
@@ -1062,8 +1063,8 @@ describe(replanGoalsWaitingOnSkills, () => {
     const second = await saveChapter(1);
 
     await expect(
-      replanGoalsWaitingOnSkills({ goalIds: partway, skillIds: [skill.id] }),
-    ).resolves.toStrictEqual([goal.id]);
+      replanGoalsWaitingOnSkills({ goalIds: partway.goalIds, skillIds: [skill.id] }),
+    ).resolves.toStrictEqual({ failedGoalIds: [], goalIds: [goal.id] });
 
     const items = await prisma.planItem.findMany({
       orderBy: { position: "asc" },

@@ -1,6 +1,5 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { wasLastDayStudied } from "./_utils/carried-lessons";
 import { getEstimateChange } from "./_utils/estimate-change";
@@ -9,8 +8,9 @@ import {
   updatePhaseDatesProposal,
   withdrawUnneededPhaseDatesProposal,
 } from "./_utils/phase-dates-proposal";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
 import { addsLessonsAfterLessonsDone, isPlanLaidOut } from "./_utils/plan-refresh-admission";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import {
   type ComputedPlan,
@@ -21,10 +21,47 @@ import {
 import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
-import { withPlanRetry } from "./plan-conflict";
+import { isPlanConflictError, withPlanRetry } from "./plan-conflict";
 import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
+
+/**
+ * A refresh's result, and the plan it worked out when that's the learner's plan now: saved, or
+ * waiting to be saved because another write won. Null when the saved plan stays as it is.
+ */
+type PlannedRefresh = PlanRefreshResult & { plan: ComputedPlan | null };
+
+/**
+ * How a refresh saves what it worked out (see `saveOrLetGo`): `throw` when another write won, or
+ * `letGo` for a reader that only needs the plan worked out (see `planGoalForPick`).
+ */
+type LostSave = "letGo" | "throw";
+
+/**
+ * Saves through `write`. A save another write won throws, unless the refresh lets it go: then it
+ * says so (false), for the refresh to stop saving and hand back the plan it worked out.
+ */
+async function saveOrLetGo(lostSave: LostSave, write: () => Promise<unknown>): Promise<boolean> {
+  if (lostSave === "throw") {
+    await write();
+    return true;
+  }
+
+  const [saved] = await Promise.allSettled([write()]);
+
+  if (saved.status === "fulfilled") {
+    return true;
+  }
+
+  const reason: unknown = saved.reason;
+
+  if (isPlanConflictError(reason)) {
+    return false;
+  }
+
+  throw reason;
+}
 
 /**
  * A new day settles what earlier days left: it comes first, in the order it was planned, and the
@@ -39,38 +76,48 @@ type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refresh
 async function settleLeftWork({
   context,
   left,
+  lostSave,
   pace,
   revalidation,
 }: {
   context: PlanContext;
   left: PlanContext["items"];
+  lostSave: LostSave;
   pace: "sampled" | "saved";
   revalidation: PlanTagRevalidation;
-}): Promise<PlanRefreshResult> {
+}): Promise<PlannedRefresh> {
   const missed = !(await wasLastDayStudied(context));
   const computed = await computeSettledPlan({ context, missed, pace });
 
-  await commitPlan({
-    change: getSettledPlanChange({ computed, context, left }),
-    computed,
-    context,
-    revalidation,
-  });
+  const saved = await saveOrLetGo(lostSave, () =>
+    commitPlan({
+      change: getSettledPlanChange({ computed, context, left }),
+      computed,
+      context,
+      revalidation,
+    }),
+  );
 
-  await updatePhaseDatesProposal({
-    computed,
-    context,
-    mode: "forced",
-    pace,
-    revalidation,
-    writeVersion: {
-      ...context.plan,
-      inputVersion: context.plan.inputVersion + 1,
-      version: context.plan.version + 1,
-    },
-  });
+  if (!saved) {
+    return { plan: computed, status: "refreshed" };
+  }
 
-  return { status: "refreshed" };
+  await saveOrLetGo(lostSave, () =>
+    updatePhaseDatesProposal({
+      computed,
+      context,
+      mode: "forced",
+      pace,
+      revalidation,
+      writeVersion: {
+        ...context.plan,
+        inputVersion: context.plan.inputVersion + 1,
+        version: context.plan.version + 1,
+      },
+    }),
+  );
+
+  return { plan: computed, status: "refreshed" };
 }
 
 /**
@@ -128,19 +175,39 @@ async function computeRefreshedPlan({
  * same, wherever a new run would lay it. Does nothing for paused goals or plans not built yet.
  */
 export async function refreshGoalPlan({
-  goalId,
-  pace = "saved",
-  revalidation = "now",
   retryOnConflict = true,
-  settleOnly = false,
-}: {
+  ...input
+}: RefreshInput & {
+  /** Deferred work stops on a lost CAS; the next learner action owns recovery. */
+  retryOnConflict?: boolean;
+}): Promise<PlanRefreshResult> {
+  const refresh = async (): Promise<PlanRefreshResult> => {
+    const { status } = await refreshPlanned({ ...input, lostSave: "throw" });
+    return { status };
+  };
+
+  return retryOnConflict ? withPlanRetry(refresh) : refresh();
+}
+
+/**
+ * The goal's plan worked out from what it plans from now, for a reader that picks lessons from it
+ * (see `pickSpeculativeLessons`): refreshed as any refresh (see `refreshGoalPlan`), its saves tried
+ * once and let go when another write won, which the learner's own onboarding keeps doing, so a
+ * pick never waits on them: what the plan plans from is the same either way, and the run that
+ * wrote meanwhile, or the next refresh, saves it. `plan` is null when the saved plan stays as it
+ * is (not built yet, nothing new to plan, or lessons waiting for the learner's OK), and the status
+ * says when there's no plan to pick from at all (no goal, or a paused one).
+ */
+export async function planGoalForPick(goalId: string): Promise<PlannedRefresh> {
+  return refreshPlanned({ goalId, lostSave: "letGo" });
+}
+
+type RefreshInput = {
   goalId: string;
   /** `sampled` after the learner's progress (a session ended); `saved` otherwise. */
   pace?: "sampled" | "saved";
   /** Building a day while a page renders can't clear caches, and has none to clear. */
   revalidation?: PlanTagRevalidation;
-  /** Deferred work stops on a lost CAS; the next learner action owns recovery. */
-  retryOnConflict?: boolean;
   /**
    * Building a day only settles what earlier days left: opening the app with nothing new changes
    * nothing. Planned again from its own output, a plan isn't always laid out the same way, and a
@@ -148,57 +215,75 @@ export async function refreshGoalPlan({
    * out is still laid out (see `isPlanLaidOut`).
    */
   settleOnly?: boolean;
-}): Promise<PlanRefreshResult> {
-  const refresh = async (): Promise<PlanRefreshResult> => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+};
 
-    if (!goal) {
-      return { status: "notFound" };
-    }
+/** One refresh (see `refreshGoalPlan`), with the plan it worked out. */
+async function refreshPlanned({
+  goalId,
+  lostSave,
+  pace = "saved",
+  revalidation = "now",
+  settleOnly = false,
+}: RefreshInput & { lostSave: LostSave }): Promise<PlannedRefresh> {
+  const context = await loadPlanAtToken(goalId);
 
-    if (goal.status !== "active") {
-      return { status: "paused" };
-    }
+  if (!context) {
+    return { plan: null, status: "notFound" };
+  }
 
-    const context = await loadPlanContext({ goal });
+  if (context.goal.status !== "active") {
+    return { plan: null, status: "paused" };
+  }
 
-    if (!context || !isPlanReady(context)) {
-      return { status: context ? "notReady" : "notFound" };
-    }
+  if (!isPlanReady(context)) {
+    return { plan: null, status: "notReady" };
+  }
 
-    const left = await loadLeftWork(context);
+  const left = await loadLeftWork(context);
 
-    if (left.length > 0) {
-      return settleLeftWork({ context, left, pace, revalidation });
-    }
+  if (left.length > 0) {
+    return settleLeftWork({ context, left, lostSave, pace, revalidation });
+  }
 
-    if (settleOnly && isPlanLaidOut(context)) {
-      return { status: "unchanged" };
-    }
+  if (settleOnly && isPlanLaidOut(context)) {
+    return { plan: null, status: "unchanged" };
+  }
 
-    const { computed, mode, planned } = await computeRefreshedPlan({ context, pace });
+  const { computed, mode, planned } = await computeRefreshedPlan({ context, pace });
 
-    if (computed.inputsKey === context.plan.inputsKey) {
-      await withdrawUnneededPhaseDatesProposal({ computed, context, revalidation });
-      return { status: "unchanged" };
-    }
+  if (computed.inputsKey === context.plan.inputsKey) {
+    await saveOrLetGo(lostSave, () =>
+      withdrawUnneededPhaseDatesProposal({ computed, context, revalidation }),
+    );
 
-    if (addsLessonsAfterLessonsDone({ computed, context })) {
-      return { status: "unchanged" };
-    }
+    // The saved plan stays as it is, laid out as it was saved.
+    return { plan: null, status: "unchanged" };
+  }
 
-    const change = getEstimateChange({ computed, context });
+  // The lessons it would add wait for the learner's OK: the plan stays as it was saved.
+  if (addsLessonsAfterLessonsDone({ computed, context })) {
+    return { plan: null, status: "unchanged" };
+  }
 
-    const unchanged = !change && isPlanUnchanged({ computed, context });
+  const change = getEstimateChange({ computed, context });
 
-    await (unchanged
+  const unchanged = !change && isPlanUnchanged({ computed, context });
+
+  const saved = await saveOrLetGo(lostSave, () =>
+    unchanged
       ? savePlanInputsKey({ context, graph: computed.state.graph, inputsKey: computed.inputsKey })
-      : commitPlan({ change, computed, context, revalidation }));
+      : commitPlan({ change, computed, context, revalidation }),
+  );
 
-    // Moving the dates is planned from the day the run planned from, to compare: from today, whose
-    // time was still open, a career plan's lessons fit before their challenges, and Today asked
-    // nothing while the plan held them after (career 2131).
-    await updatePhaseDatesProposal({
+  if (!saved) {
+    return { plan: computed, status: "refreshed" };
+  }
+
+  // Moving the dates is planned from the day the run planned from, to compare: from today, whose
+  // time was still open, a career plan's lessons fit before their challenges, and Today asked
+  // nothing while the plan held them after (career 2131).
+  await saveOrLetGo(lostSave, () =>
+    updatePhaseDatesProposal({
       computed,
       context: planned,
       mode,
@@ -209,10 +294,9 @@ export async function refreshGoalPlan({
         inputVersion: context.plan.inputVersion + 1,
         version: context.plan.version + (unchanged ? 0 : 1),
       },
-    });
+    }),
+  );
 
-    return { status: unchanged ? "unchanged" : "refreshed" };
-  };
-
-  return retryOnConflict ? withPlanRetry(refresh) : refresh();
+  // An unchanged plan keeps the layout it was saved with; only its inputs' key was saved.
+  return { plan: unchanged ? null : computed, status: unchanged ? "unchanged" : "refreshed" };
 }

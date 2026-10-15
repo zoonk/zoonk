@@ -19,6 +19,7 @@ import {
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as logger from "@zoonk/utils/logger";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
@@ -49,20 +50,10 @@ const scope = {
 
 const TIMEOUT = 60_000;
 
-/** A learner whose plan stands in for the recorded graph's skills until the outline lands. */
-async function waitingGoal() {
+/** A learner whose plan stands in for these skills of the recorded graph until the outline lands. */
+async function planWaitingGoal(idsByKey: Record<string, string>) {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
-
-  const skills = await Promise.all(
-    recordedGraph.skills.map((skill) =>
-      skillFixture({ description: skill.description, name: skill.name }),
-    ),
-  );
-
-  const idsByKey = Object.fromEntries(
-    recordedGraph.skills.map((skill, index) => [skill.key, skills[index]?.id ?? ""]),
-  );
 
   await prisma.plan.create({
     data: { goalId: goal.id, settings: { startDate: new Date().toISOString().slice(0, 10) } },
@@ -73,6 +64,23 @@ async function waitingGoal() {
     graph: toGoalPlanGraph({ courseIdsByKey: {}, graph: recordedGraph, idsByKey }),
   });
 
+  return goal;
+}
+
+/** A learner whose plan stands in for the recorded graph's skills until the outline lands. */
+async function waitingGoal() {
+  const skills = await Promise.all(
+    recordedGraph.skills.map((skill) =>
+      skillFixture({ description: skill.description, name: skill.name }),
+    ),
+  );
+
+  const idsByKey = Object.fromEntries(
+    recordedGraph.skills.map((skill, index) => [skill.key, skills[index]?.id ?? ""]),
+  );
+
+  const goal = await planWaitingGoal(idsByKey);
+
   const bandSkills = recordedGraph.skills.map((skill) => ({
     description: skill.description,
     id: idsByKey[skill.key] ?? "",
@@ -80,7 +88,26 @@ async function waitingGoal() {
     name: skill.name,
   }));
 
-  return { bandSkills, goal };
+  return { bandSkills, goal, idsByKey };
+}
+
+/**
+ * Marks the plan's inputs changed again and again until `signal` aborts, as other runs saving
+ * lessons for its skills do. Returns how many marks it made.
+ */
+async function markPlanUntil({
+  planId,
+  signal,
+}: {
+  planId: string;
+  signal: AbortSignal;
+}): Promise<number> {
+  if (signal.aborted) {
+    return 0;
+  }
+
+  await prisma.$executeRaw`UPDATE plans SET input_version = input_version + 1 WHERE id = ${planId}::uuid`;
+  return 1 + (await markPlanUntil({ planId, signal }));
 }
 
 /**
@@ -227,6 +254,65 @@ describe(courseOutlineWorkflow, () => {
           { attributes: { courseId: course.id } },
         ],
       ]);
+    },
+  );
+
+  // Other runs keep saving lessons one waiting learner's plan is planned from while the band
+  // lands: that plan can't be saved from what it read, and once its step gives up the band stays
+  // written, the other learner takes its lessons, and the one still on stand-ins is said, with
+  // its goal, and counted as a generation that failed.
+  it(
+    "keeps a band written when a waiting goal can't take its lessons, and says which",
+    { timeout: TIMEOUT },
+    async () => {
+      const [busy, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      ]);
+
+      const other = await planWaitingGoal(busy.idsByKey);
+
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: busy.goal.id } });
+      const error = vi.spyOn(logger, "logError");
+      const stop = new AbortController();
+      const marking = markPlanUntil({ planId: plan.id, signal: stop.signal });
+
+      const writing = courseOutlineWorkflow({
+        analytics: { distinctId: busy.goal.userId, goalId: busy.goal.id, platform: "web" },
+        bands: [{ level: "overview", skills: busy.bandSkills }],
+        courseId: course.id,
+        scope,
+      });
+
+      try {
+        await Promise.allSettled([writing.finally(() => stop.abort()), marking]);
+        await expect(writing).resolves.toMatchObject({ status: "written" });
+
+        expect(error).toHaveBeenCalledWith(
+          "[courseOutlineWorkflow] Goals waiting on a band couldn't take its lessons:",
+          expect.objectContaining({ courseId: course.id, goalIds: [busy.goal.id] }),
+        );
+      } finally {
+        error.mockRestore();
+      }
+
+      const [storedCourse, busyItems, otherItems] = await Promise.all([
+        prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+        lessonItems(busy.goal.id),
+        lessonItems(other.id),
+      ]);
+
+      expect(storedCourse.outlineStatus).toBe("completed");
+      expect(otherItems.every((item) => item.lessonId !== null)).toBe(true);
+      expect(busyItems.some((item) => item.lessonId === null)).toBe(true);
+
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          distinctId: busy.goal.userId,
+          name: "Generation Failed",
+          properties: { content_kind: "course", model: null, task: "waiting-goals-replan" },
+        }),
+      );
     },
   );
 

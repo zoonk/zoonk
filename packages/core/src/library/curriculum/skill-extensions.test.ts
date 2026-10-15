@@ -457,9 +457,10 @@ describe("skill extensions", () => {
       title: "Entrevistas com perguntas situacionais",
     });
 
-    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual([
-      goal.id,
-    ]);
+    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual({
+      failedGoalIds: [],
+      goalIds: [goal.id],
+    });
 
     const [items, after] = await Promise.all([
       planItems(plan.id),
@@ -492,9 +493,10 @@ describe("skill extensions", () => {
       title: "Entrevistas com perguntas situacionais",
     });
 
-    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual([
-      goal.id,
-    ]);
+    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual({
+      failedGoalIds: [],
+      goalIds: [goal.id],
+    });
 
     const items = await planItems(plan.id);
     const next = items.filter((item) => item.titleSnapshot.startsWith("Entrevistas"));
