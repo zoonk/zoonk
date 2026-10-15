@@ -21,6 +21,7 @@ async function setup() {
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 12,
     settings: { startDate: "2020-09-28" },
+    timezone: "UTC",
     userId: user.id,
   });
 

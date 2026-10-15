@@ -37,9 +37,18 @@ const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).fil
 const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-call-lifecycle.test.ts";
 const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
 const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
-const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_CALL_TESTS.includes(file));
+/** Recovery holds one database-wide advisory lock; unrelated merges intentionally refuse it. */
+const SKILL_RECOVERY_TESTS = [
+  "src/library/plan-input-writers.test.ts",
+  "src/mistakes/backfill-lesson-mistakes-merge.test.ts",
+  "src/mistakes/backfill-lesson-mistakes.test.ts",
+];
+
+const ORDERED_TESTS = [...ORDERED_CALL_TESTS, ...SKILL_RECOVERY_TESTS];
+const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_TESTS.includes(file));
 const MISSION_TEST_GROUP = 1;
 const LIVE_CALL_POLICY_TEST_GROUP = 2;
+const SKILL_RECOVERY_TEST_GROUP = 3;
 
 export default defineConfig({
   plugins: [markdownAsText],
@@ -58,7 +67,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          exclude: [...configDefaults.exclude, ...OWN_MOCKS, ...ORDERED_CALL_TESTS],
+          exclude: [...configDefaults.exclude, ...OWN_MOCKS, ...ORDERED_TESTS],
           isolate: false,
           name: "shared",
         },
@@ -78,6 +87,15 @@ export default defineConfig({
           include: [LIVE_CALL_POLICY_TEST],
           name: "live-call-policy",
           sequence: { groupOrder: LIVE_CALL_POLICY_TEST_GROUP },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          fileParallelism: false,
+          include: SKILL_RECOVERY_TESTS,
+          name: "skill-recovery",
+          sequence: { groupOrder: SKILL_RECOVERY_TEST_GROUP },
         },
       },
     ],

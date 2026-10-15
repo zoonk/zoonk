@@ -34,9 +34,9 @@ describe("the explicit day open follows the device zone", () => {
 
   it.each([
     { inputIncrement: 2, shownDate: "2026-10-01", timeZone: "Pacific/Kiritimati" },
-    { inputIncrement: 1, shownDate: "2026-09-30", timeZone: "America/New_York" },
+    { inputIncrement: 2, shownDate: "2026-09-30", timeZone: "America/New_York" },
   ])(
-    "moves the zone before opening $shownDate, marking only a changed day as plan input",
+    "moves the zone before opening $shownDate, marking every actual zone change as plan input",
     async (input) => {
       const fixture = await setup();
       const before = await versions(fixture);

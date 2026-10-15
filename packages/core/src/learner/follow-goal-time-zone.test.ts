@@ -115,7 +115,7 @@ describe("following a learner who moves", () => {
     });
   });
 
-  it("raises only the learner's revision when the goal's today stays the same date", async () => {
+  it("raises the learner's revision and plan inputs when the zone moves within the same date", async () => {
     // Buenos Aires keeps São Paulo's clock all year: the zone moves, the day doesn't.
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
@@ -126,7 +126,7 @@ describe("following a learner who moves", () => {
     ).resolves.toMatchObject({ moved: true });
 
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
-      inputVersion: before.inputVersion,
+      inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 1n,
     });
   });

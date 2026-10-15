@@ -13,7 +13,7 @@ import { getSession } from "../users/get-session";
 const GATE_NAMESPACE = 1_731_209;
 
 describe("backfill attribution during skill merges", () => {
-  it("serializes a merge started between recovery's read and write, then confirms the surviving attribution", async () => {
+  it("refuses a merge during recovery, then preserves attribution when retried after recovery", async () => {
     const [lesson, duplicate, survivor, user, admin] = await Promise.all([
       libraryLessonFixture(),
       skillFixture(),
@@ -85,34 +85,20 @@ describe("backfill attribution during skill merges", () => {
         })
         .toBe(1);
 
-      const merge = mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id });
+      await expect(
+        mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id }),
+      ).rejects.toThrow("Skill attribution recovery is running");
 
-      try {
-        /** Before the fix the merge commits here; afterward it must wait for recovery's lock. */
-        await expect
-          .poll(async () => {
-            const merged = await prisma.skill.findUniqueOrThrow({ where: { id: duplicate.id } });
+      await expect(
+        prisma.skill.findUniqueOrThrow({ where: { id: duplicate.id } }),
+      ).resolves.toMatchObject({ mergedIntoId: null });
 
-            const waiters = await prisma.$queryRaw<{ pid: number }[]>(sql`
-            SELECT waiting.pid FROM pg_locks waiting
-            JOIN pg_locks held USING (locktype, database, classid, objid, objsubid)
-            WHERE waiting.locktype = 'advisory' AND waiting.mode = 'ShareLock'
-              AND NOT waiting.granted AND held.granted
-              AND held.pid IN (
-                SELECT pid FROM pg_locks WHERE locktype = 'advisory' AND NOT granted
-                  AND classid = ${GATE_NAMESPACE}::oid AND objid = hashtext(${step.id})::oid
-              )
-          `);
+      release.resolve(null);
+      await Promise.all([gate, recovery]);
 
-            return merged.mergedIntoId === survivor.id || waiters.length > 0;
-          })
-          .toBe(true);
-      } finally {
-        release.resolve(null);
-        await Promise.all([gate, recovery, merge]);
-      }
-
-      await expect(merge).resolves.toMatchObject({ status: "merged", survivorId: survivor.id });
+      await expect(
+        mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id }),
+      ).resolves.toMatchObject({ status: "merged", survivorId: survivor.id });
 
       const [recoveredStep, recoveredAttempt, recoveredMistake, links] = await Promise.all([
         prisma.step.findUniqueOrThrow({ where: { id: step.id } }),

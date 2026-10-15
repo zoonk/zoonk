@@ -3,12 +3,14 @@ import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import {
   type LibraryProvenance,
   createOrFindByIdentity,
   toLibraryVisibility,
   toProvenanceData,
 } from "../_utils/library-rows";
+import { lockPlanInputWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createSourceChangeNotice } from "../sources/content-review-flags";
 import {
   type BlueprintContent,
@@ -160,7 +162,15 @@ async function updateBlueprint({
 
   const notice = changes.length > 0 ? input.notice : null;
 
-  const { blueprint, noticeId } = await prisma.$transaction(async (tx) => {
+  const { blueprint, noticeId } = await writePlanInputs(async (tx) => {
+    await lockPlanInputWrite({
+      loadPlanIds: () => resolvePlanInputDependents(tx, { blueprintIds: [current.id] }),
+      lockSources: async () => {
+        await tx.$queryRaw`SELECT id FROM exam_blueprints WHERE id = ${current.id}::uuid FOR UPDATE`;
+      },
+      tx,
+    });
+
     const updated = await tx.examBlueprint.update({
       data: {
         ...toContentColumns(content),

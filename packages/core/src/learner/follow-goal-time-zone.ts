@@ -113,8 +113,8 @@ async function readGoalZone(
 
 /**
  * Moves a goal from `fromZone` (the zone the caller read) to `toZone` inside the caller's
- * transaction, when `canMoveGoalTimeZone` allows it: the learner's revision first (with the plan's
- * inputs only when the goal's today becomes another date), then the same checks again at the
+ * transaction, when `canMoveGoalTimeZone` allows it: the plans' inputs and learner's revision
+ * first (a zone is an input even while its local date stays the same), then the same checks at the
  * moment it holds the learner's lock (the goal may have moved, an answer or a block start may have
  * committed, or a midnight passed, while it waited), then the zone, set only while it's still
  * `fromZone`. `unchanged` when the goal can't move, having written nothing; when the goal moved
@@ -151,8 +151,8 @@ export async function moveGoalTimeZoneInTransaction(
     return { kind: "unchanged", retryAt: getNextDayStart(goal, readAt) };
   }
 
-  const planInputs = movesTheDate({ goal, now: readAt, toZone });
-  const { learnerRevision } = await markLearnerChanged(tx, { planInputs, userId });
+  const dateChanges = movesTheDate({ goal, now: readAt, toZone });
+  const { learnerRevision } = await markLearnerChanged(tx, { planInputs: true, userId });
   const lockedAt = new Date();
 
   // Another writer moved the goal while this waited: its day is no longer the one checked.
@@ -160,7 +160,7 @@ export async function moveGoalTimeZoneInTransaction(
     throw new TimeZoneUnchangedError("zoneChanged", lockedAt.getTime());
   }
 
-  if (movesTheDate({ goal, now: lockedAt, toZone }) !== planInputs) {
+  if (movesTheDate({ goal, now: lockedAt, toZone }) !== dateChanges) {
     throw new TimeZoneUnchangedError("dayChanged", lockedAt.getTime());
   }
 
@@ -177,7 +177,7 @@ export async function moveGoalTimeZoneInTransaction(
     throw new TimeZoneUnchangedError("zoneChanged", lockedAt.getTime());
   }
 
-  return { kind: "moved", learnerRevision, planInputsChanged: planInputs };
+  return { kind: "moved", learnerRevision, planInputsChanged: true };
 }
 
 /**

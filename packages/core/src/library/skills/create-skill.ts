@@ -10,6 +10,8 @@ import {
   toLibraryVisibility,
   toProvenanceData,
 } from "../_utils/library-rows";
+import { writePlanInputs } from "../_utils/plan-input-write";
+import { lockSkillPlanInputs } from "./_utils/skill-input-write";
 
 export type CreateSkillInput = {
   /** The key `resolveLibraryIdentity` returned with its `generate` outcome. */
@@ -83,13 +85,15 @@ export async function setSkillPrerequisites({
   const kept = new Set(prerequisiteIds.filter((prerequisiteId) => prerequisiteId !== skillId));
   const removed = [...among].filter((prerequisiteId) => !kept.has(prerequisiteId));
 
-  await prisma.$transaction([
-    prisma.skillPrerequisite.deleteMany({ where: { prerequisiteId: { in: removed }, skillId } }),
-    prisma.skillPrerequisite.createMany({
+  await writePlanInputs(async (tx) => {
+    await lockSkillPlanInputs({ referencedSkillIds: [...kept], skillIds: [skillId], tx });
+    await tx.skillPrerequisite.deleteMany({ where: { prerequisiteId: { in: removed }, skillId } });
+
+    await tx.skillPrerequisite.createMany({
       data: [...kept].map((prerequisiteId) => ({ prerequisiteId, skillId })),
       skipDuplicates: true,
-    }),
-  ]);
+    });
+  });
 
   revalidateCacheTags([getSkillCacheTag(skillId)]);
 }

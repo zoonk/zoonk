@@ -8,8 +8,9 @@ import {
   getSkillCacheTag,
 } from "../../cache/tags";
 import { getAdminAccess } from "../../users/get-admin-access";
+import { writePlanInputs } from "../_utils/plan-input-write";
 import { findSurvivingSkill } from "./_utils/find-surviving-skill";
-import { lockSkillAttribution } from "./_utils/lock-skill-attribution";
+import { lockSkillPlanInputs } from "./_utils/skill-input-write";
 
 export type SkillMergeResult =
   | { learners: number; status: "merged"; survivorId: string }
@@ -129,8 +130,21 @@ async function moveLinks(tx: TransactionClient, { duplicate, survivor }: SkillPa
 }
 
 async function mergeInto(pair: SkillPair) {
-  return prisma.$transaction(async (tx) => {
-    await lockSkillAttribution({ mode: "merge", tx });
+  return writePlanInputs(async (tx) => {
+    await lockSkillPlanInputs({
+      masterySkillId: pair.duplicate.id,
+      skillIds: [pair.duplicate.id, pair.survivor.id],
+      tx,
+    });
+
+    const [duplicate, survivor] = await Promise.all([
+      tx.skill.findUniqueOrThrow({ where: { id: pair.duplicate.id } }),
+      tx.skill.findUniqueOrThrow({ where: { id: pair.survivor.id } }),
+    ]);
+
+    if (!canMerge({ duplicate, survivor }) || survivor.mergedIntoId !== null) {
+      throw new Error("A skill was merged meanwhile; try the merge again.");
+    }
 
     const userIds = await moveLearnerSkills(tx, pair);
     await movePointers(tx, pair);
