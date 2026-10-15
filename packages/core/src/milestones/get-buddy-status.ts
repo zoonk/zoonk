@@ -14,13 +14,13 @@ import {
 } from "@zoonk/utils/buddy";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readActiveGoal, readLearningProfile } from "../learner/facts/learning-profile";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { getStartOfWeek, toIsoDate } from "../plans/planner/plan-calendar";
 import { type ResolvedBuddy, resolveProfileBuddy } from "../profile/default-buddy";
 import { hasEnergyStarted } from "../progress/_utils/energy-started";
-import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { measureProgress } from "../sessions/_utils/capture-snapshot";
 import { findCarriedOverSession } from "../sessions/_utils/current-session";
 import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
@@ -72,34 +72,17 @@ export type BuddyStatusResult =
   | { buddy: BuddyStatus; status: "ready" }
   | { status: "unauthorized" };
 
-/** The active goal, whose time zone decides when the learner's day starts. */
-async function findActiveGoal(userId: string) {
-  const goalId = await findActiveGoalId(userId);
-
-  return goalId
-    ? prisma.goal.findUnique({ select: { id: true, timezone: true }, where: { id: goalId } })
-    : null;
-}
-
-/** The client's time zone, or the request's, which the top bar and the stats pages read too. */
-async function getLearnerTimeZone(timeZone: string | undefined): Promise<string> {
-  if (timeZone) {
-    return timeZone;
-  }
-
-  const request = await getRequestProgressDateContext();
-  return request.timeZone;
-}
-
 /** The missions of the active goal's session today, read without building the session. */
 async function loadToday({
   goalId,
   localDate,
+  now,
   timeZone,
   userId,
 }: {
   goalId: string | null;
   localDate: Date;
+  now: Date;
   timeZone: string;
   userId: string;
 }): Promise<{ today: BuddyToday; firstSteps: FirstSteps | null } | null> {
@@ -107,7 +90,7 @@ async function loadToday({
     return null;
   }
 
-  const carried = await findCarriedOverSession({ goalId, now: new Date(), timeZone, userId });
+  const carried = await findCarriedOverSession({ goalId, now, timeZone, userId });
 
   const current = await prisma.studySession.findUnique({
     include: STUDY_SESSION_INCLUDE,
@@ -121,8 +104,8 @@ async function loadToday({
   }
 
   const [missions, earned] = await Promise.all([
-    getDayMissions({ session, through: new Date(), timeZone }),
-    hasDayMissionBonus({ now: new Date(), session, timeZone }),
+    getDayMissions({ session, through: now, timeZone }),
+    hasDayMissionBonus({ now, session, timeZone }),
   ]);
 
   const firstSteps = await getDayFirstSteps({ missions, session, timeZone });
@@ -148,40 +131,46 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
   }
 
   const userId = session.user.id;
-  const now = new Date();
-  const goal = await findActiveGoal(userId);
-  const learnerTimeZone = await getLearnerTimeZone(input.timeZone);
+
+  const [now, goal, profile] = await Promise.all([
+    getRequestInstant(),
+    readActiveGoal(userId),
+    readLearningProfile(userId),
+  ]);
 
   // Energy and the day's study read the learner's clock like the top bar and the stats pages do;
   // today's session belongs to the goal's day, as Today builds it.
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: learnerTimeZone });
+  const timeZone = getAnswerTimeZone({
+    goal: input.timeZone ? null : goal,
+    timeZone: input.timeZone,
+  });
+
   const today = getDateInTimeZone({ date: now, timeZone });
   const sessionTimeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const sessionDate = getDateInTimeZone({ date: now, timeZone: sessionTimeZone });
   const weekStart = getStartOfWeek(today);
 
-  const [profile, progress, todayRow, counts, thisWeek, todayMissions, energyStarted] =
-    await Promise.all([
-      prisma.userLearningProfile.findUnique({ where: { userId } }),
-      measureProgress({ now, timeZone, userId }),
-      prisma.dailyProgress.findUnique({ where: { userDate: { date: today, userId } } }),
-      loadMilestoneCounts(userId),
-      loadBuddyDiet({
-        from: getStartOfLocalDay({ localDate: weekStart, timeZone }),
-        to: getStartOfLocalDay({
-          localDate: new Date(weekStart.getTime() + DAYS_PER_WEEK * MS_PER_DAY),
-          timeZone,
-        }),
-        userId,
+  const [progress, todayRow, counts, thisWeek, todayMissions, energyStarted] = await Promise.all([
+    measureProgress({ now, timeZone, userId }),
+    prisma.dailyProgress.findUnique({ where: { userDate: { date: today, userId } } }),
+    loadMilestoneCounts(userId),
+    loadBuddyDiet({
+      from: getStartOfLocalDay({ localDate: weekStart, timeZone }),
+      to: getStartOfLocalDay({
+        localDate: new Date(weekStart.getTime() + DAYS_PER_WEEK * MS_PER_DAY),
+        timeZone,
       }),
-      loadToday({
-        goalId: goal?.id ?? null,
-        localDate: sessionDate,
-        timeZone: sessionTimeZone,
-        userId,
-      }),
-      hasEnergyStarted({ today, userId }),
-    ]);
+      userId,
+    }),
+    loadToday({
+      goalId: goal?.id ?? null,
+      localDate: sessionDate,
+      now,
+      timeZone: sessionTimeZone,
+      userId,
+    }),
+    hasEnergyStarted({ today, userId }),
+  ]);
 
   const belt = calculateBeltLevel(progress.brainPower);
   const next = getNextBuddyStage(belt.color);
