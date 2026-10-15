@@ -76,12 +76,12 @@ async function createLoginState({
 }
 
 /**
- * Verifies callback failures at the route-response boundary so the browser
- * does not follow `/login` onward to the central auth host during this focused
- * main-app test.
+ * Verifies callback failures at the route-response boundary (the callback page's post) so the
+ * browser does not follow `/login` onward to the central auth host during this focused main-app
+ * test.
  */
 function expectAuthErrorRedirect(response: APIResponse): void {
-  expect(response.status()).toBe(302);
+  expect(response.status()).toBe(303);
   expect(getRedirectLocation(response)).toBe("/login?error=auth");
 }
 
@@ -121,7 +121,7 @@ test.describe("Auth Callback", () => {
     const ctx = await browser.newContext({ baseURL });
     const state = await createLoginState({ baseURL, context: ctx });
 
-    const failed = await ctx.request.get(
+    const failed = await ctx.request.post(
       `/auth/callback?state=${encodeURIComponent(state)}&token=invalid-token-abc&next=${encodeURIComponent("/level")}`,
       { maxRedirects: 0 },
     );
@@ -164,6 +164,13 @@ test.describe("Auth Callback", () => {
     const ctx = await browser.newContext({ baseURL });
     const state = await createLoginState({ baseURL, context: ctx });
     const page = await ctx.newPage();
+    const referrers: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.isNavigationRequest() && !request.url().includes("/auth/callback")) {
+        referrers.push(request.headers().referer ?? "");
+      }
+    });
 
     await page.goto(
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
@@ -173,6 +180,82 @@ test.describe("Auth Callback", () => {
     await page.waitForURL(/\/today$/u);
     await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
 
+    // No page after the callback learns its address, which held the one-time token.
+    const documentReferrer = await page.evaluate(() => document.referrer);
+    expect(documentReferrer).not.toContain(token);
+    expect(referrers.filter((referrer) => referrer.includes(token))).toStrictEqual([]);
+
+    const session = await page.request.get("/api/auth/get-session");
+    expect(await session.json()).toMatchObject({ user: { email: user.email } });
+
+    await ctx.close();
+  });
+
+  test("opening the sign-in link signs nobody in and leaves the token for the page's own post", async ({
+    browser,
+  }) => {
+    const baseURL = getBaseURL();
+    const user = await createE2EUser(baseURL);
+    const token = await generateOneTimeToken(baseURL, user);
+    const ctx = await browser.newContext({ baseURL, javaScriptEnabled: false });
+    const state = await createLoginState({ baseURL, context: ctx });
+    const callback = `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`;
+
+    // A mail scanner or a prefetch opens the link, twice: it only gets the page.
+    const first = await ctx.request.get(callback);
+    const second = await ctx.request.get(callback);
+    const pages = await Promise.all([first.text(), second.text()]);
+
+    for (const opened of [first, second]) {
+      expect(opened.status()).toBe(200);
+      expect(opened.headers()["set-cookie"]).toBeUndefined();
+    }
+
+    for (const html of pages) {
+      expect(html).not.toContain(token);
+    }
+
+    const cookies = await ctx.cookies(baseURL);
+    expect(cookies.some((cookie) => cookie.name.endsWith("session_token"))).toBe(false);
+
+    // Without JavaScript the page waits for a tap, which signs the learner in.
+    const page = await ctx.newPage();
+    await page.goto(callback);
+    await expect(page.getByRole("heading", { name: "Signing you in…" })).toBeVisible();
+
+    // A sign-in that never finishes posting can start again with a new token.
+    await expect(page.getByRole("link", { name: "Sign in again" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
+
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.waitForURL(/\/today$/u);
+
+    const session = await page.request.get("/api/auth/get-session");
+    expect(await session.json()).toMatchObject({ user: { email: user.email } });
+
+    await ctx.close();
+  });
+
+  test("going back after signing in doesn't post the used link again", async ({ browser }) => {
+    const baseURL = getBaseURL();
+    const user = await createE2EUser(baseURL);
+    const token = await generateOneTimeToken(baseURL, user);
+    const ctx = await browser.newContext({ baseURL });
+    const state = await createLoginState({ baseURL, context: ctx });
+    const page = await ctx.newPage();
+
+    await page.goto("/pricing");
+
+    await page.goto(
+      `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
+    );
+
+    await page.waitForURL(/\/today$/u);
+    await page.goBack();
+
+    await expect(page).toHaveURL(/\/pricing$/u);
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { email: user.email } });
 
@@ -193,12 +276,12 @@ test.describe("Auth Callback", () => {
     const state = await createLoginState({ baseURL, context: ctx });
 
     // The browser still holds the guest's session when the token signs the learner in.
-    const response = await ctx.request.get(
+    const response = await ctx.request.post(
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
       { maxRedirects: 0 },
     );
 
-    expect(response.status()).toBe(302);
+    expect(response.status()).toBe(303);
 
     const cookies = await ctx.cookies(baseURL);
     const hint = cookies.find((cookie) => cookie.name === "zoonk-signed-in");
@@ -240,12 +323,12 @@ test.describe("Auth Callback", () => {
     const ctx = await browser.newContext({ baseURL });
     const state = await createLoginState({ baseURL, context: ctx });
 
-    const response = await ctx.request.get(
+    const response = await ctx.request.post(
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}&next=${encodeURIComponent(unsafeNextPath)}`,
       { maxRedirects: 0 },
     );
 
-    expect(response.status()).toBe(302);
+    expect(response.status()).toBe(303);
     expect(getRedirectLocation(response)).toBe("/");
 
     await ctx.close();
@@ -259,7 +342,7 @@ test.describe("Auth Callback", () => {
     const token = await generateOneTimeToken(baseURL, user);
     const ctx = await browser.newContext({ baseURL });
 
-    const response = await ctx.request.get(
+    const response = await ctx.request.post(
       `/auth/callback?state=attacker-state&token=${encodeURIComponent(token)}`,
       { maxRedirects: 0 },
     );
@@ -274,7 +357,7 @@ test.describe("Auth Callback", () => {
     const ctx = await browser.newContext({ baseURL });
     const state = await createLoginState({ baseURL, context: ctx });
 
-    const response = await ctx.request.get(
+    const response = await ctx.request.post(
       `/auth/callback?state=${encodeURIComponent(state)}&token=invalid-token-abc`,
       { maxRedirects: 0 },
     );
