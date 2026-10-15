@@ -353,11 +353,28 @@ test.describe("Onboarding from a typed goal", () => {
       words: `learn about ${subject} from zero by ${DEADLINE_YEAR}, 20 min a day`,
     });
 
+    // The steps' only action that sends nothing but the goal's id is the ask for its run's id.
+    const runIdAsks: string[] = [];
+
+    page.on("request", (request) => {
+      const goalId = /\/start\/(?<goalId>[0-9a-f-]{36})$/u.exec(new URL(request.url()).pathname)
+        ?.groups?.goalId;
+
+      if (goalId && request.headers()["next-action"] && request.postData() === `["${goalId}"]`) {
+        runIdAsks.push(goalId);
+      }
+    });
+
     await expect(page.getByText("20 min a day")).toBeVisible();
     const created = await confirmGoal(page, goal);
 
+    // Starting the goal's run saved it before the steps opened: they follow it without asking.
+    expect(created.generationRunId).toEqual(expect.any(String));
+
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("radio", { name: /Otto/u }).click();
+    await expect(page.getByRole("radio", { name: /Otto/u })).toBeChecked();
+    expect(runIdAsks).toEqual([]);
     await page.getByRole("textbox", { name: "Name" }).fill("Octavia");
     await expectAccessibleAnswer(page, "Choose your buddy");
     await pressByKeyboard(page, page.getByRole("button", { exact: true, name: "Continue" }));

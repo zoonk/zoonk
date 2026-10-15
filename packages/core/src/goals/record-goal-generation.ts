@@ -4,9 +4,11 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 
 /**
  * Remembers the run writing a goal's curriculum (or its quick explanation), so onboarding and the
- * explanation's wait can follow it live and pick it up again after a reload. Called by the run
- * itself, once it knows it isn't joining another one; a goal deleted meanwhile is left alone. A
- * failure an earlier run recorded is cleared, since this run builds the plan again.
+ * explanation's wait can follow it live and pick it up again after a reload. Called when the run
+ * starts, so the goal's screens have it before they open, and again by the run itself (the same id
+ * changes nothing; a run started without the first call is saved there). A run that joins another
+ * stays saved: its stream hands followers over. A goal deleted meanwhile is left alone. A failure
+ * an earlier run recorded is cleared, since this run builds the plan again.
  */
 export async function recordGoalGeneration({
   generationId,

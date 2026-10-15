@@ -41,7 +41,7 @@ export async function createGoalsFromPlanLinkAction(
   }
 
   if (result.status === "owner") {
-    return { generationStarted: true, goalId: result.goal.id, status: "created" };
+    return { generationId: null, goalId: result.goal.id, status: "created" };
   }
 
   if (result.status !== "created") {
@@ -50,9 +50,5 @@ export async function createGoalsFromPlanLinkAction(
 
   const [start] = await startGoalWork([result.goal], { research: false });
 
-  return {
-    generationStarted: Boolean(start?.generationId),
-    goalId: result.goal.id,
-    status: "created",
-  };
+  return { generationId: start?.generationId ?? null, goalId: result.goal.id, status: "created" };
 }

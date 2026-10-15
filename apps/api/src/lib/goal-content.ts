@@ -3,6 +3,7 @@ import { explainQuestionWorkflow } from "@/workflows/v2/explain/explain-question
 import { goalContentWorkflow } from "@/workflows/v2/goals/goal-content-workflow";
 import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
+import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
 import { isResearchedGoalKind } from "@zoonk/core/goals/research";
 import { type GoalKind } from "@zoonk/db";
 import { start } from "workflow/api";
@@ -13,18 +14,13 @@ type GoalRef = { id: string; kind: GoalKind };
 
 type GoalGeneration = z.infer<typeof goalGenerationSchema>;
 
-/**
- * Starts what one goal needs written: an explain question's quick explanation (claimed against the
- * learner's allowance when the goal was created), or every other goal's curriculum, waiting for the
- * research run started with it (an exam's blueprint, a learn goal's references). The run carries
- * the client that asked, for analytics.
- */
-export async function startGoalGeneration({
+/** The run writing what one goal needs: its quick explanation, or its curriculum. */
+async function startGoalRun({
   goal,
-  researchId = null,
+  researchId,
 }: {
   goal: GoalRef;
-  researchId?: string | null;
+  researchId: string | null;
 }): Promise<GoalGeneration> {
   const platform = await getRequestPlatform();
 
@@ -35,6 +31,26 @@ export async function startGoalGeneration({
 
   const run = await start(goalContentWorkflow, [{ goalId: goal.id, platform, researchId }]);
   return { generationId: run.runId, goalId: goal.id, kind: "curriculum" };
+}
+
+/**
+ * Starts what one goal needs written: an explain question's quick explanation (claimed against the
+ * learner's allowance when the goal was created), or every other goal's curriculum, waiting for the
+ * research run started with it (an exam's blueprint, a learn goal's references). The run carries
+ * the client that asked, for analytics. It's saved on the goal before this answers, so the goal's
+ * screens, opened right after, follow it at once instead of asking for it until the run saves it.
+ */
+export async function startGoalGeneration({
+  goal,
+  researchId = null,
+}: {
+  goal: GoalRef;
+  researchId?: string | null;
+}): Promise<GoalGeneration> {
+  const generation = await startGoalRun({ goal, researchId });
+
+  await recordGoalGeneration({ generationId: generation.generationId, goalId: goal.id });
+  return generation;
 }
 
 type GoalResearch = { goalId: string; researchId: string };

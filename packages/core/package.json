@@ -121,6 +121,7 @@
     "./goals/course-start-contract": "./src/goals/course-start-contract.ts",
     "./goals/course-weights-research": "./src/goals/course-weights-research.ts",
     "./goals/create": "./src/goals/create-goals.ts",
+    "./goals/generation-id": "./src/goals/get-goal-generation-id.ts",
     "./goals/get": "./src/goals/get-goal.ts",
     "./goals/list-current-user": "./src/goals/list-current-user-goals.ts",
     "./goals/owned-goal": "./src/learner/get-owned-goal.ts",

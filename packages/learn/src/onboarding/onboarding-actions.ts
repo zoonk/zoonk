@@ -69,10 +69,11 @@ export type GoalLimitReason =
 export type CreateGoalsOutcome =
   | {
       /**
-       * Whether the goal's plan (or explanation) started being written. False when the start
-       * failed: the goal exists, and its steps offer to start it again (the run follower's retry).
+       * The run writing the goal's plan (or explanation), also saved on the goal, so its steps
+       * follow it at once. Null when nothing started: the start failed (the goal exists, and its
+       * steps offer to start it again) or the goal was already the learner's (their own plan link).
        */
-      generationStarted: boolean;
+      generationId: string | null;
       goalId: string;
       status: "created";
     }
