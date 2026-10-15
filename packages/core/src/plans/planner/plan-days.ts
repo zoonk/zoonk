@@ -2,7 +2,7 @@ import { getCheckpointMinutes } from "../../checkpoints/checkpoint-minutes";
 import { CHECKPOINT_QUESTIONS } from "../../checkpoints/checkpoint-rules";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type ExamBossDays, listBossEvents } from "./exam-boss-days";
-import { type MockDays, getMockDays, getMockWeeks, isMockDay, isMockWeek } from "./mock-days";
+import { type MockDays, getExamMockDays, getMockWeeks, isMockDay, isMockWeek } from "./mock-days";
 import { type MockFunding, getFundedMinutes } from "./mock-funding";
 import {
   type StudyCalendar,
@@ -285,12 +285,12 @@ export function createExamDays({
   const firstDay = windows[0]?.startDate ?? dayBefore;
   const isShortPlan = isShortExam({ planStart: firstDay, targetDate });
 
-  const mockDays = getMockDays({
+  const mockDays = getExamMockDays({
     calendar,
     eventWeekday,
-    firstMockDay: addDays(firstDay, DAY_OF_SECOND_WEEK),
     from: rules.from,
-    mockMinutes: { finalStretch: fullMockMinutes, weekly: mockMinutes },
+    fullMockMinutes,
+    mockMinutes,
     shortMockMinutes: rules.shortMockMinutes,
     takenMocks: rules.takenMocks,
     targetDate,

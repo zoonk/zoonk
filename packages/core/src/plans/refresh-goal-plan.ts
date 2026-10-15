@@ -134,8 +134,18 @@ async function computeRefreshedPlan({
 }: {
   context: PlanContext;
   pace: "sampled" | "saved";
-}): Promise<{ computed: ComputedPlan; mode: "automatic" | "forced"; planned: PlanContext }> {
-  const automatic = await computePlan({ context, mode: "automatic", pace });
+}): Promise<{ computed: ComputedPlan; mode: "automatic" | "forced"; planned: PlanContext } | null> {
+  const automatic = await computePlan({
+    context,
+    mode: "automatic",
+    pace,
+    skipUnchangedInputs: true,
+  });
+
+  if (!automatic) {
+    return null;
+  }
+
   const newPace = !isDeepStrictEqual(automatic.pace, context.state.settings.pace);
 
   if (pace === "saved" || !newPace || automatic.built.spill <= 0) {
@@ -249,7 +259,17 @@ async function refreshPlanned({
     return { plan: null, status: "unchanged" };
   }
 
-  const { computed, mode, planned } = await computeRefreshedPlan({ context, pace });
+  const refreshed = await computeRefreshedPlan({ context, pace });
+
+  if (!refreshed) {
+    await saveOrLetGo(lostSave, () =>
+      withdrawUnneededPhaseDatesProposal({ context, revalidation }),
+    );
+
+    return { plan: null, status: "unchanged" };
+  }
+
+  const { computed, mode, planned } = refreshed;
 
   if (computed.inputsKey === context.plan.inputsKey) {
     await saveOrLetGo(lostSave, () =>

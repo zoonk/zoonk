@@ -133,7 +133,12 @@ function getAutomaticChange({
 
 /** `computeRefreshedPlan`'s copy: after a session whose new pace lays this week past it, from tomorrow. */
 function computeRefreshedSimPlan({ pace, world }: { pace: "sampled" | "saved"; world: SimWorld }) {
-  const automatic = computeSimPlan({ mode: "automatic", pace, world });
+  const automatic = computeSimPlan({ mode: "automatic", pace, skipUnchangedInputs: true, world });
+
+  if (!automatic) {
+    return null;
+  }
+
   const newPace = !isDeepStrictEqual(automatic.pace, world.plan.state.settings.pace);
 
   if (pace === "saved" || !newPace || automatic.built.spill <= 0) {
@@ -189,7 +194,13 @@ export function refreshSimPlan({
     return { change: null, plan: world.plan, proposals: [] };
   }
 
-  const { computed, mode, planned } = computeRefreshedSimPlan({ pace, world });
+  const refreshed = computeRefreshedSimPlan({ pace, world });
+
+  if (!refreshed) {
+    return { change: null, plan: world.plan, proposals: withdrawUnneededSimProposal({ world }) };
+  }
+
+  const { computed, mode, planned } = refreshed;
 
   if (computed.inputsKey === world.plan.inputsKey) {
     return {

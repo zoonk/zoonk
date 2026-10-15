@@ -1,7 +1,7 @@
 import { getKnownSubjects, getOwnLevel } from "../../../learner/placement/placement-contract";
 import { listFinishedDays } from "../../_utils/finished-days";
 import { getLevelFloor, keepPastBasicsBands } from "../../_utils/level-bands";
-import { getPlanInputsKey, readLanding } from "../../_utils/plan-inputs-key";
+import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "../../_utils/plan-inputs-key";
 import { type ComputedPlan } from "../../_utils/replan";
 import { summarizeRetainedPlan } from "../../_utils/retained-plan-allocation";
 import { isStandIn } from "../../_utils/stand-in-lessons";
@@ -53,7 +53,7 @@ export type SimPlanRequest = {
   world: SimWorld;
 };
 
-/** The lessons the Library has now: the fixture's as loaded without pending skills, and those that landed. */
+/** The Library's current lessons, including those that landed during this life. */
 function listLessons(world: SimWorld): PlannerLesson[] {
   return [...world.lessons, ...world.landedLessons];
 }
@@ -202,12 +202,22 @@ function toPlannerInput({
 }
 
 /** `computePlan` on the simulator's world. */
-export function computeSimPlan(request: SimPlanRequest): ComputedPlan {
-  const { world } = request;
+export function computeSimPlan(
+  request: SimPlanRequest & { skipUnchangedInputs: true },
+): ComputedPlan | null;
+export function computeSimPlan(request: SimPlanRequest): ComputedPlan;
+export function computeSimPlan(
+  request: SimPlanRequest & { skipUnchangedInputs?: boolean },
+): ComputedPlan | null {
+  const { skipUnchangedInputs, world } = request;
   const state = request.state ?? world.plan.state;
   const prepared = toPlannerInput({ ...request, state });
   const chosen = chooseBases(prepared.input);
   const { input } = chosen;
+
+  if (shouldSkipPlanBuild({ input, savedKey: world.plan.inputsKey, skipUnchangedInputs })) {
+    return null;
+  }
 
   const landing = readLanding({ input, savedKey: world.plan.inputsKey });
 
@@ -263,13 +273,12 @@ function asStored(value: unknown): unknown {
  * `savePlanItems` keeps a row's status, but sets aside a todo row the run sets aside, and turns a
  * set-aside row the run plans as todo back to todo.
  */
-function getSavedStatus({
-  existing,
-  item,
-}: {
+function getSavedStatus(input: {
   existing: ExistingPlanItem | undefined;
   item: ComputedPlan["built"]["items"][number];
 }): ExistingPlanItem["status"] {
+  const { existing, item } = input;
+
   if (!existing) {
     return item.status;
   }

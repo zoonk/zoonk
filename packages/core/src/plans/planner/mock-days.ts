@@ -230,3 +230,21 @@ export function getMockDays({
     }),
   };
 }
+
+/** The producer and its clock input use the same mock calendar, including the second-week start. */
+export function getExamMockDays({
+  fullMockMinutes,
+  mockMinutes,
+  ...input
+}: Omit<Parameters<typeof getMockDays>[0], "firstMockDay" | "mockMinutes"> & {
+  fullMockMinutes: number;
+  mockMinutes: number;
+}): MockDays {
+  const firstDay = input.windows[0]?.startDate ?? addDays(input.targetDate, -1);
+
+  return getMockDays({
+    ...input,
+    firstMockDay: addDays(firstDay, 7),
+    mockMinutes: { finalStretch: fullMockMinutes, weekly: mockMinutes },
+  });
+}

@@ -39,7 +39,7 @@ import {
   isUndoableChange,
 } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
-import { getPlanInputsKey, readLanding } from "./plan-inputs-key";
+import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
 import { loadPlanReadAdvice } from "./plan-read-advice";
 import { savePlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
@@ -143,8 +143,11 @@ type ComputePlanRequest = {
  * learner saw (see `keepPhaseEnds`), and so does a forced one the learner didn't ask for, such as a
  * new day settling what earlier days left (`keepPhaseDates`); a learner's change re-plans them.
  */
+export function computePlan(
+  input: ComputePlanRequest & { skipUnchangedInputs: true },
+): Promise<ComputedPlan | null>;
+export function computePlan(input: ComputePlanRequest): Promise<ComputedPlan>;
 export async function computePlan({
-  bringBackSetAside = false,
   carrySnapshot,
   context,
   mode,
@@ -156,13 +159,12 @@ export async function computePlan({
   releasedPhases,
   reuseReadBuild = false,
   readBuildScope: scope,
-  readAnalysis,
   setAsideLeftWork = false,
+  skipUnchangedInputs,
   state = context.state,
-  todayExceptAreas = null,
   todayShown: shownToday,
-  studyScheduleAt,
-}: ComputePlanRequest): Promise<ComputedPlan> {
+  ...options
+}: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
   // The plan studies only the options the learner takes of their exam's choices.
   const resolved = await resolveMergedSkills(
     await chooseExamOptionSkills({
@@ -193,7 +195,7 @@ export async function computePlan({
         (loadedCarry) =>
           loadedCarry && {
             ...loadedCarry,
-            todayExceptAreas: todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
+            todayExceptAreas: options.todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
           },
       ),
       shownToday ??
@@ -228,7 +230,7 @@ export async function computePlan({
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
-    bringBackSetAside,
+    bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver,
     courseStart:
       readCourseStart(isJsonObject(context.goal.details) ? context.goal.details : {}) !== null,
@@ -266,6 +268,12 @@ export async function computePlan({
     topicLevels,
   });
 
+  // Compare the inputs before the producer can change its own funding or relocations. Its output
+  // is not news: rebuilding identical inputs moved a saved boss and deleted a funded mock.
+  if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
+    return null;
+  }
+
   // A run whose only news is lessons written for the plan's stand-ins keeps every other item as the
   // plan has it (see `landedOnly`).
   const landing = readLanding({ input, savedKey: context.plan.inputsKey });
@@ -283,9 +291,9 @@ export async function computePlan({
     input,
     landing,
     planned: built,
-    readAnalysis,
+    readAnalysis: options.readAnalysis,
     reuseReadBuild,
-    studyScheduleAt,
+    studyScheduleAt: options.studyScheduleAt,
     userId,
   });
 

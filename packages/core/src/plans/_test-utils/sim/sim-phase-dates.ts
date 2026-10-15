@@ -202,14 +202,16 @@ export function withdrawUnneededSimProposal({
   computed,
   world,
 }: {
-  computed: ComputedPlan;
+  computed?: ComputedPlan;
   world: SimWorld;
 }): SimChange[] {
   const waiting = findWaitingProposal(world.changes);
 
-  return waiting && !mayCostToKeepPhaseDates(computed.built)
-    ? [{ ...waiting, status: "replaced" }]
-    : [];
+  const unneeded = computed
+    ? !mayCostToKeepPhaseDates(computed.built)
+    : !waiting?.effect || !startsFromEnds({ effect: waiting.effect, phases: world.plan.phases });
+
+  return waiting && unneeded ? [{ ...waiting, status: "replaced" }] : [];
 }
 
 /** A change applied lays the phase dates out again, so it changes what moving them would. */

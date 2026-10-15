@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { type BuildPlanInput } from "../planner/build-plan";
 import { withoutPlannedLessons } from "../planner/core-first";
 import { findLanding } from "../planner/landed-lessons";
+import { getMissedMockRescueDays } from "../planner/mock-rescue-input";
 import { type PlannedItem, getItemKey } from "../planner/plan-items";
 import { type PlannerLesson } from "../planner/plan-units";
 
@@ -50,7 +51,8 @@ const KEYED_FIELDS = {
   settings: true,
   strongAreas: true,
   testedTeaching: "A run's own pass before, settling its challenges: not what it plans from.",
-  today: "A day that only begins changes nothing; a missed day settles on its own path.",
+  today:
+    "Raw day rollover is not news; missed work settles separately and rescue eligibility is keyed.",
   todayShown: "Whether the learner saw today's session: the saved plan's today, as it is.",
   topicLevels: true,
 } satisfies Record<keyof BuildPlanInput, string | true>;
@@ -58,6 +60,25 @@ const KEYED_FIELDS = {
 const PLANNED_FIELDS = new Set(
   Object.entries(KEYED_FIELDS).flatMap(([field, keyed]) => (keyed === true ? [field] : [])),
 );
+
+/** An automatic run compares its actual inputs before derived output can look like new input. */
+export function shouldSkipPlanBuild({
+  input,
+  savedKey,
+  skipUnchangedInputs,
+}: {
+  input: BuildPlanInput;
+  savedKey: string | null | undefined;
+  skipUnchangedInputs?: boolean;
+}): boolean {
+  return (
+    skipUnchangedInputs === true &&
+    getPlanInputsKey({
+      input,
+      items: input.items.map((item) => ({ key: getItemKey(item), status: item.status })),
+    }) === savedKey
+  );
+}
 
 /** Sorts keys as text, whatever they are. */
 function compareText(a: unknown, b: unknown): number {
@@ -169,8 +190,12 @@ export function getPlanInputsKey({
     .map((item) => `${item.key}:${item.status}`)
     .toSorted();
 
+  const rescueDays = getMissedMockRescueDays(input);
+
   return createHash("sha256")
-    .update(JSON.stringify(toStable({ planned, progress })))
+    .update(
+      JSON.stringify(toStable({ planned, progress, ...(rescueDays.length > 0 && { rescueDays }) })),
+    )
     .digest("hex");
 }
 

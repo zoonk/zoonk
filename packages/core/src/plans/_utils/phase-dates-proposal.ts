@@ -136,28 +136,31 @@ async function loadPhaseDatesChanges(planId: string) {
  * longer needs it (see `mayCostToKeepPhaseDates`): that refresh doesn't weigh the proposal again,
  * so one an earlier version of the planner made stayed while nothing the plan reads changed, and
  * an on-track learner kept reading that lessons came out longer than planned (walk, Lucas).
+ * Without a build, only invalid legacy effects and quotes starting at obsolete saved dates retire.
  */
 export async function withdrawUnneededPhaseDatesProposal({
   computed,
   context,
   revalidation,
 }: {
-  computed: ComputedPlan;
+  computed?: ComputedPlan;
   context: PlanContext;
   revalidation: PlanTagRevalidation;
 }): Promise<void> {
-  if (mayCostToKeepPhaseDates(computed.built)) {
+  if (computed && mayCostToKeepPhaseDates(computed.built)) {
     return;
   }
 
-  const waiting = await prisma.planChange.findMany({
-    select: { id: true },
-    where: {
-      payload: { equals: PHASE_DATES_SOURCE, path: ["source"] },
-      planId: context.plan.id,
-      status: "proposed",
-    },
-  });
+  // With no new inputs, only a quote that no longer starts at the saved dates is obsolete.
+  const earlier = await loadPhaseDatesChanges(context.plan.id);
+
+  const waiting = earlier.filter(
+    (change) =>
+      change.status === "proposed" &&
+      (computed ||
+        !change.effect ||
+        !startsFromEnds({ effect: change.effect, phases: context.phases })),
+  );
 
   if (waiting.length === 0) {
     return;
