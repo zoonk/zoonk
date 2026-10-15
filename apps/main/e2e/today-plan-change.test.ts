@@ -47,6 +47,18 @@ const LESSONS = 3;
 /** A goal date this close, which no daily time covers. */
 const SOON_DAYS = 5;
 
+const WEDNESDAY = 3;
+
+/**
+ * How many days ago last week's Wednesday was: 7 to 13. A plan that starts on a Monday has a full
+ * first week, which funds a mock on its first Sunday at any daily time, so no change moves its next
+ * mock. The goal itself stays new, so its free week of exam prep still runs.
+ */
+function daysSinceLastWeeksWednesday(): number {
+  const today = toUTCMidnight(new Date());
+  return DAYS_PER_WEEK + ((today.getUTCDay() - WEDNESDAY + DAYS_PER_WEEK) % DAYS_PER_WEEK);
+}
+
 /**
  * A card's text as a learner reads it: its diff keeps each day whole with no-break spaces
  * ("Oct 28"), which read as spaces.
@@ -689,19 +701,24 @@ test.describe("Today's plan change", () => {
   test("a focus explains the extra depth behind a subject's later finish before applying", async ({
     browser,
   }) => {
+    // Enough of each subject and time that the focus moves Criminal law's finish on any weekday:
+    // with fewer, its extra lessons fit its old last day on most of them.
+    const phases = [0, 1];
+    const lessonsPerSkill = 14;
+
     const { plan, user } = await createProposalPlan({
-      dailyMinutes: 30,
+      dailyMinutes: 45,
       exam: true,
       examDays: 21,
       lessonMinutes: 6,
       specs: ["Math", "Civil law", "Criminal law"].flatMap((area) =>
-        [0, 1].map((phase) => ({
+        phases.map((phase) => ({
           area,
-          lessons: 6,
+          lessons: lessonsPerSkill,
           name: `${area} ${phase === 0 ? "basics" : "application"}`,
           phase,
           written: Array.from(
-            { length: 6 },
+            { length: lessonsPerSkill },
             (_, index) => `${area} ${phase}.${index} ${randomUUID()}`,
           ),
         })),
@@ -724,7 +741,7 @@ test.describe("Today's plan change", () => {
     const beforeStart = first?.scheduledFor?.toISOString().slice(0, 10) ?? null;
 
     expect(before.get("Criminal law")).toBeGreaterThan(0);
-    expect(before.get("Criminal law")).toBeLessThan(12);
+    expect(before.get("Criminal law")).toBeLessThan(phases.length * lessonsPerSkill);
     expect(beforeStart).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 
     expect(
@@ -858,8 +875,6 @@ test.describe("Today's plan change", () => {
     expect(before.get("Strategy")).toBeGreaterThan(0);
     expect(before.get("Criminal law")).toBeGreaterThan(0);
     expect(before.get("Criminal law")).toBeLessThan(24);
-    expect(before.get("Strategy")).toBe(13);
-    expect(before.get("Criminal law")).toBe(11);
 
     const ethicsFirst = await firstProposalLesson({ area: "Ethics", planId: plan.id });
 
@@ -888,8 +903,6 @@ test.describe("Today's plan change", () => {
     await expect(note.getByRole("button", { exact: true, name: "Apply" })).toBeEnabled();
     const preview = await readText(note);
 
-    expect(preview).toContain("Criminal law: 16 lessons to go instead of 11.");
-
     await note.getByRole("button", { exact: true, name: "Apply" }).click();
     await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
     const applied = await prisma.planChange.findUniqueOrThrow({ where: { id: change.id } });
@@ -900,15 +913,36 @@ test.describe("Today's plan change", () => {
       throw new Error("The real reduction must move the unnamed Criminal law lesson count");
     }
 
+    // How many lessons each subject keeps depends on the weekday the plan starts on: the card's
+    // numbers are the plan's own, read before and after the change.
     const after = await proposalAreaLessons(plan.id);
     expect(after.get("Ethics")).toBe(4);
     expect(after.get("Strategy")).toBe(8);
-    expect(after.get("Criminal law")).toBe(16);
     expect(area.before).toBe(before.get("Criminal law"));
     expect(area.after).toBe(after.get("Criminal law"));
     expect(area.after - area.before).toBeGreaterThan(2);
-    expect(area.after - area.before).toBe(5);
-    expect(effect?.areaEnds?.find((item) => item.area === "Ethics")).toBeUndefined();
+
+    const ethicsLastAfter = await prisma.planItem.findFirstOrThrow({
+      orderBy: { scheduledFor: "desc" },
+      where: {
+        kind: "lesson",
+        planId: plan.id,
+        scheduledFor: { not: null },
+        skillId: ethicsFirst.skillId,
+        status: "todo",
+      },
+    });
+
+    // Ethics fits whole either way; the days the reduction frees can move its last lesson, and
+    // the change names that move exactly when it happens.
+    const ethicsEnd = {
+      after: ethicsLastAfter.scheduledFor?.toISOString().slice(0, 10),
+      before: ethicsLast.scheduledFor.toISOString().slice(0, 10),
+    };
+
+    expect(effect?.areaEnds?.find((item) => item.area === "Ethics")).toStrictEqual(
+      ethicsEnd.after === ethicsEnd.before ? undefined : { area: "Ethics", ...ethicsEnd },
+    );
 
     expect(effect?.areaStarts?.find((item) => item.area === "Ethics")).toStrictEqual({
       after: ethicsFirst.scheduledFor.toISOString().slice(0, 10),
@@ -919,19 +953,6 @@ test.describe("Today's plan change", () => {
     await expect(firstProposalLesson({ area: "Ethics", planId: plan.id })).resolves.toMatchObject({
       scheduledFor: ethicsFirst.scheduledFor,
     });
-
-    await expect(
-      prisma.planItem.findFirst({
-        orderBy: { scheduledFor: "desc" },
-        where: {
-          kind: "lesson",
-          planId: plan.id,
-          scheduledFor: { not: null },
-          skillId: ethicsFirst.skillId,
-          status: "todo",
-        },
-      }),
-    ).resolves.toMatchObject({ scheduledFor: ethicsLast.scheduledFor });
 
     expect(preview).toContain(
       `Criminal law: ${area.after} lessons to go instead of ${area.before}.`,
@@ -994,6 +1015,7 @@ test.describe("Today's plan change", () => {
       dailyMinutes: 5,
       exam: true,
       specs: [{ area: "Culture", lessons: 300, name: "Cultural identity" }],
+      startDaysAgo: daysSinceLastWeeksWednesday(),
     });
 
     const before = built.items.find(
