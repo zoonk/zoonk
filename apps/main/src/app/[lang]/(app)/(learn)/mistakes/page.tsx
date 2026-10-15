@@ -1,9 +1,9 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { getTodayPattern } from "@zoonk/core/language/patterns/today";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { MistakesNotebook } from "@zoonk/learn/mistakes";
 import { INBOX_PAGE_CLASS } from "@zoonk/learn/page";
@@ -67,7 +67,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   // A language goal's pattern noticed in these mistakes is one tap away from the notebook.
   const [result, language] = await Promise.all([
     listCurrentUserMistakes({ ...input, goalId: goal.id }),
-    getLanguageTodayView({ goalId: goal.id }),
+    getTodayPattern({ goalId: goal.id }),
   ]);
 
   if (result.status !== "ready") {
@@ -93,7 +93,7 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
         practice: "/mistakes/practice",
       }}
       notebook={result}
-      pattern={language.status === "ready" ? language.today.pattern : null}
+      pattern={language.status === "ready" ? language.pattern : null}
     />
   );
 }

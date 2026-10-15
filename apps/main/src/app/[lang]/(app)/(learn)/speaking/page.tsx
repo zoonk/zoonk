@@ -1,6 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { redirect } from "@/i18n/navigation";
-import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
+import { getSpeakingPaper } from "@zoonk/core/language/exam-speaking/paper";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -26,7 +26,7 @@ async function SpeakingBar() {
 }
 
 async function SpeakingContent() {
-  const [language, result] = await Promise.all([lang(), getLanguageProgressView({})]);
+  const [language, result] = await Promise.all([lang(), getSpeakingPaper({})]);
 
   if (result.status === "noGoal" || result.status === "unauthorized") {
     const t = await getExtracted();
@@ -48,7 +48,7 @@ async function SpeakingContent() {
     redirect({ href: "/exam", locale: language });
   }
 
-  if (result.status !== "ready" || !result.progress.speaking) {
+  if (result.status !== "ready" || !result.paper) {
     return (
       <NotFoundPage>
         <LearnNotFound />
@@ -56,7 +56,7 @@ async function SpeakingContent() {
     );
   }
 
-  return <SpeakingClient goalId={result.progress.goal.id} paper={result.progress.speaking} />;
+  return <SpeakingClient goalId={result.goalId} paper={result.paper} />;
 }
 
 function SpeakingSkeleton() {

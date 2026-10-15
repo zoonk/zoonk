@@ -1,40 +1,25 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
 import { type LanguageUnit, loadLanguageUnits } from "../../../language/units/language-units";
-import { resolveViewGoal } from "../../_utils/resolve-view-goal";
+import {
+  type LanguageViewGoal,
+  type LanguageViewGoalResult,
+  resolveLanguageViewGoal,
+} from "./language-view-goal";
 
-type LanguageGoalContext = {
-  goal: Goal & { targetLanguage: string };
-  units: LanguageUnit[];
-  userId: string;
-};
+type LanguageGoalContext = LanguageViewGoal & { units: LanguageUnit[] };
 
 export type LanguageGoalContextResult =
   | { context: LanguageGoalContext; status: "ready" }
-  | { status: "noGoal" | "notFound" | "notLanguage" | "unauthorized" };
+  | Exclude<LanguageViewGoalResult, { status: "ready" }>;
 
-/**
- * The language goal a screen shows (the one asked for, or the active goal) with its course's
- * units. Any other kind of goal is `notLanguage`, so the app shows its usual screen.
- */
+/** The owned language goal and its course's units, for screens that draw those units. */
 export async function loadLanguageGoalContext(goalId?: string): Promise<LanguageGoalContextResult> {
-  const resolved = await resolveViewGoal(goalId);
+  const loaded = await resolveLanguageViewGoal(goalId);
 
-  if (resolved.status !== "ready") {
-    return resolved;
+  if (loaded.status !== "ready") {
+    return loaded;
   }
 
-  const { goal } = resolved;
-  const { targetLanguage } = goal;
-
-  if (goal.kind !== "language" || !targetLanguage) {
-    return { status: "notLanguage" };
-  }
-
-  const units = await loadLanguageUnits(goal);
-
-  return {
-    context: { goal: { ...goal, targetLanguage }, units, userId: goal.userId },
-    status: "ready",
-  };
+  const units = await loadLanguageUnits(loaded.context.goal);
+  return { context: { ...loaded.context, units }, status: "ready" };
 }
