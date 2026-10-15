@@ -1,3 +1,4 @@
+import { checkIdentity } from "@/lib/learner/learner-identity";
 import { safeAsync } from "@zoonk/utils/error";
 import { noteAppWrite } from "./app-write-ledger";
 
@@ -15,6 +16,11 @@ function toRequest(body: unknown): RequestInit {
 }
 
 async function send<Outcome>({ body, path }: { body: unknown; path: string }) {
+  // A page that no longer belongs to the learner the browser holds sends nothing: it's reloading.
+  if (!checkIdentity()) {
+    return null;
+  }
+
   const { data } = await safeAsync(async () => {
     const response = await fetch(path, toRequest(body));
 
@@ -26,14 +32,16 @@ async function send<Outcome>({ body, path }: { body: unknown; path: string }) {
     return (await response.json()) as Outcome;
   });
 
-  return data ?? null;
+  // An answer that arrives after another learner signed in reaches nothing: the page is reloading.
+  return checkIdentity() ? (data ?? null) : null;
 }
 
 /**
  * Posts to one of this app's own routes (`appPostRoute`) from the browser and reads the outcome it
  * answers with. These run alongside each other instead of queuing like Server Actions, and never
  * re-render the page (the screen refreshes once when it closes: `useRefreshAfterAppWrites`). Null
- * when the request didn't get through: offline, or a server error.
+ * when the request didn't get through (offline, a server error), or when the page no longer belongs
+ * to the learner the browser holds, before it sends or once its answer is in.
  */
 export function postToApp<Outcome>({
   body,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
+import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import {
   type SkillOutline,
@@ -36,7 +36,7 @@ async function requestOutline({
     return { status: "failed" };
   }
 
-  const body: unknown = await response.json().catch(() => null);
+  const body = await readJsonForThisLearner(response);
   const limit = readRefusedLimit({ body, status: response.status });
 
   if (limit) {
@@ -47,7 +47,9 @@ async function requestOutline({
     return { status: "unavailable" };
   }
 
-  if (!response.ok) {
+  // No body is no answer: the route always says the status, and a body read once the page
+  // belonged to someone else is dropped.
+  if (!response.ok || body === null) {
     return { status: "failed" };
   }
 
@@ -68,7 +70,7 @@ async function readOutline({
     return null;
   }
 
-  const parsed = skillOutlineSchema.safeParse(await response.json().catch(() => null));
+  const parsed = skillOutlineSchema.safeParse(await readJsonForThisLearner(response));
   return parsed.success ? parsed.data : null;
 }
 

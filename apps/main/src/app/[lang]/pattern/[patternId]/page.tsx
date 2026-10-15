@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getMistakePattern } from "@zoonk/core/language/patterns/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -38,12 +39,18 @@ async function PatternContent({ params }: Props) {
   const result = await getMistakePattern(patternId);
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next={`/pattern/${patternId}`} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next={`/pattern/${patternId}`} />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -51,6 +58,7 @@ async function PatternContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
+      <LearnerWitness />
       <PatternClient pattern={result.pattern} />
     </MainLearnProvider>
   );

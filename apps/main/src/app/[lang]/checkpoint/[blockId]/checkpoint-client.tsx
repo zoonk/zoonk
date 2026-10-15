@@ -1,12 +1,12 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { sendStudyAnswer } from "@/lib/session/study-answer-request";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { type CheckpointActions, CheckpointScreen } from "@zoonk/learn/checkpoint";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 /**

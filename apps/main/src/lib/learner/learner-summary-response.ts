@@ -2,12 +2,13 @@ import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type Snapshot } from "./learner-snapshot";
 
 /**
- * What `GET /api/learner/summary` answers: the learner's summary, or that the browser holds no
- * session, with when the server read it (milliseconds), so an older answer never wins.
+ * What `GET /api/learner/summary` answers: the learner's summary with their session hint's tag, or
+ * that the browser holds no session, with when the server read it (milliseconds), so an older
+ * answer never wins.
  */
 export type LearnerSummaryResponse =
   | { readAt: number; status: "visitor" }
-  | { status: "ready"; summary: LearnerSummary };
+  | { status: "ready"; summary: LearnerSummary; tag: string };
 
 /** Where the browser reads the learner summary. */
 const LEARNER_SUMMARY_PATH = "/api/learner/summary";
@@ -28,6 +29,6 @@ export async function fetchLearnerSummary(): Promise<Snapshot> {
   const body = (await response.json()) as LearnerSummaryResponse;
 
   return body.status === "ready"
-    ? { readAt: body.summary.readAt, source: "server", summary: body.summary }
-    : { readAt: body.readAt, source: "server", summary: null };
+    ? { readAt: body.summary.readAt, source: "server", summary: body.summary, tag: body.tag }
+    : { readAt: body.readAt, source: "server", summary: null, tag: null };
 }

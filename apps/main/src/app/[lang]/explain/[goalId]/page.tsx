@@ -1,5 +1,6 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
@@ -36,7 +37,12 @@ async function ExplainContent({ params }: Props) {
   ]);
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next={`/explain/${goalId}`} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next={`/explain/${goalId}`} />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
@@ -45,6 +51,7 @@ async function ExplainContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
+      <LearnerWitness />
       <ExplainClient
         explanation={result.explanation}
         hasSession={Boolean(session)}

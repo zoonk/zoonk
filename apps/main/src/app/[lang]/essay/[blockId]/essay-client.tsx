@@ -2,6 +2,7 @@
 
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { postToApp } from "@/lib/http/post-to-app";
+import { checkIdentity } from "@/lib/learner/learner-identity";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
@@ -29,6 +30,12 @@ export function EssayClient({ essay }: { essay: EssayView }) {
   const actions: EssayActions = {
     finish: async () => {
       await grading.current;
+
+      // The grading may outlast the learner's session: a page no longer theirs sends nothing.
+      if (!checkIdentity()) {
+        return false;
+      }
+
       const outcome = await finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() });
       return outcome.status === "finished" && (await navigation.continueSession());
     },

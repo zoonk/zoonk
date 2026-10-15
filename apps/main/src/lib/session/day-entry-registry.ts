@@ -1,4 +1,4 @@
-import { onLearnerIdentityChange } from "@/lib/learner/learner-pages";
+import { onLearnerIdentityChange } from "@/lib/learner/learner-identity";
 import { type DayEntry, getEntryExpiry } from "./day-entry";
 
 const registry: {

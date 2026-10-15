@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getSpeakingPaper } from "@zoonk/core/language/exam-speaking/paper";
 import { LearnPageBar } from "@zoonk/learn/bar";
@@ -33,6 +34,7 @@ async function SpeakingContent() {
 
     return (
       <>
+        <LearnerWitness />
         <SpeakingBar />
         <LearnNoGoal
           description={t("Calls in the language you're learning, at your level.")}
@@ -51,12 +53,18 @@ async function SpeakingContent() {
   if (result.status !== "ready" || !result.paper) {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
   }
 
-  return <SpeakingClient goalId={result.goalId} paper={result.paper} />;
+  return (
+    <>
+      <LearnerWitness />
+      <SpeakingClient goalId={result.goalId} paper={result.paper} />
+    </>
+  );
 }
 
 function SpeakingSkeleton() {

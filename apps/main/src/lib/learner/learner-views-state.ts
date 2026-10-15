@@ -73,3 +73,29 @@ export const store: LearnerViewsStore = {
 export function notify() {
   store.listeners.forEach((listener) => listener());
 }
+
+/** Records a signal: every read sent before it no longer covers it. */
+export function signal(field: Exclude<keyof ViewFreshness, "seq" | "watermark">) {
+  const seq = store.freshness.seq + 1;
+  store.freshness = { ...store.freshness, [field]: seq, seq };
+}
+
+/** Raises the highest revision the tab knows the learner's writes committed, if this one is higher. */
+export function raiseWatermark({
+  revision,
+  userId,
+}: {
+  revision: string;
+  userId: string;
+}): boolean {
+  const next = BigInt(revision);
+  const { watermark } = store.freshness;
+
+  if (watermark && watermark.userId === userId && watermark.revision >= next) {
+    return false;
+  }
+
+  const seq = store.freshness.seq + 1;
+  store.freshness = { ...store.freshness, seq, watermark: { revision: next, seq, userId } };
+  return true;
+}

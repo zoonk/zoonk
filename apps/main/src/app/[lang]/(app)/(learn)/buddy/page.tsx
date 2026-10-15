@@ -1,4 +1,5 @@
 import { AuthGatePage } from "@/components/auth-gate";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getReadAt } from "@/lib/learn/read-at";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -69,17 +70,26 @@ async function BuddyContent() {
     const t = await getExtracted();
 
     return (
-      <AuthGatePage
-        description={t("Your buddy answers your questions and adjusts your plan.")}
-        next="/buddy"
-        title={t("Your buddy")}
-      />
+      <>
+        <LearnerWitness />
+
+        <AuthGatePage
+          description={t("Your buddy answers your questions and adjusts your plan.")}
+          next="/buddy"
+          title={t("Your buddy")}
+        />
+      </>
     );
   }
 
   // The buddy tutors a goal: without one, it takes the learner's goal right here.
   if (!goal) {
-    return <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />;
+    return (
+      <>
+        <LearnerWitness />
+        <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />
+      </>
+    );
   }
 
   const canAsk = !session.user.isAnonymous;
@@ -94,6 +104,7 @@ async function BuddyContent() {
   // The conversation is the lesson tutor's, so the tab needs the player's messages.
   return (
     <ClientMessagesProvider scope="player">
+      <LearnerWitness />
       <BuddyPageClient
         canAsk={canAsk}
         goalId={goal.id}

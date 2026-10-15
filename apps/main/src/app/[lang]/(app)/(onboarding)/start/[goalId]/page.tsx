@@ -7,6 +7,7 @@ import {
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
 import { AuthGate } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
 import { getGoalPlanScreen } from "@zoonk/core/plans/get";
@@ -70,6 +71,7 @@ async function StepsContent({ params }: Props) {
   if (!isUuid(goalId)) {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <OnboardingNotFound />
       </NotFoundPage>
     );
@@ -78,12 +80,18 @@ async function StepsContent({ params }: Props) {
   const [result, session] = await Promise.all([getOnboarding({ goalId }), getSession()]);
 
   if (result.status === "unauthorized") {
-    return <StepsGate goalId={goalId} />;
+    return (
+      <>
+        <LearnerWitness />
+        <StepsGate goalId={goalId} />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <OnboardingNotFound />
       </NotFoundPage>
     );
@@ -101,6 +109,7 @@ async function StepsContent({ params }: Props) {
 
   return (
     <OnboardingPage backHref="/today">
+      <LearnerWitness />
       <StepsClient
         initialPlan={
           plan?.status === "ready"

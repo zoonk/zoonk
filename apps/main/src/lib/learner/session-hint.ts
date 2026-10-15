@@ -1,10 +1,10 @@
 import {
-  LEGACY_SESSION_HINT,
   NO_SESSION_HINT,
   SESSION_HINT_COOKIE,
+  SESSION_HINT_TAG_PATTERN,
   describeSessionHint,
 } from "@zoonk/auth/session-hint";
-import { readCookie, setCookie } from "@zoonk/utils/cookies";
+import { readCookie } from "@zoonk/utils/cookies";
 
 /**
  * What the browser's session hint (`@zoonk/auth/session-hint`) says: a session (a learner's tag, or
@@ -22,17 +22,17 @@ export function hasSessionHint(): boolean {
 }
 
 /**
- * Leaves the hint for a session the browser now holds, until `expiresAt` (milliseconds), or for
- * this browsing session when that isn't known yet. Browser only.
+ * Whose session the hint names: the learner's opaque tag, null for nobody (`0`), or undefined when
+ * it names no one (absent, a hint from before tags, or one this code can't read), which only a
+ * session read can tell. Only the auth responses that set or delete the session cookie write it,
+ * so it changes exactly when the browser's session does. Browser only.
  */
-export async function setSessionHint(expiresAt?: number): Promise<void> {
-  const maxAge =
-    expiresAt === undefined ? undefined : Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+export function readSessionHintTag(): string | null | undefined {
+  const value = readCookie(SESSION_HINT_COOKIE);
 
-  await setCookie(SESSION_HINT_COOKIE, LEGACY_SESSION_HINT, { maxAge });
-}
+  if (value === NO_SESSION_HINT) {
+    return null;
+  }
 
-/** Says the browser holds no session (signed out, or its session ended). Browser only. */
-export async function setNoSessionHint(): Promise<void> {
-  await setCookie(SESSION_HINT_COOKIE, NO_SESSION_HINT);
+  return value !== null && SESSION_HINT_TAG_PATTERN.test(value) ? value : undefined;
 }

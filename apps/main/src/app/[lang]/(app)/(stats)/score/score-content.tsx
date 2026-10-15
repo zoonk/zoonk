@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getMenu } from "@/lib/menu";
 import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
@@ -20,11 +21,17 @@ export async function ScoreContent() {
   ]);
 
   if (!(history && session)) {
-    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("score").url} />;
+    return (
+      <>
+        <LearnerWitness />
+        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("score").url} />
+      </>
+    );
   }
 
   return (
     <ProgressContent>
+      <LearnerWitness />
       <ScoreTiles performance={history} />
       <ScoreChart dataPoints={history.dataPoints} performance={history} />
       <ScoreLine />

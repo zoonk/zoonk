@@ -12,6 +12,8 @@ import { Suspense } from "react";
 import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
+import { IdentityCoverBridge } from "./identity-cover-bridge";
+import { IdentityCoverScript } from "./identity-cover-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
@@ -57,6 +59,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <head>
         <SignedInHintScript />
+        <IdentityCoverScript />
       </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the
@@ -71,6 +74,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
             </MainFeedbackProvider>
           </ClientMessagesProvider>
         </NuqsAdapter>
+        <IdentityCoverBridge />
         <Suspense fallback={null}>
           <LearnerSummarySync />
         </Suspense>

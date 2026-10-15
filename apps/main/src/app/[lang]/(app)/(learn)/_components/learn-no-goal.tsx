@@ -1,4 +1,5 @@
 import { AuthGatePage, GatedPage } from "@/components/auth-gate";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { Link } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -30,6 +31,32 @@ function WithBar({ bar, children }: { bar?: React.ReactNode; children: React.Rea
   );
 }
 
+/** The way to a first goal: Today asks what the learner wants to learn. */
+async function StartGoal() {
+  const t = await getExtracted();
+
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <TargetIcon aria-hidden="true" />
+        </EmptyMedia>
+        <EmptyTitle>
+          <h2>{t("Start with a goal")}</h2>
+        </EmptyTitle>
+        <EmptyDescription>
+          {t("Tell us what you want to learn, and we'll plan every day until you get there.")}
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Link className={buttonVariants()} href="/today">
+          {t("Start a goal")}
+        </Link>
+      </EmptyContent>
+    </Empty>
+  );
+}
+
 /**
  * Tabs without a goal have one next step: starting one, on Today, where the start form is. The
  * page keeps its own title and what it is (`title`, `description`), as every gated page does, and
@@ -47,39 +74,27 @@ export async function LearnNoGoal({
   next: string;
   title: string;
 }) {
-  const t = await getExtracted();
   const session = await getSession();
 
   if (!session) {
     return (
-      <WithBar bar={bar}>
-        <AuthGatePage description={description} next={next} title={title} />
-      </WithBar>
+      <>
+        <LearnerWitness />
+        <WithBar bar={bar}>
+          <AuthGatePage description={description} next={next} title={title} />
+        </WithBar>
+      </>
     );
   }
 
   return (
-    <WithBar bar={bar}>
-      <GatedPage description={description} title={title}>
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <TargetIcon aria-hidden="true" />
-            </EmptyMedia>
-            <EmptyTitle>
-              <h2>{t("Start with a goal")}</h2>
-            </EmptyTitle>
-            <EmptyDescription>
-              {t("Tell us what you want to learn, and we'll plan every day until you get there.")}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Link className={buttonVariants()} href="/today">
-              {t("Start a goal")}
-            </Link>
-          </EmptyContent>
-        </Empty>
-      </GatedPage>
-    </WithBar>
+    <>
+      <LearnerWitness />
+      <WithBar bar={bar}>
+        <GatedPage description={description} title={title}>
+          <StartGoal />
+        </GatedPage>
+      </WithBar>
+    </>
   );
 }

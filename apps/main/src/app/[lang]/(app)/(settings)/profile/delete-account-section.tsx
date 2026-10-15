@@ -3,6 +3,7 @@
 import { rememberAccountDeleted } from "@/app/[lang]/account-deleted-toast";
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { forgetDeletedSession } from "@/lib/forget-deleted-session";
+import { beginLocalAuthChange } from "@/lib/learner/learner-identity";
 import { ListGroup } from "@zoonk/learn/list";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { SettingRow } from "@zoonk/learn/setting-rows";
@@ -79,15 +80,24 @@ export function DeleteAccountSection() {
 
   const deleteAccount = () => {
     startTransition(async () => {
-      const { data } = await safeAsync(deleteAccountAction);
-      const outcome = data ?? "failed";
+      // The tab ends its own session: a deletion that's refused or fails leaves the page as it was.
+      const change = beginLocalAuthChange();
 
-      if (outcome === "deleted") {
-        await leaveDeletedAccount();
-        return;
+      try {
+        const { data } = await safeAsync(deleteAccountAction);
+        const outcome = data ?? "failed";
+
+        if (outcome === "deleted") {
+          // The account is gone: the page is covered and the other tabs hear it before any cleanup.
+          change.complete({ actor: null, tag: null });
+          await leaveDeletedAccount();
+          return;
+        }
+
+        setResult(outcome);
+      } finally {
+        change.release();
       }
-
-      setResult(outcome);
     });
   };
 

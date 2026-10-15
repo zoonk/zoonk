@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { PublicTopBar } from "@/components/public/public-top-bar";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
@@ -44,53 +45,59 @@ export async function AuthGate({
 
   if (session?.user.isAnonymous) {
     return (
+      <>
+        <LearnerWitness />
+        <Empty className={className}>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <LockIcon aria-hidden="true" />
+            </EmptyMedia>
+            <EmptyTitle>
+              <Heading>{t("Create an account to use this page")}</Heading>
+            </EmptyTitle>
+            <EmptyDescription>
+              {t("Your plan and progress move to your account, safe on any device.")}
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <a className={buttonVariants()} href={loginHref}>
+              {t("Create an account")}
+            </a>
+          </EmptyContent>
+        </Empty>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <LearnerWitness />
       <Empty className={className}>
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <LockIcon aria-hidden="true" />
           </EmptyMedia>
           <EmptyTitle>
-            <Heading>{t("Create an account to use this page")}</Heading>
+            <Heading>{ended ? t("Your session ended") : t("Log in to continue")}</Heading>
           </EmptyTitle>
           <EmptyDescription>
-            {t("Your plan and progress move to your account, safe on any device.")}
+            {ended
+              ? t("Log in to pick up your plan.")
+              : t("Log in to pick up where you left off, or start free.")}
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <a className={buttonVariants()} href={loginHref}>
-            {t("Create an account")}
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a className={buttonVariants()} href={loginHref}>
+              {t("Log in")}
+            </a>
+            <Link className={buttonVariants({ variant: "outline" })} href="/start">
+              {ended ? t("Start something new") : t("Start free")}
+            </Link>
+          </div>
         </EmptyContent>
       </Empty>
-    );
-  }
-
-  return (
-    <Empty className={className}>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <LockIcon aria-hidden="true" />
-        </EmptyMedia>
-        <EmptyTitle>
-          <Heading>{ended ? t("Your session ended") : t("Log in to continue")}</Heading>
-        </EmptyTitle>
-        <EmptyDescription>
-          {ended
-            ? t("Log in to pick up your plan.")
-            : t("Log in to pick up where you left off, or start free.")}
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <div className="flex flex-wrap gap-2">
-          <a className={buttonVariants()} href={loginHref}>
-            {t("Log in")}
-          </a>
-          <Link className={buttonVariants({ variant: "outline" })} href="/start">
-            {ended ? t("Start something new") : t("Start free")}
-          </Link>
-        </div>
-      </EmptyContent>
-    </Empty>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import { CatalogAsideBlock } from "@/components/catalog/catalog-aside";
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { HERO_CLASS, HERO_LEAD_CLASS, HERO_TITLE_CLASS } from "@/components/public/landing-styles";
 import { NumberedRows } from "@/components/public/numbered-rows";
 import { PublicNotFound } from "@/components/public/public-not-found";
@@ -55,6 +56,7 @@ async function PlanLinkBody({ params }: Props) {
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <PublicNotFound />
       </NotFoundPage>
     );
@@ -80,6 +82,7 @@ async function PlanLinkBody({ params }: Props) {
 
   return (
     <PublicPage>
+      <LearnerWitness />
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
         <PlanLinkTracker planId={planId} />
 

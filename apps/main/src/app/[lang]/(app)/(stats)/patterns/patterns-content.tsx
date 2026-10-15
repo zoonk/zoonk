@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getMenu } from "@/lib/menu";
 import {
@@ -116,13 +117,19 @@ export async function PatternsContent() {
   const patterns = resource?.patterns;
 
   if (!(patterns && session)) {
-    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("patterns").url} />;
+    return (
+      <>
+        <LearnerWitness />
+        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("patterns").url} />
+      </>
+    );
   }
 
   const summary = getPatternsSummary(patterns);
 
   return (
     <ProgressContent>
+      <LearnerWitness />
       <PatternTiles patterns={patterns} />
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">

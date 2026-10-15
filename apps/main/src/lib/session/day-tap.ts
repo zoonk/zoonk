@@ -1,3 +1,4 @@
+import { checkIdentity } from "@/lib/learner/learner-identity";
 import { getLearnerGeneration, getLearnerSummaryState } from "@/lib/learner/learner-store";
 import { noteLearnerRevision, noteLearnerWrite } from "@/lib/learner/learner-views";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
@@ -71,8 +72,12 @@ export async function sendDayOpen({
   const generation = getLearnerGeneration();
   const first = await openStudyDayAction(input);
 
+  // Sent again only while the page still belongs to the browser's learner (`checkIdentity`).
   const again =
-    first.status === "retryable" && (await stillHere()) && generation === getLearnerGeneration();
+    first.status === "retryable" &&
+    (await stillHere()) &&
+    generation === getLearnerGeneration() &&
+    checkIdentity();
 
   const outcome = again ? await openStudyDayAction(input) : first;
 

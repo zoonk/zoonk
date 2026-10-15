@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
 import { GOAL_PARAM, PLAN_PARAM } from "@/lib/public/public-hrefs";
@@ -49,23 +50,26 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
   // Someone who landed here without a session goes back to the home page they came from, and logs
   // in from the bar under `lg`, where the sidebar's way in isn't.
   return (
-    <OnboardingPage
-      backHref={session ? "/today" : "/"}
-      barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
-    >
-      <StartClient
-        // "Start over" comes back here with a new key, so nothing typed before is kept, and
-        // opening another draft shows that one.
-        key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}`}
-        buddy={buddy}
-        canAttach={canAttach}
-        defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
-        goalLimit={goalLimit}
-        initialDraft={draft}
-        needsAccount={needsAccount}
-        planId={plan && isUuid(plan) ? plan : null}
-      />
-    </OnboardingPage>
+    <>
+      <LearnerWitness />
+      <OnboardingPage
+        backHref={session ? "/today" : "/"}
+        barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
+      >
+        <StartClient
+          // "Start over" comes back here with a new key, so nothing typed before is kept, and
+          // opening another draft shows that one.
+          key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}`}
+          buddy={buddy}
+          canAttach={canAttach}
+          defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
+          goalLimit={goalLimit}
+          initialDraft={draft}
+          needsAccount={needsAccount}
+          planId={plan && isUuid(plan) ? plan : null}
+        />
+      </OnboardingPage>
+    </>
   );
 }
 

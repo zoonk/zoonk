@@ -1,5 +1,6 @@
 import { type LearnerSummarySeedValue } from "@/lib/learner/learner-snapshot";
 import { LEARNER_SEED_META } from "@/lib/learner/learner-store";
+import { getLearnerHintTag } from "@zoonk/auth/learner-hint-tag";
 import { getLearnerSummary } from "@zoonk/core/learner/summary";
 import { logError } from "@zoonk/utils/logger";
 import { navigation } from "next/cache";
@@ -11,7 +12,10 @@ import { LearnerSummarySeedMerge } from "./learner-summary-seed-merge";
 async function readSeed(): Promise<LearnerSummarySeedValue> {
   try {
     const summary = await getLearnerSummary();
-    return summary ? { status: "ready", summary } : { status: "visitor" };
+
+    return summary
+      ? { status: "ready", summary, tag: await getLearnerHintTag(summary.identity.userId) }
+      : { status: "visitor" };
   } catch (error) {
     // Next's own signals (dynamic rendering, redirects) must keep propagating.
     unstable_rethrow(error);

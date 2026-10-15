@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
@@ -227,48 +228,51 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
   const mathMarkup = collectMathMarkup(played?.lesson);
 
   return (
-    <MathMarkupProvider markup={mathMarkup}>
-      {result.status === "ready" && isGuest && (
-        <GuestLessonPlayer
-          challengeTeam={challengeTeam}
-          firstAnswer={firstAnswer}
-          fit={fit}
-          hasSession={Boolean(session)}
-          lesson={result.lesson}
-          resume={resume}
-          routing={routing}
-          soundsEnabled={soundsEnabled}
-          studySessionId={null}
-          support={support}
-        />
-      )}
+    <>
+      <LearnerWitness />
+      <MathMarkupProvider markup={mathMarkup}>
+        {result.status === "ready" && isGuest && (
+          <GuestLessonPlayer
+            challengeTeam={challengeTeam}
+            firstAnswer={firstAnswer}
+            fit={fit}
+            hasSession={Boolean(session)}
+            lesson={result.lesson}
+            resume={resume}
+            routing={routing}
+            soundsEnabled={soundsEnabled}
+            studySessionId={null}
+            support={support}
+          />
+        )}
 
-      {played && !isGuest && (
-        <LessonPlayerClient
-          challengeTeam={challengeTeam}
-          firstAnswer={firstAnswer}
-          hasSession={Boolean(session)}
-          lesson={played.lesson}
-          resume={resume}
-          routing={routing}
-          sessionContext={sessionContext}
-          soundsEnabled={soundsEnabled}
-          studySessionId={studySessionId}
-          support={support}
-          tutor={tutor}
-          tutorSuggestions={tutorSuggestions}
-        />
-      )}
+        {played && !isGuest && (
+          <LessonPlayerClient
+            challengeTeam={challengeTeam}
+            firstAnswer={firstAnswer}
+            hasSession={Boolean(session)}
+            lesson={played.lesson}
+            resume={resume}
+            routing={routing}
+            sessionContext={sessionContext}
+            soundsEnabled={soundsEnabled}
+            studySessionId={studySessionId}
+            support={support}
+            tutor={tutor}
+            tutorSuggestions={tutorSuggestions}
+          />
+        )}
 
-      {result.status !== "ready" && (
-        <LessonWithoutScreens
-          inSession={studySessionId !== null}
-          initialRequest={readLessonWritingRequest(query)}
-          origin={origin}
-          result={result}
-        />
-      )}
-    </MathMarkupProvider>
+        {result.status !== "ready" && (
+          <LessonWithoutScreens
+            inSession={studySessionId !== null}
+            initialRequest={readLessonWritingRequest(query)}
+            origin={origin}
+            result={result}
+          />
+        )}
+      </MathMarkupProvider>
+    </>
   );
 }
 

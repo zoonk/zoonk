@@ -1,4 +1,5 @@
 import { AuthGate } from "@/components/auth-gate";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getSession } from "@zoonk/core/users/session";
 
 /**
@@ -19,8 +20,18 @@ export async function ProtectedSection({
   const session = await getSession();
 
   if (!session || (session.user.isAnonymous && !allowGuests)) {
-    return <AuthGate next={next} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGate next={next} />
+      </>
+    );
   }
 
-  return children;
+  return (
+    <>
+      <LearnerWitness />
+      {children}
+    </>
+  );
 }

@@ -120,8 +120,10 @@ test.describe("Learner frame before the summary", () => {
     await expect(page.locator(SKELETONS)).toHaveCount(0);
 
     await read.release();
-    await expect.poll(() => getSessionHint(context)).toBe("0");
     await expect(sidebar(page).getByRole("link", { name: "Log in" })).toBeVisible();
+
+    // Only the auth responses that set or delete a session write the hint: a visitor's stays absent.
+    expect(await getSessionHint(context)).toBeNull();
 
     await context.close();
   });
@@ -245,7 +247,10 @@ test.describe("Learner frame before the summary", () => {
 
     await expect(sidebar(page).getByRole("link", { name: "Log in" })).toBeVisible();
     await expect(sidebar(page).getByRole("link", { name: "Pricing" })).toBeVisible();
-    await expect.poll(() => getSessionHint(context)).toBe("0");
+
+    // The page asks Better Auth's own session read once the summary found nobody: its answer drops
+    // the hint left without a session, so the next page doesn't take it for one.
+    await expect.poll(() => getSessionHint(context)).toBeNull();
 
     await context.close();
   });

@@ -13,8 +13,8 @@ export async function forgetDeletedSession() {
 
   await endLearnerSession(() =>
     safeAsync(async () => {
-      const { authClient } = await auth;
-      await authClient.signOut();
+      const { signOutAppHost } = await auth;
+      await signOutAppHost();
     }),
   );
 }

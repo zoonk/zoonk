@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
@@ -52,9 +53,13 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
   // A signed-out learner (or one whose session ended) signs in again, like on every learner page.
   if (!session) {
     return (
-      <AuthGateScreen
-        next={skillId ? `/mistakes/practice?skill=${skillId}` : "/mistakes/practice"}
-      />
+      <>
+        <LearnerWitness />
+
+        <AuthGateScreen
+          next={skillId ? `/mistakes/practice?skill=${skillId}` : "/mistakes/practice"}
+        />
+      </>
     );
   }
 
@@ -68,6 +73,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -75,6 +81,7 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
 
   return (
     <PracticeMain>
+      <LearnerWitness />
       <MistakePracticeClient
         goalId={goal.id}
         practice={result.practice}

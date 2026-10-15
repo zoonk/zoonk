@@ -132,10 +132,15 @@ test.describe("Signed-in hint", () => {
       learner.getByRole("banner").getByRole("button", { name: /User menu$/u }),
     ).toBeVisible();
 
-    // Hydrated: the visitor's page asked who's reading, and the answer left the hint at "none".
+    // Hydrated: the visitor's page asked who's reading, and the answer wrote no hint.
+    const read = visitor.waitForResponse((response) =>
+      response.url().endsWith("/api/learner/summary"),
+    );
+
     await visitor.goto("/pricing");
+    await read;
     expect(await isMarkedSignedIn(visitor)).toBe(false);
-    await expect.poll(() => getSessionHint(visitor.context())).toBe("0");
+    expect(await getSessionHint(visitor.context())).toBeNull();
 
     const errors = messages.flat().map((message) => message.text());
     expect(errors.filter((text) => HYDRATION_ERROR.test(text))).toStrictEqual([]);
@@ -180,11 +185,11 @@ test.describe("Signed-in hint", () => {
     await prisma.session.deleteMany({ where: { userId: user.id } });
     await context.clearCookies({ name: /session_data/u });
 
+    // The page finds nobody and asks Better Auth's own session read, whose answer drops the dead
+    // session cookie and the hint together; the page then reloads itself signed out.
     await page.reload();
     await expect.poll(() => getSessionHint(context)).toBe("0");
-
-    await page.reload();
-    expect(await isMarkedSignedIn(page)).toBe(false);
+    await expect.poll(() => isMarkedSignedIn(page)).toBe(false);
     await expect(page.getByRole("banner").getByRole("link", { name: "Log in" })).toBeVisible();
 
     await context.close();

@@ -234,7 +234,7 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("gives a session from before the hint its frame on the catalog, and the hint", async ({
+  test("gives a session from before the hint its frame on the catalog, writing no hint", async ({
     browser,
   }) => {
     const { name, user } = await createGoalLearner();
@@ -248,12 +248,16 @@ test.describe("learner summary", () => {
     const page = await openAs(context, "/courses");
 
     await expect(accountRow(page, name)).toBeVisible();
-    await expect.poll(() => getSessionHint(context)).toBe("1");
+
+    // Only the auth responses that set the session cookie write the hint, beside it.
+    expect(await getSessionHint(context)).toBeNull();
 
     await context.close();
   });
 
-  test("asks once per browsing session whether a visitor has a session", async ({ browser }) => {
+  test("asks once per page whether a visitor without a hint has a session, writing none", async ({
+    browser,
+  }) => {
     const context = await browser.newContext();
     const page = await context.newPage();
     const reads = { count: 0 };
@@ -264,14 +268,14 @@ test.describe("learner summary", () => {
       }
     });
 
-    await page.goto("/courses");
-    await expect.poll(() => getSessionHint(context)).toBe("0");
+    // Each page shown reads once: nothing but an auth response may say "none" for the browser.
+    await openAndRead(page, "/courses");
+    await openAndRead(page, "/pricing");
+    await openAndRead(page, "/courses");
 
-    await page.goto("/pricing");
-    await page.goto("/courses");
     await expect(sidebar(page).getByRole("link", { name: "Log in" })).toBeVisible();
-
-    expect(reads.count).toBe(1);
+    expect(reads.count).toBe(3);
+    expect(await getSessionHint(context)).toBeNull();
 
     await context.close();
   });
@@ -283,11 +287,70 @@ test.describe("learner summary", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
-    await expect.poll(() => getSessionHint(context)).toBe("1");
+    // The guest's own sign-in response names them in the hint.
+    await expect.poll(() => getSessionHint(context)).toMatch(/^t1\.[\w-]{22}$/u);
 
     await expect
       .poll(() => context.request.get("/api/learner/summary").then((response) => response.json()))
       .toMatchObject({ status: "ready", summary: { identity: { isAnonymous: true } } });
+
+    await context.close();
+  });
+
+  test("goes on as the guest a lesson makes for a visitor, without reloading the page", async ({
+    browser,
+  }) => {
+    const { lesson } = await playableLessonFixture();
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const loads = { count: 0 };
+
+    page.on("load", () => {
+      loads.count += 1;
+    });
+
+    await page.goto(`/learn/${lesson.id}`);
+
+    // The tab's own guest: its sign-in names them in the hint, and the page simply goes on.
+    await expect.poll(() => getSessionHint(context)).toMatch(/^t1\.[\w-]{22}$/u);
+
+    await expect
+      .poll(() => context.request.get("/api/learner/summary").then((response) => response.json()))
+      .toMatchObject({ status: "ready", summary: { identity: { isAnonymous: true } } });
+
+    await settle(page);
+
+    expect(loads.count).toBe(1);
+    await expect(page.getByText("This page is out of date")).toHaveCount(0);
+
+    await context.close();
+  });
+
+  test("leaves a learner's page on its return once the server ended their session", async ({
+    browser,
+  }) => {
+    const { name, user } = await createGoalLearner();
+    const context = await browser.newContext({ storageState: user.storageState });
+    const page = await openAs(context, "/plan");
+
+    await expect(accountRow(page, name)).toBeVisible();
+    await expect(planGoal(page)).toBeVisible();
+
+    // The session ends on the server; the browser keeps its cookies and hint (no cached copy).
+    await prisma.session.deleteMany({ where: { userId: user.id } });
+    await context.clearCookies({ name: /session_data/u });
+
+    // The learner comes back to the tab: one session read, and its answer ends the page.
+    await page.evaluate(() => {
+      ["hidden", "visible"].forEach((state) => {
+        Object.defineProperty(document, "visibilityState", { configurable: true, value: state });
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+    });
+
+    await expect.poll(() => getSessionHint(context)).toBe("0");
+    await expect(loginGate(page)).toBeVisible();
+    await expect(planGoal(page)).toBeHidden();
 
     await context.close();
   });
@@ -388,16 +451,23 @@ test.describe("learner summary", () => {
 
     // The catalog's read (sent with the first learner's cookies) is held back.
     const held = Promise.withResolvers<boolean>();
+    const answered = Promise.withResolvers<boolean>();
     const reads = { count: 0 };
 
     await page.route("**/api/learner/summary", async (route) => {
       reads.count += 1;
 
       if (reads.count === 1) {
-        // The server answers it now, for the first learner; the browser only gets it later.
+        // The server answers it now, for the first learner; the browser only gets it later, or
+        // never once the page it was sent from reloaded for the second learner.
         const response = await route.fetch();
         await held.promise;
-        await route.fulfill({ response });
+
+        await route.fulfill({ response }).then(
+          () => answered.resolve(true),
+          () => answered.resolve(false),
+        );
+
         return;
       }
 
@@ -431,7 +501,7 @@ test.describe("learner summary", () => {
     await page.waitForURL(/\/courses$/u);
 
     held.resolve(true);
-    await settle(page);
+    await answered.promise;
 
     await expect(accountRow(page, second.name)).toBeVisible();
     await expect(page.getByText(first.name)).toHaveCount(0);
@@ -558,6 +628,14 @@ test.describe("learner summary", () => {
     await context.close();
   });
 });
+
+/** Opens `path` and waits for the summary read its page sends. */
+async function openAndRead(page: Page, path: string) {
+  const read = page.waitForResponse((response) => response.url().endsWith("/api/learner/summary"));
+
+  await page.goto(path);
+  await read;
+}
 
 /** The learner's goal in the Plan's body, which a signed-out Plan never names. */
 function planGoal(page: Page) {

@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getWeeklyRecap } from "@zoonk/core/milestones/weekly-recap";
 import { getSession } from "@zoonk/core/users/session";
@@ -46,12 +47,18 @@ async function LogbookContent() {
   const result = await getWeeklyRecap({ goalId: goal?.id });
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next="/logbook" />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next="/logbook" />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -59,6 +66,7 @@ async function LogbookContent() {
 
   return (
     <MainLearnProvider>
+      <LearnerWitness />
       <LogbookScreen
         hrefs={{ close: "/buddy", start: "/today" }}
         learnerName={session?.user.name.split(" ")[0] || null}

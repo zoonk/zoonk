@@ -1,27 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-// PostHog's SDK failing to load or start can't be produced with the real one in a test.
-vi.mock("./posthog", () => ({ resetPostHogUser: vi.fn(async () => {}) }));
+// One function in every fresh module: each test drives the one the helper calls.
+const analytics = vi.hoisted(() => ({ resetPostHogUser: vi.fn(async () => {}) }));
 
-/**
- * A browser tab whose cookie writes fail or not, with what it tells the other tabs and the errors
- * it reports.
- */
-function stubTab({ cookieWriteFails }: { cookieWriteFails: boolean }) {
+// PostHog's SDK failing to load or start can't be produced with the real one in a test.
+vi.mock("./posthog", () => analytics);
+
+/** A browser tab, with what it tells the other tabs and the errors it reports. */
+function stubTab() {
   const announced: unknown[] = [];
   const reported: unknown[] = [];
 
   vi.stubGlobal("document", { addEventListener: vi.fn(), cookie: "zoonk-signed-in=1" });
-  vi.stubGlobal("isSecureContext", true);
+  vi.stubGlobal("addEventListener", vi.fn());
   vi.stubGlobal("reportError", (error: unknown) => reported.push(error));
-
-  vi.stubGlobal("cookieStore", {
-    set: vi.fn(async () => {
-      if (cookieWriteFails) {
-        throw new Error("cookie not written");
-      }
-    }),
-  });
 
   vi.stubGlobal(
     "BroadcastChannel",
@@ -38,12 +30,9 @@ function stubTab({ cookieWriteFails }: { cookieWriteFails: boolean }) {
 async function loadHelper() {
   vi.resetModules();
 
-  const [{ endLearnerSession }, { resetPostHogUser }] = await Promise.all([
-    import("./end-learner-session"),
-    import("./posthog"),
-  ]);
+  const { endLearnerSession } = await import("./end-learner-session");
 
-  return { endLearnerSession, resetPostHogUser: vi.mocked(resetPostHogUser) };
+  return { endLearnerSession, resetPostHogUser: analytics.resetPostHogUser };
 }
 
 describe("endLearnerSession", () => {
@@ -52,7 +41,7 @@ describe("endLearnerSession", () => {
   });
 
   it("ends the session and tells the other tabs when forgetting the learner here fails", async () => {
-    const tab = stubTab({ cookieWriteFails: true });
+    const tab = stubTab();
     const { endLearnerSession, resetPostHogUser } = await loadHelper();
     const analyticsFailure = new Error("PostHog didn't load");
     resetPostHogUser.mockRejectedValueOnce(analyticsFailure);
@@ -61,12 +50,12 @@ describe("endLearnerSession", () => {
     await endLearnerSession(endSession);
 
     expect(endSession).toHaveBeenCalledOnce();
-    expect(tab.announced).toStrictEqual([{ identity: null }]);
-    expect(tab.reported).toStrictEqual([analyticsFailure, new Error("cookie not written")]);
+    expect(tab.announced).toStrictEqual([{ check: true }]);
+    expect(tab.reported).toStrictEqual([analyticsFailure]);
   });
 
   it("tells the other tabs when ending the session fails", async () => {
-    const tab = stubTab({ cookieWriteFails: false });
+    const tab = stubTab();
     const { endLearnerSession } = await loadHelper();
     const signOutFailure = new Error("sign-out failed");
 
@@ -76,7 +65,7 @@ describe("endLearnerSession", () => {
       }),
     ).rejects.toBe(signOutFailure);
 
-    expect(tab.announced).toStrictEqual([{ identity: null }]);
+    expect(tab.announced).toStrictEqual([{ check: true }]);
     expect(tab.reported).toStrictEqual([]);
   });
 });

@@ -1,4 +1,5 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getSocialProfiles } from "@/lib/social";
 import { getSession } from "@zoonk/core/users/session";
 import { FeedbackForm, FeedbackFormSkeleton } from "@zoonk/learn/feedback/form";
@@ -19,7 +20,12 @@ async function ContactSupport() {
 
   const email = session && !session.user.isAnonymous ? session.user.email : null;
 
-  return <FeedbackForm context={{ screen: "support" }} defaultEmail={email} />;
+  return (
+    <>
+      <LearnerWitness />
+      <FeedbackForm context={{ screen: "support" }} defaultEmail={email} />
+    </>
+  );
 }
 
 /** Where else to find Zoonk: the Brazilian profiles in Portuguese, the global ones otherwise. */

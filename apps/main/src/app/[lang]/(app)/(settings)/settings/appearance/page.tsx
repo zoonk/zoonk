@@ -1,4 +1,5 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
@@ -26,20 +27,24 @@ async function AppearanceContent() {
   const [profile, buddy] = await Promise.all([getLearningProfile(), getLearnerBuddy()]);
 
   return (
-    <AppearanceSettings
-      view={{
-        availableGlasses: profile?.availableGlasses ?? [buddy.glasses],
-        buddy,
-        canPersonalize: profile !== null,
-        dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
-        look: {
-          beltColor: buddy.beltColor,
-          energy: buddy.energy,
-          studiedToday: buddy.studiedToday,
-        },
-        soundsEnabled: profile?.soundsEnabled ?? true,
-      }}
-    />
+    <>
+      <LearnerWitness />
+
+      <AppearanceSettings
+        view={{
+          availableGlasses: profile?.availableGlasses ?? [buddy.glasses],
+          buddy,
+          canPersonalize: profile !== null,
+          dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
+          look: {
+            beltColor: buddy.beltColor,
+            energy: buddy.energy,
+            studiedToday: buddy.studiedToday,
+          },
+          soundsEnabled: profile?.soundsEnabled ?? true,
+        }}
+      />
+    </>
   );
 }
 

@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { deliveredForThisLearner } from "@/lib/learner/delivered-for-this-learner";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import {
   type ConversationActions,
@@ -81,7 +82,8 @@ export function ConversationClient({
 
   const actions = useMemo<ConversationActions>(
     () => ({
-      checkObjectives: (turns) => checkObjectivesAction(id, { turns }),
+      // The call's progress is the learner's own: it reaches only a page still drawn for them.
+      checkObjectives: (turns) => deliveredForThisLearner(checkObjectivesAction(id, { turns })),
       complete: (input) =>
         completeConversationAction(id, { ...input, timeZone: getLocalTimeZone() }),
       connect: (input) => connectConversationAction({ conversationId: id, input, locale }),

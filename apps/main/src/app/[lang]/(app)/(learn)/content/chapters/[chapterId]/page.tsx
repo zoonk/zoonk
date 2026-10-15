@@ -2,6 +2,7 @@ import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { withQuery } from "@/lib/with-query";
@@ -55,6 +56,7 @@ async function UnitInPlace({ chapterId, tutor }: { chapterId: string; tutor: Tut
   if (unit.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
@@ -62,6 +64,7 @@ async function UnitInPlace({ chapterId, tutor }: { chapterId: string; tutor: Tut
 
   return (
     <ClientMessagesProvider scope="player">
+      <LearnerWitness />
       <UnitScreenClient
         tutor={tutor}
         unit={unit.unit}
@@ -87,17 +90,22 @@ async function ChapterBody({ params, searchParams }: Props) {
     const t = await getExtracted();
 
     return (
-      <AuthGatePage
-        description={t("A chapter of your plan, with its lessons and how far you are.")}
-        next={withQuery(`/content/chapters/${chapterId}`, { from })}
-        title={t("Chapter")}
-      />
+      <>
+        <LearnerWitness />
+
+        <AuthGatePage
+          description={t("A chapter of your plan, with its lessons and how far you are.")}
+          next={withQuery(`/content/chapters/${chapterId}`, { from })}
+          title={t("Chapter")}
+        />
+      </>
     );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
@@ -110,6 +118,7 @@ async function ChapterBody({ params, searchParams }: Props) {
   // The chapter's "Ask" opens the player's questions sheet, so it needs the player's messages.
   return (
     <ClientMessagesProvider scope="player">
+      <LearnerWitness />
       <ChapterScreenClient
         back={back}
         chapter={result.chapter}

@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
@@ -78,7 +79,12 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
   const session = await getSession();
 
   if (!session) {
-    return <PlanNoGoal />;
+    return (
+      <>
+        <LearnerWitness />
+        <PlanNoGoal />
+      </>
+    );
   }
 
   // Only this initial display is cached; onboarding answers and the building client's polling
@@ -89,10 +95,20 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
   const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
   if (steps.some((step) => step !== "plan")) {
-    return <JourneySetup goalId={goalId} goalTitle={goalTitle} />;
+    return (
+      <>
+        <LearnerWitness />
+        <JourneySetup goalId={goalId} goalTitle={goalTitle} />
+      </>
+    );
   }
 
-  return <JourneyBuildingClient goalId={goalId} goalTitle={goalTitle} />;
+  return (
+    <>
+      <LearnerWitness />
+      <JourneyBuildingClient goalId={goalId} goalTitle={goalTitle} />
+    </>
+  );
 }
 
 async function JourneyContent() {
@@ -122,14 +138,24 @@ async function JourneyContent() {
     result.status === "unauthorized" ||
     activeGoal?.kind === "explain"
   ) {
-    return <PlanNoGoal />;
+    return (
+      <>
+        <LearnerWitness />
+        <PlanNoGoal />
+      </>
+    );
   }
 
   if (result.status !== "ready" || !result.view.plan.ready) {
-    return activeGoal ? (
-      <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.title} />
-    ) : (
-      <PlanNoGoal />
+    return (
+      <>
+        <LearnerWitness />
+        {activeGoal ? (
+          <JourneyWithoutPlan goalId={activeGoal.id} goalTitle={activeGoal.title} />
+        ) : (
+          <PlanNoGoal />
+        )}
+      </>
     );
   }
 
@@ -146,53 +172,57 @@ async function JourneyContent() {
   const alphabet = units.status === "ready" ? units.units.alphabet : null;
 
   return (
-    <JourneyClient
-      actions={{
-        change: changePlanAction.bind(null, goal.id),
-        chooseExamOption: chooseExamOptionAction.bind(null, goal.id),
-        chooseTools: choosePlanToolsAction.bind(null, goal.id),
-        decide: decidePlanChangeAction.bind(null, goal.id),
-        preview: previewPlanChangeAction.bind(null, goal.id),
-      }}
-      alphabet={
-        alphabet && {
-          link: {
-            href: `/learn/${alphabet.lessonId}`,
-            minutes: alphabet.minutes,
-            pending: alphabet.pending,
-            title: alphabet.title,
-          },
-          onSkip: skipAlphabetAction.bind(null, goal.id),
+    <>
+      <LearnerWitness />
+
+      <JourneyClient
+        actions={{
+          change: changePlanAction.bind(null, goal.id),
+          chooseExamOption: chooseExamOptionAction.bind(null, goal.id),
+          chooseTools: choosePlanToolsAction.bind(null, goal.id),
+          decide: decidePlanChangeAction.bind(null, goal.id),
+          preview: previewPlanChangeAction.bind(null, goal.id),
+        }}
+        alphabet={
+          alphabet && {
+            link: {
+              href: `/learn/${alphabet.lessonId}`,
+              minutes: alphabet.minutes,
+              pending: alphabet.pending,
+              title: alphabet.title,
+            },
+            onSkip: skipAlphabetAction.bind(null, goal.id),
+          }
         }
-      }
-      buddy={buddy}
-      goal={{ kind: goal.kind, title: goal.title }}
-      goalId={goal.id}
-      goalStatus={goalStatus}
-      hasMindMaps={mindMaps.status === "ready" && mindMaps.mindMaps.chapters.length > 0}
-      language={language.status === "ready" ? language.progress : null}
-      next={next && { onContinue: continueNextLevelAction.bind(null, goal.id), view: next }}
-      plan={plan}
-      readAt={readAt}
-      resume={resume}
-      preparation={
-        standing?.preparation
-          ? {
-              forExam: goal.kind === "exam",
-              kind: "preparation",
-              lessons: syllabus.status === "ready" ? syllabus.syllabus.lessons : null,
-              preparation: standing.preparation,
-              stillNeeded: standing.stillNeeded,
-            }
-          : null
-      }
-      shareHref={getPathname({
-        href: `/plan-link/${plan.planId}`,
-        locale: getSupportedLocaleFromLanguage(locale),
-      })}
-      syllabus={syllabus.status === "ready" ? syllabus.syllabus : null}
-      weekTime={weekTime}
-    />
+        buddy={buddy}
+        goal={{ kind: goal.kind, title: goal.title }}
+        goalId={goal.id}
+        goalStatus={goalStatus}
+        hasMindMaps={mindMaps.status === "ready" && mindMaps.mindMaps.chapters.length > 0}
+        language={language.status === "ready" ? language.progress : null}
+        next={next && { onContinue: continueNextLevelAction.bind(null, goal.id), view: next }}
+        plan={plan}
+        readAt={readAt}
+        resume={resume}
+        preparation={
+          standing?.preparation
+            ? {
+                forExam: goal.kind === "exam",
+                kind: "preparation",
+                lessons: syllabus.status === "ready" ? syllabus.syllabus.lessons : null,
+                preparation: standing.preparation,
+                stillNeeded: standing.stillNeeded,
+              }
+            : null
+        }
+        shareHref={getPathname({
+          href: `/plan-link/${plan.planId}`,
+          locale: getSupportedLocaleFromLanguage(locale),
+        })}
+        syllabus={syllabus.status === "ready" ? syllabus.syllabus : null}
+        weekTime={weekTime}
+      />
+    </>
   );
 }
 

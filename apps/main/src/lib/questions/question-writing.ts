@@ -1,9 +1,7 @@
+import { postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
-import { getBrowserApiUrl } from "@/lib/browser-api-url";
-import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
-import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
 export type QuestionWriting =
@@ -19,22 +17,22 @@ export type QuestionWriting =
  * `path` is the test's generations endpoint under `/v1`; `body`, what the endpoint asks for.
  */
 export async function requestQuestionWriting(
-  path: string,
+  path: `/${string}`,
   body?: Record<string, unknown>,
 ): Promise<QuestionWriting> {
-  const auth = await getWorkflowAuthHeaders();
-  const url = `${getBrowserApiUrl()}/v1${path}`;
-  const headers = body ? { ...auth, "Content-Type": "application/json" } : auth;
+  const response = await postFromBrowser({ body, path: `/v1${path}` });
 
-  const { data: response, error } = await safeAsync(() =>
-    fetch(url, { body: body && JSON.stringify(body), headers, method: "POST" }),
-  );
-
-  if (error) {
+  if (!response) {
     return { status: "failed" };
   }
 
-  const answer: unknown = await response.json().catch(() => null);
+  const answer = await readJsonForThisLearner(response);
+
+  // The route always answers JSON: no body (or one read once the page belonged to someone else)
+  // is no answer.
+  if (answer === null) {
+    return { status: "failed" };
+  }
 
   if (
     getString(isJsonObject(answer) ? answer.error : null, "code") ===

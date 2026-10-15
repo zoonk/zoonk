@@ -1,4 +1,5 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getSession } from "@zoonk/core/users/session";
 import { ListGroup } from "@zoonk/learn/list";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
@@ -28,6 +29,7 @@ async function ProfileContent() {
 
   return (
     <ProtectedSection next="/profile">
+      <LearnerWitness />
       <PageSection aria-labelledby={ACCOUNT_ID}>
         <PageSectionHeader>
           <PageSectionTitle id={ACCOUNT_ID}>{t("Account")}</PageSectionTitle>

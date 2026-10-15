@@ -684,6 +684,7 @@ msgid "Something went wrong. Please try again."
 msgstr "Algo salió mal. Inténtalo de nuevo."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/identity-cover-script.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
@@ -3149,6 +3150,26 @@ msgstr "Quiero entender {topic} a fondo"
 msgctxt "-3M8u-"
 msgid "Focus test"
 msgstr "Prueba de enfoque"
+
+#: src/app/[lang]/identity-cover-script.tsx
+msgctxt "AJlScu"
+msgid "Checking your account…"
+msgstr "Comprobando tu cuenta…"
+
+#: src/app/[lang]/identity-cover-script.tsx
+msgctxt "bF8iyn"
+msgid "Couldn't check your account"
+msgstr "No se ha podido comprobar tu cuenta"
+
+#: src/app/[lang]/identity-cover-script.tsx
+msgctxt "s1f1wk"
+msgid "This page is out of date"
+msgstr "Esta página está desactualizada"
+
+#: src/app/[lang]/identity-cover-script.tsx
+msgctxt "fdCS5_"
+msgid "Reload"
+msgstr "Recargar"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx

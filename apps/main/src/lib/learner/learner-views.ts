@@ -1,6 +1,6 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { onLearnerIdentityChange } from "./learner-pages";
+import { checkIdentity, onLearnerIdentityChange } from "./learner-identity";
 import { type LearnerRevisionNote } from "./learner-snapshot";
 import {
   catchUpLearnerSummary,
@@ -14,12 +14,18 @@ import {
   type LearnerViewKind,
   type LearnerViewRead,
   type LearnerViewStamp,
-  type ViewFreshness,
   isViewOld,
   pickNewerView,
 } from "./learner-view-copies";
 import { fetchLearnerView } from "./learner-view-response";
-import { NO_SIGNALS, type ViewRead, notify, store } from "./learner-views-state";
+import {
+  NO_SIGNALS,
+  type ViewRead,
+  notify,
+  raiseWatermark,
+  signal,
+  store,
+} from "./learner-views-state";
 import { isShownCopyStale } from "./legacy-shown-copy";
 
 const CHANNEL_NAME = "zoonk-learner-views";
@@ -40,26 +46,6 @@ function getHeldSummary(): LearnerSummary | null {
 export function isForHeldLearner(userId: string): boolean {
   const held = getHeldLearnerId();
   return held === undefined || held === userId;
-}
-
-/** Records a signal: every read sent before it no longer covers it. */
-function signal(field: Exclude<keyof ViewFreshness, "seq" | "watermark">) {
-  const seq = store.freshness.seq + 1;
-  store.freshness = { ...store.freshness, [field]: seq, seq };
-}
-
-/** Raises the highest revision the tab knows the learner's writes committed, if this one is higher. */
-function raiseWatermark({ revision, userId }: { revision: string; userId: string }): boolean {
-  const next = BigInt(revision);
-  const { watermark } = store.freshness;
-
-  if (watermark && watermark.userId === userId && watermark.revision >= next) {
-    return false;
-  }
-
-  const seq = store.freshness.seq + 1;
-  store.freshness = { ...store.freshness, seq, watermark: { revision: next, seq, userId } };
-  return true;
 }
 
 function getDayKey(summary: LearnerSummary | null): string | null {
@@ -186,18 +172,30 @@ export function noteLearnerWrite({ generation }: { generation: number }): void {
   notify();
 }
 
+/** A page that no longer belongs to the learner the browser holds goes no further (`checkIdentity`). */
+function assertPageIsTheLearners() {
+  if (!checkIdentity()) {
+    throw new Error("The page no longer belongs to the learner the browser holds");
+  }
+}
+
 /**
  * Runs a write whose answer doesn't name the learner's new revision and, once it saved (`saved`;
  * by default a truthy answer), notes it for the identity it started under (`noteLearnerWrite`): the
  * views on screen read themselves again once, never a page refresh. A refused, unchanged or failed
- * write notes nothing.
+ * write notes nothing. A page that no longer belongs to the learner the browser holds sends
+ * nothing and takes no answer: the write fails (the page is covered, reloading).
  */
 export async function withLearnerWrite<Result>(
   write: () => Promise<Result>,
   saved: (result: Result) => boolean = Boolean,
 ): Promise<Result> {
   const generation = getLearnerGeneration();
+
+  // Checked right before it's sent (after any await of the caller's) and as its answer arrives.
+  assertPageIsTheLearners();
   const result = await write();
+  assertPageIsTheLearners();
 
   if (saved(result)) {
     noteLearnerWrite({ generation });
@@ -268,6 +266,7 @@ function sendViewRead({ kind, onResponse }: ViewRead): Promise<LearnerViewRead> 
     if (
       !response ||
       sent.generation !== getLearnerGeneration() ||
+      !checkIdentity() ||
       (response.status === "ready" && !isForHeldLearner(response.copy.userId))
     ) {
       return "failed";

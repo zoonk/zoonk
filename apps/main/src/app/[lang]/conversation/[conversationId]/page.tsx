@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { withQuery } from "@/lib/with-query";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
@@ -44,12 +45,18 @@ async function ConversationContent({ params, searchParams }: Props) {
   const result = await getLanguageConversation(conversationId);
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next={withQuery(`/conversation/${conversationId}`, query)} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next={withQuery(`/conversation/${conversationId}`, query)} />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -57,6 +64,7 @@ async function ConversationContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
+      <LearnerWitness />
       <ConversationClient
         conversation={result.conversation}
         fromExam={query.from === "exam"}

@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { redirect } from "@/i18n/navigation";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
@@ -93,19 +94,28 @@ async function SessionSummaryView({
   ]);
 
   if (result.status !== "ready") {
-    return <SessionNotFound />;
+    return (
+      <>
+        <LearnerWitness />
+        <SessionNotFound />
+      </>
+    );
   }
 
   // The summary is a task screen of its own, with its own `main`.
   return (
-    <SessionSummaryClient
-      goalKind={facts.goal.kind}
-      isGuest={Boolean(viewer?.user.isAnonymous)}
-      buddy={buddy}
-      sessionId={session.id}
-      stopped={stopped}
-      summary={result.summary}
-    />
+    <>
+      <LearnerWitness />
+
+      <SessionSummaryClient
+        goalKind={facts.goal.kind}
+        isGuest={Boolean(viewer?.user.isAnonymous)}
+        buddy={buddy}
+        sessionId={session.id}
+        stopped={stopped}
+        summary={result.summary}
+      />
+    </>
   );
 }
 
@@ -227,12 +237,18 @@ async function SavedDayView({
     ]);
 
     if (detail.status !== "ready") {
-      return <SessionNotFound />;
+      return (
+        <>
+          <LearnerWitness />
+          <SessionNotFound />
+        </>
+      );
     }
 
     // Asking the buddy about a question opens the player's conversation.
     return (
       <SessionMain>
+        <LearnerWitness />
         <ClientMessagesProvider scope="player">
           <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
         </ClientMessagesProvider>
@@ -249,14 +265,18 @@ async function SavedDayView({
   // The address's request is about the block it names: once that block is behind the learner,
   // the step shown now was never asked for.
   return (
-    <NextStepView
-      alternative={findAlternativeStudyBlock({ blockId: step.id, blocks: session.blocks })}
-      day={session}
-      facts={facts}
-      next={next}
-      screen={step.id === blockId ? screen : UNASKED}
-      step={step}
-    />
+    <>
+      <LearnerWitness />
+
+      <NextStepView
+        alternative={findAlternativeStudyBlock({ blockId: step.id, blocks: session.blocks })}
+        day={session}
+        facts={facts}
+        next={next}
+        screen={step.id === blockId ? screen : UNASKED}
+        step={step}
+      />
+    </>
   );
 }
 
@@ -273,7 +293,12 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   });
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next={withQuery("/session", search)} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next={withQuery("/session", search)} />
+      </>
+    );
   }
 
   if (result.status === "noGoal") {
@@ -310,14 +335,18 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
 
   // A day not opened yet has no block a tap's request could name.
   return (
-    <NextStepView
-      alternative={null}
-      day={result.day}
-      facts={result}
-      next={result.next}
-      screen={UNASKED}
-      step={step}
-    />
+    <>
+      <LearnerWitness />
+
+      <NextStepView
+        alternative={null}
+        day={result.day}
+        facts={result}
+        next={result.next}
+        screen={UNASKED}
+        step={step}
+      />
+    </>
   );
 }
 

@@ -1,13 +1,9 @@
 "use client";
 
-import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
+import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { type AnswerExplanationOutcome, type ExampleLine } from "@zoonk/player/lesson/types";
 import { getString, isJsonObject } from "@zoonk/utils/json";
-
-async function readBody(response: Response): Promise<unknown> {
-  return response.json().catch(() => null);
-}
 
 /** The API's example line: the saved line and whether asking can write one. */
 async function readExampleLine(response: Response | null): Promise<ExampleLine | null> {
@@ -15,7 +11,7 @@ async function readExampleLine(response: Response | null): Promise<ExampleLine |
     return null;
   }
 
-  const body = await readBody(response);
+  const body = await readJsonForThisLearner(response);
 
   return isJsonObject(body)
     ? { canRequest: body.canRequest === true, line: getString(body, "line") }
@@ -61,7 +57,7 @@ export async function requestAnswerExplanation({
     return { status: "failed" };
   }
 
-  const body = await readBody(response);
+  const body = await readJsonForThisLearner(response);
   const explanation = response.ok ? getString(body, "explanation") : null;
 
   if (explanation) {

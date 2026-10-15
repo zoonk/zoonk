@@ -52,7 +52,7 @@ async function requestMockWriting({
   page: ChooserPage;
   start: MockStart;
 }): Promise<QuestionWriting> {
-  const path = `/goals/${encodeURIComponent(page.goalId)}/mocks/generations`;
+  const path: `/${string}` = `/goals/${encodeURIComponent(page.goalId)}/mocks/generations`;
 
   const ask = async (tries: number): Promise<QuestionWriting> => {
     // A request that never answers reads as a failed one, as a refused start does.

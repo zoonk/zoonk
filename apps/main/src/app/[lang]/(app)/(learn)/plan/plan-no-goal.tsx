@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getGoalExample } from "@/components/public/goal-example";
 import { GoalForm } from "@/components/public/goal-form";
 import { getPathname } from "@/i18n/navigation";
@@ -22,11 +23,15 @@ export async function PlanNoGoal() {
 
   if (!session) {
     return (
-      <LearnNoGoal
-        description={t("What you'll study each day until your goal, and what it covers.")}
-        next="/plan"
-        title={t("Plan")}
-      />
+      <>
+        <LearnerWitness />
+
+        <LearnNoGoal
+          description={t("What you'll study each day until your goal, and what it covers.")}
+          next="/plan"
+          title={t("Plan")}
+        />
+      </>
     );
   }
 
@@ -35,6 +40,7 @@ export async function PlanNoGoal() {
 
   return (
     <Page data-slot="journey-no-goal">
+      <LearnerWitness />
       <PageHeaderContent>
         <PageTitle>{t("Plan")}</PageTitle>
         <PageSubtitle>

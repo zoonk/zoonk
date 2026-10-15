@@ -221,15 +221,23 @@ test.describe("Static public pages", () => {
         logIn.boundingBox(),
       ]);
 
+      const answered = visitor.waitForResponse((response) =>
+        response.url().endsWith("/api/learner/summary"),
+      );
+
       release();
 
-      // The summary says nobody is signed in: the hint becomes "none", and the bar stays as it was.
-      await expect
-        .poll(async () => {
-          const cookies = await visitor.context().cookies();
-          return cookies.find((cookie) => cookie.name === "zoonk-signed-in")?.value;
-        })
-        .toBe("0");
+      // The summary says nobody is signed in, and the bar stays as it was once the page has drawn
+      // that answer.
+      const summary = await answered;
+      await summary.finished();
+
+      await visitor.evaluate(
+        () =>
+          new Promise((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(resolve));
+          }),
+      );
 
       await expect(banner.locator('[data-slot="public-account-slot"]')).toHaveCount(0);
       expect(await banner.boundingBox()).toStrictEqual(bannerBefore);

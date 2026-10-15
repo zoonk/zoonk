@@ -1,5 +1,6 @@
 import { MockChooserClient } from "@/app/[lang]/mock/mock-chooser-client";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { LearnPageBar } from "@zoonk/learn/bar";
@@ -29,12 +30,16 @@ async function MockChooserContent() {
     const t = await getExtracted();
 
     return (
-      <LearnNoGoal
-        bar={CHOOSER_BAR}
-        description={t("Mock exam, timed like the real one")}
-        next="/mock/new"
-        title={t("Take a mock exam")}
-      />
+      <>
+        <LearnerWitness />
+
+        <LearnNoGoal
+          bar={CHOOSER_BAR}
+          description={t("Mock exam, timed like the real one")}
+          next="/mock/new"
+          title={t("Take a mock exam")}
+        />
+      </>
     );
   }
 
@@ -57,11 +62,15 @@ async function MockChooserContent() {
   }
 
   return (
-    <MockChooserClient
-      bar={CHOOSER_BAR}
-      page={{ goalId: view.goalId, placement: false }}
-      view={view}
-    />
+    <>
+      <LearnerWitness />
+
+      <MockChooserClient
+        bar={CHOOSER_BAR}
+        page={{ goalId: view.goalId, placement: false }}
+        view={view}
+      />
+    </>
   );
 }
 

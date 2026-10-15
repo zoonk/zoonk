@@ -1,14 +1,15 @@
 import { type LearnerIdentity, type LearnerSummary } from "@zoonk/core/learner/summary/contract";
-import { getSessionHint, hasSessionHint, setNoSessionHint, setSessionHint } from "./session-hint";
 
 /**
  * A read of the server's (`server`) or the browser's own guess that nobody is signed in (no
- * session hint): the learner's summary or nobody, and when it was read.
+ * session hint): the learner's summary or nobody, when it was read, and the session hint's tag of
+ * the learner it was read for (null for nobody).
  */
 export type Snapshot = {
   readAt: number;
   source: "guess" | "server";
   summary: LearnerSummary | null;
+  tag: string | null;
 };
 
 /**
@@ -24,7 +25,7 @@ export type LearnerSummaryState =
 /** What a page's server render hands the store (`LearnerSummarySeed`). */
 export type LearnerSummarySeedValue =
   | { status: "failed" }
-  | { status: "ready"; summary: LearnerSummary }
+  | { status: "ready"; summary: LearnerSummary; tag: string }
   | { status: "visitor" };
 
 /** A timer longer than a day isn't needed: the summary changes at the learner's midnight. */
@@ -57,12 +58,16 @@ export function isSeedExpected(meta: string): boolean {
   return document.querySelector(`meta[name="${meta}"]`) !== null;
 }
 
+/**
+ * The same learner, or nobody both times: a learner is their user id alone, so signing in again
+ * (a new session for the same learner) is never another learner.
+ */
 export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | null): boolean {
   if (!a || !b) {
     return a === b;
   }
 
-  return a.userId === b.userId && a.signedInAt === b.signedInAt;
+  return a.userId === b.userId;
 }
 
 /** The same learner's later snapshot: a higher revision, or the same one read later. */
@@ -80,40 +85,9 @@ export function isNewerSummary({
   return next.readAt >= held.readAt;
 }
 
-/**
- * Keeps the session hint in step with what the server read: a session gets it until its latest end
- * (a first sign-in the hint missed, or a session renewed since), and a browser without a session
- * (signed out, or its session ended) gets "none", so its pages stop reading for nobody.
- */
-export function syncSessionHint(snapshot: Snapshot) {
-  if (snapshot.source !== "server") {
-    return;
-  }
-
-  if (snapshot.summary) {
-    void setSessionHint(snapshot.summary.identity.expiresAt);
-    return;
-  }
-
-  if (getSessionHint() !== "none") {
-    void setNoSessionHint();
-  }
-}
-
-/**
- * Puts the hint back for the learner held when a read's response dropped it after another tab
- * signed in (a late "visitor" answer the store discarded still carried its header).
- */
-export function reconcileSessionHint(state: { status: string; summary?: LearnerSummary }) {
-  if (state.status === "ready" && state.summary && !hasSessionHint()) {
-    void setSessionHint(state.summary.identity.expiresAt);
-  }
-}
-
 /** The browser's one learner store, in memory (see `learner-store.ts`). */
 export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
-  channel: BroadcastChannel | null;
   generation: number;
   inFlight: { generation: number; promise: Promise<void> } | null;
   installed: boolean;

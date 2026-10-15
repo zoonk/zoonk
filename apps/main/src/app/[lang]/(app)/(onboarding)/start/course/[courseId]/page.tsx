@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
@@ -102,6 +103,7 @@ async function CourseStartContent({ params, searchParams }: Props) {
   if (!course) {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <OnboardingNotFound />
       </NotFoundPage>
     );
@@ -123,32 +125,35 @@ async function CourseStartContent({ params, searchParams }: Props) {
   // Back to the course it was started from, else the catalog; a visitor logs in from the bar under
   // `lg`, where the sidebar's way in isn't.
   return (
-    <OnboardingPage
-      backHref="/courses"
-      barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
-    >
-      <CourseStartScreen
-        chapter={chapter ? { id: chapter.id, title: chapter.title } : null}
-        chapters={planned.map((item) => ({
-          id: item.id,
-          lessons: item.lessons.length,
-          title: item.title,
-        }))}
-        course={{ id: course.id, title: course.title }}
-        dailyMinutes={readDailyMinutes(query[MINUTES_PARAM])}
-        minutesPicked={readParam(query[PICKED_PARAM]) !== null}
-        initialFailure={
-          toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
-        }
-        note={
-          <NoAccountNote>
-            <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
-              {t("Start free, no account needed.")}
-            </p>
-          </NoAccountNote>
-        }
-      />
-    </OnboardingPage>
+    <>
+      <LearnerWitness />
+      <OnboardingPage
+        backHref="/courses"
+        barEnd={session ? null : <LoginBarLink className="lg:hidden" />}
+      >
+        <CourseStartScreen
+          chapter={chapter ? { id: chapter.id, title: chapter.title } : null}
+          chapters={planned.map((item) => ({
+            id: item.id,
+            lessons: item.lessons.length,
+            title: item.title,
+          }))}
+          course={{ id: course.id, title: course.title }}
+          dailyMinutes={readDailyMinutes(query[MINUTES_PARAM])}
+          minutesPicked={readParam(query[PICKED_PARAM]) !== null}
+          initialFailure={
+            toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
+          }
+          note={
+            <NoAccountNote>
+              <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
+                {t("Start free, no account needed.")}
+              </p>
+            </NoAccountNote>
+          }
+        />
+      </OnboardingPage>
+    </>
   );
 }
 

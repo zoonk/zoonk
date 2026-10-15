@@ -5,7 +5,7 @@ import {
   type PlanTimeAdviceInput,
   planTimeAdviceSchema,
 } from "@zoonk/core/plans/time-advice-contract";
-import { getFromBrowser } from "../api/browser-api";
+import { getFromBrowser, readJsonForThisLearner } from "../api/browser-api";
 
 /**
  * The daily time a goal's plan needs in the week onboarding's time question shows (its study days,
@@ -31,5 +31,5 @@ export async function getGoalTimeAdvice({
     return null;
   }
 
-  return planTimeAdviceSchema.safeParse(await response.json().catch(() => null)).data ?? null;
+  return planTimeAdviceSchema.safeParse(await readJsonForThisLearner(response)).data ?? null;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { checkIdentity } from "@/lib/learner/learner-identity";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { noteLearnerWrite } from "@/lib/learner/learner-views";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
@@ -257,7 +258,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
       const opened = await openKept(scope);
 
-      if (!opened) {
+      // Opening may outlast the learner's session: a page no longer theirs sends nothing.
+      if (!opened || !checkIdentity()) {
         return false;
       }
 
@@ -277,7 +279,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
       const opened = await openKept(scope);
 
-      if (!opened) {
+      // Opening may outlast the learner's session: a page no longer theirs sends nothing.
+      if (!opened || !checkIdentity()) {
         return false;
       }
 

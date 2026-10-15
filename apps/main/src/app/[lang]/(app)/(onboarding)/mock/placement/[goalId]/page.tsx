@@ -1,6 +1,7 @@
 import { LearnNoGoal } from "@/app/[lang]/(app)/(learn)/_components/learn-no-goal";
 import { MockChooserClient } from "@/app/[lang]/mock/mock-chooser-client";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { LearnPageBar } from "@zoonk/learn/bar";
@@ -41,12 +42,16 @@ async function PlacementMockContent({ params }: Props) {
     const t = await getExtracted();
 
     return (
-      <LearnNoGoal
-        bar={<PlacementBar backHref={onboarding} />}
-        description={t("Mock exam, timed like the real one")}
-        next={`/mock/placement/${goalId}`}
-        title={t("A mock exam to find your level")}
-      />
+      <>
+        <LearnerWitness />
+
+        <LearnNoGoal
+          bar={<PlacementBar backHref={onboarding} />}
+          description={t("Mock exam, timed like the real one")}
+          next={`/mock/placement/${goalId}`}
+          title={t("A mock exam to find your level")}
+        />
+      </>
     );
   }
 
@@ -63,11 +68,15 @@ async function PlacementMockContent({ params }: Props) {
   }
 
   return (
-    <MockChooserClient
-      bar={<PlacementBar backHref={onboarding} />}
-      page={{ goalId, placement: true }}
-      view={result.view}
-    />
+    <>
+      <LearnerWitness />
+
+      <MockChooserClient
+        bar={<PlacementBar backHref={onboarding} />}
+        page={{ goalId, placement: true }}
+        view={result.view}
+      />
+    </>
   );
 }
 

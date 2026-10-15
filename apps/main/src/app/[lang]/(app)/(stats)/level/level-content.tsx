@@ -1,3 +1,4 @@
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getMenu } from "@/lib/menu";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getSession } from "@zoonk/core/users/session";
@@ -13,11 +14,17 @@ export async function LevelContent() {
   const [currentBelt, session] = await Promise.all([getBeltLevel(), getSession()]);
 
   if (!(currentBelt && session)) {
-    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("level").url} />;
+    return (
+      <>
+        <LearnerWitness />
+        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("level").url} />
+      </>
+    );
   }
 
   return (
     <ProgressContent>
+      <LearnerWitness />
       <LevelTiles level={currentBelt} />
       <LevelProgression currentBelt={currentBelt} />
       <LevelLine />

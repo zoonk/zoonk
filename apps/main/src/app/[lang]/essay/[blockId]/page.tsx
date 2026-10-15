@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getEssay } from "@zoonk/core/exams/essays/get";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -51,12 +52,18 @@ async function EssayContent({ params }: Props) {
   const result = await getEssay({ blockId });
 
   if (result.status === "unauthorized") {
-    return <AuthGateScreen next={`/essay/${blockId}`} />;
+    return (
+      <>
+        <LearnerWitness />
+        <AuthGateScreen next={`/essay/${blockId}`} />
+      </>
+    );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -64,6 +71,7 @@ async function EssayContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
+      <LearnerWitness />
       <EssayClient essay={result.essay} />
     </MainLearnProvider>
   );

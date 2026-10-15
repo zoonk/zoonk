@@ -1,6 +1,7 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
@@ -56,6 +57,7 @@ async function TestOutBody({ params, searchParams }: Props) {
   if (result.status !== "ready" && result.status !== "plusRequired") {
     return (
       <NotFoundPage>
+        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -70,7 +72,12 @@ async function TestOutBody({ params, searchParams }: Props) {
 
   // Past a free exam plan's first week the test comes with Plus: it says so instead of starting.
   if (result.status === "plusRequired") {
-    return <TestOutPreparingClient generationId={null} page={page} plusRequired />;
+    return (
+      <>
+        <LearnerWitness />
+        <TestOutPreparingClient generationId={null} page={page} plusRequired />
+      </>
+    );
   }
 
   // Its questions are written on the learner's tap (on the chapter's page, or here), never on
@@ -79,18 +86,26 @@ async function TestOutBody({ params, searchParams }: Props) {
     const run = query[TEST_OUT_RUN_PARAM];
 
     return (
-      <TestOutPreparingClient generationId={typeof run === "string" ? run : null} page={page} />
+      <>
+        <LearnerWitness />
+
+        <TestOutPreparingClient generationId={typeof run === "string" ? run : null} page={page} />
+      </>
     );
   }
 
   return (
-    <TestOutClient
-      lessonsLeft={chapter?.lessonsLeft ?? null}
-      page={page}
-      passMark={result.testOut.passMark}
-      questions={result.testOut.questions}
-      trueFalseLabels={result.testOut.trueFalseLabels}
-    />
+    <>
+      <LearnerWitness />
+
+      <TestOutClient
+        lessonsLeft={chapter?.lessonsLeft ?? null}
+        page={page}
+        passMark={result.testOut.passMark}
+        questions={result.testOut.questions}
+        trueFalseLabels={result.testOut.trueFalseLabels}
+      />
+    </>
   );
 }
 

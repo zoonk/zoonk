@@ -1,6 +1,5 @@
-import { adoptNewSession } from "@/lib/learner/learner-pages";
-import { ensureLearnerSummary } from "@/lib/learner/learner-store";
-import { hasSessionHint, setSessionHint } from "@/lib/learner/session-hint";
+import { beginLocalAuthChange } from "@/lib/learner/learner-identity";
+import { SESSION_HINT_HEADER } from "@zoonk/auth/session-hint";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
@@ -28,34 +27,33 @@ async function startGuestSession(): Promise<boolean> {
   }
 
   if (data) {
-    if (!hasSessionHint()) {
-      await markSession();
-    }
-
     return true;
   }
 
-  const { data: guest, error } = await authClient.signIn.anonymous();
+  // The tab makes the guest itself: the hint changing under its own sign-in raises no alarm, and
+  // the page goes on as the guest only if the browser still holds the guest's session when it
+  // answers (another tab may have signed in meanwhile).
+  const change = beginLocalAuthChange();
+  const answer = { tag: null as string | null };
 
-  if (error) {
-    logError("[ensureGuestSession] Could not start a guest session:", error);
-    return false;
+  try {
+    const { data: guest, error } = await authClient.signIn.anonymous({
+      fetchOptions: {
+        onResponse: ({ response }) => {
+          answer.tag = response.headers.get(SESSION_HINT_HEADER);
+        },
+      },
+    });
+
+    if (error) {
+      logError("[ensureGuestSession] Could not start a guest session:", error);
+      return false;
+    }
+
+    return change.complete({ actor: guest.user.id, tag: answer.tag });
+  } finally {
+    change.release();
   }
-
-  // The page that made the guest goes on as them: their summary doesn't read it again.
-  adoptNewSession(guest.user.id);
-  await markSession();
-  return true;
-}
-
-/**
- * The session hint for a session the browser now holds (a new guest's, or one the hint missed),
- * then its summary, whose read keeps the hint for as long as the session lasts: the frame, the
- * palette and analytics follow the learner from here.
- */
-async function markSession() {
-  await setSessionHint();
-  ensureLearnerSummary();
 }
 
 /** The check or sign-in in flight, so callers at the same moment share one guest. */
