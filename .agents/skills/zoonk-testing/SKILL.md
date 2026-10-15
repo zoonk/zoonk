@@ -41,4 +41,12 @@ Run the affected tests, then broaden only for affected consumers or unresolved r
 
 Keep each test file well under 20 seconds locally: CI splits work by whole files, so one long file sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
 
+## Production read-shape ratchets
+
+Database integration tests verify a fact's shape and authorization, but Vitest has no Next.js request `workStore` and cannot prove private-cache dedupe. Ratchet (a) measures exact-repeat physical SQL per production request: normalize the statement and hash its complete bound parameter array without logging values. Keep timestamp-varied groups separate; they can be intentional windows rather than duplicates.
+
+Use the L0 production harness, currently `/tmp/zoonk-review/round-am/fpa-measure/ratchet.mjs`, against the change's isolated worktree and E2E database: `mise x -- node <harness> --worktree <worktree> --port <high-port> --db <own-e2e-db> --label <cut> --routes-only`. Coordinate sequential builds with L0. Reuse the same personas and route IDs for the baseline and each fact's cut on Today API, Plan, Buddy, Chapter and Mind maps. Preserve the source SHA, dirty patch, warmup and three measured repetitions. Compare each fact's SQL/parameter families against the accepted budget in the harness's `ratchet-ledger.md`; do not infer savings from static call-site counts or a zero-repeat total alone.
+
+Pair repeat budgets with process CPU, returned rows, response bytes and process memory. For large facts, measure the internal Flight encoding and decoding cost and bytes separately; process RSS is not allocation attributable to one fact. Report clock, fixture, wrong-kind/not-found and unrun-path limits. Fresh write/workflow checks and private-source visibility guards remain part of acceptance. Ratchet (b), plan-build entries per GET, belongs to plan-compute; ratchet (c), action-induced requests and SQL, belongs to D6.
+
 For Vitest, a package-scoped command is `mise x -- pnpm --filter <workspace> test <test-file>`. E2E build and launch details are in the E2E reference. Report checks accurately, including failures and anything not exercised.

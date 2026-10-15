@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import {
   type ShortPlanToday,
@@ -61,9 +62,7 @@ export async function loadExamMoment({
   }
 
   const [blueprint, finalStretchStart] = await Promise.all([
-    goal.examBlueprintId
-      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-      : null,
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
     loadFinalStretchStart(goal.id),
   ]);
 

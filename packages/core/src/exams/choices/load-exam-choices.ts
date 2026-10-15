@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type ExamChoiceView } from "./exam-choice-contract";
 import {
@@ -15,15 +15,21 @@ export async function loadExamChoices(goalId: string): Promise<ExamChoice[]> {
   return readExamChoices(plan?.settings);
 }
 
-async function loadStructure(examBlueprintId: string | null): Promise<ExamStructure | null> {
+async function loadStructure(
+  examBlueprintId: string | null,
+  knownBlueprint: Pick<ExamBlueprint, "structure"> | null | undefined,
+): Promise<ExamStructure | null> {
   if (!examBlueprintId) {
     return null;
   }
 
-  const blueprint = await prisma.examBlueprint.findUnique({
-    select: { structure: true },
-    where: { id: examBlueprintId },
-  });
+  const blueprint =
+    knownBlueprint === undefined
+      ? await prisma.examBlueprint.findUnique({
+          select: { structure: true },
+          where: { id: examBlueprintId },
+        })
+      : knownBlueprint;
 
   return examStructureSchema.safeParse(blueprint?.structure).data ?? null;
 }
@@ -33,13 +39,15 @@ async function loadStructure(examBlueprintId: string | null): Promise<ExamStruct
  * change them; none for a goal without an exam notice or one without choices.
  */
 export async function loadExamChoiceViews({
+  blueprint,
   choices,
   examBlueprintId,
 }: {
+  blueprint?: Pick<ExamBlueprint, "structure"> | null;
   choices: readonly ExamChoice[];
   examBlueprintId: string | null;
 }): Promise<ExamChoiceView[]> {
-  const structure = await loadStructure(examBlueprintId);
+  const structure = await loadStructure(examBlueprintId, blueprint);
   return structure ? listExamChoiceViews({ choices, structure }) : [];
 }
 
@@ -48,12 +56,14 @@ export async function loadExamChoiceViews({
  * subject's area (see `findPartAreas`); none for a goal without an exam notice.
  */
 export async function loadPartAreas({
+  blueprint,
   areas,
   examBlueprintId,
 }: {
+  blueprint?: Pick<ExamBlueprint, "structure"> | null;
   areas: readonly string[];
   examBlueprintId: string | null;
 }): Promise<Map<string, string>> {
-  const structure = await loadStructure(examBlueprintId);
+  const structure = await loadStructure(examBlueprintId, blueprint);
   return structure ? findPartAreas({ areas, structure }) : new Map();
 }

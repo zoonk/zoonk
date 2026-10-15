@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import {
   type PlanGraph,
@@ -140,9 +140,11 @@ export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<
  * an exam goal that names its blueprint reads it (only exams practice with recordings).
  */
 export async function loadGoalListeningSkillIds({
+  blueprint,
   goal,
   graph,
 }: {
+  blueprint?: ExamBlueprint | null;
   goal: Pick<Goal, "examBlueprintId" | "kind" | "targetLanguage">;
   graph: unknown;
 }): Promise<Set<string>> {
@@ -150,9 +152,10 @@ export async function loadGoalListeningSkillIds({
     return new Set();
   }
 
-  const examBlueprint = await prisma.examBlueprint.findUnique({
-    where: { id: goal.examBlueprintId },
-  });
+  const examBlueprint =
+    blueprint === undefined
+      ? await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : blueprint;
 
   return getListeningSkillIds({
     exam: toListeningExam({ ...goal, examBlueprint }),

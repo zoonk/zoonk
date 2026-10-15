@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { examReportsSql } from "@zoonk/db/anonymous-records";
 import { isJsonObject } from "@zoonk/utils/json";
 import {
@@ -98,13 +98,15 @@ async function loadReports({
 /** The scale the goal's exam reports on (SAT, AP, TOEFL), from its blueprint or title. */
 async function loadExamScale(
   goal: Pick<Goal, "examBlueprintId" | "title">,
+  knownBlueprint: Pick<ExamBlueprint, "identityKey" | "name"> | null | undefined,
 ): Promise<ExamScale | null> {
-  const blueprint = goal.examBlueprintId
-    ? await prisma.examBlueprint.findUnique({
-        select: { identityKey: true, name: true },
-        where: { id: goal.examBlueprintId },
-      })
-    : null;
+  const blueprint =
+    knownBlueprint === undefined && goal.examBlueprintId
+      ? await prisma.examBlueprint.findUnique({
+          select: { identityKey: true, name: true },
+          where: { id: goal.examBlueprintId },
+        })
+      : (knownBlueprint ?? null);
 
   return getExamScale({ blueprint, goal });
 }
@@ -168,9 +170,11 @@ function getRecentMockEvidence({
  * against them.
  */
 export async function loadGoalScoreEstimate({
+  blueprint,
   goal,
   ledgerMocks,
 }: {
+  blueprint?: Pick<ExamBlueprint, "identityKey" | "name"> | null;
   goal: Pick<Goal, "examBlueprintId" | "id" | "title">;
   /** Finished mocks from the ledger: right and wrong answers, for the percent estimate. */
   ledgerMocks: readonly LedgerMock[];
@@ -181,7 +185,7 @@ export async function loadGoalScoreEstimate({
     return null;
   }
 
-  const examScale = await loadExamScale(goal);
+  const examScale = await loadExamScale(goal, blueprint);
   const abilities = examScale ? [] : getIrtAbilities(mocks);
   const scale: EstimatedScore["scale"] = examScale ?? (abilities.length > 0 ? "irt" : "percent");
   const reports = await loadReports({ examBlueprintId: goal.examBlueprintId, scale });

@@ -7,6 +7,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
@@ -82,9 +83,11 @@ async function loadMap({
  * from the notice, so the page offers it as Today does, or that the learner's month has no sitting.
  */
 async function loadExamNoticeDates({
+  blueprint,
   goal,
   today,
 }: {
+  blueprint: ExamBlueprint | null;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "targetDate">;
   today: Date;
 }): Promise<NoticeDates> {
@@ -94,6 +97,7 @@ async function loadExamNoticeDates({
   });
 
   return loadNoticeDates({
+    blueprint,
     goal,
     goalDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     noticeDate: plan ? parsePlanSettings(plan.settings).noticeDate : null,
@@ -208,9 +212,7 @@ export async function getExamView({
     return { status: "notExam" };
   }
 
-  const blueprint = goal.examBlueprintId
-    ? await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-    : null;
+  const blueprint = goal.examBlueprintId ? await readExamBlueprint(goal.examBlueprintId) : null;
 
   const calendar = getExamCalendar({ blueprint, goal });
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
@@ -247,14 +249,14 @@ export async function getExamView({
   ] = await Promise.all([
     loadMap({ blueprint, goalId, userId }),
     loadExamHistory({ goalId, today }),
-    loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mockResults }),
+    loadGoalScoreEstimate({ blueprint, goal, ledgerMocks: inputs.mockResults }),
     prisma.examResult.findUnique({ where: { goalId } }),
     loadShortPlanDay({ goal, today }),
     loadFinalStretchStart(goalId),
     loadNextMock({ blueprint, goal, today }),
     loadRunningMocks({ goalId, userId }),
-    loadTargetCutoff({ details: goal.details, examBlueprintId: goal.examBlueprintId }),
-    loadExamNoticeDates({ goal, today }),
+    loadTargetCutoff({ blueprint, details: goal.details, examBlueprintId: goal.examBlueprintId }),
+    loadExamNoticeDates({ blueprint, goal, today }),
     loadSpeakingPaper({
       access: includesMockExams ? "open" : "plusRequired",
       goal: { ...goal, examBlueprint: blueprint },

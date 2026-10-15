@@ -201,6 +201,7 @@ async function loadKeptNoticeDays(goalId: string): Promise<string[]> {
 }
 
 type NoticeDatesRequest = {
+  blueprint?: NoticeDayBlueprint | null;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind">;
   goalDate: string | null;
   noticeDate: string | null;
@@ -212,6 +213,7 @@ type NoticeDatesRequest = {
  * learner kept their date over, so the plan and the exam page say the same; none for other goals.
  */
 export async function loadNoticeDates({
+  blueprint: knownBlueprint,
   goal,
   goalDate,
   noticeDate,
@@ -222,10 +224,12 @@ export async function loadNoticeDates({
   }
 
   const [blueprint, kept] = await Promise.all([
-    prisma.examBlueprint.findUnique({
-      select: { edition: true, ownerId: true },
-      where: { id: goal.examBlueprintId },
-    }),
+    knownBlueprint === undefined
+      ? prisma.examBlueprint.findUnique({
+          select: { edition: true, ownerId: true },
+          where: { id: goal.examBlueprintId },
+        })
+      : knownBlueprint,
     loadKeptNoticeDays(goal.id),
   ]);
 

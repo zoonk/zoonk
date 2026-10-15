@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type CutoffTarget, getCutoffTarget } from "./cutoff-target";
 import { type TargetCutoff } from "./target-cutoff-contract";
@@ -35,9 +35,11 @@ function findMaxScore({
  * target, a shared exam, a found cut-off or its scale: nothing is guessed.
  */
 export async function loadTargetCutoff({
+  blueprint: knownBlueprint,
   details,
   examBlueprintId,
 }: {
+  blueprint?: Pick<ExamBlueprint, "ownerId" | "role" | "structure"> | null;
   details: unknown;
   examBlueprintId: string | null | undefined;
 }): Promise<TargetCutoff | null> {
@@ -45,10 +47,13 @@ export async function loadTargetCutoff({
     return null;
   }
 
-  const blueprint = await prisma.examBlueprint.findUnique({
-    select: { ownerId: true, role: true, structure: true },
-    where: { id: examBlueprintId },
-  });
+  const blueprint =
+    knownBlueprint === undefined
+      ? await prisma.examBlueprint.findUnique({
+          select: { ownerId: true, role: true, structure: true },
+          where: { id: examBlueprintId },
+        })
+      : knownBlueprint;
 
   const target =
     blueprint && !blueprint.ownerId ? getCutoffTarget({ details, role: blueprint.role }) : null;

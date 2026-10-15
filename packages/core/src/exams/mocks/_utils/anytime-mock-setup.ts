@@ -86,11 +86,14 @@ async function canBuildMock({
  * at learners' real pace on the exam's mocks. The half mock copies the exam day whose turn it is,
  * as the weekly mocks take turns. None while no mock can be built (see `canBuildMock`).
  */
-export async function loadAnytimeMockSetup(goal: Goal): Promise<AnytimeMockSetup> {
+export async function loadAnytimeMockSetup(
+  goal: Goal,
+  knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,
+): Promise<AnytimeMockSetup> {
   const [blueprint, areas, finished, pace, essays, choices, typed, speaking] = await Promise.all([
-    goal.examBlueprintId
+    knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-      : null,
+      : (knownBlueprint ?? null),
     loadSkillAreas(goal.id),
     countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
