@@ -1,5 +1,5 @@
-import { type PlanContext } from "./plan-context";
 import { buildPhaseViews } from "./plan-phase-views";
+import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
 import { type TodayLearnBlock, findUpNextItem } from "./up-next-item";
 
@@ -12,11 +12,13 @@ type PathInput = Pick<
   | "shortPlan"
   | "skillAreas"
   | "taughtSkillIds"
-> & { challengesOpen: boolean; context: PlanContext; todayBlocks: readonly TodayLearnBlock[] };
+> & { challengesOpen: boolean; context: PlanReadContext; todayBlocks: readonly TodayLearnBlock[] };
 
 /** The path keeps locked challenges visible while its phase progress counts accessible work. */
 export function buildPlanPath({ context, todayBlocks, ...input }: PathInput) {
   const { goal, items, phases, state } = context;
+
+  const next = findUpNextItem({ items, todayBlocks });
 
   return buildPhaseViews({
     ...input,
@@ -28,6 +30,6 @@ export function buildPlanPath({ context, todayBlocks, ...input }: PathInput) {
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
     targetDate: goal.targetDate,
     today: context.today,
-    upNextItemId: findUpNextItem({ items, todayBlocks })?.id ?? null,
+    upNextItemId: next ? getPlanReadItemKey(next) : null,
   });
 }

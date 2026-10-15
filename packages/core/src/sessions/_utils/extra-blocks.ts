@@ -1,13 +1,16 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
+import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { getGoalField } from "../../library/items/item-field";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
 import { type ExtraTime } from "../extra-time";
 import { PRACTICE_MINUTES_PER_QUESTION, type PlannedBlock } from "../session-builder";
+import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
@@ -15,7 +18,11 @@ import { loadExamPrepAccess } from "./plus-only-lessons";
 import { takePracticeQuestions } from "./practice-sets";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
-import { type StudySessionRow } from "./study-session-access";
+import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
+
+type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
+  blocks: readonly DayBlockInput[];
+};
 
 /** The plan's "Too easy" or "Too hard" steering, which bonus practice follows too. */
 async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias> {
@@ -30,7 +37,7 @@ async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias
  * A free exam plan past its first week on the session's day: its practice and new lessons come
  * with Plus, so no bonus block adds them.
  */
-export async function isFreeWeekOver(session: StudySessionRow): Promise<boolean> {
+export async function isFreeWeekOver(session: ExtraDay): Promise<boolean> {
   if (!session.goal) {
     return false;
   }
@@ -54,7 +61,7 @@ export async function buildExtraPractice({
 }: {
   areaId?: string | null;
   minutes: number;
-  session: StudySessionRow;
+  session: ExtraDay;
   skillIds: string[];
   title?: string | null;
   userId: string;
@@ -116,7 +123,7 @@ export async function buildExtraLesson({
 }: {
   areaId?: string | null;
   planItemIds?: readonly string[];
-  session: StudySessionRow;
+  session: ExtraDay;
   userId: string;
 }): Promise<PlannedBlock | null> {
   if (await isFreeWeekOver(session)) {
@@ -178,7 +185,7 @@ export async function planExtraBlock({
   userId,
 }: {
   minutes: number;
-  session: StudySessionRow;
+  session: ExtraDay;
   skillIds: string[];
   userId: string;
 }): Promise<PlannedBlock | null> {
@@ -199,7 +206,7 @@ export async function withExtraStudyCheck({
   userId,
 }: {
   extraTime: ExtraTime;
-  session: StudySessionRow;
+  session: ExtraDay;
   userId: string;
 }): Promise<ExtraTime> {
   if (!extraTime.available) {
@@ -224,21 +231,56 @@ export async function withExtraStudyCheck({
  * blocks read under the lock.
  */
 export async function withSessionAppendLock<TResult>({
+  planId,
   run,
   session,
 }: {
+  /** A queue-only edit changes its own plan, never the learner model of their other goals. */
+  planId?: string;
   run: (locked: { session: StudySessionRow; transaction: TransactionClient }) => Promise<TResult>;
   session: StudySessionRow;
 }): Promise<TResult> {
-  return prisma.$transaction(async (transaction) => {
-    const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });
+  class QueueUnchangedError extends Error {
+    override name = "QueueUnchangedError";
+  }
 
-    if (!locked) {
-      throw new Error("The study session no longer exists.");
+  const unchanged: { value: { result: TResult } | null } = { value: null };
+
+  try {
+    return await prisma.$transaction(async (transaction) => {
+      if (planId) {
+        await markPlansChanged(transaction, { planIds: [planId] });
+      } else {
+        await markLearnerChanged(transaction, { userId: session.userId });
+      }
+
+      const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });
+
+      if (!locked) {
+        throw new Error("The study session no longer exists.");
+      }
+
+      const result = await run({ session: locked, transaction });
+
+      const current = await transaction.studySession.findUnique({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: session.id },
+      });
+
+      if (isDeepStrictEqual(locked, current)) {
+        unchanged.value = { result };
+        throw new QueueUnchangedError();
+      }
+
+      return result;
+    });
+  } catch (error) {
+    if (error instanceof QueueUnchangedError && unchanged.value) {
+      return unchanged.value.result;
     }
 
-    return run({ session: locked, transaction });
-  });
+    throw error;
+  }
 }
 
 /** Adds a bonus block at the end of the session. Call it inside `withSessionAppendLock`. */

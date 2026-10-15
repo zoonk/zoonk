@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { type PlanReadContext } from "../../../plans/_utils/plan-read-projection";
 import { type SyllabusView } from "../syllabus-contract";
 import { buildSyllabus } from "./build-syllabus";
 import { loadSyllabusInput } from "./load-syllabus";
@@ -9,7 +10,10 @@ import { loadSyllabusInput } from "./load-syllabus";
  * measured in lessons; null for an exam (measured by preparation), a quick explanation or a goal
  * without a plan. The caller has checked the goal is the learner's.
  */
-export async function loadGoalLessons(goalId: string): Promise<SyllabusView["lessons"] | null> {
+export async function loadGoalLessons(
+  goalId: string,
+  selectedPlan?: Pick<PlanReadContext, "items" | "state">,
+): Promise<SyllabusView["lessons"] | null> {
   const goal = await prisma.goal.findUnique({
     select: {
       createdAt: true,
@@ -18,6 +22,7 @@ export async function loadGoalLessons(goalId: string): Promise<SyllabusView["les
       id: true,
       kind: true,
       language: true,
+      primaryCourseId: true,
       targetDate: true,
       userId: true,
     },
@@ -28,6 +33,6 @@ export async function loadGoalLessons(goalId: string): Promise<SyllabusView["les
     return null;
   }
 
-  const input = await loadSyllabusInput(goal);
+  const input = await loadSyllabusInput(goal, selectedPlan);
   return input ? buildSyllabus(input).lessons : null;
 }

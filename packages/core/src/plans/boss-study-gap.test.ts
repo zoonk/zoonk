@@ -10,8 +10,8 @@ import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { readBlockPayload } from "../sessions/block-payload";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -95,11 +95,7 @@ async function readItems(planId: string) {
 }
 
 async function readToday(goalId: string) {
-  const result = await getTodayView({ goalId, timeZone: "UTC" });
-
-  if (result.status !== "ready") {
-    throw new Error(`Expected the real day: ${result.status}`);
-  }
+  const result = await openTodayView({ goalId, timeZone: "UTC" });
 
   const session = await prisma.studySession.findUniqueOrThrow({
     include: { blocks: { orderBy: { position: "asc" } } },

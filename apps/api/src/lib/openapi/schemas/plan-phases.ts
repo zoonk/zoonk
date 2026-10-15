@@ -86,7 +86,13 @@ export const planPhaseSchema = z
             description:
               "The challenge remains visible in the plan, but starting it requires Plus; its intro reports `locked` and `status` `plusRequired`",
           }),
-        planItemId: z.uuid().meta({ description: "Its intro is GET /challenges/{planItemId}" }),
+        planItemId: z
+          .uuid()
+          .nullable()
+          .meta({
+            description:
+              "Its intro is GET /challenges/{planItemId}; null for an unsaved selection, shown without an action link until Open persists it",
+          }),
         state: z.enum(["done", "upcoming"]),
         when: z
           .enum(["date", "nextSession", "queued"])

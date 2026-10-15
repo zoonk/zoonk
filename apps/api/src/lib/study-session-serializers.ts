@@ -17,7 +17,7 @@ function toOptionalLogicalDate(date: Date | null): string | null {
 
 type StudySessionView = Extract<StudySessionResult, { status: "ready" }>["session"];
 
-export function serializeStudySession(session: StudySessionView) {
+export function serializeStudySession(session: StudySessionView | TodayView["session"]) {
   return {
     ...session,
     localDate: toLogicalDate(session.localDate),

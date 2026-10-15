@@ -33,10 +33,8 @@ async function stayAway(goalId: string) {
 }
 
 /**
- * Opening Today after days away builds the day from a plan that moved forward first: what those
- * days left comes first, labeled as catching up, and the Plan says how much is left right away
- * instead of "Keeping pace". The plan changes while Today renders, where Next.js can't clear caches; the
- * plan's reads are private caches no server keeps, so the Plan reads it fresh anyway.
+ * After days away, both reads show the selected plan in memory. Only the learner's Start POST
+ * persists the moved-forward plan and its mandatory change notice.
  */
 test.describe("Plan after days away", () => {
   test("after days away, Today puts what they left first and the Journey says what's left to catch up", async ({
@@ -45,9 +43,9 @@ test.describe("Plan after days away", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const plan = await stayAway(user.goalId);
 
-      // Before Today moves it, the Plan reads every lesson left as overdue, and is cached so.
+      // No GET settles the plan in storage; Plan already shows the actual selected backlog.
       await page.goto("/plan");
-      await expect(planNumbers(page)).toContainText(/Needs adjusting|days? behind/u);
+      await expect(planNumbers(page)).toContainText(/\d+ lessons? to catch up/u);
 
       await page.goto("/today");
       await expect(startDayButton(page)).toBeVisible();
@@ -57,6 +55,14 @@ test.describe("Plan after days away", () => {
 
       const session = page.getByRole("region", { name: "Today's session" });
       await expect(session.getByText(/^Catching up/u).first()).toBeVisible();
+
+      // GETs remain read-only. The same real Start persists the plan that both reads showed.
+      await expect(
+        prisma.planChange.count({ where: { kind: "missedDays", planId: plan.id } }),
+      ).resolves.toBe(0);
+
+      await startDayButton(page).click();
+      await expect(page).toHaveURL(/\/session(?:[/?]|$)/u);
 
       await expect
         .poll(() => prisma.planChange.count({ where: { kind: "missedDays", planId: plan.id } }))
@@ -74,7 +80,7 @@ test.describe("Plan after days away", () => {
       await stayAway(user.goalId);
       await page.setViewportSize({ height: 844, width: 390 });
 
-      // Today moves the plan forward first, so the Plan then says there's a little to catch up.
+      // Today and Plan project the moved-forward work without persisting it on either GET.
       await page.goto("/today");
       await expect(startDayButton(page)).toBeVisible();
 

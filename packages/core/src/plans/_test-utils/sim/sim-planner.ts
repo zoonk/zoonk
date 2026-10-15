@@ -3,6 +3,7 @@ import { listFinishedDays } from "../../_utils/finished-days";
 import { getLevelFloor, keepPastBasicsBands } from "../../_utils/level-bands";
 import { getPlanInputsKey, readLanding } from "../../_utils/plan-inputs-key";
 import { type ComputedPlan } from "../../_utils/replan";
+import { summarizeRetainedPlan } from "../../_utils/retained-plan-allocation";
 import { isStandIn } from "../../_utils/stand-in-lessons";
 import { chooseBases } from "../../planner/base-choices";
 import { type BuildPlanInput, type PlanningMode, buildPlan } from "../../planner/build-plan";
@@ -25,6 +26,8 @@ import {
   parsePlanSettings,
 } from "../../planner/plan-state";
 import { type PlannerLesson } from "../../planner/plan-units";
+import { listSelectedItemFacts } from "../../planner/selected-item-facts";
+import { summarizeSelectedPlan } from "../../planner/selected-plan-summary";
 import { getSettledSkillIds } from "../../planner/settled-skills";
 import { listGapSkillIds, readSimEvidence } from "./sim-claims";
 import { type SimPlan, type SimWorld, getSimGoal, getSimPlanCarryOver } from "./sim-world";
@@ -222,13 +225,26 @@ export function computeSimPlan(request: SimPlanRequest): ComputedPlan {
       planned: built,
     }),
     inputsKey: getPlanInputsKey({ input, items: built.items }),
+    itemFacts: listSelectedItemFacts({ built, input: { ...input, ...landing } }),
     pace: prepared.pace,
+    selected: summarizeSelectedPlan({
+      built,
+      examSubjects: world.inputs.examSubjects,
+      input: { ...input, ...landing },
+    }),
     standInLessons,
     state: {
       ...state,
       graph: withPlannedLessons({ graph: prepared.graph, skillLessons: built.skillLessons }),
       settings: prepared.settings,
     },
+    summarizeRetained: () =>
+      summarizeRetainedPlan({
+        built,
+        context: world.plan,
+        examSubjects: world.inputs.examSubjects,
+        input: { ...input, ...landing },
+      }),
   };
 }
 

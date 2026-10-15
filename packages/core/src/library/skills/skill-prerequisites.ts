@@ -8,6 +8,10 @@ import { prisma } from "@zoonk/db";
 export async function loadSkillPrerequisites(
   skillIds: readonly string[],
 ): Promise<Map<string, string[]>> {
+  if (skillIds.length === 0) {
+    return new Map();
+  }
+
   const edges = await prisma.skillPrerequisite.findMany({
     select: { prerequisiteId: true, skillId: true },
     where: { prerequisiteId: { in: [...skillIds] }, skillId: { in: [...skillIds] } },

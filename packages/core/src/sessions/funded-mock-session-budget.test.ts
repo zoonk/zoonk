@@ -4,7 +4,10 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { after as afterResponse } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
@@ -18,6 +21,7 @@ import { parsePlanSettings } from "../plans/planner/plan-state";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
+import { openTodayView } from "./_test-utils/open-today-view";
 import { completeLessonPlanItems } from "./_utils/plan-items";
 import { readBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
@@ -133,6 +137,8 @@ async function finishTeaching({ items, userId }: { items: PlanItem[]; userId: st
 }
 
 async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
+  const finishDeferred = runDeferredWork();
+
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
     where: { planId: fixture.plan.id },
@@ -198,6 +204,9 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
     seconds: 900,
     startedAt: new Date("2020-10-06T12:00:00Z"),
   });
+
+  // Completion returns before re-planning; observe the real request-lifetime work before its result.
+  await finishDeferred();
 
   const afterFirst = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
@@ -298,7 +307,10 @@ describe("funded mock sessions reserve all their fixed work", () => {
     vi.setSystemTime(new Date(`${START}T12:00:00Z`));
   });
 
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.mocked(afterResponse).mockReset();
+    vi.useRealTimers();
+  });
 
   it("funds and can start the real 15-minute boss before the 165-minute moved mock", async () => {
     const fixture = await setup({ withBoss: true });
@@ -346,7 +358,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     vi.setSystemTime(new Date(`${BOSS_DAY}T12:00:00Z`));
 
     const [today, view] = await Promise.all([
-      getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+      openTodayView({ goalId: goal.id, timeZone: "UTC" }),
       getGoalPlan(goal.id),
     ]);
 
@@ -444,7 +456,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
 
     vi.setSystemTime(new Date("2020-10-06T12:00:00Z"));
-    const skipped = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+    const skipped = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
     expect(skipped).toMatchObject({ status: "ready" });
 
     if (skipped.status !== "ready") {
@@ -468,7 +480,35 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
 
     const beforeView = await getGoalPlan(fixture.goal.id);
-    const today = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+
+    const preview = await countDatabaseStatements(() =>
+      getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
+    );
+
+    expect(preview.writes).toBe(0);
+    expect(preview.result.status).toBe("ready");
+
+    if (preview.result.status !== "ready") {
+      throw new Error("Expected the selected missed-day preview");
+    }
+
+    // The selected mock stays visible; its intro opens only after its row is persisted.
+    expect(preview.result.today.weeklyChallenge).toMatchObject({
+      date: new Date("2020-10-20"),
+      kind: "mock",
+      planItemId: null,
+      questions: 30,
+      timeLimitMinutes: 165,
+    });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: fixture.plan.id },
+      }),
+    ).resolves.toStrictEqual(before);
+
+    const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
 
     const after = await prisma.plan.findUniqueOrThrow({
       include: { items: { orderBy: { position: "asc" } } },
@@ -502,7 +542,20 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the funded coevent Plan");
     }
 
-    expect(beforeView.plan.week.days.find((day) => day.date === BOSS_DAY)?.minutes).toBe(180);
+    // Read-only Plan already projects the real missed-day relocation; the saved premise stays180.
+    expect(beforeView.plan.week.days.find((day) => day.date === BOSS_DAY)?.minutes).toBe(30);
+    expect(view.status).toBe("ready");
+
+    if (view.status !== "ready") {
+      throw new Error("Expected the persisted relocated Plan");
+    }
+
+    const visible = (plan: typeof view.plan) =>
+      plan.week.days
+        .flatMap((day) => day.items)
+        .map(({ kind, scheduledFor, title }) => ({ kind, scheduledFor, title }));
+
+    expect(visible(beforeView.plan)).toStrictEqual(visible(view.plan));
 
     expect(before.items.find((item) => item.kind === "boss" && item.phase === 0)).toMatchObject({
       completedAt: null,
@@ -674,7 +727,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     ).toBe(165);
 
     vi.setSystemTime(new Date(`${ORIGINAL_MOCK}T12:00:00Z`));
-    const result = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const result = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     if (result.status !== "ready") {
       throw new Error("Expected the actual mock session");

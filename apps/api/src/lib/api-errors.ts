@@ -4,9 +4,11 @@ import { type z } from "zod";
 export const httpStatus = {
   badRequest: 400,
   conflict: 409,
+  created: 201,
   forbidden: 403,
   internalError: 500,
   notFound: 404,
+  ok: 200,
   paymentRequired: 402,
   tooManyRequests: 429,
   unauthorized: 401,

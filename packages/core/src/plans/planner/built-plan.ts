@@ -3,6 +3,7 @@ import { type LaidOutOrder } from "./learned-order";
 import { type MockFunding } from "./mock-funding";
 import { type PlannedItem } from "./plan-items";
 import { type PlannedMocks } from "./planned-mocks";
+import { type PlanDay } from "./schedule-units";
 import { type SkillMinutes } from "./skill-minutes";
 import { type PlanOutline } from "./summarize-plan";
 
@@ -28,6 +29,8 @@ export type BuiltPlan = PlanOutline & {
   keptKeys: ReadonlySet<string>;
   /** The mocks the plan funds, which Today reads days' time through (see `fundMocks`). */
   mockFunding: MockFunding[];
+  /** The actual selected allocation, projected without another plan build. */
+  planDays: PlanDay[];
   /** How the run settled its mocks (see `settlePlannedMocks`), its unfunded ones included. */
   mocks: PlannedMocks;
   /**

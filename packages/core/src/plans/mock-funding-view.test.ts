@@ -8,6 +8,7 @@ import { todayResponseSchema } from "../../../../apps/api/src/lib/openapi/schema
 import { serializeToday } from "../../../../apps/api/src/lib/study-session-serializers";
 import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import {
   NET_SCORED_EXAM_STRUCTURE,
   SESSION_TODAY,
@@ -136,7 +137,7 @@ describe("public mock funding views", () => {
       }),
     ]);
 
-    const today = await getTodayView({ goalId: goal.id });
+    const today = await openTodayView({ goalId: goal.id });
 
     if (today.status !== "ready") {
       throw new Error("Expected welcome-back Today");
@@ -276,7 +277,7 @@ describe("public mock funding views", () => {
     expect(after.plan).toMatchObject({ fundedMocks: [{ id: mock.id, minutes: 165 }] });
   });
 
-  it("reads Today funding after day resolution has actually refreshed the saved plan", async () => {
+  it("previews the selected funding without saving, then opens that same funded day", async () => {
     const { goal, plan, skills } = await setup();
 
     const blueprint = await examBlueprintFixture({
@@ -307,12 +308,19 @@ describe("public mock funding views", () => {
       }),
     ]);
 
+    // GET is read-only; the learner's POST persists the same selected allocation.
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const result = await getTodayView({ goalId: goal.id });
 
     if (result.status !== "ready") {
       throw new Error("Expected refreshed Today");
     }
 
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+
+    const opened = await openTodayView({ goalId: goal.id });
     const refreshed = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(refreshed.version).toBeGreaterThan(plan.version);
 
@@ -329,6 +337,9 @@ describe("public mock funding views", () => {
       setAsideMinutes: 30,
     });
 
+    expect(opened.today.mockFunding).toStrictEqual(result.today.mockFunding);
+    expect(opened.today.session.minutes).toStrictEqual(result.today.session.minutes);
+    expect(opened.today.session.week.time).toStrictEqual(result.today.session.week.time);
     expect(result.today).toMatchObject({ mockFunding: expected });
     expect(result.today.session.minutes.dailyGoal % 1).not.toBe(0);
     expect(result.today.session.week.time.targetMinutes % 1).not.toBe(0);

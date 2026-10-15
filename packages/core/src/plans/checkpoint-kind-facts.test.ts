@@ -18,8 +18,8 @@ import { estimateCoursePlan } from "../catalog/course-estimate";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { readBlockPayload } from "../sessions/block-payload";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -176,7 +176,7 @@ async function onBossDay(fixture: Awaited<ReturnType<typeof setup>>, expectedMin
     .soft(challenge)
     .toMatchObject({ challenge: { estimatedMinutes: expectedMinutes }, status: "ready" });
 
-  const today = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+  const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
 
   if (today.status !== "ready") {
     throw new Error("Expected the real boss-day session");
@@ -318,6 +318,10 @@ describe("checkpoint kind facts share the actual planned and played duration", (
     await refreshGoalPlan({ goalId: fixture.goal.id, pace: "saved" });
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
     expect.soft(after.inputsKey).not.toBe(before.inputsKey);
+
+    expect(after.version, "Changed real checkpoint minutes require the complete write").toBe(
+      before.version + 1,
+    );
 
     expect
       .soft(await planBossMinutes(fixture.goal.id))

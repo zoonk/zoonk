@@ -4,7 +4,9 @@ import { isWritingItem } from "./plan-phase-views";
 /** Lessons and chapters are what a plan teaches; challenges, mocks and reviews come around them. */
 const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
-export type UpNextCandidate = Pick<PlanItem, "chapterId" | "id" | "kind" | "lessonId" | "status">;
+export type UpNextCandidate = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "status"> & {
+  id: string | null;
+};
 
 /** A learn block of today's session not done yet, as Today opens it (`loadTodayLearnBlocks`). */
 export type TodayLearnBlock = { lessonId: string | null; planItemId: string | null };
@@ -60,7 +62,7 @@ export function findUpNextItem<Item extends UpNextCandidate>({
   const today = todayBlocks
     .map(
       (block) =>
-        todo.find((item) => item.id === block.planItemId) ??
+        todo.find((item) => block.planItemId !== null && item.id === block.planItemId) ??
         todo.find((item) => block.lessonId !== null && item.lessonId === block.lessonId),
     )
     .find(Boolean);

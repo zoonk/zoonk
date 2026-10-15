@@ -1,3 +1,4 @@
+import { mockIdentitySchema } from "@zoonk/core/sessions/day-block";
 import { z } from "zod";
 
 export const checkpointAnsweredQuestionsSchema = z
@@ -23,6 +24,7 @@ export const studyCheckpointSchema = z
     mock: z
       .boolean()
       .meta({ description: "An exam's weekly mock, which feeds the estimated score" }),
+    mockIdentity: mockIdentitySchema.nullable(),
     passMark: z
       .number()
       .int()

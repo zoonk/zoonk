@@ -30,9 +30,9 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
-import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { createExamGoal } from "./helpers/exams";
+import { openStudyDay } from "./helpers/open-study-day";
 
 const SUGGESTION = "Explain it more simply";
 
@@ -119,8 +119,7 @@ async function createModulesGoal(userId: string) {
 async function createMockBlock({ api, userId }: { api: APIRequestContext; userId: string }) {
   const { goal } = await createExamGoal(userId);
 
-  const today = await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
-  const { session } = todayResponseSchema.parse(await today.json());
+  const session = await openStudyDay({ api, goalId: goal.id });
   const block = session.blocks.find((candidate) => candidate.checkpoint?.mock);
 
   if (!block) {

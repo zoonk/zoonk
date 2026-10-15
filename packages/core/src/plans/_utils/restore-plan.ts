@@ -2,7 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type ExistingPlanItem } from "../planner/plan-items";
-import { type PlanContext } from "./plan-context";
+import { type ContextPlanItem, type PlanContext } from "./plan-context";
 import { type PlanSnapshot, getSnapshotStandInLessons, parsePlanSnapshot } from "./plan-snapshot";
 import { writePlan } from "./write-plan";
 
@@ -49,7 +49,7 @@ function restoreStatus({
   status,
   tx,
 }: {
-  items: readonly ExistingPlanItem[];
+  items: readonly ContextPlanItem[];
   planId: string;
   status: "skipped" | "todo";
   tx: TransactionClient;
@@ -88,8 +88,10 @@ export async function restorePlan({
       inputsKey: snapshot.inputsKey,
       items: items.map(({ position: _position, ...item }) => item),
       phases: snapshot.phases,
+      sourceSkillIds: snapshot.sourceSkillIds,
       standInLessons: getSnapshotStandInLessons(snapshot),
       state: snapshot.state,
+      summary: snapshot.summary,
     },
     tx,
   });

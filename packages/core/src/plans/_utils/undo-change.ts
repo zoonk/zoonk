@@ -5,6 +5,7 @@ import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-ses
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
+import { markPlanWrite } from "./mark-plan-write";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { revalidatePlanTags } from "./replan";
@@ -108,10 +109,7 @@ export async function undoChange({
   );
 
   const restored = await prisma.$transaction(async (tx) => {
-    // Guest linking moves learner rows under an exclusive owner lock.
-    await tx.$queryRaw`
-      SELECT id FROM users WHERE id = ${context.goal.userId}::uuid FOR KEY SHARE
-    `;
+    const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
     const session =
       snapshot.todaySession &&
@@ -123,7 +121,7 @@ export async function undoChange({
         userId: context.goal.userId,
       }));
 
-    await restorePlan({ context, items, snapshot, tx });
+    await restorePlan({ context: writeContext, items, snapshot, tx });
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
 

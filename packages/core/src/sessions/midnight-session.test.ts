@@ -113,6 +113,7 @@ describe("a session the learner is in when midnight comes", () => {
 
     expect(today.id).toBe(session.id);
     expect(today.current).toBe(true);
+    expect(today.dayEndsAt).toBe(new Date("2026-10-01T01:05:00Z").getTime());
     expect(next?.lessonId).toBe(second.id);
 
     await expect(

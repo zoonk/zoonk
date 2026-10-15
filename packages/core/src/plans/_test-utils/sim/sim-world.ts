@@ -143,6 +143,8 @@ export function toSimContext(world: SimWorld): PlanContext {
       inputVersion: 0,
       inputsKey: world.plan.inputsKey ?? null,
       noticeWaitUntil: null,
+      sourceSkillIds: world.plan.state.graph.skills.map((skill) => skill.skillId),
+      summary: null,
       version: world.plan.version,
     },
     state: world.plan.state,

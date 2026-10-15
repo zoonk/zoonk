@@ -1,7 +1,9 @@
 import "server-only";
-import { type GoalKind, type PlanItem } from "@zoonk/db";
+import { type GoalKind } from "@zoonk/db";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
+import { getItemKey } from "../../plans/planner/plan-items";
+import { type SessionPlanItem } from "../../sessions/_utils/session-plan-item";
 import { type PlannedCheckpoint, type PlannedLesson } from "../../sessions/session-builder";
 import { getBossQuestionSkills, getCheckpointMinutes } from "../checkpoint-minutes";
 import {
@@ -30,8 +32,8 @@ export function isFinalBoss({
   boss,
   items,
 }: {
-  boss: PlanItem;
-  items: readonly PlanItem[];
+  boss: SessionPlanItem;
+  items: readonly SessionPlanItem[];
 }): boolean {
   const lastPhase = Math.max(...items.map((item) => item.phase));
   const laterBoss = items.some((item) => item.kind === "boss" && item.position > boss.position);
@@ -87,7 +89,7 @@ type BossInput = {
   graphSkills: readonly { lessons: number; skillId: string }[];
   /** Each plan item's skills, by its id, for a phase with no skills of its own. */
   itemSkillIds: ReadonlyMap<string, readonly string[]>;
-  items: readonly PlanItem[];
+  items: readonly SessionPlanItem[];
   /** The goal's skills practiced only with recordings (`getListeningSkillIds`). */
   listeningSkillIds?: ReadonlySet<string>;
   skills: readonly GoalSkillNode[];
@@ -152,8 +154,8 @@ async function loadBoss({
   skills,
   today,
   userId,
-}: BossInput & { boss: PlanItem }): Promise<SessionBoss> {
-  const result = await findLastCheckpointResult({ planItemId: boss.id, userId });
+}: BossInput & { boss: SessionPlanItem }): Promise<SessionBoss> {
+  const result = boss.id ? await findLastCheckpointResult({ planItemId: boss.id, userId }) : null;
 
   if (result && !result.passed && result.localDate.getTime() === today.getTime()) {
     return NO_BOSS;
@@ -172,6 +174,7 @@ async function loadBoss({
         passMark: 0,
         phase: boss.phase,
         planItemId: boss.id,
+        planItemKey: getItemKey(boss),
         rematch: result !== null,
         skillIds,
         timeLimitMinutes: null,
@@ -202,6 +205,7 @@ async function loadBoss({
       passMark: getPassMark(questions),
       phase: boss.phase,
       planItemId: boss.id,
+      planItemKey: getItemKey(boss),
       rematch: result !== null,
       skillIds: asked.skillIds,
       timeLimitMinutes: null,

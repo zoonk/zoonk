@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type Plan, prisma } from "@zoonk/db";
+import { type Goal, type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
@@ -10,11 +10,17 @@ import {
   parsePlanPhases,
   parsePlanSettings,
 } from "../planner/plan-state";
+import { readSelectedItemFacts } from "./selected-item-contract";
+
+export type ContextPlanItem = ExistingPlanItem & {
+  facts?: PlanItem["facts"];
+  minutes?: number | null;
+};
 
 /** Everything a planning run starts from: the goal, its plan and items, and the learner's today. */
 export type PlanContext = {
   goal: Goal;
-  items: ExistingPlanItem[];
+  items: ContextPlanItem[];
   plan: Pick<
     Plan,
     | "coveredShare"
@@ -23,6 +29,8 @@ export type PlanContext = {
     | "inputsKey"
     | "inputVersion"
     | "noticeWaitUntil"
+    | "sourceSkillIds"
+    | "summary"
     | "version"
   >;
   phases: ReturnType<typeof parsePlanPhases>;
@@ -34,10 +42,12 @@ export type PlanContext = {
 const itemSelect = {
   chapterId: true,
   completedAt: true,
+  facts: true,
   id: true,
   kind: true,
   lessonId: true,
   lessons: true,
+  minutes: true,
   phase: true,
   position: true,
   scheduledFor: true,
@@ -94,7 +104,7 @@ export async function loadPlanContext({
 
   return {
     goal,
-    items: plan.items,
+    items: plan.items.map((item) => ({ ...item, facts: readSelectedItemFacts(item.facts) })),
     phases: parsePlanPhases(plan.phases),
     plan: {
       coveredShare: plan.coveredShare,
@@ -103,6 +113,8 @@ export async function loadPlanContext({
       inputVersion: plan.inputVersion,
       inputsKey: plan.inputsKey,
       noticeWaitUntil: plan.noticeWaitUntil,
+      sourceSkillIds: plan.sourceSkillIds,
+      summary: plan.summary,
       version: plan.version,
     },
     state: getPlanState({ goal, plan }),

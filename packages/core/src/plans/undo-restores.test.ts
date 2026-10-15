@@ -3,6 +3,7 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
@@ -47,7 +48,7 @@ async function readDaySession(goalId: string) {
 }
 
 /** A built day of a plan whose first topic has an open mistake, so the day fixes it in practice. */
-async function setupDayWithMistake() {
+async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
@@ -56,7 +57,7 @@ async function setupDayWithMistake() {
   });
 
   const { goal } = await unplannedGoalFixture({
-    dailyMinutes: 12,
+    dailyMinutes,
     settings: { startDate: "2020-09-28" },
     userId: user.id,
   });
@@ -217,6 +218,54 @@ describe("undoing a change in the app", () => {
     });
 
     await expect(readDaySession(goal.id)).resolves.toStrictEqual(day);
+  });
+
+  it("announces Undo with one revision and restores the whole original queue, with a no-op replay", async () => {
+    const { goal } = await setupDayWithMistake({ dailyMinutes: 15 });
+    const original = await readDaySession(goal.id);
+    expect(original.blocks).toHaveLength(4);
+
+    const applied = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }] },
+    });
+
+    if (applied.status !== "applied" || !applied.change) {
+      throw new Error("Expected the real undoable plan change");
+    }
+
+    const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const owner = await prisma.user.findUniqueOrThrow({ where: { id: goal.userId } });
+    await expect(readDaySession(goal.id)).resolves.not.toStrictEqual(original);
+
+    const decision = {
+      changeId: applied.change.id,
+      goalId: goal.id,
+      input: { status: "undone" as const },
+    };
+
+    await expect(decidePlanChange(decision)).resolves.toMatchObject({ status: "updated" });
+    await expect(readDaySession(goal.id)).resolves.toStrictEqual(original);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: before.id } }),
+    ).resolves.toMatchObject({
+      inputVersion: before.inputVersion + 1,
+      version: before.version + 1,
+    });
+
+    await expect(
+      prisma.user.findUniqueOrThrow({ where: { id: goal.userId } }),
+    ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
+
+    const replay = await countDatabaseStatements(() => decidePlanChange(decision));
+    expect(replay.result).toMatchObject({ status: "conflict" });
+    expect(replay.writes).toBe(0);
+    await expect(readDaySession(goal.id)).resolves.toStrictEqual(original);
+
+    await expect(
+      prisma.user.findUniqueOrThrow({ where: { id: goal.userId } }),
+    ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
   });
 
   // What the learner did between Apply and Undo is theirs: the lesson they finished stays done, and

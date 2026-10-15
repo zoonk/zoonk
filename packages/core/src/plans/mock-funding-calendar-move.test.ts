@@ -10,7 +10,7 @@ import { getMock } from "../exams/mocks/get-mock";
 import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { startMock } from "../exams/mocks/start-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
-import { getTodayView } from "../view-models/today/get-today-view";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -354,7 +354,7 @@ describe("mock funding through exported calendar and challenge moves", () => {
 
     const [view, today] = await Promise.all([
       getGoalPlan(goal.id),
-      getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+      openTodayView({ goalId: goal.id, timeZone: "UTC" }),
     ]);
 
     if (view.status !== "ready" || today.status !== "ready") {

@@ -5,6 +5,11 @@ import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { loadScheduledMock } from "../../exams/mocks/_utils/scheduled-mock";
 import { getPlannedItemIds } from "../../exams/mocks/mock-plan";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { type MockIdentity, findScheduledMock } from "../../plans/planner/mock-identity";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { getItemKey } from "../../plans/planner/plan-items";
+import { type PlanSettings } from "../../plans/planner/plan-state";
+import { type SessionPlanItem } from "../../sessions/_utils/session-plan-item";
 import { type PlannedCheckpoint } from "../../sessions/session-builder";
 import { getCheckpointMinutes } from "../checkpoint-minutes";
 import {
@@ -27,7 +32,9 @@ export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
 }
 
 /** The plan's next weekly checkpoint that isn't done yet. */
-export function findNextWeeklyItem(items: readonly PlanItem[]): PlanItem | undefined {
+export function findNextWeeklyItem<Item extends Pick<PlanItem, "kind" | "status">>(
+  items: readonly Item[],
+): Item | undefined {
   return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
 }
 
@@ -37,6 +44,7 @@ export function findNextWeeklyItem(items: readonly PlanItem[]): PlanItem | undef
  */
 async function loadMockItems({
   goal,
+  identity: selectedIdentity,
   planItemId,
   skillIds,
   structure,
@@ -44,19 +52,25 @@ async function loadMockItems({
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
-  planItemId: string;
+  identity?: MockIdentity | null;
+  planItemId: string | null;
   skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
   userId: string;
 }) {
   // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
-  const identity = await loadScheduledMock({ date: today, goalId: goal.id, planItemId });
+  const identity =
+    selectedIdentity === undefined
+      ? await loadScheduledMock({ date: today, goalId: goal.id, planItemId })
+      : selectedIdentity;
+
   const plan = await planWeeklyMock({ goal, identity, skillIds, structure, today, userId });
 
   return {
     itemIds: getPlannedItemIds(plan),
     minutes: plan.minutes,
+    mockIdentity: identity,
     timeLimitMinutes: plan.minutes,
   };
 }
@@ -133,6 +147,7 @@ export async function loadSessionWeeklyChallenge({
   goal,
   includesMockExams,
   items,
+  mockFunding,
   mockSkillIds,
   now,
   skillIds,
@@ -142,7 +157,8 @@ export async function loadSessionWeeklyChallenge({
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   includesMockExams: boolean;
-  items: readonly PlanItem[];
+  items: readonly SessionPlanItem[];
+  mockFunding?: PlanSettings["mockFunding"];
   /**
    * The skills a mock asks: every topic of the test, the ones the plan's days left out too, as the
    * real test does and as the full review a free plan gets in its place does.
@@ -175,6 +191,9 @@ export async function loadSessionWeeklyChallenge({
     ? {
         ...(await loadMockItems({
           goal,
+          identity: mockFunding
+            ? findScheduledMock({ date: toIsoDate(item.scheduledFor), funding: mockFunding })
+            : undefined,
           planItemId: item.id,
           skillIds: asked,
           structure,
@@ -200,6 +219,7 @@ export async function loadSessionWeeklyChallenge({
       passMark: getPassMark(questions),
       phase: item.phase,
       planItemId: item.id,
+      planItemKey: getItemKey(item),
       rematch: false,
       skillIds: [...asked],
       title: item.titleSnapshot,

@@ -7,7 +7,7 @@ export const todayStudySessionInputSchema = z
     goalId: z
       .uuid()
       .optional()
-      .meta({ description: "The goal whose session to open; defaults to the active goal" }),
+      .meta({ description: "The goal whose day to read; defaults to the active goal" }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

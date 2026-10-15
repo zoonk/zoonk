@@ -2,11 +2,11 @@ import { type Goal, type PlanItemStatus } from "@zoonk/db";
 import { getBossTimings } from "../../checkpoints/_utils/boss-reached";
 import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
-import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase } from "../planner/plan-state";
 import { buildCheckpoint } from "./phase-checkpoint";
 import { getPhaseStates } from "./phase-states";
 import { hasPlanDeadline, withinLessonScope } from "./plan-end";
+import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
 import {
   countItemLessons,
@@ -20,7 +20,7 @@ const MINUTES_PER_HOUR = 60;
 
 const isTodo = (status: PlanItemStatus) => getWorkProgress(status) === "todo";
 
-const isTestedOut = (item: Pick<ExistingPlanItem, "status">) =>
+const isTestedOut = (item: Pick<PlanReadItem, "status">) =>
   getWorkProgress(item.status) === "testedOut";
 
 /** Each skill's area: the course a stand-in for its lessons is shown under. */
@@ -45,7 +45,7 @@ export function getSkillAreas({
 
 /** A stand-in for a skill whose lessons the Library hasn't outlined yet. */
 export function isWritingItem(
-  item: Pick<ExistingPlanItem, "chapterId" | "kind" | "lessonId">,
+  item: Pick<PlanReadItem, "chapterId" | "kind" | "lessonId">,
 ): boolean {
   return item.kind === "lesson" && item.lessonId === null && item.chapterId === null;
 }
@@ -55,7 +55,7 @@ export function getWritingTitle({
   item,
   skillAreas,
 }: {
-  item: Pick<ExistingPlanItem, "skillId">;
+  item: Pick<PlanReadItem, "skillId">;
   skillAreas: SkillAreas;
 }): string {
   return (item.skillId && skillAreas.get(item.skillId)) || "";
@@ -65,7 +65,7 @@ export function getWritingTitle({
  * A stand-in placement settled (the skill was tested out before its lessons were written) isn't
  * being written: it groups apart from the stand-ins still waiting for their lessons.
  */
-function getGroupKey({ item, skillAreas }: { item: ExistingPlanItem; skillAreas: SkillAreas }) {
+function getGroupKey({ item, skillAreas }: { item: PlanReadItem; skillAreas: SkillAreas }) {
   if (item.chapterId) {
     return item.chapterId;
   }
@@ -82,7 +82,7 @@ function getGroupKey({ item, skillAreas }: { item: ExistingPlanItem; skillAreas:
  * The skills a row of settled stand-ins stands for, by name in plan order: placement tested them
  * out before their lessons were written, so the row names them rather than their course.
  */
-function getSettledSkills(inGroup: readonly ExistingPlanItem[]): string[] {
+function getSettledSkills(inGroup: readonly PlanReadItem[]): string[] {
   const [first] = inGroup;
 
   if (!first || !isWritingItem(first) || !isTestedOut(first)) {
@@ -98,7 +98,7 @@ function getChapterTitle({
   skillAreas,
 }: {
   chapterTitles: ReadonlyMap<string, string>;
-  item: ExistingPlanItem;
+  item: PlanReadItem;
   skillAreas: SkillAreas;
 }): string {
   if (item.chapterId) {
@@ -128,9 +128,9 @@ function buildChapters({
   chapterTitles: ReadonlyMap<string, string>;
   /** The skill belongs to an earlier phase than this one (see `PlanChapterView.deeper`). */
   isEarlier: (skillId: string | null) => boolean;
-  lessons: readonly ExistingPlanItem[];
+  lessons: readonly PlanReadItem[];
   /** How many lessons each item is (`countItemLessons`): a stand-in, the ones the plan teaches. */
-  lessonsOf: (item: ExistingPlanItem) => number;
+  lessonsOf: (item: PlanReadItem) => number;
   outlinedUntil: string | null;
   skillAreas: SkillAreas;
   taughtSkillIds: ReadonlySet<string>;
@@ -138,7 +138,7 @@ function buildChapters({
 }): PlanChapterView[] {
   const keys = [...new Set(lessons.map((item) => getGroupKey({ item, skillAreas })))];
 
-  const sum = (list: readonly ExistingPlanItem[]) =>
+  const sum = (list: readonly PlanReadItem[]) =>
     list.reduce((total, item) => total + lessonsOf(item), 0);
 
   const groups = keys.flatMap((key) => {
@@ -175,7 +175,13 @@ function buildChapters({
     };
   });
 
-  const next = lessons.find((item) => item.id === upNextItemId);
+  const next =
+    upNextItemId === null
+      ? undefined
+      : lessons.find(
+          (item) => item.id === upNextItemId || getPlanReadItemKey(item) === upNextItemId,
+        );
+
   const currentKey = next ? getGroupKey({ item: next, skillAreas }) : null;
 
   /** A chapter finished ahead of the current one (lessons often interleave) still reads as done. */
@@ -189,13 +195,13 @@ function buildChapters({
 }
 
 /** The earliest day the items are scheduled; null when none is. */
-function getEarliestDate(items: readonly ExistingPlanItem[]): string | null {
+function getEarliestDate(items: readonly PlanReadItem[]): string | null {
   const dates = items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []));
   return dates.toSorted()[0] ?? null;
 }
 
 /** The phase's mock exams: how many, and the day of the next one still to take. */
-function buildMocks(items: readonly ExistingPlanItem[]): PlanPhaseView["mocks"] {
+function buildMocks(items: readonly PlanReadItem[]): PlanPhaseView["mocks"] {
   const mocks = items.filter((item) => item.kind === "mock");
 
   const next = mocks
@@ -219,7 +225,7 @@ function getPhaseMinutes({
 }: {
   estimateMinutes: number | null;
   index: number;
-  items: readonly ExistingPlanItem[];
+  items: readonly PlanReadItem[];
   phase: PlanPhase;
 }): number {
   const lessons = items.filter((item) => item.kind === "lesson");
@@ -264,7 +270,7 @@ export function buildPhaseViews({
   /** The whole plan's estimate, for phases saved without their own minutes. */
   estimateMinutes?: number | null;
   goalKind: Goal["kind"];
-  items: readonly ExistingPlanItem[];
+  items: readonly PlanReadItem[];
   /** How far ahead the plan writes lessons (`getOutlinedUntil`): topics after it open early. */
   outlinedUntil?: string | null;
   phases: readonly PlanPhase[];
@@ -299,7 +305,13 @@ export function buildPhaseViews({
   });
 
   // Sessions reach a challenge from every lesson before it, so its timing is read from all of them.
-  const timings = challengesOpen && today ? getBossTimings({ items: planItems, today }) : new Map();
+  const timings =
+    challengesOpen && today
+      ? getBossTimings({
+          items: planItems.map((item) => ({ ...item, id: getPlanReadItemKey(item) })),
+          today,
+        })
+      : new Map();
 
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);

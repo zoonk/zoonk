@@ -1,4 +1,4 @@
-import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { type PlanItem, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { toIsoDate } from "./plan-calendar";
 import { getBossKey, getLessonKey, getSkillKey } from "./plan-units";
 import { type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
@@ -8,6 +8,8 @@ export type ExistingPlanItem = {
   chapterId: string | null;
   completedAt: Date | null;
   id: string;
+  /** Saved allocation facts reserve an unavailable shown lesson's interval without delivering it. */
+  facts?: PlanItem["facts"];
   kind: PlanItemKind;
   lessonId: string | null;
   /**
@@ -35,8 +37,8 @@ export type PlannedItem = Omit<ExistingPlanItem, "id" | "position"> & {
 export function getItemKey(
   item: Pick<
     ExistingPlanItem,
-    "chapterId" | "id" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId"
-  >,
+    "chapterId" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId"
+  > & { id: string | null },
 ): string {
   if (item.lessonId) {
     return getLessonKey(item.lessonId);

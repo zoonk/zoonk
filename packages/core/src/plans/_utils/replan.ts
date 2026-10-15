@@ -15,16 +15,19 @@ import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
 import { type PlanBases } from "../planner/plan-bases";
-import { type PlanEffect, getFittedStandInLessons } from "../planner/plan-effect";
+import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
+import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
+import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
 import { getSettledSkillIds } from "../planner/settled-skills";
 import { loadRunBossFacts } from "./boss-plan-facts";
-import { isTodayShown, loadPlanCarryOver } from "./carried-lessons";
+import { type PlanCarrySnapshot, isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
+import { toComputedPlanWrite } from "./computed-plan-write";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
@@ -41,11 +44,11 @@ import { loadPlanReadAdvice } from "./plan-read-advice";
 import { savePlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
-import { readBuiltPlan } from "./read-built-plan";
+import { type TodayBuildScope, readBuiltPlan } from "./read-built-plan";
 import { type PlanAnalysisPurpose } from "./read-plan-analysis";
+import { summarizeRetainedPlan } from "./retained-plan-allocation";
+import { type SelectedSummary } from "./selected-summary-contract";
 import { PlanConflictError, writePlan } from "./write-plan";
-
-const MINUTES_PER_HOUR = 60;
 
 export type ComputedPlan = {
   /** The plan's bases with what the app recommends for them (see `findPlanBases`). */
@@ -59,11 +62,15 @@ export type ComputedPlan = {
    * a later system refresh with the same key has nothing new to plan.
    */
   inputsKey: string;
+  itemFacts: ReadonlyMap<string, SelectedItemFacts>;
   pace: Pace;
   /** The lessons each skill's stand-in plans in this run (see `getStandInLessons`). */
   standInLessons: Map<string, number>;
   /** The state the plan was built from, with merged skills resolved and the pace and start set. */
   state: PlanState;
+  selected: SelectedSummary;
+  /** Fresh facts measured against the actual unchanged saved allocation, not candidate dates. */
+  summarizeRetained: () => SelectedSummary | null;
 };
 
 /** What a planning run records for the learner to see; system runs may record nothing. */
@@ -85,6 +92,8 @@ export type PlanChangeRecord = {
 export type PlanTagRevalidation = "now" | "skip";
 
 type ComputePlanRequest = {
+  /** Reuse this request's settling facts; mutation callers load fresh facts by default. */
+  carrySnapshot?: PlanCarrySnapshot;
   /** A learner's change: work set aside for time comes back where it fits (see `buildPlan`). */
   bringBackSetAside?: boolean;
   context: PlanContext;
@@ -104,6 +113,8 @@ type ComputePlanRequest = {
   releasedPhases?: ReadonlySet<number>;
   /** Read-only consumers can share the same pure build; mutation preconditions stay fresh. */
   reuseReadBuild?: boolean;
+  /** Read freshness metadata is part of the existing pure build cache's argument key. */
+  readBuildScope?: TodayBuildScope;
   /** Only the Plan read requests advice; Progress and effects retain their local lazy analysis. */
   readAnalysis?: PlanAnalysisPurpose;
   /**
@@ -117,6 +128,8 @@ type ComputePlanRequest = {
    * first, as the learner sees them (see `CarryOver`).
    */
   todayExceptAreas?: readonly string[] | null;
+  /** Preview and Start both hold the current day's allocation before its session exists. */
+  todayShown?: boolean;
   /** Time-advice candidates scale the saved calendar before applying the learner's overrides. */
   studyScheduleAt?: StudyScheduleAt;
 };
@@ -132,6 +145,7 @@ type ComputePlanRequest = {
  */
 export async function computePlan({
   bringBackSetAside = false,
+  carrySnapshot,
   context,
   mode,
   keepPhaseDates = mode === "automatic",
@@ -141,10 +155,12 @@ export async function computePlan({
   pace: paceSource = "saved",
   releasedPhases,
   reuseReadBuild = false,
+  readBuildScope: scope,
   readAnalysis,
   setAsideLeftWork = false,
   state = context.state,
   todayExceptAreas = null,
+  todayShown: shownToday,
   studyScheduleAt,
 }: ComputePlanRequest): Promise<ComputedPlan> {
   // The plan studies only the options the learner takes of their exam's choices.
@@ -173,14 +189,15 @@ export async function computePlan({
         targetDate,
         userId,
       }),
-      loadPlanCarryOver({ context, mode }).then(
+      loadPlanCarryOver({ context, mode, snapshot: carrySnapshot }).then(
         (loadedCarry) =>
           loadedCarry && {
             ...loadedCarry,
             todayExceptAreas: todayExceptAreas ?? loadedCarry.todayExceptAreas ?? null,
           },
       ),
-      mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today }),
+      shownToday ??
+        (mode === "automatic" && isTodayShown({ goalId: context.goal.id, today: context.today })),
       loadQuickBaseLessons(state.settings),
     ]);
 
@@ -207,11 +224,6 @@ export async function computePlan({
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
 
-  const { pace } = settings;
-
-  // Today's proposal plans the phase ends it moves as the lessons fall (see `movesPhaseEnds`).
-  const movesPhaseEnds = !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined;
-
   // The planner studies each base as the learner chose (see `chooseBases`).
   const { advise, input } = chooseBases({
     ...inputs,
@@ -233,9 +245,9 @@ export async function computePlan({
     items: context.items,
     knownAreas: new Set([...getKnownSubjects(context.goal), ...state.settings.pastBasicsAreas]),
     mode,
-    movesPhaseEnds,
+    movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
     noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
-    paceFactor: pace.factor,
+    paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
           includeLast: keepLastPhaseDate,
@@ -261,7 +273,7 @@ export async function computePlan({
   const builtInput = { ...input, ...landing };
 
   const built = reuseReadBuild
-    ? await readBuiltPlan({ input: builtInput, userId })
+    ? await readBuiltPlan({ input: builtInput, ...(scope && { scope }), userId })
     : buildPlan(builtInput);
 
   // Measuring what fits builds the plan again as its graph sizes it: Progress never asks.
@@ -296,10 +308,14 @@ export async function computePlan({
       input: { ...input, settings: savedSettings },
       items: built.items,
     }),
-    pace,
+    itemFacts: listSelectedItemFacts({ built, input: builtInput }),
+    pace: settings.pace,
+    selected: summarizeSelectedPlan({ built, examSubjects, input: builtInput }),
     standInLessons,
     // The mocks this build funds are saved with it, so Today reads the same days (see `fundMocks`).
     state: { ...state, graph: saved, settings: savedSettings },
+    summarizeRetained: () =>
+      summarizeRetainedPlan({ built, context, examSubjects, input: builtInput }),
   };
 }
 
@@ -327,23 +343,12 @@ export async function commitPlan({
   restorable?: string | null;
   revalidation?: PlanTagRevalidation;
 }): Promise<string | null> {
-  const { built, state } = computed;
-
   const changeId = await prisma.$transaction(async (tx) => {
+    const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
+
     await writePlan({
-      context: { ...context, plan: await markPlanWrite(tx, context.plan) },
-      plan: {
-        coveredShare: computed.feasibility.deadline ? computed.feasibility.coveredShare : null,
-        estimateHours: built.estimate.totalMinutes / MINUTES_PER_HOUR,
-        inputsKey: computed.inputsKey,
-        items: built.items,
-        phases: built.phases,
-        standInLessons: getFittedStandInLessons({
-          skillMinutes: built.skillMinutes,
-          standInLessons: computed.standInLessons,
-        }),
-        state,
-      },
+      context: writeContext,
+      plan: toComputedPlanWrite({ computed, context: writeContext }),
       tx,
     });
 
@@ -353,7 +358,7 @@ export async function commitPlan({
       ? await tx.planChange.create({
           data: {
             kind: change.kind,
-            payload: { ...change.payload, versionAfter: getVersionAfter(context) },
+            payload: { ...change.payload, versionAfter: context.plan.version + 1 },
             planId: context.plan.id,
             reason: change.reason,
             status: change.status,
@@ -376,11 +381,6 @@ export async function commitPlan({
   }
 
   return changeId;
-}
-
-/** The version a commit leaves the plan at: an undo stays possible while it's still current. */
-export function getVersionAfter(context: Pick<PlanContext, "plan">): number {
-  return context.plan.version + 1;
 }
 
 /** Plans and goals read these tags; preparation and placement read the learner model's. */

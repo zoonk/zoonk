@@ -2,6 +2,7 @@ import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
 import { type DuelMarks, keepDuelLessons, splitAtDuel } from "./_utils/lessons-before-challenges";
+import { buildCheckpointBlock } from "./_utils/planned-checkpoint-block";
 import { takePracticeQuestions } from "./_utils/practice-sets";
 import {
   type BlockCapsule,
@@ -33,6 +34,7 @@ export type PlannedLesson = DuelMarks & {
   lessonId: string | null;
   minutes: number;
   planItemId: string | null;
+  planItemKey?: string | null;
   /** The plan item's skill: the subject the lesson block is labeled with. */
   planSkillId: string | null;
   skillIds: string[];
@@ -43,6 +45,7 @@ export type PlannedCheckpoint = BlockCheckpoint & {
   itemIds: string[];
   minutes: number;
   planItemId: string | null;
+  planItemKey?: string | null;
   skillIds: string[];
   title: string;
 };
@@ -90,6 +93,8 @@ export type SessionBuildInput = {
   fullReviewSkillIds?: readonly string[] | null;
   /** A review day the plan scheduled: no new lessons, the day goes to reviews and practice. */
   reviewPlanItemId: string | null;
+  /** A selected review is identified before Open assigns its persisted row ID. */
+  reviewPlanItemKey?: string | null;
   /**
    * The capsules aren't due: a day with nothing due and nothing else to study reviews the
    * learner's weakest studied topics instead of staying empty, briefly, and says so.
@@ -146,6 +151,7 @@ export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): Pl
     payload: toBlockPayload({
       chapterId: lesson.chapterId,
       planItemId: lesson.planItemId,
+      planItemKey: lesson.planItemKey ?? null,
       planSkillId: lesson.planSkillId,
       reinforcement,
       skillIds: lesson.skillIds,
@@ -189,6 +195,7 @@ function buildPracticeBlock({
   minutes,
   netScored,
   planItemId,
+  planItemKey,
   practice,
   reviewedSkillIds,
 }: {
@@ -197,6 +204,7 @@ function buildPracticeBlock({
   minutes: number;
   netScored: boolean;
   planItemId: string | null;
+  planItemKey: string | null | undefined;
   practice: readonly PracticeItem[];
   /**
    * The skills the day's quick review asks before it: the day asks them too, so a full review
@@ -229,6 +237,7 @@ function buildPracticeBlock({
       itemIds: items.map((item) => item.itemId),
       netScored,
       planItemId,
+      planItemKey: planItemKey ?? null,
       skillIds,
     }),
   };
@@ -298,21 +307,9 @@ function fillReview({
   return blocks.map((block) => (review && block.kind === "review" ? review : block));
 }
 
-function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
-  const { itemIds, minutes, planItemId, skillIds, title, ...details } = checkpoint;
-
-  return {
-    canDo: null,
-    estimatedMinutes: toMinutes(minutes),
-    kind: "checkpoint",
-    lessonId: null,
-    payload: toBlockPayload({ checkpoint: details, itemIds, planItemId, skillIds, title }),
-  };
-}
-
 /** A day the plan gives to reviews and practice: a review day, or a full review for a mock's. */
 function isReviewDay(input: SessionBuildInput): boolean {
-  return Boolean(input.reviewPlanItemId) || isFullReviewDay(input);
+  return Boolean(input.reviewPlanItemId || input.reviewPlanItemKey) || isFullReviewDay(input);
 }
 
 /**
@@ -428,6 +425,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
       minutes: Math.max(0, remaining - learnMinutes),
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,
+      planItemKey: input.reviewPlanItemKey,
       practice: input.examTrialEnded ? [] : input.practice,
       reviewedSkillIds: review?.payload.skillIds ?? [],
     }),

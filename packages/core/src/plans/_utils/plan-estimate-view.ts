@@ -1,6 +1,6 @@
 import { type PlanView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
-import { type PlanContext } from "./plan-context";
+import { type PlanReadContext } from "./plan-read-projection";
 import { type ComputedPlan } from "./replan";
 
 export const MINUTES_PER_HOUR = 60;
@@ -23,7 +23,7 @@ export function buildEstimateView({
   context,
 }: {
   computed: ComputedPlan | null;
-  context: PlanContext;
+  context: PlanReadContext;
 }): PlanView["estimate"] {
   const pace = context.state.settings.pace;
 

@@ -16,6 +16,7 @@
     "./fixtures/courses": "./src/fixtures/courses.ts",
     "./fixtures/evaluation-runs": "./src/fixtures/evaluation-runs.ts",
     "./fixtures/feedback": "./src/fixtures/feedback.ts",
+    "./fixtures/funded-mock-days": "./src/fixtures/funded-mock-days.ts",
     "./fixtures/goal-understandings": "./src/fixtures/goal-understandings.ts",
     "./fixtures/goals": "./src/fixtures/goals.ts",
     "./fixtures/learner": "./src/fixtures/learner.ts",

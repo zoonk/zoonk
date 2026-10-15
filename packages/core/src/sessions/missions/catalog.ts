@@ -46,6 +46,8 @@ const missionAnchorSchema = z.object({
   patternId: z.string().optional(),
   planItemId: z.string().optional(),
   planItemIds: z.array(z.string()).optional(),
+  /** Selected checkpoint identity survives the POST assigning its saved UUID. */
+  planItemKey: z.string().optional(),
   skillIds: z.array(z.string()).optional(),
 });
 

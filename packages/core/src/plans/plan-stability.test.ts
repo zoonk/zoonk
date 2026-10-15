@@ -13,6 +13,8 @@ import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { readFreshPlanSummary } from "./_utils/plan-summary";
+import { readSelectedItemFacts } from "./_utils/selected-item-contract";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
@@ -72,6 +74,55 @@ async function readPlanDates(planId: string) {
   };
 }
 
+/** Current summary facts describe the actual kept allocation, not a prospective shifted layout. */
+async function assertRetainedSummary({
+  day,
+  planId,
+  userId,
+}: {
+  day: string;
+  planId: string;
+  userId: string;
+}) {
+  const plan = await prisma.plan.findUniqueOrThrow({
+    include: { items: true },
+    where: { id: planId },
+  });
+
+  const summary = readFreshPlanSummary({
+    basis: {
+      inputVersion: plan.inputVersion,
+      planId,
+      planVersion: plan.version,
+      studyDay: day,
+      timeZone: "UTC",
+      userId,
+    },
+    value: plan.summary,
+  });
+
+  const pending = plan.items.filter(
+    (item) => item.status === "todo" && ["lesson", "chapter", "boss"].includes(item.kind),
+  );
+
+  const end =
+    pending
+      .flatMap((item) => {
+        const facts = readSelectedItemFacts(item.facts);
+        const date = facts?.teachingEnd ?? item.scheduledFor?.toISOString().slice(0, 10);
+        return date ? [date] : [];
+      })
+      .toSorted()
+      .at(-1) ?? null;
+
+  expect(summary).not.toBeNull();
+  expect(summary?.selected.endDate).toBe(end);
+
+  expect(summary?.selected.totalMinutes).toBe(
+    Math.round(plan.items.reduce((total, item) => total + (item.minutes ?? 0), 0)),
+  );
+}
+
 /** The learner studies every lesson due by `isoDate`, as finishing them in sessions does. */
 async function studyThrough({ isoDate, planId }: { isoDate: string; planId: string }) {
   await prisma.planItem.updateMany({
@@ -115,7 +166,7 @@ describe("a plan nobody changed", () => {
   });
 
   it("keeps its dates on the next days when the learner studied what each day asked", async () => {
-    const { goal, plan } = await examSetup();
+    const { goal, plan, user } = await examSetup();
 
     await openToday(goal.id);
     await studyThrough({ isoDate: "2020-09-28", planId: plan.id });
@@ -128,13 +179,30 @@ describe("a plan nobody changed", () => {
     await openToday(goal.id);
 
     await expect(readPlanDates(plan.id)).resolves.toStrictEqual(studied);
+    await assertRetainedSummary({ day: "2020-09-29", planId: plan.id, userId: user.id });
 
     await studyThrough({ isoDate: "2020-10-04", planId: plan.id });
     const week = await readPlanDates(plan.id);
 
     setToday("2020-10-05");
+    const beforeOpen = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     await openToday(goal.id);
+    const opened = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(opened.inputsKey).not.toBe(beforeOpen.inputsKey);
+    expect(opened.inputVersion).toBe(beforeOpen.inputVersion + 1);
+
+    expect(opened.version, "Unchanged workload saves metadata at the same version").toBe(
+      beforeOpen.version,
+    );
+
+    await assertRetainedSummary({ day: "2020-10-05", planId: plan.id, userId: user.id });
+
     await openToday(goal.id);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      opened,
+    );
 
     await expect(readPlanDates(plan.id)).resolves.toStrictEqual(week);
   });

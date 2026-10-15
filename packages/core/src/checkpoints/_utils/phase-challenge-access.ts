@@ -14,8 +14,10 @@ export async function arePhaseChallengesRequired({
   return goalKind !== "language" || Boolean(await findActiveSubscription(userId));
 }
 
+type PhaseBlock = Pick<StudySessionBlock, "kind" | "payload" | "status">;
+
 /** Saved Plus days keep their rows, but their locked calls never become Free's next activity. */
-export function withoutLockedPhaseChallenges<Block extends StudySessionBlock>({
+export function withoutLockedPhaseChallenges<Block extends PhaseBlock>({
   blocks,
   phaseChallengesRequired,
 }: {
@@ -38,4 +40,15 @@ export function withoutLockedPhaseChallenges<Block extends StudySessionBlock>({
       checkpoint.kind === "weekly"
     );
   });
+}
+
+/** Entitlement lapse releases locked call time so Free learners can continue; unavailable content does not. */
+export function shouldRefillAfterEntitlementLapse({
+  blocks,
+  phaseChallengesRequired,
+}: {
+  blocks: readonly PhaseBlock[];
+  phaseChallengesRequired: boolean;
+}): boolean {
+  return withoutLockedPhaseChallenges({ blocks, phaseChallengesRequired }).length < blocks.length;
 }

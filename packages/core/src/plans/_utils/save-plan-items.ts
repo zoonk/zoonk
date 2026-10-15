@@ -1,11 +1,15 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { DbNull, type PlanItem, type TransactionClient } from "@zoonk/db";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
+import { readSelectedItemFacts } from "./selected-item-contract";
 import { isStandIn } from "./stand-in-lessons";
 
 /** An item as a plan saves it: `id` is kept for existing items and items restored by Undo. */
-export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes">;
+export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes"> & {
+  facts?: PlanItem["facts"];
+  minutes?: number | null;
+};
 
 /**
  * When the plan's learner first finished each of these lessons, from their own ledger rows, with
@@ -73,6 +77,8 @@ export async function savePlanItems({
   const lessonsOf = (item: SavedPlanItem) =>
     isStandIn(item) ? (standInLessons.get(item.skillId ?? "") ?? null) : null;
 
+  const factsOf = (item: SavedPlanItem) => readSelectedItemFacts(item.facts);
+
   const keptIds = new Set(items.flatMap((item) => (item.id ? [item.id] : [])));
   const existingIds = new Set(existing.map((item) => item.id));
   const removedIds = existing.filter((item) => !keptIds.has(item.id)).map((item) => item.id);
@@ -102,6 +108,8 @@ export async function savePlanItems({
         chapter_id = v.chapter_id,
         skill_id = v.skill_id,
         lessons = v.lessons,
+        minutes = v.minutes,
+        facts = v.facts::jsonb,
         title_snapshot = v.title_snapshot,
         status = CASE
           WHEN v.set_aside AND p.status = 'todo' THEN 'skipped'
@@ -119,8 +127,10 @@ export async function savePlanItems({
         ${kept.map(({ item }) => lessonsOf(item))}::smallint[],
         ${kept.map(({ item }) => item.titleSnapshot)}::text[],
         ${kept.map(({ item }) => item.status === "skipped")}::boolean[],
-        ${kept.map(({ item }) => item.status === "todo")}::boolean[]
-      ) AS v(id, position, phase, scheduled_for, chapter_id, skill_id, lessons, title_snapshot, set_aside, to_do)
+        ${kept.map(({ item }) => item.status === "todo")}::boolean[],
+        ${kept.map(({ item }) => item.minutes ?? null)}::double precision[],
+        ${kept.map(({ item }) => (factsOf(item) ? JSON.stringify(factsOf(item)) : null))}::text[]
+      ) AS v(id, position, phase, scheduled_for, chapter_id, skill_id, lessons, title_snapshot, set_aside, to_do, minutes, facts)
       WHERE p.id = v.id AND p.plan_id = ${planId}::uuid`;
   }
 
@@ -142,10 +152,12 @@ export async function savePlanItems({
       data: fresh.map(({ item, position }) => ({
         chapterId: item.chapterId,
         completedAt: finishOf(item) ?? null,
+        facts: factsOf(item) ?? DbNull,
         id: item.id ?? undefined,
         kind: item.kind,
         lessonId: item.lessonId,
         lessons: lessonsOf(item),
+        minutes: item.minutes ?? null,
         phase: item.phase,
         planId,
         position,

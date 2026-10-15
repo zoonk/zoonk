@@ -1,20 +1,16 @@
 import "server-only";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
-import { loadStudySessionView } from "../_utils/load-session-view";
-import { resolveTodaySession } from "../_utils/today-session";
 import { type TodayStudySessionInput } from "../contract";
 import { type StudySessionResult } from "../get-study-session";
+import { openStudyDay } from "../open-study-day";
 
 type TodayStudySessionResult = StudySessionResult | { status: "goalNotActive" };
 
-/**
- * Today's session for a goal (the active goal by default), as tests open it: the learner's day is
- * built the way Today builds it (`resolveTodaySession`, which `getTodayView` calls), the first time
- * it's opened on the learner's local day, and returned in the session's shape. Opening it again
- * the same day returns the same session with its progress.
- */
+/** Test-only adapter for the explicit learner POST; Today and session reads never create IDs. */
 export async function getTodayStudySession(
   input: TodayStudySessionInput,
 ): Promise<TodayStudySessionResult> {
@@ -41,11 +37,18 @@ export async function getTodayStudySession(
     return { status: "goalNotActive" };
   }
 
-  const day = await resolveTodaySession({
-    goal: owned.goal,
+  const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
+
+  const opened = await openStudyDay({
+    goalId,
+    keepEmpty: true,
+    shownDate: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
     timeZone: input.timeZone,
-    userId: owned.userId,
   });
 
-  return { session: await loadStudySessionView({ ...day, userId: owned.userId }), status: "ready" };
+  if (opened.status !== "opened") {
+    throw new Error(`Expected the test learner's day to open, received ${opened.status}`);
+  }
+
+  return { session: opened.session, status: "ready" };
 }

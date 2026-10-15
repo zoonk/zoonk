@@ -1,8 +1,9 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { DbNull, type TransactionClient, prisma } from "@zoonk/db";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { markPlanWrite } from "./mark-plan-write";
 import { type PlanContext } from "./plan-context";
+import { type SavedPlanSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
 import { type SavedPlanItem, savePlanItems } from "./save-plan-items";
 
@@ -25,6 +26,8 @@ export type PlanWrite = {
   /** The lessons each skill's stand-in teaches (see `savePlanItems`). */
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
+  sourceSkillIds?: readonly string[];
+  summary?: SavedPlanSummary | null;
 };
 
 /**
@@ -49,6 +52,8 @@ export async function writePlan({
       inputsKey: plan.inputsKey,
       phases: plan.phases,
       settings: plan.state.settings,
+      sourceSkillIds: [...(plan.sourceSkillIds ?? [])],
+      summary: plan.summary ?? DbNull,
       version: { increment: 1 },
     },
     where: {

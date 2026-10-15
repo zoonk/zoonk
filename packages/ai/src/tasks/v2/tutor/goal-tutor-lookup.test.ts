@@ -91,4 +91,36 @@ describe(createLookUpTool, () => {
     expect(output).toMatchObject({ type: "text" });
     expect(output?.type === "text" && output.value).toContain('"link":"/challenge/item-1"');
   });
+
+  it("passes an unsaved challenge's null link to the model without constructing a URL", async () => {
+    const toLink = vi.fn(TEST_TUTOR_LINKS.toLink);
+    const tool = createLookUpTool({ links: { ...TEST_TUTOR_LINKS, toLink }, lookUp: vi.fn() });
+
+    const output = await tool.toModelOutput?.({
+      input: { area: null, query: null, what: "challenges" },
+      output: {
+        challenges: [
+          {
+            date: "2026-10-16",
+            kind: "challenge",
+            link: null,
+            locked: false,
+            phase: null,
+            when: "date",
+          },
+        ],
+        done: { challenges: 0, mocks: 0, weekly: 0 },
+        more: 0,
+        status: "found",
+        what: "challenges",
+      },
+      toolCallId: "call",
+    });
+
+    expect(toLink).not.toHaveBeenCalled();
+
+    expect(output?.type === "text" && JSON.parse(output.value)).toMatchObject({
+      challenges: [{ date: "2026-10-16", kind: "challenge", link: null }],
+    });
+  });
 });

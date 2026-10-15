@@ -117,6 +117,11 @@ const CANONICAL_OPERATIONS = [
     path: "/me/learning-profile",
   },
   { method: "get", operationId: "getCurrentUserSummary", path: "/me/summary" },
+  {
+    method: "post",
+    operationId: "acknowledgeTodayPlanChange",
+    path: "/today/plan-change/acknowledgments",
+  },
   { method: "get", operationId: "getGeneration", path: "/generations/{generationId}" },
   {
     method: "get",

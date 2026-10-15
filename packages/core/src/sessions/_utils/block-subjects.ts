@@ -1,8 +1,9 @@
 import "server-only";
-import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { loadSkillSubjects } from "../../view-models/syllabus/_utils/load-syllabus";
 import { readBlockPayload } from "../block-payload";
 import { getBlockSubject } from "./block-subject";
+import { type DayBlockInput } from "./day-block-view";
 
 /**
  * Each block's subject by its short name, for Today's labels (see `getBlockSubject`). A lesson's
@@ -14,9 +15,9 @@ export async function loadBlockSubjects({
   blocks,
   goal,
 }: {
-  blocks: readonly StudySessionBlock[];
+  blocks: readonly DayBlockInput[];
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null;
-}): Promise<Map<string, string>> {
+}): Promise<Map<number, string>> {
   const payloads = blocks.map((block) => ({ block, payload: readBlockPayload(block) }));
 
   const planItemIds = payloads.flatMap(({ payload }) =>
@@ -60,7 +61,7 @@ export async function loadBlockSubjects({
         skillSubjects,
       });
 
-      return subject ? [[block.id, subject] as const] : [];
+      return subject ? [[block.position, subject] as const] : [];
     }),
   );
 }

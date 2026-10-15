@@ -234,12 +234,17 @@ describe("background goal revision markers", () => {
       throw new Error("The goal has a plan context");
     }
 
-    await studySessionFixture({
+    const session = await studySessionFixture({
       goalId: goal.id,
       localDate: context.today,
       plannedMinutes: 0,
       status: "completed",
       userId: user.id,
+    });
+
+    const queue = await prisma.studySession.findUniqueOrThrow({
+      include: { blocks: true },
+      where: { id: session.id },
     });
 
     const change = await planChangeFixture({
@@ -251,12 +256,26 @@ describe("background goal revision markers", () => {
     const before = await stamp(user.id, plan.id);
     await followPlanToday({ changeId: change.id, context });
 
+    await expect(
+      prisma.studySession.findUniqueOrThrow({
+        include: { blocks: true },
+        where: { id: session.id },
+      }),
+    ).resolves.toStrictEqual(queue);
+
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       ...before,
       revision: before.revision + 1n,
     });
 
     await followPlanToday({ changeId: change.id, context });
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({
+        include: { blocks: true },
+        where: { id: session.id },
+      }),
+    ).resolves.toStrictEqual(queue);
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       ...before,

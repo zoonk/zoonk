@@ -10,7 +10,9 @@ import { getLearnerTier } from "../../lookahead/learner-lookahead";
 import { filterMistakesWithPracticeMaterial } from "../../mistakes/mistake-practice-eligibility";
 import { loadDailyTimeLimitStatus } from "../_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
+import { type loadDayPlan } from "../_utils/day-plan";
 import { loadExamStructure } from "../_utils/exam-structure";
+import { type SelectedDayPlan } from "../_utils/selected-day-plan";
 import { type MissionFactBlock, blockCandidates, finishChapterCandidate } from "./block-candidates";
 import { hasMissionAllowance } from "./candidate-allowance";
 import { MISSION_RULES, type MissionKind, type MissionPick, readMissionDocument } from "./catalog";
@@ -94,11 +96,13 @@ async function readyMistakes({
   goal,
   goalPlan,
   localDate,
+  listeningSkillIds: knownListeningSkillIds,
   timeZone,
   userId,
 }: {
   goal: Goal;
   goalPlan: GoalPlan;
+  listeningSkillIds?: ReadonlySet<string>;
   localDate: Date;
   timeZone: string;
   userId: string;
@@ -115,7 +119,7 @@ async function readyMistakes({
         userId,
       },
     }),
-    loadListeningSkillIds(goal.id),
+    knownListeningSkillIds ?? loadListeningSkillIds(goal.id),
   ]);
 
   return filterMistakesWithPracticeMaterial({
@@ -127,38 +131,73 @@ async function readyMistakes({
   });
 }
 
-/** Internal build-time read. It never starts generation or claims any usage. */
-export async function loadDayMissionFacts({
-  blocks,
-  goal,
-  localDate,
-  now = new Date(),
-  plannedMinutes,
-  timeZone,
-  userId,
-}: {
-  blocks: readonly MissionFactBlock[];
-  goal: Goal;
-  localDate: Date;
-  now?: Date;
-  plannedMinutes: number;
-  timeZone: string;
-  userId: string;
-}): Promise<DayMissionFacts> {
+type MissionContext = Pick<
+  Parameters<typeof loadDayMissionFacts>[0],
+  "dayPlan" | "goal" | "localDate" | "selection" | "userId"
+>;
+
+function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
+  if (dayPlan) {
+    return { items: dayPlan.items, settings: dayPlan.settings };
+  }
+
+  if (selection) {
+    return { items: selection.items, settings: selection.state.settings };
+  }
+
+  return prisma.plan.findUnique({
+    include: { items: { orderBy: { position: "asc" } } },
+    where: { goalId: goal.id },
+  });
+}
+
+async function loadMissionContext(input: MissionContext) {
+  const { dayPlan, goal, localDate, selection, userId } = input;
+
   const [plan, goalPlan, tier, limit, recent] = await Promise.all([
-    prisma.plan.findUnique({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { goalId: goal.id },
-    }),
-    loadGoalPlan(goal.id),
-    getLearnerTier(userId),
-    loadDailyTimeLimitStatus({ date: localDate, userId }),
+    readMissionPlan(input),
+    dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
+    dayPlan?.tier ?? getLearnerTier(userId),
+    dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
       take: RECENT_SESSIONS,
       where: { goalId: goal.id, localDate: { lt: localDate }, userId },
     }),
   ]);
+
+  return { goalPlan, limit, plan, recent, tier };
+}
+
+/** Internal build-time read. It never starts generation or claims any usage. */
+export async function loadDayMissionFacts({
+  blocks,
+  dayPlan,
+  goal,
+  localDate,
+  now = new Date(),
+  plannedMinutes,
+  selection,
+  timeZone,
+  userId,
+}: {
+  blocks: readonly MissionFactBlock[];
+  dayPlan?: Awaited<ReturnType<typeof loadDayPlan>>;
+  goal: Goal;
+  localDate: Date;
+  now?: Date;
+  plannedMinutes: number;
+  selection?: SelectedDayPlan;
+  timeZone: string;
+  userId: string;
+}): Promise<DayMissionFacts> {
+  const { plan, goalPlan, tier, limit, recent } = await loadMissionContext({
+    dayPlan,
+    goal,
+    localDate,
+    selection,
+    userId,
+  });
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
   const dailyMinutes = Math.min(dayMinutes, limit.remainingMinutes ?? dayMinutes);
@@ -192,7 +231,14 @@ export async function loadDayMissionFacts({
   const items = plan?.items ?? [];
 
   const [mistakes, language, buddyUsage, weakSpot, structure] = await Promise.all([
-    readyMistakes({ goal, goalPlan, localDate, timeZone, userId }),
+    readyMistakes({
+      goal,
+      goalPlan,
+      listeningSkillIds: dayPlan?.listeningSkillIds,
+      localDate,
+      timeZone,
+      userId,
+    }),
     languageCandidates({ blocks, goal, items, now, tier, userId }),
     tier === "guest" ? null : countUsage({ client: prisma, kind: "tutorMessage", now, userId }),
     weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, userId }),

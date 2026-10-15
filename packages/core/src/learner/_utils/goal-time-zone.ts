@@ -31,41 +31,7 @@ async function hasStudiedOn({
 }
 
 /**
- * Follows a learner to the zone a request comes from. The goal's stored zone is the one source of
- * their day: a goal without one takes the request's, and another zone moves it only while nothing
- * was done yet in the goal's current day (no answer, no block opened), so the day changes before
- * it starts. A learner who already studied keeps their day until the next one. True when the
- * goal's zone changed.
- */
-export async function moveGoalTimeZone({
-  goal,
-  now,
-  timeZone,
-}: {
-  goal: Pick<Goal, "id" | "timezone" | "userId">;
-  now: Date;
-  timeZone: string | null | undefined;
-}): Promise<boolean> {
-  if (!timeZone || !isValidTimeZone(timeZone) || timeZone === goal.timezone) {
-    return false;
-  }
-
-  const stored = goal.timezone && isValidTimeZone(goal.timezone) ? goal.timezone : null;
-
-  if (stored) {
-    const day = getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
-
-    if (await hasStudiedOn({ day, goalId: goal.id, userId: goal.userId })) {
-      return false;
-    }
-  }
-
-  await prisma.goal.update({ data: { timezone: timeZone }, where: { id: goal.id } });
-  return true;
-}
-
-/**
- * Whether `moveGoalTimeZone` would move the goal to `timeZone`, read without writing, for a caller
+ * Whether the goal may follow `timeZone`, read without writing, for a caller
  * that writes the move in its own transaction (the learner's revision first) and guards its update
  * on the zone it read here. Read through that transaction (`client`) once it holds the learner's
  * lock, it also sees an answer or a block start committed while it waited.

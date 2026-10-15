@@ -1,4 +1,6 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
+import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 
@@ -14,7 +16,7 @@ export function getLessonLookahead(dayMinutes: number): number {
 }
 
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
-  Partial<Pick<PlanItem, "lessons">>;
+  Partial<Pick<PlanItem, "facts" | "lessons">>;
 
 /** The plan items a day's lessons come from. */
 export const LEARN_KINDS: ReadonlySet<PlanItem["kind"]> = new Set(["lesson", "chapter"]);
@@ -26,6 +28,17 @@ function isStandIn(item: DayItem): boolean {
 
 function isDue({ item, today }: { item: DayItem; today: Date }): boolean {
   return item.scheduledFor !== null && item.scheduledFor <= today;
+}
+
+/** The selected producer's actual consumed interval, including a long lesson that ends later. */
+function isAllocatedOn({ item, today }: { item: DayItem; today: Date }): boolean {
+  if (item.scheduledFor === null || isDue({ item, today })) {
+    return true;
+  }
+
+  const facts = readSelectedItemFacts(item.facts);
+  const date = toIsoDate(today);
+  return facts?.days?.some(([day, , raw]) => day === date && raw > 0) === true;
 }
 
 /** The day's subjects in the order its plan reaches them, with the lessons it plans for each. */
@@ -223,10 +236,13 @@ function listHeldSkillIds<TItem extends DayItem>({
 export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "status">>({
   awaitingOutlines,
   goal,
+  heldDay = false,
   localDate,
   plan,
 }: {
   awaitingOutlines: boolean;
+  /** A shown selected day takes its actual producer allocation, never a future lookahead refill. */
+  heldDay?: boolean;
   goal: Pick<Goal, "kind">;
   localDate: Date;
   plan: {
@@ -248,6 +264,11 @@ export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "
 
   return {
     heldSkillIds: listHeldSkillIds(day),
-    learnItems: pickDayLessonItems({ ...day, prerequisites: plan.prerequisites }),
+    learnItems: heldDay
+      ? listOpenLessons({
+          items: day.items,
+          prerequisites: plan.prerequisites ?? new Map(),
+        }).filter((item) => isAllocatedOn({ item, today: localDate }))
+      : pickDayLessonItems({ ...day, prerequisites: plan.prerequisites }),
   };
 }

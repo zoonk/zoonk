@@ -14,7 +14,6 @@ import {
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
 } from "../src/lib/openapi/schemas/mocks";
-import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
@@ -27,6 +26,7 @@ import {
   examEdition,
   isoDayFromToday,
 } from "./helpers/exams";
+import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
 const REPORT = { maxScore: 12, passed: true, scale: "points", score: 10 } as const;
@@ -73,10 +73,7 @@ test.describe("Exams API", () => {
 
     const { blueprintId, goal } = await createExamGoal(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const block = today.blocks.find((candidate) => candidate.checkpoint?.mock);
     const path = `/v1/mocks/${block?.id}`;
@@ -195,10 +192,7 @@ test.describe("Exams API", () => {
 
     const { goal } = await createExamGoal(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const mock = today.blocks.find((block) => block.checkpoint?.mock);
     const path = `/v1/mocks/${mock?.id}`;
@@ -330,10 +324,7 @@ test.describe("Exams API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-expired" });
     const { goal } = await createExamGoal(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const path = `/v1/mocks/${today.blocks.find((block) => block.checkpoint?.mock)?.id}`;
     const inUtc = { data: { timeZone: "UTC" } };

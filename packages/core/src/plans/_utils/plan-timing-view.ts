@@ -2,8 +2,8 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type PlanView } from "../plan-view-contract";
 import { type StudyCalendar } from "../planner/plan-calendar";
 import { getExamDayRules } from "../planner/plan-days";
-import { type PlanContext } from "./plan-context";
 import { type SkillAreas } from "./plan-phase-views";
+import { type PlanReadContext } from "./plan-read-projection";
 import { buildFundedMocksView, buildWeekView } from "./plan-week-view";
 
 /** The saved calendar and mock ledger behind both the week's days and announced funded events. */
@@ -17,7 +17,7 @@ export function buildPlanTimingView({
 }: {
   access: PlanView["access"];
   calendar: StudyCalendar;
-  context: PlanContext;
+  context: PlanReadContext;
   minutes: ReadonlyMap<string, number>;
   skillAreas: SkillAreas;
   studiedDates: ReadonlySet<string>;

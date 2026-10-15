@@ -32,6 +32,7 @@ import {
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { weeklyChallengeResponseSchema } from "../src/lib/openapi/schemas/weekly-challenge";
 import { createBearerLearner } from "./helpers/bearer";
+import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
@@ -254,10 +255,7 @@ test.describe("Study sessions API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-session" });
     const { goal, lessons, skills } = await createGoal(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     expect(today.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
     expect(today.missions.map((mission) => mission.kind)).toStrictEqual(["review", "somethingNew"]);
@@ -272,7 +270,8 @@ test.describe("Study sessions API", () => {
       schema: todayResponseSchema,
     });
 
-    expect(again.id).toBe(today.id);
+    expect(again.status).not.toBe("unstarted");
+    expect(again).toMatchObject({ id: today.id });
 
     const [review, learn, practice] = today.blocks;
     const reviewDone = await playBlock({ api, blockId: review?.id ?? "", sessionId: today.id });
@@ -659,23 +658,26 @@ test.describe("Study sessions API", () => {
 
     const { goal } = await createGoal(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
-    const [hidden, notMine, notMineToCatchUp, onPace] = await Promise.all([
+    const [hidden, notMine, notMineToCatchUp, notMineToOpen, onPace] = await Promise.all([
       other.api.get(`/v1/study-sessions/${today.id}`),
       other.api.get(`/v1/today?goalId=${goal.id}`),
       other.api.post(`/v1/study-sessions/${today.id}/catch-up-blocks`, {
         data: { timeZone: "UTC" },
       }),
+      other.api.post(`/v1/goals/${goal.id}/study-sessions`, {
+        data: { shownDate: today.localDate, timeZone: "UTC" },
+      }),
       api.post(`/v1/study-sessions/${today.id}/catch-up-blocks`, { data: { timeZone: "UTC" } }),
     ]);
 
-    expect([hidden.status(), notMine.status(), notMineToCatchUp.status()]).toStrictEqual([
-      404, 404, 404,
-    ]);
+    expect([
+      hidden.status(),
+      notMine.status(),
+      notMineToCatchUp.status(),
+      notMineToOpen.status(),
+    ]).toStrictEqual([404, 404, 404, 404]);
 
     // On pace, the session has nothing to catch up, and says so instead of adding anything.
     expect(today.catchUp).toBeNull();
@@ -699,7 +701,8 @@ test.describe("Study sessions API", () => {
       schema: todayResponseSchema,
     });
 
-    expect(after.nextBlockId).toBe(today.blocks[0]?.id);
+    expect(after.status).not.toBe("unstarted");
+    expect(after).toMatchObject({ nextBlockId: today.blocks[0]?.id });
   });
 
   test("asks placement questions in the first week and never saves them as mistakes", async () => {
@@ -713,10 +716,7 @@ test.describe("Study sessions API", () => {
       where: { id: goal.id },
     });
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const review = today.blocks.find((block) => block.kind === "review");
     const blockPath = `/v1/study-sessions/${today.id}/blocks/${review?.id}`;

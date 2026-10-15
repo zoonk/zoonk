@@ -6,7 +6,7 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 
 /**
  * The goal's day as Today opens it, without building it: the session from before midnight the
- * learner is still in, unless they already started the new day's (see `resolveTodaySession`), else
+ * learner is still in, unless they already started the new day's, else
  * today's saved one; null while the day isn't built yet. A read: it never creates, refreshes or
  * settles anything.
  */

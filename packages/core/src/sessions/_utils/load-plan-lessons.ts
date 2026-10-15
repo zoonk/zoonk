@@ -1,14 +1,28 @@
 import "server-only";
-import { type Lesson, type PlanItem, prisma } from "@zoonk/db";
+import { type Lesson, prisma } from "@zoonk/db";
+import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
+import { getItemKey } from "../../plans/planner/plan-items";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlannedLesson } from "../session-builder";
+import { type SessionPlanItem } from "./session-plan-item";
 
 type LessonWithSkills = Lesson & { skills: { skillId: string }[] };
 
 type LearnItem = Pick<
-  PlanItem,
-  "chapterId" | "id" | "kind" | "lessonId" | "skillId" | "titleSnapshot"
->;
+  SessionPlanItem,
+  "chapterId" | "id" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId" | "titleSnapshot"
+> &
+  Partial<Pick<SessionPlanItem, "facts">>;
+
+/** Legacy chapter placeholders used kind lesson; selected rows use chapter explicitly. */
+function isChapterPlaceholder(item: LearnItem): boolean {
+  return (
+    item.chapterId !== null &&
+    item.lessonId === null &&
+    (item.kind === "chapter" ||
+      (item.kind === "lesson" && readSelectedItemFacts(item.facts) === null))
+  );
+}
 
 const LESSON_INCLUDE = {
   skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } },
@@ -18,7 +32,7 @@ function toPlannedLesson({
   item,
   lesson,
 }: {
-  item: Pick<LearnItem, "chapterId" | "id" | "skillId" | "titleSnapshot"> | null;
+  item: LearnItem | null;
   lesson: LessonWithSkills;
 }): PlannedLesson {
   return {
@@ -27,6 +41,7 @@ function toPlannedLesson({
     lessonId: lesson.id,
     minutes: lesson.estimatedMinutes || DEFAULT_LESSON_MINUTES,
     planItemId: item?.id ?? null,
+    planItemKey: item ? getItemKey(item) : null,
     planSkillId: item?.skillId ?? null,
     skillIds: lesson.skills.map((skill) => skill.skillId),
     title: lesson.title,
@@ -93,7 +108,7 @@ export async function loadPlanLessons({
   const lessonIds = items.flatMap((item) => (item.lessonId ? [item.lessonId] : []));
 
   const chapterIds = items.flatMap((item) =>
-    !item.lessonId && item.chapterId ? [item.chapterId] : [],
+    isChapterPlaceholder(item) && item.chapterId ? [item.chapterId] : [],
   );
 
   const [lessons, chapters] = await Promise.all([
@@ -113,7 +128,7 @@ export async function loadPlanLessons({
 
     // A lesson item whose lesson was deleted, or set aside after its drafts were held back, has
     // nothing to teach: the day moves on to the next item.
-    if (!item.chapterId || item.lessonId) {
+    if (!isChapterPlaceholder(item) || !item.chapterId) {
       return [];
     }
 
@@ -129,6 +144,7 @@ export async function loadPlanLessons({
           lessonId: null,
           minutes: DEFAULT_LESSON_MINUTES,
           planItemId: item.id,
+          planItemKey: getItemKey(item),
           planSkillId: item.skillId,
           skillIds: [],
           title: item.titleSnapshot,

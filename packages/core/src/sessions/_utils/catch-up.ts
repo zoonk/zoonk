@@ -1,9 +1,11 @@
 import "server-only";
-import { type PlanItem, type StudyFreshStart, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type PlanItem, type StudyFreshStart, prisma } from "@zoonk/db";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { readBlockPayload } from "../block-payload";
 import { type PlannedLesson } from "../session-builder";
+import { type DayBlockInput } from "./day-block-view";
 import { loadPlanLessons } from "./load-plan-lessons";
+import { type SessionPlanItem } from "./session-plan-item";
 import { type CatchUpView } from "./session-view";
 
 const LEARN_KINDS: PlanItem["kind"][] = ["lesson", "chapter"];
@@ -59,8 +61,8 @@ export function isCatchingUp({
   block,
   items,
 }: {
-  block: StudySessionBlock;
-  items: readonly PlanItem[];
+  block: DayBlockInput;
+  items: readonly SessionPlanItem[];
 }): boolean {
   const { planItemId } = readBlockPayload(block);
 
@@ -68,7 +70,8 @@ export function isCatchingUp({
     block.kind === "learn" &&
     items.some(
       (item) =>
-        item.id === planItemId || (item.lessonId !== null && item.lessonId === block.lessonId),
+        (item.id !== null && item.id === planItemId) ||
+        (item.lessonId !== null && item.lessonId === block.lessonId),
     )
   );
 }
@@ -82,7 +85,7 @@ export async function loadLaterCatchUp({
   goalId,
   userId,
 }: {
-  blocks: readonly StudySessionBlock[];
+  blocks: readonly DayBlockInput[];
   goalId: string | null;
   userId: string;
 }): Promise<{ items: PlanItem[]; lessons: PlannedLesson[] }> {
@@ -130,15 +133,17 @@ export async function loadCatchUpView({
   examTomorrow,
   freshStart,
   goalId,
+  selectedItems,
   trialEnded,
   userId,
 }: {
-  blocks: readonly StudySessionBlock[];
+  blocks: readonly DayBlockInput[];
   /** The learner's daily time for the goal: what "about one more day" measures. */
   dailyMinutes: number;
   examTomorrow: boolean;
   freshStart: StudyFreshStart | null;
   goalId: string | null;
+  selectedItems?: readonly SessionPlanItem[];
   trialEnded: boolean;
   userId: string;
 }): Promise<CatchUpView | null> {
@@ -146,7 +151,9 @@ export async function loadCatchUpView({
     return null;
   }
 
-  const { items, lessons } = await loadLaterCatchUp({ blocks, goalId, userId });
+  const { items, lessons } = selectedItems
+    ? await loadSelectedCatchUp({ blocks, items: selectedItems, userId })
+    : await loadLaterCatchUp({ blocks, goalId, userId });
 
   if (items.length === 0) {
     return null;
@@ -155,8 +162,33 @@ export async function loadCatchUpView({
   const minutes = Math.round(lessons.reduce((total, lesson) => total + lesson.minutes, 0));
 
   return {
-    blockIds: blocks.filter((block) => isCatchingUp({ block, items })).map((block) => block.id),
+    blockIds: blocks
+      .filter((block) => isCatchingUp({ block, items }))
+      .flatMap((block) => block.id ?? []),
     later: { lessons: lessons.length, minutes, offered: fitsInADay({ dailyMinutes, minutes }) },
     lessonsLeft: items.length,
+    positions: blocks
+      .filter((block) => isCatchingUp({ block, items }))
+      .map((block) => block.position),
+  };
+}
+
+/** A stale preview uses the selected work before its missed-day notice has been persisted. */
+async function loadSelectedCatchUp({
+  blocks,
+  items,
+  userId,
+}: {
+  blocks: readonly DayBlockInput[];
+  items: readonly SessionPlanItem[];
+  userId: string;
+}) {
+  const later = items.filter(
+    (item) => !blocks.some((block) => isCatchingUp({ block, items: [item] })),
+  );
+
+  return {
+    items,
+    lessons: later.length > 0 ? await loadPlanLessons({ items: later, userId }) : [],
   };
 }

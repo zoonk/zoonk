@@ -87,6 +87,12 @@ export const planEffectSchema = z.object({
 
 const planChangePayloadSchema = z.object({
   /**
+   * When the learner said "Got it" to an applied change: the plan stops showing it. Null until then,
+   * and for proposals.
+   */
+  /** Replay binding for an acknowledged computed Today notice, never a client-supplied row ID. */
+  acknowledgedRead: z.object({ revision: z.string(), studyDay: z.iso.date() }).strict().optional(),
+  /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.
    */
@@ -148,10 +154,6 @@ const planChangePayloadSchema = z.object({
   operations: z.array(anyPlanOperationSchema).default([]),
   /** Items a test-out skipped, which its undo brings back. */
   planItemIds: z.array(z.string()).default([]),
-  /**
-   * When the learner said "Got it" to an applied change: the plan stops showing it. Null until then,
-   * and for proposals.
-   */
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
   /**

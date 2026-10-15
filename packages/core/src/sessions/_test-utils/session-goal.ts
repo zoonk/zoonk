@@ -1,8 +1,7 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionPlanFixture } from "@zoonk/testing/fixtures/study-sessions";
 
 /** A Wednesday, so no session in these tests is a Monday fresh start by accident. */
 export const SESSION_NOW = new Date("2026-09-30T12:00:00Z");
@@ -41,49 +40,7 @@ export async function sessionGoalFixture({
     ...goal,
   });
 
-  const plan = await planFixture({
-    goalId: created.id,
-    phases: [{ name: "Basics" }, { name: "Practice" }],
-  });
-
-  const skills = await Promise.all(
-    Array.from({ length: lessons }, (_, index) => skillFixture({ name: `Skill ${index + 1}` })),
-  );
-
-  const lessonRows = await Promise.all(
-    skills.map((_, index) =>
-      libraryLessonFixture({ canDo: `You'll do thing ${index + 1}`, title: `Lesson ${index + 1}` }),
-    ),
-  );
-
-  const [planItems, items] = await Promise.all([
-    Promise.all(
-      lessonRows.map((lesson, position) =>
-        planItemFixture({
-          kind: "lesson",
-          lessonId: lesson.id,
-          phase: 0,
-          planId: plan.id,
-          position,
-          titleSnapshot: lesson.title,
-        }),
-      ),
-    ),
-    Promise.all(
-      skills.flatMap((skill) =>
-        Array.from({ length: itemsPerSkill }, () =>
-          itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-        ),
-      ),
-    ),
-    Promise.all(
-      lessonRows.map((lesson, index) =>
-        lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
-      ),
-    ),
-  ]);
-
-  return { goal: created, items, lessons: lessonRows, plan, planItems, skills };
+  return studySessionPlanFixture({ goal: created, itemsPerSkill, lessons });
 }
 
 /** A skill the learner studied earlier and FSRS says is due by `due`. */

@@ -37,11 +37,13 @@ export async function buildMockConditions(
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
   // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
-  const identity = await loadScheduledMock({
-    date: sessionDate,
-    goalId: goal?.id ?? null,
-    planItemId: payload.planItemId,
-  });
+  const identity =
+    payload.checkpoint?.mockIdentity ??
+    (await loadScheduledMock({
+      date: sessionDate,
+      goalId: goal?.id ?? null,
+      planItemId: payload.planItemId,
+    }));
 
   const plan = await planWeeklyMock({
     goal: {

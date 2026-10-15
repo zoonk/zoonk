@@ -4,6 +4,7 @@ import { z } from "zod";
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
+import { mockIdentitySchema } from "./day-block";
 
 const capsuleSchema = z.object({
   format: z.enum(CAPSULE_FORMATS),
@@ -32,6 +33,7 @@ const checkpointSchema = z.object({
   kind: z.enum(["boss", "finalBoss", "weekly"]),
   /** Weekly Big Challenges of exam goals are mock exams: they feed the estimated score. */
   mock: z.boolean(),
+  mockIdentity: mockIdentitySchema.nullable().optional(),
   passMark: z.number().int(),
   phase: z.number().int().nullable(),
   /** A boss lost on an earlier day, back after reinforcement lessons. */
@@ -55,6 +57,8 @@ const blockPayloadSchema = z.object({
   /** Question identities survive content deletion while a checkpoint is still being played. */
   checkpointAnswers: z.array(z.object({ attemptId: z.uuid(), itemId: z.uuid() })).default([]),
   drills: z.array(drillSchema).default([]),
+  /** The retained locked calls whose freed time this once-only entitlement replacement filled. */
+  entitlementReplacementFor: z.array(z.uuid()).default([]),
   /** "10 more minutes" after the day's session: its Brain Power is capped. */
   extra: z.boolean().default(false),
   /**
@@ -80,6 +84,7 @@ const blockPayloadSchema = z.object({
    */
   placementItemIds: z.array(z.string()).default([]),
   planItemId: z.string().nullable().default(null),
+  planItemKey: z.string().nullable().default(null),
   /**
    * The plan's skill a lesson block stands for, kept with the block so its subject still shows
    * when a re-plan removes its plan item while the lesson is on today's list.
@@ -122,11 +127,17 @@ export function toBlockPayload(fields: Partial<BlockPayload>): BlockPayload {
  * Reads a stored payload. The session wrote it, so a parse failure means corrupted data: it's
  * logged and the block reads as empty instead of breaking the learner's day.
  */
-export function readBlockPayload(block: Pick<StudySessionBlock, "id" | "payload">): BlockPayload {
+export function readBlockPayload(
+  block: Pick<StudySessionBlock, "payload"> & { id?: string },
+): BlockPayload {
   const parsed = blockPayloadSchema.safeParse(block.payload);
 
   if (!parsed.success) {
-    logError(`Study block ${block.id} has a payload that doesn't match its schema.`, parsed.error);
+    logError(
+      `Study block ${block.id ?? "(unstarted)"} has a payload that doesn't match its schema.`,
+      parsed.error,
+    );
+
     return EMPTY_BLOCK_PAYLOAD;
   }
 

@@ -1,7 +1,11 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
-import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
+import {
+  type ShortPlanToday,
+  getDayBeforePlan,
+  loadShortPlanDay,
+} from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { getExamDayChecklist, getExamStage } from "../final-stretch/final-stretch-rules";
@@ -32,8 +36,10 @@ function pickDay({
 export async function loadExamMoment({
   goal,
   includesMockExams,
+  shortPlan: selectedShortPlan,
   today,
 }: {
+  shortPlan?: ShortPlanToday | null;
   goal: Pick<
     Goal,
     | "createdAt"
@@ -72,7 +78,7 @@ export async function loadExamMoment({
     loadExamWork({ goalId: goal.id, today }),
     prisma.mockExam.count({ where: { goalId: goal.id, status: "finished" } }),
     prisma.examResult.findUnique({ select: { id: true }, where: { goalId: goal.id } }),
-    loadShortPlanDay({ goal, today }),
+    selectedShortPlan === undefined ? loadShortPlanDay({ goal, today }) : selectedShortPlan,
   ]);
 
   const hasChecklist = CHECKLIST_STAGES.has(stage);

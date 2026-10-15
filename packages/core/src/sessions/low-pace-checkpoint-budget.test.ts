@@ -9,7 +9,7 @@ import { getChallenge } from "../checkpoints/get-challenge";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
-import { getTodayView } from "../view-models/today/get-today-view";
+import { openTodayView } from "./_test-utils/open-today-view";
 import { readBlockPayload } from "./block-payload";
 
 const START = new Date("2020-09-28T12:00:00Z");
@@ -102,10 +102,10 @@ describe("a low-pace course's fixed checkpoint budget", () => {
         status: "ready",
       });
 
-      const today = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+      const today = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
       if (today.status !== "ready") {
-        throw new Error(`Expected the checkpoint day: ${today.status}`);
+        throw new Error("Expected the explicitly opened checkpoint day");
       }
 
       const session = await prisma.studySession.findUniqueOrThrow({
@@ -200,10 +200,10 @@ describe("a low-pace course's fixed checkpoint budget", () => {
     ]);
 
     vi.setSystemTime(new Date(weekly.scheduledFor.getTime() + DAY_MILLISECONDS / 2));
-    const result = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const result = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     if (result.status !== "ready") {
-      throw new Error(`Expected the real weekly checkpoint day: ${result.status}`);
+      throw new Error("Expected the explicitly opened weekly checkpoint day");
     }
 
     const session = await prisma.studySession.findUniqueOrThrow({

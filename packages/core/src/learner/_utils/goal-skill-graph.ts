@@ -14,7 +14,10 @@ import {
   toGraphEntries,
   unique,
 } from "./goal-plan-projection";
+import { type GoalPlanSource, type PlanItemRow, loadSavedGoalPlanSource } from "./goal-plan-source";
 import { loadSkillSurvivors } from "./update-learner-skill";
+
+export { type GoalPlanSource } from "./goal-plan-source";
 
 /**
  * A goal skill with the area it belongs to (its chapter, or its plan phase without one), below its
@@ -27,11 +30,6 @@ export type GoalSkillNode = PlacementSkill & {
   areaTitle: string;
   memberSkillIds: string[];
 };
-
-type PlanItemRow = Pick<
-  PlanItem,
-  "chapterId" | "id" | "kind" | "lessonId" | "phase" | "skillId" | "status" | "titleSnapshot"
->;
 
 /**
  * A plan item with the skills it teaches and the chapter it's planned in, for marking what a
@@ -50,21 +48,25 @@ export async function loadItemSkillRows({
   lessonIds: readonly string[];
 }): Promise<ItemSkillRows> {
   const [lessonSkills, chapterLessons] = await Promise.all([
-    prisma.lessonSkill.findMany({
-      orderBy: { createdAt: "asc" },
-      select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
-      where: { lessonId: { in: [...lessonIds] } },
-    }),
-    prisma.chapterLesson.findMany({
-      orderBy: { position: "asc" },
-      select: {
-        chapterId: true,
-        lesson: {
-          select: { skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } } },
-        },
-      },
-      where: { chapterId: { in: [...chapterIds] } },
-    }),
+    lessonIds.length === 0
+      ? []
+      : prisma.lessonSkill.findMany({
+          orderBy: { createdAt: "asc" },
+          select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
+          where: { lessonId: { in: [...lessonIds] } },
+        }),
+    chapterIds.length === 0
+      ? []
+      : prisma.chapterLesson.findMany({
+          orderBy: { position: "asc" },
+          select: {
+            chapterId: true,
+            lesson: {
+              select: { skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } } },
+            },
+          },
+          where: { chapterId: { in: [...chapterIds] } },
+        }),
   ]);
 
   return { chapterLessons, lessonSkills };
@@ -193,28 +195,16 @@ function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, Member
  * finer member skills: what `loadPlan` decorates and the goal's skill scope reads. Null without a
  * plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlanEntries({ goalId, withLeftOut }: { goalId: string; withLeftOut: boolean }) {
-  const plan = await prisma.plan.findUnique({
-    select: {
-      graph: true,
-      items: {
-        orderBy: { position: "asc" },
-        select: {
-          chapterId: true,
-          id: true,
-          kind: true,
-          lessonId: true,
-          phase: true,
-          skillId: true,
-          status: true,
-          titleSnapshot: true,
-        },
-      },
-      phases: true,
-      settings: true,
-    },
-    where: { goalId },
-  });
+async function loadPlanEntries({
+  goalId,
+  source,
+  withLeftOut,
+}: {
+  goalId: string;
+  source?: GoalPlanSource;
+  withLeftOut: boolean;
+}) {
+  const plan = source ?? (await loadSavedGoalPlanSource(goalId));
 
   if (!plan) {
     return null;
@@ -250,12 +240,14 @@ async function loadPlanEntries({ goalId, withLeftOut }: { goalId: string; withLe
  */
 async function loadPlan({
   goalId,
+  source,
   withLeftOut,
 }: {
   goalId: string;
+  source?: GoalPlanSource;
   withLeftOut: boolean;
 }): Promise<GoalPlan> {
-  const loaded = await loadPlanEntries({ goalId, withLeftOut });
+  const loaded = await loadPlanEntries({ goalId, source, withLeftOut });
 
   if (!loaded) {
     return { items: [], skills: [] };
@@ -363,8 +355,8 @@ export async function loadGoalSkillScope(
 }
 
 /** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */
-export function loadGoalPlan(goalId: string): Promise<GoalPlan> {
-  return loadPlan({ goalId, withLeftOut: false });
+export function loadGoalPlan(goalId: string, source?: GoalPlanSource): Promise<GoalPlan> {
+  return loadPlan({ goalId, source, withLeftOut: false });
 }
 
 /** A plan without the skills its exam practices only with recordings (`loadListeningSkillIds`). */

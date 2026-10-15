@@ -5,6 +5,7 @@ import {
   studySessionTimeZoneInputSchema,
 } from "@zoonk/core/sessions/contract";
 import { studySessionErrorCodes } from "../../study-session-errors";
+import { openStudyDayBodySchema, openedStudyDayResponseSchema } from "../schemas/open-study-day";
 import {
   goalPathParamsSchema,
   studyBlockPathParamsSchema,
@@ -50,6 +51,31 @@ const sessionSummaryResponse = jsonResponse(
 );
 
 export const studySessionPaths = {
+  "/goals/{goalId}/study-sessions": {
+    post: {
+      description:
+        "Opens the goal and local day the learner saw, saving the selected plan and one real session atomically. Existing days retain their authoritative blocks and IDs. A logical target resolves only to that same work; changed or removed work is never substituted. No AI or question generation starts here.",
+      operationId: "openStudyDay",
+      requestBody: {
+        content: { "application/json": { schema: openStudyDayBodySchema } },
+        required: true,
+      },
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(openedStudyDayResponseSchema, "The existing authoritative day"),
+        "201": jsonResponse(openedStudyDayResponseSchema, "The newly opened day"),
+        ...readErrors,
+        "409": {
+          ...conflictResponse,
+          description:
+            "The day is empty (NOTHING_TO_OPEN), the goal is inactive (GOAL_NOT_ACTIVE), the plan is not ready (PLAN_NOT_READY), or an input race requires one separate-request retry (STUDY_DAY_RETRYABLE). Empty and retryable outcomes retain actorId, goalId, localDate and revision in error details. Never retry by rebuilding within the same request.",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Open a study day",
+      tags: TAGS,
+    },
+  },
   "/goals/{goalId}/weekly-challenge": {
     get: {
       description:

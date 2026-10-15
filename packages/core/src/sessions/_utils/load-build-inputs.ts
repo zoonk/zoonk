@@ -1,5 +1,4 @@
 import "server-only";
-import { type PlanItem } from "@zoonk/db";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
@@ -18,6 +17,7 @@ import { loadDayCapsules } from "./day-capsules";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
 import { LEARN_KINDS, getLessonLookahead, pickDayLessons } from "./day-lessons";
 import { loadDayPlan } from "./day-plan";
+import { findPlannedReview } from "./day-review";
 import { getExamPrepAccess } from "./exam-access";
 import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadMistakeDrills } from "./load-mistake-drills";
@@ -28,21 +28,12 @@ import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
 import { getFocusedSkillIds, getTestSkillIds } from "./review-skills";
+import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
-
-/** A review day the plan scheduled for today or earlier and the learner hasn't done yet. */
-function findReviewDay({ items, today }: { items: readonly PlanItem[]; today: Date }) {
-  return items.find(
-    (item) =>
-      item.kind === "review" &&
-      item.status === "todo" &&
-      item.scheduledFor !== null &&
-      item.scheduledFor <= today,
-  );
-}
+import { type SessionPlanItem } from "./session-plan-item";
 
 /** The first day in a phase: nothing in it is done yet, and it isn't the plan's first phase. */
-function isNewPhase(items: readonly PlanItem[]): boolean {
+function isNewPhase(items: readonly SessionPlanItem[]): boolean {
   const phase = items.find(
     (item) => LEARN_KINDS.has(item.kind) && item.status === "todo" && !isWritingItem(item),
   )?.phase;
@@ -54,10 +45,8 @@ function isNewPhase(items: readonly PlanItem[]): boolean {
   );
 }
 
-function getPlanProgress(items: readonly PlanItem[]): number {
-  return items.length === 0
-    ? 0
-    : items.filter((item) => item.status !== "todo").length / items.length;
+function getPlanProgress(items: readonly SessionPlanItem[]): number {
+  return items.filter((item) => item.status !== "todo").length / Math.max(1, items.length);
 }
 
 /** A question the checkpoint asks is answered there; answering it right fixes its mistake too. */
@@ -96,6 +85,25 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
       title: alphabet.title,
     },
   ];
+}
+
+function getDayFreshStart({
+  plan,
+  today,
+}: {
+  plan: Pick<
+    Awaited<ReturnType<typeof loadDayPlan>>,
+    "isFirstDay" | "items" | "lastStudyDate" | "planStart"
+  >;
+  today: Date;
+}) {
+  return getFreshStart({
+    isFirstDay: plan.isFirstDay,
+    isNewPhase: isNewPhase(plan.items),
+    lastStudyDate: plan.lastStudyDate,
+    startDate: plan.planStart,
+    today,
+  });
 }
 
 /** What the day's quick review reads (see `loadReviewCapsules`). */
@@ -151,6 +159,15 @@ async function withWeakestReview({
   return capsules.length > 0 ? { ...input, capsules, weakestReview: true } : input;
 }
 
+/** The test's whole topic scope, including topics a short schedule leaves out. */
+function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>>): string[] {
+  return getTestSkillIds({
+    graph: plan.graph,
+    planSkillIds: plan.skills.map((skill) => skill.id),
+    settings: plan.settings,
+  });
+}
+
 /**
  * Loads everything the day's session is built from: the alphabet first for a new script, the
  * plan's next lessons, today's capsules, a mistake to fix, mixed practice (with a question on each
@@ -165,12 +182,14 @@ export async function loadSessionBuildInput(
      * review of the weakest topics (`withWeakestReview`).
      */
     keepsBlocks?: boolean;
+    selection?: SelectedDayPlan;
+    dayPlan?: Awaited<ReturnType<typeof loadDayPlan>>;
   },
 ): Promise<SessionBuildInput> {
   const { goal, keepsBlocks = false, localDate, now, timeZone, userId } = context;
 
   const [plan, awaitingOutlines] = await Promise.all([
-    loadDayPlan(context),
+    context.dayPlan ?? loadDayPlan(context),
     isDayAwaitingOutlines({ goal, localDate }),
   ]);
 
@@ -179,15 +198,17 @@ export async function loadSessionBuildInput(
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
-  const { heldSkillIds, learnItems } = pickDayLessons({ awaitingOutlines, goal, localDate, plan });
+  const { heldSkillIds, learnItems } = pickDayLessons({
+    awaitingOutlines,
+    goal,
+    heldDay: context.selection !== undefined,
+    localDate,
+    plan,
+  });
 
   // Every topic of the test, the ones its days left out too: what a mock asks, and the full
   // review a free plan gets on a mock's day.
-  const testSkillIds = getTestSkillIds({
-    graph: plan.graph,
-    planSkillIds: skillIds,
-    settings: plan.settings,
-  });
+  const testSkillIds = getPlanTestSkillIds(plan);
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal, timeZone, today: localDate });
   const review = toReviewInput({ context, field, netScored, plan });
@@ -233,6 +254,7 @@ export async function loadSessionBuildInput(
       goal,
       includesMockExams: access.includesMockExams,
       items: plan.items,
+      mockFunding: context.selection?.state.settings.mockFunding,
       mockSkillIds: testSkillIds,
       now,
       skillIds: textSkillIds,
@@ -273,8 +295,8 @@ export async function loadSessionBuildInput(
   // A mock the learner's plan doesn't include (a free plan's) leaves its day to a full review of
   // every topic of the test, the ones its days left out too.
   const fullReview = weekly.plusRequired;
-  const reviewPlanItemId = findReviewDay({ items: plan.items, today: localDate })?.id ?? null;
-  const isReviewDay = fullReview || reviewPlanItemId !== null;
+  const reviewDay = findPlannedReview({ items: plan.items, today: localDate });
+  const isReviewDay = fullReview || reviewDay !== null;
 
   const capsules = await loadDayCapsules({ capsules: dueCapsules, isReviewDay, reserved, userId });
 
@@ -312,13 +334,7 @@ export async function loadSessionBuildInput(
     dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
-    freshStart: getFreshStart({
-      isFirstDay: plan.isFirstDay,
-      isNewPhase: isNewPhase(plan.items),
-      lastStudyDate: plan.lastStudyDate,
-      startDate: plan.planStart,
-      today: localDate,
-    }),
+    freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? reviewSkillIds : null,
     lessons,
     netScored,
@@ -331,7 +347,8 @@ export async function loadSessionBuildInput(
     produce,
     reinforcement: boss.reinforcement,
     remainingLimitMinutes: plan.limit.remainingMinutes,
-    reviewPlanItemId,
+    reviewPlanItemId: reviewDay?.id ?? null,
+    reviewPlanItemKey: reviewDay?.key ?? null,
   };
 
   return keepsBlocks ? input : withWeakestReview({ input, review });

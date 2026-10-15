@@ -3,7 +3,10 @@ import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getExamPrepAccess } from "../../entitlements/limits";
 import { getFinalStretchStart } from "../../exams/final-stretch/final-stretch-rules";
-import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
+import {
+  loadGoalListeningSkillIds,
+  loadListeningSkillIds,
+} from "../../exams/listening/listening-skills";
 import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
@@ -14,7 +17,9 @@ import { getGoalDayMinutes } from "./day-minutes";
 import { loadExamStructure } from "./exam-structure";
 import { loadIdleListeningSkillIds } from "./load-practice";
 import { getSkippedSkillIds } from "./review-skills";
+import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
+import { type SessionPlanItem } from "./session-plan-item";
 
 /** Whether the goal had a day before this one: day one starts nothing over. */
 async function hasEarlierDay({ goalId, today }: { goalId: string; today: Date }) {
@@ -57,23 +62,40 @@ function getPlanStart({
  * skills with no voiced recording to ask today (`idleSkillIds`) leave their subject's time to the
  * others.
  */
-export async function loadDayPlan({ goal, localDate, now, timeZone, userId }: SessionDayContext) {
+export async function loadDayPlan({
+  goal,
+  localDate,
+  now,
+  selection,
+  timeZone,
+  userId,
+}: SessionDayContext & { selection?: SelectedDayPlan }) {
   const [plan, goalPlan, tier, limit, lastStudyDate, hadEarlierDay, listeningSkillIds] =
     await Promise.all([
-      prisma.plan.findUnique({
-        include: { items: { orderBy: { position: "asc" } } },
-        where: { goalId: goal.id },
-      }),
-      loadGoalPlan(goal.id),
+      selection
+        ? {
+            graph: selection.state.graph,
+            items: selection.items,
+            phases: selection.phases,
+            settings: selection.state.settings,
+          }
+        : prisma.plan.findUnique({
+            include: { items: { orderBy: { position: "asc" } } },
+            where: { goalId: goal.id },
+          }),
+      loadGoalPlan(goal.id, selection?.source),
       getLearnerTier(userId),
       loadDailyTimeLimitStatus({ date: localDate, userId }),
       loadLastStudyDate({ today: localDate, userId }),
       hasEarlierDay({ goalId: goal.id, today: localDate }),
-      loadListeningSkillIds(goal.id),
+      selection
+        ? loadGoalListeningSkillIds({ goal, graph: selection.state.graph })
+        : loadListeningSkillIds(goal.id),
     ]);
 
   // The day's mock fits the day: a class test's short mock takes the time the learner gives it.
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
+  const items: SessionPlanItem[] = plan?.items ?? [];
   const graph = parsePlanGraph(plan?.graph);
   const skipped = getSkippedSkillIds({ graph, settings: plan?.settings });
   const skills = goalPlan.skills.filter((skill) => !skipped.has(skill.id));
@@ -94,12 +116,13 @@ export async function loadDayPlan({ goal, localDate, now, timeZone, userId }: Se
     /** What exam prep the learner's plan (Plus, free or guest) covers. */
     examPrep: getExamPrepAccess(tier),
     finalStretchStart: getFinalStretchStart(parsePlanPhases(plan?.phases)),
+    goalPlan,
     graph,
     idleSkillIds,
     isFirstDay: !hadEarlierDay,
     /** Each plan item's skills, by its id: what a phase's lessons study (`getBossSkillIds`). */
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
-    items: plan?.items ?? [],
+    items,
     lastStudyDate,
     limit,
     listeningSkillIds,
@@ -112,5 +135,6 @@ export async function loadDayPlan({ goal, localDate, now, timeZone, userId }: Se
     // Weekly challenges ask single questions, so an exam's listening skills, practiced only with
     // recordings, aren't theirs (a boss plays a listening phase's recordings, a review one of them).
     textSkillIds: skills.flatMap((skill) => (listeningSkillIds.has(skill.id) ? [] : [skill.id])),
+    tier,
   };
 }

@@ -9,7 +9,7 @@ import { askPhaseDatesAfterChange } from "./_utils/phase-dates-proposal";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
-import { commitPlan, getVersionAfter, revalidatePlanTags, withPlanRetry } from "./_utils/replan";
+import { commitPlan, revalidatePlanTags, withPlanRetry } from "./_utils/replan";
 import { undoChange } from "./_utils/undo-change";
 import { type PlanChangeDecisionInput } from "./plan-contract";
 import { type PlanChangeView } from "./plan-view-contract";
@@ -56,7 +56,7 @@ async function acceptProposal({ change, context }: Decision) {
             ...payload,
             effect,
             fromProposal: true,
-            versionAfter: getVersionAfter(context),
+            versionAfter: context.plan.version + 1,
           }),
           status: "applied",
         },

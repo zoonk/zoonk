@@ -52,7 +52,9 @@ import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
+import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
+import * as curriculumSteps from "./steps/goal-curriculum-steps";
 import { runPlanSetupTaskStep } from "./steps/goal-curriculum-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
@@ -212,6 +214,41 @@ async function runPlacementInline(workflow: unknown, args: unknown[]) {
   }
 
   return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
+}
+
+/** An ordering hook calls through to the real writers; no clock, database or result is replaced. */
+async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promise<T> {
+  const committed = new Set<string>();
+  const createPlan = curriculumSteps.createGoalPlanStep;
+  const preparePlacement = goalPlacement.prepareGraphPlacement;
+
+  const creation = vi
+    .spyOn(curriculumSteps, "createGoalPlanStep")
+    .mockImplementation(async (input) => {
+      const tasks = await createPlan(input);
+      committed.add(input.goalId);
+      return tasks;
+    });
+
+  const placement = vi
+    .spyOn(goalPlacement, "prepareGraphPlacement")
+    .mockImplementation(async (input) => {
+      expect(
+        committed.has(input.goalId),
+        "A goal's initial plan commits before its placement writer starts",
+      ).toBe(true);
+
+      return preparePlacement(input);
+    });
+
+  try {
+    const result = await run();
+    expect(placement).toHaveBeenCalledOnce();
+    return result;
+  } finally {
+    creation.mockRestore();
+    placement.mockRestore();
+  }
 }
 
 /** Runs the course outline a goal starts inline too, as the runtime would in the background. */
@@ -432,10 +469,9 @@ describe(goalContentWorkflow, () => {
         "goalReady:completed",
       ]);
 
-      // Placement's wait opens while the skills are saved; its questions are written by a run of
-      // their own, which the goal's run never waits on.
-      expect(events.indexOf("preparePlacement:started")).toBe(
-        events.indexOf("saveSkills:started") + 1,
+      // Placement's bank writes must follow the initial commit so they cannot invalidate it.
+      expect(events.indexOf("preparePlacement:started")).toBeGreaterThan(
+        events.indexOf("createPlan:completed"),
       );
 
       expect(start).toHaveBeenCalledWith(placementItemsWorkflow, [
@@ -449,7 +485,7 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "starts placement's questions once every skill is saved, without waiting for the rest of the plan",
+    "starts placement's questions from all saved skills after committing the initial plan",
     { timeout: TIMEOUT },
     async () => {
       const { goal } = await newGoal();
@@ -464,8 +500,7 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id });
 
-      // Placement's questions need only the skills they ask about, not the plan's links or
-      // courses: their run starts once every skill is saved, and the goal's run never waits on it.
+      // Placement starts with every skill saved, after its own initial plan commit is safe.
       const saved = await countSkills();
 
       expect(saved).toBeGreaterThan(0);
@@ -2492,7 +2527,7 @@ describe(goalContentWorkflow, () => {
         ),
       );
 
-      await goalContentWorkflow({ goalId: goal.id });
+      await withCommittedPlanBeforePlacement(() => goalContentWorkflow({ goalId: goal.id }));
 
       expect(extractPastQuestions).toHaveBeenCalledWith(
         expect.objectContaining({ exam: "Enem", paper: { text: paperText, title: "Enem 2023" } }),

@@ -44,7 +44,9 @@ export function getBlockWait<Block extends BlockWaitFields>({
   return before.some((other) => isPhaseChallenge(other)) ? "challenge" : null;
 }
 
-function toBlockWaitFields(row: StudySessionBlock): BlockWaitFields {
+type StoredWaitInput = Pick<StudySessionBlock, "kind" | "payload" | "position" | "status">;
+
+function toBlockWaitFields(row: StoredWaitInput): BlockWaitFields {
   return {
     checkpoint: readBlockPayload(row).checkpoint,
     kind: row.kind,
@@ -58,8 +60,8 @@ export function getStoredBlockWait({
   block,
   blocks,
 }: {
-  block: StudySessionBlock;
-  blocks: readonly StudySessionBlock[];
+  block: StoredWaitInput;
+  blocks: readonly StoredWaitInput[];
 }): ReturnType<typeof getBlockWait> {
   return getBlockWait({
     block: toBlockWaitFields(block),

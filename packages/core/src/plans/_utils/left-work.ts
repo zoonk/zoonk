@@ -1,9 +1,24 @@
 import "server-only";
 import { carriesGiven } from "../planner/carry-over";
-import { loadCarryOver, loadTodaySettledItemIds } from "./carried-lessons";
+import { loadPlanCarrySnapshot } from "./carried-lessons";
 import { type PlanContext } from "./plan-context";
 
 const LEARN_KINDS = new Set(["chapter", "lesson"]);
+
+function isPendingStudyItem(
+  item: PlanContext["items"][number],
+): item is PlanContext["items"][number] & { scheduledFor: Date } {
+  return (
+    item.status === "todo" &&
+    (LEARN_KINDS.has(item.kind) || item.kind === "boss") &&
+    item.scheduledFor !== null
+  );
+}
+
+/** A current-day summary cannot hide actual overdue work already loaded with the owned plan. */
+export function hasOverduePlanWork({ items, today }: Pick<PlanContext, "items" | "today">) {
+  return items.some((item) => isPendingStudyItem(item) && item.scheduledFor < today);
+}
 
 /**
  * The work earlier days left that today doesn't start with yet: lessons due before today, a
@@ -14,25 +29,27 @@ const LEARN_KINDS = new Set(["chapter", "lesson"]);
  * first tomorrow: they aren't left again. A new day settles it (see `refreshGoalPlan`), and so does
  * a goal back from a pause (see `computeResumedPlan`).
  */
-export async function loadLeftWork(context: PlanContext): Promise<PlanContext["items"]> {
-  const [carryOver, settledIds] = await Promise.all([
-    loadCarryOver({ goalId: context.goal.id, today: context.today }),
-    loadTodaySettledItemIds(context),
-  ]);
-
-  const given = new Set(settledIds === null ? carryOver.lessonIds : []);
+export async function loadLeftWorkSelection(context: PlanContext) {
+  const snapshot = await loadPlanCarrySnapshot(context);
+  const given = new Set(snapshot.settle === null ? snapshot.previous.lessonIds : []);
   const carries = carriesGiven(context.items);
   const { today } = context;
 
-  return context.items.filter(
+  const left = context.items.filter(
     (item) =>
-      item.status === "todo" &&
-      (LEARN_KINDS.has(item.kind) || item.kind === "boss") &&
-      item.scheduledFor !== null &&
+      isPendingStudyItem(item) &&
       (item.scheduledFor < today ||
         (item.lessonId !== null &&
           given.has(item.lessonId) &&
           item.scheduledFor > today &&
           carries(item))),
   );
+
+  return { left, snapshot };
+}
+
+/** Writers that only need the work keep the same boundary. */
+export async function loadLeftWork(context: PlanContext): Promise<PlanContext["items"]> {
+  const { left } = await loadLeftWorkSelection(context);
+  return left;
 }

@@ -33,15 +33,24 @@ export function getDayBeforePlan({
   return "light";
 }
 
+type ShortPlanSource = {
+  items: readonly { kind: string; scheduledFor: Date | null }[];
+  phases: unknown;
+  settings: unknown;
+};
+
 /**
  * Which day of a short plan today is, what it's for and when its short mock is: "Day 1 of 3: map
  * and gaps". Null for any plan that isn't a test days away, and outside its days.
  */
 export async function loadShortPlanDay({
   goal,
+  source,
   today,
 }: {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
+  /** A stale read uses its actual in-memory selection, not the older stored calendar. */
+  source?: ShortPlanSource;
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<ShortPlanToday | null> {
@@ -49,19 +58,21 @@ export async function loadShortPlanDay({
     return null;
   }
 
-  const plan = await prisma.plan.findUnique({
-    select: {
-      items: {
-        orderBy: { position: "asc" },
-        select: { scheduledFor: true },
-        take: 1,
-        where: { kind: "mock", scheduledFor: { not: null } },
+  const plan =
+    source ??
+    (await prisma.plan.findUnique({
+      select: {
+        items: {
+          orderBy: { position: "asc" },
+          select: { kind: true, scheduledFor: true },
+          take: 1,
+          where: { kind: "mock", scheduledFor: { not: null } },
+        },
+        phases: true,
+        settings: true,
       },
-      phases: true,
-      settings: true,
-    },
-    where: { goalId: goal.id },
-  });
+      where: { goalId: goal.id },
+    }));
 
   if (!plan) {
     return null;
@@ -73,5 +84,6 @@ export async function loadShortPlanDay({
     today,
   });
 
-  return day ? { ...day, mockDate: plan.items[0]?.scheduledFor ?? null } : null;
+  const mock = plan.items.find((item) => item.kind === "mock" && item.scheduledFor !== null);
+  return day ? { ...day, mockDate: mock?.scheduledFor ?? null } : null;
 }

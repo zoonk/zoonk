@@ -350,8 +350,8 @@ async function prepareCurriculum({
 
 /**
  * The skill graph, its skills in the Library, the plan and the outlines of its courses, with
- * placement's questions started alongside the plan (a first build only: a rebuilt goal's learner
- * is past placement). Returns what it wrote, so the plan can be reconciled with research later.
+ * placement's questions started after the initial plan commits (a rebuilt goal's learner is past
+ * placement). Returns what it wrote, so the plan can be reconciled with research later.
  */
 export async function buildCurriculum({
   context,
@@ -376,27 +376,32 @@ export async function buildCurriculum({
     scope,
   });
 
-  // Placement's questions are written by a run of their own, started once the skills are saved
-  // (not their courses or prerequisites, which only the plan needs): the runtime moves a run on
-  // only once the steps it runs together are done, so questions written here held the plan, the
-  // outlines and the first lessons until all were written.
   const waitsForNotice = !rebuild && isBuiltBeforeResearch({ inputs, researchId });
 
-  const [written] = await Promise.all([
-    createPlanAndOutlines({ built, context, inputs, reused, saved, scope, waitsForNotice }),
-    rebuild
-      ? null
-      : prepareGraphPlacement({
-          context,
-          everySkill: inputs.ownMaterialTest,
-          goalId,
-          graph: built.graph,
-          knownAreas: inputs.knownSubjects,
-          ownLevel: inputs.graphPrompt.ownLevel ?? null,
-          skillIds,
-          waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
-        }),
-  ]);
+  const written = await createPlanAndOutlines({
+    built,
+    context,
+    inputs,
+    reused,
+    saved,
+    scope,
+    waitsForNotice,
+  });
+
+  // Placement publishes bank items and invalidates plan inputs. Launch its independent run only
+  // after the initial plan commits, so the goal's own placement cannot invalidate that commit.
+  if (!rebuild) {
+    await prepareGraphPlacement({
+      context,
+      everySkill: inputs.ownMaterialTest,
+      goalId,
+      graph: built.graph,
+      knownAreas: inputs.knownSubjects,
+      ownLevel: inputs.graphPrompt.ownLevel ?? null,
+      skillIds,
+      waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
+    });
+  }
 
   return { ...built, ...written };
 }

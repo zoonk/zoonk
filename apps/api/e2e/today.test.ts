@@ -15,6 +15,7 @@ import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
@@ -82,10 +83,13 @@ test.describe("Today API", () => {
 
     const responses = await Promise.all([
       api.get("/v1/today"),
+      api.post(`/v1/goals/${crypto.randomUUID()}/study-sessions`, {
+        data: { shownDate: toIsoDay(localDay("UTC")), timeZone: "UTC" },
+      }),
       api.patch(`/v1/me/suggested-goals/${crypto.randomUUID()}`, { data: { status: "accepted" } }),
     ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual([401, 401]);
+    expect(responses.map((response) => response.status())).toStrictEqual([401, 401, 401]);
     await api.dispose();
   });
 
@@ -198,7 +202,49 @@ test.describe("Today API", () => {
 
     const againResponse = await api.get("/v1/today?timeZone=UTC");
     const again = todayResponseSchema.parse(await againResponse.json());
-    expect(again.session.id).toBe(today.session.id);
+    expect(today.session.status).toBe("unstarted");
+    expect(again.session).toStrictEqual(today.session);
+    expect(today.session).not.toHaveProperty("id");
+    expect(today.session.blocks.every((block) => !("id" in block))).toBe(true);
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    const openedResponse = await api.post(`/v1/goals/${goal.id}/study-sessions`, {
+      data: { shownDate: today.session.localDate, timeZone: "UTC" },
+    });
+
+    expect(openedResponse.status()).toBe(201);
+    const opened = openedStudyDayResponseSchema.parse(await openedResponse.json());
+
+    expect(opened).toMatchObject({
+      actorId: userId,
+      created: true,
+      goalId: goal.id,
+      status: "opened",
+    });
+
+    const saved = await prisma.studySession.findUniqueOrThrow({
+      include: { blocks: { orderBy: { position: "asc" } } },
+      where: { id: opened.sessionId },
+    });
+
+    expect(opened.session.blocks.map((block) => block.id)).toStrictEqual(
+      saved.blocks.map((block) => block.id),
+    );
+
+    const repeated = await api.post(`/v1/goals/${goal.id}/study-sessions`, {
+      data: { shownDate: today.session.localDate, timeZone: "UTC" },
+    });
+
+    expect(repeated.status()).toBe(200);
+
+    expect(openedStudyDayResponseSchema.parse(await repeated.json())).toMatchObject({
+      created: false,
+      sessionId: saved.id,
+    });
+
+    const afterResponse = await api.get("/v1/today?timeZone=UTC");
+    const after = todayResponseSchema.parse(await afterResponse.json());
+    expect(after.session).toStrictEqual(opened.session);
 
     await api.dispose();
   });
@@ -288,7 +334,7 @@ test.describe("Today API", () => {
     await api.dispose();
   });
 
-  test("reads the day in the goal's zone, and takes the request's before the learner's day starts", async () => {
+  test("reads the goal's day without changing its zone, even before the day starts", async () => {
     const [studied, fresh] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "today-zone-studied" }),
       createBearerLearner({ baseURL, prefix: "today-zone-fresh" }),
@@ -306,7 +352,7 @@ test.describe("Today API", () => {
     // She answered a question today in São Paulo, so her day stays the goal's until tomorrow.
     await attemptFixture({ localDate: localDay(SAO_PAULO), userId: studied.userId });
 
-    const [kept, moved] = await Promise.all(
+    const [kept, unopened] = await Promise.all(
       [studied, fresh].map(async ({ api }) => {
         const response = await api.get(`/v1/today?timeZone=${device}`);
         expect(response.status(), await response.text()).toBe(200);
@@ -315,7 +361,7 @@ test.describe("Today API", () => {
     );
 
     expect(kept?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
-    expect(moved?.session.localDate).toBe(toIsoDay(localDay(device)));
+    expect(unopened?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
 
     const zones = await prisma.goal.findMany({
       orderBy: { userId: "asc" },
@@ -324,7 +370,7 @@ test.describe("Today API", () => {
     });
 
     expect(Object.fromEntries(zones.map((goal) => [goal.userId, goal.timezone]))).toStrictEqual({
-      [fresh.userId]: device,
+      [fresh.userId]: SAO_PAULO,
       [studied.userId]: SAO_PAULO,
     });
 

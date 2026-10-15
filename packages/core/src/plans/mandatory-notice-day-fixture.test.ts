@@ -1,0 +1,76 @@
+import { prisma } from "@zoonk/db";
+import { mandatoryNoticeDayFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getTodayView } from "../view-models/today/get-today-view";
+import { acknowledgeTodayPlanChange } from "./acknowledge-today-plan-change";
+
+/** The browser seed must work on different real calendar labels without a stored proposal. */
+describe("date-parameterized mandatory Today seed", () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ["Date"] }));
+  afterEach(() => vi.useRealTimers());
+
+  it.each(["2026-10-14", "2026-10-15", "2027-01-02"])(
+    "computes and acknowledges the actual mandatory move on %s",
+    async (date) => {
+      const user = await userFixture();
+
+      const fixture = await mandatoryNoticeDayFixture({
+        localDate: new Date(date),
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+      vi.setSystemTime(new Date(`${date}T12:00:00Z`));
+
+      const read = await countDatabaseStatements(() =>
+        getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
+      );
+
+      expect(read.writes).toBe(0);
+      expect(read.result.status).toBe("ready");
+
+      if (read.result.status !== "ready") {
+        throw new Error("Expected the seeded mandatory day");
+      }
+
+      const notice = read.result.today.planChange;
+
+      expect(notice).toMatchObject({
+        canUndo: false,
+        id: null,
+        kind: "missedDays",
+        source: "system",
+        status: "applied",
+      });
+
+      const move = notice?.effect?.phaseEnds?.find((phase) => phase.name === fixture.phaseName);
+      expect(move?.before).toBe(fixture.before.toISOString().slice(0, 10));
+      expect(move?.after).toBeTypeOf("string");
+      expect(Date.parse(move!.after)).toBeGreaterThan(Date.parse(move!.before));
+
+      expect(read.result.today.session).toMatchObject({
+        blocks: [],
+        lessonsComing: false,
+        minutes: { dailyGoal: 0 },
+      });
+
+      await expect(prisma.planChange.count({ where: { planId: fixture.plan.id } })).resolves.toBe(
+        0,
+      );
+
+      const acknowledged = await acknowledgeTodayPlanChange({
+        goalId: fixture.goal.id,
+        kind: "computed",
+        revision: read.result.today.revision,
+        shownDate: date,
+        timeZone: "UTC",
+      });
+
+      expect(acknowledged.status).toBe("acknowledged");
+      await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+    },
+  );
+});

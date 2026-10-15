@@ -10,7 +10,7 @@ import {
 } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../planner/plan-state";
 import { getMockSchedule } from "./mock-schedule";
-import { type PlanContext } from "./plan-context";
+import { type PlanReadContext } from "./plan-read-projection";
 
 /** The plan's days and dates as the learner set them, and the mock exams ahead. */
 export function buildScheduleView({
@@ -21,7 +21,7 @@ export function buildScheduleView({
   noticeDates,
 }: {
   calendar: ReturnType<typeof getPlanCalendar>;
-  context: PlanContext;
+  context: PlanReadContext;
   dateKind: Awaited<ReturnType<typeof loadGoalDateKind>>;
   fullCourse: boolean;
   noticeDates: Awaited<ReturnType<typeof loadNoticeDates>>;

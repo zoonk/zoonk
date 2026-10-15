@@ -26,15 +26,8 @@ export { type SeededToday } from "./learners/write-session";
 
 const LIBRARY_COURSES = [physicsCourse, enemCourse, stockMarketCourse, englishCourse] as const;
 
-/**
- * Writes Zoonk v2's seed: hand-written Library courses in English and Brazilian Portuguese, and
- * one learner per goal kind with their sessions, history and what they did of their plans. The
- * planner lays out the rest of each plan, which only core can run: seed through `seedV2` in
- * `@zoonk/core/seed/v2`. Every row has a stable id or key, so it runs on top of an existing
- * database (local dev, the test database or E2E setup) and running it again only brings the rows
- * up to date. Returns the learners and the moment they're written on.
- */
-export async function writeSeedV2(prisma: PrismaClient) {
+/** Seed the shared Library without replacing any learner's sessions or progress. */
+export async function writeSeedV2Library(prisma: PrismaClient): Promise<Date> {
   const now = new Date();
 
   // Items point at the blueprint of the exam they're written for, so it goes first.
@@ -54,6 +47,19 @@ export async function writeSeedV2(prisma: PrismaClient) {
 
   await writeEnemCourseGraph(prisma);
 
+  return now;
+}
+
+/**
+ * Writes Zoonk v2's seed: hand-written Library courses in English and Brazilian Portuguese, and
+ * one learner per goal kind with their sessions, history and what they did of their plans. The
+ * planner lays out the rest of each plan, which only core can run: seed through `seedV2` in
+ * `@zoonk/core/seed/v2`. Every row has a stable id or key, so it runs on top of an existing
+ * database (local dev, the test database or E2E setup) and running it again only brings the rows
+ * up to date. Returns the learners and the moment they're written on.
+ */
+export async function writeSeedV2(prisma: PrismaClient) {
+  const now = await writeSeedV2Library(prisma);
   const learners = await writeLearners({ edition: getPlannedEnemEdition(now), now, prisma });
   return { learners, now };
 }

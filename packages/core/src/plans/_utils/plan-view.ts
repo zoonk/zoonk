@@ -17,9 +17,9 @@ import { type PlanScreenView, type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { addDays, getPlanCalendar, getStartOfWeek, toIsoDate } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanSettings } from "../planner/plan-state";
-import { isPlanReady } from "./apply-plan-change";
 import { loadFitOffer } from "./fit-offer";
 import { foldChangeAreas } from "./fold-part-areas";
+import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
 import { loadPastDateOffer } from "./past-date-offer";
 import { findPlanPhase } from "./phase-states";
@@ -33,10 +33,11 @@ import { toFeasibilityView, toScreenFeasibilityView } from "./plan-feasibility-v
 import { buildPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
+import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
-import { type ComputedPlan, computePlan } from "./replan";
+import { type ComputedPlan } from "./replan";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -68,7 +69,7 @@ function buildAreas({
 }
 
 /** Free exam plans cover the first week and no mocks; Plus covers everything. */
-async function getAccess(context: PlanContext): Promise<PlanView["access"]> {
+async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
   if (context.goal.kind !== "exam") {
     return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
   }
@@ -125,7 +126,7 @@ function readPlanStatus({
 }: {
   phaseChallengesRequired: boolean;
   catchUp: number;
-  context: PlanContext;
+  context: PlanReadContext;
   freeWeekOver: boolean;
   studiesPastTarget: boolean;
 }): PlanView["status"] {
@@ -182,12 +183,19 @@ async function loadPlanOffers({
 export function buildPlanView(input: PlanViewInput & { screen: true }): Promise<PlanScreenView>;
 export function buildPlanView(input: PlanViewInput & { screen?: false }): Promise<PlanView>;
 export async function buildPlanView({
-  context,
+  context: savedContext,
   now,
   screen = false,
 }: PlanViewInput & { screen?: boolean }): Promise<PlanScreenView | PlanView> {
+  const ready = savedContext.phases.length > 0;
+
+  const {
+    catchUp: selectedCatchUp,
+    computed,
+    context,
+  } = await loadPlanReadProjection({ context: savedContext, now, screen });
+
   const { goal, items, phases, state } = context;
-  const ready = phases.length > 0;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
 
   const phaseChallengesRequired = await arePhaseChallengesRequired({
@@ -207,7 +215,6 @@ export async function buildPlanView({
   const chapterIds = [...new Set(items.flatMap((item) => item.chapterId ?? []))];
 
   const [
-    computed,
     changes,
     access,
     chapterTitles,
@@ -222,16 +229,6 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
   ] = await Promise.all([
-    ready && isPlanReady(context)
-      ? computePlan({
-          context,
-          mode: "automatic",
-          now,
-          pace: "saved",
-          readAnalysis: screen ? "screen" : "full",
-          reuseReadBuild: true,
-        })
-      : null,
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
     loadChapterTitles(chapterIds),
@@ -245,7 +242,7 @@ export async function buildPlanView({
       noticeDate: state.settings.noticeDate,
       today: toIsoDate(context.today),
     }),
-    loadCatchUpItems(goal.id),
+    selectedCatchUp ?? loadCatchUpItems(goal.id),
     loadExamChoiceViews({
       choices: state.settings.examChoices,
       examBlueprintId: goal.examBlueprintId,
@@ -275,7 +272,11 @@ export async function buildPlanView({
     studiesPastTarget: fullCourse,
   });
 
-  const { fitOffer, pastDateOffer } = await loadPlanOffers({ computed, context, status });
+  const { fitOffer, pastDateOffer } = await loadPlanOffers({
+    computed,
+    context: savedContext,
+    status,
+  });
 
   return {
     access,

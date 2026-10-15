@@ -86,10 +86,6 @@ async function landWaitingLessons(library: Awaited<ReturnType<typeof planLibrary
   return skillId;
 }
 
-function learnBlocks(session: Awaited<ReturnType<typeof readToday>>) {
-  return session.blocks.filter((block) => block.kind === "learn");
-}
-
 describe("today's session when the plan changes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -100,7 +96,7 @@ describe("today's session when the plan changes", () => {
     vi.useRealTimers();
   });
 
-  it("takes lessons that landed while the learner hasn't started, keeping its id and what it offers next", async () => {
+  it("keeps the shown unopened day when lessons land, including what it offers next", async () => {
     const { goal, library } = await setupWaitingSkill();
     const before = await readToday(goal.id);
 
@@ -111,11 +107,12 @@ describe("today's session when the plan changes", () => {
 
     expect(after.id).toBe(before.id);
     expect(after.nextBlockId).toBe(before.nextBlockId);
-    expect(learnBlocks(after).length).toBeGreaterThan(learnBlocks(before).length);
-    expect(after.minutes.planned).toBeGreaterThan(before.minutes.planned);
+    // G supersedes post-landing growth: Open keeps the full shown membership and its time.
+    expect(after.blocks).toStrictEqual(before.blocks);
+    expect(after.minutes.planned).toBe(before.minutes.planned);
   });
 
-  it("only adds landed lessons at the end of a day the learner started", async () => {
+  it("keeps the full started day when lessons land", async () => {
     const { goal, library } = await setupWaitingSkill();
     const before = await readToday(goal.id);
 
@@ -134,9 +131,14 @@ describe("today's session when the plan changes", () => {
 
     expect(after.id).toBe(before.id);
     expect(kept.map((block) => block.id)).toStrictEqual(before.blocks.map((block) => block.id));
-    expect(added.length).toBeGreaterThan(0);
-    expect(added.every((block) => block.kind === "learn")).toBe(true);
-    expect(after.minutes.planned).toBeGreaterThan(before.minutes.planned);
+    // G supersedes automatic append: new library work never expands an already-shown day.
+    expect(added).toStrictEqual([]);
+
+    expect(kept.map((block) => block.lessonId)).toStrictEqual(
+      before.blocks.map((block) => block.lessonId),
+    );
+
+    expect(after.minutes.planned).toBe(before.minutes.planned);
   });
 
   it("follows the learner's own change in the part they haven't started, in place", async () => {

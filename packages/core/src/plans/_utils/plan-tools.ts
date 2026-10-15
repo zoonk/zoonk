@@ -4,7 +4,7 @@ import { getToolKey, parseChapterTools } from "../../library/chapters/chapter-to
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type PlanToolView } from "../plan-view-contract";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
-import { type PlanContext } from "./plan-context";
+import { type PlanReadContext } from "./plan-read-projection";
 
 /**
  * A tool the plan's chapters use: essential when any of them needs it, the chapters that use it
@@ -23,7 +23,7 @@ export type PlanTool = {
 /** Chapters the learner tested out of or skipped no longer need their tools. */
 const LEFT_OUT: ReadonlySet<PlanItemStatus> = new Set(["skipped", "testedOut"]);
 
-function getPlanChapters(items: PlanContext["items"]) {
+function getPlanChapters(items: PlanReadContext["items"]) {
   const phaseByChapter = items
     .filter((item) => !LEFT_OUT.has(item.status))
     .reduce(
@@ -88,7 +88,7 @@ export async function loadPlanTools({
   /** The phase the learner is in (see `findCurrentPhase`). */
   currentPhase: number | null;
   goal: Pick<Goal, "examBlueprintId" | "kind">;
-  items: PlanContext["items"];
+  items: PlanReadContext["items"];
 }): Promise<PlanTool[]> {
   if (!(await goalUsesTools(goal))) {
     return [];

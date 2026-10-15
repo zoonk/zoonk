@@ -2,13 +2,15 @@ import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 
 /** Current lesson durations for display; the persisted blocks retain their planned budget. */
-export async function withLessonDisplayMinutes({
+export async function withLessonDisplayMinutes<
+  Block extends Pick<StudySessionBlock, "kind" | "lessonId" | "estimatedMinutes">,
+>({
   blocks,
   client = prisma,
 }: {
-  blocks: readonly StudySessionBlock[];
+  blocks: readonly Block[];
   client?: TransactionClient;
-}): Promise<StudySessionBlock[]> {
+}): Promise<Block[]> {
   const lessonIds = blocks.flatMap((block) =>
     block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
   );

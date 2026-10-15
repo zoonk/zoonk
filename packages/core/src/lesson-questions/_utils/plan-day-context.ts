@@ -127,7 +127,7 @@ export function toPlusMark(item: Pick<PlanItemView, "kind" | "requiresPlus">) {
 /** A challenge or a planned mock opens on its page, before its day too. */
 export function toChallengeLink(item: Pick<PlanItemView, "id" | "kind">): TutorLink | null {
   const challenge = item.kind === "boss" || item.kind === "checkpoint" || item.kind === "mock";
-  return challenge ? { kind: "challenge", planItemId: item.id } : null;
+  return challenge && item.id ? { kind: "challenge", planItemId: item.id } : null;
 }
 
 function toPlanItem(item: PlanItemView): PlanScopeItem {
@@ -355,7 +355,7 @@ async function loadChallenges({
           {
             date: checkpoint.date,
             kind: "challenge" as const,
-            link: { kind: "challenge" as const, planItemId: checkpoint.planItemId },
+            link: toChallengeLink({ id: checkpoint.planItemId, kind: "boss" }),
             locked: checkpoint.locked,
             when: checkpoint.when,
           },

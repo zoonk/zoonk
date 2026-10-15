@@ -8,15 +8,16 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
-import { type ExistingPlanItem, getItemKey } from "../planner/plan-items";
+import { getItemKey } from "../planner/plan-items";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
+import { type PlanReadItem } from "./plan-read-projection";
 import { isWorkFinished } from "./work-progress";
 
 type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
 
 /** Free exam plans stop at their first week, and mock exams need Plus. */
-function requiresPlus({ access, item }: { access: ItemAccess; item: ExistingPlanItem }): boolean {
+function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem }): boolean {
   if (item.kind === "mock" && access.mocksRequirePlus) {
     return true;
   }
@@ -33,11 +34,11 @@ function toPlanItemView({
   skillAreas,
 }: {
   access: ItemAccess;
-  item: ExistingPlanItem;
+  item: PlanReadItem;
   minutes: ReadonlyMap<string, number>;
   skillAreas: SkillAreas;
 }): PlanItemView {
-  const itemMinutes = minutes.get(getItemKey(item));
+  const itemMinutes = item.minutes ?? minutes.get(item.key ?? getItemKey(item));
   const writing = isWritingItem(item);
 
   return {
@@ -112,7 +113,7 @@ export function buildWeekView({
   calendar: StudyCalendar;
   /** The exam's day rules; null for goals that aren't exams. */
   exam: ExamDayRules | null;
-  items: readonly ExistingPlanItem[];
+  items: readonly PlanReadItem[];
   minutes: ReadonlyMap<string, number>;
   /** The time the days' checkpoints take past them (`PlanSettings.checkpointOverflow`). */
   overflow?: PlanSettings["checkpointOverflow"];
@@ -166,15 +167,15 @@ export function buildFundedMocksView({
 }: {
   access: ItemAccess;
   funding: readonly MockFunding[];
-  items: readonly ExistingPlanItem[];
+  items: readonly PlanReadItem[];
   skillAreas: SkillAreas;
   today: Date;
-}): PlanItemView[] {
+}): (PlanItemView & { id: string })[] {
   const day = toIsoDate(today);
 
   return items
     .flatMap((item) => {
-      if (item.kind !== "mock" || item.status !== "todo" || !item.scheduledFor) {
+      if (!item.id || item.kind !== "mock" || item.status !== "todo" || !item.scheduledFor) {
         return [];
       }
 
@@ -188,6 +189,7 @@ export function buildFundedMocksView({
       return [
         {
           ...toPlanItemView({ access, item, minutes: new Map(), skillAreas }),
+          id: item.id,
           minutes: ledger.minutes,
         },
       ];

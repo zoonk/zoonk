@@ -10,12 +10,13 @@ import { type OwnLevelChange } from "@zoonk/core/plans/own-level-contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "@zoonk/core/plans/tools-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { writtenPracticeSchema } from "@zoonk/core/plans/written-practice-contract";
-import { GoalKind, PlanItemKind, PlanItemStatus } from "@zoonk/db";
+import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { noSittingSchema, noticeDaySchema } from "./notice-dates";
 import { planAreaSchema } from "./plan-areas";
 import { planBasesSchema } from "./plan-bases";
 import { planFeasibilitySchema } from "./plan-feasibility";
+import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
 import { planFitOfferSchema, planPastDateOfferSchema } from "./plan-offers";
 import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
@@ -23,34 +24,6 @@ import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
 
 const isoDateSchema = z.iso.date();
-
-const planItemSchema = z
-  .object({
-    chapterId: z.uuid().nullable(),
-    id: z.uuid(),
-    kind: z.enum(PlanItemKind),
-    lessonId: z.uuid().nullable(),
-    minutes: z.number().nullable(),
-    requiresPlus: z
-      .boolean()
-      .meta({ description: "Free exam plans cover the first week and no mock exams" }),
-    scheduledFor: isoDateSchema.nullable(),
-    skillId: z.uuid().nullable(),
-    status: z.enum(PlanItemStatus),
-    title: z
-      .string()
-      .meta({
-        description:
-          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")",
-      }),
-    writing: z
-      .boolean()
-      .meta({
-        description:
-          "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name",
-      }),
-  })
-  .meta({ id: "PlanItem" });
 
 const planToolSchema = z
   .object({
@@ -147,7 +120,7 @@ export const planResponseSchema = z
     feasibility: planFeasibilitySchema.nullable(),
     fitOffer: planFitOfferSchema,
     fundedMocks: z
-      .array(planItemSchema)
+      .array(planItemSchema.extend({ id: z.uuid() }))
       .describe(
         "Actual future todo mock items whose saved funding has started, with their real duration. Move them using the existing plan operation and item ID.",
       ),

@@ -59,6 +59,7 @@ type Layout = {
   limitOn: (date: Date) => number;
   /** Each day's time the landed lessons took so far, shared by the landed skills. */
   taken: Map<number, number>;
+  shownUntil: Date | null;
   usedOn: (date: Date) => number;
 };
 
@@ -149,7 +150,11 @@ function findDay({
 }): Date | undefined {
   if (index === 0) {
     const day = first && first < slot.date ? first : slot.date;
-    return floor && floor > day ? floor : day;
+    const earliest = floor && floor > day ? floor : day;
+
+    return layout.shownUntil && earliest <= layout.shownUntil
+      ? findRoom({ after, layout, slot: { ...slot, date: earliest }, unit })
+      : earliest;
   }
 
   return findRoom({ after, layout, slot, unit });
@@ -346,15 +351,14 @@ export function putLandedLessons({
     dayOn,
     days,
     laid,
-    // A day takes no more than the learner's time, or what it held before when that was more; a
-    // day the learner was shown, no more than it held. A landing-only run's stand-ins held time
-    // only where it laid them, not where the plan kept its items: no day goes past the learner's
-    // time but by what the plan already holds there.
+    // A shown day's stand-in time never admits a new lesson row. Its new written lessons start
+    // after that day; future days retain the existing capacity and overflow rules.
     limitOn: (date) => {
       const before = otherOn(date) + (heldByDay.get(date.getTime()) ?? 0);
       const most = Math.max(capacityOn(date), kept ? otherOn(date) : before);
-      return shownUntil && date <= shownUntil ? Math.min(before, most) : most;
+      return shownUntil && date <= shownUntil ? 0 : most;
     },
+    shownUntil,
     taken,
     usedOn: (date) => otherOn(date) + (taken.get(date.getTime()) ?? 0),
   };

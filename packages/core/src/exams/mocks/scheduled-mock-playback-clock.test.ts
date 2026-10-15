@@ -18,7 +18,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { getTodayView } from "../../view-models/today/get-today-view";
+import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import { listListeningParts } from "../listening/listening-parts";
 import { getMock } from "./get-mock";
 import { mockConditionsSchema } from "./mock-contract";
@@ -188,7 +188,7 @@ async function assertScheduledClock({
 
   const [view, today] = await Promise.all([
     getGoalPlan(goal.id),
-    getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+    openTodayView({ goalId: goal.id, timeZone: "UTC" }),
   ]);
 
   if (view.status !== "ready" || today.status !== "ready") {

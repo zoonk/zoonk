@@ -10,6 +10,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getExamView } from "../exams/view/get-exam-view";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -407,13 +408,9 @@ describe("a class test days away", () => {
     setClock(2);
 
     const [today, examView] = await Promise.all([
-      getTodayView({ goalId: goal.id }),
+      openTodayView({ goalId: goal.id }),
       getExamView({ goalId: goal.id }),
     ]);
-
-    if (today.status !== "ready") {
-      throw new Error(`Expected Today, got ${today.status}`);
-    }
 
     // Never stuck on a mock they can't take: the day is a review of every topic, at its length.
     const { blocks } = today.today.session;
@@ -538,11 +535,7 @@ describe("a class test days away", () => {
 
     setClock(2);
 
-    const today = await getTodayView({ goalId: goal.id });
-
-    if (today.status !== "ready") {
-      throw new Error(`Expected Today, got ${today.status}`);
-    }
+    const today = await openTodayView({ goalId: goal.id });
 
     const blocks = await prisma.studySessionBlock.findMany({
       orderBy: { position: "asc" },

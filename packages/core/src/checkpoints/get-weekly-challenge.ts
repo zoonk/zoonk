@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAllowance } from "../entitlements/get-allowance";
+import { getEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { getExamPrepAccess as getTierExamPrep } from "../entitlements/limits";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getExamPrepAccess } from "../sessions/_utils/exam-access";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
@@ -56,9 +57,8 @@ export async function getWeeklyChallenge({
 
   const { goal } = owned;
 
-  const [items, allowance, blueprint] = await Promise.all([
+  const [items, blueprint] = await Promise.all([
     prisma.planItem.findMany({ orderBy: { position: "asc" }, where: { plan: { goalId } } }),
-    getAllowance(),
     goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : null,
@@ -74,8 +74,10 @@ export async function getWeeklyChallenge({
   const today = getDateInTimeZone({ date: new Date(), timeZone });
   const isMock = item.kind === "mock";
 
+  const viewer = isMock ? await getEntitlementViewer() : null;
+
   const access = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
+    examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
     goal,
     timeZone,
     today,

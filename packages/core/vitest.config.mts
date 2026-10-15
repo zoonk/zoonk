@@ -50,7 +50,7 @@ export default defineConfig({
   test: {
     env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
-    globalSetup: ["../db/src/test-database.ts"],
+    globalSetup: ["./global-setup.mts"],
     // Fewer cores than that (CI's runners have 4) get one worker each, so the database work they
     // share isn't starved of CPU.
     maxWorkers: Math.min(MAX_DATABASE_WORKERS, availableParallelism()),

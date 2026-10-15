@@ -86,7 +86,8 @@ export function selectCheckpointItems({
 
 /** What a plan item is to a phase's checkpoint: its kind, place and day, and what it teaches. */
 type BossPlanItem = {
-  id: string;
+  id: string | null;
+  key?: string;
   chapterId: string | null;
   kind: PlanItemKind;
   /** A Library lesson is one lesson; without one, a stand-in for `lessons` of them. */
@@ -152,7 +153,7 @@ function listStudiedSkillIds({
           (phase === undefined || item.phase === phase) &&
           comesBy({ boss, item }),
       )
-      .flatMap((item) => plan.itemSkillIds.get(item.id) ?? []),
+      .flatMap((item) => plan.itemSkillIds.get(item.id ?? item.key ?? "") ?? []),
   );
 
   return plan.skills.flatMap((skill) => (studied.has(skill.id) ? [skill.id] : []));
@@ -208,7 +209,9 @@ function pickBossSkillIds({
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
   const core = listCoreLessonItems({
     graphSkills: plan.graphSkills,
-    items: plan.items.toSorted((a, b) => a.position - b.position),
+    items: plan.items
+      .map((item) => ({ ...item, id: item.id ?? item.key ?? "" }))
+      .toSorted((a, b) => a.position - b.position),
   });
 
   const asked = plan.items

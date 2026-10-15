@@ -2,13 +2,12 @@ import "server-only";
 import { type Goal, type PlanChange, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { showsPhaseDatesMove } from "../planner/phase-dates-move";
-import { SMALL_CHANGE_LESSONS } from "../planner/plan-change-thresholds";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { isPlanReady } from "./apply-plan-change";
+import { isAutomaticPlanChange } from "./automatic-plan-change";
 import { computeChange } from "./compute-change";
 import { getBehindChoices } from "./falling-behind";
 import { foldChangeAreas } from "./fold-part-areas";
@@ -28,51 +27,16 @@ const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
  */
 const MAX_PROPOSALS = 3;
 
-/** Changes the learner made on purpose (in the plan editor, in words, or their own level). */
-const LEARNER_SOURCES: ReadonlySet<string> = new Set(["learner", "planEdit", OWN_LEVEL_SOURCE]);
-
-/**
- * A resumed goal stays quiet unless topics moved.
- */
-const QUIET_KINDS: ReadonlySet<string> = new Set(["resumed"]);
-
 /**
  * The plan change Today shows: a proposal waiting for an OK, or an automatic change of the last
  * day (a rebalance, falling behind, a test-out, a closer estimate that changed how many lessons
  * fit). A test-out names its chapter when every lesson it skipped is from one.
  */
-export type TodayPlanChangeView = PlanChangeView & { chapterTitle: string | null };
-
-/** A mandatory moved phase end is news even when settling missed days left no backlog. */
-function hasMovedPhaseEnd(effect: PlanChangeView["effect"]): boolean {
-  return (effect?.phaseEnds?.length ?? 0) > 0;
-}
-
-/** Automatic estimate notices use the same net seen-count threshold as the refresh that saves them. */
-function isAutomatic(change: PlanChange): boolean {
-  const { behind, effect, source } = parsePlanChangePayload(change.payload);
-
-  if (LEARNER_SOURCES.has(source)) {
-    return false;
-  }
-
-  if (hasMovedPhaseEnd(effect)) {
-    return true;
-  }
-
-  if (change.kind === "estimateUpdated") {
-    return (
-      Math.abs((effect?.lessonsAdded ?? 0) - (effect?.lessonsRemoved ?? 0)) > SMALL_CHANGE_LESSONS
-    );
-  }
-
-  const movesTopics = (effect?.topicsLeftOut?.length ?? 0) + (effect?.topicsAdded?.length ?? 0) > 0;
-
-  return (
-    movesTopics ||
-    (!QUIET_KINDS.has(change.kind) && (change.kind !== "missedDays" || behind !== null))
-  );
-}
+export type TodayPlanChangeView = Omit<PlanChangeView, "id"> & {
+  chapterTitle: string | null;
+  /** A computed mandatory read has no persisted ID until the learner's POST. */
+  id: string | null;
+};
 
 /** The chapter a test-out skipped lessons of, when they all come from the same one. */
 async function loadSkippedChapterTitle({
@@ -95,16 +59,6 @@ async function loadSkippedChapterTitle({
   const oneChapter = new Set(items.map((item) => item.chapterId)).size === 1;
 
   return oneChapter && first?.chapter ? first.chapter.title : null;
-}
-
-/**
- * A new day's settling once the goal's date came: it set aside what the date left, which Today's
- * day line says with the way to keep the plan going (status `pastDate`). Its own card read "11
- * topics no longer fit by your date" over phase ends moved into the past, and offered a date of
- * its own beside the plan's.
- */
-function isPastDateSettling({ change, dateReached }: { change: PlanChange; dateReached: boolean }) {
-  return dateReached && change.kind === "missedDays";
 }
 
 /**
@@ -138,8 +92,7 @@ async function findTodayChanges({
 
   const automatic = recent.find(
     (change) =>
-      isAutomatic(change) &&
-      !isPastDateSettling({ change, dateReached }) &&
+      isAutomaticPlanChange({ change, dateReached }) &&
       parsePlanChangePayload(change.payload).seenAt === null,
   );
 

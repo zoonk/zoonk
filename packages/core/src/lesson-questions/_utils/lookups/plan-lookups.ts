@@ -169,7 +169,9 @@ async function lookUpSchedule({
 
   const sources: ScheduleSources = {
     minutes: new Map(
-      plan.week.days.flatMap((day) => day.items.map((item) => [item.id, item.minutes] as const)),
+      plan.week.days.flatMap((day) =>
+        day.items.flatMap((item) => (item.id ? [[item.id, item.minutes] as const] : [])),
+      ),
     ),
     plan,
     skillAreas: getSkillAreas({
@@ -232,7 +234,7 @@ async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
     .map(({ checkpoint, phase }) => ({
       date: checkpoint.date,
       kind: "challenge" as const,
-      link: { kind: "challenge" as const, planItemId: checkpoint.planItemId },
+      link: toChallengeLink({ id: checkpoint.planItemId, kind: "boss" }),
       locked: checkpoint.locked,
       phase: toChallengePhase(phase),
       when: checkpoint.when,

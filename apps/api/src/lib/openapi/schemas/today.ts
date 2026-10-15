@@ -7,7 +7,8 @@ import { examMomentSchema } from "./exams";
 import { memoryInsightSchema } from "./memory";
 import { planStatusSchema } from "./preparation";
 import { todayShortPlanSchema } from "./short-exam-plans";
-import { logicalDateSchema, studySessionResponseSchema } from "./study-sessions";
+import { studyDayResponseSchema } from "./study-day";
+import { logicalDateSchema } from "./study-sessions";
 import { suggestedGoalSchema } from "./suggested-goals";
 
 export const todayResponseSchema = z
@@ -65,6 +66,12 @@ export const todayResponseSchema = z
             description:
               "For a test-out, the chapter its lessons were skipped from when they all come from one",
           }),
+        id: z
+          .uuid()
+          .nullable()
+          .describe(
+            "Null only for a computed mandatory notice before its explicit acknowledgment or Open POST",
+          ),
       })
       .nullable()
       .meta({
@@ -112,7 +119,13 @@ export const todayResponseSchema = z
         description:
           "Where the plan stands, in the goal's one measure: an exam's preparation with this week's gain, or any other goal's lessons (a language goal shows its level instead, from its Today view). Null for a quick explanation",
       }),
-    session: studySessionResponseSchema,
+    revision: z
+      .string()
+      .regex(/^\d+$/u)
+      .describe(
+        "Viewer revision read before this view; discard stale delivery after a newer revision",
+      ),
+    session: studyDayResponseSchema,
     shortPlan: todayShortPlanSchema,
     studiedToday: z
       .boolean()
@@ -136,8 +149,10 @@ export const todayResponseSchema = z
         kind: z.enum(["mixed", "mock"]),
         planItemId: z
           .uuid()
+          .nullable()
           .meta({
-            description: "The challenge's plan item, which opens its intro before and on its day",
+            description:
+              "The challenge's saved plan item, or null for selected work that remains visible without an action until Open persists it",
           }),
         questions: z.number().int().min(0),
         timeLimitMinutes: z.number().int().min(0).nullable(),

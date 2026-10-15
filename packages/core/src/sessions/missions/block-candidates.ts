@@ -1,6 +1,7 @@
-import { type PlanItem } from "@zoonk/db";
 import { type EntitlementTier } from "../../entitlements/contract";
 import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { getItemKey } from "../../plans/planner/plan-items";
+import { type SessionPlanItem } from "../_utils/session-plan-item";
 import { type PlannedBlock } from "../session-builder";
 import { type MissionKind, type MissionPick } from "./catalog";
 
@@ -21,6 +22,7 @@ export function toBlockPick({
     anchor: {
       blockKind: block.kind,
       ...(payload.planItemId ? { planItemId: payload.planItemId } : {}),
+      ...(payload.planItemKey ? { planItemKey: payload.planItemKey } : {}),
       ...(block.lessonId ? { lessonIds: [block.lessonId] } : {}),
     },
     detail: {
@@ -103,6 +105,13 @@ export function blockCandidates({
   ];
 }
 
+/** A selected item's logical key is authoritative until the POST gives it a saved row ID. */
+function isItemBlock({ block, item }: { block: MissionFactBlock; item: SessionPlanItem }): boolean {
+  return item.id === null
+    ? block.payload.planItemKey === (item.key ?? getItemKey(item))
+    : block.payload.planItemId === item.id;
+}
+
 export function finishChapterCandidate({
   blocks,
   items,
@@ -110,7 +119,7 @@ export function finishChapterCandidate({
 }: {
   blocks: readonly MissionFactBlock[];
   goalPlan: GoalPlan;
-  items: readonly PlanItem[];
+  items: readonly SessionPlanItem[];
 }): MissionPick | null {
   const learning = blocks.filter(
     (block) => block.kind === "learn" && !block.payload.extra && !block.payload.reinforcement,
@@ -121,7 +130,7 @@ export function finishChapterCandidate({
       learning.flatMap(
         (block) =>
           block.payload.chapterId ??
-          items.find((item) => item.id === block.payload.planItemId)?.chapterId ??
+          items.find((item) => isItemBlock({ block, item }))?.chapterId ??
           [],
       ),
     ),
@@ -145,7 +154,7 @@ export function finishChapterCandidate({
         (item) =>
           item.kind === "lesson" &&
           item.lessonId &&
-          learning.some((block) => block.payload.planItemId === item.id),
+          learning.some((block) => isItemBlock({ block, item })),
       )
     );
   });
@@ -155,7 +164,11 @@ export function finishChapterCandidate({
   }
 
   const remaining = findRemaining(chapterId);
-  const first = learning.find((block) => block.payload.planItemId === remaining[0]?.id);
+
+  const first = learning.find(
+    (block) => remaining[0] && isItemBlock({ block, item: remaining[0] }),
+  );
+
   const chapterTitle = goalPlan.skills.find((skill) => skill.areaId === chapterId)?.areaTitle;
 
   return {
@@ -163,13 +176,13 @@ export function finishChapterCandidate({
       blockKind: "learn",
       chapterId,
       lessonIds: remaining.flatMap((item) => item.lessonId ?? []),
-      planItemIds: remaining.map((item) => item.id),
+      planItemIds: remaining.flatMap((item) => item.id ?? []),
     },
     detail: {
       count: remaining.length,
       ...(chapterTitle ? { chapterTitle } : {}),
       minutes: learning
-        .filter((block) => remaining.some((item) => item.id === block.payload.planItemId))
+        .filter((block) => remaining.some((item) => isItemBlock({ block, item })))
         .reduce((sum, block) => sum + block.estimatedMinutes, 0),
     },
     kind: "finishChapter",

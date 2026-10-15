@@ -153,11 +153,13 @@ async function payFullMeal(
 
 /** Progress and reward evidence commit together under the learner lock, once per local session day. */
 export async function settleMissions({
+  revalidation = "now",
   sessionId,
   timeZone,
   userId,
   source,
 }: {
+  revalidation?: "now" | "skip";
   sessionId: string;
   timeZone: string;
   userId: string;
@@ -308,10 +310,11 @@ export async function settleMissions({
   }
 
   if (
-    settled.newlyDone.length > 0 ||
-    settled.newlyClaimed.length > 0 ||
-    settled.legacyClaimed.length > 0 ||
-    settled.fullMealPaid
+    revalidation === "now" &&
+    (settled.newlyDone.length > 0 ||
+      settled.newlyClaimed.length > 0 ||
+      settled.legacyClaimed.length > 0 ||
+      settled.fullMealPaid)
   ) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }

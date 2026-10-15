@@ -288,9 +288,24 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
       const finer = await liveDaysOnce("finer");
       const plan = await liveDaysOnce("plan");
 
-      // The day after the first lessons opens with a review of what they taught, and practice
-      // follows once the bank's questions on it weren't asked the day before.
-      expect(finer.days[1]?.[0]).toMatch(/^review\[G1,G2\]$/u);
+      // Day zero taught only G1; G2 starts on day one, so its review isn't due yet.
+      expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3"]);
+      expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3"]);
+
+      expect(
+        new Set(
+          finer.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
+        ),
+      ).toStrictEqual(new Set([finer.library.skills[0]?.id]));
+
+      expect(
+        new Set(
+          plan.finished.filter((lesson) => lesson.day === 0).map((lesson) => lesson.planSkillId),
+        ),
+      ).toStrictEqual(new Set([plan.library.skills[0]?.id]));
+
+      // Practice follows once the bank's questions on it weren't asked the day before.
+      expect(finer.days[1]?.[0]).toMatch(/^review\[G1\]$/u);
       expect(finer.days.flat().some((block) => block.startsWith("practice[G"))).toBe(true);
       expect(finer.days).toStrictEqual(plan.days);
     },

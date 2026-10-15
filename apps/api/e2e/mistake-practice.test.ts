@@ -17,8 +17,8 @@ import {
   studyAnswerFeedbackResponseSchema,
   studyBlockDetailResponseSchema,
 } from "../src/lib/openapi/schemas/study-sessions";
-import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
@@ -275,10 +275,7 @@ test.describe("Mistake practice API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-drill" });
     const { goal, mistake } = await createMistakeGoal({ cause: "trap", userId });
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const practice = today.blocks.find((block) => block.kind === "practice");
     const blockPath = `/v1/study-sessions/${today.id}/blocks/${practice?.id}`;

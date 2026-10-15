@@ -1,10 +1,15 @@
 import { logError } from "@zoonk/utils/logger";
-import { type BossBankFacts, getBossSize } from "../../checkpoints/checkpoint-minutes";
-import { getBossSkillIds } from "../../checkpoints/checkpoint-rules";
+import { type BossBankFacts } from "../../checkpoints/checkpoint-minutes";
 import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
 import { type BossFallback, type SettlingPlan, settleTeachingFirst } from "./boss-fallback";
 import { type BossMinutes } from "./boss-minutes";
-import { toBossPlan } from "./boss-plan";
+import {
+  type BossSizes,
+  readBossSizes,
+  sizeBosses,
+  toBossMinutes,
+  withBossSizes,
+} from "./boss-sizes";
 import { type BuildPlanInput } from "./build-plan";
 import { listCheckpointOverflow } from "./checkpoint-overflow";
 import {
@@ -14,7 +19,6 @@ import {
   placeExamBosses,
 } from "./exam-boss-days";
 import { type TestedTeaching, isSameTeaching, listTestedTeaching } from "./kept-teaching";
-import { type PlannedItem } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
 
 /**
@@ -29,45 +33,6 @@ export type BossPlanFacts = {
   rows: ItemSkillRows;
   survivors: ReadonlyMap<string, string>;
 };
-
-/**
- * What each of a built plan's bosses runs, by its key: the skills its session asks, read from the
- * plan as it would be saved (`getBossSkillIds` over the items' skills as `loadGoalPlan` reads them,
- * without the areas the learner took out), and what the bank holds for them (`getBossSize`).
- */
-function sizePlannedBosses({
-  facts,
-  input,
-  items,
-  skillLessons,
-}: {
-  facts: BossPlanFacts;
-  input: BuildPlanInput;
-  items: readonly PlannedItem[];
-  skillLessons: ReadonlyMap<string, number>;
-}): BossMinutes {
-  const plan = toBossPlan({
-    input,
-    items,
-    rows: facts.rows,
-    skillLessons,
-    survivors: facts.survivors,
-  });
-
-  return new Map(
-    plan.items
-      .filter((item) => item.kind === "boss")
-      .map((boss) => [
-        boss.key,
-        getBossSize({
-          facts: facts.bank,
-          goalKind: input.goal.kind,
-          listeningSkillIds: facts.listeningSkillIds,
-          skillIds: getBossSkillIds({ ...plan, boss }),
-        })?.minutes ?? null,
-      ]),
-  );
-}
 
 function isSameMinutes(first: BossMinutes, second: BossMinutes): boolean {
   return (
@@ -228,11 +193,16 @@ export function settlePlannedBosses<T extends SettlingPlan>({
   /** The plan built with what each boss runs (`bossMinutes`). */
   build: (input: BuildPlanInput) => T;
   input: BuildPlanInput;
-}): T & { bossFallback?: BossFallback; checkpointOverflow: PlanSettings["checkpointOverflow"] } {
+}): T & {
+  bossSizes: BossSizes;
+  bossFallback?: BossFallback;
+  checkpointOverflow: PlanSettings["checkpointOverflow"];
+} {
   const facts = input.bossFacts;
 
   // What the plan saves of its checkpoints' days, so each asks for the time they take past it.
-  const settled = (bossMinutes: BossMinutes, built: T) => ({
+  const settled = (bossMinutes: BossMinutes, built: T, bossSizes: BossSizes = new Map()) => ({
+    bossSizes,
     ...built,
     checkpointOverflow: listCheckpointOverflow({ bossMinutes, built, input }),
   });
@@ -255,9 +225,7 @@ export function settlePlannedBosses<T extends SettlingPlan>({
     placeExamBosses({ built: on, input, rows: facts?.rows, survivors: facts?.survivors });
 
   for (let pass = 1; ; pass += 1) {
-    const sized = facts
-      ? sizePlannedBosses({ facts, input, items: built.items, skillLessons: built.skillLessons })
-      : minutes;
+    const { minutes: sized, sizes } = readBossSizes({ built, facts, input, minutes });
 
     const { placed, placing } = placePass({ built, current: bossDays, place: placeBosses, track });
 
@@ -280,7 +248,7 @@ export function settlePlannedBosses<T extends SettlingPlan>({
     const next = getNextDays({ holds, placed, placing, retried: track.retried });
 
     if (holds && next === placed) {
-      return settled(minutes, built);
+      return settled(minutes, built, sizes);
     }
 
     if (pass > limit) {
@@ -293,16 +261,22 @@ export function settlePlannedBosses<T extends SettlingPlan>({
         reason: "unsettled",
       });
 
-      return settleTeachingFirst({
-        bossDays: placed,
-        build,
+      return withBossSizes({
+        built: settleTeachingFirst({
+          bossDays: placed,
+          build,
+          input,
+          iterations: pass,
+          places: placed ? (taught) => placeBosses(taught) : null,
+          size: (taught, items) =>
+            facts
+              ? toBossMinutes(
+                  sizeBosses({ facts, input, items, skillLessons: taught.skillLessons }),
+                )
+              : asSized,
+        }),
+        facts,
         input,
-        iterations: pass,
-        places: placed ? (taught) => placeBosses(taught) : null,
-        size: (taught, items) =>
-          facts
-            ? sizePlannedBosses({ facts, input, items, skillLessons: taught.skillLessons })
-            : asSized,
       });
     }
 

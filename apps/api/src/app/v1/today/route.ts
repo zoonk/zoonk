@@ -8,7 +8,7 @@ import { todayStudySessionInputSchema } from "@zoonk/core/sessions/contract";
 import { getTodayView } from "@zoonk/core/view-models/today/get";
 import { NextResponse } from "next/server";
 
-/** Returns Today for a goal (the active goal by default), building the day's session the first time. */
+/** Reads a saved day or its ID-free preview; rendering never opens or changes the day. */
 async function getToday(request: Request) {
   const query = parseQueryParams(new URL(request.url).searchParams, todayStudySessionInputSchema);
 

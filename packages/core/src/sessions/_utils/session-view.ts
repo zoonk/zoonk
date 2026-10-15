@@ -1,29 +1,16 @@
 import { type StudySessionBlock } from "@zoonk/db";
-import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
+import { type MockIdentity } from "../../plans/planner/mock-identity";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
-import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
-import { getStoredBlockWait } from "../block-wait";
-import {
-  BRAIN_POWER_BONUS,
-  type BlockOutcome,
-  EMPTY_OUTCOME,
-  estimateBrainPower,
-  getHyperdriveLevel,
-  scoreAnswers,
-} from "../brain-power";
+import { type BlockCheckpoint } from "../block-payload";
 import { type CapsuleFormat } from "../capsules";
-import { type WeekDay, getSessionMinutesDone } from "../daily-goal";
-import { type ExtraTime, getExtraTime } from "../extra-time";
+import { type WeekDay } from "../daily-goal";
+import { type ExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
-import { type Mission, getMissionBonus, isFullMeal } from "../missions";
-import { shouldSuggestPause } from "../pause-suggestion";
+import { type Mission } from "../missions";
+import { toDayBlockView } from "./day-block-view";
+import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
-import { isExamTomorrow } from "./exam-tomorrow";
-import { type SessionAnswer } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
-
-/** A short lesson has about one question for every two minutes. */
-const LESSON_QUESTIONS_PER_MINUTE = 0.5;
 
 type CapsuleView = {
   format: CapsuleFormat;
@@ -39,11 +26,12 @@ export type StudyBlockView = Pick<
   "brainPower" | "canDo" | "id" | "kind" | "lessonId" | "position" | "status"
 > & {
   answered: number;
+  areaId: string | null;
   /** Whether this lesson's chapter test can be offered after today's test and study history. */
   canTestOut: boolean;
   capsules: CapsuleView[];
   chapterId: string | null;
-  checkpoint: BlockCheckpoint | null;
+  checkpoint: (BlockCheckpoint & { mockIdentity: MockIdentity | null }) | null;
   estimatedBrainPower: number;
   estimatedMinutes: number;
   extra: boolean;
@@ -65,6 +53,7 @@ export type StudyBlockView = Pick<
   /** An exam's topic the board asks a lot, from past papers: tiles tag it "Often tested". */
   oftenTested: boolean;
   planItemId: string | null;
+  planItemKey: string | null;
   questions: number;
   reinforcement: boolean;
   /**
@@ -82,103 +71,13 @@ export type StudyBlockView = Pick<
   weakest: boolean;
 };
 
-function getEstimateOutcome(block: StudySessionBlock): {
-  outcome: BlockOutcome;
-  questions: number;
-} {
-  const payload = readBlockPayload(block);
-  const questions = getBlockItemIds(payload).length;
-
-  if (block.kind === "learn") {
-    const minutes = block.estimatedMinutes ?? 0;
-
-    return {
-      outcome: { ...EMPTY_OUTCOME, firstLessonCompletion: true },
-      questions: Math.round(minutes * LESSON_QUESTIONS_PER_MINUTE),
-    };
-  }
-
-  const checkpoint = payload.checkpoint ? { kind: payload.checkpoint.kind, passed: true } : null;
-
-  return {
-    outcome: { ...EMPTY_OUTCOME, capsulesOpened: payload.capsules.length, checkpoint },
-    questions,
-  };
-}
-
 const NO_SKILLS: ReadonlySet<string> = new Set();
-const NO_SUBJECTS: ReadonlyMap<string, string> = new Map();
+const NO_SUBJECTS: ReadonlyMap<number, string> = new Map();
 
-export function toStudyBlockView({
-  answeredItemIds,
-  block,
-  blocks = [block],
-  blockedTestOutChapters = NO_SKILLS,
-  oftenTestedSkillIds = NO_SKILLS,
-  subject = null,
-}: {
-  answeredItemIds: ReadonlySet<string>;
-  block: StudySessionBlock;
-  blocks?: readonly StudySessionBlock[];
-  blockedTestOutChapters?: ReadonlySet<string>;
-  /** The exam goal's skills its board asks a lot; empty for other goals. */
-  oftenTestedSkillIds?: ReadonlySet<string>;
-  /** The goal's subject the block studies, by its short name; null without one. */
-  subject?: string | null;
-}): StudyBlockView {
-  const payload = readBlockPayload(block);
-  const itemIds = getBlockItemIds(payload);
-  const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
-
-  // A challenge judged by right answers (a language call has no pass mark) that the bank held too
-  // few questions for asks its full ten once Start writes them (`getPlannedQuestions`).
-  const { checkpoint } = payload;
-
-  const waitsForQuestions =
-    checkpoint !== null &&
-    !checkpoint.mock &&
-    checkpoint.passMark > 0 &&
-    block.status === "pending";
-
-  return {
-    answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
-    brainPower: block.brainPower,
-    canDo: block.canDo,
-    canTestOut:
-      block.kind === "learn" &&
-      payload.chapterId !== null &&
-      !blockedTestOutChapters.has(payload.chapterId),
-    capsules: payload.capsules.map((capsule) => ({
-      format: capsule.format,
-      key: capsule.key,
-      lessonId: capsule.lessonId,
-      opened: capsule.itemIds.some((id) => answeredItemIds.has(id)),
-      questions: capsule.itemIds.length,
-      title: capsule.title,
-    })),
-    chapterId: payload.chapterId,
-    checkpoint: payload.checkpoint,
-    estimatedBrainPower: estimateBrainPower(getEstimateOutcome(block)),
-    estimatedMinutes: block.estimatedMinutes ?? 0,
-    extra: payload.extra,
-    fullReview: payload.fullReview,
-    id: block.id,
-    kind: block.kind,
-    lessonId: block.lessonId,
-    mistakesOnly:
-      block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
-    netScored: payload.netScored,
-    oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
-    planItemId: payload.planItemId,
-    position: block.position,
-    questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
-    reinforcement: payload.reinforcement,
-    status: block.status,
-    subject,
-    title: payload.title ?? payload.capsules[0]?.title ?? null,
-    waitReason: getStoredBlockWait({ block, blocks }),
-    weakest: payload.weakest,
-  };
+export function toStudyBlockView(
+  input: Omit<Parameters<typeof toDayBlockView>[0], "block"> & { block: StudySessionBlock },
+): StudyBlockView {
+  return { ...toDayBlockView(input), id: input.block.id };
 }
 
 export type EmptyDay = "lessonsComing" | "nothingNew";
@@ -192,6 +91,7 @@ export type EmptyDay = "lessonsComing" | "nothingNew";
  */
 export type CatchUpView = {
   blockIds: string[];
+  positions: number[];
   later: { lessons: number; minutes: number; offered: boolean };
   lessonsLeft: number;
 };
@@ -211,6 +111,7 @@ export type StudySessionView = {
    */
   current: boolean;
   dailyLimit: DailyTimeLimitStatus | null;
+  dayEndsAt: number;
   /**
    * Why a day with study time has no blocks: its lessons are still being outlined
    * (`lessonsComing`, the day fills in on its own), or the plan has no new lesson left for it
@@ -245,6 +146,7 @@ export type StudySessionView = {
   minutes: { dailyGoal: number; done: number; planned: number };
   missions: Mission[];
   nextBlockId: string | null;
+  nextPosition: number | null;
   pauseSuggested: boolean;
   sessionBar: { completed: number; total: number };
   status: StudySessionRow["status"];
@@ -271,89 +173,27 @@ export function getNextBlockId(blocks: readonly StudySessionBlock[]): string | n
   return next?.id ?? null;
 }
 
-/**
- * The session's day counts at least its progress (see `getSessionMinutesDone`). A session carried
- * across midnight never fills the new day's ring with the previous day's completed blocks.
- */
-function withSessionDay({
-  current,
-  days,
-  done,
-  localDate,
-}: {
-  current: boolean;
-  days: readonly WeekDay[];
-  done: number;
-  localDate: Date;
-}): WeekDay[] {
-  return days.map((day) => {
-    if (!current || day.date.getTime() !== localDate.getTime() || done <= day.minutes) {
-      return day;
-    }
+/** The persisted day adds only its real session and block IDs to the shared view. */
+export function toStudySessionView(
+  input: Omit<DayViewFieldsInput, "session" | "missions" | "sessionBar"> & {
+    blockSubjects?: ReadonlyMap<number, string>;
+    blockedTestOutChapters?: ReadonlySet<string>;
+    missions: Mission[];
+    oftenTestedSkillIds?: ReadonlySet<string>;
+    session: StudySessionRow;
+  },
+): StudySessionView {
+  const {
+    blockSubjects = NO_SUBJECTS,
+    blockedTestOutChapters = NO_SKILLS,
+    oftenTestedSkillIds,
+    session,
+  } = input;
 
-    return {
-      ...day,
-      hitGoal: day.hitGoal || (day.goalMinutes > 0 && done >= day.goalMinutes),
-      minutes: done,
-      studied: true,
-    };
-  });
-}
-
-/** The session view model the apps and the API read. */
-export function toStudySessionView({
-  answers,
-  blockSubjects = NO_SUBJECTS,
-  blockedTestOutChapters = NO_SKILLS,
-  current,
-  dailyLimit,
-  dayMinutes,
-  emptyDay = null,
-  examAccess,
-  lessonsComing = false,
-  fullMealEarned,
-  missions,
-  oftenTestedSkillIds,
-  session,
-  week,
-}: {
-  answers: readonly SessionAnswer[];
-  /** Each block's subject by its short name, by block id, for the blocks' labels. */
-  blockSubjects?: ReadonlyMap<string, string>;
-  blockedTestOutChapters?: ReadonlySet<string>;
-  current: boolean;
-  dailyLimit: DailyTimeLimitStatus | null;
-  /** The minutes the goal's plan gives the session's day. */
-  dayMinutes: number;
-  /** Why the day has no blocks, when it has study time but none (see `StudySessionView`). */
-  emptyDay?: EmptyDay | null;
-  examAccess: ExamPrepAccess;
-  /** The day holds time for lessons still being outlined (see `StudySessionView`). */
-  lessonsComing?: boolean;
-  fullMealEarned?: boolean;
-  missions: Mission[];
-  /** The exam goal's skills its board asks a lot; empty for other goals. */
-  oftenTestedSkillIds?: ReadonlySet<string>;
-  session: StudySessionRow;
-  week: StudyWeek;
-}): StudySessionView {
-  const answeredItemIds = new Set(
-    answers.flatMap((answer) => (answer.itemId ? [answer.itemId] : [])),
-  );
-
-  const streak = scoreAnswers({ answers }).streak;
-  const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
-
-  const days = withSessionDay({
-    current,
-    days: week.days,
-    done: minutesDone,
-    localDate: session.localDate,
-  });
-
-  const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
+  const answeredItemIds = new Set(input.answers.flatMap((answer) => answer.itemId ?? []));
 
   return {
+    ...toDayViewFields({ ...input, sessionBar: getSessionBar(session.blocks) }),
     blocks: session.blocks.map((block) =>
       toStudyBlockView({
         answeredItemIds,
@@ -361,45 +201,12 @@ export function toStudySessionView({
         blockedTestOutChapters,
         blocks: session.blocks,
         oftenTestedSkillIds,
-        subject: blockSubjects.get(block.id) ?? null,
+        subject: blockSubjects.get(block.position) ?? null,
       }),
     ),
-    brainPower: blocksPower + (session.fullMealAt === null ? 0 : BRAIN_POWER_BONUS.fullMeal),
-    catchUp: null,
-    current,
-    dailyLimit,
-    emptyDay: session.blocks.length === 0 && dayMinutes > 0 ? emptyDay : null,
-    examAccess,
-    examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
-    extraTime: getExtraTime({
-      blocks: session.blocks.map((block) => ({
-        extra: readBlockPayload(block).extra,
-        status: block.status,
-      })),
-      remainingLimitMinutes: dailyLimit?.remainingMinutes ?? null,
-    }),
-    freshStart: session.freshStart,
-    fullMeal: {
-      bonus: getMissionBonus(missions),
-      earned: fullMealEarned ?? session.fullMealAt !== null,
-      ready: isFullMeal(missions),
-    },
-    goalId: session.goalId,
-    hyperdrive: { level: getHyperdriveLevel(streak), streak },
     id: session.id,
-    lessonsComing: lessonsComing && session.blocks.length > 0,
-    localDate: session.localDate,
-    minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },
-    missions,
+    missions: input.missions,
     nextBlockId: getNextBlockId(session.blocks),
-    pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
-    sessionBar: getSessionBar(session.blocks),
     status: session.status,
-    week: {
-      days,
-      daysHitGoal: days.filter((day) => day.hitGoal).length,
-      studyDays: days.filter((day) => day.goalMinutes > 0).length,
-      time: week.time,
-    },
   };
 }

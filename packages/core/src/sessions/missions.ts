@@ -70,7 +70,7 @@ export function getMissions({ fix, learn, review }: MissionInput): Mission[] {
 }
 
 /** Fewer possible missions never reduce the completion bonus; no missions means no bonus. */
-export function getMissionBonus(missions: readonly Mission[]): number {
+export function getMissionBonus(missions: readonly Pick<Mission, "status">[]): number {
   return missions.length > 0 ? BRAIN_POWER_BONUS.fullMeal : 0;
 }
 
@@ -87,6 +87,6 @@ export function countMissions(
 }
 
 /** Every offered mission actually done; a day with none never earns the completion bonus. */
-export function isFullMeal(missions: readonly Mission[]): boolean {
+export function isFullMeal(missions: readonly Pick<Mission, "status">[]): boolean {
   return missions.length > 0 && countDoneMissions(missions) === missions.length;
 }

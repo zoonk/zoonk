@@ -235,9 +235,8 @@ describe(putLandedLessons, () => {
     ]);
   });
 
-  // IELTS seed 2031: a practice change that morning left today's lessons less time than Today
-  // showed. The landed lessons of today's stand-in went to later days, and it left the session.
-  it("keeps a landed stand-in in the session Today showed, with no time left that day", () => {
+  // G supersedes replacing a shown stand-in with new rows: new written work starts after today.
+  it("defers a shown stand-in's newly written lessons instead of adding rows to today", () => {
     const placed = putLandedLessons({
       days,
       input: {
@@ -258,7 +257,7 @@ describe(putLandedLessons, () => {
     });
 
     expect(datesOf(placed, "law")).toStrictEqual([
-      ["lesson:law-0", "2026-10-12"],
+      ["lesson:law-0", "2026-10-13"],
       ["lesson:law-1", "2026-10-13"],
     ]);
   });

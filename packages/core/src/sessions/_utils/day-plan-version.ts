@@ -3,7 +3,7 @@ import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 
 /** The version of the goal's plan a day is built from; null for a goal without a plan. */
-export async function loadPlanVersion({
+async function loadPlanVersion({
   client,
   goalId,
 }: {

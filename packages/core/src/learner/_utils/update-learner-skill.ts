@@ -34,6 +34,10 @@ export async function loadSkillSurvivorMap(
   skillIds: readonly string[],
   transaction: TransactionClient = prisma,
 ): Promise<Map<string, string>> {
+  if (skillIds.length === 0) {
+    return new Map();
+  }
+
   const merged = await transaction.skill.findMany({
     select: { id: true, mergedIntoId: true },
     where: { id: { in: [...skillIds] }, mergedIntoId: { not: null } },

@@ -6,6 +6,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -71,8 +72,10 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
+      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: null,
+      userId: user.id,
     });
   });
 
@@ -92,8 +95,10 @@ describe(getTodayView, () => {
     ]);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
+      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: { courseId: null, id: newest.id, status: "pending", title: "Physics" },
+      userId: user.id,
     });
   });
 
@@ -122,7 +127,15 @@ describe(getTodayView, () => {
     });
 
     expect(first.user.id).not.toBe(second.user.id);
-    expect(delayedFirst?.session.id).not.toBe(secondToday?.session.id);
+    expect(delayedFirst?.session.status).toBe("unstarted");
+    expect(secondToday?.session.status).toBe("unstarted");
+    expect(delayedFirst?.session).not.toHaveProperty("id");
+    expect(secondToday?.session).not.toHaveProperty("id");
+
+    expect(delayedFirst?.session.blocks.map((block) => block.lessonId)).not.toStrictEqual(
+      secondToday?.session.blocks.map((block) => block.lessonId),
+    );
+
     expect(delayedFirst?.session.missions).toStrictEqual(firstToday?.session.missions);
   });
 
@@ -240,7 +253,7 @@ describe(getTodayView, () => {
     await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
     mockSession(user.id);
 
-    const today = await readReadyToday();
+    const { today } = await openTodayView({ goalId: fixture.goal.id });
 
     const lessonBlocks =
       today?.session.blocks.filter((block) => block.kind === "learn" && block.planItemId) ?? [];
@@ -362,17 +375,23 @@ describe(getTodayView, () => {
 
     await expect(getTodayView({})).resolves.toStrictEqual({
       goal: { id: goal.id, kind: "learn", title: "Quantum physics" },
+      revision: String(user.learnerRevision),
       status: "preparing",
+      userId: user.id,
     });
 
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
   it("has no day to plan for a paused goal", async () => {
-    const { goal } = await setup();
+    const { goal, user } = await setup();
     await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
 
-    await expect(getTodayView({})).resolves.toStrictEqual({ status: "goalNotActive" });
+    await expect(getTodayView({})).resolves.toStrictEqual({
+      revision: String(user.learnerRevision),
+      status: "goalNotActive",
+      userId: user.id,
+    });
   });
 
   it("has no day to plan for a learner with only quick explanations", async () => {
@@ -387,8 +406,10 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
+      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: null,
+      userId: user.id,
     });
 
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);

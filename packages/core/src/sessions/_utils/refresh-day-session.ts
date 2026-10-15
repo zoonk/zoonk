@@ -1,14 +1,10 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
-import {
-  arePhaseChallengesRequired,
-  withoutLockedPhaseChallenges,
-} from "../../checkpoints/_utils/phase-challenge-access";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { hasSameContent } from "./day-block-content";
-import { loadDayPlanVersion, loadPlanVersion } from "./day-plan-version";
+import { loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
@@ -111,7 +107,7 @@ function withoutKept({
 }
 
 /** The new blocks for the rest of the day, never a second block of a kind the day keeps. */
-async function planRestOfDay({
+export async function planRestOfDay({
   day,
   kept,
 }: {
@@ -139,7 +135,7 @@ async function planRestOfDay({
   return blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind));
 }
 
-function hasSameBlocks({
+export function hasSameBlocks({
   locked,
   read,
 }: {
@@ -158,16 +154,10 @@ function hasSameBlocks({
 /**
  * Replaces the day's blocks not kept with the new plan's, after the kept ones, under the session's
  * lock: the session keeps its id, so a screen showing it still reaches it. When a block was started
- * meanwhile, the day stays as it was. The session records the plan version it now follows either
- * way, so a day that already follows the plan isn't checked again until the plan changes.
+ * meanwhile, the day stays as it was. Only an actual queue change records the plan version;
+ * unchanged content lets the append lock roll back its early revision mark.
  */
-async function replaceNotStartedBlocks({
-  day,
-  keepCompleted = false,
-}: {
-  day: DaySession;
-  keepCompleted?: boolean;
-}): Promise<DaySessionRefresh> {
+async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<DaySessionRefresh> {
   const { session } = day;
   const kept = getKeptBlocks(session.blocks);
   const keptIds = new Set(kept.map((block) => block.id));
@@ -187,16 +177,11 @@ async function replaceNotStartedBlocks({
 
   return withSessionAppendLock({
     run: async ({ session: locked, transaction }) => {
-      if (keepCompleted && locked.status === "completed") {
-        return "kept";
-      }
-
       if (!hasSameBlocks({ locked: locked.blocks, read: session.blocks })) {
         return "kept";
       }
 
       if (unchanged) {
-        await transaction.studySession.update({ data: { planVersion }, where: { id: session.id } });
         return replaced.length > 0 ? "same" : "kept";
       }
 
@@ -272,108 +257,4 @@ export async function followPlanChangeToday({
   }
 
   return replaceNotStartedBlocks({ day: { goal: session.goal, session, timeZone } });
-}
-
-/**
- * A day built before lessons it held a place for landed: the new lessons join its end, up to the
- * day's time, so a first day that opened short (its lessons still being outlined) fills up without
- * moving anything the learner has seen.
- */
-async function appendNewLessons({
-  day,
-  kept = day.session.blocks,
-}: {
-  day: DaySession;
-  kept?: readonly StudySessionBlock[];
-}): Promise<void> {
-  const { session } = day;
-  const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
-  const planned = await planRestOfDay({ day, kept });
-  const lessons = planned.filter((block) => block.kind === "learn");
-
-  await withSessionAppendLock({
-    run: async ({ session: locked, transaction }) => {
-      if (locked.status === "completed") {
-        return;
-      }
-
-      if (!hasSameBlocks({ locked: locked.blocks, read: session.blocks })) {
-        return;
-      }
-
-      if (lessons.length === 0) {
-        await transaction.studySession.update({ data: { planVersion }, where: { id: session.id } });
-        return;
-      }
-
-      const firstPosition = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
-
-      await transaction.studySessionBlock.createMany({
-        data: lessons.map((block, index) => ({
-          ...block,
-          position: firstPosition + index,
-          sessionId: session.id,
-        })),
-      });
-
-      await transaction.studySession.update({
-        data: { planVersion, plannedMinutes: getKeptMinutes(session.blocks) + sumMinutes(lessons) },
-        where: { id: session.id },
-      });
-    },
-    session,
-  });
-}
-
-/**
- * Brings a day built before the plan last changed without the learner (new lessons landing in
- * place of stand-ins, a re-plan) up to date, without changing anything they were shown: what Today
- * showed is what the day holds, started or not, so new lessons only join its end, when it has time
- * left; a day built without blocks (all its lessons still being outlined) is built now; a finished
- * day stays as it is. A day holding time for lessons being outlined is checked on every read
- * (`loadDayPlanVersion`), so it fills up once they land or nobody is writing them anymore. Only
- * the learner's own change replaces what they haven't started (`followPlanChangeToday`), and that
- * change is announced. It runs on the learner's own read, since building a day needs their
- * session.
- */
-export async function refreshDayFromPlan({
-  session,
-  timeZone,
-}: {
-  session: StudySessionRow;
-  timeZone: string;
-}): Promise<StudySessionRow> {
-  const { goal } = session;
-
-  if (!goal || session.status === "completed") {
-    return session;
-  }
-
-  const planVersion = await loadPlanVersion({ client: prisma, goalId: goal.id });
-
-  const kept = withoutLockedPhaseChallenges({
-    blocks: session.blocks,
-    phaseChallengesRequired: await arePhaseChallengesRequired({
-      goalKind: goal.kind,
-      userId: session.userId,
-    }),
-  });
-
-  if (
-    (planVersion === null || session.planVersion === null || planVersion <= session.planVersion) &&
-    kept.length === session.blocks.length
-  ) {
-    return session;
-  }
-
-  const day = { goal, session, timeZone };
-
-  await (session.blocks.length > 0
-    ? appendNewLessons({ day, kept })
-    : replaceNotStartedBlocks({ day, keepCompleted: true }));
-
-  return prisma.studySession.findUniqueOrThrow({
-    include: STUDY_SESSION_INCLUDE,
-    where: { id: session.id },
-  });
 }

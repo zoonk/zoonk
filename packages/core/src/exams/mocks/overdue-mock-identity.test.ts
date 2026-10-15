@@ -9,6 +9,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getChallenge } from "../../checkpoints/get-challenge";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { getMock } from "./get-mock";
@@ -149,7 +150,17 @@ describe("an overdue scheduled mock's canonical identity", () => {
     const intro = await getChallenge({ input: { timeZone: "UTC" }, planItemId: mock.id });
     expect.soft(intro).toMatchObject({ challenge: { minutes: 150 }, status: "ready" });
 
-    const today = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    const afterRead = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(parsePlanSettings(afterRead.settings).mockFunding).toStrictEqual(
+      parsePlanSettings(before.settings).mockFunding,
+    );
+
+    const today = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     if (today.status !== "ready") {
       throw new Error("Expected the actual late-return Today");
@@ -188,8 +199,11 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
-    expect(parsePlanSettings(after.settings).mockFunding).toStrictEqual(
-      parsePlanSettings(before.settings).mockFunding,
+    // A POST may reconcile the uncredited skipped mock; the played mock keeps its whole identity.
+    expect(
+      parsePlanSettings(after.settings).mockFunding.filter((entry) => entry.date === EVENT_DATE),
+    ).toStrictEqual(
+      parsePlanSettings(before.settings).mockFunding.filter((entry) => entry.date === EVENT_DATE),
     );
 
     await expect(

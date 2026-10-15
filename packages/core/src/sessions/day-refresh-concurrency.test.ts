@@ -1,13 +1,15 @@
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
-import { followPlanChangeToday, refreshDayFromPlan } from "./_utils/refresh-day-session";
+import { followPlanChangeToday } from "./_utils/refresh-day-session";
 import { STUDY_SESSION_INCLUDE } from "./_utils/study-session-access";
+import { getSessionPageView } from "./get-session-page-view";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 
@@ -69,13 +71,28 @@ async function setupCompletionWindow() {
   return { goal, session, user };
 }
 
+async function waitForSessionWriter(holderPid: number) {
+  await expect
+    .poll(
+      async () => prisma.$queryRaw<{ pid: number }[]>`
+        SELECT pid FROM pg_stat_activity
+        WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+          AND query ~* 'study_sessions.*FOR NO KEY UPDATE'
+      `,
+      { interval: 10, timeout: 4000 },
+    )
+    .not.toHaveLength(0);
+}
+
 /** Commit completion only after the refresh has read the active parent and waits for its lock. */
 async function completeDuringRefresh<T>({
   refresh,
   sessionId,
+  waitForLock = true,
 }: {
   refresh: () => Promise<T>;
   sessionId: string;
+  waitForLock?: boolean;
 }) {
   const ready = Promise.withResolvers<number>();
   const complete = Promise.withResolvers<null>();
@@ -104,16 +121,8 @@ async function completeDuringRefresh<T>({
   const refreshing = Promise.allSettled([refresh()]);
 
   try {
-    await expect
-      .poll(
-        async () => prisma.$queryRaw<{ pid: number }[]>`
-        SELECT pid FROM pg_stat_activity
-        WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
-          AND query ~* 'study_sessions.*FOR NO KEY UPDATE'
-      `,
-        { interval: 10, timeout: 4000 },
-      )
-      .not.toHaveLength(0);
+    // A read finishes while completion owns the row; only a writer requests that lock.
+    await (waitForLock ? waitForSessionWriter(holderPid) : refreshing);
   } finally {
     complete.resolve(null);
     await completing;
@@ -174,17 +183,49 @@ describe("day refresh races a completed parent with unchanged finished blocks", 
     expect(refreshed.status).toBe("active");
   });
 
-  it("leaves the freshly completed day unchanged when a plan read appends newly available lessons", async () => {
-    const { session } = await setupCompletionWindow();
+  it("reads around concurrent completion without appending newly available lessons", async () => {
+    const { goal, session } = await setupCompletionWindow();
 
-    const refreshed = await completeDuringRefresh({
-      refresh: () => refreshDayFromPlan({ session, timeZone: "UTC" }),
+    const during = await completeDuringRefresh({
+      refresh: () =>
+        countDatabaseStatements(() => getSessionPageView({ goalId: goal.id, timeZone: "UTC" })),
       sessionId: session.id,
+      waitForLock: false,
     });
 
-    expect(refreshed).toMatchObject({ endedAt: NOW, status: "completed" });
-    expect.soft(refreshed.blocks).toStrictEqual(session.blocks);
-    expect.soft(refreshed.plannedMinutes).toBe(session.plannedMinutes);
-    expect.soft(refreshed.planVersion).toBe(session.planVersion);
+    expect(during.writes).toBe(0);
+
+    expect(during.result).toMatchObject({
+      session: { id: session.id, status: "active" },
+      status: "ready",
+    });
+
+    const completed = await prisma.studySession.findUniqueOrThrow({
+      include: STUDY_SESSION_INCLUDE,
+      where: { id: session.id },
+    });
+
+    expect(completed).toMatchObject({ endedAt: NOW, status: "completed" });
+    expect(completed.blocks).toStrictEqual(session.blocks);
+    expect(completed.plannedMinutes).toBe(session.plannedMinutes);
+    expect(completed.planVersion).toBe(session.planVersion);
+
+    const after = await countDatabaseStatements(() =>
+      getSessionPageView({ goalId: goal.id, timeZone: "UTC" }),
+    );
+
+    expect(after.writes).toBe(0);
+
+    expect(after.result).toMatchObject({
+      session: { id: session.id, status: "completed" },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({
+        include: STUDY_SESSION_INCLUDE,
+        where: { id: session.id },
+      }),
+    ).resolves.toStrictEqual(completed);
   });
 });

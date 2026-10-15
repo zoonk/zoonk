@@ -25,7 +25,9 @@ function isOutsideKind(kind: MissionKind): kind is keyof typeof OUTSIDE_MINUTES 
  * A lesson's or an essay's name, as the day's queue shows it. Other blocks (reviews, practice,
  * challenges) are named by their kind on screen, so they have none here.
  */
-export function getBlockTitle(block: StudySessionBlock): string | null {
+export function getBlockTitle(
+  block: Pick<StudySessionBlock, "kind" | "payload"> & { id?: string },
+): string | null {
   if (block.kind !== "learn" && block.kind !== "produce") {
     return null;
   }

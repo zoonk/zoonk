@@ -3,7 +3,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession } from "../../_test-utils/mock-session";
 import { getGoalPlanScreen } from "../../plans/get-goal-plan";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import { openStudyDay } from "../../sessions/open-study-day";
 import { getTodayView } from "../today/get-today-view";
 import { getOnboarding } from "./get-onboarding";
 
@@ -66,7 +68,23 @@ describe("recovering a guest's failed date screen", () => {
       where: { id: goal.id },
     });
 
-    await expect(getTodayView({})).resolves.toMatchObject({ status: "ready" });
+    // The ready read remains write-free; beginning the day is the learner's explicit POST.
+    const ready = await getTodayView({});
+    expect(ready.status).toBe("ready");
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    if (ready.status !== "ready") {
+      throw new Error("Expected the recovered Today preview");
+    }
+
+    await expect(
+      openStudyDay({
+        goalId: goal.id,
+        shownDate: toIsoDate(ready.today.session.localDate),
+        timeZone: "UTC",
+      }),
+    ).resolves.toMatchObject({ status: "opened" });
+
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(1);
   });
 });

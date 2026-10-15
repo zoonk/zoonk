@@ -6,6 +6,23 @@ function readPayload(block: Pick<StudySessionBlock, "payload"> & { id?: string }
   return readBlockPayload({ id: block.id ?? "planned", payload: block.payload });
 }
 
+function matchesIdentity({
+  anchor,
+  lessonId,
+  payload,
+}: {
+  anchor: MissionPick["anchor"];
+  lessonId: string | null;
+  payload: ReturnType<typeof readBlockPayload>;
+}): boolean {
+  return (
+    (anchor.planItemId !== undefined && payload.planItemId === anchor.planItemId) ||
+    (anchor.planItemKey !== undefined && payload.planItemKey === anchor.planItemKey) ||
+    (payload.planItemId !== null && (anchor.planItemIds?.includes(payload.planItemId) ?? false)) ||
+    (lessonId !== null && (anchor.lessonIds?.includes(lessonId) ?? false))
+  );
+}
+
 /** Anchors survive block replacement: the plan item or lessons, otherwise the day's single kind. */
 export function getMissionBlocks<
   Block extends Pick<StudySessionBlock, "kind" | "lessonId" | "payload"> & {
@@ -30,13 +47,8 @@ export function getMissionBlocks<
       return false;
     }
 
-    if (anchor.planItemId || anchor.planItemIds || anchor.lessonIds) {
-      return (
-        (anchor.planItemId !== undefined && payload.planItemId === anchor.planItemId) ||
-        (payload.planItemId !== null &&
-          (anchor.planItemIds?.includes(payload.planItemId) ?? false)) ||
-        (block.lessonId !== null && (anchor.lessonIds?.includes(block.lessonId) ?? false))
-      );
+    if (anchor.planItemId || anchor.planItemIds || anchor.planItemKey || anchor.lessonIds) {
+      return matchesIdentity({ anchor, lessonId: block.lessonId, payload });
     }
 
     if (anchor.blockKind) {

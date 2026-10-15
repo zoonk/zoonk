@@ -4,8 +4,8 @@ import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { type PlanNumbers } from "../numbers-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { getItemKey } from "../planner/plan-items";
-import { type PlanContext } from "./plan-context";
 import { getPlanNumbers, getPlanWorkload } from "./plan-numbers";
+import { type PlanReadContext } from "./plan-read-projection";
 import { type ComputedPlan } from "./replan";
 
 /** The actual pure build's numbers, also reused for a prospective onboarding schedule. */
@@ -15,7 +15,7 @@ export async function buildPlanNumbersView({
   saved = false,
 }: {
   computed: ComputedPlan;
-  context: PlanContext;
+  context: PlanReadContext;
   saved?: boolean;
 }): Promise<PlanNumbers> {
   const { pace, state } = computed;

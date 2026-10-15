@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type PlanningMode } from "../planner/build-plan";
 import { type CarryOver } from "../planner/carry-over";
@@ -13,7 +13,7 @@ import { getTodayExceptAreas } from "./steered-areas";
  * lessons not done yet, in the session's order. Today's session isn't read, since a change made
  * today re-plans it as it is (see `followPlanChangeToday`).
  */
-export async function loadCarryOver({
+async function loadCarryOver({
   goalId,
   today,
 }: {
@@ -21,18 +21,22 @@ export async function loadCarryOver({
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<CarryOver> {
-  const session = await prisma.studySession.findFirst({
-    include: {
-      blocks: {
-        orderBy: { position: "asc" },
-        where: { kind: "learn", lessonId: { not: null }, status: { in: ["pending", "active"] } },
-      },
-    },
-    orderBy: { localDate: "desc" },
-    where: { goalId, localDate: { lt: today } },
-  });
+  // One flat read keeps the latest day authoritative even when that day has no unfinished lessons.
+  const blocks = await prisma.$queryRaw<Pick<StudySessionBlock, "lessonId">[]>`
+    SELECT block.lesson_id AS "lessonId"
+    FROM study_session_blocks AS block
+    WHERE block.session_id = (
+      SELECT id FROM study_sessions
+      WHERE goal_id = ${goalId}::uuid AND local_date < ${today}
+      ORDER BY local_date DESC LIMIT 1
+    )
+    AND block.kind = 'learn'::"StudyBlockKind"
+    AND block.lesson_id IS NOT NULL
+    AND block.status IN ('pending'::"StudyBlockStatus", 'active'::"StudyBlockStatus")
+    ORDER BY block.position ASC
+  `;
 
-  return { lessonIds: session?.blocks.flatMap((block) => block.lessonId ?? []) ?? [] };
+  return { lessonIds: blocks.flatMap((block) => block.lessonId ?? []) };
 }
 
 /**
@@ -91,16 +95,17 @@ async function loadTodaySettle(context: Pick<PlanContext, "plan" | "timeZone" | 
   );
 }
 
-/**
- * The items today's settling of what earlier days left carried (see `refreshGoalPlan`), the latest
- * one's when there were several; null when today settled nothing.
- */
-export async function loadTodaySettledItemIds(
-  context: Pick<PlanContext, "plan" | "timeZone" | "today">,
-): Promise<string[] | null> {
-  const settled = await loadTodaySettle(context);
-  return settled?.itemIds ?? null;
+/** The shared facts used by both the read's settling decision and its one compute. */
+export async function loadPlanCarrySnapshot(context: PlanContext) {
+  const [previous, settle] = await Promise.all([
+    loadCarryOver({ goalId: context.goal.id, today: context.today }),
+    loadTodaySettle(context),
+  ]);
+
+  return { previous, settle };
 }
+
+export type PlanCarrySnapshot = Awaited<ReturnType<typeof loadPlanCarrySnapshot>>;
 
 /**
  * The lessons today's relearns brought back (see `bringBackMissedLessons`): a gap's lessons come
@@ -165,12 +170,14 @@ async function loadTodayEdit(context: Pick<PlanContext, "plan" | "timeZone" | "t
 export async function loadPlanCarryOver({
   context,
   mode,
+  snapshot,
 }: {
   context: Pick<PlanContext, "goal" | "plan" | "timeZone" | "today">;
   mode: PlanningMode;
+  snapshot?: PlanCarrySnapshot;
 }): Promise<CarryOver | null> {
   const [settle, relearnedIds, edit] = await Promise.all([
-    loadTodaySettle(context),
+    snapshot ? snapshot.settle : loadTodaySettle(context),
     loadTodayRelearnedItemIds(context),
     mode === "automatic" ? loadTodayEdit(context) : null,
   ]);
@@ -183,7 +190,9 @@ export async function loadPlanCarryOver({
     return null;
   }
 
-  const { lessonIds } = await loadCarryOver({ goalId: context.goal.id, today: context.today });
+  const { lessonIds } =
+    snapshot?.previous ?? (await loadCarryOver({ goalId: context.goal.id, today: context.today }));
+
   const itemIds = [...(settledIds ?? []), ...relearnedIds];
 
   return { itemIds, lessonIds, ...(steered && { todayExceptAreas: steered }) };

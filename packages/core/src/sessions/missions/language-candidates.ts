@@ -1,10 +1,11 @@
+import { type Goal, prisma } from "@zoonk/db";
 import "server-only";
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { type EntitlementTier } from "../../entitlements/contract";
 import { mistakePatternContentSchema } from "../../language/patterns/pattern-contract";
 import { MAX_PRONUNCIATION_ROUND_WORDS } from "../../language/pronunciation/pronunciation-rules";
+import { type SessionPlanItem } from "../_utils/session-plan-item";
 import { type MissionFactBlock } from "./block-candidates";
 import { hasMissionAllowance } from "./candidate-allowance";
 import { type MissionPick } from "./catalog";
@@ -22,7 +23,7 @@ export async function languageCandidates({
 }: {
   blocks: readonly MissionFactBlock[];
   goal: Goal;
-  items: readonly PlanItem[];
+  items: readonly SessionPlanItem[];
   now: Date;
   tier: EntitlementTier;
   userId: string;

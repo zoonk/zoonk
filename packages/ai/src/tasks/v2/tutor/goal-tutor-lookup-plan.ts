@@ -66,7 +66,8 @@ export type PlanLookUpFound =
         date: string | null;
         /** A phase's challenge (`challenge`), the week's mixed challenge (`weekly`) or a mock exam (`mock`). */
         kind: "challenge" | "mock" | "weekly";
-        link: TutorLink;
+        /** Null for a selected item until the learner's next POST persists it. */
+        link: TutorLink | null;
         /** Still in the plan, but starting it needs Plus. */
         locked: boolean;
         /** The phase it belongs to; `name` is null for an exam's phases, which `kind` names. */

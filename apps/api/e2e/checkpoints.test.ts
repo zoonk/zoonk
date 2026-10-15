@@ -17,9 +17,9 @@ import {
 } from "../src/lib/openapi/schemas/checkpoints";
 import { languageConversationCreatedSchema } from "../src/lib/openapi/schemas/language";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
-import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 import { createExamGoal } from "./helpers/exams";
+import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
 const QUESTIONS_PER_SKILL = 3;
@@ -166,10 +166,7 @@ test.describe("Checkpoints API", () => {
 
     const goal = await createGoalAtBoss(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const boss = today.blocks.find((block) => block.kind === "checkpoint");
     const path = `/v1/checkpoints/${boss?.id}`;
@@ -244,10 +241,7 @@ test.describe("Checkpoints API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "checkpoint-empty" });
     const goal = await createGoalAtBoss(userId);
 
-    const { session: today } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
+    const today = await openStudyDay({ api, goalId: goal.id });
 
     const boss = today.blocks.find((block) => block.kind === "checkpoint");
     const path = `/v1/checkpoints/${boss?.id}`;

@@ -4,15 +4,13 @@ import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { wasLastDayStudied } from "./_utils/carried-lessons";
 import { getEstimateChange } from "./_utils/estimate-change";
-import { getFallingBehind } from "./_utils/falling-behind";
 import { loadLeftWork } from "./_utils/left-work";
 import {
   updatePhaseDatesProposal,
   withdrawUnneededPhaseDatesProposal,
 } from "./_utils/phase-dates-proposal";
-import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
-import { areLessonsFinished } from "./_utils/plan-end";
+import { addsLessonsAfterLessonsDone, isPlanLaidOut } from "./_utils/plan-refresh-admission";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import {
   type ComputedPlan,
@@ -21,33 +19,12 @@ import {
   computePlan,
   withPlanRetry,
 } from "./_utils/replan";
-import { withSeenTopics } from "./_utils/seen-effect";
+import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
-import { listCarriedItemIds } from "./planner/carried-items";
-import { listPhaseEndMoves } from "./planner/phase-dates-move";
 import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
-
-/** Plain notes for logs and admin; the apps say these changes from their kind and numbers. */
-const LEFT_WORK_NOTE = "Lessons earlier days left come first; the rest of the plan moved forward.";
-
-/** The earlier days that left work: the days it was due, or the last study day for the rest. */
-function countLeftDays({ context, left }: { context: PlanContext; left: PlanContext["items"] }) {
-  const overdue = left.filter((item) => item.scheduledFor && item.scheduledFor < context.today);
-  const days = new Set(overdue.map((item) => item.scheduledFor?.getTime())).size;
-
-  return Math.max(1, days);
-}
-
-/**
- * The planner dated the plan's phases: a plan written but never laid out (no phase has a start
- * date; the learner saw only "Building your plan") has nothing a day build could move.
- */
-function isLaidOut(context: PlanContext): boolean {
-  return context.phases.some((phase) => phase.startDate !== null);
-}
 
 /**
  * A new day settles what earlier days left: it comes first, in the order it was planned, and the
@@ -72,27 +49,9 @@ async function settleLeftWork({
 }): Promise<PlanRefreshResult> {
   const missed = !(await wasLastDayStudied(context));
   const computed = await computeSettledPlan({ context, missed, pace });
-  const phaseEnds = listPhaseEndMoves({ after: computed.built.phases, shown: context.phases });
 
   await commitPlan({
-    change: {
-      kind: "missedDays",
-      payload: toPlanChangePayload({
-        behind: getFallingBehind({ computed, context }),
-        carriedItemIds: listCarriedItemIds({
-          items: computed.built.items,
-          left: left.filter((item) => item.kind !== "boss"),
-        }),
-        days: countLeftDays({ context, left }),
-        effect: {
-          ...withSeenTopics({ computed, shown: context.items }),
-          ...(phaseEnds.length > 0 && { phaseEnds }),
-        },
-        source: "system",
-      }),
-      reason: LEFT_WORK_NOTE,
-      status: "applied",
-    },
+    change: getSettledPlanChange({ computed, context, left }),
     computed,
     context,
     revalidation,
@@ -112,40 +71,6 @@ async function settleLeftWork({
   });
 
   return { status: "refreshed" };
-}
-
-/**
- * Every lesson of a plan the learner saw laid out is done and the run would add some: no run the
- * learner didn't ask for does that. Pedro won his first challenge with every lesson done, and the
- * session's new pace added 4 lessons to his plan, so it went from 100% to 67% and never reached
- * "Finished". The Plan offers what the learner's time fits instead (see `loadFitOffer`). A plan
- * never laid out holds only what placement settled, and is laid out on its first read.
- */
-function addsLessonsAfterLessonsDone({
-  computed,
-  context,
-}: {
-  computed: ComputedPlan;
-  context: PlanContext;
-}): boolean {
-  const { goal, items, state } = context;
-
-  if (!isLaidOut(context)) {
-    return false;
-  }
-
-  const done = areLessonsFinished({
-    items,
-    studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
-    targetDate: goal.targetDate,
-  });
-
-  return (
-    done &&
-    computed.built.items.some(
-      (item) => (item.kind === "lesson" || item.kind === "chapter") && item.status === "todo",
-    )
-  );
 }
 
 /**
@@ -220,7 +145,7 @@ export async function refreshGoalPlan({
    * Building a day only settles what earlier days left: opening the app with nothing new changes
    * nothing. Planned again from its own output, a plan isn't always laid out the same way, and a
    * career plan's first open of Today added lessons and moved its last weeks. A plan never laid
-   * out is still laid out (see `isLaidOut`).
+   * out is still laid out (see `isPlanLaidOut`).
    */
   settleOnly?: boolean;
 }): Promise<PlanRefreshResult> {
@@ -247,7 +172,7 @@ export async function refreshGoalPlan({
       return settleLeftWork({ context, left, pace, revalidation });
     }
 
-    if (settleOnly && isLaidOut(context)) {
+    if (settleOnly && isPlanLaidOut(context)) {
       return { status: "unchanged" };
     }
 

@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
 
@@ -132,10 +133,28 @@ describe("today's session the learner was shown", () => {
     const before = await readToday(goal.id);
 
     const dueToday = await prisma.planItem.findMany({
-      where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
+      where: { lessonId: { not: null }, plan: { goalId: goal.id } },
     });
 
-    const due = new Set(dueToday.map((item) => item.lessonId));
+    // Canonical long-lesson portions may consume today before the saved start label.
+    const allocated = dueToday.filter(
+      (item) =>
+        (item.scheduledFor !== null && item.scheduledFor <= TODAY) ||
+        readSelectedItemFacts(item.facts)?.days?.some(
+          ([date, , raw]) => date === "2026-09-30" && raw > 0,
+        ),
+    );
+
+    const due = new Set(allocated.map((item) => item.lessonId));
+
+    const spanning = allocated.find(
+      (item) => item.scheduledFor !== null && item.scheduledFor > TODAY,
+    );
+
+    expect(readSelectedItemFacts(spanning?.facts)?.days).toStrictEqual([
+      ["2026-09-30", 1, 0.5],
+      ["2026-10-01", 5, 2.5],
+    ]);
 
     // The day keeps their place instead of filling it with later lessons, and says more are coming.
     expect(learnLessonIds(before).length).toBeGreaterThan(0);
@@ -153,10 +172,21 @@ describe("today's session the learner was shown", () => {
       before.blocks.map((block) => block.id),
     );
 
-    // The landed lessons take the time the day held for them, then the day fills as usual.
-    const added = after.blocks.slice(before.blocks.length, before.blocks.length + landed.length);
+    // G supersedes post-landing refill: the announced day keeps its exact membership and time.
+    expect(landed).toHaveLength(4);
 
-    expect(added.map((block) => block.lessonId)).toStrictEqual(landed);
+    const authored = await prisma.lesson.findMany({
+      select: { id: true },
+      where: { id: { in: landed } },
+    });
+
+    expect(authored.map((lesson) => lesson.id).toSorted()).toStrictEqual(landed.toSorted());
+    expect(after.blocks).toStrictEqual(before.blocks);
+    expect(after.minutes).toStrictEqual(before.minutes);
+
+    expect(
+      after.blocks.filter((block) => block.lessonId !== null && landed.includes(block.lessonId)),
+    ).toStrictEqual([]);
   });
 
   // Carla's Today said 6 lessons of her hour, with no word of more: the next skill's stand-in
@@ -210,7 +240,8 @@ describe("today's session the learner was shown", () => {
       before.blocks.map((block) => block.id),
     );
 
-    expect(after.blocks.length).toBeGreaterThan(before.blocks.length);
+    // G keeps unavailable held slots; only entitlement lapse permits a refill.
+    expect(after.blocks).toStrictEqual(before.blocks);
   });
 
   // Lucas's landed lessons were planned on the day he had already been shown, beyond its time, so

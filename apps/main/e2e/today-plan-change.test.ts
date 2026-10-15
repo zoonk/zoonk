@@ -1676,26 +1676,28 @@ test.describe("Today's plan change", () => {
     const note = page.getByRole("region", { name: "Plan change" });
     await expect(note.getByRole("button", { name: "Got it" })).toBeVisible();
 
-    const changes = await prisma.planChange.findMany({
-      where: { planId: plan.id, status: "applied" },
+    // The read computes the exact notice; only the learner's acknowledgment persists it.
+    const response = await page.request.get("/api/learner/views/today");
+    expect(response.ok()).toBe(true);
+    const body = await response.json();
+    expect(body.status).toBe("ready");
+    const shown = body.copy.view.today.planChange;
+
+    expect(shown).toMatchObject({
+      canUndo: false,
+      id: null,
+      kind: "missedDays",
+      source: "system",
+      status: "applied",
     });
 
-    expect(changes).toHaveLength(1);
-
-    const change = changes[0];
-
-    if (!change) {
-      throw new Error("The real settle must save the applied notice shown on Today");
-    }
-
-    const payload = parsePlanChangePayload(change.payload);
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+    const payload = parsePlanChangePayload(shown);
     const move = payload.effect?.phaseEnds?.[0];
 
     if (!move) {
       throw new Error("The mandatory notice must name the actual first phase-end move");
     }
-
-    expect(change.kind).toBe("missedDays");
 
     expect(payload).toMatchObject({
       behind: null,
@@ -1721,7 +1723,7 @@ test.describe("Today's plan change", () => {
 
     await expect(
       prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
-    ).resolves.toMatchObject({ scheduledFor: new Date(`${move.after}T00:00:00Z`) });
+    ).resolves.toMatchObject({ scheduledFor: new Date(`${end}T00:00:00Z`) });
 
     const keptLessons = await prisma.planItem.findMany({
       orderBy: { id: "asc" },
@@ -1733,24 +1735,56 @@ test.describe("Today's plan change", () => {
       originalLessons.map(({ id, lessonId }) => ({ id, lessonId })),
     );
 
+    const actions: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.method() === "POST" && request.headers()["next-action"]) {
+        actions.push(request.url());
+      }
+    });
+
     await note.getByRole("button", { name: "Got it" }).click();
     await expect(note.getByRole("status")).toHaveText("Noted.");
 
-    await expect
-      .poll(async () => {
-        const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: change.id } });
-        return parsePlanChangePayload(saved.payload).seenAt;
-      })
-      .not.toBeNull();
+    await expect.poll(() => prisma.planChange.count({ where: { planId: plan.id } })).toBe(1);
 
-    const [acknowledged, savedPlan] = await Promise.all([
-      prisma.planChange.findUniqueOrThrow({ where: { id: change.id } }),
+    const [acknowledged, savedPlan, savedBoss, savedLessons] = await Promise.all([
+      prisma.planChange.findFirstOrThrow({ where: { planId: plan.id } }),
       prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
+      prisma.planItem.findMany({
+        orderBy: { id: "asc" },
+        select: { id: true, lessonId: true },
+        where: { kind: "lesson", planId: plan.id },
+      }),
     ]);
 
-    expect(acknowledged.status).toBe("applied");
+    expect(acknowledged.id).toMatch(/^[0-9a-f-]{36}$/u);
+    expect(acknowledged).toMatchObject({ kind: "missedDays", status: "applied" });
+
+    expect(parsePlanChangePayload(acknowledged.payload)).toMatchObject({
+      acknowledgedRead: { revision: body.copy.revision },
+      behind: null,
+      days: 1,
+      effect: payload.effect,
+      seenAt: expect.any(String),
+      source: "system",
+    });
+
     expect(parsePlanChangePayload(acknowledged.payload).effect).toStrictEqual(payload.effect);
     expect((savedPlan.phases as { endDate: string | null }[])[0]?.endDate).toBe(move.after);
+    expect(savedBoss.scheduledFor).toStrictEqual(new Date(`${move.after}T00:00:00Z`));
+    expect(savedLessons).toStrictEqual(keptLessons);
+    expect(actions).toHaveLength(1);
+    await expect(prisma.studySession.count({ where: { goalId: plan.goalId } })).resolves.toBe(0);
+
+    await page.request.get("/api/learner/views/today");
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: acknowledged.id } }),
+    ).resolves.toStrictEqual(acknowledged);
+
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(1);
 
     await page.context().close();
   });

@@ -104,7 +104,8 @@ async function waitForWriter({
 }) {
   const query =
     operation === "start"
-      ? "(UPDATE.*study_session|study_session_blocks.*FOR UPDATE)"
+      ? // A starter behind Undo now waits at its revision marker, before domain rows.
+        "(UPDATE.*study_session|study_session_blocks.*FOR UPDATE|UPDATE users SET learner_revision)"
       : "(DELETE|FOR UPDATE)";
 
   await expect

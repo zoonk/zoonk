@@ -75,6 +75,33 @@ function pick(input: { isExam: boolean; items: readonly Item[]; today: Date }) {
 }
 
 describe(pickDayLessons, () => {
+  it("keeps a held day's positive long-lesson portion and refuses future refills", () => {
+    const long = {
+      ...item("long", "reading", TOMORROW),
+      facts: {
+        days: [
+          ["2026-10-06", 5, 5],
+          ["2026-10-07", 55, 55],
+        ],
+        minutes: 60,
+        parts: { checkpoint: 0, practice: 0, unwritten: 0, written: 60 },
+        schemaVersion: 1,
+        skillIds: ["reading"],
+        teachingEnd: "2026-10-07",
+      },
+    };
+
+    const picked = pickDayLessons({
+      awaitingOutlines: false,
+      goal: { kind: "learn" },
+      heldDay: true,
+      localDate: TODAY,
+      plan: { graph, items: [item("pt-1", "reading", TODAY), long, ...items.slice(1)] },
+    });
+
+    expect(picked.learnItems.map((entry) => entry.id)).toStrictEqual(["pt-1", "long", "cf-1"]);
+  });
+
   it("fills an exam day with today's lessons, then more of today's subjects, not tomorrow's", () => {
     const picked = pick({ isExam: true, items, today: TODAY });
 

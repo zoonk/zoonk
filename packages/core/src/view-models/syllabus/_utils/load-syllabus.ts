@@ -5,6 +5,10 @@ import { listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
+import {
+  type PlanReadContext,
+  getPlanReadItemKey,
+} from "../../../plans/_utils/plan-read-projection";
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
@@ -170,22 +174,32 @@ export async function loadSyllabusInput(
     Goal,
     "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "targetDate" | "userId"
   > &
-    Partial<Pick<Goal, "details">>,
+    Partial<Pick<Goal, "details" | "primaryCourseId">>,
+  selectedPlan?: Pick<PlanReadContext, "items" | "state">,
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
-    prisma.plan.findUnique({
-      select: {
-        goal: { select: { primaryCourseId: true } },
-        graph: true,
-        items: {
-          orderBy: { position: "asc" },
-          select: itemSelect,
-          where: { kind: { in: ["lesson", "chapter"] } },
-        },
-        settings: true,
-      },
-      where: { goalId: goal.id },
-    }),
+    selectedPlan
+      ? {
+          goal: { primaryCourseId: goal.primaryCourseId ?? null },
+          graph: selectedPlan.state.graph,
+          items: selectedPlan.items
+            .filter((item) => item.kind === "lesson" || item.kind === "chapter")
+            .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
+          settings: selectedPlan.state.settings,
+        }
+      : prisma.plan.findUnique({
+          select: {
+            goal: { select: { primaryCourseId: true } },
+            graph: true,
+            items: {
+              orderBy: { position: "asc" },
+              select: itemSelect,
+              where: { kind: { in: ["lesson", "chapter"] } },
+            },
+            settings: true,
+          },
+          where: { goalId: goal.id },
+        }),
     loadNotice(goal),
   ]);
 

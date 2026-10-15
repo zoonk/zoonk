@@ -7,6 +7,7 @@ import { loadBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure";
 import { countPlannedQuestions, outlineMock } from "../../exams/mocks/mock-plan";
+import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { findScheduledMock } from "../../plans/planner/mock-identity";
@@ -28,12 +29,15 @@ export async function loadMockCard({
   blueprint,
   date,
   goal,
+  source,
   today,
 }: {
   blueprint: ExamBlueprint | null;
   /** The mock's day, as a UTC-midnight label. */
   date: Date;
   goal: Goal;
+  /** A stale read renders the same selected allocation as its day and notice. */
+  source?: Pick<GoalPlanSource, "graph" | "settings">;
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }) {
@@ -41,7 +45,11 @@ export async function loadMockCard({
 
   // Only reads render a card, so the goal's skills come from the request's one load of them.
   const [goalPlan, { skills }, essays, typed] = await Promise.all([
-    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
+    source ??
+      prisma.plan.findUnique({
+        select: { graph: true, settings: true },
+        where: { goalId: goal.id },
+      }),
     readGoalPlan(goal.id),
     loadMockEssays({ goal, userId: goal.userId }),
     loadBankTypedParts(goal.examBlueprintId),

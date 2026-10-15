@@ -19,9 +19,11 @@ const SECONDS_PER_MINUTE = 60;
  */
 export async function loadStudyWeek({
   localDate,
+  selectedPlan,
   userId,
 }: {
   localDate: Date;
+  selectedPlan?: { goalId: string; settings: unknown };
   userId: string;
 }): Promise<StudyWeek> {
   const weekStart = getStartOfWeek(localDate);
@@ -61,6 +63,7 @@ export async function loadStudyWeek({
   const started = goals.map((goal) => ({
     goal,
     isExam: goal.kind === "exam",
+    planSettings: selectedPlan?.goalId === goal.id ? selectedPlan.settings : goal.plan?.settings,
     startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: getAnswerTimeZone({ goal }) }),
     targetDate: goal.targetDate,
   }));
@@ -69,12 +72,11 @@ export async function loadStudyWeek({
   // with days that read as missed, or as rest days they never chose.
   const getPlanDay = (date: Date): PlanDay => {
     const goalMinutes = started.reduce(
-      (sum, { goal, startDate }) =>
+      (sum, { goal, planSettings, startDate }) =>
         date < startDate
           ? sum
           : sum +
-            (getPastMinutes(goal.id, date) ??
-              getGoalDayMinutes({ date, goal, planSettings: goal.plan?.settings })),
+            (getPastMinutes(goal.id, date) ?? getGoalDayMinutes({ date, goal, planSettings })),
       0,
     );
 

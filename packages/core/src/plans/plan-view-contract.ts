@@ -89,7 +89,7 @@ export type PlanChangeView = {
 
 export type PlanItemView = {
   chapterId: string | null;
-  id: string;
+  id: string | null;
   kind: PlanItemKind;
   lessonId: string | null;
   minutes: number | null;
@@ -210,7 +210,7 @@ export type PlanPhaseCheckpointView = {
   /** Still visible in the path, but starting it requires Plus. */
   locked: boolean;
   date: string | null;
-  planItemId: string;
+  planItemId: string | null;
   state: "done" | "upcoming";
   /**
    * When it comes, as sessions offer challenges and its page says (see `getBossTimings`): on its
@@ -422,7 +422,7 @@ export type PlanView = {
    */
   fitOffer: PlanOffer | null;
   /** Future todo mocks whose saved funding has started, with real item IDs and durations. */
-  fundedMocks: PlanItemView[];
+  fundedMocks: (PlanItemView & { id: string })[];
   /**
    * The one change that keeps the plan going when its date came with lessons left: a goal's own
    * date moves to the day the learner's time covers what's left by (`setTargetDate`); an exam's

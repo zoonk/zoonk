@@ -65,7 +65,7 @@ function getOutlinedMinutes({
  * skills by their exam weight. Skills outside the notice's subjects (study strategy, say) aren't
  * questions of the exam. Null when no subject has a share.
  */
-function getExamWorth({
+export function getExamWorth({
   examSubjects,
   skills,
 }: {

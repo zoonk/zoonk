@@ -1,7 +1,5 @@
 import "server-only";
 import { type Goal, type GoalKind, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getWeeklyChallenge } from "../../checkpoints/get-weekly-challenge";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
 import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
@@ -11,12 +9,12 @@ import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { hasStudyGoal } from "../../goals/_utils/study-goal";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
+import { loadViewerStamp } from "../../learner/_utils/load-viewer-stamp";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
 } from "../../library/generation/lesson-generation-state";
-import { getCurrentMemoryInsight } from "../../memory/insights/get-current-memory-insight";
 import { type MemoryInsightView } from "../../memory/memory-contract";
 import { type ShortPlanToday, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import {
@@ -25,18 +23,18 @@ import {
 } from "../../plans/_utils/today-plan-change";
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
-import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { type PlanStatus } from "../../preparation/plan-status";
-import { loadStudySessionView } from "../../sessions/_utils/load-session-view";
-import { type StudySessionView } from "../../sessions/_utils/session-view";
-import { resolveTodaySession } from "../../sessions/_utils/today-session";
+import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
+import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notice";
 import { type TodayStudySessionInput } from "../../sessions/contract";
+import { type DayView } from "../../sessions/day-view";
 import { getSession } from "../../users/get-session";
 import { getOnboarding } from "../onboarding/get-onboarding";
-import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getLessonShare } from "../syllabus/lesson-share";
+import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
+import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
-import { toWeeklyChallenge } from "./_utils/weekly-challenge-view";
+import { hasStudiedOn } from "./_utils/studied-on-day";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
@@ -72,8 +70,8 @@ type TodayWeeklyChallenge = {
   access: "open" | "plusRequired";
   date: Date | null;
   kind: "mixed" | "mock";
-  /** The plan item the challenge is, which opens its intro before and on its day. */
-  planItemId: string;
+  /** An unsaved selected challenge stays visible without an intro action until Open persists it. */
+  planItemId: string | null;
   questions: number;
   timeLimitMinutes: number | null;
   title: string;
@@ -85,6 +83,8 @@ type TodayWeeklyChallenge = {
  * and the plan change to answer. The apps and the public API read this.
  */
 export type TodayView = {
+  /** Read before the view's data, so delayed delivery never claims a newer learner revision. */
+  revision: string;
   /** An exam goal's final stretch, day before, exam day or "How did it go?"; null otherwise. */
   exam: ExamMomentView | null;
   /**
@@ -107,7 +107,7 @@ export type TodayView = {
    */
   planChange: TodayPlanChangeView | null;
   progress: TodayProgress | null;
-  session: StudySessionView;
+  session: DayView;
   /**
    * A test days away, planned day by day: "Day 1 of 3: map and gaps", and the day of its short
    * mock. Null for any other plan.
@@ -123,11 +123,16 @@ export type TodayView = {
 };
 
 export type TodayViewResult =
-  | { status: "goalNotActive" }
+  | { revision: string; status: "goalNotActive"; userId: string }
   /** No goal yet: the apps open onboarding, or first offer the suggested goal when there's one. */
-  | { status: "noGoal"; suggestedGoal: SuggestedGoalView | null }
+  | { revision: string; status: "noGoal"; suggestedGoal: SuggestedGoalView | null; userId: string }
   | { status: "notFound" }
-  | { goal: Pick<TodayGoal, "id" | "kind" | "title">; status: "preparing" }
+  | {
+      goal: Pick<TodayGoal, "id" | "kind" | "title">;
+      revision: string;
+      status: "preparing";
+      userId: string;
+    }
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
@@ -139,55 +144,6 @@ export type TodayViewResult =
 function getDaysLeft({ localDate, targetDate }: { localDate: Date; targetDate: Date | null }) {
   const days = targetDate ? daysBetween(localDate, targetDate) : -1;
   return days >= 0 ? days : null;
-}
-
-/** Whether the learner studied today, on this goal or another. */
-async function hasStudiedOn({ localDate, userId }: { localDate: Date; userId: string }) {
-  const today = await prisma.dailyProgress.findUnique({
-    select: { timeSpentSeconds: true },
-    where: { userDate: { date: localDate, userId } },
-  });
-
-  return (today?.timeSpentSeconds ?? 0) > 0;
-}
-
-/**
- * The plan's lessons studied or known, for a goal measured in lessons (see `TodayProgress`): not an
- * exam, nor a quick explanation, which has no plan.
- */
-async function loadLessons({ goalId, kind }: { goalId: string; kind: GoalKind }) {
-  if (kind === "exam" || kind === "explain") {
-    return null;
-  }
-
-  const result = await getSyllabusView({ goalId });
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const { done, total } = result.syllabus.lessons;
-  return { done, total };
-}
-
-/** Everything around the session reads the goal the session belongs to. */
-async function loadAroundSession({
-  goalId,
-  kind,
-  timeZone,
-}: {
-  goalId: string;
-  kind: GoalKind;
-  timeZone?: string;
-}) {
-  const [preparation, lessons, insight, challenge] = await Promise.all([
-    getGoalPreparation(goalId),
-    loadLessons({ goalId, kind }),
-    getCurrentMemoryInsight({ goalId }),
-    getWeeklyChallenge({ goalId, timeZone }),
-  ]);
-
-  return { challenge, insight, lessons, preparation };
 }
 
 /** Where the goal stands, in its measure (see `TodayProgress`); null for a quick explanation. */
@@ -216,61 +172,43 @@ function toTodayProgress({
   };
 }
 
-/**
- * The plan's lessons today's session still holds, as they add to its progress: each plan item once
- * (a bonus copy of a lesson is the same lesson), and only while it's still to do, so a lesson
- * finished elsewhere (another goal's session sharing it, a copy already done) no longer counts.
- */
-async function countLessonsLeftToday(session: StudySessionView): Promise<number> {
-  const planItemIds = [
-    ...new Set(
-      session.blocks.flatMap((block) =>
-        block.kind === "learn" &&
-        !block.reinforcement &&
-        block.planItemId &&
-        (block.status === "pending" || block.status === "active")
-          ? [block.planItemId]
-          : [],
-      ),
-    ),
-  ];
-
-  if (planItemIds.length === 0) {
-    return 0;
-  }
-
-  return prisma.planItem.count({ where: { id: { in: planItemIds }, status: "todo" } });
-}
-
 /** The day's session for the screen, with what Today reads from the session's day. */
 async function loadSessionDay({
   day,
   goal,
   userId,
 }: {
-  day: Awaited<ReturnType<typeof resolveTodaySession>>;
+  day: ReadStudyDay;
   goal: Goal;
   userId: string;
 }) {
-  const studySession = await loadStudySessionView({
-    ...day,
-    userId,
-    weekDate: getDateInTimeZone({ date: new Date(), timeZone: day.timeZone }),
-  });
+  const studySession = day.session;
 
   const lessonIds = studySession.blocks.flatMap((block) =>
     block.kind === "learn" && block.lessonId ? [block.lessonId] : [],
   );
 
-  const [studied, lessonStates, exam, shortPlan] = await Promise.all([
+  const shortPlan = await loadShortPlanDay({
+    goal,
+    source: day.selection
+      ? {
+          items: day.selection.items,
+          phases: day.selection.phases,
+          settings: day.selection.state.settings,
+        }
+      : undefined,
+    today: studySession.localDate,
+  });
+
+  const [studied, lessonStates, exam] = await Promise.all([
     hasStudiedOn({ localDate: studySession.localDate, userId }),
     getLessonGenerationStates(lessonIds),
     loadExamMoment({
       goal,
       includesMockExams: studySession.examAccess.includesMockExams,
+      shortPlan,
       today: studySession.localDate,
     }),
-    loadShortPlanDay({ goal, today: studySession.localDate }),
   ]);
 
   return { exam, lessonStates, shortPlan, studied, studySession };
@@ -300,16 +238,8 @@ async function isPlanBuilt(goalId: string): Promise<boolean> {
 }
 
 /**
- * Today's screen for a goal (the active goal by default). Opening it builds the day's session the
- * first time (`resolveTodaySession`), so the screen and "Continue" always agree. A learner
- * without a goal, or with only quick explanations, gets `noGoal`, which the apps turn into "start a
- * goal"; a goal whose plan is still being built gets `preparing`, so the apps show the wait
- * instead of an empty day.
- *
- * One private cached read, so the tab bar's link prefetches Today whole and opening it is instant.
- * Building the day stays idempotent (one session per goal and day), so it's safe in a prefetch.
- * The browser keeps its copy for a while, so apps showing it from a prefetch read it again once
- * on screen when that copy is old (main's `useRefreshWhenOld`).
+ * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
+ * references until the learner opens it with a POST; prefetch never creates or settles a day.
  */
 export async function getTodayView(input: TodayStudySessionInput): Promise<TodayViewResult> {
   "use cache: private";
@@ -321,10 +251,13 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
   }
 
   const userId = session.user.id;
+
+  const stamp = await loadViewerStamp(userId);
+
   const goalId = input.goalId ?? (await findActiveGoalId(userId));
 
   if (!goalId) {
-    return { status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
+    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
   }
 
   // Whether the plan is built is read alongside the goal; it's only used once the goal is theirs.
@@ -336,18 +269,18 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
 
   // A paused, completed or archived goal has no day to plan: nothing is built for it.
   if (owned.goal.status !== "active") {
-    return { status: "goalNotActive" };
+    return { ...stamp, status: "goalNotActive" };
   }
 
   // A quick explanation is a one-off: a learner with only explanations has no day to plan.
   if (owned.goal.kind === "explain" && !(await hasStudyGoal(userId))) {
-    return { status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
+    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
   }
 
   const { id, kind, targetDate, title } = owned.goal;
 
   if (!built) {
-    return { goal: { id, kind, title }, status: "preparing" };
+    return { ...stamp, goal: { id, kind, title }, status: "preparing" };
   }
 
   if (session.user.isAnonymous) {
@@ -358,35 +291,57 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
       onboarding.status === "ready" &&
       onboarding.onboarding.steps.some((step) => step !== "plan")
     ) {
-      return { goal: { id, kind, title }, status: "preparing" };
+      return { ...stamp, goal: { id, kind, title }, status: "preparing" };
     }
   }
 
-  // Building the day can move the plan first (see `ensureStudySession`), so the reads around the
-  // session start once the day is resolved. None of them reads the session, so they load while
-  // the session is read for the screen.
-  const day = await resolveTodaySession({ goal: owned.goal, timeZone: input.timeZone, userId });
+  // Select the in-memory day once before projecting its surrounding read-only cards.
+  const day = await readStudyDay({
+    goal: owned.goal,
+    now: new Date(),
+    timeZone: input.timeZone,
+    userId,
+  });
+
+  if (!day) {
+    return { ...stamp, goal: { id, kind, title }, status: "preparing" };
+  }
 
   const mockFunding =
     day.session.freshStart === "welcomeBack"
       ? null
-      : await loadDayMockFunding({ goal: owned.goal, localDate: day.session.localDate });
+      : await loadDayMockFunding({
+          goal: owned.goal,
+          localDate: day.session.localDate,
+          selectedSettings: day.selection?.state.settings,
+        });
 
   const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
-    loadAroundSession({ goalId, kind: owned.goal.kind, timeZone: input.timeZone }),
+    loadAroundSession({
+      goalId,
+      kind: owned.goal.kind,
+      selection: day.selection,
+      session: day.session,
+      timeZone: input.timeZone,
+    }),
     getCurrentSuggestedGoal(),
-    loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
+    getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
+      loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
     loadGoalDateKind(owned.goal),
     loadOpenExamChoice(owned.goal),
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
-  const lessonsToday = around.lessons ? await countLessonsLeftToday(studySession) : 0;
+
+  const lessonsToday = around.lessons
+    ? await countLessonsLeftToday({ selectedItems: day.selection?.items, session: studySession })
+    : 0;
 
   return {
     status: "ready",
     today: {
+      ...stamp,
       exam,
       examChoice,
       goal: {
@@ -408,8 +363,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
       shortPlan,
       studiedToday: studied || studySession.minutes.done > 0,
       suggestedGoal,
-      userId,
-      weeklyChallenge: toWeeklyChallenge(around.challenge),
+      weeklyChallenge: around.challenge,
     },
   };
 }

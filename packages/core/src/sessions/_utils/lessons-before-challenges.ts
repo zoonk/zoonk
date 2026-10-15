@@ -4,7 +4,10 @@ import { type BlockCheckpoint } from "../block-payload";
 type DayItem = Pick<PlanItem, "position" | "scheduledFor">;
 
 /** A challenge of the day, as the session has it. */
-type DayChallenge = Pick<BlockCheckpoint, "kind" | "rematch"> & { planItemId: string | null };
+type DayChallenge = Pick<BlockCheckpoint, "kind" | "rematch"> & {
+  planItemId: string | null;
+  planItemKey?: string | null;
+};
 
 /** Where the plan has a lesson of the day around its first duel (see `getChallengeSide`). */
 export type DuelMarks = {
@@ -21,7 +24,7 @@ export type DuelMarks = {
 };
 
 /** A lesson of the day, as the session has it. */
-type DayLesson = DuelMarks & { planItemId: string | null };
+type DayLesson = DuelMarks & { planItemId: string | null; planItemKey?: string | null };
 
 /** A phase's challenge the learner hasn't played yet: not a rematch, not the week's. */
 function isFirstDuel(checkpoint: Pick<DayChallenge, "kind" | "rematch">): boolean {
@@ -64,17 +67,17 @@ export function markLessonsAroundChallenges<TLesson extends DayLesson>({
   today,
 }: {
   checkpoints: readonly DayChallenge[];
-  items: readonly (DayItem & Pick<PlanItem, "id">)[];
+  items: readonly (DayItem & { id: string | null; key?: string })[];
   lessons: readonly TLesson[];
   today: Date;
 }): (TLesson & DuelMarks)[] {
-  const byId = new Map(items.map((item) => [item.id, item]));
+  const byId = new Map(items.map((item) => [item.id ?? item.key, item]));
 
   const challengeAt = Math.max(
     -1,
     ...checkpoints.flatMap((checkpoint) =>
-      isFirstDuel(checkpoint) && checkpoint.planItemId
-        ? [byId.get(checkpoint.planItemId)?.position ?? -1]
+      isFirstDuel(checkpoint) && (checkpoint.planItemId ?? checkpoint.planItemKey)
+        ? [byId.get(checkpoint.planItemId ?? checkpoint.planItemKey ?? undefined)?.position ?? -1]
         : [],
     ),
   );
@@ -84,7 +87,8 @@ export function markLessonsAroundChallenges<TLesson extends DayLesson>({
   }
 
   return lessons.map((lesson) => {
-    const item = lesson.planItemId ? byId.get(lesson.planItemId) : undefined;
+    const identity = lesson.planItemId ?? lesson.planItemKey;
+    const item = identity ? byId.get(identity) : undefined;
     const side = item && getChallengeSide({ challengeAt, item, today });
 
     if (side === "before") {

@@ -21,12 +21,12 @@ import { boundaries } from "../_test-utils/test-boundaries";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
+import { openTodayView } from "../sessions/_test-utils/open-today-view";
 import { getGoalDayMinutes } from "../sessions/_utils/day-minutes";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
 import { readBlockPayload } from "../sessions/block-payload";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -305,7 +305,7 @@ async function assertTeachingDay({
   lessonId: string;
 }) {
   on(PROMISED_DAY);
-  const today = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+  const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
   const view = await getGoalPlan(fixture.goal.id);
 
   if (today.status !== "ready" || view.status !== "ready") {

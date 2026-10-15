@@ -7,7 +7,6 @@ import {
   daySessionSnapshotSchema,
 } from "../../sessions/_utils/day-session-snapshot";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
-import { type ExistingPlanItem } from "../planner/plan-items";
 import {
   type PlanPhase,
   type PlanState,
@@ -16,16 +15,20 @@ import {
   parsePlanSettings,
   planStateSchema,
 } from "../planner/plan-state";
-import { type PlanContext } from "./plan-context";
+import { type ContextPlanItem, type PlanContext } from "./plan-context";
+import { type SavedPlanSummary, savedPlanSummarySchema } from "./plan-summary";
+import { readSelectedItemFacts, selectedItemFactsSchema } from "./selected-item-contract";
 import { isStandIn } from "./stand-in-lessons";
 
 const snapshotItemSchema = z.object({
   chapterId: z.string().nullable(),
   completedAt: z.iso.datetime().nullable(),
+  facts: selectedItemFactsSchema.nullable().default(null),
   id: z.string(),
   kind: z.enum(PlanItemKind),
   lessonId: z.string().nullable(),
   lessons: z.int().nullable(),
+  minutes: z.number().nonnegative().nullable().default(null),
   phase: z.int(),
   scheduledFor: z.iso.date().nullable(),
   skillId: z.string().nullable(),
@@ -39,7 +42,9 @@ const planSnapshotSchema = z.object({
   inputsKey: z.string().nullable().default(null),
   items: z.array(snapshotItemSchema),
   phases: z.unknown(),
+  sourceSkillIds: z.array(z.string()).default([]),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
+  summary: savedPlanSummarySchema.nullable().default(null),
   todaySession: daySessionSnapshotSchema.nullable().default(null),
 });
 
@@ -55,9 +60,11 @@ export type PlanSnapshot = {
   estimateHours: number | null;
   /** What the plan was planned from, which the undo gives back with it (see `getPlanInputsKey`). */
   inputsKey: string | null;
-  items: ExistingPlanItem[];
+  items: ContextPlanItem[];
   phases: PlanPhase[];
+  sourceSkillIds: string[];
   state: PlanState;
+  summary: SavedPlanSummary | null;
   /** Today's session when the change was made; null when it wasn't built yet. */
   todaySession: DaySessionSnapshot | null;
 };
@@ -77,10 +84,12 @@ function toPlanSnapshot({
     items: context.items.map((item) => ({
       chapterId: item.chapterId,
       completedAt: item.completedAt?.toISOString() ?? null,
+      facts: readSelectedItemFacts(item.facts),
       id: item.id,
       kind: item.kind,
       lessonId: item.lessonId,
       lessons: item.lessons ?? null,
+      minutes: item.minutes ?? null,
       phase: item.phase,
       scheduledFor: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       skillId: item.skillId,
@@ -88,7 +97,9 @@ function toPlanSnapshot({
       titleSnapshot: item.titleSnapshot,
     })),
     phases: context.phases,
+    sourceSkillIds: context.plan.sourceSkillIds,
     state: context.state,
+    summary: savedPlanSummarySchema.safeParse(context.plan.summary).data ?? null,
     todaySession,
   };
 }

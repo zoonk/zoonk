@@ -3,7 +3,6 @@ import { type TopicLevel } from "../../library/exams/topic-frequency";
 import { listAfterExamDays } from "./after-exam";
 import { type BossMinutes } from "./boss-minutes";
 import { type BuiltPlan } from "./built-plan";
-import { scheduleCarriedAndRest } from "./carried-and-rest";
 import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
@@ -27,6 +26,7 @@ import {
 import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toQueueUnit } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
+import { createLayOut } from "./pass-layout";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -43,7 +43,6 @@ import { withoutRepeatedTitles } from "./repeated-titles";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { summarizePlan } from "./summarize-plan";
-import { layOutAfterThisWeek } from "./week-after";
 import { markKeptLessons } from "./whole-boss";
 
 /**
@@ -345,27 +344,22 @@ function planGoal({
 
   // What earlier days left comes first, as it was planned; the rest fills the time after it.
   const { carriedSchedule, keptParts, keptPortions, keptUntil, restSchedule, spill, yielded } =
-    layOutAfterThisWeek({
-      days: funded.days,
-      kept: listThisWeekWork({
+    createLayOut({
+      input,
+      kept: keptWork,
+      learnedOrder,
+      phaseEnds,
+      planStart,
+      queue: { focused, prerequisites, ranks, rates, values },
+      start,
+      thisWeek: listThisWeekWork({
         frozen: [...frozen, ...landedStandIns],
         landed: [],
         units: unitsByKey,
       }),
-      layOut: (laid) =>
-        scheduleCarriedAndRest({
-          ...laid,
-          input,
-          kept: keptWork,
-          learnedOrder,
-          phaseEnds,
-          planStart,
-          queue: { focused, prerequisites, ranks, rates, values },
-          unitsByKey,
-        }),
-      start,
       units: unplaced,
-    });
+      unitsByKey,
+    })(funded.days);
 
   const { landed, laidOut, leftOut } = putLandedLessons({
     days: funded.days,
@@ -464,6 +458,7 @@ function planGoal({
       dropped: restSchedule.dropped.map((unit) => toQueueUnit(unit)),
       placed: restSchedule.units.map((unit) => toQueueUnit(unit)),
     },
+    planDays: funded.days,
     skillMinutes: getLandingSkillMinutes({
       dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],
       kept: queue.filter((unit) => finishedKeys.has(unit.key)),
