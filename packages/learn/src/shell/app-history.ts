@@ -54,11 +54,57 @@ function isOtherAppPage({
   );
 }
 
+type AppEntryMark = { path: string; state: typeof APP_ENTRY_STATE & { zoonkAppSection?: string } };
+
+/**
+ * The host's marks by history entry. The router writes each render of a page (a refresh, a Server
+ * Action's answer) into its entry with `history.replaceState`, which clears the entry's Navigation
+ * API state: a Plan that read itself again on the way back was no longer a page to go back to. An
+ * entry keeps its key through those writes, so its mark goes back on as each write happens, before
+ * anything reads it, while the entry is still at the page it marked.
+ */
+const marks = new Map<string, AppEntryMark>();
+let keepingMarks = false;
+
+function keepMarks(navigation: Navigation): void {
+  if (keepingMarks) {
+    return;
+  }
+
+  keepingMarks = true;
+
+  navigation.addEventListener("currententrychange", () => {
+    const entry = navigation.currentEntry;
+    const mark = entry ? marks.get(entry.key) : undefined;
+
+    if (entry?.url && mark && !isAppEntry(entry) && getPathname(entry.url) === mark.path) {
+      navigation.updateCurrentEntry({ state: mark.state });
+    }
+  });
+}
+
 /** Called by the host on each app page; the host groups pages that belong to one section. */
 export function markAppEntry(section?: string): void {
-  getNavigation()?.updateCurrentEntry({
-    state: { ...APP_ENTRY_STATE, ...(section !== undefined && { zoonkAppSection: section }) },
-  });
+  const navigation = getNavigation();
+  const entry = navigation?.currentEntry;
+
+  if (!(navigation && entry?.url)) {
+    return;
+  }
+
+  const state = { ...APP_ENTRY_STATE, ...(section !== undefined && { zoonkAppSection: section }) };
+  const kept = new Set(navigation.entries().map((item) => item.key));
+
+  // A new page drops the entries ahead of it from the history, so their marks go too.
+  for (const key of marks.keys()) {
+    if (!kept.has(key)) {
+      marks.delete(key);
+    }
+  }
+
+  marks.set(entry.key, { path: getPathname(entry.url), state });
+  keepMarks(navigation);
+  navigation.updateCurrentEntry({ state });
 }
 
 /**

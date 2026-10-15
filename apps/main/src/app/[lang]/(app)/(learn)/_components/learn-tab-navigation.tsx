@@ -17,7 +17,7 @@ import { LearnShellMain } from "@zoonk/learn/shell";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense, useLayoutEffect } from "react";
 
 /**
  * The tab each page belongs to, by the first part of its path. Chapter and unit pages (under
@@ -242,7 +242,8 @@ function MarkAppEntry() {
   const pathname = usePathname();
   const section = useSelectedLayoutSegments().find((segment) => APP_SECTIONS.has(segment));
 
-  useEffect(() => {
+  // In the commit that writes the page's history entry, so no tap finds the entry unmarked.
+  useLayoutEffect(() => {
     markAppEntry(section);
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Each page is a new history entry to mark.
   }, [pathname, section]);

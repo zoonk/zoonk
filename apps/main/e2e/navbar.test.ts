@@ -13,6 +13,27 @@ async function openUserMenu(page: Page) {
   return page.getByRole("menu").getByRole("menuitem");
 }
 
+type PlanEntryWrites = typeof globalThis & { planEntryWrites?: number };
+
+/**
+ * Counts, from now on, the times the router writes the Plan's history entry: once when the Plan
+ * shows, and again for each time it reads itself again, which replaces the entry's state.
+ */
+async function countPlanEntryWrites(page: Page) {
+  await page.evaluate(() => {
+    const counter: PlanEntryWrites = globalThis;
+    counter.planEntryWrites = 0;
+
+    navigation.addEventListener("currententrychange", (event) => {
+      if (event.navigationType === "replace" && location.pathname === "/plan") {
+        counter.planEntryWrites = (counter.planEntryWrites ?? 0) + 1;
+      }
+    });
+  });
+
+  return () => page.evaluate(() => (globalThis as PlanEntryWrites).planEntryWrites ?? 0);
+}
+
 test.describe("Catalog chrome", () => {
   test("a visitor browses it in the app's frame, as a learner does, with a way in", async ({
     page,
@@ -59,6 +80,7 @@ test.describe("User menu - Account", () => {
   }) => {
     const goal = await goalFixture({ userId: noProgressUser.id });
     await planFixture({ goalId: goal.id });
+    await page.clock.install();
     await page.goto("/plan");
 
     const items = await openUserMenu(page);
@@ -99,10 +121,24 @@ test.describe("User menu - Account", () => {
     await page.setViewportSize({ height: 812, width: 375 });
     await page.getByRole("main").getByRole("link", { name: "Back to Settings" }).click();
     await expect(page).toHaveURL(/\/settings$/u);
+
+    // A minute in settings leaves the Plan the learner returns to old: it shows, then reads itself
+    // again, and the router writes its history entry each time.
+    await page.clock.setSystemTime(Date.now() + 60_000);
+    const planEntryWrites = await countPlanEntryWrites(page);
+
+    const planRead = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/plan" &&
+        !response.request().headers()["next-router-prefetch"],
+    );
+
     await page.getByRole("main").getByRole("link", { exact: true, name: "Back" }).click();
     await expect(page).toHaveURL(/\/plan$/u);
+    await planRead;
+    await expect.poll(planEntryWrites).toBeGreaterThanOrEqual(2);
 
-    // A restored Plan entry remains the way back on the next visit to the same section.
+    // The restored Plan entry, read again, remains the way back on the next visit to the section.
     const phoneItems = await openUserMenu(page);
     await expect(phoneItems).toHaveText(["Settings", "Subscription", "Help", "Log out"]);
     await page.getByRole("menuitem", { name: "Settings" }).click();
