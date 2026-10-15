@@ -5,10 +5,12 @@ import { type APIRequestContext, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { BLOG_URL } from "@zoonk/utils/url";
+import { compileDevRoutes } from "../../../scripts/e2e/prerender-compile.mjs";
 import { findPrerenderErrors } from "../../../scripts/e2e/prerender-errors.mjs";
 import { isExpectedPrerenderRedirect } from "../../../scripts/e2e/prerender-redirects.mjs";
+import { selectPrerenderShard } from "../../../scripts/e2e/prerender-shard.mjs";
 import { waitForPrerenderValidation } from "../../../scripts/e2e/prerender-validation.mjs";
-import { createPrerenderCrawlFixtures } from "./prerender-crawl-fixtures";
+import { createPrerenderCrawlFixtures, drainParallel } from "./prerender-crawl-fixtures";
 
 const ACTIVITY_ROUTE_SEGMENTS = 4;
 const OK_STATUS = 200;
@@ -43,23 +45,37 @@ const results: {
 const failures: string[] = [];
 const started = performance.now();
 
+/**
+ * A persona can sit idle while others crawl, and Node closes an idle keep-alive socket after about
+ * six seconds: a request reusing that socket as it closes fails with ECONNRESET before Next sees it.
+ */
 async function context(
   storageState?: NonNullable<Parameters<typeof request.newContext>[0]>["storageState"],
 ) {
-  const result = await request.newContext({ baseURL, storageState, timeout: 60_000 });
+  const result = await request.newContext({
+    baseURL,
+    extraHTTPHeaders: { connection: "close" },
+    storageState,
+    timeout: 60_000,
+  });
+
   contexts.push(result);
   return result;
 }
 
 type Fixtures = Awaited<ReturnType<typeof createPrerenderCrawlFixtures>>;
 
-function pageCase({ file, fixtures }: { file: string; fixtures: Fixtures }) {
-  const pattern = `/${file
+/** The route a page file serves, e.g. `[lang]/(app)/today/page.tsx` → `/[lang]/today`. */
+function routePattern(file: string) {
+  return `/${file
     .split("/")
     .filter((segment) => !segment.startsWith("("))
     .slice(0, -1)
     .join("/")}`;
+}
 
+function pageCase({ file, fixtures }: { file: string; fixtures: Fixtures }) {
+  const pattern = routePattern(file);
   const segments = pattern.split("/");
   const kind = segments[2];
 
@@ -81,6 +97,26 @@ function pageCase({ file, fixtures }: { file: string; fixtures: Fixtures }) {
   });
 
   return { client: special?.client ?? fixtures.examContext, path };
+}
+
+/** Compiling every route up front leaves the serial crawl only rendering and validating. */
+async function compileRoutes(files: readonly string[]) {
+  const start = performance.now();
+  await compileDevRoutes({ baseURL, routes: files.map((file) => routePattern(file)) });
+
+  process.stdout.write(
+    `Compiled ${files.length} routes in ${((performance.now() - start) / 1000).toFixed(2)}s.\n`,
+  );
+}
+
+/** Fixtures and compiles are independent; both settle before a failure triggers cleanup. */
+async function prepareCrawl(files: readonly string[]) {
+  const [fixtures] = await drainParallel([
+    createPrerenderCrawlFixtures({ baseURL, createContext: context }),
+    compileRoutes(files),
+  ]);
+
+  return fixtures;
 }
 
 async function visit({
@@ -150,15 +186,18 @@ async function visit({
 }
 
 try {
-  const fixtures = await createPrerenderCrawlFixtures({ baseURL, createContext: context });
-
   const entries = await readdir("src/app", { recursive: true });
 
-  const files = entries.filter((file) => /(?:^|\/)page\.(?:tsx?|jsx?|mdx)$/u.test(file)).toSorted();
+  const files = selectPrerenderShard({
+    items: entries.filter((file) => /(?:^|\/)page\.(?:tsx?|jsx?|mdx)$/u.test(file)).toSorted(),
+    shard: process.env.PRERENDER_SHARD,
+  });
 
   if (files.length === 0) {
-    throw new Error("No Main page files discovered.");
+    throw new Error("No Main page files discovered for this prerender shard.");
   }
+
+  const fixtures = await prepareCrawl(files);
 
   const cases = files.map((file) => pageCase({ file, fixtures }));
   const locale = fixtures.parameters.lang;
@@ -167,11 +206,11 @@ try {
     throw new Error("Prerender fixtures require a locale.");
   }
 
-  /** Next 16.4 read/modifies/writes the dev prerender manifest without serializing cold routes. */
+  /** A route's first render read/modifies/writes Next 16.4's dev prerender manifest without a lock. */
   for (const { client, path } of cases) {
-    // oxlint-disable-next-line eslint/no-await-in-loop -- Concurrent cold compiles corrupt Next's dev prerender-manifest.json.
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Concurrent first renders corrupt Next's dev prerender-manifest.json.
     await visit({ client: fixtures.visitor, locale, path, persona: "visitor" });
-    // oxlint-disable-next-line eslint/no-await-in-loop -- Finish this route before compiling another route.
+    // oxlint-disable-next-line eslint/no-await-in-loop -- Finish this route before rendering another route.
     await visit({ client, locale, path, persona: "learner" });
   }
 } finally {

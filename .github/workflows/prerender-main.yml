@@ -12,7 +12,12 @@ permissions:
 jobs:
   prerender:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    # Each runner compiles and validates every fourth page; together they crawl every page.
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       CI: "true"
@@ -21,6 +26,7 @@ jobs:
       E2E_TESTING: "true"
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
+      PRERENDER_SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
@@ -63,5 +69,5 @@ jobs:
       - name: Prepare Main fixtures
         run: pnpm --filter main exec node ../../scripts/run-test-env.mts e2e tsx e2e/prepare-data.ts
 
-      - name: Validate all development page prerenders
+      - name: Validate this shard's development page prerenders
         run: node scripts/e2e/prerender-crawl.mts

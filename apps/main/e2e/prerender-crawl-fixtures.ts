@@ -10,7 +10,7 @@ import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { createLanguageChallenge } from "./language-challenge-fixtures";
 
 /** Let every owned fixture task finish before a failure triggers client/database cleanup. */
-async function drainParallel<const Values extends readonly unknown[]>(values: Values) {
+export async function drainParallel<const Values extends readonly unknown[]>(values: Values) {
   await Promise.allSettled(values);
   return Promise.all(values);
 }
