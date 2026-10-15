@@ -53,14 +53,15 @@ export async function getCatalogCourseProgress({ courseId }: { courseId: string 
   "use cache: private";
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
 
-  const [catalog, { finishedLessonIds, signedIn }] = await Promise.all([
-    getCatalogCourse(courseId),
-    loadViewerFinishedLessons(),
-  ]);
+  const catalog = await getCatalogCourse(courseId);
 
   if (!catalog) {
     return null;
   }
+
+  const { finishedLessonIds, signedIn } = await loadViewerFinishedLessons(
+    catalog.placements.flatMap(({ chapter }) => chapter.lessons.map((lesson) => lesson.id)),
+  );
 
   if (!signedIn) {
     return { chapters: [], percentComplete: null };
@@ -89,14 +90,15 @@ export async function getCatalogChapterProgress({ chapterId }: { chapterId: stri
   "use cache: private";
   cacheTag(getLibraryChapterCacheTag(chapterId));
 
-  const [chapter, { finishedLessonIds, signedIn }] = await Promise.all([
-    getLibraryChapter({ chapterId }),
-    loadViewerFinishedLessons(),
-  ]);
+  const chapter = await getLibraryChapter({ chapterId });
 
   if (!chapter) {
     return null;
   }
+
+  const { finishedLessonIds, signedIn } = await loadViewerFinishedLessons(
+    chapter.lessons.map((lesson) => lesson.id),
+  );
 
   if (!signedIn) {
     return { lessons: [], percentComplete: null };

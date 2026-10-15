@@ -109,14 +109,15 @@ export async function getCatalogCourseNextLesson({
   "use cache: private";
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
 
-  const [catalog, { finishedLessonIds }] = await Promise.all([
-    getCatalogCourse(courseId),
-    loadViewerFinishedLessons(),
-  ]);
+  const catalog = await getCatalogCourse(courseId);
 
   if (!catalog) {
     return { status: "notFound" };
   }
+
+  const { finishedLessonIds } = await loadViewerFinishedLessons(
+    catalog.placements.flatMap(({ chapter }) => chapter.lessons.map((lesson) => lesson.id)),
+  );
 
   const target = await toTarget({
     chapters: catalog.placements.map((placement) => placement.chapter),
@@ -141,10 +142,7 @@ export async function getCatalogChapterNextLesson({
   "use cache: private";
   cacheTag(getLibraryChapterCacheTag(chapterId));
 
-  const [found, { finishedLessonIds }] = await Promise.all([
-    getCatalogChapterPlacement({ chapterId, courseId }),
-    loadViewerFinishedLessons(),
-  ]);
+  const found = await getCatalogChapterPlacement({ chapterId, courseId });
 
   if (!found) {
     return { status: "notFound" };
@@ -153,6 +151,10 @@ export async function getCatalogChapterNextLesson({
   if (found.chapter.lessons.length === 0) {
     return { status: "ready", target: null };
   }
+
+  const { finishedLessonIds } = await loadViewerFinishedLessons(
+    found.chapter.lessons.map((lesson) => lesson.id),
+  );
 
   const target = await toTarget({
     chapters: [found.chapter],

@@ -41,5 +41,6 @@ model LearningEvent {
   @@index([userId, localDate])
   @@index([userId, hour])
   @@index([localDate])
+  @@index([contentIds(ops: JsonbPathOps)], type: Gin)
   @@map("learning_events")
 }
