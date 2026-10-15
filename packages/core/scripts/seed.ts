@@ -1,7 +1,8 @@
 /**
  * Seeds Zoonk v2 with the plans the planner makes (see `seedV2`), or, with `--persona`, writes a
  * copy of one persona (see `seedV2PersonaCopy`), on `--day` of its plan when given, back after
- * `--away` days without studying when given, and prints it as JSON. For processes that can't
+ * `--away` days without studying when given, living in `--time-zone` instead of its own when given,
+ * and prints it as JSON. For processes that can't
  * load core's server code: Prisma's seed command and Playwright run it as `pnpm seed:v2`, which
  * sets the app domain auth reads as core loads (the seed builds no URL). No model is called.
  */
@@ -9,6 +10,7 @@ import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
 import { SEED_PERSONA_NAMES, type SeedPersonaName } from "@zoonk/db/seed/v2/personas";
 import { logError } from "@zoonk/utils/logger";
+import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { seedV2, seedV2PersonaCopy } from "../src/seed/seed-v2";
 
 function isPersonaName(value: string): value is SeedPersonaName {
@@ -30,23 +32,40 @@ async function copyPersona({
   day,
   email,
   persona,
+  timeZone,
 }: {
   away?: string;
   copyKey?: string;
   day?: string;
   email?: string;
   persona: string;
+  timeZone?: string;
 }) {
   const planDay = toWholeNumber(day);
   const awayDays = toWholeNumber(away);
 
-  if (!isPersonaName(persona) || !copyKey || !email || planDay === null || awayDays === null) {
+  if (
+    !isPersonaName(persona) ||
+    !copyKey ||
+    !email ||
+    planDay === null ||
+    awayDays === null ||
+    (timeZone !== undefined && !isValidTimeZone(timeZone))
+  ) {
     throw new Error(
-      `Usage: pnpm seed:v2 [--persona <${SEED_PERSONA_NAMES.join("|")}> --copy-key <key> --email <email> [--day <day of its plan>] [--away <days without studying>]]`,
+      `Usage: pnpm seed:v2 [--persona <${SEED_PERSONA_NAMES.join("|")}> --copy-key <key> --email <email> [--day <day of its plan>] [--away <days without studying>] [--time-zone <IANA zone>]]`,
     );
   }
 
-  const copy = await seedV2PersonaCopy({ awayDays, copyKey, day: planDay, email, persona });
+  const copy = await seedV2PersonaCopy({
+    awayDays,
+    copyKey,
+    day: planDay,
+    email,
+    persona,
+    timeZone,
+  });
+
   process.stdout.write(`${JSON.stringify(copy)}\n`);
 }
 
@@ -58,6 +77,7 @@ async function main() {
       day: { type: "string" },
       email: { type: "string" },
       persona: { type: "string" },
+      "time-zone": { type: "string" },
     },
   });
 
@@ -72,6 +92,7 @@ async function main() {
     day: values.day,
     email: values.email,
     persona: values.persona,
+    timeZone: values["time-zone"],
   });
 }
 

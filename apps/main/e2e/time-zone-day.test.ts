@@ -11,34 +11,81 @@ import { expect, test } from "./fixtures";
  * day starts; once they studied, the day stays the goal's until the next one.
  */
 
-/** "Fri, Oct 9": a day as Today's compact header writes it. */
-function headerDay(timeZone: string): string {
+/**
+ * Ana's goal lives in Honolulu and her device is in Kiritimati: 24 hours apart, neither with summer
+ * time, so at any hour the device's day is her goal's next one, and both turn at the same moment.
+ */
+const GOAL_ZONE = "Pacific/Honolulu";
+const DEVICE_ZONE = "Pacific/Kiritimati";
+
+/**
+ * Room for a test to seed Ana, open Today and check it (more than its 30-second budget): no
+ * midnight of hers may fall inside.
+ */
+const MIDNIGHT_MARGIN_MS = 60_000;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/** "Fri, Oct 9": the day at `at` as Today's compact header writes it. */
+function headerDay(timeZone: string, at: Date): string {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "short",
     timeZone,
     weekday: "short",
-  }).format(new Date());
+  }).format(at);
 }
 
-function localDay(timeZone: string): Date {
-  return getDateInTimeZone({ date: new Date(), timeZone });
+function localDay(timeZone: string, at: Date): Date {
+  return getDateInTimeZone({ date: at, timeZone });
 }
 
-/** A zone whose day isn't the goal's right now: far ahead of it, or far behind it early on. */
-function zoneOnAnotherDay(goalZone: string): string {
-  const zones = ["Pacific/Kiritimati", "Pacific/Pago_Pago"];
-  return zones.find((zone) => localDay(zone).getTime() !== localDay(goalZone).getTime()) ?? "UTC";
+/** How long after `at` the next midnight comes in `timeZone`, a zone without summer time. */
+function untilMidnight(timeZone: string, at: Date): number {
+  const parts = new Intl.DateTimeFormat("en", {
+    hour: "numeric",
+    hourCycle: "h23",
+    minute: "numeric",
+    second: "numeric",
+    timeZone,
+  }).formatToParts(at);
+
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((each) => each.type === type)?.value ?? 0);
+
+  const sinceMidnight = ((part("hour") * 60 + part("minute")) * 60 + part("second")) * 1000;
+  return MS_PER_DAY - sinceMidnight - at.getMilliseconds();
 }
 
-/** Ana (ENEM, her goal in São Paulo) on a device whose day isn't hers. */
+/**
+ * The moment a test reads its days at: now, unless Ana's midnight comes before the test could
+ * finish, then just after it, so the days it seeds and checks stay the ones the server reads.
+ */
+async function startClearOfMidnight(): Promise<Date> {
+  const wait = untilMidnight(GOAL_ZONE, new Date());
+
+  if (wait < MIDNIGHT_MARGIN_MS) {
+    test.setTimeout(test.info().timeout + wait + 1000);
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, wait + 1000);
+    });
+  }
+
+  return new Date();
+}
+
+/** Ana (ENEM) with her goal in Honolulu, on a device in Kiritimati: a day ahead of hers. */
 async function openAnaElsewhere(browser: Browser) {
-  const user = await createE2EPersona(getBaseURL(), { persona: "exam" });
-  const device = zoneOnAnotherDay(user.timeZone);
+  const at = await startClearOfMidnight();
+  const user = await createE2EPersona(getBaseURL(), { persona: "exam", timeZone: GOAL_ZONE });
 
-  const context = await browser.newContext({ storageState: user.storageState, timezoneId: device });
+  const context = await browser.newContext({
+    storageState: user.storageState,
+    timezoneId: DEVICE_ZONE,
+  });
 
-  return { context, device, page: await context.newPage(), user };
+  return { at, context, device: DEVICE_ZONE, page: await context.newPage(), user };
 }
 
 async function readGoalZone(user: E2EPersona) {
@@ -47,12 +94,12 @@ async function readGoalZone(user: E2EPersona) {
 }
 
 /**
- * Nothing yet today in São Paulo: no answer, no block opened or finished, the session not started.
- * Before her study hour, the seed dates today's activity minutes ago, which would keep the session
- * hers past midnight on the device's day.
+ * Nothing yet today in her goal's zone: no answer, no block opened or finished, the session not
+ * started. Before her study hour, the seed dates today's activity minutes ago, which would keep the
+ * session hers past midnight on the device's day.
  */
-async function clearToday(user: E2EPersona) {
-  const today = { goalId: user.goalId, localDate: localDay(user.timeZone) };
+async function clearToday(user: E2EPersona, at: Date) {
+  const today = { goalId: user.goalId, localDate: localDay(user.timeZone, at) };
 
   await Promise.all([
     prisma.attempt.deleteMany({ where: { localDate: today.localDate, userId: user.id } }),
@@ -97,11 +144,11 @@ test.describe("The learner's day on a device in another zone", () => {
   test("keeps the day of a goal she studied today, and Continue opens her session", async ({
     browser,
   }) => {
-    const { context, page, user } = await openAnaElsewhere(browser);
+    const { at, context, page, user } = await openAnaElsewhere(browser);
 
     try {
       await page.goto("/today");
-      await expect(page.getByText(headerDay(user.timeZone), { exact: true })).toBeVisible();
+      await expect(page.getByText(headerDay(user.timeZone, at), { exact: true })).toBeVisible();
 
       const card = page.getByRole("region", { name: "Today's session" });
       await card.getByRole("button", { name: /^Continue/u }).click();
@@ -114,13 +161,16 @@ test.describe("The learner's day on a device in another zone", () => {
   });
 
   test("moves to the device's day while nothing was done yet today", async ({ browser }) => {
-    const { context, device, page, user } = await openAnaElsewhere(browser);
-    await clearToday(user);
+    const { at, context, device, page, user } = await openAnaElsewhere(browser);
+    await clearToday(user, at);
 
     try {
+      // Today reads itself again once the follow answers, however long the summary took first.
+      const followed = page.waitForResponse((response) => isFollowAsk(response.request(), device));
       await page.goto("/today");
+      await followed;
 
-      await expect(page.getByText(headerDay(device), { exact: true })).toBeVisible();
+      await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
       await expect.poll(() => readGoalZone(user)).toBe(device);
     } finally {
       await context.close();
@@ -128,8 +178,8 @@ test.describe("The learner's day on a device in another zone", () => {
   });
 
   test("follows the device's zone with one ask, then reads Today once", async ({ browser }) => {
-    const { context, device, page, user } = await openAnaElsewhere(browser);
-    await clearToday(user);
+    const { at, context, device, page, user } = await openAnaElsewhere(browser);
+    await clearToday(user, at);
 
     const origin = new URL(getBaseURL()).origin;
     const asks: string[] = [];
@@ -160,7 +210,7 @@ test.describe("The learner's day on a device in another zone", () => {
     try {
       await page.goto("/today");
       await answered.promise;
-      await expect(page.getByText(headerDay(device), { exact: true })).toBeVisible();
+      await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
 
       // One read of Today, and one wave of prefetches: each link in sight at most once per tier, as
       // a single refresh prefetches them again, never twice over as when the whole cache was dropped.

@@ -38,6 +38,7 @@ export async function seedV2PersonaCopy({
   day,
   email,
   persona,
+  timeZone,
 }: {
   /** Days the copy has been away without studying (see `writeSeedV2PersonaCopy`). */
   away?: number;
@@ -46,6 +47,8 @@ export async function seedV2PersonaCopy({
   day?: number;
   email: string;
   persona: SeedPersonaName;
+  /** The zone the copy lives in, its days and its goal's; the persona's own when absent. */
+  timeZone?: string;
 }): Promise<{ goalId: string; userId: string }> {
   const output = await runSeedV2([
     "--persona",
@@ -56,6 +59,7 @@ export async function seedV2PersonaCopy({
     email,
     ...(day === undefined ? [] : ["--day", String(day)]),
     ...(away === undefined ? [] : ["--away", String(away)]),
+    ...(timeZone === undefined ? [] : ["--time-zone", timeZone]),
   ]);
 
   const copy: unknown = JSON.parse(output.trim().split("\n").at(-1) ?? "null");
