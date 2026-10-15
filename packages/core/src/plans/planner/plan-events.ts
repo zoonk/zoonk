@@ -184,7 +184,6 @@ export function scheduleRunEvents({
   const unmatched = input.settings.mockFunding.filter((entry) => !funded.matched.includes(entry));
 
   const afterExam = continueAfterExam({
-    before: schedule.units,
     bossDays: input.bossDays,
     bossMinutes: (phase) =>
       getPlannedBossMinutes({ bossMinutes: input.bossMinutes, goalKind: "exam", phase }),

@@ -196,7 +196,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
         .map((item) => [item.phase, item.scheduledFor?.toISOString().slice(0, 10)]),
     ).toStrictEqual([
       [0, "2020-10-01"],
-      [1, "2020-10-04"],
+      [1, "2020-10-05"],
       [2, "2020-10-10"],
     ]);
 

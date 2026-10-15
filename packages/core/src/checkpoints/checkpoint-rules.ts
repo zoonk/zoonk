@@ -1,4 +1,4 @@
-import { type PlanItemKind } from "@zoonk/db";
+import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { listCoreLessonItems } from "../plans/_utils/core-lessons";
 
@@ -97,6 +97,7 @@ type BossPlanItem = {
   position: number;
   scheduledFor: Date | null;
   skillId: string | null;
+  status?: PlanItemStatus;
 };
 
 type BossItem = Pick<BossPlanItem, "phase" | "position" | "scheduledFor">;
@@ -119,6 +120,11 @@ type BossPlan = {
 type CoreLessons = ReadonlyMap<string, readonly BossPlanItem[]>;
 
 const LEARN_KINDS = new Set<PlanItemKind>(["chapter", "lesson"]);
+
+/** Actual teaching, including finished lessons, excluding work set aside or tested out. */
+export function isBossTeachingItem(item: Pick<BossPlanItem, "kind" | "status">): boolean {
+  return LEARN_KINDS.has(item.kind) && item.status !== "skipped" && item.status !== "testedOut";
+}
 
 /**
  * Whether the plan has an item by a checkpoint: before its day, or on it before it in plan order
@@ -149,7 +155,7 @@ function listStudiedSkillIds({
     plan.items
       .filter(
         (item) =>
-          LEARN_KINDS.has(item.kind) &&
+          isBossTeachingItem(item) &&
           (phase === undefined || item.phase === phase) &&
           comesBy({ boss, item }),
       )
@@ -166,11 +172,11 @@ function firstWithSkills(lists: readonly (readonly string[])[]): string[] {
 
 /**
  * What one checkpoint asks, after the ones before it asked `asked`: the skills whose core lessons
- * are all in by its day that none of them asked. With none, the finished skills its phase's
- * lessons study (a phase going on with skills it finished earlier), then every finished one (an
- * exam's window of practice and mocks, or a phase whose own skills begin late in it): a skill with
- * core lessons after its day is never asked while one is finished. Only when none is finished yet,
- * what it studied.
+ * are all in by its day that its own phase's lessons study, though an earlier checkpoint asked them
+ * (a subject taught in every phase is tested in every phase). With none, those no earlier one asked,
+ * then every finished one (an exam's window of practice and mocks, or a phase whose own skills
+ * begin late in it): a skill with core lessons after its day is never asked while one is finished.
+ * Only when none is finished yet, what its phase studied, else what it studied.
  */
 function pickBossSkillIds({
   asked,
@@ -188,11 +194,12 @@ function pickBossSkillIds({
 
   const studied = listStudiedSkillIds({ boss, plan });
   const phase = listStudiedSkillIds({ boss, phase: boss.phase, plan });
+  const ownPhase = new Set(phase);
   const finished = studied.filter((skillId) => isFinished(skillId));
 
   return firstWithSkills([
+    finished.filter((skillId) => ownPhase.has(skillId)),
     finished.filter((skillId) => !asked.has(skillId)),
-    phase.filter((skillId) => isFinished(skillId)),
     finished,
     phase,
     studied,
@@ -200,11 +207,11 @@ function pickBossSkillIds({
 }
 
 /**
- * The skills a phase's checkpoint asks: the ones whose core lessons the plan has in by its day,
- * which no earlier checkpoint asked (`pickBossSkillIds`). A skill begun late in an exam's window,
- * its core in the next one, isn't asked before it's studied, and the next window's challenge asks
- * it (R40): each skill is asked once, by the first challenge after its core. The session's duel and
- * the questions written ahead for it ask the same.
+ * The skills a phase's checkpoint asks: the ones whose core lessons the plan has in by its day that
+ * its own phase teaches, else any no earlier checkpoint asked (`pickBossSkillIds`). A skill begun
+ * late in an exam's window, its core in the next one, isn't asked before it's studied, and the next
+ * window's challenge asks it (R40). Checking again what earlier phases taught is review's work, not
+ * a phase's challenge's. The session's duel and the questions written ahead for it ask the same.
  */
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
   const core = listCoreLessonItems({

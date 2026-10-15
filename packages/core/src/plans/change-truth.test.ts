@@ -6,11 +6,16 @@ import { mockSession } from "../_test-utils/mock-session";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { findOwnedPlan } from "./_utils/owned-plan";
+import { applyChangeOperations } from "./_utils/part-areas";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
+import { computePlan } from "./_utils/replan";
+import { getChangePlanning } from "./_utils/steered-areas";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { parsePlanGraph } from "./planner/plan-state";
+import { previewPlanChange } from "./preview-plan-change";
 import { proposePlanChange } from "./propose-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
@@ -296,9 +301,68 @@ describe("more of one subject and less of another", () => {
   });
 
   it("never offers less of a subject when it would keep every lesson and end when it does", async () => {
-    const { goal, plan } = await setup({ dailyMinutes: 60 });
+    const { goal, plan } = await setup({ dailyMinutes: 70 });
+    const operations: LearnerPlanOperation[] = [{ areas: ["Matemática"], kind: "reduceAreas" }];
+    const owned = await findOwnedPlan({ goalId: goal.id, timeZone: "UTC" });
 
-    // Every lesson fits, and math ends when it did even with less of it: nothing to offer.
+    if (owned.status !== "ready") {
+      throw new Error("Expected the learner's plan");
+    }
+
+    const { context } = owned;
+    const requested = await applyChangeOperations({ context, operations });
+
+    if ("error" in requested) {
+      throw new Error("Expected a valid reduction of math");
+    }
+
+    const planning = { ...getChangePlanning(operations), context };
+
+    const [baseline, reduced] = await Promise.all([
+      computePlan(planning),
+      computePlan({ ...planning, state: requested.state }),
+    ]);
+
+    const math = new Set(await listAreaSkills(plan.id));
+
+    const mathLessons = (built: typeof baseline.built) =>
+      built.items.filter(
+        (item) => item.kind === "lesson" && item.status === "todo" && math.has(item.skillId ?? ""),
+      );
+
+    const mathEnd = (built: typeof baseline.built) =>
+      mathLessons(built)
+        .map((item) => item.scheduledFor?.getTime() ?? 0)
+        .toSorted((a, b) => a - b)
+        .at(-1);
+
+    // The original premise compares the change with planning from today without it. Establish it
+    // independently of the preview's unchanged verdict: all 12 math lessons remain, ending together.
+    expect(mathLessons(baseline.built)).toHaveLength(12);
+
+    expect(
+      mathLessons(reduced.built)
+        .map((item) => item.key)
+        .toSorted((a, b) => a.localeCompare(b)),
+    ).toStrictEqual(
+      mathLessons(baseline.built)
+        .map((item) => item.key)
+        .toSorted((a, b) => a.localeCompare(b)),
+    );
+
+    expect(mathEnd(baseline.built)).toBeGreaterThan(0);
+    expect(mathEnd(reduced.built)).toBe(mathEnd(baseline.built));
+
+    const preview = await previewPlanChange({
+      goalId: goal.id,
+      input: { operations, timeZone: "UTC" },
+    });
+
+    expect(preview).toMatchObject({
+      preview: { effect: { lessonsRemoved: 0 }, feasibility: { fits: true }, unchanged: true },
+      status: "ready",
+    });
+
     await expect(
       proposePlanChange({
         goalId: goal.id,
@@ -389,13 +453,14 @@ describe("more of one subject and less of another", () => {
   // Ana's "more Linguagens", short on time: Linguagens gained 96 lessons and ended in October
   // instead of August, and her card said only that she'd finish it later.
   it("says how many more lessons the subject asked for gets when that ends it later", async () => {
-    const { goal, plan } = await setup({ dailyMinutes: 25, mockMinutes: 60 });
+    const { goal, plan } = await setup({ dailyMinutes: 25, mockMinutes: 45 });
     const before = await readAreas(plan.id);
 
     const changed = await change(goal.id, [{ areas: ["Direito"], kind: "focusAreas", parts: [] }]);
     const after = await readAreas(plan.id);
     const [was, now] = [before.get("Direito"), after.get("Direito")];
 
+    // The premise: short on time, more of it gains it lessons and ends it later.
     expect(now?.lessons ?? 0).toBeGreaterThan(was?.lessons ?? 0);
     expect(toTime(now)).toBeGreaterThan(toTime(was));
 

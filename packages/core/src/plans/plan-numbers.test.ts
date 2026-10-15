@@ -10,11 +10,13 @@ import {
 import { loadCourseEstimateData } from "../catalog/_utils/course-estimate-data";
 import { startCourseGoal } from "../goals/start-course-goal";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { getPlanNumbers } from "./_utils/plan-numbers";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait } from "./notice-wait";
+import { type PlannedItem } from "./planner/plan-items";
 import { parsePlanSettings } from "./planner/plan-state";
 
 describe("learner plan numbers", () => {
@@ -95,6 +97,89 @@ describe("learner plan numbers", () => {
     expect(advice.advice.coveredShare).toBe(numbers.coverage?.coveredShare);
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: started.goal.id } });
     expect(saved.dailyMinutes).toBe(30);
+  });
+
+  it("splits a joined stand-in at its actual deadline portions and keeps other work on its dates", () => {
+    const standIn: PlannedItem = {
+      chapterId: null,
+      completedAt: null,
+      id: null,
+      key: "skill:law",
+      kind: "lesson",
+      lessonId: null,
+      minutes: 90,
+      phase: 0,
+      scheduledFor: new Date("2020-09-28T00:00:00Z"),
+      skillId: "law",
+      status: "todo",
+      titleSnapshot: "Law",
+    };
+
+    const items: PlannedItem[] = [
+      standIn,
+      { ...standIn, key: "mock:before", kind: "mock", minutes: 20 },
+      {
+        ...standIn,
+        key: "lesson:legacy",
+        lessonId: "legacy",
+        minutes: 25,
+        scheduledFor: new Date("2020-09-30T00:00:00Z"),
+      },
+      {
+        ...standIn,
+        key: "review:after",
+        kind: "review",
+        minutes: 10,
+        scheduledFor: new Date("2020-10-01T00:00:00Z"),
+      },
+      { ...standIn, key: "lesson:done", minutes: 600, status: "done" },
+      { ...standIn, key: "lesson:undated", minutes: 600, scheduledFor: null },
+    ];
+
+    const built = {
+      items,
+      lessonDayMinutes: new Map([
+        [
+          "skill:law",
+          new Map([
+            ["2020-09-28", 20],
+            ["2020-09-29", 25],
+            ["2020-09-30", 45],
+          ]),
+        ],
+      ]),
+    };
+
+    const workload = {
+      checkpointMinutes: 20,
+      lessonMinutes: 25,
+      practiceMinutes: 10,
+      unwrittenLessonMinutes: 90,
+    };
+
+    const numbers = getPlanNumbers({
+      built,
+      context: {
+        dailyMinutes: 60,
+        fromDate: "2020-09-28",
+        fullCourse: true,
+        ownLevel: "none",
+        paceFactor: 1,
+        targetDate: "2020-09-30",
+        weekdayMinutes: Array.from({ length: 7 }, () => 60),
+      },
+      coverage: null,
+      isExam: true,
+      settings: parsePlanSettings({ fullCourse: true }),
+      workload,
+    });
+
+    // 45 stand-in minutes fall on the deadline; the written lesson and review add 25 + 10.
+    // Before it, the stand-in takes 20 + 25, and the mock keeps its own 20 minutes.
+    expect(numbers.afterDeadlineMinutes).toBe(80);
+    expect(numbers.beforeDeadlineMinutes).toBe(65);
+    expect(numbers.scheduledMinutes).toBe(145);
+    expect(numbers.workload).toStrictEqual(workload);
   });
 
   it.each([10, 15, 30])(

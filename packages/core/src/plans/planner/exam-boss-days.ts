@@ -1,4 +1,4 @@
-import { getBossSkillIds } from "../../checkpoints/checkpoint-rules";
+import { getBossSkillIds, isBossTeachingItem } from "../../checkpoints/checkpoint-rules";
 import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
 import { type BossCandidate, listBossCandidates, projectBossPlan } from "./boss-projection";
 import { type BuildPlanInput } from "./build-plan";
@@ -10,14 +10,14 @@ import { type FixedEvent, type PlanDay } from "./schedule-units";
 /**
  * Where an exam's phase challenges go, by key (see `placeExamBosses`): their day, whether it's
  * beside the lessons they test on their last day, with no study day left after them, and the keys
- * of the lessons they test there (`tested`), which the next pass keeps them after.
+ * of the lessons they test there (`tested`), which the next pass keeps them after. A phase with
+ * teaching of its own (`phaseTeaching`) always uses its first eligible day, even if an earlier
+ * pass placed it later.
  */
 export type ExamBossDays = ReadonlyMap<
   string,
-  { beside: boolean; date: string; tested?: readonly string[] }
+  { beside: boolean; date: string; phaseTeaching?: true; tested?: readonly string[] }
 >;
-
-const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 /** Whether two challenges test the same lessons, in any order. */
 function isSameTested(first?: readonly string[], second?: readonly string[]): boolean {
@@ -35,6 +35,7 @@ export function isSameBossDays(first: ExamBossDays, second: ExamBossDays): boole
       return (
         other?.date === day.date &&
         other.beside === day.beside &&
+        other.phaseTeaching === day.phaseTeaching &&
         isSameTested(other.tested, day.tested)
       );
     })
@@ -43,19 +44,20 @@ export function isSameBossDays(first: ExamBossDays, second: ExamBossDays): boole
 
 /**
  * The day an exam's phase challenge goes, as a built plan lays its lessons out: the first study
- * day after the lessons it tests end (`getBossSkillIds`, with the time each lesson takes,
- * `teachingEnds`), so a day passes between learning and being tested; with none before the exam,
- * the day they end, beside them. It starts from the day the challenge had (its window's end on a
- * plan's first pass) and moves until what it tests and its day agree: later, it tests no fewer.
- * What it tests is what it asks once saved: the plan's items with every challenge the run places
- * where it tries it, in the saved plan's order (see `projectBossPlan`), read by the rule sizing and
- * the session read (`getBossSkillIds`). What it tested on the pass before (`earlier`) of the skills
- * it still asks it still comes after: a lesson of its own that slipped past its day moves it, and
- * its questions stay; one another challenge asks never holds it. One the plan keeps (finished,
- * skipped, or this week's) stays where it is. One that tests nothing on its day moves to the
- * first later study day it tests something on: kept there, the entrance exam's three challenges
- * took a mock week's time from the lessons they test, then tested nothing, and so on, forever. With
- * nothing to test on any day, it keeps its day (an unavailable one, see `getBossSize`).
+ * day after every lesson its own phase teaches has ended (with the time each takes, `teachingEnds`),
+ * so it never comes while its phase's lessons still run, and
+ * a day passes between learning and being tested; with none before the exam, the day they end,
+ * beside them. A stand-in its phase begins keeps its later days as its own. It tests its own phase's
+ * teaching and asks its skills once
+ * saved: the plan's items with every challenge the run places where it tries it, in the saved
+ * plan's order (see `projectBossPlan`), read by the rule sizing and the session read
+ * (`getBossSkillIds`). A phase that teaches nothing of its own (an exam's window of practice and
+ * mocks) starts from its window's end and moves until what it asks from before it and its day
+ * agree: later, it tests no fewer; one that tests nothing on its day moves to the first later study
+ * day it tests something on (kept there, the entrance exam's three challenges took a mock week's
+ * time from the lessons they test, then tested nothing, and so on, forever); with nothing to test
+ * on any day, it keeps its day (an unavailable one, see `getBossSize`). One the plan keeps
+ * (finished, skipped, or this week's) stays where it is.
  */
 export function placeExamBosses({
   built,
@@ -79,7 +81,7 @@ export function placeExamBosses({
 
   const { at, plan, without } = projectBossPlan({ built, candidates, input, rows, survivors });
 
-  const learn = plan.items.filter((item) => LEARN_KINDS.has(item.kind) && item.scheduledFor);
+  const learn = plan.items.filter((item) => isBossTeachingItem(item) && item.scheduledFor);
   const endOf = (item: PlannedItem) => built.teachingEnds.get(item.key) ?? item.scheduledFor;
 
   // The skills a challenge asks on `day` with every other one where the run tries it: leading the
@@ -92,15 +94,22 @@ export function placeExamBosses({
     );
   };
 
+  const asks = (item: (typeof learn)[number], asked: ReadonlySet<string>) =>
+    (plan.itemSkillIds.get(item.id) ?? []).some((skillId) => asked.has(skillId));
+
+  // What a phase without teaching of its own asks at a spot, from lessons already before it.
   const listTested = (spot: Spot) => {
     const asked = listAsked(spot);
     const position = at({ beside: spot.afterDay, day: spot.day, key: spot.key, phase: spot.phase });
 
-    return learn.filter(
-      (item) =>
-        item.position < position &&
-        (plan.itemSkillIds.get(item.id) ?? []).some((skillId) => asked.has(skillId)),
-    );
+    return learn.filter((item) => item.position < position && asks(item, asked));
+  };
+
+  // What a challenge tests of those: its own phase's lessons, or, for a phase that teaches nothing
+  // of its own (an exam's window of practice and mocks), what it asks from before it.
+  const keepOwn = (tested: readonly (typeof learn)[number][], phase: number) => {
+    const own = tested.filter((item) => item.phase === phase);
+    return (own.length > 0 ? own : tested).map((item) => item.key);
   };
 
   const ends = learn
@@ -131,9 +140,40 @@ export function placeExamBosses({
       return day && (!latest || day > latest) ? day : latest;
     }, null);
 
+  const shown = new Set(plan.skills.map((skill) => skill.id));
+
+  const listOwnTeaching = (phase: number) =>
+    learn.filter(
+      (item) =>
+        item.phase === phase &&
+        (plan.itemSkillIds.get(item.id) ?? []).some((skillId) => shown.has(skillId)),
+    );
+
+  // The first study day after its own teaching ends, including every day of a stand-in. Other
+  // phases' teaching cannot delay it. With none left, beside its own teaching on its last day. A
+  // phase that teaches nothing of its own goes from its window's end (see `placeAfterWindow`).
+  const placeOne = (candidate: BossCandidate) => {
+    const { phase } = candidate;
+    const own = listOwnTeaching(phase);
+    const lastTaught = lastEnd(own);
+
+    if (!lastTaught) {
+      return placeAfterWindow(candidate);
+    }
+
+    const day = findStudyDayAfter(built.studyDays, lastTaught);
+
+    return {
+      beside: day === undefined,
+      date: day ?? lastTaught,
+      phaseTeaching: true as const,
+      tested: own.map((item) => item.key),
+    };
+  };
+
   // From its window's end, the first study day on which everything it tests there has ended,
   // moving only forward: past what it tests, or to the next day its content can change on.
-  const placeOne = (candidate: BossCandidate) => {
+  const placeAfterWindow = (candidate: BossCandidate) => {
     const { key, phase } = candidate;
     const anchor = candidate.date;
     const atAnchor = lastEnd(listOn({ date: anchor, key, phase }));
@@ -182,15 +222,9 @@ export function placeExamBosses({
     }
 
     const asked = new Set(getBossSkillIds({ ...plan, boss }));
-
-    const tested = learn.filter(
-      (item) =>
-        item.position < boss.position &&
-        (plan.itemSkillIds.get(item.id) ?? []).some((skillId) => asked.has(skillId)),
-    );
-
+    const tested = learn.filter((item) => item.position < boss.position && asks(item, asked));
     const date = boss.scheduledFor ? toIsoDate(boss.scheduledFor) : "";
-    return [[boss.key, { beside: false, date, tested: tested.map((item) => item.key) }] as const];
+    return [[boss.key, { beside: false, date, tested: keepOwn(tested, boss.phase) }] as const];
   });
 
   return new Map([
@@ -249,12 +283,11 @@ function listStudyDays({
 }
 
 /**
- * The days a pass places an exam's challenges, never earlier than the pass before put them: a
- * challenge's own time can push the end of the lessons it tests (a stand-in spanning its day)
- * past it, and moving back would free that time and pull the end back, and so on; on the same day,
- * one beside its lessons stays beside them, taking none of their time. Later, it still comes after
- * everything it tests, and the plan settles on it. Only while it tests the same lessons: one whose
- * lessons changed (a stale one let go, see `placeExamBosses`) goes where they put it.
+ * A phase with teaching of its own always uses this pass's first eligible day. Keeping an earlier
+ * pass's later day would leave its challenge after an empty gap once funding settles. A phase
+ * without its own teaching keeps the later day: moving back would free time, change the teaching
+ * it asks from other phases, and move it forward again. On the same day, one beside the lessons
+ * stays beside them, taking none of their time.
  */
 export function keepLaterBossDays({
   earlier,
@@ -268,7 +301,9 @@ export function keepLaterBossDays({
       const before = earlier.get(key);
 
       const keeps =
-        before && (before.date > day.date || (before.date === day.date && before.beside));
+        !day.phaseTeaching &&
+        before &&
+        (before.date > day.date || (before.date === day.date && before.beside));
 
       return [key, keeps ? { ...before, tested: day.tested } : day] as const;
     }),

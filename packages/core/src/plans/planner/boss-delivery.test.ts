@@ -107,7 +107,6 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
     const targetDate = fromIsoDate("2026-10-25");
 
     const afterExam = continueAfterExam({
-      before: [],
       bossDays: new Map([["boss:1", { beside: false, date: "2026-10-27" }]]),
       bossMinutes: () => 15,
       calendar: { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null },

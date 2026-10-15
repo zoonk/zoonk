@@ -68,7 +68,6 @@ function toPlainUnit(unit: DroppedUnit): QueueUnit {
  * their own once the Library outlines them.
  */
 export function continueAfterExam({
-  before,
   bossDays,
   bossMinutes = () => 0,
   calendar,
@@ -91,8 +90,6 @@ export function continueAfterExam({
   resolution?: MockResolution | null;
   /** The saved mocks no mock before the exam continued (see `matchSavedMocks`). */
   saved: readonly MockFunding[];
-  /** What the plan scheduled before the exam. */
-  before: readonly Pick<QueueUnit, "key">[];
   /**
    * Where the run's phase challenges go (see `placeExamBosses`): one whose own teaching ends after
    * the exam goes on the day after it here, its phase's still.
@@ -147,8 +144,6 @@ export function continueAfterExam({
 
   const { days } = funded;
 
-  const started = new Set(before.map((unit) => unit.key));
-
   const schedule = scheduleUnits({
     days,
     units: dropped.filter((unit) => unit.kind === "lesson").map((unit) => toPlainUnit(unit)),
@@ -178,7 +173,7 @@ export function continueAfterExam({
     events,
     funded,
     span: first && last ? { end: last, minutes, start: first } : null,
-    units: schedule.units.filter((unit) => !started.has(unit.key)),
+    units: schedule.units,
   };
 }
 

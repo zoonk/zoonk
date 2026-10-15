@@ -761,13 +761,12 @@ describe("exam plans", () => {
 
     expect(plan.items.find((item) => item.key === "review:2026-11-07")?.minutes).toBe(15);
 
-    // Superseded by C2: a phase's challenge goes on the first study day after the lessons it
-    // tests, past the Saturday mock and the Sunday rest day, instead of closing the day before.
-    // The second keeps testing the s1 lessons it tested when a pass first placed it, which now end
-    // on 10-21 (see `placeExamBosses`): dropping them would test less than the phase taught.
+    // A phase's challenge tests its own phase's teaching and goes on the first study day after it
+    // ends, past the Saturday mock and the Sunday rest day (see `placeExamBosses`): the gaps
+    // phase's last lessons are on 10-20, so its challenge leads 10-21, before the next phase's.
     expect(datesOf({ kind: "boss", plan })).toStrictEqual([
       "2026-10-05",
-      "2026-10-22",
+      "2026-10-21",
       "2026-11-02",
     ]);
   });
@@ -1147,13 +1146,6 @@ function standIns(plan: ReturnType<typeof buildPlan>) {
     .map((item) => [item.skillId, Math.round((item.minutes * 0.5) / DEFAULT_LESSON_MINUTES)]);
 }
 
-/** The plan's items up to a day, each with its day and minutes. */
-function until(plan: ReturnType<typeof buildPlan>, last: string) {
-  return plan.items
-    .filter((item) => item.scheduledFor && toIsoDate(item.scheduledFor) <= last)
-    .map((item) => [item.key, toIsoDate(item.scheduledFor ?? TODAY), item.minutes]);
-}
-
 describe("studying everything", () => {
   const EXAM_DAY = "2026-10-23";
 
@@ -1180,7 +1172,77 @@ describe("studying everything", () => {
     const plan = buildPlan(studyingEverything);
     const after = plan.items.filter((item) => toIsoDate(item.scheduledFor ?? TODAY) > EXAM_DAY);
 
-    expect(until(plan, EXAM_DAY)).toStrictEqual(until(byExam, EXAM_DAY));
+    // A joined stand-in's total includes its continuation after the exam. Compare its actual
+    // teaching before the exam, rather than assigning that total to the day its first part is due.
+    const teachingBeforeExam = (built: typeof plan) =>
+      [...built.lessonDayMinutes]
+        .map(([key, days]) => ({
+          key,
+          portions: [...days]
+            .filter(([date]) => date <= EXAM_DAY)
+            .toSorted(([first], [second]) => first.localeCompare(second)),
+        }))
+        .filter(({ portions }) => portions.length > 0)
+        .toSorted((first, second) => first.key.localeCompare(second.key));
+
+    const lessonDatesBeforeExam = (built: typeof plan) =>
+      built.items
+        .filter(
+          (item) =>
+            item.kind === "lesson" &&
+            item.scheduledFor !== null &&
+            toIsoDate(item.scheduledFor) <= EXAM_DAY,
+        )
+        .map((item) => [item.key, toIsoDate(item.scheduledFor!)]);
+
+    expect(lessonDatesBeforeExam(plan)).toStrictEqual(lessonDatesBeforeExam(byExam));
+
+    const eventsBeforeExam = (built: typeof plan) =>
+      built.items
+        .filter(
+          (item) =>
+            item.kind !== "lesson" &&
+            item.kind !== "boss" &&
+            item.scheduledFor !== null &&
+            toIsoDate(item.scheduledFor) <= EXAM_DAY,
+        )
+        .map((item) => [item.key, toIsoDate(item.scheduledFor!), item.minutes]);
+
+    expect(eventsBeforeExam(plan)).toStrictEqual(eventsBeforeExam(byExam));
+
+    // Phase 1 teaches past the exam now, so its challenge moves from 10-15 to 11-20. Its freed
+    // funded slot gives s5 80/7 more teaching minutes on 10-15: 160/7 becomes 240/7. Every other
+    // lesson-day portion stays exact. Keep the sevenths together to avoid addition round-off.
+    const freedBossTeachingMinutes = 80 / 7;
+    const beforeTeaching = teachingBeforeExam(byExam);
+
+    expect(beforeTeaching.find(({ key }) => key === "skill:s5")?.portions).toContainEqual([
+      "2026-10-15",
+      160 / 7,
+    ]);
+
+    expect(teachingBeforeExam(plan)).toStrictEqual(
+      beforeTeaching.map(({ key, portions }) => ({
+        key,
+        portions: portions.map(([date, minutes]) => [
+          date,
+          key === "skill:s5" && date === "2026-10-15"
+            ? (minutes * 7 + freedBossTeachingMinutes * 7) / 7
+            : minutes,
+        ]),
+      })),
+    );
+
+    expect(
+      plan.items
+        .filter((item) => item.kind === "boss")
+        .map((item) => [item.key, item.phase, toIsoDate(item.scheduledFor!)]),
+    ).toStrictEqual([
+      ["boss:0", 0, "2026-10-04"],
+      ["boss:1", 1, "2026-11-20"],
+      ["boss:2", 2, "2026-11-25"],
+    ]);
+
     expect(byExam.droppedSkillIds.length).toBeGreaterThan(0);
     expect(plan.droppedSkillIds).toStrictEqual([]);
 
@@ -1192,7 +1254,10 @@ describe("studying everything", () => {
     expect(toIsoDate(mocks[0]?.scheduledFor ?? TODAY) >= "2026-10-31").toBe(true);
     expect(mocks.every((item) => item.minutes === 150)).toBe(true);
     expect(after.some((item) => item.kind === "review" || item.kind === "checkpoint")).toBe(false);
-    expect(after.every((item) => item.phase === 4)).toBe(true);
+    // After-exam teaching and mocks form phase 4; each challenge still closes its own phase.
+    expect(after.filter((item) => item.kind !== "boss").every((item) => item.phase === 4)).toBe(
+      true,
+    );
 
     expect(plan.phases.map((phase) => phase.kind)).toStrictEqual([
       "foundations",

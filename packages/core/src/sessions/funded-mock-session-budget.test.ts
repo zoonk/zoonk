@@ -29,6 +29,8 @@ import { finishStudyBlock } from "./finish-study-block";
 const START = "2020-09-28";
 const ORIGINAL_MOCK = "2020-10-09";
 const BOSS_DAY = "2020-10-16";
+/** The first phase's challenge: the first study day after its last lessons, on the 6th. */
+const FIRST_BOSS_DAY = "2020-10-07";
 
 const STRUCTURE = examStructureSchema.parse({
   formats: [],
@@ -152,12 +154,12 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
   const phaseLessons = (phase: number) =>
     items.filter((item) => item.kind === "lesson" && item.phase === phase);
 
-  expect(phaseLessons(0)).toHaveLength(14);
+  expect(phaseLessons(0)).toHaveLength(16);
 
   expect(
     phaseLessons(1).map((item) => item.scheduledFor?.toISOString().slice(0, 10)),
   ).toStrictEqual([
-    "2020-10-07",
+    "2020-10-08",
     "2020-10-08",
     "2020-10-09",
     "2020-10-12",
@@ -168,9 +170,9 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
 
   const first = await finishTeaching({ items: phaseLessons(0), userId: fixture.user.id });
   const boss = items.find((item) => item.kind === "boss" && item.phase === 0);
-  expect(boss?.scheduledFor).toStrictEqual(new Date("2020-10-06"));
+  expect(boss?.scheduledFor).toStrictEqual(new Date(FIRST_BOSS_DAY));
 
-  vi.setSystemTime(new Date("2020-10-06T12:00:00Z"));
+  vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:00:00Z`));
   const started = await startChallenge({ input: { timeZone: "UTC" }, planItemId: boss?.id ?? "" });
 
   if (started.status !== "ready") {
@@ -180,7 +182,7 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
   const { blockId, sessionId } = started.destination;
   const answers = await answerBlockInOrder({ blockId, sessionId });
   expect(answers).toHaveLength(10);
-  vi.setSystemTime(new Date("2020-10-06T12:15:00Z"));
+  vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:15:00Z`));
 
   await expect(
     finishStudyBlock({ blockId, input: { timeZone: "UTC" }, sessionId }),
@@ -189,8 +191,8 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
   await expect(
     prisma.planItem.findUniqueOrThrow({ where: { id: boss?.id } }),
   ).resolves.toMatchObject({
-    completedAt: new Date("2020-10-06T12:15:00Z"),
-    scheduledFor: new Date("2020-10-06"),
+    completedAt: new Date(`${FIRST_BOSS_DAY}T12:15:00Z`),
+    scheduledFor: new Date(FIRST_BOSS_DAY),
     status: "done",
   });
 
@@ -200,9 +202,9 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
     }),
   ).resolves.toMatchObject({
     contentIds: { planItemId: boss?.id },
-    endedAt: new Date("2020-10-06T12:15:00Z"),
+    endedAt: new Date(`${FIRST_BOSS_DAY}T12:15:00Z`),
     seconds: 900,
-    startedAt: new Date("2020-10-06T12:00:00Z"),
+    startedAt: new Date(`${FIRST_BOSS_DAY}T12:00:00Z`),
   });
 
   // Completion returns before re-planning; observe the real request-lifetime work before its result.
@@ -216,7 +218,7 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
   const nextTeaching = afterFirst.filter((item) => item.kind === "lesson" && item.phase === 1);
 
   expect(nextTeaching.map((item) => item.scheduledFor?.toISOString().slice(0, 10))).toStrictEqual([
-    "2020-10-07",
+    "2020-10-08",
     "2020-10-08",
     "2020-10-09",
     "2020-10-12",
@@ -234,7 +236,7 @@ async function keepUp(fixture: Awaited<ReturnType<typeof setup>>) {
 
   expect(writtenIds(afterFirst)).toStrictEqual(
     fixture.library.lessons
-      .slice(0, 40)
+      .slice(0, 43)
       .map((lesson) => lesson.id)
       .toSorted(),
   );
@@ -455,7 +457,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
       userId: fixture.user.id,
     });
 
-    vi.setSystemTime(new Date("2020-10-06T12:00:00Z"));
+    vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:00:00Z`));
     const skipped = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
     expect(skipped).toMatchObject({ status: "ready" });
 
@@ -559,7 +561,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
 
     expect(before.items.find((item) => item.kind === "boss" && item.phase === 0)).toMatchObject({
       completedAt: null,
-      scheduledFor: new Date("2020-10-06"),
+      scheduledFor: new Date(FIRST_BOSS_DAY),
       status: "todo",
     });
 

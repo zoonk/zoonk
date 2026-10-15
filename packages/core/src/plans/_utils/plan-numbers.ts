@@ -68,7 +68,7 @@ export function getPlanNumbers({
   settings,
   workload,
 }: {
-  built: Pick<BuiltPlan, "items">;
+  built: Pick<BuiltPlan, "items" | "lessonDayMinutes">;
   context: PlanNumbers["context"];
   coverage: Pick<NonNullable<PlanNumbers["coverage"]>, "coveredShare" | "measure"> | null;
   isExam: boolean;
@@ -76,20 +76,36 @@ export function getPlanNumbers({
   workload: PlanWorkload;
 }): PlanNumbers {
   const from = new Date(`${context.fromDate}T00:00:00Z`);
-  const target = context.targetDate ? new Date(`${context.targetDate}T00:00:00Z`) : null;
+  const targetDate = context.targetDate;
+  const target = targetDate ? new Date(`${targetDate}T00:00:00Z`) : null;
   const scheduledMinutes = Object.values(workload).reduce((sum, minutes) => sum + minutes, 0);
 
-  const after = target
-    ? built.items
-        .filter(
-          (item) =>
-            item.status === "todo" &&
-            item.scheduledFor !== null &&
-            item.scheduledFor >= from &&
-            item.scheduledFor >= target,
-        )
-        .reduce((sum, item) => sum + item.minutes, 0)
-    : 0;
+  const after =
+    target && targetDate
+      ? built.items.reduce((sum, item) => {
+          if (item.status !== "todo" || !item.scheduledFor || item.scheduledFor < from) {
+            return sum;
+          }
+
+          // A joined stand-in starts before the exam but can teach after it. Its actual day
+          // portions split that time; events and legacy rows without portions keep their dates.
+          const portions = built.lessonDayMinutes.get(item.key);
+
+          if (portions) {
+            const minutes = [...portions]
+              .filter(([date]) => date >= context.fromDate && date >= targetDate)
+              .reduce((total, [, amount]) => total + amount, 0);
+
+            return sum + minutes;
+          }
+
+          if (item.scheduledFor >= target) {
+            return sum + item.minutes;
+          }
+
+          return sum;
+        }, 0)
+      : 0;
 
   const afterDeadlineMinutes = target ? roundPlanMinutes(after) : null;
   const calendar = getPlanCalendar({ dailyMinutes: context.dailyMinutes, settings });

@@ -196,21 +196,32 @@ describe("an exam window's challenge", () => {
     expect(askedBy("w0")).toStrictEqual(["algebra"]);
   });
 
-  // Asked by no challenge, a skill finished just after its window's challenge was never checked.
-  it("asks a skill finished after the last challenge in the next one, once", () => {
-    expect(askedBy("w1")).toStrictEqual(["geometry", "trig"]);
+  // Asked by no challenge, a skill finished just after its window's challenge was never checked;
+  // algebra's second lesson is the next window's teaching, which its own challenge tests.
+  it("asks the next window's challenge a skill finished after the last one, and what it teaches", () => {
+    expect(askedBy("w1")).toStrictEqual(["algebra", "geometry", "trig"]);
     expect(askedBy("w2")).toStrictEqual(["stats"]);
   });
 
   // The plan's days, which the plan's checks read too: a lesson done ahead keeps its day.
   it("goes by the plan's days, not the lessons done ahead of them", () => {
     const ahead = examWindows.map((item) =>
-      item.id === "g2" ? { ...item, completedAt: day(4), status: "done" } : item,
+      item.id === "g2" ? { ...item, completedAt: day(4), status: "done" as const } : item,
     );
 
     expect(askedBy("w0", { items: ahead })).toStrictEqual(["algebra"]);
-    expect(askedBy("w1", { items: ahead })).toStrictEqual(["geometry", "trig"]);
+    expect(askedBy("w1", { items: ahead })).toStrictEqual(["algebra", "geometry", "trig"]);
   });
+
+  it.each(["skipped", "testedOut"] as const)(
+    "does not ask an earlier phase's skill again for a %s lesson",
+    (status) => {
+      const items = examWindows.map((item) => (item.id === "a2" ? { ...item, status } : item));
+
+      expect(askedBy("w0", { items })).toStrictEqual(["algebra"]);
+      expect(askedBy("w1", { items })).toStrictEqual(["geometry", "trig"]);
+    },
+  );
 
   // Class test seed 3: the phase's only skill of its own begins on its challenge's day, two of its
   // three core lessons after it, so the phase finished nothing new.

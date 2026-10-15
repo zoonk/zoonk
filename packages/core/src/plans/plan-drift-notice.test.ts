@@ -308,7 +308,7 @@ describe("notices for changes within an estimate", () => {
     expect(byDate(after)).toBe(byDate(before));
     expect(change?.effect?.lessonsAdded).toBe(8);
     // The last lessons reclaim time no longer set aside for an omitted after-exam mock.
-    expect(change?.effect?.endDateAfter).toBe("2020-10-30");
+    expect(change?.effect?.endDateAfter).toBe("2020-10-29");
 
     await expect(readTodayChange(goal.id)).resolves.toMatchObject({
       canUndo: false,
