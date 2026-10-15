@@ -281,7 +281,7 @@ describe(processAppleSubscriptionNotification, () => {
 
     await expect(
       reconcileAppleSubscription({ product, referenceId: user.id, verifiedSubscription }),
-    ).rejects.toMatchObject({ code: "P2003" });
+    ).rejects.toThrow("Cannot mark a missing learner changed");
 
     await expect(
       prisma.subscription.count({
