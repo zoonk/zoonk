@@ -31,6 +31,7 @@ export async function weakSpotCandidate({
   }
 
   const inputs = await loadPreparationInputs({
+    goal,
     goalId: goal.id,
     now,
     readPlan: async () => goalPlan,

@@ -319,8 +319,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
   const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
     loadAroundSession({
-      goalId,
-      kind: owned.goal.kind,
+      owned,
       selection: day.selection,
       session: day.session,
       timeZone: input.timeZone,

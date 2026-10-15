@@ -1,9 +1,11 @@
 import "server-only";
 import { type GoalKind } from "@zoonk/db";
+import { type OwnedGoal } from "../../../learner/_utils/owned-goal";
 import { getCurrentMemoryInsight } from "../../../memory/insights/get-current-memory-insight";
 import { projectPlanForRead } from "../../../plans/_utils/plan-read-projection";
-import { loadGoalPreparation } from "../../../preparation/_utils/load-goal-preparation";
+import { loadOwnedGoalPreparation } from "../../../preparation/_utils/load-goal-preparation";
 import { getGoalPreparation } from "../../../preparation/get-goal-preparation";
+import { getRequestProgressDateContext } from "../../../progress/get-request-date-context";
 import { type ReadStudyDay } from "../../../sessions/_utils/read-study-day";
 import { getSelectedCatchUpItems } from "../../../sessions/_utils/selected-day-plan";
 import { type DayView } from "../../../sessions/day-view";
@@ -45,29 +47,32 @@ async function loadLessons({
 
 /** Everything around the session reads the goal the session belongs to. */
 export async function loadAroundSession({
-  goalId,
-  kind,
+  owned,
   timeZone,
   session,
   selection,
 }: {
-  goalId: string;
-  kind: GoalKind;
+  owned: Extract<OwnedGoal, { status: "ready" }>;
   timeZone?: string;
   session: DayView;
   selection: ReadStudyDay["selection"];
 }) {
+  const { id: goalId, kind } = owned.goal;
+
   const [preparation, lessons, insight, challenge] = await Promise.all([
     selection?.computed
-      ? loadGoalPreparation({
-          goalId,
-          selectedPlan: {
-            ...projectPlanForRead(selection),
-            ...(selection.left.length > 0 && {
-              catchUp: getSelectedCatchUpItems(selection).length,
-            }),
-          },
-        })
+      ? getRequestProgressDateContext().then((dateContext) =>
+          loadOwnedGoalPreparation({
+            dateContext,
+            owned,
+            selectedPlan: {
+              ...projectPlanForRead(selection),
+              ...(selection.left.length > 0 && {
+                catchUp: getSelectedCatchUpItems(selection).length,
+              }),
+            },
+          }),
+        )
       : getGoalPreparation(goalId),
     loadLessons({ goalId, kind, selection }),
     getCurrentMemoryInsight({ goalId }),

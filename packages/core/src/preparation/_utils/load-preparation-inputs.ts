@@ -9,7 +9,6 @@ import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { isFadingRetrievability } from "../../learner/mastery-state";
 import { FULL_REVIEW_LEDGER_KIND } from "../../sessions/_utils/block-events";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
-import { PLAN_STATUS_ITEM_SELECT } from "../plan-status";
 import {
   type MockResult,
   type PreparationSkill,
@@ -255,19 +254,28 @@ async function loadTests({
 }
 
 /** The goal as preparation reads it, with its test in real conditions (see `loadGoalTest`). */
+type PreparationGoal = Pick<
+  Goal,
+  "createdAt" | "details" | "examBlueprintId" | "kind" | "timezone"
+>;
+
 async function loadGoalWithTest({
+  goal: providedGoal,
   goalId,
   now,
   userId,
 }: {
+  goal?: PreparationGoal;
   goalId: string;
   now: Date;
   userId: string;
 }) {
-  const goal = await prisma.goal.findUnique({
-    select: { createdAt: true, details: true, examBlueprintId: true, kind: true, timezone: true },
-    where: { id: goalId },
-  });
+  const goal =
+    providedGoal ??
+    (await prisma.goal.findUnique({
+      select: { createdAt: true, details: true, examBlueprintId: true, kind: true, timezone: true },
+      where: { id: goalId },
+    }));
 
   return { goal, test: await loadGoalTest({ goal, now, userId }) };
 }
@@ -275,15 +283,18 @@ async function loadGoalWithTest({
 /**
  * Reads what preparation is made of for one goal: the goal's skills with what the learner showed
  * of each and their memory of it, first answers to questions never seen before, recent tests (an
- * exam's mock exams or full reviews, or another goal's weekly challenges) and the plan schedule. Learner rows and
+ * exam's mock exams or full reviews, or another goal's weekly challenges) and their evidence. Learner rows and
  * plan items only; content is read just to find which skills the goal has and its lessons teach.
  */
 export async function loadPreparationInputs({
+  goal,
   goalId,
   now,
   readPlan = loadGoalPlan,
   userId,
 }: {
+  /** Reuse a caller's already owned row; this does not authorize the read. */
+  goal?: PreparationGoal;
   goalId: string;
   now: Date;
   /** How the goal's skills are read: a page's reads pass `readGoalPlan`, loaded once per request. */
@@ -291,11 +302,13 @@ export async function loadPreparationInputs({
   userId: string;
 }) {
   // The goal's test needs only the goal, so it's read while the goal's skills load.
-  const [{ choices, fullCourse, graph, plan, skills: measured, survivorOf }, { goal, test }] =
-    await Promise.all([
-      loadMeasuredSkills({ goalId, readPlan }),
-      loadGoalWithTest({ goalId, now, userId }),
-    ]);
+  const [
+    { choices, fullCourse, graph, plan, skills: measured, survivorOf },
+    { goal: measuredGoal, test },
+  ] = await Promise.all([
+    loadMeasuredSkills({ goalId, readPlan }),
+    loadGoalWithTest({ goal, goalId, now, userId }),
+  ]);
 
   const evidenceIds = [...new Set(measured.flatMap((skill) => skill.memberSkillIds))];
 
@@ -303,16 +316,12 @@ export async function loadPreparationInputs({
     measured.map((skill) => ({ id: skill.skillId, memberSkillIds: skill.memberSkillIds })),
   );
 
-  const [learnerSkills, firstAnswers, answers, tests, schedule, weights] = await Promise.all([
+  const [learnerSkills, firstAnswers, answers, tests, weights] = await Promise.all([
     prisma.learnerSkill.findMany({ where: { skillId: { in: evidenceIds }, userId } }),
     loadFirstAnswers({ skillIds: evidenceIds, userId }),
     loadUnseenAnswers({ owners, skillIds: evidenceIds, userId }),
     loadTests({ goalId, test, userId }),
-    prisma.plan.findUnique({
-      select: { estimateHours: true, items: { select: PLAN_STATUS_ITEM_SELECT } },
-      where: { goalId },
-    }),
-    loadSkillImportance({ choices, goal, graph, skills: measured, survivorOf }),
+    loadSkillImportance({ choices, goal: measuredGoal, graph, skills: measured, survivorOf }),
   ]);
 
   const skills = measured.map((skill) =>
@@ -335,14 +344,12 @@ export async function loadPreparationInputs({
   return {
     answers,
     areas,
-    estimateHours: schedule?.estimateHours ?? null,
     /** The mock exams among the tests: only they estimate a score. */
     mockResults: tests.mocks,
     mocks: tests.tests,
-    planItems: schedule?.items ?? [],
     sectionWeights: weights.sectionWeights,
     skills,
-    studiesPastTarget: goal?.kind === "exam" && fullCourse,
+    studiesPastTarget: measuredGoal?.kind === "exam" && fullCourse,
     testKind: test.kind,
     testPlusRequired: test.plusRequired,
   };
