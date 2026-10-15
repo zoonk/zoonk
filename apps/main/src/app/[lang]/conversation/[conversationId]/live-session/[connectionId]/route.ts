@@ -37,7 +37,10 @@ export async function POST(
   });
 
   return Response.json(result.json, {
-    headers: { "Cache-Control": "no-store" },
+    headers: {
+      "Cache-Control": "no-store",
+      ...(result.ok && result.learnerRevision && { "Learner-Revision": result.learnerRevision }),
+    },
     status: result.ok ? HTTP_OK : (result.status ?? HTTP_UNAVAILABLE),
   });
 }

@@ -80,6 +80,15 @@
                   "$ref": "#/components/schemas/MeDeletionResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -202,6 +211,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -1005,6 +1023,15 @@
                   "$ref": "#/components/schemas/ChallengeGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -1016,6 +1043,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -1149,6 +1183,15 @@
                   "$ref": "#/components/schemas/ChallengeMove"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -1274,6 +1317,15 @@
                   "$ref": "#/components/schemas/ChallengeMoveUndo"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -1376,6 +1428,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ChallengeStart"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -1586,6 +1647,15 @@
                   "$ref": "#/components/schemas/CheckpointMove"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -1704,7 +1774,16 @@
         ],
         "responses": {
           "204": {
-            "description": "The challenge is back on its day"
+            "description": "The challenge is back on its day",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -1809,6 +1888,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -1932,6 +2018,15 @@
                   "$ref": "#/components/schemas/SessionPreparation"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -2016,6 +2111,15 @@
                   "$ref": "#/components/schemas/LessonGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -2027,6 +2131,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -2233,7 +2344,16 @@
         },
         "responses": {
           "204": {
-            "description": "Recorded"
+            "description": "Recorded",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -2305,6 +2425,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SessionPreparation"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -2401,6 +2530,15 @@
                   "$ref": "#/components/schemas/Goal"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "201": {
@@ -2409,6 +2547,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Goal"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -2577,6 +2724,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CourseDetailsRegeneration"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -2950,6 +3106,15 @@
                   "$ref": "#/components/schemas/EssayGrade"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -3221,6 +3386,15 @@
                   "additionalProperties": false
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -3344,6 +3518,15 @@
                   "$ref": "#/components/schemas/ExamResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -3456,6 +3639,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlanChangeResult"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -3675,6 +3867,15 @@
                   "$ref": "#/components/schemas/GuestSessionResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "403": {
@@ -3836,6 +4037,15 @@
                   "$ref": "#/components/schemas/InstrumentWaitlistEntryResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -3913,7 +4123,16 @@
         ],
         "responses": {
           "204": {
-            "description": "Left the waitlist for this instrument"
+            "description": "Left the waitlist for this instrument",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -4005,6 +4224,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SpokenAnswerGrade"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -4124,7 +4352,16 @@
         ],
         "responses": {
           "204": {
-            "description": "Skipped"
+            "description": "Skipped",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -4594,6 +4831,15 @@
                   "$ref": "#/components/schemas/LanguageLevelTestGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -4602,6 +4848,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageLevelTestGeneration"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -4708,6 +4963,15 @@
                   "$ref": "#/components/schemas/LanguageLevelTest"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -4810,6 +5074,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageLevelTestResult"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -4924,6 +5197,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageLevelTestSpokenResult"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -5252,7 +5534,16 @@
         ],
         "responses": {
           "204": {
-            "description": "Dismissed"
+            "description": "Dismissed",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -5356,6 +5647,15 @@
                   "$ref": "#/components/schemas/MistakePatternPracticeResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -5444,6 +5744,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageConversationCreated"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -5694,6 +6003,15 @@
                   "$ref": "#/components/schemas/CompletedLanguageConversation"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -5806,6 +6124,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageConversationSetup"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -5964,6 +6291,15 @@
                   "$ref": "#/components/schemas/LiveCallEndResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -6088,6 +6424,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LiveCallSdpResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -6222,6 +6567,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LanguageConversationObjectiveCheck"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -6382,6 +6736,15 @@
                   "$ref": "#/components/schemas/LiveCallAdmissionInput"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -6460,6 +6823,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LiveCallCloseAllResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -6640,6 +7012,15 @@
                   "$ref": "#/components/schemas/PronunciationAnswerGrade"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -6774,6 +7155,15 @@
                   "$ref": "#/components/schemas/PronunciationRoundResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -6862,6 +7252,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SpeechClip"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -7118,6 +7517,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LearningProfileResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -7433,6 +7841,15 @@
                   "$ref": "#/components/schemas/LibraryLessonCompletion"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -7535,6 +7952,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LibraryLessonRun"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -7659,6 +8085,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AnswerExplanation"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -7795,6 +8230,15 @@
                   "$ref": "#/components/schemas/LessonStepCheckResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -7895,6 +8339,15 @@
                   "$ref": "#/components/schemas/LessonRegeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -7977,6 +8430,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReviewFlagRewrite"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -8209,6 +8671,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -8461,6 +8932,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -8739,6 +9219,15 @@
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -8991,6 +9480,15 @@
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -9241,6 +9739,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -9568,6 +10075,15 @@
                   "$ref": "#/components/schemas/CreatedLessonQuestion"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -9765,6 +10281,15 @@
                   "type": "string",
                   "description": "AI SDK UI message stream. Each data field contains a UI message chunk and the stream ends with a [DONE] event.",
                   "example": "data: {\"type\":\"text-delta\",\"id\":\"answer\",\"delta\":\"An orbit is...\"}\n\n"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -10245,6 +10770,15 @@
                   "$ref": "#/components/schemas/FeedbackResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -10447,6 +10981,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ContentVote"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -10965,7 +11508,16 @@
         },
         "responses": {
           "204": {
-            "description": "Sign-in code sent"
+            "description": "Sign-in code sent",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Request validation failed or a new account uses a temporary email address. Error code: DISPOSABLE_EMAIL_NOT_ALLOWED. Existing accounts and supported privacy aliases remain allowed.",
@@ -11047,6 +11599,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SessionTokenResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -11134,7 +11695,16 @@
         ],
         "responses": {
           "204": {
-            "description": "Current session deleted or already absent"
+            "description": "Current session deleted or already absent",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "403": {
             "description": "Request forbidden",
@@ -11185,6 +11755,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SessionTokenResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -11269,6 +11848,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SessionTokenResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -11459,6 +12047,15 @@
                   "$ref": "#/components/schemas/StepExampleLine"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -11568,6 +12165,15 @@
                   "$ref": "#/components/schemas/AppleSubscriptionResponse"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -11633,7 +12239,16 @@
         },
         "responses": {
           "204": {
-            "description": "Notification reconciled or acknowledged"
+            "description": "Notification reconciled or acknowledged",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request",
@@ -11980,6 +12595,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AreaPractice"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -12380,6 +13004,15 @@
                   "$ref": "#/components/schemas/ChapterTestOutResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -12496,6 +13129,15 @@
                   "$ref": "#/components/schemas/TestOutGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -12507,6 +13149,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -12744,6 +13393,15 @@
                   "$ref": "#/components/schemas/PlacementAnswerResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -12846,6 +13504,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlacementCompletion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -12974,6 +13641,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GoalCreateResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -13170,6 +13846,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GoalUpdateResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -13527,6 +14212,15 @@
                   "additionalProperties": false
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -13638,6 +14332,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AreaPractice"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -13922,6 +14625,15 @@
                   "$ref": "#/components/schemas/PlanChangeResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -14043,6 +14755,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlanChange"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -14241,6 +14962,15 @@
                   "$ref": "#/components/schemas/FocusTestResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -14335,6 +15065,15 @@
                   "$ref": "#/components/schemas/FocusTestGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -14346,6 +15085,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -14477,6 +15223,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OwnLevelChange"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -14685,6 +15440,15 @@
                   "$ref": "#/components/schemas/PlanChangeResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -14864,6 +15628,15 @@
                   "$ref": "#/components/schemas/Goal"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "201": {
@@ -14872,6 +15645,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Goal"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -15106,6 +15888,15 @@
                   "$ref": "#/components/schemas/PlanChangePreview"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -15335,6 +16126,15 @@
                   "$ref": "#/components/schemas/MemorySettings"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -15403,6 +16203,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MemoryChangeReversal"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -15539,6 +16348,15 @@
                   "$ref": "#/components/schemas/MemoryFactDeletion"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -15629,6 +16447,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MemoryFactResponse"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -15796,6 +16623,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MemoryInsightResult"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -16011,6 +16847,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Milestone"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -16308,6 +17153,15 @@
                   "$ref": "#/components/schemas/MindMapGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -16317,6 +17171,13 @@
                 "description": "The run's status URL, once it has one: GET /generations/{generationId}",
                 "schema": {
                   "description": "The run's status URL, once it has one: GET /generations/{generationId}",
+                  "type": "string"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
                   "type": "string"
                 }
               }
@@ -16643,6 +17504,15 @@
                   "$ref": "#/components/schemas/SkillOutlineGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -16652,6 +17522,13 @@
                 "description": "The run's status URL, when this request started one: GET /generations/{generationId}",
                 "schema": {
                   "description": "The run's status URL, when this request started one: GET /generations/{generationId}",
+                  "type": "string"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
                   "type": "string"
                 }
               }
@@ -16883,6 +17760,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MistakePracticeCompletion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -17134,6 +18020,15 @@
                   "$ref": "#/components/schemas/MistakePracticeFeedback"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -17330,6 +18225,15 @@
                   "$ref": "#/components/schemas/AnytimeMock"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "201": {
@@ -17341,6 +18245,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The mock: GET /mocks/{id}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -17474,6 +18385,15 @@
                   "$ref": "#/components/schemas/MockQuestionsGeneration"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -17485,6 +18405,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The run's status URL: GET /generations/{generationId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -17712,6 +18639,15 @@
                   "$ref": "#/components/schemas/MockEssayGrades"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -17826,6 +18762,15 @@
                   "$ref": "#/components/schemas/MockStep"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -17930,6 +18875,15 @@
                   "$ref": "#/components/schemas/MockPlanOfferResult"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -18017,7 +18971,16 @@
         },
         "responses": {
           "204": {
-            "description": "Running"
+            "description": "Running",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -18124,7 +19087,16 @@
         },
         "responses": {
           "204": {
-            "description": "Saved"
+            "description": "Saved",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -18221,7 +19193,16 @@
         ],
         "responses": {
           "204": {
-            "description": "The next section's clock started"
+            "description": "The next section's clock started",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -18323,6 +19304,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MockPlay"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -18451,6 +19441,15 @@
                   "$ref": "#/components/schemas/MockStep"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -18543,6 +19542,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SpeakingSection"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -18657,6 +19665,13 @@
                   "type": "string",
                   "description": "The typed goal's URL: GET /goal-understandings/{understandingId}"
                 }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
               }
             },
             "content": {
@@ -18676,6 +19691,13 @@
                 "schema": {
                   "type": "string",
                   "description": "The typed goal's URL: GET /goal-understandings/{understandingId}"
+                }
+              },
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             },
@@ -18881,6 +19903,15 @@
                   "$ref": "#/components/schemas/OnboardingDraft"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -18985,6 +20016,15 @@
                   "$ref": "#/components/schemas/OnboardingDraft"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "202": {
@@ -18993,6 +20033,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OnboardingDraft"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -19287,6 +20336,15 @@
                   "$ref": "#/components/schemas/Onboarding"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -19500,6 +20558,15 @@
                   "$ref": "#/components/schemas/FreshnessCommand"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -19587,7 +20654,16 @@
         ],
         "responses": {
           "204": {
-            "description": "Dismissed"
+            "description": "Dismissed",
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error",
@@ -19748,6 +20824,15 @@
                   "$ref": "#/components/schemas/MaterialQuestionAnswer"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -19856,6 +20941,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Research"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -20238,6 +21332,15 @@
                   "$ref": "#/components/schemas/Upload"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -20356,6 +21459,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UploadToken"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -20766,6 +21878,15 @@
                   "$ref": "#/components/schemas/StudyAnswerFeedback"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -20890,6 +22011,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StudyBlockCompletion"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -21018,6 +22148,15 @@
                   "$ref": "#/components/schemas/StartedStudyBlock"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -21132,6 +22271,15 @@
                   "$ref": "#/components/schemas/StudySession"
                 }
               }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
             }
           },
           "400": {
@@ -21234,6 +22382,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StudyBlock"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -21348,6 +22505,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StudySessionSummary"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }
@@ -21535,6 +22701,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SuggestedGoalResult"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
                 }
               }
             }

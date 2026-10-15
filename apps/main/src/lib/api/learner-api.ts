@@ -11,7 +11,7 @@ const API_ORIGIN = new URL(API_URL).origin;
  * reached) with the error body, so callers can tell a learner who should slow down from a failure.
  */
 export type LearnerApiResponse =
-  | { json: unknown; ok: true }
+  | { json: unknown; learnerRevision: string | null; ok: true }
   | { json: unknown; ok: false; status: number | null };
 
 /**
@@ -48,7 +48,7 @@ export async function postAsLearner({
       return { json, ok: false, status: response.status };
     }
 
-    return { json, ok: true };
+    return { json, learnerRevision: response.headers.get("Learner-Revision"), ok: true };
   } catch (error) {
     logError("[postAsLearner] Failed to reach the API:", error);
     return { json: null, ok: false, status: null };
