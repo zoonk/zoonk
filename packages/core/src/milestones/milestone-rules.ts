@@ -7,7 +7,8 @@ import { getBuddyStage } from "@zoonk/utils/buddy";
  * Glasses: Round comes with the buddy, Star for the first boss beaten, Aviator for the first Big
  * Challenge, Cat-eye for seven days with all three missions done, Retro for fifty capsules opened
  * and Monocle for the final boss. Badges ("Trap hunter" for a boss won) go to the logbook. A new
- * belt color and the buddy's next stage are celebrated once each.
+ * belt color and the buddy's next stage are celebrated once each. The reader saturates these
+ * internal counts at GLASSES_TARGETS; they are not exact lifetime totals.
  */
 export type MilestoneCounts = {
   bigChallenges: number;
@@ -19,16 +20,20 @@ export type MilestoneCounts = {
 
 type EarnedGlasses = Exclude<BuddyGlasses, "round">;
 
-const GLASSES_RULES: readonly {
-  glasses: EarnedGlasses;
-  metric: keyof MilestoneCounts;
-  target: number;
-}[] = [
-  { glasses: "star", metric: "bossesWon", target: 1 },
-  { glasses: "aviator", metric: "bigChallenges", target: 1 },
-  { glasses: "catEye", metric: "fullMeals", target: 7 },
-  { glasses: "retro", metric: "capsulesOpened", target: 50 },
-  { glasses: "monocle", metric: "finalBossesWon", target: 1 },
+export const GLASSES_TARGETS = {
+  bigChallenges: 1,
+  bossesWon: 1,
+  capsulesOpened: 50,
+  finalBossesWon: 1,
+  fullMeals: 7,
+} as const satisfies Readonly<Record<keyof MilestoneCounts, number>>;
+
+const GLASSES_RULES: readonly { glasses: EarnedGlasses; metric: keyof MilestoneCounts }[] = [
+  { glasses: "star", metric: "bossesWon" },
+  { glasses: "aviator", metric: "bigChallenges" },
+  { glasses: "catEye", metric: "fullMeals" },
+  { glasses: "retro", metric: "capsulesOpened" },
+  { glasses: "monocle", metric: "finalBossesWon" },
 ];
 
 export type GlassesProgress = {
@@ -42,12 +47,16 @@ export type GlassesProgress = {
 export function getGlassesProgress(counts: MilestoneCounts): GlassesProgress[] {
   return [
     { current: 0, earned: true, glasses: "round", target: 0 },
-    ...GLASSES_RULES.map((rule) => ({
-      current: Math.min(counts[rule.metric], rule.target),
-      earned: counts[rule.metric] >= rule.target,
-      glasses: rule.glasses,
-      target: rule.target,
-    })),
+    ...GLASSES_RULES.map(({ glasses, metric }) => {
+      const target = GLASSES_TARGETS[metric];
+
+      return {
+        current: Math.min(counts[metric], target),
+        earned: counts[metric] >= target,
+        glasses,
+        target,
+      };
+    }),
   ];
 }
 

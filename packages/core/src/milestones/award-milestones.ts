@@ -8,6 +8,7 @@ import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rule
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { type BrainPowerReward } from "./milestone-reward";
 import {
+  GLASSES_TARGETS,
   type MilestoneAward,
   type MilestoneCounts,
   getCrossedMilestones,
@@ -22,7 +23,7 @@ class MilestoneAwardUnchangedError extends Error {
   override name = "MilestoneAwardUnchangedError";
 }
 
-/** Counts what glasses are earned from, all from learner rows that outlive content. */
+/** Counts toward glasses targets, saturated at each target, from rows that outlive content. */
 export async function loadMilestoneCounts(userId: string): Promise<MilestoneCounts> {
   const [bosses, bigChallenges, capsulesOpened, fullMeals] = await Promise.all([
     prisma.learningEvent.findMany({
@@ -35,9 +36,11 @@ export async function loadMilestoneCounts(userId: string): Promise<MilestoneCoun
       },
     }),
     prisma.learningEvent.count({
+      take: GLASSES_TARGETS.bigChallenges,
       where: { endedAt: { not: null }, lessonKind: CHECKPOINT_LEDGER_KINDS.weekly, userId },
     }),
     prisma.learningEvent.count({
+      take: GLASSES_TARGETS.capsulesOpened,
       where: { kind: "review", lessonKind: CAPSULE_LEDGER_KIND, userId },
     }),
     prisma.studySession.count({ where: { fullMealAt: { not: null }, userId } }),
@@ -52,11 +55,13 @@ export async function loadMilestoneCounts(userId: string): Promise<MilestoneCoun
 
   return {
     bigChallenges,
-    bossesWon: won.length,
+    bossesWon: Math.min(won.length, GLASSES_TARGETS.bossesWon),
     capsulesOpened,
-    finalBossesWon: won.filter((boss) => boss.lessonKind === CHECKPOINT_LEDGER_KINDS.finalBoss)
-      .length,
-    fullMeals,
+    finalBossesWon: Math.min(
+      won.filter((boss) => boss.lessonKind === CHECKPOINT_LEDGER_KINDS.finalBoss).length,
+      GLASSES_TARGETS.finalBossesWon,
+    ),
+    fullMeals: Math.min(fullMeals, GLASSES_TARGETS.fullMeals),
   };
 }
 
