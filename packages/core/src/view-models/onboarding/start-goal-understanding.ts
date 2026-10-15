@@ -1,9 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
+import { writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { allowDateSearch } from "./_utils/date-search";
 import { completeDraft, toDraftView } from "./_utils/onboarding-draft";
@@ -55,14 +55,16 @@ export async function startGoalUnderstanding(
     return usage;
   }
 
-  const draft = await prisma.onboardingDraft.create({
-    data: {
-      language: input.language,
-      prompt: input.goal,
-      timeZone: input.timeZone ?? "UTC",
-      userId: session.user.id,
-    },
-  });
+  const draft = await writeLearnerChange({ userId: session.user.id }, (tx) =>
+    tx.onboardingDraft.create({
+      data: {
+        language: input.language,
+        prompt: input.goal,
+        timeZone: input.timeZone ?? "UTC",
+        userId: session.user.id,
+      },
+    }),
+  );
 
   if (!cached) {
     return { draft: toDraftView({ draft, goalId: null }), status: "understanding" };

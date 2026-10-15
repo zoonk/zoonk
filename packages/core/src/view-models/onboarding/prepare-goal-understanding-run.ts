@@ -1,9 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { allowDateSearch } from "./_utils/date-search";
 import { completeDraft, findOwnedDraft, loadDraftView } from "./_utils/onboarding-draft";
@@ -72,11 +72,22 @@ export async function prepareGoalUnderstandingRun({
 
   const ready =
     draft.status === "failed"
-      ? await prisma.onboardingDraft.update({
-          data: { status: "understanding" },
-          where: { id: draft.id },
+      ? await writeLearnerChange({ userId: session.user.id }, async (tx) => {
+          const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
+
+          if (current.status !== "failed") {
+            return unchanged(current);
+          }
+
+          return tx.onboardingDraft.update({
+            data: { status: "understanding" },
+            where: { id: draft.id },
+          });
         })
       : draft;
 
-  return { draft: await loadDraftView(ready), status: "start" };
+  return {
+    draft: await loadDraftView(ready),
+    status: ready.status === "understood" ? "understood" : "start",
+  };
 }

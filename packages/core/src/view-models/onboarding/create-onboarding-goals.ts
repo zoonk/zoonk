@@ -1,7 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { type GoalCreateResult, createGoals } from "../../goals/create-goals";
 import { type GoalCreateInput } from "../../goals/goal-contract";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 
 /**
@@ -20,9 +20,13 @@ export async function createOnboardingGoals(input: GoalCreateInput): Promise<Goa
     const session = await getSession();
 
     if (session) {
-      await prisma.learnerSource.updateMany({
-        data: { goalId: main.id },
-        where: { goalId: null, sourceId: { in: input.sourceIds }, userId: session.user.id },
+      await writeLearnerChange({ userId: session.user.id }, async (tx) => {
+        const { count } = await tx.learnerSource.updateMany({
+          data: { goalId: main.id },
+          where: { goalId: null, sourceId: { in: input.sourceIds }, userId: session.user.id },
+        });
+
+        return count === 0 ? unchanged(null) : null;
       });
     }
   }

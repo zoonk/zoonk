@@ -1,5 +1,7 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type OnboardingDraft, prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { assertTargetDates } from "../../plans/target-date-range";
 import { getSession } from "../../users/get-session";
 import {
@@ -60,14 +62,50 @@ async function applyEdit({
   }
 
   // Saved only over the version it was computed from, so two quick fixes can't undo each other.
-  const saved = await prisma.onboardingDraft.updateMany({
-    data: { understanding: revised },
-    where: { id: draft.id, updatedAt: draft.updatedAt },
+  const saved = await writeLearnerChange({ userId: draft.userId }, async (tx) => {
+    const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
+
+    if (
+      current.updatedAt.getTime() !== draft.updatedAt.getTime() ||
+      !isDeepStrictEqual(current.understanding, draft.understanding)
+    ) {
+      return unchanged(false);
+    }
+
+    if (await findDraftGoalId(draft, tx)) {
+      return unchanged(false);
+    }
+
+    const { count } = await tx.onboardingDraft.updateMany({
+      data: { understanding: revised },
+      where: {
+        NOT: { understanding: { equals: revised } },
+        id: draft.id,
+        status: "understood",
+        updatedAt: draft.updatedAt,
+        userId: draft.userId,
+      },
+    });
+
+    if (count > 0) {
+      return true;
+    }
+
+    const same = await tx.onboardingDraft.findFirst({
+      where: {
+        id: draft.id,
+        status: "understood",
+        understanding: { equals: revised },
+        updatedAt: draft.updatedAt,
+      },
+    });
+
+    return unchanged(Boolean(same));
   });
 
   const current = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
 
-  if (saved.count > 0) {
+  if (saved) {
     return { draft: toDraftView({ draft: current, goalId: null }), status: "revised" };
   }
 

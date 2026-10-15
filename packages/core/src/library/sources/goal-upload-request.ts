@@ -4,6 +4,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
 
@@ -75,7 +76,15 @@ export async function dismissGoalUploadRequest({
     return owned;
   }
 
-  await prisma.goal.update({ data: { researchUploadReason: null }, where: { id: goalId } });
+  await writeLearnerChange({ userId: owned.userId }, async (tx) => {
+    const { count } = await tx.goal.updateMany({
+      data: { researchUploadReason: null },
+      where: { id: goalId, researchUploadReason: { not: null }, userId: owned.userId },
+    });
+
+    return count === 0 ? unchanged(null) : null;
+  });
+
   revalidateCacheTags([getGoalsCacheTag(owned.userId)]);
 
   return { status: "dismissed" };
@@ -106,14 +115,14 @@ export async function answerGoalUploadRequest({
 
   const userId = session.user.id;
 
-  const answered = await prisma.$transaction(async (transaction) => {
+  const answered = await writeLearnerChange({ userId }, async (transaction) => {
     const { count } = await transaction.goal.updateMany({
       data: { researchUploadReason: null },
-      where: { id: goalId, researchUploadReason: { not: null } },
+      where: { id: goalId, researchUploadReason: { not: null }, userId },
     });
 
     if (count === 0) {
-      return false;
+      return unchanged(false);
     }
 
     await transaction.learnerSource.createMany({
@@ -165,8 +174,24 @@ export async function recordGoalResearchOutcome({
   goalId: string;
   uploadReason: ResearchUploadReason | null;
 }): Promise<void> {
-  await prisma.goal.updateMany({
-    data: { researchUploadReason: uploadReason },
-    where: { id: goalId },
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return;
+  }
+
+  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findFirst({ where: { id: goalId, userId: goal.userId } });
+
+    if (!current || current.researchUploadReason === uploadReason) {
+      return unchanged(null);
+    }
+
+    const { count } = await tx.goal.updateMany({
+      data: { researchUploadReason: uploadReason },
+      where: { id: goalId, userId: goal.userId },
+    });
+
+    return count === 0 ? unchanged(null) : null;
   });
 }

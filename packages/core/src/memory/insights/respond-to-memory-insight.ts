@@ -1,8 +1,9 @@
 import "server-only";
-import { type MemoryInsight, prisma } from "@zoonk/db";
+import { type MemoryInsight, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getMemoryCacheTag } from "../../cache/tags";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getSession } from "../../users/get-session";
 import { type MemoryInsightAnswerInput, type MemoryInsightView } from "../memory-contract";
@@ -20,16 +21,20 @@ type Answer = MemoryInsightAnswerInput["status"];
 
 /** Accepting a schedule idea moves the goal's study time to the suggested one. */
 async function moveStudyTime({
+  transaction,
   goalId,
   studyTime,
   userId,
 }: {
+  transaction: TransactionClient;
   goalId: string;
   studyTime: string;
   userId: string;
 }): Promise<void> {
-  await prisma.goal.updateMany({ data: { studyTime }, where: { id: goalId, userId } });
-  revalidateCacheTags([getGoalsCacheTag(userId)]);
+  await transaction.goal.updateMany({
+    data: { studyTime },
+    where: { OR: [{ studyTime: null }, { studyTime: { not: studyTime } }], id: goalId, userId },
+  });
 }
 
 /**
@@ -59,18 +64,12 @@ async function applyAnswer({
   answer,
   goalId,
   insight,
-  userId,
 }: {
   answer: Answer;
   goalId: string;
   insight: MemoryInsight;
-  userId: string;
 }): Promise<void> {
   const payload = readInsightPayload(insight.payload);
-
-  if (insight.kind === "scheduleIdea" && answer === "accepted" && payload.studyTime) {
-    await moveStudyTime({ goalId, studyTime: payload.studyTime, userId });
-  }
 
   const decision = insight.kind === "planChange" ? getPlanDecision({ answer, payload }) : null;
 
@@ -116,12 +115,36 @@ export async function respondToMemoryInsight({
   }
 
   if (insight.goalId) {
-    await applyAnswer({ answer: input.status, goalId: insight.goalId, insight, userId });
+    await applyAnswer({ answer: input.status, goalId: insight.goalId, insight });
   }
 
-  const { count } = await prisma.memoryInsight.updateMany({
-    data: { respondedAt: new Date(), status: input.status },
-    where: { id: insightId, status: "pending" },
+  const count = await writeLearnerChange({ userId }, async (tx) => {
+    const saved = await tx.memoryInsight.updateMany({
+      data: { respondedAt: new Date(), status: input.status },
+      where: { id: insightId, status: "pending", userId },
+    });
+
+    if (saved.count === 0) {
+      return unchanged(0);
+    }
+
+    const payload = readInsightPayload(insight.payload);
+
+    if (
+      insight.goalId &&
+      insight.kind === "scheduleIdea" &&
+      input.status === "accepted" &&
+      payload.studyTime
+    ) {
+      await moveStudyTime({
+        goalId: insight.goalId,
+        studyTime: payload.studyTime,
+        transaction: tx,
+        userId,
+      });
+    }
+
+    return saved.count;
   });
 
   if (count === 0) {
@@ -129,6 +152,10 @@ export async function respondToMemoryInsight({
   }
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);
+
+  if (insight.goalId && insight.kind === "scheduleIdea" && input.status === "accepted") {
+    revalidateCacheTags([getGoalsCacheTag(userId)]);
+  }
 
   const updated = await prisma.memoryInsight.findUniqueOrThrow({ where: { id: insightId } });
   const view = toMemoryInsightView(updated);

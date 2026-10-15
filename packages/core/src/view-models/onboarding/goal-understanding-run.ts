@@ -4,6 +4,7 @@ import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/v2/goals/understand-goal";
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { saveUnderstanding } from "./_utils/understanding-cache";
 import { getLearnerToday } from "./_utils/understanding-view";
@@ -42,7 +43,24 @@ export async function recordUnderstandingRun({
   draftId: string;
   runId: string;
 }): Promise<void> {
-  await prisma.onboardingDraft.updateMany({ data: { runId }, where: { id: draftId } });
+  const draft = await prisma.onboardingDraft.findUnique({ where: { id: draftId } });
+
+  if (!draft) {
+    return;
+  }
+
+  await writeLearnerChange({ userId: draft.userId }, async (tx) => {
+    const { count } = await tx.onboardingDraft.updateMany({
+      data: { runId },
+      where: {
+        OR: [{ runId: null }, { runId: { not: runId } }],
+        id: draftId,
+        userId: draft.userId,
+      },
+    });
+
+    return count === 0 ? unchanged(null) : null;
+  });
 }
 
 /**
@@ -116,8 +134,18 @@ export async function completeUnderstandingDraft({
 
 /** The words couldn't be read: the learner sees it and can try again. */
 export async function failUnderstandingDraft(draftId: string): Promise<void> {
-  await prisma.onboardingDraft.updateMany({
-    data: { status: "failed" },
-    where: { id: draftId, status: "understanding" },
+  const draft = await prisma.onboardingDraft.findUnique({ where: { id: draftId } });
+
+  if (!draft) {
+    return;
+  }
+
+  await writeLearnerChange({ userId: draft.userId }, async (tx) => {
+    const { count } = await tx.onboardingDraft.updateMany({
+      data: { status: "failed" },
+      where: { id: draftId, status: "understanding", userId: draft.userId },
+    });
+
+    return count === 0 ? unchanged(null) : null;
   });
 }

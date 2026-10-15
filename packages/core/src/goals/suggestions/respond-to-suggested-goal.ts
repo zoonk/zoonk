@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { suggestedGoalViewSelect, toSuggestedGoalView } from "./_utils/suggested-goal-view";
 import { type SuggestedGoalAnswerInput, type SuggestedGoalView } from "./suggested-goal-contract";
@@ -35,9 +36,13 @@ export async function respondToSuggestedGoal({
 
   const userId = session.user.id;
 
-  const { count } = await prisma.suggestedGoal.updateMany({
-    data: { respondedAt: new Date(), status: input.status },
-    where: { id: suggestionId, status: "pending", userId },
+  const count = await writeLearnerChange({ userId }, async (tx) => {
+    const saved = await tx.suggestedGoal.updateMany({
+      data: { respondedAt: new Date(), status: input.status },
+      where: { id: suggestionId, status: "pending", userId },
+    });
+
+    return saved.count === 0 ? unchanged(0) : saved.count;
   });
 
   const suggestion = await prisma.suggestedGoal.findFirst({

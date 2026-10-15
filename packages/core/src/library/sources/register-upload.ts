@@ -5,6 +5,7 @@ import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isOwnUploadPathname } from "./create-upload-token";
@@ -38,10 +39,13 @@ async function linkLearnerSource({
   sourceId: string;
   userId: string;
 }) {
-  await prisma.learnerSource.upsert({
-    create: { goalId, origin: "upload", sourceId, userId },
-    update: {},
-    where: { learnerSource: { sourceId, userId } },
+  await writeLearnerChange({ userId }, async (tx) => {
+    const { count } = await tx.learnerSource.createMany({
+      data: { goalId, origin: "upload", sourceId, userId },
+      skipDuplicates: true,
+    });
+
+    return count === 0 ? unchanged(null) : null;
   });
 }
 
@@ -82,27 +86,40 @@ function createPrivateSource({
 
   const title = input.title?.trim() || getDefaultTitle(input);
 
-  // Concurrent registrations of one file by one learner land on the same row.
-  return prisma.source.upsert({
-    create: {
-      blobUrl: content.blobUrl,
-      contentHash: content.hash,
-      extractedText: content.parsed.text,
-      fetchedAt: new Date(),
-      id,
-      identityKey,
-      kind: "upload",
-      language: input.language,
-      mimeType: content.contentType,
-      ownerId: userId,
-      structure: { images: content.parsed.images.length, pages: content.parsed.pages, topic: null },
-      title,
-      url: content.url ?? null,
-      visibility: "private",
-    },
-    omit: { extractedText: true },
-    update: {},
-    where: { languageIdentity: { identityKey, language: input.language } },
+  // The marker serializes registrations of one file by one learner before their source write.
+  return writeLearnerChange({ userId }, async (tx) => {
+    const stored = await tx.source.findUnique({
+      omit: { extractedText: true },
+      where: { languageIdentity: { identityKey, language: input.language } },
+    });
+
+    if (stored) {
+      return unchanged(stored);
+    }
+
+    return tx.source.create({
+      data: {
+        blobUrl: content.blobUrl,
+        contentHash: content.hash,
+        extractedText: content.parsed.text,
+        fetchedAt: new Date(),
+        id,
+        identityKey,
+        kind: "upload",
+        language: input.language,
+        mimeType: content.contentType,
+        ownerId: userId,
+        structure: {
+          images: content.parsed.images.length,
+          pages: content.parsed.pages,
+          topic: null,
+        },
+        title,
+        url: content.url ?? null,
+        visibility: "private",
+      },
+      omit: { extractedText: true },
+    });
   });
 }
 
