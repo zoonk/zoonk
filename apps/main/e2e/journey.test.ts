@@ -837,7 +837,13 @@ test.describe("Journey", () => {
       // The weekdays change on their own, and the weekend keeps what she gave it. The editor saves
       // one change at a time: the weekend's is saved before the page shows it.
       const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
-      await expect(minutes.locator("xpath=..")).toHaveAttribute("aria-busy", "false");
+
+      // The presets are busy while a change saves, and a tap on them then does nothing.
+      const presets = editor.locator("[aria-busy]", {
+        has: page.getByRole("radiogroup", { name: "Time a day" }),
+      });
+
+      await expect(presets).toHaveAttribute("aria-busy", "false");
       await minutes.getByText("45 min", { exact: true }).click();
 
       await expect.poll(loadWeek).toStrictEqual([120, ...weekdays.map(() => 45), 120]);
@@ -846,7 +852,7 @@ test.describe("Journey", () => {
 
       // Switched off once the change is saved, the weekend goes back to the weekdays' new time.
       await expect(minutes.getByRole("radio", { name: /^45 min/u })).toBeChecked();
-      await expect(minutes.locator("xpath=..")).toHaveAttribute("aria-busy", "false");
+      await expect(presets).toHaveAttribute("aria-busy", "false");
       await toggle.click();
       await expect(weekend).toBeHidden();
       await expect.poll(loadWeek).toBeNull();
