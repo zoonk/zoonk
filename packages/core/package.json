@@ -123,6 +123,7 @@
     "./goals/create": "./src/goals/create-goals.ts",
     "./goals/get": "./src/goals/get-goal.ts",
     "./goals/list-current-user": "./src/goals/list-current-user-goals.ts",
+    "./goals/owned-goal": "./src/learner/get-owned-goal.ts",
     "./goals/record-generation": "./src/goals/record-goal-generation.ts",
     "./goals/research": "./src/goals/goal-research.ts",
     "./goals/start-course": "./src/goals/start-course-goal.ts",

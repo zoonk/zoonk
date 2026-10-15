@@ -2,7 +2,8 @@ import { AuthGatePage } from "@/components/auth-gate";
 import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getReadAt } from "@/lib/learn/read-at";
-import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
+import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
+import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
 import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { countCurrentUserMemory } from "@zoonk/core/memory/count";
@@ -23,11 +24,22 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Your buddy") };
 }
 
-/** The goal the buddy tutors: the active one, unless it's a quick explanation. */
+/** The selected, non-archived goal the buddy tutors, unless it's a quick explanation. */
 async function findTutoredGoal() {
-  const list = await listCurrentUserGoals();
-  const goal = list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
-  return goal && goal.kind !== "explain" ? goal : null;
+  const goalId = await getActiveGoalId();
+
+  if (!goalId) {
+    return null;
+  }
+
+  const owned = await getOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return null;
+  }
+
+  const { goal } = owned;
+  return goal.status !== "archived" && goal.kind !== "explain" ? goal : null;
 }
 
 /** A conversation not started yet: the tab opens to the greeting and the suggestions. */
