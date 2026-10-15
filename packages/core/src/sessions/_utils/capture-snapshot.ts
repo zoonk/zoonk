@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type UserProgress, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../preparation/section-preparation";
@@ -41,14 +41,19 @@ async function measureGoal({
 /** The learner's Energy (decayed through inactive days) and Brain Power total right now. */
 export async function measureProgress({
   now,
+  progress: providedProgress,
   timeZone,
   userId,
 }: {
   now: Date;
+  progress?: UserProgress | null | Promise<UserProgress | null>;
   timeZone: string;
   userId: string;
 }): Promise<{ brainPower: number; energy: number }> {
-  const progress = await prisma.userProgress.findUnique({ where: { userId } });
+  const progress =
+    providedProgress === undefined
+      ? await prisma.userProgress.findUnique({ where: { userId } })
+      : await providedProgress;
 
   if (!progress) {
     return { brainPower: 0, energy: 0 };

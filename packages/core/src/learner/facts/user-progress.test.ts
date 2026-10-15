@@ -64,6 +64,42 @@ describe("persisted user progress request fact", () => {
     await expect(getUserProgress()).rejects.toBe(error);
   });
 
+  it.each(["row", "promise", "null", "null promise"] as const)(
+    "measures a supplied %s without re-reading progress",
+    async (kind) => {
+      const user = await userFixture();
+
+      await userProgressFixture({
+        currentEnergy: 60,
+        lastActiveAt: INSTANT,
+        totalBrainPower: 1000n,
+        userId: user.id,
+      });
+
+      const fact = await readUserProgress(user.id);
+
+      await prisma.userProgress.update({
+        data: { currentEnergy: 90, totalBrainPower: 3000n },
+        where: { userId: user.id },
+      });
+
+      const supplied = kind === "null" || kind === "null promise" ? null : fact;
+
+      const progress =
+        kind === "promise" || kind === "null promise" ? Promise.resolve(supplied) : supplied;
+
+      const measured = await countDatabaseStatements(() =>
+        measureProgress({ now: INSTANT, progress, timeZone: "UTC", userId: user.id }),
+      );
+
+      expect(measured).toStrictEqual({
+        result: supplied ? { brainPower: 1000, energy: 60 } : { brainPower: 0, energy: 0 },
+        statements: 0,
+        writes: 0,
+      });
+    },
+  );
+
   it("keeps the existing metrics and snapshot default fresh after a GET snapshot", async () => {
     const user = await userFixture();
 
@@ -102,6 +138,21 @@ describe("persisted user progress request fact", () => {
 
     expect(snapshot).toMatchObject({
       result: { brainPower: 3000, energy: 90 },
+      statements: 1,
+      writes: 0,
+    });
+
+    await prisma.userProgress.update({
+      data: { currentEnergy: 95, totalBrainPower: 4000n },
+      where: { userId: user.id },
+    });
+
+    const explicitDefault = await countDatabaseStatements(() =>
+      measureProgress({ now: INSTANT, progress: undefined, timeZone: "UTC", userId: user.id }),
+    );
+
+    expect(explicitDefault).toStrictEqual({
+      result: { brainPower: 4000, energy: 95 },
       statements: 1,
       writes: 0,
     });
