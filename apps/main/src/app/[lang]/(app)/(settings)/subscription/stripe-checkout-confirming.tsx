@@ -7,6 +7,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
+import { hasPlusSubscriptionAction } from "./subscription-status-action";
 
 /** Stripe's webhook usually saves the subscription within seconds of the return. */
 const CONFIRMATION_POLL_MS = 3000;
@@ -15,8 +16,9 @@ const CONFIRMATION_TIMEOUT_MS = 45_000;
 
 /**
  * Back from Stripe before its webhook saved the subscription: the page says it's confirming and
- * reads itself again until the subscription shows, when the plan replaces this. After a while it
- * says it's still confirming, with a way to check again, never the offer they just paid for.
+ * asks whether the subscription is saved until it is, then reads itself, and the plan replaces
+ * this. After a while it says it's still confirming, with a way to check again, never
+ * the offer they just paid for.
  */
 export function StripeCheckoutConfirming() {
   const t = useExtracted();
@@ -25,7 +27,11 @@ export function StripeCheckoutConfirming() {
   const poll = usePoll({
     active: true,
     intervalMs: CONFIRMATION_POLL_MS,
-    onPoll: () => router.refresh(),
+    onPoll: async () => {
+      if (await hasPlusSubscriptionAction()) {
+        router.refresh();
+      }
+    },
     timeoutMs: CONFIRMATION_TIMEOUT_MS,
   });
 

@@ -318,6 +318,23 @@ test.describe("Subscription Page - Back From Checkout", () => {
     browser,
   }) => {
     const { confirm, context, page } = await openBackFromCheckout(browser);
+    const checks: string[] = [];
+    const refreshes: string[] = [];
+
+    page.on("request", (request) => {
+      const headers = request.headers();
+
+      if (!new URL(request.url()).pathname.endsWith("/subscription")) {
+        return;
+      }
+
+      if (headers["next-action"]) {
+        checks.push(request.url());
+      } else if (headers.rsc === "1" && !headers["next-router-prefetch"]) {
+        refreshes.push(request.url());
+      }
+    });
+
     await page.goto("/subscription?stripe_checkout=complete");
 
     await expect(
@@ -325,6 +342,11 @@ test.describe("Subscription Page - Back From Checkout", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+
+    // While the webhook hasn't saved it, the page asks about the subscription alone, never reading
+    // the whole page again.
+    await expect.poll(() => checks.length).toBeGreaterThan(0);
+    expect(refreshes).toStrictEqual([]);
 
     await confirm();
 
@@ -340,17 +362,12 @@ test.describe("Subscription Page - Back From Checkout", () => {
     const { confirm, context, page } = await openBackFromCheckout(browser);
     await page.clock.install();
 
-    // The page asks again (a refresh, not a prefetch) once it's live: only then time can jump.
-    const firstCheck = page.waitForRequest((check) => {
-      const headers = check.headers();
-      const { pathname } = new URL(check.url());
-
-      return (
-        pathname.endsWith("/subscription") &&
-        headers.rsc === "1" &&
-        !headers["next-router-prefetch"]
-      );
-    });
+    // The page asks about the subscription once it's live: only then time can jump.
+    const firstCheck = page.waitForRequest(
+      (check) =>
+        new URL(check.url()).pathname.endsWith("/subscription") &&
+        Boolean(check.headers()["next-action"]),
+    );
 
     await page.goto("/subscription?stripe_checkout=complete");
     await firstCheck;
