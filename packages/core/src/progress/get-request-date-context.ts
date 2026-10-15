@@ -3,6 +3,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag } from "../cache/tags";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { getSession } from "../users/get-session";
 
 const DEFAULT_TIME_ZONE = "UTC";
@@ -18,7 +19,7 @@ export async function getRequestProgressDateContext(): Promise<RequestProgressDa
   "use cache: private";
 
   const session = await getSession();
-  const currentInstant = new Date();
+  const currentInstant = await getRequestInstant();
 
   if (session) {
     cacheTag(getGoalsCacheTag(session.user.id));

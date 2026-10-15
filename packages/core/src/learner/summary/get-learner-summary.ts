@@ -22,6 +22,7 @@ import { countReadyMistakesByDay } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
+import { getRequestInstant } from "../facts/request-instant";
 import { type LearnerFacts, loadLearnerFacts } from "./_utils/load-learner-facts";
 import { loadActiveGoalDay } from "./_utils/summary-day";
 import { getNextChangeAt, getSummaryProgress } from "./_utils/summary-progress";
@@ -204,7 +205,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     return null;
   }
 
-  const now = new Date();
+  const now = await getRequestInstant();
 
   const [profile, goals, subscription, sessions, phaseFacts, facts] = await Promise.all([
     prisma.userLearningProfile.findUnique({ where: { userId } }),

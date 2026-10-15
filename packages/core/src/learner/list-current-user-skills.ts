@@ -7,6 +7,7 @@ import { type GoalSkillNode } from "./_utils/goal-skill-graph";
 import { readGoalPlan } from "./_utils/read-goal-plan";
 import { type SkillStatus, toSkillStatus } from "./_utils/skill-status";
 import { type SkillListInput } from "./contract";
+import { getRequestInstant } from "./facts/request-instant";
 import { getOwnedGoal } from "./get-owned-goal";
 import { type SkillStateCounts, countSkillStates } from "./mastery-state";
 
@@ -122,7 +123,7 @@ export async function listCurrentUserSkills(input: SkillListInput): Promise<Curr
     }
   }
 
-  const now = new Date();
+  const now = await getRequestInstant();
 
   const cards = input.goalId
     ? await loadGoalCards({ goalId: input.goalId, now, userId })

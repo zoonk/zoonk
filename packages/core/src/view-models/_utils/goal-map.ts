@@ -6,6 +6,7 @@ import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-chall
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
@@ -113,7 +114,7 @@ export async function loadGoalMap({
 }: {
   goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "timezone" | "userId">;
 }): Promise<GoalMap> {
-  const now = new Date();
+  const now = await getRequestInstant();
   const today = getDateInTimeZone({ date: now, timeZone: getAnswerTimeZone({ goal }) });
 
   const [graph, rows, todayBlocks] = await Promise.all([

@@ -7,6 +7,7 @@ import { loadGoalSkillIds } from "./_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "./_utils/local-time";
 import { getAnswerTimeZone } from "./_utils/owned-goal";
 import { type ReviewScheduleInput } from "./contract";
+import { getRequestInstant } from "./facts/request-instant";
 import { getSkillRetrievability } from "./fsrs-scheduler";
 import { getOwnedGoal } from "./get-owned-goal";
 import {
@@ -82,7 +83,7 @@ export async function getCurrentUserReviewSchedule(
     return { status: "notFound" };
   }
 
-  const now = new Date();
+  const now = await getRequestInstant();
   const timeZone = getAnswerTimeZone({ goal: scope.goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
 

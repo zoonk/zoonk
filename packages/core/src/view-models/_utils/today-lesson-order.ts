@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { readBlockPayload } from "../../sessions/block-payload";
 
@@ -13,7 +14,10 @@ import { readBlockPayload } from "../../sessions/block-payload";
 export async function loadTodayLearnBlocks(
   goal: Pick<Goal, "id" | "timezone" | "userId">,
 ): Promise<TodayLearnBlock[]> {
-  const localDate = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+  const localDate = getDateInTimeZone({
+    date: await getRequestInstant(),
+    timeZone: getAnswerTimeZone({ goal }),
+  });
 
   const session = await prisma.studySession.findUnique({
     select: {

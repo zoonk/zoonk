@@ -8,6 +8,7 @@ import { readLiveCallAdmission } from "../../language/conversations/_utils/live-
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
@@ -212,16 +213,19 @@ export async function getExamView({
     return { status: "notExam" };
   }
 
-  const blueprint = goal.examBlueprintId ? await readExamBlueprint(goal.examBlueprintId) : null;
+  const [blueprint, now] = await Promise.all([
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+    getRequestInstant(),
+  ]);
 
   const calendar = getExamCalendar({ blueprint, goal });
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
-  const today = getDateInTimeZone({ date: new Date(), timeZone });
+  const today = getDateInTimeZone({ date: now, timeZone });
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
   const scale = getExamScale({ blueprint, goal });
 
   const [inputs, allowance] = await Promise.all([
-    loadPreparationInputs({ goalId, now: new Date(), userId }),
+    loadPreparationInputs({ goalId, now, userId }),
     getAllowance(),
   ]);
 

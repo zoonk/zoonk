@@ -2,6 +2,7 @@ import "server-only";
 import { type SourceChangeNotice, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { NOTICE_SOURCE } from "../../plans/plan-change-contract";
 import { getSession } from "../../users/get-session";
@@ -109,7 +110,8 @@ export async function listGoalChangeNotices({
     return { status: "notFound" };
   }
 
-  const since = getNewsStart({ goal, now: Date.now() });
+  const now = await getRequestInstant();
+  const since = getNewsStart({ goal, now: now.getTime() });
 
   const [notices, answered] = await Promise.all([
     prisma.sourceChangeNotice.findMany({

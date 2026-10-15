@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { loadMemoryExport } from "../memory/_utils/memory-export";
 import { findLearningProfileView } from "../profile/_utils/learning-profile-view";
 import {
@@ -118,7 +119,7 @@ export async function exportCurrentUserData() {
     account,
     answers: { attempts },
     buddy,
-    exportedAt: new Date(),
+    exportedAt: await getRequestInstant(),
     feedback: { contentVotes, messages: feedbackMessages },
     goals,
     language,
