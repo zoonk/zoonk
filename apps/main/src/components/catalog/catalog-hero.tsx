@@ -1,13 +1,13 @@
 import { getExtracted } from "next-intl/server";
 
 /*
- * The lines of a catalog page's first screen, in one place for the pages and their skeleton
- * (`CatalogPageSkeleton`), so the words land where their placeholders were.
+ * The lines of a catalog page's first screen, in one place for the course, chapter and lesson
+ * pages.
  */
 
 /**
  * A course's first screen: the course on the left and its example plan beside it from `xl`, under
- * it before; the course alone when it has no plan to show. Its skeleton lays out the same.
+ * it before; the course alone when it has no plan to show.
  */
 export const COURSE_HERO_CLASS =
   "max-w-wide grid grid-cols-1 gap-9 xl:items-start xl:gap-12 xl:has-[[data-slot=course-plan]]:grid-cols-[minmax(0,1fr)_minmax(0,33rem)]";
@@ -24,7 +24,7 @@ export const LESSON_LEAD_CLASS =
   "text-muted-foreground mt-3 text-[0.9375rem] leading-relaxed text-pretty";
 
 /** The line on what Zoonk does with the course (`PlanLine`). */
-export const PLAN_LINE_CLASS = "mt-3 text-[0.9375rem] leading-snug font-medium text-pretty";
+const PLAN_LINE_CLASS = "mt-3 text-[0.9375rem] leading-snug font-medium text-pretty";
 
 /**
  * What Zoonk does with the page's course, in one line on its first screen: a plan that starts at

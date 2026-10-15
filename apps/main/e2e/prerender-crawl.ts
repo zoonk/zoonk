@@ -12,7 +12,6 @@ import { createPrerenderCrawlFixtures } from "./prerender-crawl-fixtures";
 
 const ACTIVITY_ROUTE_SEGMENTS = 4;
 const OK_STATUS = 200;
-const NOT_FOUND_STATUS = 404;
 
 const repository = resolve(process.cwd(), "../..");
 const isLane = /^\/Users\/will\/coding\/zoonk\/zoonk-e2e-lane-[1-4]$/u.test(repository);
@@ -108,12 +107,8 @@ async function visit({
     const status = response.status();
     const location = response.headers().location;
 
-    const expectedMissing = path.endsWith("/%5Fcatalog-not-found");
-
     for (const error of findPrerenderErrors(body)) {
-      if (!(expectedMissing && error.context.includes("NEXT_HTTP_ERROR_FALLBACK;404"))) {
-        failures.push(`${persona} ${path}: ${error.message}`);
-      }
+      failures.push(`${persona} ${path}: ${error.message}`);
     }
 
     if (
@@ -140,7 +135,7 @@ async function visit({
       return;
     }
 
-    if (status !== (expectedMissing ? NOT_FOUND_STATUS : OK_STATUS)) {
+    if (status !== OK_STATUS) {
       failures.push(`${persona} ${path}: HTTP ${status}`);
     }
 

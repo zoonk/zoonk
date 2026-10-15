@@ -4,8 +4,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
 import Image from "next/image";
 
-/** The 40px place of a course's mark, which its skeleton draws too. */
-export const COURSE_MARK_CLASS = "size-10 shrink-0 rounded-lg";
+/** The 40px place of a course's mark. */
+const COURSE_MARK_CLASS = "size-10 shrink-0 rounded-lg";
 
 /**
  * A course's mark, as small as a list row's leading one: a language course's flag, which names the

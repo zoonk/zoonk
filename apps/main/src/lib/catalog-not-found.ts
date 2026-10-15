@@ -18,10 +18,10 @@ const CATEGORY_PATH = new RegExp(
 );
 
 /**
- * The catalog's always-404 page (`(catalog)/%5Fcatalog-not-found`): a real 404 status, with the
+ * The catalog's always-404 page (`(catalog)/catalog-not-found`): a real 404 status, with the
  * catalog's not-found message inside the app's frame.
  */
-const NOT_FOUND_PATH = "_catalog-not-found";
+const NOT_FOUND_PATH = "catalog-not-found";
 
 /**
  * Client navigations and prefetches carry the `RSC` header; they show the in-app not-found page,

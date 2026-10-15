@@ -133,14 +133,6 @@ async function startMainDev({ log, signal }: { log: string; signal: AbortSignal 
   }
 }
 
-/** The catalog's dedicated missing-page boundary deliberately cannot produce a page to validate. */
-function isExpectedMissingBoundary(error: ReturnType<typeof findPrerenderErrors>[number]) {
-  return (
-    error.message.includes('Route "/[lang]/_catalog-not-found": Could not validate `instant`') &&
-    error.context.includes("NEXT_HTTP_ERROR_FALLBACK;404")
-  );
-}
-
 async function reportPrerenderResult({
   baseURL,
   log,
@@ -157,10 +149,6 @@ async function reportPrerenderResult({
   const blogRedirectsVerified = hasVerifiedBlogRedirects({ baseURL, blogURL: BLOG_URL, result });
 
   function isUnexpected(error: ReturnType<typeof findPrerenderErrors>[number]) {
-    if (isExpectedMissingBoundary(error)) {
-      return false;
-    }
-
     return !(
       blogRedirectsVerified &&
       error.message.includes('Route "/[lang]/blog" did not produce a static shell')

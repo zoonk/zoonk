@@ -1,4 +1,7 @@
-import { CatalogPageSkeleton } from "@/components/catalog/catalog-page-skeleton";
+import {
+  CatalogNotFoundPage,
+  getCatalogNotFoundMetadata,
+} from "@/components/catalog/catalog-not-found";
 import { getChapterStaticParams } from "@/data/catalog/catalog-static-params";
 import {
   type LibraryChapterRoute,
@@ -9,14 +12,15 @@ import { getChapterUrls } from "@/lib/public/public-canonical";
 import { getContentLocale, getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { LibraryChapterPage } from "./library-chapter-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">;
 
 /** Fully static like its course's page; the build writes each popular course's first chapter. */
 export const ensureStatic = "navigation";
+
+/** No placeholder to paint first, like its course's page. */
+export const instant = false;
 
 export async function generateStaticParams({ params }: { params: { lang: string } }) {
   return getChapterStaticParams(params.lang);
@@ -61,6 +65,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, ...routeParams } = await params;
   const route = await resolveChapterRoute(routeParams);
 
+  if (route.kind === "notFound") {
+    return getCatalogNotFoundMetadata();
+  }
+
   if (route.kind !== "library") {
     return {};
   }
@@ -70,17 +78,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /**
  * A chapter that no longer exists in a course that does moves permanently to
- * the course page. Next.js serves an App Shell for unlisted params first, so
- * the redirect arrives in the stream as an instant meta refresh (which search
- * engines treat as permanent), not as an HTTP status.
+ * the course page. The page is static and written whole before it's served, so
+ * the move is a real permanent redirect, and a missing course is the catalog's
+ * not-found page from the first paint.
  */
-async function ChapterRoutePage({ params }: Pick<Props, "params">) {
+export default async function ChapterPage({ params }: Props) {
   const { lang, ...routeParams } = await params;
   const locale = getSupportedLocaleFromLanguage(lang);
   const route = await resolveChapterRoute(routeParams);
 
   if (route.kind === "notFound") {
-    notFound();
+    return <CatalogNotFoundPage />;
   }
 
   if (route.kind === "redirect") {
@@ -88,12 +96,4 @@ async function ChapterRoutePage({ params }: Pick<Props, "params">) {
   }
 
   return <LibraryChapterPage locale={locale} params={routeParams} route={route} />;
-}
-
-export default function ChapterPage({ params }: Props) {
-  return (
-    <Suspense fallback={<CatalogPageSkeleton kind="chapter" />}>
-      <ChapterRoutePage params={params} />
-    </Suspense>
-  );
 }

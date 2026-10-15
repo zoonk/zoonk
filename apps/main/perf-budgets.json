@@ -7,7 +7,7 @@
   "routes": {
     "/_not-found": 208734,
     "/[lang]": 430904,
-    "/[lang]/_catalog-not-found": 468199,
+    "/[lang]/catalog-not-found": 468199,
     "/[lang]/activity": 473101,
     "/[lang]/b/[brandSlug]/c/[courseSlug]": 482744,
     "/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]": 482744,

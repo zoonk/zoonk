@@ -1,5 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { type Browser, type Page } from "@playwright/test";
-import { prisma } from "@zoonk/db";
+import { getListedCourseWhere, prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -10,6 +11,7 @@ import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
+import { getServedPage } from "./served-page";
 
 const PROGRESS_PATH = /\/api\/learner\/courses\/[^/]+\/progress/u;
 const SUMMARY_PATH = /\/api\/learner\/summary/u;
@@ -66,10 +68,7 @@ async function holdReads(page: Page, url: RegExp) {
 
 /** The words of the page as the server sent it, before any script ran (scripts left out). */
 async function getServedText(page: Page, path: string): Promise<string> {
-  const response = await page.request.get(path);
-  expect(response.status()).toBe(200);
-
-  const html = await response.text();
+  const { html } = await getServedPage(page, path);
 
   return html
     .replaceAll(/<script[\s\S]*?<\/script>/gu, " ")
@@ -415,6 +414,79 @@ test.describe("catalog pages and the learner's own bits", () => {
     } finally {
       await context.close();
     }
+  });
+
+  test("a course's, a chapter's and a lesson's pages are served whole, with no placeholder in them", async ({
+    page,
+  }) => {
+    // The most popular course's page is written by the build; a new course's pages on their first
+    // request. Both are the visitor's whole page from the first paint.
+    const [popular, { chapter, chapterPath, course, coursePath, lesson, lessonPath }] =
+      await Promise.all([
+        prisma.course.findFirstOrThrow({
+          orderBy: [{ userCount: "desc" }, { id: "desc" }],
+          select: { organization: { select: { slug: true } }, slug: true, title: true },
+          where: getListedCourseWhere({ language: "en" }),
+        }),
+        createStaticCourse(),
+      ]);
+
+    const pages = [
+      { heading: popular.title, path: `/b/${popular.organization?.slug}/c/${popular.slug}` },
+      { heading: course.title, path: coursePath },
+      { heading: chapter.title, path: chapterPath },
+      { heading: lesson.title, path: lessonPath },
+    ];
+
+    const served = await Promise.all(
+      pages.map(async ({ path }) => {
+        const { heading, skeletons } = await getServedPage(page, path);
+        return { heading, path, skeletons };
+      }),
+    );
+
+    expect(served).toStrictEqual(
+      pages.map(({ heading, path }) => ({ heading, path, skeletons: 0 })),
+    );
+  });
+
+  test("a course, chapter or lesson address with nothing to show is served as the not-found page, whole from the first paint", async ({
+    page,
+  }) => {
+    // A brand's course that isn't public gets past the proxy's check, so its pages answer 404
+    // themselves; a brand or course that doesn't exist, and the address the build writes for a
+    // language without courses, are answered as the catalog's not-found page before them.
+    const { chapters, course, lessons, organization } = await catalogCourseFixture({
+      visibility: "private",
+    });
+
+    const hiddenPath = `/b/${organization.slug}/c/${course.slug}`;
+    const hiddenChapterPath = `${hiddenPath}/ch/${chapters[0]?.slug}`;
+    const missingPath = `/b/no-brand-${randomUUID().slice(0, 8)}/c/no-course`;
+    const english = "We couldn't find this page";
+    const german = "Diese Seite wurde nicht gefunden";
+
+    const addresses = [
+      { heading: english, path: hiddenPath },
+      { heading: english, path: hiddenChapterPath },
+      { heading: english, path: `${hiddenChapterPath}/l/${lessons[0]?.[0]?.slug}` },
+      { heading: english, path: missingPath },
+      { heading: english, path: `${missingPath}/ch/a-chapter/l/a-lesson` },
+      { heading: german, path: "/de/b/-/c/-" },
+      { heading: german, path: "/de/b/-/c/-/ch/-" },
+      { heading: german, path: "/de/b/-/c/-/ch/-/l/-" },
+    ];
+
+    const served = await Promise.all(
+      addresses.map(async ({ path }) => {
+        const { heading, skeletons } = await getServedPage(page, path, 404);
+        return { heading, path, skeletons };
+      }),
+    );
+
+    expect(served).toStrictEqual(
+      addresses.map(({ heading, path }) => ({ heading, path, skeletons: 0 })),
+    );
   });
 
   test("the progress read answers only the learner's own bits and is never cached", async ({

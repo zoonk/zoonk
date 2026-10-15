@@ -10,7 +10,6 @@ import {
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -341,38 +340,6 @@ export async function CoursePlanWindow({
       <p className="text-muted-foreground text-[13px] text-pretty">
         {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
       </p>
-    </div>
-  );
-}
-
-/**
- * The window while the plan is worked out: its label and pace row, the number, the line under it
- * and Today's first rows in their places. It marks the hero's split like the window does, so the
- * hero doesn't move when it arrives.
- */
-export async function CoursePlanWindowSkeleton({ className }: { className?: string }) {
-  const t = await getExtracted();
-
-  return (
-    <div aria-hidden="true" className={cn(WINDOW_COLUMN_CLASS, className)} data-slot="course-plan">
-      <ProductWindow className="flex flex-col gap-5 p-5 sm:p-7">
-        <p className="text-label">{t("Example plan")}</p>
-        <Skeleton className="h-9 w-56 rounded-lg" />
-
-        <div className="flex flex-col gap-2.5">
-          <Skeleton className="h-11 w-40 rounded-md" />
-          <Skeleton className="h-3.5 w-full rounded-sm" />
-          <Skeleton className="h-3.5 w-4/5 rounded-sm" />
-        </div>
-
-        <div className="flex flex-col gap-3 border-t pt-4">
-          <Skeleton className="h-3 w-24 rounded-sm" />
-          <Skeleton className="h-10 w-full rounded-md" />
-          <Skeleton className="h-10 w-full rounded-md" />
-        </div>
-      </ProductWindow>
-
-      <Skeleton className="h-3.5 w-3/4 rounded-sm" />
     </div>
   );
 }

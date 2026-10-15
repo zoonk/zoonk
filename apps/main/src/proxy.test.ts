@@ -112,7 +112,7 @@ describe("catalog pages that don't exist", () => {
 
     for (const response of responses) {
       expect(response.headers.get("x-middleware-rewrite")).toBe(
-        "https://www.zoonk.com/pt/_catalog-not-found",
+        "https://www.zoonk.com/pt/catalog-not-found",
       );
       // The 404 page reads the visitor's language from the header the locale middleware sets.
       expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
@@ -142,11 +142,11 @@ describe("catalog pages that don't exist", () => {
     ]);
 
     expect(unknown.headers.get("x-middleware-rewrite")).toBe(
-      "https://www.zoonk.com/de/_catalog-not-found",
+      "https://www.zoonk.com/de/catalog-not-found",
     );
 
     expect(deeper.headers.get("x-middleware-rewrite")).toBe(
-      "https://www.zoonk.com/de/_catalog-not-found",
+      "https://www.zoonk.com/de/catalog-not-found",
     );
 
     expect(known.headers.get("x-middleware-rewrite")).toBeNull();

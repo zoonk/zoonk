@@ -2,6 +2,7 @@ import { type Page } from "@playwright/test";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
+import { getServedPage } from "./served-page";
 
 /** Every public page, prerendered whole, with its title. */
 const PUBLIC_PAGES = [
@@ -13,18 +14,6 @@ const PUBLIC_PAGES = [
   { path: "/courses", title: "Explore courses" },
   { path: "/courses/science", title: "Courses in Science" },
 ] as const;
-
-/** The page as the server sent it, before any script ran, with its tags dropped. */
-async function getServedPage(page: Page, path: string) {
-  const response = await page.request.get(path, { maxRedirects: 0 });
-  expect(response.status(), path).toBe(200);
-
-  const html = await response.text();
-  const main = html.slice(html.indexOf("<main"), html.lastIndexOf("</main>"));
-  const title = /<h1[^>]*>(?<text>.*?)<\/h1>/su.exec(html)?.groups?.text ?? "";
-
-  return { html, main, title: title.replaceAll(/<[^>]+>/gu, "") };
-}
 
 /**
  * Where each plan's card starts saying what it includes, under its action: these rows, and the page
@@ -95,8 +84,8 @@ test.describe("Static public pages", () => {
       // oxlint-disable-next-line no-await-in-loop -- One page at a time keeps failures readable.
       const served = await getServedPage(page, path);
 
-      expect(served.title, path).toContain(title);
-      expect(served.main, path).not.toContain('data-slot="skeleton"');
+      expect(served.heading, path).toContain(title);
+      expect(served.skeletons, path).toBe(0);
     }
 
     // Pricing's questions and its closing call are in the HTML too.

@@ -1,4 +1,5 @@
 import "server-only";
+import { getCatalogNotFoundMetadata } from "@/components/catalog/catalog-not-found";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { getLessonUrls } from "@/lib/public/public-canonical";
 import { getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
@@ -31,7 +32,7 @@ export async function getLibraryLessonMetadata({
   ]);
 
   if (!lesson) {
-    return {};
+    return getCatalogNotFoundMetadata();
   }
 
   return {
