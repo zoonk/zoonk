@@ -1,16 +1,16 @@
-import { prisma } from "@zoonk/db";
+import { buildChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
 
 /**
  * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) from the learner's plan:
- * the intro with the team kept with the plan, decisions picked with number keys or taps and sent
+ * the intro with the same team derived from the plan, decisions picked with number keys or taps and sent
  * with Confirm, the meters and the week that passes, the ending and the debrief, then the lesson's
  * completion. A weak ending's debrief is the player's to test (`packages/player`).
  */
 
-/** A learner whose plan has the challenge lesson, which keeps its team once it first opens. */
+/** A learner whose plan has the challenge lesson and deterministic, named colleagues. */
 async function openChallenge(page: Page, userId: string) {
   const [{ lesson }, goal] = await Promise.all([
     playableLessonFixture({ lesson: { title: "Challenge: A/B tests" }, steps: ["challenge"] }),
@@ -19,34 +19,37 @@ async function openChallenge(page: Page, userId: string) {
 
   const plan = await planFixture({ goalId: goal.id });
   await planItemFixture({ lessonId: lesson.id, planId: plan.id });
+  const [data, product] = buildChallengeTeam({ language: lesson.language, seed: plan.id }).members;
+
+  if (!data?.name || !product?.name) {
+    throw new Error("Expected two named colleagues for the challenge fixture");
+  }
+
   await page.goto(`/learn/${lesson.id}`);
 
-  return { planId: plan.id };
+  return { data: data.name, product: product.name };
 }
 
-/** The team the plan keeps once the first challenge opens, in order: data, then product. */
-async function readTeam(planId: string): Promise<string[]> {
-  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
-  const settings = plan.settings as { team?: { members: { name: string }[] } };
-
-  return settings.team?.members.map((member) => member.name) ?? [];
+async function expectTeam(
+  page: Page,
+  { data, product }: Awaited<ReturnType<typeof openChallenge>>,
+) {
+  const team = page.locator('[data-slot="challenge-team"]');
+  await expect(team).toContainText(`${data}Data scientist`);
+  await expect(team).toContainText(`${product}Product manager`);
+  await expect(team).toContainText("AI assistant");
 }
 
 function primary(page: Page, name: RegExp) {
   return page.getByRole("button", { name });
 }
 
-async function startCase(page: Page, planId: string) {
+async function startCase(page: Page, names: Awaited<ReturnType<typeof openChallenge>>) {
   await expect(page.getByText("Challenge · Day 3 at Aurora Shop")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Does button B sell more?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Your mission" })).toBeVisible();
-
-  const [data = "", product = ""] = await readTeam(planId);
-
-  const team = page.locator('[data-slot="challenge-team"]');
-  await expect(team).toContainText(`${data}Data scientist`);
-  await expect(team).toContainText(`${product}Product manager`);
-  await expect(team).toContainText("AI assistant");
+  await expectTeam(page, names);
+  const { product } = names;
   await expect(page.getByText(`Meeting with ${product} today at 3 pm`)).toBeVisible();
 
   // Enter's listener attaches as the page hydrates, so the first press retries.
@@ -95,8 +98,12 @@ test.describe("Challenge lesson", () => {
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const { planId } = await openChallenge(page, noProgressUser.id);
-    const { product } = await startCase(page, planId);
+    const names = await openChallenge(page, noProgressUser.id);
+    await expectTeam(page, names);
+
+    // Returning to the intro delivers the same named team without a read-time persistence step.
+    await page.reload();
+    const { product } = await startCase(page, names);
 
     await playStrongPath(page, product);
 
@@ -113,8 +120,5 @@ test.describe("Challenge lesson", () => {
 
     await primary(page, /^Continue/u).click();
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-
-    // Opening it again keeps the same people.
-    await expect(readTeam(planId)).resolves.toHaveLength(4);
   });
 });
