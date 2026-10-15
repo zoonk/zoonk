@@ -437,13 +437,16 @@ test.describe("Learning tabs", () => {
     await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(1);
     await expect(page.getByRole("banner")).toHaveCount(0);
 
-    // The first stop skips the frame: past it, the next stop is the page's main action.
+    // The first stop skips the frame: past it, the next stop is the page's main action. The frame
+    // paints before Today's content streams in, so the walk starts once that action is there.
+    const start = page.getByRole("main").getByRole("button", { name: /^Start/u });
+    await expect(start).toBeVisible();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("main").getByRole("button", { name: /^Start/u })).toBeFocused();
+    await expect(start).toBeFocused();
 
     // Tab order is reading order: the goal, search, the three tabs, the study shortcuts and the
     // account. Enter opens a tab.
