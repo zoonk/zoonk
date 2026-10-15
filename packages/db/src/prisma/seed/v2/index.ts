@@ -33,9 +33,14 @@ export async function writeSeedV2Library(prisma: PrismaClient): Promise<Date> {
   // Items point at the blueprint of the exam they're written for, so it goes first.
   await writeEnemBlueprint({ edition: getEnemEdition(now), now, prisma });
 
-  const organization = await prisma.organization.upsert({
-    create: { name: "Zoonk AI", slug: AI_ORG_SLUG },
-    update: {},
+  // One statement that waits for another writer of the organization instead of failing on it
+  // (an upsert that updates nothing reads first, then inserts).
+  await prisma.organization.createMany({
+    data: [{ name: "Zoonk AI", slug: AI_ORG_SLUG }],
+    skipDuplicates: true,
+  });
+
+  const organization = await prisma.organization.findUniqueOrThrow({
     where: { slug: AI_ORG_SLUG },
   });
 
