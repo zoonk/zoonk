@@ -486,6 +486,7 @@
     "./sessions/catch-up": "./src/sessions/catch-up-today.ts",
     "./sessions/completion-contract": "./src/sessions/completion-contract.ts",
     "./sessions/contract": "./src/sessions/contract.ts",
+    "./sessions/day-block": "./src/sessions/day-block.ts",
     "./sessions/daily-time-limit": "./src/sessions/get-daily-time-limit.ts",
     "./sessions/extra-block": "./src/sessions/add-extra-study-block.ts",
     "./sessions/finish-block": "./src/sessions/finish-study-block.ts",
