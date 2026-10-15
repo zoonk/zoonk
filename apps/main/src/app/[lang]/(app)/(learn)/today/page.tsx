@@ -206,7 +206,7 @@ async function TodayContent() {
     return (
       <>
         <TodayStateSync stamp={toStamp(result)} state={result.status} />
-        <TodayGoalPaused />
+        <TodayGoalPaused revision={result.revision} />
       </>
     );
   }

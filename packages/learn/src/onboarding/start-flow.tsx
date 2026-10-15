@@ -14,6 +14,7 @@ import { type MaterialIntent } from "./entry/material-intent";
 import { MaterialQuestions } from "./entry/material-questions";
 import { SendingGoal } from "./entry/understanding-wait";
 import { useDraftActions } from "./entry/use-draft-actions";
+import { useFollowSavedDraft } from "./entry/use-follow-saved-draft";
 import { useGoalCreation } from "./entry/use-goal-creation";
 import { useSubmitUnderstanding } from "./entry/use-submit-understanding";
 import { type GoalError } from "./goal-errors";
@@ -120,8 +121,15 @@ function GoalStartFlow({
       : { error: null, kind: "entry", words: defaultGoal },
   );
 
+  const savedDraft = useFollowSavedDraft({
+    follow: (draft) => setState({ draft, kind: "draft" }),
+    initialDraft,
+    shown: state.kind === "draft" ? state.draft : null,
+  });
+
   const showDraft = (draft: OnboardingDraftView) => {
     navigation.showDraft(draft.id);
+    savedDraft.markOwn();
     setState({ draft, kind: "draft" });
   };
 

@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
 import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import {
   goalFixture,
   planChangeFixture,
@@ -1224,9 +1226,36 @@ test.describe("Today without a session to start", () => {
       page.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
     ).toContainText("Nothing is planned until you resume it.");
 
+    // Today reads the page again from the resume's note, after reading its view, never from the
+    // button on its own: a read of the page sent with the resume (the button's) could overlap
+    // Today's, and leave the page paused, with Resume busy.
+    const events: string[] = [];
+
+    page.on("request", (request) => {
+      const url = new URL(request.url());
+
+      if (
+        url.pathname === "/today" &&
+        url.searchParams.has("_rsc") &&
+        !request.headers()["next-router-prefetch"]
+      ) {
+        events.push("page");
+      }
+    });
+
+    page.on("response", (response) => {
+      if (new URL(response.url()).pathname === "/api/learner/views/today") {
+        events.push("view");
+      }
+    });
+
     await page.getByRole("button", { name: "Resume Bake sourdough bread" }).click();
 
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
+
+    // No read of the page is fine too: the resume's own answer can draw the day.
+    const firstPage = events.indexOf("page");
+    expect(firstPage === -1 ? ["view"] : events.slice(0, firstPage)).toContain("view");
 
     await expect.poll(() => readGoalStatus(goal.id)).toBe("active");
 
@@ -1429,6 +1458,48 @@ test.describe("Today while some of its lessons are still being outlined", () => 
   });
 });
 
+/**
+ * A learner without a goal who typed one on Today (its reading stored, as a real read leaves it)
+ * and has Today open in another tab too, both showing the draft to confirm.
+ */
+async function openDraftInTwoTabs(browser: Browser) {
+  const user = await createE2EUser(getBaseURL());
+  const id = randomUUID().slice(0, 8);
+  const title = `Understand quantum physics ${id}`;
+
+  await goalUnderstandingFixture({
+    goal: `understand quantum physics ${id}`,
+    result: {
+      followUps: [],
+      goals: [{ kind: "learn", subject: "quantum physics", title }],
+      route: "goals",
+    },
+    userId: user.id,
+  });
+
+  const page = await openAs(browser, user);
+  const other = await page.context().newPage();
+  await page.goto("/today");
+  const send = page.getByRole("button", { name: "Build my plan" });
+
+  // The box sends once React drives it: a click on the server's HTML alone sends nothing.
+  await expect
+    .poll(() =>
+      send.evaluate((button) => Object.keys(button).some((key) => key.startsWith("__react"))),
+    )
+    .toBe(true);
+
+  await page.getByRole("textbox", { name: "I want to" }).fill(`understand quantum physics ${id}`);
+  await send.click();
+  await expect(page.getByText(title, { exact: true })).toBeVisible();
+
+  await other.goto("/today");
+  await expect(other.getByText(title, { exact: true })).toBeVisible();
+  expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+  return { id, other, page };
+}
+
 test.describe("Today without a day to show", () => {
   test("lets a learner without a goal start one right on Today", async ({
     userWithoutProgress,
@@ -1458,6 +1529,126 @@ test.describe("Today without a day to show", () => {
     await userWithoutProgress.setViewportSize({ height: 844, width: 390 });
     await expect(example).toHaveCount(1);
     await expect(aside).toBeHidden();
+  });
+
+  // Bia typed "understand quantum physics" on Today and had it open in two tabs: she renamed the
+  // goal in one, and the other kept the old name, so confirming there made the goal she'd changed.
+  test("shows a goal draft corrected in another tab on Today's card", async ({ browser }) => {
+    const { id, other, page } = await openDraftInTwoTabs(browser);
+    const renamed = `Understand quantum computing ${id}`;
+
+    await page.getByRole("button", { name: "Edit Goal" }).click();
+    await page.getByRole("textbox", { name: "Goal" }).fill(renamed);
+    await page.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByText(renamed, { exact: true })).toBeVisible();
+
+    await expect(other.getByText(renamed, { exact: true })).toBeVisible();
+    await page.context().close();
+  });
+
+  // Bia renamed the goal in one tab, then in the other. The second tab's own name briefly gave way
+  // to the first tab's, from a page read made before her second rename was saved: confirming then
+  // made the goal with the older name.
+  test("keeps a draft corrected here over an older copy Today read before it", async ({
+    browser,
+  }) => {
+    const { id, other, page } = await openDraftInTwoTabs(browser);
+    const fromOther = `Understand quantum optics ${id}`;
+    const fromHere = `Understand quantum computing ${id}`;
+
+    // Today's read of the page here that has the other tab's rename is answered by the server,
+    // then held: it doesn't have this tab's rename, which is saved meanwhile.
+    const answered = Promise.withResolvers<null>();
+    const deliver = Promise.withResolvers<null>();
+    let held = false;
+
+    await page.route(
+      (url) => url.pathname === "/today" && url.searchParams.has("_rsc"),
+      async (route, request) => {
+        if (held || request.headers()["next-router-prefetch"]) {
+          await route.continue();
+          return;
+        }
+
+        const response = await route.fetch();
+
+        // Only the read that already has the other tab's rename is held; an earlier one goes on.
+        const body = await response.text();
+
+        if (!body.includes(fromOther)) {
+          await route.fulfill({ response });
+          return;
+        }
+
+        held = true;
+        answered.resolve(null);
+        await deliver.promise;
+        await route.fulfill({ response });
+      },
+    );
+
+    await other.getByRole("button", { name: "Edit Goal" }).click();
+    await other.getByRole("textbox", { name: "Goal" }).fill(fromOther);
+    await other.getByRole("button", { name: "Save" }).click();
+    await answered.promise;
+
+    // Today's reads here wait until the older page read is delivered, so nothing newer overtakes it.
+    const reads = Promise.withResolvers<null>();
+
+    await page.route("**/api/learner/views/today", async (route) => {
+      await reads.promise;
+      await route.continue();
+    });
+
+    await page.getByRole("button", { name: "Edit Goal" }).click();
+    await page.getByRole("textbox", { name: "Goal" }).fill(fromHere);
+    await page.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByText(fromHere, { exact: true })).toBeVisible();
+
+    await page.evaluate((older) => {
+      const main = document.querySelector("main") ?? document.body;
+
+      new MutationObserver(() => {
+        if (main.textContent.includes(older)) {
+          document.documentElement.dataset.sawOlder = "true";
+        }
+      }).observe(main, { characterData: true, childList: true, subtree: true });
+    }, fromOther);
+
+    const delivered = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/today" &&
+        !response.request().headers()["next-router-prefetch"],
+    );
+
+    // The older read lands first: Today's next read of the page here only goes out once its view
+    // reads are let go, and the check waits for it, so the older one had its chance to show.
+    deliver.resolve(null);
+    await delivered;
+
+    const next = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/today" &&
+        !response.request().headers()["next-router-prefetch"],
+    );
+
+    reads.resolve(null);
+    await next;
+
+    await expect(page.getByText(fromHere, { exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.dataset.sawOlder)).toBeUndefined();
+    await page.context().close();
+  });
+
+  // Bia confirmed the goal in one tab: the other kept offering the same draft to confirm again.
+  test("leaves the goal draft in another tab once the goal is confirmed", async ({ browser }) => {
+    const { other, page } = await openDraftInTwoTabs(browser);
+
+    await page.getByRole("button", { name: "Looks right" }).click();
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+
+    await expect(other.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
+    await page.context().close();
   });
 
   test("sends a learner without a goal from a goal's tab to Today to start one", async ({
