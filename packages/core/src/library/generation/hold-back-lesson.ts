@@ -1,7 +1,10 @@
 import "server-only";
 import { type StudySessionStatus, type TransactionClient, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
+import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
 /** A day that ended keeps what happened in it; days still running or ahead move on. */
@@ -12,6 +15,11 @@ const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
  * work beyond the first draft and its fix passes): its first held-back draft sets it aside.
  */
 const PRIVATE_LESSON_DRAFTS = 1;
+
+/** A superseded claim must roll back plan/learner admission as well as the attempted draft. */
+class LessonClaimLostError extends Error {
+  override name = "LessonClaimLostError";
+}
 
 /**
  * Takes a set-aside lesson out of what learners have ahead: its todo plan items are skipped and
@@ -74,37 +82,62 @@ export async function holdBackLessonDraft({
   problems: HeldBackDraft["problems"];
   workflowRunId: string;
 }): Promise<{ setAside: boolean } | null> {
-  const lesson = await prisma.lesson.findUnique({
-    select: { heldBackDrafts: true, ownerId: true },
-    where: { id: lessonId },
-  });
+  const { data: heldBack, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({
+        select: { heldBackDrafts: true, ownerId: true },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
 
-  const now = new Date();
-  const draft = { heldBackAt: now.toISOString(), model, problems, runId: workflowRunId };
-  const drafts = [...parseHeldBackDrafts(lesson?.heldBackDrafts), draft];
-  const setAside = drafts.length >= (lesson?.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
+      if (!lesson) {
+        return null;
+      }
 
-  const userIds = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.lesson.updateMany({
-      data: { contentStatus: "failed", heldBackDrafts: drafts, setAsideAt: setAside ? now : null },
-      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-    });
+      const now = new Date();
+      const draft = { heldBackAt: now.toISOString(), model, problems, runId: workflowRunId };
+      const drafts = [...parseHeldBackDrafts(lesson.heldBackDrafts), draft];
 
-    if (count === 0) {
-      return null;
-    }
+      const setAside =
+        drafts.length >= (lesson.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
 
-    return setAside ? moveOnWithoutLesson(tx, lessonId) : [];
-  });
+      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
 
-  if (!userIds) {
+      await markPlansChanged(tx, { planIds });
+
+      const { count } = await tx.lesson.updateMany({
+        data: {
+          contentStatus: "failed",
+          heldBackDrafts: drafts,
+          setAsideAt: setAside ? now : null,
+        },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
+
+      if (count === 0) {
+        throw new LessonClaimLostError();
+      }
+
+      const userIds = setAside ? await moveOnWithoutLesson(tx, lessonId) : [];
+      return { setAside, userIds };
+    }),
+  );
+
+  if (error instanceof LessonClaimLostError) {
+    return null;
+  }
+
+  if (error) {
+    throw error;
+  }
+
+  if (!heldBack) {
     return null;
   }
 
   revalidateCacheTags([
     getLibraryLessonCacheTag(lessonId),
-    ...userIds.map((userId) => getGoalsCacheTag(userId)),
+    ...heldBack.userIds.map((userId) => getGoalsCacheTag(userId)),
   ]);
 
-  return { setAside };
+  return { setAside: heldBack.setAside };
 }

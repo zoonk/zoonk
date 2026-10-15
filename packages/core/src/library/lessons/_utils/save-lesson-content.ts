@@ -1,8 +1,11 @@
 import "server-only";
 import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
+import { markPlansChanged } from "../../../learner/_utils/mark-learner-changed";
+import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { toStoredItem } from "../../items/item-content";
 import { resolveReviewFlags } from "../../sources/content-review-flags";
@@ -11,6 +14,11 @@ import { type ScreenMathItem } from "../../steps/written-screens";
 import { lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
 import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
 import { toStepData } from "./step-data";
+
+/** A lost claim or version rolls admission back; persistence failures remain errors. */
+class LessonPublicationLostError extends Error {
+  override name = "LessonPublicationLostError";
+}
 
 /** One checked screen, ready to store. */
 export type LessonScreenToSave = {
@@ -180,14 +188,40 @@ export async function saveLessonContent({
   summary: string[];
   workflowRunId: string;
 }): Promise<number | null> {
-  const version = await prisma.$transaction(async (tx) => {
-    const claimed = await tx.lesson.updateMany({
-      data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
-      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-    });
+  const { data: version, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({
+        select: { id: true },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
 
-    return claimed.count === 0 ? null : writeScreens(tx, { language, lessonId, screens });
-  });
+      if (!lesson) {
+        return null;
+      }
+
+      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
+      await markPlansChanged(tx, { planIds });
+
+      const claimed = await tx.lesson.updateMany({
+        data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
+        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      });
+
+      if (claimed.count === 0) {
+        throw new LessonPublicationLostError();
+      }
+
+      return writeScreens(tx, { language, lessonId, screens });
+    }),
+  );
+
+  if (error instanceof LessonPublicationLostError) {
+    return null;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (version !== null) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
@@ -216,16 +250,39 @@ export async function saveLessonVersion({
   screens: LessonScreenToSave[];
   summary: string[];
 }): Promise<number | null> {
-  const version = await prisma.$transaction(async (tx) => {
-    const current = await lockCurrentLessonVersion(tx, lessonId);
+  const { data: version, error } = await safeAsync(() =>
+    prisma.$transaction(async (tx) => {
+      const existing = await tx.step.findFirst({
+        select: { version: true },
+        where: { lesson: { contentStatus: "completed" }, lessonId, retiredAt: null },
+      });
 
-    if (current !== replaces) {
-      return null;
-    }
+      if (existing?.version !== replaces) {
+        return null;
+      }
 
-    await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
-    return writeScreens(tx, { language, lessonId, screens });
-  });
+      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
+      await markPlansChanged(tx, { planIds });
+
+      /** The plain precondition read may change while admission waits; lock the lesson last. */
+      const current = await lockCurrentLessonVersion(tx, lessonId);
+
+      if (current !== replaces) {
+        throw new LessonPublicationLostError();
+      }
+
+      await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
+      return writeScreens(tx, { language, lessonId, screens });
+    }),
+  );
+
+  if (error instanceof LessonPublicationLostError) {
+    return null;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   if (version !== null) {
     revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
