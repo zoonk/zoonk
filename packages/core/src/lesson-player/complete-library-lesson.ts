@@ -3,9 +3,12 @@ import { type LearningEvent, prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getUserProgressCacheTag } from "../cache/tags";
+import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../cache/tags";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
-import { loadLessonReviewSkillIds } from "../learner/_utils/lesson-plan-skills";
+import {
+  loadLessonPlanSkillIds,
+  loadLessonReviewSkillIds,
+} from "../learner/_utils/lesson-plan-skills";
 import { clampEnergy } from "../progress/energy";
 import { serializeStudyBlockCompletion } from "../sessions/completion-contract";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
@@ -19,11 +22,15 @@ import { trackLessonCompleted } from "./_utils/lesson-events";
 import { isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, hasFinishedLessonBefore, toSittings } from "./_utils/lesson-runs";
 import { loadPlayedLesson } from "./_utils/load-played-lesson";
-import { getNextReviewAt, reviewFinishedLesson } from "./_utils/plan-skill-review";
+import {
+  getNextReviewAt,
+  loadLessonAttempts,
+  reviewFinishedLesson,
+} from "./_utils/plan-skill-review";
 import { getLessonCompletionSeconds } from "./_utils/session-lesson-duration";
 import { type LibraryLessonCompletionInput } from "./completion-input-contract";
-import { type LibraryLessonCompletion, type PlayableLibraryStep } from "./contract";
-import { type LessonRunTally, isAnswerableStep, tallyLessonRun } from "./lesson-run";
+import { type LibraryLessonCompletion } from "./contract";
+import { type LessonRunTally, tallyLessonRun } from "./lesson-run";
 import { scoreLibraryLesson } from "./lesson-score";
 
 export type LibraryLessonCompletionOutcome =
@@ -78,15 +85,20 @@ async function readFinishedRun({
 async function finishRun({
   answerPoints,
   answeredCount,
+  answers,
   lessonId,
+  planSkillIds,
   run,
+  skillIds,
   skippedWritingStepIds,
   tally,
   timeZone,
   userId,
-}: Omit<CompletionRun, "skillIds"> & {
+}: CompletionRun & {
   answerPoints: number;
   answeredCount: number;
+  answers: Parameters<typeof reviewFinishedLesson>[0]["answers"];
+  planSkillIds: readonly string[];
   skippedWritingStepIds: string[];
   tally: LessonRunTally;
 }) {
@@ -160,13 +172,27 @@ async function finishRun({
       userId,
     });
 
+    const { changed, nextReviewAt } = await reviewFinishedLesson({
+      answers,
+      planSkillIds,
+      reviewedAt: completedAt,
+      skillIds,
+      timeZone,
+      transaction: tx,
+      userId,
+    });
+
     return {
-      ...score,
-      correctCount: tally.correctCount,
-      incorrectCount: tally.incorrectCount,
-      isFirstCompletion: !isReplay,
-      seconds,
-      totalBrainPower: Number(progress.totalBrainPower),
+      completion: {
+        ...score,
+        correctCount: tally.correctCount,
+        incorrectCount: tally.incorrectCount,
+        isFirstCompletion: !isReplay,
+        nextReviewAt,
+        seconds,
+        totalBrainPower: Number(progress.totalBrainPower),
+      },
+      modelChanged: changed,
     };
   });
 }
@@ -198,37 +224,6 @@ async function withStudyBlock({
     studyBlock: studyBlock ? serializeStudyBlockCompletion(studyBlock) : null,
   };
 }
-
-/**
- * The answers the completion counts: every answerable screen's, since the first sitting the
- * learner left unfinished (this run's when there's none), with the sittings to score them by.
- */
-async function loadLessonAttempts({
-  sittings,
-  steps,
-  userId,
-}: {
-  sittings: Sittings;
-  steps: Pick<PlayableLibraryStep, "id" | "kind">[];
-  userId: string;
-}) {
-  const answerable = steps.filter((step) => isAnswerableStep(step)).map((step) => step.id);
-
-  return prisma.attempt.findMany({
-    orderBy: { answeredAt: "asc" },
-    select: {
-      answeredAt: true,
-      id: true,
-      isCorrect: true,
-      itemId: true,
-      skillId: true,
-      stepId: true,
-    },
-    where: { answeredAt: { gte: sittings[0]?.startedAt }, stepId: { in: answerable }, userId },
-  });
-}
-
-type Sittings = Awaited<ReturnType<typeof loadPlayedLesson>>["sittings"];
 
 /**
  * The run's sittings (see `loadProgressRuns`) and the lesson as the learner played it: the
@@ -334,18 +329,30 @@ export async function completeLibraryLesson({
     userId,
   });
 
+  // Resolve membership before taking progress/run locks; the transaction uses only its own client.
+  const planSkillIds =
+    skillIds.length > 0
+      ? await loadLessonPlanSkillIds({ lessonIds: [lessonId], userId })
+      : new Map<string, string[]>();
+
   const finished = await finishRun({
     answerPoints,
     answeredCount: attempts.length,
+    answers: attempts,
     lessonId,
+    planSkillIds: planSkillIds.get(lessonId) ?? [],
     run,
+    skillIds,
     skippedWritingStepIds,
     tally,
     timeZone,
     userId,
   });
 
-  revalidateCacheTags([getUserProgressCacheTag(userId)]);
+  revalidateCacheTags([
+    getUserProgressCacheTag(userId),
+    ...(finished?.modelChanged ? [getLearnerModelCacheTag(userId)] : []),
+  ]);
 
   if (!finished) {
     const closedRun = await prisma.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
@@ -357,19 +364,11 @@ export async function completeLibraryLesson({
   }
 
   trackLessonCompleted({
-    isFirstCompletion: finished.isFirstCompletion,
+    isFirstCompletion: finished.completion.isFirstCompletion,
     lessonId,
     run,
-    seconds: finished.seconds,
+    seconds: finished.completion.seconds,
   });
 
-  const nextReviewAt = await reviewFinishedLesson({
-    answers: attempts,
-    lessonId,
-    skillIds,
-    timeZone,
-    userId,
-  });
-
-  return { completion: await settle({ ...finished, nextReviewAt }), status: "completed" };
+  return { completion: await settle(finished.completion), status: "completed" };
 }

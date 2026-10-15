@@ -1,11 +1,41 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getLearnerModelCacheTag } from "../../cache/tags";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { loadLessonPlanSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { applyAnswerToLearnerSkill } from "../../learner/_utils/update-learner-skill";
 import { gradeLessonAnswers } from "../../learner/answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../../learner/fsrs-scheduler";
+import { type PlayableLibraryStep } from "../contract";
+import { isAnswerableStep } from "../lesson-run";
+import { type loadPlayedLesson } from "./load-played-lesson";
+
+/**
+ * The answers the completion counts: every answerable screen's, since the first sitting the
+ * learner left unfinished (this run's when there's none), with the sittings to score them by.
+ */
+export async function loadLessonAttempts({
+  sittings,
+  steps,
+  userId,
+}: {
+  sittings: Awaited<ReturnType<typeof loadPlayedLesson>>["sittings"];
+  steps: Pick<PlayableLibraryStep, "id" | "kind">[];
+  userId: string;
+}) {
+  const answerable = steps.filter((step) => isAnswerableStep(step)).map((step) => step.id);
+
+  return prisma.attempt.findMany({
+    orderBy: { answeredAt: "asc" },
+    select: {
+      answeredAt: true,
+      id: true,
+      isCorrect: true,
+      itemId: true,
+      skillId: true,
+      stepId: true,
+    },
+    where: { answeredAt: { gte: sittings[0]?.startedAt }, stepId: { in: answerable }, userId },
+  });
+}
 
 /** A recorded answer of the run, oldest first. */
 type RunAnswer = { isCorrect: boolean; skillId: string | null; stepId: string | null };
@@ -46,54 +76,52 @@ function getSkillsToReview({
  */
 async function reviewLessonPlanSkills({
   answers,
-  lessonId,
+  planSkillIds,
   reviewedAt,
   timeZone,
+  transaction,
   userId,
 }: {
   answers: readonly RunAnswer[];
-  lessonId: string;
+  planSkillIds: readonly string[];
   reviewedAt: Date;
   timeZone: string;
+  transaction: TransactionClient;
   userId: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const grade = gradeLessonAnswers(toFirstAnswers(answers));
-  const planSkillIds = await loadLessonPlanSkillIds({ lessonIds: [lessonId], userId });
-  const skillIds = getSkillsToReview({ answers, planSkillIds: planSkillIds.get(lessonId) ?? [] });
+  const skillIds = getSkillsToReview({ answers, planSkillIds });
 
   if (!grade || skillIds.length === 0) {
-    return;
+    return false;
   }
 
-  await Promise.all(
-    skillIds.map((skillId) =>
-      applyAnswerToLearnerSkill({
-        answer: grade,
-        learning: true,
-        reviewedAt,
-        skillId,
-        timeZone,
-        userId,
-      }),
-    ),
-  );
+  for (const skillId of skillIds.toSorted()) {
+    // oxlint-disable-next-line no-await-in-loop -- Keep a deterministic skill lock order after the run lock.
+    await applyAnswerToLearnerSkill(
+      { answer: grade, learning: true, reviewedAt, skillId, timeZone, userId },
+      transaction,
+    );
+  }
 
-  revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+  return true;
 }
 
 /** The earliest review of the lesson's skills, which the completion moment announces. */
 export async function getNextReviewAt({
   skillIds,
+  transaction = prisma,
   userId,
 }: {
   skillIds: readonly string[];
+  transaction?: TransactionClient;
   userId: string;
 }): Promise<string | null> {
   if (skillIds.length === 0) {
     return null;
   }
 
-  const next = await prisma.learnerSkill.findFirst({
+  const next = await transaction.learnerSkill.findFirst({
     orderBy: { due: "asc" },
     select: { due: true },
     where: { due: { not: null }, skillId: { in: [...skillIds] }, userId },
@@ -109,22 +137,35 @@ export async function getNextReviewAt({
  */
 export async function reviewFinishedLesson({
   answers,
-  lessonId,
+  planSkillIds,
+  reviewedAt,
   skillIds,
   timeZone,
+  transaction,
   userId,
 }: {
   answers: readonly RunAnswer[];
-  lessonId: string;
+  planSkillIds: readonly string[];
+  reviewedAt: Date;
   skillIds: readonly string[];
   timeZone: string;
+  transaction: TransactionClient;
   userId: string;
-}): Promise<string | null> {
-  if (skillIds.length > 0) {
-    await reviewLessonPlanSkills({ answers, lessonId, reviewedAt: new Date(), timeZone, userId });
-  }
+}): Promise<{ changed: boolean; nextReviewAt: string | null }> {
+  const changed =
+    skillIds.length > 0
+      ? await reviewLessonPlanSkills({
+          answers,
+          planSkillIds,
+          reviewedAt,
+          timeZone,
+          transaction,
+          userId,
+        })
+      : false;
 
-  return getNextReviewAt({ skillIds, userId });
+  const nextReviewAt = await getNextReviewAt({ skillIds, transaction, userId });
+  return { changed, nextReviewAt };
 }
 
 /**
