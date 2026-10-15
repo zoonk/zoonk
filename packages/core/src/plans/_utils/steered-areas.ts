@@ -126,9 +126,9 @@ export function getReducedAreas({
  * When each area a change gives more or less time to (a focus, or less of an area) has its last
  * lesson, against the plan the learner sees: the focused ones whose end moves (see
  * `getAreaEnds`), and every one it gives less time to that moves or keeps all of it (see
- * `getReducedEnds`), each with the lessons it gains or loses when those move by more than
- * rounding: short on time, Ana's "more Linguagens" brought 96 of its lessons in and ended it in
- * October instead of August, and her card said only that it ended later.
+ * `getReducedEnds`), each with the lessons it gains or loses: short on time, Ana's "more Linguagens"
+ * brought 96 of its lessons in and ended it in October instead of August, and her card said only
+ * that it ended later.
  */
 export function getSteeredEnds({
   baseline,
@@ -153,7 +153,7 @@ export function getSteeredEnds({
     const before = readSteered({ belongs, items: items.before, lessonsOf: lessonsBefore });
     const lessonsGained = after.lessons - before.lessons;
 
-    return Math.abs(lessonsGained) > ROUNDING_LESSONS ? { ...end, lessonsGained } : end;
+    return lessonsGained === 0 ? end : { ...end, lessonsGained };
   };
 
   return [

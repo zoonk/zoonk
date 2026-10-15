@@ -32,10 +32,12 @@ async function setup({
   dailyMinutes,
   daysAway,
   mockMinutes = null,
+  lessonMinutes = 3,
 }: {
   dailyMinutes: number;
   daysAway: number;
   mockMinutes?: number | null;
+  lessonMinutes?: number;
 }) {
   const user = await userFixture();
 
@@ -65,6 +67,11 @@ async function setup({
   });
 
   const library = await planLibraryFixture({ phases: ["Basics", "Further"], skills: SKILLS });
+
+  await prisma.lesson.updateMany({
+    data: { estimatedMinutes: lessonMinutes },
+    where: { id: { in: library.lessons.map((lesson) => lesson.id) } },
+  });
 
   const graph = {
     ...library.graph,
@@ -153,7 +160,13 @@ describe("a change the learner didn't make names the topics it moves", () => {
   // Placement found the learner knows mathematics' basics: the time it frees brings mathematics'
   // application into a plan short on time, and the test-out's change says so.
   it("names the topics a test-out brings into the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 5, daysAway: 14, mockMinutes: 30 });
+    const { goal, library, plan } = await setup({
+      dailyMinutes: 9,
+      daysAway: 14,
+      lessonMinutes: 7,
+      mockMinutes: 30,
+    });
+
     const before = await plannedTopics({ library, planId: plan.id });
     const [known] = library.skills;
 
@@ -214,7 +227,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
   // Four days missed on a plan that just fit: what's left no longer fits by the exam, and the
   // missed-days change names what leaves, not only that the plan covers less.
   it("names the topics missed days leave out of the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 10, daysAway: 14 });
+    const { goal, library, plan } = await setup({ dailyMinutes: 15, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
 
     vi.setSystemTime(new Date("2020-10-02T12:00:00Z"));
@@ -233,7 +246,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
 
   // Back from a pause with less time left: the resumed plan names what no longer fits.
   it("names the topics a goal back from a pause leaves out of the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 10, daysAway: 14 });
+    const { goal, library, plan } = await setup({ dailyMinutes: 15, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
 
     await updateGoal({ goalId: goal.id, input: { status: "paused" } });
