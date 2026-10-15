@@ -8,9 +8,9 @@ import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import { Page } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
-import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
+import { type MissionsDay } from "../missions/missions-card";
 import { PageWithAside } from "../shell/learn-shell";
 import { TodayAction, TodayContinueProvider } from "./today-action";
 import {
@@ -97,8 +97,8 @@ export function TodayScreen({
   buddy: LearnBuddy | null;
   /** A language goal's level and the one it aims for, said where another goal's progress is. */
   level?: LanguageTodayView["level"];
-  /** Today's missions; null before today's session exists. */
-  missions?: BuddyToday | null;
+  /** Today's missions; null on a day that offers none. */
+  missions?: MissionsDay | null;
   /** Open entries in the mistakes notebook, offered under "Practice anytime". */
   mistakes?: MistakeAvailability;
   /** An exam's "Take a mock exam" whenever the learner wants (`MockEntryRow`). */

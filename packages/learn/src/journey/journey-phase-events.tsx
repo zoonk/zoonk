@@ -33,9 +33,26 @@ const EVENT_ROW_CLASS = cn(PATH_ROW_CLASS, "hover:bg-muted/70");
 const EVENT_DATE_CLASS =
   "text-muted-foreground shrink-0 font-mono text-xs whitespace-nowrap tabular-nums";
 
-function EventChevron() {
+/**
+ * A phase's event as a row: opening its page (`href`) with the chevron that says so, or the same
+ * row without either while it has no page yet (a challenge the plan adds when the day is opened),
+ * its date kept in the dates' column.
+ */
+function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
+  if (!href) {
+    return (
+      <div className={PATH_ROW_CLASS}>
+        {children}
+        <span aria-hidden="true" className="size-4 shrink-0" />
+      </div>
+    );
+  }
+
   return (
-    <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+    <LearnLink className={EVENT_ROW_CLASS} href={href}>
+      {children}
+      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+    </LearnLink>
   );
 }
 
@@ -44,7 +61,8 @@ function EventChevron() {
  * page says (see `PlanPhaseCheckpointView.when`): on its day, in the next session, or after the
  * challenge before it once its phase's lessons are done. One still to win that the learner's plan
  * leaves to Plus (a language goal's call on the free plan, or any past a free exam plan's first
- * week) is marked Plus, as its page says.
+ * week) is marked Plus, as its page says. One the plan only adds once the day is opened (no
+ * `planItemId` yet) has no page to open: its row says when, without a link.
  */
 export function CheckpointRow({
   checkpoint,
@@ -61,7 +79,7 @@ export function CheckpointRow({
   const onDate = !isDone && when === "date";
 
   return (
-    <LearnLink className={EVENT_ROW_CLASS} href={links.challenge(checkpoint.planItemId)}>
+    <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
       <span className={PATH_ROW_LEADING_CLASS}>
         <Trickster className="-m-1 size-5" />
       </span>
@@ -80,8 +98,7 @@ export function CheckpointRow({
         {!isDone && when === "queued" && t("After the challenge before it")}
         {onDate && checkpoint.date && formatPlanDate(checkpoint.date)}
       </span>
-      <EventChevron />
-    </LearnLink>
+    </EventRow>
   );
 }
 
@@ -145,8 +162,8 @@ export function MockRow({
   const funded = plan.fundedMocks.find((mock) => mock.scheduledFor === date);
   const href = funded ? challengeHref(funded.id) : examHref;
 
-  const content = (
-    <>
+  return (
+    <EventRow href={href}>
       <span className={PATH_ROW_LEADING_CLASS}>
         <KindMark kind="mock" />
       </span>
@@ -163,17 +180,6 @@ export function MockRow({
         ) : null}
       </span>
       <span className={EVENT_DATE_CLASS}>{formatPlanDate(date)}</span>
-    </>
-  );
-
-  if (!href) {
-    return <div className={EVENT_ROW_CLASS}>{content}</div>;
-  }
-
-  return (
-    <LearnLink className={EVENT_ROW_CLASS} href={href}>
-      {content}
-      <EventChevron />
-    </LearnLink>
+    </EventRow>
   );
 }

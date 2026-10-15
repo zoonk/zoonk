@@ -1,9 +1,12 @@
-import { type TodayView } from "@zoonk/core/view-models/today/get";
+import { type StudyDay } from "../session/session-types";
 
-export type SessionDay = Pick<
-  TodayView["session"],
-  "dailyLimit" | "emptyDay" | "minutes" | "nextBlockId"
-> & { blocks: readonly Pick<TodayView["session"]["blocks"][number], "id" | "status">[] };
+/**
+ * The parts of a day its state reads: the same on a saved day and on one not opened yet, whose
+ * steps have no ids, so the step to go on with is named by its place in the day.
+ */
+export type SessionDay = Pick<StudyDay, "dailyLimit" | "emptyDay" | "minutes" | "nextPosition"> & {
+  blocks: readonly Pick<StudyDay["blocks"][number], "position" | "status">[];
+};
 
 /**
  * Where the day stands, for the main button and the done state. A day with no blocks is a rest
@@ -18,7 +21,7 @@ export function getSessionState(session: SessionDay) {
 
   return {
     ahead: studyDay && session.emptyDay !== "lessonsComing",
-    done: !empty && session.nextBlockId === null,
+    done: !empty && session.nextPosition === null,
     limitReached,
     rest: empty && !limitReached && session.minutes.dailyGoal === 0,
     started: session.blocks.some((block) => block.status !== "pending"),
@@ -35,7 +38,7 @@ export type DayState = "ahead" | "done" | "limit" | "rest" | "underway" | "waiti
 
 export function getDayState(session: SessionDay): DayState {
   const { ahead, done, limitReached, rest, waiting } = getSessionState(session);
-  const hasNext = session.blocks.some((block) => block.id === session.nextBlockId);
+  const hasNext = session.blocks.some((block) => block.position === session.nextPosition);
 
   if (waiting) {
     return "waiting";

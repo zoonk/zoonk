@@ -8,12 +8,13 @@ import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-c
 import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
 import { finishStudyBlock } from "@zoonk/core/sessions/finish-block";
-import { getStudySession } from "@zoonk/core/sessions/get";
+import { openStudySession } from "@zoonk/core/sessions/open";
+import { getSessionPageView } from "@zoonk/core/sessions/page";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
-import { getTodayView } from "@zoonk/core/view-models/today/get";
 import {
   type StudyAnswerOutcome,
+  type StudyBlock,
   type StudyFinishOutcome,
   type StudyQuestionAnswer,
 } from "@zoonk/learn/session/types";
@@ -32,6 +33,8 @@ const sessionInputSchema = z.object({
 
 const blockInputSchema = sessionInputSchema.extend({ blockId: z.uuid() });
 
+const nextInputSchema = sessionInputSchema.extend({ expectedBlockId: z.uuid().optional() });
+
 const missionInputSchema = z.object({
   blockId: z.uuid(),
   timeZone: z.string().refine(isValidTimeZone),
@@ -41,22 +44,45 @@ type SessionInput = z.infer<typeof sessionInputSchema>;
 type BlockInput = z.infer<typeof blockInputSchema>;
 
 /**
+ * Whether the next block isn't the step the screen showed and one of them is a mock: Start never
+ * begins a mock the learner didn't see, so the screen shows the new step first.
+ */
+function isChangedMock({
+  blocks,
+  expectedBlockId,
+  next,
+}: {
+  blocks: readonly StudyBlock[];
+  expectedBlockId: string | undefined;
+  next: StudyBlock | undefined;
+}): boolean {
+  if (!expectedBlockId || next?.id === expectedBlockId) {
+    return false;
+  }
+
+  const shown = blocks.find((block) => block.id === expectedBlockId);
+  return Boolean(next?.checkpoint?.mock || shown?.checkpoint?.mock);
+}
+
+/**
  * Opens the next block of today's session ("Continue", "Take off", the moment after a block):
  * starts it and says where it's played, or the session screen for the summary once nothing is
  * left. An earlier day's session the learner has left (a lesson finished the next morning) goes on
- * with today's, on Today. Null when it couldn't be opened.
+ * with today's, on Today. The step the screen showed (`expectedBlockId`) guards mocks: when it or
+ * the next block is a mock and they differ, nothing opens (`changed`). Null when it couldn't be
+ * opened.
  */
 export async function openNextStudyBlockAction(
-  input: SessionInput,
+  input: z.infer<typeof nextInputSchema>,
 ): Promise<StudyDestination | null> {
-  const parsed = sessionInputSchema.safeParse(input);
+  const parsed = nextInputSchema.safeParse(input);
 
   if (!parsed.success) {
     return null;
   }
 
   const { data: result, error } = await safeAsync(async () => {
-    const session = await getStudySession({
+    const session = await openStudySession({
       input: { timeZone: parsed.data.timeZone },
       sessionId: parsed.data.sessionId,
     });
@@ -69,10 +95,16 @@ export async function openNextStudyBlockAction(
       return { kind: "today" } satisfies StudyDestination;
     }
 
-    const next = session.session.blocks.find((block) => block.id === session.session.nextBlockId);
+    const { blocks, nextBlockId } = session.session;
+    const { expectedBlockId, sessionId, timeZone } = parsed.data;
+    const next = blocks.find((block) => block.id === nextBlockId);
+
+    if (isChangedMock({ blocks, expectedBlockId, next })) {
+      return { kind: "changed" } satisfies StudyDestination;
+    }
 
     return next
-      ? openStudyBlock({ block: next, ...parsed.data })
+      ? openStudyBlock({ block: next, sessionId, timeZone })
       : ({ kind: "session" } satisfies StudyDestination);
   });
 
@@ -95,7 +127,7 @@ export async function openStudyBlockAction(input: BlockInput): Promise<StudyDest
   const { blockId, sessionId, timeZone } = parsed.data;
 
   const { data: result, error } = await safeAsync(async () => {
-    const session = await getStudySession({ input: { timeZone }, sessionId });
+    const session = await openStudySession({ input: { timeZone }, sessionId });
 
     const block =
       session.status === "ready"
@@ -114,11 +146,12 @@ export async function openStudyBlockAction(input: BlockInput): Promise<StudyDest
 }
 
 /**
- * Opens the block of today's session a mission or a first step opens (its `opens`), from its chip
- * on Today or its row in the buddy's day, started like a block the learner picks. Only a block of
- * the learner's own session today that can start now opens: null for one that isn't (a chip read
- * before the day changed: the block finished, skipped, gone or waiting for the lessons before it),
- * so the host reads the day again instead.
+ * Opens the block of a saved day a mission or a first step opens (its `opens`), from its chip on
+ * Today or its row in the buddy's day, started like a block the learner picks. It reads the day
+ * that block belongs to (only the learner's own), not whichever goal is active now. Only a block
+ * still to do and free to start opens: null for one that isn't (a chip read before the day
+ * changed: the block finished, skipped, gone or waiting for the lessons before it), so the host
+ * reads the day again instead.
  */
 export async function openMissionAction(
   input: z.infer<typeof missionInputSchema>,
@@ -132,13 +165,13 @@ export async function openMissionAction(
   const { blockId, timeZone } = parsed.data;
 
   const { data: result, error } = await safeAsync(async () => {
-    const today = await getTodayView({});
+    const day = await getSessionPageView({ blockId });
 
-    if (today.status !== "ready") {
+    if (day.status !== "ready") {
       return null;
     }
 
-    const { session } = today.today;
+    const { session } = day;
 
     const block = session.blocks.find(
       (candidate) =>
@@ -176,7 +209,7 @@ export async function openWrittenLessonAction(input: BlockInput): Promise<StudyD
 
   const { data: result, error } = await safeAsync(async () => {
     const { blockId, sessionId, timeZone } = parsed.data;
-    const session = await getStudySession({ input: { timeZone }, sessionId });
+    const session = await openStudySession({ input: { timeZone }, sessionId });
 
     const block =
       session.status === "ready"

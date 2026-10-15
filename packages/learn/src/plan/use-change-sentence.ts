@@ -17,7 +17,7 @@ import { isChoiceOperation, useChoiceSentence } from "./use-choice-sentence";
 import { useCoverageSentence } from "./use-coverage-sentence";
 import { usePhaseDatesSentence } from "./use-phase-dates-sentence";
 import { useShortList } from "./use-short-list";
-import { useSystemChangeSentence } from "./use-system-change-sentence";
+import { type PlanChangeContent, useSystemChangeSentence } from "./use-system-change-sentence";
 import { useToolSentence } from "./use-tool-sentence";
 import { useWeekdaySentence } from "./use-weekday-texts";
 import { useWrittenCadenceWords } from "./written-cadence";
@@ -187,7 +187,10 @@ function useNoticeSentence() {
   const noticeDayText = useNoticeDayText();
   const followsNotice = useFollowsNoticeSentence();
 
-  return ({ examDocument: document, operations }: PlanChangeView): string => {
+  return ({
+    examDocument: document,
+    operations,
+  }: Pick<PlanChangeView, "examDocument" | "operations">): string => {
     const follows = operations.some((operation) => operation.kind === "followNotice");
     const day = operations.find((operation) => operation.kind === "setNoticeDate");
     const date = day?.kind === "setNoticeDate" ? formatDate(day.targetDate, "long") : null;
@@ -256,7 +259,7 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
   const systemSentence = useSystemChangeSentence({ targetDate });
   const phaseDatesSentence = usePhaseDatesSentence();
 
-  return (change: PlanChangeView): string => {
+  return (change: PlanChangeContent): string => {
     if (change.reason) {
       return change.reason;
     }

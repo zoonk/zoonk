@@ -32,7 +32,7 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
         <ListRow
           aria-current={state === "next" ? "step" : undefined}
           data-state={state}
-          key={block.id}
+          key={block.position}
           role="listitem"
         >
           <ListRowLeading className="w-3 justify-center">

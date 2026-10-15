@@ -9,17 +9,26 @@ import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
-import { type BuddyMission, type BuddyToday } from "../buddies/buddy-status-view";
+import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
-import { type MissionLinks, useMissionOpen } from "./mission-links";
+import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
 import { MissionListRow, ProgressCount } from "./mission-list";
 import { BuddyFace, MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
+/** A day's missions and the full meal they add up to: a saved day's, or one not opened yet. */
+export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
+
 /** "2 left · ~8 min": how many missions are left and about how long they take, in the mono face. */
-function MissionsStatus({ missions, points }: { missions: BuddyMission[]; points: number }) {
+function MissionsStatus({
+  missions,
+  points,
+}: {
+  missions: readonly MissionView[];
+  points: number;
+}) {
   const t = useExtracted();
   const format = useFormatter();
   const formatDuration = useFormatDuration();
@@ -51,7 +60,7 @@ function MissionRow({
 }: {
   buddy: LearnBuddy | null;
   links: MissionLinks;
-  mission: BuddyMission;
+  mission: MissionView;
 }) {
   const missionName = useMissionName(buddy);
   const stateLabel = useMissionStateLabel(buddy);
@@ -80,7 +89,7 @@ function MissionRow({
 }
 
 /** The violet target when a mission opens one of the day's blocks: the mark that block wears there. */
-function MissionRowEnd({ mission }: { mission: BuddyMission }) {
+function MissionRowEnd({ mission }: { mission: MissionView }) {
   if (mission.opens?.kind !== "block" || mission.waitReason) {
     return null;
   }
@@ -126,7 +135,7 @@ export function MissionsCard({
   links: MissionLinks;
   /** In the buddy's own day its face is already there: the card leaves it out. */
   showBuddy?: boolean;
-  today: BuddyToday | null;
+  today: MissionsDay | null;
 }) {
   const t = useExtracted();
   const format = useFormatter();

@@ -34,6 +34,7 @@ import { useTodayChangeSentence, useTodayCountsByDate } from "./today-change-sen
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
 import { AdjustPlanLink } from "./today-plan-change-actions";
+import { useShownChange } from "./use-shown-change";
 
 type Change = NonNullable<TodayView["planChange"]>;
 type Decision = PlanChangeDecisionInput["status"];
@@ -176,26 +177,40 @@ function ChangeActions({
  * save keeps the last one on screen (an applied change whose Undo failed stays applied). Undoing
  * an applied suggestion gives the suggestion back (`change`), waiting for an answer as before
  * Apply, even when Today opened on it already applied: Ana undid resting on Saturdays and read
- * "Undone" with no way back to it until she reloaded.
+ * "Undone" with no way back to it until she reloaded. The change stays on screen from the answer
+ * (`onHold`) unless nothing was saved. One out of date stays busy until what replaces it shows.
  */
-function useAnswer(opened: Change) {
+function useAnswer(opened: Change, onHold: (held: boolean) => void) {
   const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
   const [answered, setAnswered] = useState<Answered | null>(null);
   const [restored, setRestored] = useState<Change | null>(null);
   const [failed, setFailed] = useState(false);
+  const [superseded, setSuperseded] = useState<Change | null>(null);
   const [isPending, startTransition] = useTransition();
   const change = restored ?? opened;
 
   const answer = (status: Decision) => {
+    onHold(true);
+
     startTransition(async () => {
       const { data: saved } = await safeAsync(() =>
         actions.decidePlanChange({ changeId: change.id, status }),
       );
 
+      // An out-of-date change says nothing: Today read itself again, and its copy (or the page's
+      // other state) replaces it.
+      if (saved === "stale") {
+        setFailed(false);
+        setSuperseded(change);
+        onHold(false);
+        return;
+      }
+
       setFailed(!saved);
 
       if (!saved) {
+        onHold(false);
         return;
       }
 
@@ -217,7 +232,7 @@ function useAnswer(opened: Change) {
     });
   };
 
-  return { answer, answered, change, failed, isPending };
+  return { answer, answered, change, failed, isPending: isPending || superseded === change };
 }
 
 /**
@@ -259,18 +274,21 @@ function AfterAnswer({
 function PlanChangeNotice({
   change: opened,
   focusOnMount = false,
+  onHold,
   onNext,
 }: {
   change: Change;
   /** It replaced the answered one in place, so the keyboard lands on it. */
   focusOnMount?: boolean;
+  /** Keeps it on screen from the learner's answer (`useShownChange`). */
+  onHold: (held: boolean) => void;
   /** Shows the next proposal still waiting, once this one is answered; null when none waits. */
   onNext: (() => void) | null;
 }) {
   const t = useExtracted();
   const sentence = useTodayChangeSentence();
   const changeTitle = useChangeTitle();
-  const { answer, answered, change, failed, isPending } = useAnswer(opened);
+  const { answer, answered, change, failed, isPending } = useAnswer(opened, onHold);
   const answeredText = useAnsweredText(change);
   const officialDate = useOfficialDateLine()(change);
   const byDate = useTodayCountsByDate()(change);
@@ -328,30 +346,6 @@ function PlanChangeNotice({
 }
 
 /**
- * The change shown when Today opened stays while the learner is here, so answering it shows what
- * the answer did. One that turns up later shows when none did. Today reads itself again after an
- * answer: a different proposal still waiting comes up when the learner asks (`showNext`).
- */
-function useShownChange(change: Change | null) {
-  const [shown, setShown] = useState<{ change: Change; swapped: boolean } | null>(
-    change ? { change, swapped: false } : null,
-  );
-
-  if (shown === null && change !== null) {
-    setShown({ change, swapped: false });
-  }
-
-  const current = shown?.change ?? change;
-  const next = change?.status === "proposed" && change.id !== current?.id ? change : null;
-
-  return {
-    current,
-    showNext: next ? () => setShown({ change: next, swapped: true }) : null,
-    swapped: shown?.swapped ?? false,
-  };
-}
-
-/**
  * Today's plan change, the one place to answer it: a proposal ("Apply" or "Not now"), falling
  * behind that puts the date at risk (more time, focus or keep), or an automatic change of the last
  * day, such as a rebalance or a test-out ("We skipped 3 lessons of Electric circuits"), with "Got
@@ -359,17 +353,25 @@ function useShownChange(change: Change | null) {
  */
 export function TodayPlanChange() {
   const { today } = useTodayScreen();
-  const { current: change, showNext, swapped } = useShownChange(today.planChange);
+  const { current: change, hold, showNext, swapped } = useShownChange(today.planChange);
 
   if (!change) {
     return null;
   }
 
   if (change.kind === "missedDays" && change.behind) {
-    return <FallingBehindNotice behind={change.behind} change={change} key={change.id} />;
+    return (
+      <FallingBehindNotice behind={change.behind} change={change} key={change.id} onHold={hold} />
+    );
   }
 
   return (
-    <PlanChangeNotice change={change} focusOnMount={swapped} key={change.id} onNext={showNext} />
+    <PlanChangeNotice
+      change={change}
+      focusOnMount={swapped}
+      key={change.id}
+      onHold={hold}
+      onNext={showNext}
+    />
   );
 }

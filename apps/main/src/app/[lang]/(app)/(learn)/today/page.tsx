@@ -2,41 +2,34 @@ import { LazyStartClient } from "@/app/[lang]/(app)/(onboarding)/start/lazy-star
 import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view";
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
-import { UploadRequestClient } from "@/components/learn/upload-request-client";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { Link } from "@/i18n/navigation";
-import { getBrainPowerTotal, getLearnerBuddy } from "@/lib/learn/learner-buddy";
-import { getReadAt } from "@/lib/learn/read-at";
+import { type LearnerViewStamp } from "@/lib/learner/learner-view-copies";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
-import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
-import { listGoalChangeNotices } from "@zoonk/core/library/sources/notices";
-import { getGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
-import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
-import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getOnboardingResume } from "@zoonk/core/view-models/onboarding/resume";
-import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
-import { type TodayView, getTodayView } from "@zoonk/core/view-models/today/get";
-import { LanguagePracticeRow } from "@zoonk/learn/language/today";
 import { Page } from "@zoonk/learn/page";
-import { type TodayHostNotices } from "@zoonk/learn/today";
 import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
-import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
-import { TodaySkeleton } from "@zoonk/learn/today/skeleton";
+import { TodayShell } from "@zoonk/learn/today/shell";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { SuggestedGoalClient, TodayClient, TodayPreparingClient } from "./today-client";
+import { LearnNotFound } from "../_components/learn-not-found";
+import {
+  SuggestedGoalClient,
+  TodayClient,
+  TodayPreparingClient,
+  TodayStateSync,
+} from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
 import { TodayOnboardingLeft, isOnboardingLeft } from "./today-onboarding-left";
+import { loadTodayScreen } from "./today-view";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -177,101 +170,25 @@ async function TodaySessionEnded() {
   );
 }
 
-/** A language goal's due practice; nothing for other goals. */
-async function loadLanguageToday(goal: TodayView["goal"]) {
-  if (goal.kind !== "language") {
-    return null;
-  }
-
-  const result = await getLanguageTodayView({ goalId: goal.id });
-  return result.status === "ready" ? result.today : null;
-}
-
-/**
- * The notices Today can show that need main's actions, each drawn only when there's something to
- * say. Today shows the most important one.
- */
-async function loadHostNotices(goal: TodayView["goal"]) {
-  const [changes, upload, language] = await Promise.all([
-    listGoalChangeNotices({ goalId: goal.id }),
-    getGoalUploadRequest({ goalId: goal.id }),
-    loadLanguageToday(goal),
-  ]);
-
-  const latestChange = changes.status === "ready" ? changes.notices[0] : undefined;
-  const request = upload.status === "ready" ? upload.request : null;
-  const hasPractice = Boolean(language?.pattern ?? language?.pronunciation);
-
-  const notices: TodayHostNotices = {
-    practice:
-      language && hasPractice ? (
-        <LanguagePracticeRow
-          hrefs={{
-            pattern: language.pattern ? `/pattern/${language.pattern.id}` : null,
-            pronunciation: `/pronunciation?goal=${goal.id}`,
-          }}
-          today={language}
-        />
-      ) : null,
-    sourceChange: latestChange ? <TodayChangeNotice message={latestChange.message} /> : null,
-    uploadRequest: request ? <UploadRequestClient request={request} /> : null,
-  };
-
-  return notices;
-}
-
-/**
- * The plan's end as the Plan shows it, read only when Today has a proposed plan change to
- * explain for a plan without a date: that's the one case its sentence names an end.
- */
-async function loadPlanEnd(today: TodayView): Promise<string | null> {
-  const proposed =
-    today.insight?.planChange?.status === "proposed" || today.planChange?.status === "proposed";
-
-  if (!proposed || today.goal.targetDate) {
-    return null;
-  }
-
-  const result = await getPlanTabView({ goalId: today.goal.id });
-  return result.status === "ready" ? result.view.plan.estimate.endDate : null;
-}
-
-/**
- * An exam goal's mocks to take any time, which Today offers under "Practice anytime" to every
- * learner: without Plus, the row is marked Plus and its chooser says what Plus unlocks. Nothing
- * while no mock can be built.
- */
-async function loadTodayMocks(goal: TodayView["goal"]) {
-  if (goal.kind !== "exam") {
-    return null;
-  }
-
-  const result = await getMockOptions({ goalId: goal.id });
-  const view = result.status === "ready" ? result.view : null;
-
-  return view && (view.running || view.options.length > 0) ? view : null;
-}
-
-/**
- * The goal's subjects for Today's aside, read as the Plan reads them, so the aside's rows are the
- * Plan's own (the same names, bars and shares) under its "See your plan".
- */
-async function loadSyllabus(goalId: string) {
-  const result = await getSyllabusView({ goalId });
-  return result.status === "ready" ? result.syllabus : null;
-}
-
-/** Open entries in the goal's mistakes notebook, which Today offers under "Practice anytime". */
-async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
-  const result = await listCurrentUserMistakes({ goalId, limit: 1, offset: 0, status: "open" });
-  return result.status === "ready" ? result.availability : { ready: 0, tomorrow: 0 };
+/** The learner and the revision a state other than the day was read at, to keep it fresh. */
+function toStamp(result: { revision: string; userId: string }): LearnerViewStamp {
+  return { day: null, revision: result.revision, userId: result.userId };
 }
 
 async function TodayContent() {
-  const result = await getTodayView({});
+  const result = await loadTodayScreen();
 
-  if (result.status === "noGoal" && result.suggestedGoal) {
-    return <WelcomeBack suggestion={result.suggestedGoal} />;
+  if (result.status === "noGoal") {
+    return (
+      <>
+        <TodayStateSync stamp={toStamp(result)} state={result.status} />
+        {result.suggestedGoal ? (
+          <WelcomeBack suggestion={result.suggestedGoal} />
+        ) : (
+          <TodayFirstGoal />
+        )}
+      </>
+    );
   }
 
   // A cookie without a session behind it is a learner whose session ended, not someone new.
@@ -281,66 +198,58 @@ async function TodayContent() {
 
   // Someone without a session hasn't started anything here either: they start right away, or log
   // in from the frame.
-  if (result.status === "noGoal" || result.status === "unauthorized") {
+  if (result.status === "unauthorized") {
     return <TodayFirstGoal />;
   }
 
   if (result.status === "goalNotActive") {
-    return <TodayGoalPaused />;
+    return (
+      <>
+        <TodayStateSync stamp={toStamp(result)} state={result.status} />
+        <TodayGoalPaused />
+      </>
+    );
   }
 
   if (result.status === "preparing") {
-    // A goal left halfway through its questions has no plan coming until they're answered.
-    if (await isOnboardingLeft(result.goal.id)) {
-      return <TodayOnboardingLeft goal={result.goal} />;
-    }
-
-    return <TodayPreparingClient goalId={result.goal.id} goalTitle={result.goal.title} />;
+    return (
+      <>
+        <TodayStateSync stamp={toStamp(result)} state={result.status} />
+        <TodayPreparingState goal={result.goal} />
+      </>
+    );
   }
 
+  // A goal Today can't find says so in Today's place; the app's bar stays Today's own.
   if (result.status !== "ready") {
-    notFound();
+    return (
+      <NotFoundPage>
+        <LearnNotFound bar={null} />
+      </NotFoundPage>
+    );
   }
 
-  // The language goal's view is read once per request: the notices read it too.
-  const [buddy, notices, planEnd, readAt, mocks, mistakes, languageToday, syllabus, brainPower] =
-    await Promise.all([
-      getLearnerBuddy(),
-      loadHostNotices(result.today.goal),
-      loadPlanEnd(result.today),
-      getReadAt(),
-      loadTodayMocks(result.today.goal),
-      countOpenMistakes(result.today.goal.id),
-      loadLanguageToday(result.today.goal),
-      loadSyllabus(result.today.goal.id),
-      getBrainPowerTotal(),
-    ]);
+  return <TodayClient copy={result.copy} key={result.copy.day} />;
+}
 
-  return (
-    <TodayClient
-      key={`${result.today.goal.id}:${result.today.session.id}`}
-      brainPower={brainPower}
-      buddy={buddy}
-      level={languageToday?.level ?? null}
-      mistakes={mistakes}
-      mocks={mocks}
-      notices={notices}
-      planEnd={planEnd}
-      readAt={readAt}
-      speaking={languageToday?.speaking ?? null}
-      syllabus={syllabus}
-      today={result.today}
-    />
-  );
+/** A goal whose plan is being built, or one left halfway through its questions. */
+async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
+  // A goal left halfway through its questions has no plan coming until they're answered.
+  if (await isOnboardingLeft(goal.id)) {
+    return <TodayOnboardingLeft goal={goal} />;
+  }
+
+  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
 }
 
 /**
- * Today, the screen learners open every day: one next step for the active goal. While it loads,
- * its skeleton is the same frame (`TodaySkeleton`), so nothing moves when it arrives.
+ * Today, the screen learners open every day: one next step for the active goal. A client
+ * navigation paints it from its prefetch; a hard load paints Today's frame (`TodayShell`) until the
+ * day streams into the same response, with no placeholders, and the title doesn't move.
  */
 export default function TodayPage() {
   return (
-    <Suspense fallback={<TodaySkeleton />}>
+    <Suspense fallback={<TodayShell />}>
       <TodayContent />
     </Suspense>
   );

@@ -1,36 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-/** A tap that answers within this long needs no word; past it, the screen says it's on its way. */
-const SLOW_MS = 1500;
-
-/** Past this, it says it's taking longer than usual, and that tapping again isn't needed. */
-const VERY_SLOW_MS = 15_000;
-
-export type WaitState = "none" | "slow" | "verySlow";
+import { type WaitState, getWaitChanges, getWaitState } from "./wait-state";
 
 /**
  * How long a pending action has been waiting, so a button never just greys out: nothing for a
- * quick one, then that it's on its way, then that it's slow and needs no second tap.
+ * quick one, then that it's on its way, then that it's slow and needs no second tap. A wait a tap
+ * started before this screen showed it (`since`, the tap's `Date.now()`) counts from that tap and
+ * starts with the line it's already at, so the line neither starts over nor blinks when the screen
+ * showing it changes.
  */
-export function useSlowWait(isPending: boolean): WaitState {
-  const [state, setState] = useState<WaitState>("none");
+export function useSlowWait(isPending: boolean, { since }: { since?: number } = {}): WaitState {
+  const [state, setState] = useState<WaitState>(() =>
+    isPending && since !== undefined ? getWaitState(Date.now() - since) : "none",
+  );
 
   useEffect(() => {
     if (!isPending) {
       return;
     }
 
-    const slow = setTimeout(() => setState("slow"), SLOW_MS);
-    const verySlow = setTimeout(() => setState("verySlow"), VERY_SLOW_MS);
+    const start = since ?? Date.now();
+    const read = () => setState(getWaitState(Date.now() - start));
+
+    const timers = [0, ...getWaitChanges(Date.now() - start)].map((delay) =>
+      setTimeout(read, delay),
+    );
 
     return () => {
-      clearTimeout(slow);
-      clearTimeout(verySlow);
+      timers.forEach((timer) => clearTimeout(timer));
       setState("none");
     };
-  }, [isPending]);
+  }, [isPending, since]);
 
   return isPending ? state : "none";
 }

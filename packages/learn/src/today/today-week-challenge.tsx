@@ -95,7 +95,8 @@ function FullReviewRow({ date }: { date: Date }) {
 
 /**
  * The week's challenge under the days: its name over its day, questions and time; the row opens
- * its intro. A free plan's mock day is its full review.
+ * its intro. One the plan adds only once the day is opened (no saved row yet) says the same, with
+ * nothing to open until then. A free plan's mock day is its full review.
  */
 export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: Date }) {
   const t = useExtracted();
@@ -116,12 +117,22 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
     challenge.timeLimitMinutes !== null && formatDuration(challenge.timeLimitMinutes),
   ].filter(Boolean);
 
-  return (
-    <ListRowLink className="border-t" href={actions.challengeHref(challenge.planItemId)}>
+  const content = (
+    <>
       <ListRowLeading className="w-3 justify-center">
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ChallengeLine facts={facts.join(" · ")} name={name} />
+    </>
+  );
+
+  if (challenge.planItemId === null) {
+    return <ListRow className="border-t">{content}</ListRow>;
+  }
+
+  return (
+    <ListRowLink className="border-t" href={actions.challengeHref(challenge.planItemId)}>
+      {content}
     </ListRowLink>
   );
 }

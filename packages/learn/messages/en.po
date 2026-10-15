@@ -96,7 +96,7 @@ msgstr "Studied"
 #: src/today/today-heading.tsx
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
-#: src/today/today-skeleton.tsx
+#: src/today/today-shell.tsx
 #: src/today/today-subject-rows.tsx
 msgctxt "zWgbGg"
 msgid "Today"
@@ -394,6 +394,16 @@ msgstr "It didn't pass our quality checks, so your plan goes on without it."
 msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Summaries"
+
+#: src/_components/opening-wait-line.tsx
+msgctxt "bSuhQp"
+msgid "Opening your next step…"
+msgstr "Opening your next step…"
+
+#: src/_components/opening-wait-line.tsx
+msgctxt "Pd4dpx"
+msgid "This is taking longer than usual. It opens on its own, no need to tap again."
+msgstr "This is taking longer than usual. It opens on its own, no need to tap again."
 
 #: src/_components/plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
@@ -3968,7 +3978,6 @@ msgid "{done} of {planned}"
 msgstr "{done} of {planned}"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-skeleton.tsx
 #: src/today/today-week.tsx
 msgctxt "PtxhIN"
 msgid "This week"
@@ -11315,12 +11324,6 @@ msgid "Do {title} while you wait"
 msgstr "Do {title} while you wait"
 
 #: src/session/next-stop.tsx
-#: src/today/today-block-row.tsx
-msgctxt "d562ST"
-msgid "Often tested"
-msgstr "Often tested"
-
-#: src/session/next-stop.tsx
 msgctxt "xpHtfD"
 msgid "We couldn't open this step. Try again."
 msgstr "We couldn't open this step. Try again."
@@ -11338,6 +11341,12 @@ msgstr "We couldn't stop the session. Try again."
 msgctxt "E5P6Z8"
 msgid "Stop for today"
 msgstr "Stop for today"
+
+#: src/session/next-stop.tsx
+#: src/today/today-block-row.tsx
+msgctxt "d562ST"
+msgid "Often tested"
+msgstr "Often tested"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -12158,17 +12167,6 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, one {# lesson skipped because you already know it} other {# lessons skipped because you already know them}}"
 
 #: src/today/today-action.tsx
-msgctxt "bSuhQp"
-msgid "Opening your next step…"
-msgstr "Opening your next step…"
-
-#: src/today/today-action.tsx
-msgctxt "Pd4dpx"
-msgid "This is taking longer than usual. It opens on its own, no need to tap again."
-msgstr "This is taking longer than usual. It opens on its own, no need to tap again."
-
-#: src/today/today-action.tsx
-#: src/today/today-skeleton.tsx
 msgctxt "AstaIr"
 msgid "Continue session"
 msgstr "Continue session"
@@ -12523,7 +12521,7 @@ msgid "It usually takes a minute or two. Your first day opens here as soon as it
 msgstr "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 
 #: src/today/today-screen.tsx
-#: src/today/today-skeleton.tsx
+#: src/today/today-shell.tsx
 msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Your week"

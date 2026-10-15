@@ -3,7 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { KindMark } from "../_components/kind-tile";
 import { DoneMark } from "../_components/status-mark";
 import { getBlockKind } from "./block-kind";
-import { type StudyBlock } from "./session-types";
+import { type DayStep } from "./session-types";
 
 /**
  * A block's mark in the day's queue, on Today and beside the session: its kind's icon, the
@@ -16,7 +16,7 @@ export function BlockMark({
   className,
   done = block.status === "completed",
 }: {
-  block: StudyBlock;
+  block: DayStep;
   className?: string;
   done?: boolean;
 }) {

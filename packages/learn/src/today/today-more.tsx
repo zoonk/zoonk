@@ -52,7 +52,8 @@ function MoreTime() {
 
 /**
  * The week's challenge or mock exam ahead, on a day with nothing new: its intro shows what it asks,
- * before its day too. A mock the learner's plan doesn't include is marked Plus.
+ * before its day too. A mock the learner's plan doesn't include is marked Plus. One the plan adds
+ * only once the day is opened (no saved row yet) has no intro to show: the week's row says when.
  */
 function ChallengeRow() {
   const t = useExtracted();
@@ -60,7 +61,7 @@ function ChallengeRow() {
   const { actions, today } = useTodayScreen();
   const challenge = today.weeklyChallenge;
 
-  if (!challenge?.date || challenge.date < today.session.localDate) {
+  if (!challenge?.date || !challenge.planItemId || challenge.date < today.session.localDate) {
     return null;
   }
 

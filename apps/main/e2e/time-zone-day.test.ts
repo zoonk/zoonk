@@ -1,4 +1,4 @@
-import { type Browser, type Request } from "@playwright/test";
+import { type Browser, type Page, type Request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EPersona, createE2EPersona } from "@zoonk/e2e/fixtures/personas";
@@ -114,8 +114,11 @@ async function clearToday(user: E2EPersona, at: Date) {
   ]);
 }
 
-/** How long after the follow answers its effects are counted: the refresh and any prefetches. */
+/** How long after the follow answers its effects count: Today's view read and any prefetches. */
 const AFTER_FOLLOW_MS = 6000;
+
+/** Where the browser reads Today's view again, instead of rendering the page again. */
+const TODAY_VIEW_PATH = "/api/learner/views/today";
 
 /** The follow's ask, however it's sent (a request, or a Server Action): a POST naming the zone. */
 function isFollowAsk(request: Request, zone: string): boolean {
@@ -125,7 +128,8 @@ function isFollowAsk(request: Request, zone: string): boolean {
 /**
  * A read of the app's pages, named by what it asked for: a page read again (`page`), or a link's
  * prefetch at its tier (`Next-Router-Prefetch`: prerendered segments, its shell, or its page) and,
- * for prerendered ones, the segment. Null for anything else (Main's own data, the follow).
+ * for prerendered ones, the segment, at its address with its query (two addresses are two links).
+ * Null for anything else (Main's own data, the follow).
  */
 function toPageRead(request: Request, origin: string): string | null {
   const url = new URL(request.url());
@@ -137,7 +141,42 @@ function toPageRead(request: Request, origin: string): string | null {
   const { "next-router-prefetch": tier = "page", "next-router-segment-prefetch": segment = "" } =
     request.headers();
 
-  return `${tier} ${url.pathname} ${segment}`.trim();
+  url.searchParams.delete("_rsc");
+
+  return `${tier} ${url.pathname}${url.search} ${segment}`.trim();
+}
+
+/**
+ * The follow's answer, then the response to Today's view read sent after it: the read the follow
+ * made (`viewReads`), as against one the page sent before the answer.
+ */
+function watchFollow(page: Page, zone: string) {
+  const answered = Promise.withResolvers<null>();
+  const viewed = Promise.withResolvers<null>();
+  const viewReads = new Set<Request>();
+  let hasAnswered = false;
+
+  page.on("request", (request) => {
+    if (hasAnswered && new URL(request.url()).pathname === TODAY_VIEW_PATH) {
+      viewReads.add(request);
+    }
+  });
+
+  page.on("response", (response) => {
+    if (isFollowAsk(response.request(), zone)) {
+      hasAnswered = true;
+      answered.resolve(null);
+    } else if (viewReads.has(response.request())) {
+      viewed.resolve(null);
+    }
+  });
+
+  return {
+    answered: answered.promise,
+    hasAnswered: () => hasAnswered,
+    viewReads,
+    viewed: viewed.promise,
+  };
 }
 
 test.describe("The learner's day on a device in another zone", () => {
@@ -164,11 +203,14 @@ test.describe("The learner's day on a device in another zone", () => {
     const { at, context, device, page, user } = await openAnaElsewhere(browser);
     await clearToday(user, at);
 
+    const follow = watchFollow(page, device);
+
     try {
-      // Today reads itself again once the follow answers, however long the summary took first.
-      const followed = page.waitForResponse((response) => isFollowAsk(response.request(), device));
+      // Today reads itself again once the follow answers, however long the summary took first, and
+      // the day moves with that read, however long the server takes to answer it.
       await page.goto("/today");
-      await followed;
+      await follow.answered;
+      await follow.viewed;
 
       await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
       await expect.poll(() => readGoalZone(user)).toBe(device);
@@ -184,13 +226,12 @@ test.describe("The learner's day on a device in another zone", () => {
     const origin = new URL(getBaseURL()).origin;
     const asks: string[] = [];
     const reads: string[] = [];
-    const answered = Promise.withResolvers<null>();
-    let hasAnswered = false;
+    const follow = watchFollow(page, device);
 
     page.on("request", (request) => {
       if (isFollowAsk(request, device)) {
         asks.push(request.url());
-      } else if (hasAnswered) {
+      } else if (follow.hasAnswered()) {
         // From the follow's answer on: the page's own first prefetches may still be on their way.
         const read = toPageRead(request, origin);
 
@@ -200,20 +241,17 @@ test.describe("The learner's day on a device in another zone", () => {
       }
     });
 
-    page.on("response", (response) => {
-      if (isFollowAsk(response.request(), device)) {
-        hasAnswered = true;
-        answered.resolve(null);
-      }
-    });
-
     try {
       await page.goto("/today");
-      await answered.promise;
+      await follow.answered;
+
+      // The day moves with the view read the follow made (the one counted), however long the server
+      // takes to answer it.
+      await follow.viewed;
       await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
 
-      // One read of Today, and one wave of prefetches: each link in sight at most once per tier, as
-      // a single refresh prefetches them again, never twice over as when the whole cache was dropped.
+      // One read of Today, its view's own (never the page rendered again), and no link in sight
+      // prefetched twice.
       await page.evaluate(async (ms) => {
         await new Promise((resolve) => {
           setTimeout(resolve, ms);
@@ -225,7 +263,8 @@ test.describe("The learner's day on a device in another zone", () => {
       );
 
       expect.soft(asks).toHaveLength(1);
-      expect.soft(reads.filter((read) => read === "page /today")).toHaveLength(1);
+      expect.soft([...follow.viewReads].map((request) => request.url())).toHaveLength(1);
+      expect.soft(reads.filter((read) => read === "page /today")).toStrictEqual([]);
       expect.soft(repeated, reads.join("\n")).toStrictEqual([]);
     } finally {
       await context.close();

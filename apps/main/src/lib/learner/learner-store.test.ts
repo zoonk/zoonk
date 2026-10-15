@@ -244,6 +244,48 @@ describe("learner store identity", () => {
   });
 });
 
+describe("the held learner", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("is unknown until a read answers, then names the learner", async () => {
+    stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    expect(store.getHeldLearnerId()).toBeUndefined();
+
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("first") });
+    await settle();
+
+    expect(store.getHeldLearnerId()).toBe("first");
+  });
+
+  it("is nobody only once the server said so, never from the browser's own guess", async () => {
+    const { announce } = stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("first") });
+    await settle();
+
+    // Another tab signs out: the check that follows says nobody holds the session.
+    announce({ identity: null });
+    reads[1]?.resolve({ readAt: Date.now(), status: "visitor" });
+    await settle();
+
+    expect(store.getHeldLearnerId()).toBeNull();
+  });
+});
+
 const MINUTE_MS = 60 * 1000;
 
 /** When the server read the summaries below, by its own clock. */
@@ -352,5 +394,72 @@ describe("learner store timing", () => {
 
     vi.advanceTimersByTime(1);
     expect(reads).toHaveLength(3);
+  });
+});
+
+describe("the summary after this tab's writes", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("reads again once a write committed a newer revision than the summary holds", async () => {
+    stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("first") });
+    await settle();
+
+    store.catchUpLearnerSummary({
+      generation: store.getLearnerGeneration(),
+      revision: "2",
+      userId: "first",
+    });
+
+    expect(reads).toHaveLength(2);
+  });
+
+  it("reads once more when a read already on its way answers behind the write", async () => {
+    stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("first") });
+    await settle();
+    const generation = store.getLearnerGeneration();
+
+    // A read for revision 2 is out when a write commits revision 3.
+    store.catchUpLearnerSummary({ generation, revision: "2", userId: "first" });
+    store.catchUpLearnerSummary({ generation, revision: "3", userId: "first" });
+    expect(reads).toHaveLength(2);
+
+    reads[1]?.resolve({ status: "ready", summary: { ...summaryOf("first"), revision: "2" } });
+    await settle();
+
+    expect(reads).toHaveLength(3);
+  });
+
+  it("reads nothing for a revision it holds, another learner's, or an older identity's", async () => {
+    stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("first") });
+    await settle();
+    const generation = store.getLearnerGeneration();
+
+    store.catchUpLearnerSummary({ generation, revision: "1", userId: "first" });
+    store.catchUpLearnerSummary({ generation, revision: "3", userId: "other" });
+    store.catchUpLearnerSummary({ generation: generation - 1, revision: "3", userId: "first" });
+
+    expect(reads).toHaveLength(1);
   });
 });

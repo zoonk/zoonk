@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
@@ -11,6 +12,7 @@ import { type StreamEvent, followRun } from "./generation-run";
 import { openUserAsGuest } from "./guest-session";
 import { tabTo } from "./keyboard-focus";
 import { continueToLastStep, continueToStep } from "./result-steps";
+import { logStatusLines, readStatusLog } from "./status-lines";
 import {
   LESSON_TITLE,
   answerRight,
@@ -23,6 +25,11 @@ import {
 
 /** The next step reads the session again every 5 seconds while its lesson is written. */
 const WAITING_REFRESH_MS = 5000;
+
+/** A request this slow gets the tap's wait line, which shows past 1.5 seconds. */
+const SLOW_REQUEST_MS = 2000;
+
+const OPENING_STEP = "Opening your next step…";
 
 /**
  * A moment sits under its header's heading: the lesson's title in the player, "Today's session"
@@ -63,6 +70,24 @@ async function refuseLessonWriting(
       status: limit.tier === "guest" ? 403 : 402,
     }),
   );
+}
+
+/**
+ * Stands in for the API taking the learner's request to write the lesson: a run starts (still
+ * running, nothing written yet), and every request is recorded, so a test can say none went unasked.
+ */
+async function acceptLessonWriting(page: Page) {
+  const runId = `e2e-session-lesson-${randomUUID()}`;
+  const asked: string[] = [];
+
+  await followRun({ events: [], page, runId });
+
+  await page.route("**/v1/library/lessons/*/generations", async (route) => {
+    asked.push(route.request().method());
+    await route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 });
+  });
+
+  return { asked, runId };
 }
 
 /**
@@ -536,12 +561,221 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
+  test("a lesson nobody asked for shows its Start, and only the tap asks for it", async ({
+    browser,
+  }) => {
+    const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+    const { asked, runId } = await acceptLessonWriting(page);
+    const writing = page.getByRole("progressbar", { name: "Writing your lesson" });
+
+    // A bookmark, or a new tab: nothing writes the lesson, so the step offers its Start.
+    await page.goto("/session");
+    const start = page.getByRole("main").getByRole("button", { exact: true, name: "Start" });
+    await expect(start).toBeEnabled();
+    await expect(writing).toHaveCount(0);
+    await page.waitForLoadState("networkidle");
+    expect(asked).toStrictEqual([]);
+
+    // Start asks for it once, and only then the wait for its writing shows.
+    await start.click();
+    await expect(writing).toBeVisible();
+    await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
+    expect(asked).toStrictEqual(["POST"]);
+
+    // Asked for, not picked up by its run yet: the wait stays, without asking again.
+    await page.reload();
+    await expect(writing).toBeVisible();
+    await expect(start).toHaveCount(0);
+    expect(asked).toStrictEqual(["POST"]);
+
+    await page.context().close();
+  });
+
+  test("a lesson already being written keeps its wait", async ({ browser }) => {
+    const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+    const { asked, runId } = await acceptLessonWriting(page);
+
+    await prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    });
+
+    await page.goto("/session");
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+
+    await expect(
+      page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
+    ).toHaveCount(0);
+
+    expect(asked).toStrictEqual([]);
+    await page.context().close();
+  });
+
+  test("a request the address carries for a block already done doesn't make the next lesson wait", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+    const { asked } = await acceptLessonWriting(page);
+
+    const review = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "review", sessionId: session.id },
+    });
+
+    // An old address: the review's lesson request, kept from an earlier visit.
+    await page.goto(`/session?generation=e2e-old-run&block=${review.id}`);
+
+    await expect(
+      page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
+    ).toBeEnabled();
+
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toHaveCount(0);
+    expect(asked).toStrictEqual([]);
+    await page.context().close();
+  });
+
+  test("a step whose lesson the plan hasn't picked yet waits for it after Start", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+
+    // A chapter with no lesson written yet: Start asks to prepare it.
+    await prisma.studySessionBlock.updateMany({
+      data: { lessonId: null },
+      where: { kind: "learn", sessionId: session.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/session");
+    await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(page).toHaveURL((url) => url.searchParams.has("preparing"));
+
+    await expect(
+      page.getByText(
+        "This lesson is being written for you. It's usually ready in about two minutes.",
+      ),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
+    ).toHaveCount(0);
+
+    await page.context().close();
+  });
+
+  test("a lesson written by the time Start asks opens in the player", async ({ browser }) => {
+    const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
+    const page = await openAs(browser, user);
+    const asked: string[] = [];
+
+    // Another run finishes it while the learner's request is on its way.
+    await page.route("**/v1/library/lessons/*/generations", async (route) => {
+      asked.push(route.request().method());
+      await writeStudyLesson(lesson.id);
+      await route.fulfill({ json: { generationId: null, status: "ready" } });
+    });
+
+    await page.goto("/session");
+    await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+    expect(asked).toStrictEqual(["POST"]);
+    await page.context().close();
+  });
+
+  test("a lesson written while Start's request was answered opens in the player", async ({
+    browser,
+  }) => {
+    const { lesson, session, user } = await createStudyDay({
+      reviewDone: true,
+      writtenLesson: false,
+    });
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "learn", sessionId: session.id },
+    });
+
+    const page = await openAs(browser, user);
+    const runId = `e2e-session-lesson-${randomUUID()}`;
+    const opens: Route[] = [];
+    let answered = false;
+    await followRun({ events: [], page, runId });
+    await logStatusLines(page);
+
+    // The API takes the request (a run writes it), slowly enough for the tap's wait line to show,
+    // and the run finishes before the screen shows it.
+    await page.route("**/v1/library/lessons/*/generations", async (route) => {
+      await writeStudyLesson(lesson.id);
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, SLOW_REQUEST_MS);
+      });
+
+      answered = true;
+      await route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 });
+    });
+
+    // Then the screen opens the written lesson on its own: held here to look at it meanwhile.
+    await page.route("**/*", async (route) => {
+      const request = route.request();
+
+      if (
+        answered &&
+        request.method() === "POST" &&
+        Boolean(request.headers()["next-action"]) &&
+        (request.postData() ?? "").includes(block.id)
+      ) {
+        opens.push(route);
+        return;
+      }
+
+      await route.fallback();
+    });
+
+    await page.goto("/session");
+    const start = page.getByRole("main").getByRole("button", { exact: true, name: "Start" });
+    await start.click();
+
+    // Busy until the lesson is open, so another press sends nothing more.
+    await expect.poll(() => opens.length, { message: "the screen opens the lesson" }).toBe(1);
+    await expect(start).toHaveAttribute("aria-busy", "true");
+    await page.keyboard.press("Enter");
+    await start.click({ force: true });
+    expect(opens).toHaveLength(1);
+
+    const releasedAt = await page.evaluate(() => performance.now());
+    await opens[0]?.continue();
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+    expect(opens).toHaveLength(1);
+
+    // One wait line from the tap until the lesson opened: it never went away or started over when
+    // the tap handed over to opening the written lesson.
+    const { lines } = await readStatusLog(page);
+    const waiting = lines.filter((line) => line.at < releasedAt);
+    const shown = waiting.findIndex((line) => line.text === OPENING_STEP);
+
+    expect(shown, "the wait line shows while the step opens").toBeGreaterThanOrEqual(0);
+
+    expect(waiting.slice(shown).map((line) => line.text)).toStrictEqual(
+      waiting.slice(shown).map(() => OPENING_STEP),
+    );
+
+    await page.context().close();
+  });
+
   test("opens the lesson on its own once it's written", async ({ browser }) => {
     const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
 
     const page = await openAs(browser, user);
+    await acceptLessonWriting(page);
     await page.clock.install();
     await page.goto("/session");
+
+    // The learner asks for it with Start; the wait follows its writing from then on.
+    await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(
       page.getByText(
@@ -619,18 +853,20 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
-  test("a failed writing request stays on Today with an immediate retry", async ({ browser }) => {
+  test("a failed writing request stays on the step with an immediate retry", async ({
+    browser,
+  }) => {
     const { user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
     const page = await openAs(browser, user);
     await page.route("**/v1/library/lessons/*/generations", (route) => route.abort());
     await page.goto("/today");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    await expect(
-      page.getByRole("region", { name: "Today's session" }).getByRole("alert"),
-    ).toHaveText("We couldn't open the next step. Try again.");
-
-    await expect(page).toHaveURL(/\/today$/u);
+    // The lesson's step opens on the session screen at once; the request that fails says so there.
+    const main = page.getByRole("main");
+    await expect(main.getByRole("alert")).toHaveText("We couldn't open this step. Try again.");
+    await expect(main.getByRole("button", { exact: true, name: "Start" })).toBeEnabled();
+    await expect(page).toHaveURL(/\/session\?block=[\w-]+$/u);
     await page.context().close();
   });
 

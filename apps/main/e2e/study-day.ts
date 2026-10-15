@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Page, expect } from "@playwright/test";
+import { type Browser, type Locator, type Page, expect } from "@playwright/test";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -85,7 +85,7 @@ type StudyDayOptions = {
   freshStart?: "newWeek" | "welcomeBack" | null;
   /** The capsules already played, so the session opens on its lesson. */
   reviewDone?: boolean;
-  /** False for a lesson still being written, so the session has to wait for it. */
+  /** False for a lesson not written yet: the session asks for it when the learner starts it. */
   writtenLesson?: boolean;
 };
 
@@ -294,4 +294,15 @@ export async function answerRight(page: Page, question: RegExp | string) {
   await page.keyboard.press("1");
   await checkWithEnter(page);
   await continueWithEnter(page);
+}
+
+/**
+ * Today's blocks by name, in order (`day`: the rows of "Today's session"). What a row says under
+ * its name can change on its own: applying or undoing a plan change gets today's lessons written
+ * (session preparation), so a lesson in both days may read "Being written for you…" afterwards,
+ * though the block is the same.
+ */
+export async function readDayNames(day: Locator): Promise<string[]> {
+  const rows = await day.allInnerTexts();
+  return rows.map((row) => row.split("\n")[0] ?? "");
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { SuggestionLinkAction } from "../_components/suggestion";
 import { useLearnRoutes } from "../learn-context";
+import { type PlanChangeContent } from "../plan/use-system-change-sentence";
 import { useTodayCountsByDate } from "./today-change-sentence";
 
 /**
@@ -11,7 +11,7 @@ import { useTodayCountsByDate } from "./today-change-sentence";
  * existing Plan editor. A plan without a date ahead keeps every lesson (one with no date, one past
  * its date, an exam studied past the exam), so fewer of them leaves nothing to win back.
  */
-export function AdjustPlanLink({ change }: { change: PlanChangeView }) {
+export function AdjustPlanLink({ change }: { change: PlanChangeContent }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const countsByDate = useTodayCountsByDate();

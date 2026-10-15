@@ -6,9 +6,10 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { createContext, use } from "react";
 import { type TestOutStart } from "../_components/test-out-start-link";
-import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type MissionLinks } from "../missions/mission-links";
+import { type MissionsDay } from "../missions/missions-card";
+import { type DayStep } from "../session/session-types";
 
 /**
  * How Today acts, supplied by the host. `continueSession` starts the next block and opens it
@@ -52,20 +53,22 @@ export type TodayActions = {
   continueSession: () => Promise<boolean>;
   /**
    * Answers the plan change on Today: apply or not now for a proposal, undo or "Got it" for a
-   * change already made. Resolves to the change as it stands after the answer (whether today's
-   * session took it), or null when it wasn't saved.
+   * change already made (one Today worked out before the day saved it has no id yet: "Got it"
+   * saves it). Resolves to the change as it stands after the answer (whether today's session took
+   * it), `stale` when the change was out of date (Today reads itself again, which replaces it), or
+   * null when it wasn't saved.
    */
   decidePlanChange: (input: {
-    changeId: string;
+    changeId: NonNullable<TodayView["planChange"]>["id"];
     status: PlanChangeDecisionInput["status"];
-  }) => Promise<PlanChangeView | null>;
+  }) => Promise<PlanChangeView | "stale" | null>;
   /** Where today's missions open, from their card: one of the day's blocks, or a place of its own. */
   missionLinks: MissionLinks;
   /**
-   * Opens one block of today's session from its row, in any order (`continueSession` opens the
-   * next one); resolves to whether it opened.
+   * Opens one step of today's session from its row, in any order (`continueSession` opens the
+   * next one), opening the day first when it isn't yet; resolves to whether it opened.
    */
-  openBlock: (blockId: string) => Promise<boolean>;
+  openBlock: (step: DayStep) => Promise<boolean>;
   /** Where the mistakes notebook opens, from "Practice anytime". */
   mistakesHref: string;
   /**
@@ -108,8 +111,8 @@ type TodayScreenValue = {
   brainPower: number | null;
   /** The learner's buddy, who quizzes on a day with nothing new; null resolves to the default. */
   buddy: LearnBuddy | null;
-  /** Today's missions, atop the aside; null before today's session exists. */
-  missions: BuddyToday | null;
+  /** Today's missions, atop the aside; null on a day that offers none. */
+  missions: MissionsDay | null;
   notices: TodayHostNotices;
   /**
    * The plan's estimated end ("YYYY-MM-DD"), the one the Plan shows, so a proposed change says

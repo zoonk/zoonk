@@ -2,6 +2,7 @@
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { useRouter } from "@/i18n/navigation";
+import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
@@ -35,7 +36,12 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
 
   const resume = () => {
     startTransition(async () => {
-      const result = await setGoalStatusAction(goalId, "active");
+      // Another tab's Today shows the day too, rather than the goal still paused.
+      const result = await withLearnerWrite(
+        () => setGoalStatusAction(goalId, "active"),
+        (status) => status === "saved",
+      );
+
       setOutcome(result);
 
       if (result === "saved") {

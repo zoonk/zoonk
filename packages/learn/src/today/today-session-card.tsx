@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { type StudyBlock } from "../session/session-types";
+import { type DayStep } from "../session/session-types";
 import { BlockRow, type RowFold } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
 import { DayMeta, DayProgress } from "./today-day-progress";
@@ -27,7 +27,7 @@ const WIDE_UPCOMING_ROWS = 12;
  * learner opens prepares the next ones. "More on the way" read as a delivery already running, and
  * an IELTS learner waited 40 minutes on a 45-minute day that showed 15.
  */
-function useDaySoFar(blocks: readonly StudyBlock[]): string {
+function useDaySoFar(blocks: readonly DayStep[]): string {
   const t = useExtracted();
   const count = blocks.length;
 
@@ -38,7 +38,7 @@ function useDaySoFar(blocks: readonly StudyBlock[]): string {
       });
 }
 
-function sumMinutes(blocks: readonly StudyBlock[]): number {
+function sumMinutes(blocks: readonly DayStep[]): number {
   return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
 }
 
@@ -53,14 +53,14 @@ function getUpcomingFold({ index, open }: { index: number; open: boolean }): Row
  * next one the rest fold into "+3 more". From `sm` the whole day shows (a day longer than 12 after
  * the next block folds the rest the same way).
  */
-function SessionQueue({ next }: { next: StudyBlock }) {
+function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, lessonsComing } = today.session;
   const daySoFar = useDaySoFar(blocks);
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const { after, before, done } = splitTodayQueue({ blocks, nextId: next.id });
+  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
   const foldsDone = done.length > PHONE_DONE_ROWS;
   const phoneMore = after.slice(PHONE_UPCOMING_ROWS);
   const wideMore = after.slice(WIDE_UPCOMING_ROWS);
@@ -84,12 +84,12 @@ function SessionQueue({ next }: { next: StudyBlock }) {
             block={block}
             fold={{ hidden: foldsDone && !doneOpen, phone: true, wide: false }}
             isNext={false}
-            key={block.id}
+            key={block.position}
           />
         ))}
 
         {before.map((block) => (
-          <BlockRow block={block} isNext={false} key={block.id} />
+          <BlockRow block={block} isNext={false} key={block.position} />
         ))}
 
         <BlockRow block={next} isNext />
@@ -99,7 +99,7 @@ function SessionQueue({ next }: { next: StudyBlock }) {
             block={block}
             fold={getUpcomingFold({ index, open: moreOpen })}
             isNext={false}
-            key={block.id}
+            key={block.position}
           />
         ))}
       </ol>
@@ -148,18 +148,18 @@ function DayQueue() {
   return (
     <ol className="flex flex-col" data-slot="today-session-list">
       {blocks.map((block) => (
-        <BlockRow block={block} isNext={false} key={block.id} opens={false} />
+        <BlockRow block={block} isNext={false} key={block.position} opens={false} />
       ))}
     </ol>
   );
 }
 
-/** The block to go on with; null once the day's blocks are done. */
-function useNextBlock(): StudyBlock | null {
+/** The step to go on with; null once the day's blocks are done. */
+function useNextBlock(): DayStep | null {
   const { today } = useTodayScreen();
-  const { blocks, nextBlockId } = today.session;
+  const { blocks, nextPosition } = today.session;
 
-  return blocks.find((block) => block.id === nextBlockId) ?? null;
+  return blocks.find((block) => block.position === nextPosition) ?? null;
 }
 
 /**

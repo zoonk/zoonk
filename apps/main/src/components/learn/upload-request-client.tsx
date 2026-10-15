@@ -3,6 +3,7 @@
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { answerUploadRequest } from "@/lib/goals/research-uploads";
 import { dismissUploadRequestAction } from "@/lib/goals/upload-request-actions";
+import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import {
   Suggestion,
@@ -25,15 +26,33 @@ type RequestState = "answered" | "asking" | "dismissed";
  * goal (uploads linked to it, then research with them); the line follows what they did. "Not now"
  * takes the ask away for good.
  */
-export function UploadRequestClient({ request }: { request: GoalUploadRequest }) {
+export function UploadRequestClient({
+  answered = false,
+  onAnswered,
+  request,
+}: {
+  /** The learner answered it here this visit (the host keeps that), so it shows its thanks. */
+  answered?: boolean;
+  /** The learner answered it here: the host keeps it, and its thanks, while they stay. */
+  onAnswered?: () => void;
+  request: GoalUploadRequest;
+}) {
   const t = useExtracted();
   const copy = useRequestCopy(request);
-  const [state, setState] = useState<RequestState>("asking");
+  const [answer, setAnswer] = useState<RequestState>("asking");
+
+  // The host's word that it was answered here wins over this instance's own, so an ask shown
+  // again before the answer arrived (a read that dropped it, then one that brought it back) thanks.
+  const state: RequestState = answered ? "answered" : answer;
   const { goalId } = request;
 
   const settle = (done: RequestState) => (saved: boolean) => {
     if (saved) {
-      setState(done);
+      setAnswer(done);
+    }
+
+    if (saved && done === "answered") {
+      onAnswered?.();
     }
 
     return saved;
@@ -71,13 +90,18 @@ export function UploadRequestClient({ request }: { request: GoalUploadRequest })
           <UploadRequestCard
             actions={{
               answer: (sourceIds) =>
-                answerUploadRequest({ goalId, sourceIds }).then(settle("answered")),
+                withLearnerWrite(() => answerUploadRequest({ goalId, sourceIds })).then(
+                  settle("answered"),
+                ),
               attach: {
                 file: (input) => attachGoalFile({ ...input, goalId }),
                 link: (input) => attachGoalLink({ ...input, goalId }),
                 text: (input) => attachGoalText({ ...input, goalId }),
               },
-              dismiss: () => dismissUploadRequestAction(goalId).then(settle("dismissed")),
+              dismiss: () =>
+                withLearnerWrite(() => dismissUploadRequestAction(goalId)).then(
+                  settle("dismissed"),
+                ),
             }}
             className="rounded-none bg-transparent p-0"
             language={request.language}

@@ -4,15 +4,15 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { useFormatDuration } from "../_utils/time-format";
-import { type StudyBlock } from "../session/session-types";
+import { type DayStep } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
 
-/** A block that catches up on lessons earlier days left. */
+/** A step that catches up on lessons earlier days left, by its place in the day. */
 export function useIsCatchingUp() {
   const { today } = useTodayScreen();
-  const blockIds = new Set(today.session.catchUp?.blockIds);
+  const positions = new Set(today.session.catchUp?.positions);
 
-  return (block: StudyBlock) => blockIds.has(block.id);
+  return (step: DayStep) => positions.has(step.position);
 }
 
 /**

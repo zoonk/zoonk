@@ -33,7 +33,12 @@ describe(openStudyBlock, () => {
         sessionId: session.id,
         timeZone: "UTC",
       }),
-    ).resolves.toStrictEqual({ blockId: block.id, kind: "unwrittenLesson", lessonId: lesson.id });
+    ).resolves.toStrictEqual({
+      blockId: block.id,
+      kind: "unwrittenLesson",
+      lessonId: lesson.id,
+      sessionId: session.id,
+    });
 
     expect(prepareStudySession).not.toHaveBeenCalled();
 
@@ -54,7 +59,7 @@ describe(openStudyBlock, () => {
         sessionId: session.id,
         timeZone: "UTC",
       }),
-    ).resolves.toStrictEqual({ blockId: block.id, kind: "session" });
+    ).resolves.toStrictEqual({ blockId: block.id, kind: "preparingLesson" });
 
     expect(prepareStudySession).toHaveBeenCalledExactlyOnceWith(session.id);
   });

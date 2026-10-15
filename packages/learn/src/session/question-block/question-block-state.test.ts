@@ -35,6 +35,7 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
 
 const BLOCK: StudyBlockDetail["block"] = {
   answered: 0,
+  areaId: null,
   brainPower: 0,
   canDo: null,
   canTestOut: false,
@@ -52,6 +53,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   netScored: false,
   oftenTested: false,
   planItemId: null,
+  planItemKey: null,
   position: 0,
   questions: 2,
   reinforcement: false,

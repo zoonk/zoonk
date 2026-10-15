@@ -13,7 +13,7 @@ import { GenerationFailureNotice, GenerationWait } from "../generation/generatio
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type NextStopActions, type NextStopLesson } from "./next-stop";
-import { type StudyBlock } from "./session-types";
+import { type DayStep } from "./session-types";
 import { useBlockTitle } from "./use-block-copy";
 import { useSessionAction } from "./use-session-action";
 
@@ -67,7 +67,7 @@ function WritingProgress({
   generationId,
 }: {
   actions: NextStopActions;
-  block: StudyBlock;
+  block: DayStep;
   generationId: string | null;
 }) {
   const t = useExtracted();
@@ -78,7 +78,7 @@ function WritingProgress({
       key={generationId ?? "notStarted"}
       kind="lesson"
       onReady={actions.refresh}
-      restart={async () => ((await actions.start(block.id)) ? undefined : null)}
+      restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
       {(run) => (
         <GenerationWait kind="lesson" run={run}>
@@ -102,7 +102,7 @@ export function Waiting({
   lesson,
 }: {
   actions: NextStopActions;
-  block: StudyBlock;
+  block: DayStep;
   generationId: string | null;
   lesson: NextStopLesson;
 }) {
@@ -117,7 +117,7 @@ export function Waiting({
       {lesson === "failed" || stuck ? (
         <GenerationFailureNotice
           failure={lesson === "notStarted" ? "notStarted" : "generation"}
-          retry={() => void actions.start(block.id)}
+          retry={() => void actions.start(block)}
         />
       ) : (
         <WritingProgress actions={actions} block={block} generationId={generationId} />
@@ -136,7 +136,7 @@ export function NotWritten({
   reason,
 }: {
   actions: NextStopActions;
-  block: StudyBlock;
+  block: DayStep;
   reason: LessonNotWritten;
 }) {
   const routes = useLearnRoutes();
@@ -144,7 +144,7 @@ export function NotWritten({
   return (
     <LessonNotWrittenNotice
       linkComponent={LearnLink}
-      onRetry={() => void actions.start(block.id)}
+      onRetry={() => void actions.start(block)}
       reason={reason}
       routes={routes}
     />
@@ -161,13 +161,13 @@ export function AlternativeButton({
   reason,
 }: {
   actions: NextStopActions;
-  alternative: StudyBlock;
+  alternative: DayStep;
   reason: "instead" | "whileWaiting";
 }) {
   const t = useExtracted();
   const title = useBlockTitle();
 
-  const other = useSessionAction({ action: () => actions.start(alternative.id), enterKey: true });
+  const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
     <EnterButton

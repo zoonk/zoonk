@@ -7,7 +7,9 @@ import { type LearnTabMissions } from "@zoonk/learn/navigation";
  * no empty ring. The frame's read (the learner summary) and the pages' own reads count them the
  * same way.
  */
-export function countTabMissions(missions: readonly Mission[] | null): LearnTabMissions {
+export function countTabMissions(
+  missions: readonly Pick<Mission, "status">[] | null,
+): LearnTabMissions {
   return countMissions(missions ?? []);
 }
 

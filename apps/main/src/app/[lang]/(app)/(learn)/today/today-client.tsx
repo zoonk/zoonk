@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  answerPlanChangeAction,
   changePlanAction,
   chooseExamOptionAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
@@ -9,149 +8,343 @@ import {
   getGenerationIdAction,
   retryGenerationAction,
 } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
+import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
-import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
-import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
+import {
+  type LearnerViewCopy,
+  type LearnerViewRead,
+  type LearnerViewStamp,
+} from "@/lib/learner/learner-view-copies";
+import { withLearnerWrite } from "@/lib/learner/learner-views";
+import { useLearnerView, useLearnerViewState } from "@/lib/learner/use-learner-view";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
-import { answerMemoryInsightAction, catchUpTodayAction } from "@/lib/session/study-session-actions";
-import { useMissionLinks, useStudyNavigation } from "@/lib/session/use-study-navigation";
+import { type TapStep } from "@/lib/session/day-entry";
+import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
+import { useDayTaps } from "@/lib/session/use-day-taps";
+import { getSessionHref, useMissionLinks } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
-import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
-import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
-import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { type TodayView } from "@zoonk/core/view-models/today/get";
+import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
+import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { SpeakingPracticeRow } from "@zoonk/learn/language/speaking";
+import { LanguagePracticeRow } from "@zoonk/learn/language/today";
 import { MockEntryRow } from "@zoonk/learn/mock/entry";
+import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
+import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { TodayPreparing } from "@zoonk/learn/today/preparing";
+import { TodayShell } from "@zoonk/learn/today/shell";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
-import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { type TodayScreenData } from "./today-view";
+import { useDecidePlanChange } from "./use-decide-plan-change";
 
 /**
- * Today with main's actions: each one opens where the session continues. It opens from its
- * prefetched copy and reads itself again when that copy is old.
+ * How long Today trusts its prefetch of the session screen's frame while the router doesn't say
+ * it dropped it: long enough to cover Today mounting anew after a refresh, short enough that a
+ * prefetch that failed or expired is asked again soon.
  */
-export function TodayClient({
-  brainPower,
-  buddy,
-  level,
-  mistakes,
-  mocks,
-  notices,
-  planEnd,
-  readAt,
-  speaking,
-  syllabus,
-  today,
-}: {
-  /** The learner's Brain Power so far, which the missions' reward says when tapped. */
-  brainPower: number | null;
-  buddy: LearnerBuddy;
-  /** A language goal's level, said where another goal's progress is; null otherwise. */
-  level: LanguageTodayView["level"];
-  /** Open entries in the goal's mistakes notebook. */
-  mistakes: MistakeAvailability;
-  /** An exam goal's mocks to take any time, when Today offers them; null otherwise. */
-  mocks: MockOptionsView | null;
-  notices: TodayHostNotices;
-  planEnd: string | null;
-  /** A language goal's exam-style speaking tasks, when its language has a paper; null otherwise. */
-  speaking: LanguageTodayView["speaking"];
-  /** When the page read `today` (`getReadAt`). */
-  readAt: number;
-  /** The goal's subjects as the Plan lists them; null when it has none. */
-  syllabus: SyllabusView | null;
-  today: TodayView;
-}) {
+const SESSION_FRAME_TRUST_MS = 30_000;
+
+/**
+ * The session screen's frame Today prefetched for the whole tab: its address, until when that
+ * prefetch is trusted (`until`), and the prefetch of the Today on screen, which fetches it again
+ * once the router drops it.
+ */
+const sessionFrame: { href: string; refetch: (() => void) | null; until: number } = {
+  href: "",
+  refetch: null,
+  until: 0,
+};
+
+/**
+ * Prefetches the session screen's frame for this day's taps, so a step that plays there opens at
+ * once: once while that prefetch is trusted, once more, while Today is on screen, when the router
+ * drops it (`onInvalidate`: a page refresh, a write that expired the page), and again whenever the
+ * trust runs out while Today is shown (a prefetch that failed or expired; the router fetches
+ * nothing for a copy it still holds fresh). Today mounting anew (a new day after a refresh) reuses
+ * it, so a refresh fetches the frame once, not twice.
+ */
+function usePrefetchSessionFrame(href: string) {
   const router = useRouter();
-  useRefreshWhenOld(readAt);
-  useFollowTimeZone(today.goal.id);
+
+  useEffect(() => {
+    let recheck: ReturnType<typeof setTimeout> | undefined;
+
+    const prefetch = () => {
+      if (sessionFrame.href === href && Date.now() < sessionFrame.until) {
+        return;
+      }
+
+      sessionFrame.href = href;
+      sessionFrame.until = Date.now() + SESSION_FRAME_TRUST_MS;
+
+      router.prefetch(href, {
+        onInvalidate: () => {
+          if (sessionFrame.href === href) {
+            sessionFrame.until = 0;
+            sessionFrame.refetch?.();
+          }
+        },
+      });
+    };
+
+    // Checks again when the trust runs out, only while Today is shown: a hidden tab checks on return.
+    const check = () => {
+      clearTimeout(recheck);
+
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      prefetch();
+      recheck = setTimeout(check, Math.max(sessionFrame.until - Date.now(), 0) + 1);
+    };
+
+    sessionFrame.refetch = check;
+    check();
+    document.addEventListener("visibilitychange", check);
+    globalThis.addEventListener("pageshow", check);
+
+    return () => {
+      clearTimeout(recheck);
+      document.removeEventListener("visibilitychange", check);
+      globalThis.removeEventListener("pageshow", check);
+
+      if (sessionFrame.refetch === check) {
+        sessionFrame.refetch = null;
+      }
+    };
+  }, [href, router]);
+}
+
+/**
+ * Today's notices that need main's components, drawn from what the view read: a language goal's
+ * due practice, the newest change to a source the goal is built on, and an upload research asks for.
+ * An upload ask the learner answered here (`answeredUpload`) shows its thanks while they stay,
+ * whatever Today read since, even when a read dropped it before the answer arrived; another tab
+ * drops it.
+ */
+function toHostNotices({
+  answeredUpload,
+  data,
+  goalId,
+  onUploadAnswered,
+}: {
+  answeredUpload: GoalUploadRequest | null;
+  data: TodayScreenData;
+  goalId: string;
+  onUploadAnswered: (request: GoalUploadRequest) => void;
+}): TodayHostNotices {
+  const { language, notices } = data;
+  const hasPractice = Boolean(language?.pattern ?? language?.pronunciation);
+  const upload = answeredUpload ?? notices.upload;
+
+  return {
+    practice:
+      language && hasPractice ? (
+        <LanguagePracticeRow
+          hrefs={{
+            pattern: language.pattern ? `/pattern/${language.pattern.id}` : null,
+            pronunciation: `/pronunciation?goal=${goalId}`,
+          }}
+          today={language}
+        />
+      ) : null,
+    sourceChange: notices.change ? <TodayChangeNotice message={notices.change} /> : null,
+    uploadRequest: upload ? (
+      <UploadRequestClient
+        answered={answeredUpload !== null}
+        onAnswered={() => onUploadAnswered(upload)}
+        request={upload}
+      />
+    ) : null,
+  };
+}
+
+/** The day's steps with where each plays and the work it is, as the view read them. */
+function toTapSteps(data: TodayScreenData): TapStep[] {
+  return data.today.session.blocks.flatMap((block, index) => {
+    const step = data.steps[index];
+
+    return step
+      ? [{ ...step, blockId: "id" in block ? block.id : null, position: block.position }]
+      : [];
+  });
+}
+
+/**
+ * The day on Today with main's actions: each one opens where the step is played, opening a day
+ * the learner hasn't opened yet with the tap that names its step. Keyed by its goal and day, so a
+ * new day (midnight, a goal switch) draws fresh.
+ */
+function TodayDay({
+  data,
+  readAt,
+  refreshView,
+  userId,
+}: {
+  data: TodayScreenData;
+  readAt: number;
+  refreshView: () => Promise<LearnerViewRead>;
+  userId: string;
+}) {
+  const { today } = data;
+  const goalId = today.session.goalId ?? today.goal.id;
+  const refresh = useCallback(() => void refreshView(), [refreshView]);
+  const steps = useMemo(() => toTapSteps(data), [data]);
+
+  const taps = useDayTaps({
+    day: {
+      sessionId: today.session.status === "unstarted" ? null : today.session.id,
+      shown: { day: today.session, goalId, userId },
+    },
+    refresh,
+  });
+
+  const stepAt = (position: number | null) => steps.find((step) => step.position === position);
+
+  const openStep = useCallback(
+    (ref: DayBlockRef) => {
+      const step = steps.find((candidate) => candidate.position === ref.position);
+      return step ? taps.open(step) : Promise.resolve(false);
+    },
+    [steps, taps],
+  );
+
+  const missionLinks = useMissionLinks(today.goal.id, { openStep, refresh });
+  const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
+  const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
+  const startTestOut = useStartTestOut();
+  const sessionHref = getSessionHref({ goalId, limit: null });
+
+  useFollowTimeZone({ goalId: today.goal.id, userId });
+  const decidePlanChange = useDecidePlanChange({ refreshView, today });
 
   useReportTabMissions({
-    day: {
-      goalId: today.session.goalId ?? today.goal.id,
-      localDate: toStudyDayDate(today.session.localDate),
-    },
+    day: { goalId, localDate: toStudyDayDate(today.session.localDate) },
     missions: today.session.missions,
     readAt,
-    userId: today.userId,
+    userId,
   });
 
   const refreshOnPlanChange = useRefreshOnPlanChange({
     goalId: today.goal.id,
     readAt,
+    refresh,
     watch: "today",
   });
 
-  const navigation = useStudyNavigation(today.session.id);
-  const missionLinks = useMissionLinks(today.goal.id);
-  const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
-  const startTestOut = useStartTestOut();
+  // The session screen's frame is static: with it at hand, a step that plays there opens at once.
+  usePrefetchSessionFrame(sessionHref);
 
   return (
     <TodayScreen
-      level={level}
+      level={data.language?.level ?? null}
       actions={{
-        addExtraTime: navigation.addExtraTime,
-        answerInsight: answerMemoryInsightAction,
+        addExtraTime: taps.addExtraTime,
+        answerInsight: (input) => withLearnerWrite(() => answerMemoryInsightAction(input)),
         answerSuggestedGoal,
         buddyHref: "/buddy",
-        catchUp: async () => {
-          const added = await catchUpTodayAction({
-            sessionId: today.session.id,
-            timeZone: getLocalTimeZone(),
-          });
-
-          if (added) {
-            router.refresh();
-          }
-
-          return added;
-        },
+        catchUp: taps.catchUp,
         challengeHref: (planItemId) => `/challenge/${planItemId}`,
         changePlan: async (operations) => {
-          const outcome = await changePlanAction(today.goal.id, operations);
+          const outcome = await withLearnerWrite(
+            () => changePlanAction(today.goal.id, operations),
+            (result) => result?.status === "applied",
+          );
+
           return outcome?.status === "applied" ? outcome.change : null;
         },
         chooseExamOption: async (input) => {
-          const outcome = await chooseExamOptionAction(today.goal.id, input);
+          const outcome = await withLearnerWrite(() =>
+            chooseExamOptionAction(today.goal.id, input),
+          );
+
           return outcome?.change ?? null;
         },
         chooseFocusHref: "/plan?focus=choose",
-        continueSession: navigation.continueSession,
-        decidePlanChange: (input) => answerPlanChangeAction(today.goal.id, input),
+        continueSession: () => {
+          const next = stepAt(today.session.nextPosition);
+          return next ? taps.next(next) : Promise.resolve(false);
+        },
+        decidePlanChange,
         examHref: "/exam",
         missionLinks,
         mistakesHref: "/mistakes",
-        openBlock: navigation.openBlock,
+        openBlock: (block: DayStep) => {
+          const step = stepAt(block.position);
+          return step ? taps.open(step) : Promise.resolve(false);
+        },
         plusHref: "/subscription",
         refresh: refreshOnPlanChange,
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
         studyEverythingHref: "/plan?focus=everything",
-        summaryHref: "/session",
+        summaryHref: sessionHref,
       }}
-      brainPower={brainPower}
-      buddy={buddy}
-      // Read with the day's session: a read before opening Today built it had no missions yet.
+      brainPower={data.brainPower}
+      buddy={data.buddy}
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
-      mistakes={mistakes}
-      mockEntry={mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={mocks} />}
-      notices={notices}
-      planEnd={planEnd}
-      speakingEntry={speaking && <SpeakingPracticeRow entry={speaking} href="/speaking" />}
-      syllabus={syllabus}
+      mistakes={data.mistakes}
+      mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
+      notices={toHostNotices({
+        answeredUpload,
+        data,
+        goalId: today.goal.id,
+        onUploadAnswered: setAnsweredUpload,
+      })}
+      planEnd={data.planEnd}
+      speakingEntry={
+        data.language?.speaking && (
+          <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />
+        )
+      }
+      syllabus={data.syllabus}
       today={today}
     />
   );
+}
+
+/**
+ * Today from the copy the page rendered (prefetched, or read with the page), or a newer one this
+ * tab read since: shown at once, and read again, as one small view read, only once it's old (a
+ * write, another day, another tab), never by rendering the page again. A copy rendered for another
+ * learner than the one the browser holds now (a sign-in in another tab while it was on its way)
+ * leaves Today's frame until the page reads itself again for them.
+ */
+export function TodayClient({ copy }: { copy: LearnerViewCopy<TodayScreenData> }) {
+  const { refresh, shown } = useLearnerView({ copy, kind: "today" });
+
+  if (!shown) {
+    return <TodayShell />;
+  }
+
+  return (
+    <TodayDay
+      data={shown.view}
+      key={shown.day ?? "today"}
+      readAt={shown.readAt}
+      refreshView={refresh}
+      userId={shown.userId}
+    />
+  );
+}
+
+/**
+ * Keeps one of Today's other states (no goal yet, a paused goal, a plan being built) as fresh as
+ * Today's day: when it's shown and old, Today's view is read, and the page reads itself again once
+ * the learner's Today is something else now (a goal started or resumed elsewhere).
+ */
+export function TodayStateSync({ stamp, state }: { stamp: LearnerViewStamp; state: string }) {
+  useLearnerViewState({ kind: "today", stamp, state });
+  return null;
 }
 
 /**

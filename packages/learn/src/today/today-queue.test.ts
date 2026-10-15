@@ -4,34 +4,29 @@ import { isFinished, splitTodayQueue } from "./today-queue";
 describe(splitTodayQueue, () => {
   it("keeps pending lessons before a later active block out of the done fold", () => {
     const blocks = [
-      { id: "review", status: "completed" },
-      { id: "lesson-one", status: "pending" },
-      { id: "lesson-two", status: "pending" },
-      { id: "practice", status: "active" },
-      { id: "skipped", status: "skipped" },
-      { id: "later-review", status: "completed" },
-      { id: "later-lesson", status: "pending" },
+      { position: 0, status: "completed" },
+      { position: 1, status: "pending" },
+      { position: 2, status: "pending" },
+      { position: 3, status: "active" },
+      { position: 4, status: "skipped" },
+      { position: 5, status: "completed" },
+      { position: 6, status: "pending" },
     ] as const;
 
-    const queue = splitTodayQueue({ blocks, nextId: "practice" });
+    const queue = splitTodayQueue({ blocks, nextPosition: 3 });
 
-    expect(queue.done.map((block) => block.id)).toStrictEqual([
-      "review",
-      "skipped",
-      "later-review",
-    ]);
-
-    expect(queue.before.map((block) => block.id)).toStrictEqual(["lesson-one", "lesson-two"]);
-    expect(queue.after.map((block) => block.id)).toStrictEqual(["later-lesson"]);
+    expect(queue.done.map((block) => block.position)).toStrictEqual([0, 4, 5]);
+    expect(queue.before.map((block) => block.position)).toStrictEqual([1, 2]);
+    expect(queue.after.map((block) => block.position)).toStrictEqual([6]);
   });
 
   it("keeps all unfinished blocks after the first next block", () => {
     const blocks = [
-      { id: "next", status: "pending" },
-      { id: "later", status: "pending" },
+      { position: 0, status: "pending" },
+      { position: 1, status: "pending" },
     ] as const;
 
-    expect(splitTodayQueue({ blocks, nextId: "next" })).toStrictEqual({
+    expect(splitTodayQueue({ blocks, nextPosition: 0 })).toStrictEqual({
       after: [blocks[1]],
       before: [],
       done: [],

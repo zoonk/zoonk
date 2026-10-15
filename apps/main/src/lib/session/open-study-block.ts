@@ -1,6 +1,7 @@
 import "server-only";
 import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
+import { getDayBlockScreen } from "@zoonk/core/sessions/day-block";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { type StudyBlock } from "@zoonk/learn/session/types";
 import { prepareStudySession } from "./session-preparation";
@@ -49,11 +50,12 @@ async function isLessonReady(lessonId: string | null): Promise<boolean> {
 }
 
 /**
- * Starts a block and says where it's played. Checkpoints and mocks start on their own screen, and a
- * lesson that isn't ready isn't started: the learner's browser asks for it right away (so the
- * answer, including a refusal, reaches the screen), then the session screen shows the wait or why
- * it can't be written now, with a ready block to do meanwhile. Other blocks opened get the rest of
- * the session and the next study day written in the background.
+ * Starts a block and says where it's played, by the rule every screen uses (`getDayBlockScreen`).
+ * Checkpoints and mocks start on their own screen, and a lesson that isn't ready isn't started:
+ * the learner's browser asks for it right away (so the answer, including a refusal, reaches the
+ * screen), then the session screen shows the wait or why it can't be written now, with a ready
+ * block to do meanwhile. Other blocks opened get the rest of the session and the next study day
+ * written in the background.
  */
 export async function openStudyBlock({
   block,
@@ -64,20 +66,23 @@ export async function openStudyBlock({
   sessionId: string;
   timeZone: string;
 }): Promise<StudyDestination | null> {
-  if (block.kind === "learn" && !(await isLessonReady(block.lessonId))) {
+  const lessonReady = block.kind === "learn" ? await isLessonReady(block.lessonId) : null;
+  const screen = getDayBlockScreen(block, { lessonReady });
+
+  if (block.kind === "learn" && screen === "session") {
     if (!block.lessonId) {
       // A plan placeholder has no browser generation endpoint until preparation picks its lesson.
       prepareStudySession(sessionId);
-      return { blockId: block.id, kind: "session" };
+      return { blockId: block.id, kind: "preparingLesson" };
     }
 
     /** Preparation would compete with the browser's request and hide its refusal or use its allowance. */
-    return { blockId: block.id, kind: "unwrittenLesson", lessonId: block.lessonId };
+    return { blockId: block.id, kind: "unwrittenLesson", lessonId: block.lessonId, sessionId };
   }
 
   prepareStudySession(sessionId);
 
-  if (block.kind === "checkpoint") {
+  if (screen === "challenge") {
     if (block.status === "active") {
       const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
@@ -108,11 +113,11 @@ export async function openStudyBlock({
     return null;
   }
 
-  if (block.kind === "produce") {
+  if (screen === "essay") {
     return { blockId: block.id, kind: "essay" };
   }
 
-  return block.kind === "learn" && block.lessonId
+  return screen === "lesson" && block.lessonId
     ? { kind: "lesson", lessonId: block.lessonId, sessionId }
     : { blockId: block.id, kind: "session" };
 }

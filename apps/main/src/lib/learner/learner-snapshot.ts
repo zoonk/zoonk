@@ -52,6 +52,11 @@ export function getUntilChange(
   return Math.min(Math.max(untilChange, MIN_REREAD_MS - elapsed, 0), MAX_TIMER_MS);
 }
 
+/** Whether the page's own render streams the summary in: its seed marks the head (`meta`). */
+export function isSeedExpected(meta: string): boolean {
+  return document.querySelector(`meta[name="${meta}"]`) !== null;
+}
+
 export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | null): boolean {
   if (!a || !b) {
     return a === b;
@@ -103,4 +108,39 @@ export function reconcileSessionHint(state: { status: string; summary?: LearnerS
   if (state.status === "ready" && state.summary && !hasSessionHint()) {
     void setSessionHint(state.summary.identity.expiresAt);
   }
+}
+
+/** The browser's one learner store, in memory (see `learner-store.ts`). */
+export type LearnerStore = {
+  changeTimer: ReturnType<typeof setTimeout> | undefined;
+  channel: BroadcastChannel | null;
+  generation: number;
+  identityListeners: Set<() => void>;
+  inFlight: { generation: number; promise: Promise<void> } | null;
+  installed: boolean;
+  listeners: Set<() => void>;
+  readAt: number;
+  receivedAt: number;
+  seedTimer: ReturnType<typeof setTimeout> | undefined;
+  state: LearnerSummaryState;
+  /** The generation of the last identity check, until a read sent since answers: seeds wait. */
+  verifying: number | null;
+};
+
+/**
+ * A write this tab sent for the identity it held (`generation`), and the learner revision it
+ * committed for `userId`.
+ */
+export type LearnerRevisionNote = { generation: number; revision: string; userId: string };
+
+/** Whether the held summary is that learner's, and older than a revision their write committed. */
+export function isSummaryBehind(
+  state: LearnerSummaryState,
+  { revision, userId }: Pick<LearnerRevisionNote, "revision" | "userId">,
+): boolean {
+  return (
+    state.status === "ready" &&
+    state.summary.identity.userId === userId &&
+    BigInt(state.summary.revision) < BigInt(revision)
+  );
 }

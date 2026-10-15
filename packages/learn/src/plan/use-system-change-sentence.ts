@@ -5,6 +5,9 @@ import { useEstimateSentence } from "./use-estimate-sentence";
 import { usePhaseEndsText } from "./use-phase-ends-text";
 import { useRelearnSentence } from "./use-relearn-sentence";
 
+/** What a plan change says, saved or not yet (one Today worked out has no id until it's saved). */
+export type PlanChangeContent = Omit<PlanChangeView, "id">;
+
 /**
  * The sentence of a change the learner didn't make, said from its kind, with the notice topics it
  * moves into or out of the plan after what it did: "Lessons earlier days left come first, and the
@@ -25,10 +28,10 @@ export function useSystemChangeSentence({
   const phaseEndsText = usePhaseEndsText();
   const estimateSentence = useEstimateSentence({ targetDate });
 
-  const withTopics = (sentence: string, change: PlanChangeView, added = true): string =>
+  const withTopics = (sentence: string, change: PlanChangeContent, added = true): string =>
     [sentence, topicsMoved(change, { added })].filter(Boolean).join(" ");
 
-  return function systemChangeSentence(change: PlanChangeView): string | null {
+  return function systemChangeSentence(change: PlanChangeContent): string | null {
     switch (change.kind) {
       case "missedDays":
         return withTopics(

@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { getSessionQueue } from "./session-queue-rows";
-import { type StudyBlock } from "./session-types";
+import { type DayStep, type StudyBlock } from "./session-types";
 
 function block(id: string, status: StudyBlock["status"], estimatedMinutes: number): StudyBlock {
   return { estimatedMinutes, id, status } as StudyBlock;
+}
+
+/** A step of a day not opened yet: no id, only its place in the day. */
+function step(
+  position: number,
+  estimatedMinutes: number,
+  status: DayStep["status"] = "pending",
+): DayStep {
+  return { estimatedMinutes, position, status } as DayStep;
 }
 
 describe(getSessionQueue, () => {
@@ -17,7 +26,7 @@ describe(getSessionQueue, () => {
       nextId: "lesson",
     });
 
-    expect(queue.rows.map((row) => [row.block.id, row.state])).toStrictEqual([
+    expect(queue.rows.map((row) => ["id" in row.block && row.block.id, row.state])).toStrictEqual([
       ["review", "done"],
       ["lesson", "next"],
       ["practice", "ahead"],
@@ -43,7 +52,27 @@ describe(getSessionQueue, () => {
       nextId: "lesson",
     });
 
-    expect(queue.rows.map((row) => row.block.id)).toStrictEqual(["lesson"]);
+    expect(queue.rows.map((row) => "id" in row.block && row.block.id)).toStrictEqual(["lesson"]);
     expect(queue.minutesLeft).toBe(12);
+  });
+
+  it("names the next step by its place in a day not opened yet", () => {
+    const queue = getSessionQueue({
+      blocks: [step(0, 8), step(1, 12), step(2, 10)],
+      nextPosition: 1,
+    });
+
+    expect(queue.rows.map((row) => row.state)).toStrictEqual(["ahead", "next", "ahead"]);
+    expect(queue.minutesLeft).toBe(30);
+  });
+
+  it("keeps the work done earlier as done in a day still to open", () => {
+    const queue = getSessionQueue({
+      blocks: [step(0, 8, "completed"), step(1, 12), step(2, 10)],
+      nextPosition: 1,
+    });
+
+    expect(queue.rows.map((row) => row.state)).toStrictEqual(["done", "next", "ahead"]);
+    expect(queue.minutesLeft).toBe(22);
   });
 });

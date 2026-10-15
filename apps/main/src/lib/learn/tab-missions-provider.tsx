@@ -64,7 +64,7 @@ export function useReportTabMissions({
   userId,
 }: {
   day: LearnerSummaryDay | null;
-  missions: readonly Mission[] | null;
+  missions: readonly Pick<Mission, "status">[] | null;
   readAt: number;
   userId: string;
 }) {

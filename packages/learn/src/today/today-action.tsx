@@ -7,7 +7,9 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
-import { type WaitState, useSlowWait } from "../_utils/use-slow-wait";
+import { OpeningWaitLine } from "../_components/opening-wait-line";
+import { useSlowWait } from "../_utils/use-slow-wait";
+import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
@@ -59,8 +61,7 @@ export function useTodayContinueSpeaking(): boolean {
  * What a slow or failed Start or Continue is doing, so the button never just greys out. It never
  * takes room of its own above anything: on a phone it's under the button, at the end of the day;
  * from `sm` it takes the place of the day's line under its segments (`DayMeta`), right under the
- * button. It's marked `data-speaking` while it says something. The status stays in the page while
- * empty, so screen readers hear it when it speaks.
+ * button. It's marked `data-speaking` while it says something.
  */
 export function TodayContinueStatus({ className }: { className?: string }) {
   const t = useExtracted();
@@ -69,11 +70,7 @@ export function TodayContinueStatus({ className }: { className?: string }) {
 
   return (
     <span className={className} data-speaking={speaking || undefined}>
-      <span className="text-muted-foreground" role="status">
-        {wait === "slow" && t("Opening your next step…")}
-        {wait === "verySlow" &&
-          t("This is taking longer than usual. It opens on its own, no need to tap again.")}
-      </span>
+      <OpeningWaitLine wait={wait} />
 
       {failed && (
         <span className="text-destructive-text" role="alert">

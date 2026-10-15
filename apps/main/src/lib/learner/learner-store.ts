@@ -1,11 +1,15 @@
 import { type LearnerIdentity, type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import {
+  type LearnerRevisionNote,
+  type LearnerStore,
   type LearnerSummarySeedValue,
   type LearnerSummaryState,
   type Snapshot,
   getUntilChange,
   isNewerSummary,
   isSameIdentity,
+  isSeedExpected,
+  isSummaryBehind,
   reconcileSessionHint,
   syncSessionHint,
 } from "./learner-snapshot";
@@ -26,22 +30,6 @@ const CHANNEL_NAME = "zoonk-learner";
 const NOT_LOADED: LearnerSummaryState = { status: "not-loaded" };
 const VISITOR: LearnerSummaryState = { status: "visitor" };
 const FAILED: LearnerSummaryState = { status: "failed" };
-
-type LearnerStore = {
-  changeTimer: ReturnType<typeof setTimeout> | undefined;
-  channel: BroadcastChannel | null;
-  generation: number;
-  identityListeners: Set<() => void>;
-  inFlight: { generation: number; promise: Promise<void> } | null;
-  installed: boolean;
-  listeners: Set<() => void>;
-  readAt: number;
-  receivedAt: number;
-  seedTimer: ReturnType<typeof setTimeout> | undefined;
-  state: LearnerSummaryState;
-  /** The generation of the last identity check, until a read sent since answers: seeds wait. */
-  verifying: number | null;
-};
 
 /**
  * Memory only: a reload or another tab reads its own. `generation` changes whenever the identity
@@ -231,10 +219,6 @@ function readLearnerSummary({ verify = false }: { verify?: boolean } = {}): Prom
   return promise;
 }
 
-function isSeedExpected(): boolean {
-  return document.querySelector(`meta[name="${LEARNER_SEED_META}"]`) !== null;
-}
-
 /** Without a session nobody needs reading: the browser's own guess, which any read replaces. */
 function guessVisitor() {
   accept({ readAt: 0, source: "guess", summary: null }, { fresh: false });
@@ -331,7 +315,7 @@ export function ensureLearnerSummary(): void {
   const { state } = store;
 
   if (state.status === "not-loaded") {
-    if (isSeedExpected()) {
+    if (isSeedExpected(LEARNER_SEED_META)) {
       waitForSeed();
       return;
     }
@@ -389,6 +373,27 @@ export function getLearnerGeneration(): number {
 }
 
 /**
+ * A write this tab sent for the identity it held (`generation`) committed `revision` for `userId`:
+ * a summary older than that is read again, so the frame says what the write changed (the day a
+ * zone follow moved, the step an open saved). Another learner's write, or one sent before the
+ * identity changed, reads nothing.
+ */
+export function catchUpLearnerSummary({ generation, revision, userId }: LearnerRevisionNote): void {
+  if (generation !== store.generation || !isSummaryBehind(store.state, { revision, userId })) {
+    return;
+  }
+
+  // A read already on its way may have left before the write: once it answers, still behind means
+  // one more read.
+  if (store.inFlight?.generation === store.generation) {
+    void store.inFlight.promise.then(() => catchUpLearnerSummary({ generation, revision, userId }));
+    return;
+  }
+
+  void readLearnerSummary();
+}
+
+/**
  * Takes a summary a Server Action returned with its outcome (a goal switch) for the identity the
  * browser held when it sent the action (`generation`), so an old session's cookies never restore
  * it; when the session was checked meanwhile, the summary is read again with the cookies of now.
@@ -418,6 +423,15 @@ export function announceSignOut(): void {
 
 export function getLearnerSummaryState(): LearnerSummaryState {
   return store.state;
+}
+
+/**
+ * Whose session the browser holds, as far as it knows: the learner's id, null once the server said
+ * nobody holds one (signed out), or undefined while it doesn't know (nothing read yet, a failed
+ * read, or its own guess that nobody is signed in, whose `readAt` is 0).
+ */
+export function getHeldLearnerId(): string | null | undefined {
+  return store.readAt > 0 ? (getHeldIdentity()?.userId ?? null) : undefined;
 }
 
 export function getServerLearnerSummaryState(): LearnerSummaryState {

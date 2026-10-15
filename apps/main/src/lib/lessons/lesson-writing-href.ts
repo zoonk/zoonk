@@ -2,7 +2,8 @@ import { readLessonLimitParam, toLessonLimitParam } from "../session/lesson-limi
 import { type LessonWritingAnswer } from "./lesson-writing-request";
 import { type LessonRequest } from "./use-lesson-writing";
 
-const LESSON_GENERATION_PARAM = "generation";
+/** The run a learner's request started (`?generation=`), which its wait follows. */
+export const LESSON_GENERATION_PARAM = "generation";
 const WRITING_PARAM = "writing";
 
 /** Carries the click's answer to its wait; none of these query values can start work. */

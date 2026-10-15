@@ -5,9 +5,10 @@ import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useReviewTitle } from "../session/use-review-title";
+import { type MissionView } from "./mission-links";
 import { ProgressCount } from "./mission-list";
 
-type MissionOpens = NonNullable<Mission["opens"]>;
+type MissionOpens = NonNullable<MissionView["opens"]>;
 type MissionKind = Mission["kind"];
 type MissionDetail = Mission["detail"];
 
@@ -187,7 +188,10 @@ const ESTIMATED_KINDS: ReadonlySet<MissionKind> = new Set([
 function useOutsideStep() {
   const t = useExtracted();
 
-  return function outsideStep({ detail, kind }: Mission): string | null {
+  return function outsideStep({
+    detail,
+    kind,
+  }: Pick<MissionView, "detail" | "kind">): string | null {
     switch (kind) {
       case "fixMistake":
         return t("From your mistakes notebook");
@@ -221,7 +225,11 @@ function useOutsideStep() {
 function useChapterStep() {
   const t = useExtracted();
 
-  return function chapterStep({ detail, done, total }: Mission): string {
+  return function chapterStep({
+    detail,
+    done,
+    total,
+  }: Pick<MissionView, "detail" | "done" | "total">): string {
     const more = total - done - 1;
 
     if (!detail?.title) {
@@ -251,7 +259,7 @@ function useMissionStep() {
   const chapterStep = useChapterStep();
   const reviewTitle = useReviewTitle();
 
-  return function missionStep(mission: Mission): string | null {
+  return function missionStep(mission: MissionView): string | null {
     const { detail, kind, waitReason } = mission;
 
     if (waitReason) {
@@ -300,7 +308,7 @@ function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number
  * takes. A challenge that has to wait says what for. The minutes stay with the line's last word,
  * so a narrow column never leaves them alone on a line.
  */
-export function MissionStepLine({ mission }: { mission: Mission }) {
+export function MissionStepLine({ mission }: { mission: MissionView }) {
   const step = useMissionStep()(mission);
   const minutes = mission.minutes ?? 0;
   const count = mission.total > 1 && <ProgressCount done={mission.done} total={mission.total} />;

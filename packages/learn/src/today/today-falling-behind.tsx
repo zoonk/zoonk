@@ -193,6 +193,48 @@ function getChoiceOperations({
 }
 
 /**
+ * Saves that the learner saw the change, once: true when it's saved. One out of date says nothing
+ * (Today read itself again, and its copy or the page's other state replaces it) and stays busy
+ * until that shows (`superseded`); one that didn't save says so. Either lets go of the notice
+ * (`onHold`), since nothing was saved.
+ */
+function useSeeChange({
+  change,
+  onAnswer,
+  onHold,
+}: {
+  change: Change;
+  onAnswer: (answer: Answer) => void;
+  onHold: (held: boolean) => void;
+}) {
+  const { actions } = useTodayScreen();
+  const [seen, setSeen] = useState(false);
+  const [superseded, setSuperseded] = useState<Change | null>(null);
+
+  async function see(): Promise<boolean> {
+    if (seen) {
+      return true;
+    }
+
+    const { data } = await safeAsync(() =>
+      actions.decidePlanChange({ changeId: change.id, status: "seen" }),
+    );
+
+    if (!data || data === "stale") {
+      onAnswer(data === "stale" ? null : { failed: true });
+      setSuperseded(data === "stale" ? change : null);
+      onHold(false);
+      return false;
+    }
+
+    setSeen(true);
+    return true;
+  }
+
+  return { see, superseded: superseded === change };
+}
+
+/**
  * Falling behind put the goal's date at risk: Today says in one sentence what the missed days did
  * to what the plan covers, names a few of the topics that no longer fit, and lets the learner
  * choose (D1): more time a day (with what it covers), where to focus, or keeping their time with
@@ -200,7 +242,16 @@ function getChoiceOperations({
  * cover it all is the plan notice's: moving the date to the day their time covers it by. Nothing
  * changes until they tap.
  */
-export function FallingBehindNotice({ behind, change }: { behind: Behind; change: Change }) {
+export function FallingBehindNotice({
+  behind,
+  change,
+  onHold,
+}: {
+  behind: Behind;
+  change: Change;
+  /** Keeps it on screen from the learner's choice (see `TodayPlanChange`). */
+  onHold: (held: boolean) => void;
+}) {
   const t = useExtracted();
   const analytics = useLearnAnalytics();
   const sentence = useBehindSentence();
@@ -209,11 +260,23 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
   const { actions } = useTodayScreen();
   const [answer, setAnswer] = useState<Answer>(null);
   const [isPending, startTransition] = useTransition();
+  const { see, superseded } = useSeeChange({ change, onAnswer: setAnswer, onHold });
   const answered = answer !== null && !("failed" in answer);
 
-  const choose = (choice: Choice) =>
+  // One Today worked out (no id) is saved by its "seen", which names the copy that showed it, so it
+  // goes first: the edit moves the learner past that copy. A retry then only redoes the edit.
+  const seenFirst = change.id === null;
+
+  const choose = (choice: Choice) => {
+    onHold(true);
+
     startTransition(async () => {
       const operations = getChoiceOperations({ behind, choice });
+
+      if (seenFirst && !(await see())) {
+        return;
+      }
+
       const applied = operations ? await safeAsync(() => actions.changePlan(operations)) : null;
 
       if (applied && !applied.data) {
@@ -221,12 +284,7 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
         return;
       }
 
-      const { data: seen } = await safeAsync(() =>
-        actions.decidePlanChange({ changeId: change.id, status: "seen" }),
-      );
-
-      if (!seen) {
-        setAnswer({ failed: true });
+      if (!seenFirst && !(await see())) {
         return;
       }
 
@@ -237,6 +295,7 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
         properties: { change_kind: `today:behind:${choice}` },
       });
     });
+  };
 
   const result =
     answer && "applied" in answer
@@ -276,7 +335,7 @@ export function FallingBehindNotice({ behind, change }: { behind: Behind; change
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <BehindChoices behind={behind} choose={choose} isPending={isPending} />
+          <BehindChoices behind={behind} choose={choose} isPending={isPending || superseded} />
         )}
 
         {answer && "failed" in answer && (

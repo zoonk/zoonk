@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
-import { type StudyBlock } from "../session/session-types";
+import { type DayStep } from "../session/session-types";
 import { DAY_SEGMENTS_CLASS, DaySegment, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
@@ -11,14 +11,14 @@ import { isFinished } from "./today-queue";
 import { useSessionState } from "./use-today-copy";
 
 /** The minutes the day's blocks still hold. */
-function getMinutesLeft(blocks: readonly StudyBlock[]): number {
+function getMinutesLeft(blocks: readonly DayStep[]): number {
   return blocks
     .filter((block) => !isFinished(block))
     .reduce((total, block) => total + block.estimatedMinutes, 0);
 }
 
 /** How far the block in progress is, by its questions answered; nothing before it starts. */
-function getBlockShare(block: StudyBlock): number {
+function getBlockShare(block: DayStep): number {
   if (block.status !== "active" || block.questions === 0) {
     return 0;
   }
@@ -27,7 +27,7 @@ function getBlockShare(block: StudyBlock): number {
 }
 
 /** Where a block stands on the day's bar: behind the learner, in progress, or ahead. */
-function getSegmentState(block: StudyBlock, current: boolean): DaySegmentState {
+function getSegmentState(block: DayStep, current: boolean): DaySegmentState {
   if (block.status === "completed") {
     return "done";
   }
@@ -46,7 +46,7 @@ function getSegmentState(block: StudyBlock, current: boolean): DaySegmentState {
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, nextBlockId } = today.session;
+  const { blocks, nextPosition } = today.session;
   const done = blocks.filter((block) => isFinished(block)).length;
 
   if (blocks.length < 2) {
@@ -65,10 +65,10 @@ export function DayProgress({ className }: { className?: string }) {
     >
       {blocks.map((block) => (
         <DaySegment
-          key={block.id}
+          key={block.position}
           minutes={block.estimatedMinutes}
-          share={block.id === nextBlockId ? getBlockShare(block) : 0}
-          state={getSegmentState(block, block.id === nextBlockId)}
+          share={block.position === nextPosition ? getBlockShare(block) : 0}
+          state={getSegmentState(block, block.position === nextPosition)}
         />
       ))}
     </div>

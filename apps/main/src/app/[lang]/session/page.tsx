@@ -1,5 +1,7 @@
 import { AuthGateScreen } from "@/components/auth-gate";
+import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { TaskNotFound } from "@/components/learn/task-not-found";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { redirect } from "@/i18n/navigation";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
@@ -8,32 +10,44 @@ import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { LESSON_LIMIT_PARAM, readLessonLimitParam } from "@/lib/session/lesson-limit-param";
 import { SESSION_BLOCK_PARAM, readSessionBlockParam } from "@/lib/session/session-block-param";
+import { SESSION_GOAL_PARAM, readSessionGoalParam } from "@/lib/session/session-goal-param";
+import {
+  SESSION_PREPARING_PARAM,
+  readSessionPreparingParam,
+} from "@/lib/session/session-preparing-param";
 import {
   SESSION_STOPPED_PARAM,
   readSessionStoppedParam,
 } from "@/lib/session/session-stopped-param";
 import { withQuery } from "@/lib/with-query";
-import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
-import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { findAlternativeStudyBlock } from "@zoonk/core/sessions/alternative";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
+import { getDayBlockScreen } from "@zoonk/core/sessions/day-block";
+import {
+  type NextStopFacts,
+  type SessionPageView,
+  getSessionPageView,
+} from "@zoonk/core/sessions/page";
 import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { getSession } from "@zoonk/core/users/session";
-import { type TodayView, getTodayView } from "@zoonk/core/view-models/today/get";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
-import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
-import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
-import { type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type DayStep, type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
+import {
+  getNextStopLesson,
+  getNotWritten,
+  getWritingRunId,
+  loadLessonState,
+} from "./next-step-lesson";
 import { SessionBlockClient, SessionNextStopClient, SessionSummaryClient } from "./session-client";
+import { SessionEntryFallback } from "./session-entry-fallback";
 
 type Props = PageProps<"/[lang]/session">;
+
+type SessionFacts = Pick<SessionPageView, "goal" | "localDate" | "userId">;
 
 /** One learner's own day: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,97 +55,34 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Today's session") };
 }
 
-/** Lessons open in the player, checkpoints and essays on their own screen; the rest plays here. */
-function isQuestionBlock(block: StudyBlock): boolean {
-  return block.kind !== "learn" && block.kind !== "checkpoint" && block.kind !== "produce";
-}
-
-/** Where the next block's lesson stands; blocks without a lesson are always ready to start. */
-function getNextStopLesson({
-  lessonStatus,
-  next,
-}: {
-  lessonStatus: TodayView["lessonStatus"];
-  next: StudyBlock;
-}): NextStopLesson {
-  if (next.kind !== "learn") {
-    return "ready";
-  }
-
-  const status = next.lessonId ? lessonStatus[next.lessonId] : undefined;
-
-  if (status === "ready") {
-    return "ready";
-  }
-
-  if (status === "generating") {
-    return "writing";
-  }
-
-  return status === "failed" ? "failed" : "notStarted";
+/** Questions play here; lessons open in the player, checkpoints and essays on their own screen. */
+function isQuestionBlock(block: DayStep): boolean {
+  return block.kind !== "learn" && getDayBlockScreen(block, { lessonReady: null }) === "session";
 }
 
 /**
- * The run writing the next block's lesson, so the wait follows its progress: the same readiness
- * a native client reads (`/v1/library/lessons/{lessonId}/readiness`), only while it's written.
+ * The session's full screen, around the screens that don't bring their own `main`: the summary and
+ * a missing block's answer (both task screens), and the sign-in gate, do.
  */
-async function getWritingRunId({
-  lesson,
-  next,
-}: {
-  lesson: NextStopLesson;
-  next: StudyBlock;
-}): Promise<string | null> {
-  if (lesson !== "writing" || !next.lessonId) {
-    return null;
-  }
-
-  const waiting = await getLessonWaitingState({ lessonId: next.lessonId });
-  return waiting.status === "ready" ? waiting.state.generationId : null;
+function SessionMain({ children }: { children: React.ReactNode }) {
+  return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
 }
 
-/**
- * Why the next block's lesson won't be written now: every draft failed its checks (read from the
- * lesson), or the learner's request was just turned down (`?limit=`, from the tap that asked).
- * Only a lesson nothing writes can be refused, so a stale `?limit=` never hides a wait.
- */
-async function getNotWritten({
-  lesson,
-  limit,
-  next,
-  request,
-}: {
-  lesson: NextStopLesson;
-  limit: LessonLimit | null;
-  next: StudyBlock;
-  request: LessonRequest;
-}): Promise<LessonNotWritten | null> {
-  if (
-    (lesson === "notStarted" || lesson === "failed") &&
-    (request.status === "plusRequired" || request.status === "setAside")
-  ) {
-    return request;
-  }
-
-  if (lesson === "failed" && next.lessonId) {
-    const state = await getLessonGenerationState(next.lessonId);
-    return state?.status === "failed" && state.setAside ? { status: "setAside" } : null;
-  }
-
-  return lesson === "notStarted" && limit ? { limit, status: "refused" } : null;
-}
-
-/** A ready block to do while a lesson is written: anything but another lesson. */
-function findAlternative({ next, session }: { next: StudyBlock; session: StudySession }) {
-  return findAlternativeStudyBlock({ blockId: next.id, blocks: session.blocks });
+/** The answer for a session or block that isn't there: the task's own not-found screen, as a 404. */
+function SessionNotFound() {
+  return (
+    <NotFoundPage>
+      <TaskNotFound />
+    </NotFoundPage>
+  );
 }
 
 async function SessionSummaryView({
-  goalKind,
+  facts,
   session,
   stopped,
 }: {
-  goalKind: TodayView["goal"]["kind"];
+  facts: SessionFacts;
   session: StudySession;
   stopped: boolean;
 }) {
@@ -142,12 +93,13 @@ async function SessionSummaryView({
   ]);
 
   if (result.status !== "ready") {
-    notFound();
+    return <SessionNotFound />;
   }
 
+  // The summary is a task screen of its own, with its own `main`.
   return (
     <SessionSummaryClient
-      goalKind={goalKind}
+      goalKind={facts.goal.kind}
       isGuest={Boolean(viewer?.user.isAnonymous)}
       buddy={buddy}
       sessionId={session.id}
@@ -184,25 +136,85 @@ function findActiveQuestionBlock({
   return session.blocks.find((block) => block.status === "active" && isQuestionBlock(block));
 }
 
-async function SessionView({
-  blockId,
-  limit,
-  request,
-  stopped,
-  today,
+type ScreenRequest = { limit: LessonLimit | null; request: LessonRequest };
+
+/** A screen whose address asks nothing about the step's lesson. */
+const UNASKED: ScreenRequest = { limit: null, request: { status: "idle" } };
+
+/**
+ * What the learner's tap asked about a step's lesson, as the address carries it: the run writing
+ * it, why it can't be written now, or that it's being prepared (`?preparing`: asked, no run yet).
+ */
+function readScreenRequest(search: Awaited<Props["searchParams"]>): ScreenRequest {
+  const request = readLessonWritingRequest(search);
+  const preparing = readSessionPreparingParam(search[SESSION_PREPARING_PARAM]);
+
+  return {
+    limit: readLessonLimitParam(search[LESSON_LIMIT_PARAM]),
+    request: request.status === "idle" && preparing ? { status: "requesting" } : request,
+  };
+}
+
+/**
+ * The next step of either kind of day, for the session screen: its lesson's state and why it won't
+ * be written now, the day's facts the screen keys and guards it by, and a ready block to do while
+ * it's written (a saved day only: a day not opened yet has no block to start in its place).
+ */
+async function NextStepView({
+  alternative,
+  day,
+  facts,
+  next,
+  screen,
+  step,
 }: {
-  /** The block the learner opened, from `?block=`. */
+  alternative: StudyBlock | null;
+  day: Parameters<typeof SessionNextStopClient>[0]["day"];
+  facts: SessionFacts;
+  next: NextStopFacts | null;
+  screen: ScreenRequest;
+  step: DayStep;
+}) {
+  const state = await loadLessonState({ next, step });
+  const lesson = getNextStopLesson({ ...screen, state, step });
+
+  return (
+    <SessionMain>
+      <SessionNextStopClient
+        alternative={lesson === "ready" ? null : alternative}
+        asked={screen.request.status !== "idle"}
+        day={day}
+        generationId={getWritingRunId({ request: screen.request, state })}
+        goalId={facts.goal.id}
+        key={`${facts.goal.id}:${facts.localDate.toISOString()}:${step.position}`}
+        lesson={lesson}
+        notWritten={getNotWritten({ lesson, state, ...screen })}
+        step={step}
+        stepRef={next?.ref.position === step.position ? next.ref : null}
+        userId={facts.userId}
+      />
+    </SessionMain>
+  );
+}
+
+async function SavedDayView({
+  blockId,
+  facts,
+  next,
+  screen,
+  session,
+  stopped,
+}: {
   blockId: string | null;
-  limit: LessonLimit | null;
-  request: LessonRequest;
+  facts: SessionFacts;
+  next: NextStopFacts | null;
+  screen: ScreenRequest;
+  session: StudySession;
   /** The learner just stopped for today: what changed so far, before the next step. */
   stopped: boolean;
-  today: TodayView;
 }) {
-  const { lessonStatus, session } = today;
-
   if (stopped) {
-    return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped />;
+    return <SessionSummaryView facts={facts} session={session} stopped />;
   }
 
   const opened = findOpenedBlock({ blockId, session });
@@ -215,46 +227,50 @@ async function SessionView({
     ]);
 
     if (detail.status !== "ready") {
-      notFound();
+      return <SessionNotFound />;
     }
 
     // Asking the buddy about a question opens the player's conversation.
     return (
-      <ClientMessagesProvider scope="player">
-        <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
-      </ClientMessagesProvider>
+      <SessionMain>
+        <ClientMessagesProvider scope="player">
+          <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
+        </ClientMessagesProvider>
+      </SessionMain>
     );
   }
 
-  const next = opened ?? session.blocks.find((block) => block.id === session.nextBlockId);
+  const step = opened ?? session.blocks.find((block) => block.id === session.nextBlockId);
 
-  if (!next) {
-    return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped={false} />;
+  if (!step) {
+    return <SessionSummaryView facts={facts} session={session} stopped={false} />;
   }
 
-  const lesson = getNextStopLesson({ lessonStatus, next });
-
-  const [generationId, notWritten] = await Promise.all([
-    getWritingRunId({ lesson, next }),
-    getNotWritten({ lesson, limit, next, request }),
-  ]);
-
+  // The address's request is about the block it names: once that block is behind the learner,
+  // the step shown now was never asked for.
   return (
-    <SessionNextStopClient
-      alternative={lesson === "ready" ? null : findAlternative({ next, session })}
-      block={next}
-      generationId={generationId}
-      key={next.id}
-      lesson={lesson}
-      notWritten={notWritten}
-      session={session}
+    <NextStepView
+      alternative={findAlternativeStudyBlock({ blockId: step.id, blocks: session.blocks })}
+      day={session}
+      facts={facts}
+      next={next}
+      screen={step.id === blockId ? screen : UNASKED}
+      step={step}
     />
   );
 }
 
 async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.
-  const [language, result, search] = await Promise.all([lang(), getTodayView({}), searchParams]);
+  const [language, search] = await Promise.all([lang(), searchParams]);
+  const blockId = readSessionBlockParam(search[SESSION_BLOCK_PARAM]);
+  const goalId = blockId ? null : readSessionGoalParam(search[SESSION_GOAL_PARAM]);
+
+  // The block names its day; else the goal whose day a tap opened; else the active goal's.
+  const result = await getSessionPageView({
+    ...(blockId ? { blockId } : {}),
+    ...(goalId ? { goalId } : {}),
+  });
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={withQuery("/session", search)} />;
@@ -264,63 +280,66 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
     redirect({ href: "/start", locale: language });
   }
 
-  // A goal on pause or a plan still being built has no session to run: Today explains it.
-  if (result.status !== "ready") {
+  // A goal on pause, one not the learner's, or a plan still being built has no session to run:
+  // Today explains it.
+  if (result.status !== "ready" && result.status !== "unstarted") {
     redirect({ href: "/today", locale: language });
     return null;
   }
 
-  return (
-    <MainLearnProvider>
-      <main className="bg-background flex min-h-dvh flex-col">
-        <SessionView
-          blockId={readSessionBlockParam(search[SESSION_BLOCK_PARAM])}
-          limit={readLessonLimitParam(search[LESSON_LIMIT_PARAM])}
-          request={readLessonWritingRequest(search)}
-          stopped={readSessionStoppedParam(search[SESSION_STOPPED_PARAM])}
-          today={result.today}
-        />
-      </main>
-    </MainLearnProvider>
-  );
-}
+  if (result.status === "ready") {
+    return (
+      <SavedDayView
+        blockId={blockId}
+        facts={result}
+        next={result.next}
+        screen={readScreenRequest(search)}
+        session={result.session}
+        stopped={readSessionStoppedParam(search[SESSION_STOPPED_PARAM])}
+      />
+    );
+  }
 
-/**
- * The session's chrome while it loads, in its final shapes: the task header's row in the column
- * (close, title, menu) with its bar, the step in the column, the action bar pinned under a
- * hairline with its main action (label-width from `lg`), and the aside beside them from `lg`.
- */
-function SessionSkeleton() {
+  const step = result.day.blocks.find((block) => block.position === result.day.nextPosition);
+
+  // A day with nothing to open: Today says what the day is.
+  if (!step) {
+    redirect({ href: "/today", locale: language });
+    return null;
+  }
+
+  // A day not opened yet has no block a tap's request could name.
   return (
-    <TaskSkeleton
-      aside={
-        <>
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-4/6" />
-        </>
-      }
-      progress
-      title={<Skeleton className="h-4 w-32" />}
-    >
-      <Skeleton className="h-7 w-2/3" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-      </div>
-    </TaskSkeleton>
+    <NextStepView
+      alternative={null}
+      day={result.day}
+      facts={result}
+      next={result.next}
+      screen={UNASKED}
+      step={step}
+    />
   );
 }
 
 /**
  * Today's session, full screen like a lesson: the question block in progress, the next step, or
- * the summary once the day's blocks are done (or what changed so far, right after stopping).
+ * the summary once the day's blocks are done (or what changed so far, right after stopping). Its
+ * frame is static: a tap from a screen that showed the day draws the tapped step at once from what
+ * that screen held (`SessionEntryFallback`), and a hard load draws the frame until the day streams
+ * into the same response. Never a placeholder.
  */
 export default function SessionPage({ searchParams }: Props) {
   return (
-    <Suspense fallback={<SessionSkeleton />}>
-      <SessionContent searchParams={searchParams} />
-    </Suspense>
+    <MainLearnProvider>
+      <Suspense
+        fallback={
+          <SessionMain>
+            <SessionEntryFallback />
+          </SessionMain>
+        }
+      >
+        <SessionContent searchParams={searchParams} />
+      </Suspense>
+    </MainLearnProvider>
   );
 }

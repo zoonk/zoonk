@@ -6,8 +6,9 @@ import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { useFormatDuration } from "../_utils/time-format";
+import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
-import { type StudyBlock } from "../session/session-types";
+import { type DayStep } from "../session/session-types";
 import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
 import { useIsCatchingUp } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
@@ -35,7 +36,7 @@ function useRowLabel() {
   const t = useExtracted();
   const isCatchingUp = useIsCatchingUp();
 
-  const part = (block: StudyBlock): string | null => {
+  const part = (block: DayStep): string | null => {
     if (!isCatchingUp(block)) {
       return block.subject ?? getChallengePhase(block);
     }
@@ -45,7 +46,7 @@ function useRowLabel() {
       : t("Catching up");
   };
 
-  return (block: StudyBlock): string | null => {
+  return (block: DayStep): string | null => {
     const label = part(block);
 
     if (!block.oftenTested) {
@@ -63,7 +64,7 @@ function useRowLabel() {
 function useWaitLabel() {
   const t = useExtracted();
 
-  return (block: StudyBlock, wait: "challenge" | "lessons"): string => {
+  return (block: DayStep, wait: "challenge" | "lessons"): string => {
     const phase = getChallengePhase(block);
 
     if (wait === "lessons") {
@@ -110,7 +111,7 @@ function RowOpen({
   countsTowardMission,
   isNext,
 }: {
-  block: StudyBlock;
+  block: DayStep;
   children: React.ReactNode;
   countsTowardMission: boolean;
   isNext: boolean;
@@ -122,7 +123,7 @@ function RowOpen({
 
   const open = () => {
     startTransition(async () => {
-      await actions.openBlock(block.id);
+      await actions.openBlock(block);
     });
   };
 
@@ -142,7 +143,7 @@ function RowOpen({
 }
 
 /** A row's name, muted once finished, with its state for screen readers. */
-function RowName({ block, isNext }: { block: StudyBlock; isNext: boolean }) {
+function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const title = useBlockTitle();
 
@@ -170,7 +171,7 @@ function RowLines({
   isNext,
   wait,
 }: {
-  block: StudyBlock;
+  block: DayStep;
   isNext: boolean;
   wait: "challenge" | "lessons" | null;
 }) {
@@ -205,13 +206,24 @@ function RowLines({
   );
 }
 
+/** Whether a mission opens this step: by its id on a saved day, by its place on a day not opened yet. */
+function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
+  if (opens?.kind !== "block") {
+    return false;
+  }
+
+  return "blockId" in opens
+    ? "id" in step && opens.blockId === step.id
+    : opens.ref.position === step.position;
+}
+
 /**
  * The block a mission still to do opens, marked in Brain Power's violet beside its minutes: doing
  * it moves the day's missions. Only the block a tap on the mission would open, so a day's queue
  * carries at most one mark per mission, and none once the mission is done, while it waits, or
  * once today's bonus is earned.
  */
-function useCountsTowardMission(blockId: string) {
+function useCountsTowardMission(step: DayStep) {
   const { missions } = useTodayScreen();
 
   // Once today's bonus is earned (here or by another goal), nothing is at stake: no marks.
@@ -219,10 +231,7 @@ function useCountsTowardMission(blockId: string) {
     !missions?.fullMeal.earned &&
     missions?.missions.some(
       (mission) =>
-        mission.status === "todo" &&
-        !mission.waitReason &&
-        mission.opens?.kind === "block" &&
-        mission.opens.blockId === blockId,
+        mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
     ),
   );
 }
@@ -244,14 +253,14 @@ export function BlockRow({
   isNext,
   opens = true,
 }: {
-  block: StudyBlock;
+  block: DayStep;
   fold?: RowFold;
   isNext: boolean;
   opens?: boolean;
 }) {
   const formatDuration = useFormatDuration();
   const finished = isFinished(block);
-  const countsTowardMission = useCountsTowardMission(block.id);
+  const countsTowardMission = useCountsTowardMission(block);
   const wait = block.waitReason;
   const name = <RowName block={block} isNext={isNext} />;
 

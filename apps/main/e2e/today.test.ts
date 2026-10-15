@@ -561,11 +561,6 @@ test.describe("Today", () => {
     const start = card.getByRole("button", { name: /^Start/u });
     await expect(start).toBeVisible();
 
-    const title = card.getByRole("heading", { level: 1, name: "Today" });
-    const segments = card.getByRole("img", { name: /^\d+ of \d+ done$/u });
-    const placed = () => Promise.all([title.boundingBox(), segments.boundingBox()]);
-    const before = await placed();
-
     // The server takes a few seconds to open the next step.
     await page.route("**/today", async (route) => {
       if (route.request().method() === "POST") {
@@ -578,12 +573,29 @@ test.describe("Today", () => {
     });
 
     await start.click();
-    await expect(card.getByRole("status")).toHaveText("Opening your next step…");
 
-    // It says so in the day's own line, under the button: the title and the day stay put.
-    expect(await placed()).toEqual(before);
+    // The step opens on the session screen at once, drawn from the tap: its title and the day's
+    // segments are there, and Start stays busy while the server opens it.
+    const main = page.getByRole("main");
+    const step = main.getByRole("heading", { level: 2, name: "Quick review" });
+    const day = main.getByRole("progressbar", { name: /^\d+ of \d+ done$/u });
+    const busy = main.getByRole("button", { exact: true, name: "Start" });
+    await expect(step).toBeVisible();
+    await expect(day).toBeVisible();
+    await expect(busy).toHaveAttribute("aria-busy", "true");
+    const placedThere = () => Promise.all([step.boundingBox(), day.boundingBox()]);
+    const shown = await placedThere();
 
-    await expect(page).not.toHaveURL(/\/today$/u, { timeout: SLOW_OPEN_MS + 10_000 });
+    await expect(main.getByRole("status")).toHaveText("Opening your next step…");
+
+    // It says so in the step's own line, under the button: the title and the day stay put.
+    expect(await placedThere()).toEqual(shown);
+    await expect(step).toBeVisible();
+
+    // Once the server opens it, the step plays: its questions replace the busy Start.
+    await expect(page.getByRole("link", { name: "Close. Your answers are saved." })).toBeVisible({
+      timeout: SLOW_OPEN_MS + 10_000,
+    });
 
     await page.context().close();
   });
@@ -609,9 +621,11 @@ test.describe("Today", () => {
     await expect(note.getByRole("button")).toHaveCount(0);
     await expect(card.getByText(WELCOME_BACK)).toBeVisible();
 
-    // Once the day is underway, the greeting has done its job.
+    // Once the day is underway, the greeting has done its job. The review's questions show only
+    // once its start is saved.
     await card.getByRole("button", { name: /^Start/u }).click();
     await expect(page).not.toHaveURL(/\/today$/u);
+    await expect(page.getByRole("link", { name: "Close. Your answers are saved." })).toBeVisible();
     await page.goto("/today");
     await expect(card.getByRole("button", { name: /^Continue/u })).toBeVisible();
     await expect(page.getByText(WELCOME_BACK)).toHaveCount(0);
@@ -632,6 +646,77 @@ test.describe("Today", () => {
     await suggestion.getByRole("button", { name: "Not now" }).click();
     await expect(suggestion).toBeHidden();
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
+    await page.context().close();
+  });
+
+  // Bia had Today open in two tabs and said "Not now" to "Continue Spanish?" in one: the other kept
+  // offering it, and answering it there failed, since it was answered already.
+  test("drops a suggested goal answered in another tab", async ({ browser }) => {
+    const { user } = await createStudyDay();
+    await suggestedGoalFixture({ title: "Spanish", userId: user.id });
+    const page = await openAs(browser, user);
+    const other = await page.context().newPage();
+    await page.goto("/today");
+    await other.goto("/today");
+
+    const suggestion = page.getByRole("region", { name: "Suggested goal" });
+    const elsewhere = other.getByRole("region", { name: "Suggested goal" });
+    await expect(elsewhere.getByRole("heading", { name: "Continue Spanish?" })).toBeVisible();
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+    await suggestion.getByRole("button", { name: "Not now" }).click();
+    await expect(suggestion).toBeHidden();
+    await expect(elsewhere).toBeHidden();
+    await page.context().close();
+  });
+
+  // Rui had Today open in two tabs and started his review from its mission in one: the other still
+  // said "Start session", as if nothing had started.
+  test("says Continue in another tab once a mission started the day's block", async ({
+    browser,
+  }) => {
+    const { user } = await createStudyDay();
+    const page = await openAs(browser, user);
+    const other = await page.context().newPage();
+    await page.goto("/today");
+    await other.goto("/today");
+
+    await expect(other.getByRole("button", { name: "Start session" })).toBeVisible();
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+    await page
+      .getByRole("region", { name: "Today's missions" })
+      .getByRole("button", { name: "Review, go to today's review" })
+      .click();
+
+    await expect(page).toHaveURL(/\/session/u);
+    await expect(other.getByRole("button", { name: "Continue session" })).toBeVisible();
+    await page.context().close();
+  });
+
+  // Bia said "Not now" to Today's ask for the exam's notice in one tab: the other kept asking, and
+  // an upload there was refused, since nothing was asked anymore.
+  test("takes a document ask away in another tab once it's answered", async ({ browser }) => {
+    const { goal, user } = await createStudyDay();
+
+    await prisma.goal.update({
+      data: { researchUploadReason: "unverified" },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    const other = await page.context().newPage();
+    await page.goto("/today");
+    await other.goto("/today");
+
+    const ask = page.getByRole("region", { name: "Your plan needs a document" });
+    const elsewhere = other.getByRole("region", { name: "Your plan needs a document" });
+    await expect(elsewhere).toContainText("We couldn't confirm the exam's details");
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+    await ask.getByRole("button", { name: "Not now" }).click();
+    await expect(ask).toBeHidden();
+    await expect(elsewhere).toBeHidden();
     await page.context().close();
   });
 
@@ -743,14 +828,14 @@ test.describe("Today", () => {
     await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toBeVisible();
     await expectAccessibleScreen(page, "Today once the day is done");
 
-    // Enter opens what changed, the day's one next step.
+    // Enter opens what changed, the day's one next step, on the session screen of this goal's day.
     await expect(card.getByRole("link", { name: /^See what changed/u })).toHaveAttribute(
       "href",
-      "/session",
+      `/session?goal=${session.goalId}`,
     );
 
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/session$/u);
+    await expect(page).toHaveURL(new RegExp(`/session\\?goal=${session.goalId}$`, "u"));
     await page.context().close();
   });
 });
@@ -1148,6 +1233,42 @@ test.describe("Today without a session to start", () => {
     await page.context().close();
   });
 
+  // Bia had Today open in two tabs on her paused goal and resumed it in one: the other still said
+  // the goal was paused, with nothing planned.
+  test("shows the day in another tab once a paused goal is resumed", async ({ browser }) => {
+    const user = await createE2EUser(getBaseURL());
+
+    const goal = await goalFixture({
+      status: "paused",
+      timezone: "UTC",
+      title: "Bake sourdough bread",
+      userId: user.id,
+    });
+
+    const [plan] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    await planItemFixture({ kind: "lesson", planId: plan.id });
+
+    const page = await openAs(browser, user);
+    const other = await page.context().newPage();
+    await page.goto("/today");
+    await other.goto("/today");
+
+    await expect(
+      other.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
+    ).toBeVisible();
+
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+    await page.getByRole("button", { name: "Resume Bake sourdough bread" }).click();
+    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
+    await expect(other.getByRole("region", { name: "Today's session" })).toBeVisible();
+    await page.context().close();
+  });
+
   test("says the free plan follows one goal when another one is active", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
 
@@ -1401,6 +1522,32 @@ test.describe("Today without a day to show", () => {
       })
       .toBe("accepted");
 
+    await page.context().close();
+  });
+
+  // Bia had "Continue Physics?" open in two tabs and said "Not now" in one: the other kept offering
+  // it, and answering it there failed, since it was answered already.
+  test("drops a returning learner's suggested goal answered in another tab", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    await suggestedGoalFixture({ title: "Physics", userId: user.id });
+    const page = await openAs(browser, user);
+    const other = await page.context().newPage();
+    await page.goto("/today");
+    await other.goto("/today");
+
+    const elsewhere = other.getByRole("region", { name: "Suggested goal" });
+    await expect(elsewhere.getByText("Continue Physics?")).toBeVisible();
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
+
+    await page
+      .getByRole("region", { name: "Suggested goal" })
+      .getByRole("button", { name: "Not now" })
+      .click();
+
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(elsewhere).toBeHidden();
     await page.context().close();
   });
 
