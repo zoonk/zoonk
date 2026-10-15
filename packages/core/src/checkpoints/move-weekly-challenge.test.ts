@@ -41,6 +41,7 @@ async function setup() {
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
   const challenge = await prisma.planItem.findFirstOrThrow({
+    orderBy: [{ scheduledFor: "asc" }, { position: "asc" }, { id: "asc" }],
     where: { kind: "checkpoint", planId: plan.id },
   });
 
