@@ -372,7 +372,7 @@ test.describe("Mind maps", () => {
     await page.goto("/mind-maps");
 
     // Instead of a generic "Keep studying", the page says which map comes first and opens it.
-    const empty = page.locator('[data-slot="mind-maps-empty"]');
+    const empty = page.getByRole("main").locator('[data-slot="mind-maps-empty"]');
     await expect(empty.getByText("No mind maps yet")).toBeVisible();
 
     await expect(

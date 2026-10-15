@@ -632,7 +632,7 @@ test.describe("Mocks whenever the learner wants", () => {
     // The exam page shows the mocks as Plus learners see them, marked Plus, with one notice, and
     // their progress over time locked.
     await page.goto("/exam");
-    await expect(page.getByText(/^Mock exams come with Plus/u)).toBeVisible();
+    await expect(page.getByRole("main").getByText(/^Mock exams come with Plus/u)).toBeVisible();
     await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(1);
 
     await expect(page.getByRole("region", { name: "How your mocks went" })).toContainText(

@@ -615,6 +615,15 @@ test.describe("Instant navigation", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page }) => {
+      // Settings' own first page (whose account it is) comes with its link's prefetch, which the
+      // account menu's links send once it opens: watched from the start, so it's never missed.
+      const settingsPrefetched = page.waitForResponse(
+        (response) =>
+          new URL(response.url()).pathname === "/settings" &&
+          response.request().headers()["next-router-prefetch"] === "2",
+        { timeout: 0 },
+      );
+
       await openSettled(page, "/today");
 
       // A frame drawn again would be a new element, without this mark.
@@ -659,8 +668,10 @@ test.describe("Instant navigation", () => {
 
       await tapInstantly({ link: "/today", page, path: /\/today$/u });
 
-      // Settings open from the account menu, in the same frame.
+      // Settings open from the account menu, in the same frame: the static shell has the page's
+      // frame, and its first page came with the link's prefetch.
       await page.getByRole("button", { name: /user menu/iu }).click();
+      await settingsPrefetched;
 
       await instant(page, async () => {
         await page.getByRole("menuitem", { name: "Settings" }).click();

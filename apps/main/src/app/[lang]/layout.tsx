@@ -17,6 +17,13 @@ import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import "../globals.css";
 
+/**
+ * Every page's App Shell (what a default `<Link>` prefetches) stays static: request-time content
+ * behind Suspense comes with the link's own prefetch or the navigation, so a link in sight never
+ * costs a server render for its shell.
+ */
+export const ensureStatic = "shell";
+
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: { default: "Zoonk", template: "%s | Zoonk" },

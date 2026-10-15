@@ -57,7 +57,7 @@ test.describe("Energy Page", () => {
       ).toContainText(/Low\s*High/u);
 
       // Over the whole history, that day still counts as one at its maximum.
-      const tiles = page.locator('[data-slot="stat-tile"]');
+      const tiles = page.getByRole("main").locator('[data-slot="stat-tile"]');
       // Across 401 days: 100 down to 1, then 300 idle days at 0, and today's 50.
       // (5050 + 50) / 401 = 12.7%, including the days without a stored completion.
       await expect(tiles.filter({ hasText: /^Average/u })).toContainText("12.7%");

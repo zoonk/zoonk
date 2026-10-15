@@ -192,7 +192,7 @@ test("a picked answer saves once and moves on once, whatever else is pressed whi
       Boolean(response.request().postData()?.includes('"purpose"')),
   );
 
-  await page.getByText("Use it at work", { exact: true }).click();
+  await page.getByRole("main").getByText("Use it at work", { exact: true }).click();
   await page.keyboard.press("Enter");
   await page.getByText("Get an overview", { exact: true }).click();
 

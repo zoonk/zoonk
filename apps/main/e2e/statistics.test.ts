@@ -28,7 +28,7 @@ async function expectEmptyState({
 }) {
   await page.goto(statsPage.path);
   await expect(page.getByRole("heading", { level: 1, name: statsPage.title })).toBeVisible();
-  await expect(page.getByText(prompt)).toBeVisible();
+  await expect(page.getByRole("main").getByText(prompt)).toBeVisible();
 }
 
 async function expectNoHorizontalScroll(page: Page) {

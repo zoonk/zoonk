@@ -444,8 +444,9 @@ test.describe("Mistakes notebook", () => {
     });
 
     await page.goto("/mistakes");
-    await expect(page.getByText(context)).toBeVisible();
-    await expect(page.getByText("Shadow measurements", { exact: true })).toBeVisible();
+    const notebook = page.getByRole("main");
+    await expect(notebook.getByText(context)).toBeVisible();
+    await expect(notebook.getByText("Shadow measurements", { exact: true })).toBeVisible();
 
     await page.goto("/mistakes/practice");
     await expect(page.getByText(LESSON_IDEA)).toBeVisible();
@@ -555,7 +556,7 @@ test.describe("Mistakes notebook", () => {
     await page.goto("/mistakes");
 
     await expect(
-      page.getByText("Listen again as often as you like.", { exact: true }),
+      page.getByRole("main").getByText("Listen again as often as you like.", { exact: true }),
     ).toBeVisible();
 
     await page.getByRole("button", { exact: true, name: "Transcript" }).click();

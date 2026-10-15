@@ -242,7 +242,7 @@ test.describe("Paywall", () => {
     const page = await openAs(browser, user);
     await page.goto("/start");
 
-    const notice = page.locator('[data-slot="plus-notice"]');
+    const notice = page.getByRole("main").locator('[data-slot="plus-notice"]');
     await expect(notice.getByText("More goals at once with Plus")).toBeVisible();
 
     await expect(
