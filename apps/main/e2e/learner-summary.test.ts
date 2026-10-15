@@ -193,23 +193,43 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("keeps the session hint in step with the session, an ended one included", async ({
-    browser,
-  }) => {
+  test("never writes the session hint, for a session or one that ended", async ({ browser }) => {
     const { user } = await createGoalLearner();
     const context = await browser.newContext({ storageState: user.storageState });
+    const tag = await getSessionHint(context);
 
     const ready = await context.request.get("/api/learner/summary");
-    expect(ready.headers()["set-cookie"]).toMatch(/^zoonk-signed-in=1;/u);
 
-    // The session ends (signed out elsewhere, or expired): the read says "visitor" and drops it.
+    // The session ends (signed out elsewhere, or expired): the read says "visitor", and the hint
+    // still changes only with the session cookie, which this read doesn't touch.
     await prisma.session.deleteMany({ where: { userId: user.id } });
     await context.clearCookies({ name: /session_data/u });
 
     const ended = await context.request.get("/api/learner/summary");
 
     await expect(ended.json()).resolves.toMatchObject({ status: "visitor" });
-    await expect.poll(() => getSessionHint(context)).toBe("0");
+
+    for (const response of [ready, ended]) {
+      expect(response.headers()["set-cookie"] ?? "", response.url()).not.toContain(
+        SESSION_HINT_COOKIE,
+      );
+    }
+
+    expect(tag).toMatch(/^t1\.[\w-]{22}$/u);
+    expect(await getSessionHint(context)).toBe(tag);
+
+    // Asking auth itself finds the session gone: its response deletes the session cookie and
+    // says "none" with it.
+    const checked = await context.request.get(
+      "/api/auth/get-session?disableCookieCache=true&disableRefresh=true",
+    );
+
+    const cookies = checked.headers()["set-cookie"] ?? "";
+
+    expect(checked.headers()["x-zoonk-session-hint"]).toBe("0");
+    expect(cookies).toMatch(/session_token=;/u);
+    expect(cookies).toContain(`${SESSION_HINT_COOKIE}=0`);
+    expect(await getSessionHint(context)).toBe("0");
 
     await context.close();
   });

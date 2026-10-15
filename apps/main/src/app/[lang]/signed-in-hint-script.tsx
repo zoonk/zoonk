@@ -1,7 +1,19 @@
-import { SESSION_HINT_COOKIE } from "@/lib/learner/session-hint";
+import {
+  LEGACY_SESSION_HINT,
+  SESSION_HINT_COOKIE,
+  SESSION_HINT_TAG_PATTERN,
+} from "@zoonk/auth/session-hint";
 
-/** The browser's session hint saying it holds a session, as `document.cookie` lists it. */
-const SIGNED_IN = `${SESSION_HINT_COOKIE}=1`;
+const HINT_PREFIX = `${SESSION_HINT_COOKIE}=`;
+
+/**
+ * Runs before any bundle, so it carries its own copy of `describeSessionHint`'s "session" (a
+ * learner's tag, or `1` from before tags), built from the same values, on the cookie read by name.
+ */
+const SCRIPT = [
+  `{const v=(document.cookie.split("; ").find((c)=>c.startsWith(${JSON.stringify(HINT_PREFIX)}))??"").slice(${HINT_PREFIX.length});`,
+  `document.documentElement.toggleAttribute("data-signed-in",v===${JSON.stringify(LEGACY_SESSION_HINT)}||${String(SESSION_HINT_TAG_PATTERN)}.test(v))}`,
+].join("");
 
 /**
  * Marks `<html>` with `data-signed-in` before the first paint when the browser's session hint
@@ -14,9 +26,7 @@ export function SignedInHintScript() {
   return (
     <script
       // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
-      dangerouslySetInnerHTML={{
-        __html: `document.documentElement.toggleAttribute("data-signed-in",document.cookie.split("; ").includes(${JSON.stringify(SIGNED_IN)}))`,
-      }}
+      dangerouslySetInnerHTML={{ __html: SCRIPT }}
     />
   );
 }

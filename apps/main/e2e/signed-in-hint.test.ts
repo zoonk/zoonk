@@ -41,7 +41,10 @@ test.describe("Signed-in hint", () => {
       [null, false],
       ["0", false],
       ["yes", false],
+      ["t1.short", false],
+      ["t2.AbCdEfGhIjKlMnOpQrSt-_", false],
       ["1", true],
+      ["t1.AbCdEfGhIjKlMnOpQrSt-_", true],
     ] as const) {
       // oxlint-disable-next-line no-await-in-loop -- One browser at a time keeps failures readable.
       const context = await browser.newContext();
@@ -74,6 +77,42 @@ test.describe("Signed-in hint", () => {
       // oxlint-disable-next-line no-await-in-loop -- One browser at a time keeps failures readable.
       await context.close();
     }
+  });
+
+  test("a sign-in leaves the learner's own tag beside their session, the same on every sign-in", async ({
+    browser,
+  }) => {
+    const [first, second] = await Promise.all([
+      createE2EUser(getBaseURL()),
+      createE2EUser(getBaseURL()),
+    ]);
+
+    const [firstHint, secondHint] = [first, second].map((user) =>
+      user.storageState.cookies.find((cookie) => cookie.name === SESSION_HINT_COOKIE),
+    );
+
+    const session = first.storageState.cookies.find((cookie) =>
+      cookie.name.endsWith("session_token"),
+    );
+
+    expect(firstHint).toMatchObject({ httpOnly: false, sameSite: "Lax" });
+    expect(firstHint?.value).toMatch(/^t1\.[\w-]{22}$/u);
+    expect(firstHint?.value).not.toContain(first.id);
+    expect(Math.abs((firstHint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
+    expect(secondHint?.value).toMatch(/^t1\.[\w-]{22}$/u);
+    expect(secondHint?.value).not.toBe(firstHint?.value);
+
+    // Signing in again starts another session for the same learner, under the same tag.
+    const context = await browser.newContext();
+
+    const response = await context.request.post("/api/auth/sign-in/email", {
+      data: { email: first.email, password: first.password },
+    });
+
+    expect(response.ok()).toBe(true);
+    expect(await getSessionHint(context)).toBe(firstHint?.value);
+
+    await context.close();
   });
 
   test("hydrates the marked page without a mismatch, for a learner and a visitor", async ({

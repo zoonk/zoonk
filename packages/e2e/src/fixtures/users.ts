@@ -4,7 +4,6 @@ import { prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { getAiOrganization } from "./orgs";
 import { createE2EProgressData } from "./progress";
-import { withSessionHint } from "./session-hint";
 
 const SHORT_UUID_LENGTH = 8;
 
@@ -78,7 +77,7 @@ export async function createE2EUser(
     await createE2EProgressData(user.id);
   }
 
-  const storageState = withSessionHint(await signupContext.storageState());
+  const storageState = await signupContext.storageState();
   await signupContext.dispose();
 
   return { email, id: user.id, password, storageState };

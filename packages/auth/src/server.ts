@@ -30,6 +30,7 @@ import { accessGuardsPlugin } from "./plugins/access-guards";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
 import { learnerIdentityPlugin } from "./plugins/learner-identity";
+import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { nameProviderAccount } from "./provider-username";
 import { appleProvider } from "./providers/apple";
@@ -114,7 +115,9 @@ export const fullPlugins = [
   trustedOriginPlugin(),
   guestPlugin(),
   accessGuardsPlugin(),
-  // NextCookies should be the last plugin in the array
+  // The session hint pairs with the session cookie every earlier hook may have written, and
+  // NextCookies (always last) hands both to Next.js.
+  sessionHintPlugin(),
   nextCookies(),
 ] as const;
 

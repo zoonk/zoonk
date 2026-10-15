@@ -4,6 +4,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { mockCentralAuthTransport } from "./auth-transport";
 import { expect, test } from "./fixtures";
+import { openAsGuest } from "./guest-session";
 
 /**
  * Reads the redirect target from a response that intentionally does not follow
@@ -178,16 +179,20 @@ test.describe("Auth Callback", () => {
     await ctx.close();
   });
 
-  test("leaves main's session hint beside the session it signs in, for as long", async ({
+  test("leaves the learner's session hint beside the session it signs in, for as long", async ({
     browser,
   }) => {
     const baseURL = getBaseURL();
-    const user = await createE2EUser(baseURL);
+    const [user, guest] = await Promise.all([createE2EUser(baseURL), openAsGuest(browser)]);
     const token = await generateOneTimeToken(baseURL, user);
 
-    const ctx = await browser.newContext({ baseURL });
+    const ctx = guest.context;
+    const guestCookies = await ctx.cookies(baseURL);
+    const guestHint = guestCookies.find((cookie) => cookie.name === "zoonk-signed-in");
+    const userHint = user.storageState.cookies.find((cookie) => cookie.name === "zoonk-signed-in");
     const state = await createLoginState({ baseURL, context: ctx });
 
+    // The browser still holds the guest's session when the token signs the learner in.
     const response = await ctx.request.get(
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
       { maxRedirects: 0 },
@@ -199,7 +204,9 @@ test.describe("Auth Callback", () => {
     const hint = cookies.find((cookie) => cookie.name === "zoonk-signed-in");
     const session = cookies.find((cookie) => cookie.name.endsWith("session_token"));
 
-    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: "1" });
+    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: userHint?.value });
+    expect(hint?.value).toMatch(/^t1\.[\w-]{22}$/u);
+    expect(hint?.value).not.toBe(guestHint?.value);
     expect(Math.abs((hint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
 
     await ctx.close();
