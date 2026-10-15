@@ -6,8 +6,9 @@ import {
   getLearningProfileCacheTag,
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
+import { readActiveGoal } from "../learner/facts/learning-profile";
 import { getSession } from "../users/get-session";
-import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
+import { loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
 
 /**
@@ -34,13 +35,15 @@ export async function listCurrentUserGoals(): Promise<GoalList | null> {
     getUserSubscriptionCacheTag(userId),
   );
 
-  const [goals, activeGoalId] = await Promise.all([
+  const [goals, activeGoal] = await Promise.all([
     prisma.goal.findMany({
       orderBy: { createdAt: "asc" },
       where: { status: { not: "archived" }, userId },
     }),
-    findActiveGoalId(userId),
+    readActiveGoal(userId),
   ]);
+
+  const activeGoalId = activeGoal?.id ?? null;
 
   /** The main goal leads the switcher, as its session leads the day. */
   const ordered = goals.toSorted(

@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { readLearningProfile } from "../learner/facts/learning-profile";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { loadMemoryExport } from "../memory/_utils/memory-export";
 import { findLearningProfileView } from "../profile/_utils/learning-profile-view";
@@ -101,7 +102,7 @@ export async function exportCurrentUserData() {
       select: { createdAt: true, email: true, image: true, name: true, username: true },
       where: { id: userId },
     }),
-    findLearningProfileView(userId),
+    findLearningProfileView(userId, readLearningProfile(userId)),
     loadGoals(userId),
     loadProgress(userId),
     prisma.attempt.findMany({ orderBy: byAnswer, where: { userId } }),

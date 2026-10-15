@@ -2,8 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getLearningProfileCacheTag, getMemoryCacheTag } from "../cache/tags";
+import { readLearningProfile } from "../learner/facts/learning-profile";
+import { getRequestInstant } from "../learner/facts/request-instant";
 import { getSession } from "../users/get-session";
-import { isMemoryEnabled } from "./_utils/memory-access";
 import { currentFactsWhere, toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryView } from "./memory-contract";
 
@@ -21,13 +22,18 @@ export async function getCurrentUserMemory(): Promise<MemoryView | null> {
 
   cacheTag(getMemoryCacheTag(userId), getLearningProfileCacheTag(userId));
 
-  const [enabled, facts] = await Promise.all([
-    isMemoryEnabled(userId),
+  const now = await getRequestInstant();
+
+  const [profile, facts] = await Promise.all([
+    readLearningProfile(userId),
     prisma.memoryFact.findMany({
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      where: currentFactsWhere({ now: new Date(), userId }),
+      where: currentFactsWhere({ now, userId }),
     }),
   ]);
 
-  return { enabled, facts: facts.map((fact) => toMemoryFactView(fact)) };
+  return {
+    enabled: profile?.memoryEnabled ?? true,
+    facts: facts.map((fact) => toMemoryFactView(fact)),
+  };
 }

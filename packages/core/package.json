@@ -115,6 +115,7 @@
     "./feedback/submit": "./src/feedback/submit-feedback.ts",
     "./feedback/vote": "./src/feedback/vote-on-content.ts",
     "./files/read-own": "./src/files/read-own-file.ts",
+    "./goals/active-goal": "./src/goals/get-active-goal-id.ts",
     "./goals/continue-next-level": "./src/goals/continue-goal-at-next-level.ts",
     "./goals/contract": "./src/goals/goal-contract.ts",
     "./goals/course-start-contract": "./src/goals/course-start-contract.ts",

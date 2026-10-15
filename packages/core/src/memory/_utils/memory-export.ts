@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { readLearningProfile } from "../../learner/facts/learning-profile";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type MemoryExport } from "../memory-contract";
-import { isMemoryEnabled } from "./memory-access";
 import { toMemoryFactView } from "./memory-fact-view";
 
 /**
@@ -9,8 +10,8 @@ import { toMemoryFactView } from "./memory-fact-view";
  * account-wide export, which call it after deriving the learner from the session.
  */
 export async function loadMemoryExport(userId: string): Promise<MemoryExport> {
-  const [enabled, facts, insights] = await Promise.all([
-    isMemoryEnabled(userId),
+  const [profile, facts, insights, now] = await Promise.all([
+    readLearningProfile(userId),
     prisma.memoryFact.findMany({
       orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       where: { userId },
@@ -19,11 +20,12 @@ export async function loadMemoryExport(userId: string): Promise<MemoryExport> {
       orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       where: { kind: { not: null }, message: { not: null }, userId },
     }),
+    getRequestInstant(),
   ]);
 
   return {
-    enabled,
-    exportedAt: new Date(),
+    enabled: profile?.memoryEnabled ?? true,
+    exportedAt: now,
     facts: facts.map((fact) => ({
       ...toMemoryFactView(fact),
       deletedAt: fact.deletedAt,

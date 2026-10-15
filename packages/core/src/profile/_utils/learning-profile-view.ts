@@ -35,9 +35,15 @@ function toLearningProfileView({
   };
 }
 
-export async function findLearningProfileView(userId: string): Promise<LearningProfileView> {
+/** A GET supplies its canonical fact; the omitted write-response input always reads fresh. */
+export async function findLearningProfileView(
+  userId: string,
+  knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>,
+): Promise<LearningProfileView> {
   const [profile, availableGlasses] = await Promise.all([
-    prisma.userLearningProfile.findUnique({ where: { userId } }),
+    knownProfile === undefined
+      ? prisma.userLearningProfile.findUnique({ where: { userId } })
+      : knownProfile,
     listAvailableGlasses(userId),
   ]);
 

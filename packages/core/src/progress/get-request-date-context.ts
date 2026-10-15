@@ -2,11 +2,10 @@ import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getGoalsCacheTag } from "../cache/tags";
-import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readActiveGoal } from "../learner/facts/learning-profile";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { getSession } from "../users/get-session";
-
-const DEFAULT_TIME_ZONE = "UTC";
 
 type RequestProgressDateContext = { currentDate: Date; currentInstant: Date; timeZone: string };
 
@@ -25,9 +24,8 @@ export async function getRequestProgressDateContext(): Promise<RequestProgressDa
     cacheTag(getGoalsCacheTag(session.user.id));
   }
 
-  const timeZone = session
-    ? await getLearnerTimeZone({ userId: session.user.id })
-    : DEFAULT_TIME_ZONE;
+  const goal = session ? await readActiveGoal(session.user.id) : null;
+  const timeZone = getAnswerTimeZone({ goal });
 
   return {
     currentDate: getDateInTimeZone({ date: currentInstant, timeZone }),

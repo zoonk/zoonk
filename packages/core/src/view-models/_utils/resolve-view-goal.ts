@@ -8,7 +8,7 @@ import {
   getUserProgressCacheTag,
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
-import { findActiveGoalId } from "../../goals/_utils/goal-view";
+import { readActiveGoal, readLearningProfile } from "../../learner/facts/learning-profile";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 
@@ -40,13 +40,22 @@ export async function resolveViewGoal(goalId?: string): Promise<ViewGoalResult> 
     getUserSubscriptionCacheTag(userId),
   );
 
-  const id = goalId ?? (await findActiveGoalId(userId));
+  if (goalId === undefined) {
+    const goal = await readActiveGoal(userId);
 
-  if (!id) {
+    if (goal) {
+      return { goal, status: "ready" };
+    }
+
+    const profile = await readLearningProfile(userId);
+    return { status: profile?.activeGoalId ? "notFound" : "noGoal" };
+  }
+
+  if (!goalId) {
     return { status: "noGoal" };
   }
 
-  const owned = await getOwnedGoal(id);
+  const owned = await getOwnedGoal(goalId);
 
   return owned.status === "ready" ? { goal: owned.goal, status: "ready" } : owned;
 }
