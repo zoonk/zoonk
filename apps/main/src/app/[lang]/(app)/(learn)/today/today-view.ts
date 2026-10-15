@@ -1,5 +1,5 @@
 import "server-only";
-import { type LearnerBuddy, getBrainPowerTotal, getLearnerBuddy } from "@/lib/learn/learner-buddy";
+import { type LearnerBuddy, getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { type LearnerViewCopy } from "@/lib/learner/learner-view-copies";
@@ -12,6 +12,7 @@ import {
 } from "@zoonk/core/library/sources/upload-request";
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
+import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { type DayBlockRef, getDayBlockScreen, toDayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
@@ -163,7 +164,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, notices, planEnd, readAt, mocks, mistakes, language, syllabus, brainPower] =
+  const [buddy, notices, planEnd, readAt, mocks, mistakes, language, syllabus, belt] =
     await Promise.all([
       getLearnerBuddy(),
       loadNotices(today.goal.id),
@@ -173,7 +174,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       countOpenMistakes(today.goal.id),
       loadLanguageToday(today.goal),
       loadSyllabus(today.goal.id),
-      getBrainPowerTotal(),
+      getBeltLevel(),
     ]);
 
   const steps = today.session.blocks.map((block) =>
@@ -187,7 +188,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       revision: today.revision,
       userId: today.userId,
       view: {
-        brainPower,
+        brainPower: belt?.totalBrainPower ?? 0,
         buddy,
         language,
         mistakes,

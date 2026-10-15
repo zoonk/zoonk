@@ -1,5 +1,4 @@
 import "server-only";
-import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
 import { DEFAULT_BUDDY } from "@zoonk/core/profile/default-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
@@ -32,9 +31,3 @@ export async function getLearnerBuddy() {
 }
 
 export type LearnerBuddy = Awaited<ReturnType<typeof getLearnerBuddy>>;
-
-/** The learner's Brain Power so far, which the missions' reward says when tapped; null without it. */
-export async function getBrainPowerTotal(): Promise<number | null> {
-  const result = await getBuddyStatus({});
-  return result.status === "ready" ? result.buddy.belt.totalBrainPower : null;
-}
