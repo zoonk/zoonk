@@ -10,9 +10,11 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
+import { getBlockItemIds, readBlockPayload } from "../sessions/block-payload";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
+import { getSession } from "../users/get-session";
 import { getCheckpoint } from "./get-checkpoint";
 
 /** A learner whose first phase (two lessons) is done, so today's session is the phase's boss. */
@@ -104,6 +106,45 @@ describe(getCheckpoint, () => {
         reward: { glasses: null },
         status: "completed",
       },
+      status: "ready",
+    });
+  });
+
+  it("keeps the checkpoint's status and abandonment flag together when finishing during a read", async () => {
+    const { block, sessionId, user } = await reachedBoss();
+    await startStudyBlock({ blockId: block.id, input: {}, sessionId });
+    const row = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    await prisma.item.deleteMany({ where: { id: { in: getBlockItemIds(readBlockPayload(row)) } } });
+    const identity = await getSession();
+
+    /** The detail read resolves auth again after the checkpoint row was read. Finish at that boundary. */
+    vi.mocked(getSession)
+      .mockResolvedValueOnce(identity)
+      .mockImplementationOnce(async () => {
+        await finishStudyBlock({ blockId: block.id, input: {}, sessionId });
+        return identity;
+      });
+
+    try {
+      const result = await getCheckpoint(block.id);
+      expect(result.status).toBe("ready");
+
+      if (result.status !== "ready") {
+        throw new Error("Expected the checkpoint");
+      }
+
+      expect(result.checkpoint).toMatchObject({
+        endedWithoutQuestions: true,
+        result: null,
+        status: "skipped",
+      });
+    } finally {
+      vi.mocked(getSession).mockReset();
+      mockSession(user.id);
+    }
+
+    await expect(getCheckpoint(block.id)).resolves.toMatchObject({
+      checkpoint: { endedWithoutQuestions: true, result: null, status: "skipped" },
       status: "ready",
     });
   });

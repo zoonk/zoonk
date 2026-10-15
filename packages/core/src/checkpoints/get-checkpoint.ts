@@ -5,8 +5,9 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { parsePlanPhases } from "../plans/planner/plan-state";
+import { findOwnedStudyBlock } from "../sessions/_utils/study-session-access";
 import { type BlockPayload, readBlockPayload } from "../sessions/block-payload";
-import { type StudyBlockResult, getStudyBlock } from "../sessions/get-study-block";
+import { type StudyBlockResult, loadStudyBlock } from "../sessions/get-study-block";
 import { getSession } from "../users/get-session";
 import { getAskablePassMark } from "./_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "./_utils/checkpoint-reinforcement";
@@ -24,7 +25,6 @@ export type CheckpointResult =
 
 async function findCheckpointBlock({ blockId, userId }: { blockId: string; userId: string }) {
   return prisma.studySessionBlock.findFirst({
-    include: { session: { include: { goal: true } } },
     where: { id: blockId, kind: "checkpoint", session: { userId } },
   });
 }
@@ -112,18 +112,30 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
   }
 
   const userId = session.user.id;
-  const block = isUuid(blockId) ? await findCheckpointBlock({ blockId, userId }) : null;
+  const checkpointBlock = isUuid(blockId) ? await findCheckpointBlock({ blockId, userId }) : null;
 
-  if (!block) {
+  if (!checkpointBlock) {
     return { status: "notFound" };
   }
 
+  const owned = await findOwnedStudyBlock({ blockId, sessionId: checkpointBlock.sessionId });
+
+  if (owned.status !== "ready") {
+    return { status: "notFound" };
+  }
+
+  const { block, session: studySession } = owned;
   const payload = readBlockPayload(block);
   const { planItemId } = payload;
+  const checkpoint = payload.checkpoint;
 
-  const [found, phases, counts, item, reinforcement, savedScore] = await Promise.all([
-    getStudyBlock({ blockId, sessionId: block.sessionId }),
-    loadPhases(block.session.goalId),
+  if (!checkpoint) {
+    return { status: "notFound" };
+  }
+
+  const [detail, phases, counts, item, reinforcement, savedScore] = await Promise.all([
+    loadStudyBlock(owned),
+    loadPhases(studySession.goalId),
     loadMilestoneCounts(userId),
     planItemId && isUuid(planItemId)
       ? prisma.planItem.findUnique({ where: { id: planItemId } })
@@ -141,13 +153,6 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
       : null,
   ]);
 
-  const checkpoint = found.status === "ready" ? found.detail.block.checkpoint : null;
-
-  if (found.status !== "ready" || !checkpoint) {
-    return { status: "notFound" };
-  }
-
-  const { detail } = found;
   const phase = phases.find((candidate) => candidate.index === checkpoint.phase) ?? null;
   const result = getResult({ detail, payload, savedScore });
 
@@ -170,7 +175,7 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
       retry:
         checkpoint.kind === "weekly"
           ? null
-          : getRetry({ goal: block.session.goal, item, playedOn: block.session.localDate, result }),
+          : getRetry({ goal: studySession.goal, item, playedOn: studySession.localDate, result }),
       reward: getCheckpointReward({ counts, kind: checkpoint.kind }),
       sessionId: block.sessionId,
       status: detail.block.status,

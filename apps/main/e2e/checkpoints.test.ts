@@ -52,6 +52,7 @@ test.describe("Checkpoints", () => {
     });
 
     await page.getByRole("button", { name: "See how it went" }).click();
+    await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
 
     await expect(
       page.getByRole("heading", { level: 1, name: "The questions were removed" }),

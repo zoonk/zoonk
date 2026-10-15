@@ -24,7 +24,7 @@ import {
   toSessionQuestion,
 } from "./_utils/session-items";
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
-import { findOwnedStudyBlock } from "./_utils/study-session-access";
+import { type OwnedStudyBlock, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
 import { type StudyBlockQuestion, type TimeMachine } from "./study-block-question";
 
@@ -135,6 +135,15 @@ export async function getStudyBlock({
     return owned;
   }
 
+  return { detail: await loadStudyBlock(owned), status: "ready" };
+}
+
+/** Hydrates an authorized block snapshot while its caller reads other metadata from that same row. */
+export async function loadStudyBlock(
+  owned: Extract<OwnedStudyBlock, { status: "ready" }>,
+): Promise<StudyBlockDetail> {
+  const blockId = owned.block.id;
+  const sessionId = owned.session.id;
   const payload = readBlockPayload(owned.block);
   const itemIds = getBlockItemIds(payload);
 
@@ -233,30 +242,27 @@ export async function getStudyBlock({
   });
 
   return {
-    detail: {
-      ...(payload.checkpoint && {
-        answeredQuestions: [...answered].map(([itemId, answer]) => ({
-          isCorrect: answer.isCorrect,
-          itemId,
-        })),
+    ...(payload.checkpoint && {
+      answeredQuestions: [...answered].map(([itemId, answer]) => ({
+        isCorrect: answer.isCorrect,
+        itemId,
+      })),
+    }),
+    block: toAskableBlock({
+      block: toStudyBlockView({
+        answeredItemIds: new Set(answered.keys()),
+        block: owned.block,
+        blockedTestOutChapters,
+        blocks: owned.session.blocks,
       }),
-      block: toAskableBlock({
-        block: toStudyBlockView({
-          answeredItemIds: new Set(answered.keys()),
-          block: owned.block,
-          blockedTestOutChapters,
-          blocks: owned.session.blocks,
-        }),
-        payload,
-        questions: questionCount,
-      }),
-      hints: owned.block.kind !== "checkpoint",
-      questions,
-      // Before the notice's blueprint is linked, the formats a first pass over it read.
-      trueFalseLabels: getTrueFalseLabels(
-        structure ?? readNoticeFormats(owned.session.goal?.details),
-      ),
-    },
-    status: "ready",
+      payload,
+      questions: questionCount,
+    }),
+    hints: owned.block.kind !== "checkpoint",
+    questions,
+    // Before the notice's blueprint is linked, the formats a first pass over it read.
+    trueFalseLabels: getTrueFalseLabels(
+      structure ?? readNoticeFormats(owned.session.goal?.details),
+    ),
   };
 }
