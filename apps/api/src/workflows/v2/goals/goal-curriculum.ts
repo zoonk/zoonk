@@ -13,6 +13,7 @@ import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-c
 import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type PlanSetupTask } from "@zoonk/core/plans/setup";
 import { start } from "workflow/api";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
 import { prepareGraphPlacement } from "./goal-placement-items";
@@ -20,9 +21,7 @@ import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
 import {
   buildSkillGraphStep,
   checkGraphCoverageStep,
-  createGoalPlanStep,
   linkSkillPrerequisitesStep,
-  runPlanSetupTaskStep,
   saveExamSkillGraphStep,
   saveGoalSkillsStep,
 } from "./steps/goal-curriculum-steps";
@@ -32,6 +31,7 @@ import {
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
+import { createGoalPlanStep, runPlanSetupTaskStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { startNoticeWaitStep } from "./steps/notice-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
@@ -207,7 +207,7 @@ async function createPlanAndOutlines({
   const goalId = inputs.goal.id;
   const { courseIdsByKey, idsByKey } = await saved;
 
-  const setupTasks = await createGoalPlanStep({
+  const setupTasks = await retryPlanConflicts(createGoalPlanStep, {
     courseIdsByKey,
     goalId,
     graph,

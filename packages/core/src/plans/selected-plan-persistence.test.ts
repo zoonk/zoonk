@@ -13,8 +13,8 @@ import { loadPlanContext } from "./_utils/plan-context";
 import { readFreshPlanSummary } from "./_utils/plan-summary";
 import { commitPlan, computePlan } from "./_utils/replan";
 import { readSelectedItemFacts } from "./_utils/selected-item-contract";
-import { PlanConflictError } from "./_utils/write-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { PlanConflictError } from "./plan-conflict";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 

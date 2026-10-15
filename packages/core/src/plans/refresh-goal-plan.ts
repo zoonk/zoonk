@@ -17,11 +17,11 @@ import {
   type PlanTagRevalidation,
   commitPlan,
   computePlan,
-  withPlanRetry,
 } from "./_utils/replan";
 import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
+import { withPlanRetry } from "./plan-conflict";
 import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };

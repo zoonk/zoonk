@@ -6,14 +6,18 @@ import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
 import { isCourseDateSkipped } from "../view-models/onboarding/onboarding-steps";
-import { loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
-import { startOnRecommendedBases } from "./_utils/recommended-bases";
-import { type ComputedPlan, commitPlan, computePlan, withPlanRetry } from "./_utils/replan";
+import { ensureQuickBaseLessons, hasQuickBases } from "./_utils/quick-bases";
+import { planOnRecommendedBases } from "./_utils/recommended-bases";
+import { type ComputedPlan, commitPlan, computePlan } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
-import { setUpPlanNow } from "./plan-setup";
+import { checkNoticeLanding } from "./notice-wait";
+import { withPlanRetry } from "./plan-conflict";
+import { listPlanSetupTasks, setUpPlanNow } from "./plan-setup";
 import { toIsoDate } from "./planner/plan-calendar";
-import { type PlanGraph, planGraphSchema } from "./planner/plan-state";
+import { type PlanGraph, parsePlanSettings, planGraphSchema } from "./planner/plan-state";
 import { getTargetDateBounds } from "./target-date-range";
 
 const MINUTES_PER_HOUR = 60;
@@ -138,23 +142,120 @@ async function findNoticeNextDay({
   );
 }
 
-/**
- * A new plan planned again once it checked off the lessons the learner finished before it existed
- * (see `savePlanItems`): the chapter of a guest's lesson is in progress, so its next lesson comes
- * first (R10), where the first run, which didn't know of it, put two other chapters first. Null
- * when nothing was finished before.
- */
-async function planAroundFinishedLessons(goal: Goal): Promise<ComputedPlan | null> {
-  const context = await loadPlanContext({ goal });
+type GraphPlanning = {
+  followNotice: boolean;
+  goalId: string;
+  graph: PlanGraph;
+  provenance: Provenance | null;
+};
 
-  if (!context?.items.some((item) => item.kind === "lesson" && item.status === "done")) {
+/**
+ * The plan from the graph, read after the plan's token (see `loadPlanAtToken`), so a change that
+ * lands while it's worked out fails its save, and the caller plans again. The first plan starts
+ * on the recommendation for its bases, creating nothing (see `planOnRecommendedBases`), and owes
+ * its setup. A rebuilt plan that comes out the same writes nothing. With `followNotice`, the plan
+ * still has to wait for the notice's reading when it's saved (see `checkNoticeLanding`).
+ */
+async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphPlanning) {
+  const context = await loadPlanAtToken(goalId);
+
+  if (!context) {
     return null;
   }
 
-  const computed = await computePlan({ context, mode: "forced" });
-  await commitPlan({ change: null, computed, context });
+  const { goal } = context;
+  const isFirst = context.state.graph.skills.length === 0;
 
-  return computed;
+  const [target, skills] = await Promise.all([
+    getExamTarget({
+      followNotice,
+      goal,
+      noticeDate: context.state.settings.noticeDate,
+      today: toIsoDate(context.today),
+    }),
+    keepKnownSkills(graph),
+  ]);
+
+  const state = {
+    goal: { ...context.state.goal, targetDate: target.targetDate },
+    graph: skills,
+    settings: { ...context.state.settings, noticeDate: target.noticeDate },
+  };
+
+  const planned = await computePlan({ context, mode: "forced", state });
+
+  // A new plan starts on the recommendation for its bases; a rebuilt one keeps the learner's.
+  const computed = isFirst ? await planOnRecommendedBases({ computed: planned, context }) : planned;
+
+  if (!isFirst && isPlanUnchanged({ computed, context })) {
+    return { computed, goal, isFirst, status: "unchanged" as const };
+  }
+
+  // A new plan owes its setup from the moment it's saved. A notice read later proposes its day
+  // when that reading lands (the research workflow's reconciliation).
+  const setupTasks: PlanSetupTask[] = isFirst
+    ? ["placement", "routine", ...(target.asksNotice ? (["notice"] as const) : [])]
+    : [];
+
+  const plan = { ...provenance, ...(isFirst ? { setupTasks } : {}) };
+
+  await commitPlan({
+    change: null,
+    computed,
+    context,
+    extraWrites: async (tx) => {
+      if (followNotice) {
+        await checkNoticeLanding(tx, context.plan.id);
+      }
+
+      if (Object.keys(plan).length > 0) {
+        await tx.plan.update({ data: plan, where: { id: context.plan.id } });
+      }
+    },
+  });
+
+  return { computed, goal, isFirst, status: "created" as const };
+}
+
+/** Whether the learner finished lessons of the plan before it existed (see `savePlanItems`). */
+function hasFinishedLessons(context: PlanContext): boolean {
+  return context.items.some((item) => item.kind === "lesson" && item.status === "done");
+}
+
+/**
+ * The saved plan planned again from what it has now, once more is known than when it was worked
+ * out: the quick lessons its bases are studied with, created here (outlines, no model call), and
+ * the lessons the learner finished before it existed, now checked off (a guest's lesson's chapter
+ * is in progress, so its next lesson comes first, R10). Planned from the plan as it is, the
+ * learner's choices, date and time included, without recommending its bases again. Runs after
+ * every build, so a run that stopped before it, or a quick lesson another learner's run created
+ * first, still ends with the plan they make. Writes nothing when the plan already is so; null when
+ * it wrote nothing.
+ */
+async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> {
+  const saved = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
+  const settings = parsePlanSettings(saved?.settings);
+
+  if (hasQuickBases(settings)) {
+    await ensureQuickBaseLessons(settings);
+  }
+
+  return withPlanRetry(async () => {
+    const context = await loadPlanAtToken(goalId);
+
+    if (!(context && (hasQuickBases(context.state.settings) || hasFinishedLessons(context)))) {
+      return null;
+    }
+
+    const computed = await computePlan({ context, mode: "forced" });
+
+    if (isPlanUnchanged({ computed, context })) {
+      return null;
+    }
+
+    await commitPlan({ change: null, computed, context });
+    return computed;
+  });
 }
 
 /**
@@ -162,14 +263,20 @@ async function planAroundFinishedLessons(goal: Goal): Promise<ComputedPlan | nul
  * with their size, area and exam weight. The Library's lessons for those skills fill the plan,
  * with dates at the learner's time; skills not outlined yet stand as one item each until their
  * lessons exist. Running it again replaces the graph and re-plans from today, keeping past work;
- * a run that changes nothing writes nothing (`unchanged`).
+ * a run that changes nothing writes nothing (`unchanged`). The plan is worked out outside any
+ * lock and saved only if nothing it reads changed meanwhile (see `loadPlanAtToken`): planned again
+ * once when something did, then it throws (see `isPlanConflictError`), for the caller to try again
+ * later, as lessons and questions other runs save for the same skills can keep landing for a while.
+ * Once saved, it's planned again with the quick lessons its bases are studied with and the lessons
+ * finished before it existed (see `planAgainFromSaved`).
  * The first plan of a goal sends "Plan Created" and owes its setup, each task once (see
  * `runPlanSetupTask`): testing out what placement already settled when the learner ended it before
  * the plan existed, fitting it to the routine memory holds (days off, lighter days, trips) as a
  * change the learner sees with an undo, and, when it keeps the month the learner named over a
  * notice day in another month, the notice's day waiting on Today. A request sets the plan up
  * before it returns (`setup: "now"`), leaving a task that failed owed for the goal's next run; a
- * workflow runs each task as a step of its own (`setup: "steps"`). Returns the tasks still owed.
+ * workflow runs each task as a step of its own (`setup: "steps"`). Returns the tasks still owed,
+ * also when the plan was already built, so a run that stopped after saving it still sets it up.
  */
 export async function createGoalPlan({
   followNotice = false,
@@ -195,88 +302,43 @@ export async function createGoalPlan({
   /** A new plan's setup: run in this call, or left for the caller's steps (`runPlanSetupTask`). */
   setup?: "now" | "steps";
 }): Promise<GoalPlanCreation> {
-  const parsed = planGraphSchema.parse(graph);
+  const goal = await prisma.goal.findUnique({ select: { id: true }, where: { id: goalId } });
 
-  const outcome = await withPlanRetry(async () => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-
-    if (!goal) {
-      return { status: "notFound" as const };
-    }
-
-    await prisma.plan.upsert({ create: { goalId }, update: {}, where: { goalId } });
-
-    const context = await loadPlanContext({ goal });
-
-    if (!context) {
-      return { status: "notFound" as const };
-    }
-
-    const today = toIsoDate(context.today);
-    const isFirst = context.state.graph.skills.length === 0;
-
-    const target = await getExamTarget({
-      followNotice,
-      goal,
-      noticeDate: context.state.settings.noticeDate,
-      today,
-    });
-
-    const state = {
-      goal: { ...context.state.goal, targetDate: target.targetDate },
-      graph: await keepKnownSkills(parsed),
-      settings: { ...context.state.settings, noticeDate: target.noticeDate },
-    };
-
-    const planned = await computePlan({ context, mode: "forced", state });
-
-    // A new plan starts on the recommendation for its bases; a rebuilt one keeps the learner's.
-    const computed = isFirst
-      ? await startOnRecommendedBases({ computed: planned, context })
-      : planned;
-
-    if (!isFirst && isPlanUnchanged({ computed, context })) {
-      return { status: "unchanged" as const };
-    }
-
-    // A new plan owes its setup from the moment it's saved. A notice read later proposes its day
-    // when that reading lands (the research workflow's reconciliation).
-    const setupTasks: PlanSetupTask[] = isFirst
-      ? ["placement", "routine", ...(target.asksNotice ? (["notice"] as const) : [])]
-      : [];
-
-    const plan = { ...provenance, ...(isFirst ? { setupTasks } : {}) };
-
-    await commitPlan({
-      change: null,
-      computed,
-      context,
-      extraWrites:
-        Object.keys(plan).length > 0
-          ? (tx) => tx.plan.update({ data: plan, where: { id: context.plan.id } })
-          : undefined,
-    });
-
-    const settled = isFirst ? await planAroundFinishedLessons(goal) : null;
-
-    return { computed: settled ?? computed, goal, isFirst, setupTasks, status: "created" as const };
-  });
-
-  if (outcome.status !== "created") {
-    return { setupTasks: [], status: outcome.status };
+  if (!goal) {
+    return { setupTasks: [], status: "notFound" };
   }
 
-  if (outcome.isFirst) {
+  // The empty plan is saved first and on its own, so a run that fails still leaves it. One
+  // statement that waits for another run saving it instead of failing on it (an upsert that
+  // updates nothing reads first, then inserts).
+  await prisma.plan.createMany({ data: [{ goalId }], skipDuplicates: true });
+
+  const built = await withPlanRetry(() =>
+    planFromGraph({ followNotice, goalId, graph: planGraphSchema.parse(graph), provenance }),
+  );
+
+  if (!built) {
+    return { setupTasks: [], status: "notFound" };
+  }
+
+  const settled = await planAgainFromSaved(goalId);
+
+  if (built.status === "created" && built.isFirst) {
+    const final = settled ?? built.computed;
+
     await trackPlanCreated({
-      estimateHours: outcome.computed.built.estimate.totalMinutes / MINUTES_PER_HOUR,
+      estimateHours: final.built.estimate.totalMinutes / MINUTES_PER_HOUR,
       fromPlanLink,
-      goal: outcome.goal,
-      phases: outcome.computed.built.phases.length,
+      goal: built.goal,
+      phases: final.built.phases.length,
       platform,
     });
   }
 
-  const setupTasks = setup === "now" ? await setUpPlanNow(goalId) : outcome.setupTasks;
+  // A run that saved the plan, then stopped before setting it up, still sets it up when it runs
+  // again: the tasks it owes are the plan's.
+  const setupTasks =
+    setup === "now" ? await setUpPlanNow(goalId) : await listPlanSetupTasks(goalId);
 
-  return { setupTasks, status: "created" };
+  return { setupTasks, status: built.status === "created" || settled ? "created" : "unchanged" };
 }

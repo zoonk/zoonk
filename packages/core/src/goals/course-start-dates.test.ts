@@ -6,8 +6,8 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { followNoticeReading } from "../plans/_test-utils/notice-landing";
 import { planLibraryFixture } from "../plans/_test-utils/plan-library";
-import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
@@ -234,11 +234,7 @@ describe("course-start deadlines", () => {
       where: { id: blueprint.id },
     });
 
-    await createGoalPlan({
-      followNotice: true,
-      goalId,
-      graph: parsePlanGraph(saved.goal.plan?.graph),
-    });
+    await followNoticeReading({ goalId, graph: parsePlanGraph(saved.goal.plan?.graph) });
 
     const followed = await readGoal(goalId);
     expect(followed.goal.targetDate?.toISOString().slice(0, 10)).toBe("2020-10-18");
@@ -273,8 +269,7 @@ describe("course-start deadlines", () => {
       where: { id: blueprint.id },
     });
 
-    await createGoalPlan({
-      followNotice: true,
+    await followNoticeReading({
       goalId,
       graph: (await examCourseGraph(blueprint.id)) ?? parsePlanGraph(null),
     });
@@ -307,8 +302,7 @@ describe("course-start deadlines", () => {
 
       await expect(readSteps(goalId)).resolves.not.toContain("targetDate");
 
-      await createGoalPlan({
-        followNotice: true,
+      await followNoticeReading({
         goalId,
         graph: (await examCourseGraph(blueprint.id)) ?? parsePlanGraph(null),
       });
@@ -336,11 +330,7 @@ describe("course-start deadlines", () => {
     const saved = await readGoal(goalId);
     expect(saved.settings.noticeDate).toBeNull();
 
-    await createGoalPlan({
-      followNotice: true,
-      goalId,
-      graph: parsePlanGraph(saved.goal.plan?.graph),
-    });
+    await followNoticeReading({ goalId, graph: parsePlanGraph(saved.goal.plan?.graph) });
 
     const replanned = await readGoal(goalId);
     expect(replanned.goal.targetDate).toBeNull();
@@ -387,11 +377,7 @@ describe("course-start deadlines", () => {
 
       await expect(readSteps(goalId)).resolves.not.toContain("targetDate");
 
-      await createGoalPlan({
-        followNotice: true,
-        goalId,
-        graph: parsePlanGraph(answered.goal.plan?.graph),
-      });
+      await followNoticeReading({ goalId, graph: parsePlanGraph(answered.goal.plan?.graph) });
 
       const replanned = await readGoal(goalId);
       expect(replanned.goal.targetDate?.toISOString().slice(0, 10) ?? null).toBe(targetDate);
@@ -464,11 +450,7 @@ describe("course-start deadlines", () => {
 
     await expect(readSteps(goalId)).resolves.not.toContain("targetDate");
 
-    await createGoalPlan({
-      followNotice: true,
-      goalId,
-      graph: parsePlanGraph(saved.goal.plan?.graph),
-    });
+    await followNoticeReading({ goalId, graph: parsePlanGraph(saved.goal.plan?.graph) });
 
     const replanned = await readGoal(goalId);
     expect(replanned.goal.targetDate?.toISOString().slice(0, 10)).toBe("2020-10-04");

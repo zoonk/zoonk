@@ -17,7 +17,7 @@ import {
   acknowledgmentResult,
   findAcknowledgedRead,
 } from "./_utils/acknowledge-today-change";
-import { PlanConflictError } from "./_utils/write-plan";
+import { PlanConflictError } from "./plan-conflict";
 import { toIsoDate } from "./planner/plan-calendar";
 import {
   type AcknowledgeTodayPlanChangeInput,

@@ -5,7 +5,7 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { applyChangeNow } from "../../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../../plans/_utils/owned-plan";
 import { type PlanContext, loadPlanContext } from "../../plans/_utils/plan-context";
-import { withPlanRetry } from "../../plans/_utils/replan";
+import { withPlanRetry } from "../../plans/plan-conflict";
 import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { type PlanOperationError } from "../../plans/planner/plan-operations";
 import { type ExamChoiceInput } from "./exam-choice-contract";

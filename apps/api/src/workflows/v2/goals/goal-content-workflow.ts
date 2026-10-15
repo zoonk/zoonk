@@ -17,7 +17,6 @@ import { isPlanPreparedStep, recordGoalBuildFailureStep } from "./steps/goal-bui
 import {
   decideGoalScopeStep,
   keepMaterialPrivate,
-  listPlanSetupTasksStep,
   loadGoalCurriculumStep,
 } from "./steps/goal-curriculum-steps";
 import {
@@ -25,6 +24,7 @@ import {
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
+import { listPlanSetupTasksStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
 import { loadStoredCurriculumStep } from "./steps/stored-plan-steps";

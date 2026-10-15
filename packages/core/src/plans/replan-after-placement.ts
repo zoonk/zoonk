@@ -5,7 +5,8 @@ import { getCoverageChange } from "./_utils/coverage-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { loadPlanContext } from "./_utils/plan-context";
-import { commitPlan, computePlan, withPlanRetry } from "./_utils/replan";
+import { commitPlan, computePlan } from "./_utils/replan";
+import { withPlanRetry } from "./plan-conflict";
 
 /**
  * Plans again from today once placement ends without skipping anything, when its answers changed

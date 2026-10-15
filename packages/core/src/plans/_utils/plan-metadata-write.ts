@@ -1,8 +1,8 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { PlanConflictError } from "../plan-conflict";
 import { markPlanWrite } from "./mark-plan-write";
 import { type PlanContext } from "./plan-context";
-import { PlanConflictError } from "./write-plan";
 
 /** A proposal belongs to the version it described; a winning plan write makes it obsolete. */
 export async function writePlanMetadata<T>({

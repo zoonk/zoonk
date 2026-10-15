@@ -33,6 +33,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as logger from "@zoonk/utils/logger";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
@@ -54,8 +55,8 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
-import * as curriculumSteps from "./steps/goal-curriculum-steps";
-import { runPlanSetupTaskStep } from "./steps/goal-curriculum-steps";
+import * as planSteps from "./steps/goal-plan-steps";
+import { runPlanSetupTaskStep } from "./steps/goal-plan-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
@@ -94,6 +95,9 @@ const planCoursesSchema = z.object({
 });
 
 const recordedSpecificity = recordedOutput<Specificity>("goal-specificity");
+/** Past the five minutes a landing reading holds the reveal's wait (see `claimNoticeLanding`). */
+const LANDING_RAN_OUT_MS = 10 * 60 * 1000;
+
 const TIMEOUT = 60_000;
 
 /** The Library skills a stored plan teaches, in its order. */
@@ -219,16 +223,14 @@ async function runPlacementInline(workflow: unknown, args: unknown[]) {
 /** An ordering hook calls through to the real writers; no clock, database or result is replaced. */
 async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promise<T> {
   const committed = new Set<string>();
-  const createPlan = curriculumSteps.createGoalPlanStep;
+  const createPlan = planSteps.createGoalPlanStep;
   const preparePlacement = goalPlacement.prepareGraphPlacement;
 
-  const creation = vi
-    .spyOn(curriculumSteps, "createGoalPlanStep")
-    .mockImplementation(async (input) => {
-      const tasks = await createPlan(input);
-      committed.add(input.goalId);
-      return tasks;
-    });
+  const creation = vi.spyOn(planSteps, "createGoalPlanStep").mockImplementation(async (input) => {
+    const tasks = await createPlan(input);
+    committed.add(input.goalId);
+    return tasks;
+  });
 
   const placement = vi
     .spyOn(goalPlacement, "prepareGraphPlacement")
@@ -367,6 +369,12 @@ describe(goalContentWorkflow, () => {
     );
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
+
+    // Research's check finds nothing missing unless a test says what it finds: no test inherits
+    // what the one before it found.
+    vi.mocked(checkCoverage).mockResolvedValue(
+      taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
+    );
   });
 
   it(
@@ -1881,6 +1889,89 @@ describe(goalContentWorkflow, () => {
     },
   );
 
+  // The reading landed while the reveal waited, but saving what it adds took the plan past the
+  // five minutes that landing held the wait: the learner may have seen the plan by then, so it stays
+  // as it was, and the reading waits on Today as a change to apply.
+  it(
+    "proposes a reading the reveal stopped waiting for while the plan was built again with it",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal } = await newGoal({
+        details: { examName: "Late board exam", level: "basic" },
+        kind: "exam",
+      });
+
+      const blueprint = await examBlueprintFixture({
+        name: "Late board exam",
+        structure: examStructure(["Antibody structure", "Vaccines"]),
+      });
+
+      const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
+
+      vi.mocked(checkCoverage).mockResolvedValue(
+        taskResult(
+          {
+            examWeights: [],
+            missing: [
+              {
+                area: "Immunology",
+                description: "Heavy and light chains, and the part that binds the antigen.",
+                examWeight: 5,
+                name: missed,
+                prerequisites: [],
+                reference: "Late board exam",
+                syllabusLine: "Antibody structure",
+                topics: ["Antibody structure"],
+              },
+            ],
+            placements: [],
+          },
+          "google/gemini-3.8-flash",
+        ),
+      );
+
+      const searchTerms = vi.mocked(generateSearchTerms).getMockImplementation();
+
+      // Finding the Library's twin of the skill the reading adds takes ten minutes.
+      vi.mocked(generateSearchTerms).mockImplementation(async (input) => {
+        if (input.subjects.some((subject) => subject.item.title === missed)) {
+          vi.setSystemTime(Date.now() + LANDING_RAN_OUT_MS);
+        }
+
+        return searchTerms?.(input) as never;
+      });
+
+      researchEndsWhenAsked(async () => {
+        await prisma.goal.update({
+          data: { examBlueprintId: blueprint.id },
+          where: { id: goal.id },
+        });
+      });
+
+      vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
+
+      try {
+        await expect(
+          goalContentWorkflow({ goalId: goal.id, researchId: "research-run" }),
+        ).resolves.toMatchObject({ status: "built" });
+      } finally {
+        vi.useRealTimers();
+      }
+
+      const [plan, added, proposals] = await Promise.all([
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+        prisma.skill.findFirstOrThrow({ where: { name: missed } }),
+        prisma.planChange.count({ where: { plan: { goalId: goal.id }, status: "proposed" } }),
+      ]);
+
+      const { skills } = planWeightsSchema.parse(plan.graph);
+
+      expect(skills.some((skill) => skill.skillId === added.id)).toBe(false);
+      expect(proposals).toBe(1);
+      expect(plan.noticeWaitUntil).toBeNull();
+    },
+  );
+
   it(
     "follows the exam day a reading that lands in time moves, without asking, when nothing else changes",
     { timeout: TIMEOUT },
@@ -1919,6 +2010,66 @@ describe(goalContentWorkflow, () => {
       expect(stored.targetDate?.toISOString().slice(0, 10)).toBe(moved);
       expect(proposals).toBe(0);
       expect(plan.noticeWaitUntil).toBeNull();
+    },
+  );
+
+  it(
+    "keeps the plan usable and records the failure when a reading can't be reconciled",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal } = await newGoal({
+        details: { examName: "Unreconciled board exam", level: "basic" },
+        kind: "exam",
+      });
+
+      const blueprint = await examBlueprintFixture({
+        edition: examDayEdition(inDays(120)),
+        name: "Unreconciled board exam",
+        structure: examStructure(["Antibody structure", "Vaccines"]),
+      });
+
+      // Research links the notice it read while the reveal waits; checking the plan against it
+      // keeps failing until its retries run out.
+      researchEndsWhenAsked(async () => {
+        await prisma.goal.update({
+          data: { examBlueprintId: blueprint.id },
+          where: { id: goal.id },
+        });
+      });
+
+      vi.mocked(checkCoverage).mockRejectedValue(new Error("Provider unavailable"));
+      const error = vi.spyOn(logger, "logError");
+
+      try {
+        await expect(
+          goalContentWorkflow({ goalId: goal.id, researchId: "research-run" }),
+        ).resolves.toMatchObject({ status: "built" });
+
+        expect(error).toHaveBeenCalledWith(
+          "[goalContentWorkflow] Research's reading couldn't be reconciled with the plan:",
+          { error: "Provider unavailable", goalId: goal.id, researchId: "research-run" },
+        );
+      } finally {
+        error.mockRestore();
+      }
+
+      expect(checkCoverage).toHaveBeenCalledWith(expect.anything());
+
+      const [plan, lessons] = await Promise.all([
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+        prisma.planItem.count({ where: { kind: "lesson", plan: { goalId: goal.id } } }),
+      ]);
+
+      // The plan the learner has stays ready and stops waiting for the reading.
+      expect(lessons).toBeGreaterThan(0);
+      expect(plan.noticeWaitUntil).toBeNull();
+
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Generation Failed",
+          properties: { content_kind: "curriculum", model: null, task: "research-reconcile" },
+        }),
+      );
     },
   );
 

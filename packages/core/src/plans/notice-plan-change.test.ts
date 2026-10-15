@@ -7,10 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listGoalChangeNotices } from "../library/sources/source-change-notices";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { followNoticeReading } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposeNoticeChange } from "./notice-plan-change";
+import { claimNoticeLanding, isNoticeLandingExpiredError, startNoticeWait } from "./notice-wait";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { type PlanGraph, parsePlanGraph } from "./planner/plan-state";
 
@@ -19,6 +21,9 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
 
 const citation = { passage: "", sourceId: "notice" };
+
+/** Past the five minutes a landing reading holds the reveal's wait (see `claimNoticeLanding`). */
+const WAIT_RAN_OUT_MS = 10 * 60 * 1000;
 
 /** A stored notice with its exam days. */
 function examBlueprint({ days, year }: { days: string[]; year: number }) {
@@ -266,10 +271,55 @@ describe(proposeNoticeChange, () => {
       where: { id: blueprint.id },
     });
 
-    await createGoalPlan({ followNotice: true, goalId: goal.id, graph: library.graph });
+    await followNoticeReading({ goalId: goal.id, graph: library.graph });
 
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-15");
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("none");
+  });
+
+  // The reading claimed the reveal's wait, but planning with it outlasted the wait (or its save
+  // waited to be tried again): the learner may have seen the plan by then, so nothing lands
+  // silently, and the reading is left to wait on Today instead.
+  it("leaves the plan as it was when a notice's reading lands after the reveal stopped waiting", async () => {
+    const { blueprint, goal, library } = await plannedExam({
+      days: ["2019-11-03"],
+      targetDate: null,
+      year: 2019,
+    });
+
+    await prisma.examBlueprint.update({
+      data: {
+        edition: {
+          citations: [],
+          dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam" }],
+          noticeUrl: null,
+          questionCount: null,
+          sourceHash: null,
+          year: 2020,
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await startNoticeWait({ goalId: goal.id });
+    await expect(claimNoticeLanding({ goalId: goal.id })).resolves.toBe(true);
+
+    const [before, date] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      readTargetDate(goal.id),
+    ]);
+
+    vi.setSystemTime(new Date(NOW.getTime() + WAIT_RAN_OUT_MS));
+
+    await expect(
+      createGoalPlan({ followNotice: true, goalId: goal.id, graph: library.graph }),
+    ).rejects.toSatisfy(isNoticeLandingExpiredError);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ inputVersion: before.inputVersion, version: before.version });
+
+    await expect(readTargetDate(goal.id)).resolves.toBe(date);
   });
 
   it("asks before a notice read before the reveal moves the exam out of the month the learner said", async () => {
@@ -307,7 +357,7 @@ describe(proposeNoticeChange, () => {
       where: { id: blueprint.id },
     });
 
-    await createGoalPlan({ followNotice: true, goalId: goal.id, graph: library.graph });
+    await followNoticeReading({ goalId: goal.id, graph: library.graph });
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-01");
 
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("proposed");

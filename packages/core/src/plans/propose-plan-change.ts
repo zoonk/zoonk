@@ -2,7 +2,8 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type AppliedChange, proposeChange } from "./_utils/apply-plan-change";
 import { loadPlanContext } from "./_utils/plan-context";
-import { type PlanChangeRecord, withPlanRetry } from "./_utils/replan";
+import { type PlanChangeRecord } from "./_utils/replan";
+import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation } from "./plan-contract";
 
 export type PlanProposalResult = AppliedChange | { status: "notFound" | "saved" | "unchanged" };

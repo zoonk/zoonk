@@ -12,6 +12,11 @@ function listQuickBases(settings: Pick<PlanSettings, "baseChoices">): string[] {
   return settings.baseChoices.flatMap((entry) => (entry.choice === "quick" ? [entry.skillId] : []));
 }
 
+/** Whether the plan studies any of its bases with a quick lesson. */
+export function hasQuickBases(settings: Pick<PlanSettings, "baseChoices">): boolean {
+  return listQuickBases(settings).length > 0;
+}
+
 function toPlannerLesson([skillId, ref]: [string, QuickLessonRef]): [string, PlannerLesson] {
   return [
     skillId,

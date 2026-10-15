@@ -1,19 +1,12 @@
 import "server-only";
 import { DbNull, type TransactionClient, prisma } from "@zoonk/db";
+import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { markPlanWrite } from "./mark-plan-write";
 import { type PlanContext } from "./plan-context";
 import { type SavedPlanSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
 import { type SavedPlanItem, savePlanItems } from "./save-plan-items";
-
-/** Another planning run committed first; the caller reloads and tries again. */
-export class PlanConflictError extends Error {
-  constructor() {
-    super("The plan changed while it was being planned.");
-    this.name = "PlanConflictError";
-  }
-}
 
 /** What a commit writes on a plan: its state, phases and numbers, and its items in order. */
 export type PlanWrite = {

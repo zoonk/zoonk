@@ -6,7 +6,6 @@ import {
   isEmptySkillGraphError,
 } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/v2/identity/goal-specificity";
-import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
@@ -27,8 +26,6 @@ import {
   getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
 import { toScopedGraphPrompt } from "@zoonk/core/library/curriculum/shared-graph-prompt";
-import { createGoalPlan } from "@zoonk/core/plans/create";
-import { type PlanSetupTask, listPlanSetupTasks, runPlanSetupTask } from "@zoonk/core/plans/setup";
 import { safeAsync } from "@zoonk/utils/error";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -300,50 +297,6 @@ export async function linkSkillPrerequisitesStep(input: {
 }
 
 /**
- * Builds the plan from the graph at the learner's daily minutes: phases with dates, and one stand-in
- * per skill until the outlines give it lessons. Each skill's lessons come only from the Library
- * course found for its graph course. Placement can start as soon as this is saved. Returns the
- * setup a new plan owes, which the run does one step per task (`runPlanSetupTaskStep`).
- */
-export async function createGoalPlanStep({
-  courseIdsByKey,
-  followNotice = false,
-  goalId,
-  graph,
-  idsByKey,
-  platform,
-  provenance,
-}: {
-  courseIdsByKey: Record<string, string>;
-  /** The exam's notice was read before the learner saw the plan: its day becomes the plan's. */
-  followNotice?: boolean;
-  goalId: string;
-  graph: GoalSkillGraph;
-  idsByKey: Record<string, string>;
-  /** The client that started the run, for "Plan Created". */
-  platform: AnalyticsPlatform | null;
-  provenance: GraphProvenance;
-}): Promise<PlanSetupTask[]> {
-  "use step";
-
-  const { setupTasks } = await createGoalPlan({
-    followNotice,
-    goalId,
-    graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
-    platform,
-    provenance: {
-      generatedAt: new Date(provenance.generatedAt),
-      model: provenance.model,
-      promptVersion: provenance.promptVersion,
-      runId: provenance.runId,
-    },
-    setup: "steps",
-  });
-
-  return setupTasks;
-}
-
-/**
  * Keeps a graph this goal's run wrote as its exam's shared graph, when the goal's graph is the
  * exam's (`saveExamSkillGraph`): the first written for the exam, which only this run completes.
  */
@@ -375,24 +328,4 @@ export async function saveExamSkillGraphStep({
     },
     scope,
   });
-}
-
-/**
- * One setup task the new plan owes (see `runPlanSetupTask`), done once. A failure throws, so the
- * runtime retries it; the routine's fit is a model call, retried after a minute when rate limited.
- */
-export async function runPlanSetupTaskStep(input: {
-  goalId: string;
-  task: PlanSetupTask;
-}): Promise<void> {
-  "use step";
-
-  await withAiRetry(() => runPlanSetupTask(input));
-}
-
-/** The setup the goal's plan still owes, in the order it runs. */
-export async function listPlanSetupTasksStep(goalId: string): Promise<PlanSetupTask[]> {
-  "use step";
-
-  return listPlanSetupTasks(goalId);
 }

@@ -48,7 +48,7 @@ import { type TodayBuildScope, readBuiltPlan } from "./read-built-plan";
 import { type PlanAnalysisPurpose } from "./read-plan-analysis";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
-import { PlanConflictError, writePlan } from "./write-plan";
+import { writePlan } from "./write-plan";
 
 export type ComputedPlan = {
   /** The plan's bases with what the app recommends for them (see `findPlanBases`). */
@@ -386,20 +386,4 @@ export async function commitPlan({
 /** Plans and goals read these tags; preparation and placement read the learner model's. */
 export function revalidatePlanTags(userId: string) {
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
-}
-
-/**
- * Runs a planning step that reloads its context: when another run commits first, it starts over
- * once from the new plan instead of overwriting it.
- */
-export async function withPlanRetry<T>(run: () => Promise<T>): Promise<T> {
-  try {
-    return await run();
-  } catch (error) {
-    if (error instanceof PlanConflictError) {
-      return run();
-    }
-
-    throw error;
-  }
 }

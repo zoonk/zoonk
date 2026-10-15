@@ -7,7 +7,8 @@ import { type PlanChangeCaution, findChangeCautions } from "../plans/_utils/chan
 import { findOwnedPlan, loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { type PlanContext, loadPlanContext } from "../plans/_utils/plan-context";
 import { interpretPlanWords } from "../plans/_utils/plan-words";
-import { revalidatePlanTags, withPlanRetry } from "../plans/_utils/replan";
+import { revalidatePlanTags } from "../plans/_utils/replan";
+import { withPlanRetry } from "../plans/plan-conflict";
 import { type PlanOperation } from "../plans/plan-contract";
 import { type PlanChangeView } from "../plans/plan-view-contract";
 import { type PlanOperationError } from "../plans/planner/plan-operations";

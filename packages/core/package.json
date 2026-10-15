@@ -423,6 +423,7 @@
     "./plans/changed-since": "./src/plans/get-plan-changed-since.ts",
     "./plans/changed-since-contract": "./src/plans/plan-changed-since-contract.ts",
     "./plans/choose-tools": "./src/plans/choose-plan-tools.ts",
+    "./plans/conflict": "./src/plans/plan-conflict.ts",
     "./plans/contract": "./src/plans/plan-contract.ts",
     "./plans/course-contract": "./src/plans/plan-course-contract.ts",
     "./plans/create": "./src/plans/create-goal-plan.ts",

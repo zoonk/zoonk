@@ -1,6 +1,6 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { PlanConflictError } from "../plans/_utils/write-plan";
+import { PlanConflictError } from "../plans/plan-conflict";
 import { openPlannedDay } from "./_utils/open-planned-day";
 import { type StudySessionRow } from "./_utils/study-session-access";
 

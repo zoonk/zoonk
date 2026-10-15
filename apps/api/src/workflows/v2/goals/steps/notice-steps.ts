@@ -2,6 +2,7 @@ import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph"
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { listNoticeGoals, proposeNoticeChange } from "@zoonk/core/plans/notice-change";
 import { claimNoticeLanding, endNoticeWait, startNoticeWait } from "@zoonk/core/plans/notice-wait";
+import { logError } from "@zoonk/utils/logger";
 
 /**
  * The exam plan just built waits for research's reading of the notice; the reveal says so. A
@@ -24,6 +25,24 @@ export async function claimNoticeLandingStep(goalId: string): Promise<boolean> {
   "use step";
 
   return claimNoticeLanding({ goalId });
+}
+
+/**
+ * Research's reading couldn't be reconciled with the plan once its steps' retries ran out: the
+ * plan stays usable as it was and stops waiting, so the failure is only said, loudly, with the ids
+ * to find it by.
+ */
+export async function logReconcileFailureStep(failure: {
+  error: string;
+  goalId: string;
+  researchId: string;
+}): Promise<void> {
+  "use step";
+
+  logError(
+    "[goalContentWorkflow] Research's reading couldn't be reconciled with the plan:",
+    failure,
+  );
 }
 
 /**

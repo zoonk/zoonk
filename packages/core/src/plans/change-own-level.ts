@@ -11,12 +11,12 @@ import { findFoundationOperations } from "./_utils/own-level-foundations";
 import { findLevelTestOuts } from "./_utils/own-level-test-outs";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
-import { withPlanRetry } from "./_utils/replan";
 import {
   OWN_LEVEL_SOURCE,
   type OwnLevelChangeInput,
   type OwnLevelChangeResult,
 } from "./own-level-contract";
+import { withPlanRetry } from "./plan-conflict";
 import { type PlanChangeView } from "./plan-view-contract";
 
 /** Not shown to the learner: the app announces the foundations from the change's operations. */

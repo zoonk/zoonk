@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { PlanConflictError } from "../../plans/_utils/write-plan";
+import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";

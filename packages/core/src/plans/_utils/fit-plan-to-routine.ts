@@ -2,12 +2,12 @@ import "server-only";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../library/_utils/library-rows";
+import { withPlanRetry } from "../plan-conflict";
 import { applyChangeNow, isPlanReady } from "./apply-plan-change";
 import { type PlanContext, loadPlanContext } from "./plan-context";
 import { toPlanEditInput } from "./plan-edit-input";
 import { loadPlanMemory } from "./plan-memory";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./plan-setup-tasks";
-import { withPlanRetry } from "./replan";
 
 /** Memory proposed it; the change shows the model's sentence saying what changed and why. */
 const ROUTINE_SOURCE = "memory";

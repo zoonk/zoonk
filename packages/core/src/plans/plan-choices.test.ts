@@ -2,143 +2,30 @@ import { type Skill, prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { reportExamResult } from "../exams/results/report-exam-result";
 import { requestLessonGeneration } from "../lookahead/request-lesson-generation";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
-import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
+import { TOPICS, day, enemBiologyGoal, isoDay, setClock } from "./_test-utils/enem-biology";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { type PlanOperation } from "./plan-contract";
-import { type PlanGraph } from "./planner/plan-state";
 import { previewPlanChange } from "./preview-plan-change";
 
-/** A Friday: Lucas plans for ENEM. */
-const TODAY = new Date("2026-10-09T00:00:00Z");
-const DAY_MS = 86_400_000;
+/** Lucas's ENEM goal with its plan built (see `enemBiologyGoal`). */
+async function setup(options: Parameters<typeof enemBiologyGoal>[0]) {
+  const built = await enemBiologyGoal(options);
 
-function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
-}
+  mockSession(built.user.id);
+  await createGoalPlan({ goalId: built.goal.id, graph: built.graph });
 
-function isoDay(offset: number): string {
-  return day(offset).toISOString().slice(0, 10);
-}
-
-function setClock(offset: number) {
-  const now = new Date(day(offset).getTime() + 12 * 60 * 60 * 1000);
-
-  vi.setSystemTime(now);
-
-  vi.mocked(getRequestProgressDateContext).mockResolvedValue({
-    currentDate: day(offset),
-    currentInstant: now,
-    timeZone: "UTC",
-  });
-}
-
-const TOPICS = ["Células", "Seres vivos", "Ecologia", "Água"];
-
-function frequency({ level, topic }: { level: "high" | "low"; topic: string }) {
-  return {
-    appearances: null,
-    basis: "Provas anteriores",
-    citation: { passage: topic, sourceId: "papers" },
-    level,
-    subject: "Biologia",
-    topic,
-  };
-}
-
-/**
- * ENEM's biology as four topics: ecology and cells come up a lot, living things and water less.
- * Ecology builds on how living things work, which builds on cells.
- */
-const ENEM_BIOLOGY = {
-  name: "ENEM",
-  structure: {
-    formats: [],
-    mock: null,
-    rules: [],
-    subjects: [
-      {
-        citation: { passage: "Biologia", sourceId: "notice" },
-        name: "Biologia",
-        questions: null,
-        topics: TOPICS,
-        weight: null,
-      },
-    ],
-  },
-  topicFrequency: [
-    frequency({ level: "high", topic: "Células" }),
-    frequency({ level: "low", topic: "Seres vivos" }),
-    frequency({ level: "high", topic: "Ecologia" }),
-    frequency({ level: "low", topic: "Água" }),
-  ],
-};
-
-function withTopics(graph: PlanGraph): PlanGraph {
-  return {
-    ...graph,
-    skills: graph.skills.map((skill, index) => ({ ...skill, topics: [TOPICS[index] ?? ""] })),
-  };
-}
-
-/**
- * Four skills of thirty lessons each (`size`), three of each outlined: far more than the learner's
- * time covers by the exam.
- */
-async function setup({
-  dailyMinutes = 15,
-  days,
-  edition = null,
-  size = 30,
-}: {
-  dailyMinutes?: number;
-  days: number;
-  /** The notice's edition, with its exam day. */
-  edition?: object | null;
-  size?: number;
-}) {
-  const user = await userFixture();
-
-  const [blueprint, library] = await Promise.all([
-    examBlueprintFixture({ ...ENEM_BIOLOGY, ...(edition ? { edition } : {}) }),
-    planLibraryFixture({
-      skills: TOPICS.map(() => ({ area: "Biologia", lessons: 3, size, weight: 3 })),
-    }),
-  ]);
-
-  const [cells, living, ecology] = library.skills as [Skill, Skill, Skill, Skill];
-
-  const { goal, plan } = await unplannedGoalFixture({
-    dailyMinutes,
-    details: { placementDeclined: true },
-    examBlueprintId: blueprint.id,
-    kind: "exam",
-    targetDate: day(days),
-    timezone: "UTC",
-    userId: user.id,
-  });
-
-  await Promise.all([
-    skillPrerequisiteFixture({ prerequisiteId: cells.id, skillId: living.id }),
-    skillPrerequisiteFixture({ prerequisiteId: living.id, skillId: ecology.id }),
-    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-  ]);
-
-  mockSession(user.id);
-  await createGoalPlan({ goalId: goal.id, graph: withTopics(library.graph) });
-
-  return { ecology, goal, library, living, plan, user };
+  return built;
 }
 
 async function readPlan(goalId: string) {

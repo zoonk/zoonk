@@ -6,9 +6,10 @@ import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { loadPlanContext } from "./_utils/plan-context";
-import { commitPlan, computePlan, withPlanRetry } from "./_utils/replan";
+import { commitPlan, computePlan } from "./_utils/replan";
 import { withSeenTopics } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
+import { withPlanRetry } from "./plan-conflict";
 
 /** A plain note for logs and admin; the apps say "Skipped 12 lessons you already know". */
 const TESTED_OUT_NOTE = "Placement or a test-out skipped lessons the learner already knows.";

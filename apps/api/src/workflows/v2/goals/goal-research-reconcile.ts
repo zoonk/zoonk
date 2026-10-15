@@ -1,24 +1,23 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { mergeAddedTwins, saveAddedSkills } from "./goal-added-skills";
 import { isBuiltBeforeResearch, loadResearchedInputs } from "./goal-content-inputs";
 import { type BuiltCurriculum, startOutlines } from "./goal-curriculum";
 import { type GoalRunContext } from "./goal-run-context";
 import { preparePlacementItems } from "./placement-items";
-import {
-  checkGraphCoverageStep,
-  createGoalPlanStep,
-  saveExamSkillGraphStep,
-} from "./steps/goal-curriculum-steps";
+import { checkGraphCoverageStep, saveExamSkillGraphStep } from "./steps/goal-curriculum-steps";
 import {
   listPlanOutlineNeedsStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
+import { followNoticeStep } from "./steps/goal-plan-steps";
 import {
   claimNoticeLandingStep,
   endNoticeWaitStep,
+  logReconcileFailureStep,
   proposeNoticeChangeStep,
 } from "./steps/notice-steps";
 
@@ -102,7 +101,8 @@ function claimNoticeLanding(goalId: string): Promise<boolean> {
 /**
  * The plan again, from today and keeping past work (what placement tested out stays tested out),
  * following the notice: its exam day becomes the target of a goal without a date of its own, or
- * replaces one the plan took from the notice before. Then the reveal stops waiting.
+ * replaces one the plan took from the notice before. Then the reveal stops waiting. False when it
+ * had stopped waiting before the plan could be saved (see `followNoticeStep`): nothing changed.
  */
 async function followNotice({
   context,
@@ -117,9 +117,8 @@ async function followNotice({
   graph: BuiltCurriculum["graph"];
   idsByKey: Record<string, string>;
 }) {
-  await createGoalPlanStep({
+  const landed = await retryPlanConflicts(followNoticeStep, {
     courseIdsByKey: curriculum.courseIdsByKey,
-    followNotice: true,
     goalId,
     graph,
     idsByKey,
@@ -129,12 +128,43 @@ async function followNotice({
 
   // The reveal waited for this plan; what it needs next doesn't hold the learner.
   await endNoticeWait(goalId);
+  return landed;
+}
+
+/**
+ * The graph research's reading wrote, its added skills already in the Library, with the notice's
+ * exam day: it waits on Today for the learner's Apply or "Keep mine". The exam's graph is the
+ * exam's either way.
+ */
+async function proposeSavedReading({
+  curriculum,
+  graph,
+  idsByKey,
+  researched,
+  scope,
+}: {
+  curriculum: BuiltCurriculum;
+  graph: BuiltCurriculum["graph"];
+  idsByKey: Record<string, string>;
+  researched: GoalCurriculumInputs;
+  scope: CurriculumScope;
+}) {
+  await proposeNoticeChangeStep({
+    courseIdsByKey: curriculum.courseIdsByKey,
+    goalId: researched.goal.id,
+    graph,
+    idsByKey,
+  });
+
+  await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
 }
 
 /**
  * The plan again from the reconciled graph, following the notice (`followNotice`), then what it
  * needs next: outlines for its new stand-ins, and placement's questions for its picks, now that
- * the exam's format is known.
+ * the exam's format is known. When the reveal stopped waiting before the plan could be saved, the
+ * reading waits on Today instead, as one that lands after the learner saw the plan (see
+ * `proposeSavedReading`). Returns whether the plan followed the notice.
  */
 async function replan({
   context,
@@ -152,7 +182,11 @@ async function replan({
   const goalId = researched.goal.id;
   const idsByKey = await saveAddedSkills({ context, curriculum, graph, scope });
 
-  await followNotice({ context, curriculum, goalId, graph, idsByKey });
+  if (!(await followNotice({ context, curriculum, goalId, graph, idsByKey }))) {
+    await proposeSavedReading({ curriculum, graph, idsByKey, researched, scope });
+    return false;
+  }
+
   await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
 
   const lookahead = await readGoalLookaheadStep(goalId);
@@ -166,6 +200,8 @@ async function replan({
     startOutlines({ context, courses: needs, firstSkillId, forGuest: researched.isGuest }),
     preparePlacementItems({ ...context, forPlacement: true, goalId }),
   ]);
+
+  return true;
 }
 
 /**
@@ -187,16 +223,7 @@ async function proposeReading({
   scope: CurriculumScope;
 }) {
   const idsByKey = await saveAddedSkills({ context, curriculum, graph, scope });
-
-  await proposeNoticeChangeStep({
-    courseIdsByKey: curriculum.courseIdsByKey,
-    goalId: researched.goal.id,
-    graph,
-    idsByKey,
-  });
-
-  // The learner's own plan waits for their Apply; the exam's graph is the exam's.
-  await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
+  await proposeSavedReading({ curriculum, graph, idsByKey, researched, scope });
 }
 
 async function reconcile({
@@ -242,25 +269,33 @@ async function reconcile({
 
   // A check that outlasts the landing's wait may have let the learner see the plan meanwhile.
   if (landed && (await claimNoticeLanding(goalId))) {
-    await (changesGraph
-      ? replan({ context, curriculum, graph: checked.graph, researched, scope })
-      : followNotice({
-          context,
-          curriculum,
-          goalId,
-          graph: curriculum.graph,
-          idsByKey: curriculum.idsByKey,
-        }).then(() =>
-          keepExamGraph({
-            curriculum,
-            graph: curriculum.graph,
-            idsByKey: curriculum.idsByKey,
-            researched,
-            scope,
-          }),
-        ));
+    if (changesGraph) {
+      // A reading that came too late waits on Today whole, its exam day included (see `replan`).
+      if (await replan({ context, curriculum, graph: checked.graph, researched, scope })) {
+        await proposeNoticeChangeStep({ goalId });
+      }
 
-    // A date the learner gave that isn't the notice's day is theirs to change.
+      return;
+    }
+
+    await followNotice({
+      context,
+      curriculum,
+      goalId,
+      graph: curriculum.graph,
+      idsByKey: curriculum.idsByKey,
+    });
+
+    await keepExamGraph({
+      curriculum,
+      graph: curriculum.graph,
+      idsByKey: curriculum.idsByKey,
+      researched,
+      scope,
+    });
+
+    // A date the learner gave that isn't the notice's day is theirs to change; one the plan
+    // didn't follow, as the reveal stopped waiting first, waits on Today too.
     await proposeNoticeChangeStep({ goalId });
     return;
   }
@@ -298,8 +333,9 @@ async function reconcile({
  * the learner saw the plan never changes it silently: it waits on Today as one change to apply,
  * with the notice's exam day (see `proposeNoticeChange`). A notice day that isn't the date the
  * learner gave is proposed the same way. Research that ends without a notice
- * leaves the plan as it is, and so does a failure here; either way the plan stops waiting. It
- * reports no progress: every wait of the learner's ended with the plan.
+ * leaves the plan as it is, and so does a failure here, once its steps' retries run out: the plan
+ * stays usable, so the failure is logged and recorded rather than failing the run; either way the
+ * plan stops waiting. It reports no progress: every wait of the learner's ended with the plan.
  */
 export async function reconcileResearch({ researchId, ...input }: ReconcileInput): Promise<void> {
   if (!researchId || !isBuiltBeforeResearch({ inputs: input.inputs, researchId })) {
@@ -312,11 +348,20 @@ export async function reconcileResearch({ researchId, ...input }: ReconcileInput
   await endNoticeWait(goalId);
 
   if (outcome.status === "rejected") {
-    await trackGenerationFailedStep({
-      analytics: input.context.analytics,
-      contentKind: "curriculum",
-      task: "research-reconcile",
-    });
+    const reason: unknown = outcome.reason;
+
+    await Promise.all([
+      logReconcileFailureStep({
+        error: reason instanceof Error ? reason.message : String(reason),
+        goalId,
+        researchId,
+      }),
+      trackGenerationFailedStep({
+        analytics: input.context.analytics,
+        contentKind: "curriculum",
+        task: "research-reconcile",
+      }),
+    ]);
   }
 }
 

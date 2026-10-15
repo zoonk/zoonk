@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { revalidatePlanTags } from "./_utils/replan";
 import { type PlanView } from "./plan-view-contract";
@@ -19,6 +19,38 @@ const NOTICE_WAIT_MS = 360_000;
  * (7 Oct 2026), and building the plan again a few seconds.
  */
 const LANDING_MS = 300_000;
+
+/**
+ * The reveal stopped waiting before research's reading landed in the plan: the learner may have
+ * seen it, so the reading waits on Today as a change to apply instead (see `proposeNoticeChange`).
+ */
+class NoticeLandingExpiredError extends Error {
+  constructor() {
+    super("The plan stopped waiting for the notice's reading before it landed.");
+    this.name = "NoticeLandingExpiredError";
+  }
+}
+
+/** Whether a reading came too late to land in the plan (see `NoticeLandingExpiredError`). */
+export function isNoticeLandingExpiredError(error: unknown): boolean {
+  return error instanceof NoticeLandingExpiredError;
+}
+
+/**
+ * Throws unless the plan still waits for the notice's reading, read in the transaction that writes
+ * the plan, once it holds the plan: the wait that `claimNoticeLanding` extended may have run out
+ * while the plan was built again, or while its write waited to be tried again.
+ */
+export async function checkNoticeLanding(tx: TransactionClient, planId: string): Promise<void> {
+  const plan = await tx.plan.findUnique({
+    select: { noticeWaitUntil: true },
+    where: { id: planId },
+  });
+
+  if (!plan?.noticeWaitUntil || plan.noticeWaitUntil <= new Date()) {
+    throw new NoticeLandingExpiredError();
+  }
+}
 
 /**
  * Where a plan stands with its exam's notice: `reading` while the reveal waits for research to read

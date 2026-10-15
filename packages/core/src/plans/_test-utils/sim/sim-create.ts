@@ -10,7 +10,7 @@ import { type SimPlan, type SimWorld, getSimGoal } from "./sim-world";
  * normal run: confirm a finding through the database tier.
  */
 
-/** `startOnRecommendedBases`: planned again on the app's recommendation for its bases. */
+/** `planOnRecommendedBases`: planned again on the app's recommendation for its bases. */
 function startOnSimRecommendedBases({
   computed,
   world,

@@ -3,7 +3,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { unplannedGoalFixture } from "./_test-utils/plan-library";
 import { writePlanMetadata } from "./_utils/plan-metadata-write";
-import { PlanConflictError } from "./_utils/write-plan";
+import { PlanConflictError } from "./plan-conflict";
 
 async function setup() {
   const user = await userFixture();

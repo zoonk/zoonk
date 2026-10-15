@@ -10,7 +10,7 @@ import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { findCurrentPhase } from "./_utils/phase-states";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
 import { type PlanTool, findToolAnchorSkill, loadPlanTools } from "./_utils/plan-tools";
-import { withPlanRetry } from "./_utils/replan";
+import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation, type PlanToolChoiceInput } from "./plan-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
