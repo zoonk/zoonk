@@ -1,10 +1,12 @@
 import "server-only";
-import { type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
+import { isDeepStrictEqual } from "node:util";
+import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type ProgressLock } from "../../sessions/_utils/session-progress";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
@@ -42,15 +44,47 @@ async function saveSkillLevels({
   scores: LevelTestScores;
   userId: string;
 }) {
-  await prisma.$transaction(
-    listLevelTestLevels(scores).map(({ score, skill }) =>
-      prisma.languageSkillLevel.upsert({
-        create: { language, score, skill, startScore: score, userId },
-        update: { score, startScore: score, windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
-        where: { userLanguageSkill: { language, skill, userId } },
-      }),
-    ),
-  );
+  await writeLearnerChange({ userId }, async (transaction) => {
+    const levels = listLevelTestLevels(scores);
+
+    const existing = await transaction.languageSkillLevel.findMany({
+      where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
+    });
+
+    const equal = levels.every(({ score, skill }) => {
+      const row = existing.find((level) => level.skill === skill);
+
+      return (
+        row?.score === score &&
+        row.startScore === score &&
+        row.windowCeiling === null &&
+        row.windowCorrect === 0 &&
+        row.windowTotal === 0
+      );
+    });
+
+    if (equal) {
+      return unchanged(null);
+    }
+
+    await Promise.all(
+      levels.map(({ score, skill }) =>
+        transaction.languageSkillLevel.upsert({
+          create: { language, score, skill, startScore: score, userId },
+          update: {
+            score,
+            startScore: score,
+            windowCeiling: null,
+            windowCorrect: 0,
+            windowTotal: 0,
+          },
+          where: { userLanguageSkill: { language, skill, userId } },
+        }),
+      ),
+    );
+
+    return null;
+  });
 }
 
 /**
@@ -124,48 +158,57 @@ export async function finishLanguageLevelTest(
   const { goal, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal });
 
-  const { progress, scores } = await prisma.$transaction(async (transaction) => {
-    const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
+  const { progress, scores } = await writeLearnerChange(
+    { planInputs: true, userId },
+    async (transaction) => {
+      const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
 
-    /** Read the marker after serialization, so finishes that already read context cannot count twice. */
-    await transaction.$queryRaw`
+      /** Re-read the saved answers after serialization so concurrent finishes cannot count twice. */
+      await transaction.$queryRaw`
       SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE
     `;
 
-    const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
+      const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
 
-    const currentProgress = readLevelTestProgress(current);
+      const currentProgress = readLevelTestProgress(current);
 
-    const currentScores = getLevelTestScores({
-      bank,
-      progress: currentProgress,
-      start: getTestStart(current),
-    });
+      const currentScores = getLevelTestScores({
+        bank,
+        progress: currentProgress,
+        start: getTestStart(current),
+      });
 
-    await recordTestActivity({
-      bank,
-      goalId: goal.id,
-      lock,
-      progress: currentProgress,
-      timeZone,
-      transaction,
-      userId,
-    });
+      const details = {
+        ...readGoalDetails(current),
+        level: formatCefrScore(getOverallScore(currentScores)),
+        levelTest: { ...currentProgress, counted: currentProgress.answers.length },
+        skillLevels: toLevelLabels(currentScores),
+      };
 
-    await transaction.goal.update({
-      data: {
-        details: {
-          ...readGoalDetails(current),
-          level: formatCefrScore(getOverallScore(currentScores)),
-          levelTest: { ...currentProgress, counted: currentProgress.answers.length },
-          skillLevels: toLevelLabels(currentScores),
-        },
-      },
-      where: { id: goal.id },
-    });
+      const result = { progress: currentProgress, scores: currentScores };
 
-    return { progress: currentProgress, scores: currentScores };
-  });
+      if (
+        currentProgress.counted >= currentProgress.answers.length &&
+        isDeepStrictEqual(details, readGoalDetails(current))
+      ) {
+        return unchanged(result);
+      }
+
+      await recordTestActivity({
+        bank,
+        goalId: goal.id,
+        lock,
+        progress: currentProgress,
+        timeZone,
+        transaction,
+        userId,
+      });
+
+      await transaction.goal.update({ data: { details }, where: { id: goal.id } });
+
+      return result;
+    },
+  );
 
   /** Linking merges skill rows before progress; never hold progress while waiting for those rows. */
   await saveSkillLevels({ language: goal.targetLanguage, scores, userId });

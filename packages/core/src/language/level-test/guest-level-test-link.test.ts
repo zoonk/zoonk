@@ -150,7 +150,7 @@ async function finishWhileLinking({
           SELECT pid FROM pg_stat_activity
           WHERE datname = current_database()
             AND ${linkPid} = ANY(pg_blocking_pids(pid))
-            AND query LIKE '%FOR KEY SHARE%'
+            AND query LIKE '%UPDATE users SET learner_revision%'
         `;
 
         expect(waiting).toHaveLength(1);
@@ -164,9 +164,10 @@ async function finishWhileLinking({
     observed.mockRestore();
   }
 
+  /** The revision marker now rejects the linked-away guest before a progress insert can fail its FK. */
   await expect(Promise.all([linking, finished])).resolves.toMatchObject([
     [{ status: "fulfilled" }],
-    [{ reason: { code: "P2003" }, status: "rejected" }],
+    [{ reason: { message: "Cannot mark a missing learner changed" }, status: "rejected" }],
   ]);
 }
 

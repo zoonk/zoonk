@@ -181,6 +181,90 @@ describe("language level test", () => {
     expect(progress.reduce((sum, day) => sum + day.timeSpentSeconds, 0)).toBe(60);
   });
 
+  it("marks finish details and skill levels once when an identical retry writes equal values", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const before = await readLearnerRevision(user.id);
+    const first = await finishLanguageLevelTest(goal.id);
+    expect(first.status).toBe("ready");
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+
+    const saved = await prisma.languageSkillLevel.findMany({
+      orderBy: { skill: "asc" },
+      where: { userId: user.id },
+    });
+
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const retry = await finishLanguageLevelTest(goal.id);
+    expect(retry).toStrictEqual(first);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+
+    await expect(
+      prisma.languageSkillLevel.findMany({ orderBy: { skill: "asc" }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual(saved);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ inputVersion: plan.inputVersion });
+  });
+
+  it("marks a repeated finish when the pre-existing scoring behavior changes its values", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+    });
+
+    const before = await readLearnerRevision(user.id);
+    const first = await finishLanguageLevelTest(goal.id);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+    const retry = await finishLanguageLevelTest(goal.id);
+    /** Pre-existing bug: finishing changes details.level, which becomes the next finish's scoring prior. */
+    expect(retry).not.toStrictEqual(first);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 4n);
+
+    await expect(
+      prisma.learningEvent.count({ where: { goalId: goal.id, lessonKind: "levelTest" } }),
+    ).resolves.toBe(1);
+  });
+
+  it("takes the finish marker before progress and serializes identical finish requests", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    await prisma.plan.delete({ where: { goalId: goal.id } });
+    mockSession(user.id);
+    const before = await readLearnerRevision(user.id);
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (transaction) => {
+        await transaction.userProgress.upsert({
+          create: { userId: user.id },
+          update: {},
+          where: { userId: user.id },
+        });
+
+        await transaction.$queryRaw`SELECT id FROM user_progress WHERE user_id = ${user.id}::uuid FOR UPDATE`;
+      },
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+    const both = Promise.all([finishLanguageLevelTest(goal.id), finishLanguageLevelTest(goal.id)]);
+
+    try {
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, both]);
+    }
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
+  });
+
   it("sets the speaking level from the sentence said out loud", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
