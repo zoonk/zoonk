@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { prisma } from "@zoonk/db";
-import { type E2EUser } from "@zoonk/e2e/fixtures/users";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -149,5 +150,45 @@ test.describe("Account data", () => {
     await expect(
       prisma.feedback.findUnique({ where: { id: study.feedback.id } }),
     ).resolves.toMatchObject({ email: null, message: FEEDBACK, userId: null });
+  });
+
+  test("drops the deleted account from the browser's other tabs, as logging out does", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const context = await browser.newContext({ storageState: user.storageState });
+
+    try {
+      const [catalog, profile] = await Promise.all([context.newPage(), context.newPage()]);
+      await catalog.setViewportSize({ height: 900, width: 1440 });
+      await catalog.goto("/courses");
+
+      const sidebar = catalog.getByRole("complementary", { name: "Sidebar" });
+      await expect(sidebar.getByRole("button", { name: /User menu$/u })).toBeVisible();
+
+      // The deletion itself tells the other tabs: this tab's own summary reads never answer, as the
+      // answer of one (the read its refreshed seed asks for, or the home page's after it) would
+      // tell them too. Its first summary comes from the page's seed.
+      await profile.route("**/api/learner/summary", () => {});
+      await profile.goto("/profile");
+      await profile.getByRole("button", { name: "Delete account" }).click();
+
+      await profile
+        .getByRole("alertdialog", { name: "Delete your account?" })
+        .getByRole("button", { name: "Delete my account" })
+        .click();
+
+      await expect(
+        profile
+          .getByRole("region", { name: "Notifications" })
+          .getByText("Your account was deleted."),
+      ).toBeVisible();
+
+      // The other tab, never reloaded, lets the account go as when the learner logs out.
+      await expect(sidebar.getByRole("link", { name: "Log in" })).toBeVisible();
+      await expect(sidebar.getByRole("button", { name: /User menu$/u })).toHaveCount(0);
+    } finally {
+      await context.close();
+    }
   });
 });

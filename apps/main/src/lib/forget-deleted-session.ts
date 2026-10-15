@@ -1,17 +1,20 @@
 import { safeAsync } from "@zoonk/utils/error";
-import { resetPostHogUser } from "./posthog";
+import { endLearnerSession } from "./end-learner-session";
 
 /**
  * The session went with the deleted account (the learner's own deletion, or an age answer under
- * 13), so the browser forgets its cookies, which could otherwise show the account as signed in
- * for the rest of the session cache, and unlinks analytics from it. The auth client loads only
- * then, so the page that offers deleting the account doesn't ship it up front.
+ * 13), so the browser forgets the learner as a logout does (`endLearnerSession`, its other tabs
+ * included) and its cookies, which could otherwise show the account as signed in for the rest of
+ * the session cache, even when the server says that session is gone already. The auth client
+ * loads only then, so the page that offers deleting the account doesn't ship it up front.
  */
 export async function forgetDeletedSession() {
-  await safeAsync(async () => {
-    const { authClient } = await import("@zoonk/auth/client");
-    await authClient.signOut();
-  });
+  const auth = import("@zoonk/auth/client");
 
-  await resetPostHogUser();
+  await endLearnerSession(() =>
+    safeAsync(async () => {
+      const { authClient } = await auth;
+      await authClient.signOut();
+    }),
+  );
 }

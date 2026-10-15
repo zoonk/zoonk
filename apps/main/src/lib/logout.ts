@@ -1,22 +1,16 @@
 "use client";
 
-import { announceSignOut } from "./learner/learner-store";
-import { setNoSessionHint } from "./learner/session-hint";
-import { resetPostHogUser } from "./posthog";
+import { endLearnerSession } from "./end-learner-session";
 
 /**
- * Clears the browser's analytics identity and its session hint before ending the Better Auth
- * session, so the next anonymous or shared-device visitor isn't linked to the learner who's
- * leaving, then tells the browser's other tabs to drop the learner too. The auth client loads when
- * the learner logs out, so the menus that offer it don't ship it up front.
+ * Ends the learner's Better Auth session, after the browser forgot them (`endLearnerSession`). The
+ * auth client loads when the learner logs out, so the menus that offer it don't ship it up front.
  */
 export async function logout() {
-  const [{ logout: authLogout }] = await Promise.all([
-    import("@zoonk/auth/client"),
-    resetPostHogUser(),
-    setNoSessionHint(),
-  ]);
+  const auth = import("@zoonk/auth/client");
 
-  await authLogout();
-  announceSignOut();
+  await endLearnerSession(async () => {
+    const { logout: authLogout } = await auth;
+    await authLogout();
+  });
 }
