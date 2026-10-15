@@ -3,11 +3,12 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession, mockSessionFailure } from "../../_test-utils/mock-session";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getActiveGoalId } from "../../goals/get-active-goal-id";
+import { listCurrentUserGoals } from "../../goals/list-current-user-goals";
 import { loadMemoryExport } from "../../memory/_utils/memory-export";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { getCurrentMemoryInsight } from "../../memory/insights/get-current-memory-insight";
@@ -71,6 +72,15 @@ describe("learning profile request facts", () => {
       await expect(getActiveGoalId()).resolves.toBe(selected.id);
       await expect(readActiveGoal(user.id)).resolves.toStrictEqual(selected);
       expect(selected.id).not.toBe(fallback.id);
+
+      const list = await countDatabaseStatements(listCurrentUserGoals);
+
+      assertReadBudget(list, 6);
+      expect(list.result?.activeGoalId).toBe(selected.id);
+
+      expect(list.result?.goals.some((goal) => goal.id === selected.id)).toBe(
+        status !== "archived",
+      );
     },
   );
 
@@ -92,6 +102,12 @@ describe("learning profile request facts", () => {
 
     await expect(getActiveGoalId()).resolves.toBeNull();
     await expect(readActiveGoal(owner.id)).resolves.toBeNull();
+
+    const list = await countDatabaseStatements(listCurrentUserGoals);
+
+    assertReadBudget(list, 6);
+    expect(list.result?.activeGoalId).toBeNull();
+    expect(list.result?.goals.some((goal) => goal.id === selected.id)).toBe(false);
   });
 
   it("falls back to the earliest owned active goal only without a stored selection", async () => {
@@ -109,14 +125,19 @@ describe("learning profile request facts", () => {
     await expect(getLearningProfile()).resolves.toMatchObject({ activeGoalId: null });
     await learningProfileFixture({ activeGoalId: null, userId: owner.id });
     await expect(getActiveGoalId()).resolves.toBe(first.id);
+
+    const list = await countDatabaseStatements(listCurrentUserGoals);
+
+    assertReadBudget(list, 6);
+    expect(list.result?.activeGoalId).toBe(first.id);
   });
 
   it("keeps visitors query-free, supports guests, and propagates session failures", async () => {
     const visitor = await countDatabaseStatements(() =>
-      Promise.all([getActiveGoalId(), getLearningProfile()]),
+      Promise.all([getActiveGoalId(), getLearningProfile(), listCurrentUserGoals()]),
     );
 
-    expect(visitor).toStrictEqual({ result: [null, null], statements: 0, writes: 0 });
+    expect(visitor).toStrictEqual({ result: [null, null, null], statements: 0, writes: 0 });
 
     const guest = await userFixture();
     mockGuestSession(guest.id);
@@ -127,6 +148,7 @@ describe("learning profile request facts", () => {
     mockSessionFailure(error);
     await expect(getActiveGoalId()).rejects.toBe(error);
     await expect(getLearningProfile()).rejects.toBe(error);
+    await expect(listCurrentUserGoals()).rejects.toBe(error);
   });
 
   it("projects a supplied GET profile while keeping the omitted write-response lookup fresh", async () => {
