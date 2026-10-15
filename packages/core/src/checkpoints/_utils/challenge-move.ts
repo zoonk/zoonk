@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanItem, type StudySessionBlock, prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { addDays, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
@@ -87,6 +88,7 @@ export async function applyChallengeMove({
   goalId,
   input,
   planId,
+  userId,
 }: {
   block: Pick<StudySessionBlock, "id"> | null;
   /** The day it's planned for now. */
@@ -94,6 +96,7 @@ export async function applyChallengeMove({
   goalId: string;
   input: StudySessionTimeZoneInput;
   planId: string;
+  userId: string;
 }): Promise<ApplyChallengeMoveResult> {
   const to = getNextMonday(from);
 
@@ -117,9 +120,13 @@ export async function applyChallengeMove({
   const [moved] = await Promise.all([
     findChallengeOn({ date: to, planId }),
     block
-      ? prisma.studySessionBlock.updateMany({
-          data: { status: "skipped" },
-          where: { id: block.id, status: "pending" },
+      ? writeLearnerChange({ userId }, async (tx) => {
+          const changed = await tx.studySessionBlock.updateMany({
+            data: { status: "skipped" },
+            where: { id: block.id, status: "pending" },
+          });
+
+          return changed.count === 0 ? unchanged(null) : null;
         })
       : null,
   ]);
@@ -147,12 +154,21 @@ export async function findMovedFrom(changeId: string): Promise<Date | null> {
 export async function restoreChallengeBlock({
   block,
   challenge,
+  userId,
 }: {
   block: Pick<StudySessionBlock, "id" | "payload">;
   challenge: Pick<PlanItem, "id">;
+  userId: string;
 }): Promise<void> {
-  await prisma.studySessionBlock.updateMany({
-    data: { payload: { ...readBlockPayload(block), planItemId: challenge.id }, status: "pending" },
-    where: { id: block.id, status: "skipped" },
+  await writeLearnerChange({ userId }, async (tx) => {
+    const changed = await tx.studySessionBlock.updateMany({
+      data: {
+        payload: { ...readBlockPayload(block), planItemId: challenge.id },
+        status: "pending",
+      },
+      where: { id: block.id, status: "skipped" },
+    });
+
+    return changed.count === 0 ? unchanged(null) : null;
   });
 }

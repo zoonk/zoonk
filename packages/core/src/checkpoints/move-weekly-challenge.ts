@@ -90,6 +90,7 @@ export async function moveWeeklyChallenge({
     goalId: goal.id,
     input,
     planId: item.planId,
+    userId: goal.userId,
   });
 
   if (result.status !== "moved") {
@@ -138,7 +139,7 @@ export async function undoWeeklyChallengeMove({
     : null;
 
   if (challenge) {
-    await restoreChallengeBlock({ block: found.block, challenge });
+    await restoreChallengeBlock({ block: found.block, challenge, userId: found.goal.userId });
   }
 
   return { status: "undone" };
