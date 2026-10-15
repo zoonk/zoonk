@@ -1,6 +1,7 @@
 import { type Subscription, type UserLearningProfile } from "@zoonk/db";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getUsageResets } from "../../../entitlements/_utils/usage-periods";
 import { resolveProfileBuddy } from "../../../profile/default-buddy";
 import { projectPersistedEnergy } from "../../../progress/energy";
 import { hasUserLearningProgress } from "../../../progress/user-progress";
@@ -78,8 +79,9 @@ function getSubscriptionChanges(subscription: Subscription | null): Date[] {
 
 /**
  * When the summary changes on its own: the learner's next midnight (a new day, its missions and
- * Energy), the end of a day carried over from the night before, the subscription's next change, or
- * the session's end, whichever comes first.
+ * Energy), the next UTC midnight (the allowance's day starts over, and a month's on its first day),
+ * the end of a day carried over from the night before, the subscription's next change (an App Store
+ * period's end too), or the session's end, whichever comes first.
  */
 export function getNextChangeAt({
   carriedUntil,
@@ -102,7 +104,15 @@ export function getNextChangeAt({
     timeZone,
   });
 
-  const times = [midnight, sessionExpiresAt, carriedUntil, ...getSubscriptionChanges(subscription)]
+  const allowanceResets = getUsageResets(now).day;
+
+  const times = [
+    midnight,
+    allowanceResets,
+    sessionExpiresAt,
+    carriedUntil,
+    ...getSubscriptionChanges(subscription),
+  ]
     .filter((date): date is Date => date !== null)
     .map((date) => date.getTime())
     .filter((time) => time > now.getTime());

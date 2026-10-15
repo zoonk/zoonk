@@ -93,9 +93,9 @@ export type LearnerSummary = {
   /** Today's missions done and offered; null on a day without missions or before it's saved. */
   missions: { done: number; total: number } | null;
   /**
-   * When the summary changes without a write (milliseconds): the learner's next midnight, the end
-   * of a day carried over from the night before, the subscription's next change, or the session's
-   * end, whichever comes first.
+   * When the summary changes without a write (milliseconds): the learner's next midnight, the next
+   * UTC midnight (when the allowance starts over), the end of a day carried over from the night
+   * before, the subscription's next change, or the session's end, whichever comes first.
    */
   nextChangeAt: number;
   places: LearnerSummaryPlaces;

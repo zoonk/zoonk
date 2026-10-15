@@ -73,7 +73,7 @@ const learnerSummarySchema = z
       .meta({ description: "Today's missions, or null on a day without any" }),
     nextChangeAt: millisecondsSchema.meta({
       description:
-        "When the summary changes without a write: the next local midnight, the subscription's next change or the session's end",
+        "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end",
     }),
     places: z
       .object({

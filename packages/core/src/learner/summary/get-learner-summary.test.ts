@@ -203,6 +203,22 @@ describe(getLearnerSummary, () => {
     await expect(getLearnerSummary()).resolves.toMatchObject({ revision: "7" });
   });
 
+  it("names the learner from their row, not the session's older copy of it", async () => {
+    const user = await userFixture();
+    const image = "https://example.com/learner.png";
+
+    // The session keeps the account for up to an hour: renamed since, on another device.
+    signIn({ ...user, name: "Name before" });
+
+    await prisma.user.update({ data: { image, name: "Name now" }, where: { id: user.id } });
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.account).toStrictEqual({ email: user.email, image, name: "Name now" });
+    expect(counts.writes).toBe(0);
+    assertReadBudget(counts, QUIET_SUMMARY_STATEMENT_BUDGET);
+  });
+
   it("reads a guest's tier and identity without a subscription lookup", async () => {
     const user = await userFixture();
     signIn(user, { isAnonymous: true });
@@ -632,9 +648,18 @@ describe("the summary's ready mistakes", () => {
     await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
 
     const today = await getLearnerSummary();
+    const allowanceResets = new Date("2026-03-11T00:00:00.000Z");
     const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + DAY_MS);
 
+    // The allowance starts over at UTC midnight first; read then, it waits for the learner's own.
     expect(today).toMatchObject({
+      nextChangeAt: allowanceResets.getTime(),
+      places: { readyMistakes: 0 },
+    });
+
+    vi.setSystemTime(allowanceResets);
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
       nextChangeAt: nextMidnight.getTime(),
       places: { readyMistakes: 0 },
     });

@@ -190,7 +190,13 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   );
 
   const user = await prisma.user.findUnique({
-    select: { analyticsDisabled: true, learnerRevision: true, username: true },
+    select: {
+      analyticsDisabled: true,
+      image: true,
+      learnerRevision: true,
+      name: true,
+      username: true,
+    },
     where: { id: userId },
   });
 
@@ -245,11 +251,8 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   ]);
 
   return {
-    account: {
-      email: session.user.email,
-      image: session.user.image ?? null,
-      name: session.user.name,
-    },
+    // The row, not the session: its cookie keeps a name or picture changed elsewhere for an hour.
+    account: { email: session.user.email, image: user.image, name: user.name },
     activeGoalId,
     analytics: {
       disabled: user.analyticsDisabled,
