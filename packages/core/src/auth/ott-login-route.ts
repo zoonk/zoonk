@@ -19,7 +19,7 @@ function getFirstHeaderValue({ name, request }: { name: string; request: Request
  * server is reached at another address, so the forwarded host and protocol say which one the
  * learner is on: the callback has to come back to the origin that holds the state cookie.
  */
-function getBrowserOrigin(request: Request): string {
+export function getBrowserOrigin(request: Request): string {
   const url = new URL(request.url);
 
   const host =

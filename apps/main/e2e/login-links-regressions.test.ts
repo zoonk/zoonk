@@ -15,6 +15,144 @@ function getRedirectUrl(response: APIResponse | Response): URL {
   return new URL(location, response.url());
 }
 
+// oxlint-disable-next-line vitest/prefer-each -- Playwright has no test.each API.
+for (const { name, path } of [
+  { name: "Log in", path: "/plan?from=sidebar" },
+  { name: "Entrar", path: "/pt/settings/memory?from=sidebar" },
+  { name: "Log in", path: "/start?goal=learn+physics" },
+]) {
+  test(`the static sidebar keeps ${path} before hydration`, async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    try {
+      await mockCentralAuthTransport(page);
+      const shell = await page.goto(path);
+      expect(shell?.headers()["set-cookie"]).toBeUndefined();
+
+      const login = page
+        .getByRole("complementary", { name: /Sidebar|Barra lateral/u })
+        .getByRole("link", { exact: true, name });
+
+      // No scripts can replace Suspense's static fallback with the hydrated return address.
+      await expect(login).toHaveAttribute("href", path.startsWith("/pt/") ? "/pt/login" : "/login");
+      await login.click();
+      await expect(page).toHaveURL(/\/auth\/login\?/u);
+
+      const authUrl = new URL(page.url());
+      const callbackUrl = new URL(authUrl.searchParams.get("redirectTo") ?? "");
+      expect(callbackUrl.searchParams.get("next")).toBe(path);
+    } finally {
+      await context.close();
+    }
+  });
+}
+
+test("login recovers only same-origin learner pages when next is missing", async ({ request }) => {
+  const baseURL = getBaseURL();
+
+  await Promise.all(
+    [
+      "/plan?from=sidebar",
+      "/pt/settings/memory",
+      "/start?draft=unfinished",
+      "/b/science/c/physics/ch/motion/l/velocity",
+      "/learn/lesson-id",
+    ].map(async (path) => {
+      const response = await request.get("/login", {
+        headers: { referer: new URL(path, baseURL).toString() },
+        maxRedirects: 0,
+      });
+
+      expect(response.status()).toBe(307);
+      const callbackUrl = new URL(getRedirectUrl(response).searchParams.get("redirectTo") ?? "");
+      expect(callbackUrl.origin).toBe(new URL(baseURL).origin);
+      expect(callbackUrl.searchParams.get("next")).toBe(path);
+    }),
+  );
+});
+
+test("login checks the browser origin selected by the deployment proxy", async ({ request }) => {
+  await Promise.all(
+    [
+      { expected: "/plan?from=sidebar", referer: "https://preview.zoonk.dev/plan?from=sidebar" },
+      { expected: "/today", referer: "http://preview.zoonk.dev/plan" },
+      { expected: "/today", referer: "https://evil.example/plan" },
+      { expected: "/today", referer: new URL("/plan", getBaseURL()).toString() },
+    ].map(async ({ expected, referer }) => {
+      const response = await request.get("/login", {
+        headers: {
+          referer,
+          "x-forwarded-host": "preview.zoonk.dev, internal.example",
+          "x-forwarded-proto": "https",
+        },
+        maxRedirects: 0,
+      });
+
+      const callbackUrl = new URL(getRedirectUrl(response).searchParams.get("redirectTo") ?? "");
+      expect(callbackUrl.origin).toBe("https://preview.zoonk.dev");
+      expect(callbackUrl.searchParams.get("next")).toBe(expected);
+    }),
+  );
+});
+
+test("login rejects unrelated, malformed, auth, and API referrers", async ({ request }) => {
+  const baseURL = getBaseURL();
+
+  await Promise.all(
+    [
+      "https://evil.example/plan",
+      `${new URL(baseURL).origin.replace("http:", "https:")}/plan`,
+      "//evil.example/plan",
+      "/plan",
+      "not a URL",
+      ...[
+        "/login",
+        "/pt/login",
+        "/auth/callback?next=/plan",
+        "/pt/auth/login",
+        "/api/auth/get-session",
+        "/pt/api/auth/get-session",
+        "/v1/auth/sign-out",
+        "/pt/v1/auth/sign-out",
+        "/plan/../auth/callback",
+        "/plan/%2e%2e/api/auth/get-session",
+        "//evil.example/plan",
+        "/unknown-page",
+      ].map((path) => new URL(path, baseURL).toString()),
+    ].map(async (referer) => {
+      const response = await request.get("/pt/login", { headers: { referer }, maxRedirects: 0 });
+
+      expect(response.status()).toBe(307);
+      const callbackUrl = new URL(getRedirectUrl(response).searchParams.get("redirectTo") ?? "");
+      expect(callbackUrl.origin).toBe(new URL(baseURL).origin);
+      expect(callbackUrl.searchParams.get("next"), referer).toBe("/pt/today");
+    }),
+  );
+});
+
+test("an explicit next takes precedence over the referrer, including an unsafe next", async ({
+  request,
+}) => {
+  await Promise.all(
+    [
+      { expected: "/pt/plan?from=explicit", next: "/pt/plan?from=explicit" },
+      { expected: "/pt/today", next: "https://evil.example" },
+      { expected: "/pt/today", next: "//evil.example" },
+      { expected: "/pt/today", next: String.raw`/\evil.example` },
+      { expected: "/pt/today", next: "" },
+    ].map(async ({ expected, next }) => {
+      const response = await request.get(`/pt/login?${new URLSearchParams({ next })}`, {
+        headers: { referer: new URL("/settings", getBaseURL()).toString() },
+        maxRedirects: 0,
+      });
+
+      const callbackUrl = new URL(getRedirectUrl(response).searchParams.get("redirectTo") ?? "");
+      expect(callbackUrl.searchParams.get("next")).toBe(expected);
+    }),
+  );
+});
+
 test("the sidebar logs in with one document request and returns to Plan", async ({ page }) => {
   const loginRequests: string[] = [];
 
