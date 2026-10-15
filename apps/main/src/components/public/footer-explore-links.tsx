@@ -6,7 +6,6 @@ import { listCourses } from "@zoonk/core/courses/list";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
-import { Suspense } from "react";
 
 /** Two rows of three columns, so the list stays short. */
 const POPULAR_COURSES_LIMIT = 6;
@@ -98,21 +97,16 @@ async function CourseCategories({ language }: { language: string }) {
 
 /**
  * The catalog from every public page's footer, so visitors and search engines go straight to it:
- * the most popular courses and the categories that have courses. Each list streams on its own, so
- * a page never waits on them.
+ * the most popular courses and the categories that have courses. Both lists are cached, so they're
+ * part of every page's static HTML rather than streamed after it.
  */
 export async function FooterExploreLinks() {
   const language = getSupportedLocaleFromLanguage(await lang());
 
   return (
     <div className="grid grid-cols-1 gap-8 pt-12 pb-2 lg:grid-cols-[3fr_1fr] lg:gap-12">
-      <Suspense fallback={null}>
-        <PopularCourses language={language} />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <CourseCategories language={language} />
-      </Suspense>
+      <PopularCourses language={language} />
+      <CourseCategories language={language} />
     </div>
   );
 }

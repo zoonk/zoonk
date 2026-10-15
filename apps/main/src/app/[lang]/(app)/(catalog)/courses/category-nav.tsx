@@ -7,7 +7,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted, useLocale } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { Suspense } from "react";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
 
@@ -41,11 +40,8 @@ function revealChip(chip: HTMLAnchorElement | null) {
 
 type CategoryNavProps = {
   categories: CategoryLink[];
-  /**
-   * The open category, null on the catalog's own page; left out while it's only known once its
-   * page opens, when no link is marked.
-   */
-  openCategory?: string | null;
+  /** The open category, null on the catalog's own page. */
+  openCategory: string | null;
   total: number;
 };
 
@@ -137,22 +133,12 @@ function CategoryNavView(props: CategoryNavProps) {
   );
 }
 
-function OpenCategoryNav(props: Omit<CategoryNavProps, "openCategory">) {
-  const openCategory = useSelectedLayoutSegment();
-  return <CategoryNavView {...props} openCategory={openCategory} />;
-}
-
 /**
  * The catalog's categories, one tap to filter it: under `lg` a row of chips that scrolls sideways
  * (faded at its end, with arrows only for a mouse), from `lg` a list beside the courses, as Linear
- * lists its views, each with its number of courses and the chosen one on a soft fill. A category's
- * page is a dynamic route, so the chosen one is marked in its own `Suspense`: the shell shared by
- * every category draws the links unmarked.
+ * lists its views, each with its number of courses and the chosen one on a soft fill. Every
+ * category's page is a static route of its own, so the chosen one is known as the page renders.
  */
 export function CategoryNav(props: Omit<CategoryNavProps, "openCategory">) {
-  return (
-    <Suspense fallback={<CategoryNavView {...props} />}>
-      <OpenCategoryNav {...props} />
-    </Suspense>
-  );
+  return <CategoryNavView {...props} openCategory={useSelectedLayoutSegment()} />;
 }

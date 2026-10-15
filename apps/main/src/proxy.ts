@@ -43,7 +43,7 @@ const PRICING_VARIANT_PATH = new RegExp(
 
 /**
  * Serves the pricing page in the visitor's currency (`getBillingCurrency`) at its one address:
- * a rewrite to the page's static variant for that currency (`pricing/[currency]`), so every
+ * a rewrite to the page's static variant for that currency (`pricing/<currency>`), so every
  * variant is cached for everyone billed in it and the response sets no cookie. The default
  * currency is `/pricing` itself. Null for any other page, and for a redirect next-intl decided.
  */

@@ -31,7 +31,9 @@ function readCurrency(currency: string): string {
  * once more. A visitor's next step is starting free or getting Plus, a learner's subscribing, and
  * a subscriber's managing their plan. The page is static: its HTML is a visitor's, and the
  * browser's learner summary shows another reader theirs. Prices are in `currency`: the proxy
- * serves each country the page's variant in its own currency (`getBillingCurrency`).
+ * serves each country the page's variant in its own currency (`getBillingCurrency`), a static
+ * route each (`pricing/<currency>/page.tsx`); `static-value-routes.test.ts` keeps those folders
+ * exactly in step with `BILLING_CURRENCIES`.
  */
 export async function PricingPage({ currency }: { currency: string }) {
   const { monthlyPrice, yearlyPrice } = await getPlusPrices(readCurrency(currency));
