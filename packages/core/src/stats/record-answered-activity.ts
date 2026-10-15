@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type AnsweredActivity, settleAnsweredActivity } from "./_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "./completion-energy";
 
@@ -9,8 +9,10 @@ import { getCompletionEnergyContext } from "./completion-energy";
  * no Brain Power: it tests what the learner knows rather than teaching it.
  */
 export async function recordAnsweredActivity(activity: AnsweredActivity): Promise<void> {
-  await prisma.$transaction(async (tx) => {
-    const { timeZone, userId } = activity;
+  const { timeZone, userId } = activity;
+
+  // Statistics and the day's totals show it, so it's a learner change.
+  await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
     await settleAnsweredActivity(tx, { ...activity, lock });
   });

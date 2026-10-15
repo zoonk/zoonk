@@ -1,6 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { finishExplanations } from "../goals/_utils/finish-explanations";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { findDayLessonBlock } from "./_utils/day-lesson-block";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./_utils/plan-items";
 import { type StudyBlockCompletion } from "./completion-contract";
@@ -28,9 +28,16 @@ export async function settleFinishedLesson({
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion | null> {
-  const languageGoals = await prisma.$transaction((tx) =>
-    completeLessonPlanItems(tx, { lessonId, now: new Date(), userId }),
-  );
+  // The plan shows the lesson checked off; a lesson with nothing left to check changes nothing.
+  const languageGoals = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const open = await tx.planItem.count({
+      where: { lessonId, plan: { goal: { userId } }, status: "todo" },
+    });
+
+    return open > 0
+      ? completeLessonPlanItems(tx, { lessonId, now: new Date(), userId })
+      : unchanged([]);
+  });
 
   scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
 

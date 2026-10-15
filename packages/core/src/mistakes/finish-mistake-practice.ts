@@ -1,10 +1,11 @@
 import "server-only";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type ProgressLock, applySessionProgress } from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
 import { type MissionMomentView } from "../sessions/completion-contract";
@@ -167,7 +168,7 @@ async function writeRun(
  * to the run's row, and one that adds nothing returns what the run earned.
  */
 function settlePracticeRun({ answers, ...input }: SettleInput) {
-  return prisma.$transaction(async (tx) => {
+  return writeLearnerChange({ userId: input.userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({
       timeZone: input.timeZone,
       transaction: tx,
@@ -181,8 +182,9 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
 
     const { fresh, run, runAnswers } = matchRun({ answers, runs });
 
+    // A finish that adds nothing new returns what the run earned, and changes nothing.
     if (fresh.length === 0) {
-      return {
+      return unchanged({
         counted: false,
         result: {
           brainPower: run?.brainPower ?? 0,
@@ -191,7 +193,7 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
           total: (run?.correctAnswers ?? 0) + (run?.incorrectAnswers ?? 0),
         },
         runId: run?.id ?? null,
-      };
+      });
     }
 
     const recorded = await writeRun(tx, { ...input, fresh, lock, run, runAnswers });

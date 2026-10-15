@@ -1,9 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
@@ -74,7 +74,7 @@ export async function practiceMistakePattern({
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;
 
-  const counted = await prisma.$transaction(async (tx) => {
+  const counted = await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
     // The progress lock serializes a double submit: the second one finds the first's row. The id
@@ -90,7 +90,7 @@ export async function practiceMistakePattern({
     });
 
     if (earlier) {
-      return { event: earlier, retry: true };
+      return unchanged({ event: earlier, retry: true });
     }
 
     const energyDelta = getAnswersEnergyDelta({ correct, incorrect });

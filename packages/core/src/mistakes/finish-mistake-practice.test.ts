@@ -7,6 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
+import { readLearnerRevision } from "../_test-utils/learner-revision";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
@@ -127,6 +128,7 @@ describe(finishMistakePractice, () => {
     const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
     const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
     const input = { answerIds: [first, second], timeZone: "UTC" };
+    const answered = await readLearnerRevision(user.id);
 
     const [once, twice] = await Promise.all([
       finishMistakePractice(input),
@@ -142,6 +144,9 @@ describe(finishMistakePractice, () => {
       correctAnswers: 2,
       interactiveCompleted: 1,
     });
+
+    // Counting the run is one change; finishing it again counts nothing new.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(answered + 1n);
   });
 
   it("grows one run as it's finished after every answer, counting each answer once", async () => {

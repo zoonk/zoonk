@@ -193,8 +193,9 @@ describe("session day settlement during guest linking", () => {
       gatedMoment.mockRestore();
     }
 
+    // Settling the day marks the guest's revision first, and finds no guest anymore.
     await expect(finished).resolves.toMatchObject([
-      { reason: { code: "P2003" }, status: "rejected" },
+      { reason: { message: "Cannot mark a missing learner changed" }, status: "rejected" },
     ]);
 
     const transferred = await prisma.userProgress.findUniqueOrThrow({

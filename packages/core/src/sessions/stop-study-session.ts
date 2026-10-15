@@ -1,6 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { scheduleMemoryAfterSession } from "../memory/after-session";
 import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
@@ -32,14 +32,16 @@ async function settleActiveBlocks({ session, timeZone, userId }: StopContext) {
   );
 }
 
-/** Records the session's first stop; true only for the request that recorded it. */
-async function markFirstStop(sessionId: string): Promise<boolean> {
-  const { count } = await prisma.studySession.updateMany({
-    data: { stoppedAt: new Date() },
-    where: { id: sessionId, stoppedAt: null },
-  });
+/** Records the session's first stop, which Today shows; true only for the request that recorded it. */
+function markFirstStop({ sessionId, userId }: { sessionId: string; userId: string }) {
+  return writeLearnerChange({ userId }, async (tx) => {
+    const { count } = await tx.studySession.updateMany({
+      data: { stoppedAt: new Date() },
+      where: { id: sessionId, stoppedAt: null },
+    });
 
-  return count > 0;
+    return count > 0 ? true : unchanged(false);
+  });
 }
 
 /**
@@ -72,7 +74,7 @@ export async function stopStudySession({
 
   // A session the stop finished already had memory read it and the plan rebalanced as it completed.
   // Otherwise the first stop does it, once: stopping again (or a client looping) runs no model.
-  if (!settled.sessionCompleted && (await markFirstStop(session.id))) {
+  if (!settled.sessionCompleted && (await markFirstStop({ sessionId: session.id, userId }))) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
     await rebalancePlanAfterSession({ goalId: session.goalId, userId });
   }

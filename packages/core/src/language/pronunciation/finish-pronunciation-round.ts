@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
@@ -103,16 +104,17 @@ export async function finishPronunciationRound({
 
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
-  const event = await prisma.$transaction(async (tx) => {
+  const event = await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
-    // The progress lock serializes a double submit: the second one finds the first's row.
+    // The progress lock serializes a double submit: the second one finds the first's row, and
+    // changes nothing.
     const counted = await tx.learningEvent.findFirst({
       where: { contentIds: { equals: roundId, path: ["pronunciationRoundId"] }, userId },
     });
 
     if (counted) {
-      return counted;
+      return unchanged(counted);
     }
 
     const energyDelta = getAnswersEnergyDelta({ correct, incorrect });

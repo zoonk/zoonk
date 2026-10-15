@@ -7,6 +7,7 @@ import {
   signInAsGuest,
   signInWithPassword,
 } from "../../../auth/src/guests/_test-utils/guest-auth";
+import { readLearnerRevision } from "../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
@@ -52,8 +53,13 @@ async function waitForBlocked(pid: number) {
 async function linkBeforeSettlement({
   account,
   guest,
+  rejection,
   settle,
-}: Awaited<ReturnType<typeof createLinkOwners>> & { settle: () => Promise<unknown> }) {
+}: Awaited<ReturnType<typeof createLinkOwners>> & {
+  /** How the settlement fails once the guest it was for is gone. */
+  rejection: object;
+  settle: () => Promise<unknown>;
+}) {
   const release = Promise.withResolvers<null>();
   const ready = Promise.withResolvers<number>();
 
@@ -97,7 +103,7 @@ async function linkBeforeSettlement({
 
   expect(results).toMatchObject([
     [{ status: "fulfilled" }],
-    [{ reason: { code: "P2003" }, status: "rejected" }],
+    [{ reason: rejection, status: "rejected" }],
   ]);
 
   await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
@@ -237,7 +243,8 @@ describe("guest completion during account linking", () => {
     const complete = () =>
       completeLibraryLesson({ input: { runId: run.id, timeZone: "UTC" }, lessonId: lesson.id });
 
-    await linkBeforeSettlement({ account, guest, settle: complete });
+    // The lesson's run moved to the account, so finishing it for the guest breaks its reference.
+    await linkBeforeSettlement({ account, guest, rejection: { code: "P2003" }, settle: complete });
 
     await expect(
       prisma.learningEvent.findUniqueOrThrow({ where: { id: run.id } }),
@@ -280,12 +287,16 @@ describe("guest completion during account linking", () => {
     await linkBeforeSettlement({
       account,
       guest,
+      // Marking the guest's revision finds no guest anymore, before anything is written.
+      rejection: { message: "Cannot mark a missing learner changed" },
       settle: () => recordAnsweredActivity({ ...activity, userId: guest.guestId }),
     });
 
     await expect(prisma.learningEvent.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
+    const linked = await readLearnerRevision(account.userId);
     await recordAnsweredActivity({ ...activity, userId: account.userId });
+    await expect(readLearnerRevision(account.userId)).resolves.toBe(linked + 1n);
 
     await expect(
       prisma.dailyProgress.findMany({ where: { userId: account.userId } }),

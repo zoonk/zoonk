@@ -337,6 +337,7 @@ describe(finishPronunciationRound, () => {
     await answerPronunciationReview({ audio: AUDIO, fields, reviewId: next.id });
 
     const input = { goalId: goal.id, timeZone: TIME_ZONE };
+    const answered = await readLearnerRevision(user.id);
 
     const [finished, again] = await Promise.all([
       finishPronunciationRound({ input, roundId }),
@@ -345,6 +346,9 @@ describe(finishPronunciationRound, () => {
 
     expect(finished).toStrictEqual(again);
     expect(finished).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
+
+    // The round counts once: its double submit finds the first one's row and changes nothing.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(answered + 1n);
 
     const events = await prisma.learningEvent.findMany({ where: { userId: user.id } });
 
