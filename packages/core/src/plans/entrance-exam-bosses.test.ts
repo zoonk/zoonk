@@ -61,7 +61,7 @@ function skill(row: { id: string; name: string }, area: string, topics: string[]
  * Main's entrance exam learner (`createEntranceExamLearner`): an exam three months away, a plan
  * with one phase of two skills and one lesson item, never laid out yet.
  */
-async function createEntranceExamLearner() {
+async function createEntranceExamLearner({ dailyMinutes }: { dailyMinutes?: number } = {}) {
   const user = await userFixture();
   const today = toUTCMidnight(new Date());
 
@@ -104,6 +104,7 @@ async function createEntranceExamLearner() {
         ],
       },
     },
+    ...(dailyMinutes === undefined ? {} : { dailyMinutes }),
     examBlueprintId: blueprint.id,
     kind: "exam",
     targetDate: new Date(today.getTime() + 90 * MS_PER_DAY),
@@ -179,6 +180,17 @@ describe("an entrance exam plan's challenges", () => {
     const { goal } = await createEntranceExamLearner();
 
     await expect(getPlanTabView({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+    expect(logError).not.toHaveBeenCalled();
+  });
+
+  // The Plan's daily-time advice plans this learner at 5 minutes a day: each pass's challenges kept
+  // the teaching the pass before laid out from the mock's funding, which spread it again a little
+  // differently, so the same days, lessons and minutes never settled.
+  it("settles the plan at 5 minutes a day without placing its challenges after the fact", async () => {
+    const { goal } = await createEntranceExamLearner({ dailyMinutes: 5 });
+    const bosses = await planBosses(goal.id);
+
+    expect(bosses.length).toBeGreaterThan(0);
     expect(logError).not.toHaveBeenCalled();
   });
 

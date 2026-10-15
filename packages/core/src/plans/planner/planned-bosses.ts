@@ -105,8 +105,8 @@ function keepLater({
 /**
  * Whether a pass holds, with what the next pass would keep from mocks' funding (`testedTeaching`,
  * see `listTestedTeaching`): its challenges' minutes and days are the ones it was built with, and
- * that teaching is what it was built keeping (`kept`). Same days and minutes alone don't settle a
- * plan whose next pass would fund its mocks differently.
+ * that teaching is on the days it was built keeping (`kept`, see `isSameTeaching`). Same days and
+ * minutes alone don't settle a plan whose next pass would keep other days from its mocks' funding.
  */
 function checkPass({
   built,

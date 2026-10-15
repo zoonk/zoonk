@@ -55,8 +55,10 @@ export function listTestedTeaching({
 
 /**
  * The protection a run's challenges give their teaching, as text that doesn't depend on order:
- * each challenge's day, then each lesson it tests with its lesson minutes day by day (rounded as
- * the funding rounds them, see `getKeptMinutes`).
+ * each challenge's day, then each lesson it tests with the days it takes time on. Not how much
+ * time: what a pass keeps changes the funding, which spreads a lesson over its days a little
+ * differently, which the next pass keeps, and so on, ever closer and never equal (the entrance
+ * exam's plan at 5 minutes a day took 29 passes to agree to the billionth of a minute).
  */
 function digestTeaching(tested: TestedTeaching | undefined): string {
   return (tested ?? [])
@@ -68,7 +70,8 @@ function digestTeaching(tested: TestedTeaching | undefined): string {
             [
               key,
               ...[...days]
-                .map(([day, minutes]) => `${day}=${Math.round(minutes / KEPT_PRECISION)}`)
+                .filter(([, minutes]) => minutes > 0)
+                .map(([day]) => day)
                 .toSorted(),
             ].join(","),
           )
@@ -79,7 +82,7 @@ function digestTeaching(tested: TestedTeaching | undefined): string {
     .join("|");
 }
 
-/** Whether two runs' challenges keep the same teaching from mocks' funding (see `digestTeaching`). */
+/** Whether two runs' challenges keep the same teaching on the same days (see `digestTeaching`). */
 export function isSameTeaching(first?: TestedTeaching, second?: TestedTeaching): boolean {
   return digestTeaching(first) === digestTeaching(second);
 }

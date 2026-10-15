@@ -196,8 +196,8 @@ describe("a change the learner didn't make names the topics it moves", () => {
         .map((item) => [item.phase, item.scheduledFor?.toISOString().slice(0, 10)]),
     ).toStrictEqual([
       [0, "2020-10-01"],
-      [1, "2020-10-06"],
-      [2, "2020-10-08"],
+      [1, "2020-10-04"],
+      [2, "2020-10-10"],
     ]);
 
     if (!known) {
@@ -262,5 +262,47 @@ describe("a change the learner didn't make names the topics it moves", () => {
       added: difference(after, before),
       leftOut,
     });
+  });
+});
+
+describe("a plan whose challenges settled", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-09-28T00:00:00Z"),
+      currentInstant: NOW,
+      timeZone: "UTC",
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Its challenges settle on the days their teaching takes, not on the minutes a mock's funding
+  // leaves each of them: planned again with nothing new, it keeps the funding it was made with.
+  it("keeps its mock funding when planned again with nothing new", async () => {
+    const { goal, plan } = await setup({
+      dailyMinutes: 9,
+      daysAway: 14,
+      lessonMinutes: 7,
+      mockMinutes: 30,
+    });
+
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await expect(refreshGoalPlan({ goalId: goal.id, pace: "saved" })).resolves.toStrictEqual({
+      status: "unchanged",
+    });
+
+    const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(after.version).toBe(before.version);
+
+    expect(parsePlanSettings(after.settings).mockFunding).toStrictEqual(
+      parsePlanSettings(before.settings).mockFunding,
+    );
   });
 });
