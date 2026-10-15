@@ -22,11 +22,12 @@ test.describe("Learning tabs command palette", () => {
     await page.goto("/today");
 
     // Cmd/Ctrl+K opens the palette anywhere; on a laptop the sidebar's field opens the same one.
-    await expect(
-      page
-        .getByRole("complementary", { name: "Sidebar" })
-        .getByRole("button", { name: "Search or ask…" }),
-    ).toBeVisible();
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+    await expect(sidebar.getByRole("button", { name: "Search or ask…" })).toBeVisible();
+
+    // Once the learner is read (their exam joins the sidebar), the palette opens on all of theirs:
+    // one opened before keeps the places every learner has (`learner-frame-paint`).
+    await expect(sidebar.getByRole("link", { name: "Exam" })).toBeVisible();
 
     const palette = await openPaletteWithKeyboard(page);
 

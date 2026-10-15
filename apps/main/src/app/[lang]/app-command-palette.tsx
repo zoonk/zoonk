@@ -6,12 +6,10 @@ import {
 } from "@/app/[lang]/(app)/(catalog)/_components/command-palette-event";
 import { getLearnerSummaryState, subscribeToLearnerSummary } from "@/lib/learner/learner-store";
 import { hasSessionHint } from "@/lib/learner/session-hint";
+import { runWhenIdle } from "@/lib/run-when-idle";
 import { Suspense, lazy, useEffect, useState, useSyncExternalStore } from "react";
 
 const loadPalette = () => import("./app-command-palette-dialog");
-
-/** Where the browser can't say when it's idle, the palette's code loads this long after the page. */
-const PRELOAD_DELAY_MS = 2000;
 const AppCommandPaletteDialog = lazy(loadPalette);
 
 /** How many frames are mounted: a visitor's Cmd/Ctrl+K opens the palette only in the app's frame. */
@@ -70,13 +68,7 @@ function usePreloadOnIdle() {
       return;
     }
 
-    if (!("requestIdleCallback" in globalThis)) {
-      const timer = setTimeout(() => void loadPalette(), PRELOAD_DELAY_MS);
-      return () => clearTimeout(timer);
-    }
-
-    const idle = requestIdleCallback(() => void loadPalette());
-    return () => cancelIdleCallback(idle);
+    return runWhenIdle(() => void loadPalette());
   }, []);
 }
 
