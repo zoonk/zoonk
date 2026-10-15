@@ -82,10 +82,11 @@ function getSessionUserUpdate({
   currentUser: CurrentUser;
   input: CurrentUserUpdate;
 }): CurrentUserUpdate {
+  const username = input.username === undefined ? undefined : normalizeUsername(input.username);
+
   return {
     ...(input.name !== undefined && input.name !== currentUser.name && { name: input.name }),
-    ...(input.username !== undefined &&
-      input.username !== currentUser.username && { username: input.username }),
+    ...(username !== undefined && username !== currentUser.username && { username }),
   };
 }
 
