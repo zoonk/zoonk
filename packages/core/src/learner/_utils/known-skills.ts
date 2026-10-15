@@ -5,6 +5,7 @@ import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
+import { unchanged, writeLearnerChange } from "./write-learner-change";
 
 /**
  * Records skills placement takes as known (each one's own answers confirmed it) as one right answer
@@ -33,14 +34,20 @@ export async function markSkillsKnown({
     timeZone,
   });
 
-  await prisma.learnerSkill.createMany({
-    data: skillIds.map((skillId) => ({ ...memory, skillId, userId })),
-    skipDuplicates: true,
-  });
+  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const created = await tx.learnerSkill.createMany({
+      data: skillIds.map((skillId) => ({ ...memory, skillId, userId })),
+      skipDuplicates: true,
+    });
 
-  await prisma.learnerSkill.updateMany({
-    data: memory,
-    where: { reps: 0, skillId: { in: [...skillIds] }, userId },
+    const updated = await tx.learnerSkill.updateMany({
+      data: memory,
+      where: { reps: 0, skillId: { in: [...skillIds] }, userId },
+    });
+
+    if (created.count === 0 && updated.count === 0) {
+      return unchanged(null);
+    }
   });
 }
 
@@ -57,11 +64,13 @@ async function insertTestedOutStandIns({
   skills,
   testedOutAt,
   timeZone,
+  userId,
 }: {
   goalId: string;
   skills: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
+  userId: string;
 }): Promise<string[]> {
   const names = await prisma.skill.findMany({
     select: { id: true, name: true },
@@ -70,12 +79,12 @@ async function insertTestedOutStandIns({
 
   const nameOf = new Map(names.map((skill) => [skill.id, skill.name]));
 
-  return prisma.$transaction(async (tx) => {
+  return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const [plan] = await tx.$queryRaw<{ id: string }[]>`
       UPDATE plans SET version = version + 1 WHERE goal_id = ${goalId}::uuid RETURNING id`;
 
     if (!plan) {
-      return [];
+      return unchanged([]);
     }
 
     const [last, planned] = await Promise.all([
@@ -92,6 +101,11 @@ async function insertTestedOutStandIns({
 
     const plannedIds = new Set(planned.map((item) => item.skillId));
     const missing = skills.filter((skill) => !plannedIds.has(skill.id));
+
+    if (missing.length === 0) {
+      return unchanged([]);
+    }
+
     const after = (last?.position ?? -1) + 1;
 
     const created = await tx.planItem.createManyAndReturn({
@@ -127,6 +141,7 @@ async function addTestedOutStandIns({
   placedSkills,
   testedOutAt,
   timeZone,
+  userId,
 }: {
   goalId: string;
   items: readonly GoalPlanItem[];
@@ -134,6 +149,7 @@ async function addTestedOutStandIns({
   placedSkills: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
+  userId: string;
 }): Promise<string[]> {
   const planned = new Set(items.flatMap((item) => item.skillIds));
 
@@ -143,7 +159,29 @@ async function addTestedOutStandIns({
 
   return leftOut.length === 0
     ? []
-    : insertTestedOutStandIns({ goalId, skills: leftOut, testedOutAt, timeZone });
+    : insertTestedOutStandIns({ goalId, skills: leftOut, testedOutAt, timeZone, userId });
+}
+
+/** The guarded transition and its marker commit together, including when a retry has stale items. */
+async function testOutPlanItems({
+  ids,
+  testedOutAt,
+  userId,
+}: {
+  ids: readonly string[];
+  testedOutAt: Date;
+  userId: string;
+}): Promise<void> {
+  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const updated = await tx.planItem.updateMany({
+      data: { completedAt: testedOutAt, status: "testedOut" },
+      where: { id: { in: [...ids] }, status: "todo" },
+    });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
+  });
 }
 
 /**
@@ -195,14 +233,23 @@ export async function markPlanItemsTestedOut({
     )
     .map((item) => item.id);
 
+  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
+
+  if (!goal) {
+    return { changeId: null, lessonsSkipped: 0, planItemIds: [] };
+  }
+
   const [standInIds] = await Promise.all([
-    addTestedOutStandIns({ goalId, items, knownSkillIds, placedSkills, testedOutAt, timeZone }),
-    ids.length > 0
-      ? prisma.planItem.updateMany({
-          data: { completedAt: testedOutAt, status: "testedOut" },
-          where: { id: { in: ids }, status: "todo" },
-        })
-      : null,
+    addTestedOutStandIns({
+      goalId,
+      items,
+      knownSkillIds,
+      placedSkills,
+      testedOutAt,
+      timeZone,
+      userId: goal.userId,
+    }),
+    ids.length > 0 ? testOutPlanItems({ ids, testedOutAt, userId: goal.userId }) : null,
   ]);
 
   const planItemIds = [...ids, ...standInIds];

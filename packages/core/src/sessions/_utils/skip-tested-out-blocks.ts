@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionStatus, prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 
 /** A day that ended keeps what happened in it; days still running or ahead move on. */
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
@@ -49,13 +50,16 @@ export async function skipTestedOutBlocks({
   notStarted?: boolean;
   planItemIds: readonly string[];
 }): Promise<void> {
-  const lessonIds = await loadItemLessonIds(planItemIds);
+  const [goal, lessonIds] = await Promise.all([
+    prisma.goal.findUnique({ where: { id: goalId } }),
+    loadItemLessonIds(planItemIds),
+  ]);
 
-  if (lessonIds.length === 0) {
+  if (!goal || lessonIds.length === 0) {
     return;
   }
 
-  await prisma.$transaction(async (tx) => {
+  await writeLearnerChange({ userId: goal.userId }, async (tx) => {
     /** Bulk transitions use the queue's block order rather than the UPDATE scan order. */
     const blocks = await tx.$queryRaw<{ id: string }[]>`
       SELECT block.id FROM study_session_blocks AS block
@@ -66,7 +70,11 @@ export async function skipTestedOutBlocks({
       ORDER BY block.id FOR UPDATE OF block
     `;
 
-    await tx.studySessionBlock.updateMany({
+    if (blocks.length === 0) {
+      return unchanged(null);
+    }
+
+    const updated = await tx.studySessionBlock.updateMany({
       data: { status: "skipped" },
       where: {
         id: { in: blocks.map((block) => block.id) },
@@ -76,5 +84,9 @@ export async function skipTestedOutBlocks({
         status: { in: notStarted ? ["active", "pending"] : ["active"] },
       },
     });
+
+    if (updated.count === 0) {
+      return unchanged(null);
+    }
   });
 }

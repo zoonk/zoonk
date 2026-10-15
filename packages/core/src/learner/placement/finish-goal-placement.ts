@@ -1,10 +1,11 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
 import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { applyPlacement } from "./_utils/apply-placement";
 import { type PlacementCompletionInput } from "./placement-contract";
 import {
@@ -41,11 +42,18 @@ export type FinishPlacementResult =
 
 /** "Start from scratch" is remembered, so the first week's sessions don't ask placement questions. */
 async function declinePlacement(goal: Goal) {
-  const details = isJsonObject(goal.details) ? goal.details : {};
+  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUnique({ where: { id: goal.id } });
+    const details = isJsonObject(current?.details) ? current.details : {};
 
-  await prisma.goal.update({
-    data: { details: { ...details, placementDeclined: true } },
-    where: { id: goal.id },
+    if (!current || details.placementDeclined === true) {
+      return unchanged(null);
+    }
+
+    await tx.goal.update({
+      data: { details: { ...details, placementDeclined: true } },
+      where: { id: goal.id },
+    });
   });
 }
 
