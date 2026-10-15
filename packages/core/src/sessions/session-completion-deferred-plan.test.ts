@@ -244,7 +244,8 @@ describe("the completion moment precedes replanning", () => {
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual({
       ...before,
-      inputVersion: before.inputVersion + 1,
+      // Block completion and session completion each mark their own transaction.
+      inputVersion: before.inputVersion + 2,
     });
 
     await deferred.run();
