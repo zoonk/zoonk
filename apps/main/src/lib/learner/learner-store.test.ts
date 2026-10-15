@@ -71,18 +71,23 @@ async function settle() {
 
 /**
  * A browser holding a session (per its hint) on a page whose render streams a seed, or not; the
- * learner can move to a seeded page later (`page.seeded = true`), and another tab can `announce`
- * whose session it read.
+ * learner can move to a seeded page later (`page.seeded = true`), the tab can mark a session it
+ * made (`markSession`), and another tab can `announce` whose session it read.
  */
 function stubPage({ seeded }: { seeded: boolean }) {
   const page = { seeded };
+  const place = { pathname: "/start" };
 
-  vi.stubGlobal("document", {
+  vi.stubGlobal("location", place);
+
+  const browser = {
     addEventListener: vi.fn(),
     cookie: "zoonk-signed-in=1",
     querySelector: () => (page.seeded ? {} : null),
     visibilityState: "visible",
-  });
+  };
+
+  vi.stubGlobal("document", browser);
 
   // What another tab says about the session reaches this one through its channel.
   const tabs: ((event: { data: unknown }) => void)[] = [];
@@ -98,7 +103,16 @@ function stubPage({ seeded }: { seeded: boolean }) {
     },
   );
 
-  return { announce: (data: unknown) => tabs.forEach((listener) => listener({ data })), page };
+  return {
+    announce: (data: unknown) => tabs.forEach((listener) => listener({ data })),
+    goTo: (pathname: string) => {
+      place.pathname = pathname;
+    },
+    markSession: () => {
+      browser.cookie = "zoonk-signed-in=1";
+    },
+    page,
+  };
 }
 
 function heldLearner(store: { getLearnerSummaryState: () => { status: string } }) {
@@ -461,5 +475,290 @@ describe("the summary after this tab's writes", () => {
     store.catchUpLearnerSummary({ generation: generation - 1, revision: "3", userId: "first" });
 
     expect(reads).toHaveLength(1);
+  });
+});
+
+/**
+ * A fresh store whose pages report each time they read themselves again (`redraw`), with the
+ * pages' own module (`pages`) as the store loaded it.
+ */
+async function watchRedraws() {
+  const store = await loadStore();
+  const pages = await import("./learner-pages");
+  const redraw = vi.fn();
+  pages.onLearnerIdentityChange(redraw);
+  return { pages, redraw, store };
+}
+
+describe("pages drawn for the session before", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("are read again when another tab signs the learner out and back in", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "ready", summary: learner });
+
+    // Another tab signs out: the Plan showed the learner.
+    announce({ identity: null });
+    reads[0]?.resolve({ readAt: Date.now(), status: "visitor" });
+    await settle();
+    expect(redraw).toHaveBeenCalledOnce();
+
+    // ...and signs back in: the Plan drawn since asks them to log in.
+    announce({ identity: learner.identity });
+    reads[1]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledTimes(2);
+  });
+
+  it("are read again when a page drawn signed out sees another tab sign in", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+
+    announce({ identity: learner.identity });
+    reads[0]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+    expect(store.getHeldLearnerId()).toBe("first");
+  });
+
+  it("are read again when another tab signs in before the page's own seed arrives", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    // The page is on its way, drawn signed out, when another tab signs in.
+    store.ensureLearnerSummary();
+    announce({ identity: learner.identity });
+    reads[0]?.resolve({ status: "ready", summary: learner });
+    await settle();
+    expect(redraw).not.toHaveBeenCalled();
+
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    reads[1]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("are read again once a check that failed is asked again", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+
+    announce({ identity: learner.identity });
+    reads[0]?.reject(new Error("offline"));
+    await settle();
+
+    // The next page's seed (drawn signed out, too) asks again.
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    reads[1]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("aren't read again for the guest this tab made, whatever late seeds arrive", async () => {
+    const { announce, markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const guest = summaryOf("guest");
+
+    // The goal's page was drawn for a visitor, who starts a goal: the tab makes them a guest. Seeds
+    // of renders begun before arrive late (a visitor's, a previous learner's), and another tab opens
+    // as the same guest.
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    announce({ identity: guest.identity });
+    reads[0]?.resolve({ status: "ready", summary: guest });
+    await settle();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    store.mergeLearnerSummarySeed({ status: "ready", summary: summaryOf("previous") });
+    reads[1]?.resolve({ status: "ready", summary: guest });
+    await settle();
+
+    expect(store.getHeldLearnerId()).toBe("guest");
+    expect(redraw).not.toHaveBeenCalled();
+  });
+
+  it("aren't read again for this tab's guest when a page's late seed arrives after its read", async () => {
+    const { markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const guest = summaryOf("guest");
+
+    // The store knew a visitor; /start's own seed is still on its way when the guest is made.
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: guest });
+    await settle();
+
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    reads[1]?.resolve({ status: "ready", summary: guest });
+    await settle();
+
+    expect(redraw).not.toHaveBeenCalled();
+  });
+
+  it("aren't read again for this tab's guest after a late visitor announcement", async () => {
+    const { announce, markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+
+    // Another tab read nobody before the guest existed; its word and a late seed arrive after.
+    announce({ identity: null });
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    reads[0]?.resolve({ status: "ready", summary: summaryOf("guest") });
+    await settle();
+
+    expect(redraw).not.toHaveBeenCalled();
+  });
+
+  it("are read again for a learner another tab signed in while this tab's guest was on its way", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+
+    // Another tab signs in while this one waits for its guest, whose answer comes in between.
+    announce({ identity: learner.identity });
+    pages.adoptNewSession("guest");
+    reads[0]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("are read again for a page drawn signed out after this tab's guest", async () => {
+    const { announce, markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+    reads[0]?.reject(new Error("offline"));
+    await settle();
+
+    // Another tab signs out, the learner opens the Plan here (drawn signed out), then signs in.
+    announce({ identity: null });
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    announce({ identity: learner.identity });
+    reads[1]?.resolve({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("are read again for a page drawn signed out before this tab's guest, opened again", async () => {
+    const { goTo, markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const guest = summaryOf("guest");
+
+    // The Plan was drawn signed out; the learner starts a goal on /start, then goes back to the Plan.
+    goTo("/plan");
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    goTo("/start");
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+    reads[0]?.resolve({ status: "ready", summary: guest });
+    await settle();
+    expect(redraw).not.toHaveBeenCalled();
+
+    goTo("/plan");
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    reads[1]?.resolve({ status: "ready", summary: guest });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("are read again for another learner's page that arrives after they signed out elsewhere", async () => {
+    const { announce, goTo, markSession } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { pages, redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    store.mergeLearnerSummarySeed({ status: "visitor" });
+    pages.adoptNewSession("guest");
+    markSession();
+    store.ensureLearnerSummary();
+    reads[0]?.reject(new Error("offline"));
+    await settle();
+
+    // Another tab signs in as someone else; the check fails. This tab opens their Plan, and the
+    // other tab signs out before the Plan's seed arrives: the check now finds nobody.
+    announce({ identity: learner.identity });
+    reads[1]?.reject(new Error("offline"));
+    await settle();
+    goTo("/plan");
+    store.mergeLearnerSummarySeed({ status: "ready", summary: learner });
+    reads[2]?.resolve({ readAt: Date.now(), status: "visitor" });
+    await settle();
+
+    expect(redraw).toHaveBeenCalledOnce();
+  });
+
+  it("aren't read again when another tab opens as the same learner while the page loads", async () => {
+    const { announce } = stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const { redraw, store } = await watchRedraws();
+    const learner = summaryOf("first");
+
+    store.ensureLearnerSummary();
+    announce({ identity: learner.identity });
+    reads[0]?.resolve({ status: "ready", summary: learner });
+    await settle();
+    store.mergeLearnerSummarySeed({ status: "ready", summary: learner });
+    await settle();
+
+    expect(redraw).not.toHaveBeenCalled();
   });
 });

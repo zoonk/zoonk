@@ -115,7 +115,6 @@ export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
   channel: BroadcastChannel | null;
   generation: number;
-  identityListeners: Set<() => void>;
   inFlight: { generation: number; promise: Promise<void> } | null;
   installed: boolean;
   listeners: Set<() => void>;

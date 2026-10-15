@@ -1,4 +1,5 @@
 import { type LearnerIdentity, type LearnerSummary } from "@zoonk/core/learner/summary/contract";
+import { notePageSeed, redrawPages, redrawStalePages } from "./learner-pages";
 import {
   type LearnerRevisionNote,
   type LearnerStore,
@@ -41,7 +42,6 @@ const store: LearnerStore = {
   changeTimer: undefined,
   channel: null,
   generation: 0,
-  identityListeners: new Set(),
   inFlight: null,
   installed: false,
   listeners: new Set(),
@@ -120,7 +120,7 @@ function replaceIdentity(snapshot: Snapshot) {
   announce(snapshot);
 
   if (confirmed) {
-    store.identityListeners.forEach((listener) => listener());
+    redrawPages(getHeldIdentity());
   }
 }
 
@@ -198,6 +198,7 @@ function readLearnerSummary({ verify = false }: { verify?: boolean } = {}): Prom
         if (store.generation === sent) {
           store.verifying = null;
           accept(snapshot, { fresh: true });
+          redrawStalePages(getHeldIdentity());
         }
       },
       () => {
@@ -341,6 +342,7 @@ export function ensureLearnerSummary(): void {
 /** Takes what a page's server render read (`LearnerSummarySeed`). */
 export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
   install();
+  notePageSeed(seed);
 
   // Who holds the session is being checked: only a read settles it (asked again if it failed).
   if (store.verifying !== null) {
@@ -441,10 +443,4 @@ export function getServerLearnerSummaryState(): LearnerSummaryState {
 export function subscribeToLearnerSummary(listener: () => void): () => void {
   store.listeners.add(listener);
   return () => store.listeners.delete(listener);
-}
-
-/** Runs when the identity the pages showed changed: they read themselves again. */
-export function onLearnerIdentityChange(listener: () => void): () => void {
-  store.identityListeners.add(listener);
-  return () => store.identityListeners.delete(listener);
 }

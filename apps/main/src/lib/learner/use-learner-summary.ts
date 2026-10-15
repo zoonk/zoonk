@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
+import { onLearnerIdentityChange } from "./learner-pages";
 import { type LearnerSummaryState } from "./learner-snapshot";
 import {
   ensureLearnerSummary,
   getLearnerSummaryState,
   getServerLearnerSummaryState,
-  onLearnerIdentityChange,
   subscribeToLearnerSummary,
 } from "./learner-store";
 

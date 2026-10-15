@@ -1,3 +1,4 @@
+import { adoptNewSession } from "@/lib/learner/learner-pages";
 import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { hasSessionHint, setSessionHint } from "@/lib/learner/session-hint";
 import { safeAsync } from "@zoonk/utils/error";
@@ -34,13 +35,15 @@ async function startGuestSession(): Promise<boolean> {
     return true;
   }
 
-  const { error } = await authClient.signIn.anonymous();
+  const { data: guest, error } = await authClient.signIn.anonymous();
 
   if (error) {
     logError("[ensureGuestSession] Could not start a guest session:", error);
     return false;
   }
 
+  // The page that made the guest goes on as them: their summary doesn't read it again.
+  adoptNewSession(guest.user.id);
   await markSession();
   return true;
 }

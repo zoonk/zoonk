@@ -1,12 +1,12 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { safeAsync } from "@zoonk/utils/error";
+import { onLearnerIdentityChange } from "./learner-pages";
 import { type LearnerRevisionNote } from "./learner-snapshot";
 import {
   catchUpLearnerSummary,
   getHeldLearnerId,
   getLearnerGeneration,
   getLearnerSummaryState,
-  onLearnerIdentityChange,
   subscribeToLearnerSummary,
 } from "./learner-store";
 import {

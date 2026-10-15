@@ -1,8 +1,9 @@
 import { instant } from "@next/playwright";
-import { type BrowserContext, type Page } from "@playwright/test";
+import { type BrowserContext, type Page, request as apiRequest } from "@playwright/test";
+import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "@zoonk/core/auth/ott/state";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
-import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { type E2EUser, createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -487,26 +488,117 @@ test.describe("learner summary", () => {
     await catalogPalette.getByRole("option", { name: /^Explore courses/u }).click();
     await page.waitForURL(/\/courses$/u);
 
-    // The learner logs out in another tab.
-    const other = await context.newPage();
-    await mockCentralSignOut(other);
-    await other.setViewportSize({ height: 900, width: 1440 });
-    await other.goto("/settings");
-
-    const account = sidebar(other).getByRole("button", { name: /User menu$/u });
-    await account.click();
-
-    await Promise.all([
-      other.waitForEvent("framenavigated", { predicate: (frame) => frame === other.mainFrame() }),
-      other.getByRole("menuitem", { name: "Log out" }).click(),
-    ]);
+    await logOutInAnotherTab(context);
 
     await expect(sidebar(page).getByRole("link", { name: "Log in" })).toBeVisible();
     await expect(sidebar(page).getByRole("link", { name: /missions today/u })).toHaveCount(0);
 
     await context.close();
   });
+
+  test("gives a page back to the learner who signs in again in another tab", async ({
+    browser,
+  }) => {
+    const { name, user } = await createGoalLearner();
+    const context = await browser.newContext({ storageState: user.storageState });
+    const page = await openAs(context, "/plan");
+    const gate = loginGate(page);
+
+    await expect(accountRow(page, name)).toBeVisible();
+    await expect(gate).toHaveCount(0);
+
+    // Logged out in another tab, the Plan asks the visitor to log in...
+    await logOutInAnotherTab(context);
+    await expect(gate).toBeVisible();
+
+    // ...until the learner signs in again there: the Plan is theirs again, not only the frame.
+    await signInInAnotherTab({ context, user });
+    await expect(accountRow(page, name)).toBeVisible();
+    await expect(gate).toBeHidden();
+    await expect(planGoal(page)).toBeVisible();
+
+    await context.close();
+  });
+
+  test("gives a page opened signed out to the learner who signs in in another tab", async ({
+    browser,
+  }) => {
+    const { name, user } = await createGoalLearner();
+    const context = await browser.newContext();
+    const page = await openAs(context, "/plan");
+    const gate = loginGate(page);
+
+    await expect(gate).toBeVisible();
+
+    await signInInAnotherTab({ context, user });
+    await expect(accountRow(page, name)).toBeVisible();
+    await expect(gate).toBeHidden();
+    await expect(planGoal(page)).toBeVisible();
+
+    await context.close();
+  });
 });
+
+/** The learner's goal in the Plan's body, which a signed-out Plan never names. */
+function planGoal(page: Page) {
+  return page
+    .getByRole("main")
+    .getByText(/Bake sourdough bread/u)
+    .first();
+}
+
+/** A gated page's way in, where its body would be. */
+function loginGate(page: Page) {
+  return page.getByRole("main").getByRole("heading", { level: 2, name: "Log in to continue" });
+}
+
+/** Logs the learner out from another tab's account menu, as they would. */
+async function logOutInAnotherTab(context: BrowserContext) {
+  const other = await context.newPage();
+  await mockCentralSignOut(other);
+  await other.setViewportSize({ height: 900, width: 1440 });
+  await other.goto("/settings");
+
+  await sidebar(other)
+    .getByRole("button", { name: /User menu$/u })
+    .click();
+
+  await Promise.all([
+    other.waitForEvent("framenavigated", { predicate: (frame) => frame === other.mainFrame() }),
+    other.getByRole("menuitem", { name: "Log out" }).click(),
+  ]);
+}
+
+/**
+ * Signs the learner in from another tab through the auth callback, as a real sign-in ends, with a
+ * token from a new session of theirs (a logout ended the one they had).
+ */
+async function signInInAnotherTab({ context, user }: { context: BrowserContext; user: E2EUser }) {
+  const auth = await apiRequest.newContext({ baseURL: getBaseURL() });
+
+  const signIn = await auth.post("/api/auth/sign-in/email", {
+    data: { email: user.email, password: user.password },
+  });
+
+  expect(signIn.ok()).toBe(true);
+  const storageState = await auth.storageState();
+  await auth.dispose();
+
+  const token = await generateOneTimeToken(getBaseURL(), { ...user, storageState });
+  const state = crypto.randomUUID();
+
+  await context.addCookies([
+    { name: ONE_TIME_TOKEN_LOGIN_STATE_COOKIE, sameSite: "Lax", url: getBaseURL(), value: state },
+  ]);
+
+  const other = await context.newPage();
+
+  await other.goto(
+    `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}`,
+  );
+
+  await other.waitForURL(/\/today$/u);
+}
 
 /** Replaces the context's session with another learner's, as signing in in another tab does. */
 async function signInAs({ context, user }: { context: BrowserContext; user: E2EUser }) {
