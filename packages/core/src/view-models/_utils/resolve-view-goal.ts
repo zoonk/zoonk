@@ -9,7 +9,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 
 export type ViewGoalResult =
@@ -46,7 +46,7 @@ export async function resolveViewGoal(goalId?: string): Promise<ViewGoalResult> 
     return { status: "noGoal" };
   }
 
-  const owned = await findOwnedGoal(id);
+  const owned = await getOwnedGoal(id);
 
   return owned.status === "ready" ? { goal: owned.goal, status: "ready" } : owned;
 }

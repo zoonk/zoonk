@@ -4,10 +4,10 @@ import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { type GoalSkillNode } from "./_utils/goal-skill-graph";
-import { findOwnedGoal } from "./_utils/owned-goal";
 import { readGoalPlan } from "./_utils/read-goal-plan";
 import { type SkillStatus, toSkillStatus } from "./_utils/skill-status";
 import { type SkillListInput } from "./contract";
+import { getOwnedGoal } from "./get-owned-goal";
 import { type SkillStateCounts, countSkillStates } from "./mastery-state";
 
 /** A skill as a study card: the idea on the front, an example on the back, and its memory. */
@@ -115,7 +115,7 @@ export async function listCurrentUserSkills(input: SkillListInput): Promise<Curr
   cacheTag(getLearnerModelCacheTag(userId));
 
   if (input.goalId) {
-    const owned = await findOwnedGoal(input.goalId);
+    const owned = await getOwnedGoal(input.goalId);
 
     if (owned.status !== "ready") {
       return owned;

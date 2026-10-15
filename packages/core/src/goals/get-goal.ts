@@ -5,7 +5,7 @@ import {
   getLearningProfileCacheTag,
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { getOwnedGoal } from "../learner/get-owned-goal";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
 
@@ -17,7 +17,7 @@ export type GoalResult =
 export async function getGoal(goalId: string): Promise<GoalResult> {
   "use cache: private";
 
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;

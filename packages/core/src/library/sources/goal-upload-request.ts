@@ -5,6 +5,7 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
 
@@ -40,7 +41,7 @@ export async function getGoalUploadRequest({
 }): Promise<GoalUploadRequestResult> {
   "use cache: private";
 
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;

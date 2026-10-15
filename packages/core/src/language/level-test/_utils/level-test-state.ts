@@ -2,7 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
-import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
+import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
@@ -79,8 +79,11 @@ export async function saveLevelTestProgress({
  * One of the learner's language goals with its test so far and the pair's questions, or since
  * when they're being written. Read-only: the questions are written by a workflow.
  */
-export async function loadLevelTestContext(goalId: string): Promise<LevelTestContext> {
-  const owned = await findOwnedGoal(goalId);
+export async function loadLevelTestContext(
+  goalId: string,
+  knownOwned?: OwnedGoal,
+): Promise<LevelTestContext> {
+  const owned = knownOwned ?? (await findOwnedGoal(goalId));
 
   if (owned.status !== "ready") {
     return owned;

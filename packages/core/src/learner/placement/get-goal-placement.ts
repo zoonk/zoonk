@@ -1,7 +1,8 @@
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
-import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
+import { getAnswerTimeZone } from "../_utils/owned-goal";
+import { getOwnedGoal } from "../get-owned-goal";
 import { type PlacementState, loadPlacementState } from "./_utils/load-placement-state";
 import { getOwnLevel } from "./placement-contract";
 import { type OwnLevel } from "./placement-steps";
@@ -27,7 +28,7 @@ export async function getGoalPlacement({
   /** The learner's timezone, so the day's few minutes of placement follow their day. */
   timeZone?: string;
 }): Promise<GoalPlacementResult> {
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;

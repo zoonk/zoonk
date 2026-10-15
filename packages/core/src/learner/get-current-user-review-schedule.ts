@@ -5,9 +5,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getSession } from "../users/get-session";
 import { loadGoalSkillIds } from "./_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "./_utils/local-time";
-import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
+import { getAnswerTimeZone } from "./_utils/owned-goal";
 import { type ReviewScheduleInput } from "./contract";
 import { getSkillRetrievability } from "./fsrs-scheduler";
+import { getOwnedGoal } from "./get-owned-goal";
 import {
   type ReviewCandidate,
   forecastReviewLoad,
@@ -40,7 +41,7 @@ async function resolveGoal(goalId: string | undefined) {
     return { goal: null };
   }
 
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
   return owned.status === "ready" ? { goal: owned.goal } : null;
 }
 

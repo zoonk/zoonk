@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { hasStudyGoal } from "../../goals/_utils/study-goal";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { type PlayableLibraryLesson } from "../../lesson-player/contract";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { readRelatedQuestions } from "../../library/explanations/save-explanation";
@@ -88,7 +88,7 @@ async function findExplanationLessonId(goalId: string): Promise<string | null> {
 export async function getExplanation({ goalId }: { goalId: string }): Promise<ExplanationResult> {
   "use cache: private";
 
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
 
   if (owned.status !== "ready" || owned.goal.kind !== "explain") {
     return owned.status === "unauthorized" ? owned : { status: "notFound" };
