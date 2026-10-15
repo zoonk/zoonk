@@ -7,7 +7,7 @@ import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
-import { type SkillRequirement, isCredited } from "./selected-requirement";
+import { type SkillRequirement, isCompleted } from "./selected-requirement";
 
 /** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
@@ -84,7 +84,7 @@ function sumRawBefore({
 }
 
 /**
- * The raw minutes each of the plan's written lessons covers by the deadline: whole when credited,
+ * The raw minutes each of the plan's written lessons covers by the deadline: whole when completed,
  * else its time's portions on days before it, so a long lesson that runs past the deadline counts
  * only what comes before. A lesson the plan doesn't hold covers nothing.
  */
@@ -105,7 +105,7 @@ function listCoveredLessons({
         return [];
       }
 
-      if (isCredited(item)) {
+      if (isCompleted(item)) {
         return [[item.lessonId, minutes] as const];
       }
 

@@ -44,9 +44,9 @@ export function readRequirement(input: BuildPlanInput): Map<string, SkillRequire
   );
 }
 
-/** Whether an item's work is credited whole: the learner did it, or showed they know it. */
-export function isCredited(item: Pick<PlannedItem, "status">): boolean {
-  return item.status === "done" || item.status === "testedOut";
+/** Completion credits the shared lesson; a test-out credits only its settled skill (see `listSettled`). */
+export function isCompleted(item: Pick<PlannedItem, "status">): boolean {
+  return item.status === "done";
 }
 
 /** The skills the learner settled: tested out, or known, as the plan reads them. */
@@ -78,14 +78,14 @@ export function sumRequirement({
   const lessons = new Map(studied.flatMap(([, skill]) => [...skill.lessons]));
   const standIns = studied.reduce((sum, [, skill]) => sum + skill.standIn, 0);
 
-  const credited = new Set(
-    built.items.flatMap((item) => (item.lessonId && isCredited(item) ? [item.lessonId] : [])),
+  const completed = new Set(
+    built.items.flatMap((item) => (item.lessonId && isCompleted(item) ? [item.lessonId] : [])),
   );
 
   const totalRaw = [...lessons.values()].reduce((sum, minutes) => sum + minutes, standIns);
 
   const doneRaw = [...lessons].reduce(
-    (sum, [lessonId, minutes]) => (credited.has(lessonId) ? sum + minutes : sum),
+    (sum, [lessonId, minutes]) => (completed.has(lessonId) ? sum + minutes : sum),
     0,
   );
 
