@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { runDeferredWork } from "../../../_test-utils/deferred-work";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { finishStudyBlock } from "../../../sessions/finish-study-block";
 import { startStudyBlock } from "../../../sessions/start-study-block";
@@ -166,7 +167,9 @@ async function runStudyWithQuestions(
   const answers = session ? await playSession(runner, { index, sessionId: session.id, step }) : [];
 
   if (session && step.finish > 0) {
+    const finish = runDeferredWork();
     await stopStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
+    await finish();
   }
 
   runner.progressed ||= await hasFinishedToday(runner);
@@ -186,6 +189,7 @@ export async function runStudyDb(
   }
 
   const session = await openTodayDb(runner, index);
+  const finishDeferredWork = runDeferredWork();
   const sessionId = session?.id ?? "";
 
   const learn =
@@ -218,6 +222,8 @@ export async function runStudyDb(
     await stopStudySession({ input: { timeZone: "UTC" }, sessionId });
   }
 
+  /** Session-end planning belongs to this day, before its snapshot or the next learner action. */
+  await finishDeferredWork();
   runner.progressed ||= finishing.length > 0 || wins.length > 0;
   await recordDb(runner, { event: { kind: "session" }, label: "session", step: index });
 

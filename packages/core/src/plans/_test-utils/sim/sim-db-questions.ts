@@ -271,7 +271,9 @@ export async function playQuestionBlock({
     ];
   }, Promise.resolve([]));
 
+  const finish = runDeferredWork();
   await finishStudyBlock({ blockId: block.id, input, sessionId });
+  await finish();
   return answers;
 }
 

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { runDeferredWork } from "../../../_test-utils/deferred-work";
 import { adaptPlanFromMock } from "../../../exams/mocks/adapt-plan-from-mock";
 import { endMockBreak } from "../../../exams/mocks/end-mock-break";
 import { getMock } from "../../../exams/mocks/get-mock";
@@ -65,7 +66,9 @@ async function sitSections({
     });
   }, Promise.resolve());
 
+  const finish = runDeferredWork();
   const handedIn = await submitMockSection({ blockId, input: INPUT, section: current.section });
+  await finish();
   return handedIn.status === "next" ? sitSections({ blockId, knows }) : undefined;
 }
 
