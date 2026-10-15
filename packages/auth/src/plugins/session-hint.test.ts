@@ -273,6 +273,40 @@ describe("session hint", () => {
     expect(response.headers.get(SESSION_HINT_HEADER)).toBe("0");
   });
 
+  it.each([
+    ["a learner's tag", tagFor(randomUUID())],
+    ["a hint from before tags", "1"],
+    ["an unreadable hint", "junk"],
+  ])(
+    "drops %s kept without a session when a session read finds none, never saying nobody",
+    async (_, hint) => {
+      const response = await request({
+        cookie: `${SESSION_HINT_COOKIE}=${hint}`,
+        method: "GET",
+        path: "/get-session?disableCookieCache=true&disableRefresh=true",
+      });
+
+      expect(readSetCookies(response).has(SESSION_COOKIE)).toBe(false);
+      expect(getHint(response)).toMatchObject({ value: "" });
+      expect(getHint(response)?.attributes.get("max-age")).toBe("0");
+      expect(response.headers.get(SESSION_HINT_HEADER)).toBe("0");
+    },
+  );
+
+  it("writes nothing from a session read for a hint saying nobody or a live session's hint", async () => {
+    const { cookie } = await signUp();
+    const legacy = cookie.replace(/zoonk-signed-in=[^;]*/u, `${SESSION_HINT_COOKIE}=1`);
+
+    const responses = await Promise.all([
+      request({ cookie: `${SESSION_HINT_COOKIE}=0`, method: "GET", path: "/get-session" }),
+      request({ cookie: legacy, method: "GET", path: "/get-session?disableRefresh=true" }),
+    ]);
+
+    for (const response of responses) {
+      expect(response.headers.getSetCookie()).toStrictEqual([]);
+    }
+  });
+
   it("leaves the hint alone when a response doesn't touch the session cookie", async () => {
     const { cookie, email } = await signUp();
 

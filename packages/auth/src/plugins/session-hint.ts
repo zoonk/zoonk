@@ -47,7 +47,10 @@ function getReturnedHint({ returned, secret }: { returned: unknown; secret: stri
  * in or up, a guest's sign-in, a sign-in token, a renewal, signing out, a session found gone),
  * from the session cookie the browser keeps last, with its lifetime and scope. Nothing else
  * writes it, so an old response can only take the hint back together with the session it held.
- * Session reads also say whose session they found in a header, without writing anything.
+ * Session reads also say whose session they found in a header, without writing anything, except
+ * that a read finding no session drops a hint the browser kept without one (cleared session
+ * cookies, an old tab's write). Dropped, not `0`: an old answer landing after another tab signed in
+ * leaves that learner's tabs not knowing, never told nobody is there.
  * It runs after every other hook that can touch the session cookie and before `nextCookies`
  * hands the response's cookies to Next.js.
  */
@@ -60,8 +63,24 @@ const writeSessionHint = createAuthMiddleware(async (ctx) => {
     const hint =
       ctx.path === "/get-session" && getReturnedHint({ returned: ctx.context.returned, secret });
 
-    if (hint) {
-      ctx.setHeader(SESSION_HINT_HEADER, hint);
+    if (!hint) {
+      return;
+    }
+
+    ctx.setHeader(SESSION_HINT_HEADER, hint);
+
+    const kept = ctx.getCookie(SESSION_HINT_COOKIE);
+
+    if (hint === NO_SESSION_HINT && kept && kept !== NO_SESSION_HINT) {
+      const { domain, secure } = ctx.context.authCookies.sessionToken.attributes;
+
+      ctx.setCookie(SESSION_HINT_COOKIE, "", {
+        domain,
+        maxAge: 0,
+        path: "/",
+        sameSite: "lax",
+        secure,
+      });
     }
 
     return;
