@@ -2,6 +2,8 @@ import "server-only";
 import { captureMessage } from "@sentry/nextjs";
 import { prisma } from "@zoonk/db";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { getLiveCallLiability } from "./_utils/live-call-policy";
 import { accrueLiveCallLiability } from "./_utils/settle-live-call";
 import { closeLiveCallConnection } from "./close-live-call-connection";
 import { type CloseLiveCallResult } from "./live-call-contract";
@@ -51,7 +53,7 @@ export async function markLiveCallRecoveryUnconfirmed({
     return;
   }
 
-  const marked = await prisma.$transaction(async (transaction) => {
+  const marked = await writeLearnerChange({ userId: original.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: original.userId });
 
     const connection = await transaction.liveCallConnection.findUniqueOrThrow({
@@ -59,10 +61,20 @@ export async function markLiveCallRecoveryUnconfirmed({
     });
 
     if (connection.generation !== generation || connection.state === "closed") {
-      return false;
+      return unchanged(false);
     }
 
-    await accrueLiveCallLiability({ connection, now: new Date(), transaction });
+    const now = new Date();
+
+    if (
+      connection.recoveryUnconfirmedAt !== null &&
+      connection.costConfidence === "unconfirmed" &&
+      connection.liabilityMicros === getLiveCallLiability({ connection, now })
+    ) {
+      return unchanged(false);
+    }
+
+    await accrueLiveCallLiability({ connection, now, transaction });
 
     await transaction.liveCallConnection.update({
       data: { recoveryUnconfirmedAt: new Date() },

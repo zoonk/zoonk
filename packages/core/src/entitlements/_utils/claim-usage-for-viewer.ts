@@ -1,4 +1,4 @@
-import { type UsageKind, prisma } from "@zoonk/db";
+import { type UsageKind } from "@zoonk/db";
 import { type LiveCallReservationResult } from "../../language/conversations/live-call-contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type UsageDecision } from "../contract";
@@ -60,22 +60,30 @@ export async function claimLiveCallUsageForViewer(input: {
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
   try {
-    return await prisma.$transaction(async (transaction) => {
-      await lockUsageForViewer({ transaction, userId: input.viewer.userId });
+    return await writeLearnerChange<LiveCallReservationResult>(
+      { userId: input.viewer.userId },
+      async (transaction) => {
+        await lockUsageForViewer({ transaction, userId: input.viewer.userId });
 
-      const viewer = await refreshLiveCallViewer({
-        isGuest: input.viewer.isGuest,
-        now: input.now,
-        transaction,
-        userId: input.viewer.userId,
-      });
+        const viewer = await refreshLiveCallViewer({
+          isGuest: input.viewer.isGuest,
+          now: input.now,
+          transaction,
+          userId: input.viewer.userId,
+        });
 
-      if (!viewer) {
-        return { status: "unauthorized" as const };
-      }
+        if (!viewer) {
+          return unchanged({ status: "unauthorized" as const });
+        }
 
-      return reserveLiveCall({ ...input, transaction, viewer });
-    });
+        const existing = await transaction.liveCallConnection.findUnique({
+          where: { userId_requestId: { requestId: input.requestId, userId: viewer.userId } },
+        });
+
+        const result = await reserveLiveCall({ ...input, transaction, viewer });
+        return result.status !== "reserved" || existing ? unchanged(result) : result;
+      },
+    );
   } catch (error) {
     if (error instanceof LiveCallReservationRefusedError) {
       return error.result;

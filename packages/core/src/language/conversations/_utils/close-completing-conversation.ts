@@ -1,12 +1,21 @@
-import { prisma } from "@zoonk/db";
+import { type LiveCallConnection, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { closeLiveCallConnection } from "../close-live-call-connection";
 import {
   COMPLETION_REVIEW_LEASE_MS,
   hasCompletionReviewClaim,
   withCompletionReviewLease,
 } from "./completion-review-lease";
+
+type CompletionRefusal = {
+  status: "previousConnectionClosing" | "conversationEnded" | "takenOver" | "notFound";
+};
+
+type PreparedCompletion =
+  | CompletionRefusal
+  | { completionStartedAt: Date; latest: LiveCallConnection; status: "ready" };
 
 /** The completion latch prevents a replacement from starting while feedback is being written. */
 export async function closeCompletingConversation<T>({
@@ -19,14 +28,12 @@ export async function closeCompletingConversation<T>({
   conversationId: string;
   userId: string;
   review: (completionStartedAt: Date) => Promise<T>;
-}): Promise<
-  T | { status: "previousConnectionClosing" | "conversationEnded" | "takenOver" | "notFound" }
-> {
+}): Promise<T | CompletionRefusal> {
   if (!isUuid(connectionId)) {
     return { status: "notFound" };
   }
 
-  const prepared = await prisma.$transaction(async (transaction) => {
+  const prepared = await writeLearnerChange<PreparedCompletion>({ userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId });
 
     const [origin, latest] = await Promise.all([
@@ -40,11 +47,11 @@ export async function closeCompletingConversation<T>({
     ]);
 
     if (!origin) {
-      return { status: "notFound" as const };
+      return unchanged({ status: "notFound" as const });
     }
 
     if (origin.endReason === "takeover") {
-      return { status: "takenOver" as const };
+      return unchanged({ status: "takenOver" as const });
     }
 
     if (
@@ -52,7 +59,7 @@ export async function closeCompletingConversation<T>({
       latest?.id !== origin.id ||
       latest.generation !== origin.generation
     ) {
-      return { status: "conversationEnded" as const };
+      return unchanged({ status: "conversationEnded" as const });
     }
 
     const conversation = await transaction.languageConversation.findUniqueOrThrow({
@@ -79,7 +86,7 @@ export async function closeCompletingConversation<T>({
     });
 
     if (count === 0) {
-      return { status: "previousConnectionClosing" as const };
+      return unchanged({ status: "previousConnectionClosing" as const });
     }
 
     return { completionStartedAt, latest: origin, status: "ready" as const };

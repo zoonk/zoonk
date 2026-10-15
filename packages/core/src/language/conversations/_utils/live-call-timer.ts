@@ -1,11 +1,12 @@
 import { type LiveCallConnection, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type LiveCallDeadlineScheduler } from "../live-call-contract";
 import { settleLiveCall } from "./settle-live-call";
 
 async function refundUnscheduledConnection(connection: LiveCallConnection): Promise<void> {
-  await prisma.$transaction(async (transaction) => {
+  await writeLearnerChange({ userId: connection.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: connection.userId });
 
     const current = await transaction.liveCallConnection.findUniqueOrThrow({
@@ -13,7 +14,7 @@ async function refundUnscheduledConnection(connection: LiveCallConnection): Prom
     });
 
     if (current.state !== "pending" || current.workflowRunId !== null) {
-      return;
+      return unchanged(null);
     }
 
     await transaction.liveCallConnection.update({
@@ -48,14 +49,18 @@ export async function attachLiveCallDeadline({
     return null;
   }
 
-  await prisma.liveCallConnection.updateMany({
-    data: { workflowRunId: receipt.data.runId },
-    where: {
-      generation: connection.generation,
-      id: connection.id,
-      state: "pending",
-      workflowRunId: null,
-    },
+  await writeLearnerChange({ userId: connection.userId }, async (transaction) => {
+    const { count } = await transaction.liveCallConnection.updateMany({
+      data: { workflowRunId: receipt.data.runId },
+      where: {
+        generation: connection.generation,
+        id: connection.id,
+        state: "pending",
+        workflowRunId: null,
+      },
+    });
+
+    return count === 0 ? unchanged(null) : undefined;
   });
 
   const current = await prisma.liveCallConnection.findUniqueOrThrow({

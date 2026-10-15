@@ -1,7 +1,8 @@
 import "server-only";
-import { type LearningEventKind, type TransactionClient, prisma } from "@zoonk/db";
+import { type LearningEventKind, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-results";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getBlockElapsedMs, pausedBlockTiming } from "../../../sessions/_utils/block-timing";
 import { completePlanItem } from "../../../sessions/_utils/plan-items";
 import { applySessionProgress } from "../../../sessions/_utils/session-progress";
@@ -91,7 +92,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
   const brainPower = getConversationBrainPower({ checkpoint, objectivesMet: objectivesMet.length });
   const missed = input.objectives - objectivesMet.length;
 
-  return prisma.$transaction(async (tx) => {
+  return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
     const block = await findBlockContext(tx, row.studyBlockId);
     const payload = block ? readBlockPayload(block) : null;
@@ -118,7 +119,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
     });
 
     if (count === 0) {
-      return false;
+      return unchanged(false);
     }
 
     await applySessionProgress(tx, {

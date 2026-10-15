@@ -13,13 +13,20 @@ import {
 } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import {
+  holdLearnerRevision,
+  readLearnerRevision,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
+import { claimLiveCallUsageForViewer } from "../../entitlements/_utils/claim-usage-for-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { settleCallTime } from "../../entitlements/settle-call-time";
 import { getLanguageProgressView } from "../../view-models/language/get-language-progress-view";
 import { loadSpeakingPaper } from "../exam-speaking/_utils/exam-speaking-setup";
 import { startSpeakingSection } from "../exam-speaking/start-speaking-section";
@@ -30,7 +37,12 @@ import {
   liveCallHistoryFixture,
   mockLiveCallAdminSession,
 } from "./_test-utils/live-call-fixture";
+import { closeCompletingConversation } from "./_utils/close-completing-conversation";
+import { createConversation } from "./_utils/create-conversation";
 import { getLiveCallLiability } from "./_utils/live-call-policy";
+import { attachLiveCallDeadline } from "./_utils/live-call-timer";
+import { persistLiveCallSession } from "./_utils/persist-live-call-session";
+import { settleConversation } from "./_utils/settle-conversation";
 import { settleEstimatedLiveCall } from "./_utils/settle-live-call";
 import { findSpeakingMockSetup } from "./_utils/speaking-mock";
 import { closeAllLiveCalls } from "./close-all-live-calls";
@@ -81,6 +93,50 @@ async function reserve(conversationId: string, requestId = randomUUID()) {
   }
 
   return { ...result.setup, scheduleDeadline };
+}
+
+/** Proves the writer reaches the learner row before taking the usage advisory lock. */
+async function runBehindLearnerRevision({
+  count = 1,
+  run,
+  userId,
+}: {
+  count?: number;
+  run: () => Promise<unknown>;
+  userId: string;
+}): Promise<void> {
+  const holder = holdLearnerRevision({
+    beforeCommit: async (transaction) => lockUsageForViewer({ transaction, userId }),
+    userId,
+  });
+
+  const pid = await holder.pid;
+  const writing = run();
+
+  try {
+    await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, count);
+  } finally {
+    holder.release();
+    await Promise.all([holder.done, writing]);
+  }
+}
+
+async function reserveWithoutDeadline({
+  conversation,
+  user,
+}: Awaited<ReturnType<typeof liveCallFixture>>) {
+  const reserved = await claimLiveCallUsageForViewer({
+    conversationId: conversation.id,
+    now: new Date(),
+    requestId: randomUUID(),
+    viewer: { isGuest: false, tier: "free", userId: user.id },
+  });
+
+  if (reserved.status !== "reserved") {
+    throw new Error(`Reservation refused: ${reserved.status}`);
+  }
+
+  return reserved.connection;
 }
 
 function redeem({
@@ -150,7 +206,7 @@ function feedbackAnswer() {
 }
 
 describe("server-owned live-call reservation and cleanup", () => {
-  const calendar = { day: 0 };
+  const calendar = { month: 0 };
 
   /** Run this setting-mutating file separately: admission is intentionally global product state. */
   beforeAll(async () => {
@@ -171,9 +227,9 @@ describe("server-owned live-call reservation and cleanup", () => {
 
   beforeEach(async () => {
     freezeClock();
-    /** Independent far-future buckets cannot consume another test file's free-day budget. */
-    calendar.day += 1;
-    vi.setSystemTime(new Date(Date.UTC(2400, 0, calendar.day, 12)));
+    /** Separate far-future months isolate spend buckets and keep yesterday in the same month. */
+    calendar.month += 1;
+    vi.setSystemTime(new Date(Date.UTC(2400, calendar.month, 15, 12)));
 
     await prisma.liveCallSetting.upsert({
       create: { id: "live", ...SETTINGS },
@@ -202,6 +258,549 @@ describe("server-owned live-call reservation and cleanup", () => {
       where: { id: "live" },
     });
   });
+
+  it("marks conversation insertion and settlement once, leaving a repeated settlement unchanged", async () => {
+    const { user } = await liveCallFixture();
+    const before = await readLearnerRevision(user.id);
+
+    const row = await createConversation({
+      chapterId: null,
+      goal: null,
+      kind: "practice",
+      language: "pt",
+      level: "A2",
+      markChanged: true,
+      minutes: 2,
+      scenario: RENTING_SCENARIO,
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 1n);
+
+    const input = {
+      bossKind: "boss" as const,
+      feedback: null,
+      objectives: 1,
+      objectivesMet: [],
+      row: { ...row, chapter: null },
+      spokenSeconds: 20,
+      timeZone: "UTC",
+      usedHelp: false,
+      userId: user.id,
+    };
+
+    await expect(settleConversation(input)).resolves.toBe(true);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+    await expect(settleConversation(input)).resolves.toBe(false);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+  });
+
+  it("marks settlement before progress locks and rolls back both planner and revision marks for its loser", async () => {
+    const { conversation, user } = await liveCallFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    const before = await readLearnerRevision(user.id);
+
+    const input = {
+      bossKind: "boss" as const,
+      feedback: null,
+      objectives: 1,
+      objectivesMet: [],
+      row: { ...conversation, chapter: null },
+      spokenSeconds: 20,
+      timeZone: "UTC",
+      usedHelp: false,
+      userId: user.id,
+    };
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (transaction) => {
+        await transaction.userProgress.createMany({
+          data: [{ userId: user.id }],
+          skipDuplicates: true,
+        });
+
+        await transaction.$queryRaw`SELECT id FROM user_progress WHERE user_id = ${user.id}::uuid FOR UPDATE`;
+      },
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+    const settling = Promise.all([settleConversation(input), settleConversation(input)]);
+
+    try {
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+    } finally {
+      holder.release();
+      await holder.done;
+    }
+
+    const results = await settling;
+    expect(results.toSorted()).toStrictEqual([false, true]);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+    });
+  });
+
+  it("marks reservation, timer receipt, redemption and both close writes, preserving retries", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const viewer = { isGuest: false, tier: "free" as const, userId: user.id };
+
+    const input = {
+      conversationId: conversation.id,
+      now: new Date(),
+      requestId: randomUUID(),
+      viewer,
+    };
+
+    const before = await readLearnerRevision(user.id);
+    const reserved = await claimLiveCallUsageForViewer(input);
+    expect(reserved.status).toBe("reserved");
+
+    if (reserved.status !== "reserved") {
+      throw new Error("Expected reservation");
+    }
+
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 1n);
+    await claimLiveCallUsageForViewer(input);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 1n);
+    const timer = { connection: reserved.connection, scheduleDeadline: deadlineScheduler() };
+    await attachLiveCallDeadline(timer);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+    await attachLiveCallDeadline(timer);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+    const target = { connectionId: reserved.connection.id, conversationId: conversation.id };
+    await expect(redeem(target)).resolves.toMatchObject({ status: "ready" });
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 4n);
+    await expect(redeem(target)).resolves.toMatchObject({ status: "connectionUsed" });
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 4n);
+    const current = await connection(reserved.connection.id);
+
+    const persisted = await persistLiveCallSession({
+      connection: current,
+      providerSessionId: current.providerSessionId!,
+      viewer,
+    });
+
+    expect(persisted.error).toBeNull();
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 4n);
+    const persistedConnection = await connection(current.id);
+    expect.soft(persistedConnection.state).toBe("active");
+    await closeLiveCallConnection({ connectionId: current.id, generation: current.generation });
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 6n);
+    await closeLiveCallConnection({ connectionId: current.id, generation: current.generation });
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 6n);
+  });
+
+  it("leaves missing, stale and already closed call writers unchanged", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const pending = await reserveWithoutDeadline({ conversation, user });
+    const before = await readLearnerRevision(user.id);
+    const target = { connectionId: pending.id, generation: pending.generation + 1 };
+
+    await expect(closeLiveCallConnection(target)).resolves.toMatchObject({ status: "stale" });
+    await markLiveCallRecoveryUnconfirmed(target);
+
+    await expect(
+      redeem({ connectionId: randomUUID(), conversationId: conversation.id }),
+    ).resolves.toMatchObject({ status: "notFound" });
+
+    await settleCallTime({ conversationId: conversation.id, now: new Date(), userId: user.id });
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
+
+    await closeLiveCallConnection({ connectionId: pending.id, generation: pending.generation });
+    const afterClose = await readLearnerRevision(user.id);
+    expect(afterClose).toBe(before + 1n);
+
+    await markLiveCallRecoveryUnconfirmed({
+      connectionId: pending.id,
+      generation: pending.generation,
+    });
+
+    await attachLiveCallDeadline({ connection: pending, scheduleDeadline: deadlineScheduler() });
+    await closeLiveCallConnection({ connectionId: pending.id, generation: pending.generation });
+    await expect(readLearnerRevision(user.id)).resolves.toBe(afterClose);
+  });
+
+  it("marks timer refunds, provider refusal refunds and recovery only when they write", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+
+    const input = {
+      conversationId: conversation.id,
+      now: new Date(),
+      requestId: randomUUID(),
+      viewer: { isGuest: false, tier: "free" as const, userId: user.id },
+    };
+
+    const reserved = await claimLiveCallUsageForViewer(input);
+
+    if (reserved.status !== "reserved") {
+      throw new Error("Expected reservation");
+    }
+
+    const before = await readLearnerRevision(user.id);
+
+    const timer = {
+      connection: reserved.connection,
+      scheduleDeadline: async () => {
+        throw new Error("Scheduler unavailable");
+      },
+    };
+
+    await attachLiveCallDeadline(timer);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 1n);
+    await attachLiveCallDeadline(timer);
+    expect.soft(await readLearnerRevision(user.id)).toBe(before + 1n);
+    const next = await reserve(conversation.id);
+    vi.mocked(createLiveCallSession).mockRejectedValueOnce(new LiveCallCreationRefusedError(400));
+    const beforeRefusal = await readLearnerRevision(user.id);
+
+    await expect(
+      redeem({ connectionId: next.connectionId, conversationId: conversation.id }),
+    ).resolves.toMatchObject({ status: "retryable" });
+
+    expect.soft(await readLearnerRevision(user.id)).toBe(beforeRefusal + 2n);
+
+    await expect(
+      redeem({ connectionId: next.connectionId, conversationId: conversation.id }),
+    ).resolves.toMatchObject({ status: "connectionUsed" });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(beforeRefusal + 2n);
+    const pending = await reserve(conversation.id);
+
+    await prisma.liveCallConnection.update({
+      data: { state: "closing" },
+      where: { id: pending.connectionId },
+    });
+
+    const beforeRecovery = await readLearnerRevision(user.id);
+
+    await markLiveCallRecoveryUnconfirmed({
+      connectionId: pending.connectionId,
+      generation: pending.generation,
+    });
+
+    expect.soft(await readLearnerRevision(user.id)).toBe(beforeRecovery + 1n);
+
+    await markLiveCallRecoveryUnconfirmed({
+      connectionId: pending.connectionId,
+      generation: pending.generation,
+    });
+
+    expect.soft(await readLearnerRevision(user.id)).toBe(beforeRecovery + 1n);
+  });
+
+  it("marks the completion latch and leaves an overlapping review refusal unchanged", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+    const setup = await reserve(conversation.id);
+    const entered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+    const before = await readLearnerRevision(user.id);
+
+    const input = {
+      connectionId: setup.connectionId,
+      conversationId: conversation.id,
+      userId: user.id,
+    };
+
+    const completing = closeCompletingConversation({
+      ...input,
+      review: async () => {
+        entered.resolve(null);
+        await release.promise;
+        return { status: "reviewed" };
+      },
+    });
+
+    await entered.promise;
+
+    try {
+      expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+
+      await expect(
+        closeCompletingConversation({ ...input, review: async () => ({ status: "unexpected" }) }),
+      ).resolves.toMatchObject({ status: "previousConnectionClosing" });
+
+      expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
+    } finally {
+      release.resolve(null);
+      await completing;
+    }
+  });
+
+  it("marks legacy time settlement once under concurrent identical requests", async () => {
+    const { conversation, user } = await liveCallFixture();
+
+    await prisma.usageRecord.create({
+      data: {
+        createdAt: new Date(Date.now() - 30_000),
+        kind: "conversation",
+        seconds: 120,
+        targetId: conversation.id,
+        userId: user.id,
+      },
+    });
+
+    const before = await readLearnerRevision(user.id);
+    const input = { conversationId: conversation.id, now: new Date(), userId: user.id };
+    await Promise.all([settleCallTime(input), settleCallTime(input)]);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
+    await settleCallTime(input);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
+  });
+
+  it("marks before the usage advisory lock and serializes an identical reservation", async () => {
+    const { conversation, user } = await liveCallFixture();
+    const before = await readLearnerRevision(user.id);
+
+    const holder = holdLearnerRevision({
+      beforeCommit: async (transaction) => lockUsageForViewer({ transaction, userId: user.id }),
+      userId: user.id,
+    });
+
+    const pid = await holder.pid;
+
+    const input = {
+      conversationId: conversation.id,
+      now: new Date(),
+      requestId: randomUUID(),
+      viewer: { isGuest: false, tier: "free" as const, userId: user.id },
+    };
+
+    const contenders = Promise.all([
+      claimLiveCallUsageForViewer(input),
+      claimLiveCallUsageForViewer(input),
+    ]);
+
+    try {
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+    } finally {
+      holder.release();
+      await holder.done;
+      await contenders;
+    }
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+  });
+
+  it.each([
+    {
+      name: "timer receipt",
+      prepare: async (fixture: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const pending = await reserveWithoutDeadline(fixture);
+
+        return {
+          changes: 1n,
+          run: () =>
+            attachLiveCallDeadline({ connection: pending, scheduleDeadline: deadlineScheduler() }),
+        };
+      },
+    },
+    {
+      name: "timer refund",
+      prepare: async (fixture: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const pending = await reserveWithoutDeadline(fixture);
+
+        return {
+          changes: 1n,
+          run: () =>
+            attachLiveCallDeadline({
+              connection: pending,
+              scheduleDeadline: async () => {
+                throw new Error("Scheduler unavailable");
+              },
+            }),
+        };
+      },
+    },
+    {
+      name: "redemption",
+      prepare: async ({ conversation }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const setup = await reserve(conversation.id);
+
+        return {
+          changes: 2n,
+          run: () => redeem({ connectionId: setup.connectionId, conversationId: conversation.id }),
+        };
+      },
+    },
+    {
+      name: "provider receipt",
+      prepare: async ({ conversation, user }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const setup = await reserve(conversation.id);
+
+        const creating = await prisma.liveCallConnection.update({
+          data: { providerStartedAt: new Date(), state: "creating" },
+          where: { id: setup.connectionId },
+        });
+
+        return {
+          changes: 1n,
+          run: () =>
+            persistLiveCallSession({
+              connection: creating,
+              providerSessionId: `receipt-${creating.id}`,
+              viewer: { isGuest: false, tier: "free", userId: user.id },
+            }),
+        };
+      },
+    },
+    {
+      name: "pending close",
+      prepare: async ({ conversation }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const setup = await reserve(conversation.id);
+
+        return {
+          changes: 1n,
+          run: () =>
+            closeLiveCallConnection({
+              connectionId: setup.connectionId,
+              generation: setup.generation,
+            }),
+        };
+      },
+    },
+    {
+      name: "completion latch",
+      prepare: async ({ conversation, user }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const setup = await reserve(conversation.id);
+
+        return {
+          changes: 2n,
+          run: () =>
+            closeCompletingConversation({
+              connectionId: setup.connectionId,
+              conversationId: conversation.id,
+              review: async () => ({ status: "reviewed" }),
+              userId: user.id,
+            }),
+        };
+      },
+    },
+    {
+      name: "recovery",
+      prepare: async ({ conversation }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        const setup = await reserve(conversation.id);
+
+        await prisma.liveCallConnection.update({
+          data: { state: "closing" },
+          where: { id: setup.connectionId },
+        });
+
+        return {
+          changes: 1n,
+          run: () =>
+            markLiveCallRecoveryUnconfirmed({
+              connectionId: setup.connectionId,
+              generation: setup.generation,
+            }),
+        };
+      },
+    },
+    {
+      name: "legacy settlement",
+      prepare: async ({ conversation, user }: Awaited<ReturnType<typeof liveCallFixture>>) => {
+        await prisma.usageRecord.create({
+          data: {
+            createdAt: new Date(Date.now() - 30_000),
+            kind: "conversation",
+            seconds: 120,
+            targetId: conversation.id,
+            userId: user.id,
+          },
+        });
+
+        return {
+          changes: 1n,
+          run: () =>
+            settleCallTime({ conversationId: conversation.id, now: new Date(), userId: user.id }),
+        };
+      },
+    },
+  ])("marks before locks for $name", async ({ name, prepare }) => {
+    const fixture = await liveCallFixture();
+    mockSession(fixture.user.id);
+    const writer = await prepare(fixture);
+    const before = await readLearnerRevision(fixture.user.id);
+
+    await runBehindLearnerRevision({
+      count: name === "completion latch" ? 1 : 2,
+      run:
+        name === "completion latch" ? writer.run : () => Promise.all([writer.run(), writer.run()]),
+      userId: fixture.user.id,
+    });
+
+    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before + 1n + writer.changes);
+  });
+
+  it.each(["provider refusal refund", "confirmed close"] as const)(
+    "marks before the usage lock for the second %s transaction",
+    async (writer) => {
+      const { conversation, user } = await liveCallFixture();
+      mockSession(user.id);
+      const setup = await reserve(conversation.id);
+
+      if (writer === "confirmed close") {
+        await redeem({ connectionId: setup.connectionId, conversationId: conversation.id });
+      }
+
+      const entered = Promise.withResolvers<ReturnType<typeof holdLearnerRevision>>();
+      const before = await readLearnerRevision(user.id);
+
+      const provider = async () => {
+        const holder = holdLearnerRevision({
+          beforeCommit: async (transaction) => lockUsageForViewer({ transaction, userId: user.id }),
+          userId: user.id,
+        });
+
+        await holder.pid;
+        entered.resolve(holder);
+
+        if (writer === "provider refusal refund") {
+          throw new LiveCallCreationRefusedError(400);
+        }
+
+        return { reason: "closed", seconds: 30, status: "closed" as const };
+      };
+
+      if (writer === "provider refusal refund") {
+        vi.mocked(createLiveCallSession).mockImplementationOnce(async () => {
+          await provider();
+          throw new Error("Expected provider refusal");
+        });
+      } else {
+        vi.mocked(closeLiveCallSession).mockImplementationOnce(provider);
+      }
+
+      const writing =
+        writer === "provider refusal refund"
+          ? redeem({ connectionId: setup.connectionId, conversationId: conversation.id })
+          : closeLiveCallConnection({
+              connectionId: setup.connectionId,
+              generation: setup.generation,
+            });
+
+      const holder = await entered.promise;
+      const pid = await holder.pid;
+
+      try {
+        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      } finally {
+        holder.release();
+        await Promise.all([holder.done, writing]);
+      }
+
+      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
+      await expect(connection(setup.connectionId)).resolves.toMatchObject({ state: "closed" });
+    },
+  );
 
   it.each(["off", "staff", "provider"] as const)(
     "refuses speaking cards and whole papers before generation when calls are paused by %s",
@@ -484,6 +1083,7 @@ describe("server-owned live-call reservation and cleanup", () => {
   it("rolls back the minute and dollar claims when the global free-day budget refuses", async () => {
     const { conversation, user } = await liveCallFixture();
     mockSession(user.id);
+    const before = await readLearnerRevision(user.id);
 
     await prisma.liveCallSetting.update({
       data: { freeDailyBudgetMicros: 134_999 },
@@ -512,6 +1112,8 @@ describe("server-owned live-call reservation and cleanup", () => {
         where: { day: new Date(new Date().toISOString().slice(0, 10)) },
       }),
     ).resolves.toBeNull();
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 
   it("does not end a newer same-call session when an older request ID is replayed", async () => {
@@ -650,6 +1252,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     });
 
     mockSession(user.id);
+    const before = await readLearnerRevision(user.id);
 
     await expect(
       connectLanguageConversation({
@@ -670,12 +1273,15 @@ describe("server-owned live-call reservation and cleanup", () => {
     await expect(
       prisma.liveCallSlot.findUnique({ where: { userId: user.id } }),
     ).resolves.toBeNull();
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 
   it("does not claim a slot or money when the learner has spent today's call time", async () => {
     const { conversation, user } = await liveCallFixture();
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 120, userId: user.id });
     mockSession(user.id);
+    const before = await readLearnerRevision(user.id);
 
     await expect(
       connectLanguageConversation({
@@ -689,6 +1295,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     ).resolves.toBeNull();
 
     await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 
   it.each([

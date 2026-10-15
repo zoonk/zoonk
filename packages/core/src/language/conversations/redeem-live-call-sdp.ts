@@ -5,7 +5,7 @@ import {
   createLiveCallSession,
 } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
-import { type LiveCallConnection, prisma } from "@zoonk/db";
+import { type LiveCallConnection } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
@@ -13,7 +13,8 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
-import { toConversationView } from "./_utils/conversation-view";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { type ConversationRow, toConversationView } from "./_utils/conversation-view";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import { persistLiveCallSession } from "./_utils/persist-live-call-session";
@@ -36,13 +37,22 @@ export type RedeemLiveCallSdpResult =
         | "retryable";
     };
 
+type PreparedRedemption =
+  | Exclude<RedeemLiveCallSdpResult, { status: "ready" }>
+  | {
+      connection: LiveCallConnection;
+      conversation: ConversationRow;
+      instructions: string;
+      status: "prepared";
+    };
+
 /**
  * OpenAI answered with its own error, so the session never reached `session.started`: the slot,
  * the learner's time and the reservation return, keeping only the shortest call's cost for the
  * initialization OpenAI may bill.
  */
 async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<void> {
-  await prisma.$transaction(async (transaction) => {
+  await writeLearnerChange({ userId: connection.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: connection.userId });
 
     const current = await transaction.liveCallConnection.findUniqueOrThrow({
@@ -54,7 +64,7 @@ async function releaseRefusedLiveCall(connection: LiveCallConnection): Promise<v
       current.state === "closed" ||
       current.providerSessionId !== null
     ) {
-      return;
+      return unchanged(null);
     }
 
     await settleEstimatedLiveCall({
@@ -85,78 +95,81 @@ export async function redeemLiveCallSdp({
     return { status: "unauthorized" };
   }
 
-  const prepared = await prisma.$transaction(async (transaction) => {
-    await lockUsageForViewer({ transaction, userId: viewer.userId });
+  const prepared = await writeLearnerChange<PreparedRedemption>(
+    { userId: viewer.userId },
+    async (transaction) => {
+      await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-    const [connection, conversation, slot] = await Promise.all([
-      transaction.liveCallConnection.findFirst({
-        where: { conversationId, id: connectionId, userId: viewer.userId },
-      }),
-      transaction.languageConversation.findFirst({
-        include: { chapter: { select: { id: true, title: true } } },
-        where: { id: conversationId, userId: viewer.userId },
-      }),
-      transaction.liveCallSlot.findUnique({ where: { userId: viewer.userId } }),
-    ]);
+      const [connection, conversation, slot] = await Promise.all([
+        transaction.liveCallConnection.findFirst({
+          where: { conversationId, id: connectionId, userId: viewer.userId },
+        }),
+        transaction.languageConversation.findFirst({
+          include: { chapter: { select: { id: true, title: true } } },
+          where: { id: conversationId, userId: viewer.userId },
+        }),
+        transaction.liveCallSlot.findUnique({ where: { userId: viewer.userId } }),
+      ]);
 
-    if (!connection || !conversation) {
-      return { status: "notFound" as const };
-    }
+      if (!connection || !conversation) {
+        return unchanged({ status: "notFound" as const });
+      }
 
-    if (conversation.status !== "ready" || conversation.completionStartedAt !== null) {
-      return { status: "conversationEnded" as const };
-    }
+      if (conversation.status !== "ready" || conversation.completionStartedAt !== null) {
+        return unchanged({ status: "conversationEnded" as const });
+      }
 
-    const freshViewer = await refreshLiveCallViewer({
-      isGuest: viewer.isGuest,
-      now: new Date(),
-      transaction,
-      userId: viewer.userId,
-    });
+      const freshViewer = await refreshLiveCallViewer({
+        isGuest: viewer.isGuest,
+        now: new Date(),
+        transaction,
+        userId: viewer.userId,
+      });
 
-    if (isPlusOnlyLiveCall(conversation.kind) && freshViewer?.tier !== "plus") {
-      return { status: "plusRequired" as const };
-    }
+      if (isPlusOnlyLiveCall(conversation.kind) && freshViewer?.tier !== "plus") {
+        return unchanged({ status: "plusRequired" as const });
+      }
 
-    if ((await readLiveCallAdmission({ transaction, userId: viewer.userId })) === null) {
-      return { status: "callsPaused" as const };
-    }
+      if ((await readLiveCallAdmission({ transaction, userId: viewer.userId })) === null) {
+        return unchanged({ status: "callsPaused" as const });
+      }
 
-    if (connection.state === "closing") {
-      return { status: "previousConnectionClosing" as const };
-    }
+      if (connection.state === "closing") {
+        return unchanged({ status: "previousConnectionClosing" as const });
+      }
 
-    if (
-      connection.state !== "pending" ||
-      slot?.connectionId !== connectionId ||
-      slot.generation !== connection.generation
-    ) {
-      return { status: "connectionUsed" as const };
-    }
+      if (
+        connection.state !== "pending" ||
+        slot?.connectionId !== connectionId ||
+        slot.generation !== connection.generation
+      ) {
+        return unchanged({ status: "connectionUsed" as const });
+      }
 
-    const now = new Date();
+      const now = new Date();
 
-    if (connection.deadlineAt <= now) {
-      return { status: "connectionExpired" as const };
-    }
+      if (connection.deadlineAt <= now) {
+        return unchanged({ status: "connectionExpired" as const });
+      }
 
-    if (!connection.workflowRunId) {
-      return { status: "retryable" as const };
-    }
+      if (!connection.workflowRunId) {
+        return unchanged({ status: "retryable" as const });
+      }
 
-    const instructions = toConversationView({ row: conversation })?.instructions;
+      const instructions = toConversationView({ row: conversation })?.instructions;
 
-    if (!instructions) {
-      return { status: "conversationEnded" as const };
-    }
+      if (!instructions) {
+        return unchanged({ status: "conversationEnded" as const });
+      }
 
-    await transaction.liveCallConnection.update({
-      data: { providerStartedAt: now, state: "creating" },
-      where: { id: connectionId },
-    });
+      await transaction.liveCallConnection.update({
+        data: { providerStartedAt: now, state: "creating" },
+        where: { id: connectionId },
+      });
 
-    return { connection, conversation, instructions, status: "prepared" as const };
-  });
+      return { connection, conversation, instructions, status: "prepared" as const };
+    },
+  );
 
   if (prepared.status !== "prepared") {
     return prepared;

@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../cache/tags";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getCallSecondsRun } from "./_utils/call-time";
+import { lockUsageForViewer } from "./_utils/usage-lock";
 import { getEstimatedCostMicros } from "./limits";
 
 /**
@@ -19,36 +20,46 @@ export async function settleCallTime({
   now: Date;
   userId: string;
 }): Promise<void> {
-  /** Server connection settlement owns new calls; legacy records retain their original behavior. */
-  const connection = await prisma.liveCallConnection.findFirst({
-    where: { conversationId, userId },
+  const changed = await writeLearnerChange({ userId }, async (transaction) => {
+    await lockUsageForViewer({ transaction, userId });
+    /** Server connection settlement owns new calls; legacy records retain their original behavior. */
+    const connection = await transaction.liveCallConnection.findFirst({
+      where: { conversationId, userId },
+    });
+
+    if (connection) {
+      return unchanged(false);
+    }
+
+    const record = await transaction.usageRecord.findUnique({
+      where: { userUsageTarget: { kind: "conversation", targetId: conversationId, userId } },
+    });
+
+    if (!record) {
+      return unchanged(false);
+    }
+
+    const seconds = getCallSecondsRun({ now, record });
+
+    const costMicros = getEstimatedCostMicros({
+      generated: record.generated,
+      kind: record.kind,
+      seconds,
+    });
+
+    if (seconds === record.seconds) {
+      return unchanged(false);
+    }
+
+    await transaction.usageRecord.update({
+      data: { costMicros, seconds },
+      where: { id: record.id },
+    });
+
+    return true;
   });
 
-  if (connection) {
-    return;
+  if (changed) {
+    revalidateCacheTags([getAllowanceCacheTag(userId)]);
   }
-
-  const record = await prisma.usageRecord.findUnique({
-    where: { userUsageTarget: { kind: "conversation", targetId: conversationId, userId } },
-  });
-
-  if (!record) {
-    return;
-  }
-
-  const seconds = getCallSecondsRun({ now, record });
-
-  const costMicros = getEstimatedCostMicros({
-    generated: record.generated,
-    kind: record.kind,
-    seconds,
-  });
-
-  if (seconds === record.seconds) {
-    return;
-  }
-
-  await prisma.usageRecord.update({ data: { costMicros, seconds }, where: { id: record.id } });
-
-  revalidateCacheTags([getAllowanceCacheTag(userId)]);
 }

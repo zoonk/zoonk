@@ -16,6 +16,7 @@ import {
   setupTestCalls,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getChallenge } from "../../checkpoints/get-challenge";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -301,8 +302,9 @@ describe("language checkpoint calls", () => {
   });
 
   it("opens a checkpoint's call from its unit's written call without a model", async () => {
-    const { block } = await reachedCheckpointFixture({ speaking: 1 });
+    const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
 
+    const before = await readLearnerRevision(user.id);
     const first = await openLanguageCheckpointCall(block.id);
     const again = await openLanguageCheckpointCall(block.id);
 
@@ -325,6 +327,8 @@ describe("language checkpoint calls", () => {
       level: "A2",
       titleSnapshot: RENTING_SCENARIO.title,
     });
+    /** The GET insertion remains the separate lead decision, with no revision marker. */
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 
   it("leaves a checkpoint preparing when its call isn't written, and starting it writes the call", async () => {

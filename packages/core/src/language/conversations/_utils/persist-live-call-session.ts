@@ -1,10 +1,11 @@
 import { recordLiveConversationUsage } from "@zoonk/ai/tasks/v2/language/live-conversation-usage";
-import { type LiveCallConnection, type TransactionClient, prisma } from "@zoonk/db";
+import { type LiveCallConnection, type TransactionClient } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type EntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { refreshLiveCallViewer } from "../../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
 import { LIVE_CALL_INITIALIZATION_SECONDS } from "../../../entitlements/limits";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { isPlusOnlyLiveCall } from "./live-call-plus";
 import { readLiveCallAdmission } from "./live-call-policy";
 import { reopenEstimatedLiveCall, settleLiveCall } from "./settle-live-call";
@@ -95,12 +96,22 @@ function persistedConnectionData({
 }
 
 async function persistSessionOnce(input: PersistenceInput): Promise<PersistedSession> {
-  return prisma.$transaction(async (transaction) => {
+  return writeLearnerChange({ userId: input.connection.userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId: input.connection.userId });
 
     const current = await transaction.liveCallConnection.findUniqueOrThrow({
       where: { id: input.connection.id },
     });
+
+    /** A persistence retry with the same provider receipt must not revoke its active call. */
+    if (
+      current.providerSessionId === input.providerSessionId &&
+      (current.state === "closed" ||
+        (!input.forceClosing && !input.terminal && current.state === "active") ||
+        (!input.terminal && current.state === "closing"))
+    ) {
+      return unchanged({ active: current.state === "active" });
+    }
 
     const active = await canActivateSession({ current, input, transaction });
     /** Late/uncertain responses always retain the known ID, even when activation was revoked. */
