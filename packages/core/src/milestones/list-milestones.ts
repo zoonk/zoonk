@@ -2,8 +2,6 @@ import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
-import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getUserProgressCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getSession } from "../users/get-session";
 import { loadMilestoneCounts } from "./award-milestones";
@@ -56,6 +54,9 @@ export type MilestoneShownResult =
 /**
  * Records that a milestone was celebrated, so it's shown only once. Showing it again keeps the
  * first time.
+ *
+ * Tag invalidation from the acknowledgement's Server Action would re-render the page and remove
+ * the ceremony while the learner is still viewing it.
  */
 export async function markMilestoneShown(milestoneId: string): Promise<MilestoneShownResult> {
   const session = await getSession();
@@ -87,10 +88,6 @@ export async function markMilestoneShown(milestoneId: string): Promise<Milestone
 
   if (error && !(error instanceof MilestoneShownUnchangedError)) {
     throw error;
-  }
-
-  if (!error) {
-    revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }
 
   const milestone = await prisma.milestone.findFirst({ where: { id: milestoneId, userId } });

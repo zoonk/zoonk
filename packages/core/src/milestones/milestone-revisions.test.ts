@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { revalidateTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -45,7 +46,7 @@ describe("milestone writes publish the actor's visible revision", () => {
     await expect(versions(day)).resolves.toStrictEqual(changed);
   });
 
-  it("concurrent ceremony acknowledgements keep one timestamp and one revision", async () => {
+  it("concurrent ceremony acknowledgements keep one timestamp and revision without invalidating", async () => {
     const day = await setup();
     const row = await milestoneFixture({ key: "young", kind: "buddyStage", userId: day.user.id });
     const before = await versions(day);
@@ -58,6 +59,7 @@ describe("milestone writes publish the actor's visible revision", () => {
     expect(shown.shownAt).toBeInstanceOf(Date);
     const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
     await expect(versions(day)).resolves.toStrictEqual(changed);
+    expect(revalidateTag).not.toHaveBeenCalled();
 
     await expect(markMilestoneShown(row.id)).resolves.toMatchObject({
       milestone: { shownAt: shown.shownAt },
@@ -65,6 +67,7 @@ describe("milestone writes publish the actor's visible revision", () => {
     });
 
     await expect(versions(day)).resolves.toStrictEqual(changed);
+    expect(revalidateTag).not.toHaveBeenCalled();
   });
 
   it("refusing another learner's ceremony rolls back the early mark", async () => {
