@@ -199,13 +199,13 @@ export async function StatsOverview() {
 
   const [progress, session, energy, energyStarted, activity, patterns, history] = await Promise.all(
     [
-      getCurrentUserProgress(),
+      getCurrentUserProgress({ history: "lifetime" }),
       getSession(),
       loadOptionalData(getEnergyData),
-      getEnergyStarted(),
-      getLearningActivity(),
-      loadOptionalData(getCurrentUserScorePatterns),
-      loadOptionalData(() => getScoreHistory({ locale })),
+      getEnergyStarted({ history: "lifetime" }),
+      getLearningActivity({ history: "lifetime" }),
+      loadOptionalData(() => getCurrentUserScorePatterns({ history: "lifetime" })),
+      loadOptionalData(() => getScoreHistory({ history: "lifetime", locale })),
     ],
   );
 

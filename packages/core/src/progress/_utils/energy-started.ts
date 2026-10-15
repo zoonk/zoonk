@@ -1,5 +1,29 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type DailyProgress, prisma } from "@zoonk/db";
+
+const ENERGY_ACTIVITY_FIELDS = [
+  "timeSpentSeconds",
+  "correctAnswers",
+  "incorrectAnswers",
+  "lessonsCompleted",
+] as const;
+
+type EnergyActivityDay = Pick<DailyProgress, "date" | (typeof ENERGY_ACTIVITY_FIELDS)[number]>;
+
+/** The same activity fields serve the bounded query and an already-loaded lifetime ledger. */
+function isPriorEnergyDay({ day, today }: { day: EnergyActivityDay; today: Date }): boolean {
+  return day.date < today && ENERGY_ACTIVITY_FIELDS.some((field) => day[field] > 0);
+}
+
+export function hasEnergyStartedInRows({
+  rows,
+  today,
+}: {
+  rows: EnergyActivityDay[];
+  today: Date;
+}): boolean {
+  return rows.some((day) => isPriorEnergyDay({ day, today }));
+}
 
 /**
  * Whether the learner studied on a day before `today`: time spent, an answer or a lesson that day.
@@ -18,12 +42,7 @@ export async function hasEnergyStarted({
   const before = await prisma.dailyProgress.findFirst({
     select: { date: true },
     where: {
-      OR: [
-        { timeSpentSeconds: { gt: 0 } },
-        { correctAnswers: { gt: 0 } },
-        { incorrectAnswers: { gt: 0 } },
-        { lessonsCompleted: { gt: 0 } },
-      ],
+      OR: ENERGY_ACTIVITY_FIELDS.map((field) => ({ [field]: { gt: 0 } })),
       date: { lt: today },
       userId,
     },

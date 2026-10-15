@@ -6,6 +6,11 @@ import {
   getContributionCalendarDateRangeFromEndDate,
   getContributionCalendarDates,
 } from "@zoonk/utils/contribution-calendar";
+import {
+  type ProgressHistoryOptions,
+  dailyProgressInWindow,
+  readLifetimeDailyProgress,
+} from "./_utils/daily-progress-rows";
 import { getProgressSession } from "./_utils/progress-cache";
 import {
   type LearningActivityTotals,
@@ -104,8 +109,18 @@ async function findLearningActivityDays({
   endDate,
   startDate,
   userId,
-}: ContributionCalendarDateRange & { userId: string }): Promise<LearningActivityDay[]> {
-  const rows = await listLearningActivityRows({ endDate, startDate, userId });
+  history,
+}: ContributionCalendarDateRange & ProgressHistoryOptions & { userId: string }): Promise<
+  LearningActivityDay[]
+> {
+  const rows =
+    history === "lifetime"
+      ? dailyProgressInWindow({
+          endDate,
+          rows: await readLifetimeDailyProgress(userId),
+          startDate,
+        }).filter((row) => countActivitiesCompleted(row) > 0)
+      : await listLearningActivityRows({ endDate, startDate, userId });
 
   return buildLearningActivityDays({ endDate, rows, startDate });
 }
@@ -114,7 +129,9 @@ async function findLearningActivityDays({
  * Returns the signed-in learner's 53-week completion-activity calendar and
  * lifetime totals using the current learner-local date.
  */
-export async function getLearningActivity(): Promise<LearningActivityData | null> {
+export async function getLearningActivity({
+  history,
+}: ProgressHistoryOptions = {}): Promise<LearningActivityData | null> {
   "use cache: private";
 
   const [session, dateContext] = await Promise.all([
@@ -129,8 +146,8 @@ export async function getLearningActivity(): Promise<LearningActivityData | null
   const dateRange = getContributionCalendarDateRangeFromEndDate(dateContext.currentDate);
 
   const [days, totals] = await Promise.all([
-    findLearningActivityDays({ ...dateRange, userId: session.user.id }),
-    getLearningActivityTotals(),
+    findLearningActivityDays({ ...dateRange, history, userId: session.user.id }),
+    history ? getLearningActivityTotals({ history }) : getLearningActivityTotals(),
   ]);
 
   return totals ? { ...totals, days } : null;
