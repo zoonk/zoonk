@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { findOwnedMock } from "./_utils/owned-mock";
 
 export type EndMockBreakResult = { status: "notFound" | "notOnBreak" | "started" | "unauthorized" };
@@ -22,14 +22,18 @@ export async function endMockBreak({ blockId }: { blockId: string }): Promise<En
     return { status: "notOnBreak" };
   }
 
-  const { count } = await prisma.mockExam.updateMany({
-    data: { sectionStartedAt: now },
-    where: {
-      id: mock.id,
-      sectionIndex: mock.sectionIndex,
-      sectionStartedAt: { gt: now },
-      status: "active",
-    },
+  const count = await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
+    const updated = await tx.mockExam.updateMany({
+      data: { sectionStartedAt: now },
+      where: {
+        id: mock.id,
+        sectionIndex: mock.sectionIndex,
+        sectionStartedAt: { equals: mock.sectionStartedAt, gt: now },
+        status: "active",
+      },
+    });
+
+    return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 
   return { status: count === 0 ? "notOnBreak" : "started" };

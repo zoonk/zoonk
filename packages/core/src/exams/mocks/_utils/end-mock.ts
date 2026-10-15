@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma, sql } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { type MockConditions } from "../mock-contract";
 import { completeMock } from "./complete-mock";
 import { type MockSitting, type OwnedMock, findMockSitting } from "./owned-mock";
@@ -59,9 +60,13 @@ export async function endMock({
 
       if (!isStuck) {
         // Outside the lock's transaction: grading updates this row too, and must not wait on it.
-        const { count } = await prisma.mockExam.updateMany({
-          data: { conditions, sectionIndex: handedIn },
-          where: { id: mock.id, sectionIndex: mock.sectionIndex, status: "active" },
+        const count = await writeLearnerChange({ userId: mock.userId }, async (writing) => {
+          const updated = await writing.mockExam.updateMany({
+            data: { conditions, sectionIndex: handedIn },
+            where: { id: mock.id, sectionIndex: mock.sectionIndex, status: "active" },
+          });
+
+          return updated.count > 0 ? updated.count : unchanged(updated.count);
         });
 
         if (count === 0) {

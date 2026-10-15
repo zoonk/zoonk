@@ -88,6 +88,7 @@ export async function writeSpeakingMock({ exam, goal, level }: SpeakingMockSetup
     kind: "speakingMock",
     language: goal.language,
     level,
+    markChanged: true,
     minutes: SPEAKING_MOCK_MINUTES,
     scenario: { ...scenario, exam },
     targetLanguage: SPEAKING_MOCK_LANGUAGE,

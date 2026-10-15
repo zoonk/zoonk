@@ -1,7 +1,8 @@
 import "server-only";
-import { type Goal, prisma, sql } from "@zoonk/db";
+import { type Goal, sql } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { type UsagePeriod } from "../../../entitlements/contract";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
@@ -197,7 +198,7 @@ export async function createAnytimeMock({
     planned >= MIN_CHECKPOINT_QUESTIONS &&
     isMockShort({ option: pick.option, planned });
 
-  return prisma.$transaction(async (tx): Promise<CreateAnytimeMockResult> => {
+  return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
     await tx.$queryRaw(
       sql`SELECT pg_advisory_xact_lock(${START_LOCK_NAMESPACE}::int, hashtext(${goal.id}))::text`,
     );
@@ -205,26 +206,26 @@ export async function createAnytimeMock({
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
 
     if (running) {
-      return { id: running.id, status: "running" };
+      return unchanged({ id: running.id, status: "running" });
     }
 
     if (asksForNew) {
-      return { status: "needsQuestions" };
+      return unchanged({ status: "needsQuestions" });
     }
 
     if (short) {
-      return {
+      return unchanged({
         examQuestions: pick.option.questions,
         limit: shortOfNew ? writesCap : null,
         minutes: plan.minutes,
         questions: planned,
         status: "short",
-      };
+      });
     }
 
     // A day that is all written asks its essays and no questions.
     if (planned < MIN_CHECKPOINT_QUESTIONS && !(planned === 0 && asksEssays)) {
-      return { status: "notEnoughQuestions" };
+      return unchanged({ status: "notEnoughQuestions" });
     }
 
     const now = new Date();

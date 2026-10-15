@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma, sql } from "@zoonk/db";
+import { sql } from "@zoonk/db";
 import { getSpeakingSection } from "../../language/exam-speaking/get-speaking-section";
 import { type SpeakingSectionView } from "../../language/exam-speaking/speaking-contract";
 import { startSpeakingSection } from "../../language/exam-speaking/start-speaking-section";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { findOwnedMock } from "./_utils/owned-mock";
 
 export type StartMockSpeakingResult =
@@ -63,13 +64,19 @@ export async function startMockSpeaking({
   // first paper, and the second learns of it.
   const index = String(mock.sectionIndex);
 
-  const kept = await prisma.$executeRaw(sql`
+  const kept = await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
+    const count = await tx.$executeRaw(sql`
     UPDATE mock_exams
     SET conditions = jsonb_set(conditions, ARRAY['sections', ${index}, 'speakingSectionId'], to_jsonb(${started.section.id}::text)),
         updated_at = now()
     WHERE id = ${mock.id}::uuid
+      AND status = 'active'
+      AND section_index = ${mock.sectionIndex}
       AND conditions -> 'sections' -> ${mock.sectionIndex}::int ->> 'speakingSectionId' IS NULL
   `);
+
+    return count > 0 ? count : unchanged(count);
+  });
 
   return kept > 0 ? started : loadKeptPaper({ blockId, fallback: started });
 }

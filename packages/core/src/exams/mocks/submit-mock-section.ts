@@ -1,6 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { routeNextModule } from "../scoring/adaptive-routing";
 import { endMock } from "./_utils/end-mock";
 import { readMockAnswer } from "./_utils/mock-answers";
@@ -119,13 +119,17 @@ export async function submitMockSection({
 
   const breakMs = (mock.conditions.sections[section]?.breakAfterMinutes ?? 0) * MS_PER_MINUTE;
 
-  const { count } = await prisma.mockExam.updateMany({
-    data: {
-      conditions,
-      sectionIndex: section + 1,
-      sectionStartedAt: new Date(now.getTime() + breakMs),
-    },
-    where: { id: mock.id, sectionIndex: section, status: "active" },
+  const count = await writeLearnerChange({ userId: owned.userId }, async (tx) => {
+    const updated = await tx.mockExam.updateMany({
+      data: {
+        conditions,
+        sectionIndex: section + 1,
+        sectionStartedAt: new Date(now.getTime() + breakMs),
+      },
+      where: { id: mock.id, sectionIndex: section, status: "active" },
+    });
+
+    return updated.count > 0 ? updated.count : unchanged(updated.count);
   });
 
   return { status: count === 0 ? "notRunning" : "next" };

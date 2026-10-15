@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { applySessionProgress } from "../../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
@@ -42,7 +42,7 @@ export async function settleAnytimeMock({
     })),
   });
 
-  await prisma.$transaction(async (tx) => {
+  await writeLearnerChange({ userId: mock.userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({
       timeZone,
       transaction: tx,
@@ -60,7 +60,7 @@ export async function settleAnytimeMock({
     });
 
     if (settled) {
-      return;
+      return unchanged(null);
     }
 
     await applySessionProgress(tx, {
@@ -92,5 +92,7 @@ export async function settleAnytimeMock({
       titleSnapshot: null,
       userId: mock.userId,
     });
+
+    return null;
   });
 }

@@ -78,6 +78,7 @@ export async function writeExamTask({
     kind: "examSpeaking",
     language: goal.language,
     level: format.level,
+    markChanged: true,
     minutes: task.minutes.max,
     scenario: {
       character: data.character,

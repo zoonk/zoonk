@@ -4,6 +4,7 @@ import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
 import { loadPreparationInputs } from "../../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../../preparation/section-preparation";
@@ -105,7 +106,7 @@ async function loadPreviousMeasure(mock: MockSitting): Promise<number | null> {
 async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: MockSitting }) {
   const asked = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
 
-  await prisma.$transaction(async (tx) => {
+  await writeLearnerChange({ userId: mock.userId }, async (tx) => {
     await tx.$queryRaw`
       SELECT id FROM study_session_blocks WHERE id = ${blockId}::uuid FOR UPDATE
     `;
@@ -114,13 +115,15 @@ async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: Mo
     const payload = readBlockPayload(block);
 
     if (asked.length === payload.itemIds.length) {
-      return;
+      return unchanged(null);
     }
 
     await tx.studySessionBlock.update({
       data: { payload: { ...payload, itemIds: asked } },
       where: { id: blockId },
     });
+
+    return null;
   });
 }
 
@@ -232,13 +235,19 @@ export async function completeMock({
     previous,
   });
 
-  await prisma.mockExam.update({
-    data: { finishedAt: new Date(), result, status: "finished" },
-    where: { id: mock.id },
+  const finished = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
+    const { count } = await tx.mockExam.updateMany({
+      data: { finishedAt: new Date(), result, status: "finished" },
+      where: { id: mock.id, status: "active" },
+    });
+
+    return count > 0 ? count : unchanged(count);
   });
 
-  revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
-  await trackCompletion({ graded, mock, result });
+  if (finished > 0) {
+    revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
+    await trackCompletion({ graded, mock, result });
+  }
 
   return result;
 }

@@ -1,5 +1,6 @@
 import "server-only";
-import { type StudySessionBlock, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { type StudySessionBlock, isPrismaUniqueConstraintError } from "@zoonk/db";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { buildMockConditions } from "./_utils/mock-conditions";
 import { findOwnedMock } from "./_utils/owned-mock";
@@ -60,9 +61,15 @@ export async function startMock({
   const { owned } = found;
 
   if (owned.mock?.status === "expired" && owned.block) {
-    await prisma.mockExam.updateMany({
-      data: { blockId: null },
-      where: { blockId: owned.block.id, id: owned.mock.id },
+    const { block, mock } = owned;
+
+    await writeLearnerChange({ userId: owned.userId }, async (tx) => {
+      const { count } = await tx.mockExam.updateMany({
+        data: { blockId: null },
+        where: { blockId: block.id, id: mock.id },
+      });
+
+      return count > 0 ? count : unchanged(count);
     });
   } else if (owned.mock) {
     if (owned.mock.status === "active" && owned.block) {
@@ -87,16 +94,26 @@ export async function startMock({
   const now = new Date();
 
   try {
-    await prisma.mockExam.create({
-      data: {
-        blockId,
-        conditions,
-        examBlueprintId: owned.blueprint?.id ?? null,
-        goalId: owned.goal?.id ?? null,
-        sectionStartedAt: now,
-        startedAt: now,
-        userId: owned.userId,
-      },
+    await writeLearnerChange<null>({ userId: owned.userId }, async (tx) => {
+      const existing = await tx.mockExam.findUnique({ where: { blockId } });
+
+      if (existing) {
+        return unchanged(null);
+      }
+
+      await tx.mockExam.create({
+        data: {
+          blockId,
+          conditions,
+          examBlueprintId: owned.blueprint?.id ?? null,
+          goalId: owned.goal?.id ?? null,
+          sectionStartedAt: now,
+          startedAt: now,
+          userId: owned.userId,
+        },
+      });
+
+      return null;
     });
   } catch (error) {
     // Two taps on "Start" race to create the sitting; the one that lost resumes the other's.
