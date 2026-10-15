@@ -30,11 +30,17 @@ export async function settleFinishedLesson({
 }): Promise<StudyBlockCompletion | null> {
   // The plan shows the lesson checked off; a lesson with nothing left to check changes nothing.
   const languageGoals = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const open = await tx.planItem.count({
-      where: { lessonId, plan: { goal: { userId } }, status: "todo" },
-    });
+    // Lock the items still to do: a test-out that takes one meanwhile is seen, not raced.
+    const open = await tx.$queryRaw<{ id: string }[]>`
+      SELECT item.id FROM plan_items AS item
+      JOIN plans AS plan ON plan.id = item.plan_id
+      JOIN goals AS goal ON goal.id = plan.goal_id
+      WHERE item.lesson_id = ${lessonId}::uuid AND goal.user_id = ${userId}::uuid
+        AND item.status = 'todo'
+      ORDER BY item.id FOR UPDATE OF item
+    `;
 
-    return open > 0
+    return open.length > 0
       ? completeLessonPlanItems(tx, { lessonId, now: new Date(), userId })
       : unchanged([]);
   });

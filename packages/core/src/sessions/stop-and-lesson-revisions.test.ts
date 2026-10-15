@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { readLearnerRevision } from "../_test-utils/learner-revision";
+import { readLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
@@ -67,5 +67,42 @@ describe("stop and lesson revisions", () => {
 
     await settleFinishedLesson({ lessonId, timeZone: "UTC", userId: user.id });
     await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
+  });
+
+  it("changes nothing when a test-out takes the lesson's last item while the check-off waits", async () => {
+    const { user } = await today();
+    const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
+    const lessonId = elsewhere.lessons[0]?.id ?? "";
+    const itemId = elsewhere.planItems[0]?.id ?? "";
+    const before = await readLearnerRevision(user.id);
+
+    const held = Promise.withResolvers<number>();
+    const release = Promise.withResolvers<null>();
+
+    // A test-out tests the item out in its own transaction, still open.
+    const testOut = prisma.$transaction(async (tx) => {
+      await tx.planItem.update({ data: { status: "testedOut" }, where: { id: itemId } });
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await release.promise;
+    });
+
+    const pid = await held.promise;
+    const settled = settleFinishedLesson({ lessonId, timeZone: "UTC", userId: user.id });
+
+    try {
+      await waitForBlockedStatement(pid, /plan_items/u);
+    } finally {
+      release.resolve(null);
+      await testOut;
+    }
+
+    await expect(settled).resolves.toBeNull();
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: itemId } }),
+    ).resolves.toMatchObject({ status: "testedOut" });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 });
