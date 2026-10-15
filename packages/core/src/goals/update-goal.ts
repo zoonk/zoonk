@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type Goal, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
@@ -7,6 +8,7 @@ import {
   getLearningProfileCacheTag,
 } from "../cache/tags";
 import { type AllowanceLimit } from "../entitlements/contract";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { applyChangeNow, isPlanReady } from "../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
@@ -33,6 +35,79 @@ export type GoalUpdateResult =
 /** Plain notes for logs and admin; the apps say these changes from their operations. */
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
+
+/** A duplicate writer must roll back the marker it acquired before reading the locked state. */
+class GoalMetadataUnchangedError extends Error {
+  override name = "GoalMetadataUnchangedError";
+  readonly goal: Goal;
+
+  constructor(goal: Goal) {
+    super("The goal metadata is unchanged");
+    this.goal = goal;
+  }
+}
+
+function goalMetadata(input: GoalUpdateInput) {
+  return {
+    details: input.details,
+    status: input.status,
+    studyTime: input.studyTime,
+    timezone: input.timeZone,
+    title: input.title,
+  };
+}
+
+function changesMetadata(goal: Goal, input: GoalUpdateInput): boolean {
+  return Object.entries(goalMetadata(input)).some(
+    ([key, value]) => value !== undefined && !isDeepStrictEqual(value, Reflect.get(goal, key)),
+  );
+}
+
+async function saveMetadata({
+  goal,
+  input,
+  userId,
+}: {
+  goal: Goal;
+  input: GoalUpdateInput;
+  userId: string;
+}) {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, {
+        planInputs:
+          input.details !== undefined || input.status !== undefined || input.timeZone !== undefined,
+        userId,
+      });
+
+      const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
+      const changed = changesMetadata(current, input);
+
+      const updated = changed
+        ? await tx.goal.update({ data: goalMetadata(input), where: { id: current.id } })
+        : current;
+
+      const moved = input.status
+        ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })
+        : 0;
+
+      if (!changed && moved === 0) {
+        throw new GoalMetadataUnchangedError(current);
+      }
+
+      return {
+        completed: current.status !== "completed" && updated.status === "completed",
+        goal: updated,
+      };
+    });
+  } catch (error) {
+    if (error instanceof GoalMetadataUnchangedError) {
+      return { completed: false, goal: error.goal };
+    }
+
+    throw error;
+  }
+}
 
 /**
  * A goal back from a pause keeps its plan, or starts it again from today when the pause left
@@ -138,23 +213,10 @@ export async function updateGoal({
     return planResult;
   }
 
-  const updated = await prisma.goal.update({
-    data: {
-      details: input.details,
-      status: input.status,
-      studyTime: input.studyTime,
-      timezone: input.timeZone,
-      title: input.title,
-    },
-    where: { id: goalId },
-  });
+  const { completed, goal: updated } = await saveMetadata({ goal, input, userId });
 
-  if (input.status) {
-    await moveActiveGoalAway({ goalId, status: input.status, userId });
-  }
-
-  if (input.status === "completed" && goal.status !== "completed") {
-    trackGoalReached(goal);
+  if (completed) {
+    trackGoalReached(updated);
   }
 
   revalidateCacheTags([

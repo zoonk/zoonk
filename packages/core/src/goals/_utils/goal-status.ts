@@ -1,5 +1,5 @@
 import "server-only";
-import { type GoalStatus, prisma } from "@zoonk/db";
+import { type GoalStatus, type TransactionClient, prisma } from "@zoonk/db";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
@@ -38,24 +38,28 @@ export async function findActiveGoalLimit({
 export async function moveActiveGoalAway({
   goalId,
   status,
+  tx,
   userId,
 }: {
   goalId: string;
   status: GoalStatus;
+  tx: TransactionClient;
   userId: string;
-}): Promise<void> {
+}): Promise<number> {
   if (status !== "archived" && status !== "completed") {
-    return;
+    return 0;
   }
 
-  const next = await prisma.goal.findFirst({
+  const next = await tx.goal.findFirst({
     orderBy: { updatedAt: "desc" },
     select: { id: true },
     where: { id: { not: goalId }, kind: { not: "explain" }, status: "active", userId },
   });
 
-  await prisma.userLearningProfile.updateMany({
+  const moved = await tx.userLearningProfile.updateMany({
     data: { activeGoalId: next?.id ?? null },
     where: { activeGoalId: goalId, userId },
   });
+
+  return moved.count;
 }

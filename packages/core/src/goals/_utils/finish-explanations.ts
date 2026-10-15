@@ -2,7 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../../cache/tags";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { moveActiveGoalAway } from "./goal-status";
+
+/** No active explanation means the early marker must roll back with the no-op. */
+class ExplanationsUnchangedError extends Error {
+  override name = "ExplanationsUnchangedError";
+}
 
 /**
  * A quick explanation is one answer, with no plan to follow: once the learner finishes its lesson,
@@ -19,19 +25,38 @@ export async function finishExplanations({
   lessonId: string;
   userId: string;
 }): Promise<void> {
-  const finished = await prisma.goal.updateManyAndReturn({
-    data: { status: "completed" },
-    select: { id: true },
-    where: { kind: "explain", plan: { items: { some: { lessonId } } }, status: "active", userId },
-  });
+  try {
+    await prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId });
 
-  if (finished.length === 0) {
-    return;
+      const finished = await tx.goal.updateManyAndReturn({
+        data: { status: "completed" },
+        select: { id: true },
+        where: {
+          kind: "explain",
+          plan: { items: { some: { lessonId } } },
+          status: "active",
+          userId,
+        },
+      });
+
+      if (finished.length === 0) {
+        throw new ExplanationsUnchangedError();
+      }
+
+      await Promise.all(
+        finished.map((goal) =>
+          moveActiveGoalAway({ goalId: goal.id, status: "completed", tx, userId }),
+        ),
+      );
+    });
+  } catch (error) {
+    if (error instanceof ExplanationsUnchangedError) {
+      return;
+    }
+
+    throw error;
   }
-
-  await Promise.all(
-    finished.map((goal) => moveActiveGoalAway({ goalId: goal.id, status: "completed", userId })),
-  );
 
   revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
 }
