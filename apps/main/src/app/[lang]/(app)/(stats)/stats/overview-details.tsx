@@ -28,7 +28,7 @@ import {
   getPatternsSummary,
 } from "../patterns/pattern-summary";
 import { ScoreChart } from "../score/score-chart";
-import { WideScoreChartPlot } from "./wide-score-chart-plot";
+import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";
 
 const PERCENT = 100;
 
@@ -55,8 +55,8 @@ export async function ScoreTrend({
       {history ? (
         <ScoreChart
           dataPoints={history.dataPoints}
+          media={OVERVIEW_CHART_MEDIA}
           performance={history}
-          plot={WideScoreChartPlot}
         />
       ) : (
         <p className="text-muted-foreground text-sm">

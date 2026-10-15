@@ -7,7 +7,6 @@ import { getLocale } from "next-intl/server";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
-import { LazyScoreChartPlot } from "./lazy-score-chart-plot";
 import { ScoreChart, ScoreChartSkeleton } from "./score-chart";
 import { ScoreLine, ScoreTiles } from "./score-stats";
 
@@ -27,7 +26,7 @@ export async function ScoreContent() {
   return (
     <ProgressContent>
       <ScoreTiles performance={history} />
-      <ScoreChart dataPoints={history.dataPoints} performance={history} plot={LazyScoreChartPlot} />
+      <ScoreChart dataPoints={history.dataPoints} performance={history} />
       <ScoreLine />
     </ProgressContent>
   );

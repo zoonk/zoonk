@@ -1,6 +1,6 @@
 import { type ScorePerformance } from "@zoonk/core/progress/score-performance";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type ComponentType } from "react";
+import { OnDemandScoreChartPlot } from "./on-demand-score-chart-plot";
 import { ScoreChartFigure } from "./score-chart-figure";
 
 type ScoreTrendDataPoint = ScorePerformance & { date: Date; label: string };
@@ -9,17 +9,18 @@ export type SerializedScoreDataPoint = ScorePerformance & { date: string; label:
 
 /**
  * Serializes the fixed weekly Score trend at the server boundary so the client
- * chart receives only the small, JSON-safe dataset it needs. The page picks its plot: Score draws
- * it with the page, the overview only where it shows it (`WideScoreChartPlot`).
+ * chart receives only the small, JSON-safe dataset it needs. Score shows its plot at every width,
+ * the overview only where it shows its trend (`media`).
  */
 export function ScoreChart({
   dataPoints,
+  media,
   performance,
-  plot: Plot,
 }: {
   dataPoints: ScoreTrendDataPoint[];
+  /** Where the page shows the plot; elsewhere its code never loads. Every width without one. */
+  media?: string;
   performance: ScorePerformance;
-  plot: ComponentType<{ dataPoints: SerializedScoreDataPoint[] }>;
 }) {
   const serializedDataPoints = dataPoints.map((point) => ({
     correctAnswers: point.correctAnswers,
@@ -32,7 +33,7 @@ export function ScoreChart({
 
   return (
     <ScoreChartFigure dataPoints={serializedDataPoints} performance={performance}>
-      <Plot dataPoints={serializedDataPoints} />
+      <OnDemandScoreChartPlot dataPoints={serializedDataPoints} media={media} />
     </ScoreChartFigure>
   );
 }

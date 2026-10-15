@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { StatsPage } from "../_components/stats-page";
+import { ScoreChartPreload } from "./score-chart-preload";
 import { ScoreContent, ScoreContentSkeleton } from "./score-content";
 
 /** Describes the fixed Score window consistently in browser and social metadata. */
@@ -20,6 +21,7 @@ export default async function ScorePage() {
 
   return (
     <StatsPage title={t("Score")}>
+      <ScoreChartPreload />
       <Suspense fallback={<ScoreContentSkeleton />}>
         <ScoreContent />
       </Suspense>
