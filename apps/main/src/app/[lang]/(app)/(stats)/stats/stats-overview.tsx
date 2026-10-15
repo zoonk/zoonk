@@ -26,7 +26,6 @@ import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ActivityChart, ActivityChartSkeleton } from "../activity/activity-chart";
 import { ScoreChartSkeleton } from "../score/score-chart";
-import { ScoreChartIntent } from "../score/score-chart-preload";
 import { PatternsLinkRow, PatternsOverview, ScoreTrend } from "./overview-details";
 
 const PERCENT = 100;
@@ -184,12 +183,7 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
       icon={<TargetIcon />}
       label={label}
       tone="success"
-      value={
-        // Score draws its chart: reaching for the tile starts loading it.
-        <ScoreChartIntent>
-          <TileLink href={getMenu("score").url} label={label} value={value} />
-        </ScoreChartIntent>
-      }
+      value={<TileLink href={getMenu("score").url} label={label} value={value} />}
     />
   );
 }

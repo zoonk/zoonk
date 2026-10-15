@@ -1,5 +1,7 @@
+import { instant } from "@next/playwright";
 import { expect, test } from "./fixtures";
 import {
+  AT_ONCE_MS,
   followRequests,
   markPaintedFrames,
   paintedFramesSince,
@@ -20,9 +22,6 @@ const TREND_FRAMES = { drawn: `${TREND}:has(svg)`, empty: `${TREND}:not(:has(svg
  * holds a Suspense fallback once it's shown.
  */
 const DRAWN_WITH_PAGE_MS = 200;
-
-/** "At once" for a page opened from a link, well under how late slowed code arrives. */
-const AT_ONCE_MS = 1000;
 
 test.describe("Score", () => {
   test("shows one weighted 90-day score with its answers on tiles, the weekly trend and one line", async ({
@@ -152,6 +151,67 @@ test.describe("Score", () => {
       expect(frames.filter((frame) => frame.seen.empty !== "none")).toEqual([]);
     } finally {
       await context.close();
+    }
+  });
+
+  test("the sidebar's Statistics opens the overview with its trend drawn once reached for, even when code arrives slowly", async ({
+    browser,
+    withProgressUser,
+  }) => {
+    // A pointer resting on the link, or the keyboard's focus on it.
+    for (const reach of ["hover", "focus"] as const) {
+      // oxlint-disable-next-line no-await-in-loop -- Each way in opens in a new tab, one after another.
+      const context = await browser.newContext({
+        storageState: withProgressUser.storageState,
+        viewport: { height: 900, width: 1280 },
+      });
+
+      // oxlint-disable-next-line no-await-in-loop
+      await watchPaintedFrames(context, TREND_FRAMES);
+      // oxlint-disable-next-line no-await-in-loop
+      const page = await context.newPage();
+      const requests = followRequests(page);
+
+      try {
+        // oxlint-disable-next-line no-await-in-loop
+        await page.goto("/level");
+
+        const statistics = page
+          .getByRole("complementary", { name: "Sidebar" })
+          .getByRole("link", { name: "Statistics" });
+
+        // oxlint-disable-next-line no-await-in-loop
+        await expect(statistics).toBeVisible();
+
+        // From here on code arrives as over a slow network. Reaching for the link starts loading
+        // the trend's code along with the page.
+        // oxlint-disable-next-line no-await-in-loop
+        await slowCodeFromNow(page);
+        // oxlint-disable-next-line no-await-in-loop
+        await (reach === "hover" ? statistics.hover() : statistics.focus());
+        // oxlint-disable-next-line no-await-in-loop
+        await requests.settled();
+        // oxlint-disable-next-line no-await-in-loop
+        await markPaintedFrames(page);
+
+        // oxlint-disable-next-line no-await-in-loop
+        await instant(page, async () => {
+          await (reach === "hover" ? statistics.click() : page.keyboard.press("Enter"));
+          await expect(page).toHaveURL(/\/stats$/u);
+
+          await expect(page.locator(TREND_FRAMES.drawn), reach).toBeVisible({
+            timeout: AT_ONCE_MS,
+          });
+        });
+
+        // oxlint-disable-next-line no-await-in-loop
+        const frames = await paintedFramesSince(page);
+        const empty = frames.filter((frame) => frame.seen.empty !== "none");
+        expect(empty, reach).toEqual([]);
+      } finally {
+        // oxlint-disable-next-line no-await-in-loop
+        await context.close();
+      }
     }
   });
 });

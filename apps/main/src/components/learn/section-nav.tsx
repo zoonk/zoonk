@@ -5,8 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 
 export type SectionNavItem<Href extends string> = {
   label: string;
-  /** Reaching for the tab (pointer over, focus, press), to start loading what its page draws. */
-  onIntent?: () => void;
   /** A short mark after the name, such as the plan (`PlusMark`). */
   trail?: React.ReactNode;
   url: AppRoute<Href>;
@@ -49,9 +47,6 @@ export function SectionNav<Href extends string>({
               aria-current={current === item.url ? "page" : undefined}
               className={SECTION_NAV_LINK_CLASS}
               href={item.url}
-              onFocus={item.onIntent}
-              onPointerDown={item.onIntent}
-              onPointerEnter={item.onIntent}
               prefetch
             >
               {item.label}

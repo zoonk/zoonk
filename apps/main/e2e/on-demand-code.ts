@@ -77,6 +77,9 @@ export function paintedFramesSince(page: Page): Promise<PaintedFrame[]> {
 /** How late code arrives over a slow connection, well past what "at once" allows. */
 const SLOW_CODE_MS = 3000;
 
+/** "At once" for a page opened from a link, well under how late slowed code arrives. */
+export const AT_ONCE_MS = 1000;
+
 /** From now on, every script the page asks for arrives `SLOW_CODE_MS` late. */
 export async function slowCodeFromNow(page: Page) {
   await page.route("**/_next/static/chunks/**/*.js", async (route) => {

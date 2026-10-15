@@ -11,7 +11,8 @@ import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting"
 import { useExtracted, useLocale } from "next-intl";
 import { type ComponentProps, startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
-import { LazyLessonPlayer, preloadLessonPlayer } from "./lazy-lesson-player";
+import { LazyLessonPlayer } from "./lazy-lesson-player";
+import { preloadLessonPlayer } from "./lesson-player-code";
 
 type EndingSlots = NonNullable<ComponentProps<typeof LazyLessonPlayer>["endingSlots"]>;
 

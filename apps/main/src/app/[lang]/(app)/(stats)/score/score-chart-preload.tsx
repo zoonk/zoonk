@@ -5,20 +5,6 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { importScoreChartPlot, preloadScoreChart } from "./score-chart-code";
 
-/** Wraps a link to a page that draws Score's chart: reaching for it starts loading the chart. */
-export function ScoreChartIntent({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="contents"
-      onFocus={preloadScoreChart}
-      onPointerDown={preloadScoreChart}
-      onPointerEnter={preloadScoreChart}
-    >
-      {children}
-    </span>
-  );
-}
-
 function NoPlot() {
   return null;
 }
