@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged, markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { keepPaceOwn } from "../plans/_test-utils/sim/sim-db-pace";
 import { readFreshPlanSummary } from "../plans/_utils/plan-summary";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import * as producer from "../plans/planner/build-plan";
@@ -72,9 +73,11 @@ function assertFresh(plan: Awaited<ReturnType<typeof saved>>, userId: string) {
 }
 
 describe("a selected plan reaches the day exactly once", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
+    // Exact allocations use this learner's pace, independent of other tests' completed lessons.
+    await keepPaceOwn();
   });
 
   afterEach(() => {

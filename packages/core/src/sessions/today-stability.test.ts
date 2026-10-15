@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { keepPaceOwn } from "../plans/_test-utils/sim/sim-db-pace";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
@@ -116,12 +117,15 @@ function learnLessonIds(session: Awaited<ReturnType<typeof readToday>>): string[
 }
 
 describe("today's session the learner was shown", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
+    // Exact allocations use this learner's pace, independent of other tests' completed lessons.
+    await keepPaceOwn();
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
