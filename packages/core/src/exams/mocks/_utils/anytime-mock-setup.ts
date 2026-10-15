@@ -213,10 +213,12 @@ const ANYTIME_MOCK_FILTER = {
 export async function findRunningAnytimeMock({
   client = prisma,
   goalId,
+  now: requestInstant,
   userId,
 }: {
   client?: TransactionClient;
   goalId: string;
+  now?: Date | Promise<Date>;
   userId: string;
 }) {
   const active = await client.mockExam.findMany({
@@ -225,7 +227,8 @@ export async function findRunningAnytimeMock({
     where: { ...ANYTIME_MOCK_FILTER, blockId: null, goalId, status: "active", userId },
   });
 
-  const now = Date.now();
+  const instant = requestInstant === undefined ? undefined : await requestInstant;
+  const now = instant?.getTime() ?? Date.now();
   return active.find((mock) => !hasStoredTimeRunOutAway({ mock, now })) ?? null;
 }
 

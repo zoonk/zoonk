@@ -1,6 +1,7 @@
 import "server-only";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
@@ -47,7 +48,7 @@ export async function getMockOptions({
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
     ),
     getAnytimeMockAccess({ goal, timeZone: getAnswerTimeZone({ goal }) }),
-    findRunningAnytimeMock({ goalId: goal.id, userId: goal.userId }),
+    findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),
     findPlacementMock({ goalId: goal.id, userId: goal.userId }),
     findLastMock(goal.id),
   ]);

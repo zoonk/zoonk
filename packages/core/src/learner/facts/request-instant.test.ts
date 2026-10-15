@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
@@ -8,6 +9,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getAnytimeMockAccess } from "../../exams/mocks/_utils/anytime-mock-access";
+import { findRunningAnytimeMock } from "../../exams/mocks/_utils/anytime-mock-setup";
+import { getMockOptions } from "../../exams/mocks/get-mock-options";
+import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getCurrentUserReviewSchedule } from "../get-current-user-review-schedule";
 import * as requestClock from "./request-instant";
@@ -15,11 +20,152 @@ import type * as ProgressDateContext from "../../progress/get-request-date-conte
 
 const INSTANT = new Date("2026-07-12T12:00:00Z");
 
+async function runningMockFixture() {
+  const user = await userFixture();
+  const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
+
+  const conditions = mockConditionsSchema.parse({
+    day: null,
+    fullLength: true,
+    purpose: "practice",
+    scoring: "raw",
+    sections: [
+      { itemIds: ["first", "second"], minutes: 30, name: null, questions: 2, routing: null },
+    ],
+    shape: { area: null, day: null, kind: "full" },
+    startTime: null,
+    timeZone: "UTC",
+  });
+
+  const mock = await prisma.mockExam.create({
+    data: {
+      conditions,
+      goalId: goal.id,
+      sectionStartedAt: INSTANT,
+      startedAt: INSTANT,
+      status: "active",
+      userId: user.id,
+    },
+  });
+
+  return { goal, mock, user };
+}
+
 describe("GET request instant", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
   });
+
+  it.each([
+    { access: "open", kind: "exam", tier: "plus" },
+    { access: "plusRequired", kind: "exam", tier: "free" },
+    { access: "open", kind: "learn", tier: "free" },
+    { access: "open", kind: "exam", tier: "visitor" },
+  ] as const)("keeps $kind mock access for $tier at $access", async ({ access, kind, tier }) => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind, userId: user.id });
+
+    if (tier === "plus") {
+      await prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      });
+    }
+
+    mockSession(tier === "visitor" ? null : user.id);
+
+    const reads = await countDatabaseStatements(() =>
+      getAnytimeMockAccess({ goal, timeZone: "Pacific/Kiritimati" }),
+    );
+
+    expect(reads.result).toBe(access);
+    expect(reads.writes).toBe(0);
+  });
+
+  it("shows the running mock at the GET instant while a fresh writer sees it expired", async () => {
+    const { goal, mock, user } = await runningMockFixture();
+    mockSession(user.id);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
+    vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(INSTANT);
+
+    const reads = await countDatabaseStatements(() => getMockOptions({ goalId: goal.id }));
+
+    expect(reads.writes).toBe(0);
+
+    expect(reads.result).toMatchObject({
+      status: "ready",
+      view: { running: { id: mock.id, purpose: "practice", shape: { kind: "full" } } },
+    });
+
+    await expect(
+      prisma.$transaction((client) =>
+        findRunningAnytimeMock({ client, goalId: goal.id, userId: user.id }),
+      ),
+    ).resolves.toBeNull();
+  });
+
+  it.each(["omitted", "undefined"] as const)(
+    "reads a fresh %s writer clock after its transactional SQL completes",
+    async (mode) => {
+      const { goal, user } = await runningMockFixture();
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(INSTANT);
+      const ready = Promise.withResolvers<number>();
+      const release = Promise.withResolvers<null>();
+
+      const holding = prisma.$transaction(
+        async (client) => {
+          await client.$executeRaw`LOCK TABLE mock_exams IN ACCESS EXCLUSIVE MODE`;
+
+          const [connection] = await client.$queryRaw<
+            { pid: number }[]
+          >`SELECT pg_backend_pid() AS pid`;
+
+          ready.resolve(connection?.pid ?? 0);
+          await release.promise;
+        },
+        { timeout: 12_000 },
+      );
+
+      const held = Promise.allSettled([holding]);
+      void holding.catch(ready.reject);
+      const holderPid = await ready.promise;
+
+      const reading = Promise.allSettled([
+        prisma.$transaction((client) =>
+          findRunningAnytimeMock({
+            client,
+            goalId: goal.id,
+            ...(mode === "undefined" ? { now: undefined } : {}),
+            userId: user.id,
+          }),
+        ),
+      ]);
+
+      try {
+        await expect
+          .poll(
+            async () => prisma.$queryRaw<{ pid: number }[]>`
+              SELECT pid FROM pg_stat_activity
+              WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+                AND query ~* 'mock_exams'
+            `,
+            { interval: 10, timeout: 4000 },
+          )
+          .not.toHaveLength(0);
+
+        vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
+      } finally {
+        release.resolve(null);
+        await held;
+        await reading;
+      }
+
+      await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
+      await expect(reading).resolves.toStrictEqual([{ status: "fulfilled", value: null }]);
+    },
+  );
 
   it("uses the same fact for progress and each goal's own local day without writing", async () => {
     const user = await userFixture();

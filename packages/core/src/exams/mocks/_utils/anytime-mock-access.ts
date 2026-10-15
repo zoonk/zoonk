@@ -1,8 +1,6 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../../entitlements/get-allowance";
-import { getExamPrepAccess } from "../../../sessions/_utils/exam-access";
 
 export type AnytimeMockAccess = "open" | "plusRequired";
 
@@ -14,19 +12,13 @@ export type AnytimeMockAccess = "open" | "plusRequired";
  */
 export async function getAnytimeMockAccess({
   goal,
-  timeZone,
 }: {
   goal: Goal;
   timeZone: string;
 }): Promise<AnytimeMockAccess> {
   const allowance = await getAllowance();
 
-  const access = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today: getDateInTimeZone({ date: new Date(), timeZone }),
-  });
-
-  return access.includesMockExams ? "open" : "plusRequired";
+  return goal.kind === "exam" && allowance?.examPrep.includesMockExams === false
+    ? "plusRequired"
+    : "open";
 }
