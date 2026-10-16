@@ -24,6 +24,8 @@ import {
 } from "../../_test-utils/mock-session";
 import { mistakeListInputSchema } from "../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
+import { lapsedDayFixture } from "../../sessions/_test-utils/entitlement-lapse";
+import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getLearnerSummary } from "./get-learner-summary";
 
@@ -731,5 +733,51 @@ describe("the summary's ready mistakes", () => {
     await expect(notebookReady(goal.id)).resolves.toBe(2);
     expect(counts.result?.missions).toStrictEqual({ done: 0, total: 2 });
     assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+  });
+});
+
+/**
+ * The summary's statements for a Plus learner's saved call day: what it read before it previewed a
+ * lapsed day's replacement. The preview's gates are pure, so a day that isn't lapsed reads no more.
+ */
+const PLUS_CALL_DAY_STATEMENTS = 9;
+
+describe("the summary of a Plus call day", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(SESSION_NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("names the free lesson Today offers in the call's place once Plus ends, without writing", async () => {
+    const day = await lapsedDayFixture();
+    const free = day.planItems.at(-1);
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.writes).toBe(0);
+
+    expect(counts.result?.today).toMatchObject({
+      blocksLeft: 1,
+      next: { sessionId: day.sessionId, title: free?.titleSnapshot },
+    });
+  });
+
+  it("reads nothing more for the call while Plus is still active", async () => {
+    const day = await lapsedDayFixture();
+
+    await prisma.subscription.updateMany({
+      data: { status: "active" },
+      where: { referenceId: day.user.id },
+    });
+
+    const counts = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(counts.result?.today?.next?.sessionId).toBe(day.sessionId);
+    expect(counts.writes).toBe(0);
+    expect(counts.statements).toBe(PLUS_CALL_DAY_STATEMENTS);
   });
 });
