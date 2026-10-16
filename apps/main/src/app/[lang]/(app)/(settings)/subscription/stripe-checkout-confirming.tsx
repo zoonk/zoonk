@@ -7,6 +7,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
+import { useEffect, useState } from "react";
 import { hasPlusSubscriptionAction } from "./subscription-status-action";
 
 /** Stripe's webhook usually saves the subscription within seconds of the return. */
@@ -20,15 +21,22 @@ const CONFIRMATION_TIMEOUT_MS = 45_000;
  * this. After a while it says it's still confirming, with a way to check again, never
  * the offer they just paid for.
  */
-export function StripeCheckoutConfirming() {
+function ConfirmationAttempt({ restart }: { restart: () => void }) {
   const t = useExtracted();
   const router = useRouter();
+  const [expired, setExpired] = useState(false);
+
+  // A stalled status response must not hold the timeout and its recovery button hostage.
+  useEffect(() => {
+    const timer = setTimeout(() => setExpired(true), CONFIRMATION_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   const poll = usePoll({
-    active: true,
+    active: !expired,
     intervalMs: CONFIRMATION_POLL_MS,
-    onPoll: async () => {
-      if (await hasPlusSubscriptionAction()) {
+    onPoll: async (signal) => {
+      if ((await hasPlusSubscriptionAction()) && !signal.aborted) {
         router.refresh();
       }
     },
@@ -63,10 +71,16 @@ export function StripeCheckoutConfirming() {
           {t("Checking with Stripe…")}
         </p>
       ) : (
-        <Button className="self-start" onClick={poll.restart} variant="outline">
+        <Button className="self-start" onClick={restart} variant="outline">
           {t("Check again")}
         </Button>
       )}
     </Page>
   );
+}
+
+/** A new check has its own deadline and cancels any response belonging to the previous attempt. */
+export function StripeCheckoutConfirming() {
+  const [round, setRound] = useState(0);
+  return <ConfirmationAttempt key={round} restart={() => setRound((current) => current + 1)} />;
 }

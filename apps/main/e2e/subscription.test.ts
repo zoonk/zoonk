@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Page } from "@playwright/test";
+import { type Browser, type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -272,6 +272,9 @@ test.describe("Subscription Page - With Plus Subscription", () => {
   });
 });
 
+/** The page back from checkout asks about the subscription this often. */
+const CONFIRMATION_CHECK_MS = 3000;
+
 /** A learner back from Stripe's checkout whose subscription the webhook hasn't saved yet. */
 async function openBackFromCheckout(browser: Browser) {
   const user = await createE2EUser(getBaseURL());
@@ -335,6 +338,14 @@ test.describe("Subscription Page - Back From Checkout", () => {
       }
     });
 
+    // The page asks about the subscription once it's live.
+    const firstAnswer = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname.endsWith("/subscription") &&
+        Boolean(response.request().headers()["next-action"]),
+    );
+
+    await page.clock.install();
     await page.goto("/subscription?stripe_checkout=complete");
 
     await expect(
@@ -342,13 +353,36 @@ test.describe("Subscription Page - Back From Checkout", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
+    // Its answer coming in is the signal: Playwright doesn't always see a streamed answer finish.
+    await firstAnswer;
+
+    // Its next check is held until the webhook saved the plan, so that check reads it.
+    const heldChecks: Route[] = [];
+
+    await page.route("**/subscription?stripe_checkout=complete", async (route) => {
+      if (route.request().headers()["next-action"]) {
+        heldChecks.push(route);
+        return;
+      }
+
+      await route.fallback();
+    });
+
+    await expect(async () => {
+      if (heldChecks.length === 0) {
+        await page.clock.fastForward(CONFIRMATION_CHECK_MS);
+      }
+
+      expect(heldChecks.length, "the page asks again").toBeGreaterThan(0);
+    }).toPass();
 
     // While the webhook hasn't saved it, the page asks about the subscription alone, never reading
-    // the whole page again.
-    await expect.poll(() => checks.length).toBeGreaterThan(0);
+    // the whole page again (the next check is sent once the answer before it was handled).
+    expect(checks.length).toBeGreaterThan(1);
     expect(refreshes).toStrictEqual([]);
 
     await confirm();
+    await Promise.all(heldChecks.map((route) => route.continue()));
 
     // No refresh: the plan replaces the wait once the webhook saved it.
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
@@ -361,6 +395,21 @@ test.describe("Subscription Page - Back From Checkout", () => {
   }) => {
     const { confirm, context, page } = await openBackFromCheckout(browser);
     await page.clock.install();
+    const held = Promise.withResolvers<null>();
+    const finished = Promise.withResolvers<null>();
+
+    // Keep the first status response pending beyond the UI deadline; a later round must ignore it.
+    await page.route("**/subscription?stripe_checkout=complete", async (route) => {
+      if (!route.request().headers()["next-action"]) {
+        await route.continue();
+        return;
+      }
+
+      const response = await route.fetch();
+      await held.promise;
+      await route.fulfill({ response });
+      finished.resolve(null);
+    });
 
     // The page asks about the subscription once it's live: only then time can jump.
     const firstCheck = page.waitForRequest(
@@ -382,6 +431,9 @@ test.describe("Subscription Page - Back From Checkout", () => {
       page.getByRole("heading", { level: 1, name: "Still confirming your subscription" }),
     ).toBeVisible();
 
+    held.resolve(null);
+    await finished.promise;
+    await page.unroute("**/subscription?stripe_checkout=complete");
     await confirm();
     await page.getByRole("button", { name: "Check again" }).click();
 
