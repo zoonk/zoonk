@@ -5,7 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { markLearnerChanged, markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import {
   WAITING_START,
   outlineSkill,
@@ -16,7 +16,9 @@ import {
   mockSearchTerms,
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
+import * as plannerLessons from "../plans/_utils/planner-lessons";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { PlanConflictError } from "../plans/plan-conflict";
 import { buildPlan } from "../plans/planner/build-plan";
 import { readGenerationManifest } from "./_utils/generation-manifest";
 import { admitPlanLessons, createPlanGenerationManifest } from "./speculative-lessons";
@@ -43,6 +45,31 @@ async function manifestFixture() {
   return { ...fixture, lessonIds, manifest, user };
 }
 
+/** A goal planned before its skill was outlined, with the lessons that outline then landed. */
+async function outlinedWaitingGoal() {
+  const skill = await skillFixture();
+  const { goal, plan } = await waitingGoal(skill);
+  const lessonIds = await outlineSkill(skill);
+  return { goal, lessonIds, plan };
+}
+
+/**
+ * Another run's content write marks the plan (as saving a shared lesson or question does) while
+ * the manifest reads the lessons its stand-ins now name: after the manifest's token, before its
+ * re-check. Only the order is the test's; the write and the read are real.
+ */
+function markPlanWhileRead({ every = false, planId }: { every?: boolean; planId: string }) {
+  const load = plannerLessons.loadGoalPlannerLessons;
+  const spy = vi.spyOn(plannerLessons, "loadGoalPlannerLessons");
+
+  const marked = async (input: Parameters<typeof load>[0]) => {
+    await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [planId] }));
+    return load(input);
+  };
+
+  return every ? spy.mockImplementation(marked) : spy.mockImplementationOnce(marked);
+}
+
 describe("parent-issued generation manifests", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -51,7 +78,10 @@ describe("parent-issued generation manifests", () => {
     mockDecision(null);
   });
 
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it("admits a current child batch in one physical statement and no builder entries", async () => {
     const { goal, lessonIds, manifest } = await manifestFixture();
@@ -126,9 +156,7 @@ describe("parent-issued generation manifests", () => {
   });
 
   it("includes newly outlined lessons while their saved stand-in remains todo", async () => {
-    const skill = await skillFixture();
-    const { goal, plan } = await waitingGoal(skill);
-    const lessonIds = await outlineSkill(skill);
+    const { goal, lessonIds, plan } = await outlinedWaitingGoal();
     const saved = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
     expect(saved.every((item) => item.lessonId === null)).toBe(true);
     vi.mocked(buildPlan).mockClear();
@@ -141,6 +169,51 @@ describe("parent-issued generation manifests", () => {
     );
 
     expect(buildPlan).not.toHaveBeenCalled();
+  });
+
+  it("issues the manifest from a fresh read when a content write marks the plan while it's read", async () => {
+    const { goal, lessonIds, plan } = await outlinedWaitingGoal();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const reads = markPlanWhileRead({ planId: plan.id });
+
+    const manifest = await createPlanGenerationManifest({ goalId: goal.id, lessonIds });
+    const current = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(current.inputVersion).toBeGreaterThan(before.inputVersion);
+
+    expect(manifest?.basis).toMatchObject({
+      inputVersion: current.inputVersion,
+      planVersion: current.version,
+    });
+
+    expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual(lessonIds);
+    expect(reads).toHaveBeenCalledTimes(2);
+  });
+
+  it("still refuses a plan whose inputs keep changing on the second read", async () => {
+    const { goal, lessonIds, plan } = await outlinedWaitingGoal();
+    const reads = markPlanWhileRead({ every: true, planId: plan.id });
+
+    await expect(createPlanGenerationManifest({ goalId: goal.id, lessonIds })).rejects.toThrow(
+      PlanConflictError,
+    );
+
+    expect(reads).toHaveBeenCalledTimes(2);
+  });
+
+  it("lets a failure other than a plan conflict through without reading again", async () => {
+    const { goal, lessonIds } = await outlinedWaitingGoal();
+    const failure = new Error("The Library is unavailable");
+
+    // A read failing mid-manifest can't be produced safely with the real database: any error other
+    // than a plan conflict stands in for it.
+    const reads = vi.spyOn(plannerLessons, "loadGoalPlannerLessons").mockRejectedValueOnce(failure);
+
+    await expect(createPlanGenerationManifest({ goalId: goal.id, lessonIds })).rejects.toBe(
+      failure,
+    );
+
+    expect(reads).toHaveBeenCalledOnce();
   });
 
   it("does not let another goal or an unadmitted target use a manifest", async () => {

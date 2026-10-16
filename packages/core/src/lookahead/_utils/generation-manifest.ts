@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
-import { PlanConflictError } from "../../plans/plan-conflict";
+import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getSettledSkillIds } from "../../plans/planner/settled-skills";
 import { getSkippedSkillIds } from "../../sessions/_utils/review-skills";
@@ -24,18 +24,17 @@ export type PlanGenerationManifest = {
   targets: GenerationTarget[];
 };
 
+type ManifestRequest = { goalId: string; lessonIds: readonly string[] };
+
 /**
  * Reads the saved selection, replacing only its still-todo stand-ins with the Library lessons
  * they now name. The canonical lesson resolver keeps course/tool/visibility rules in one place.
  * No new selection or calendar is computed, including while an outline's plan save is waiting.
  */
-export async function readGenerationManifest({
+async function readManifestAtToken({
   goalId,
   lessonIds,
-}: {
-  goalId: string;
-  lessonIds: readonly string[];
-}): Promise<PlanGenerationManifest | null> {
+}: ManifestRequest): Promise<PlanGenerationManifest | null> {
   const token = await prisma.plan.findUnique({ where: { goalId } });
   const goal = token ? await prisma.goal.findUnique({ where: { id: goalId } }) : null;
 
@@ -116,6 +115,18 @@ export async function readGenerationManifest({
     goalId,
     targets: lessonIds.flatMap((lessonId) => byId.get(lessonId) ?? []),
   };
+}
+
+/**
+ * The manifest read from one token (see `readManifestAtToken`). Other runs' content writes (an
+ * outline band, placement's questions, a shared lesson's save) mark the plan at any moment, so
+ * one landing mid-read reads everything again, once, from the new token; a plan still changing
+ * then throws for the caller's step to retry.
+ */
+export function readGenerationManifest(
+  request: ManifestRequest,
+): Promise<PlanGenerationManifest | null> {
+  return withPlanRetry(() => readManifestAtToken(request));
 }
 
 /** A single statement verifies a queued batch's membership, content, placement and input epoch. */
