@@ -2,12 +2,13 @@
 
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import {
   type LessonNotWritten,
   LessonNotWrittenNotice,
 } from "../_components/lesson-not-written-notice";
+import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
@@ -17,8 +18,11 @@ import { type DayStep } from "./session-types";
 import { useBlockTitle } from "./use-block-copy";
 import { useSessionAction } from "./use-session-action";
 
-/** A lesson being written is checked again every few seconds, so the wait shows live. */
-const WAITING_REFRESH_MS = 5000;
+/**
+ * A lesson being written is checked every few seconds, so a run picking it up, another run writing
+ * it, or writing that stopped shows without the learner refreshing.
+ */
+const WAITING_CHECK_MS = 5000;
 
 /**
  * How long a wait may look stuck before the learner gets a way to ask again: a lesson no run
@@ -26,17 +30,58 @@ const WAITING_REFRESH_MS = 5000;
  */
 const STUCK_AFTER_MS = { notStarted: 20_000, writing: 300_000 } as const;
 
-function useWaitingRefresh({ enabled, refresh }: { enabled: boolean; refresh: () => void }) {
-  const onTick = useEffectEvent(refresh);
+/** The lesson's state read now differs from the wait's: another state, or another run writing it. */
+function hasLessonChanged({
+  generationId,
+  lesson,
+  read,
+}: {
+  generationId: string | null;
+  lesson: NextStopLesson;
+  read: { generationId: string | null; lesson: NextStopLesson };
+}): boolean {
+  return (
+    read.lesson !== lesson || (read.lesson === "writing" && read.generationId !== generationId)
+  );
+}
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
+/**
+ * Checks the waited-for lesson on its own (`readLesson`) and reads the whole session again only
+ * when it changed from what the screen shows. Failed waits still read the session: the readiness
+ * contract doesn't distinguish a retryable failure from a lesson permanently set aside/skipped.
+ * A host without that read, or a step without a lesson, also reads the session every time.
+ */
+function useWaitingCheck({
+  actions,
+  block,
+  generationId,
+  lesson,
+}: {
+  actions: NextStopActions;
+  block: DayStep;
+  generationId: string | null;
+  lesson: NextStopLesson;
+}) {
+  const lessonId = block.kind === "learn" ? block.lessonId : null;
 
-    const timer = setInterval(onTick, WAITING_REFRESH_MS);
-    return () => clearInterval(timer);
-  }, [enabled]);
+  return usePoll({
+    active: true,
+    intervalMs: WAITING_CHECK_MS,
+    key: `${lessonId ?? block.position}:${lesson}:${generationId ?? ""}`,
+    onPoll: async (signal) => {
+      if (lesson === "failed" || !lessonId || !actions.readLesson) {
+        actions.refresh();
+        return;
+      }
+
+      const read = await actions.readLesson(lessonId);
+
+      if (!signal.aborted && read && hasLessonChanged({ generationId, lesson, read })) {
+        actions.refresh();
+      }
+    },
+    startNow: false,
+  });
 }
 
 /** A wait that looks stuck gets the same way to ask again as writing that stopped. */
@@ -92,7 +137,7 @@ function WritingProgress({
 }
 
 /**
- * The lesson being written, followed live; refreshed every few seconds so the wait shows live, with
+ * The lesson being written, followed live; checked every few seconds so the wait shows live, with
  * a way to ask again when writing stopped or looks stuck.
  */
 export function Waiting({
@@ -108,7 +153,7 @@ export function Waiting({
 }) {
   const stuck = useLooksStuck(lesson);
 
-  useWaitingRefresh({ enabled: true, refresh: actions.refresh });
+  const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
   return (
     <div className="flex flex-col gap-5">
@@ -117,7 +162,10 @@ export function Waiting({
       {lesson === "failed" || stuck ? (
         <GenerationFailureNotice
           failure={lesson === "notStarted" ? "notStarted" : "generation"}
-          retry={() => void actions.start(block)}
+          retry={() => {
+            poll.restart();
+            void actions.start(block);
+          }}
         />
       ) : (
         <WritingProgress actions={actions} block={block} generationId={generationId} />

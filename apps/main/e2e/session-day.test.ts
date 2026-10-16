@@ -23,8 +23,63 @@ import {
   writeStudyLesson,
 } from "./study-day";
 
-/** The next step reads the session again every 5 seconds while its lesson is written. */
+/** The next step reads lesson readiness every 5 seconds while its lesson is written. */
 const WAITING_REFRESH_MS = 5000;
+
+/**
+ * Moves the clock on until the wait's next readiness check answers `status`, and lets that answer
+ * settle. The check's timer can be set after a jump (the screen was still hydrating, or still
+ * reading the answer before), so the clock moves on again, but only while no check is out: a jump
+ * while one is out would send another, whose answer could land after this returns.
+ */
+async function checkWaitedLesson(
+  page: Page,
+  path: string,
+  status: "generating" | "ready" = "generating",
+) {
+  let answered = false;
+  let asked = 0;
+  let askedAtJump: number | null = null;
+
+  const onRequest = (request: { url: () => string }) => {
+    if (new URL(request.url()).pathname === path) {
+      asked += 1;
+    }
+  };
+
+  page.on("request", onRequest);
+
+  const checked = page.waitForResponse(async (response) => {
+    if (new URL(response.url()).pathname !== path) {
+      return false;
+    }
+
+    const body: unknown = response.ok() ? await response.json() : null;
+    answered = !response.ok() || (isJsonObject(body) && body.status === status);
+
+    // That check is over: the next jump sends the next one.
+    if (!answered) {
+      askedAtJump = null;
+    }
+
+    return answered;
+  });
+
+  await expect(async () => {
+    if (!answered && (askedAtJump === null || asked === askedAtJump)) {
+      askedAtJump = asked;
+      await page.clock.fastForward(WAITING_REFRESH_MS);
+    }
+
+    expect(answered, `the wait's readiness check answers ${status}`).toBe(true);
+  }).toPass();
+
+  page.off("request", onRequest);
+  const response = await checked;
+  expect(response.ok()).toBe(true);
+  // Its body was read whole above; Playwright doesn't always see an answer finish, so no wait on it.
+  await page.evaluate(() => Promise.resolve());
+}
 
 /** A request this slow gets the tap's wait line, which shows past 1.5 seconds. */
 const SLOW_REQUEST_MS = 2000;
@@ -770,7 +825,18 @@ test.describe("Today's session", () => {
     const { lesson, user } = await createStudyDay({ reviewDone: true, writtenLesson: false });
 
     const page = await openAs(browser, user);
-    await acceptLessonWriting(page);
+    const { runId } = await acceptLessonWriting(page);
+
+    // The run picks the lesson up before the start answers: the wait shows that run from the tap.
+    await page.route("**/v1/library/lessons/*/generations", async (route) => {
+      await prisma.lesson.update({
+        data: { contentRunId: runId, contentStatus: "running" },
+        where: { id: lesson.id },
+      });
+
+      await route.fallback();
+    });
+
     await page.clock.install();
     await page.goto("/session");
 
@@ -785,9 +851,37 @@ test.describe("Today's session", () => {
 
     await expectAccessibleScreen(page, "the session's next step while its lesson is written");
 
+    // The tap's own read of the session is done once the address names the run.
+    await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
+
+    // Readiness that says what the screen shows must not read the whole session again on each
+    // tick, even while the stream has no new events.
+    const readinessPath = `/v1/library/lessons/${lesson.id}/readiness`;
+    const sessionReads: string[] = [];
+
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname === "/session" && request.headers().rsc) {
+        sessionReads.push(request.url());
+      }
+    });
+
+    await checkWaitedLesson(page, readinessPath);
+    await checkWaitedLesson(page, readinessPath);
+
+    // A check is sent only once the answer before it was handled, so by the next check the session
+    // reads those answers caused have been sent.
+    let readsBeforeNextCheck: number | null = null;
+
+    page.on("request", (request) => {
+      if (readsBeforeNextCheck === null && new URL(request.url()).pathname === readinessPath) {
+        readsBeforeNextCheck = sessionReads.length;
+      }
+    });
+
     // The API's run writes it meanwhile; it opens without a tap at the screen's next check.
     await writeStudyLesson(lesson.id);
-    await page.clock.fastForward(WAITING_REFRESH_MS);
+    await checkWaitedLesson(page, readinessPath, "ready");
+    expect(readsBeforeNextCheck).toBe(0);
 
     await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
     await page.context().close();
@@ -850,6 +944,113 @@ test.describe("Today's session", () => {
     // Never a dead end: the ready block can come first.
     await page.getByRole("button", { name: "Do Mixed practice while you wait" }).click();
     await answerRight(page, /^Practice one/u);
+    await page.context().close();
+  });
+
+  test("keeps recovering a failed lesson after its retained run reaches the waiting limit", async ({
+    browser,
+  }) => {
+    const { goal, lesson, session, user } = await createStudyDay({
+      reviewDone: true,
+      writtenLesson: false,
+    });
+
+    const runId = `e2e-session-lesson-${randomUUID()}`;
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "learn", sessionId: session.id },
+    });
+
+    await prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    });
+
+    const page = await openAs(browser, user);
+    await followRun({ events: [], page, runId });
+    await page.clock.install();
+    await page.goto(`/session?block=${block.id}&generation=${runId}`);
+    await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
+    await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+    await checkWaitedLesson(page, `/v1/library/lessons/${lesson.id}/readiness`);
+
+    // Its last readiness check observes failure at the ten-minute polling limit. The session
+    // retains the address's run ID across writing -> failed, but failure needs a fresh round.
+    const readiness = page.waitForResponse(async (response) => {
+      if (new URL(response.url()).pathname !== `/v1/library/lessons/${lesson.id}/readiness`) {
+        return false;
+      }
+
+      const body: unknown = await response.json();
+      return isJsonObject(body) && body.status === "failed";
+    });
+
+    const refreshed = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/session" &&
+        Boolean(response.request().headers().rsc),
+    );
+
+    await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
+    await page.clock.fastForward(10 * 60 * 1000);
+    await readiness;
+    // The router's refresh loads end aborted after their headers (net::ERR_ABORTED), so the wait
+    // is for what the screen shows, not for the load to finish.
+    const sessionResponse = await refreshed;
+    expect(sessionResponse.ok()).toBe(true);
+
+    await expect(page.getByRole("alert").getByText("This didn't finish")).toBeVisible();
+
+    // A wait that looks stuck shows that notice before the refresh draws the failed lesson, and
+    // only the failed lesson's wait reads the session on its timer. The session's reads are held
+    // from here, so none of them reads while the other run below writes.
+    const heldReads: Route[] = [];
+    let holding = true;
+
+    await page.route(
+      (url) => url.pathname === "/session",
+      async (route) => {
+        if (holding && route.request().headers().rsc) {
+          heldReads.push(route);
+          return;
+        }
+
+        await route.fallback();
+      },
+    );
+
+    await expect(async () => {
+      if (heldReads.length === 0) {
+        await page.clock.fastForward(WAITING_REFRESH_MS);
+      }
+
+      expect(heldReads.length, "the failed lesson's wait reads the session").toBeGreaterThan(0);
+    }).toPass();
+
+    // The failed lesson is drawn (its wait reads the session), and the address kept the run.
+    await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
+
+    // Another run exhausts this lesson's drafts and skips its open blocks while this tab receives
+    // no intermediate generating sample. Readiness still says failed; the session must move on.
+    await prisma.$transaction([
+      prisma.lesson.update({
+        data: { contentStatus: "failed", setAsideAt: new Date() },
+        where: { id: lesson.id },
+      }),
+      prisma.studySessionBlock.updateMany({
+        data: { status: "skipped" },
+        where: { kind: "learn", lessonId: lesson.id, sessionId: session.id },
+      }),
+      prisma.planItem.updateMany({
+        data: { status: "skipped" },
+        where: { lessonId: lesson.id, plan: { goalId: goal.id } },
+      }),
+    ]);
+
+    holding = false;
+    await Promise.all(heldReads.map((route) => route.continue()));
+    await expect(page.getByRole("heading", { level: 2, name: "Mixed practice" })).toBeVisible();
+    await expect(page.getByRole("alert").getByText("This didn't finish")).toHaveCount(0);
     await page.context().close();
   });
 

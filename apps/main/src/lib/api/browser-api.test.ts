@@ -5,6 +5,8 @@ import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "./brows
 /** Whose session the browser's cookie jar holds: the page was drawn for "first". */
 const jar = vi.hoisted(() => ({ holder: "first" }));
 
+const auth = vi.hoisted(() => ({ pending: null as Promise<{ Authorization: string }> | null }));
+
 vi.mock("@/lib/learner/learner-identity", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   checkIdentity: () => jar.holder === "first",
@@ -13,7 +15,7 @@ vi.mock("@/lib/learner/learner-identity", async (importOriginal) => ({
 vi.mock("@/lib/browser-api-url", () => ({ getBrowserApiUrl: () => "https://api.test" }));
 
 vi.mock("@/lib/workflow/auth-headers", () => ({
-  getWorkflowAuthHeaders: async () => ({ Authorization: "Bearer token" }),
+  getWorkflowAuthHeaders: async () => auth.pending ?? { Authorization: "Bearer token" },
 }));
 
 const REQUESTS = [
@@ -24,6 +26,7 @@ const REQUESTS = [
 describe("browser API answers", () => {
   beforeEach(() => {
     jar.holder = "first";
+    auth.pending = null;
   });
 
   afterEach(() => {
@@ -67,6 +70,51 @@ describe("browser API answers", () => {
 
     await expect(postFromBrowser({ path: "/v1/feedback" })).resolves.toBeNull();
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it("getFromBrowser sends nothing when the original generation changes while auth is pending", async () => {
+    const headers = Promise.withResolvers<{ Authorization: string }>();
+    auth.pending = headers.promise;
+    const send = vi.fn(async () => Response.json({ status: "ready" }));
+    vi.stubGlobal("fetch", send);
+    let generation = 1;
+    const result = getFromBrowser("/v1/me/example-lines/step", () => generation === 1);
+    generation = 2;
+    headers.resolve({ Authorization: "Bearer token" });
+
+    await expect(result).resolves.toBeNull();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("getFromBrowser sends nothing when the page's learner changes while auth is pending", async () => {
+    const headers = Promise.withResolvers<{ Authorization: string }>();
+    auth.pending = headers.promise;
+    const send = vi.fn(async () => Response.json({ status: "ready" }));
+    vi.stubGlobal("fetch", send);
+    const result = getFromBrowser("/v1/me/example-lines/step", () => true);
+    jar.holder = "second";
+    headers.resolve({ Authorization: "Bearer token" });
+
+    await expect(result).resolves.toBeNull();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("getFromBrowser sends once when auth settles for the original generation and learner", async () => {
+    const headers = Promise.withResolvers<{ Authorization: string }>();
+    auth.pending = headers.promise;
+    const send = vi.fn(async () => Response.json({ status: "ready" }));
+    vi.stubGlobal("fetch", send);
+    const result = getFromBrowser("/v1/me/example-lines/step", () => true);
+
+    expect(send).not.toHaveBeenCalled();
+    headers.resolve({ Authorization: "Bearer token" });
+
+    const response = await result;
+    expect(response?.ok).toBe(true);
+
+    expect(send).toHaveBeenCalledExactlyOnceWith("https://api.test/v1/me/example-lines/step", {
+      headers: { Authorization: "Bearer token" },
+    });
   });
 });
 

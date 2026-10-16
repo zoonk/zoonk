@@ -19,6 +19,7 @@ import {
   toDayKey,
 } from "@/lib/session/day-entry-registry";
 import { sendDayOpen } from "@/lib/session/day-tap";
+import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
 import {
   answerStudyQuestionAction,
   finishStudyBlockAction,
@@ -296,6 +297,7 @@ export function SessionNextStopClient({
         actions={{
           openWrittenLesson: (target) =>
             "id" in target ? navigation.openWrittenLesson(target.id) : Promise.resolve(false),
+          readLesson: readWaitedLesson,
           recordWait: (milliseconds) =>
             void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
           refresh,

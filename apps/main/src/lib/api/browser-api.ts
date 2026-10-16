@@ -87,9 +87,17 @@ export async function postFromBrowser({
  * answer comes in after the page stopped belonging to the learner the browser holds. Its body is
  * read with `readJsonForThisLearner`.
  */
-export async function getFromBrowser(path: `/v1/${string}`): Promise<Response | null> {
+export async function getFromBrowser(
+  path: `/v1/${string}`,
+  isCurrent?: () => boolean,
+): Promise<Response | null> {
   const { data: response } = await safeAsync(async () => {
     const headers = await getWorkflowAuthHeaders();
+
+    if (!checkIdentity() || isCurrent?.() === false) {
+      return null;
+    }
+
     return forThisLearner(await fetch(`${getBrowserApiUrl()}${path}`, { headers }));
   });
 

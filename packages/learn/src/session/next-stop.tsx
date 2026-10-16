@@ -8,6 +8,7 @@ import { type LessonNotWritten } from "../_components/lesson-not-written-notice"
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
+import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
@@ -30,6 +31,13 @@ export type NextStopActions = {
   recordWait?: (milliseconds: number) => void;
   /** Checks again whether the lesson is ready (the host re-reads the session). */
   refresh: () => void;
+  /**
+   * Where a waited-for lesson stands now, read on its own rather than with the whole session: its
+   * state as the wait draws it, and the run writing it. Null when it couldn't be read.
+   */
+  readLesson?: (
+    lessonId: string,
+  ) => Promise<{ generationId: string | null; lesson: NextStopLesson } | null>;
   /** Opens an already-written lesson without requesting more generation. */
   openWrittenLesson?: (step: DayStep) => Promise<boolean>;
   /** Starts a step: this one, or a ready one to do while its lesson is written. */
@@ -50,18 +58,6 @@ export type NextStopTap = {
   /** When the learner tapped (`Date.now()`). */
   tappedAt: number;
 };
-
-/**
- * Whether the page's focus is nowhere the learner can see: none, the page itself, or a control that
- * left with the screen it was on (a hidden route keeps its nodes, hidden, until the browser blurs).
- */
-function isFocusLost(active: Element | null): boolean {
-  return (
-    active === null ||
-    active === document.body ||
-    (active instanceof HTMLElement && !active.checkVisibility())
-  );
-}
 
 /**
  * The main action takes focus when it's drawn for a tap whose control had it, and the focus is
