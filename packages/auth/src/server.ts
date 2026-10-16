@@ -69,6 +69,14 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       },
     },
   },
+  // Reads Zoonk never calls that write on a GET: Better Auth's organization reads clear the
+  // session's active organization when asked for one the learner isn't in, and its provider account
+  // read refreshes and saves the account's tokens.
+  disabledPaths: [
+    "/account-info",
+    "/organization/get-full-organization",
+    "/organization/get-organization",
+  ],
   hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
