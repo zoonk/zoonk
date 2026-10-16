@@ -4,22 +4,24 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { privateCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { expect, test } from "./fixtures";
 import { signInInAnotherTab } from "./session-switch";
 
 const FIRST_GOAL = "Bake sourdough bread";
 const SECOND_GOAL = "Play the cello";
+const FIRST_COURSE = "Sourdough starters from scratch";
 
 /**
  * One frame the page painted: when (page time), its document, the session hint the browser held,
- * whether the cover was up, and the goals it showed.
+ * whether the cover was up, and the learners' private titles it showed.
  */
 type Frame = {
   at: number;
   covered: boolean;
   document: number;
-  goals: string[];
   hint: string | null;
+  titles: string[];
 };
 
 declare global {
@@ -41,8 +43,8 @@ async function createLearner(goal: string) {
 }
 
 /**
- * Records every frame the page paints, in every document it loads, with the goals visible in it:
- * what a learner could have seen, frame by frame.
+ * Records every frame the page paints, in every document it loads, with the learners' private
+ * titles visible in it (their goals, a course): what a learner could have seen, frame by frame.
  */
 async function watchFrames(page: Page): Promise<Frame[]> {
   const frames: Frame[] = [];
@@ -52,7 +54,7 @@ async function watchFrames(page: Page): Promise<Frame[]> {
   });
 
   await page.addInitScript(
-    ({ cookie, goals }) => {
+    ({ cookie, titles }) => {
       const sample = () => {
         const text = document.body?.innerText ?? "";
         const hint = document.cookie.split("; ").find((pair) => pair.startsWith(`${cookie}=`));
@@ -61,8 +63,8 @@ async function watchFrames(page: Page): Promise<Frame[]> {
           at: performance.timeOrigin + performance.now(),
           covered: Object.hasOwn(document.documentElement.dataset, "zoonkCover"),
           document: performance.timeOrigin,
-          goals: goals.filter((goal) => text.includes(goal)),
           hint: hint?.slice(cookie.length + 1) ?? null,
+          titles: titles.filter((title) => text.includes(title)),
         });
 
         requestAnimationFrame(sample);
@@ -70,16 +72,24 @@ async function watchFrames(page: Page): Promise<Frame[]> {
 
       requestAnimationFrame(sample);
     },
-    { cookie: SESSION_HINT_COOKIE, goals: [FIRST_GOAL, SECOND_GOAL] },
+    { cookie: SESSION_HINT_COOKIE, titles: [FIRST_GOAL, SECOND_GOAL, FIRST_COURSE] },
   );
 
   return frames;
 }
 
-/** The frames painted from `since` (page time) on that showed `goal` with nothing covering it. */
-function shownUncovered({ frames, goal, since }: { frames: Frame[]; goal: string; since: number }) {
+/** The frames painted from `since` (page time) on that showed `title` with nothing covering it. */
+function shownUncovered({
+  frames,
+  since,
+  title,
+}: {
+  frames: Frame[];
+  since: number;
+  title: string;
+}) {
   return frames.filter(
-    (frame) => frame.at >= since && !frame.covered && frame.goals.includes(goal),
+    (frame) => frame.at >= since && !frame.covered && frame.titles.includes(title),
   );
 }
 
@@ -138,10 +148,10 @@ test.describe("identity cover", () => {
     await learningTab(page, "Plan").click();
     await expect(mainText(page, SECOND_GOAL)).toBeVisible();
 
-    expect(shownUncovered({ frames, goal: FIRST_GOAL, since })).toStrictEqual([]);
+    expect(shownUncovered({ frames, since, title: FIRST_GOAL })).toStrictEqual([]);
 
     expect(
-      frames.filter((frame) => frame.document === before && frame.goals.includes(SECOND_GOAL)),
+      frames.filter((frame) => frame.document === before && frame.titles.includes(SECOND_GOAL)),
     ).toStrictEqual([]);
 
     await context.close();
@@ -168,7 +178,55 @@ test.describe("identity cover", () => {
     await expect.poll(() => currentDocument(frames)).not.toBe(before);
     await expect(page.getByText(FIRST_GOAL)).toHaveCount(0);
 
-    expect(shownUncovered({ frames, goal: FIRST_GOAL, since })).toStrictEqual([]);
+    expect(shownUncovered({ frames, since, title: FIRST_GOAL })).toStrictEqual([]);
+
+    await context.close();
+  });
+
+  test("never shows a course's start page kept for one learner after another signs in elsewhere", async ({
+    browser,
+  }) => {
+    const [first, second] = await Promise.all([
+      createLearner(FIRST_GOAL),
+      createLearner(SECOND_GOAL),
+    ]);
+
+    // The first learner's own course: nobody else may see it.
+    const { course } = await privateCourseFixture({ ownerId: first.user.id, title: FIRST_COURSE });
+
+    const context = await browser.newContext({ storageState: first.user.storageState });
+    const { frames, page } = await openPage(context, `/start/course/${course.id}`);
+    await expect(mainText(page, FIRST_COURSE)).toBeVisible();
+    const before = currentDocument(frames);
+
+    // The page's reload waits until its cover was seen, so a quick reload can't skip it. Nothing
+    // asks the page while it waits (that would wait for the reload too): its frames say what it
+    // painted.
+    const reload = Promise.withResolvers<null>();
+
+    await page.route(`**/start/course/${course.id}`, async (route) => {
+      if (route.request().isNavigationRequest()) {
+        await reload.promise;
+      }
+
+      await route.continue();
+    });
+
+    await signInInAnotherTab({ context, user: second.user });
+
+    // The first learner's page covers itself as soon as the other learner signs in, then reloads
+    // for them, and they can't see that course.
+    const coveredAt = () => frames.find((frame) => frame.document === before && frame.covered)?.at;
+    await expect.poll(coveredAt).toBeDefined();
+    const since = coveredAt() ?? 0;
+
+    reload.resolve(null);
+    await expect.poll(() => currentDocument(frames)).not.toBe(before);
+    await page.bringToFront();
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    await expect(page.getByText(FIRST_COURSE)).toHaveCount(0);
+
+    expect(shownUncovered({ frames, since, title: FIRST_COURSE })).toStrictEqual([]);
 
     await context.close();
   });
@@ -196,7 +254,7 @@ test.describe("identity cover", () => {
     await page.goBack();
     await expect(mainText(page, SECOND_GOAL)).toBeVisible();
 
-    expect(shownUncovered({ frames, goal: FIRST_GOAL, since })).toStrictEqual([]);
+    expect(shownUncovered({ frames, since, title: FIRST_GOAL })).toStrictEqual([]);
 
     await context.close();
   });
@@ -237,7 +295,7 @@ test.describe("identity cover", () => {
     await expect(page.getByRole("button", { name: "Reload" })).toBeVisible();
     expect(documents).toBe(2);
 
-    expect(shownUncovered({ frames, goal: FIRST_GOAL, since: 0 })).toStrictEqual([]);
+    expect(shownUncovered({ frames, since: 0, title: FIRST_GOAL })).toStrictEqual([]);
 
     await context.close();
   });
