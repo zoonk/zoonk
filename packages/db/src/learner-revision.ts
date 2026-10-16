@@ -3,17 +3,23 @@ import { type Plan, type PlanAdaptationReason, type TransactionClient, sql } fro
 /** Marking only runs SQL, so any transaction or client that can do that may mark. */
 export type LearnerRevisionTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
 
+/**
+ * The reasons an input writer can mark. `newSources` isn't one: only the plan's own source
+ * publication adds or takes it out, with the sources it registers.
+ */
+type MarkedReason = Exclude<PlanAdaptationReason, "newSources">;
+
 export type PlanInputChange = {
-  adaptation?: readonly PlanAdaptationReason[];
+  adaptation?: readonly MarkedReason[];
   /** Adaptation and pendingPace apply only to this goal when given, otherwise to every marked plan. */
   adaptationGoalId?: string;
   /** Applies to every plan this mark raises, regardless of the goal scope or number of learners. */
-  allPlansAdaptation?: readonly Exclude<PlanAdaptationReason, "pace">[];
+  allPlansAdaptation?: readonly Exclude<MarkedReason, "pace">[];
   pendingPace?: Plan["pendingPace"];
 };
 
 /** Prisma's enum names may differ from the stored PostgreSQL literals. */
-function toDatabaseReasons(reasons: readonly PlanAdaptationReason[]) {
+function toDatabaseReasons(reasons: readonly MarkedReason[]) {
   return reasons.map((reason) => (reason === "goalSource" ? "goal_source" : reason));
 }
 

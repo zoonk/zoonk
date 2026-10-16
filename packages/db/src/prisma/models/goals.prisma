@@ -37,6 +37,7 @@ enum PlanAdaptationReason {
   evidence
   account
   rebalance
+  newSources @map("new_sources")
 }
 
 /// One piece of a new plan's setup, done once after the plan is built (see `Plan.setupTasks`).
