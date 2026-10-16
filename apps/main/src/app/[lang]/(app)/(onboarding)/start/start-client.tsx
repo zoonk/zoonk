@@ -40,11 +40,9 @@ export function StartClient({
   planId: string | null;
 }) {
   const navigation = useOnboardingNavigation();
-  // The buddy who answers questions about attached material, as the frame's summary has it. It's
-  // drawn only beside an answer, seconds after the page opened; until the summary is in (or when it
-  // couldn't be read) the flow draws the default buddy, the one a learner who never chose has.
+  // An unknown summary leaves answers without a buddy identity until the actual one arrives.
   const learner = useLearnerSummary();
-  const buddy = learner.status === "ready" ? learner.summary.buddy : null;
+  const buddy = learner.status === "ready" ? learner.summary.buddy : undefined;
 
   const flow = (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>

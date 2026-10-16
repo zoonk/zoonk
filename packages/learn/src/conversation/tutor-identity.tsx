@@ -2,6 +2,7 @@
 
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Message, MessageContent } from "@zoonk/ui/components/message";
+import { useExtracted } from "next-intl";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 
 export type { LearnBuddy } from "../buddies/use-buddy-name";
@@ -31,9 +32,14 @@ function TutorAvatar({ buddy }: { buddy: LearnBuddy }) {
  * const identity = useTutorIdentity(buddy);
  * ```
  */
-export function useTutorIdentity(buddy: LearnBuddy | null): TutorIdentity {
-  const resolved = resolveLearnBuddy(buddy);
-  return { avatar: <TutorAvatar buddy={resolved} />, name: useBuddyName(resolved) };
+export function useTutorIdentity(buddy: LearnBuddy | null | undefined): TutorIdentity {
+  const t = useExtracted();
+  const resolved = resolveLearnBuddy(buddy ?? null);
+  const name = useBuddyName(resolved);
+
+  return buddy === undefined
+    ? { avatar: null, name: t("Your buddy") }
+    : { avatar: <TutorAvatar buddy={resolved} />, name };
 }
 
 /**

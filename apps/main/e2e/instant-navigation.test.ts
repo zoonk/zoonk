@@ -57,6 +57,23 @@ async function pagePrefetched(page: Page, path: string) {
   await response.finished();
 }
 
+/**
+ * Like `pagePrefetched`, for a page with the learner's own facts (their goal limit): those come
+ * with the link's runtime prefetch, which can land after the page's static part. The server renders
+ * that prefetch whole before it answers, so its answer coming in is the signal. Playwright never
+ * sees these streamed answers finish, so waiting for `finished()` would hang.
+ */
+async function pageAndOwnFactsPrefetched(page: Page, path: string) {
+  const ownFacts = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === path &&
+      response.request().headers()["next-router-prefetch"] === "2",
+  );
+
+  await pagePrefetched(page, path);
+  await ownFacts;
+}
+
 /** Taps a link and checks the destination paints from its prefetch, before any server reply. */
 async function tapInstantly({
   content,
@@ -231,7 +248,9 @@ test.describe("Instant navigation", () => {
 
   test("a public course's Build my plan opens its start page at once", async ({ page }) => {
     const { course, coursePath } = await createPublicNavigationCourse();
+    const prefetched = pageAndOwnFactsPrefetched(page, `/start/course/${course.id}`);
     await openSettled(page, coursePath);
+    await prefetched;
 
     await instant(page, async () => {
       await page
@@ -256,7 +275,7 @@ test.describe("Instant navigation", () => {
     const page = await openAs(browser, user);
     await openSettled(page, "/stats");
 
-    const prefetched = pagePrefetched(page, "/start");
+    const prefetched = pageAndOwnFactsPrefetched(page, "/start");
 
     await page
       .getByRole("complementary", { name: "Sidebar" })

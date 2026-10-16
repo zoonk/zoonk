@@ -96,7 +96,7 @@ export function StartFlow({
 
 type GoalStartFlowProps = {
   actions: OnboardingActions;
-  /** The learner's buddy; a host without a profile gets the default when omitted or null. */
+  /** The learner's buddy; null is the resolved default, undefined is not known yet. */
   buddy?: LearnBuddy | null;
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach?: boolean;
@@ -113,7 +113,7 @@ type GoalStartFlowProps = {
 
 function GoalStartFlow({
   actions,
-  buddy = null,
+  buddy,
   canAttach = false,
   defaultGoal = "",
   fromSharedPlan = false,

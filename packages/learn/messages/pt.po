@@ -625,6 +625,7 @@ msgstr "Dominado"
 
 #: src/appearance/appearance-screen.tsx
 #: src/appearance/buddy-settings.tsx
+#: src/conversation/tutor-identity.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "Seu parceiro"

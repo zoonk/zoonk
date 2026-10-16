@@ -130,7 +130,7 @@ export function MaterialQuestions({
   sources,
 }: {
   ask: OnboardingActions["askMaterial"];
-  buddy: LearnBuddy | null;
+  buddy: LearnBuddy | null | undefined;
   sources: AttachedSource[];
 }) {
   const t = useExtracted();

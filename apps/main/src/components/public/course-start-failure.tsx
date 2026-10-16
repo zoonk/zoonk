@@ -5,35 +5,9 @@ import { useGoalLimitMessage } from "@zoonk/learn/onboarding/goal-errors";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useLocale } from "next-intl";
+import { getCourseStartRemedy } from "./course-start-remedy";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
-
-type CourseStartRemedy = "signUp" | "upgrade" | "retry" | null;
-
-/**
- * The one thing to do next: an account, Plus, or another try. A limit that only needs time (the
- * day's goals, too many at once) has none.
- */
-function getCourseStartRemedy(failure: CourseStartFailure): CourseStartRemedy {
-  if (failure.status !== "limitReached") {
-    return "retry";
-  }
-
-  if (failure.reason === "guest" || failure.reason === "signUpRequired") {
-    return "signUp";
-  }
-
-  return failure.reason === "oneActiveGoal" ? "upgrade" : null;
-}
-
-/**
- * Whether the start can only go on with an account or Plus: then that's the page's one action,
- * in place of a start that would be refused again.
- */
-export function isStartBlocked(failure: CourseStartFailure | null): boolean {
-  const remedy = failure ? getCourseStartRemedy(failure) : null;
-  return remedy === "signUp" || remedy === "upgrade";
-}
 
 function FailureAction({
   className,

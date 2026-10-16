@@ -1,6 +1,7 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
+import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
@@ -23,6 +24,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { cacheTag } from "next/cache";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { OnboardingNotFound } from "../../../_components/onboarding-not-found";
 import { getGoalLimitReason } from "../../goal-limit-reason";
@@ -107,6 +109,47 @@ async function loadCourseStart(courseId: string) {
   return { course, existing, hasSession: Boolean(session), limit };
 }
 
+type CourseStartViewProps = {
+  hasSession: boolean;
+  screen: React.ComponentProps<typeof CourseStartScreen>;
+};
+
+function CourseStartView({ hasSession, screen }: CourseStartViewProps) {
+  return (
+    <OnboardingPage
+      backHref="/courses"
+      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
+    >
+      <CourseStartScreen {...screen} />
+    </OnboardingPage>
+  );
+}
+
+/** Only a cached wall waits for a live read; an unblocked entry remains fully prefetched. */
+async function FreshCourseStart({ locale, ...view }: CourseStartViewProps & { locale: string }) {
+  await connection();
+
+  const [existing, limit] = await Promise.all([
+    findCourseGoalStart(view.screen.course.id),
+    findGoalStartLimit(),
+  ]);
+
+  if (existing) {
+    redirect({ href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today", locale });
+  }
+
+  // Revealed after the page around it, so it says whose page it is too.
+  return (
+    <>
+      <LearnerWitness />
+      <CourseStartView
+        {...view}
+        screen={{ ...view.screen, initialFailure: toLimitFailure(limit) }}
+      />
+    </>
+  );
+}
+
 async function CourseStartContent({ params, searchParams }: Props) {
   const t = await getExtracted();
   const [{ courseId, lang }, query] = await Promise.all([params, searchParams]);
@@ -134,36 +177,37 @@ async function CourseStartContent({ params, searchParams }: Props) {
   const chapter = chapters.find((item) => item.id === chapterId && item.lessons.length > 0);
   const planned = chapter ? chapters.slice(chapters.indexOf(chapter)) : chapters;
 
-  // Back to the course it was started from, else the catalog; a visitor logs in from the bar under
-  // `lg`, where the sidebar's way in isn't.
+  const screen: CourseStartViewProps["screen"] = {
+    chapter: chapter ? { id: chapter.id, title: chapter.title } : null,
+    chapters: planned.map((item) => ({
+      id: item.id,
+      lessons: item.lessons.length,
+      title: item.title,
+    })),
+    course: { id: course.id, title: course.title },
+    dailyMinutes: readDailyMinutes(query[MINUTES_PARAM]),
+    initialFailure: toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit),
+    note: (
+      <NoAccountNote>
+        <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
+          {t("Start free, no account needed.")}
+        </p>
+      </NoAccountNote>
+    ),
+  };
+
+  const cached = <CourseStartView hasSession={hasSession} screen={screen} />;
+
   return (
     <>
       <LearnerWitness />
-      <OnboardingPage
-        backHref="/courses"
-        barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
-      >
-        <CourseStartScreen
-          chapter={chapter ? { id: chapter.id, title: chapter.title } : null}
-          chapters={planned.map((item) => ({
-            id: item.id,
-            lessons: item.lessons.length,
-            title: item.title,
-          }))}
-          course={{ id: course.id, title: course.title }}
-          dailyMinutes={readDailyMinutes(query[MINUTES_PARAM])}
-          initialFailure={
-            toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
-          }
-          note={
-            <NoAccountNote>
-              <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
-                {t("Start free, no account needed.")}
-              </p>
-            </NoAccountNote>
-          }
-        />
-      </OnboardingPage>
+      {isStartBlocked(screen.initialFailure) ? (
+        <Suspense fallback={cached}>
+          <FreshCourseStart hasSession={hasSession} locale={lang} screen={screen} />
+        </Suspense>
+      ) : (
+        cached
+      )}
     </>
   );
 }

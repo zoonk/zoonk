@@ -1,7 +1,8 @@
 "use client";
 
 import { startCourseFormAction } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
-import { CourseStartFailureNote, isStartBlocked } from "@/components/public/course-start-failure";
+import { CourseStartFailureNote } from "@/components/public/course-start-failure";
+import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import {

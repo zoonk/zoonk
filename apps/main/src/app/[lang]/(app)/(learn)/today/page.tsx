@@ -138,7 +138,7 @@ async function TodayFirstGoal() {
       <LearnerWitness />
 
       <LazyStartClient
-                canAttach={canAttach}
+        canAttach={canAttach}
         defaultGoal=""
         embedded
         goalLimit={goalLimit}

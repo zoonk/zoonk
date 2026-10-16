@@ -575,6 +575,45 @@ test.describe("Starting a course from its page", () => {
     ]);
   });
 
+  test("a course start prefetched as blocked checks again after the active goal is paused elsewhere", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [{ course, coursePath }, goal] = await Promise.all([
+      createOutlinedCourse(),
+      goalFixture({ userId: noProgressUser.id }),
+    ]);
+
+    const prefetched = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === `/start/course/${course.id}` &&
+        (response.request().headers()["next-router-segment-prefetch"] ?? "").endsWith("/__PAGE__"),
+    );
+
+    // The wall comes with the learner's own facts, in the runtime prefetch, which can land after
+    // the page's static part: both are in before the goal is paused elsewhere. The server renders
+    // the runtime prefetch whole before it answers, so its answer coming in is enough.
+    const ownFactsPrefetched = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === `/start/course/${course.id}` &&
+        response.request().headers()["next-router-prefetch"] === "2",
+    );
+
+    await page.goto(coursePath);
+    const response = await prefetched;
+    await response.finished();
+    await ownFactsPrefetched;
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+    await startFromHero(page, { name: course.title });
+
+    await expect(
+      page.getByRole("heading", { name: "How much do you already know?" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("radiogroup", { name: "Your level" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveCount(0);
+  });
+
   test("a free learner following another goal is told up front, with Plus as the one action", async ({
     noProgressUser,
     userWithoutProgress: page,
