@@ -1,4 +1,8 @@
-import { chapterMindMapSchema, goalMindMapsSchema } from "@zoonk/core/mind-maps/contract";
+import {
+  chapterMindMapSchema,
+  chapterMindMapStatusSchema,
+  goalMindMapsSchema,
+} from "@zoonk/core/mind-maps/contract";
 import { z } from "zod";
 import { mindMapGenerationSchema } from "../schemas/mind-maps";
 import { goalChapterPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
@@ -75,6 +79,24 @@ export const mindMapPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Make a chapter's mind map",
+      tags: ["Learner"],
+    },
+  },
+  "/goals/{goalId}/chapters/{chapterId}/mind-map/status": {
+    get: {
+      description:
+        "The live status of a chapter's mind map, for a waiting screen. Checks the same ownership, chapter visibility and eligibility as the full map read. Never starts generation or returns the outline and picture.",
+      operationId: "getChapterMindMapStatus",
+      requestParams: { path: goalChapterPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: chapterMindMapStatusSchema } },
+          description: "The map's live status",
+        },
+        ...readErrors,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Read a chapter's mind map status",
       tags: ["Learner"],
     },
   },

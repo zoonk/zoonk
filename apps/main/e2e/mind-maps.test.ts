@@ -15,7 +15,7 @@ import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
 const GENERATIONS_URL = "**/v1/goals/*/chapters/*/mind-map/generations";
-const MAP_URL = /\/v1\/goals\/[^/]+\/chapters\/[^/]+\/mind-map$/u;
+const MAP_URL = /\/v1\/goals\/[^/]+\/chapters\/[^/]+\/mind-map\/status$/u;
 
 /** A picture main serves itself, standing in for the map's on the CDN. */
 const PICTURE = "/catalog/chapters/science.webp";
@@ -118,7 +118,7 @@ test.describe("Mind maps", () => {
     });
 
     await page.route(MAP_URL, (route) =>
-      route.fulfill({ json: { status: drawn ? "ready" : "generating" }, status: 200 }),
+      drawn ? route.fulfill({ json: { status: "ready" }, status: 200 }) : route.continue(),
     );
 
     // A chapter still to study has no map to offer.
@@ -131,8 +131,16 @@ test.describe("Mind maps", () => {
     await expect(reference.getByText("The chapter's main ideas in one picture")).toBeVisible();
     await expectAccessibleScreen(page, "a finished chapter without its mind map");
 
+    const statusRead = page.waitForResponse((response) =>
+      MAP_URL.test(new URL(response.url()).pathname),
+    );
+
     await reference.getByRole("button", { name: "Create the mind map" }).click();
     await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
+    const statusResponse = await statusRead;
+    expect(statusResponse.status()).toBe(200);
+    expect(statusResponse.headers()["cache-control"]).toBe("no-store");
+    expect(await statusResponse.json()).toEqual({ status: "generating" });
 
     let pageReads = 0;
 

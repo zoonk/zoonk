@@ -50,6 +50,11 @@ const mindMapStatusSchema = z
       "`unavailable`: maps are for chapters the learner finished (and not a language's units). `available`: finished and without a map yet; `POST .../mind-map/generations` makes it. `generating`: being written and drawn (about half a minute); GET again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again",
   });
 
+/** The live state a waiting screen needs, without an outline or picture payload. */
+export const chapterMindMapStatusSchema = z
+  .object({ status: mindMapStatusSchema })
+  .meta({ id: "ChapterMindMapStatus" });
+
 /** One chapter's mind map as a goal's learner sees it. */
 export const chapterMindMapSchema = z
   .object({

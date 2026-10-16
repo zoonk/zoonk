@@ -17273,6 +17273,102 @@
         }
       }
     },
+    "/goals/{goalId}/chapters/{chapterId}/mind-map/status": {
+      "get": {
+        "description": "The live status of a chapter's mind map, for a waiting screen. Checks the same ownership, chapter visibility and eligibility as the full map read. Never starts generation or returns the outline and picture.",
+        "operationId": "getChapterMindMapStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Read a chapter's mind map status",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "path",
+            "name": "chapterId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Library chapter ID in the goal's plan"
+            },
+            "required": true,
+            "description": "Library chapter ID in the goal's plan"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The map's live status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChapterMindMapStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/mind-maps": {
       "get": {
         "description": "A goal's mind maps: every chapter the learner finished, in plan order, with its subject (an exam's notice subject or the plan's module), its number and its map's status and picture (`image.thumbnailUrl` for grids). A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `generating` or `failed`; the outline is on the chapter's map.",
@@ -72981,6 +73077,26 @@
         },
         "required": [
           "generationId",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ChapterMindMapStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "unavailable",
+              "available",
+              "generating",
+              "ready",
+              "failed"
+            ],
+            "description": "`unavailable`: maps are for chapters the learner finished (and not a language's units). `available`: finished and without a map yet; `POST .../mind-map/generations` makes it. `generating`: being written and drawn (about half a minute); GET again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again"
+          }
+        },
+        "required": [
           "status"
         ],
         "additionalProperties": false

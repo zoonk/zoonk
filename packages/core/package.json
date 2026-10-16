@@ -412,6 +412,7 @@
     "./mind-maps/contract": "./src/mind-maps/mind-map-contract.ts",
     "./mind-maps/generation": "./src/mind-maps/chapter-mind-map-generation.ts",
     "./mind-maps/get-chapter": "./src/mind-maps/get-chapter-mind-map.ts",
+    "./mind-maps/status": "./src/mind-maps/get-chapter-mind-map-status.ts",
     "./mind-maps/list": "./src/mind-maps/list-goal-mind-maps.ts",
     "./mind-maps/request": "./src/mind-maps/request-chapter-mind-map.ts",
     "./mistakes/contract": "./src/mistakes/contract.ts",

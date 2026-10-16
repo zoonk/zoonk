@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { type MindMapStatus } from "@zoonk/core/mind-maps/contract";
 import { type MindMapActions, type MindMapRequestOutcome } from "@zoonk/learn/mind-maps";
 import { getString } from "@zoonk/utils/json";
@@ -63,14 +64,19 @@ async function readMindMapStatus({
   chapterId: string;
   goalId: string;
 }): Promise<MindMapStatus | null> {
-  const response = await getFromBrowser(chapterPath({ chapterId, goalId }));
+  const generation = getLearnerGeneration();
+
+  const response = await getFromBrowser(
+    `${chapterPath({ chapterId, goalId })}/status`,
+    () => generation === getLearnerGeneration(),
+  );
 
   if (!response?.ok) {
     return null;
   }
 
   const status = getString(await readJsonForThisLearner(response), "status");
-  return isMindMapStatus(status) ? status : null;
+  return generation === getLearnerGeneration() && isMindMapStatus(status) ? status : null;
 }
 
 /**
