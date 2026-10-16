@@ -1882,16 +1882,28 @@ describe(goalContentWorkflow, () => {
         }
       };
 
+      // Every proposal the spy started, so none outlives the test.
+      const proposals: Promise<void>[] = [];
+
       const proposal = vi
         .spyOn(noticeSteps, "proposeNoticeChangeStep")
-        .mockImplementation((input) => proposeAsTheRuntimeDoes(input));
+        .mockImplementation((input) => {
+          const call = proposeAsTheRuntimeDoes(input);
+          proposals.push(call);
+          return call;
+        });
 
       try {
         await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
       } finally {
+        // A run that failed first ends the marks, and what the spy started settles before it's
+        // restored; the run's own error still propagates.
+        firstProposal.underWay = false;
+        await Promise.allSettled(proposals);
         proposal.mockRestore();
       }
 
+      expect(proposals).not.toHaveLength(0);
       expect(firstProposal.underWay).toBe(false);
       expect(waited[0]?.getTime()).toBeGreaterThan(Date.now());
 
