@@ -169,7 +169,6 @@ function creditShortLessons({
  * times it's reported. Other completions were counted already, so the summary stays as it is. The
  * requirement's sizes and the forecasts stay as of the layout. Without a summary that describes the
  * plan there's nothing to reduce: it reads as pending until the next layout.
- * @public A lesson's completion reduces the stored summary with it.
  */
 export function reduceCompletedSummary({
   completed,
