@@ -20,6 +20,7 @@ import { UnderstoodScreen } from "../understood/understood-screen";
 import { useDraftGoals } from "./draft-goals";
 import { DeclinedGoal, ExplainGoal, InstrumentGoal, UnclearGoal } from "./goal-outcomes";
 import { type MaterialIntent } from "./material-intent";
+import { getSentGoal } from "./understanding-start";
 import { UnderstandingWait } from "./understanding-wait";
 import { type useDraftActions } from "./use-draft-actions";
 
@@ -126,7 +127,7 @@ function ReadDraft({
         <ExplainGoal
           error={creation.error}
           goal={draft.prompt}
-          isStarting={creation.isCreating}
+          isStarting={creation.isCreating || getSentGoal(draft.id) !== null}
           onStart={() => creation.startExplanation({ draft, question: understanding.question })}
           question={understanding.question}
           signUpHref={routes.signUp}

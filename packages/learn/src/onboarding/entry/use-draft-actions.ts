@@ -5,7 +5,7 @@ import {
   type OnboardingDraftView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
 
@@ -44,6 +44,23 @@ export function useDraftActions({
   /** Starting the read again hit a limit: why, with the way to an account when one helps. */
   const [limit, setLimit] = useState<GoalError | null>(null);
   const [isRetrying, startRetrying] = useTransition();
+  const pending = useRef<AbortController | null>(null);
+  const draftId = draft?.id;
+
+  const cancel = () => pending.current?.abort();
+
+  useEffect(() => {
+    if (draftId) {
+      return () => pending.current?.abort();
+    }
+  }, [draftId]);
+
+  function beginRead() {
+    pending.current?.abort();
+    const controller = new AbortController();
+    pending.current = controller;
+    return controller.signal;
+  }
 
   /** The run said the words were read: load what was understood. */
   const loadRead = async () => {
@@ -51,7 +68,13 @@ export function useDraftActions({
       return;
     }
 
+    const signal = beginRead();
     const { data: next } = await safeAsync(() => understanding.get(draft.id));
+
+    if (signal.aborted) {
+      return;
+    }
+
     setReadFailed(!next);
 
     if (next) {
@@ -66,7 +89,12 @@ export function useDraftActions({
     }
 
     startRetrying(async () => {
+      const signal = beginRead();
       const { data: outcome } = await safeAsync(() => understanding.retry(draft.id));
+
+      if (signal.aborted) {
+        return;
+      }
 
       if (isLimit(outcome)) {
         setLimit(toError(outcome));
@@ -86,7 +114,12 @@ export function useDraftActions({
       return null;
     }
 
+    const signal = beginRead();
     const outcome = await understanding.retry(draft.id);
+
+    if (signal.aborted) {
+      return null;
+    }
 
     if (isLimit(outcome)) {
       setLimit(toError(outcome));
@@ -109,7 +142,12 @@ export function useDraftActions({
       return false;
     }
 
+    const signal = beginRead();
     const { data: next } = await safeAsync(() => understanding.revise({ draftId: draft.id, edit }));
+
+    if (signal.aborted) {
+      return false;
+    }
 
     if (next) {
       onDraft(next);
@@ -118,5 +156,5 @@ export function useDraftActions({
     return Boolean(next);
   };
 
-  return { isRetrying, limit, loadRead, readFailed, restart, retry, revise };
+  return { cancel, isRetrying, limit, loadRead, readFailed, restart, retry, revise };
 }

@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
 /** Whether the learner summary found an account (a guest's session has none). */
-function hasAccount(learner: LearnerSummaryState): boolean {
+export function hasAccount(learner: LearnerSummaryState): boolean {
   return learner.status === "ready" && !learner.summary.identity.isAnonymous;
 }
 

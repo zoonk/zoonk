@@ -6,7 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type UnderstandingActions } from "../onboarding-actions";
-import { getClassifiedKind, sendGoal, takeSentGoal } from "./understanding-start";
+import {
+  forgetSentGoal,
+  getClassifiedKind,
+  holdSentGoal,
+  sendGoal,
+  takeSentGoal,
+} from "./understanding-start";
 
 /**
  * Sending a typed goal from this screen (cancelled on leaving or changing goals), and carrying the
@@ -14,6 +20,7 @@ import { getClassifiedKind, sendGoal, takeSentGoal } from "./understanding-start
  * it was classified, and a question goes straight on to its explanation.
  */
 export function useSubmitUnderstanding({
+  draftId,
   hasAttachment,
   onDraft,
   onError,
@@ -21,6 +28,7 @@ export function useSubmitUnderstanding({
   onSending,
   understanding,
 }: {
+  draftId: string | null;
   hasAttachment: boolean;
   onDraft: (draft: OnboardingDraftView) => void;
   onError: (input: { error: GoalError; words: string }) => void;
@@ -36,7 +44,14 @@ export function useSubmitUnderstanding({
 
   useEffect(() => () => submitted.current?.abort(), []);
 
+  // A home-page click transfers to this flow; once it leaves this draft, that click ends here.
+  useEffect(() => (draftId ? holdSentGoal(draftId) : undefined), [draftId]);
+
   function cancel() {
+    if (draftId) {
+      forgetSentGoal(draftId);
+    }
+
     submitted.current?.abort();
     submitted.current = null;
     setIsSubmitting(false);

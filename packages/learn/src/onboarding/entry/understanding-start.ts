@@ -16,11 +16,49 @@ const EXPLANATION_MINUTES = 5;
  * a question's explanation), even after the home page handed it to `/start`. A reload forgets it,
  * so a draft opened later waits for the learner's own tap.
  */
-const sentGoals = new Map<string, number>();
+type SentGoal = { pending: boolean; prompt: string; sentAt: number; owner?: symbol };
+
+const sentGoals = new Map<string, SentGoal>();
+
+/** The click's words and wait state, without consuming its continuation. */
+export function getSentGoal(draftId: string): Omit<SentGoal, "owner"> | null {
+  const sent = sentGoals.get(draftId);
+  return sent ? { pending: sent.pending, prompt: sent.prompt, sentAt: sent.sentAt } : null;
+}
+
+/**
+ * Owns the click while its draft is shown. A cleanup replay can reclaim it in the same turn;
+ * actually leaving, or replacing the draft, revokes it before the next browser task.
+ */
+export function holdSentGoal(draftId: string): () => void {
+  const sent = sentGoals.get(draftId);
+
+  if (!sent) {
+    return function releaseUnknownGoal() {
+      // A reloaded draft has no click to release.
+    };
+  }
+
+  const owner = Symbol("sent goal screen");
+  sent.owner = owner;
+
+  return () => {
+    queueMicrotask(() => {
+      if (sentGoals.get(draftId) === sent && sent.owner === owner) {
+        forgetSentGoal(draftId);
+      }
+    });
+  };
+}
+
+/** Back, a replacement, or leaving the draft revokes its automatic click continuation. */
+export function forgetSentGoal(draftId: string): void {
+  sentGoals.delete(draftId);
+}
 
 /** When this tab's click sent the draft, once: null for a draft it didn't send or already read. */
 export function takeSentGoal(draftId: string): number | null {
-  const sentAt = sentGoals.get(draftId) ?? null;
+  const sentAt = sentGoals.get(draftId)?.sentAt ?? null;
   sentGoals.delete(draftId);
   return sentAt;
 }
@@ -94,7 +132,11 @@ export async function sendGoal({
   const outcome: StartUnderstandingOutcome = data ?? { status: "failed" };
 
   if (outcome.status === "started" && !signal?.aborted) {
-    sentGoals.set(outcome.draft.id, sentAt);
+    sentGoals.set(outcome.draft.id, {
+      pending: outcome.draft.status === "understanding",
+      prompt: goal,
+      sentAt,
+    });
   }
 
   return outcome;

@@ -40,6 +40,37 @@ async function findDraft(prompt: string) {
   return prisma.onboardingDraft.findFirstOrThrow({ where: { prompt } });
 }
 
+/**
+ * The real submit saves this learner's draft from cached words, without starting AI. Its answer
+ * becomes the fixture's still-reading state, so the click is followed through its own fake run.
+ */
+async function answerStartAsReading(
+  page: Page,
+  { prompt, runId }: { prompt: string; runId: string },
+) {
+  await page.route("**/start", async (route) => {
+    if (route.request().method() !== "POST" || !route.request().headers()["next-action"]) {
+      await route.continue();
+      return;
+    }
+
+    const response = await route.fetch();
+    const saved = await findDraft(prompt);
+
+    await prisma.onboardingDraft.update({
+      data: { runId, status: "understanding" },
+      where: { id: saved.id },
+    });
+
+    const body = await response.text();
+    const withRun = body.replace('"generationId":null', `"generationId":${JSON.stringify(runId)}`);
+    expect(withRun).not.toBe(body);
+    const reading = withRun.replace('"status":"understood"', '"status":"understanding"');
+    expect(reading).not.toBe(withRun);
+    await route.fulfill({ body: reading, response });
+  });
+}
+
 const QUANTUM: Understanding = {
   followUps: [],
   goals: [{ kind: "learn", subject: "quantum physics", title: "Understand quantum physics" }],
@@ -81,9 +112,125 @@ test.describe("Sending a goal", () => {
       )
       .toBe(0);
   });
+
+  test("a goal sent from /start keeps the focus on the wait's title once its draft arrives", async ({
+    page,
+  }) => {
+    const prompt = uniqueWords("why does ice float");
+    const userId = await ensureGuest(page);
+    const runId = `e2e-focus-${randomUUID()}`;
+    const release = Promise.withResolvers<null>();
+
+    await goalUnderstandingFixture({
+      goal: prompt,
+      result: { question: "Why ice floats", route: "explain" },
+      userId,
+    });
+
+    // Its read stays running on a held stream, so the draft's own wait stays on screen.
+    await answerStartAsReading(page, { prompt, runId });
+
+    await page.route(`**/v1/generations/${runId}`, (route) =>
+      route.fulfill({ json: { id: runId, status: "running" } }),
+    );
+
+    await page.route(`**/v1/generations/${runId}/events**`, async (route) => {
+      await release.promise;
+      await route.abort();
+    });
+
+    // Only the draft's own wait follows its run: once it asks, its title is the one on screen.
+    const followed = page.waitForRequest(
+      (request) => new URL(request.url()).pathname === `/v1/generations/${runId}/events`,
+    );
+
+    await sendGoal(page, prompt);
+    await expect(page).toHaveURL(DRAFT_URL);
+    await followed;
+
+    await expect(page.getByRole("heading", { name: "Understanding your goal" })).toBeFocused();
+    release.resolve(null);
+  });
 });
 
 test.describe("Coming back", () => {
+  test("Back discards a terminal draft response that arrives while the learner edits new words", async ({
+    page,
+  }) => {
+    const prompt = uniqueWords("why does ice float");
+    const userId = await ensureGuest(page);
+    const runId = `e2e-abandoned-${randomUUID()}`;
+
+    await goalUnderstandingFixture({
+      goal: prompt,
+      result: { question: "Why ice floats", route: "explain" },
+      userId,
+    });
+
+    await answerStartAsReading(page, { prompt, runId });
+
+    const ready = Promise.withResolvers<null>();
+    const readStarted = Promise.withResolvers<null>();
+    const releaseRead = Promise.withResolvers<null>();
+    const delivered = Promise.withResolvers<null>();
+    const requests = followRequests(page);
+
+    await page.route(`**/v1/generations/${runId}`, (route) =>
+      route.fulfill({ json: { id: runId, status: "running" } }),
+    );
+
+    await page.route(`**/v1/generations/${runId}/events**`, async (route) => {
+      await ready.promise;
+
+      const draft = await findDraft(prompt);
+
+      await prisma.onboardingDraft.update({
+        data: { status: "understood" },
+        where: { id: draft.id },
+      });
+
+      await route.fulfill({
+        body: `data: ${JSON.stringify({ entityId: draft.id, status: "completed", step: "understandingReady" })}\n\n`,
+        contentType: "text/event-stream",
+      });
+    });
+
+    await page.route("**/start?draft=*", async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.continue();
+        return;
+      }
+
+      const response = await route.fetch();
+      readStarted.resolve(null);
+      await releaseRead.promise;
+      await route.fulfill({ response });
+      delivered.resolve(null);
+    });
+
+    await sendGoal(page, prompt);
+    await expect(page.getByRole("heading", { name: "Understanding your goal" })).toBeVisible();
+    ready.resolve(null);
+    await readStarted.promise;
+    await page.getByRole("button", { exact: true, name: "Back" }).click();
+    const words = page.getByRole("textbox", { name: "I want to" });
+    await words.fill("learn to cook for my family");
+    releaseRead.resolve(null);
+    await delivered.promise;
+    await requests.settled();
+    // Let the completed action's promise continuations and React commit before the assertions.
+    await page.evaluate(
+      () =>
+        new Promise<null>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)));
+        }),
+    );
+
+    await expect(words).toHaveValue("learn to cook for my family");
+    await expect(page.getByRole("button", { exact: true, name: "Explain it" })).toHaveCount(0);
+    await expect(prisma.goal.count({ where: { prompt } })).resolves.toBe(0);
+  });
+
   test("a refreshed question draft waits for Explain it instead of starting new work", async ({
     page,
   }) => {
@@ -241,7 +388,7 @@ test.describe("Coming back", () => {
 
     release.resolve(null);
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeFocused();
     await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
   });
 
@@ -331,7 +478,6 @@ test.describe("Fixing what was understood", () => {
   });
 });
 
-/** Signs the page in as a new guest and returns the guest's id. */
 test.describe("Goal limits", () => {
   test("a guest whose one goal is taken is asked for an account before typing another", async ({
     page,

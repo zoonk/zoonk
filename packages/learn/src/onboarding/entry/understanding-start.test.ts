@@ -1,6 +1,12 @@
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { sendGoal, takeSentGoal } from "./understanding-start";
+import {
+  forgetSentGoal,
+  getSentGoal,
+  holdSentGoal,
+  sendGoal,
+  takeSentGoal,
+} from "./understanding-start";
 
 function draftBeingRead(id: string): OnboardingDraftView {
   return {
@@ -16,6 +22,81 @@ function draftBeingRead(id: string): OnboardingDraftView {
 describe(sendGoal, () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
+
+  it("keeps the sent words for the loading bridge without consuming the click", async () => {
+    const draft = draftBeingRead("draft-bridge");
+
+    await sendGoal({
+      goal: draft.prompt,
+      language: "en",
+      understanding: { start: () => Promise.resolve({ draft, status: "started" }) },
+    });
+
+    expect(getSentGoal(draft.id)).toStrictEqual({
+      pending: true,
+      prompt: draft.prompt,
+      sentAt: expect.any(Number),
+    });
+
+    expect(getSentGoal(draft.id)).not.toBeNull();
+    expect(takeSentGoal(draft.id)).toStrictEqual(expect.any(Number));
+    expect(getSentGoal(draft.id)).toBeNull();
+  });
+
+  it("preserves the click through a StrictMode cleanup replay, then revokes it on departure", async () => {
+    const draft = draftBeingRead("draft-replayed");
+
+    await sendGoal({
+      goal: draft.prompt,
+      language: "en",
+      understanding: { start: () => Promise.resolve({ draft, status: "started" }) },
+    });
+
+    const releaseFirst = holdSentGoal(draft.id);
+    releaseFirst();
+    const releaseReplay = holdSentGoal(draft.id);
+    await Promise.resolve();
+    expect(getSentGoal(draft.id)).not.toBeNull();
+
+    releaseReplay();
+    await Promise.resolve();
+    expect(getSentGoal(draft.id)).toBeNull();
+  });
+
+  it("doesn't promise a pending wait for an already-read draft", async () => {
+    const draft = { ...draftBeingRead("draft-read"), status: "understood" as const };
+
+    await sendGoal({
+      goal: draft.prompt,
+      language: "en",
+      understanding: { start: () => Promise.resolve({ draft, status: "started" }) },
+    });
+
+    expect(getSentGoal(draft.id)?.pending).toBe(false);
+    forgetSentGoal(draft.id);
+  });
+
+  it("revokes a continuation canceled after the start response, without canceling its replacement", async () => {
+    const oldDraft = draftBeingRead("draft-canceled");
+    const nextDraft = draftBeingRead("draft-replacement");
+
+    await sendGoal({
+      goal: oldDraft.prompt,
+      language: "en",
+      understanding: { start: () => Promise.resolve({ draft: oldDraft, status: "started" }) },
+    });
+
+    forgetSentGoal(oldDraft.id);
+
+    await sendGoal({
+      goal: nextDraft.prompt,
+      language: "en",
+      understanding: { start: () => Promise.resolve({ draft: nextDraft, status: "started" }) },
+    });
+
+    expect(takeSentGoal(oldDraft.id)).toBeNull();
+    expect(takeSentGoal(nextDraft.id)).toStrictEqual(expect.any(Number));
+  });
 
   it("starts the read and leaves following it to the draft's screen", async () => {
     const draft = draftBeingRead("draft-followed");

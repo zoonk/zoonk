@@ -1,7 +1,8 @@
 "use client";
 
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
+import { isFocusLost } from "../_utils/is-focus-lost";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
@@ -35,6 +36,18 @@ type StartState =
   | { kind: "questions" }
   | { goal: string; kind: "sending" }
   | { draft: OnboardingDraftView; kind: "draft" };
+
+/**
+ * The screen by its title, as drawn: the draft's wait replaces the sending wait's title with its
+ * own, so it takes the focus that one lost.
+ */
+function getScreenKey(state: StartState): string {
+  if (state.kind === "draft") {
+    return state.draft.status === "understood" ? `${state.draft.id}:read` : "wait";
+  }
+
+  return state.kind;
+}
 
 /** Back goes to writing the goal, with the words kept, from anywhere but the first screen. */
 function getBack({
@@ -121,6 +134,29 @@ function GoalStartFlow({
       : { error: null, kind: "entry", words: defaultGoal },
   );
 
+  const screen = getScreenKey(state);
+  const lastFocusedScreen = useRef(screen);
+
+  // A new screen takes the focus the old one lost, but the first one keeps it where the browser
+  // put it.
+  useLayoutEffect(() => {
+    if (lastFocusedScreen.current === screen) {
+      return;
+    }
+
+    lastFocusedScreen.current = screen;
+
+    if (!isFocusLost(document.activeElement)) {
+      return;
+    }
+
+    const title = [
+      ...document.querySelectorAll<HTMLElement>('[data-slot="onboarding-title"]'),
+    ].find((heading) => heading.checkVisibility());
+
+    title?.focus({ preventScroll: true });
+  }, [screen]);
+
   const savedDraft = useFollowSavedDraft({
     follow: (draft) => setState({ draft, kind: "draft" }),
     initialDraft,
@@ -140,6 +176,7 @@ function GoalStartFlow({
   });
 
   const showEntry = ({ error = null, words }: { error?: GoalError | null; words: string }) => {
+    draftActions.cancel();
     submission.cancel();
     navigation.showDraft(null);
     creation.clearError();
@@ -159,11 +196,15 @@ function GoalStartFlow({
     });
 
   const submission = useSubmitUnderstanding({
+    draftId: state.kind === "draft" ? state.draft.id : null,
     hasAttachment: attached.length > 0,
     onDraft: showDraft,
     onError: showEntry,
     onExplanation: startExplanation,
-    onSending: (goal) => setState({ goal, kind: "sending" }),
+    onSending: (goal) => {
+      draftActions.cancel();
+      setState({ goal, kind: "sending" });
+    },
     understanding: actions.understanding,
   });
 

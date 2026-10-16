@@ -3,6 +3,8 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { SendingGoal } from "./entry/understanding-wait";
+import { OnboardingHowItWorks } from "./how-it-works";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -85,6 +87,20 @@ export function StartEntrySkeleton() {
             <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
           </div>
         </OnboardingColumn>
+      </OnboardingFrame>
+    </OnboardingRailProvider>
+  );
+}
+
+/**
+ * This tab's own pending send keeps the real wait and rail while its new draft loads. The goal box
+ * sends from the home page, the catalog and a plan without a goal, so the rail follows the account.
+ */
+export function StartSentGoal({ goal, hasAccount }: { goal: string; hasAccount: boolean }) {
+  return (
+    <OnboardingRailProvider rail={<OnboardingHowItWorks hasAccount={hasAccount} />}>
+      <OnboardingFrame>
+        <SendingGoal goal={goal} />
       </OnboardingFrame>
     </OnboardingRailProvider>
   );

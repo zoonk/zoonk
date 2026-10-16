@@ -133,7 +133,12 @@ export function OnboardingTitle({ children, className, ...props }: React.Compone
   // Under the host's own title, the screen's title is a section's.
   if (section) {
     return (
-      <h2 className={cn("text-xl leading-snug font-semibold text-pretty", className)} {...props}>
+      <h2
+        className={cn("text-xl leading-snug font-semibold text-pretty outline-none", className)}
+        data-slot="onboarding-title"
+        tabIndex={-1}
+        {...props}
+      >
         {children}
       </h2>
     );
@@ -142,9 +147,11 @@ export function OnboardingTitle({ children, className, ...props }: React.Compone
   return (
     <h1
       className={cn(
-        "text-title wrap-break-word hyphens-auto [hyphenate-limit-chars:12]",
+        "text-title wrap-break-word hyphens-auto outline-none [hyphenate-limit-chars:12]",
         className,
       )}
+      data-slot="onboarding-title"
+      tabIndex={-1}
       {...props}
     >
       {children}
