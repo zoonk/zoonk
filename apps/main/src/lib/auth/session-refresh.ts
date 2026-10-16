@@ -82,17 +82,23 @@ async function withRefreshLock(work: () => Promise<void>): Promise<void> {
   await navigator.locks.request(REFRESH_LOCK, work);
 }
 
-/** Whether the server answered with a new copy; an error answer or no answer is a failure. */
+/**
+ * Whether the server answered with a new copy; an error answer or no answer is a failure. The
+ * answer is read to its end, since a body left unread keeps its request open until it times out.
+ */
 async function refresh(): Promise<boolean> {
-  const { data: response } = await safeAsync(() =>
-    fetch(SESSION_REFRESH_PATH, {
+  const { data: isRefreshed } = await safeAsync(async () => {
+    const response = await fetch(SESSION_REFRESH_PATH, {
       cache: "no-store",
       credentials: "same-origin",
       signal: AbortSignal.timeout(REFRESH_TIMEOUT_MS),
-    }),
-  );
+    });
 
-  return response?.ok === true;
+    await response.arrayBuffer();
+    return response.ok;
+  });
+
+  return isRefreshed === true;
 }
 
 /**

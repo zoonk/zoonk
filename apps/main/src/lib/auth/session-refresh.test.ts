@@ -28,7 +28,8 @@ const documentListeners: { listener: () => void; type: string }[] = [];
 
 /**
  * A browser and its tabs: whether they're visible, whether storage works, and how the server
- * answers each refresh, in order (a promise answers once it settles). Records the requests sent.
+ * answers each refresh, in order (a promise answers once it settles). Records the requests sent
+ * and the answers, each with a body as the server's has.
  */
 function stubTab({
   answers,
@@ -41,6 +42,7 @@ function stubTab({
 }) {
   const stored = new Map<string, string>();
   const sent: { method: string; url: string }[] = [];
+  const answered: Response[] = [];
 
   documentListeners.splice(0);
 
@@ -89,11 +91,13 @@ function stubTab({
         throw new TypeError("Failed to fetch");
       }
 
-      return new Response(null, { status: answer === "ok" ? 200 : 503 });
+      const response = Response.json({ session: null }, { status: answer === "ok" ? 200 : 503 });
+      answered.push(response);
+      return response;
     }),
   );
 
-  return { sent };
+  return { answered, sent };
 }
 
 /** A fresh page: the watcher keeps its own record per page. */
@@ -168,6 +172,23 @@ describe("session copy refresh", () => {
 
     first.stop();
     second.stop();
+  });
+
+  it("reads every answer to its end, an error's included, so its request doesn't stay open", async () => {
+    const { answered } = stubTab({ answers: ["unavailable", "ok"] });
+    const { stop, tap } = await openPage();
+
+    await tap();
+    await vi.advanceTimersByTimeAsync(3 * MINUTE_MS);
+    await tap();
+    await vi.advanceTimersByTimeAsync(2 * MINUTE_MS);
+
+    expect(answered.map(({ bodyUsed, status }) => ({ bodyUsed, status }))).toStrictEqual([
+      { bodyUsed: true, status: 503 },
+      { bodyUsed: true, status: 200 },
+    ]);
+
+    stop();
   });
 
   it("asks nothing from an idle tab, a hidden one, or a page without a learner", async () => {
