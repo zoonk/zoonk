@@ -29701,10 +29701,11 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "estimatedMinutes": {
+            "nullable": true,
+            "description": "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise. Display minutes as the canonical mock duration: it is the real time limit funded by the plan, even when the learner may finish early."
+            "maximum": 9007199254740991
           },
           "examName": {
             "nullable": true,
@@ -29740,10 +29741,11 @@
             "description": "The learner needs Plus to start this challenge. Its content and completed feedback remain visible; an unfinished challenge has `status` `plusRequired`, and a completed language challenge keeps `status` `done` with `locked` true after Plus lapses. Starting rechecks the subscription"
           },
           "minutes": {
+            "nullable": true,
+            "description": "A mock's clock; otherwise about how long a checkpoint takes; null while its size is unknown",
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Time on the clock for a mock; about how long a checkpoint takes"
+            "maximum": 9007199254740991
           },
           "mock": {
             "type": "boolean",
@@ -29762,7 +29764,7 @@
           },
           "passMark": {
             "nullable": true,
-            "description": "Right answers that win a boss, or for a call the goals got across (null until its call is written); a weekly challenge pays for finishing",
+            "description": "Right answers that win a boss, null while its size is unknown; a call's goals got across, null until written. A weekly challenge pays for finishing",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -29781,16 +29783,18 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "questions": {
+            "nullable": true,
+            "description": "Null while unknown; 0 for a call or a checkpoint with nothing to ask yet",
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "0 for a call, which asks none"
+            "maximum": 9007199254740991
           },
           "recordings": {
+            "nullable": true,
+            "description": "Recordings a listening boss asks about, each played as in the exam; null for a saved recording offer while its recordings aren't picked yet, 0 for text or unknown kind",
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Recordings a listening phase's boss asks its questions on, each played as in the exam; 0 for text questions"
+            "maximum": 9007199254740991
           },
           "reinforcementLessons": {
             "type": "integer",
@@ -29923,7 +29927,16 @@
               ],
               "additionalProperties": false
             },
-            "description": "What its questions ask about, in plan order: once its block is built, the topics of the questions it asks; before that, the topics a boss's questions will come from, as the plan sets them (none for the weekly challenge). Empty for a mock, which lists its sections, and a language goal's call"
+            "description": "What its questions ask about, in plan order: once its block is built, the topics of the questions it asks; before that, the topics its saved offer keeps. Empty without saved topics, for a mock, which lists its sections, and a language goal's call"
+          },
+          "waitReason": {
+            "nullable": true,
+            "description": "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+            "type": "string",
+            "enum": [
+              "lessons",
+              "challenge"
+            ]
           },
           "written": {
             "type": "array",
@@ -29971,6 +29984,7 @@
           "title",
           "today",
           "topics",
+          "waitReason",
           "written",
           "wrongPenalty"
         ],
@@ -73043,11 +73057,39 @@
               "title"
             ],
             "additionalProperties": false
+          },
+          "nextChapter": {
+            "nullable": true,
+            "description": "The chapter the learner is in, whose map comes once it's finished: the one holding the lesson up next. Null when that lesson isn't a chapter's or nothing is left",
+            "type": "object",
+            "properties": {
+              "chapterId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "lessonsLeft": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991,
+                "description": "Its lessons left in the plan"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "chapterId",
+              "lessonsLeft",
+              "title"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
           "chapters",
-          "goal"
+          "goal",
+          "nextChapter"
         ],
         "additionalProperties": false
       },
