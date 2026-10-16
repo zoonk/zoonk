@@ -235,6 +235,43 @@ describe("session renewal", () => {
     await expect(findSession(userId)).resolves.toStrictEqual(before);
   });
 
+  it("gives a session renewed within the day only a new copy on the browser's POST, which reads then use", async () => {
+    const { cookie, userId } = await signUpWithSessionUsed({ days: 0.5 });
+    const before = await findSession(userId);
+
+    // The renewal exactly as the browser sends it, its copy of the session gone.
+    const response = await auth.handler(
+      new Request(`${ORIGIN}${SESSION_RENEWAL_PATH}`, {
+        ...SESSION_RENEWAL_REQUEST,
+        headers: { ...SESSION_RENEWAL_REQUEST.headers, cookie, origin: ORIGIN },
+      }),
+    );
+
+    const cookies = readSetCookies(response);
+    const copy = cookies.get(SESSION_CACHE_COOKIE)?.value;
+
+    expect(response.status).toBe(200);
+    expect(copy).toBeTruthy();
+    expect(cookies.has(SESSION_COOKIE)).toBe(false);
+    expect(cookies.has(SESSION_HINT_COOKIE)).toBe(false);
+    await expect(findSession(userId)).resolves.toStrictEqual(before);
+
+    // A page's read looks the session up without the copy, and not with it.
+    const { internalAdapter } = await auth.$context;
+    const lookups = vi.spyOn(internalAdapter, "findSession");
+
+    await auth.api.getSession({ headers: new Headers({ cookie }) });
+    expect(lookups).toHaveBeenCalledOnce();
+
+    const read = await auth.api.getSession({
+      headers: new Headers({ cookie: `${cookie}; ${SESSION_CACHE_COOKIE}=${copy}` }),
+    });
+
+    expect(read?.user.id).toBe(userId);
+    expect(lookups).toHaveBeenCalledOnce();
+    lookups.mockRestore();
+  });
+
   it("renews a native app's due bearer session, and tells it when the session is gone", async () => {
     const { bearer, userId } = await signInGuestWithSessionUsed({ days: 3 });
 

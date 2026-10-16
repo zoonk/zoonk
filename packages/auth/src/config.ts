@@ -11,6 +11,13 @@ export const SESSION_EXPIRES_IN_DAYS = 30;
  * renewing writes, so reads (every GET) never do.
  */
 export const SESSION_UPDATE_AGE_DAYS = 1;
+
+/**
+ * How long a browser reads its signed copy of the session (Better Auth's cookie cache) instead of
+ * the database, and so how long a session ended on the server can still read as signed in there.
+ * A render can't set cookies, so a page in use writes a new copy before it runs out with the
+ * renewal's POST (`session-renewal.ts`).
+ */
 export const COOKIE_CACHE_MINUTES = 60;
 export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !== "false";
 
