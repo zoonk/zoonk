@@ -113,19 +113,19 @@ test.describe("Quick explanations", () => {
 
     await followRun({ events, page, runId });
 
-    // Full reads of the page while it waits (not prefetches of other pages).
-    const pageReads: string[] = [];
-
-    page.on("request", (request) => {
+    /** A full read of the page (not a prefetch of another page). */
+    const isPageRead = (request: { headers: () => Record<string, string>; url: () => string }) => {
       const headers = request.headers();
-      const isPage = new URL(request.url()).pathname.endsWith(`/explain/${goal.id}`);
 
-      if (isPage && headers.rsc === "1" && !headers["next-router-prefetch"]) {
-        pageReads.push(request.url());
-      }
-    });
+      return (
+        new URL(request.url()).pathname.endsWith(`/explain/${goal.id}`) &&
+        headers.rsc === "1" &&
+        !headers["next-router-prefetch"]
+      );
+    };
 
-    await page.clock.install();
+    const openedAt = Date.now();
+    await page.clock.install({ time: openedAt });
     await page.goto(`/explain/${goal.id}`);
 
     // The wait's phases, as every generation wait draws them: done ones say so, and the one
@@ -149,9 +149,20 @@ test.describe("Quick explanations", () => {
       `/start?goal=${encodeURIComponent("I want to understand how a microwave works in depth")}`,
     );
 
-    // The run's progress is the wait: the page doesn't read itself again while it's followed.
-    await page.clock.fastForward(15_000);
-    expect(pageReads).toStrictEqual([]);
+    // The run's progress is the wait: the page doesn't read itself again while it's followed. Reads
+    // count from here, after the stream answered the wait above, so after the page's mount (which
+    // can read a copy that's already old again).
+    const pageReads: string[] = [];
+
+    page.on("request", (request) => {
+      if (isPageRead(request)) {
+        pageReads.push(request.url());
+      }
+    });
+
+    // Time stops just short of the fallback, twenty seconds after the page opened (after
+    // `openedAt`), so nothing fires on its own while the other run writes.
+    await page.clock.pauseAt(openedAt + 19_000);
 
     // The explanation is saved while the stream is silent (another run wrote it): the page's
     // fallback check, twenty seconds in, fills the outline in with its screens, and it starts on
@@ -167,7 +178,13 @@ test.describe("Quick explanations", () => {
       titleSnapshot: "How a microwave works",
     });
 
-    await page.clock.fastForward(6000);
+    expect(pageReads).toStrictEqual([]);
+
+    // The router's refresh loads can end aborted after their headers, so the wait is for the read.
+    const fallback = page.waitForResponse((response) => isPageRead(response.request()));
+    await page.clock.fastForward(21_000);
+    await fallback;
+    await page.clock.resume();
 
     await expect(
       page.getByRole("list", { name: "What's coming" }).getByText("A cloud, not a little ball"),
