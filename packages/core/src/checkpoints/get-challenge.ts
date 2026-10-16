@@ -6,12 +6,15 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../plans/planner/plan-state";
+import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { readDailyTimeLimitReached } from "../sessions/_utils/daily-time-limit";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { type BossTiming, getBossTimings } from "./_utils/boss-reached";
 import { countBlockRecordings } from "./_utils/boss-recordings";
+import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
 import { getMovableDay, loadChallengeMoveRules } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
@@ -31,7 +34,7 @@ import {
   findOwnedChallenge,
   getTodayBlock,
 } from "./_utils/owned-challenge";
-import { type ChallengeCall, type ChallengeStatus, type ChallengeView } from "./challenge-contract";
+import { type ChallengeCall, type ChallengeView } from "./challenge-contract";
 import { getCheckpointReward } from "./checkpoint-reward";
 import { getPassMark } from "./checkpoint-rules";
 
@@ -60,6 +63,15 @@ function getTiming(challenge: OwnedChallenge): BossTiming {
   }
 
   return item.scheduledFor !== null && item.scheduledFor <= today ? "nextSession" : "date";
+}
+
+/**
+ * Whether today's study time is used up on the day Start counts it: the learner's day, in their
+ * active goal's zone as Today reads it, which can be another date than the challenge's own goal's.
+ */
+async function readDailyLimitReachedToday(userId: string): Promise<boolean> {
+  const { currentDate } = await getRequestProgressDateContext();
+  return readDailyTimeLimitReached({ date: currentDate, userId });
 }
 
 /** The week's challenge moves before it starts, from today or a later day. */
@@ -98,28 +110,6 @@ function getOpenBlockId({
   }
 
   return block?.status === "completed" ? block.id : null;
-}
-
-/**
- * An unavailable milestone is pending content, not an empty future or queued offer. One whose size
- * is unknown (null questions) isn't known to be empty, so it keeps its status.
- */
-function getAvailableChallengeStatus({
-  block,
-  call,
-  isMock,
-  size,
-  status,
-}: {
-  block: ChallengeBlock | null;
-  call: ChallengeCall | null;
-  isMock: boolean;
-  size: { questions: number | null };
-  status: ChallengeStatus;
-}): ChallengeStatus {
-  const pending = status === "upcoming" || status === "queued";
-  const empty = size.questions === 0;
-  return pending && !isMock && !call && !block && empty ? "waiting" : status;
 }
 
 /**
@@ -317,24 +307,29 @@ export async function getChallenge({
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
-  const [size, canMoveIt, lastResult, counts, recordings, topics, call] = await Promise.all([
-    loadChallengeSize({ block: previewBlock, challenge }),
-    // A mock the plan doesn't include has no day of its own to move.
-    status !== "plusRequired" && canMove({ challenge, todayBlock }),
-    kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
-    loadMilestoneCounts(userId),
-    loadRecordings({ block: previewBlock, challenge }),
-    loadChallengeTopics({ block: previewBlock, challenge }),
-    loadChallengeCall({ blockId, challenge }),
-  ]);
+  const [size, canMoveIt, lastResult, counts, recordings, topics, call, limitReached] =
+    await Promise.all([
+      loadChallengeSize({ block: previewBlock, challenge }),
+      // A mock the plan doesn't include has no day of its own to move.
+      status !== "plusRequired" && canMove({ challenge, todayBlock }),
+      kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
+      loadMilestoneCounts(userId),
+      loadRecordings({ block: previewBlock, challenge }),
+      loadChallengeTopics({ block: previewBlock, challenge }),
+      loadChallengeCall({ blockId, challenge }),
+      // Start refuses a challenge once today's study time is used up: a ready one says so first.
+      status === "ready" && !waitReason && readDailyLimitReachedToday(userId),
+    ]);
 
   const reinforcement = await loadResultReinforcement({ result: lastResult, userId });
+  const shown = getAvailableChallengeStatus({ block: previewBlock, call, isMock, size, status });
 
   return {
     challenge: {
       blockId,
       call,
       canMove: canMoveIt,
+      dailyLimitReached: shown === "ready" && limitReached,
       date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       estimatedMinutes: size.estimatedMinutes,
       examName: isMock ? (goal.examBlueprint?.name ?? goal.title) : null,
@@ -362,7 +357,7 @@ export async function getChallenge({
       sections: size.sections,
       // The exam's real start time when it has one, else the time the learner's own words gave.
       startTime: size.startTime ?? goal.studyTime,
-      status: getAvailableChallengeStatus({ block: previewBlock, call, isMock, size, status }),
+      status: shown,
       timeZone: size.startTime ? size.timeZone : null,
       title: item.titleSnapshot,
       today: toIsoDate(today),

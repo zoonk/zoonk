@@ -3,9 +3,11 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -147,6 +149,104 @@ describe("a phase checkpoint's challenge", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: started.destination.blockId } }),
     ).resolves.toMatchObject({ status: "active" });
+  });
+
+  it("past today's study time, says so before Start, as Start refuses; a started one goes on", async () => {
+    const { boss, goal, user } = await bossSetup();
+
+    // Today's session already holds it, as when the learner opened Today before the limit ran out.
+    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    // Without a limit the intro reads no day's progress; the limit comes with the learner's profile.
+    const unlimited = await countDatabaseStatements(() => challengeOf(boss.id));
+    expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "ready" });
+
+    const limit = (dailyLimitMinutes: number | null) =>
+      prisma.userLearningProfile.upsert({
+        create: { dailyLimitMinutes, userId: user.id },
+        update: { dailyLimitMinutes },
+        where: { userId: user.id },
+      });
+
+    await Promise.all([
+      limit(30),
+      dailyProgressFixtureMany([
+        { date: SESSION_TODAY, timeSpentSeconds: 30 * 60, userId: user.id },
+      ]),
+    ]);
+
+    const limited = await countDatabaseStatements(() => challengeOf(boss.id));
+
+    expect(limited.writes).toBe(0);
+    expect(limited.statements).toBe(unlimited.statements + 1);
+    expect(limited.result).toMatchObject({ dailyLimitReached: true, status: "ready" });
+
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
+      status: "dailyLimitReached",
+    });
+
+    // Started before the limit was used up, it goes on, as Start resumes it.
+    await limit(null);
+
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    await limit(30);
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      dailyLimitReached: false,
+      status: "started",
+    });
+  });
+
+  it("counts today's study time on the learner's day, as Start does, when its goal is on another date", async () => {
+    const { boss, goal, user } = await bossSetup();
+
+    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    // At noon UTC the learner's active goal, in Kiritimati (UTC+14), is already on the next day.
+    const active = await goalFixture({ timezone: "Pacific/Kiritimati", userId: user.id });
+    const learnerDay = new Date(SESSION_TODAY.getTime() + DAY_MS);
+
+    await prisma.userLearningProfile.upsert({
+      create: { activeGoalId: active.id, dailyLimitMinutes: 30, userId: user.id },
+      update: { activeGoalId: active.id, dailyLimitMinutes: 30 },
+      where: { userId: user.id },
+    });
+
+    const useUpOn = async (date: Date) => {
+      await prisma.dailyProgress.deleteMany({ where: { userId: user.id } });
+      await dailyProgressFixtureMany([{ date, timeSpentSeconds: 30 * 60, userId: user.id }]);
+    };
+
+    // Used up on the learner's day: Start refuses, so the intro says so first.
+    await useUpOn(learnerDay);
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      dailyLimitReached: true,
+      status: "ready",
+    });
+
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
+      status: "dailyLimitReached",
+    });
+
+    // Used up only on the challenge's own date: the learner's day still has time, and Start goes on.
+    await useUpOn(SESSION_TODAY);
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      dailyLimitReached: false,
+      status: "ready",
+    });
+
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toMatchObject({
+      status: "ready",
+    });
   });
 
   // r16-seed's thin bank: the challenge was left out of the session and never asked. Now it stays

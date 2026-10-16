@@ -28,10 +28,11 @@ type ChallengePage = { locale: unknown; sessionId: unknown };
  * or that the bank holds too few questions for it yet (`questionsNeeded`: they're written first,
  * and once the learner waited for that, `afterWriting` starts it with what was written), or that
  * the learner's plan leaves it to Plus (`plusRequired`, as when Plus lapsed since the intro opened).
- * `notToday` (today's session was planned without it) and `earlierFirst` (with its `reason`: the
- * day's lessons or the challenge before it come first) are named outcomes the intro reads again
- * for. Either can follow a write, since Start may save today's session before it refuses, so
- * neither says nothing was saved. Inputs are untrusted, so they're parsed with the API's schemas.
+ * `notToday` (today's session was planned without it), `dailyLimitReached` (today's study time ran
+ * out since the intro opened) and `earlierFirst` (with its `reason`: the day's lessons or the
+ * challenge before it come first) are named outcomes the intro reads again for. Each can follow a
+ * write, since Start may save today's session before it refuses, so none says nothing was saved.
+ * Inputs are untrusted, so they're parsed with the API's schemas.
  */
 export async function startChallengeAction(
   planItemId: unknown,

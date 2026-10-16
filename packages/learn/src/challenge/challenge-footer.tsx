@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
+import { StudyTimeUsedUpActions, StudyTimeUsedUpLine } from "../_components/study-time-used-up";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -85,14 +86,6 @@ function WaitingLine() {
 function StartProblem() {
   const t = useExtracted();
   const { start } = useChallengeScreen();
-
-  if (start.problem === "dailyLimitReached") {
-    return (
-      <p className="text-muted-foreground text-sm" role="alert">
-        {t("You've reached today's study time. It'll be here tomorrow.")}
-      </p>
-    );
-  }
 
   if (start.problem === "failed") {
     return (
@@ -281,11 +274,13 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
  * stands, and what the learner can do. A Start or Continue refused because Plus lapsed since the
  * intro opened shows the lock right away, while the host reloads the challenge. One that today's
  * saved order puts after other work (`waitReason`, the rule Start applies) says what comes first,
- * as the day's row does, instead of offering a Start that refuses.
+ * as the day's row does, instead of offering a Start that refuses. Today's study time used up
+ * (`dailyLimitReached`, as the page read it) says when it's back, with the way back to Today in
+ * Start's place and Move to Monday before it, since moving the week's challenge isn't study.
  */
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const { challenge, start } = useChallengeScreen();
+  const { challenge, hrefs, start } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
     return { actions: <PlusRequiredFooter />, line: null };
@@ -296,6 +291,20 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "started":
       if (challenge.waitReason) {
         return { actions: null, line: <WaitReasonLine reason={challenge.waitReason} /> };
+      }
+
+      if (challenge.status === "ready" && challenge.dailyLimitReached) {
+        return {
+          actions: (
+            <>
+              <MoveFailed />
+              <StudyTimeUsedUpActions href={hrefs.exit}>
+                {challenge.canMove && <MoveToMondayButton />}
+              </StudyTimeUsedUpActions>
+            </>
+          ),
+          line: <StudyTimeUsedUpLine />,
+        };
       }
 
       return {
@@ -334,7 +343,8 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
  * Move to Monday under it while it can still wait for Monday (the bar's width on a phone, its
  * label's from `lg`, like every action there). Where it stands is one polite region that stays in
  * the bar, out of the layout while it's empty, so the line that replaces a refused Start ("In your
- * next session", "After today's lessons") is read out whole without moving focus.
+ * next session", "After today's lessons", today's study time used up) is read out whole without
+ * moving focus.
  */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
@@ -343,7 +353,7 @@ export function ChallengeFooter() {
 
   return (
     <>
-      <div aria-atomic="true" aria-live="polite" className="empty:absolute">
+      <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
         {line}
       </div>
       {actions}

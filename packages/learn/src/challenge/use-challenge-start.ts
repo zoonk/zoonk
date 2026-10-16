@@ -14,7 +14,7 @@ import { type ChallengeActions } from "./challenge-context";
 const START_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
 /** Why Start didn't open it; `plusRequired`: the plan left it to Plus since the intro opened. */
-type StartProblem = "dailyLimitReached" | "failed" | "plusRequired" | null;
+type StartProblem = "failed" | "plusRequired" | null;
 
 export type ChallengeStartState = {
   busy: boolean;
@@ -42,9 +42,14 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
 
     // Once it started, the host is already opening the block: the button stays busy until then.
     // While its questions are written, the host shows the wait instead. A changed day (`notToday`,
-    // or `earlierFirst`, the only object) is read by the host; release Start without showing a
-    // failure while that saved state arrives.
-    if (outcome === "writing" || outcome === "notToday" || typeof outcome === "object") {
+    // today's study time used up meanwhile, or `earlierFirst`, the only object) is read by the
+    // host; release Start without showing a failure while that saved state arrives.
+    if (
+      outcome === "writing" ||
+      outcome === "notToday" ||
+      outcome === "dailyLimitReached" ||
+      typeof outcome === "object"
+    ) {
       setBusy(false);
     } else if (outcome !== "started") {
       setBusy(false);

@@ -7,10 +7,11 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { PageEyebrow } from "../../_components/page";
 import { SectionLabel } from "../../_components/section-label";
+import { StudyTimeUsedUpActions, StudyTimeUsedUpLine } from "../../_components/study-time-used-up";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
-import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
+import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { useConversationTitle } from "./conversation-labels";
@@ -156,12 +157,33 @@ function preloadLiveCall() {
 }
 
 /**
- * Start, or "See Plus" for a locked call. A start on its way (`starting`) shows a spinner in the
- * phone's place, and one that didn't go through (`failed`) says so above it. Today's study time
- * used up (`dailyLimitReached`) says when the call is back, with the way back to Today in Start's
- * place.
+ * The call intro's action bar: a status region mounted from the start, so today's study time used up
+ * (`dailyLimitReached`), which can replace a refused Start, is read out as it arrives, then the
+ * actions.
  */
 function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
+  return (
+    <>
+      <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
+        {start === "dailyLimitReached" && <StudyTimeUsedUpLine />}
+      </div>
+      <CallIntroActions onStart={onStart} start={start} />
+    </>
+  );
+}
+
+/**
+ * Start, or "See Plus" for a locked call. A start on its way (`starting`) shows a spinner in the
+ * phone's place, and one that didn't go through (`failed`) says so above it. Past today's study
+ * time, the way back to Today takes Start's place.
+ */
+function CallIntroActions({
+  onStart,
+  start,
+}: {
+  onStart: () => void;
+  start: CallIntroFooterState;
+}) {
   const t = useExtracted();
 
   if (start === "plusRequired") {
@@ -174,17 +196,7 @@ function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallI
   }
 
   if (start === "dailyLimitReached") {
-    return (
-      <>
-        <p className="text-muted-foreground text-sm text-pretty" role="alert">
-          {t("You've reached today's study time. It'll be here tomorrow.")}
-        </p>
-
-        <TaskActions>
-          <TaskMainLink href="/today">{t("Back to Today")}</TaskMainLink>
-        </TaskActions>
-      </>
-    );
+    return <StudyTimeUsedUpActions href="/today" />;
   }
 
   const starting = start === "starting";

@@ -473,6 +473,20 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Voltar"
 
+#: src/_components/study-time-used-up.tsx
+msgctxt "-Eq2VH"
+msgid "You've reached today's study time. It'll be here tomorrow."
+msgstr "Você já atingiu seu limite de tempo de estudo de hoje. O desafio fica para amanhã."
+
+#: src/_components/study-time-used-up.tsx
+#: src/challenge/challenge-moved-screen.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+#: src/session/session-header.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "Voltar para Hoje"
+
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
 msgid "View"
@@ -1234,12 +1248,6 @@ msgid "In your next session"
 msgstr "Na sua próxima sessão"
 
 #: src/challenge/challenge-footer.tsx
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "-Eq2VH"
-msgid "You've reached today's study time. It'll be here tomorrow."
-msgstr "Você já atingiu seu limite de tempo de estudo de hoje. O desafio fica para amanhã."
-
-#: src/challenge/challenge-footer.tsx
 #: src/essay/essay-feedback.tsx
 #: src/essay/essay-screen.tsx
 #: src/exam/exam-result-section.tsx
@@ -1470,15 +1478,6 @@ msgstr "Amanhã"
 msgctxt "fUd0bj"
 msgid "{day} · {time}"
 msgstr "{day} · {time}"
-
-#: src/challenge/challenge-moved-screen.tsx
-#: src/language/conversation/conversation-intro.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "Voltar para Hoje"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx

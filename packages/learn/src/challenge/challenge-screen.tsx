@@ -68,6 +68,7 @@ export function ChallengeScreen({
   challenge,
   hrefs,
   movedBy,
+  rereading = false,
   writing = null,
 }: {
   actions: ChallengeActions;
@@ -75,10 +76,16 @@ export function ChallengeScreen({
   hrefs: ChallengeHrefs;
   /** The plan change that just moved it here, whose undo takes it back. */
   movedBy: string | null;
+  /**
+   * The host is reading the page again after a refused Start: Start stays busy until the page says
+   * where the challenge stands, so it never shows ready only to refuse again.
+   */
+  rereading?: boolean;
   writing?: ChallengeWriting | null;
 }) {
   const move = useChallengeMove(actions);
-  const start = useChallengeStart(actions);
+  const ownStart = useChallengeStart(actions);
+  const start = rereading ? { ...ownStart, busy: true } : ownStart;
 
   return (
     <ChallengeProvider value={{ challenge, hrefs, move, start, writing }}>

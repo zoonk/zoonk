@@ -73,6 +73,12 @@ export type ChallengeView = {
   call: ChallengeCall | null;
   /** "Move to Monday": only the week's challenge, before it starts, from today or a later day. */
   canMove: boolean;
+  /**
+   * Today's study time is used up under the learner's daily limit, so a `ready` challenge can't
+   * start until tomorrow, as Start would refuse. False for every other status, and while
+   * `waitReason` says what comes first.
+   */
+  dailyLimitReached: boolean;
   /** The learner-local day it's planned for, YYYY-MM-DD. */
   date: string | null;
   /**

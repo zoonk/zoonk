@@ -13,7 +13,7 @@ import { type ChallengeActions, ChallengeScreen } from "@zoonk/learn/challenge";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
-import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState, useTransition } from "react";
 import {
   moveChallengeAction,
   startChallengeAction,
@@ -98,6 +98,7 @@ export function ChallengeClient({
   const search = sessionId ? `?${STUDY_SESSION_PARAM}=${sessionId}` : "";
   const page = useMemo(() => ({ locale, sessionId }), [locale, sessionId]);
   const [writing, setWriting] = useState<Writing | null>(null);
+  const [rereading, startRereading] = useTransition();
 
   const { actions, openWritten, startAfterWriting } = useMemo(() => {
     const open = (started: Pick<ChallengeDestination, "blockId" | "kind">): StartOutcome => {
@@ -115,13 +116,15 @@ export function ChallengeClient({
       );
 
       // Open can save a day without this offer, or with lessons or a challenge before it
-      // (`earlierFirst`, the only result with a status). Read the owning intro again; neither
-      // outcome is a failure the learner should keep retrying.
+      // (`earlierFirst`, the only result with a status), and today's study time can run out
+      // meanwhile. Read the owning intro again, which says where it stands; none of these is a
+      // failure the learner should keep retrying. Start stays busy until the page is read again.
       if (
         started === "notToday" ||
+        started === "dailyLimitReached" ||
         (started && typeof started === "object" && "status" in started)
       ) {
-        router.refresh();
+        startRereading(() => router.refresh());
         return started;
       }
 
@@ -191,7 +194,7 @@ export function ChallengeClient({
       openWritten: () => startOnce(true),
       startAfterWriting: () => start(true),
     };
-  }, [challenge.blockId, challenge.mock, page, planItemId, router, search]);
+  }, [challenge.blockId, challenge.mock, page, planItemId, router, search, startRereading]);
 
   const hrefs = useMemo(
     () => ({
@@ -203,7 +206,7 @@ export function ChallengeClient({
     [challenge.blockId, challenge.mock, search],
   );
 
-  const screen = { actions, challenge, hrefs, movedBy };
+  const screen = { actions, challenge, hrefs, movedBy, rereading };
 
   if (writing?.kind !== "writing") {
     return <ChallengeScreen {...screen} writing={writing} />;

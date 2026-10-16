@@ -146,6 +146,12 @@ export const challengeResponseSchema = z
       .meta({
         description: '"Move to Monday": the weekly challenge before it starts, from today on',
       }),
+    dailyLimitReached: z
+      .boolean()
+      .meta({
+        description:
+          "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start until tomorrow: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first",
+      }),
     date: logicalDateSchema.nullable().meta({ description: "The day it's planned for" }),
     estimatedMinutes: unknownSizeSchema.meta({
       description:
