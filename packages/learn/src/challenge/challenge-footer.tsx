@@ -141,14 +141,27 @@ function StartButton() {
 }
 
 /**
- * Move to Monday, before the week's challenge starts: the second option beside Start, and past
- * today's study time, where moving is what keeps it, the main action (`main`), which Enter presses.
+ * Whether the screen offers Move to Monday: while the challenge can move, until the plan refuses
+ * the move. A refusal is a fact about the plan that nothing on this screen changes, so the screen
+ * doesn't offer the move again. A move that just didn't go through (`move.failed`) keeps it, for
+ * the retry its line asks for.
+ */
+function useMovable(): boolean {
+  const { challenge, move } = useChallengeScreen();
+  return challenge.canMove && !move.refusal;
+}
+
+/**
+ * Move to Monday, before the week's challenge starts and while it can move (`useMovable`): the
+ * second option beside Start, and past today's study time, where moving is what keeps it, the main
+ * action (`main`), which Enter presses.
  */
 function MoveToMondayButton({ className, main = false }: { className?: string; main?: boolean }) {
   const t = useExtracted();
-  const { challenge, move, start } = useChallengeScreen();
+  const { move, start } = useChallengeScreen();
+  const movable = useMovable();
 
-  if (!challenge.canMove) {
+  if (!movable) {
     return null;
   }
 
@@ -276,7 +289,8 @@ function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
  */
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const { challenge, hrefs, move, start } = useChallengeScreen();
+  const { challenge, hrefs, start } = useChallengeScreen();
+  const movable = useMovable();
 
   if (start.problem === "plusRequired") {
     return { actions: <PlusRequiredFooter />, line: null };
@@ -290,9 +304,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
       }
 
       if (challenge.status === "ready" && challenge.dailyLimitReached) {
-        // A refusal is a fact about the plan that nothing on this screen changes: no move again.
-        const movable = challenge.canMove && !move.refusal;
-
         return {
           actions: (
             <>
@@ -348,14 +359,15 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
 
 /**
  * The challenge's pinned action bar: Start, with Move to Monday beside it, or where it stands, with
- * Move to Monday under it while it can still wait for Monday (the bar's width on a phone, its
- * label's from `lg`, like every action there). Where it stands is one polite region that stays in
- * the bar, out of the layout while it's empty, so the line that replaces a refused Start ("In your
- * next session", "After today's lessons", today's study time used up) is read out whole without
- * moving focus.
+ * Move to Monday under it while it can still wait for Monday and the plan hasn't refused the move
+ * (the bar's width on a phone, its label's from `lg`, like every action there). Where it stands is
+ * one polite region that stays in the bar, out of the layout while it's empty, so the line that
+ * replaces a refused Start ("In your next session", "After today's lessons", today's study time
+ * used up) is read out whole without moving focus.
  */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
+  const movable = useMovable();
   const { actions, line } = useStatusFooter();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
 
@@ -366,7 +378,7 @@ export function ChallengeFooter() {
       </div>
       {actions}
       {!startShows && <MoveFailed />}
-      {!startShows && challenge.canMove && (
+      {!startShows && movable && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>

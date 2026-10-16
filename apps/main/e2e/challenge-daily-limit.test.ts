@@ -254,6 +254,38 @@ test("the week's mock exam past today's study time stops offering Move to Monday
   await page.context().close();
 });
 
+test("the week's mock exam stops offering Move to Monday beside Start once the plan refuses it", async ({
+  browser,
+}) => {
+  const { boss, plan, user } = await createCheckpointLearner({ kind: "weekly", planned: true });
+
+  // Next Monday already has the week's mock, so the plan refuses to move this one onto it.
+  await planItemFixture({
+    kind: "mock",
+    phase: 0,
+    planId: plan.id,
+    position: 1,
+    scheduledFor: nextMonday(),
+    titleSnapshot: "Mock exam 2",
+  });
+
+  const page = await openAs(browser, user);
+  await page.goto(`/challenge/${boss.id}`);
+  const start = page.getByRole("button", { name: "Start the mock exam" });
+  await expect(start).toBeEnabled();
+  await page.getByRole("button", { name: "Move to Monday" }).click();
+
+  // The refusal is a fact about the plan, so Move to Monday goes instead of offering a move the
+  // plan can only refuse again. Today's study time isn't used up: Start stays the main action.
+  await expect(page.getByText(MOVE_COLLIDES)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
+  await expect(start).toBeEnabled();
+  await expect(start).toHaveAttribute("aria-keyshortcuts", "Enter");
+  await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+
+  await page.context().close();
+});
+
 test("a challenge refused at today's study time offers Start again once the learner lifts the limit", async ({
   browser,
 }) => {
