@@ -8,6 +8,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../../cache/tags";
 import { readStoredImage } from "../../images/read-stored-image";
 import { toProvenanceData } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type DrawnImage, drawCheckedImage, reviewImage } from "./_utils/draw-checked-image";
 import { type ImageAnalytics } from "./_utils/plan-library-image";
 import { uploadImageFile } from "./_utils/save-image-asset";
@@ -78,19 +79,33 @@ async function replacePicture({ asset, drawn }: { asset: CheckedAsset; drawn: Dr
  * question never goes without the picture it points at. Answers keep their snapshots.
  */
 async function removePicture(asset: CheckedAsset) {
-  await prisma.$transaction([
-    prisma.item.deleteMany({ where: { mediaAssetId: asset.id } }),
-    prisma.step.updateMany({
+  await writePlanInputs(async (tx) => {
+    // A plan counts the questions in its bank, through their skills or exam.
+    const questions = await tx.item.findMany({
+      select: { examBlueprintId: true, skillId: true },
+      where: { mediaAssetId: asset.id },
+    });
+
+    await lockPlanSourceWrite(tx, {
+      blueprintIds: [...new Set(questions.flatMap(({ examBlueprintId }) => examBlueprintId ?? []))],
+      skillIds: [...new Set(questions.map(({ skillId }) => skillId))],
+    });
+
+    await tx.item.deleteMany({ where: { mediaAssetId: asset.id } });
+
+    await tx.step.updateMany({
       data: { updatedAt: new Date() },
       where: { optionPictures: { some: { mediaAssetId: asset.id } } },
-    }),
-    prisma.step.updateMany({
+    });
+
+    await tx.step.updateMany({
       data: { mediaAssetId: null, pictureAvailableAt: null },
       where: { mediaAssetId: asset.id },
-    }),
+    });
+
     // Its option rows go with it (they cascade), so those options show their description.
-    prisma.mediaAsset.delete({ where: { id: asset.id } }),
-  ]);
+    await tx.mediaAsset.delete({ where: { id: asset.id } });
+  });
 }
 
 /**

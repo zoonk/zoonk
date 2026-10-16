@@ -1,7 +1,7 @@
 import "server-only";
 import { type StatuteDrill } from "@zoonk/ai/tasks/v2/items/statute-drills";
-import { prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { checkItem } from "../items/item-checks";
 import { toStoredItem } from "../items/item-content";
 import { repairItem } from "../items/item-repairs";
@@ -49,7 +49,18 @@ export async function replaceFlaggedDrills({
     return problems.length === 0 ? [{ item, itemId }] : [];
   });
 
-  await prisma.$transaction(async (tx) => {
+  await writePlanInputs(async (tx) => {
+    // A plan counts a drill in its question bank, through the drill's skill or exam.
+    const rewritten = await tx.item.findMany({
+      select: { examBlueprintId: true, skillId: true },
+      where: { id: { in: pairs.map(({ itemId }) => itemId) } },
+    });
+
+    await lockPlanSourceWrite(tx, {
+      blueprintIds: [...new Set(rewritten.flatMap(({ examBlueprintId }) => examBlueprintId ?? []))],
+      skillIds: [...new Set(rewritten.map(({ skillId }) => skillId))],
+    });
+
     await Promise.all(
       pairs.map(({ item, itemId }, index) =>
         tx.item.update({

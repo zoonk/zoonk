@@ -2,6 +2,7 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type ExamStructure, examEditionSchema, examStructureSchema } from "./blueprint-contract";
 import { needsPastQuestions } from "./subject-questions";
 
@@ -93,14 +94,18 @@ export async function recordSubjectQuestions({
     subjects: counted,
   };
 
-  // One statement sets only this lookup, so the options looked up at the same time
-  // (`recordChoiceOptions`) are never overwritten.
-  await prisma.$executeRaw`
-    UPDATE exam_blueprints
-    SET structure = jsonb_set(structure, '{pastQuestions}', ${JSON.stringify(pastQuestions)}::jsonb),
-      updated_at = ${now}
-    WHERE id = ${examBlueprintId}::uuid
-  `;
+  // Plans size the exam's mocks by its question counts. One statement sets only this lookup, so
+  // the options looked up at the same time (`recordChoiceOptions`) are never overwritten.
+  await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+
+    await tx.$executeRaw`
+      UPDATE exam_blueprints
+      SET structure = jsonb_set(structure, '{pastQuestions}', ${JSON.stringify(pastQuestions)}::jsonb),
+        updated_at = ${now}
+      WHERE id = ${examBlueprintId}::uuid
+    `;
+  });
 
   revalidateCacheTags([getExamBlueprintCacheTag(examBlueprintId)]);
 }

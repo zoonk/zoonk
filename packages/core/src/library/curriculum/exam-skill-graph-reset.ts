@@ -1,7 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getAdminAccess } from "../../users/get-admin-access";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 
 /**
  * Resets an exam's shared skill graph on an admin's request, the only way one is rewritten: the
@@ -23,6 +23,11 @@ export async function resetExamSkillGraphForAdmin({
     return { status: "notFound" };
   }
 
-  const { count } = await prisma.examSkillGraph.deleteMany({ where: { examBlueprintId } });
+  // Plans of the exam add a picked option's skills from the shared graph.
+  const { count } = await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+    return tx.examSkillGraph.deleteMany({ where: { examBlueprintId } });
+  });
+
   return { status: count > 0 ? "reset" : "notFound" };
 }

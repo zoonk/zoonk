@@ -901,3 +901,52 @@ describe(resetExamSkillGraphForAdmin, () => {
     await expect(findReusableCurriculum({ inputs, scope: SHARED })).resolves.toBeNull();
   });
 });
+
+describe("saving an exam's graph again", () => {
+  it("marks the exam's plans only when its graph changes, never for another run's", async () => {
+    const blueprint = await examBlueprintFixture({ language: "pt" });
+    const runId = crypto.randomUUID();
+    const built = await builtGoal({ blueprintId: blueprint.id, runId });
+    const plan = await prisma.plan.findFirstOrThrow({ where: { goalId: built.inputs.goal.id } });
+    const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    const provenance = {
+      generatedAt: new Date(),
+      model: "openai/gpt-6-sol",
+      promptVersion: "v1",
+      runId,
+    };
+
+    const save = (graph: typeof built.graph, run = provenance) =>
+      saveExamSkillGraph({ graph, inputs: built.inputs, provenance: run, scope: SHARED });
+
+    // A goal reusing the exam's graph saves it again as it is: nothing a plan reads changes.
+    await save(built.graph);
+
+    await expect(readPlan()).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      pendingAdaptation: plan.pendingAdaptation,
+    });
+
+    // Another run's graph never replaces the exam's.
+    await save(
+      { ...built.graph, skills: built.graph.skills.slice(0, 1) },
+      { ...provenance, runId: crypto.randomUUID() },
+    );
+
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
+
+    // The run that wrote it adding a skill changes what the exam's plans read.
+    const added = await skillFixture();
+
+    await save({
+      ...built.graph,
+      skills: [...built.graph.skills, { ...built.graph.skills[0], skillId: added.id }],
+    } as typeof built.graph);
+
+    await expect(readPlan()).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+      pendingAdaptation: ["content"],
+    });
+  });
+});

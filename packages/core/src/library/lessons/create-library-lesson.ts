@@ -9,8 +9,6 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { assertIdentityKeyScope } from "@zoonk/utils/identity-key";
 import { normalizeString, pickAvailableSlug, toSlug } from "@zoonk/utils/string";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import {
   type LibraryProvenance,
   createOrFindByIdentity,
@@ -18,6 +16,7 @@ import {
   toProvenanceData,
 } from "../_utils/library-rows";
 import { assertHomeVisibility } from "../_utils/placement-visibility";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
 /**
  * What a caller already knows about a new lesson beyond its outline, written with it: the can-do
@@ -92,9 +91,8 @@ function pickLessonSlug({ taken, title }: { taken: readonly string[]; title: str
 }
 
 async function insertLesson({ input, slug }: { input: CreateLibraryLessonInput; slug: string }) {
-  return prisma.$transaction(async (tx) => {
-    const planIds = await resolvePlanInputDependents(tx, { skillIds: input.skillIds });
-    await markPlansChanged(tx, { adaptation: ["content"], planIds });
+  return writePlanInputs(async (tx) => {
+    await lockPlanSourceWrite(tx, { skillIds: input.skillIds });
 
     return tx.lesson.create({
       data: {

@@ -2,6 +2,7 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import {
   type PastTopicFrequency,
   examStructureSchema,
@@ -92,13 +93,18 @@ export async function recordTopicFrequency({
     ],
   };
 
-  // One statement sets only this lookup, so the ones run at the same time are never overwritten.
-  await prisma.$executeRaw`
-    UPDATE exam_blueprints
-    SET structure = jsonb_set(structure, '{pastTopicFrequency}', ${JSON.stringify(pastTopicFrequency)}::jsonb),
-      updated_at = ${now}
-    WHERE id = ${examBlueprintId}::uuid
-  `;
+  // Plans weigh the exam's topics by it. One statement sets only this lookup, so the ones run at
+  // the same time are never overwritten.
+  await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+
+    await tx.$executeRaw`
+      UPDATE exam_blueprints
+      SET structure = jsonb_set(structure, '{pastTopicFrequency}', ${JSON.stringify(pastTopicFrequency)}::jsonb),
+        updated_at = ${now}
+      WHERE id = ${examBlueprintId}::uuid
+    `;
+  });
 
   revalidateCacheTags([getExamBlueprintCacheTag(examBlueprintId)]);
 }

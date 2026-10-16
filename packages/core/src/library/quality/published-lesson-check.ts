@@ -4,8 +4,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
 import { moveOnWithoutLesson } from "../generation/hold-back-lesson";
 import {
@@ -294,7 +293,7 @@ export async function setAsidePublishedLesson({
   version: number;
 }): Promise<boolean> {
   const { data: userIds, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
+    writePlanInputs(async (tx) => {
       const existing = await tx.step.findFirst({
         select: { version: true },
         where: { lesson: { contentStatus: "completed" }, lessonId, ...CURRENT_STEPS },
@@ -304,8 +303,7 @@ export async function setAsidePublishedLesson({
         return null;
       }
 
-      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { adaptation: ["content"], planIds });
+      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
       /** Lock content only after plans and owners; a replaced version rolls admission back. */
       if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {

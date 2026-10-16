@@ -1,10 +1,9 @@
 import "server-only";
-import { type StudySessionStatus, type TransactionClient, prisma } from "@zoonk/db";
+import { type StudySessionStatus, type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
 /** A day that ended keeps what happened in it; days still running or ahead move on. */
@@ -83,7 +82,7 @@ export async function holdBackLessonDraft({
   workflowRunId: string;
 }): Promise<{ setAside: boolean } | null> {
   const { data: heldBack, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
+    writePlanInputs(async (tx) => {
       const lesson = await tx.lesson.findFirst({
         select: { heldBackDrafts: true, ownerId: true },
         where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
@@ -100,9 +99,7 @@ export async function holdBackLessonDraft({
       const setAside =
         drafts.length >= (lesson.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
 
-      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-
-      await markPlansChanged(tx, { adaptation: ["content"], planIds });
+      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
       const { count } = await tx.lesson.updateMany({
         data: {

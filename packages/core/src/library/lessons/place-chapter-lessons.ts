@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 
 /**
@@ -28,10 +29,14 @@ export async function placeChapterLessons({
 
   lessons.forEach((lesson) => assertPlacementVisibility({ child: lesson, container: chapter }));
 
-  await prisma.chapterLesson.deleteMany({ where: { chapterId } });
+  // Plans read the chapter's lessons, the ones it had and the ones it gets.
+  await writePlanInputs(async (tx) => {
+    await lockPlanSourceWrite(tx, { chapterIds: [chapterId], lessonIds });
+    await tx.chapterLesson.deleteMany({ where: { chapterId } });
 
-  await prisma.chapterLesson.createMany({
-    data: lessonIds.map((lessonId, position) => ({ chapterId, lessonId, position })),
+    await tx.chapterLesson.createMany({
+      data: lessonIds.map((lessonId, position) => ({ chapterId, lessonId, position })),
+    });
   });
 
   revalidateCacheTags(await getChapterCacheTags(chapterId));

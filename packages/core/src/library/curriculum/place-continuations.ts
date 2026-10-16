@@ -1,7 +1,8 @@
 import "server-only";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { type CourseLevel } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
 /** Moves a band's placements out of the way first, so the new order never collides with the old. */
 const POSITION_OFFSET = 1_000_000;
@@ -54,17 +55,23 @@ export async function placeContinuations({
     return;
   }
 
-  await prisma.$transaction(async (tx) => {
+  await writePlanInputs(async (tx) => {
     const placements = await tx.courseChapter.findMany({
       orderBy: { position: "asc" },
       select: { chapterId: true },
       where: { courseId, level },
     });
 
-    const order = orderWithContinuations({
-      current: placements.map((placement) => placement.chapterId),
-      moves: valid,
-    });
+    const current = placements.map((placement) => placement.chapterId);
+    const order = orderWithContinuations({ current, moves: valid });
+    const moved = order.filter((chapterId, index) => current[index] !== chapterId);
+
+    if (moved.length === 0) {
+      return;
+    }
+
+    // Plans read lessons in their chapters' order: only the chapters that move change it.
+    await lockPlanSourceWrite(tx, { chapterIds: moved });
 
     await tx.courseChapter.updateMany({
       data: { position: { increment: POSITION_OFFSET } },

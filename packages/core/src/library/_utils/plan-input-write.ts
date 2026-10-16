@@ -2,6 +2,12 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import {
+  type PlanInputRoots,
+  loadPlanInputSources,
+  resolvePlanInputDependents,
+} from "../../plans/_utils/plan-input-dependencies";
+import { lockSourceBlueprint, lockSourceRoots } from "../../plans/_utils/plan-source-publication";
 
 export class PlanInputWriteConflictError extends Error {
   override name = "PlanInputWriteConflictError";
@@ -26,6 +32,32 @@ export async function lockPlanInputWrite({
   if (currentPlanIds.some((id) => !marked.has(id))) {
     throw new PlanInputWriteConflictError("Plan inputs changed; try the write again.");
   }
+}
+
+/**
+ * A content write's locks, before it changes its rows: it marks every plan that reads these roots
+ * (`content`), locks the lessons and skills plans read them through (`loadPlanInputSources`), and
+ * then finds the plans again, so a plan that started reading them meanwhile throws and the write
+ * starts over (see `writePlanInputs`).
+ */
+export function lockPlanSourceWrite(tx: TransactionClient, roots: PlanInputRoots): Promise<void> {
+  return lockPlanInputWrite({
+    loadPlanIds: () => resolvePlanInputDependents(tx, roots),
+    lockSources: async () => lockSourceRoots(tx, await loadPlanInputSources(tx, roots)),
+    tx,
+  });
+}
+
+/**
+ * The same for a write of an exam's own facts (its shared graph, its structure): plans read them
+ * through the goal's exam, so the exam's row is what it locks.
+ */
+export function lockPlanBlueprintWrite(tx: TransactionClient, blueprintId: string): Promise<void> {
+  return lockPlanInputWrite({
+    loadPlanIds: () => resolvePlanInputDependents(tx, { blueprintIds: [blueprintId] }),
+    lockSources: () => lockSourceBlueprint(tx, blueprintId),
+    tx,
+  });
 }
 
 /** A retry releases every plan, user and source lock before collecting the complete union again. */

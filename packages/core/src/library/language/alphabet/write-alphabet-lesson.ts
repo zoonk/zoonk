@@ -1,12 +1,12 @@
 import "server-only";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
-import { prisma } from "@zoonk/db";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { generateLanguageAudio } from "../../../audio/generate-language-audio";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { claimLibraryGeneration, finishLibraryGeneration } from "../../claims/generation-claim";
 import { toStepData } from "../../lessons/_utils/step-data";
 import { createLibraryLesson } from "../../lessons/create-library-lesson";
@@ -68,7 +68,16 @@ async function saveAlphabetLesson({
   steps: readonly AlphabetStepToSave[];
   workflowRunId: string;
 }): Promise<boolean> {
-  const saved = await prisma.$transaction(async (tx) => {
+  const claim = { contentRunId: workflowRunId, contentStatus: "running" as const, id: lessonId };
+
+  const saved = await writePlanInputs(async (tx) => {
+    if (!(await tx.lesson.findFirst({ select: { id: true }, where: claim }))) {
+      return false;
+    }
+
+    // Plans read the lesson's title, which publishing sets.
+    await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+
     const claimed = await tx.lesson.updateMany({
       data: {
         canDo: content.canDo,
@@ -78,7 +87,7 @@ async function saveAlphabetLesson({
         title: content.title,
         ...toProvenanceData(provenance),
       },
-      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+      where: claim,
     });
 
     if (claimed.count === 0) {

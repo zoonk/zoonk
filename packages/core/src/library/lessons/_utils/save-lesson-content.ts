@@ -1,12 +1,11 @@
 import "server-only";
-import { type StepKind, type TransactionClient, prisma } from "@zoonk/db";
+import { type StepKind, type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
-import { markPlansChanged } from "../../../learner/_utils/mark-learner-changed";
-import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
 import { toStoredItem } from "../../items/item-content";
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
@@ -84,19 +83,14 @@ async function createMathItem({
 }
 
 /**
- * Stores a lesson's checked screens as its new version, in the caller's transaction: the version
- * they replace is retired (learners playing it finish it), then the math items behind calculation
- * checks and every screen in order. Flags on earlier versions' sources are resolved, since this
- * one was written from them as they are now.
+ * The screens as they'll be stored: each skill as the library knows it now, and every question
+ * screen on a skill of the lesson. Read before the write locks anything, so the math items it
+ * creates go on skills it has locked (see `listItemSkillIds`).
  */
-async function writeScreens(
+async function prepareScreens(
   tx: TransactionClient,
-  {
-    language,
-    lessonId,
-    screens: uncheckedScreens,
-  }: { language: string; lessonId: string; screens: LessonScreenToSave[] },
-): Promise<number> {
+  { lessonId, screens: uncheckedScreens }: { lessonId: string; screens: LessonScreenToSave[] },
+): Promise<LessonScreenToSave[]> {
   const links = await tx.lessonSkill.findMany({
     orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
     where: { lessonId },
@@ -122,7 +116,7 @@ async function writeScreens(
   // the identity a writer loaded before the merge. Keep that identity when the lesson teaches it.
   const survivorIds = new Map(skills.map((skill) => [skill.id, skill.mergedIntoId ?? skill.id]));
 
-  const screens = uncheckedScreens.map((screen) =>
+  return uncheckedScreens.map((screen) =>
     repairScreenSkill({
       lessonId,
       lessonSkillIds,
@@ -132,7 +126,34 @@ async function writeScreens(
       },
     }),
   );
+}
 
+/**
+ * The skills of the math items the screens become: a plan counts them in its question bank, so a
+ * plan that never read this lesson can still read them, through the skill.
+ */
+function listItemSkillIds(screens: readonly LessonScreenToSave[]): string[] {
+  return [
+    ...new Set(
+      screens.flatMap((screen) => (screen.mathItem && screen.skillId ? [screen.skillId] : [])),
+    ),
+  ];
+}
+
+/**
+ * Stores a lesson's prepared screens as its new version, in the caller's transaction: the version
+ * they replace is retired (learners playing it finish it), then the math items behind calculation
+ * checks and every screen in order. Flags on earlier versions' sources are resolved, since this
+ * one was written from them as they are now.
+ */
+async function writeScreens(
+  tx: TransactionClient,
+  {
+    language,
+    lessonId,
+    screens,
+  }: { language: string; lessonId: string; screens: LessonScreenToSave[] },
+): Promise<number> {
   const version = await startLessonVersion(tx, lessonId);
 
   const itemIds = await Promise.all(
@@ -189,7 +210,7 @@ export async function saveLessonContent({
   workflowRunId: string;
 }): Promise<number | null> {
   const { data: version, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
+    writePlanInputs(async (tx) => {
       const lesson = await tx.lesson.findFirst({
         select: { id: true },
         where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
@@ -199,8 +220,12 @@ export async function saveLessonContent({
         return null;
       }
 
-      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { adaptation: ["content"], planIds });
+      const prepared = await prepareScreens(tx, { lessonId, screens });
+
+      await lockPlanSourceWrite(tx, {
+        lessonIds: [lessonId],
+        skillIds: listItemSkillIds(prepared),
+      });
 
       const claimed = await tx.lesson.updateMany({
         data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
@@ -211,7 +236,7 @@ export async function saveLessonContent({
         throw new LessonPublicationLostError();
       }
 
-      return writeScreens(tx, { language, lessonId, screens });
+      return writeScreens(tx, { language, lessonId, screens: prepared });
     }),
   );
 
@@ -251,7 +276,7 @@ export async function saveLessonVersion({
   summary: string[];
 }): Promise<number | null> {
   const { data: version, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
+    writePlanInputs(async (tx) => {
       const existing = await tx.step.findFirst({
         select: { version: true },
         where: { lesson: { contentStatus: "completed" }, lessonId, retiredAt: null },
@@ -261,8 +286,12 @@ export async function saveLessonVersion({
         return null;
       }
 
-      const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { adaptation: ["content"], planIds });
+      const prepared = await prepareScreens(tx, { lessonId, screens });
+
+      await lockPlanSourceWrite(tx, {
+        lessonIds: [lessonId],
+        skillIds: listItemSkillIds(prepared),
+      });
 
       /** The plain precondition read may change while admission waits; lock the lesson last. */
       const current = await lockCurrentLessonVersion(tx, lessonId);
@@ -272,7 +301,7 @@ export async function saveLessonVersion({
       }
 
       await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
-      return writeScreens(tx, { language, lessonId, screens });
+      return writeScreens(tx, { language, lessonId, screens: prepared });
     }),
   );
 

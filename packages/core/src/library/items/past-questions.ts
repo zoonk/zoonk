@@ -6,6 +6,7 @@ import {
 import { type Source, prisma, sql } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getExamChoiceFormat } from "../exams/exam-choice-format";
 import { readBlueprintContent } from "../exams/save-exam-blueprint";
 import { getKnownReusePolicy } from "../sources/reuse-policy";
@@ -198,7 +199,7 @@ export async function savePastQuestions({
     .filter((entry) => entry.problems.length > 0)
     .map(({ problems, question }) => ({ number: question.number, problems }));
 
-  const created = await prisma.$transaction(async (tx) => {
+  const created = await writePlanInputs(async (tx) => {
     const key = `${target.examBlueprintId}:${target.paper.id}`;
 
     await tx.$queryRaw(
@@ -212,6 +213,12 @@ export async function savePastQuestions({
     if (imported > 0 || passing.length === 0) {
       return 0;
     }
+
+    // A plan of this exam made after the marks still counts these items, through their skills.
+    await lockPlanSourceWrite(tx, {
+      blueprintIds: [target.examBlueprintId],
+      skillIds: [...new Set(passing.map(({ skillId }) => skillId))],
+    });
 
     const { count } = await tx.item.createMany({
       data: passing.map(({ question, skillId }) => ({

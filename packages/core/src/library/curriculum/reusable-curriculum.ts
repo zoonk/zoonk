@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { loadCourseExam } from "../../goals/_utils/course-exam";
@@ -6,6 +7,7 @@ import { loadCourseOutline } from "../../goals/_utils/course-outline";
 import { getExamCourseSkills } from "../../goals/_utils/exam-course-skills";
 import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { pinPlanGraphToCourse } from "./course-start-graph";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
@@ -99,19 +101,38 @@ export async function saveExamSkillGraph({
     where: { id: inputs.goal.id },
   });
 
-  const data = { graph, primaryCourseId: goal?.primaryCourseId ?? null, ...provenance };
+  const kept = { primaryCourseId: goal?.primaryCourseId ?? null, ...provenance };
+  const current = { examBlueprintId, runId: provenance.runId };
 
-  const { count } = await prisma.examSkillGraph.createMany({
-    data: [{ ...data, examBlueprintId }],
-    skipDuplicates: true,
+  const stored = await prisma.examSkillGraph.findUnique({
+    select: { graph: true, runId: true },
+    where: { examBlueprintId },
   });
 
-  if (count === 0) {
-    await prisma.examSkillGraph.updateMany({
-      data,
-      where: { examBlueprintId, runId: provenance.runId },
-    });
+  // Another run's graph stays the exam's.
+  if (stored && stored.runId !== provenance.runId) {
+    return;
   }
+
+  // A goal reusing the exam's graph saves it again unchanged: plans read only the graph.
+  if (stored && isDeepStrictEqual(parsePlanGraph(stored.graph), parsePlanGraph(graph))) {
+    await prisma.examSkillGraph.updateMany({ data: kept, where: current });
+    return;
+  }
+
+  // Plans of the exam add a picked option's skills from the shared graph.
+  await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+
+    const { count } = await tx.examSkillGraph.createMany({
+      data: [{ ...kept, examBlueprintId, graph }],
+      skipDuplicates: true,
+    });
+
+    if (count === 0) {
+      await tx.examSkillGraph.updateMany({ data: { ...kept, graph }, where: current });
+    }
+  });
 }
 
 /**

@@ -5,6 +5,7 @@ import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { type MediaAsset, prisma } from "@zoonk/db";
 import { uploadAudio } from "../../audio/upload-audio";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getListeningAudioKey } from "./listening-audio-key";
 import { type ListeningContent, listeningContentSchema } from "./listening-content";
 
@@ -133,9 +134,24 @@ export async function voiceListeningSet({
   const recording = await voiceRecordingOnce({ analytics, content, reuseKey, serviceTier });
 
   if (recording) {
-    await prisma.itemSet.updateMany({
-      data: { mediaAssetId: recording.id },
-      where: { id: set.id, mediaAssetId: null },
+    // A voiced set joins the recordings a plan counts, through its questions' skills or exam.
+    await writePlanInputs(async (tx) => {
+      const questions = await tx.item.findMany({
+        select: { examBlueprintId: true, skillId: true },
+        where: { setId: set.id },
+      });
+
+      await lockPlanSourceWrite(tx, {
+        blueprintIds: [
+          ...new Set([set, ...questions].flatMap(({ examBlueprintId }) => examBlueprintId ?? [])),
+        ],
+        skillIds: [...new Set(questions.map(({ skillId }) => skillId))],
+      });
+
+      await tx.itemSet.updateMany({
+        data: { mediaAssetId: recording.id },
+        where: { id: set.id, mediaAssetId: null },
+      });
     });
   }
 

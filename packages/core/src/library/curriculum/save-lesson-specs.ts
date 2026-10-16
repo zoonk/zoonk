@@ -4,6 +4,7 @@ import { type CourseLevel, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
@@ -66,7 +67,10 @@ async function placeAfter({
   lessonId: string;
   splitIds: readonly string[];
 }): Promise<void> {
-  await prisma.$transaction(async (tx) => {
+  await writePlanInputs(async (tx) => {
+    // Plans read the chapter's lessons in order, so the split parts change what they read.
+    await lockPlanSourceWrite(tx, { chapterIds: [chapterId], lessonIds: splitIds });
+
     const placements = await tx.chapterLesson.findMany({
       orderBy: { position: "asc" },
       select: { lessonId: true },
@@ -154,9 +158,22 @@ export async function saveLessonSpecs({
     await placeAfter({ chapterId: homeChapterId, lessonId, splitIds: placedIds });
   }
 
-  const { count } = await prisma.lesson.updateMany({
-    data: { ...toSpecData(first), specStatus: "completed" },
-    where: { id: lessonId, specRunId: workflowRunId, specStatus: "running" },
+  const claim = { id: lessonId, specRunId: workflowRunId, specStatus: "running" as const };
+
+  // The spec sets the minutes plans size the lesson by; a run that lost the claim marks nothing.
+  const count = await writePlanInputs(async (tx) => {
+    if ((await tx.lesson.count({ where: claim })) === 0) {
+      return 0;
+    }
+
+    await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+
+    const updated = await tx.lesson.updateMany({
+      data: { ...toSpecData(first), specStatus: "completed" },
+      where: claim,
+    });
+
+    return updated.count;
   });
 
   if (count === 0) {

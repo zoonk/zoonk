@@ -4,6 +4,7 @@ import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
 import { findUncoveredTopics, formatExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
+import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { toGoalCandidateExams } from "../exams/candidate-exams";
 import { applyGraphCoverage } from "./add-coverage-skills";
 import { type CurriculumScope } from "./curriculum-scope";
@@ -170,7 +171,11 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
     stored: parsePlanGraph(stored.graph),
   });
 
-  await prisma.examSkillGraph.update({ data: { graph }, where: { examBlueprintId } });
+  // Plans of the exam add a picked option's skills from the shared graph.
+  await writePlanInputs(async (tx) => {
+    await lockPlanBlueprintWrite(tx, examBlueprintId);
+    await tx.examSkillGraph.update({ data: { graph }, where: { examBlueprintId } });
+  });
 
   return added.map((skill) => skill.name);
 }

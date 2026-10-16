@@ -3,6 +3,7 @@ import { type CourseChapter, type CourseLevel, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
 /**
  * Places a shared chapter in a course outline inside one level band. Placing
@@ -31,10 +32,15 @@ export async function attachChapterToCourse({
     container: { ownerId: course.userId, visibility: course.visibility },
   });
 
-  const placement = await prisma.courseChapter.upsert({
-    create: { area, chapterId, courseId, level, position },
-    update: { area, level, position },
-    where: { courseId_chapterId: { chapterId, courseId } },
+  // Plans of the course's goals read its chapters, and other plans the chapter's lessons.
+  const placement = await writePlanInputs(async (tx) => {
+    await lockPlanSourceWrite(tx, { chapterIds: [chapterId], courseIds: [courseId] });
+
+    return tx.courseChapter.upsert({
+      create: { area, chapterId, courseId, level, position },
+      update: { area, level, position },
+      where: { courseId_chapterId: { chapterId, courseId } },
+    });
   });
 
   revalidateCacheTags([getCourseCurriculumCacheTag(courseId)]);

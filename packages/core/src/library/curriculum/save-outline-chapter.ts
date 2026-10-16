@@ -2,6 +2,7 @@ import "server-only";
 import { type generateCourseOutline } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createChapterChallenge } from "../challenges/chapter-challenge";
 import { attachChapterToCourse } from "../chapters/attach-course-chapter";
 import { parseChapterTools } from "../chapters/chapter-tools";
@@ -141,13 +142,17 @@ async function writeChapterLessons({
 
   const placed = [...new Set([...lessonIds, challengeId].filter((id) => id !== null))];
 
-  await Promise.all([
-    placeChapterLessons({ chapterId, lessonIds: placed }),
-    prisma.chapter.update({
+  await placeChapterLessons({ chapterId, lessonIds: placed });
+
+  // Plans read a chapter's tools to tell a tool chapter from the others.
+  await writePlanInputs(async (tx) => {
+    await lockPlanSourceWrite(tx, { chapterIds: [chapterId] });
+
+    await tx.chapter.update({
       data: { tools: parseChapterTools(chapter.tools) },
       where: { id: chapterId },
-    }),
-  ]);
+    });
+  });
 }
 
 /**
@@ -192,9 +197,14 @@ async function linkChapterGoalSkills({
     .filter((skill) => chapter.skillKeys.includes(skill.key))
     .map((skill) => skill.id);
 
-  await prisma.chapterSkill.createMany({
-    data: skillIds.map((skillId) => ({ chapterId, skillId })),
-    skipDuplicates: true,
+  // A plan may read the chapter through a tag it had or one it gets.
+  await writePlanInputs(async (tx) => {
+    await lockPlanSourceWrite(tx, { chapterIds: [chapterId], skillIds });
+
+    await tx.chapterSkill.createMany({
+      data: skillIds.map((skillId) => ({ chapterId, skillId })),
+      skipDuplicates: true,
+    });
   });
 }
 

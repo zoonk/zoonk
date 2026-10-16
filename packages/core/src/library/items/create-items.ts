@@ -1,8 +1,7 @@
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/schemas";
-import { type Item, prisma } from "@zoonk/db";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
+import { type Item } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type ImageAnalytics } from "../media/_utils/plan-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
 import { checkItem } from "./item-checks";
@@ -43,7 +42,7 @@ async function storeBatch({
 }): Promise<Item[]> {
   const { answerFormat, format, provenance, skillId, ...shared } = rows;
 
-  return prisma.$transaction(async (transaction) => {
+  return writePlanInputs(async (transaction) => {
     const existing = await transaction.item.findMany({
       orderBy: { id: "asc" },
       where: {
@@ -58,12 +57,10 @@ async function storeBatch({
       return existing;
     }
 
-    const planIds = await resolvePlanInputDependents(transaction, {
+    await lockPlanSourceWrite(transaction, {
       blueprintIds: shared.examBlueprintId ? [shared.examBlueprintId] : [],
       skillIds: [skillId],
     });
-
-    await markPlansChanged(transaction, { adaptation: ["content"], planIds });
 
     return transaction.item.createManyAndReturn({
       data: entries.map(({ item, mediaAssetId }) => ({
