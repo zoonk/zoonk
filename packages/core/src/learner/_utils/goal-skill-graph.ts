@@ -51,7 +51,7 @@ export async function loadItemSkillRows({
     lessonIds.length === 0
       ? []
       : prisma.lessonSkill.findMany({
-          orderBy: { createdAt: "asc" },
+          orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
           select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
           where: { lessonId: { in: [...lessonIds] } },
         }),
@@ -62,7 +62,12 @@ export async function loadItemSkillRows({
           select: {
             chapterId: true,
             lesson: {
-              select: { skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } } },
+              select: {
+                skills: {
+                  orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
+                  select: { skillId: true },
+                },
+              },
             },
           },
           where: { chapterId: { in: [...chapterIds] } },

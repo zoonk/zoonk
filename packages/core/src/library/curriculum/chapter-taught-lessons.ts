@@ -30,7 +30,7 @@ export function compareCourseOrder(a: CourseOrder, b: CourseOrder): number {
   return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 }
 
-type ChapterTaughtLesson = PlannerLesson & { order: CourseOrder };
+type ChapterTaughtLesson = PlannerLesson & { chapterId: string; order: CourseOrder };
 
 /**
  * The lessons of the chapters a course outline tagged with the plan's skills, in course order
@@ -118,7 +118,12 @@ export async function loadChapterTaughtLessons({
   });
 
   return lessons
-    .toSorted((a, b) => compareCourseOrder(a.order, b.order))
+    .toSorted(
+      (a, b) =>
+        compareCourseOrder(a.order, b.order) ||
+        a.chapterId.localeCompare(b.chapterId) ||
+        a.lessonId.localeCompare(b.lessonId),
+    )
     .map((lesson) => ({
       band: lesson.band,
       chapterId: lesson.chapterId,

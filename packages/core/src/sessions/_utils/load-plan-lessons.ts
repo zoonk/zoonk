@@ -167,7 +167,7 @@ export async function loadLessonsForSkills({
 }): Promise<PlannedLesson[]> {
   const rows = await prisma.lessonSkill.findMany({
     include: { lesson: { include: LESSON_INCLUDE } },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { lessonId: "asc" }],
     where: { lesson: { setAsideAt: null }, skillId: { in: [...skillIds] } },
   });
 

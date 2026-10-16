@@ -116,7 +116,9 @@ async function loadLessons({
     })
     .toSorted(
       (a, b) =>
-        compareCourseOrder(a.order, b.order) || a.createdAt.getTime() - b.createdAt.getTime(),
+        compareCourseOrder(a.order, b.order) ||
+        a.createdAt.getTime() - b.createdAt.getTime() ||
+        a.lessonId.localeCompare(b.lessonId),
     )
     .map(({ band, chapterId, lessonId, minutes, skillIds: taughtIds, title }) => ({
       band,
