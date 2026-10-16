@@ -47,8 +47,15 @@ describe("entitlement lapse keeps a free way forward", () => {
 
     expect(preview.blocks[0]).not.toHaveProperty("id");
 
-    // The summary shows only the saved day's safe blocks: Open saves the replacement it then names.
-    expect(summary?.today).toMatchObject({ blocksLeft: 0, next: null });
+    // The summary previews the same free step as Today before Open saves it, and names it after.
+    expect(summary?.today).toMatchObject({
+      blocksLeft: 1,
+      next: {
+        minutes: preview.blocks[0]?.estimatedMinutes,
+        sessionId: day.sessionId,
+        title: preview.blocks[0]?.title,
+      },
+    });
 
     const refs = preview.blocks.map(toDayBlockRef);
 

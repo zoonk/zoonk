@@ -16,11 +16,16 @@ describe("the frame's explicit Continue after Plus lapses", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("opens the free step Open saves, which the summary never advertised, then replays without a mark", async () => {
+  it("opens the free step the summary previews and Open saves, then replays without a mark", async () => {
     const day = await lapsedDayFixture();
     const summary = await getLearnerSummary();
-    // The summary lists only safe saved blocks: the free step replacing the locked ones is Open's.
-    expect(summary?.today).toMatchObject({ blocksLeft: 0, next: null });
+
+    // The summary names the free step replacing the locked call, as Today does; Continue saves it.
+    expect(summary?.today).toMatchObject({
+      blocksLeft: 1,
+      next: { sessionId: day.sessionId, title: day.planItems.at(-1)?.titleSnapshot },
+    });
+
     const before = await readLapsedDayState(day.user.id);
     // Continue applies the same entitlement-only POST as opening Today.
     const continued = await openStudySession({

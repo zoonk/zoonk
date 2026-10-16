@@ -106,7 +106,7 @@ describe("row-5 callers read their saved artifacts", () => {
     expect(buildSessionBlocks).toHaveBeenCalledTimes(0);
   });
 
-  it("a lapsed summary reports only safe saved blocks without planning replacements", async () => {
+  it("a lapsed summary previews the free lesson Open saves from the saved plan, without writing", async () => {
     const day = await lapsedDayFixture();
     const before = await readLapsedDayState(day.user.id);
     vi.mocked(buildPlan).mockClear();
@@ -115,9 +115,35 @@ describe("row-5 callers read their saved artifacts", () => {
     const read = await countDatabaseStatements(() => getLearnerSummary());
 
     expect(read.writes).toBe(0);
+    // As Today does, it builds the lapsed day's free blocks once from the saved plan (its input's
+    // empty-day check builds them too); it never builds a plan.
+    expect(buildPlan).toHaveBeenCalledTimes(0);
+    expect(buildSessionBlocks).toHaveBeenCalledTimes(2);
+
+    expect(read.result?.today).toMatchObject({
+      blocksLeft: 1,
+      next: { sessionId: day.sessionId, title: day.planItems.at(-1)?.titleSnapshot },
+    });
+
+    await expect(readLapsedDayState(day.user.id)).resolves.toStrictEqual(before);
+  });
+
+  it("an active Plus call day's summary plans no replacement", async () => {
+    const day = await lapsedDayFixture();
+
+    await prisma.subscription.updateMany({
+      data: { status: "active" },
+      where: { referenceId: day.user.id },
+    });
+
+    vi.mocked(buildPlan).mockClear();
+    vi.mocked(buildSessionBlocks).mockClear();
+
+    const read = await countDatabaseStatements(() => getLearnerSummary());
+
+    expect(read.writes).toBe(0);
     expect(buildPlan).toHaveBeenCalledTimes(0);
     expect(buildSessionBlocks).toHaveBeenCalledTimes(0);
-    expect(read.result?.today).toMatchObject({ blocksLeft: 0, next: null });
-    await expect(readLapsedDayState(day.user.id)).resolves.toStrictEqual(before);
+    expect(read.result?.today?.next?.sessionId).toBe(day.sessionId);
   });
 });
