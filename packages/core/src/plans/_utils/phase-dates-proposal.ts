@@ -1,7 +1,9 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
+import { isPlanConflictError } from "../plan-conflict";
 import { type PlanOperation } from "../plan-contract";
 import { type PlanningMode } from "../planner/build-plan";
 import {
@@ -236,31 +238,44 @@ export async function updatePhaseDatesProposal({
     return;
   }
 
-  await writePlanMetadata({
-    plan: writeVersion,
-    write: async (tx) => {
-      await tx.planChange.updateMany({
-        data: { status: "replaced" },
-        where: { id: { in: stale }, status: "proposed" },
-      });
-
-      if (proposes) {
-        await tx.planChange.create({
-          data: {
-            kind: "edited",
-            payload: toPlanChangePayload({
-              effect,
-              operations: [{ kind: "fitPhaseDates" }],
-              source: PHASE_DATES_SOURCE,
-            }),
-            planId: context.plan.id,
-            reason: "",
-            status: "proposed",
-          },
+  const { error } = await safeAsync(() =>
+    writePlanMetadata({
+      plan: writeVersion,
+      write: async (tx) => {
+        await tx.planChange.updateMany({
+          data: { status: "replaced" },
+          where: { id: { in: stale }, status: "proposed" },
         });
-      }
-    },
-  });
+
+        if (proposes) {
+          await tx.planChange.create({
+            data: {
+              kind: "edited",
+              payload: toPlanChangePayload({
+                effect,
+                operations: [{ kind: "fitPhaseDates" }],
+                source: PHASE_DATES_SOURCE,
+              }),
+              planId: context.plan.id,
+              reason: "",
+              status: "proposed",
+            },
+          });
+        }
+      },
+    }),
+  );
+
+  if (error) {
+    // Every caller asks after its own plan write committed, and a write since then makes this
+    // proposal obsolete: the next run asks from the plan as it is. Thrown, the conflict would make
+    // the caller's retry run its committed write again.
+    if (isPlanConflictError(error)) {
+      return;
+    }
+
+    throw error;
+  }
 
   if (revalidation === "now") {
     revalidatePlanTags(context.goal.userId);
