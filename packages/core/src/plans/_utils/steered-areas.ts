@@ -2,6 +2,7 @@ import { type PlanOperation } from "../plan-contract";
 import { getAreaEnds, getReducedEnds } from "../planner/focus-gain";
 import { getFocusTargets, getTargetOf } from "../planner/focus-targets";
 import { getSkillArea } from "../planner/graph-areas";
+import { isMoveOnlyPlanChange } from "../planner/pinned-study-portions";
 import { type AreaEnd, type AreaLessons } from "../planner/plan-effect";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan } from "./replan";
@@ -50,13 +51,13 @@ export function getTodayExceptAreas(operations: readonly PlanOperation[]): strin
 export function getChangePlanning(operations: readonly PlanOperation[]) {
   // Moving one weekly event isn't permission to change the phase dates, including the last one,
   // or bring unrelated work back. A faster learner's replan could otherwise end before the move.
-  const movesWeeklyOnly =
-    operations.length > 0 && operations.every((operation) => operation.kind === "moveWeeklyEvent");
+  const movesWeeklyOnly = isMoveOnlyPlanChange(operations);
 
   return {
     bringBackSetAside: !movesWeeklyOnly,
     keepLastPhaseDate: movesWeeklyOnly,
     keepPhaseDates: movesWeeklyOnly || getSteeredAreas(operations) !== null,
+    keepSelection: movesWeeklyOnly,
     mode: movesWeeklyOnly ? ("automatic" as const) : ("forced" as const),
     todayExceptAreas: getTodayExceptAreas(operations),
   };

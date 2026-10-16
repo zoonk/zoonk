@@ -30,6 +30,7 @@ const KEYED_FIELDS = {
   graph: true,
   heldSkillsLand: "Whether a landing's lessons include next chapters, whose lessons the key reads.",
   items: "The saved plan itself: only the learner's progress in it counts (see `progress`).",
+  keepSelection: "A move-only run pins the selection the saved plan already holds.",
   knownAreas: true,
   knownSkillIds: true,
   landedOnly: "Whether the run's only news is a landing, whose lessons the key reads.",

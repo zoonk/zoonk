@@ -1,9 +1,11 @@
 import { getKnownSubjects, getOwnLevel } from "../../../learner/placement/placement-contract";
 import { listFinishedDays } from "../../_utils/finished-days";
 import { getLevelFloor, keepPastBasicsBands } from "../../_utils/level-bands";
+import { listRequestedMoveDates } from "../../_utils/missing-weekly-move";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "../../_utils/plan-inputs-key";
 import { type ComputedPlan } from "../../_utils/replan";
 import { summarizeRetainedPlan } from "../../_utils/retained-plan-allocation";
+import { type SavedItemFacts, withSelectedItemFacts } from "../../_utils/selected-item-contract";
 import { isStandIn } from "../../_utils/stand-in-lessons";
 import { chooseBases } from "../../planner/base-choices";
 import { type BuildPlanInput, type PlanningMode, buildPlan } from "../../planner/build-plan";
@@ -13,6 +15,7 @@ import { readCourseWeights } from "../../planner/course-weights";
 import { weighGraphForExam } from "../../planner/exam-weights";
 import { getShownPhaseEnds } from "../../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../../planner/language-size";
+import { getSelectionOptions } from "../../planner/pinned-study-portions";
 import { fromIsoDate, toIsoDate } from "../../planner/plan-calendar";
 import { getFittedStandInLessons, getPlanEffect } from "../../planner/plan-effect";
 import { getPlanFeasibility } from "../../planner/plan-feasibility";
@@ -26,6 +29,7 @@ import {
   parsePlanSettings,
 } from "../../planner/plan-state";
 import { type PlannerLesson } from "../../planner/plan-units";
+import { withBuiltSettings } from "../../planner/run-outcome";
 import { listSelectedItemFacts } from "../../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../../planner/selected-plan-summary";
 import { getSettledSkillIds } from "../../planner/settled-skills";
@@ -40,8 +44,7 @@ import { type SimPlan, type SimWorld, getSimGoal, getSimPlanCarryOver } from "./
  * normal run.
  */
 
-export type SimPlanRequest = {
-  bringBackSetAside?: boolean;
+export type SimPlanRequest = Pick<BuildPlanInput, "bringBackSetAside" | "keepSelection"> & {
   keepPhaseDates?: boolean;
   mode: PlanningMode;
   movedEnds?: ReadonlyMap<number, string>;
@@ -92,7 +95,6 @@ function getPace({ pace, world }: { pace: "sampled" | "saved"; world: SimWorld }
 
 /** The planner's input, as `computePlan` builds it from what it loads. */
 function toPlannerInput({
-  bringBackSetAside = false,
   keepPhaseDates,
   mode,
   movedEnds,
@@ -102,13 +104,8 @@ function toPlannerInput({
   state,
   todayExceptAreas = null,
   world,
-}: SimPlanRequest & { state: PlanState }): {
-  /** The graph the plan saves: a language goal's sized, never the exam-weighted copy. */
-  graph: PlanState["graph"];
-  input: BuildPlanInput;
-  pace: Pace;
-  settings: PlanState["settings"];
-} {
+  ...selection
+}: SimPlanRequest & { state: PlanState }) {
   const { inputs, learner, plan, today } = world;
   const goal = getSimGoal({ ...world, plan: { ...plan, state } });
   const graphSkills = new Set(state.graph.skills.map((skill) => skill.skillId));
@@ -149,7 +146,7 @@ function toPlannerInput({
     announcements: inputs.announcements,
     answeredWrongSkillIds: evidence.answeredWrongSkillIds,
     bands: inputs.bands,
-    bringBackSetAside,
+    ...getSelectionOptions(selection),
     carryOver: carryOver && {
       ...carryOver,
       todayExceptAreas: todayExceptAreas ?? carryOver.todayExceptAreas ?? null,
@@ -190,6 +187,7 @@ function toPlannerInput({
     prerequisites: inputs.prerequisites,
     quickLessons,
     readiness: isExam && targetDate ? learner.readiness : new Map(),
+    requestedMoveDates: listRequestedMoveDates({ saved: world.plan.state, state }),
     setAsideLeftWork,
     settings,
     strongAreas: new Set(),
@@ -224,6 +222,7 @@ export function computeSimPlan(
   const built = buildPlan({ ...input, ...landing });
 
   const standInLessons = getChosenStandInLessons(input);
+  const settings = withBuiltSettings({ built, settings: prepared.settings });
 
   return {
     bases: chosen.advise(),
@@ -234,7 +233,7 @@ export function computeSimPlan(
       input,
       planned: built,
     }),
-    inputsKey: getPlanInputsKey({ input, items: built.items }),
+    inputsKey: getPlanInputsKey({ input: { ...input, settings }, items: built.items }),
     itemFacts: listSelectedItemFacts({ built, input: { ...input, ...landing } }),
     pace: prepared.pace,
     selected: summarizeSelectedPlan({
@@ -246,7 +245,7 @@ export function computeSimPlan(
     state: {
       ...state,
       graph: withPlannedLessons({ graph: prepared.graph, skillLessons: built.skillLessons }),
-      settings: prepared.settings,
+      settings,
     },
     summarizeRetained: () =>
       summarizeRetainedPlan({
@@ -279,45 +278,15 @@ function getSavedStatus(input: {
 }): ExistingPlanItem["status"] {
   const { existing, item } = input;
 
-  if (!existing) {
+  if (
+    !existing ||
+    (item.status === "skipped" && existing.status === "todo") ||
+    (item.status === "todo" && existing.status === "skipped")
+  ) {
     return item.status;
   }
 
-  if (item.status === "skipped" && existing.status === "todo") {
-    return "skipped";
-  }
-
-  return item.status === "todo" && existing.status === "skipped" ? "todo" : existing.status;
-}
-
-/** The saved row of a planned item: a kept item keeps its status, lesson and completion. */
-function toSavedItem({
-  existing,
-  fitted,
-  item,
-  position,
-}: {
-  existing: ExistingPlanItem | undefined;
-  fitted: ReadonlyMap<string, number>;
-  item: ComputedPlan["built"]["items"][number];
-  position: number;
-}): ExistingPlanItem {
-  nextItemId += 1;
-
-  return {
-    chapterId: item.chapterId,
-    completedAt: existing ? existing.completedAt : item.completedAt,
-    id: item.id ?? `item-${nextItemId}`,
-    kind: item.kind,
-    lessonId: existing ? existing.lessonId : item.lessonId,
-    lessons: isStandIn(item) ? (fitted.get(item.skillId ?? "") ?? null) : null,
-    phase: item.phase,
-    position,
-    scheduledFor: item.scheduledFor,
-    skillId: item.skillId,
-    status: getSavedStatus({ existing, item }),
-    titleSnapshot: item.titleSnapshot,
-  };
+  return existing.status;
 }
 
 /** `commitPlan` on the simulator's world: the plan as `savePlanItems` leaves it. */
@@ -335,7 +304,7 @@ export function commitSimPlan({
     standInLessons: computed.standInLessons,
   });
 
-  const existing = new Map(world.plan.items.map((item) => [item.id, item]));
+  const byId = new Map(world.plan.items.map((item) => [item.id, item]));
   const keptIds = new Set(built.items.flatMap((item) => (item.id ? [item.id] : [])));
 
   // `savePlanItems` deletes only todo items that left; anything else keeps its row, moved past
@@ -344,8 +313,33 @@ export function commitSimPlan({
     .filter((item) => !keptIds.has(item.id) && item.status !== "todo")
     .map((item) => ({ ...item, position: item.position + ORPHAN_OFFSET }));
 
-  const items = built.items.map((item, position) =>
-    toSavedItem({ existing: item.id ? existing.get(item.id) : undefined, fitted, item, position }),
+  /** The saved row keeps its original status, lesson and completion. */
+  function toSavedItem(
+    item: ComputedPlan["built"]["items"][number] & { facts: SavedItemFacts },
+    position: number,
+  ): ExistingPlanItem {
+    const existing = item.id ? byId.get(item.id) : undefined;
+    nextItemId += 1;
+
+    return {
+      chapterId: item.chapterId,
+      completedAt: existing ? existing.completedAt : item.completedAt,
+      facts: item.facts,
+      id: item.id ?? `item-${nextItemId}`,
+      kind: item.kind,
+      lessonId: existing ? existing.lessonId : item.lessonId,
+      lessons: isStandIn(item) ? (fitted.get(item.skillId ?? "") ?? null) : null,
+      phase: item.phase,
+      position,
+      scheduledFor: item.scheduledFor,
+      skillId: item.skillId,
+      status: getSavedStatus({ existing, item }),
+      titleSnapshot: item.titleSnapshot,
+    };
+  }
+
+  const items = withSelectedItemFacts({ facts: computed.itemFacts, items: built.items }).map(
+    (item, position) => toSavedItem(item, position),
   );
 
   return {

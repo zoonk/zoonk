@@ -14,6 +14,7 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
+import { getSelectionOptions } from "../planner/pinned-study-portions";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
@@ -104,6 +105,8 @@ type ComputePlanRequest = {
   keepPhaseDates?: boolean;
   /** Moving a weekly event also keeps the last phase's challenge, rather than shortening the plan. */
   keepLastPhaseDate?: boolean;
+  /** Moving an event keeps the teaching and funding the learner already selected. */
+  keepSelection?: boolean;
   mode: PlanningMode;
   /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
   movedEnds?: ReadonlyMap<number, string>;
@@ -230,7 +233,7 @@ export async function computePlan({
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
-    bringBackSetAside: options.bringBackSetAside ?? false,
+    ...getSelectionOptions(options),
     carryOver,
     courseStart:
       readCourseStart(isJsonObject(context.goal.details) ? context.goal.details : {}) !== null,

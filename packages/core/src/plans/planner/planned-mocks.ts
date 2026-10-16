@@ -1,4 +1,5 @@
 import { type UnfundedMove } from "../plan-error-contract";
+import { type SelectionShift } from "./local-mock-move-layout";
 import { type FundedMocks, type MockFunding } from "./mock-funding";
 import {
   type MockClock,
@@ -17,6 +18,10 @@ export type PlannedMocks = {
   horizon: number;
   /** The funding the plan saves: its retained mocks', and the past days a page still shows. */
   mockFunding: MockFunding[];
+  /** Exact saved practice reassigned to retained mocks whose clock grows on a local edit. */
+  practiceFunding?: FundedMocks["practiceFunding"];
+  /** Selected work reflowed inside minimal local intervals, for the quoted effect. */
+  selectionShifts?: SelectionShift[];
   /** The resolution to plan again with, or null when this pass's mocks hold. */
   next: MockResolution | null;
   /** The mocks the plan keeps on another day than their own (see `findRelocation`). */
@@ -38,6 +43,7 @@ export function settlePlannedMocks({
   items,
   resolution,
   saved,
+  selectionShifts = [],
   spare,
   today,
 }: {
@@ -47,6 +53,7 @@ export function settlePlannedMocks({
   items: readonly PlannedItem[];
   resolution: MockResolution | null;
   saved: readonly MockFunding[];
+  selectionShifts?: SelectionShift[];
   spare: { funding: readonly MockFunding[]; sourced: ReadonlySet<string> };
   today: Date;
 }): PlannedMocks {
@@ -76,6 +83,7 @@ export function settlePlannedMocks({
   });
 
   const unfundedMocks = [...dayPass.unfunded, ...(afterExam?.unfunded ?? [])];
+  const practiceFunding = (dayPass.practiceFunding ?? []).filter((entry) => held.has(entry.date));
 
   return {
     horizon: funded.length + unfundedMocks.length,
@@ -83,6 +91,8 @@ export function settlePlannedMocks({
       a.date.localeCompare(b.date),
     ),
     next,
+    ...(practiceFunding.length > 0 ? { practiceFunding } : {}),
+    ...(selectionShifts.length > 0 ? { selectionShifts } : {}),
     relocations: [...dayPass.relocations, ...(afterExam?.relocations ?? [])].filter((relocation) =>
       held.has(relocation.to),
     ),

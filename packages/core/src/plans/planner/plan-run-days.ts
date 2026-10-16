@@ -1,23 +1,32 @@
 import { MAX_PLAN_DAYS } from "../target-date-range";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput } from "./build-plan";
+import { getRequestedMoves } from "./committed-mock-funding";
+import { getKeptMinutes } from "./kept-minutes";
 import { findDayMock } from "./mock-day";
 import { listTakenMockDays } from "./mock-days";
 import { fundMocks } from "./mock-funding";
 import { type MockResolution } from "./mock-identity";
 import { withMovedEvents } from "./moved-events";
 import {
+  fixedPortions,
+  getDisplacedLessonPortions,
+  listPinnedStudyPortions,
+} from "./pinned-study-portions";
+import {
   type StudyCalendar,
   addDays,
   daysBetween,
   fromIsoDate,
   getWeeklyEventWeekday,
+  toIsoDate,
 } from "./plan-calendar";
 import { createExamDays, createLearnDays } from "./plan-days";
+import { type ExistingPlanItem } from "./plan-items";
 import { findExamWindow, getKeptExamWindows } from "./plan-phases";
 import { type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
-import { type FixedEvent, listPlanDays } from "./schedule-units";
+import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
 
 /** The plan's first day: the day it was started, or today for a plan not saved yet. */
 export function getPlanStart(input: BuildPlanInput): Date {
@@ -96,6 +105,119 @@ function getHorizonDays({ input, start }: { input: BuildPlanInput; start: Date }
   return targetDate ? Math.min(MAX_PLAN_DAYS, daysBetween(start, targetDate)) : MAX_PLAN_DAYS;
 }
 
+/** A move-only run starts from the saved events, never a newly selected calendar's events. */
+function keepSelectedEvents({
+  input,
+  planDays,
+  units,
+  windows,
+}: {
+  input: BuildPlanInput;
+  planDays: readonly PlanDay[];
+  units: readonly QueueUnit[];
+  windows: ReturnType<typeof createDays>["windows"];
+}) {
+  const byKey = new Map(units.map((unit) => [unit.key, unit]));
+
+  const moves = getRequestedMoves({
+    moves: input.settings.movedEvents,
+    requested: input.requestedMoveDates ?? new Set(),
+  });
+
+  // Saved weekly rows still require the calendar source that authorizes their requested move.
+  const checkpoints = new Set(
+    planDays
+      .filter((day) => day.shape.events.some((event) => event.kind === "checkpoint"))
+      .map((day) => toIsoDate(day.date)),
+  );
+
+  const movedDate = (item: ExistingPlanItem) =>
+    moves.reduce(
+      (date, move) =>
+        (item.kind === "mock" || (item.kind === "checkpoint" && checkpoints.has(move.to))) &&
+        date === move.from
+          ? move.to
+          : date,
+      item.scheduledFor ? toIsoDate(item.scheduledFor) : "",
+    );
+
+  const events = Map.groupBy(
+    input.items.filter(
+      (item) => item.status === "todo" && item.kind !== "lesson" && item.kind !== "chapter",
+    ),
+    movedDate,
+  );
+
+  const selectedDays = planDays.map((day) => {
+    const selected = events.get(toIsoDate(day.date)) ?? [];
+    const mock = selected.some((item) => item.kind === "mock");
+
+    return {
+      ...day,
+      shape: {
+        ...day.shape,
+        events: selected.flatMap((item): FixedEvent[] => {
+          if (
+            item.kind === "lesson" ||
+            item.kind === "chapter" ||
+            (mock && item.kind === "review")
+          ) {
+            return [];
+          }
+
+          const fullLength = findExamWindow({ date: day.date, windows })?.kind === "finalStretch";
+
+          return [
+            {
+              key:
+                item.kind === "boss" ? `boss:${item.phase}` : `${item.kind}:${toIsoDate(day.date)}`,
+              kind: item.kind,
+              minutes: getKeptMinutes({ input, item, units: byKey, windows }),
+              ...(item.kind === "mock" ? { mock: { fullLength } } : {}),
+              ownPhase: item.phase,
+              replacesDay: item.kind === "mock",
+              title: item.titleSnapshot,
+            },
+          ];
+        }),
+      },
+    };
+  });
+
+  const portions = listPinnedStudyPortions({ input, units: byKey });
+  const displaced = getDisplacedLessonPortions({ days: selectedDays, input, portions });
+  const kept = new Map<string, number>();
+  const practice = new Map<string, number>();
+
+  for (const key of portions.keys()) {
+    fixedPortions({ displaced, key, portions }).forEach((part) => {
+      kept.set(part.date, (kept.get(part.date) ?? 0) + part.minutes);
+
+      practice.set(
+        part.date,
+        (practice.get(part.date) ?? 0) + Math.max(0, part.minutes - part.lessonMinutes),
+      );
+    });
+  }
+
+  return {
+    days: selectedDays.map((day) => ({
+      ...day,
+      shape: { ...day.shape, kept: kept.get(toIsoDate(day.date)) ?? 0 },
+    })),
+    practice,
+  };
+}
+
+/** Each move reads the previous layout: a second move starts where the first put its event. */
+function replayMoves({ moves, ...options }: Parameters<typeof withMovedEvents>[0]) {
+  // Legacy moves sharing a destination keep their canonical winner and remove every source.
+  return [...Map.groupBy(moves, (move) => move.to).values()].reduce(
+    (describeDay, group) => withMovedEvents({ ...options, describeDay, moves: group }),
+    options.describeDay,
+  );
+}
+
 /**
  * The days a run lays the plan out over, from today: what each holds (see `createDays`), with the
  * learner's moved events on their new days and the plan's mocks funded by the days before them
@@ -138,11 +260,7 @@ export function listFundedPlanDays({
   const relocatedTo = new Set(input.settings.mockRelocations.map((relocation) => relocation.to));
   const earlier = moves.filter((move) => !relocatedTo.has(move.from));
 
-  const learnerMoved = withMovedEvents({
-    describeDay: days.describeDay,
-    moves: earlier,
-    resolveMoved,
-  });
+  const learnerMoved = replayMoves({ describeDay: days.describeDay, moves: earlier, resolveMoved });
 
   const relocated = input.settings.mockRelocations.filter(
     (relocation) =>
@@ -151,8 +269,8 @@ export function listFundedPlanDays({
       learnerMoved(fromIsoDate(relocation.to)).events.length === 0,
   );
 
-  const describeDay = withMovedEvents({
-    describeDay: withMovedEvents({ describeDay: learnerMoved, moves: relocated }),
+  const describeDay = replayMoves({
+    describeDay: replayMoves({ describeDay: learnerMoved, moves: relocated }),
     moves: moves.filter((move) => relocatedTo.has(move.from)),
     resolveMoved,
   });
@@ -163,10 +281,15 @@ export function listFundedPlanDays({
     start: input.today,
   });
 
+  const selected = input.keepSelection
+    ? keepSelectedEvents({ input, planDays, units, windows: days.windows })
+    : { days: planDays, practice: undefined };
+
   const funded = fundMocks({
     clocks: input.mockClocks,
-    days: planDays,
+    days: selected.days,
     funding: input.settings.mockFunding,
+    keepSelection: input.keepSelection,
     kept: {
       promised: listPromisedLessonMinutes({
         days: planDays.filter((day) => day.date >= start),
@@ -175,6 +298,7 @@ export function listFundedPlanDays({
       tested: input.testedTeaching ?? [],
     },
     moves,
+    practice: selected.practice,
     requested: input.requestedMoveDates,
     resolution,
   });

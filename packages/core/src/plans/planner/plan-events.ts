@@ -1,11 +1,14 @@
 import { continueAfterExam } from "./after-exam";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput } from "./build-plan";
+import { getFixedMinutes } from "./committed-mock-funding";
+import { type StudyPortion } from "./interval-study-minutes";
 import { getMockWeeks } from "./mock-days";
 import { type FundedMocks, type MockFunding } from "./mock-funding";
 import { type MockResolution } from "./mock-identity";
+import { withFundedPractice } from "./pinned-study-portions";
 import { toIsoDate } from "./plan-calendar";
-import { type ExistingPlanItem } from "./plan-items";
+import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { getCalendar } from "./plan-run-days";
 import { addPracticeDays } from "./practice-days";
 import {
@@ -17,6 +20,86 @@ import {
 import { isShortExam } from "./short-exam-plan";
 import { fundSpareMocks } from "./spare-mock-funding";
 import { addSpareMocks } from "./spare-mocks";
+
+function getCheckpointPractice({
+  day,
+  portions,
+  reviews,
+}: {
+  day: PlanDay;
+  portions: ReadonlyMap<string, readonly StudyPortion[]>;
+  reviews: ReadonlyMap<string, readonly StudyPortion[]>;
+}) {
+  const date = toIsoDate(day.date);
+  const study = [...portions.values()].flat().filter((part) => part.date === date);
+  const practice = [...reviews.values()].flat().filter((part) => part.date === date);
+  const fixed = getFixedMinutes(day.shape);
+  // An explicit weekly move already permits its own fixed clock on an otherwise resting day.
+  const capacity = Math.max(day.shape.minutes, fixed);
+  const available = practice.reduce((sum, part) => sum + part.minutes, 0);
+  const needed = Math.max(0, study.reduce((sum, part) => sum + part.minutes, 0) + fixed - capacity);
+
+  return { date, minutes: Math.min(available, needed) };
+}
+
+/** Destination review gives way first; the selected interval handles any remaining pressure. */
+export function fitCheckpointPractice({
+  days,
+  input,
+  portions,
+}: {
+  days: readonly PlanDay[];
+  input: BuildPlanInput;
+  portions: Map<string, StudyPortion[]>;
+}) {
+  const destinations = days.filter(
+    (day) =>
+      input.requestedMoveDates?.has(toIsoDate(day.date)) &&
+      day.shape.events.some((event) => event.kind === "checkpoint"),
+  );
+
+  if (destinations.length === 0) {
+    return { days, portions };
+  }
+
+  const keys = new Set(
+    input.items.filter((item) => item.kind === "review").map((item) => getItemKey(item)),
+  );
+
+  const reviews = new Map([...portions].filter(([key]) => keys.has(key)));
+  const taken = destinations.map((day) => getCheckpointPractice({ day, portions, reviews }));
+
+  const adjusted = withFundedPractice({
+    contributions: taken,
+    displaced: new Map(),
+    portions: reviews,
+  });
+
+  const fitted = new Map([...portions].map(([key, parts]) => [key, adjusted.get(key) ?? parts]));
+
+  return {
+    days: days.map((day) => ({
+      ...day,
+      shape: {
+        ...day.shape,
+        events: day.shape.events.map((event) =>
+          event.kind === "review" && fitted.has(event.key)
+            ? {
+                ...event,
+                minutes: (fitted.get(event.key) ?? []).reduce((sum, part) => sum + part.minutes, 0),
+              }
+            : event,
+        ),
+        kept: Math.max(
+          0,
+          (day.shape.kept ?? 0) -
+            (taken.find((part) => part.date === toIsoDate(day.date))?.minutes ?? 0),
+        ),
+      },
+    })),
+    portions: fitted,
+  };
+}
 
 /**
  * The plan's last lesson day: what this run scheduled (`units`), what this week keeps, and where a
@@ -135,7 +218,23 @@ function listRunEvents({
   start: Date;
 }): { events: ScheduledEvent[]; funding: MockFunding[]; sourced: Set<string> } {
   if (keepsRest) {
-    return { events: [], funding: [], sourced: new Set() };
+    const requested = planned.input.requestedMoveDates;
+
+    const events = planned.input.keepSelection
+      ? planned.days.flatMap((day) =>
+          requested?.has(toIsoDate(day.date))
+            ? day.shape.events
+                .filter((event) => event.kind === "mock" || event.kind === "checkpoint")
+                .map((event) => ({
+                  ...event,
+                  date: day.date,
+                  phase: event.ownPhase ?? day.shape.phase,
+                }))
+            : [],
+        )
+      : [];
+
+    return { events, funding: [], sourced: new Set() };
   }
 
   return fundSpareMocks({
@@ -183,22 +282,24 @@ export function scheduleRunEvents({
 }) {
   const unmatched = input.settings.mockFunding.filter((entry) => !funded.matched.includes(entry));
 
-  const afterExam = continueAfterExam({
-    bossDays: input.bossDays,
-    bossMinutes: (phase) =>
-      getPlannedBossMinutes({ bossMinutes: input.bossMinutes, goalKind: "exam", phase }),
-    calendar: getCalendar(input),
-    clocks: input.mockClocks,
-    cursor: funded.funding.findLast((entry) => entry.day !== undefined)?.day,
-    dropped: schedule.dropped,
-    goal: input.goal,
-    mockMinutes: input.mockMinutes,
-    phase: windows.length,
-    resolution,
-    saved: unmatched,
-    settings: input.settings,
-    start,
-  });
+  const afterExam = input.keepSelection
+    ? null
+    : continueAfterExam({
+        bossDays: input.bossDays,
+        bossMinutes: (phase) =>
+          getPlannedBossMinutes({ bossMinutes: input.bossMinutes, goalKind: "exam", phase }),
+        calendar: getCalendar(input),
+        clocks: input.mockClocks,
+        cursor: funded.funding.findLast((entry) => entry.day !== undefined)?.day,
+        dropped: schedule.dropped,
+        goal: input.goal,
+        mockMinutes: input.mockMinutes,
+        phase: windows.length,
+        resolution,
+        saved: unmatched,
+        settings: input.settings,
+        start,
+      });
 
   const spare = listRunEvents({
     afterExam,

@@ -57,6 +57,7 @@ const INPUT_CLASSES = {
     excluded: "Whether a landing's lessons include next chapters, whose lessons the key reads.",
   },
   items: "reduction",
+  keepSelection: { excluded: "A move-only run pins the selection the saved plan already holds." },
   knownAreas: "scope",
   knownSkillIds: "scope",
   landedOnly: {

@@ -1,4 +1,12 @@
 import { type UnfundedMove } from "../plan-error-contract";
+import {
+  type PracticeFunding,
+  fundCommittedMocks,
+  fundDay,
+  getFixedMinutes,
+  getMockDayMinutes,
+  getRequestedMoves,
+} from "./committed-mock-funding";
 import { type KeptTeaching, NOTHING_KEPT, keepWindowTeaching } from "./kept-teaching";
 import { EPSILON, findDayMock, getSpendable } from "./mock-day";
 import {
@@ -64,30 +72,17 @@ export function getFundedMinutes({
   date: Date;
   funding: readonly MockFunding[];
 }): number {
-  const found = findFunding({ date, funding });
+  const day = toIsoDate(date);
+  const own = funding.find((entry) => entry.date === day);
 
-  if (!found) {
-    return base;
-  }
+  const outgoing = funding.reduce(
+    (total, entry) =>
+      total + (entry.contributions.find((given) => given.date === day)?.minutes ?? 0),
+    0,
+  );
 
-  return found.setAside === null
-    ? getMockDayMinutes({ base, entry: found.entry })
-    : Math.max(0, base - found.setAside);
-}
-
-/**
- * A mock's day: its own time, and what the days before it set aside for the part of the mock, and of
- * what else the day keeps (a phase's checkpoint, `fixedMinutes`), that time doesn't hold (none for a
- * mock shorter than the day, such as a class test's short mock). Funded in full, the day holds them
- * exactly: fourteen days' fourteenths of 150 minutes summed to 149.99999999999997, and Today asked
- * 179.99999999999997 of a 180-minute day.
- */
-function getMockDayMinutes({ base, entry }: { base: number; entry: MockFunding }): number {
-  const given = sumContributions(entry.contributions);
-  const total = entry.minutes + (entry.fixedMinutes ?? 0);
-  const needed = Math.max(0, total - base);
-
-  return given >= needed - EPSILON ? Math.max(base, total) : base + Math.min(given, needed);
+  const available = Math.max(0, base - outgoing);
+  return own ? getMockDayMinutes({ base: available, entry: own }) : available;
 }
 
 /**
@@ -125,20 +120,6 @@ function getFixedEntry(shape: DayShape): Pick<MockFunding, "fixedMinutes"> {
   return fixedMinutes > 0 ? { fixedMinutes } : {};
 }
 
-/** A day that sets `minutes` aside for a mock, its review shortened by as much. */
-function fundDay({ minutes, shape }: { minutes: number; shape: DayShape }): DayShape {
-  const spendable = getSpendable(shape);
-  const keep = spendable > 0 ? 1 - minutes / spendable : 1;
-
-  return {
-    ...shape,
-    events: shape.events.map((event) =>
-      event.kind === "review" ? { ...event, minutes: event.minutes * keep } : event,
-    ),
-    minutes: shape.minutes - minutes,
-  };
-}
-
 /** What days before the run's first set aside for a mock, as they did: they're never planned again. */
 export function listPast({ saved, start }: { saved: MockFunding | undefined; start: string }) {
   return (saved?.contributions ?? []).filter((contribution) => contribution.date < start);
@@ -172,12 +153,6 @@ export function resolveIdentity({
 }
 
 /** The minutes of what else a mock's day keeps beside it: a phase's checkpoint, not a review. */
-function getFixedMinutes(shape: DayShape): number {
-  return shape.events
-    .filter((event) => event.kind !== "review" && event.kind !== "mock" && !event.beside)
-    .reduce((sum, event) => sum + event.minutes, 0);
-}
-
 /**
  * The days of a mock's window giving `needed` minutes, each the same share of the time it can
  * give (see `getSpendable`): their shapes lighter (in `shapes`), and what each gave.
@@ -213,6 +188,8 @@ function fundWindow({
 export type FundedMocks = {
   days: PlanDay[];
   funding: MockFunding[];
+  /** The minimum saved practice reassigned to actual clock growth, for the quoted effect. */
+  practiceFunding?: PracticeFunding[];
   /** The saved mocks the run's mocks continue (see `matchSavedMocks`): each counts once. */
   matched: MockFunding[];
   /**
@@ -244,7 +221,9 @@ export function fundMocks({
   days,
   funding,
   kept = NOTHING_KEPT,
+  keepSelection = false,
   moves,
+  practice,
   requested = new Set(),
   resolution = null,
 }: {
@@ -257,7 +236,9 @@ export function fundMocks({
   funding: readonly MockFunding[];
   /** The teaching funding never takes (see `getKeptMinutes`); none: every day's time can give. */
   kept?: KeptTeaching;
+  keepSelection?: boolean;
   moves: readonly MovedEvent[];
+  practice?: ReadonlyMap<string, number>;
   /** The days a learner's change asks mocks to move to: funded there or refused, never relocated. */
   requested?: ReadonlySet<string>;
   resolution?: MockResolution | null;
@@ -277,6 +258,16 @@ export function fundMocks({
 
   if (!start) {
     return empty;
+  }
+
+  if (keepSelection) {
+    return fundCommittedMocks({
+      clocks,
+      days,
+      funding,
+      moves: getRequestedMoves({ moves, requested }),
+      practice,
+    });
   }
 
   const released = resolution?.released ?? new Set<string>();
