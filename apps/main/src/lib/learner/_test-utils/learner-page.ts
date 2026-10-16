@@ -79,11 +79,9 @@ export function stubReads() {
         const check = Promise.withResolvers<string | null>();
         sessions.push(check);
 
-        return check.promise.then((tag) => ({
-          headers: new Headers({ "x-zoonk-session-hint": tag ?? "0" }),
-          ok: true,
-          status: 200,
-        }));
+        return check.promise.then((tag) =>
+          Response.json({ session: null }, { headers: { "x-zoonk-session-hint": tag ?? "0" } }),
+        );
       }
 
       const read = Promise.withResolvers<LearnerSummaryResponse>();

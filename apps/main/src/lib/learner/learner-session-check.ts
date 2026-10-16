@@ -1,3 +1,4 @@
+import { fetchToEnd } from "@/lib/http/fetch-to-end";
 import {
   NO_SESSION_HINT,
   SESSION_HINT_HEADER,
@@ -20,7 +21,7 @@ export const SESSION_CHECK_TIMEOUT_MS = 8000;
  * null for nobody. Rejects when the server can't say (offline, an error, more than ≈8 s).
  */
 export async function fetchSessionTag(): Promise<string | null> {
-  const response = await fetch(SESSION_CHECK_PATH, {
+  const response = await fetchToEnd(SESSION_CHECK_PATH, {
     cache: "no-store",
     credentials: "same-origin",
     headers: { accept: "application/json" },
