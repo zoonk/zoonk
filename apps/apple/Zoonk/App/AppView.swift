@@ -46,7 +46,6 @@ struct AppView: View {
     }
     .task {
       await session.restore()
-      await session.renewSessionIfDue()
     }
     .task {
       await subscriptions.observeTransactionUpdates(
@@ -114,7 +113,7 @@ struct AppView: View {
     selectedSection = .courses
   }
 
-  /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart, then keeps the session going (once a day).
+  /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart.
   private func reconcileSessionWhenActive(_ scenePhase: ScenePhase) {
     guard scenePhase == .active else {
       return
@@ -122,7 +121,6 @@ struct AppView: View {
 
     Task {
       await session.reconcileSynchronizedCredential()
-      await session.renewSessionIfDue()
     }
   }
 }

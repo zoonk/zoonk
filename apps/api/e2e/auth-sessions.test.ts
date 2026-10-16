@@ -76,7 +76,7 @@ test.describe("Native session API", () => {
       user: { email: SESSION_EMAIL, id: session.userId },
     });
 
-    // Reads never renew the session; the app's once-a-day PATCH does, once it's a day old.
+    // The app's reads keep its session going: a read a day or more after the last renewal renews it.
     const usedAt = new Date(Date.now() - 3 * DAY_MS);
 
     await prisma.session.update({
@@ -86,15 +86,6 @@ test.describe("Native session API", () => {
 
     const read = await bearerContext.get("/v1/me");
     expect(read.status()).toBe(200);
-
-    await expect(prisma.session.findUniqueOrThrow({ where: { token } })).resolves.toMatchObject({
-      updatedAt: usedAt,
-    });
-
-    const renewal = await bearerContext.patch("/v1/sessions/current");
-    expect(renewal.status()).toBe(204);
-    // A bearer app gets no session cookie, so its next change isn't refused as a cookie request.
-    expect(renewal.headers()["set-cookie"]).toBeUndefined();
     const renewed = await prisma.session.findUniqueOrThrow({ where: { token } });
     expect(renewed.updatedAt.getTime()).toBeGreaterThan(usedAt.getTime());
     expect(renewed.expiresAt.getTime()).toBeGreaterThan(Date.now() + (SESSION_DAYS - 1) * DAY_MS);
@@ -114,9 +105,6 @@ test.describe("Native session API", () => {
 
     const signedOutResponse = await bearerContext.get("/v1/me");
     expect(signedOutResponse.status()).toBe(401);
-
-    const signedOutRenewal = await bearerContext.patch("/v1/sessions/current");
-    expect(signedOutRenewal.status()).toBe(401);
 
     await Promise.all([
       bearerContext.dispose(),

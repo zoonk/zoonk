@@ -218,7 +218,7 @@ describe("session hint", () => {
     expect(getHint(response)?.value).not.toBe(tagFor(String(guest.id)));
   });
 
-  it("names the learner again when a renewal renews their session cookie", async () => {
+  it("names the learner again when a session read renews their session cookie", async () => {
     const { response: signedUp, userId } = await signUp();
     const session = readSetCookies(signedUp).get(SESSION_COOKIE);
 
@@ -228,9 +228,9 @@ describe("session hint", () => {
       where: { userId },
     });
 
-    // Renewing writes, so only the once-a-day POST does it (`session-renewal.ts`).
     const response = await request({
       cookie: `${SESSION_COOKIE}=${session?.value}`,
+      method: "GET",
       path: "/get-session",
     });
 

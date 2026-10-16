@@ -30,7 +30,6 @@ protocol AccountAPIClient {
   func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String
   func signInWithEmailCode(email: String, code: String) async throws -> String
   func signInWithGoogle(idToken: String) async throws -> String
-  func renewSession(token: String) async throws
   func signOut(token: String) async throws
   func synchronizeAppleSubscription(
     token: String,
@@ -221,22 +220,6 @@ struct AccountAPI {
       throw AccountAPIError.unauthorized
     case .conflict:
       throw AccountAPIError.accountMismatch
-    case .internalServerError, .undocumented:
-      throw AccountAPIError.invalidResponse
-    }
-  }
-
-  /// Keeps the bearer session going while the app is used: reads never renew a session, so the app asks once a day and the server slides it forward once it's a day old. The token stays the same.
-  func renewSession(token: String) async throws {
-    let output = try await perform(token: token) { client in
-      try await client.renewCurrentSession(.init())
-    }
-
-    switch output {
-    case .noContent:
-      return
-    case .unauthorized:
-      throw AccountAPIError.unauthorized
     case .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }

@@ -11727,56 +11727,6 @@
             }
           }
         }
-      },
-      "patch": {
-        "description": "Renews the supplied session (sliding expiry): once the session is at least a day old, its 30 days start again; before that the request changes nothing. It writes nothing else, and the bearer token stays the same. Reads never renew a session, so an app calls this once a day, on launch or when it returns to the foreground.",
-        "operationId": "renewCurrentSession",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Keep signed in",
-        "tags": [
-          "Sessions"
-        ],
-        "responses": {
-          "204": {
-            "description": "Session kept; renewed when it was at least a day old",
-            "headers": {
-              "Learner-Revision": {
-                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
-                "schema": {
-                  "pattern": "^[0-9]+$",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/sessions/email-code": {

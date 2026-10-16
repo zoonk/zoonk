@@ -57,46 +57,34 @@ async function signInGuest() {
   return { cookie: session?.split(";")[0] ?? "", id: response.user.id };
 }
 
-/** The guest coming back: a page's reads (GET), or the browser's daily renewal (POST). */
-function comeBack({ cookie, method }: { cookie: string; method: "GET" | "POST" }) {
-  return auth.handler(
-    new Request("http://localhost:9000/api/auth/get-session", {
-      headers: { cookie, origin: "http://localhost:9000" },
-      method,
-    }),
-  );
-}
-
 describe(deleteInactiveGuests, () => {
-  it("keeps a guest who keeps coming back through the daily renewal; reads alone never count", async () => {
+  it("keeps a guest whose page reads keep its session going", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
 
     try {
       const start = Date.now() - 40 * MS_PER_DAY;
       vi.setSystemTime(start);
 
-      const [renewing, readingOnly] = await Promise.all([signInGuest(), signInGuest()]);
+      const guest = await signInGuest();
 
-      // Both come back on days 20 and 38; only one browser's renewal POST reaches the server.
+      // The guest comes back on days 20 and 38 and only reads its session, as a page does.
       for (const day of [20, 38]) {
         vi.setSystemTime(start + day * MS_PER_DAY);
 
         // oxlint-disable-next-line no-await-in-loop -- The visits happen one day after another.
-        await Promise.all([
-          comeBack({ cookie: renewing.cookie, method: "POST" }),
-          comeBack({ cookie: readingOnly.cookie, method: "GET" }),
-        ]);
+        await auth.handler(
+          new Request("http://localhost:9000/api/auth/get-session", {
+            headers: { cookie: guest.cookie },
+          }),
+        );
       }
 
       vi.useRealTimers();
       await deleteInactiveGuests();
 
-      const remaining = await prisma.user.findMany({
-        select: { id: true },
-        where: { id: { in: [renewing.id, readingOnly.id] } },
-      });
-
-      expect(remaining).toStrictEqual([{ id: renewing.id }]);
+      await expect(
+        prisma.user.findUnique({ select: { id: true }, where: { id: guest.id } }),
+      ).resolves.toStrictEqual({ id: guest.id });
     } finally {
       vi.useRealTimers();
     }

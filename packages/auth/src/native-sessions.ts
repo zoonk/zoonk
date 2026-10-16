@@ -96,33 +96,6 @@ export async function createGoogleSession({
 }
 
 /**
- * Keeps an app's session going while it's used: a POST is the only read that renews a session
- * (`deferSessionRefresh`), and it only writes once the session is a day old. Read from the
- * database, past a cookie's cached copy, so a session ended elsewhere answers null and the app
- * signs out. Sent through Better Auth's HTTP boundary like the other native facades, so the
- * renewed session's cookies stay here and the caller decides who gets them (a direct `auth.api`
- * call sets them on every response through Next.js, a bearer app's included).
- */
-export async function renewCurrentSession({
-  headers,
-  requestURL,
-}: {
-  headers: Headers;
-  requestURL: string;
-}): Promise<{ headers: Headers } | null> {
-  const renewal = await sendNativeAuthRequest({
-    body: {},
-    handler: auth.handler,
-    headers,
-    path: "/get-session",
-    query: { disableCookieCache: "true" },
-    requestURL,
-  });
-
-  return renewal.body === null ? null : { headers: renewal.headers };
-}
-
-/**
  * Deletes the authoritative server session before clearing its cookie. Better
  * Auth's sign-out endpoint deliberately swallows persistence failures, which
  * is unsafe for native clients that clear Keychain only after this succeeds,

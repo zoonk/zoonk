@@ -964,98 +964,6 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
-  func testSessionRenewalAsksOnceADayForTheSignedInSession() async {
-    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
-    let session = makeSession(
-      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
-    let launch = Date(timeIntervalSince1970: 1_800_000_000)
-    await session.restore()
-
-    await session.renewSessionIfDue(now: launch)
-    await session.renewSessionIfDue(now: launch.addingTimeInterval(60 * 60))
-    XCTAssertEqual(api.renewalTokens, ["stored-session"])
-
-    await session.renewSessionIfDue(now: launch.addingTimeInterval(25 * 60 * 60))
-    XCTAssertEqual(api.renewalTokens, ["stored-session", "stored-session"])
-  }
-
-  @MainActor
-  func testSessionRenewalAsksAgainOnceTheClockIsSetBack() async {
-    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
-    let session = makeSession(
-      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
-    let corrected = Date(timeIntervalSince1970: 1_800_000_000)
-    await session.restore()
-
-    await session.renewSessionIfDue(now: corrected.addingTimeInterval(40 * 24 * 60 * 60))
-    await session.renewSessionIfDue(now: corrected)
-    XCTAssertEqual(api.renewalTokens, ["stored-session", "stored-session"])
-  }
-
-  @MainActor
-  func testSessionRenewalWithoutASessionAsksNothing() async {
-    let api = SessionStoreAPIStub()
-    let session = makeSession(api: api, credentialStore: SessionCredentialStoreSpy())
-    await session.restore()
-
-    await session.renewSessionIfDue()
-
-    XCTAssertEqual(api.renewalTokens, [])
-  }
-
-  @MainActor
-  func testUnauthorizedSessionRenewalSignsOutTheEndedSession() async {
-    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
-    let credentialStore = SessionCredentialStoreSpy(token: "ended-session")
-    let session = makeSession(api: api, credentialStore: credentialStore)
-    await session.restore()
-    api.renewalResult = .failure(.unauthorized)
-
-    await session.renewSessionIfDue()
-
-    XCTAssertEqual(session.state, .signedOut)
-    XCTAssertNil(credentialStore.token)
-  }
-
-  @MainActor
-  func testLateUnauthorizedSessionRenewalKeepsANewerCredential() async throws {
-    let accountA = makeAccount(userID: "account-a")
-    let accountB = makeAccount(userID: "account-b")
-    let credentialStore = SessionCredentialStoreSpy(token: "account-a-session")
-    let api = SessionStoreAPIStub(currentAccountResult: .success(accountA))
-    let session = makeSession(api: api, credentialStore: credentialStore)
-    await session.restore()
-
-    api.renewalHandler = { _ in
-      credentialStore.token = "account-b-session"
-      api.currentAccountResult = .success(accountB)
-      throw AccountAPIError.unauthorized
-    }
-
-    await session.renewSessionIfDue()
-
-    XCTAssertEqual(credentialStore.token, "account-b-session")
-    XCTAssertEqual(credentialStore.deleteCallCount, 0)
-    XCTAssertEqual(session.authenticatedSession?.accountID, "account-b")
-  }
-
-  @MainActor
-  func testFailedSessionRenewalKeepsTheSessionAndAsksAgain() async {
-    let account = makeAccount()
-    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
-    let session = makeSession(
-      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
-    await session.restore()
-    api.renewalResult = .failure(.network)
-
-    await session.renewSessionIfDue()
-    await session.renewSessionIfDue()
-
-    XCTAssertEqual(session.state, .signedIn(account))
-    XCTAssertEqual(api.renewalTokens, ["stored-session", "stored-session"])
-  }
-
-  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -1106,9 +1014,6 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     )?
   var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
-  var renewalHandler: (@MainActor (String) async throws -> Void)?
-  var renewalResult: Result<Void, AccountAPIError> = .success(())
-  private(set) var renewalTokens = [String]()
   var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
 
@@ -1138,16 +1043,6 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     }
 
     return try appleSubscriptionResult.get()
-  }
-
-  func renewSession(token: String) async throws {
-    renewalTokens.append(token)
-
-    if let renewalHandler {
-      return try await renewalHandler(token)
-    }
-
-    try renewalResult.get()
   }
 
   func getCurrentAccount(token: String) async throws -> CurrentAccount {
@@ -1272,10 +1167,6 @@ extension AccountAPIClient {
   }
 
   func signInWithGoogle(idToken: String) async throws -> String {
-    throw AccountAPIError.invalidResponse
-  }
-
-  func renewSession(token: String) async throws {
     throw AccountAPIError.invalidResponse
   }
 

@@ -128,18 +128,6 @@ export const sessionPaths = {
       summary: "Sign out",
       tags: ["Sessions"],
     },
-    patch: {
-      description:
-        "Renews the supplied session (sliding expiry): once the session is at least a day old, its 30 days start again; before that the request changes nothing. It writes nothing else, and the bearer token stays the same. Reads never renew a session, so an app calls this once a day, on launch or when it returns to the foreground.",
-      operationId: "renewCurrentSession",
-      responses: {
-        "204": { description: "Session kept; renewed when it was at least a day old" },
-        "401": unauthorizedResponse,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Keep signed in",
-      tags: ["Sessions"],
-    },
   },
   "/sessions/email-code": {
     post: {
