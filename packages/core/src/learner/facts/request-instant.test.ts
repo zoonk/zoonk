@@ -116,6 +116,7 @@ describe("GET request instant", () => {
 
       const holding = prisma.$transaction(
         async (client) => {
+          await client.$executeRaw`SET LOCAL lock_timeout = '1s'`;
           await client.$executeRaw`LOCK TABLE mock_exams IN ACCESS EXCLUSIVE MODE`;
 
           const [connection] = await client.$queryRaw<
@@ -130,40 +131,51 @@ describe("GET request instant", () => {
 
       const held = Promise.allSettled([holding]);
       void holding.catch(ready.reject);
-      const holderPid = await ready.promise;
-
-      const reading = Promise.allSettled([
-        prisma.$transaction((client) =>
-          findRunningAnytimeMock({
-            client,
-            goalId: goal.id,
-            ...(mode === "undefined" ? { now: undefined } : {}),
-            userId: user.id,
-          }),
-        ),
-      ]);
 
       try {
-        await expect
-          .poll(
-            async () => prisma.$queryRaw<{ pid: number }[]>`
+        const holderPid = await ready.promise;
+
+        const reading = Promise.allSettled([
+          prisma.$transaction(
+            async (client) => {
+              await client.$executeRaw`SET LOCAL lock_timeout = '5s'`;
+
+              return findRunningAnytimeMock({
+                client,
+                goalId: goal.id,
+                ...(mode === "undefined" ? { now: undefined } : {}),
+                userId: user.id,
+              });
+            },
+            { timeout: 8000 },
+          ),
+        ]);
+
+        try {
+          await expect
+            .poll(
+              async () => prisma.$queryRaw<{ pid: number }[]>`
               SELECT pid FROM pg_stat_activity
               WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
                 AND query ~* 'mock_exams'
             `,
-            { interval: 10, timeout: 4000 },
-          )
-          .not.toHaveLength(0);
+              { interval: 10, timeout: 4000 },
+            )
+            .not.toHaveLength(0);
 
-        vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
+          vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
+        } finally {
+          release.resolve(null);
+          await reading;
+        }
+
+        await expect(reading).resolves.toStrictEqual([{ status: "fulfilled", value: null }]);
       } finally {
         release.resolve(null);
         await held;
-        await reading;
       }
 
       await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
-      await expect(reading).resolves.toStrictEqual([{ status: "fulfilled", value: null }]);
     },
   );
 
