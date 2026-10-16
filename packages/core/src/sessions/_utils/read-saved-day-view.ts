@@ -1,4 +1,5 @@
 import "server-only";
+import { type ExamBlueprint } from "@zoonk/db";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
@@ -15,18 +16,21 @@ import { type StudySessionRow } from "./study-session-access";
 
 /** A saved day can need a POST for entitlement-only free replacements, never invented IDs. */
 export async function readSavedDayView({
+  blueprint,
   session,
   timeZone,
   userId,
   weekDate,
 }: {
+  /** The session goal's exam blueprint when the GET already read it (see `loadNotice`). */
+  blueprint?: ExamBlueprint | null;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
   weekDate?: Date;
 }): Promise<DayView> {
   const [view, refill] = await Promise.all([
-    loadStudySessionView({ session, timeZone, userId, weekDate }),
+    loadStudySessionView({ blueprint, session, timeZone, userId, weekDate }),
     session.goal ? planEntitlementLapseRefill({ goal: session.goal, session, timeZone }) : null,
   ]);
 
@@ -36,7 +40,7 @@ export async function readSavedDayView({
 
   const [display, subjects, blockedTestOutChapters, catchUp] = await Promise.all([
     withLessonDisplayMinutes({ blocks: refill.blocks }),
-    loadBlockSubjects({ blocks: refill.blocks, goal: session.goal }),
+    loadBlockSubjects({ blocks: refill.blocks, blueprint, goal: session.goal }),
     loadBlockedTestOutChapters({
       chapterIds: [
         ...new Set(refill.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),

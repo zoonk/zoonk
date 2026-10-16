@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
+import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
@@ -17,6 +17,8 @@ import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-stat
 
 /** The goal, learner and day a session is built for. */
 export type SessionDayContext = {
+  /** The goal's exam blueprint when a GET already read it; without it, it's read fresh. */
+  blueprint?: ExamBlueprint | null;
   goal: Goal;
   localDate: Date;
   now: Date;

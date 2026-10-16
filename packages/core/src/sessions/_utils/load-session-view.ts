@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type ExamBlueprint, prisma } from "@zoonk/db";
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
@@ -112,12 +112,15 @@ async function loadSessionBasics({
 
 /** Loads what the session view model reads: answers, missions, the week, limits and access. */
 export async function loadStudySessionView({
+  blueprint,
   initialDay,
   session: storedSession,
   timeZone,
   userId,
   weekDate = storedSession.localDate,
 }: {
+  /** The session goal's exam blueprint when a GET already read it (see `loadNotice`). */
+  blueprint?: ExamBlueprint | null;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
@@ -136,7 +139,7 @@ export async function loadStudySessionView({
     loadSessionBasics({ initialDay, session: storedSession, userId }),
     loadStudyWeek({ localDate: weekDate, userId }),
     loadOftenTestedSkillIds(storedSession.goal),
-    loadBlockSubjects({ blocks: storedSession.blocks, goal: storedSession.goal }),
+    loadBlockSubjects({ blocks: storedSession.blocks, blueprint, goal: storedSession.goal }),
     storedSession.goalId
       ? loadBlockedTestOutChapters({
           chapterIds: [

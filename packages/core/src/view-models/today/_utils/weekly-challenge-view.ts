@@ -10,6 +10,7 @@ import {
   type WeeklyChallengeResult,
   getWeeklyChallenge,
 } from "../../../checkpoints/get-weekly-challenge";
+import { readExamBlueprint } from "../../../learner/facts/exam-blueprint";
 import { type SelectedDayPlan } from "../../../sessions/_utils/selected-day-plan";
 import { type SessionPlanItem } from "../../../sessions/_utils/session-plan-item";
 import { type DayView } from "../../../sessions/day-view";
@@ -48,9 +49,7 @@ async function readSelectedCard({
   const isMock = item.kind === "mock";
 
   const blueprint =
-    isMock && goal.examBlueprintId
-      ? await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-      : null;
+    isMock && goal.examBlueprintId ? await readExamBlueprint(goal.examBlueprintId) : null;
 
   const card = isMock
     ? await loadMockCard({

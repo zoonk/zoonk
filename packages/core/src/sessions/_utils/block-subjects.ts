@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { loadSkillSubjects } from "../../view-models/syllabus/_utils/load-syllabus";
 import { readBlockPayload } from "../block-payload";
 import { getBlockSubject } from "./block-subject";
@@ -13,9 +13,12 @@ import { type DayBlockInput } from "./day-block-view";
  */
 export async function loadBlockSubjects({
   blocks,
+  blueprint,
   goal,
 }: {
   blocks: readonly DayBlockInput[];
+  /** The goal's exam blueprint when a GET already read it (see `loadNotice`). */
+  blueprint?: ExamBlueprint | null;
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null;
 }): Promise<Map<number, string>> {
   const payloads = blocks.map((block) => ({ block, payload: readBlockPayload(block) }));
@@ -27,7 +30,7 @@ export async function loadBlockSubjects({
   const chapterIds = [...new Set(payloads.flatMap(({ payload }) => payload.chapterId ?? []))];
 
   const [skillSubjects, planItems, chapterSkills] = await Promise.all([
-    loadSkillSubjects(goal),
+    loadSkillSubjects(goal, blueprint),
     planItemIds.length > 0
       ? prisma.planItem.findMany({
           select: { id: true, skillId: true },

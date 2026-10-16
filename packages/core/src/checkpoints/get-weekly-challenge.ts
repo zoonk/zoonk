@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../entitlements/limits";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readExamBlueprint } from "../learner/facts/exam-blueprint";
 import { getExamPrepAccess } from "../sessions/_utils/exam-access";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { findNextWeeklyItem } from "./_utils/load-weekly-challenge";
@@ -59,9 +60,7 @@ export async function getWeeklyChallenge({
 
   const [items, blueprint] = await Promise.all([
     prisma.planItem.findMany({ orderBy: { position: "asc" }, where: { plan: { goalId } } }),
-    goal.examBlueprintId
-      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-      : null,
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
   ]);
 
   const item = findNextWeeklyItem(items);

@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readExamBlueprint } from "../learner/facts/exam-blueprint";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
@@ -100,13 +101,16 @@ export async function listCurrentUserMistakes(
     return owned;
   }
 
-  const skillIds = await getScopeSkillIds(input);
+  const goal = owned?.status === "ready" ? owned.goal : null;
+
+  const [skillIds, blueprint] = await Promise.all([
+    getScopeSkillIds(input),
+    goal?.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+  ]);
+
   const scope = { userId, ...(skillIds ? { skillId: { in: skillIds } } : {}) };
 
-  const timeZone = getAnswerTimeZone({
-    goal: owned?.status === "ready" ? owned.goal : null,
-    timeZone: input.timeZone,
-  });
+  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
 
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
 
@@ -122,8 +126,10 @@ export async function listCurrentUserMistakes(
       where: { ...scope, cause: input.cause, status: input.status },
     }),
     countMistakes(scope),
-    owned ? loadExamStructure(owned.goal) : null,
+    goal ? loadExamStructure(goal, { blueprint }) : null,
     loadMistakePracticeAvailability({
+      blueprint,
+      goal,
       goalId: input.goalId,
       localDate,
       skillIds,

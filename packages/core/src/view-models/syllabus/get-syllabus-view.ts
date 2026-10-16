@@ -6,6 +6,7 @@ import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { getExamDocument } from "../../exams/exam-document";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { getOutlinedUntil } from "../../plans/_utils/stand-in-lessons";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
@@ -86,7 +87,13 @@ export async function getSyllabusView(
   }
 
   const [syllabusInput, todayBlocks, sections] = await Promise.all([
-    loadSyllabusInput(goal),
+    loadSyllabusInput(goal, {
+      // Only an exam's notice reads it (see `loadNotice`), so it's read for exams alone.
+      blueprint:
+        goal.kind === "exam" && goal.examBlueprintId
+          ? readExamBlueprint(goal.examBlueprintId)
+          : null,
+    }),
     loadTodayLearnBlocks(goal),
     loadSections(goal),
   ]);

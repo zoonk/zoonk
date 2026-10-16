@@ -46,7 +46,7 @@ export async function loadUnstartedDayView({
   day: PlannedStudyDay;
   selection: SelectedDayPlan;
 }): Promise<UnstartedDayView> {
-  const { goal, localDate, now, timeZone, userId } = context;
+  const { blueprint, goal, localDate, now, timeZone, userId } = context;
 
   const blocks = day.blocks.map((block, position) => ({
     ...block,
@@ -64,7 +64,7 @@ export async function loadUnstartedDayView({
         selectedPlan: { goalId: goal.id, settings: selection.state.settings },
         userId,
       }),
-      loadBlockSubjects({ blocks, goal }),
+      loadBlockSubjects({ blocks, blueprint, goal }),
       loadOftenTestedSkillIds(goal),
       loadBlockedTestOutChapters({
         chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],

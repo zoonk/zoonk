@@ -327,7 +327,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
     getCurrentSuggestedGoal(),
     getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
       loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
-    loadGoalDateKind(owned.goal),
+    loadGoalDateKind(owned.goal, day.blueprint),
     loadOpenExamChoice(owned.goal),
   ]);
 

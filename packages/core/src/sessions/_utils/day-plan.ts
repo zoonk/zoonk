@@ -63,6 +63,7 @@ function getPlanStart({
  * others.
  */
 export async function loadDayPlan({
+  blueprint,
   goal,
   localDate,
   now,
@@ -89,7 +90,7 @@ export async function loadDayPlan({
       loadLastStudyDate({ today: localDate, userId }),
       hasEarlierDay({ goalId: goal.id, today: localDate }),
       selection
-        ? loadGoalListeningSkillIds({ goal, graph: selection.state.graph })
+        ? loadGoalListeningSkillIds({ blueprint, goal, graph: selection.state.graph })
         : loadListeningSkillIds(goal.id),
     ]);
 
@@ -101,7 +102,7 @@ export async function loadDayPlan({
   const skills = goalPlan.skills.filter((skill) => !skipped.has(skill.id));
 
   const [structure, prerequisites, idleSkillIds] = await Promise.all([
-    loadExamStructure(goal, { dayMinutes }),
+    loadExamStructure(goal, { blueprint, dayMinutes }),
     loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
     loadIdleListeningSkillIds({
       examBlueprintId: goal.examBlueprintId,

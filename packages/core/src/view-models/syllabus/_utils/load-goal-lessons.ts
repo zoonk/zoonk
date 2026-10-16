@@ -33,6 +33,6 @@ export async function loadGoalLessons(
     return null;
   }
 
-  const input = await loadSyllabusInput(goal, selectedPlan);
+  const input = await loadSyllabusInput(goal, { selectedPlan });
   return input ? buildSyllabus(input).lessons : null;
 }

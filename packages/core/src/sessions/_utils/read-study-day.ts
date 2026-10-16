@@ -1,7 +1,8 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
+import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
 import { planStudyDay } from "./plan-study-day";
@@ -10,6 +11,8 @@ import { findSavedDaySession } from "./saved-day-session";
 import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
 
 export type ReadStudyDay = {
+  /** The goal's exam blueprint, read once for the day and whatever else the request shows. */
+  blueprint: ExamBlueprint | null;
   selection: SelectedDayPlan | null;
   session: DayView;
   timeZone: string;
@@ -29,12 +32,23 @@ export async function readStudyDay({
 }): Promise<ReadStudyDay | null> {
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestedZone });
   const localDate = getDateInTimeZone({ date: now, timeZone });
-  const saved = await findSavedDaySession({ goalId: goal.id, now, timeZone, userId });
+
+  const [saved, blueprint] = await Promise.all([
+    findSavedDaySession({ goalId: goal.id, now, timeZone, userId }),
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+  ]);
 
   if (saved) {
     return {
+      blueprint,
       selection: null,
-      session: await readSavedDayView({ session: saved, timeZone, userId, weekDate: localDate }),
+      session: await readSavedDayView({
+        blueprint,
+        session: saved,
+        timeZone,
+        userId,
+        weekDate: localDate,
+      }),
       timeZone,
     };
   }
@@ -45,7 +59,13 @@ export async function readStudyDay({
     return null;
   }
 
-  const context = { goal, localDate, now, timeZone, userId };
+  const context = { blueprint, goal, localDate, now, timeZone, userId };
   const day = await planStudyDay({ ...context, selection });
-  return { selection, session: await loadUnstartedDayView({ context, day, selection }), timeZone };
+
+  return {
+    blueprint,
+    selection,
+    session: await loadUnstartedDayView({ context, day, selection }),
+    timeZone,
+  };
 }

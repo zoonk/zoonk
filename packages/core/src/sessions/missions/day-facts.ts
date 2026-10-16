@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
@@ -172,6 +172,7 @@ async function loadMissionContext(input: MissionContext) {
 /** Internal build-time read. It never starts generation or claims any usage. */
 export async function loadDayMissionFacts({
   blocks,
+  blueprint,
   dayPlan,
   goal,
   localDate,
@@ -182,6 +183,8 @@ export async function loadDayMissionFacts({
   userId,
 }: {
   blocks: readonly MissionFactBlock[];
+  /** The goal's exam blueprint when a GET already read it; without it, it's read fresh. */
+  blueprint?: ExamBlueprint | null;
   dayPlan?: Awaited<ReturnType<typeof loadDayPlan>>;
   goal: Goal;
   localDate: Date;
@@ -242,7 +245,7 @@ export async function loadDayMissionFacts({
     languageCandidates({ blocks, goal, items, now, tier, userId }),
     tier === "guest" ? null : countUsage({ client: prisma, kind: "tutorMessage", now, userId }),
     weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, userId }),
-    loadExamStructure(goal),
+    loadExamStructure(goal, { blueprint }),
   ]);
 
   const chapter = finishChapterCandidate({ blocks, goalPlan, items });

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
 import { listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
@@ -168,6 +168,7 @@ async function loadChapterTitles(items: readonly SyllabusItem[]): Promise<Map<st
 /**
  * Everything a goal's syllabus is built from: the notice (exams), the plan's graph and settings,
  * its lessons in plan order, their chapters' titles and each area's course. Null without a plan.
+ * A GET passes the exam's blueprint it already read (see `loadNotice`).
  */
 export async function loadSyllabusInput(
   goal: Pick<
@@ -175,7 +176,13 @@ export async function loadSyllabusInput(
     "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "targetDate" | "userId"
   > &
     Partial<Pick<Goal, "details" | "primaryCourseId">>,
-  selectedPlan?: Pick<PlanReadContext, "items" | "state">,
+  {
+    blueprint,
+    selectedPlan,
+  }: {
+    blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
+    selectedPlan?: Pick<PlanReadContext, "items" | "state">;
+  } = {},
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
     selectedPlan
@@ -200,7 +207,7 @@ export async function loadSyllabusInput(
           },
           where: { goalId: goal.id },
         }),
-    loadNotice(goal),
+    loadNotice(goal, blueprint),
   ]);
 
   if (!plan) {
@@ -269,10 +276,12 @@ export async function loadSyllabusInput(
 /**
  * Each of the goal's skills by its subject's short name ("Portuguese Language"), for labels on
  * Today's lessons; empty for goals with fewer than two subjects. Reads only the graph, the notice
- * and the areas' courses, so a session doesn't load the whole plan for it.
+ * and the areas' courses, so a session doesn't load the whole plan for it. A GET passes the exam's
+ * blueprint it already read (see `loadNotice`).
  */
 export async function loadSkillSubjects(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
+  blueprint?: ExamBlueprint | null,
 ): Promise<Map<string, string>> {
   if (!goal) {
     return new Map();
@@ -280,7 +289,7 @@ export async function loadSkillSubjects(
 
   const [plan, notice] = await Promise.all([
     prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
-    loadNotice(goal),
+    loadNotice(goal, blueprint),
   ]);
 
   const graph = parsePlanGraph(plan?.graph);

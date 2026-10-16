@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import {
   loadGoalListeningSkillIds,
   loadLearnerListeningSkillIds,
@@ -36,6 +36,8 @@ function isMistakePracticeAvailable({
 
 /** Whose mistakes, in which goal's scope (or `skillIds`, or every goal without either). */
 type MistakeScopeInput = {
+  /** The known goal's exam blueprint when the caller already read it (a GET), so it isn't again. */
+  blueprint?: ExamBlueprint | null;
   /** The goal's row when the caller already read it (the learner summary), so it isn't again. */
   goal?: Goal | null;
   goalId?: string | null;
@@ -46,14 +48,28 @@ type MistakeScopeInput = {
 type AvailabilityInput = MistakeScopeInput & { localDate: Date; timeZone: string };
 
 /** The goal's row, its skill scope (`getSkillOwners` of its plan) and its listening skills. */
-async function loadGoalScope({ goal: known, goalId }: { goal?: Goal | null; goalId: string }) {
+async function loadGoalScope({
+  blueprint,
+  goal: known,
+  goalId,
+}: {
+  blueprint?: ExamBlueprint | null;
+  goal?: Goal | null;
+  goalId: string;
+}) {
+  const isKnown = known?.id === goalId;
+
   const [scope, goal] = await Promise.all([
     loadGoalSkillScope(goalId),
-    known?.id === goalId ? known : prisma.goal.findUnique({ where: { id: goalId } }),
+    isKnown ? known : prisma.goal.findUnique({ where: { id: goalId } }),
   ]);
 
   const listeningSkillIds = goal
-    ? await loadGoalListeningSkillIds({ goal, graph: scope.graph })
+    ? await loadGoalListeningSkillIds({
+        blueprint: isKnown ? blueprint : undefined,
+        goal,
+        graph: scope.graph,
+      })
     : new Set<string>();
 
   return { goal, listeningSkillIds, ownerOf: scope.ownerOf };
@@ -65,12 +81,13 @@ async function loadGoalScope({ goal: known, goalId }: { goal?: Goal | null; goal
  * the goal, when scoped.
  */
 async function loadPracticeEligibleMistakes({
+  blueprint,
   goal: knownGoal,
   goalId,
   skillIds,
   userId,
 }: MistakeScopeInput) {
-  const scope = goalId ? await loadGoalScope({ goal: knownGoal, goalId }) : null;
+  const scope = goalId ? await loadGoalScope({ blueprint, goal: knownGoal, goalId }) : null;
   const ownerOf = scope?.ownerOf ?? new Map<string, string>();
   const scopedSkillIds = skillIds ?? (goalId ? [...ownerOf.keys()] : null);
 
