@@ -102,7 +102,7 @@ export async function holdBackLessonDraft({
 
       const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       const { count } = await tx.lesson.updateMany({
         data: {

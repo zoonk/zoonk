@@ -55,7 +55,11 @@ function isRetryableTransferError(error: unknown) {
  */
 async function markAccountChanged({ guestUserId, transaction, userId }: GuestLinkContext) {
   const userIds = [userId, guestUserId];
-  const markedPlanIds = new Set(await markPlanInputsChanged(transaction, { userIds }));
+
+  const markedPlanIds = new Set(
+    await markPlanInputsChanged(transaction, { adaptation: ["account"], userIds }),
+  );
+
   await markLearnerRevision(transaction, { userId });
 
   const plans = await transaction.plan.findMany({

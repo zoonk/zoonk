@@ -200,7 +200,7 @@ export async function saveLessonContent({
       }
 
       const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       const claimed = await tx.lesson.updateMany({
         data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
@@ -262,7 +262,7 @@ export async function saveLessonVersion({
       }
 
       const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       /** The plain precondition read may change while admission waits; lock the lesson last. */
       const current = await lockCurrentLessonVersion(tx, lessonId);

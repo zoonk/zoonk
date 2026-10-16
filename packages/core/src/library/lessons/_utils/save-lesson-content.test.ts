@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -186,10 +187,14 @@ describe(saveLessonContent, () => {
   it("rolls back publishing an answerable lesson without any linked skill", async () => {
     const workflowRunId = randomUUID();
 
-    const lesson = await libraryLessonFixture({
-      contentRunId: workflowRunId,
-      contentStatus: "running",
-    });
+    const [lesson, user] = await Promise.all([
+      libraryLessonFixture({ contentRunId: workflowRunId, contentStatus: "running" }),
+      userFixture(),
+    ]);
+
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: lesson.id, planId: plan.id });
 
     await expect(
       saveLessonContent({
@@ -206,6 +211,46 @@ describe(saveLessonContent, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ).resolves.toMatchObject({ contentStatus: "running" });
+
+    // The plan's mark rolled back with the publication.
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      pendingAdaptation: [],
+    });
+  });
+
+  it("marks each plan reading the lesson changed content when publishing it and its next version, once", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
+    const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await saveLessonContent({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: [],
+      workflowRunId,
+    });
+
+    await expect(readPlan()).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+      pendingAdaptation: ["content"],
+    });
+
+    await saveLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [screen(skill.id)],
+      summary: [],
+    });
+
+    await expect(readPlan()).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 2,
+      pendingAdaptation: ["content"],
+    });
   });
 
   it("repairs skills in replacement versions too", async () => {

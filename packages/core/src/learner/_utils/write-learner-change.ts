@@ -23,7 +23,7 @@ function isUnchanged<T, Kept>(written: T | Unchanged<Kept>): written is Unchange
  * its mark, and `result` is the outcome, so no revision is committed for it.
  */
 export async function writeLearnerChange<T, Kept = T>(
-  { lockPlanIds, planInputs = false, userId }: Parameters<typeof markLearnerChanged>[1],
+  marker: Parameters<typeof markLearnerChanged>[1],
   write: (tx: TransactionClient) => Promise<T | Unchanged<Kept>>,
 ): Promise<T | Kept> {
   const rollback = new Error("The learner write changed nothing");
@@ -31,7 +31,7 @@ export async function writeLearnerChange<T, Kept = T>(
 
   const { data, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { lockPlanIds, planInputs, userId });
+      await markLearnerChanged(tx, marker);
       const written = await write(tx);
 
       if (isUnchanged(written)) {

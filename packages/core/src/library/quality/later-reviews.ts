@@ -161,7 +161,7 @@ export async function pullLessonForFix(lessonId: string): Promise<boolean> {
         skillIds: current.skills.map(({ skillId }) => skillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       const { count } = await tx.lesson.updateMany({
         data: { contentStatus: "failed" },

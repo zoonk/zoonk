@@ -36,7 +36,14 @@ export async function setGoalPrimaryCourse({
     return;
   }
 
-  const count = await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+  const marker = {
+    adaptation: ["goalSource"] as const,
+    adaptationGoalId: goalId,
+    planInputs: true,
+    userId: goal.userId,
+  };
+
+  const count = await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.goal.updateMany({
       data: { primaryCourseId: courseId },
       where: { id: goalId, primaryCourseId: null },

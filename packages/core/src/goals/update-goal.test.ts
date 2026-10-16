@@ -72,6 +72,36 @@ describe(updateGoal, () => {
     });
 
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      pendingAdaptation: [],
+    });
+  });
+
+  it("records source and calendar reasons with metadata and preserves them on a no-op", async () => {
+    const { goal, plan, user } = await signedInGoal();
+    const { plan: otherPlan } = await unplannedGoalFixture({ userId: user.id });
+    const input = { details: { placementDeclined: true }, timeZone: "America/Sao_Paulo" };
+
+    await expect(updateGoal({ goalId: goal.id, input })).resolves.toMatchObject({
+      status: "updated",
+    });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved.pendingAdaptation).toStrictEqual(["goalSource", "calendar"]);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1, pendingAdaptation: [] });
+
+    await expect(updateGoal({ goalId: goal.id, input })).resolves.toMatchObject({
+      status: "updated",
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: saved.inputVersion,
+      pendingAdaptation: saved.pendingAdaptation,
+    });
   });
 
   it("re-plans when the learner's time or days change, with a change they can undo", async () => {

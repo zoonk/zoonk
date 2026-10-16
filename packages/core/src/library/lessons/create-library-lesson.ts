@@ -94,7 +94,7 @@ function pickLessonSlug({ taken, title }: { taken: readonly string[]; title: str
 async function insertLesson({ input, slug }: { input: CreateLibraryLessonInput; slug: string }) {
   return prisma.$transaction(async (tx) => {
     const planIds = await resolvePlanInputDependents(tx, { skillIds: input.skillIds });
-    await markPlansChanged(tx, { planIds });
+    await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
     return tx.lesson.create({
       data: {

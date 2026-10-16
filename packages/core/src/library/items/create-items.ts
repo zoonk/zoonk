@@ -63,7 +63,7 @@ async function storeBatch({
       skillIds: [skillId],
     });
 
-    await markPlansChanged(transaction, { planIds });
+    await markPlansChanged(transaction, { adaptation: ["content"], planIds });
 
     return transaction.item.createManyAndReturn({
       data: entries.map(({ item, mediaAssetId }) => ({

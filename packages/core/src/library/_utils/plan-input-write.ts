@@ -18,7 +18,7 @@ export async function lockPlanInputWrite({
   tx: TransactionClient;
 }): Promise<void> {
   const planIds = await loadPlanIds();
-  await markPlansChanged(tx, { planIds });
+  await markPlansChanged(tx, { adaptation: ["content"], planIds });
   await lockSources();
   const currentPlanIds = await loadPlanIds();
   const marked = new Set(planIds);

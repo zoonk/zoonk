@@ -128,7 +128,14 @@ async function copyToGoal({
     return;
   }
 
-  const count = await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+  const marker = {
+    adaptation: ["goalSource"] as const,
+    adaptationGoalId: goalId,
+    planInputs: true,
+    userId: goal.userId,
+  };
+
+  const count = await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.$executeRaw`
       UPDATE goals
       SET details = jsonb_set(details, '{courseWeights}', ${JSON.stringify(courseWeights)}::jsonb),

@@ -103,7 +103,7 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
         skillIds: current.skills.map(({ skillId: linkedSkillId }) => linkedSkillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       const claimed = await tx.lesson.updateMany({
         data: {

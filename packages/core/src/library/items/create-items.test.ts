@@ -4,6 +4,7 @@ import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -440,8 +441,10 @@ describe(createItems, () => {
     expect(rejected).toStrictEqual([{ index: 0, problems: ["Has 2 options instead of 5."] }]);
   });
 
-  it("returns the stored items instead of copies when a workflow step retries", async () => {
-    const skill = await skillFixture();
+  it("returns the stored items instead of copies when a workflow step retries, marking plans reading the skill once", async () => {
+    const [skill, user] = await Promise.all([skillFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
     const provenance = generatedProvenance();
     const items = [generatedTypedItem(), generatedTypedItem({ question: "Another question?" })];
 
@@ -461,6 +464,12 @@ describe(createItems, () => {
     );
 
     await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(2);
+
+    // The bank the plan reads changed once: the retry wrote nothing.
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+      pendingAdaptation: ["content"],
+    });
   });
 
   it("stores each format one run wrote for a skill, and still no copies on a retry", async () => {

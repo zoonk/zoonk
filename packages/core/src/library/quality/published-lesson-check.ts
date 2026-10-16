@@ -305,7 +305,7 @@ export async function setAsidePublishedLesson({
       }
 
       const planIds = await resolvePlanInputDependents(tx, { lessonIds: [lessonId] });
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       /** Lock content only after plans and owners; a replaced version rolls admission back. */
       if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {

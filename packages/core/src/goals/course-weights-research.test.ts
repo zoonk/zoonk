@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -61,7 +61,7 @@ async function lookUp(goalId: string, year = YEAR) {
 }
 
 describe(findCourseWeightsLookup, () => {
-  it("looks up an entrance exam goal's course weights once, and the planner then reads them", async () => {
+  it("looks up an entrance exam goal's course weights once, marking the goal source changed, and the planner then reads them", async () => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
     const lookup = await lookUp(goal.id);
 
@@ -77,10 +77,33 @@ describe(findCourseWeightsLookup, () => {
 
     await expect(copyStoredCourseWeights({ goalId: goal.id, lookup })).resolves.toBe(false);
 
-    const revisionBefore = await readRevision(goal.userId);
+    const otherGoal = await goalFixture({ userId: goal.userId });
+
+    const [revisionBefore, plan, otherPlan] = await Promise.all([
+      readRevision(goal.userId),
+      planFixture({ goalId: goal.id }),
+      planFixture({ goalId: otherGoal.id }),
+    ]);
+
+    const readPlan = (planId = plan.id) =>
+      prisma.plan.findUniqueOrThrow({
+        select: { inputVersion: true, pendingAdaptation: true },
+        where: { id: planId },
+      });
 
     await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
     await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
+
+    await expect(readPlan()).resolves.toStrictEqual({
+      inputVersion: plan.inputVersion + 1,
+      pendingAdaptation: ["goalSource"],
+    });
+
+    // Only this goal's source changed; the learner's other plan is checked with no reason.
+    await expect(readPlan(otherPlan.id)).resolves.toStrictEqual({
+      inputVersion: otherPlan.inputVersion + 1,
+      pendingAdaptation: [],
+    });
 
     await Promise.all([
       copyStoredCourseWeights({ goalId: goal.id, lookup }),
@@ -88,6 +111,7 @@ describe(findCourseWeightsLookup, () => {
     ]);
 
     await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 

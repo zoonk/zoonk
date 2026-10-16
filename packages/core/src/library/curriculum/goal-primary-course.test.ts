@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it } from "vitest";
@@ -9,15 +9,34 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { getGoalCourseFormat, setGoalPrimaryCourse } from "./goal-primary-course";
 
 describe(setGoalPrimaryCourse, () => {
-  it("points a goal without a main course at the course its first phase is taught in", async () => {
+  it("points a goal without a main course at the course its first phase is taught in, marking only its plan's goal source changed", async () => {
     const [user, course] = await Promise.all([userFixture(), courseFixture()]);
-    const goal = await goalFixture({ userId: user.id });
+
+    const [goal, otherGoal] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const [plan, otherPlan] = await Promise.all([
+      planFixture({ goalId: goal.id, pendingAdaptation: ["pace"] }),
+      planFixture({ goalId: otherGoal.id }),
+    ]);
 
     await setGoalPrimaryCourse({ courseId: course.id, goalId: goal.id });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       primaryCourseId: course.id,
     });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion + 1,
+      pendingAdaptation: ["goalSource", "pace"],
+    });
+
+    // The learner's other plan is checked again, but its own goal source didn't change.
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1, pendingAdaptation: [] });
 
     expect(revalidateTag).toHaveBeenCalledWith(getGoalsCacheTag(user.id), { expire: 0 });
   });
@@ -30,11 +49,17 @@ describe(setGoalPrimaryCourse, () => {
     ]);
 
     const goal = await goalFixture({ primaryCourseId: chosen.id, userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
 
     await setGoalPrimaryCourse({ courseId: generated.id, goalId: goal.id });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       primaryCourseId: chosen.id,
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      pendingAdaptation: [],
     });
 
     expect(revalidateTag).not.toHaveBeenCalled();

@@ -78,7 +78,7 @@ async function publishSteps({
         skillIds: linkedSkills.map(({ skillId: linkedSkillId }) => linkedSkillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlansChanged(tx, { adaptation: ["content"], planIds });
 
       const claimed = await tx.lesson.updateMany({
         data: {
@@ -244,7 +244,14 @@ async function saveExplanationLink({
 
   const planInputs = goal.primaryCourseId === null && courseId !== null;
 
-  const retry = await writeLearnerChange({ planInputs, userId: goal.userId }, async (tx) => {
+  const marker = {
+    adaptation: planInputs ? (["goalSource"] as const) : [],
+    adaptationGoalId: goalId,
+    planInputs,
+    userId: goal.userId,
+  };
+
+  const retry = await writeLearnerChange(marker, async (tx) => {
     const current = await tx.goal.findUnique({ where: { id: goalId } });
 
     if (!current) {
@@ -311,7 +318,14 @@ export async function linkGoFurtherCourse({
     return;
   }
 
-  await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+  const marker = {
+    adaptation: ["goalSource"] as const,
+    adaptationGoalId: goalId,
+    planInputs: true,
+    userId: goal.userId,
+  };
+
+  await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.goal.updateMany({
       data: { primaryCourseId: courseId },
       where: { id: goalId, primaryCourseId: null },
