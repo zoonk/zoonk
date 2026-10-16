@@ -28,6 +28,7 @@ import { finishStudyBlock } from "../sessions/finish-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { requestChallengeQuestions } from "./challenge-questions";
 import { getCheckpointMinutes } from "./checkpoint-minutes";
+import { MIN_CHECKPOINT_QUESTIONS } from "./checkpoint-rules";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
@@ -181,7 +182,15 @@ describe("a phase checkpoint's challenge", () => {
 
     expect(limited.writes).toBe(0);
     expect(limited.statements).toBe(unlimited.statements + 1);
-    expect(limited.result).toMatchObject({ dailyLimitReached: true, status: "ready" });
+
+    // When it's back comes from the plan already read: tomorrow, a day its plan studies.
+    expect(limited.result).toMatchObject({
+      dailyLimitReached: true,
+      nextStudyDate: "2026-10-01",
+      status: "ready",
+    });
+
+    expect(unlimited.result).toMatchObject({ nextStudyDate: null });
 
     await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
       status: "dailyLimitReached",
@@ -199,6 +208,41 @@ describe("a phase checkpoint's challenge", () => {
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       dailyLimitReached: false,
       status: "started",
+    });
+  });
+
+  it("past today's study time in an exam's plan, names no day, as its runs pick the challenge's day", async () => {
+    const { boss, goal, user } = await bossSetup();
+
+    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    // Tomorrow has study time, but an exam's runs keep phase challenges off its eve and its mocks'
+    // own days (see `placeExamBosses`): a Friday's "tomorrow" can be a mock's Saturday, with the
+    // challenge back on Monday. So an exam's intro names no day.
+    await Promise.all([
+      prisma.goal.update({
+        data: { kind: "exam", targetDate: new Date("2026-12-15T00:00:00Z") },
+        where: { id: goal.id },
+      }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      prisma.userLearningProfile.upsert({
+        create: { dailyLimitMinutes: 30, userId: user.id },
+        update: { dailyLimitMinutes: 30 },
+        where: { userId: user.id },
+      }),
+      dailyProgressFixtureMany([
+        { date: SESSION_TODAY, timeSpentSeconds: 30 * 60, userId: user.id },
+      ]),
+    ]);
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      dailyLimitReached: true,
+      nextStudyDate: null,
+      status: "ready",
     });
   });
 
@@ -564,7 +608,7 @@ async function weeklySetup() {
 
   mockSession(user.id);
 
-  return { challenge, goal, plan };
+  return { challenge, goal, plan, skills: library.skills };
 }
 
 /**
@@ -679,6 +723,135 @@ describe("the week's challenge before its day", () => {
     await expect(moveChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
       status: "notMovable",
     });
+  });
+});
+
+/** Today's study time under a 30-minute daily limit, all of it used on `date`. */
+async function useUpStudyTime({ date, userId }: { date: Date; userId: string }) {
+  await Promise.all([
+    prisma.userLearningProfile.upsert({
+      create: { dailyLimitMinutes: 30, userId },
+      update: { dailyLimitMinutes: 30 },
+      where: { userId },
+    }),
+    dailyProgressFixtureMany([{ date, timeSpentSeconds: 30 * 60, userId }]),
+  ]);
+}
+
+const SUNDAY = new Date("2020-10-11T00:00:00Z");
+
+/**
+ * The week's challenge brings the week's studied skills together, so a learner who studied one
+ * this week, with the bank holding its questions, has one to take; without, it keeps its day.
+ */
+async function studyTheWeek({ skillId, userId }: { skillId: string; userId: string }) {
+  const items = await Promise.all(
+    Array.from({ length: MIN_CHECKPOINT_QUESTIONS + 1 }, () =>
+      itemFixture({ content: choiceItemContent(), skillId }),
+    ),
+  );
+
+  await attemptFixture({
+    answeredAt: new Date("2020-10-11T10:00:00Z"),
+    itemId: items[0]?.id,
+    skillId,
+    userId,
+  });
+}
+
+/** The week's challenge planned on Monday, then its Sunday comes. */
+async function weeklySunday() {
+  const setup = await weeklySetup();
+  vi.setSystemTime(new Date("2020-10-11T12:00:00Z"));
+  return setup;
+}
+
+describe("the week's challenge on its Sunday, past today's study time", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(MONDAY);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("keeps Move to Monday: left unstarted, Monday re-plans without it", async () => {
+    const { challenge, goal, skills } = await weeklySunday();
+
+    await Promise.all([
+      studyTheWeek({ skillId: skills[0]?.id ?? "", userId: goal.userId }),
+      useUpStudyTime({ date: SUNDAY, userId: goal.userId }),
+    ]);
+
+    // It names no day to come back: the week's challenge doesn't come back on its own.
+    await expect(challengeOf(challenge.id)).resolves.toMatchObject({
+      canMove: true,
+      dailyLimitReached: true,
+      date: "2020-10-11",
+      nextStudyDate: null,
+      status: "ready",
+      today: "2020-10-11",
+    });
+
+    // Sunday's lessons left, Monday re-plans from today (RULES R24): its session doesn't hold it.
+    vi.setSystemTime(new Date("2020-10-12T12:00:00Z"));
+
+    await expect(startChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
+      status: "notToday",
+    });
+
+    const monday = await prisma.studySession.findFirstOrThrow({
+      include: { blocks: true },
+      where: { goalId: goal.id, localDate: new Date("2020-10-12") },
+    });
+
+    expect(
+      monday.blocks
+        .filter((block) => block.kind === "checkpoint")
+        .map((block) => readBlockPayload(block).planItemId),
+    ).not.toContain(challenge.id);
+  });
+
+  it("moved to Monday past today's study time, starts in Monday's session", async () => {
+    const { challenge, goal, skills } = await weeklySunday();
+
+    await Promise.all([
+      studyTheWeek({ skillId: skills[0]?.id ?? "", userId: goal.userId }),
+      useUpStudyTime({ date: SUNDAY, userId: goal.userId }),
+    ]);
+
+    // Moving changes the plan, not today's study, so it goes through past the limit.
+    const moved = await moveChallenge({ input: {}, planItemId: challenge.id });
+
+    if (moved.status !== "moved" || !moved.move.planItemId) {
+      throw new Error(`Expected the challenge to move, got ${moved.status}`);
+    }
+
+    expect(moved.move.date).toBe("2020-10-12");
+
+    // The move makes it a new row on Monday: the Sunday one is gone.
+    await expect(getChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    vi.setSystemTime(new Date("2020-10-12T12:00:00Z"));
+
+    await expect(
+      startChallenge({ input: {}, planItemId: moved.move.planItemId }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    // A moved challenge is a new row on its new day: Monday's checkpoint block is that row.
+    const monday = await prisma.studySession.findFirstOrThrow({
+      include: { blocks: true },
+      where: { goalId: goal.id, localDate: new Date("2020-10-12") },
+    });
+
+    expect(
+      monday.blocks
+        .filter((block) => block.kind === "checkpoint")
+        .map((block) => readBlockPayload(block).planItemId),
+    ).toContain(moved.move.planItemId);
   });
 });
 

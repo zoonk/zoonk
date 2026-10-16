@@ -1,8 +1,9 @@
 "use client";
 
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePastDateText } from "../plan/plan-status-label";
@@ -74,6 +75,35 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
 }
 
 /**
+ * When the learner's study time is back: "See you tomorrow!" only when tomorrow is a study day,
+ * else the day the plan studies next, named (Friday's "tomorrow" was a Saturday off), or the next
+ * session when the coming week has none. Counted from the week's today, as the week marks it.
+ */
+function SeeYouClause() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { today } = useTodayScreen();
+  const { days, nextStudyDate } = today.session.week;
+  const weekDate = days.find((day) => day.isToday)?.date ?? today.session.localDate;
+
+  if (!nextStudyDate) {
+    return <TodayStatusClause>{t("See you in your next session!")}</TodayStatusClause>;
+  }
+
+  if (nextStudyDate.getTime() - weekDate.getTime() === MS_PER_DAY) {
+    return <TodayStatusClause>{t("See you tomorrow!")}</TodayStatusClause>;
+  }
+
+  return (
+    <TodayStatusClause>
+      {t("See you {day}!", {
+        day: format.dateTime(nextStudyDate, { timeZone: "UTC", weekday: "long" }),
+      })}
+    </TodayStatusClause>
+  );
+}
+
+/**
  * What the day is when there's nothing to start, in one line under the queue: done, a rest day,
  * the study time used up, nothing new in the plan, the goal's date that came with lessons left, or
  * lessons still being written. A rest day that is a return after a break still says hello, as a
@@ -98,7 +128,7 @@ export function TodayDayStatus({ className }: { className?: string }) {
       return (
         <TodayStatusLine className={className} icon={<HourglassIcon />}>
           <TodayStatusSentence>{t("That's today's study time.")}</TodayStatusSentence>
-          <TodayStatusClause>{t("See you tomorrow!")}</TodayStatusClause>
+          <SeeYouClause />
         </TodayStatusLine>
       );
     case "rest":

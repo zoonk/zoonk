@@ -474,9 +474,19 @@ msgid "Back"
 msgstr "Zurück"
 
 #: src/_components/study-time-used-up.tsx
+msgctxt "jwkazv"
+msgid "You've reached today's study time. It'll be in your next session."
+msgstr "Du hast deine Lernzeit für heute erreicht. In deiner nächsten Lerneinheit geht es hier weiter."
+
+#: src/_components/study-time-used-up.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
 msgstr "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter."
+
+#: src/_components/study-time-used-up.tsx
+msgctxt "--X_qb"
+msgid "You've reached today's study time. It'll be here on {day}."
+msgstr "Du hast deine Lernzeit für heute erreicht. Am {day} geht es hier weiter."
 
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
@@ -1246,9 +1256,10 @@ msgstr "Diese Herausforderung ist noch nicht fertig."
 #: src/journey/journey-phase-events.tsx
 msgctxt "f0UFlY"
 msgid "In your next session"
-msgstr "In deiner nächsten Sitzung"
+msgstr "In deiner nächsten Lerneinheit"
 
 #: src/challenge/challenge-footer.tsx
+#: src/challenge/challenge-move-failed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/essay/essay-screen.tsx
 #: src/exam/exam-result-section.tsx
@@ -1282,16 +1293,6 @@ msgid "Start the mock exam"
 msgstr "Probeprüfung starten"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "BNpip2"
-msgid "That day already has a mock exam. Pick another day."
-msgstr "An diesem Tag gibt es bereits eine Probeprüfung. Wähle einen anderen Tag."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "6zRRv0"
-msgid "Not enough study time before {date} for this {duration} mock exam. Pick a later day."
-msgstr "Bis zum {date} reicht die Lernzeit für diese Probeprüfung von {duration} nicht aus. Wähle einen späteren Tag."
-
-#: src/challenge/challenge-footer.tsx
 msgctxt "gCqLBd"
 msgid "Move to Monday"
 msgstr "Auf Montag verschieben"
@@ -1302,6 +1303,16 @@ msgstr "Auf Montag verschieben"
 msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "Mit Plus kannst du Probeprüfungen machen, wann immer du willst, und jede Woche eine in deinem Tarif."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "4jTLf0"
+msgid "You've reached today's study time. Move it to Monday to keep it."
+msgstr "Du hast deine Lernzeit für heute erreicht. Verschiebe das auf Montag, dann bleibt es in deinem Plan."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "PjSBHJ"
+msgid "You've reached today's study time."
+msgstr "Du hast deine Lernzeit für heute erreicht."
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
@@ -1479,6 +1490,16 @@ msgstr "Morgen"
 msgctxt "fUd0bj"
 msgid "{day} · {time}"
 msgstr "{day} · {time}"
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "FgE3EB"
+msgid "That day already has a mock exam, so this one stays where it is."
+msgstr "An diesem Tag gibt es schon eine Probeprüfung, deshalb bleibt diese, wo sie ist."
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "Qyqwxr"
+msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
+msgstr "Für diese Probeprüfung von {duration} kann dein Plan am {date} keinen Platz schaffen. Sie bleibt, wo sie ist."
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
@@ -12311,14 +12332,24 @@ msgid "Adjust your plan to keep going."
 msgstr "Passe deinen Plan an, um weiterzumachen."
 
 #: src/today/today-day-status.tsx
-msgctxt "nQ6arV"
-msgid "That's today's study time."
-msgstr "Das war deine Lernzeit für heute."
+msgctxt "qtZtWG"
+msgid "See you in your next session!"
+msgstr "Bis zur nächsten Lerneinheit!"
 
 #: src/today/today-day-status.tsx
 msgctxt "gWPikA"
 msgid "See you tomorrow!"
 msgstr "Bis morgen!"
+
+#: src/today/today-day-status.tsx
+msgctxt "L6jXw1"
+msgid "See you {day}!"
+msgstr "Bis {day}!"
+
+#: src/today/today-day-status.tsx
+msgctxt "nQ6arV"
+msgid "That's today's study time."
+msgstr "Das war deine Lernzeit für heute."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"

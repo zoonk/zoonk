@@ -147,6 +147,7 @@ export function toDayViewFields({
     week: {
       days,
       daysHitGoal: days.filter((day) => day.hitGoal).length,
+      nextStudyDate: week.nextStudyDate,
       studyDays: days.filter((day) => day.goalMinutes > 0).length,
       time: week.time,
     },

@@ -474,9 +474,19 @@ msgid "Back"
 msgstr "Volver"
 
 #: src/_components/study-time-used-up.tsx
+msgctxt "jwkazv"
+msgid "You've reached today's study time. It'll be in your next session."
+msgstr "Has alcanzado el límite de tiempo de estudio de hoy. Estará en tu próxima sesión."
+
+#: src/_components/study-time-used-up.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
 msgstr "Has alcanzado el límite de tiempo de estudio de hoy. Estará aquí mañana."
+
+#: src/_components/study-time-used-up.tsx
+msgctxt "--X_qb"
+msgid "You've reached today's study time. It'll be here on {day}."
+msgstr "Has alcanzado el límite de tiempo de estudio de hoy. Estará aquí el {day}."
 
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
@@ -1249,6 +1259,7 @@ msgid "In your next session"
 msgstr "En tu próxima sesión"
 
 #: src/challenge/challenge-footer.tsx
+#: src/challenge/challenge-move-failed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/essay/essay-screen.tsx
 #: src/exam/exam-result-section.tsx
@@ -1282,16 +1293,6 @@ msgid "Start the mock exam"
 msgstr "Empezar el simulacro"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "BNpip2"
-msgid "That day already has a mock exam. Pick another day."
-msgstr "Ese día ya tiene un simulacro. Elige otro día."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "6zRRv0"
-msgid "Not enough study time before {date} for this {duration} mock exam. Pick a later day."
-msgstr "No hay suficiente tiempo de estudio antes del {date} para este simulacro de {duration}. Elige un día posterior."
-
-#: src/challenge/challenge-footer.tsx
 msgctxt "gCqLBd"
 msgid "Move to Monday"
 msgstr "Pasar al lunes"
@@ -1302,6 +1303,16 @@ msgstr "Pasar al lunes"
 msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "Los simulacros están incluidos en Plus: cuando quieras y cada semana dentro de tu plan."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "4jTLf0"
+msgid "You've reached today's study time. Move it to Monday to keep it."
+msgstr "Has alcanzado el límite de tiempo de estudio de hoy. Pásalo al lunes para no perderlo."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "PjSBHJ"
+msgid "You've reached today's study time."
+msgstr "Has alcanzado el límite de tiempo de estudio de hoy."
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
@@ -1479,6 +1490,16 @@ msgstr "Mañana"
 msgctxt "fUd0bj"
 msgid "{day} · {time}"
 msgstr "{day} · {time}"
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "FgE3EB"
+msgid "That day already has a mock exam, so this one stays where it is."
+msgstr "Ese día ya tiene un simulacro, así que este se queda donde está."
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "Qyqwxr"
+msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
+msgstr "Tu plan no tiene espacio el {date} para este simulacro de {duration}. Se queda donde está."
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
@@ -12311,14 +12332,24 @@ msgid "Adjust your plan to keep going."
 msgstr "Ajusta tu plan para seguir."
 
 #: src/today/today-day-status.tsx
-msgctxt "nQ6arV"
-msgid "That's today's study time."
-msgstr "Ese es el tiempo de estudio de hoy."
+msgctxt "qtZtWG"
+msgid "See you in your next session!"
+msgstr "¡Hasta tu próxima sesión!"
 
 #: src/today/today-day-status.tsx
 msgctxt "gWPikA"
 msgid "See you tomorrow!"
 msgstr "¡Hasta mañana!"
+
+#: src/today/today-day-status.tsx
+msgctxt "L6jXw1"
+msgid "See you {day}!"
+msgstr "¡Hasta el {day}!"
+
+#: src/today/today-day-status.tsx
+msgctxt "nQ6arV"
+msgid "That's today's study time."
+msgstr "Ese es el tiempo de estudio de hoy."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"

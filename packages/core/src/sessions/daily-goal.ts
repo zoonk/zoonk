@@ -102,6 +102,27 @@ export function getWeekDays({
 }
 
 /**
+ * The first day after `today` with study time, within a week: when what today's study time held
+ * back comes. Null when the coming week has none (days closed, or past the goal's date), so the
+ * copy says "your next session" instead of naming a day.
+ */
+export function getNextStudyDate({
+  getMinutes,
+  today,
+}: {
+  /** The minutes the learner's plans give a date. */
+  getMinutes: (date: Date) => number;
+  today: Date;
+}): Date | null {
+  const days = Array.from(
+    { length: DAYS_PER_WEEK },
+    (_, index) => new Date(today.getTime() + (index + 1) * MS_PER_DAY),
+  );
+
+  return days.find((date) => getMinutes(date) > 0) ?? null;
+}
+
+/**
  * Minutes a block took: from start to finish, capped at twice its estimate so a tab left open
  * doesn't inflate the day. A finished block that never recorded its start counts its estimate.
  */

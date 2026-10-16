@@ -7,7 +7,7 @@ import { TaskActions } from "../_components/task-layout";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { MoveFailed } from "./challenge-footer";
+import { MoveFailed } from "./challenge-move-failed";
 
 /** The new day in the title, in the mono face like every date. */
 function renderMono(chunks: React.ReactNode) {

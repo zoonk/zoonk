@@ -6,8 +6,6 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../plans/planner/plan-state";
-import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { readDailyTimeLimitReached } from "../sessions/_utils/daily-time-limit";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
@@ -16,6 +14,7 @@ import { type BossTiming, getBossTimings } from "./_utils/boss-reached";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
+import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-daily-limit";
 import { getMovableDay, loadChallengeMoveRules } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
@@ -63,15 +62,6 @@ function getTiming(challenge: OwnedChallenge): BossTiming {
   }
 
   return item.scheduledFor !== null && item.scheduledFor <= today ? "nextSession" : "date";
-}
-
-/**
- * Whether today's study time is used up on the day Start counts it: the learner's day, in their
- * active goal's zone as Today reads it, which can be another date than the challenge's own goal's.
- */
-async function readDailyLimitReachedToday(userId: string): Promise<boolean> {
-  const { currentDate } = await getRequestProgressDateContext();
-  return readDailyTimeLimitReached({ date: currentDate, userId });
 }
 
 /** The week's challenge moves before it starts, from today or a later day. */
@@ -323,13 +313,14 @@ export async function getChallenge({
 
   const reinforcement = await loadResultReinforcement({ result: lastResult, userId });
   const shown = getAvailableChallengeStatus({ block: previewBlock, call, isMock, size, status });
+  const dailyLimitReached = shown === "ready" && limitReached;
 
   return {
     challenge: {
       blockId,
       call,
       canMove: canMoveIt,
-      dailyLimitReached: shown === "ready" && limitReached,
+      dailyLimitReached,
       date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
       estimatedMinutes: size.estimatedMinutes,
       examName: isMock ? (goal.examBlueprint?.name ?? goal.title) : null,
@@ -341,6 +332,7 @@ export async function getChallenge({
       minutes: size.minutes,
       mock: isMock,
       netScored: size.netScored,
+      nextStudyDate: getNextStudyDay({ challenge, dailyLimitReached, kind }),
       number: size.number,
       passMark: getChallengePassMark({ block: previewBlock, call, kind, size }),
       phase: findPhase(challenge),

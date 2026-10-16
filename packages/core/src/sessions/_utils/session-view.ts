@@ -150,7 +150,13 @@ export type StudySessionView = {
   pauseSuggested: boolean;
   sessionBar: { completed: number; total: number };
   status: StudySessionRow["status"];
-  week: { days: WeekDay[]; daysHitGoal: number; studyDays: number; time: StudyWeek["time"] };
+  week: {
+    days: WeekDay[];
+    daysHitGoal: number;
+    nextStudyDate: StudyWeek["nextStudyDate"];
+    studyDays: number;
+    time: StudyWeek["time"];
+  };
 };
 
 /**

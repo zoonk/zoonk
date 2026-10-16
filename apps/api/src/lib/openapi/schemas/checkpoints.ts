@@ -150,7 +150,7 @@ export const challengeResponseSchema = z
       .boolean()
       .meta({
         description:
-          "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start until tomorrow: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first",
+          "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start today: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first. A phase challenge is back on `nextStudyDate`, its goal's next study day within a week (say tomorrow when it's the day after `today`, else name the day; null: say the next session). `nextStudyDate` is null for an exam goal's phase challenges, whose day the plan's next run picks away from the exam's eve and its mock days, and for the weekly challenge, which doesn't come back on its own once its day is over: offer Move to Monday to keep it when `canMove`",
       }),
     date: logicalDateSchema.nullable().meta({ description: "The day it's planned for" }),
     estimatedMinutes: unknownSizeSchema.meta({
@@ -179,6 +179,7 @@ export const challengeResponseSchema = z
     }),
     mock: z.boolean().meta({ description: "An exam's weekly mock, in the exam's conditions" }),
     netScored: z.boolean().meta({ description: "Wrong answers cost points (see `wrongPenalty`)" }),
+    nextStudyDate: logicalDateSchema.nullable().meta({ description: "See `dailyLimitReached`" }),
     number: z.number().int().min(1).nullable().meta({ description: '"Mock exam 3"' }),
     passMark: unknownSizeSchema.meta({
       description:

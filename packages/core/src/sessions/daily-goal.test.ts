@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type PlanDay,
   getBlockMinutes,
+  getNextStudyDate,
   getSessionMinutesDone,
   getWeekDayKind,
   getWeekDays,
@@ -105,6 +106,35 @@ describe(getWeekDayKind, () => {
 
     // Without any goal, nothing was ever planned.
     expect(getWeekDayKind({ date: WEDNESDAY, goalMinutes: 0, goals: [] })).toBe("beforeStart");
+  });
+});
+
+/** The minutes of a 45-minute plan that rests on Sundays. */
+function studyMinutes(date: Date): number {
+  return restsOnSundays(45)(date).goalMinutes;
+}
+
+describe(getNextStudyDate, () => {
+  it("is the next day with study time, past rest days and into the next week", () => {
+    expect(getNextStudyDate({ getMinutes: studyMinutes, today: WEDNESDAY })).toStrictEqual(
+      day("2026-10-01"),
+    );
+
+    // Saturday's next study day is Monday: Sunday rests.
+    expect(getNextStudyDate({ getMinutes: studyMinutes, today: day("2026-10-03") })).toStrictEqual(
+      day("2026-10-05"),
+    );
+
+    // Studying one weekday only, the next study day is a week away.
+    const wednesdays = (date: Date) => (date.getUTCDay() === WEDNESDAY.getUTCDay() ? 30 : 0);
+
+    expect(getNextStudyDate({ getMinutes: wednesdays, today: WEDNESDAY })).toStrictEqual(
+      day("2026-10-07"),
+    );
+  });
+
+  it("is null when the coming week has no study time", () => {
+    expect(getNextStudyDate({ getMinutes: () => 0, today: WEDNESDAY })).toBeNull();
   });
 });
 

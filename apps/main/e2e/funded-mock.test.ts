@@ -59,19 +59,34 @@ test.describe("A long mock the plan saves time for", () => {
       });
 
     const page = await openAs(browser, user);
-    // Resolve the learner's current day before taking the move's exact persistence baseline.
-    // The shell prefetches Today, which can refresh this older fixture's saved plan.
+    // Every GET and tab prefetch preserves this announced mock; only a learner POST may save a plan.
+    const before = await readSaved();
+    await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
     await page.goto("/today");
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
+    await expect(readSaved()).resolves.toStrictEqual(before);
+    await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+
     await page.goto(`/challenge/${mock.id}`);
     const move = page.getByRole("button", { name: "Move to Monday" });
     await expect(move).toBeVisible();
-    const before = await readSaved();
+    await expect(readSaved()).resolves.toStrictEqual(before);
+
+    await page.goto("/plan");
+    await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
+    await expect(readSaved()).resolves.toStrictEqual(before);
+    await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await page.goto(`/challenge/${mock.id}`);
+    await expect(move).toBeVisible();
     await move.click();
 
-    await expect(page.getByText(/Not enough study time before/u)).toContainText(shownDuration(330));
+    const refused = page.getByText(/^Your plan can't make room for this/u);
+    await expect(refused).toContainText(shownDuration(330));
 
-    await expect(page.getByText(/Pick a later day/u)).toBeVisible();
+    // Monday is this screen's only move, so it says the mock stays instead of asking for a day.
+    await expect(refused).toContainText("It stays where it is.");
     await expect(page).toHaveURL(new RegExp(`/challenge/${mock.id}$`, "u"));
     await expect(readSaved()).resolves.toStrictEqual(before);
     await page.context().close();

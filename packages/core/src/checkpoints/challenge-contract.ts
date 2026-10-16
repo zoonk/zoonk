@@ -75,7 +75,7 @@ export type ChallengeView = {
   canMove: boolean;
   /**
    * Today's study time is used up under the learner's daily limit, so a `ready` challenge can't
-   * start until tomorrow, as Start would refuse. False for every other status, and while
+   * start today, as Start would refuse (`nextStudyDate` says when a phase challenge is back). False for every other status, and while
    * `waitReason` says what comes first.
    */
   dailyLimitReached: boolean;
@@ -101,6 +101,15 @@ export type ChallengeView = {
   leftOut: MockLeftOut[];
   /** Wrong answers cost points, as in Cebraspe exams (see `wrongPenalty`). */
   netScored: boolean;
+  /**
+   * With `dailyLimitReached`, a phase challenge's next study day in its goal's plan, YYYY-MM-DD,
+   * within a week: it's back in that day's session ("It'll be here on Monday"). Null otherwise, when
+   * the coming week has no study time, and for the week's challenge, which doesn't come back on its
+   * own once its day is over: Move to Monday keeps it (`canMove`). Null for an exam's phase
+   * challenges too: its runs keep them off the exam's eve and its mocks' own days, which no day's
+   * study time tells.
+   */
+  nextStudyDate: string | null;
   /** "Mock exam 3": this goal's mocks, counting this one. */
   number: number | null;
   /**

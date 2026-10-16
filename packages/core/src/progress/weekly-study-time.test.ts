@@ -15,6 +15,7 @@ import { getTodayView } from "../view-models/today/get-today-view";
 
 const MONDAY = new Date("2026-10-12T00:00:00Z");
 const TUESDAY = new Date("2026-10-13T00:00:00Z");
+const FRIDAY = new Date("2026-10-16T00:00:00Z");
 
 describe("weekly study time", () => {
   afterEach(() => {
@@ -208,5 +209,42 @@ describe("weekly study time", () => {
       isToday: true,
       minutes: 1,
     });
+  });
+
+  it("names the next study day past the week's rest days, for when today's study time is used up", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-16T14:00:00Z"));
+    const user = await userFixture();
+    const { goal } = await learnerGoalFixture({ phases: [1], userId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: MONDAY, dailyMinutes: 45, timezone: "UTC" },
+        where: { id: goal.id },
+      }),
+      // Weekdays only: Saturday and Sunday rest, so Friday's "tomorrow" would be wrong.
+      prisma.plan.update({
+        data: { settings: { weekdayMinutes: [0, 45, 45, 45, 45, 45, 0] } },
+        where: { goalId: goal.id },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    await studySessionFixture({ goalId: goal.id, localDate: FRIDAY, userId: user.id });
+    mockSession(user.id);
+
+    const today = await getTodayView({ goalId: goal.id });
+
+    if (today.status !== "ready") {
+      throw new Error(`Expected ready Today, received ${today.status}`);
+    }
+
+    // The week's days end on Sunday's rest; the next study day is the next week's Monday.
+    expect(today.today.session.week.days.slice(5).map((day) => day.kind)).toStrictEqual([
+      "rest",
+      "rest",
+    ]);
+
+    expect(today.today.session.week.nextStudyDate).toStrictEqual(new Date("2026-10-19T00:00:00Z"));
   });
 });

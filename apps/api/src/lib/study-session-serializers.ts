@@ -24,6 +24,7 @@ export function serializeStudySession(session: StudySessionView | TodayView["ses
     week: {
       ...session.week,
       days: session.week.days.map((day) => ({ ...day, date: toLogicalDate(day.date) })),
+      nextStudyDate: toOptionalLogicalDate(session.week.nextStudyDate),
     },
   };
 }

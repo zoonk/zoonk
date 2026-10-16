@@ -8,15 +8,19 @@ import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
-import { StudyTimeUsedUpActions, StudyTimeUsedUpLine } from "../_components/study-time-used-up";
+import {
+  StudyTimeUsedUpActions,
+  StudyTimeUsedUpLine,
+  StudyTimeUsedUpNote,
+} from "../_components/study-time-used-up";
 import { TaskActions } from "../_components/task-layout";
-import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
+import { daysBetween } from "../_utils/iso-date";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { WaitLine } from "../missions/mission-copy";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
+import { MoveFailed } from "./challenge-move-failed";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
 /**
@@ -137,55 +141,27 @@ function StartButton() {
 }
 
 /**
- * A move or its undo that didn't go through. A mock the days before Monday can't save its time for
- * says so, with the day and its real length; one onto a day that already has a mock says that.
- * Either way the plan stays as it was.
+ * Move to Monday, before the week's challenge starts: the second option beside Start, and past
+ * today's study time, where moving is what keeps it, the main action (`main`), which Enter presses.
  */
-export function MoveFailed() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
-  const { move } = useChallengeScreen();
-
-  if (move.refusal?.kind === "mockCollision") {
-    return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
-        {t("That day already has a mock exam. Pick another day.")}
-      </p>
-    );
-  }
-
-  if (move.refusal?.kind === "unfundedMove") {
-    const { date, minutes } = move.refusal.unfundedMove;
-
-    return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
-        {t("Not enough study time before {date} for this {duration} mock exam. Pick a later day.", {
-          date: formatDate(date),
-          duration: formatDuration(minutes),
-        })}
-      </p>
-    );
-  }
-
-  if (!move.failed) {
-    return null;
-  }
-
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Try again in a moment.")}
-    </p>
-  );
-}
-
-/** The second option beside Start: the week's challenge can wait for Monday, before it starts. */
-function MoveToMondayButton({ className }: { className?: string }) {
+function MoveToMondayButton({ className, main = false }: { className?: string; main?: boolean }) {
   const t = useExtracted();
   const { challenge, move, start } = useChallengeScreen();
 
   if (!challenge.canMove) {
     return null;
+  }
+
+  if (main) {
+    return (
+      <TaskMainButton
+        busy={move.pending}
+        disabled={start.busy}
+        onClick={() => void move.moveToMonday()}
+      >
+        {t("Move to Monday")}
+      </TaskMainButton>
+    );
   }
 
   return (
@@ -270,17 +246,37 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
 }
 
 /**
+ * The week's challenge past today's study time doesn't come back on its own: the next study day
+ * re-plans without it (RULES R24). So, while it can move (`movable`), it says how to keep it, with
+ * Move to Monday as the way on. When it can't move, or once the plan refused the move, it says only
+ * that today's study time is used up, promising nothing.
+ */
+function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <StudyTimeUsedUpNote>
+      {movable
+        ? t("You've reached today's study time. Move it to Monday to keep it.")
+        : t("You've reached today's study time.")}
+    </StudyTimeUsedUpNote>
+  );
+}
+
+/**
  * What the footer says about the challenge today, and nothing more: the line saying where it
  * stands, and what the learner can do. A Start or Continue refused because Plus lapsed since the
  * intro opened shows the lock right away, while the host reloads the challenge. One that today's
  * saved order puts after other work (`waitReason`, the rule Start applies) says what comes first,
  * as the day's row does, instead of offering a Start that refuses. Today's study time used up
- * (`dailyLimitReached`, as the page read it) says when it's back, with the way back to Today in
- * Start's place and Move to Monday before it, since moving the week's challenge isn't study.
+ * (`dailyLimitReached`, as the page read it) puts the way back to Today in Start's place: a phase
+ * challenge says when it's back; the week's challenge says how to keep it, with Move to Monday as
+ * the main action, since moving it isn't study, until the plan refuses the move. A move that just
+ * didn't go through keeps Move to Monday, for the retry its line asks for.
  */
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const { challenge, hrefs, start } = useChallengeScreen();
+  const { challenge, hrefs, move, start } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
     return { actions: <PlusRequiredFooter />, line: null };
@@ -294,16 +290,28 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
       }
 
       if (challenge.status === "ready" && challenge.dailyLimitReached) {
+        // A refusal is a fact about the plan that nothing on this screen changes: no move again.
+        const movable = challenge.canMove && !move.refusal;
+
         return {
           actions: (
             <>
               <MoveFailed />
-              <StudyTimeUsedUpActions href={hrefs.exit}>
-                {challenge.canMove && <MoveToMondayButton />}
-              </StudyTimeUsedUpActions>
+              <StudyTimeUsedUpActions
+                href={hrefs.exit}
+                main={movable && <MoveToMondayButton main />}
+              />
             </>
           ),
-          line: <StudyTimeUsedUpLine />,
+          line:
+            challenge.kind === "weekly" ? (
+              <WeeklyUsedUpLine movable={movable} />
+            ) : (
+              <StudyTimeUsedUpLine
+                nextStudyDate={challenge.nextStudyDate}
+                today={challenge.today}
+              />
+            ),
         };
       }
 

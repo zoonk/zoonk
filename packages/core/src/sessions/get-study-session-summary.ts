@@ -174,7 +174,7 @@ export async function getStudySessionSummary({
     fullMealEarned,
     missions,
     session,
-    week: { days: [], time: { studiedMinutes: 0, targetMinutes: 0 } },
+    week: { days: [], nextStudyDate: null, time: { studiedMinutes: 0, targetMinutes: 0 } },
   });
 
   const netScoredItemIds = getNetScoredItemIds(session.blocks);

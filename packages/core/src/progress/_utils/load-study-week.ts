@@ -5,10 +5,24 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getGoalDayMinutes } from "../../sessions/_utils/day-minutes";
-import { type PlanDay, type WeekDay, getWeekDayKind, getWeekDays } from "../../sessions/daily-goal";
+import {
+  type PlanDay,
+  type WeekDay,
+  getNextStudyDate,
+  getWeekDayKind,
+  getWeekDays,
+} from "../../sessions/daily-goal";
 import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
-export type StudyWeek = { days: WeekDay[]; time: WeeklyStudyTime };
+export type StudyWeek = {
+  days: WeekDay[];
+  /**
+   * The learner's next day with study time after this one, within a week, past the week's end too:
+   * when today's study time used up is back ("See you Monday!"). Null when the coming week has none.
+   */
+  nextStudyDate: Date | null;
+  time: WeeklyStudyTime;
+};
 
 const WEEK_DAYS = 7;
 const SECONDS_PER_MINUTE = 60;
@@ -70,8 +84,8 @@ export async function loadStudyWeek({
 
   // Days before a goal existed weren't days to study for it, so a new learner's week doesn't open
   // with days that read as missed, or as rest days they never chose.
-  const getPlanDay = (date: Date): PlanDay => {
-    const goalMinutes = started.reduce(
+  const getDayMinutes = (date: Date): number =>
+    started.reduce(
       (sum, { goal, planSettings, startDate }) =>
         date < startDate
           ? sum
@@ -80,6 +94,8 @@ export async function loadStudyWeek({
       0,
     );
 
+  const getPlanDay = (date: Date): PlanDay => {
+    const goalMinutes = getDayMinutes(date);
     return { goalMinutes, kind: getWeekDayKind({ date, goalMinutes, goals: started }) };
   };
 
@@ -92,6 +108,7 @@ export async function loadStudyWeek({
 
   return {
     days: week,
+    nextStudyDate: getNextStudyDate({ getMinutes: getDayMinutes, today: localDate }),
     time: {
       studiedMinutes: Math.floor(
         days.reduce((total, day) => total + day.timeSpentSeconds, 0) / SECONDS_PER_MINUTE,

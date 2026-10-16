@@ -474,9 +474,19 @@ msgid "Back"
 msgstr "Retour"
 
 #: src/_components/study-time-used-up.tsx
+msgctxt "jwkazv"
+msgid "You've reached today's study time. It'll be in your next session."
+msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera disponible à ta prochaine séance."
+
+#: src/_components/study-time-used-up.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
 msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible demain."
+
+#: src/_components/study-time-used-up.tsx
+msgctxt "--X_qb"
+msgid "You've reached today's study time. It'll be here on {day}."
+msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible {day}."
 
 #: src/_components/study-time-used-up.tsx
 #: src/challenge/challenge-moved-screen.tsx
@@ -485,7 +495,7 @@ msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera 
 #: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
-msgstr "Retour à Aujourd'hui"
+msgstr "Retour à Aujourd’hui"
 
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
@@ -1249,6 +1259,7 @@ msgid "In your next session"
 msgstr "Lors de ta prochaine séance"
 
 #: src/challenge/challenge-footer.tsx
+#: src/challenge/challenge-move-failed.tsx
 #: src/essay/essay-feedback.tsx
 #: src/essay/essay-screen.tsx
 #: src/exam/exam-result-section.tsx
@@ -1282,16 +1293,6 @@ msgid "Start the mock exam"
 msgstr "Commencer l’examen blanc"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "BNpip2"
-msgid "That day already has a mock exam. Pick another day."
-msgstr "Il y a déjà un examen blanc ce jour-là. Choisis un autre jour."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "6zRRv0"
-msgid "Not enough study time before {date} for this {duration} mock exam. Pick a later day."
-msgstr "Pas assez de temps d’étude avant le {date} pour cet examen blanc de {duration}. Choisis un jour plus tardif."
-
-#: src/challenge/challenge-footer.tsx
 msgctxt "gCqLBd"
 msgid "Move to Monday"
 msgstr "Déplacer à lundi"
@@ -1302,6 +1303,16 @@ msgstr "Déplacer à lundi"
 msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
 msgstr "Avec Plus, fais des examens blancs quand tu veux et chaque semaine dans ton plan."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "4jTLf0"
+msgid "You've reached today's study time. Move it to Monday to keep it."
+msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Déplace-le à lundi pour le garder."
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "PjSBHJ"
+msgid "You've reached today's study time."
+msgstr "Tu as atteint ta limite de temps d’étude pour aujourd’hui."
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
@@ -1363,7 +1374,7 @@ msgstr "Des questions variées sur cette phase, sans indice."
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "2yz8Wb"
 msgid "The Trickster"
-msgstr "le Farceur"
+msgstr "Le Farceur"
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
@@ -1479,6 +1490,16 @@ msgstr "Demain"
 msgctxt "fUd0bj"
 msgid "{day} · {time}"
 msgstr "{day} · {time}"
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "FgE3EB"
+msgid "That day already has a mock exam, so this one stays where it is."
+msgstr "Il y a déjà un examen blanc ce jour-là, donc celui-ci reste où il est."
+
+#: src/challenge/challenge-move-failed.tsx
+msgctxt "Qyqwxr"
+msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
+msgstr "Ton plan ne peut pas faire de place le {date} pour cet examen blanc de {duration}. Il reste où il est."
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
@@ -2658,17 +2679,17 @@ msgstr "Les examens blancs sont inclus avec Plus : passe-en quand tu veux, retr
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
 msgid "Today is your short mock, then a look at what it finds. Then rest. {work}"
-msgstr "Aujourd'hui, tu passes un court examen blanc, puis tu regardes ce qu'il révèle. Ensuite, repose-toi. {work}"
+msgstr "Aujourd’hui, tu passes un court examen blanc, puis tu regardes ce qu’il révèle. Ensuite, repose-toi. {work}"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "kjAsiN"
 msgid "Today goes to the topics that come up most, then a short mock. Then rest."
-msgstr "Aujourd'hui, tu révises les sujets qui tombent le plus souvent, puis tu passes un court examen blanc. Ensuite, repose-toi."
+msgstr "Aujourd’hui, tu révises les sujets qui tombent le plus souvent, puis tu passes un court examen blanc. Ensuite, repose-toi."
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "A98YJQ"
 msgid "Today goes to the topics that come up most. Then rest."
-msgstr "Aujourd'hui, tu révises les sujets qui tombent le plus souvent. Ensuite, repose-toi."
+msgstr "Aujourd’hui, tu révises les sujets qui tombent le plus souvent. Ensuite, repose-toi."
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "hKsGQp"
@@ -12311,14 +12332,24 @@ msgid "Adjust your plan to keep going."
 msgstr "Ajuste ton plan pour continuer."
 
 #: src/today/today-day-status.tsx
-msgctxt "nQ6arV"
-msgid "That's today's study time."
-msgstr "Tu as atteint ton temps d’étude pour aujourd’hui."
+msgctxt "qtZtWG"
+msgid "See you in your next session!"
+msgstr "À ta prochaine séance !"
 
 #: src/today/today-day-status.tsx
 msgctxt "gWPikA"
 msgid "See you tomorrow!"
 msgstr "À demain !"
+
+#: src/today/today-day-status.tsx
+msgctxt "L6jXw1"
+msgid "See you {day}!"
+msgstr "À {day} !"
+
+#: src/today/today-day-status.tsx
+msgctxt "nQ6arV"
+msgid "That's today's study time."
+msgstr "Tu as atteint ton temps d’étude pour aujourd’hui."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -12653,7 +12684,7 @@ msgstr "Une nouvelle phase commence aujourd'hui, avec un petit échauffement pou
 #: src/today/use-today-copy.ts
 msgctxt "RlVM-g"
 msgid "A fresh week. Today starts with an easy warm-up."
-msgstr "Une nouvelle semaine commence. Aujourd'hui, on démarre avec un petit échauffement."
+msgstr "Une nouvelle semaine commence. Aujourd’hui, on démarre avec un petit échauffement."
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "OA9N1Z"

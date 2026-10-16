@@ -1,31 +1,62 @@
 import { type Page, type TestInfo } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { createCheckpointLearner } from "./checkpoint-fixtures";
 import { openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
 import { watchStart } from "./start-watch";
 import { openAs } from "./study-day";
 
-const STUDY_TIME_USED_UP = "You've reached today's study time. It'll be here tomorrow.";
+/**
+ * The line past today's study time: a phase challenge comes back on its own (its plan here studies
+ * every day, so tomorrow); the week's doesn't, so it says how to keep it.
+ */
+type UsedUpLine = "keep" | "tomorrow";
+
+const STUDY_TIME_USED_UP = {
+  keep: "You've reached today's study time. Move it to Monday to keep it.",
+  tomorrow: "You've reached today's study time. It'll be here tomorrow.",
+} as const satisfies Record<UsedUpLine, string>;
+
 const START_FAILED = "That didn't go through. Try again in a moment.";
 
-/** The same line and way back as the French, German and Portuguese catalogs say them. */
+/** The week's line once it can't move: only that today's study time is used up. */
+const STUDY_TIME_USED_UP_ONLY = "You've reached today's study time.";
+
+/** The plan's answer to a move onto a day that already has the week's mock. */
+const MOVE_COLLIDES = "That day already has a mock exam, so this one stays where it is.";
+
+const DAYS_PER_WEEK = 7;
+const MONDAY = 1;
+
+/** The Monday the week's challenge moves to: the first one after today. */
+function nextMonday(): Date {
+  const today = toUTCMidnight(new Date());
+  const days = (MONDAY - today.getUTCDay() + DAYS_PER_WEEK) % DAYS_PER_WEEK || DAYS_PER_WEEK;
+  return new Date(today.getTime() + days * MS_PER_DAY);
+}
+
+/** The same lines and way back as the French, German and Portuguese catalogs say them. */
 const STUDY_TIME_USED_UP_IN = {
   de: {
     back: "Zurück zu Heute",
-    line: "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter.",
+    keep: "Du hast deine Lernzeit für heute erreicht. Verschiebe das auf Montag, dann bleibt es in deinem Plan.",
+    tomorrow: "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter.",
   },
   fr: {
-    back: "Retour à Aujourd'hui",
-    line: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible demain.",
+    back: "Retour à Aujourd’hui",
+    keep: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Déplace-le à lundi pour le garder.",
+    tomorrow:
+      "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible demain.",
   },
   pt: {
     back: "Voltar para Hoje",
-    line: "Você já atingiu seu limite de tempo de estudo de hoje. O desafio fica para amanhã.",
+    keep: "Você já atingiu seu limite de tempo de estudo de hoje. Mova para segunda-feira para não perder.",
+    tomorrow: "Você já atingiu seu limite de tempo de estudo de hoje. Fica para amanhã.",
   },
-} as const;
+} as const satisfies Record<string, Record<UsedUpLine, string> & { back: string }>;
 
 /** Today's study time under a 30-minute daily limit, all used. */
 async function useUpTodaysStudyTime(userId: string) {
@@ -42,8 +73,11 @@ async function useUpTodaysStudyTime(userId: string) {
 }
 
 /** The intro's footer once today's study time is used up: when it's back, and the way home. */
-async function expectStudyTimeUsedUp(page: Page) {
-  await expect(page.getByRole("status").filter({ hasText: STUDY_TIME_USED_UP })).toBeVisible();
+async function expectStudyTimeUsedUp(page: Page, line: UsedUpLine) {
+  await expect(
+    page.getByRole("status").filter({ hasText: STUDY_TIME_USED_UP[line] }),
+  ).toBeVisible();
+
   await expect(page.getByRole("link", { name: "Back to Today" })).toBeVisible();
   await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
 }
@@ -68,11 +102,13 @@ async function captureAt(
  * have to fit. It ends back in the light scheme.
  */
 async function captureStudyTimeUsedUp({
+  line: usedUp,
   name,
   page,
   planItemId,
   testInfo,
 }: {
+  line: UsedUpLine;
   name: string;
   page: Page;
   planItemId: string;
@@ -86,7 +122,7 @@ async function captureStudyTimeUsedUp({
   }
 
   for (const lang of ["fr", "de", "pt"] as const) {
-    const { back, line } = STUDY_TIME_USED_UP_IN[lang];
+    const { back, [usedUp]: line } = STUDY_TIME_USED_UP_IN[lang];
     // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
     await page.goto(`/${lang}/challenge/${planItemId}`);
     // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
@@ -110,8 +146,17 @@ test("a challenge intro opened past today's study time says when it's back, with
   await useUpTodaysStudyTime(user.id);
   const page = await openAs(browser, user);
   await page.goto(`/challenge/${boss.id}`);
-  await expectStudyTimeUsedUp(page);
-  await captureStudyTimeUsedUp({ name: "daily-limit", page, planItemId: boss.id, testInfo });
+  // Its plan studies every day, so it's back tomorrow.
+  await expectStudyTimeUsedUp(page, "tomorrow");
+
+  await captureStudyTimeUsedUp({
+    line: "tomorrow",
+    name: "daily-limit",
+    page,
+    planItemId: boss.id,
+    testInfo,
+  });
+
   await page.goto(`/challenge/${boss.id}`);
 
   await expect(
@@ -123,20 +168,89 @@ test("a challenge intro opened past today's study time says when it's back, with
   await page.context().close();
 });
 
-test("the week's mock exam past today's study time still offers Move to Monday with the way back to Today", async ({
+test("the week's mock exam past today's study time says how to keep it, with Move to Monday and the way back to Today", async ({
   browser,
 }, testInfo) => {
   const { boss, user } = await createCheckpointLearner({ kind: "weekly", planned: true });
   await useUpTodaysStudyTime(user.id);
   const page = await openAs(browser, user);
   await page.goto(`/challenge/${boss.id}`);
-  await expectStudyTimeUsedUp(page);
 
-  // Moving the week's challenge (here its mock) changes the plan, not today's study, so it stays.
-  // Not tapped here: the move itself is checkpoints.test.ts's "Move to Monday" flow.
+  // Left unstarted, the week's challenge leaves the plan once the next study day re-plans, so it
+  // promises no day: moving it, which changes the plan, not today's study, keeps it.
+  // Not tapped here: the move itself is checkpoints.test.ts's "Move to Monday" flow, and core's
+  // challenges.test.ts proves the moved one starts in Monday's session.
+  await expectStudyTimeUsedUp(page, "keep");
   await expect(page.getByRole("button", { name: "Move to Monday" })).toBeEnabled();
 
-  await captureStudyTimeUsedUp({ name: "daily-limit-weekly", page, planItemId: boss.id, testInfo });
+  // Moving is what keeps it, so Move to Monday is the main action Enter presses, not the way back.
+  await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveAttribute(
+    "aria-keyshortcuts",
+    "Enter",
+  );
+
+  await expect(page.getByRole("link", { name: "Back to Today" })).not.toHaveAttribute(
+    "aria-keyshortcuts",
+  );
+
+  await captureStudyTimeUsedUp({
+    line: "keep",
+    name: "daily-limit-weekly",
+    page,
+    planItemId: boss.id,
+    testInfo,
+  });
+
+  await page.context().close();
+});
+
+test("the week's mock exam past today's study time stops offering Move to Monday once the plan refuses it", async ({
+  browser,
+}, testInfo) => {
+  const { boss, plan, user } = await createCheckpointLearner({ kind: "weekly", planned: true });
+
+  // Next Monday already has the week's mock, so the plan refuses to move this one onto it.
+  await planItemFixture({
+    kind: "mock",
+    phase: 0,
+    planId: plan.id,
+    position: 1,
+    scheduledFor: nextMonday(),
+    titleSnapshot: "Mock exam 2",
+  });
+
+  await useUpTodaysStudyTime(user.id);
+  const page = await openAs(browser, user);
+  await page.goto(`/challenge/${boss.id}`);
+  await expectStudyTimeUsedUp(page, "keep");
+  await page.getByRole("button", { name: "Move to Monday" }).click();
+
+  // The refusal is a fact about the plan: the line stops asking for the move and the button goes,
+  // leaving the way back to Today as the one action.
+  await expect(page.getByText(MOVE_COLLIDES)).toBeVisible();
+
+  await expect(page.getByRole("status").filter({ hasText: STUDY_TIME_USED_UP_ONLY })).toHaveText(
+    STUDY_TIME_USED_UP_ONLY,
+  );
+
+  await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
+
+  await expect(page.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
+    "aria-keyshortcuts",
+    "Enter",
+  );
+
+  await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+
+  for (const [colorScheme, width] of [
+    ["light", 390],
+    ["dark", 390],
+    ["light", 1440],
+  ] as const) {
+    // oxlint-disable-next-line no-await-in-loop -- One page shows one size and scheme at a time.
+    await captureAt(page, testInfo, { colorScheme, name: "daily-limit-weekly-refused", width });
+  }
+
   await page.context().close();
 });
 
@@ -162,7 +276,7 @@ test("a challenge refused at today's study time offers Start again once the lear
   });
 
   await start.click();
-  await expectStudyTimeUsedUp(page);
+  await expectStudyTimeUsedUp(page, "tomorrow");
 
   await expect(readSeen()).resolves.toMatchObject({
     busy: true,
@@ -193,6 +307,10 @@ test("a challenge refused at today's study time offers Start again once the lear
   await today.getByRole("button", { name: /^(?:Start session|Continue)/u }).click();
   await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"));
   await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeEnabled();
-  await expect(page.getByRole("status").filter({ hasText: STUDY_TIME_USED_UP })).toHaveCount(0);
+
+  await expect(
+    page.getByRole("status").filter({ hasText: STUDY_TIME_USED_UP.tomorrow }),
+  ).toHaveCount(0);
+
   await page.context().close();
 });

@@ -135,6 +135,12 @@ export const studySessionResponseSchema = z
           }),
         ),
         daysHitGoal: z.number().int().min(0),
+        nextStudyDate: logicalDateSchema
+          .nullable()
+          .meta({
+            description:
+              "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+          }),
         studyDays: z
           .number()
           .int()

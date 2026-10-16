@@ -29741,7 +29741,7 @@
           },
           "dailyLimitReached": {
             "type": "boolean",
-            "description": "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start until tomorrow: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first"
+            "description": "Today's study time is used up under the learner's daily limit, so a `ready` challenge can't start today: starting it is refused with `DAILY_LIMIT_REACHED`. False for every other status, and while `waitReason` says what comes first. A phase challenge is back on `nextStudyDate`, its goal's next study day within a week (say tomorrow when it's the day after `today`, else name the day; null: say the next session). `nextStudyDate` is null for an exam goal's phase challenges, whose day the plan's next run picks away from the exam's eve and its mock days, and for the weekly challenge, which doesn't come back on its own once its day is over: offer Move to Monday to keep it when `canMove`"
           },
           "date": {
             "nullable": true,
@@ -29804,6 +29804,13 @@
           "netScored": {
             "type": "boolean",
             "description": "Wrong answers cost points (see `wrongPenalty`)"
+          },
+          "nextStudyDate": {
+            "nullable": true,
+            "description": "See `dailyLimitReached`",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "number": {
             "nullable": true,
@@ -30018,6 +30025,7 @@
           "minutes",
           "mock",
           "netScored",
+          "nextStudyDate",
           "number",
           "passMark",
           "phase",
@@ -78712,6 +78720,13 @@
                 "minimum": 0,
                 "maximum": 9007199254740991
               },
+              "nextStudyDate": {
+                "nullable": true,
+                "description": "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
               "studyDays": {
                 "type": "integer",
                 "minimum": 0,
@@ -78744,6 +78759,7 @@
             "required": [
               "days",
               "daysHitGoal",
+              "nextStudyDate",
               "studyDays",
               "time"
             ],
@@ -81092,6 +81108,13 @@
                 "minimum": 0,
                 "maximum": 9007199254740991
               },
+              "nextStudyDate": {
+                "nullable": true,
+                "description": "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
               "studyDays": {
                 "type": "integer",
                 "minimum": 0,
@@ -81124,6 +81147,7 @@
             "required": [
               "days",
               "daysHitGoal",
+              "nextStudyDate",
               "studyDays",
               "time"
             ],

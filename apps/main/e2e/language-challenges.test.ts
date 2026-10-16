@@ -510,17 +510,21 @@ test("a checkpoint Start asks for the microphone in the tap, and its call keeps 
   }
 });
 
-const STUDY_TIME_USED_UP = "You've reached today's study time. It'll be here tomorrow.";
+/**
+ * The call's intro doesn't read its plan's days, so it names no day: the call is back in the
+ * learner's next session, whichever day that is.
+ */
+const STUDY_TIME_USED_UP = "You've reached today's study time. It'll be in your next session.";
 
 /** The same line and way back as the French and German catalogs say them. */
 const STUDY_TIME_USED_UP_IN = {
   de: {
     back: "Zurück zu Heute",
-    line: "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter.",
+    line: "Du hast deine Lernzeit für heute erreicht. In deiner nächsten Lerneinheit geht es hier weiter.",
   },
   fr: {
-    back: "Retour à Aujourd'hui",
-    line: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible demain.",
+    back: "Retour à Aujourd’hui",
+    line: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera disponible à ta prochaine séance.",
   },
 } as const;
 
