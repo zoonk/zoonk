@@ -39,13 +39,9 @@ async function recordSessionLookup(headers: Headers | undefined) {
  * - Enables email+password with plain-text matching (no bcrypt overhead)
  * - Bypasses rate limiting except guest requests opting into real limiter coverage
  * - Stores OTP and one-time tokens in plain text for E2E testing
- * - Mints one-time tokens over HTTP (off in production), so fixtures can sign a learner in on any app
  */
 export const auth = betterAuth({
   ...baseAuthConfig,
-  disabledPaths: baseAuthConfig.disabledPaths?.filter(
-    (path) => path !== "/one-time-token/generate",
-  ),
   emailAndPassword: {
     enabled: true,
     password: {

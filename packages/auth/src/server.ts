@@ -69,18 +69,6 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       },
     },
   },
-  // GETs Zoonk never calls that write: Better Auth's organization reads clear the session's active
-  // organization when asked for one the learner isn't in, its provider account read refreshes and
-  // saves the account's tokens, its one-time token GET mints a sign-in token (E2E keeps it), and its
-  // email-link callbacks verify an email or delete an account (Zoonk sends codes, never these links).
-  disabledPaths: [
-    "/account-info",
-    "/delete-user/callback",
-    "/one-time-token/generate",
-    "/organization/get-full-organization",
-    "/organization/get-organization",
-    "/verify-email",
-  ],
   hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
