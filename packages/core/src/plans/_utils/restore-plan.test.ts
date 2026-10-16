@@ -111,7 +111,7 @@ describe(restorePlan, () => {
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
     expect(after.layoutKeys).toStrictEqual(KEYS);
-    expect(after.pendingAdaptation).toStrictEqual(["evidence", "pace"]);
+    expect(after.pendingAdaptation.toSorted()).toStrictEqual(["evidence", "pace"]);
     expect(after.pendingPace).toStrictEqual({ factor: 1.4, source: "own" });
     expect(after.checkedInputVersion).toBeNull();
 
