@@ -1294,12 +1294,6 @@ msgid "Mock exams come with Plus: whenever you want, and every week in your plan
 msgstr "Avec Plus, fais des examens blancs quand tu veux et chaque semaine dans ton plan."
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-verdict.tsx
-msgctxt "a2N2Lk"
-msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {Nouvel essai demain. Rien n’est perdu.} one {Nouvel essai demain, après # courte leçon. Rien n’est perdu.} other {Nouvel essai demain, après # courtes leçons. Rien n’est perdu.}}"
-
-#: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-screen.tsx
@@ -1308,12 +1302,10 @@ msgid "See how it went"
 msgstr "Voir le résultat"
 
 #: src/challenge/challenge-footer.tsx
-#: src/journey/journey-phase-events.tsx
-#: src/missions/mission-copy.tsx
-#: src/today/today-block-row.tsx
-msgctxt "lqBoRy"
-msgid "After the challenge before it"
-msgstr "Après le défi précédent"
+#: src/checkpoints/checkpoint-duel-verdict.tsx
+msgctxt "a2N2Lk"
+msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
+msgstr "{lessons, plural, =0 {Nouvel essai demain. Rien n’est perdu.} one {Nouvel essai demain, après # courte leçon. Rien n’est perdu.} other {Nouvel essai demain, après # courtes leçons. Rien n’est perdu.}}"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/exam/exam-format-section.tsx
@@ -1341,6 +1333,11 @@ msgstr "+{points} Puissance Mentale"
 msgctxt "rpg2CM"
 msgid "New try · {name}"
 msgstr "Nouvel essai · {name}"
+
+#: src/challenge/challenge-intro.tsx
+msgctxt "Nu8F54"
+msgid "Questions on recordings from this phase, played as in the exam, with no hints."
+msgstr "Questions sur des enregistrements de cette phase, diffusés comme à l’examen, sans indice."
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "1UgcTo"
@@ -3893,6 +3890,13 @@ msgstr "Hors de ton plan"
 msgctxt "J15Qzq"
 msgid "Won"
 msgstr "Réussi"
+
+#: src/journey/journey-phase-events.tsx
+#: src/missions/mission-copy.tsx
+#: src/today/today-block-row.tsx
+msgctxt "lqBoRy"
+msgid "After the challenge before it"
+msgstr "Après le défi précédent"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "jcz36l"
