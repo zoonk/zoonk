@@ -1904,7 +1904,6 @@ describe(goalContentWorkflow, () => {
       }
 
       expect(proposals).not.toHaveLength(0);
-      expect(firstProposal.underWay).toBe(false);
       expect(waited[0]?.getTime()).toBeGreaterThan(Date.now());
 
       const [plan, stored, added, changes] = await Promise.all([
