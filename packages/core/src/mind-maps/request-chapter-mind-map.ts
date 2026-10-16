@@ -6,7 +6,6 @@ import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
-import { loadGoalMap } from "../view-models/_utils/goal-map";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
 
@@ -98,14 +97,14 @@ export async function requestChapterMindMap({
     return { status: "notFound" };
   }
 
-  const map = await loadGoalMap({ goal: owned.goal });
-  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal: owned.goal, map });
+  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal: owned.goal });
 
   if (!facts) {
     return { status: "notFound" };
   }
 
   const now = new Date();
+
   const status = getMindMapStatus({ ...facts, now });
 
   if (status === "ready" || status === "unavailable") {

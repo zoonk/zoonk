@@ -290,7 +290,7 @@ test.describe("Checkpoints API", () => {
     await api.dispose();
   });
 
-  test("a boss's challenge says what it asks on its day and starts its block, only for its learner", async () => {
+  test("a legacy boss offers Start without a question count, then reads its saved block, only for its learner", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "challenge" }),
       createBearerLearner({ baseURL, prefix: "challenge-other" }),
@@ -313,13 +313,17 @@ test.describe("Checkpoints API", () => {
       blockId: null,
       call: null,
       canMove: false,
+      estimatedMinutes: null,
       goalId: goal.id,
       kind: "boss",
       locked: false,
+      minutes: null,
+      passMark: null,
       phase: { index: 0, name: "Basics" },
       planItemId: boss.id,
-      questions: BOSS_QUESTIONS,
+      questions: null,
       status: "ready",
+      waitReason: null,
     });
 
     // Reading the intro writes nothing: only Start makes the day's session and its block.
@@ -337,7 +341,12 @@ test.describe("Checkpoints API", () => {
       schema: challengeResponseSchema,
     });
 
-    expect(running).toMatchObject({ blockId: started.blockId, status: "started" });
+    expect(running).toMatchObject({
+      blockId: started.blockId,
+      questions: BOSS_QUESTIONS,
+      status: "started",
+      waitReason: null,
+    });
 
     const [hidden, bossMove] = await Promise.all([
       other.api.get(`${path}?timeZone=UTC`),
@@ -349,6 +358,94 @@ test.describe("Checkpoints API", () => {
     // Only the week's challenge moves to Monday; a boss keeps its day.
     expect(bossMove.status()).toBe(409);
   });
+
+  // oxlint-disable-next-line vitest/prefer-each -- Playwright doesn't provide test.each.
+  for (const { before, done } of [
+    { before: "lessons", done: "skipped" },
+    { before: "challenge", done: "completed" },
+  ] as const) {
+    test(`a boss after today's unfinished ${before} says it waits, as Start refuses, until that work is ${done}`, async () => {
+      const { api, userId } = await createBearerLearner({ baseURL, prefix: "challenge-wait" });
+      const goal = await createGoalAtBoss(userId);
+
+      const boss = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "boss", plan: { goalId: goal.id } },
+      });
+
+      const path = `/v1/challenges/${boss.id}`;
+
+      const readIntro = async () =>
+        readBody({
+          response: await api.get(`${path}?timeZone=UTC`),
+          schema: challengeResponseSchema,
+        });
+
+      // Nothing waits before the day is saved, nor in the order Open saves it in.
+      await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: null });
+
+      const today = await openStudyDay({ api, goalId: goal.id });
+      const checkpoint = today.blocks.find((block) => block.kind === "checkpoint");
+
+      if (!checkpoint) {
+        throw new Error("Expected the boss in the opened day");
+      }
+
+      await expect(readIntro()).resolves.toMatchObject({
+        blockId: checkpoint.id,
+        status: "ready",
+        waitReason: null,
+      });
+
+      // Unfinished work saved ahead of it in today's order, as a rematch's reinforcement lessons are.
+      const last = Math.max(...today.blocks.map((block) => block.position));
+
+      await prisma.studySessionBlock.update({
+        data: { position: last + 1 },
+        where: { id: checkpoint.id },
+      });
+
+      const earlier = await prisma.studySessionBlock.create({
+        data: {
+          kind: before === "lessons" ? "learn" : "checkpoint",
+          payload:
+            before === "lessons"
+              ? {}
+              : {
+                  checkpoint: {
+                    kind: "boss",
+                    mock: false,
+                    passMark: 0,
+                    phase: 0,
+                    timeLimitMinutes: null,
+                  },
+                },
+          position: checkpoint.position,
+          sessionId: today.id,
+        },
+      });
+
+      await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: before });
+
+      const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
+      expect(refused.status()).toBe(409);
+
+      await expect(refused.json()).resolves.toMatchObject({
+        error: { code: "EARLIER_FIRST", details: { reason: before } },
+      });
+
+      await prisma.studySessionBlock.update({ data: { status: done }, where: { id: earlier.id } });
+      await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: null });
+
+      await expect(
+        readBody({
+          response: await api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+          schema: challengeStartResponseSchema,
+        }),
+      ).resolves.toMatchObject({ blockId: checkpoint.id, kind: "checkpoint" });
+
+      await api.dispose();
+    });
+  }
 
   // A boss the bank held too few questions for stays in the day: starting it says so, and its
   // generations write what it lacks of its ten (a model call, so each counts as AI help).
@@ -371,7 +468,7 @@ test.describe("Checkpoints API", () => {
       schema: challengeResponseSchema,
     });
 
-    expect(intro).toMatchObject({ passMark: 7, questions: 10, status: "ready" });
+    expect(intro).toMatchObject({ passMark: null, questions: null, status: "ready" });
 
     const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
     expect(refused.status()).toBe(409);

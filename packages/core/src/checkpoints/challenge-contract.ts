@@ -77,9 +77,10 @@ export type ChallengeView = {
   date: string | null;
   /**
    * About how long it takes: for a mock, learners' real pace on the exam's mocks (never more than
-   * `minutes`, its clock), the exam's own pace until that's known; `minutes` otherwise.
+   * `minutes`, its clock), the exam's own pace until that's known; `minutes` otherwise. Null while
+   * the checkpoint's size is unknown.
    */
-  estimatedMinutes: number;
+  estimatedMinutes: number | null;
   examName: string | null;
   /** The challenge needs Plus to start; content and completed results remain visible. */
   locked: boolean;
@@ -87,8 +88,8 @@ export type ChallengeView = {
   fullLength: boolean;
   goalId: string;
   kind: CheckpointKind;
-  /** Time on the clock for a mock; about how long a checkpoint takes otherwise. */
-  minutes: number;
+  /** Time on the clock for a mock; about a checkpoint's time, null while its size is unknown. */
+  minutes: number | null;
   mock: boolean;
   /** What a mock leaves out of the real exam, each with why; empty for any other challenge. */
   leftOut: MockLeftOut[];
@@ -98,18 +99,20 @@ export type ChallengeView = {
   number: number | null;
   /**
    * Right answers that pass a phase checkpoint, or for a call the goals got across that win it
-   * (null until its call is written); a weekly challenge pays for finishing.
+   * (null until its call is written); null while a checkpoint's size is unknown. A weekly
+   * challenge pays for finishing.
    */
   passMark: number | null;
   phase: CheckpointPhase | null;
   planItemId: string;
-  /** The questions it asks; 0 for a call, which asks none. */
-  questions: number;
+  /** The stored question count; null before it is known, 0 for a call or known empty challenge. */
+  questions: number | null;
   /**
    * The recordings a listening phase's checkpoint asks its questions on, each played as in the
-   * exam; 0 when it asks text questions (and before its day, while its questions aren't picked).
+   * exam; null for a saved recording-kind offer before its recordings are selected, 0 for text
+   * questions or without a known recording-kind offer.
    */
-  recordings: number;
+  recordings: number | null;
   /** A phase checkpoint not passed on an earlier day, back again. */
   rematch: boolean;
   /** Available lessons selected for the last lost duel's misses by the rematch scheduler. */
@@ -147,6 +150,13 @@ export type ChallengeView = {
    * lists its sections, and a language goal's call.
    */
   topics: ChallengeTopic[];
+  /**
+   * Why today's block for it waits, in the order today's saved session keeps (the rule Start
+   * applies, `getStoredBlockWait`): a phase checkpoint waits for the day's lessons before it
+   * (`"lessons"`) or for the phase checkpoint before it (`"challenge"`) until they're completed or
+   * skipped. Null before today's session is saved and when nothing before it waits.
+   */
+  waitReason: "challenge" | "lessons" | null;
 };
 
 /** Where a started challenge is played: the checkpoint screen or the mock exam's. */

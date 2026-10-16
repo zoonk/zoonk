@@ -57,7 +57,7 @@ describe("checkpoint previews follow the day Start actually opens", () => {
     await expect(
       getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
     ).resolves.toMatchObject({
-      challenge: { blockId: null, questions: 10, status: "waiting" },
+      challenge: { blockId: null, minutes: null, questions: null, status: "waiting", topics: [] },
       status: "ready",
     });
 
@@ -70,7 +70,7 @@ describe("checkpoint previews follow the day Start actually opens", () => {
     await expect(readDay(day.id)).resolves.toStrictEqual(saved);
   });
 
-  it("reads the weekly preview's seven real questions and topics before Start persists them", async () => {
+  it("keeps the weekly offer unknown until Start persists its seven questions and topics", async () => {
     const { goal, items, plan, skills, user } = await completedTeaching({
       itemsPerSkill: 7,
       lessons: 1,
@@ -96,13 +96,13 @@ describe("checkpoint previews follow the day Start actually opens", () => {
     expect(preview).toMatchObject({
       challenge: {
         blockId: null,
-        estimatedMinutes: 11,
+        estimatedMinutes: null,
         kind: "weekly",
-        minutes: 11,
+        minutes: null,
         passMark: null,
-        questions: 7,
+        questions: null,
         status: "ready",
-        topics: [{ name: skill.name, subject: null }],
+        topics: [],
       },
       status: "ready",
     });

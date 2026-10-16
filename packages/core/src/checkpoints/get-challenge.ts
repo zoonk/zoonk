@@ -6,15 +6,15 @@ import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../plans/planner/plan-state";
-import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { readBlockPayload } from "../sessions/block-payload";
+import { getStoredBlockWait } from "../sessions/block-wait";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
-import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-builder";
 import { type BossTiming, getBossTimings } from "./_utils/boss-reached";
 import { countBlockRecordings } from "./_utils/boss-recordings";
 import { loadChallengeCall } from "./_utils/challenge-call";
 import { getMovableDay, loadChallengeMoveRules } from "./_utils/challenge-move";
+import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
 import { loadChallengeSize } from "./_utils/challenge-size";
 import { getChallengeStatus } from "./_utils/challenge-status";
@@ -100,41 +100,43 @@ function getOpenBlockId({
   return block?.status === "completed" ? block.id : null;
 }
 
-/** An unavailable milestone is pending content, not an empty future or queued offer. */
+/**
+ * An unavailable milestone is pending content, not an empty future or queued offer. One whose size
+ * is unknown (null questions) isn't known to be empty, so it keeps its status.
+ */
 function getAvailableChallengeStatus({
   block,
   call,
   isMock,
-  questions,
+  size,
   status,
 }: {
   block: ChallengeBlock | null;
   call: ChallengeCall | null;
   isMock: boolean;
-  questions: number;
+  size: { questions: number | null };
   status: ChallengeStatus;
 }): ChallengeStatus {
   const pending = status === "upcoming" || status === "queued";
-  return pending && !isMock && !call && !block && questions === 0 ? "waiting" : status;
+  const empty = size.questions === 0;
+  return pending && !isMock && !call && !block && empty ? "waiting" : status;
 }
 
 /**
  * What wins a phase checkpoint: right answers (its block's pass mark on the questions it can still
- * ask, `getAskablePassMark`, or seven of ten before it's planned), or for a unit's call most of its
- * goals, once its call is written.
+ * ask, `getAskablePassMark`, or the share of its known saved offer). Null while its size is unknown,
+ * or for a unit's call until its goals are written.
  */
 function getChallengePassMark({
   block,
   call,
   kind,
-  planned,
-  questions,
+  size,
 }: {
   block: ChallengeBlock | null;
   call: ChallengeCall | null;
   kind: CheckpointKind;
-  planned?: PlannedBlock | null;
-  questions: number;
+  size: { questions: number | null };
 }): number | null {
   if (kind === "weekly") {
     return null;
@@ -144,7 +146,13 @@ function getChallengePassMark({
     return call.goals === null ? null : getPassMark(call.goals.length);
   }
 
-  const payload = block ? readBlockPayload(block) : planned?.payload;
+  const { questions } = size;
+
+  if (questions === null) {
+    return null;
+  }
+
+  const payload = block ? readBlockPayload(block) : null;
   return payload?.checkpoint ? getAskablePassMark({ payload, questions }) : getPassMark(questions);
 }
 
@@ -179,12 +187,46 @@ async function readTodayBlockStatus({
 }
 
 /**
- * A due challenge can be offered before the learner opens the day. Its queue is checked in
- * memory; once the day exists its saved blocks are authoritative, just as they are for Start.
- * Only the Start POST may create the session and its blocks.
+ * Whether Start can open it before the learner opens the day: a due one on a day not saved yet,
+ * unless its saved plan item says it can't be asked yet (`readBossOffer`). Once the day exists its
+ * saved blocks are authoritative, just as they are for Start. Only the Start POST may create the
+ * session and its blocks, so nothing here builds the day.
  */
+function isOfferedBeforeOpen({
+  challenge,
+  due,
+  plusRequired,
+  savedDay,
+}: {
+  challenge: OwnedChallenge;
+  due: boolean;
+  plusRequired: boolean;
+  savedDay: boolean;
+}): boolean {
+  const offerable = !savedDay && due && !plusRequired && challenge.goal.status === "active";
+  return offerable && !readBossOffer(challenge)?.waiting;
+}
+
+type SavedDayBlock = Pick<ChallengeBlock, "id" | "kind" | "payload" | "position" | "status">;
+
+/**
+ * Why today's block waits in the saved day's order, by the rule Start applies to the same saved
+ * blocks, so the intro says so instead of offering a Start that refuses. Before the day is saved
+ * there's no order to wait in.
+ */
+function getSavedWaitReason({
+  savedBlocks,
+  todayBlock,
+}: {
+  savedBlocks: readonly SavedDayBlock[];
+  todayBlock: ChallengeBlock | null;
+}): ChallengeView["waitReason"] {
+  const saved = todayBlock ? savedBlocks.find((row) => row.id === todayBlock.id) : undefined;
+  return saved ? getStoredBlockWait({ block: saved, blocks: savedBlocks }) : null;
+}
+
 async function loadChallengeDay(challenge: OwnedChallenge) {
-  const { goal, item, timeZone, today, userId } = challenge;
+  const { goal, item, today, userId } = challenge;
   const timing = getTiming(challenge);
   const due = timing === "nextSession" && item.status === "todo";
   const plusRequired = await needsPlus(challenge);
@@ -192,60 +234,59 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const [block, savedDay] = await Promise.all([
     findChallengeBlock({ challenge }),
     prisma.studySession.findUnique({
+      select: {
+        blocks: { select: { id: true, kind: true, payload: true, position: true, status: true } },
+        id: true,
+      },
       where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
     }),
   ]);
 
   const todayBlock = getTodayBlock({ block, today });
 
-  const upcomingBlock =
-    !savedDay && due && !plusRequired && goal.status === "active"
-      ? buildSessionBlocks(
-          await loadSessionBuildInput({
-            goal,
-            localDate: today,
-            now: new Date(),
-            timeZone,
-            userId,
-          }),
-        ).blocks.find((candidate) => candidate.payload.planItemId === item.id)
-      : null;
+  const offered = isOfferedBeforeOpen({
+    challenge,
+    due,
+    plusRequired,
+    savedDay: Boolean(savedDay),
+  });
 
   const status = getChallengeStatus({
     due,
     itemStatus: item.status,
     plusRequired,
     queued: timing === "queued",
-    todayBlockStatus: upcomingBlock
+    todayBlockStatus: offered
       ? "pending"
       : await readTodayBlockStatus({ isMock: item.kind === "mock", todayBlock }),
   });
 
+  // An earlier day's block isn't the one Start opens today: the offer is sized as its item keeps it.
   return {
     plusRequired,
-    previewBlock: upcomingBlock ? null : block,
+    previewBlock: offered ? null : block,
     status,
     todayBlock,
-    upcomingBlock,
+    waitReason: getSavedWaitReason({ savedBlocks: savedDay?.blocks ?? [], todayBlock }),
   };
 }
 
 function loadRecordings({
   block,
-  isMock,
-  planned,
+  challenge,
 }: {
   block: ChallengeBlock | null;
-  isMock: boolean;
-  planned: PlannedBlock | null | undefined;
+  challenge: OwnedChallenge;
 }) {
-  if (isMock || (!block && !planned)) {
+  if (challenge.item.kind === "mock") {
     return 0;
   }
 
-  return countBlockRecordings(
-    block ? readBlockPayload(block).itemIds : (planned?.payload.itemIds ?? []),
-  );
+  if (block) {
+    return countBlockRecordings(readBlockPayload(block).itemIds);
+  }
+
+  return readBossOffer(challenge)?.kind === "recording" ? null : 0;
 }
 
 /**
@@ -271,19 +312,19 @@ export async function getChallenge({
   const kind = getKind(challenge);
   const isMock = item.kind === "mock";
 
-  const { plusRequired, previewBlock, status, todayBlock, upcomingBlock } =
+  const { plusRequired, previewBlock, status, todayBlock, waitReason } =
     await loadChallengeDay(challenge);
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
   const [size, canMoveIt, lastResult, counts, recordings, topics, call] = await Promise.all([
-    loadChallengeSize({ block: previewBlock, challenge, planned: upcomingBlock }),
+    loadChallengeSize({ block: previewBlock, challenge }),
     // A mock the plan doesn't include has no day of its own to move.
     status !== "plusRequired" && canMove({ challenge, todayBlock }),
     kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
     loadMilestoneCounts(userId),
-    loadRecordings({ block: previewBlock, isMock, planned: upcomingBlock }),
-    loadChallengeTopics({ block: previewBlock, challenge, planned: upcomingBlock }),
+    loadRecordings({ block: previewBlock, challenge }),
+    loadChallengeTopics({ block: previewBlock, challenge }),
     loadChallengeCall({ blockId, challenge }),
   ]);
 
@@ -306,13 +347,7 @@ export async function getChallenge({
       mock: isMock,
       netScored: size.netScored,
       number: size.number,
-      passMark: getChallengePassMark({
-        block: previewBlock,
-        call,
-        kind,
-        planned: upcomingBlock,
-        questions: size.questions,
-      }),
+      passMark: getChallengePassMark({ block: previewBlock, call, kind, size }),
       phase: findPhase(challenge),
       planItemId: item.id,
       questions: size.questions,
@@ -327,17 +362,12 @@ export async function getChallenge({
       sections: size.sections,
       // The exam's real start time when it has one, else the time the learner's own words gave.
       startTime: size.startTime ?? goal.studyTime,
-      status: getAvailableChallengeStatus({
-        block: previewBlock,
-        call,
-        isMock,
-        questions: size.questions,
-        status,
-      }),
+      status: getAvailableChallengeStatus({ block: previewBlock, call, isMock, size, status }),
       timeZone: size.startTime ? size.timeZone : null,
       title: item.titleSnapshot,
       today: toIsoDate(today),
       topics,
+      waitReason,
       written: size.written,
       wrongPenalty: isMock
         ? getWrongPenalty(

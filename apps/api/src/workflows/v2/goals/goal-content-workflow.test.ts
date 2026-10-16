@@ -718,6 +718,10 @@ describe(goalContentWorkflow, () => {
             forExam: false,
             lessonId,
             planGoalId: goal.id,
+            planManifest: expect.objectContaining({
+              goalId: goal.id,
+              targets: expect.arrayContaining([expect.objectContaining({ lessonId })]),
+            }),
             wait: index === 0 ? "learner" : "soon",
           },
         ]);
@@ -836,6 +840,10 @@ describe(goalContentWorkflow, () => {
           forExam: false,
           lessonId: lesson.id,
           planGoalId: goal.id,
+          planManifest: expect.objectContaining({
+            goalId: goal.id,
+            targets: expect.arrayContaining([expect.objectContaining({ lessonId: lesson.id })]),
+          }),
           wait: "learner",
         },
       ]);
@@ -919,6 +927,12 @@ describe(goalContentWorkflow, () => {
           forExam: false,
           lessonId: moved.lessonId,
           planGoalId: goal.id,
+          planManifest: expect.objectContaining({
+            goalId: goal.id,
+            targets: expect.arrayContaining([
+              expect.objectContaining({ lessonId: moved.lessonId }),
+            ]),
+          }),
           wait: "learner",
         },
       ]);

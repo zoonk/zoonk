@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
@@ -180,6 +181,132 @@ test.describe("Checkpoints", () => {
     await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
     await expectAccessibleScreen(page, "a checkpoint before its day");
+
+    await page.context().close();
+  });
+
+  test("Start refreshes a due offer omitted from the opened day instead of asking to retry", async ({
+    browser,
+  }) => {
+    const { boss, user } = await createUpcomingBoss();
+    const today = toUTCMidnight(new Date());
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { id: boss.planId } });
+
+    // The commitment is due, but today's saved calendar is a rest day. Only Start opens the day
+    // and finds it has no block for this offer; the intro must then read that saved outcome.
+    await Promise.all([
+      prisma.planItem.update({ data: { scheduledFor: today }, where: { id: boss.id } }),
+      prisma.plan.update({
+        data: {
+          settings: {
+            startDate: new Date(today.getTime() - MS_PER_DAY).toISOString().slice(0, 10),
+            weekdayMinutes: Array.from({ length: 7 }, (_, weekday) =>
+              weekday === today.getUTCDay() ? 0 : 20,
+            ),
+          },
+        },
+        where: { id: plan.id },
+      }),
+    ]);
+
+    const context = await browser.newContext({
+      storageState: user.storageState,
+      timezoneId: "UTC",
+    });
+
+    const page = await context.newPage();
+    await page.goto(`/challenge/${boss.id}`);
+    await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeEnabled();
+    expect(await prisma.studySession.count({ where: { goalId: plan.goalId } })).toBe(0);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    // No manual reload: the owning host re-reads after the POST, without a generic error or busy loop.
+    await expect(page.getByText("In your next session", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0);
+    await expect(page.getByText("That didn't go through. Try again in a moment.")).toHaveCount(0);
+
+    await expect(page.getByText("Still starting. This is taking longer than usual.")).toHaveCount(
+      0,
+    );
+
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+
+    const session = await prisma.studySession.findFirstOrThrow({
+      include: { blocks: true },
+      where: { goalId: plan.goalId, localDate: today },
+    });
+
+    expect(session.blocks).toHaveLength(0);
+    await page.reload();
+    await expect(page.getByText("In your next session", { exact: true })).toBeVisible();
+    await context.close();
+  });
+
+  test("Start on a checkpoint whose reinforcement lesson the saved day puts first says so politely instead of asking to retry", async ({
+    browser,
+  }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+
+    await page.goto(`/challenge/${boss.id}`);
+    const start = page.getByRole("button", { exact: true, name: "Start" });
+    const statusRegion = page.locator("[data-slot='task-action-bar'] [aria-live='polite']");
+    await expect(start).toBeEnabled();
+
+    // The bar's polite region is already there, empty, so a line that later replaces Start is
+    // inserted into it and read out. One mounted together with its line would stay silent.
+    await expect(statusRegion).toBeAttached();
+    await expect(statusRegion).toBeEmpty();
+
+    // Meanwhile another tab saves today's order with a rematch's short lesson before the duel:
+    // Start refuses, and the intro reads that order.
+    await prisma.studySessionBlock.update({ data: { position: 1 }, where: { id: block.id } });
+
+    const lesson = await prisma.studySessionBlock.create({
+      data: {
+        kind: "learn",
+        payload: { reinforcement: true },
+        position: 0,
+        sessionId: block.sessionId,
+      },
+    });
+
+    await start.click();
+
+    // The line replaces the Start that had focus, in the bar's polite region, with no error to
+    // retry and no busy loop.
+    await expect(statusRegion.getByText("After today's lessons", { exact: true })).toBeVisible();
+
+    await expect(start).toHaveCount(0);
+    await expect(page.getByText("That didn't go through. Try again in a moment.")).toHaveCount(0);
+
+    await expect(page.getByText("Still starting. This is taking longer than usual.")).toHaveCount(
+      0,
+    );
+
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+    await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+        return saved.status;
+      })
+      .toBe("pending");
+
+    await page.reload();
+    await expect(page.getByText("After today's lessons", { exact: true })).toBeVisible();
+    await expect(start).toHaveCount(0);
+
+    // Once the lesson is skipped, the duel is the next thing: Start opens it.
+    await prisma.studySessionBlock.update({
+      data: { status: "skipped" },
+      where: { id: lesson.id },
+    });
+
+    await page.reload();
+    await start.click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
 
     await page.context().close();
   });

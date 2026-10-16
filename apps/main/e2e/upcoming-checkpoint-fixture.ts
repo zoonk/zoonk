@@ -2,6 +2,8 @@ import { planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { getCheckpointMinutes } from "../../../packages/core/src/checkpoints/checkpoint-minutes";
+import { type SavedItemFacts } from "../../../packages/core/src/plans/_utils/selected-item-contract";
 import { createGoalLearner } from "./checkpoint-fixtures";
 
 const DAYS_TO_BOSS = 3;
@@ -18,7 +20,7 @@ export async function createUpcomingBoss() {
     libraryLessonFixture({ title: "Discounts" }),
   ]);
 
-  // Its future intro describes the canonical ten real questions, not an empty phase.
+  // Its future intro reads the ten-question offer saved by the selected plan.
   await Promise.all([
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
     ...Array.from({ length: 10 }, () =>
@@ -31,8 +33,26 @@ export async function createUpcomingBoss() {
     phases: [{ name: "Basics" }, { name: "Practice" }],
   });
 
+  const minutes = getCheckpointMinutes(10);
+
+  const facts: SavedItemFacts = {
+    boss: {
+      kind: "text",
+      minutes,
+      questions: 10,
+      testedKeys: [],
+      testedSkillIds: [skill.id],
+      waiting: false,
+    },
+    minutes,
+    parts: { checkpoint: minutes, practice: 0, unwritten: 0, written: 0 },
+    schemaVersion: 1,
+    skillIds: [skill.id],
+  };
+
   const [boss] = await Promise.all([
     planItemFixture({
+      facts,
       kind: "boss",
       phase: 0,
       planId: plan.id,

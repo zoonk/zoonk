@@ -200,6 +200,7 @@ test.describe("Mind maps API", () => {
         },
       ],
       goal: { id: goal.id, title: "Cells" },
+      nextChapter: { chapterId: current.id, lessonsLeft: 1, title: current.title },
     });
 
     await apiContext.dispose();

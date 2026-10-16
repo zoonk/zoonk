@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { deliveredForThisLearner } from "@/lib/learner/delivered-for-this-learner";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
@@ -109,7 +110,20 @@ export function ChallengeClient({
 
     // `afterWriting` once the learner waited for the run: it starts with what was written.
     const startOnce = async (afterWriting: boolean): Promise<StartOutcome | "questionsNeeded"> => {
-      const started = await startChallengeAction(planItemId, getLocalTimeZone(), afterWriting);
+      const started = await deliveredForThisLearner(
+        startChallengeAction(planItemId, getLocalTimeZone(), afterWriting),
+      );
+
+      // Open can save a day without this offer, or with lessons or a challenge before it
+      // (`earlierFirst`, the only result with a status). Read the owning intro again; neither
+      // outcome is a failure the learner should keep retrying.
+      if (
+        started === "notToday" ||
+        (started && typeof started === "object" && "status" in started)
+      ) {
+        router.refresh();
+        return started;
+      }
 
       // A kept intro can say Continue after another tab already finished this block.
       if (started === "blockFinished" && challenge.blockId) {

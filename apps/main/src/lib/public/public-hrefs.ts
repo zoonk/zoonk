@@ -31,11 +31,9 @@ export const CHAPTER_PARAM = "chapter";
 
 /**
  * `minutes` holds the time a day the course's example plan showed, which the plan starts with
- * (onboarding's schedule question opens on it). `picked` says the visitor chose it there, rather
- * than leaving the page's first one, so the start page only says "as you picked" when they did.
+ * (onboarding's schedule question opens on it).
  */
 export const MINUTES_PARAM = "minutes";
-export const PICKED_PARAM = "picked";
 
 const MIN_DAILY_MINUTES = 5;
 const MAX_DAILY_MINUTES = 240;
@@ -53,12 +51,10 @@ export function getCourseStartHref({
   chapterId,
   courseId,
   minutes,
-  picked = false,
 }: {
   chapterId?: string | null;
   courseId: string;
   minutes?: number | null;
-  picked?: boolean;
 }) {
   const query = new URLSearchParams();
 
@@ -68,10 +64,6 @@ export function getCourseStartHref({
 
   if (minutes) {
     query.set(MINUTES_PARAM, String(minutes));
-  }
-
-  if (minutes && picked) {
-    query.set(PICKED_PARAM, "1");
   }
 
   const search = query.toString();

@@ -6,7 +6,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import {
-  admitPlanLessonsStep,
+  createGoalGenerationManifestStep,
   pickPlanStartToWriteStep,
   pickSpeculativeLessonsStep,
   readGoalLookaheadStep,
@@ -64,7 +64,7 @@ function toWriter({
 }
 
 /**
- * Starts writing the lessons the plan still has the learner do (see `admitPlanLessonsStep`), and
+ * Starts writing the lessons the saved plan still has the learner do, and
  * returns them: `learner` for the plan's first lesson, which the learner opens the moment
  * placement ends; the others are minutes away.
  */
@@ -79,12 +79,16 @@ async function writeLessons({
   wait?: CallWait;
   writer: LessonWriter;
 }): Promise<string[]> {
-  const admitted =
-    lessonIds.length > 0 ? await admitPlanLessonsStep({ goalId, lessonIds }) : lessonIds;
+  const planManifest =
+    lessonIds.length > 0 ? await createGoalGenerationManifestStep({ goalId, lessonIds }) : null;
+
+  const admitted = planManifest?.targets.map((target) => target.lessonId) ?? [];
 
   await Promise.all(
     admitted.map((lessonId) =>
-      start(lessonContentWorkflow, [{ ...writer, lessonId, planGoalId: goalId, wait }]),
+      start(lessonContentWorkflow, [
+        { ...writer, lessonId, planGoalId: goalId, planManifest, wait },
+      ]),
     ),
   );
 

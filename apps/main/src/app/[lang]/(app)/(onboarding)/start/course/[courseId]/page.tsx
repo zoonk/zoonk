@@ -4,12 +4,7 @@ import { LoginBarLink } from "@/components/login-bar-link";
 import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
 import { redirect } from "@/i18n/navigation";
-import {
-  CHAPTER_PARAM,
-  MINUTES_PARAM,
-  PICKED_PARAM,
-  readDailyMinutes,
-} from "@/lib/public/public-hrefs";
+import { CHAPTER_PARAM, MINUTES_PARAM, readDailyMinutes } from "@/lib/public/public-hrefs";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
@@ -140,7 +135,6 @@ async function CourseStartContent({ params, searchParams }: Props) {
           }))}
           course={{ id: course.id, title: course.title }}
           dailyMinutes={readDailyMinutes(query[MINUTES_PARAM])}
-          minutesPicked={readParam(query[PICKED_PARAM]) !== null}
           initialFailure={
             toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
           }

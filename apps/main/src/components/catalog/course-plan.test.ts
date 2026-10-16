@@ -19,16 +19,17 @@ import * as logger from "@zoonk/utils/logger";
 import { cacheTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import * as navigation from "next/navigation";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
+import { type getCoursePlanExample } from "./course-plan";
 import * as planEstimate from "./plan-estimate";
 
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
-type CacheEntry = { result: Promise<unknown>; tags: Set<string> };
+type CacheEntry = { revalidateAt: number | null; result: Promise<unknown>; tags: Set<string> };
 
-type GetCoursePlanExample = (course: {
-  format: string;
-  id: string;
-}) => Promise<{ exam: { days: string[] } | null }>;
+type GetCoursePlanExample = typeof getCoursePlanExample;
+
+vi.mock("../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
 const SOURCE = new URL("course-plan.ts", import.meta.url).pathname;
 
@@ -41,7 +42,7 @@ const SOURCE = new URL("course-plan.ts", import.meta.url).pathname;
 function cachePlatform(code: string) {
   const sharedEntries = new Map<string, CacheEntry>();
   const requestEntries = new Map<string, CacheEntry>();
-  const activeTags = new AsyncLocalStorage<Set<string>>();
+  const activeEntry = new AsyncLocalStorage<CacheEntry>();
 
   /** A private cache keeps its entries for one request only; a shared one, across requests. */
   function cache(kind: string, id: string, _bound: number, read: CachedRead, args: unknown[]) {
@@ -49,22 +50,43 @@ function cachePlatform(code: string) {
     const key = JSON.stringify([id, args]);
     const tags = new Set<string>();
 
-    const entry = entries.get(key) ?? {
-      result: Promise.resolve().then(() => activeTags.run(tags, () => read(...args))),
-      tags,
-    };
+    const found = entries.get(key);
+    const kept = found && (found.revalidateAt === null || found.revalidateAt > Date.now());
+
+    const entry: CacheEntry = kept
+      ? found
+      : {
+          result: Promise.resolve().then(() => activeEntry.run(entry, () => read(...args))),
+          revalidateAt: null,
+          tags,
+        };
 
     entries.set(key, entry);
     return entry.result;
   }
 
   vi.mocked(cacheTag).mockImplementation((...tags) => {
-    tags.forEach((tag) => activeTags.getStore()?.add(tag));
+    tags.forEach((tag) => activeEntry.getStore()?.tags.add(tag));
   });
 
   const imports: Record<string, unknown> = {
     "./plan-estimate": planEstimate,
-    "@/lib/public/cache-until-midnight": { cacheUntilMidnight: () => null },
+    "@/lib/public/cache-until-midnight": {
+      cacheUntilMidnight: (timeZones: string[]) => {
+        const entry = activeEntry.getStore();
+
+        if (entry) {
+          const seconds = Math.min(
+            3600,
+            ...timeZones.map((timeZone) =>
+              calendarDay.getSecondsToMidnight({ now: new Date(), timeZone }),
+            ),
+          );
+
+          entry.revalidateAt = Date.now() + seconds * 1000;
+        }
+      },
+    },
     "@/lib/public/calendar-day": calendarDay,
     "@zoonk/core/cache-tags": cacheTags,
     "@zoonk/core/catalog/course-estimate": estimate,
@@ -81,6 +103,7 @@ function cachePlatform(code: string) {
   const compiled = {} as { getCoursePlanExample: GetCoursePlanExample };
 
   runInNewContext(code, {
+    Date,
     exports: compiled,
     module: { exports: compiled },
     require: (name: string) => {
@@ -185,6 +208,8 @@ describe("the course page's example plan cache", () => {
     compiled.code = result.code;
   });
 
+  afterEach(() => vi.useRealTimers());
+
   it("keeps the example for every visitor until a notice revised elsewhere expires its tag", async () => {
     const platform = cachePlatform(compiled.code);
     const { blueprint, course } = await examCourse(dayIn(40));
@@ -215,5 +240,109 @@ describe("the course page's example plan cache", () => {
 
     const next = await platform.getCoursePlanExample(course);
     expect(next.exam?.days).toStrictEqual([dayIn(54)]);
+  });
+
+  it("builds one default example on a miss and none for another visitor, then keys a new revision", async () => {
+    const platform = cachePlatform(compiled.code);
+    const course = await courseFixture({ isPublished: true, visibility: "public" });
+
+    await courseBandsFixture({
+      courseId: course.id,
+      levels: ["beginner", "intermediate", "advanced"],
+    });
+
+    vi.mocked(buildPlan).mockClear();
+
+    const first = await platform.getCoursePlanExample(course);
+    expect(first.pace?.minutes).toBe(15);
+    expect(buildPlan).toHaveBeenCalledOnce();
+    platform.nextRequest();
+    await expect(platform.getCoursePlanExample(course)).resolves.toStrictEqual(first);
+    expect(buildPlan).toHaveBeenCalledOnce();
+
+    const revision = await prisma.course.update({
+      data: { updatedAt: new Date(course.updatedAt.getTime() + 1000) },
+      where: { id: course.id },
+    });
+
+    platform.nextRequest();
+    await platform.getCoursePlanExample(revision);
+    expect(buildPlan).toHaveBeenCalledTimes(2);
+  });
+
+  it("renews the selected estimate when the notice changes but its exam day stays the same", async () => {
+    const platform = cachePlatform(compiled.code);
+    const { blueprint, course } = await examCourse(dayIn(40));
+    vi.mocked(buildPlan).mockClear();
+    await platform.getCoursePlanExample(course);
+    // An exam's estimate may build again to measure what fits: count each miss as one estimate.
+    const perMiss = vi.mocked(buildPlan).mock.calls.length;
+    expect(perMiss).toBeGreaterThan(0);
+    const first = vi.mocked(buildPlan).mock.calls[0]?.[0].fullMockMinutes;
+
+    await prisma.examBlueprint.update({
+      data: {
+        structure: {
+          formats: [],
+          mock: {
+            adaptive: false,
+            citations: [],
+            order: null,
+            scoring: { description: "", method: "raw" },
+            sections: [{ day: null, minutes: 90, name: "Paper", questions: 30 }],
+            timeLimitMinutes: 90,
+            totalQuestions: 30,
+          },
+          rules: [],
+          subjects: [],
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    platform.expireTag(getExamBlueprintCacheTag(blueprint.id));
+    platform.nextRequest();
+    await platform.getCoursePlanExample(course);
+    expect(buildPlan).toHaveBeenCalledTimes(2 * perMiss);
+    expect(vi.mocked(buildPlan).mock.calls[perMiss]?.[0].fullMockMinutes).toBe(90);
+    expect(first).not.toBe(90);
+  });
+
+  it("renews the selected exam example by the hour and the exam's own midnight", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-30T12:15:00Z"));
+    const platform = cachePlatform(compiled.code);
+    const { blueprint, course } = await examCourse("2026-10-01");
+
+    await prisma.examBlueprint.update({
+      data: { edition: { ...edition("2026-10-01"), timeZone: "Pacific/Honolulu" } },
+      where: { id: blueprint.id },
+    });
+
+    vi.mocked(buildPlan).mockClear();
+    const first = await platform.getCoursePlanExample(course);
+    expect(first.exam?.days).toStrictEqual(["2026-10-01"]);
+    const perMiss = vi.mocked(buildPlan).mock.calls.length;
+    expect(perMiss).toBeGreaterThan(0);
+
+    vi.setSystemTime(new Date("2026-09-30T13:16:00Z"));
+    platform.nextRequest();
+    await platform.getCoursePlanExample(course);
+    expect(buildPlan).toHaveBeenCalledTimes(2 * perMiss);
+
+    // UTC is already October 1, but the sitting is still tomorrow in its own zone.
+    vi.setSystemTime(new Date("2026-10-01T00:15:00Z"));
+    platform.nextRequest();
+    const sameExamDay = await platform.getCoursePlanExample(course);
+    expect(sameExamDay.exam?.days).toStrictEqual(["2026-10-01"]);
+    // The countdown keeps the exam-zone day, while the UTC estimate has no study day left.
+    expect(sameExamDay.pace).toBeNull();
+
+    vi.setSystemTime(new Date("2026-10-01T10:16:00Z"));
+    platform.nextRequest();
+    const afterExam = await platform.getCoursePlanExample(course);
+    expect(afterExam.exam?.days).not.toStrictEqual(["2026-10-01"]);
+    expect(afterExam.exam).toMatchObject({ estimated: true, timeZone: "Pacific/Honolulu" });
+    expect(afterExam.pace?.minutes).toBe(30);
   });
 });

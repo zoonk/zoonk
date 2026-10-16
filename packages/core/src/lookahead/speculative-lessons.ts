@@ -8,6 +8,13 @@ import {
 } from "../learner/placement/placement-steps";
 import { planGoalForPick } from "../plans/refresh-goal-plan";
 import { isPlacementAhead } from "../view-models/onboarding/onboarding-steps";
+import {
+  type PlanGenerationManifest,
+  readCurrentGenerationTargets,
+  readGenerationManifest,
+} from "./_utils/generation-manifest";
+
+export type { PlanGenerationManifest } from "./_utils/generation-manifest";
 
 type PlannedLesson = { lessonId: string; phase: number };
 
@@ -163,23 +170,56 @@ export async function pickPlanStartToWrite(goalId: string): Promise<string | nul
 }
 
 /**
- * The lessons of `lessonIds` still to write for the goal, right before their writing starts: the
- * ones the plan, worked out again from what it plans from now (see `loadPlanLessons`), still has
- * the learner do. One the learner finished, placement tested out, an area they skipped, or a draft
- * held back took out since it was picked doesn't start, so no model call writes a lesson the plan no
- * longer has them do; one the plan worked out has before its save lands still does.
+ * A parent's admitted batch, persisted as its durable step result. The saved selection is the
+ * source of truth; newly outlined lessons may fill its still-todo stand-ins before a save lands.
  *
  * This is a workflow bridge: the goal id comes from the goal the public boundary created.
  */
-export async function admitPlanLessons({
+export async function createPlanGenerationManifest({
   goalId,
   lessonIds,
 }: {
   goalId: string;
   lessonIds: readonly string[];
-}): Promise<string[]> {
-  const lessons = await loadPlanLessons(goalId);
-  const planned = new Set(lessons.map((lesson) => lesson.lessonId));
+}): Promise<PlanGenerationManifest | null> {
+  return readGenerationManifest({ goalId, lessonIds });
+}
 
-  return lessonIds.filter((lessonId) => planned.has(lessonId));
+/**
+ * Checks a child's manifest in one statement. Only changed targets re-read their saved source;
+ * neither a changed epoch nor a legacy queued child can enter the planner to ask membership.
+ */
+export async function admitPlanLessons({
+  goalId,
+  lessonIds,
+  manifest,
+}: {
+  goalId: string;
+  lessonIds: readonly string[];
+  manifest?: PlanGenerationManifest | null;
+}): Promise<string[]> {
+  if (manifest && manifest.goalId !== goalId) {
+    return [];
+  }
+
+  const admitted = manifest ? await readCurrentGenerationTargets({ lessonIds, manifest }) : [];
+  const current = new Set(admitted);
+  const allowed = manifest ? new Set(manifest.targets.map((target) => target.lessonId)) : null;
+
+  const changed = lessonIds.filter(
+    (lessonId) => !current.has(lessonId) && (!allowed || allowed.has(lessonId)),
+  );
+
+  if (changed.length === 0) {
+    return admitted;
+  }
+
+  const refreshed = await readGenerationManifest({ goalId, lessonIds: changed });
+
+  const selected = new Set([
+    ...admitted,
+    ...(refreshed?.targets.map((target) => target.lessonId) ?? []),
+  ]);
+
+  return lessonIds.filter((lessonId) => selected.has(lessonId));
 }

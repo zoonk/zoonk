@@ -1,5 +1,4 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { Variant } from "@/components/public/variant-switch";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
@@ -35,21 +34,6 @@ const LONE_LESSON_LINK_CLASS =
 
 /** A chapter's place in the plan beside its title: quiet, in the mono face. */
 const MARK_CLASS = cn(NUMERIC_CLASS, "text-muted-foreground flex-none text-xs leading-6");
-
-/** What a mark says at each pace: the plan window's radios show the picked pace's. */
-export function PaceMarks({
-  marks,
-  paceSwitch,
-}: {
-  marks: { minutes: number; text: ReactNode }[];
-  paceSwitch: string;
-}) {
-  return marks.map(({ minutes, text }) => (
-    <Variant as="span" key={minutes} name={paceSwitch} value={String(minutes)}>
-      {text}
-    </Variant>
-  ));
-}
 
 /** A chapter's lessons in one line, one link each, a lone lesson on a target of its own. */
 function ChapterLessonLinks({

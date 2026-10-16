@@ -3,6 +3,7 @@ import {
   type SessionPreparation,
   listSessionPreparation,
 } from "@zoonk/core/lookahead/session-preparation";
+import { createPlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
 
 export async function listSessionPreparationStep(input: {
   goalId: string;
@@ -12,6 +13,16 @@ export async function listSessionPreparationStep(input: {
   "use step";
 
   return listSessionPreparation(input);
+}
+
+/** The immutable admitted batch is saved in the parent's durable step log before children start. */
+export async function createSessionGenerationManifestStep(input: {
+  goalId: string;
+  lessonIds: string[];
+}) {
+  "use step";
+
+  return createPlanGenerationManifest(input);
 }
 
 /** How many of these lessons are still being written: not written yet, and not given up on. */

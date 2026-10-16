@@ -203,12 +203,20 @@ describe(sessionPreparationWorkflow, () => {
       libraryLessonFixture(),
     ]);
 
+    // Today's block comes from its plan item, which admits it to the parent's manifest.
     await Promise.all([
       studySessionBlockFixture({ lessonId: todayLesson.id, position: 0, sessionId: session.id }),
       studySessionBlockFixture({ lessonId: written.id, position: 1, sessionId: session.id }),
       planItemFixture({
+        lessonId: todayLesson.id,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: today,
+      }),
+      planItemFixture({
         lessonId: tomorrowLesson.id,
         planId: plan.id,
+        position: 1,
         scheduledFor: new Date(today.getTime() + 86_400_000),
       }),
     ]);
@@ -231,7 +239,16 @@ describe(sessionPreparationWorkflow, () => {
     // Today's next lesson is minutes away, so it's written at the standard tier; tomorrow's is
     // hours away, so it's written at the flex tier, about half the price.
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-      { analytics, forExam: false, lessonId: todayLesson.id, planGoalId: goal.id },
+      {
+        analytics,
+        forExam: false,
+        lessonId: todayLesson.id,
+        planGoalId: goal.id,
+        planManifest: expect.objectContaining({
+          goalId: goal.id,
+          targets: expect.arrayContaining([expect.objectContaining({ lessonId: todayLesson.id })]),
+        }),
+      },
     ]);
 
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
@@ -240,6 +257,12 @@ describe(sessionPreparationWorkflow, () => {
         forExam: false,
         lessonId: tomorrowLesson.id,
         planGoalId: goal.id,
+        planManifest: expect.objectContaining({
+          goalId: goal.id,
+          targets: expect.arrayContaining([
+            expect.objectContaining({ lessonId: tomorrowLesson.id }),
+          ]),
+        }),
         wait: "later",
       },
     ]);

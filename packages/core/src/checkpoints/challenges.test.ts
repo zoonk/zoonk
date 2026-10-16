@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
@@ -24,6 +25,7 @@ import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { requestChallengeQuestions } from "./challenge-questions";
+import { getCheckpointMinutes } from "./checkpoint-minutes";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
@@ -47,6 +49,25 @@ async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   });
 
   const boss = await checkpointItemFixture({ kind: "boss", planId: fixture.plan.id, position: 2 });
+  const minutes = getCheckpointMinutes(10);
+  const skillIds = fixture.skills.slice(0, 2).map((skill) => skill.id);
+
+  const facts: SavedItemFacts = {
+    boss: {
+      kind: "text",
+      minutes,
+      questions: 10,
+      testedKeys: [],
+      testedSkillIds: skillIds,
+      waiting: false,
+    },
+    minutes,
+    parts: { checkpoint: minutes, practice: 0, unwritten: 0, written: 0 },
+    schemaVersion: 1,
+    skillIds,
+  };
+
+  await prisma.planItem.update({ data: { facts }, where: { id: boss.id } });
   mockSession(user.id);
 
   return { ...fixture, boss, user };
@@ -96,9 +117,9 @@ describe("a phase checkpoint's challenge", () => {
       canMove: false,
       goalId: goal.id,
       kind: "boss",
-      passMark: 5,
+      passMark: 7,
       phase: { index: 0, name: "Basics" },
-      questions: 6,
+      questions: 10,
       rematch: false,
       reward: { badge: true, brainPower: BRAIN_POWER_BONUS.phaseBoss },
       status: "ready",
@@ -331,9 +352,10 @@ describe("the week's mixed challenge with too few questions", () => {
 
     mockSession(user.id);
 
+    // Saved without facts, its intro promises no size until Start fixes the block.
     await expect(challengeOf(weekly.id)).resolves.toMatchObject({
       kind: "weekly",
-      questions: 10,
+      questions: null,
       status: "ready",
     });
 

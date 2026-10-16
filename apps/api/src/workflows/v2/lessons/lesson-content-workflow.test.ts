@@ -6,7 +6,10 @@ import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
-import { admitPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
+import {
+  admitPlanLessons,
+  createPlanGenerationManifest,
+} from "@zoonk/core/lookahead/speculative-lessons";
 import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -23,6 +26,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { buildPlan } from "../../../../../../packages/core/src/plans/planner/build-plan";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
@@ -31,6 +35,9 @@ import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
+
+// The child admission guard calls through the real producer if anything still reaches it.
+vi.mock("../../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
 type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
@@ -79,6 +86,28 @@ describe(lessonContentWorkflow, () => {
     vi.mocked(checkLessonQuality).mockResolvedValue(
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
     );
+  });
+
+  it("checks a parent's stale placement manifest before taking any generation claim", async () => {
+    const { goal, item, lesson } = await plannedLesson();
+
+    const planManifest = await createPlanGenerationManifest({
+      goalId: goal.id,
+      lessonIds: [lesson.id],
+    });
+
+    expect(planManifest?.targets.map((target) => target.lessonId)).toStrictEqual([lesson.id]);
+    await prisma.planItem.update({ data: { status: "testedOut" }, where: { id: item.id } });
+    vi.mocked(buildPlan).mockClear();
+
+    await expect(
+      lessonContentWorkflow({ lessonId: lesson.id, planGoalId: goal.id, planManifest }),
+    ).resolves.toStrictEqual({ lessonId: lesson.id, status: "missing" });
+
+    expect(buildPlan).not.toHaveBeenCalled();
+    expect(generateLessonSpec).not.toHaveBeenCalled();
+    expect(writeLessonDraft).not.toHaveBeenCalled();
+    expect(createHook).not.toHaveBeenCalled();
   });
 
   it.each(["done", "testedOut", "skipped", "paused", "deleted"] as const)(

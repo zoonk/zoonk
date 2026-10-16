@@ -1,6 +1,5 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
-import { loadGoalMap } from "../view-models/_utils/goal-map";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
@@ -36,10 +35,10 @@ export async function getChapterMindMap({
   }
 
   const { goal } = resolved;
-  const map = await loadGoalMap({ goal });
+  const now = new Date();
 
   const [[facts], numbering] = await Promise.all([
-    loadMindMapChapters({ chapterIds: [chapterId], goal, map }),
+    loadMindMapChapters({ chapterIds: [chapterId], goal }),
     loadChapterNumbering(goal),
   ]);
 
@@ -47,7 +46,7 @@ export async function getChapterMindMap({
     return { status: "notFound" };
   }
 
-  const status = getMindMapStatus({ ...facts, now: new Date() });
+  const status = getMindMapStatus({ ...facts, now });
   const isReady = status === "ready";
 
   return {

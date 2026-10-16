@@ -13,6 +13,7 @@ import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { WaitLine } from "../missions/mission-copy";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
@@ -23,7 +24,7 @@ import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
  */
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground flex min-h-11 items-center gap-2 text-sm">
+    <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
       <span className="text-pretty">{children}</span>
     </p>
@@ -62,8 +63,8 @@ function OpensLine() {
 
 /**
  * Due, but today's session was planned without it: the next one has it. A checkpoint with nothing
- * to ask yet (no questions, and not a call or a mock) can't promise that: before its day it says
- * when it opens, and from its day that it isn't ready.
+ * known to have nothing to ask yet (zero questions, not an unknown count, call or mock) can't
+ * promise that: before its day it says when it opens, and from its day that it isn't ready.
  */
 function WaitingLine() {
   const t = useExtracted();
@@ -266,50 +267,63 @@ function PlusRequiredFooter() {
   );
 }
 
+/** Today's saved order puts other work first: the day's lessons, or the challenge before it. */
+function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
+  return (
+    <StatusLine icon={<CalendarClockIcon className="size-4" />}>
+      <WaitLine reason={reason} />
+    </StatusLine>
+  );
+}
+
 /**
- * The footer says what the learner can do with the challenge today, and nothing more. A Start or
- * Continue refused because Plus lapsed since the intro opened shows the lock right away, while the
- * host reloads the challenge.
+ * What the footer says about the challenge today, and nothing more: the line saying where it
+ * stands, and what the learner can do. A Start or Continue refused because Plus lapsed since the
+ * intro opened shows the lock right away, while the host reloads the challenge. One that today's
+ * saved order puts after other work (`waitReason`, the rule Start applies) says what comes first,
+ * as the day's row does, instead of offering a Start that refuses.
  */
-function StatusFooter() {
+function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
   const { challenge, start } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
-    return <PlusRequiredFooter />;
+    return { actions: <PlusRequiredFooter />, line: null };
   }
 
   switch (challenge.status) {
     case "ready":
-      return <StartButton />;
     case "started":
-      return <ResumeButton />;
+      if (challenge.waitReason) {
+        return { actions: null, line: <WaitReasonLine reason={challenge.waitReason} /> };
+      }
+
+      return {
+        actions: challenge.status === "ready" ? <StartButton /> : <ResumeButton />,
+        line: null,
+      };
     case "tried":
-      return (
-        <>
+      return {
+        actions: <OpenLink>{t("See how it went")}</OpenLink>,
+        line: (
           <StatusLine icon={<RotateCcwIcon className="size-4" />}>
             {t(
               "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}",
               { lessons: challenge.reinforcementLessons },
             )}
           </StatusLine>
-          <OpenLink>{t("See how it went")}</OpenLink>
-        </>
-      );
+        ),
+      };
     case "done":
-      return <OpenLink>{t("See how it went")}</OpenLink>;
+      return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
     case "plusRequired":
-      return <PlusRequiredFooter />;
+      return { actions: <PlusRequiredFooter />, line: null };
     case "waiting":
-      return <WaitingLine />;
+      return { actions: null, line: <WaitingLine /> };
     case "queued":
-      return (
-        <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-          {t("After the challenge before it")}
-        </StatusLine>
-      );
+      return { actions: null, line: <WaitReasonLine reason="challenge" /> };
     case "upcoming":
-      return <OpensLine />;
+      return { actions: null, line: <OpensLine /> };
     default:
       return challenge.status satisfies never;
   }
@@ -318,17 +332,23 @@ function StatusFooter() {
 /**
  * The challenge's pinned action bar: Start, with Move to Monday beside it, or where it stands, with
  * Move to Monday under it while it can still wait for Monday (the bar's width on a phone, its
- * label's from `lg`, like every action there).
+ * label's from `lg`, like every action there). Where it stands is one polite region that stays in
+ * the bar, out of the layout while it's empty, so the line that replaces a refused Start ("In your
+ * next session", "After today's lessons") is read out whole without moving focus.
  */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
-  const ready = challenge.status === "ready";
+  const { actions, line } = useStatusFooter();
+  const startShows = challenge.status === "ready" && challenge.waitReason === null;
 
   return (
     <>
-      <StatusFooter />
-      {!ready && <MoveFailed />}
-      {!ready && challenge.canMove && (
+      <div aria-atomic="true" aria-live="polite" className="empty:absolute">
+        {line}
+      </div>
+      {actions}
+      {!startShows && <MoveFailed />}
+      {!startShows && challenge.canMove && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>

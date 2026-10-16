@@ -1,11 +1,15 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
-import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { type GoalMap } from "../../view-models/_utils/goal-map";
-import { findChapterArea } from "../../view-models/chapter/_utils/chapter-area";
-import { MIND_MAP_ROW_SELECT, type MindMapRow } from "./mind-map-view";
-
-type MapGoal = Pick<Goal, "kind" | "userId">;
+import { type Goal, prisma, sql } from "@zoonk/db";
+import { hasPlanDeadline, withinLessonScope } from "../../plans/_utils/plan-end";
+import { findUpNextItem } from "../../plans/_utils/up-next-item";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
+import {
+  type MindMapChapterRow,
+  mindMapChapterRows,
+  toMindMapRow,
+} from "./listed-mind-map-chapters";
+import { type MindMapRow } from "./mind-map-view";
 
 /** A chapter of the goal's plan with what its map's status reads. */
 export type MindMapChapterFacts = {
@@ -19,81 +23,83 @@ export type MindMapChapterFacts = {
   title: string;
 };
 
-/** The chapters of the plan in plan order: those its items point at, then those only the map files. */
-function listPlanChapterIds(map: GoalMap): string[] {
-  return [
-    ...new Set([
-      ...map.items.flatMap((item) => item.chapterId ?? []),
-      ...map.areas.flatMap((area) => area.chapterId ?? []),
-    ]),
-  ];
-}
-
-async function countWrittenLessons(chapterIds: string[]): Promise<Map<string, number>> {
-  const counts = await prisma.chapterLesson.groupBy({
-    _count: { lessonId: true },
-    by: ["chapterId"],
-    where: { chapterId: { in: chapterIds }, lesson: { contentStatus: "completed" } },
-  });
-
-  return new Map(counts.map((row) => [row.chapterId, row._count.lessonId]));
-}
-
 /**
- * What a map's status reads for the plan's chapters (all of them, or the ones asked for), in plan
- * order: each one's number and state in the plan, whether its lessons are written and its map's
- * row. A chapter the learner can't see isn't listed.
+ * What a map's status reads for the saved plan's chapters (all of them, or the ones asked for), in
+ * plan order: each one's number and state in the plan, whether its lessons are written and its
+ * map's row, in one grouped statement (`mindMapChapterRows`). A chapter the learner can't see isn't
+ * listed.
  */
 export async function loadMindMapChapters({
   chapterIds,
   goal,
-  map,
 }: {
   chapterIds?: readonly string[];
-  goal: MapGoal;
-  map: GoalMap;
+  goal: Pick<Goal, "id">;
 }): Promise<MindMapChapterFacts[]> {
-  const ordered = listPlanChapterIds(map).filter((id) => !chapterIds || chapterIds.includes(id));
+  const only = chapterIds ? sql`WHERE m."chapterId" = ANY(${[...chapterIds]}::uuid[])` : sql``;
 
-  const areas = ordered.flatMap((chapterId) => {
-    const area = findChapterArea({ chapterId, map });
-    return area ? [{ ...area, chapterId }] : [];
-  });
+  const chapters = await prisma.$queryRaw<MindMapChapterRow[]>`
+    SELECT * FROM (${mindMapChapterRows(sql`g.id = ${goal.id}::uuid`)}) m
+    ${only}
+    ORDER BY m.position`;
 
-  const ids = areas.map((area) => area.chapterId);
+  return chapters.map((chapter) => ({
+    canHaveMap: chapter.canHaveMap,
+    chapterId: chapter.chapterId,
+    hasWrittenLessons: chapter.hasWrittenLessons,
+    position: chapter.position,
+    row: toMindMapRow(chapter),
+    title: chapter.title,
+  }));
+}
 
-  const [chapters, written, rows] = await Promise.all([
-    prisma.chapter.findMany({
-      select: { id: true, targetLanguage: true, title: true },
-      where: { ...libraryRowsVisibleTo(goal.userId), id: { in: ids } },
+/**
+ * The chapter the learner is in, as the Plan marks it current: the one holding the lesson up next
+ * (`findUpNextItem`), with the lessons left in it in that phase, as the Plan counts them
+ * (`withinLessonScope`). Read from the saved plan and today's session, never building either. Null
+ * when the lesson up next isn't a chapter's or nothing is left.
+ */
+export async function loadUpNextChapter(
+  goal: Pick<Goal, "id" | "kind" | "targetDate" | "timezone" | "userId">,
+): Promise<{ chapterId: string; lessonsLeft: number } | null> {
+  const [plan, todayBlocks] = await Promise.all([
+    prisma.plan.findUnique({
+      select: {
+        items: {
+          orderBy: { position: "asc" },
+          select: {
+            chapterId: true,
+            id: true,
+            kind: true,
+            lessonId: true,
+            phase: true,
+            status: true,
+          },
+          where: { kind: { in: ["chapter", "lesson"] }, status: { in: ["todo", "skipped"] } },
+        },
+        settings: true,
+      },
+      where: { goalId: goal.id },
     }),
-    countWrittenLessons(ids),
-    prisma.chapterMindMap.findMany({
-      select: { ...MIND_MAP_ROW_SELECT, chapterId: true },
-      where: { chapterId: { in: ids } },
-    }),
+    loadTodayLearnBlocks(goal),
   ]);
 
-  const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
-  const rowByChapter = new Map(rows.map((row) => [row.chapterId, row]));
+  const items = plan?.items ?? [];
+  const next = findUpNextItem({ items, todayBlocks });
 
-  return areas.flatMap((area) => {
-    const chapter = chapterById.get(area.chapterId);
+  if (!next?.chapterId || next.kind !== "lesson") {
+    return null;
+  }
 
-    if (!chapter) {
-      return [];
-    }
-
-    return [
-      {
-        canHaveMap:
-          area.state === "done" && goal.kind !== "language" && chapter.targetLanguage === null,
-        chapterId: area.chapterId,
-        hasWrittenLessons: (written.get(area.chapterId) ?? 0) > 0,
-        position: area.position,
-        row: rowByChapter.get(area.chapterId) ?? null,
-        title: chapter.title,
-      },
-    ];
+  const deadline = hasPlanDeadline({
+    studiesPastTarget: goal.kind === "exam" && parsePlanSettings(plan?.settings).fullCourse,
+    targetDate: goal.targetDate,
   });
+
+  const lessonsLeft = withinLessonScope({ deadline, items }).filter(
+    (item) =>
+      item.kind === "lesson" && item.chapterId === next.chapterId && item.phase === next.phase,
+  ).length;
+
+  return { chapterId: next.chapterId, lessonsLeft };
 }

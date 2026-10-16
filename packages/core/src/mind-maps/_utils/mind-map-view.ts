@@ -18,16 +18,6 @@ export type MindMapRow = Pick<
   "imageHeight" | "imageUrl" | "imageWidth" | "status" | "structure" | "thumbnailUrl" | "updatedAt"
 >;
 
-export const MIND_MAP_ROW_SELECT = {
-  imageHeight: true,
-  imageUrl: true,
-  imageWidth: true,
-  status: true,
-  structure: true,
-  thumbnailUrl: true,
-  updatedAt: true,
-} as const;
-
 /** The stored structure as learners read it, without the sketches the picture draws. */
 export function toMindMapOutline(structure: unknown): MindMapOutline | null {
   const parsed = mindMapStructureSchema.safeParse(structure);

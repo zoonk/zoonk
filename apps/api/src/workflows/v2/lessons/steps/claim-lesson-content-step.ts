@@ -3,7 +3,10 @@ import {
   getLessonGenerationState,
   releaseStaleLessonClaims,
 } from "@zoonk/core/library/generation/state";
-import { admitPlanLessons } from "@zoonk/core/lookahead/speculative-lessons";
+import {
+  type PlanGenerationManifest,
+  admitPlanLessons,
+} from "@zoonk/core/lookahead/speculative-lessons";
 import { isRunActive } from "../../_shared/run-activity";
 
 /** `setAside`: every draft the lesson gets was held back, so nothing writes it again. */
@@ -71,6 +74,7 @@ export async function claimLessonContentStep(input: {
 export async function admitLessonContentStep(input: {
   goalId?: string;
   lessonId: string;
+  manifest?: PlanGenerationManifest | null;
 }): Promise<boolean> {
   "use step";
 
@@ -79,6 +83,11 @@ export async function admitLessonContentStep(input: {
     return true;
   }
 
-  const admitted = await admitPlanLessons({ goalId: input.goalId, lessonIds: [input.lessonId] });
+  const admitted = await admitPlanLessons({
+    goalId: input.goalId,
+    lessonIds: [input.lessonId],
+    manifest: input.manifest,
+  });
+
   return admitted.includes(input.lessonId);
 }

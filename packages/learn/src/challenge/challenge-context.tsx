@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
+import { type StartChallengeResult } from "@zoonk/core/checkpoints/challenge-start";
 import { type UnfundedMove } from "@zoonk/core/plans/plan-error-contract";
 import { createContext, use } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
@@ -12,7 +13,9 @@ import { type ChallengeStartState } from "./use-challenge-start";
  * How the screen reaches the server. `start` opens the challenge's block when it went through, and
  * says why it didn't otherwise: `writing` when the questions it lacks are being written first,
  * which the host shows (`ChallengeWriting`), and `plusRequired` when the learner's plan leaves it
- * to Plus since the intro opened (Plus lapsed), which the screen shows locked right away. A move
+ * to Plus since the intro opened (Plus lapsed), which the screen shows locked right away.
+ * `notToday` and `earlierFirst` ask the host to read the intro again and release Start without a
+ * retry error; `earlierFirst` retains whether lessons or a challenge come first. A move
  * and its undo take the learner to the challenge on its day when they went through (a dated plan
  * item is a new one once it moves); each resolves to false when it didn't. A move the plan refuses
  * because the days before the new one can't save a mock's time resolves to that day and the mock's
@@ -23,7 +26,15 @@ export type ChallengeActions = {
   move: () => Promise<
     "failed" | "moved" | { mockCollision: true } | { unfundedMove: UnfundedMove }
   >;
-  start: () => Promise<"dailyLimitReached" | "failed" | "plusRequired" | "started" | "writing">;
+  start: () => Promise<
+    | Extract<StartChallengeResult, { status: "earlierFirst" }>
+    | "dailyLimitReached"
+    | "failed"
+    | "notToday"
+    | "plusRequired"
+    | "started"
+    | "writing"
+  >;
   undoMove: (changeId: string) => Promise<boolean>;
 };
 

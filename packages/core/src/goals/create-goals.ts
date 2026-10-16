@@ -185,15 +185,26 @@ export async function createGoals(
         return { ...state, refused: [...state.refused, { decision, index }] };
       }
 
-      await createGoal({
+      const limit = await createGoal({
         dailyMinutes: minutes[index] ?? input.dailyMinutes,
         draft,
         id,
         input,
+        replacing,
         testedLanguage:
           (draft.kind === "exam" && testedLanguages.get(draft.examBlueprintId ?? "")) || null,
         userId,
       });
+
+      if (limit) {
+        return {
+          ...state,
+          refused: [
+            ...state.refused,
+            { decision: { limit, status: "limitReached" as const }, index },
+          ],
+        };
+      }
 
       return { ...state, ids: [...state.ids, id] };
     },

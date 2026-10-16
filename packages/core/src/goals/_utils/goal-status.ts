@@ -9,9 +9,11 @@ import { getActiveGoalLimit } from "../../entitlements/limits";
  * goal at a time, so they pause another first.
  */
 export async function findActiveGoalLimit({
+  db = prisma,
   goalId,
   userId,
 }: {
+  db?: TransactionClient;
   goalId: string;
   userId: string;
 }): Promise<AllowanceLimit | null> {
@@ -22,7 +24,7 @@ export async function findActiveGoalLimit({
     return null;
   }
 
-  const active = await prisma.goal.count({
+  const active = await db.goal.count({
     where: { id: { not: goalId }, kind: { not: "explain" }, status: "active", userId },
   });
 

@@ -355,28 +355,18 @@ test.describe("Starting a course from its page", () => {
     }
   });
 
-  test("the time question opens on the time a day picked on the course's page and Monday to Friday, and only the learner moves it", async ({
+  test("the time question opens on the time a day the course's page showed and Monday to Friday, and only the learner moves it", async ({
     page,
   }) => {
     const { course, coursePath } = await createOutlinedCourse();
 
     await page.goto(coursePath);
-
-    await page
-      .getByRole("main")
-      .locator("[data-slot='course-plan']")
-      .getByRole("radiogroup", { name: "Time a day" })
-      .getByText("30 min")
-      .click();
-
     await startFromHero(page, { name: course.title });
 
-    await expect(page).toHaveURL(
-      new RegExp(`/start/course/${course.id}\\?minutes=30&picked=1$`, "u"),
-    );
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
 
     await expect(
-      page.getByText("30 minutes a day, as you picked. You can change it in the next steps."),
+      page.getByText("15 minutes a day for now. You can change it in the next steps."),
     ).toBeVisible();
 
     await startCourseWithLevel(page);
@@ -414,13 +404,22 @@ test.describe("Starting a course from its page", () => {
     }
 
     await expect(time).toBeVisible();
-    const thirty = page.getByRole("radio", { exact: true, name: "30 min" });
-    await expect(thirty).toBeChecked();
+    const fifteen = page.getByRole("radio", { exact: true, name: "15 min" });
+    await expect(fifteen).toBeChecked();
     await expect(page.getByText(/^5 days · /u)).toBeVisible();
 
     await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
-    await expect(thirty).toBeChecked();
+    await expect(fifteen).toBeChecked();
     await expect(page.getByRole("radio", { name: /^4 hr/u })).not.toBeChecked();
+
+    // The learner moves it.
+    await page
+      .getByRole("radiogroup", { name: "Minutes a day" })
+      .getByText("30 min", { exact: true })
+      .click();
+
+    await expect(page.getByRole("radio", { exact: true, name: "30 min" })).toBeChecked();
+    await expect(fifteen).not.toBeChecked();
   });
 
   test("starts the plan at a chapter from the chapter's page, after saying what it will be", async ({

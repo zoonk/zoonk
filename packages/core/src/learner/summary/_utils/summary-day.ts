@@ -3,8 +3,6 @@ import { type Goal, type StudySession, type StudySessionBlock } from "@zoonk/db"
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { withoutLockedPhaseChallenges } from "../../../checkpoints/_utils/phase-challenge-access";
 import { getCarryOverEnd, pickCurrentDay } from "../../../sessions/_utils/current-session";
-import { type DayBlockInput } from "../../../sessions/_utils/day-block-view";
-import { planEntitlementLapseRefill } from "../../../sessions/_utils/entitlement-lapse-refill";
 import { getSessionBar } from "../../../sessions/_utils/session-view";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { countMissions } from "../../../sessions/missions";
@@ -45,16 +43,15 @@ function findSavedDay({
 
 /**
  * The saved day as the sidebar and the palette show it: its blocks left and the one up next (its
- * lesson's title, when it has one, and its minutes). Free language plans skip their locked calls.
+ * lesson's title, when it has one, and its minutes). Free language plans skip their locked calls;
+ * what replaces them is saved by Open, so the summary never advertises a replacement before then.
  * An explanation, or a goal that isn't followed now, has none.
  */
 function getSummaryToday({
   day,
   goal,
   phaseChallengesRequired,
-  projected,
 }: {
-  projected?: readonly DayBlockInput[];
   day: SavedSession | null;
   goal: Goal;
   phaseChallengesRequired: boolean;
@@ -63,8 +60,7 @@ function getSummaryToday({
     return null;
   }
 
-  const blocks =
-    projected ?? withoutLockedPhaseChallenges({ blocks: day.blocks, phaseChallengesRequired });
+  const blocks = withoutLockedPhaseChallenges({ blocks: day.blocks, phaseChallengesRequired });
 
   const bar = getSessionBar(blocks);
 
@@ -153,14 +149,10 @@ export async function loadActiveGoalDay({
   const day = findSavedDay({ goal, localDate, now, sessions, timeZone });
   const carried = day && day.localDate.getTime() !== localDate.getTime();
 
-  const refill = day
-    ? await planEntitlementLapseRefill({ goal, phaseChallengesRequired, session: day, timeZone })
-    : null;
-
   return {
     carriedUntil: carried ? getCarryOverEnd(day) : null,
     dayDate: day?.localDate ?? localDate,
     missions: await countDayMissions({ day, goal, now, readyMistakesOn, timeZone }),
-    today: getSummaryToday({ day, goal, phaseChallengesRequired, projected: refill?.blocks }),
+    today: getSummaryToday({ day, goal, phaseChallengesRequired }),
   };
 }

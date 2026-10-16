@@ -98,6 +98,17 @@ export const goalMindMapsSchema = z
       .array(goalMindMapSchema)
       .meta({ description: "The chapters the learner finished, in plan order" }),
     goal: z.object({ id: z.uuid(), title: z.string() }),
+    nextChapter: z
+      .object({
+        chapterId: z.uuid(),
+        lessonsLeft: z.int().min(1).meta({ description: "Its lessons left in the plan" }),
+        title: z.string(),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The chapter the learner is in, whose map comes once it's finished: the one holding the lesson up next. Null when that lesson isn't a chapter's or nothing is left",
+      }),
   })
   .meta({ id: "GoalMindMaps" });
 

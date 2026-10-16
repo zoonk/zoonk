@@ -4,7 +4,7 @@ import { redirect } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { type ChallengeDestination } from "@zoonk/core/checkpoints/challenge-contract";
 import { moveChallenge, undoChallengeMove } from "@zoonk/core/checkpoints/challenge-move";
-import { startChallenge } from "@zoonk/core/checkpoints/challenge-start";
+import { type StartChallengeResult, startChallenge } from "@zoonk/core/checkpoints/challenge-start";
 import { type UnfundedMove } from "@zoonk/core/plans/plan-error-contract";
 import {
   studyBlockStartInputSchema,
@@ -28,7 +28,10 @@ type ChallengePage = { locale: unknown; sessionId: unknown };
  * or that the bank holds too few questions for it yet (`questionsNeeded`: they're written first,
  * and once the learner waited for that, `afterWriting` starts it with what was written), or that
  * the learner's plan leaves it to Plus (`plusRequired`, as when Plus lapsed since the intro opened).
- * Inputs are untrusted, so they're parsed with the API's schemas.
+ * `notToday` (today's session was planned without it) and `earlierFirst` (with its `reason`: the
+ * day's lessons or the challenge before it come first) are named outcomes the intro reads again
+ * for. Either can follow a write, since Start may save today's session before it refuses, so
+ * neither says nothing was saved. Inputs are untrusted, so they're parsed with the API's schemas.
  */
 export async function startChallengeAction(
   planItemId: unknown,
@@ -36,8 +39,10 @@ export async function startChallengeAction(
   afterWriting: unknown = false,
 ): Promise<
   | ChallengeDestination
+  | Extract<StartChallengeResult, { status: "earlierFirst" }>
   | "blockFinished"
   | "dailyLimitReached"
+  | "notToday"
   | "plusRequired"
   | "questionsNeeded"
   | null
@@ -54,10 +59,15 @@ export async function startChallengeAction(
   if (
     result.status === "blockFinished" ||
     result.status === "dailyLimitReached" ||
+    result.status === "notToday" ||
     result.status === "plusRequired" ||
     result.status === "questionsNeeded"
   ) {
     return result.status;
+  }
+
+  if (result.status === "earlierFirst") {
+    return result;
   }
 
   return result.status === "ready" ? result.destination : null;

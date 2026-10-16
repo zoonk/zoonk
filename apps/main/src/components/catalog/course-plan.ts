@@ -4,6 +4,7 @@ import { daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "@zoonk/core/cache-tags";
 import { estimateCoursePlan } from "@zoonk/core/catalog/course-estimate";
 import { getCourseExamDays } from "@zoonk/core/catalog/course-exam-days";
+import { type Course } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { cacheTag } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
@@ -15,23 +16,20 @@ const STUDY_DAYS = Array.from({ length: WEEKDAYS }, (_, index) => index + 1);
 
 const QUARTER_HOUR = 15;
 
-/** The times a day a visitor can try: shorter for a course, longer for an exam read against its date. */
-const COURSE_PACES = [10, QUARTER_HOUR, 30];
-const EXAM_PACES = [QUARTER_HOUR, 30, 60];
-
 const DEFAULT_COURSE_PACE = QUARTER_HOUR;
 const DEFAULT_EXAM_PACE = 30;
 
-/** The course's example plan: each time a day it can show, the one picked first and its exam's days. */
+/** The selected public example and its exam's days. */
 export type CoursePlanExample = {
-  defaultMinutes: number;
   /** An exam course's next sitting, its days from today on, counted in the exam's time zone. */
   exam: { days: string[]; daysLeft: number; estimated: boolean; timeZone: string } | null;
-  paces: PaceEstimate[];
+  pace: PaceEstimate | null;
 };
 
 /** Core's estimate starts its plan from the day in UTC. */
 const UTC = "UTC";
+const ISO_DAY_LENGTH = 10;
+const ISO_HOUR_LENGTH = 13;
 
 /**
  * An exam course's next sitting from today on, or null when there's none to read the plan against
@@ -59,35 +57,15 @@ async function getUpcomingExam(courseId: string): Promise<CoursePlanExample["exa
     : null;
 }
 
-/**
- * The course's plan at each time a day a visitor can pick, from core's planner (no AI, no writes):
- * against the exam's next day for an exam course, to the end of the course otherwise. A pace core
- * can't estimate is left out.
- */
-async function getPaceEstimates({
-  courseId,
-  targetDate,
-}: {
+type ExampleCourse = Pick<Course, "format" | "id" | "updatedAt">;
+
+type ExampleBasis = {
+  contentRevision: Date;
   courseId: string;
-  targetDate: string | null;
-}): Promise<PaceEstimate[]> {
-  const paces = targetDate ? EXAM_PACES : COURSE_PACES;
-
-  const results = await Promise.all(
-    paces.map(async (minutes) => {
-      const estimate = await estimateCoursePlan({
-        courseId,
-        dailyMinutes: minutes,
-        studyDays: STUDY_DAYS,
-        ...(targetDate && { targetDate }),
-      });
-
-      return estimate && hasStudyToShow(estimate) ? { estimate, minutes } : null;
-    }),
-  );
-
-  return results.filter((pace) => pace !== null);
-}
+  exam: CoursePlanExample["exam"];
+  /** UTC day and hour; the serialized exam also keys its zone and edition days. */
+  hour: string;
+};
 
 /**
  * The example plan in the app's shared cache, so the course's page is static: the same for every
@@ -96,20 +74,50 @@ async function getPaceEstimates({
  * outline changes, and an exam's notice does through the tag core's exam days carry; the other
  * inputs the planner reads (lesson specs, skills, item banks, paces) show at its next hourly run.
  */
-async function getCachedCoursePlanExample(
-  courseId: string,
-  isExam: boolean,
-): Promise<CoursePlanExample> {
+async function getCachedExampleBasis(course: ExampleCourse): Promise<ExampleBasis> {
   "use cache";
-  cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
-  const exam = isExam ? await getUpcomingExam(courseId) : null;
+  cacheTag(getCourseCacheTag(course.id), getCourseCurriculumCacheTag(course.id));
+  const exam = course.format === "exam" ? await getUpcomingExam(course.id) : null;
   // Both days the plan reads change at their own midnight: the estimate's and the countdown's.
   cacheUntilMidnight(exam ? [UTC, exam.timeZone] : [UTC]);
 
-  const targetDate = exam?.days[0] ?? null;
-  const paces = await getPaceEstimates({ courseId, targetDate });
+  return {
+    contentRevision: course.updatedAt,
+    courseId: course.id,
+    exam,
+    hour: new Date().toISOString().slice(0, ISO_HOUR_LENGTH),
+  };
+}
 
-  return { defaultMinutes: targetDate ? DEFAULT_EXAM_PACE : DEFAULT_COURSE_PACE, exam, paces };
+/**
+ * One selected build on a shared cache miss. Next's build and function IDs key the planner code
+ * version; the serialized basis keys the content revision, exam edition/zone and UTC day/hour.
+ * Publication tags refresh the basis and result together. No learner state enters either cache.
+ */
+async function getCachedCoursePlanExample(basis: ExampleBasis): Promise<CoursePlanExample> {
+  "use cache";
+  cacheTag(getCourseCacheTag(basis.courseId), getCourseCurriculumCacheTag(basis.courseId));
+  // The serialized basis doesn't transfer its cache tags. This entry must also depend on the
+  // notice, including corrections to its structure that leave every sitting day unchanged.
+  const exam = basis.exam ? await getUpcomingExam(basis.courseId) : null;
+  cacheUntilMidnight(exam ? [UTC, exam.timeZone] : [UTC]);
+  const targetDate = exam?.days[0] ?? null;
+  const minutes = targetDate ? DEFAULT_EXAM_PACE : DEFAULT_COURSE_PACE;
+
+  // Core's public estimate starts in UTC and requires tomorrow or later. Keep the exam's own
+  // calendar visible when it still says tomorrow, but there is no remaining UTC study day.
+  if (targetDate && targetDate <= basis.hour.slice(0, ISO_DAY_LENGTH)) {
+    return { exam, pace: null };
+  }
+
+  const estimate = await estimateCoursePlan({
+    courseId: basis.courseId,
+    dailyMinutes: minutes,
+    studyDays: STUDY_DAYS,
+    ...(targetDate && { targetDate }),
+  });
+
+  return { exam, pace: estimate && hasStudyToShow(estimate) ? { estimate, minutes } : null };
 }
 
 /**
@@ -118,41 +126,16 @@ async function getCachedCoursePlanExample(
  * to its end. A failure only hides the example: the plan's cache doesn't keep it, so the page's
  * next regeneration tries again.
  */
-export async function getCoursePlanExample(course: {
-  format: string;
-  id: string;
-}): Promise<CoursePlanExample> {
-  const isExam = course.format === "exam";
-
+export async function getCoursePlanExample(course: ExampleCourse): Promise<CoursePlanExample> {
   try {
-    return await getCachedCoursePlanExample(course.id, isExam);
+    return await getCachedCoursePlanExample(await getCachedExampleBasis(course));
   } catch (error) {
     // Next's own signals (a prerender's interrupted request) must keep propagating.
     unstable_rethrow(error);
     logError("Course plan example failed", { courseId: course.id, error });
 
-    return {
-      defaultMinutes: isExam ? DEFAULT_EXAM_PACE : DEFAULT_COURSE_PACE,
-      exam: null,
-      paces: [],
-    };
+    return { exam: null, pace: null };
   }
-}
-
-/**
- * The time a day the example plan shows first: its default pace when it could estimate it, else
- * its first. Null without any pace to show.
- */
-export function getFirstShownPace(plan: Pick<CoursePlanExample, "defaultMinutes" | "paces">) {
-  const [first] = plan.paces;
-
-  if (!first) {
-    return null;
-  }
-
-  return plan.paces.some((pace) => pace.minutes === plan.defaultMinutes)
-    ? plan.defaultMinutes
-    : first.minutes;
 }
 
 /**
@@ -161,26 +144,25 @@ export function getFirstShownPace(plan: Pick<CoursePlanExample, "defaultMinutes"
  * end, or while any of its chapters has no area: the levels place them then.
  */
 function getChapterAreas(plan: CoursePlanExample): Map<string, string> | null {
-  const paces = plan.paces.toSorted(
-    (a, b) => Number(b.minutes === plan.defaultMinutes) - Number(a.minutes === plan.defaultMinutes),
-  );
+  const estimate = plan.pace?.estimate;
 
-  const dated = paces.map((pace) => pace.estimate).find((estimate) => isDatedEstimate(estimate));
-
-  if (!dated || dated.chapters.some((chapter) => !chapter.area)) {
+  if (
+    !estimate ||
+    !isDatedEstimate(estimate) ||
+    estimate.chapters.some((chapter) => !chapter.area)
+  ) {
     return null;
   }
 
-  return new Map(dated.chapters.map((chapter) => [chapter.chapterId, chapter.area ?? ""]));
+  return new Map(estimate.chapters.map((chapter) => [chapter.chapterId, chapter.area ?? ""]));
 }
 
 /**
  * `getChapterAreas` for a chapter's page, which shows nothing else of the example plan: only an
  * exam course's plan reads its chapters by area, so any other course isn't planned at all.
  */
-export async function getExamChapterAreas(course: {
-  format: string;
-  id: string;
-}): Promise<Map<string, string> | null> {
+export async function getExamChapterAreas(
+  course: ExampleCourse,
+): Promise<Map<string, string> | null> {
   return course.format === "exam" ? getChapterAreas(await getCoursePlanExample(course)) : null;
 }

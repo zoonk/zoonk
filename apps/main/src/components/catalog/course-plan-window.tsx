@@ -1,19 +1,13 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { ProductWindow } from "@/components/public/product-window";
-import {
-  PRESET_OPTION_CLASS,
-  Variant,
-  VariantSwitch,
-  VariantSwitchOption,
-} from "@/components/public/variant-switch";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
-import { type CoursePlanExample, getFirstShownPace } from "./course-plan";
+import { type CoursePlanExample } from "./course-plan";
 import {
   type DatedEstimate,
   type UndatedEstimate,
@@ -236,20 +230,14 @@ function hasPaceDetails(estimate: DatedEstimate | UndatedEstimate): estimate is 
 }
 
 /**
- * The course as the visitor's plan, in the app's window: pick a time a day (native radios, every
- * pace's plan in the page, the picked one showing) and see what it comes to, the result in a
- * headline in a polite live region so screen readers hear the new number. The outline's marks follow the same
- * radios. Numbers come only from core's estimate; with none, the page shows no window. A caption
- * says it's an example.
- *
- * `paceSwitch` names the radios, unique per course: the router may keep two courses' pages.
+ * The course's selected public example: its daily time, result and first day. The outline reads
+ * the same estimate. With no estimate the window is hidden; the caption explains the example.
  */
 export async function CoursePlanWindow({
   chapterTitles,
   className,
   examDate,
   isExam,
-  paceSwitch,
   plan,
 }: {
   chapterTitles: Map<string, string>;
@@ -258,82 +246,30 @@ export async function CoursePlanWindow({
   isExam: boolean;
   /** The exam's first day as the page writes it, for an exam course read against it. */
   examDate: string | null;
-  paceSwitch: string;
   plan: CoursePlanExample;
 }) {
   const t = await getExtracted();
-  const minutesText = await getMinutesFormatter();
-  const { paces } = plan;
-  const shown = getFirstShownPace(plan);
+  const { pace } = plan;
 
-  if (shown === null) {
+  if (!pace) {
     return null;
   }
-
-  const values = paces.map((pace) => String(pace.minutes));
-  const defaultValue = String(shown);
-
-  const labelId = `${paceSwitch}-label`;
 
   return (
     <div className={cn(WINDOW_COLUMN_CLASS, className)} data-slot="course-plan">
       <ProductWindow className="flex flex-col gap-5 p-5 sm:p-7">
         <h2 className="text-label">{t("Example plan")}</h2>
 
-        <VariantSwitch
-          aria-labelledby={labelId}
-          className="flex flex-wrap items-center gap-2"
-          defaultValue={defaultValue}
-          name={paceSwitch}
-          values={values}
-        >
-          <span className="text-muted-foreground mr-1 text-[0.8125rem]" id={labelId}>
-            {t("Time a day")}
-          </span>
+        {isDatedEstimate(pace.estimate) ? (
+          <DatedHeadline date={examDate ?? ""} estimate={pace.estimate} minutes={pace.minutes} />
+        ) : (
+          <UndatedHeadline estimate={pace.estimate} minutes={pace.minutes} />
+        )}
 
-          {paces.map((pace) => (
-            <VariantSwitchOption
-              className={PRESET_OPTION_CLASS}
-              defaultValue={defaultValue}
-              key={pace.minutes}
-              name={paceSwitch}
-              value={String(pace.minutes)}
-            >
-              {minutesText(pace.minutes)}
-            </VariantSwitchOption>
-          ))}
-        </VariantSwitch>
+        <PlanWorkloadRows exam={isExam} numbers={pace.estimate.numbers} />
 
-        {/* Only the headline is live, so a new time a day reads its number, not every row. */}
-        <div aria-live="polite">
-          {paces.map((pace) => (
-            <Variant key={pace.minutes} name={paceSwitch} value={String(pace.minutes)}>
-              {isDatedEstimate(pace.estimate) ? (
-                <DatedHeadline
-                  date={examDate ?? ""}
-                  estimate={pace.estimate}
-                  minutes={pace.minutes}
-                />
-              ) : (
-                <UndatedHeadline estimate={pace.estimate} minutes={pace.minutes} />
-              )}
-            </Variant>
-          ))}
-        </div>
-
-        {paces.map((pace) => (
-          <Variant key={pace.minutes} name={paceSwitch} value={String(pace.minutes)}>
-            <PlanWorkloadRows exam={isExam} numbers={pace.estimate.numbers} />
-          </Variant>
-        ))}
-
-        {paces.map(
-          (pace) =>
-            hasPaceDetails(pace.estimate) && (
-              <Variant key={pace.minutes} name={paceSwitch} value={String(pace.minutes)}>
-                <UndatedToday chapterTitles={chapterTitles} estimate={pace.estimate} />
-              </Variant>
-            ),
+        {hasPaceDetails(pace.estimate) && (
+          <UndatedToday chapterTitles={chapterTitles} estimate={pace.estimate} />
         )}
       </ProductWindow>
 

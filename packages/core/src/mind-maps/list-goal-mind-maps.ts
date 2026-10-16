@@ -1,8 +1,7 @@
 import "server-only";
-import { loadGoalMap } from "../view-models/_utils/goal-map";
 import { resolveViewGoal } from "../view-models/_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../view-models/syllabus/_utils/chapter-numbers";
-import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
+import { loadMindMapChapters, loadUpNextChapter } from "./_utils/load-mind-map-chapters";
 import { getMindMapStatus, toMindMapImage, toMindMapOutline } from "./_utils/mind-map-view";
 import { type GoalMindMapView, type GoalMindMapsView } from "./mind-map-contract";
 
@@ -20,7 +19,8 @@ function isListed(
  * A goal's mind maps (the active goal by default): every chapter the learner finished, in plan
  * order, with its subject and its map (its picture and outline), being made, or ready to be made
  * with `POST .../mind-map/generations`. A finished chapter whose lessons were never written (one
- * skipped with its test) has nothing to draw a map from and isn't listed.
+ * skipped with its test) has nothing to draw a map from and isn't listed. It names the chapter the
+ * learner is in, whose map comes once it's finished. Read from the saved plan, never building it.
  */
 export async function listGoalMindMaps(
   input: { goalId?: string } = {},
@@ -34,14 +34,15 @@ export async function listGoalMindMaps(
   }
 
   const { goal } = resolved;
-  const map = await loadGoalMap({ goal });
+  const now = new Date();
 
-  const [facts, numbering] = await Promise.all([
-    loadMindMapChapters({ goal, map }),
+  const [facts, numbering, upNext] = await Promise.all([
+    loadMindMapChapters({ goal }),
     loadChapterNumbering(goal),
+    loadUpNextChapter(goal),
   ]);
 
-  const now = new Date();
+  const nextTitle = facts.find((chapter) => chapter.chapterId === upNext?.chapterId)?.title;
 
   const chapters = facts.flatMap((chapter) => {
     const status = getMindMapStatus({ ...chapter, now });
@@ -65,5 +66,13 @@ export async function listGoalMindMaps(
     ];
   });
 
-  return { mindMaps: { chapters, goal: { id: goal.id, title: goal.title } }, status: "ready" };
+  const nextChapter =
+    upNext && nextTitle !== undefined && upNext.lessonsLeft > 0
+      ? { ...upNext, title: nextTitle }
+      : null;
+
+  return {
+    mindMaps: { chapters, goal: { id: goal.id, title: goal.title }, nextChapter },
+    status: "ready",
+  };
 }

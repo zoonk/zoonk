@@ -2,12 +2,15 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type AllowanceLimit } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type GoalCreateInput, type GoalDraft } from "../goal-contract";
+import { findActiveGoalLimit } from "./goal-status";
 
 /** Study days become a weekly shape with rest days at zero; every day needs no shape. */
 function getWeekdayMinutes({
@@ -29,12 +32,15 @@ function getWeekdayMinutes({
 /**
  * Creates one goal and its empty plan. An exam goal learns the language its notice says the exam
  * tests (`testedLanguage`), else the one onboarding read, else the one a certificate's name gives.
+ * Recounts active goals after taking the same plan→user lock as resume: a usage claim that passed
+ * earlier cannot promise the slot is still free. Explanations and owned replacements take no slot.
  */
 export async function createGoal({
   dailyMinutes,
   draft,
   id,
   input,
+  replacing = false,
   testedLanguage,
   userId,
 }: {
@@ -42,13 +48,20 @@ export async function createGoal({
   draft: GoalDraft;
   id: string;
   input: GoalCreateInput;
+  replacing?: boolean;
   testedLanguage: string | null;
   userId: string;
-}): Promise<void> {
+}): Promise<AllowanceLimit | null> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
 
-  await prisma.$transaction(async (tx) => {
-    await markLearnerChanged(tx, { planInputs: true, userId });
+  return writeLearnerChange<null, AllowanceLimit>({ planInputs: true, userId }, async (tx) => {
+    if (!replacing && draft.kind !== "explain") {
+      const limit = await findActiveGoalLimit({ db: tx, goalId: id, userId });
+
+      if (limit) {
+        return unchanged(limit);
+      }
+    }
 
     await tx.goal.create({
       data: {
@@ -78,6 +91,8 @@ export async function createGoal({
         },
       },
     });
+
+    return null;
   });
 }
 

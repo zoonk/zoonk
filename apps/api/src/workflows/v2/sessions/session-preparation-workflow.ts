@@ -27,6 +27,7 @@ import {
 } from "./steps/personal-versions-steps";
 import {
   countLessonsBeingWrittenStep,
+  createSessionGenerationManifestStep,
   listSessionPreparationStep,
 } from "./steps/session-preparation-steps";
 import { listSkillExtensionsStep } from "./steps/skill-extension-steps";
@@ -128,15 +129,28 @@ async function startLessonWork({
   const { forExam, laterLessonIds, lessonIds } = preparation;
   const soonCourseIds = new Set(soon);
 
+  const planManifest = await createSessionGenerationManifestStep({
+    goalId: input.goalId,
+    lessonIds: [...lessonIds, ...laterLessonIds],
+  });
+
+  const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
+
   await Promise.all([
-    ...lessonIds.map((lessonId) =>
-      start(lessonContentWorkflow, [{ analytics, forExam, lessonId, planGoalId: input.goalId }]),
-    ),
-    ...laterLessonIds.map((lessonId) =>
-      start(lessonContentWorkflow, [
-        { analytics, forExam, lessonId, planGoalId: input.goalId, wait: "later" },
-      ]),
-    ),
+    ...lessonIds
+      .filter((lessonId) => admitted.has(lessonId))
+      .map((lessonId) =>
+        start(lessonContentWorkflow, [
+          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest },
+        ]),
+      ),
+    ...laterLessonIds
+      .filter((lessonId) => admitted.has(lessonId))
+      .map((lessonId) =>
+        start(lessonContentWorkflow, [
+          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "later" },
+        ]),
+      ),
     ...mergeCourseRequests([...extensions, ...outlines]).map((request) =>
       start(courseOutlineWorkflow, [
         {

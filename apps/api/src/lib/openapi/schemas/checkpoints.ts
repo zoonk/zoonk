@@ -17,6 +17,8 @@ import {
 } from "./study-sessions";
 import { mockWrittenPartsSchema } from "./weekly-challenge";
 
+const unknownSizeSchema = z.int().min(0).nullable();
+
 const rewardSchema = z
   .object({
     badge: z
@@ -145,14 +147,10 @@ export const challengeResponseSchema = z
         description: '"Move to Monday": the weekly challenge before it starts, from today on',
       }),
     date: logicalDateSchema.nullable().meta({ description: "The day it's planned for" }),
-    estimatedMinutes: z
-      .number()
-      .int()
-      .min(0)
-      .meta({
-        description:
-          "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise. Display minutes as the canonical mock duration: it is the real time limit funded by the plan, even when the learner may finish early.",
-      }),
+    estimatedMinutes: unknownSizeSchema.meta({
+      description:
+        "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
+    }),
     examName: z.string().nullable(),
     fullLength: z
       .boolean()
@@ -169,34 +167,26 @@ export const challengeResponseSchema = z
         description:
           "The learner needs Plus to start this challenge. Its content and completed feedback remain visible; an unfinished challenge has `status` `plusRequired`, and a completed language challenge keeps `status` `done` with `locked` true after Plus lapses. Starting rechecks the subscription",
       }),
-    minutes: z
-      .number()
-      .int()
-      .min(0)
-      .meta({ description: "Time on the clock for a mock; about how long a checkpoint takes" }),
+    minutes: unknownSizeSchema.meta({
+      description:
+        "A mock's clock; otherwise about how long a checkpoint takes; null while its size is unknown",
+    }),
     mock: z.boolean().meta({ description: "An exam's weekly mock, in the exam's conditions" }),
     netScored: z.boolean().meta({ description: "Wrong answers cost points (see `wrongPenalty`)" }),
     number: z.number().int().min(1).nullable().meta({ description: '"Mock exam 3"' }),
-    passMark: z
-      .number()
-      .int()
-      .min(0)
-      .nullable()
-      .meta({
-        description:
-          "Right answers that win a boss, or for a call the goals got across (null until its call is written); a weekly challenge pays for finishing",
-      }),
+    passMark: unknownSizeSchema.meta({
+      description:
+        "Right answers that win a boss, null while its size is unknown; a call's goals got across, null until written. A weekly challenge pays for finishing",
+    }),
     phase: checkpointPhaseSchema.nullable(),
     planItemId: z.uuid(),
-    questions: z.number().int().min(0).meta({ description: "0 for a call, which asks none" }),
-    recordings: z
-      .number()
-      .int()
-      .min(0)
-      .meta({
-        description:
-          "Recordings a listening phase's boss asks its questions on, each played as in the exam; 0 for text questions",
-      }),
+    questions: unknownSizeSchema.meta({
+      description: "Null while unknown; 0 for a call or a checkpoint with nothing to ask yet",
+    }),
+    recordings: unknownSizeSchema.meta({
+      description:
+        "Recordings a listening boss asks about, each played as in the exam; null for a saved recording offer while its recordings aren't picked yet, 0 for text or unknown kind",
+    }),
     reinforcementLessons: z
       .number()
       .int()
@@ -248,8 +238,12 @@ export const challengeResponseSchema = z
       )
       .meta({
         description:
-          "What its questions ask about, in plan order: once its block is built, the topics of the questions it asks; before that, the topics a boss's questions will come from, as the plan sets them (none for the weekly challenge). Empty for a mock, which lists its sections, and a language goal's call",
+          "What its questions ask about, in plan order: once its block is built, the topics of the questions it asks; before that, the topics its saved offer keeps. Empty without saved topics, for a mock, which lists its sections, and a language goal's call",
       }),
+    waitReason: studyBlockSchema.shape.waitReason.meta({
+      description:
+        "Why today's block for it waits in today's saved session: earlier lessons (`lessons`) or an earlier phase challenge (`challenge`) are still pending or active. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null before today's session is saved and when nothing before it waits",
+    }),
     written: mockWrittenPartsSchema,
     wrongPenalty: z
       .number()

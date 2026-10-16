@@ -12,7 +12,7 @@ import {
   listSoonStandInCourseIds,
 } from "@zoonk/core/lookahead/plan-outline-needs";
 import {
-  admitPlanLessons,
+  createPlanGenerationManifest,
   pickPlanStartToWrite,
   pickSpeculativeLessons,
 } from "@zoonk/core/lookahead/speculative-lessons";
@@ -128,15 +128,16 @@ export async function pickSpeculativeLessonsStep(input: {
 
 /**
  * The lessons of `lessonIds` to start writing now: one the learner finished, or placement tested
- * out, since it was picked is left out (see `admitPlanLessons`).
+ * out, since it was picked is left out. The admitted targets carry the same versioned token to
+ * their child runs; they never compute the plan merely to ask membership.
  */
-export async function admitPlanLessonsStep(input: {
+export async function createGoalGenerationManifestStep(input: {
   goalId: string;
   lessonIds: string[];
-}): Promise<string[]> {
+}) {
   "use step";
 
-  return admitPlanLessons(input);
+  return createPlanGenerationManifest(input);
 }
 
 /**

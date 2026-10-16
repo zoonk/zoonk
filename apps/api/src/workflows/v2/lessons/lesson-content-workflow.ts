@@ -1,6 +1,7 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { MAX_LESSON_DRAFTS } from "@zoonk/core/library/generation/held-back-drafts";
 import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
+import { type PlanGenerationManifest } from "@zoonk/core/lookahead/speculative-lessons";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type Run, start } from "workflow/api";
@@ -26,6 +27,8 @@ export type LessonContentInput = {
   lessonId: string;
   /** The plan that picked this lesson; cost attribution alone does not require plan membership. */
   planGoalId?: string;
+  /** The parent-issued selection/content/placement token, persisted before this child starts. */
+  planManifest?: PlanGenerationManifest | null;
   /** The learner and goal the lesson is being made for, so its cost adds up per learner. */
   analytics?: ContentAnalytics;
   /** Made for an exam goal, so the reasoning check always runs (after publishing). */
@@ -212,7 +215,13 @@ export async function lessonContentWorkflow(
 
   const { lessonId } = input;
 
-  if (!(await admitLessonContentStep({ goalId: input.planGoalId, lessonId }))) {
+  if (
+    !(await admitLessonContentStep({
+      goalId: input.planGoalId,
+      lessonId,
+      manifest: input.planManifest,
+    }))
+  ) {
     return { lessonId, status: "missing" };
   }
 

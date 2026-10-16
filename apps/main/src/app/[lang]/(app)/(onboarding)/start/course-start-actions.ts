@@ -5,7 +5,6 @@ import { startGoalWork } from "@/lib/goals/start-goal-work";
 import {
   CHAPTER_PARAM,
   MINUTES_PARAM,
-  PICKED_PARAM,
   getCourseStartHref,
   readDailyMinutes,
 } from "@/lib/public/public-hrefs";
@@ -44,7 +43,7 @@ export async function startCourseAction({
 }: {
   chapterId?: string | null;
   courseId: string;
-  /** The time a day picked on the course's page; the default plan's otherwise. */
+  /** The time a day the course's example plan showed; the default plan's otherwise. */
   dailyMinutes?: number | null;
   level?: OnboardingOwnLevel | null;
   timeZone?: string;
@@ -122,7 +121,6 @@ export async function startCourseFormAction(formData: FormData): Promise<void> {
   const courseId = readField(formData, "courseId") ?? "";
   const chapterId = readField(formData, CHAPTER_PARAM);
   const minutes = readDailyMinutes(readField(formData, MINUTES_PARAM) ?? undefined);
-  const picked = readField(formData, PICKED_PARAM) !== null;
 
   const locale = await getLocale();
   const outcome = await startCourseAction({ chapterId, courseId, dailyMinutes: minutes });
@@ -130,7 +128,7 @@ export async function startCourseFormAction(formData: FormData): Promise<void> {
   redirect({
     href: getFormDestination({
       outcome,
-      startHref: getCourseStartHref({ chapterId, courseId, minutes, picked }),
+      startHref: getCourseStartHref({ chapterId, courseId, minutes }),
     }),
     locale,
   });

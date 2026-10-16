@@ -15,78 +15,41 @@ import {
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { AreaOutline, type DatedPace } from "./outline-areas";
-import { PaceMarks } from "./outline-chapter-row";
+import { AreaOutline } from "./outline-areas";
 import { OutlineLevel } from "./outline-levels";
 
 type Params = { brandSlug: string; courseSlug: string };
 
 /**
- * The example plan the outline marks: the plan window's paces, whose radios (`paceSwitch`) switch
- * the marks too, the one the window picks first, and the exam's first day as the page writes it,
- * for an exam course.
+ * The selected example the outline marks, and the exam's first day as the page writes it.
  */
-export type OutlinePlan = {
-  defaultMinutes: number;
+export type OutlinePlan = { examDate: string | null; pace: PaceEstimate | null };
+
+/**
+ * What the selected example comes to over the outline: to the course's end from scratch, or to
+ * the exam's day.
+ */
+async function OutlinePlanLine({
+  examDate,
+  pace,
+}: {
   examDate: string | null;
-  paceSwitch: string;
-  paces: PaceEstimate[];
-};
-
-/**
- * How the outline shows the example plan: by the exam's areas when every pace reads an exam course
- * against its date, as weeks on the levels when every pace plans the course to its end, or not at
- * all.
- */
-function getOutlineMarks(
-  plan: OutlinePlan | null,
-):
-  | { kind: "areas"; paces: DatedPace[] }
-  | { kind: "none" }
-  | { kind: "weeks"; paces: PaceEstimate[] } {
-  const paces = plan?.paces ?? [];
-
-  const dated = paces.flatMap((pace) =>
-    isDatedEstimate(pace.estimate) ? [{ estimate: pace.estimate, minutes: pace.minutes }] : [],
-  );
-
-  if (paces.length === 0) {
-    return { kind: "none" };
-  }
-
-  if (dated.length === 0) {
-    return { kind: "weeks", paces };
-  }
-
-  return dated.length === paces.length ? { kind: "areas", paces: dated } : { kind: "none" };
-}
-
-/**
- * What the example plan comes to over the outline, at the picked pace: to the course's end from
- * scratch, or to the exam's day.
- */
-async function OutlinePlanLine({ plan }: { plan: OutlinePlan }) {
+  pace: PaceEstimate;
+}) {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
 
   return (
     <p className="text-muted-foreground -mt-2 text-sm leading-relaxed text-pretty">
-      <PaceMarks
-        marks={plan.paces.map((pace) => ({
-          minutes: pace.minutes,
-          text:
-            isDatedEstimate(pace.estimate) && plan.examDate
-              ? t("Your plan until {date}, at {time} a day", {
-                  date: plan.examDate,
-                  time: minutesText(pace.minutes),
-                })
-              : t(
-                  "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch",
-                  { minutes: pace.minutes },
-                ),
-        }))}
-        paceSwitch={plan.paceSwitch}
-      />
+      {isDatedEstimate(pace.estimate) && examDate
+        ? t("Your plan until {date}, at {time} a day", {
+            date: examDate,
+            time: minutesText(pace.minutes),
+          })
+        : t(
+            "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch",
+            { minutes: pace.minutes },
+          )}
     </p>
   );
 }
@@ -107,8 +70,8 @@ const OUTLINE_INTRO_CLASS = "contents xl:sticky xl:top-24 xl:flex xl:flex-col xl
  * Everything the course covers, after the page has said what it is and how it becomes a plan: its
  * size in one quiet line (chapters, then lessons and their total time once they're written), its
  * description, then its levels, each folded to its name and first chapters, the first one open.
- * With the example plan (`plan`), each chapter says its week in it at the pace the window's radios
- * pick, and an exam course read against its date groups its chapters by the exam's areas, each
+ * With the example plan (`plan`), each chapter says its week in it, and an exam course read
+ * against its date groups its chapters by the exam's areas, each
  * saying how much of it fits. Every chapter and lesson title stays in the page's HTML once for
  * search engines, and each opens its own page. A course whose outline isn't written yet invites
  * the visitor to build their plan, which writes it for them.
@@ -130,7 +93,10 @@ export async function LibraryCourseOutline({
   const stats = getLibraryOutlineStats(outline);
   const durationLabel = await getTotalDurationLabel(stats.totalMinutes);
   const levelLabels = await getLevelLabels();
-  const marks = stats.chapterCount > 0 ? getOutlineMarks(plan) : ({ kind: "none" } as const);
+  const pace = stats.chapterCount > 0 ? plan?.pace : null;
+  const estimate = pace?.estimate;
+  const areas = estimate && isDatedEstimate(estimate) ? estimate : null;
+  const weeks = estimate && !isDatedEstimate(estimate) ? estimate : null;
 
   const firstNumbers = outline.levels.map((_, index) =>
     outline.levels.slice(0, index).reduce((sum, band) => sum + band.chapters.length, 1),
@@ -162,7 +128,7 @@ export async function LibraryCourseOutline({
           )}
         </PageSectionHeader>
 
-        {plan && marks.kind !== "none" && <OutlinePlanLine plan={plan} />}
+        {plan && pace && <OutlinePlanLine examDate={plan.examDate} pace={pace} />}
 
         {lead && (
           <p className="max-w-column text-[0.9375rem] leading-relaxed text-pretty">{lead}</p>
@@ -182,17 +148,9 @@ export async function LibraryCourseOutline({
         )}
       </div>
 
-      {plan && marks.kind === "areas" && (
-        <AreaOutline
-          defaultMinutes={plan.defaultMinutes}
-          outline={outline}
-          paceSwitch={plan.paceSwitch}
-          paces={marks.paces}
-          params={params}
-        />
-      )}
+      {areas && <AreaOutline estimate={areas} outline={outline} params={params} />}
 
-      {stats.chapterCount > 0 && marks.kind !== "areas" && (
+      {stats.chapterCount > 0 && !areas && (
         <div className="flex flex-col">
           {outline.levels.map((band, index) => (
             <OutlineLevel
@@ -202,7 +160,7 @@ export async function LibraryCourseOutline({
               label={levelLabels[band.level]}
               open={index === 0}
               params={params}
-              plan={plan && marks.kind === "weeks" ? { ...plan, paces: marks.paces } : null}
+              estimate={weeks}
             />
           ))}
         </div>

@@ -1,7 +1,6 @@
 import { findEstimateArea, getAreaStudyText } from "@/components/catalog/area-study";
 import { type DatedEstimate } from "@/components/catalog/plan-estimate";
 import { PublicDisclosure } from "@/components/public/public-disclosure";
-import { Variant } from "@/components/public/variant-switch";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getExtracted } from "next-intl/server";
 import {
@@ -9,124 +8,83 @@ import {
   type OutlineChapter,
   OutlineChapterRow,
   type OutlineParams,
-  PaceMarks,
 } from "./outline-chapter-row";
 import { getChapterWeeksFormatter, getChapterWorkFormatter } from "./outline-weeks";
 
-/** One pace's plan for an exam course, read against the exam's date. */
-export type DatedPace = { estimate: DatedEstimate; minutes: number };
-
 type ChapterRow = DatedEstimate["chapters"][number];
 
-/** The plan at an area's chapters, per pace: each chapter's row by its id. */
-type AreaRows = Map<number, Map<string, ChapterRow>>;
-
-function getAreaRows({ chapters, paces }: { chapters: OutlineChapter[]; paces: DatedPace[] }) {
-  const ids = new Set(chapters.map((chapter) => chapter.id));
-
-  return new Map(
-    paces.map((pace) => [
-      pace.minutes,
-      new Map(
-        pace.estimate.chapters
-          .filter((row) => ids.has(row.chapterId))
-          .map((row) => [row.chapterId, row]),
-      ),
-    ]),
-  );
-}
+/** Each chapter's row in the selected example. */
+type AreaRows = ReadonlyMap<string, ChapterRow>;
 
 /**
- * The area's chapters in the order the plan studies them at the pace the window picks first: what
+ * The area's chapters in the order the selected example studies them: what
  * fits, by the planner's study order, then what's left out, in the course's order (core numbers
- * those after the rest). Other paces keep this order and say where each chapter falls.
+ * those after the rest).
  */
-function orderByStudy({
-  chapters,
-  rows,
-}: {
-  chapters: OutlineChapter[];
-  rows?: Map<string, ChapterRow>;
-}) {
+function orderByStudy({ chapters, rows }: { chapters: OutlineChapter[]; rows: AreaRows }) {
   const order = (chapter: OutlineChapter) =>
-    rows?.get(chapter.id)?.studyOrder ?? Number.POSITIVE_INFINITY;
+    rows.get(chapter.id)?.studyOrder ?? Number.POSITIVE_INFINITY;
 
   return chapters.toSorted((first, second) => order(first) - order(second));
 }
 
 /**
- * How an area fares at each pace, the picked one showing: its study time, then how many of its
+ * How an area fares in the selected example: its study time, then how many of its
  * lessons fit, its quick lessons and, when some fit and some don't, its chapters left out (a
  * whole area left out says so in its time). No bar: a share of time would read as coverage.
  */
 async function AreaFit({
   area,
   chapters,
-  paceSwitch,
-  paces,
+  estimate,
   rows,
 }: {
   area: string | null;
   chapters: OutlineChapter[];
-  paceSwitch: string;
-  paces: DatedPace[];
+  estimate: DatedEstimate;
   rows: AreaRows;
 }) {
   const t = await getExtracted();
   const areaText = await getAreaStudyText();
 
-  return paces.map((pace) => {
-    const entry = findEstimateArea(pace.estimate, area);
-    const text = entry ? areaText(entry) : null;
+  const entry = findEstimateArea(estimate, area);
+  const text = entry ? areaText(entry) : null;
 
-    const leftOut = chapters.filter(
-      (chapter) => (rows.get(pace.minutes)?.get(chapter.id)?.week ?? null) === null,
-    ).length;
+  const leftOut = chapters.filter(
+    (chapter) => (rows.get(chapter.id)?.week ?? null) === null,
+  ).length;
 
-    return (
-      <Variant
-        as="span"
-        className="flex flex-col gap-1.5"
-        key={pace.minutes}
-        name={paceSwitch}
-        value={String(pace.minutes)}
-      >
-        <span className="text-muted-foreground text-[13px] leading-snug font-normal sm:text-sm">
-          {[
-            text?.time,
-            text?.detail,
-            leftOut > 0 &&
-              leftOut < chapters.length &&
-              t("{count, plural, one {# chapter left out} other {# chapters left out}}", {
-                count: leftOut,
-              }),
-          ]
-            .filter(Boolean)
-            .join(OUTLINE_SEPARATOR)}
-        </span>
-      </Variant>
-    );
-  });
+  return (
+    <span className="flex flex-col gap-1.5">
+      <span className="text-muted-foreground text-[13px] leading-snug font-normal sm:text-sm">
+        {[
+          text?.time,
+          text?.detail,
+          leftOut > 0 &&
+            leftOut < chapters.length &&
+            t("{count, plural, one {# chapter left out} other {# chapters left out}}", {
+              count: leftOut,
+            }),
+        ]
+          .filter(Boolean)
+          .join(OUTLINE_SEPARATOR)}
+      </span>
+    </span>
+  );
 }
 
 /**
- * An area's chapters as rows, each with its week in the plan at the picked pace, how much of it
+ * An area's chapters as rows, each with its week in the selected example, how much of it
  * fits, or that it's left out.
  */
 async function AreaChapters({
   chapters,
-  defaultMinutes,
   numbers,
-  paceSwitch,
-  paces,
   params,
   rows,
 }: {
   chapters: OutlineChapter[];
-  defaultMinutes: number;
   numbers: Map<string, number>;
-  paceSwitch: string;
-  paces: DatedPace[];
   params: OutlineParams;
   rows: AreaRows;
 }) {
@@ -139,8 +97,8 @@ async function AreaChapters({
    * A chapter's mark at one pace: its weeks, with how many of its own lessons fit when not all do,
    * or what it's studied through when none does; "Left out" only when the plan holds no work of it.
    */
-  const markText = ({ chapter, minutes }: { chapter: OutlineChapter; minutes: number }) => {
-    const row = rows.get(minutes)?.get(chapter.id);
+  const markText = (chapter: OutlineChapter) => {
+    const row = rows.get(chapter.id);
     const span = row ? weeksText(row) : null;
 
     if (!row || !span) {
@@ -161,19 +119,11 @@ async function AreaChapters({
 
   return (
     <ol>
-      {orderByStudy({ chapters, rows: rows.get(defaultMinutes) }).map((chapter) => (
+      {orderByStudy({ chapters, rows }).map((chapter) => (
         <OutlineChapterRow
           chapter={chapter}
           key={chapter.id}
-          mark={
-            <PaceMarks
-              marks={paces.map((pace) => ({
-                minutes: pace.minutes,
-                text: markText({ chapter, minutes: pace.minutes }),
-              }))}
-              paceSwitch={paceSwitch}
-            />
-          }
+          mark={markText(chapter)}
           number={numbers.get(chapter.id) ?? 0}
           params={params}
         />
@@ -191,44 +141,32 @@ async function AreaChapters({
  * lists its chapters right away.
  */
 export async function AreaOutline({
-  defaultMinutes,
+  estimate,
   outline,
-  paceSwitch,
-  paces,
   params,
 }: {
-  defaultMinutes: number;
+  estimate: DatedEstimate;
   outline: LibraryOutline;
-  paceSwitch: string;
-  paces: DatedPace[];
   params: OutlineParams;
 }) {
   const t = await getExtracted();
   const chapters = outline.levels.flatMap((band) => band.chapters);
   const numbers = new Map(chapters.map((chapter, index) => [chapter.id, index + 1]));
-  const [first] = paces;
-  const areaOf = new Map(first?.estimate.chapters.map((row) => [row.chapterId, row.area]));
+  const rows = new Map(estimate.chapters.map((row) => [row.chapterId, row]));
+  const areaOf = new Map(estimate.chapters.map((row) => [row.chapterId, row.area]));
   const groups = Map.groupBy(chapters, (chapter) => areaOf.get(chapter.id) ?? null);
 
-  const areas = first?.estimate.areas.flatMap((area) => (area.area ? [area.area] : []));
+  const areas = estimate.areas.flatMap((area) => (area.area ? [area.area] : []));
   const order = [...new Set(areas)].filter((area) => groups.has(area));
 
-  const shared = { defaultMinutes, numbers, paceSwitch, paces, params };
+  const shared = { numbers, params, rows };
 
   // One area (or none placed yet) lists every chapter at once.
   if (order.length <= 1) {
-    const rows = getAreaRows({ chapters, paces });
-
     return (
       <div className="flex flex-col gap-2">
-        <AreaFit
-          area={order[0] ?? null}
-          chapters={chapters}
-          paceSwitch={paceSwitch}
-          paces={paces}
-          rows={rows}
-        />
-        <AreaChapters chapters={chapters} rows={rows} {...shared} />
+        <AreaFit area={order[0] ?? null} chapters={chapters} estimate={estimate} rows={rows} />
+        <AreaChapters chapters={chapters} {...shared} />
       </div>
     );
   }
@@ -237,7 +175,6 @@ export async function AreaOutline({
     <div className="flex flex-col">
       {order.map((area) => {
         const areaChapters = groups.get(area) ?? [];
-        const rows = getAreaRows({ chapters: areaChapters, paces });
 
         return (
           <PublicDisclosure
@@ -248,17 +185,11 @@ export async function AreaOutline({
             summary={
               <span className="flex flex-col gap-2">
                 <span>{area}</span>
-                <AreaFit
-                  area={area}
-                  chapters={areaChapters}
-                  paceSwitch={paceSwitch}
-                  paces={paces}
-                  rows={rows}
-                />
+                <AreaFit area={area} chapters={areaChapters} estimate={estimate} rows={rows} />
               </span>
             }
           >
-            <AreaChapters chapters={areaChapters} rows={rows} {...shared} />
+            <AreaChapters chapters={areaChapters} {...shared} />
           </PublicDisclosure>
         );
       })}

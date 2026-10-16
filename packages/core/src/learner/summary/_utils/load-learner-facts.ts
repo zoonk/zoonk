@@ -1,5 +1,10 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { prisma, sql } from "@zoonk/db";
+import {
+  type MindMapChapterState,
+  isListedMindMapChapter,
+  mindMapChapterRows,
+} from "../../../mind-maps/_utils/listed-mind-map-chapters";
 
 /** How many of the learner's latest days with study are enough to tell today and earlier apart. */
 const RECENT_STUDY_DAYS = 4;
@@ -26,12 +31,26 @@ export type LearnerFacts = {
 };
 
 /**
- * The learner's facts in one statement. A goal's mind maps list a chapter the learner finished
- * (every lesson studied or tested out) outside a language, visible to them, with written lessons
- * or a map being made or made: the listing rule of `listGoalMindMaps`, asked as "is there one".
+ * A finished chapter outside a language with lessons written or a map (`mindMapChapterRows`), as
+ * the facts' JSON carries it: what `isListedMindMapChapter` reads.
+ */
+type MindMapChapterFacts = Pick<
+  MindMapChapterState,
+  "canHaveMap" | "hasWrittenLessons" | "mapStatus" | "mapStructure"
+> & { goalId: string; mapUpdatedAt: number | null };
+
+type LearnerFactsRow = Omit<LearnerFacts, "mindMapGoalIds"> & {
+  mindMapChapters: MindMapChapterFacts[];
+};
+
+/**
+ * The learner's facts in one statement. A goal has mind maps when one of its chapters is listed by
+ * the rule `listGoalMindMaps` lists them by (`isListedMindMapChapter`).
  */
 export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
-  const rows = await prisma.$queryRaw<LearnerFacts[]>`
+  const mindMapGoals = sql`g.user_id = ${userId}::uuid AND g.status <> 'archived'`;
+
+  const rows = await prisma.$queryRaw<LearnerFactsRow[]>`
     SELECT
       up.current_energy AS "currentEnergy",
       up.total_brain_power AS "totalBrainPower",
@@ -59,36 +78,49 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
           LIMIT ${RECENT_STUDY_DAYS}
         ) d
       ) AS "recentStudyDays",
-      ARRAY(
-        SELECT DISTINCT p.goal_id::text
-        FROM plans p
-        JOIN goals g ON g.id = p.goal_id
-        JOIN plan_items i ON i.plan_id = p.id
-        JOIN library_chapters c ON c.id = i.chapter_id
-        WHERE g.user_id = u.id AND g.status <> 'archived' AND g.kind <> 'language'
-          AND i.kind IN ('chapter', 'lesson') AND c.target_language IS NULL
-          AND (c.visibility = 'public' OR c.owner_id = u.id)
-        GROUP BY p.goal_id, i.chapter_id
-        HAVING bool_and(i.status IN ('done', 'tested_out')) AND (
-          EXISTS (
-            SELECT 1 FROM chapter_lessons cl
-            JOIN library_lessons l ON l.id = cl.lesson_id
-            WHERE cl.chapter_id = i.chapter_id AND l.content_status = 'completed'
-          )
-          OR EXISTS (
-            SELECT 1 FROM chapter_mind_maps mm
-            WHERE mm.chapter_id = i.chapter_id AND mm.status IN ('completed', 'running')
-          )
+      (
+        SELECT coalesce(
+          json_agg(json_build_object(
+            'canHaveMap', m."canHaveMap",
+            'goalId', m."goalId",
+            'hasWrittenLessons', m."hasWrittenLessons",
+            'mapStatus', m."mapStatus",
+            -- Milliseconds: a zoneless timestamp in JSON would read as local time.
+            'mapUpdatedAt', extract(epoch FROM m."mapUpdatedAt") * 1000,
+            -- Only a map without written lessons to draw it again from is listed by its outline.
+            'mapStructure', CASE WHEN m."hasWrittenLessons" THEN NULL ELSE m."mapStructure" END
+          )),
+          '[]'::json
         )
-      ) AS "mindMapGoalIds"
+        FROM (${mindMapChapterRows(mindMapGoals)}) m
+        -- Only these can be listed (getMindMapStatus): the rest stay out of the JSON.
+        WHERE m."canHaveMap" AND (m."hasWrittenLessons" OR m."mapStatus" IS NOT NULL)
+      ) AS "mindMapChapters"
     FROM (SELECT ${userId}::uuid AS id) u
     LEFT JOIN user_progress up ON up.user_id = u.id`;
 
-  const [facts] = rows;
+  const [row] = rows;
 
-  if (!facts) {
+  if (!row) {
     throw new Error("The learner's facts read returned no row");
   }
 
-  return facts;
+  const { mindMapChapters, ...facts } = row;
+  const now = new Date();
+
+  const listed = mindMapChapters.filter((chapter) =>
+    isListedMindMapChapter({
+      chapter: {
+        ...chapter,
+        mapImageHeight: null,
+        mapImageUrl: null,
+        mapImageWidth: null,
+        mapThumbnailUrl: null,
+        mapUpdatedAt: chapter.mapUpdatedAt ? new Date(chapter.mapUpdatedAt) : null,
+      },
+      now,
+    }),
+  );
+
+  return { ...facts, mindMapGoalIds: [...new Set(listed.map((chapter) => chapter.goalId))] };
 }

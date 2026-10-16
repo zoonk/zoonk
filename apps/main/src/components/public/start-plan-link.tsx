@@ -12,23 +12,20 @@ import { getSecondaryStartControlClassName, getStartControlClassName } from "./p
  * learn more, and a prefetch is harmless; `nofollow` keeps crawlers on the indexed pages, since the
  * start page isn't one. `secondary` draws it as an outline button, for a page whose main action is
  * another one (a lesson's first question). `minutes` is the time a day the page's example plan
- * shows, which the plan starts with; `picked` when the visitor chose it rather than the page.
- * `continues` names it for a learner whose goal already follows the course, whom the start page
- * sends back to it.
+ * shows, which the plan starts with. `continues` names it for a learner whose goal already follows
+ * the course, whom the start page sends back to it.
  */
 export async function StartPlanLink({
   chapterId,
   continues = false,
   courseId,
   minutes,
-  picked = false,
   secondary = false,
 }: {
   chapterId?: string | null;
   continues?: boolean;
   courseId: string;
   minutes?: number;
-  picked?: boolean;
   secondary?: boolean;
 }) {
   const t = await getExtracted();
@@ -36,7 +33,7 @@ export async function StartPlanLink({
   return (
     <Link
       className={secondary ? getSecondaryStartControlClassName() : getStartControlClassName()}
-      href={getCourseStartHref({ chapterId, courseId, minutes, picked })}
+      href={getCourseStartHref({ chapterId, courseId, minutes })}
       prefetch
       rel="nofollow"
     >

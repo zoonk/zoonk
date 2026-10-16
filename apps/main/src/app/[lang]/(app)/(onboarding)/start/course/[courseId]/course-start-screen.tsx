@@ -3,7 +3,7 @@
 import { startCourseFormAction } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
 import { CourseStartFailureNote, isStartBlocked } from "@/components/public/course-start-failure";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
-import { CHAPTER_PARAM, MINUTES_PARAM, PICKED_PARAM } from "@/lib/public/public-hrefs";
+import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -31,8 +31,6 @@ type StartTarget = {
   course: { id: string; title: string };
   /** The time a day the course's page showed, which the plan starts with; null for the default. */
   dailyMinutes: number | null;
-  /** The visitor chose that time on the course's page, rather than leaving its first one. */
-  minutesPicked: boolean;
 };
 
 /** A chapter the plan will teach, in the course's order. */
@@ -87,7 +85,7 @@ function StartHeading({
   asksLevel,
   chapter,
   course,
-}: Omit<StartTarget, "dailyMinutes" | "minutesPicked"> & { asksLevel: boolean }) {
+}: Omit<StartTarget, "dailyMinutes"> & { asksLevel: boolean }) {
   const t = useExtracted();
 
   if (chapter) {
@@ -140,7 +138,6 @@ function CourseStartForm({
   dailyMinutes,
   initialFailure,
   level,
-  minutesPicked,
   note,
 }: StartTarget & {
   children: React.ReactNode;
@@ -167,15 +164,10 @@ function CourseStartForm({
     <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6">
       {!blocked && dailyMinutes && (
         <p className="text-muted-foreground -mt-2 text-sm text-pretty">
-          {minutesPicked
-            ? t(
-                "{minutes, plural, one {# minute} other {# minutes}} a day, as you picked. You can change it in the next steps.",
-                { minutes: dailyMinutes },
-              )
-            : t(
-                "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps.",
-                { minutes: dailyMinutes },
-              )}
+          {t(
+            "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps.",
+            { minutes: dailyMinutes },
+          )}
         </p>
       )}
 
@@ -185,7 +177,6 @@ function CourseStartForm({
         <input name="courseId" type="hidden" value={course.id} />
         {chapter && <input name={CHAPTER_PARAM} type="hidden" value={chapter.id} />}
         {dailyMinutes && <input name={MINUTES_PARAM} type="hidden" value={dailyMinutes} />}
-        {dailyMinutes && minutesPicked && <input name={PICKED_PARAM} type="hidden" value="1" />}
 
         {!blocked && (
           <OnboardingPrimaryButton
@@ -228,7 +219,6 @@ function CourseLevelStart({
   course,
   dailyMinutes,
   initialFailure,
-  minutesPicked,
   note,
 }: Omit<StartTarget, "chapter"> & {
   initialFailure: CourseStartFailure | null;
@@ -243,7 +233,6 @@ function CourseLevelStart({
       dailyMinutes={dailyMinutes}
       initialFailure={initialFailure}
       level={level}
-      minutesPicked={minutesPicked}
       note={note}
     >
       <LevelChoiceList onChange={setLevel} value={level} />
@@ -264,7 +253,6 @@ export function CourseStartScreen({
   course,
   dailyMinutes,
   initialFailure,
-  minutesPicked,
   note,
 }: StartTarget & {
   chapters: PlanChapter[];
@@ -287,7 +275,6 @@ export function CourseStartScreen({
             course={course}
             dailyMinutes={dailyMinutes}
             initialFailure={initialFailure}
-            minutesPicked={minutesPicked}
             note={note}
           >
             <PlanPreview chapters={chapters} />
@@ -297,7 +284,6 @@ export function CourseStartScreen({
             course={course}
             dailyMinutes={dailyMinutes}
             initialFailure={initialFailure}
-            minutesPicked={minutesPicked}
             note={note}
           />
         )}

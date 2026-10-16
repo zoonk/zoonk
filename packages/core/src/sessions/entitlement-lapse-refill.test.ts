@@ -47,14 +47,8 @@ describe("entitlement lapse keeps a free way forward", () => {
 
     expect(preview.blocks[0]).not.toHaveProperty("id");
 
-    expect(summary?.today).toMatchObject({
-      blocksLeft: 1,
-      next: {
-        minutes: preview.blocks[0]?.estimatedMinutes,
-        sessionId: day.sessionId,
-        title: preview.blocks[0]?.title,
-      },
-    });
+    // The summary shows only the saved day's safe blocks: Open saves the replacement it then names.
+    expect(summary?.today).toMatchObject({ blocksLeft: 0, next: null });
 
     const refs = preview.blocks.map(toDayBlockRef);
 
@@ -82,6 +76,18 @@ describe("entitlement lapse keeps a free way forward", () => {
     expect(preview.extraTime).toStrictEqual(opened.session.extraTime);
     expect(preview.catchUp).toStrictEqual(opened.session.catchUp);
     expect(opened.targetStatus).toBe("next");
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      today: {
+        blocksLeft: 1,
+        next: {
+          minutes: preview.blocks[0]?.estimatedMinutes,
+          sessionId: day.sessionId,
+          title: preview.blocks[0]?.title,
+        },
+      },
+    });
+
     const after = await readLapsedDayState(day.user.id);
 
     const replay = await countDatabaseStatements(() =>

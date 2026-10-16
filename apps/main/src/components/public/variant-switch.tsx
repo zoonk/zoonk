@@ -167,15 +167,3 @@ export const SEGMENTED_OPTION_CLASS = cn(
   "has-checked:bg-background has-checked:text-foreground has-checked:border-input dark:has-checked:bg-surface-3",
   "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
 );
-
-/**
- * A switch as the app's presets (an amount of time): the strong line, and once picked the
- * learner's blue ring and tint, as every pick in the app (`ANSWER_TONE.picked`, onboarding's time
- * chips), since the time picked is theirs: "Build my plan" starts with it. 36px, 44px on touch
- * screens.
- */
-export const PRESET_OPTION_CLASS = cn(
-  "ring-input text-muted-foreground hover:bg-muted inline-flex h-9 items-center justify-center rounded-lg px-3 font-mono text-[0.8125rem] tabular-nums ring-1 transition-colors ring-inset motion-reduce:transition-none pointer-coarse:h-11",
-  "has-checked:bg-selected-tint has-checked:text-foreground has-checked:ring-selected has-checked:ring-2",
-  "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
-);

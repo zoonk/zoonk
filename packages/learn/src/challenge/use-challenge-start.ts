@@ -41,8 +41,10 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
     const outcome = settled?.status === "settled" ? settled.value : "failed";
 
     // Once it started, the host is already opening the block: the button stays busy until then.
-    // While its questions are written, the host shows the wait instead.
-    if (outcome === "writing") {
+    // While its questions are written, the host shows the wait instead. A changed day (`notToday`,
+    // or `earlierFirst`, the only object) is read by the host; release Start without showing a
+    // failure while that saved state arrives.
+    if (outcome === "writing" || outcome === "notToday" || typeof outcome === "object") {
       setBusy(false);
     } else if (outcome !== "started") {
       setBusy(false);

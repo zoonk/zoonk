@@ -5,7 +5,6 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getReachedCap } from "@zoonk/core/entitlements/contract";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
-import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -19,28 +18,6 @@ import { MindMapsClient } from "./mind-maps-client";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { title: t("Mind maps") };
-}
-
-/**
- * The plan's next chapter, whose map comes once it's finished: named while the goal has no map
- * yet. Null when no chapter is next or its lessons aren't counted yet.
- */
-function findNextChapter(plan: Awaited<ReturnType<typeof getPlanTabView>>) {
-  if (plan.status !== "ready") {
-    return null;
-  }
-
-  const chapter = plan.view.plan.phases
-    .flatMap((phase) => phase.chapters)
-    .find((candidate) => candidate.state === "current" && candidate.chapterId);
-
-  const lessonsLeft = chapter ? chapter.lessonsTotal - chapter.lessonsDone : 0;
-
-  if (!chapter?.chapterId || lessonsLeft <= 0) {
-    return null;
-  }
-
-  return { chapterId: chapter.chapterId, lessonsLeft, title: chapter.title };
 }
 
 async function MindMapsBody() {
@@ -77,11 +54,7 @@ async function MindMapsBody() {
     );
   }
 
-  // Only a goal without maps yet names the chapter whose map comes first: the plan is read then.
-  const next =
-    result.mindMaps.chapters.length === 0
-      ? findNextChapter(await getPlanTabView({ goalId: goal.id }))
-      : null;
+  const next = result.mindMaps.chapters.length === 0 ? result.mindMaps.nextChapter : null;
 
   return (
     <>

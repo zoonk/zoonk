@@ -7,11 +7,7 @@ import {
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
 import { CourseMark } from "@/components/catalog/course-mark";
-import {
-  type CoursePlanExample,
-  getCoursePlanExample,
-  getFirstShownPace,
-} from "@/components/catalog/course-plan";
+import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import {
@@ -41,7 +37,7 @@ import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { CourseFit } from "./course-fit";
-import { CourseStart, type PaceChoice } from "./course-start";
+import { CourseStart } from "./course-start";
 import { LibraryCourseOutline } from "./library-course-outline";
 
 type Params = { brandSlug: string; courseSlug: string };
@@ -93,7 +89,7 @@ function CourseHero({
   exam: CoursePlanExample["exam"];
   isOtherLanguage: boolean;
   locale: SupportedLocale;
-  pace: PaceChoice | null;
+  pace: number | null;
   promise: string | null;
   tryId: string | null;
 }) {
@@ -125,14 +121,6 @@ function getChapterTitles(outline: LibraryOutline): Map<string, string> {
   return new Map(
     outline.levels.flatMap((band) => band.chapters.map((chapter) => [chapter.id, chapter.title])),
   );
-}
-
-/**
- * The radios that pick the example plan's time a day, named per course: the router may keep two
- * courses' pages in the document.
- */
-function getPaceSwitch(courseId: string): string {
-  return `course-pace-${courseId}`;
 }
 
 /** The course's first lessons in order, with their chapters and their numbers there. */
@@ -190,7 +178,7 @@ function TryAndFit({
 }
 
 /** The page's last word, where a long page ends: the one way in again. */
-async function CourseClosing({ courseId, pace }: { courseId: string; pace: PaceChoice | null }) {
+async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
 
@@ -255,16 +243,7 @@ export async function LibraryCoursePage({
   const tryId = getTryLessonId(course.id);
   const examDay = plan.exam?.days[0];
   const examDate = examDay ? formatDay(examDay) : null;
-  const paceSwitch = getPaceSwitch(course.id);
-
-  const pace =
-    plan.paces.length > 0
-      ? {
-          firstShown: getFirstShownPace(plan),
-          minutes: plan.paces.map((item) => item.minutes),
-          name: paceSwitch,
-        }
-      : null;
+  const pace = plan.pace?.minutes ?? null;
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
@@ -321,7 +300,6 @@ export async function LibraryCoursePage({
               chapterTitles={getChapterTitles(outline)}
               examDate={examDate}
               isExam={course.format === "exam"}
-              paceSwitch={paceSwitch}
               plan={plan}
             />
           </div>
@@ -340,7 +318,7 @@ export async function LibraryCoursePage({
             lead={outlineLead}
             outline={outline}
             params={params}
-            plan={{ defaultMinutes: plan.defaultMinutes, examDate, paceSwitch, paces: plan.paces }}
+            plan={{ examDate, pace: plan.pace }}
           />
 
           <CourseClosing courseId={course.id} pace={pace} />

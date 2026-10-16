@@ -13,16 +13,20 @@ import { type Page, expect, test } from "./fixtures";
 /** Matches Main's Playwright-only cache hook secret (`playwright.config.ts`). */
 const CACHE_SECRET_HEADERS = { "x-zoonk-cache-secret": "e2e-cache-tags-secret" };
 
-/** The seeded course whose outline core can plan, at each time a day the page offers. */
+/** The seeded course whose outline core can plan at the time a day its example shows. */
 const PLANNED_COURSE_PATH = `/b/${AI_ORG_SLUG}/c/quantum-physics-from-scratch`;
 
-/** The example plan's number for the time a day picked: its weeks to the course's end. */
+/** The example plan's headline number: its weeks to the course's end. */
 async function readPlanWeeks(plan: Locator): Promise<number> {
-  const text = await plan.locator("[aria-live='polite']").innerText();
+  const text = await plan
+    .getByText(/~\d+\s*weeks?/u)
+    .first()
+    .innerText();
+
   return Number(/~(?<weeks>\d+)\s*weeks?/u.exec(text)?.groups?.weeks);
 }
 
-/** The latest week any chapter of the outline shows ("Week 3", "Weeks 18–20"), for the time a day picked. */
+/** The latest week any chapter of the outline shows ("Week 3", "Weeks 18–20"), at the example's time a day. */
 async function readLastOutlineWeek(page: Page): Promise<number> {
   const marks = await page
     .getByRole("region", { name: "Course outline" })
@@ -227,43 +231,32 @@ test.describe("Course Detail Page", () => {
     await expect(page).toHaveTitle(`Aprenda ${title} | Zoonk`);
   });
 
-  test("the example plan follows the time a day picked, and the outline's weeks follow it, by mouse and keyboard", async ({
+  test("the example plan shows one time a day, and the outline's weeks and Build my plan follow it", async ({
     page,
   }) => {
     await page.goto(PLANNED_COURSE_PATH);
 
     const plan = page.getByRole("main").locator("[data-slot='course-plan']");
-    const pace = plan.getByRole("radiogroup", { name: "Time a day" });
     const outline = page.getByRole("region", { name: "Course outline" });
 
-    // 15 minutes on arrival: weeks to the course's end, and the outline marked at that pace.
-    await expect(pace.getByRole("radio", { name: "15 min" })).toBeChecked();
+    // One example, at 15 minutes a day: weeks to the course's end, and the outline marked at it.
+    await expect(plan.getByRole("heading", { name: "Example plan" })).toBeVisible();
+
+    await expect(
+      plan.getByText(/at 15 minutes a day, Monday to Friday, from scratch/u),
+    ).toBeVisible();
+
+    await expect(plan.getByRole("radio")).toHaveCount(0);
     await expect(outline.getByText("Your plan at 15 minutes a day, from scratch")).toBeVisible();
 
-    const atFifteen = await readPlanWeeks(plan);
-    expect(atFifteen).toBeGreaterThan(0);
+    const weeks = await readPlanWeeks(plan);
+    expect(weeks).toBeGreaterThan(0);
     // No chapter starts after the course ends.
-    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(atFifteen);
+    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(weeks);
+    await expectAccessibleScreen(page, "a course's example plan");
 
-    // More time a day finishes sooner, in the window and in the outline.
-    await pace.getByText("30 min").click();
-    await expect(outline.getByText("Your plan at 30 minutes a day, from scratch")).toBeVisible();
-
-    const atThirty = await readPlanWeeks(plan);
-    expect(atThirty).toBeLessThan(atFifteen);
-    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(atThirty);
-    await expectAccessibleScreen(page, "a course's example plan at 30 minutes a day");
-
-    // "Build my plan" starts the plan at the time picked.
+    // "Build my plan" starts the plan at the example's time a day.
     const start = page.getByRole("main").getByRole("link", { name: "Build my plan" }).first();
-    await expect(start).toHaveAttribute("href", /\?minutes=30&picked=1$/u);
-
-    // The arrow keys move between the times, as in any radio group.
-    await pace.getByRole("radio", { name: "30 min" }).focus();
-    await page.keyboard.press("ArrowLeft");
-    await expect(pace.getByRole("radio", { name: "15 min" })).toBeChecked();
-    await expect(pace.getByRole("radio", { name: "15 min" })).toBeFocused();
-    expect(await readPlanWeeks(plan)).toBe(atFifteen);
     await expect(start).toHaveAttribute("href", /\?minutes=15$/u);
   });
 });

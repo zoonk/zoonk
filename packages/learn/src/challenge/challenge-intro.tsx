@@ -28,6 +28,10 @@ function useTricksterDetail(): string {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
 
+  if (challenge.recordings === null) {
+    return t("Questions on recordings from this phase, played as in the exam, with no hints.");
+  }
+
   if (challenge.recordings > 0) {
     return t(
       "{count, plural, one {Questions on a recording from this phase, played as in the exam, with no hints.} other {Questions on # recordings from this phase, each played as in the exam, with no hints.}}",
@@ -58,7 +62,7 @@ function TricksterIntro() {
 
       <TaskMeta
         facts={[
-          challenge.questions > 0 && questions(challenge.questions),
+          challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           (challenge.passMark ?? 0) > 0 &&
             t("{count} right to win", { count: String(challenge.passMark) }),
         ]}
@@ -123,7 +127,12 @@ function WeeklyIntro() {
         when={challenge.startTime ? when : null}
       />
 
-      <TaskMeta facts={[questions(challenge.questions)]} reward={prize} />
+      <TaskMeta
+        facts={[
+          challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
+        ]}
+        reward={prize}
+      />
 
       <DuelBriefing rule={t("You'll see why each answer was right or wrong at the end.")} />
     </StepCard>
@@ -250,9 +259,9 @@ function MockIntro() {
 
       <TaskMeta
         facts={[
-          questions(challenge.questions),
+          challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           // The time on its clock, the same the plan saves for it and the real exam gives.
-          duration(challenge.minutes),
+          challenge.minutes !== null && duration(challenge.minutes),
           !challenge.fullLength && t("Half the exam"),
           objectiveOnly && t("Objective part only"),
         ]}
