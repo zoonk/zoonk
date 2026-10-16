@@ -10,7 +10,7 @@ import { applyChangeNow } from "./_utils/apply-plan-change";
 import { findFoundationOperations } from "./_utils/own-level-foundations";
 import { findLevelTestOuts } from "./_utils/own-level-test-outs";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
 import {
   OWN_LEVEL_SOURCE,
   type OwnLevelChangeInput,
@@ -39,22 +39,18 @@ function getDirection({ from, to }: { from: OwnLevel | null; to: OwnLevel }) {
 }
 
 async function saveLevel({ context, level }: { context: PlanContext; level: OwnLevel }) {
-  const saved = await writeLearnerChange(
-    { planInputs: true, userId: context.goal.userId },
-    async (tx) => {
-      const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
-      const details = isJsonObject(goal.details) ? goal.details : {};
+  await writeLearnerChange({ planInputs: true, userId: context.goal.userId }, async (tx) => {
+    const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
+    const details = isJsonObject(goal.details) ? goal.details : {};
 
-      if (details.level === level) {
-        return unchanged(goal);
-      }
+    if (details.level === level) {
+      return unchanged(goal);
+    }
 
-      return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
-    },
-  );
+    return tx.goal.update({ data: { details: { ...details, level } }, where: { id: goal.id } });
+  });
 
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
-  return saved;
 }
 
 /** Adds the foundations a lower level needs, with an undo; null when there's nothing to add. */
@@ -90,25 +86,28 @@ export async function changeOwnLevel({
   goalId: string;
   input: OwnLevelChangeInput;
 }): Promise<OwnLevelChangeResult> {
+  const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const { context } = owned;
+  const direction = getDirection({ from: getOwnLevel({ goal: context.goal }), to: input.level });
+
+  await saveLevel({ context, level: input.level });
+
+  // Only the plan's part starts over when another write wins: the level is saved, so reading it
+  // again would say "same". The goal is read again, as another write may have changed it too.
   return withPlanRetry(async () => {
-    const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
+    const current = await findOwnedPlan({ goalId, timeZone: input.timeZone });
 
-    if (owned.status !== "ready") {
-      return owned;
-    }
-
-    const { context } = owned;
-    const direction = getDirection({ from: getOwnLevel({ goal: context.goal }), to: input.level });
-
-    const goal = await saveLevel({ context, level: input.level });
-    const current = await loadPlanContext({ goal, timeZone: context.timeZone });
-
-    if (!current) {
-      return { status: "notFound" as const };
+    if (current.status !== "ready") {
+      return current;
     }
 
     const [change, testOuts] = await Promise.all([
-      direction === "lower" ? addFoundations(current) : null,
+      direction === "lower" ? addFoundations(current.context) : null,
       direction === "higher"
         ? loadGoalPlan(goalId).then((plan) => findLevelTestOuts({ level: input.level, plan }))
         : [],

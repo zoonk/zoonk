@@ -4,6 +4,8 @@ import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import * as goalSkillGraph from "../learner/_utils/goal-skill-graph";
+import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeOwnLevel } from "./change-own-level";
 import { createGoalPlan } from "./create-goal-plan";
@@ -45,6 +47,19 @@ function change(goalId: string, level: "advanced" | "basic" | "intermediate" | "
   return changeOwnLevel({ goalId, input: { level, timeZone: TIME_ZONE } });
 }
 
+/**
+ * Another write marks the plan once, while the level change reads the plan for its foundations or
+ * test-outs, after the level is saved. Only the order is the test's; the writes are real.
+ */
+function markWhileReadingPlan(planId: string) {
+  const load = goalSkillGraph.loadGoalPlan;
+
+  return vi.spyOn(goalSkillGraph, "loadGoalPlan").mockImplementationOnce(async (...input) => {
+    await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [planId] }));
+    return load(...input);
+  });
+}
+
 async function graphSkillIds(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
   return parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId);
@@ -58,6 +73,7 @@ describe(changeOwnLevel, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("lowering adds the missing foundations first, keeps tested-out work, and can be undone", async () => {
@@ -124,6 +140,55 @@ describe(changeOwnLevel, () => {
 
     expect(undone.status).toBe("updated");
     await expect(graphSkillIds(plan.id)).resolves.not.toContain(foundation.id);
+  });
+
+  // The foundations lost to the other write, and planning again read the level already saved:
+  // "same", with no foundations.
+  it("lowering still adds the foundations when another write lands while they're planned", async () => {
+    const { goal, library, plan } = await setup();
+    const [first] = library.skills;
+    const foundation = await skillFixture({ name: `Counting ${randomUUID()}` });
+
+    await skillPrerequisiteFixture({ prerequisiteId: foundation.id, skillId: first?.id ?? "" });
+    const marked = markWhileReadingPlan(plan.id);
+
+    const result = await change(goal.id, "basic");
+
+    expect(marked).toHaveBeenCalledWith(goal.id);
+
+    expect(result).toMatchObject({
+      ownLevel: {
+        change: { canUndo: true, source: "ownLevel" },
+        direction: "lower",
+        level: "basic",
+        testOuts: [],
+      },
+      status: "ready",
+    });
+
+    await expect(graphSkillIds(plan.id)).resolves.toStrictEqual([
+      foundation.id,
+      ...library.skills.map((skill) => skill.id),
+    ]);
+  });
+
+  it("raising still offers the test-outs when another write lands while they're read", async () => {
+    const { goal, library, plan } = await setup();
+    const marked = markWhileReadingPlan(plan.id);
+
+    const result = await change(goal.id, "advanced");
+
+    expect(marked).toHaveBeenCalledWith(goal.id);
+
+    expect(result).toMatchObject({
+      ownLevel: { change: null, direction: "higher", level: "advanced" },
+      status: "ready",
+    });
+
+    expect(result.status === "ready" ? result.ownLevel.testOuts : []).toStrictEqual([
+      { chapterId: library.chapters[0]?.id, title: library.chapters[0]?.title },
+      { chapterId: library.chapters[1]?.id, title: library.chapters[1]?.title },
+    ]);
   });
 
   it("lowering adds nothing when the plan already starts from its foundations", async () => {
