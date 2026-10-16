@@ -3,7 +3,13 @@ import { after } from "next/server";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
 
-/** Callers hold every owned plan lock before the learner/domain rows they complete. */
+/**
+ * Reduces each plan's posted summary by the lessons it just checked off. Only a lesson can change
+ * one (see `reduceCompletedSummary`), so checking off anything else reads nothing. The read locks
+ * the plans: writers that marked plan inputs already hold those locks, and a caller that didn't
+ * (the seed finishing a day's lessons at once) then reduces after the other completion instead of
+ * overwriting its credit.
+ */
 async function reduceCompletedPlans(
   tx: TransactionClient,
   {
@@ -11,15 +17,20 @@ async function reduceCompletedPlans(
     userId,
   }: { checked: readonly { lessonId: string | null; planId: string }[]; userId: string },
 ): Promise<void> {
-  if (checked.length === 0) {
+  const lessons = checked.filter((item) => item.lessonId !== null);
+
+  if (lessons.length === 0) {
     return;
   }
 
-  const byPlan = Map.groupBy(checked, (item) => item.planId);
+  const byPlan = Map.groupBy(lessons, (item) => item.planId);
 
-  const plans = await tx.plan.findMany({
-    where: { goal: { userId }, id: { in: [...byPlan.keys()] } },
-  });
+  const plans = await tx.$queryRaw<{ id: string; summary: unknown; version: number }[]>`
+    SELECT plan.id, plan.summary, plan.version FROM plans AS plan
+    JOIN goals AS goal ON goal.id = plan.goal_id
+    WHERE plan.id = ANY(${[...byPlan.keys()]}::uuid[]) AND goal.user_id = ${userId}::uuid
+    ORDER BY plan.id FOR UPDATE OF plan
+  `;
 
   await Promise.all(
     plans.map(async (plan) => {

@@ -3,19 +3,21 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
+import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { planSummarySchema } from "../../plans/_utils/plan-summary";
-import { completeLessonPlanItems } from "./plan-items";
+import { completeLessonPlanItems, completePlanItem } from "./plan-items";
 
 const NOW = new Date("2026-10-15T12:00:00Z");
 
 async function postedPlan({
-  lessonId,
+  lessonIds,
   short,
   userId,
 }: {
-  lessonId: string;
+  lessonIds: readonly string[];
   short: boolean;
   userId: string;
 }) {
@@ -42,12 +44,17 @@ async function postedPlan({
         fits: !short,
         measure: "goal",
         shortLessons: short
-          ? [{ countedRaw: 5, lessonId, requiredRaw: 10, skillIds: [skill.id] }]
+          ? lessonIds.map((lessonId) => ({
+              countedRaw: 5,
+              lessonId,
+              requiredRaw: 10,
+              skillIds: [skill.id],
+            }))
           : [],
         skills: [
           {
-            coveredRaw: short ? 5 : 10,
-            requiredRaw: 10,
+            coveredRaw: (short ? 5 : 10) * lessonIds.length,
+            requiredRaw: 10 * lessonIds.length,
             skillId: skill.id,
             state: "measured",
             worth: 10,
@@ -62,7 +69,11 @@ async function postedPlan({
         finish: { date: "2026-10-15" },
       },
       phaseDates: { structureKey: null, trigger: false },
-      requirement: { doneRaw: 0, remainingRaw: 10, totalRaw: 10 },
+      requirement: {
+        doneRaw: 0,
+        remainingRaw: 10 * lessonIds.length,
+        totalRaw: 10 * lessonIds.length,
+      },
       sourceSkillIds: [skill.id],
       totalMinutes: 10,
     },
@@ -73,12 +84,17 @@ async function postedPlan({
     where: { id: plan.id },
   });
 
-  await planItemFixture({
-    lessonId,
-    planId: plan.id,
-    scheduledFor: new Date("2026-10-15"),
-    skillId: skill.id,
-  });
+  await Promise.all(
+    lessonIds.map((lessonId, position) =>
+      planItemFixture({
+        lessonId,
+        planId: plan.id,
+        position,
+        scheduledFor: new Date("2026-10-15"),
+        skillId: skill.id,
+      }),
+    ),
+  );
 
   return { plan, summary };
 }
@@ -88,8 +104,8 @@ describe("completion reduces posted coverage without planning", () => {
     const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
 
     const plans = await Promise.all([
-      postedPlan({ lessonId: lesson.id, short: true, userId: user.id }),
-      postedPlan({ lessonId: lesson.id, short: true, userId: user.id }),
+      postedPlan({ lessonIds: [lesson.id], short: true, userId: user.id }),
+      postedPlan({ lessonIds: [lesson.id], short: true, userId: user.id }),
     ]);
     // Even duplicate held items for the same lesson may credit it only once per plan.
     await planItemFixture({ lessonId: lesson.id, planId: plans[0]!.plan.id, position: 1 });
@@ -133,7 +149,7 @@ describe("completion reduces posted coverage without planning", () => {
     const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
 
     const { plan, summary } = await postedPlan({
-      lessonId: lesson.id,
+      lessonIds: [lesson.id],
       short: false,
       userId: user.id,
     });
@@ -149,5 +165,74 @@ describe("completion reduces posted coverage without planning", () => {
     expect(saved.summary).toStrictEqual(summary);
     expect(JSON.stringify(saved.summary)).toBe(JSON.stringify(posted.summary));
     expect(saved.pendingAdaptation).toStrictEqual(["content"]);
+  });
+
+  it("reads no plan when the item it checks off isn't a lesson", async () => {
+    const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
+
+    const { plan, summary } = await postedPlan({
+      lessonIds: [lesson.id],
+      short: true,
+      userId: user.id,
+    });
+
+    const checkpoint = await planItemFixture({ kind: "checkpoint", planId: plan.id });
+
+    const counted = await prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+
+      return countDatabaseStatements(() =>
+        completePlanItem(tx, { now: NOW, planItemId: checkpoint.id, userId: user.id }),
+      );
+    });
+
+    expect(counted.statements).toBe(1);
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      summary,
+    });
+  });
+
+  it("credits both lessons when two completions without plan locks finish at once", async () => {
+    const [user, first, second] = await Promise.all([
+      userFixture(),
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+    ]);
+
+    const { plan } = await postedPlan({
+      lessonIds: [first.id, second.id],
+      short: true,
+      userId: user.id,
+    });
+
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    // Like the seed, neither transaction marks the plan first.
+    const firstDone = prisma.$transaction(async (tx) => {
+      await completeLessonPlanItems(tx, { lessonId: first.id, now: NOW, userId: user.id });
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    });
+
+    const pid = await held.promise;
+
+    const secondDone = prisma.$transaction((tx) =>
+      completeLessonPlanItems(tx, { lessonId: second.id, now: NOW, userId: user.id }),
+    );
+
+    try {
+      await waitForBlockedStatement(pid, /plans/u);
+    } finally {
+      released.resolve(null);
+      await Promise.all([firstDone, secondDone]);
+    }
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      coveredShare: 1,
+      summary: { selected: { coverage: { coveredShare: 1, shortLessons: [] } } },
+    });
   });
 });
