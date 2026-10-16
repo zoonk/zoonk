@@ -106,6 +106,26 @@ async function resyncMissingAnswer({
 describe("picture loss during a lesson", () => {
   afterEach(() => vi.useRealTimers());
 
+  it("reads an unresolved screen once more when its next poll crosses the picture deadline", async () => {
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValue([]);
+
+    const { picture, state } = openPictures({ getLessonPictures }, WAIT_MS - POLL_MS / 2);
+    await expect.poll(() => getLessonPictures.mock.calls.length).toBeGreaterThan(0);
+
+    // The image lands after the last pre-deadline read. The adapter honors the requested IDs.
+    getLessonPictures.mockImplementation(async (stepIds) =>
+      stepIds?.includes(picture.id)
+        ? [{ image: inlineImage({ alt: "Numbered parts" }), stepId: picture.id }]
+        : [],
+    );
+
+    await act(() => vi.advanceTimersByTimeAsync(POLL_MS));
+    expect(getLessonPictures).toHaveBeenLastCalledWith([picture.id]);
+    expect(state()?.queue).toContain(picture.id);
+  });
+
   it("waits for Finish when the last required picture expires on entry", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 

@@ -86,7 +86,9 @@ export function LessonPicturesProvider({
     let cancelled = false;
 
     const poll = async () => {
-      const asked = getWaitingKeys({ drawn: drawnRef.current, now: Date.now(), startedAt, steps });
+      // Read unresolved pictures once more before applying their deadline: one may have landed
+      // since the previous poll, even if this browser's next timer ran just after the deadline.
+      const asked = pending.filter((key) => !drawnRef.current[key]);
       const pictures = (await getLessonPictures?.(toStepIds(asked)).catch(() => [])) ?? [];
 
       if (cancelled) {
