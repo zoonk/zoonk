@@ -4,7 +4,7 @@ import { type LanguageConversationView } from "@zoonk/core/language/conversation
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/start";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { PageEyebrow } from "../../_components/page";
 import { SectionLabel } from "../../_components/section-label";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
@@ -13,12 +13,20 @@ import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challeng
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
-import { CallProblem } from "./call-problem";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
 import { loadLiveCallSession } from "./use-live-call";
 
-/** The same intro and Start click, before the start command has created the conversation. */
+/** Where a checkpoint's Start stands until its call takes the intro's place. */
+type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
+
+/**
+ * The same intro and Start click, before the start command has created the conversation. Start
+ * says it's starting while the call is created, and the host then opens the call in its place. A
+ * start that didn't go through says so above Start, which tries again; Plus lapsed meanwhile locks
+ * it. Leaving abandons a start still on its way: back on the page, Start is ready again, and that
+ * start's answer changes nothing.
+ */
 export function CheckpointCallIntro({
   conversation,
   onStart,
@@ -26,43 +34,43 @@ export function CheckpointCallIntro({
   conversation: LanguageConversationIntro;
   onStart: () => Promise<"cancelled" | "failed" | "plusRequired" | "ready">;
 }) {
-  const title = useConversationTitle(conversation);
-  const [outcome, setOutcome] = useState<"failed" | "plusRequired" | null>(null);
-  const starting = useRef(false);
+  const [start, setStart] = useState<CheckpointStart>("idle");
+  const attempt = useRef(0);
 
-  const start = async () => {
-    if (starting.current) {
-      return;
-    }
+  // A screen kept hidden after leaving runs this too, and shows Start ready when it's back.
+  useEffect(
+    () => () => {
+      attempt.current += 1;
+      setStart((current) => (current === "plusRequired" ? current : "idle"));
+    },
+    [],
+  );
 
-    starting.current = true;
+  const run = async () => {
+    const mine = attempt.current + 1;
+    attempt.current = mine;
+    setStart("starting");
+
     const result = await onStart().catch(() => "failed" as const);
-    starting.current = false;
 
-    if (result === "failed" || result === "plusRequired") {
-      setOutcome(result);
+    // A ready call replaces the intro; one dropped for another learner leaves Start ready.
+    if (mine === attempt.current && result !== "ready") {
+      setStart(result === "cancelled" ? "idle" : result);
     }
   };
-
-  if (outcome === "failed") {
-    return (
-      <CallProblem
-        error="connect"
-        exitHref="/today"
-        limit={null}
-        onEnd={() => void start()}
-        onRetry={() => void start()}
-        onTakeover={() => void start()}
-        title={title}
-      />
-    );
-  }
 
   return (
     <CallIntro
       conversation={conversation}
       exitHref="/today"
-      footer={<CallIntroFooter locked={outcome === "plusRequired"} onStart={() => void start()} />}
+      footer={
+        <CallIntroFooter
+          failed={start === "failed"}
+          locked={start === "plusRequired"}
+          onStart={() => void run()}
+          starting={start === "starting"}
+        />
+      }
     />
   );
 }
@@ -106,7 +114,21 @@ function preloadLiveCall() {
   void loadLiveCallSession();
 }
 
-function CallIntroFooter({ locked, onStart }: { locked: boolean; onStart: () => void }) {
+/**
+ * Start, or "See Plus" for a locked call. A start on its way (`starting`) shows a spinner in the
+ * phone's place, and one that didn't go through (`failed`) says so above it.
+ */
+function CallIntroFooter({
+  failed = false,
+  locked,
+  onStart,
+  starting = false,
+}: {
+  failed?: boolean;
+  locked: boolean;
+  onStart: () => void;
+  starting?: boolean;
+}) {
   const t = useExtracted();
 
   if (locked) {
@@ -119,16 +141,24 @@ function CallIntroFooter({ locked, onStart }: { locked: boolean; onStart: () => 
   }
 
   return (
-    <TaskActions
-      onFocus={preloadLiveCall}
-      onPointerDown={preloadLiveCall}
-      onPointerEnter={preloadLiveCall}
-    >
-      <TaskMainButton onClick={onStart}>
-        <PhoneIcon aria-hidden="true" />
-        {t("Start the call")}
-      </TaskMainButton>
-    </TaskActions>
+    <>
+      {failed && (
+        <p className="text-destructive-text text-sm text-pretty" role="alert">
+          {t("The call didn't start. Try again in a moment.")}
+        </p>
+      )}
+
+      <TaskActions
+        onFocus={preloadLiveCall}
+        onPointerDown={preloadLiveCall}
+        onPointerEnter={preloadLiveCall}
+      >
+        <TaskMainButton busy={starting} onClick={onStart}>
+          {!starting && <PhoneIcon aria-hidden="true" />}
+          {starting ? t("Starting…") : t("Start the call")}
+        </TaskMainButton>
+      </TaskActions>
+    </>
   );
 }
 

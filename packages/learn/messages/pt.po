@@ -1255,6 +1255,7 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "Ainda estamos iniciando. Isso está demorando mais que o normal."
 
 #: src/challenge/challenge-footer.tsx
+#: src/language/conversation/conversation-intro.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
 #: src/language/unit/practice-conversation.tsx
@@ -4615,6 +4616,12 @@ msgstr "A conversa aparece aqui assim que ficar pronta."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/unit/practice-conversation.tsx
+msgctxt "l3VAtp"
+msgid "The call didn't start. Try again in a moment."
+msgstr "A conversa não começou. Tente de novo daqui a pouco."
+
+#: src/language/conversation/conversation-intro.tsx
+#: src/language/unit/practice-conversation.tsx
 msgctxt "UJMZ20"
 msgid "Start the call"
 msgstr "Começar conversa"
@@ -5643,11 +5650,6 @@ msgstr "Sua conversa abre assim que estiver pronta."
 msgctxt "eAk2uA"
 msgid "Longer calls come with Plus."
 msgstr "As conversas mais longas estão disponíveis no Plus."
-
-#: src/language/unit/practice-conversation.tsx
-msgctxt "l3VAtp"
-msgid "The call didn't start. Try again in a moment."
-msgstr "A conversa não começou. Tente de novo daqui a pouco."
 
 #: src/language/unit/practice-conversation.tsx
 msgctxt "ktIybS"

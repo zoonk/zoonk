@@ -1,3 +1,4 @@
+import { type Page, type TestInfo } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -264,6 +265,131 @@ for (const returnBeforeResponse of [true, false]) {
     }
   });
 }
+
+async function captureStartAt(
+  page: Page,
+  testInfo: TestInfo,
+  { colorScheme, state, width }: { colorScheme: "dark" | "light"; state: string; width: number },
+) {
+  await page.emulateMedia({ colorScheme });
+  await page.setViewportSize({ height: 900, width });
+
+  await page.screenshot({
+    animations: "disabled",
+    path: testInfo.outputPath(`checkpoint-call-${state}-${width}-${colorScheme}.png`),
+  });
+}
+
+/** A Start state on the action bar, on a phone and a laptop, light and dark. */
+async function captureStartState(page: Page, testInfo: TestInfo, state: string) {
+  await captureStartAt(page, testInfo, { colorScheme: "light", state, width: 390 });
+  await captureStartAt(page, testInfo, { colorScheme: "dark", state, width: 390 });
+  await captureStartAt(page, testInfo, { colorScheme: "light", state, width: 1440 });
+  await captureStartAt(page, testInfo, { colorScheme: "dark", state, width: 1440 });
+  await page.emulateMedia({ colorScheme: "light" });
+}
+
+test("a checkpoint Start says it's starting, keeps its intro when it fails and starts at once after leaving", async ({
+  browser,
+}, testInfo) => {
+  const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+  const page = await openAs(browser, user);
+  await answerLiveCalls(page, "answers");
+  await page.goto(`/checkpoint/${block.id}`);
+
+  const start = page.getByRole("button", { name: "Start the call" });
+  const greeting = page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling");
+
+  const problem = page
+    .getByRole("alert")
+    .filter({ hasText: "The call didn't start. Try again in a moment." });
+
+  await expect(start).toBeVisible();
+
+  // The first start never reaches the server; the second answers only after the learner left
+  // and came back; the next one goes through at once.
+  const failing = { held: Promise.withResolvers<null>(), release: Promise.withResolvers<null>() };
+
+  const abandoned = {
+    delivered: Promise.withResolvers<null>(),
+    held: Promise.withResolvers<null>(),
+    release: Promise.withResolvers<null>(),
+  };
+
+  const requests = { starts: 0 };
+
+  await page.route(`**/checkpoint/${block.id}`, async (route) => {
+    if (route.request().method() !== "POST" || !route.request().postData()?.includes(block.id)) {
+      await route.continue();
+      return;
+    }
+
+    requests.starts += 1;
+
+    if (requests.starts === 1) {
+      failing.held.resolve(null);
+      await failing.release.promise;
+      await route.abort();
+      return;
+    }
+
+    if (requests.starts === 2) {
+      const response = await route.fetch();
+      abandoned.held.resolve(null);
+      await abandoned.release.promise;
+      await route.fulfill({ response });
+      abandoned.delivered.resolve(null);
+      return;
+    }
+
+    await route.continue();
+  });
+
+  try {
+    await start.click();
+    await failing.held.promise;
+    await expect(page.getByRole("button", { name: "Starting…" })).toBeDisabled();
+    await captureStartState(page, testInfo, "starting");
+    failing.release.resolve(null);
+
+    await expect(problem).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title }),
+    ).toBeVisible();
+
+    await expect(start).toBeEnabled();
+    await captureStartState(page, testInfo, "start-failed");
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
+
+    await start.click();
+    await abandoned.held.promise;
+    await expect(problem).toHaveCount(0);
+    await page.getByRole("link", { name: "Leave" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.goBack();
+
+    // Back before that start answered: Start is ready again, and one tap opens the call.
+    await start.click();
+    await expect(greeting).toBeVisible();
+    expect(requests.starts).toBe(3);
+
+    abandoned.release.resolve(null);
+    await abandoned.delivered.promise;
+    await expect(greeting).toBeVisible();
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      1,
+    );
+  } finally {
+    failing.release.resolve(null);
+    abandoned.release.resolve(null);
+    await page.context().close();
+  }
+});
 
 test("a learner whose Plus lapses while the call intro is open sees the lock on Start", async ({
   browser,
