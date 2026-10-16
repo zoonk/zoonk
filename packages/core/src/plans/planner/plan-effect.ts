@@ -4,7 +4,6 @@ import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
 import { type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
-import { type PlannedMocks } from "./planned-mocks";
 import { type SkillMinutes } from "./skill-minutes";
 
 export type EffectItem = Pick<
@@ -116,7 +115,7 @@ export type PlanEffect = {
   topicsAdded?: AreaTopics[];
   topicsLeftOut?: AreaTopics[];
   weeklyEvents?: WeeklyEventMove;
-} & Pick<PlannedMocks, "practiceFunding" | "selectionShifts">;
+};
 
 /**
  * A lesson item is one lesson; a stand-in counts the lessons it plans: the whole skill when no
