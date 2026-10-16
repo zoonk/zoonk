@@ -1,15 +1,11 @@
-import { SESSION_COPY_REFRESH_MS, SESSION_RENEWAL_PATH } from "@zoonk/auth/session-renewal";
+import { SESSION_RENEWAL_PATH } from "@zoonk/auth/session-renewal";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const MINUTE_MS = 60 * 1000;
-const DAY_MS = 24 * 60 * MINUTE_MS;
-const RETRY_MS = 5 * MINUTE_MS;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const RETRY_MS = 5 * 60 * 1000;
 
 /** A session last renewed three days ago: due today. */
 const DUE_SESSION_END = () => Date.now() + 27 * DAY_MS;
-
-/** A session renewed this morning: not due again today. */
-const RENEWED_SESSION_END = () => Date.now() + 29.5 * DAY_MS;
 
 type Answer = "ok" | "unavailable" | "offline";
 
@@ -29,9 +25,6 @@ function stubLocks() {
   };
 }
 
-/** What the browser's pages listen for on their document, in the order they asked. */
-const documentListeners: { listener: () => void; type: string }[] = [];
-
 /**
  * A browser and its tabs: whether they're visible, whether storage works, and how the server
  * answers each renewal, in order (a promise answers once it settles). Records the renewals sent.
@@ -48,21 +41,9 @@ function stubTab({
   const stored = new Map<string, string>();
   const sent: { method?: string; url: string }[] = [];
 
-  documentListeners.splice(0);
-
   vi.stubGlobal("document", {
-    addEventListener: (type: string, listener: () => void) => {
-      documentListeners.push({ listener, type });
-    },
-    removeEventListener: (type: string, listener: () => void) => {
-      const index = documentListeners.findIndex(
-        (entry) => entry.type === type && entry.listener === listener,
-      );
-
-      if (index !== -1) {
-        documentListeners.splice(index, 1);
-      }
-    },
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
     visibilityState: visible ? "visible" : "hidden",
   });
 
@@ -107,7 +88,6 @@ async function openPage({ sessionEnd }: { sessionEnd: () => number | null }) {
   vi.resetModules();
   const { watchSessionRenewal } = await import("./session-renewal");
   const listeners = new Set<() => void>();
-  const listenedBefore = documentListeners.length;
 
   const stop = watchSessionRenewal({
     readSessionEnd: sessionEnd,
@@ -117,25 +97,14 @@ async function openPage({ sessionEnd }: { sessionEnd: () => number | null }) {
     },
   });
 
-  const taps = documentListeners
-    .slice(listenedBefore)
-    .filter(({ type }) => type === "pointerdown")
-    .map(({ listener }) => listener);
-
   /** The learner summary changed (a page read it again). */
   async function notify() {
     listeners.forEach((listener) => listener());
     await vi.advanceTimersByTimeAsync(0);
   }
 
-  /** The learner taps this page. */
-  async function tap() {
-    taps.forEach((listener) => listener());
-    await vi.advanceTimersByTimeAsync(0);
-  }
-
   await vi.advanceTimersByTimeAsync(0);
-  return { notify, stop, tap };
+  return { notify, stop };
 }
 
 describe("session renewal", () => {
@@ -325,79 +294,5 @@ describe("session renewal", () => {
     expect(sent).toHaveLength(1);
 
     failing.stop();
-  });
-
-  it("refreshes the session's copy every 50 minutes while the learner uses the browser, before it runs out, whatever its tabs", async () => {
-    const { sent } = stubTab({ answers: [] });
-    const first = await openPage({ sessionEnd: RENEWED_SESSION_END });
-    const second = await openPage({ sessionEnd: RENEWED_SESSION_END });
-    // Two hours of use, with a tap in each tab every five minutes.
-    const minutes = Array.from({ length: 25 }, (_, step) => step * 5);
-
-    const sentAtMinute = await minutes.reduce<Promise<number[]>>(async (previous, minute) => {
-      const sentBefore = await previous;
-      const before = sent.length;
-      await first.tap();
-      await second.tap();
-      const sentNow = Array.from({ length: sent.length - before }, () => minute);
-      await vi.advanceTimersByTimeAsync(5 * MINUTE_MS);
-      return [...sentBefore, ...sentNow];
-    }, Promise.resolve([]));
-
-    // Each copy lasts an hour, so the next one comes while it's still good.
-    expect(sentAtMinute).toStrictEqual([0, 50, 100]);
-    expect(sent.every(({ url }) => url === SESSION_RENEWAL_PATH)).toBe(true);
-
-    first.stop();
-    second.stop();
-  });
-
-  it("refreshes no copy from an idle tab or a hidden one", async () => {
-    const idle = stubTab({ answers: [] });
-    const idlePage = await openPage({ sessionEnd: RENEWED_SESSION_END });
-    await vi.advanceTimersByTimeAsync(2 * 60 * MINUTE_MS);
-    await idlePage.notify();
-    idlePage.stop();
-    expect(idle.sent).toStrictEqual([]);
-
-    // Used, then left alone: once the copy is old, a page whose last tap was a while ago asks nothing.
-    const left = stubTab({ answers: [] });
-    const leftPage = await openPage({ sessionEnd: RENEWED_SESSION_END });
-    await leftPage.tap();
-    await vi.advanceTimersByTimeAsync(SESSION_COPY_REFRESH_MS + 10 * MINUTE_MS);
-    await leftPage.notify();
-    expect(left.sent).toHaveLength(1);
-
-    // Back to it: the next tap refreshes the copy.
-    await leftPage.tap();
-    expect(left.sent).toHaveLength(2);
-    leftPage.stop();
-
-    const hidden = stubTab({ answers: [], visible: false });
-    const hiddenPage = await openPage({ sessionEnd: RENEWED_SESSION_END });
-    await hiddenPage.tap();
-    hiddenPage.stop();
-    expect(hidden.sent).toStrictEqual([]);
-  });
-
-  it("still renews the session the day it's due, after refreshing its copy", async () => {
-    const { sent } = stubTab({ answers: [] });
-    const session = { end: Date.now() + 29.5 * DAY_MS };
-    const { notify, stop, tap } = await openPage({ sessionEnd: () => session.end });
-
-    await tap();
-    expect(sent).toHaveLength(1);
-
-    // That evening the session is a day old: the renewal goes, tapped or not.
-    vi.setSystemTime(Date.now() + 13 * 60 * MINUTE_MS);
-    await notify();
-    expect(sent).toHaveLength(2);
-
-    // The page's summary still shows the old end, but the day's renewal and the copy are done.
-    await tap();
-    await notify();
-    expect(sent).toHaveLength(2);
-
-    stop();
   });
 });

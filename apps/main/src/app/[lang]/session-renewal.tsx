@@ -11,8 +11,7 @@ function readSessionEnd(): number | null {
 }
 
 /**
- * Renews the browser's session once a day while it's used, and its copy of the session before it
- * runs out while the learner uses a page, on every page, the player's included
+ * Renews the browser's session once a day while it's used, on every page, the player's included
  * (`lib/auth/session-renewal.ts`). Draws nothing; mounted outside the messages provider, so it
  * uses no translations or router.
  */
