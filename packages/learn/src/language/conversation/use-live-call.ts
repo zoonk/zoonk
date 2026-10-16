@@ -81,21 +81,43 @@ export function loadLiveCallSession() {
 }
 
 /**
+ * The microphone a tap opened before its call's screen existed (a checkpoint's Start creates the
+ * call first). Safari on iOS asks for it, and asks again after "Don't Allow", only while the tap is
+ * still active, so the tap asks and the call's first start takes what it got. It's taken once:
+ * `release` lets it go unless a start took it first, and every later `take` finds nothing.
+ */
+export function openCallAudioInTap() {
+  const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
+
+  const take = () => {
+    const { audio } = held;
+    held.audio = null;
+    return audio;
+  };
+
+  return { release: () => void take()?.then((audio) => audio.stop()), take };
+}
+
+export type TappedCallAudio = ReturnType<typeof openCallAudioInTap>;
+
+/**
  * What a call needs before it's reserved, since the server's deadline starts when it is: the
- * microphone first, so the permission prompt never takes time from the call (a blocked one still
- * sends silence), and the realtime client loaded meanwhile, usually already in from the learner
- * reaching for Start. Null when the start was cancelled meanwhile; `live` is null when the client
- * didn't load.
+ * microphone first (`tapped`: the one the Start tap opened), so the permission prompt never takes
+ * time from the call (a blocked one still sends silence), and the realtime client loaded
+ * meanwhile, usually already in from the learner reaching for Start. Null when the start was
+ * cancelled meanwhile; `live` is null when the client didn't load.
  */
 async function openCall({
   isCurrent,
   keepAudio,
+  tapped,
 }: {
   isCurrent: () => boolean;
   keepAudio: (audio: CallAudio) => boolean;
+  tapped: Promise<CallAudio> | null;
 }) {
   const live = loadLiveCallSession();
-  const audio = await openCallAudio();
+  const audio = await (tapped ?? openCallAudio());
 
   if (!isCurrent()) {
     audio.stop();
@@ -207,9 +229,12 @@ function useCallEnding({
 export function useLiveCall({
   actions,
   conversation,
+  tappedAudio,
 }: {
   actions: LiveCallActions;
   conversation: LanguageConversationView;
+  /** The microphone the tap that created the call opened, for its first start. */
+  tappedAudio?: TappedCallAudio;
 }) {
   const [session, setSession] = useState<LiveCallSession | null>(null);
   const { phase, phaseRef, setPhase } = useCallPhase();
@@ -295,7 +320,7 @@ export function useLiveCall({
 
       setPhase("connecting");
 
-      const opened = await openCall({ isCurrent, keepAudio });
+      const opened = await openCall({ isCurrent, keepAudio, tapped: tappedAudio?.take() ?? null });
 
       if (!opened) {
         return;
@@ -349,7 +374,7 @@ export function useLiveCall({
       // only a second connect on one session rejects, and this run connects each session once.
       void created.connect({ stream: audio.stream }).catch(() => null);
     },
-    [fail, handleEvent, keepAudio, phaseRef, reserve, setPhase],
+    [fail, handleEvent, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
   );
 
   const finish = useCallFinish({ getConnectionId, release, sessionRef, turnsRef });

@@ -1234,6 +1234,7 @@ msgid "In your next session"
 msgstr "In deiner nächsten Sitzung"
 
 #: src/challenge/challenge-footer.tsx
+#: src/language/conversation/conversation-intro.tsx
 msgctxt "-Eq2VH"
 msgid "You've reached today's study time. It'll be here tomorrow."
 msgstr "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter."
@@ -1471,6 +1472,7 @@ msgid "{day} · {time}"
 msgstr "{day} · {time}"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/language/conversation/conversation-intro.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
 #: src/session/session-header.tsx

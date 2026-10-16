@@ -14,9 +14,10 @@ import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
 import { ConversationResult } from "./conversation-result";
 import { SpeakingMockResult } from "./speaking-mock-result";
-import { type LiveCallActions, useLiveCall } from "./use-live-call";
+import { type LiveCallActions, type TappedCallAudio, useLiveCall } from "./use-live-call";
 
 export type { ConversationConnection } from "./use-call-connection";
+export type { TappedCallAudio } from "./use-live-call";
 
 /**
  * Saving a finished call: it with its result and what it did to the day's missions, or why it
@@ -59,6 +60,7 @@ const SAVE_FAILED = { status: "failed" } as const;
 /** One call from the first ring to hanging up, then saved once with what was said. */
 function LiveCallRun({
   actions,
+  callAudio,
   conversation,
   hrefs,
   onRestart,
@@ -66,6 +68,7 @@ function LiveCallRun({
   startWith,
 }: {
   actions: ConversationActions;
+  callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
   hrefs: ConversationHrefs;
   onRestart: (startWith: RunStart) => void;
@@ -73,7 +76,7 @@ function LiveCallRun({
   startWith: RunStart;
 }) {
   const title = useConversationTitle(conversation);
-  const call = useLiveCall({ actions, conversation });
+  const call = useLiveCall({ actions, conversation, tappedAudio: callAudio });
   const [usedHelp, setUsedHelp] = useState(false);
   const [saving, setSaving] = useState<SaveState | null>(null);
   const { finish, start } = call;
@@ -194,12 +197,17 @@ function LiveCallRun({
  */
 export function ConversationScreen({
   actions,
+  callAudio,
   conversation,
   hrefs,
   onSaved,
-  startWithCall = false,
 }: {
   actions: ConversationActions;
+  /**
+   * Continues a Start tap that first had to create the checkpoint's conversation: the call starts
+   * at once, with the microphone that tap opened.
+   */
+  callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
   hrefs: ConversationHrefs;
   /**
@@ -208,8 +216,6 @@ export function ConversationScreen({
    * calls did to the day's missions: see `MockView.missionMoment`).
    */
   onSaved?: () => void;
-  /** Continues a Start click that first had to create the checkpoint's conversation. */
-  startWithCall?: boolean;
 }) {
   // The call as it was last saved here: once it ends, with what it did to the day's missions.
   const [view, setView] = useState<CompletedLanguageConversation>({
@@ -219,7 +225,7 @@ export function ConversationScreen({
 
   const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>({
     ...FIRST_RUN,
-    startWith: startWithCall ? "call" : "intro",
+    startWith: callAudio ? "call" : "intro",
   });
 
   const { result } = view;
@@ -269,6 +275,7 @@ export function ConversationScreen({
   return (
     <LiveCallRun
       actions={actions}
+      callAudio={callAudio}
       conversation={view}
       hrefs={hrefs}
       key={run.attempt}

@@ -8,6 +8,7 @@ import {
   type ConversationActions,
   type ConversationHrefs,
   ConversationScreen,
+  type TappedCallAudio,
 } from "@zoonk/learn/language/conversation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
@@ -65,16 +66,17 @@ function getHrefs({
  * mock once saved: the mock shows no feedback until it's over.
  */
 export function ConversationClient({
+  callAudio,
   conversation,
   fromExam,
   fromMock,
-  startWithCall = false,
 }: {
+  /** A checkpoint's Start tap that created the call: it starts at once, with the tap's microphone. */
+  callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
   fromExam: boolean;
   /** The mock whose speaking section the call is a task of, which it leads back to. */
   fromMock: string | null;
-  startWithCall?: boolean;
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -112,10 +114,10 @@ export function ConversationClient({
   return (
     <ConversationScreen
       actions={actions}
+      callAudio={callAudio}
       conversation={conversation}
       hrefs={getHrefs({ conversation, fromExam, fromMock })}
       onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
-      startWithCall={startWithCall}
     />
   );
 }

@@ -3,6 +3,8 @@ import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
+import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { getStoredBlockWait } from "../../sessions/block-wait";
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
@@ -58,12 +60,15 @@ export type StartLanguageConversationResult =
   | { limit: AllowanceLimit; status: "limitReached" }
   | { status: "callsPaused" | "plusRequired" };
 
-/** Opening a checkpoint's screen: its call, or the unit whose call isn't written yet. */
+/**
+ * Opening a checkpoint's screen: its call, or the unit whose call isn't written yet. An intro whose
+ * Start today's study time already refuses says so (`dailyLimitReached`), before any tap.
+ */
 export type OpenLanguageCheckpointCallResult =
   | StartedCall
   | CheckpointRefusal
   | { status: "plusRequired" }
-  | { intro: LanguageConversationIntro; status: "notStarted" }
+  | { dailyLimitReached: boolean; intro: LanguageConversationIntro; status: "notStarted" }
   | { status: "preparing"; unitTitle: string };
 
 async function startPractice({
@@ -120,6 +125,28 @@ async function loadAccessibleCheckpoint({ blockId, userId }: { blockId: string; 
   }
 
   return { ...checkpoint, status: "ready" as const, targetLanguage };
+}
+
+/**
+ * A checkpoint's read-only intro. Start refuses a pending block once today's study time is used up,
+ * so its intro says so before any tap (`dailyLimitReached`); a started block goes on.
+ */
+async function introWithDailyLimit({
+  intro,
+  pending,
+  userId,
+}: {
+  intro: LanguageConversationIntro;
+  pending: boolean;
+  userId: string;
+}): Promise<Extract<OpenLanguageCheckpointCallResult, { status: "notStarted" }>> {
+  if (!pending) {
+    return { dailyLimitReached: false, intro, status: "notStarted" };
+  }
+
+  const { currentDate } = await getRequestProgressDateContext();
+  const dailyLimitReached = await readDailyTimeLimitReached({ date: currentDate, userId });
+  return { dailyLimitReached, intro, status: "notStarted" };
 }
 
 /**
@@ -192,7 +219,7 @@ async function startCheckpoint({
 
   if (!scenario || !write) {
     return scenario
-      ? {
+      ? introWithDailyLimit({
           intro: {
             character: scenario.character,
             exam: null,
@@ -205,8 +232,9 @@ async function startCheckpoint({
             targetLanguage,
             title: scenario.title,
           },
-          status: "notStarted",
-        }
+          pending: block.status === "pending",
+          userId,
+        })
       : { status: "preparing", unitTitle: unit.title };
   }
 

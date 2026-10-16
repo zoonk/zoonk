@@ -10,29 +10,49 @@ import { SectionLabel } from "../../_components/section-label";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
-import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, MicNote } from "./conversation-parts";
-import { loadLiveCallSession } from "./use-live-call";
-
-/** Where a checkpoint's Start stands until its call takes the intro's place. */
-type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
+import { type TappedCallAudio, loadLiveCallSession, openCallAudioInTap } from "./use-live-call";
 
 /**
- * The same intro and Start click, before the start command has created the conversation. Start
- * says it's starting while the call is created, and the host then opens the call in its place. A
- * start that didn't go through says so above Start, which tries again; Plus lapsed meanwhile locks
- * it. Leaving abandons a start still on its way: back on the page, Start is ready again, and that
- * start's answer changes nothing.
+ * Where a checkpoint's Start stands until its call takes the intro's place: Plus lapsed meanwhile
+ * (`plusRequired`) stays, and only `failed` asks for another try.
+ */
+type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
+
+/** What the intro's footer shows: Start's state, or today's study time used up. */
+type CallIntroFooterState = CheckpointStart | "dailyLimitReached";
+
+/**
+ * What the start command came to. `changed`: the checkpoint changed since the page showed it
+ * (including today's study time used up meanwhile), and the host reads the page again
+ * (`rereading`), which opens where it stands.
+ */
+type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired" | "ready";
+
+/**
+ * The same intro and Start click, before the start command has created the conversation. The tap
+ * opens the microphone (Safari on iOS asks for it only while the tap is active): the host hands it
+ * to the call once it's created, and it's let go of when the call isn't. Start says it's starting
+ * while the call is created, and the host then opens the call in its place. A start that didn't go
+ * through says so above Start, which tries again; Plus lapsed meanwhile locks it. Today's study time
+ * used up (`dailyLimitReached`, as the page read it) says when the call is back, with the way back
+ * to Today in Start's place, so nothing asks for the microphone. Leaving abandons a start still on
+ * its way: back on the page, Start is ready again, and that start's answer changes nothing.
  */
 export function CheckpointCallIntro({
   conversation,
+  dailyLimitReached,
   onStart,
+  rereading,
 }: {
   conversation: LanguageConversationIntro;
-  onStart: () => Promise<"cancelled" | "failed" | "plusRequired" | "ready">;
+  dailyLimitReached: boolean;
+  onStart: (audio: TappedCallAudio) => Promise<CheckpointStartResult>;
+  rereading: boolean;
 }) {
   const [start, setStart] = useState<CheckpointStart>("idle");
   const attempt = useRef(0);
@@ -47,15 +67,21 @@ export function CheckpointCallIntro({
   );
 
   const run = async () => {
+    const audio = openCallAudioInTap();
     const mine = attempt.current + 1;
     attempt.current = mine;
     setStart("starting");
 
-    const result = await onStart().catch(() => "failed" as const);
+    const result = await onStart(audio).catch(() => "failed" as const);
 
-    // A ready call replaces the intro; one dropped for another learner leaves Start ready.
+    if (result !== "ready") {
+      audio.release();
+    }
+
+    // A ready call replaces the intro. A start dropped for another learner leaves Start ready, and
+    // so does a change, busy while the page is read again.
     if (mine === attempt.current && result !== "ready") {
-      setStart(result === "cancelled" ? "idle" : result);
+      setStart(result === "cancelled" || result === "changed" ? "idle" : result);
     }
   };
 
@@ -65,14 +91,29 @@ export function CheckpointCallIntro({
       exitHref="/today"
       footer={
         <CallIntroFooter
-          failed={start === "failed"}
-          locked={start === "plusRequired"}
           onStart={() => void run()}
-          starting={start === "starting"}
+          start={toFooterState({ dailyLimitReached, rereading, start })}
         />
       }
     />
   );
+}
+
+/** The page's own reading comes first: busy while it's read again, then its daily limit. */
+function toFooterState({
+  dailyLimitReached,
+  rereading,
+  start,
+}: {
+  dailyLimitReached: boolean;
+  rereading: boolean;
+  start: CheckpointStart;
+}): CallIntroFooterState {
+  if (rereading) {
+    return "starting";
+  }
+
+  return dailyLimitReached ? "dailyLimitReached" : start;
 }
 
 /**
@@ -95,7 +136,7 @@ export function ConversationIntro({
   onStart: () => void;
 }) {
   const { examTask } = conversation;
-  const footer = <CallIntroFooter locked={locked} onStart={onStart} />;
+  const footer = <CallIntroFooter onStart={onStart} start={locked ? "plusRequired" : "idle"} />;
 
   return examTask ? (
     <ExamTaskIntro
@@ -116,22 +157,14 @@ function preloadLiveCall() {
 
 /**
  * Start, or "See Plus" for a locked call. A start on its way (`starting`) shows a spinner in the
- * phone's place, and one that didn't go through (`failed`) says so above it.
+ * phone's place, and one that didn't go through (`failed`) says so above it. Today's study time
+ * used up (`dailyLimitReached`) says when the call is back, with the way back to Today in Start's
+ * place.
  */
-function CallIntroFooter({
-  failed = false,
-  locked,
-  onStart,
-  starting = false,
-}: {
-  failed?: boolean;
-  locked: boolean;
-  onStart: () => void;
-  starting?: boolean;
-}) {
+function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
   const t = useExtracted();
 
-  if (locked) {
+  if (start === "plusRequired") {
     return (
       <>
         <ChallengeCallPlusNotice />
@@ -140,9 +173,25 @@ function CallIntroFooter({
     );
   }
 
+  if (start === "dailyLimitReached") {
+    return (
+      <>
+        <p className="text-muted-foreground text-sm text-pretty" role="alert">
+          {t("You've reached today's study time. It'll be here tomorrow.")}
+        </p>
+
+        <TaskActions>
+          <TaskMainLink href="/today">{t("Back to Today")}</TaskMainLink>
+        </TaskActions>
+      </>
+    );
+  }
+
+  const starting = start === "starting";
+
   return (
     <>
-      {failed && (
+      {start === "failed" && (
         <p className="text-destructive-text text-sm text-pretty" role="alert">
           {t("The call didn't start. Try again in a moment.")}
         </p>

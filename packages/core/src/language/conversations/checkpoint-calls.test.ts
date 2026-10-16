@@ -3,12 +3,15 @@ import { createLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-ses
 import { prisma } from "@zoonk/db";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanupTestCalls,
@@ -309,7 +312,7 @@ describe("language checkpoint calls", () => {
     const opened = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
 
     expect(opened.writes).toBe(0);
-    expect(opened.result).toMatchObject({ status: "notStarted" });
+    expect(opened.result).toMatchObject({ dailyLimitReached: false, status: "notStarted" });
     expect(generateConversationScenario).not.toHaveBeenCalled();
 
     await expect(
@@ -321,6 +324,48 @@ describe("language checkpoint calls", () => {
     ).resolves.toStrictEqual(block);
 
     await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
+  });
+
+  it("says a pending checkpoint opened past today's study time can't start today, as its Start does", async () => {
+    const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
+
+    // Without a limit the intro reads no day's progress; the limit comes with the learner's profile.
+    const unlimited = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
+    expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "notStarted" });
+
+    await Promise.all([
+      learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id }),
+      dailyProgressFixtureMany([
+        { date: toUTCMidnight(new Date()), timeSpentSeconds: 30 * 60, userId: user.id },
+      ]),
+    ]);
+
+    const opened = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
+
+    expect(opened.writes).toBe(0);
+    expect(opened.statements).toBe(unlimited.statements + 1);
+
+    expect(opened.result).toMatchObject({
+      dailyLimitReached: true,
+      intro: { title: RENTING_SCENARIO.title },
+      status: "notStarted",
+    });
+
+    await expect(
+      startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
+    ).resolves.toStrictEqual({ status: "dailyLimitReached" });
+
+    await expect(
+      prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
+    ).resolves.toBe(0);
+
+    // A started block goes on past the limit, as its Start resumes it.
+    await prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } });
+
+    await expect(openLanguageCheckpointCall(block.id)).resolves.toMatchObject({
+      dailyLimitReached: false,
+      status: "notStarted",
+    });
   });
 
   it("opens a checkpoint's call from its unit's written call without a model", async () => {

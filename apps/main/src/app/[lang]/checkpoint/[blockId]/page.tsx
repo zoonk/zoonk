@@ -75,7 +75,11 @@ async function CheckpointContent({ params, searchParams }: Props) {
     return (
       <MainLearnProvider>
         <LearnerWitness />
-        <CheckpointCallPreviewClient blockId={blockId} intro={call.intro} />
+        <CheckpointCallPreviewClient
+          blockId={blockId}
+          dailyLimitReached={call.dailyLimitReached}
+          intro={call.intro}
+        />
       </MainLearnProvider>
     );
   }
