@@ -255,18 +255,28 @@ async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promi
   }
 }
 
-/** Whether the run streamed that the goal is ready: what it writes ahead of the learner is in. */
-function isGoalReady(): boolean {
+/** Whether the run streamed that this goal is ready: what it writes ahead of the learner is in. */
+function isGoalReady(goalId: string): boolean {
   return getStreamedEvents().some(
-    (event) => event.step === "goalReady" && event.status === "completed",
+    (event) =>
+      event.entityId === goalId && event.step === "goalReady" && event.status === "completed",
   );
 }
 
-/** Waits for the goal to be ready, failing the test instead of hanging when it never is. */
-async function waitForGoalReady(): Promise<void> {
+/**
+ * Waits for this goal to be ready: false once the test ended (`signal`), so a call still waiting
+ * then does nothing for a goal the next test doesn't own. It fails instead of hanging.
+ */
+async function waitForGoalReady({
+  goalId,
+  signal,
+}: {
+  goalId: string;
+  signal: AbortSignal;
+}): Promise<boolean> {
   const until = Date.now() + 30_000;
 
-  while (!isGoalReady()) {
+  while (!signal.aborted && !isGoalReady(goalId)) {
     if (Date.now() > until) {
       throw new Error("The goal never got ready");
     }
@@ -274,6 +284,14 @@ async function waitForGoalReady(): Promise<void> {
     // oxlint-disable-next-line no-await-in-loop -- polls the stream until the run says it's ready
     await setTimeout(5);
   }
+
+  return !signal.aborted;
+}
+
+/** Settles every call in `calls`, including ones added meanwhile, so none outlives the test. */
+async function settleAll(calls: Promise<unknown>[]): Promise<PromiseSettledResult<unknown>[]> {
+  const settled = await Promise.allSettled(calls);
+  return settled.length === calls.length ? settled : settleAll(calls);
 }
 
 /** Runs the course outline a goal starts inline too, as the runtime would in the background. */
@@ -964,7 +982,7 @@ describe(goalContentWorkflow, () => {
           return;
         }
 
-        if (testedOut || !isGoalReady()) {
+        if (testedOut || !isGoalReady(goal.id)) {
           return;
         }
 
@@ -1859,11 +1877,13 @@ describe(goalContentWorkflow, () => {
       const proposeNotice = noticeSteps.proposeNoticeChangeStep;
       const logFailure = noticeSteps.logReconcileFailureStep;
       const failures: string[] = [];
-      // Whether a proposal is under way, and whether the run ended: the writes ahead read both.
-      const run = { finished: false, proposing: false };
+      // The test's end, every call its spies and writes still run, and whether one is proposing.
+      const ended = new AbortController();
+      const calls: Promise<unknown>[] = [];
+      const run = { proposing: false };
 
       const writesAhead = (async () => {
-        while (!isGoalReady() && !run.finished) {
+        while (!ended.signal.aborted && !isGoalReady(goal.id)) {
           if (run.proposing) {
             // oxlint-disable-next-line no-await-in-loop -- each write marks the plan in turn
             await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
@@ -1874,40 +1894,57 @@ describe(goalContentWorkflow, () => {
         }
       })();
 
+      calls.push(writesAhead);
+
       const proposal = vi
         .spyOn(noticeSteps, "proposeNoticeChangeStep")
-        .mockImplementation(async (input) => {
-          await waitForGoalReady();
-          run.proposing = true;
+        .mockImplementation((input) => {
+          const call = (async () => {
+            // A run that ended first proposes nothing more for this goal.
+            if (!(await waitForGoalReady({ goalId: goal.id, signal: ended.signal }))) {
+              return;
+            }
 
-          try {
-            await proposeNotice(input);
-          } finally {
-            run.proposing = false;
-          }
+            run.proposing = true;
+
+            try {
+              await proposeNotice(input);
+            } finally {
+              run.proposing = false;
+            }
+          })();
+
+          calls.push(call);
+          return call;
         });
 
       const failureLog = vi
         .spyOn(noticeSteps, "logReconcileFailureStep")
-        .mockImplementation(async (failure) => {
-          failures.push(failure.error);
-          await logFailure(failure);
+        .mockImplementation((failure) => {
+          const call = (async () => {
+            failures.push(failure.error);
+            await logFailure(failure);
+          })();
+
+          calls.push(call);
+          return call;
         });
 
-      // The writes ahead settle on every path; a failure of theirs is asserted below, so it never
-      // hides an error the run threw.
-      let ahead: PromiseSettledResult<void>[] = [];
+      // On every path the test's end stops what its spies still run, and those calls settle before
+      // the spies are restored. A failure of theirs is asserted below, so it never hides an error
+      // the run threw.
+      let settled: PromiseSettledResult<unknown>[] = [];
 
       try {
         await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
       } finally {
-        run.finished = true;
+        ended.abort();
+        settled = await settleAll(calls);
         proposal.mockRestore();
         failureLog.mockRestore();
-        ahead = await Promise.allSettled([writesAhead]);
       }
 
-      expect(ahead).toStrictEqual([{ status: "fulfilled", value: undefined }]);
+      expect(settled.filter((result) => result.status === "rejected")).toStrictEqual([]);
       expect(failures).toStrictEqual([]);
       expect(waited[0]?.getTime()).toBeGreaterThan(Date.now());
 
