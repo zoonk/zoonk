@@ -26,6 +26,7 @@ import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
@@ -1680,6 +1681,19 @@ describe(resolvePlanInputDependents, () => {
     await expect(
       resolvePlanInputDependents(prisma, { chapterIds: [chapter.id] }),
     ).resolves.toStrictEqual([plan.id]);
+  });
+
+  it("reads only skills and plans for a write of skills alone", async () => {
+    const skill = await skillFixture();
+    const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+    const counts = await countDatabaseStatements(() =>
+      resolvePlanInputDependents(prisma, { skillIds: [skill.id] }),
+    );
+
+    // A skill merge resolves while it holds its locks: no lesson or chapter reads that find nothing.
+    expect(counts.result).toStrictEqual([plan.id]);
+    assertReadBudget(counts, 2);
   });
 });
 

@@ -26,22 +26,28 @@ export async function loadPlanInputSources(
       : [];
 
   const allLessonIds = [...new Set([...lessonIds, ...placed.map(({ lessonId }) => lessonId)])];
+  // A write of skills alone (a merge, which holds its locks meanwhile) skips reads that find nothing.
+  const hasLessons = allLessonIds.length > 0;
 
   const [skills, lessonSkills, tags] = await Promise.all([
     tx.skill.findMany({
       where: { OR: [{ id: { in: [...skillIds] } }, { mergedIntoId: { in: [...skillIds] } }] },
     }),
-    tx.lessonSkill.findMany({ where: { lessonId: { in: allLessonIds } } }),
-    tx.chapterSkill.findMany({
-      where: {
-        chapter: {
-          OR: [
-            { id: { in: [...chapterIds] } },
-            { lessons: { some: { lessonId: { in: allLessonIds } } } },
-          ],
-        },
-      },
-    }),
+    hasLessons
+      ? tx.lessonSkill.findMany({ where: { lessonId: { in: allLessonIds } } })
+      : Promise.resolve([]),
+    hasLessons || chapterIds.length > 0
+      ? tx.chapterSkill.findMany({
+          where: {
+            chapter: {
+              OR: [
+                { id: { in: [...chapterIds] } },
+                { lessons: { some: { lessonId: { in: allLessonIds } } } },
+              ],
+            },
+          },
+        })
+      : Promise.resolve([]),
   ]);
 
   const allSkillIds = [
@@ -61,8 +67,13 @@ export async function resolvePlanInputDependents(
   tx: TransactionClient,
   roots: PlanInputRoots,
 ): Promise<string[]> {
-  const { blueprintIds = [], chapterIds = [], courseIds = [], lessonIds = [], skillIds = [] } =
-    roots;
+  const {
+    blueprintIds = [],
+    chapterIds = [],
+    courseIds = [],
+    lessonIds = [],
+    skillIds = [],
+  } = roots;
 
   if ([blueprintIds, chapterIds, courseIds, lessonIds, skillIds].every((ids) => ids.length === 0)) {
     return [];
