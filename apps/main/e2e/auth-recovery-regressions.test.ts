@@ -57,12 +57,12 @@ for (const control of ["\t", "\n", "\r", "\u0000", "\u0008", "\u001F", "\u007F"]
 
       const token = await generateOneTimeToken(baseURL, user);
 
-      const redeemed = await context.request.post(
+      const redeemed = await context.request.get(
         `/auth/callback?${new URLSearchParams({ next, state, token })}`,
         { maxRedirects: 0 },
       );
 
-      expect(redeemed.status()).toBe(303);
+      expect(redeemed.status()).toBe(302);
       expect(redeemed.headers().location).toBe("/");
     } finally {
       await context.close();
@@ -73,10 +73,8 @@ for (const control of ["\t", "\n", "\r", "\u0000", "\u0008", "\u001F", "\u007F"]
 test("a second failed callback renders a retry screen with a safe return path", async ({
   page,
 }) => {
-  const failed = page.waitForResponse((response) => response.request().method() === "POST");
-  await page.goto("/auth/callback?error=auth&token=invalid&next=%2Fplan");
-  const failure = await failed;
-  expect(failure.status()).toBe(401);
+  const response = await page.goto("/auth/callback?error=auth&token=invalid&next=%2Fplan");
+  expect(response?.status()).toBe(401);
   await expect(page.getByRole("heading", { name: "We couldn't sign you in." })).toBeVisible();
 
   await expect(page.getByRole("link", { name: "Try again" })).toHaveAttribute(

@@ -864,7 +864,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Respóndelas y organizaremos cada día para ayudarte a avanzar hacia tu objetivo."
 
 #: src/app/[lang]/(app)/(learn)/plan/journey-setup.tsx
-#: src/app/auth/callback/route.ts
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -1065,7 +1064,6 @@ msgid "For your safety, sign in again, then delete your account."
 msgstr "Por seguridad, vuelve a iniciar sesión y luego elimina tu cuenta."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/auth/callback/route.ts
 msgctxt "scfgdM"
 msgid "Sign in again"
 msgstr "Volver a iniciar sesión"
@@ -3336,11 +3334,6 @@ msgstr "Este capítulo"
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."
 msgstr "No hemos podido iniciar tu sesión."
-
-#: src/app/auth/callback/route.ts
-msgctxt "K8-AA5"
-msgid "Signing you in…"
-msgstr "Iniciando tu sesión…"
 
 #: src/app/global-not-found.tsx
 #: src/components/catalog/catalog-not-found.tsx
