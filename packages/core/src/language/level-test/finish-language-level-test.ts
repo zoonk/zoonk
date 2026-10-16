@@ -1,24 +1,21 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type LanguageSkill, type TransactionClient, prisma } from "@zoonk/db";
+import { type LanguageSkill, type LanguageSkillLevel, type TransactionClient } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
-import { safeAsync } from "@zoonk/utils/error";
-import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
-import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type ProgressLock } from "../../sessions/_utils/session-progress";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
+import { announceLevelTestPlacement, placeLevelTestResult } from "./_utils/level-test-placement";
 import {
-  getTestStart,
   loadLevelTestContext,
   readLevelTestProgress,
+  readLevelsEndedBeforeStart,
 } from "./_utils/level-test-state";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
@@ -33,23 +30,27 @@ export type FinishLanguageLevelTestResult =
   | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
 
-class SkillLevelsAdmissionError extends Error {
-  override name = "SkillLevelsAdmissionError";
-  readonly reason: "unchanged" | "retry";
-
-  constructor(reason: "unchanged" | "retry") {
-    super(`Skill levels admission: ${reason}`);
-    this.reason = reason;
-  }
+/** Whether a skill starts at the test's level, with nothing lessons showed since. */
+function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number }) {
+  return (
+    row?.score === score &&
+    row.startScore === score &&
+    row.windowCeiling === null &&
+    row.windowCorrect === 0 &&
+    row.windowTotal === 0
+  );
 }
 
-const MAX_SKILL_LEVEL_ATTEMPTS = 3;
-
-type SaveSkillLevelsInput = { language: string; scores: LevelTestScores; userId: string };
-
-async function readSkillLevelsChange(
+/**
+ * The test's levels become where each skill starts: a new result starts them over, in the
+ * transaction that settles it, so no finish ever saves them apart from their result. A skill the
+ * test gave no level (speaking, when the sentence was skipped) keeps what lessons showed, or starts
+ * from the goal's level once the learner speaks. Linking and lessons lock the learner before these
+ * rows too, so they wait behind this finish's mark.
+ */
+async function saveSkillLevels(
   transaction: TransactionClient,
-  { language, scores, userId }: SaveSkillLevelsInput,
+  { language, scores, userId }: { language: string; scores: LevelTestScores; userId: string },
 ) {
   const levels = listLevelTestLevels(scores);
 
@@ -57,86 +58,20 @@ async function readSkillLevelsChange(
     where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
   });
 
-  const changed = levels.some(({ score, skill }) => {
-    const row = existing.find((level) => level.skill === skill);
-
-    return (
-      row?.score !== score ||
-      row.startScore !== score ||
-      row.windowCeiling !== null ||
-      row.windowCorrect !== 0 ||
-      row.windowTotal !== 0
-    );
-  });
-
-  const reading = levels.find(({ skill }) => skill === "reading");
-  const previousReading = existing.find(({ skill }) => skill === "reading");
-
-  return {
-    changed,
-    planInputs:
-      usesNonLatinScript(language) &&
-      reading !== undefined &&
-      reading.score !== (previousReading?.score ?? 0),
-  };
-}
-
-/**
- * The test's levels become where each skill starts; a new test starts them over. A skill the test
- * gave no level (speaking, when the sentence was skipped) keeps what lessons showed, or starts
- * from the goal's level once the learner speaks.
- */
-async function saveSkillLevels(input: SaveSkillLevelsInput, attempt = 1): Promise<void> {
-  const { language, scores, userId } = input;
-
-  const { error } = await safeAsync(() =>
-    prisma.$transaction(async (transaction) => {
-      const initial = await readSkillLevelsChange(transaction, input);
-
-      if (!initial.changed) {
-        return;
-      }
-
-      await markLearnerChanged(transaction, { planInputs: initial.planInputs, userId });
-      const current = await readSkillLevelsChange(transaction, input);
-
-      if (!current.changed) {
-        throw new SkillLevelsAdmissionError("unchanged");
-      }
-
-      if (initial.planInputs !== current.planInputs) {
-        throw new SkillLevelsAdmissionError("retry");
-      }
-
-      await Promise.all(
-        listLevelTestLevels(scores).map(({ score, skill }) =>
-          transaction.languageSkillLevel.upsert({
-            create: { language, score, skill, startScore: score, userId },
-            update: {
-              score,
-              startScore: score,
-              windowCeiling: null,
-              windowCorrect: 0,
-              windowTotal: 0,
-            },
-            where: { userLanguageSkill: { language, skill, userId } },
-          }),
-        ),
-      );
-    }),
+  const restarted = levels.filter(
+    ({ score, skill }) =>
+      !isFreshStart({ row: existing.find((row) => row.skill === skill), score }),
   );
 
-  if (error instanceof SkillLevelsAdmissionError && error.reason === "unchanged") {
-    return;
-  }
-
-  if (error instanceof SkillLevelsAdmissionError && attempt < MAX_SKILL_LEVEL_ATTEMPTS) {
-    return saveSkillLevels(input, attempt + 1);
-  }
-
-  if (error) {
-    throw error;
-  }
+  await Promise.all(
+    restarted.map(({ score, skill }) =>
+      transaction.languageSkillLevel.upsert({
+        create: { language, score, skill, startScore: score, userId },
+        update: { score, startScore: score, windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
+        where: { userLanguageSkill: { language, skill, userId } },
+      }),
+    ),
+  );
 }
 
 /**
@@ -190,7 +125,10 @@ async function recordTestActivity({
  * listening, for speaking only when the learner said the sentence out loud (writing waits for
  * lessons' typed answers), and one
  * for the goal, which the plan and every call use: the plan's units below it are tested out.
- * Activity keeps refining them. The time it took counts as study time.
+ * Activity keeps refining them. The time it took counts as study time. Finishing the same test
+ * again (a retry, a double tap) changes nothing and returns the same levels, and finishes what a
+ * finish that stopped partway left; answering more after a finish and finishing again sets the
+ * levels from all the answers.
  */
 export async function finishLanguageLevelTest(
   goalId: string,
@@ -210,7 +148,7 @@ export async function finishLanguageLevelTest(
   const { goal, userId } = owned;
   const timeZone = getAnswerTimeZone({ goal });
 
-  const { progress, scores } = await writeLearnerChange(
+  const { newResult, progress, scores } = await writeLearnerChange(
     { planInputs: true, userId },
     async (transaction) => {
       const lock = await getCompletionEnergyContext({ timeZone, transaction, userId });
@@ -223,11 +161,17 @@ export async function finishLanguageLevelTest(
       const current = await transaction.goal.findUniqueOrThrow({ where: { id: goal.id, userId } });
 
       const currentProgress = readLevelTestProgress(current);
+      const settled = currentProgress.counted >= currentProgress.answers.length;
+      const endedBeforeStart = settled ? readLevelsEndedBeforeStart(current) : null;
+
+      if (endedBeforeStart) {
+        return unchanged({ newResult: false, progress: currentProgress, scores: endedBeforeStart });
+      }
 
       const currentScores = getLevelTestScores({
         bank,
         progress: currentProgress,
-        start: getTestStart(current),
+        start: currentProgress.start,
       });
 
       const details = {
@@ -239,11 +183,8 @@ export async function finishLanguageLevelTest(
 
       const result = { progress: currentProgress, scores: currentScores };
 
-      if (
-        currentProgress.counted >= currentProgress.answers.length &&
-        isDeepStrictEqual(details, readGoalDetails(current))
-      ) {
-        return unchanged(result);
+      if (settled && isDeepStrictEqual(details, readGoalDetails(current))) {
+        return unchanged({ ...result, newResult: false });
       }
 
       await recordTestActivity({
@@ -256,34 +197,62 @@ export async function finishLanguageLevelTest(
         userId,
       });
 
-      await transaction.goal.update({ data: { details }, where: { id: goal.id } });
+      // A new result is placed anew; what an earlier one left unannounced is announced with it.
+      const placement = {
+        pastBasicsAreas: [],
+        unannounced: [],
+        ...currentProgress.placement,
+        placed: false,
+      };
 
-      return result;
+      await transaction.goal.update({
+        data: { details: { ...details, levelTest: { ...details.levelTest, placement } } },
+        where: { id: goal.id },
+      });
+
+      await saveSkillLevels(transaction, {
+        language: goal.targetLanguage,
+        scores: currentScores,
+        userId,
+      });
+
+      return { ...result, newResult: true };
     },
   );
 
-  /** Linking merges skill rows before progress; never hold progress while waiting for those rows. */
-  await saveSkillLevels({ language: goal.targetLanguage, scores, userId });
-
-  revalidateCacheTags([getGoalsCacheTag(userId), getUserProgressCacheTag(userId)]);
+  if (newResult) {
+    revalidateCacheTags([getGoalsCacheTag(userId), getUserProgressCacheTag(userId)]);
+  }
 
   // The plan starts at the level: units of a band below it are tested out with an undo. A plan
   // built after the test gets the same once it exists (`applyPlacementToNewPlan`).
-  await applyPlacement({ goalId: goal.id, now: new Date(), timeZone, userId });
+  const placing = await placeLevelTestResult({ goalId: goal.id, timeZone, userId });
 
-  await trackLearnerEvents({
-    events: [
-      {
-        name: "Level Test Finished",
-        properties: {
-          answered: progress.answers.length + (progress.speaking ? 1 : 0),
-          target_language: goal.targetLanguage,
+  // Once a result: the finish that places it tells, even a retry of one that failed partway.
+  if (placing?.placedNow) {
+    await trackLearnerEvents({
+      events: [
+        {
+          name: "Level Test Finished",
+          properties: {
+            answered: progress.answers.length + (progress.speaking ? 1 : 0),
+            target_language: goal.targetLanguage,
+          },
         },
-      },
-    ],
-    goalId: goal.id,
-    userId,
-  });
+      ],
+      goalId: goal.id,
+      userId,
+    });
+  }
+
+  if (placing) {
+    await announceLevelTestPlacement({
+      goalId: goal.id,
+      placement: placing.placement,
+      timeZone,
+      userId,
+    });
+  }
 
   return { levels: listLevelTestLevels(scores), status: "ready" };
 }

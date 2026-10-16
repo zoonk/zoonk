@@ -9,7 +9,6 @@ import {
 import { type SpokenWordResult } from "../../library/language/spoken-answer-match";
 import { getSession } from "../../users/get-session";
 import {
-  getTestStart,
   loadLevelTestContext,
   saveLevelTestProgress,
   toLevelTestView,
@@ -71,7 +70,7 @@ export async function gradeLevelTestSpeech({
     return { status: "notReady" };
   }
 
-  const step = getNextLevelTestStep({ bank, progress, start: getTestStart(owned.goal) });
+  const step = getNextLevelTestStep({ bank, progress, start: progress.start });
 
   if (step.kind !== "speaking") {
     return { status: "invalid" };

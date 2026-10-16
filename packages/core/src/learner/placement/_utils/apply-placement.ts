@@ -12,6 +12,35 @@ import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
 /**
+ * What placement settles for a goal now, read only: the goal's plan as placement sees it, where
+ * placement stands (with `answer`, a question a first-week session just asked, answered) and the
+ * listening areas its text answers start past their basics (`listPlacementListeningAreas`).
+ */
+export async function loadPlacement({
+  answer = null,
+  goalId,
+  plan,
+  userId,
+}: {
+  answer?: PlacementEvidence | null;
+  goalId: string;
+  plan?: GoalPlan;
+  userId: string;
+}): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
+  const goalPlan = plan ?? (await loadPlacementPlan(goalId));
+  const state = await loadPlacementState({ answer, goalId, plan: goalPlan, userId });
+
+  const pastBasicsAreas = await listPlacementListeningAreas({
+    goalId,
+    knownSkillIds: state.knownSkillIds,
+    skills: goalPlan.skills,
+    userId,
+  });
+
+  return { goalPlan, pastBasicsAreas, state };
+}
+
+/**
  * Applies what placement knows, on every skill of the goal's skill graph: skills it's sure the
  * learner can do become known in the learner model, plan items teaching only known skills are
  * tested out, and known skills the plan's time leaves out get tested-out stand-ins, so no re-plan
@@ -51,18 +80,14 @@ export async function applyPlacement({
   state: PlacementState;
   testedOutPlanItemIds: string[];
 }> {
-  const goalPlan = plan ?? (await loadPlacementPlan(goalId));
-  const state = await loadPlacementState({ answer, goalId, plan: goalPlan, userId });
+  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({
+    answer,
+    goalId,
+    plan,
+    userId,
+  });
 
-  const [pastBasicsAreas] = await Promise.all([
-    listPlacementListeningAreas({
-      goalId,
-      knownSkillIds: state.knownSkillIds,
-      skills: goalPlan.skills,
-      userId,
-    }),
-    markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId }),
-  ]);
+  await markSkillsKnown({ knownAt: now, skillIds: state.knownSkillIds, timeZone, userId });
 
   // A question inside today's session keeps the rest of the day as the learner was shown it.
   const { changeId, planItemIds: testedOutPlanItemIds } = await markPlanItemsTestedOut({

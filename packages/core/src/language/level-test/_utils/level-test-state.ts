@@ -2,6 +2,7 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
+import { isJsonObject } from "@zoonk/utils/json";
 import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readGoalDetails } from "../../_utils/language-goal";
@@ -14,6 +15,7 @@ import {
 } from "../level-test-contract";
 import {
   LEVEL_TEST_TOTAL,
+  type LevelTestScores,
   getLevelTestScores,
   getNextLevelTestStep,
   listLevelTestLevels,
@@ -36,13 +38,43 @@ export type LevelTestContext =
     }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
-export function getTestStart(goal: Pick<Goal, "details">): number {
-  return parseCefrScore(readGoalDetails(goal).level) ?? DEFAULT_START;
+/**
+ * The test so far. It starts from the level the learner gave, until it keeps its own start: the
+ * level a finish sets must never become where the same test starts, or finishing it again would
+ * move the learner's level.
+ */
+export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
+  const details = readGoalDetails(goal);
+  const parsed = levelTestProgressSchema.safeParse(details.levelTest);
+  const stored = parsed.success ? parsed.data : levelTestProgressSchema.parse({});
+
+  return { ...stored, start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START };
 }
 
-export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
-  const parsed = levelTestProgressSchema.safeParse(readGoalDetails(goal).levelTest);
-  return parsed.success ? parsed.data : { answers: [], counted: 0, speaking: null };
+/**
+ * The levels a test ended with before tests kept their start (`levelTestProgressSchema`): the level
+ * that finish set replaced the start, so the test can't be scored again, and finishing it again
+ * with nothing new keeps them. Null for any other test.
+ */
+export function readLevelsEndedBeforeStart(goal: Pick<Goal, "details">): LevelTestScores | null {
+  const details = readGoalDetails(goal);
+  const stored = levelTestProgressSchema.safeParse(details.levelTest);
+  const labels = isJsonObject(details.skillLevels) ? details.skillLevels : {};
+  const reading = parseCefrScore(labels.reading);
+  const listening = parseCefrScore(labels.listening);
+  const speaking = parseCefrScore(labels.speaking);
+
+  if (
+    !stored.success ||
+    stored.data.start !== undefined ||
+    stored.data.placement !== undefined ||
+    reading === null ||
+    listening === null
+  ) {
+    return null;
+  }
+
+  return speaking === null ? { listening, reading } : { listening, reading, speaking };
 }
 
 /**
@@ -132,7 +164,7 @@ export function toLevelTestView({
     };
   }
 
-  const start = getTestStart(goal);
+  const { start } = progress;
   const step = getNextLevelTestStep({ bank, progress, start });
   const scores = getLevelTestScores({ bank, progress, start });
 

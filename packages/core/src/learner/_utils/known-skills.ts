@@ -10,17 +10,20 @@ import { unchanged, writeLearnerChange } from "./write-learner-change";
 /**
  * Records skills placement takes as known (each one's own answers confirmed it) as one right answer
  * now. Skills the learner is already learning keep their memory: their real answers outrank this
- * record. Undoing the skip that followed takes it back (`forgetAssumedSkills`).
+ * record. Undoing the skip that followed takes it back (`forgetAssumedSkills`). With `transaction`,
+ * it writes in the caller's, which marked the learner changed.
  */
 export async function markSkillsKnown({
   knownAt,
   skillIds,
   timeZone,
+  transaction,
   userId,
 }: {
   knownAt: Date;
   skillIds: readonly string[];
   timeZone: string;
+  transaction?: TransactionClient;
   userId: string;
 }): Promise<void> {
   if (skillIds.length === 0) {
@@ -34,7 +37,7 @@ export async function markSkillsKnown({
     timeZone,
   });
 
-  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+  const write = async (tx: TransactionClient) => {
     const created = await tx.learnerSkill.createMany({
       data: skillIds.map((skillId) => ({ ...memory, skillId, userId })),
       skipDuplicates: true,
@@ -45,154 +48,162 @@ export async function markSkillsKnown({
       where: { reps: 0, skillId: { in: [...skillIds] }, userId },
     });
 
-    if (created.count === 0 && updated.count === 0) {
-      return unchanged(null);
-    }
-  });
+    return created.count + updated.count;
+  };
+
+  if (transaction) {
+    await write(transaction);
+    return;
+  }
+
+  await writeLearnerChange({ planInputs: true, userId }, async (tx) =>
+    (await write(tx)) === 0 ? unchanged(null) : null,
+  );
 }
 
 /** A skill placement placed, which the plan may hold no item for. */
 type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
 
-/**
- * Inserts one tested-out stand-in per skill, after the plan's items, under a lock on the plan that
- * also moves its version on: a re-plan computed meanwhile starts over with them (`withPlanRetry`),
- * and a skill that got its item meanwhile is left alone.
- */
-async function insertTestedOutStandIns({
-  goalId,
-  skills,
-  testedOutAt,
-  timeZone,
-  userId,
-}: {
-  goalId: string;
-  skills: readonly LeftOutSkill[];
-  testedOutAt: Date;
-  timeZone: string;
-  userId: string;
-}): Promise<string[]> {
-  const names = await prisma.skill.findMany({
-    select: { id: true, name: true },
-    where: { id: { in: skills.map((skill) => skill.id) } },
-  });
-
-  const nameOf = new Map(names.map((skill) => [skill.id, skill.name]));
-
-  return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const [plan] = await tx.$queryRaw<{ id: string }[]>`
-      UPDATE plans SET version = version + 1 WHERE goal_id = ${goalId}::uuid RETURNING id`;
-
-    if (!plan) {
-      return unchanged([]);
-    }
-
-    const [last, planned] = await Promise.all([
-      tx.planItem.findFirst({
-        orderBy: { position: "desc" },
-        select: { position: true },
-        where: { planId: plan.id },
-      }),
-      tx.planItem.findMany({
-        select: { skillId: true },
-        where: { planId: plan.id, skillId: { in: skills.map((skill) => skill.id) } },
-      }),
-    ]);
-
-    const plannedIds = new Set(planned.map((item) => item.skillId));
-    const missing = skills.filter((skill) => !plannedIds.has(skill.id));
-
-    if (missing.length === 0) {
-      return unchanged([]);
-    }
-
-    const after = (last?.position ?? -1) + 1;
-
-    const created = await tx.planItem.createManyAndReturn({
-      data: missing.map((skill, index) => ({
-        completedAt: testedOutAt,
-        kind: "lesson" as const,
-        phase: skill.phase,
-        planId: plan.id,
-        position: after + index,
-        scheduledFor: getDateInTimeZone({ date: testedOutAt, timeZone }),
-        skillId: skill.id,
-        status: "testedOut" as const,
-        titleSnapshot: nameOf.get(skill.id) ?? "",
-      })),
-      select: { id: true },
-    });
-
-    return created.map((item) => item.id);
-  });
-}
-
-/**
- * Gives each known skill of `placedSkills` that the plan holds no item for (a skill the learner's
- * time leaves out for now) an item standing in for its lessons, already tested out. Every re-plan
- * keeps a tested-out skill out (`getSettledSkillIds`), so a plan that grows with more time never
- * brings back what placement skipped, and undoing the skip brings these back with the rest.
- * Returns the new items' ids.
- */
-async function addTestedOutStandIns({
-  goalId,
-  items,
-  knownSkillIds,
-  placedSkills,
-  testedOutAt,
-  timeZone,
-  userId,
-}: {
-  goalId: string;
+type TestOutInput = {
   items: readonly GoalPlanItem[];
   knownSkillIds: ReadonlySet<string>;
-  placedSkills: readonly LeftOutSkill[];
-  testedOutAt: Date;
-  timeZone: string;
-  userId: string;
-}): Promise<string[]> {
+  placedSkills?: readonly LeftOutSkill[];
+};
+
+/**
+ * What a test-out changes on the plan: the items still to do that teach only known skills, and the
+ * known skills of `placedSkills` the plan holds no item for (a skill the learner's time leaves out
+ * for now), which get an item standing in for their lessons, already tested out. Every re-plan
+ * keeps a tested-out skill out (`getSettledSkillIds`), so a plan that grows with more time never
+ * brings back what placement skipped, and undoing the skip brings these back with the rest.
+ */
+function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) {
   const planned = new Set(items.flatMap((item) => item.skillIds));
 
-  const leftOut = placedSkills.filter(
-    (skill) => knownSkillIds.has(skill.id) && !planned.has(skill.id),
-  );
-
-  return leftOut.length === 0
-    ? []
-    : insertTestedOutStandIns({ goalId, skills: leftOut, testedOutAt, timeZone, userId });
+  return {
+    ids: items
+      .filter(
+        (item) =>
+          item.status === "todo" &&
+          item.skillIds.length > 0 &&
+          item.skillIds.every((skillId) => knownSkillIds.has(skillId)),
+      )
+      .map((item) => item.id),
+    leftOut: placedSkills.filter((skill) => knownSkillIds.has(skill.id) && !planned.has(skill.id)),
+  };
 }
 
-/** The guarded transition and its marker commit together, including when a retry has stale items. */
-async function testOutPlanItems({
-  ids,
-  testedOutAt,
-  userId,
-}: {
-  ids: readonly string[];
-  testedOutAt: Date;
-  userId: string;
-}): Promise<void> {
-  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const updated = await tx.planItem.updateMany({
-      data: { completedAt: testedOutAt, status: "testedOut" },
-      where: { id: { in: [...ids] }, status: "todo" },
-    });
+/**
+ * Inserts one tested-out stand-in per skill, after the plan's items, in the caller's transaction,
+ * which holds the plan. It moves the plan's version on, so a re-plan computed meanwhile starts over
+ * with them (`withPlanRetry`); a skill that got its item meanwhile is left alone.
+ */
+async function insertTestedOutStandIns(
+  tx: TransactionClient,
+  {
+    goalId,
+    skills,
+    testedOutAt,
+    timeZone,
+  }: { goalId: string; skills: readonly LeftOutSkill[]; testedOutAt: Date; timeZone: string },
+): Promise<string[]> {
+  const plan = await tx.plan.findUnique({ select: { id: true }, where: { goalId } });
 
-    if (updated.count === 0) {
-      return unchanged(null);
-    }
+  if (!plan) {
+    return [];
+  }
+
+  const skillIds = skills.map((skill) => skill.id);
+
+  const [last, planned, names] = await Promise.all([
+    tx.planItem.findFirst({
+      orderBy: { position: "desc" },
+      select: { position: true },
+      where: { planId: plan.id },
+    }),
+    tx.planItem.findMany({
+      select: { skillId: true },
+      where: { planId: plan.id, skillId: { in: skillIds } },
+    }),
+    tx.skill.findMany({ select: { id: true, name: true }, where: { id: { in: skillIds } } }),
+  ]);
+
+  const plannedIds = new Set(planned.map((item) => item.skillId));
+  const missing = skills.filter((skill) => !plannedIds.has(skill.id));
+
+  if (missing.length === 0) {
+    return [];
+  }
+
+  await tx.$executeRaw`UPDATE plans SET version = version + 1 WHERE id = ${plan.id}::uuid`;
+  const after = (last?.position ?? -1) + 1;
+  const nameOf = new Map(names.map((skill) => [skill.id, skill.name]));
+
+  const created = await tx.planItem.createManyAndReturn({
+    data: missing.map((skill, index) => ({
+      completedAt: testedOutAt,
+      kind: "lesson" as const,
+      phase: skill.phase,
+      planId: plan.id,
+      position: after + index,
+      scheduledFor: getDateInTimeZone({ date: testedOutAt, timeZone }),
+      skillId: skill.id,
+      status: "testedOut" as const,
+      titleSnapshot: nameOf.get(skill.id) ?? "",
+    })),
+    select: { id: true },
   });
+
+  return created.map((item) => item.id);
+}
+
+/**
+ * Tests out, in the caller's transaction, the plan items still to do that teach only known skills,
+ * and inserts the stand-ins of the known `placedSkills` the plan leaves out (see `findTestOut`),
+ * together: the caller marked the learner's plan inputs changed first, so it holds their plans.
+ * Returns what it changed: the items, in the plan's order, and the stand-ins. An item another
+ * test-out changed first isn't among them.
+ */
+export async function testOutKnownPlanItems(
+  tx: TransactionClient,
+  {
+    goalId,
+    testedOutAt,
+    timeZone,
+    ...input
+  }: TestOutInput & { goalId: string; testedOutAt: Date; timeZone: string },
+): Promise<{ itemIds: string[]; standInIds: string[] }> {
+  const { ids, leftOut } = findTestOut(input);
+
+  const updated =
+    ids.length > 0
+      ? await tx.planItem.updateManyAndReturn({
+          data: { completedAt: testedOutAt, status: "testedOut" },
+          select: { id: true },
+          where: { id: { in: ids }, status: "todo" },
+        })
+      : [];
+
+  const standInIds =
+    leftOut.length > 0
+      ? await insertTestedOutStandIns(tx, { goalId, skills: leftOut, testedOutAt, timeZone })
+      : [];
+
+  const changed = new Set(updated.map((item) => item.id));
+  return { itemIds: ids.filter((id) => changed.has(id)), standInIds };
 }
 
 /**
  * Marks plan items as tested out when the learner knows every skill they teach, so the plan skips
  * them. Placement also passes the skills it placed (`placedSkills`, from `loadPlacementPlan`): the
- * known ones the plan leaves out get tested-out stand-ins (`addTestedOutStandIns`). Only items
- * still to do change; done and skipped items stay as they are. The plan then says what it skipped
- * and re-plans from today. Returns the ids, the plan change that announced them (null when the
- * plan isn't the planner's yet), whose undo brings them back, and the lessons it says it skipped
- * (`countLessons`: a stand-in, the lessons the plan taught in its place), so a result says the
- * count Today and the Plan say.
+ * known ones the plan leaves out get tested-out stand-ins (`findTestOut`). Only items still to do
+ * change; done and skipped items stay as they are. The plan then says what it skipped and re-plans
+ * from today: the items this call found still to do, whichever test-out changed them, so a run
+ * whose announcement ends a task (`applyPlacementToNewPlan`) announces them even when another run
+ * that lost its announcement tested them out first. Returns the ids, the plan change that
+ * announced them (null when the plan isn't the planner's yet), whose undo brings them back, and
+ * the lessons it says it skipped (`countLessons`: a stand-in, the lessons the plan taught in its
+ * place), so a result says the count Today and the Plan say.
  */
 export async function markPlanItemsTestedOut({
   announceAlso = [],
@@ -224,33 +235,30 @@ export async function markPlanItemsTestedOut({
   testedOutAt: Date;
   timeZone: string;
 }): Promise<{ changeId: string | null; lessonsSkipped: number; planItemIds: string[] }> {
-  const ids = items
-    .filter(
-      (item) =>
-        item.status === "todo" &&
-        item.skillIds.length > 0 &&
-        item.skillIds.every((skillId) => knownSkillIds.has(skillId)),
-    )
-    .map((item) => item.id);
-
+  const { ids, leftOut } = findTestOut({ items, knownSkillIds, placedSkills });
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
     return { changeId: null, lessonsSkipped: 0, planItemIds: [] };
   }
 
-  const [standInIds] = await Promise.all([
-    addTestedOutStandIns({
-      goalId,
-      items,
-      knownSkillIds,
-      placedSkills,
-      testedOutAt,
-      timeZone,
-      userId: goal.userId,
-    }),
-    ids.length > 0 ? testOutPlanItems({ ids, testedOutAt, userId: goal.userId }) : null,
-  ]);
+  const standInIds =
+    ids.length > 0 || leftOut.length > 0
+      ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
+          const changed = await testOutKnownPlanItems(tx, {
+            goalId,
+            items,
+            knownSkillIds,
+            placedSkills,
+            testedOutAt,
+            timeZone,
+          });
+
+          return changed.itemIds.length === 0 && changed.standInIds.length === 0
+            ? unchanged(changed.standInIds)
+            : changed.standInIds;
+        })
+      : [];
 
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];

@@ -1,6 +1,5 @@
 import "server-only";
 import {
-  getTestStart,
   loadLevelTestContext,
   saveLevelTestProgress,
   toLevelTestView,
@@ -35,7 +34,7 @@ export async function answerLanguageLevelTest({
     return { status: "notReady" };
   }
 
-  const step = getNextLevelTestStep({ bank, progress, start: getTestStart(owned.goal) });
+  const step = getNextLevelTestStep({ bank, progress, start: progress.start });
 
   if (step.kind !== "question" || step.question.id !== input.questionId) {
     return { status: "invalid" };

@@ -48,13 +48,33 @@ export const levelTestProgressSchema = z.object({
   answers: z.array(levelTestAnswerSchema).default([]),
   /** The answers already counted toward the learner's study time, when the test ended. */
   counted: z.int().min(0).default(0),
+  /**
+   * Placing the result the test last set on the plan (see `placeLevelTestResult`): whether it's
+   * placed, and what placing tested out that the plan hasn't announced yet, with the listening
+   * areas the announcement starts past their basics. A finish that stopped partway leaves the rest
+   * to the next one. Absent before the test ends, and on tests ended before results were placed
+   * this way, which have nothing left to place.
+   */
+  placement: z
+    .object({
+      pastBasicsAreas: z.array(z.string()).default([]),
+      placed: z.boolean(),
+      unannounced: z.array(z.string()).default([]),
+    })
+    .optional(),
   speaking: z
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()
     .default(null),
+  /**
+   * The level the test started from, in half steps: the one the learner gave, kept with the
+   * answers because finishing replaces the goal's level with the test's.
+   */
+  start: z.number().min(0).max(MAX_CEFR_SCORE).optional(),
 });
 
-export type LevelTestProgress = z.infer<typeof levelTestProgressSchema>;
+/** The test so far, with the level it started from. */
+export type LevelTestProgress = z.infer<typeof levelTestProgressSchema> & { start: number };
 
 export const levelTestAnswerInputSchema = z
   .object({
