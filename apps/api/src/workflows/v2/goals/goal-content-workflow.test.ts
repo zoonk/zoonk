@@ -20,6 +20,7 @@ import { writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { prisma } from "@zoonk/db";
+import { markPlanInputsChanged } from "@zoonk/db/learner-revision";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -57,6 +58,7 @@ import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import * as planSteps from "./steps/goal-plan-steps";
 import { runPlanSetupTaskStep } from "./steps/goal-plan-steps";
+import * as noticeSteps from "./steps/notice-steps";
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
@@ -250,6 +252,27 @@ async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promi
   } finally {
     creation.mockRestore();
     placement.mockRestore();
+  }
+}
+
+/** Whether the run streamed that the goal is ready: what it writes ahead of the learner is in. */
+function isGoalReady(): boolean {
+  return getStreamedEvents().some(
+    (event) => event.step === "goalReady" && event.status === "completed",
+  );
+}
+
+/** Waits for the goal to be ready, failing the test instead of hanging when it never is. */
+async function waitForGoalReady(): Promise<void> {
+  const until = Date.now() + 30_000;
+
+  while (!isGoalReady()) {
+    if (Date.now() > until) {
+      throw new Error("The goal never got ready");
+    }
+
+    // oxlint-disable-next-line no-await-in-loop -- polls the stream until the run says it's ready
+    await setTimeout(5);
   }
 }
 
@@ -897,9 +920,56 @@ describe(goalContentWorkflow, () => {
     async () => {
       const { goal, user } = await newGoal();
       runOutlinesInline();
+      const startInline = getStartMock().getMockImplementation();
 
-      // Placement tests the learner out of the opening while the first lessons are written.
-      vi.mocked(sleep).mockImplementationOnce(async () => {
+      // The opening's second lesson is still a stand-in when the first lesson starts, so the run
+      // looks at the opening again before it picks the likeliest lessons; that band lands by then.
+      const standIns: { id: string; lessonId: string }[] = [];
+      const landed: string[] = [];
+      let openedStandIn = false;
+
+      getStartMock().mockImplementation(async (workflow, args) => {
+        if (workflow === lessonContentWorkflow && !openedStandIn) {
+          openedStandIn = true;
+
+          const [, second] = await prisma.planItem.findMany({
+            orderBy: { position: "asc" },
+            take: 2,
+            where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
+          });
+
+          if (second?.lessonId) {
+            standIns.push({ id: second.id, lessonId: second.lessonId });
+            await prisma.planItem.update({ data: { lessonId: null }, where: { id: second.id } });
+          }
+        }
+
+        return startInline ? startInline(workflow, args) : runPlacementInline(workflow, args);
+      });
+
+      // Placement tests the learner out of the opening while the run follows the plan's start: at
+      // its first wait once the goal is ready, however often it looked at the opening before.
+      let testedOut = false;
+
+      vi.mocked(sleep).mockImplementation(async () => {
+        const standIn = standIns.shift();
+
+        if (standIn) {
+          await prisma.planItem.update({
+            data: { lessonId: standIn.lessonId },
+            where: { id: standIn.id },
+          });
+
+          landed.push(standIn.lessonId);
+          return;
+        }
+
+        if (testedOut || !isGoalReady()) {
+          return;
+        }
+
+        testedOut = true;
+
         const opening = await prisma.planItem.findMany({
           orderBy: { position: "asc" },
           take: 4,
@@ -913,6 +983,9 @@ describe(goalContentWorkflow, () => {
       });
 
       const result = await goalContentWorkflow({ goalId: goal.id });
+
+      expect(landed).toHaveLength(1);
+      expect(testedOut).toBe(true);
 
       const moved = await prisma.planItem.findFirstOrThrow({
         orderBy: { position: "asc" },
@@ -1715,7 +1788,7 @@ describe(goalContentWorkflow, () => {
     "proposes a notice read after the learner saw the plan instead of changing it, and stops the reveal's wait",
     { timeout: TIMEOUT },
     async () => {
-      const { goal } = await newGoal({
+      const { goal, user } = await newGoal({
         details: { examName: "Late board exam", level: "basic" },
         kind: "exam",
       });
@@ -1780,8 +1853,62 @@ describe(goalContentWorkflow, () => {
         });
       });
 
-      await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+      // What the run writes ahead of the learner (placement's questions, the bank's items) marks
+      // the plan until the goal is ready, so a reading proposed meanwhile would lose to it: the
+      // reading is proposed once the goal is ready.
+      const proposeNotice = noticeSteps.proposeNoticeChangeStep;
+      const logFailure = noticeSteps.logReconcileFailureStep;
+      const failures: string[] = [];
+      // Whether a proposal is under way, and whether the run ended: the writes ahead read both.
+      const run = { finished: false, proposing: false };
 
+      const writesAhead = (async () => {
+        while (!isGoalReady() && !run.finished) {
+          if (run.proposing) {
+            // oxlint-disable-next-line no-await-in-loop -- each write marks the plan in turn
+            await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
+          }
+
+          // oxlint-disable-next-line no-await-in-loop -- the writes land while the goal isn't ready
+          await setTimeout(5);
+        }
+      })();
+
+      const proposal = vi
+        .spyOn(noticeSteps, "proposeNoticeChangeStep")
+        .mockImplementation(async (input) => {
+          await waitForGoalReady();
+          run.proposing = true;
+
+          try {
+            await proposeNotice(input);
+          } finally {
+            run.proposing = false;
+          }
+        });
+
+      const failureLog = vi
+        .spyOn(noticeSteps, "logReconcileFailureStep")
+        .mockImplementation(async (failure) => {
+          failures.push(failure.error);
+          await logFailure(failure);
+        });
+
+      // The writes ahead settle on every path; a failure of theirs is asserted below, so it never
+      // hides an error the run threw.
+      let ahead: PromiseSettledResult<void>[] = [];
+
+      try {
+        await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+      } finally {
+        run.finished = true;
+        proposal.mockRestore();
+        failureLog.mockRestore();
+        ahead = await Promise.allSettled([writesAhead]);
+      }
+
+      expect(ahead).toStrictEqual([{ status: "fulfilled", value: undefined }]);
+      expect(failures).toStrictEqual([]);
       expect(waited[0]?.getTime()).toBeGreaterThan(Date.now());
 
       const [plan, stored, added, changes] = await Promise.all([
