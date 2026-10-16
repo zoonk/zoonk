@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { createEmailVerificationToken } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it } from "vitest";
 import { BETTER_AUTH_BASE_PATH } from "./config";
@@ -8,6 +9,7 @@ import { baseAuthConfig, baseAuthPlugins, fullPlugins } from "./server";
 const ORIGIN = "http://localhost:3000";
 const SESSION_COOKIE = "better-auth.session_token";
 const PASSWORD = "disabled-paths-password";
+const SECRET = "disabled-paths-test-secret-with-enough-entropy";
 
 /** Production's auth rules and plugins, with email and password to sign learners in. */
 const auth = betterAuth({
@@ -22,7 +24,7 @@ const auth = betterAuth({
   },
   plugins: [...baseAuthPlugins, ...fullPlugins],
   rateLimit: { enabled: false },
-  secret: "disabled-paths-test-secret-with-enough-entropy",
+  secret: SECRET,
   socialProviders: {
     // Google, answered here: a refresh hands out a new access token.
     google: {
@@ -74,7 +76,7 @@ async function signUp() {
   return { cookie: String(session), userId: String(user.id) };
 }
 
-describe("reads that would write, switched off", () => {
+describe("GETs that would write, switched off", () => {
   it.each(["/organization/get-organization", "/organization/get-full-organization"])(
     "%s is off, so asking for someone else's organization leaves the session as it was",
     async (path) => {
@@ -120,6 +122,52 @@ describe("reads that would write, switched off", () => {
     await expect(
       prisma.account.findUniqueOrThrow({ where: { id: account.id } }),
     ).resolves.toStrictEqual(account);
+
+    expect(response.status).toBe(404);
+  });
+
+  it("/one-time-token/generate is off, so a GET never mints a sign-in token", async () => {
+    const { cookie, userId } = await signUp();
+    const { token } = await prisma.session.findFirstOrThrow({ where: { userId } });
+
+    const response = await read({ cookie, path: "/one-time-token/generate" });
+
+    await expect(prisma.verification.count({ where: { value: token } })).resolves.toBe(0);
+    expect(response.status).toBe(404);
+  });
+
+  it("/verify-email is off, so a GET never marks a learner's email verified", async () => {
+    const { cookie, userId } = await signUp();
+    const before = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const token = await createEmailVerificationToken(SECRET, before.email);
+
+    const response = await read({ cookie, path: `/verify-email?token=${token}` });
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toStrictEqual(
+      before,
+    );
+
+    expect(response.status).toBe(404);
+  });
+
+  it("/delete-user/callback is off, so a GET never spends an account deletion token", async () => {
+    const { cookie } = await signUp();
+    const token = randomUUID();
+
+    // Someone else's token: the callback would spend it, then refuse.
+    const verification = await prisma.verification.create({
+      data: {
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        identifier: `delete-account-${token}`,
+        value: randomUUID(),
+      },
+    });
+
+    const response = await read({ cookie, path: `/delete-user/callback?token=${token}` });
+
+    await expect(
+      prisma.verification.findUnique({ where: { id: verification.id } }),
+    ).resolves.toStrictEqual(verification);
 
     expect(response.status).toBe(404);
   });

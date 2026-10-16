@@ -44,6 +44,7 @@ Use supported subagents and cross-provider orchestration when available. Discove
 - Apps call authenticated core capabilities rather than supplying an acting user ID. Read the [core capability contract](packages/core/AGENTS.md) when adding or changing those capabilities or their callers.
 - Reusable product behavior must be reachable through the public API. Main owns its [capability parity audit](apps/main/AGENTS.md); API owns the [public contract and transport rules](apps/api/AGENTS.md).
 - AI work (a model call or a workflow that generates) starts only from a POST (a Server Action or an API POST) by a signed-in learner or a guest, never from a GET, a render (`after()` during one included), metadata, an OG image, a sitemap or a page load without a click. The one exception is system work behind a secret, such as the Vercel Cron's `GET /cron/daily-sweeps`.
+- A learner's GET (a render, a prefetch, or a read endpoint the apps call) never writes; writes start from a POST. The documented exceptions finish a sign-in or payment the learner started: OAuth and provider sign-in callbacks (including the one-time token the API's auth callback mints for the app) and the Stripe checkout return's subscription sync.
 
 ## Verification
 

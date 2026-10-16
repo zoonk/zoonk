@@ -198,13 +198,11 @@ describe("session hint", () => {
       signUp(),
     ]);
 
-    const generated = await request({
-      cookie: learner.cookie,
-      method: "GET",
-      path: "/one-time-token/generate",
+    // Minted on the server, as the API's sign-in callback does: the HTTP route is off.
+    const { token } = await auth.api.generateOneTimeToken({
+      headers: new Headers({ cookie: learner.cookie }),
     });
 
-    const { token } = await generated.json();
     const guestCookie = toCookieHeader(guestResponse);
     const { user: guest } = await guestResponse.json();
 
