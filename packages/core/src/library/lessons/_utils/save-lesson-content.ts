@@ -88,8 +88,8 @@ async function createMathItem({
 
 /**
  * The screens as they'll be stored: each skill as the library knows it now, and every question
- * screen on a skill of the lesson. Read before the write locks anything, so the math items it
- * creates go on skills it has locked (see `listItemSkillIds`).
+ * screen on a skill of the lesson. Read before and again after the write's locks (see
+ * `lockPreparedScreens`), so the math items it creates go on skills it has locked.
  */
 async function prepareScreens(
   tx: TransactionClient,

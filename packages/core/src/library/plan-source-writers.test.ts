@@ -442,8 +442,10 @@ function scanWrites(): Map<string, Set<string>> {
 /** The database package's own source, beside core's (its client is generated, not written). */
 const DATABASE_ROOT = fileURLToPath(new URL("../../../db/src", import.meta.url));
 
-const PLAN_WRITE =
-  /\b(?:prisma|tx|transaction)\.plan\.(?:create|createMany|update|updateMany|upsert)\b|(?:UPDATE|INSERT INTO)\s+plans\b/u;
+const PLAN_WRITE = new RegExp(
+  String.raw`\b(?:prisma|tx|transaction)\.plan\.(?:${WRITE_OPERATIONS})\b|(?:INSERT INTO|UPDATE)\s+"?plans"?\b`,
+  "u",
+);
 
 const PLAN_SOURCE_FIELD =
   /\b(?:sourceSkillIds|source_skill_ids|pendingAdaptation|pending_adaptation)\b/u;
@@ -458,6 +460,11 @@ const PLAN_SOURCE_WRITERS: Record<string, string> = {
   "plans/_utils/write-plan.ts":
     "layouts register their sources and take out the reasons they absorbed",
 };
+
+/** Whether the code writes a plan and names its sources or pending reasons. */
+function writesPlanSources(code: string): boolean {
+  return PLAN_WRITE.test(code) && PLAN_SOURCE_FIELD.test(code);
+}
 
 /** A source file's code without its comments, so a word in a doc comment never counts as a read. */
 function readCode(file: string): string {
@@ -500,12 +507,21 @@ describe("plan source writer coverage", () => {
       ...listSourceFiles(DATABASE_ROOT).filter(
         (file) => !file.includes("/generated/") && !file.includes("/prisma/"),
       ),
-    ].filter((file) => {
-      const code = readCode(file);
-      return PLAN_WRITE.test(code) && PLAN_SOURCE_FIELD.test(code);
-    });
+    ].filter((file) => writesPlanSources(readCode(file)));
 
     expect(writers.toSorted()).toStrictEqual(Object.keys(PLAN_SOURCE_WRITERS).toSorted());
+  });
+
+  it("recognizes every form a plan's sources or pending reasons can be written in", () => {
+    const writes = [
+      "await tx.plan.update({ data: { sourceSkillIds }, where: { id } })",
+      "await tx.plan.updateManyAndReturn({ data: { pendingAdaptation: [] } })",
+      "await prisma.plan.createManyAndReturn({ data: [{ sourceSkillIds }] })",
+      'UPDATE "plans" SET pending_adaptation = $1',
+      "INSERT INTO plans (source_skill_ids) VALUES ($1)",
+    ];
+
+    expect(writes.filter((write) => !writesPlanSources(write))).toStrictEqual([]);
   });
 
   it("excludes only writes of fields no loader reads", () => {
@@ -1804,6 +1820,8 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
       holder.release();
       await Promise.all([holder.done, writing]);
     }
+
+    await expect(writing).resolves.toStrictEqual({ lessonId: root.id, status: "running" });
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
