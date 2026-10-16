@@ -1,6 +1,7 @@
 import "server-only";
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type CourseLevel, prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -14,6 +15,11 @@ import { resolveScopeLessons } from "./resolve-lesson-skills";
 const POSITION_OFFSET = 1_000_000;
 
 export type SavedLessonSpecs = { status: "notClaimed" } | { lessonIds: string[]; status: "saved" };
+
+/** A run that lost its spec claim, even while it waited for plans, rolls its marks back. */
+class SpecClaimLostError extends Error {
+  override name = "SpecClaimLostError";
+}
 
 type SplitContext = {
   analytics?: CurriculumAnalytics;
@@ -161,23 +167,31 @@ export async function saveLessonSpecs({
   const claim = { id: lessonId, specRunId: workflowRunId, specStatus: "running" as const };
 
   // The spec sets the minutes plans size the lesson by; a run that lost the claim marks nothing.
-  const count = await writePlanInputs(async (tx) => {
-    if ((await tx.lesson.count({ where: claim })) === 0) {
-      return 0;
-    }
+  const { error } = await safeAsync(() =>
+    writePlanInputs(async (tx) => {
+      if ((await tx.lesson.count({ where: claim })) === 0) {
+        throw new SpecClaimLostError();
+      }
 
-    await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
-    const updated = await tx.lesson.updateMany({
-      data: { ...toSpecData(first), specStatus: "completed" },
-      where: claim,
-    });
+      const updated = await tx.lesson.updateMany({
+        data: { ...toSpecData(first), specStatus: "completed" },
+        where: claim,
+      });
 
-    return updated.count;
-  });
+      if (updated.count === 0) {
+        throw new SpecClaimLostError();
+      }
+    }),
+  );
 
-  if (count === 0) {
+  if (error instanceof SpecClaimLostError) {
     return { status: "notClaimed" };
+  }
+
+  if (error) {
+    throw error;
   }
 
   revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);

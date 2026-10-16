@@ -5,6 +5,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { waitForBlockedStatement } from "../../../_test-utils/learner-revision";
 import { mockSession } from "../../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../../learner/_test-utils/learner-goal";
 import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-fixture";
@@ -75,6 +76,58 @@ describe(saveLessonContent, () => {
     await expect(
       prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } }),
     ).resolves.toMatchObject({ skillId: survivor.id });
+  });
+
+  it("stores screens on the skill a merge moved the lesson to while the write waited for a plan", async () => {
+    const { lesson, skill: duplicate, workflowRunId } = await claimedLesson();
+    const [survivor, user] = await Promise.all([skillFixture(), userFixture()]);
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: lesson.id, planId: plan.id });
+    const written = writtenTemperatureLesson().screens[3];
+    const converted = written && toStepContent(written, { allowImage: false, language: "en" });
+
+    if (!converted?.ok) {
+      throw new Error("Expected a valid numeric screen");
+    }
+
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    // A merge of the lesson's skill holds the plan reading it, then moves the lesson to the survivor.
+    const merge = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+      await tx.lessonSkill.deleteMany({ where: { lessonId: lesson.id, skillId: duplicate.id } });
+      await tx.lessonSkill.create({ data: { lessonId: lesson.id, skillId: survivor.id } });
+      await tx.skill.update({ data: { mergedIntoId: survivor.id }, where: { id: duplicate.id } });
+    });
+
+    merge.catch((error: unknown) => held.reject(error));
+    const pid = await held.promise;
+
+    const writing = saveLessonContent({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [{ ...screen(), ...converted, skillId: duplicate.id }],
+      summary: [],
+      workflowRunId,
+    });
+
+    try {
+      await waitForBlockedStatement(pid, /FOR UPDATE OF plan/u);
+    } finally {
+      released.resolve(null);
+      await merge;
+    }
+
+    await writing;
+
+    await expect(
+      prisma.step.findFirstOrThrow({ include: { item: true }, where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({ item: { skillId: survivor.id }, skillId: survivor.id });
   });
 
   it("repairs a numeric question before saving the item used by reviews", async () => {

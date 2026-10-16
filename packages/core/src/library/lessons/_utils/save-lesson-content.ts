@@ -5,7 +5,11 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
-import { lockPlanSourceWrite, writePlanInputs } from "../../_utils/plan-input-write";
+import {
+  PlanInputWriteConflictError,
+  lockPlanSourceWrite,
+  writePlanInputs,
+} from "../../_utils/plan-input-write";
 import { toStoredItem } from "../../items/item-content";
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
@@ -129,6 +133,27 @@ async function prepareScreens(
 }
 
 /**
+ * Prepares the screens, then locks what plans read them through: the lesson and the skills of its
+ * math items. A merge that moved the lesson's skills while the locks waited changes what the
+ * screens point at, so the write starts over (see `writePlanInputs`) rather than storing screens
+ * and items on a skill the lesson no longer teaches.
+ */
+async function lockPreparedScreens(
+  tx: TransactionClient,
+  { lessonId, screens }: { lessonId: string; screens: LessonScreenToSave[] },
+): Promise<LessonScreenToSave[]> {
+  const prepared = await prepareScreens(tx, { lessonId, screens });
+  await lockPlanSourceWrite(tx, { lessonIds: [lessonId], skillIds: listItemSkillIds(prepared) });
+  const locked = await prepareScreens(tx, { lessonId, screens });
+
+  if (locked.some((screen, index) => screen.skillId !== prepared[index]?.skillId)) {
+    throw new PlanInputWriteConflictError("The lesson's skills changed; try the write again.");
+  }
+
+  return locked;
+}
+
+/**
  * The skills of the math items the screens become: a plan counts them in its question bank, so a
  * plan that never read this lesson can still read them, through the skill.
  */
@@ -220,12 +245,7 @@ export async function saveLessonContent({
         return null;
       }
 
-      const prepared = await prepareScreens(tx, { lessonId, screens });
-
-      await lockPlanSourceWrite(tx, {
-        lessonIds: [lessonId],
-        skillIds: listItemSkillIds(prepared),
-      });
+      const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
       const claimed = await tx.lesson.updateMany({
         data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
@@ -286,12 +306,7 @@ export async function saveLessonVersion({
         return null;
       }
 
-      const prepared = await prepareScreens(tx, { lessonId, screens });
-
-      await lockPlanSourceWrite(tx, {
-        lessonIds: [lessonId],
-        skillIds: listItemSkillIds(prepared),
-      });
+      const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
       /** The plain precondition read may change while admission waits; lock the lesson last. */
       const current = await lockCurrentLessonVersion(tx, lessonId);

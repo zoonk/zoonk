@@ -2,12 +2,15 @@ import { randomUUID } from "node:crypto";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readLearnerRevision, waitForBlockedStatement } from "../../_test-utils/learner-revision";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
@@ -187,5 +190,55 @@ describe(saveLessonSpecs, () => {
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: first.id } }),
     ).resolves.toMatchObject({ spec: null, specStatus: "pending" });
+  });
+
+  it("marks nothing when the run loses its claim while it waits for a plan", async () => {
+    const { chapter, first } = await chapterWithLessons();
+    const workflowRunId = randomUUID();
+    await claimLibraryGeneration({ id: first.id, target: "lessonSpec", workflowRunId });
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: first.id, planId: plan.id });
+    const revision = await readLearnerRevision(user.id);
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    // Another writer of the plan holds it while the spec waits to mark it.
+    const holder = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    });
+
+    holder.catch((error: unknown) => held.reject(error));
+    const holderPid = await held.promise;
+
+    const saving = saveLessonSpecs({
+      homeChapterId: chapter.id,
+      lessonId: first.id,
+      provenance,
+      scope,
+      specs: [temperatureSpec()],
+      workflowRunId,
+    });
+
+    try {
+      await waitForBlockedStatement(holderPid, /FOR UPDATE OF plan/u);
+      await prisma.lesson.update({ data: { specStatus: "failed" }, where: { id: first.id } });
+    } finally {
+      released.resolve(null);
+      await holder;
+    }
+
+    await expect(saving).resolves.toStrictEqual({ status: "notClaimed" });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      pendingAdaptation: [],
+    });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
   });
 });

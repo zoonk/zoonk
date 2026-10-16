@@ -29,7 +29,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
-import { waitForBlockedStatement } from "../_test-utils/learner-revision";
+import { readLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
 import {
   ENGLISH,
   LANGUAGES,
@@ -439,6 +439,26 @@ function scanWrites(): Map<string, Set<string>> {
   return writes;
 }
 
+/** The database package's own source, beside core's (its client is generated, not written). */
+const DATABASE_ROOT = fileURLToPath(new URL("../../../db/src", import.meta.url));
+
+const PLAN_WRITE =
+  /\b(?:prisma|tx|transaction)\.plan\.(?:create|createMany|update|updateMany|upsert)\b|(?:UPDATE|INSERT INTO)\s+plans\b/u;
+
+const PLAN_SOURCE_FIELD =
+  /\b(?:sourceSkillIds|source_skill_ids|pendingAdaptation|pending_adaptation)\b/u;
+
+/**
+ * The only writes of a plan's registered sources and pending reasons, which a plan's source
+ * publication will own: anything else writing them would bypass it.
+ */
+const PLAN_SOURCE_WRITERS: Record<string, string> = {
+  "../../db/src/learner-revision.ts":
+    "input markers add pending reasons (`markLockedPlanInputsChanged`)",
+  "plans/_utils/write-plan.ts":
+    "layouts register their sources and take out the reasons they absorbed",
+};
+
 /** A source file's code without its comments, so a word in a doc comment never counts as a read. */
 function readCode(file: string): string {
   return readFileSync(join(SOURCE_ROOT, file), "utf8")
@@ -472,6 +492,20 @@ describe("plan source writer coverage", () => {
 
     expect(unregistered).toStrictEqual([]);
     expect(stale).toStrictEqual([]);
+  });
+
+  it("writes a plan's sources and pending reasons only where they're registered", () => {
+    const writers = [
+      ...listSourceFiles(SOURCE_ROOT),
+      ...listSourceFiles(DATABASE_ROOT).filter(
+        (file) => !file.includes("/generated/") && !file.includes("/prisma/"),
+      ),
+    ].filter((file) => {
+      const code = readCode(file);
+      return PLAN_WRITE.test(code) && PLAN_SOURCE_FIELD.test(code);
+    });
+
+    expect(writers.toSorted()).toStrictEqual(Object.keys(PLAN_SOURCE_WRITERS).toSorted());
   });
 
   it("excludes only writes of fields no loader reads", () => {
@@ -1726,5 +1760,56 @@ describe(recordChoiceOptions, () => {
     ]);
 
     await expect(getInputsKey()).resolves.toBe(before);
+  });
+});
+
+/** Holds a plan's row until `release`, as another writer of the plan does while it commits. */
+function holdPlan(planId: string) {
+  const held = Promise.withResolvers<number>();
+  const released = Promise.withResolvers<null>();
+
+  const done = prisma.$transaction(
+    async (tx) => {
+      await tx.$queryRaw`SELECT id FROM plans WHERE id = ${planId}::uuid FOR UPDATE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    },
+    { timeout: READER_TIMEOUT_MS },
+  );
+
+  done.catch((error: unknown) => held.reject(error));
+
+  return { done, pid: held.promise, release: () => released.resolve(null) };
+}
+
+describe("a publisher that loses its claim while it waits for a plan", () => {
+  it("marks nothing: the alphabet lesson's plan and its learner keep their versions", async () => {
+    const { plan, root, write } = await alphabetCase();
+    const { userId } = await prisma.goal.findFirstOrThrow({ where: { plan: { id: plan.id } } });
+    const revision = await readLearnerRevision(userId);
+    const holder = holdPlan(plan.id);
+    const holderPid = await holder.pid;
+    const writing = write();
+
+    try {
+      // Past its claim check, the publisher waits to mark the plan; meanwhile its claim ends.
+      await vi.waitFor(
+        () => waitForBlockedStatement(holderPid, /FOR UPDATE OF plan/u),
+        WRITER_WAIT,
+      );
+
+      await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: root.id } });
+    } finally {
+      holder.release();
+      await Promise.all([holder.done, writing]);
+    }
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      pendingAdaptation: [],
+    });
+
+    await expect(readLearnerRevision(userId)).resolves.toBe(revision);
   });
 });

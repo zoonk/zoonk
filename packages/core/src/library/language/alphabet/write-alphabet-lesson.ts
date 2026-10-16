@@ -1,5 +1,6 @@
 import "server-only";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
+import { safeAsync } from "@zoonk/utils/error";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { generateLanguageAudio } from "../../../audio/generate-language-audio";
@@ -54,6 +55,11 @@ async function voiceLetters({
   return new Map(clips.filter((clip) => clip !== null));
 }
 
+/** A run that lost its content claim, even while it waited for plans, rolls its marks back. */
+class AlphabetClaimLostError extends Error {
+  override name = "AlphabetClaimLostError";
+}
+
 /** Publishes the lesson's screens while this run holds its claim; false when it lost it. */
 async function saveAlphabetLesson({
   content,
@@ -70,54 +76,61 @@ async function saveAlphabetLesson({
 }): Promise<boolean> {
   const claim = { contentRunId: workflowRunId, contentStatus: "running" as const, id: lessonId };
 
-  const saved = await writePlanInputs(async (tx) => {
-    if (!(await tx.lesson.findFirst({ select: { id: true }, where: claim }))) {
-      return false;
-    }
+  const { data: saved, error } = await safeAsync(() =>
+    writePlanInputs(async (tx) => {
+      if (!(await tx.lesson.findFirst({ select: { id: true }, where: claim }))) {
+        throw new AlphabetClaimLostError();
+      }
 
-    // Plans read the lesson's title, which publishing sets.
-    await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+      // Plans read the lesson's title, which publishing sets.
+      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
-    const claimed = await tx.lesson.updateMany({
-      data: {
-        canDo: content.canDo,
-        contentStatus: "completed",
-        description: content.description,
-        summary: { ideas: content.summary.map((text) => ({ text })) },
-        title: content.title,
-        ...toProvenanceData(provenance),
-      },
-      where: claim,
-    });
+      const claimed = await tx.lesson.updateMany({
+        data: {
+          canDo: content.canDo,
+          contentStatus: "completed",
+          description: content.description,
+          summary: { ideas: content.summary.map((text) => ({ text })) },
+          title: content.title,
+          ...toProvenanceData(provenance),
+        },
+        where: claim,
+      });
 
-    if (claimed.count === 0) {
-      return false;
-    }
+      if (claimed.count === 0) {
+        throw new AlphabetClaimLostError();
+      }
 
-    const version = await startLessonVersion(tx, lessonId);
+      const version = await startLessonVersion(tx, lessonId);
 
-    await tx.step.createMany({
-      data: steps.map((step, position) => ({
-        ...toStepData({
-          content: step.content,
-          contractVersion: STEP_CONTRACT_VERSION,
-          kind: step.kind,
+      await tx.step.createMany({
+        data: steps.map((step, position) => ({
+          ...toStepData({
+            content: step.content,
+            contractVersion: STEP_CONTRACT_VERSION,
+            kind: step.kind,
+            position,
+            provenance,
+          }),
+          lessonId,
           position,
-          provenance,
-        }),
-        lessonId,
-        position,
-        version,
-      })),
-    });
+          version,
+        })),
+      });
 
-    return true;
-  });
+      return true;
+    }),
+  );
 
-  if (saved) {
-    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+  if (error instanceof AlphabetClaimLostError) {
+    return false;
   }
 
+  if (error) {
+    throw error;
+  }
+
+  revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
   return saved;
 }
 
