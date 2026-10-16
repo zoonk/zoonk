@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { del, list } from "@vercel/blob";
+import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
 import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -48,7 +49,59 @@ async function createUser({
   return user;
 }
 
+/** A new guest, as the browser signs one in, with the session cookie it sends back. */
+async function signInGuest() {
+  const { headers, response } = await auth.api.signInAnonymous({ returnHeaders: true });
+  const session = headers.getSetCookie().find((cookie) => cookie.includes("session_token="));
+
+  return { cookie: session?.split(";")[0] ?? "", id: response.user.id };
+}
+
+/** The guest coming back: a page's reads (GET), or the browser's daily renewal (POST). */
+function comeBack({ cookie, method }: { cookie: string; method: "GET" | "POST" }) {
+  return auth.handler(
+    new Request("http://localhost:9000/api/auth/get-session", {
+      headers: { cookie, origin: "http://localhost:9000" },
+      method,
+    }),
+  );
+}
+
 describe(deleteInactiveGuests, () => {
+  it("keeps a guest who keeps coming back through the daily renewal; reads alone never count", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    try {
+      const start = Date.now() - 40 * MS_PER_DAY;
+      vi.setSystemTime(start);
+
+      const [renewing, readingOnly] = await Promise.all([signInGuest(), signInGuest()]);
+
+      // Both come back on days 20 and 38; only one browser's renewal POST reaches the server.
+      for (const day of [20, 38]) {
+        vi.setSystemTime(start + day * MS_PER_DAY);
+
+        // oxlint-disable-next-line no-await-in-loop -- The visits happen one day after another.
+        await Promise.all([
+          comeBack({ cookie: renewing.cookie, method: "POST" }),
+          comeBack({ cookie: readingOnly.cookie, method: "GET" }),
+        ]);
+      }
+
+      vi.useRealTimers();
+      await deleteInactiveGuests();
+
+      const remaining = await prisma.user.findMany({
+        select: { id: true },
+        where: { id: { in: [renewing.id, readingOnly.id] } },
+      });
+
+      expect(remaining).toStrictEqual([{ id: renewing.id }]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("deletes guests with no activity for 30 days and keeps everyone else", async () => {
     const [inactiveGuest, returningGuest, newGuest, oldAccount] = await Promise.all([
       createUser({ createdDaysAgo: 45, isAnonymous: true, sessionUsedDaysAgo: 40 }),

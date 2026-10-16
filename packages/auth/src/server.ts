@@ -20,6 +20,7 @@ import {
   COOKIE_CACHE_MINUTES,
   IS_COOKIE_CACHE_ENABLED,
   SESSION_EXPIRES_IN_DAYS,
+  SESSION_UPDATE_AGE_DAYS,
 } from "./config";
 import { ensureUserProgressAfterAuthCreate, reportSignUpAfterAuthCreate } from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
@@ -71,7 +72,11 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
+    // A GET (a page, a read, a prefetch) never renews or deletes a session; the browser and the
+    // apps renew it with a POST once a day while it's in use (`session-renewal.ts`).
+    deferSessionRefresh: true,
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
+    updateAge: 60 * 60 * 24 * SESSION_UPDATE_AGE_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
   user: { deleteUser: { beforeDelete: deleteUserDependenciesBeforeAuthDelete, enabled: true } },

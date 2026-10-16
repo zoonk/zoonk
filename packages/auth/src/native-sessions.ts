@@ -1,7 +1,7 @@
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
-import { getString } from "@zoonk/utils/json";
-import { callNativeAuthHandler } from "./native-auth-handler";
+import { getString, isJsonObject } from "@zoonk/utils/json";
+import { callNativeAuthHandler, sendNativeAuthRequest } from "./native-auth-handler";
 
 function getSessionToken(response: unknown) {
   const token = getString(response, "token");
@@ -96,20 +96,68 @@ export async function createGoogleSession({
 }
 
 /**
- * Deletes the authoritative server session before clearing its cookie. Better
- * Auth's sign-out endpoint deliberately swallows persistence failures, which
- * is unsafe for native clients that clear Keychain only after this succeeds.
+ * Keeps an app's session going while it's used: a POST is the only read that renews a session
+ * (`deferSessionRefresh`), and it only writes once the session is a day old. Read from the
+ * database, past a cookie's cached copy, so a session ended elsewhere answers null and the app
+ * signs out. Sent through Better Auth's HTTP boundary like the other native facades, so the
+ * renewed session's cookies stay here and the caller decides who gets them (a direct `auth.api`
+ * call sets them on every response through Next.js, a bearer app's included).
  */
-export async function deleteCurrentSession({ headers }: { headers: Headers }) {
-  const currentSession = await auth.api.getSession({
+export async function renewCurrentSession({
+  headers,
+  requestURL,
+}: {
+  headers: Headers;
+  requestURL: string;
+}): Promise<{ headers: Headers } | null> {
+  const renewal = await sendNativeAuthRequest({
+    body: {},
+    handler: auth.handler,
     headers,
-    query: { disableCookieCache: true },
+    path: "/get-session",
+    query: { disableCookieCache: "true" },
+    requestURL,
   });
 
-  if (currentSession) {
-    await prisma.session.deleteMany({ where: { token: currentSession.session.token } });
+  return renewal.body === null ? null : { headers: renewal.headers };
+}
+
+/**
+ * Deletes the authoritative server session before clearing its cookie. Better
+ * Auth's sign-out endpoint deliberately swallows persistence failures, which
+ * is unsafe for native clients that clear Keychain only after this succeeds,
+ * so a failed read or sign-out throws instead of answering signed out.
+ * Both calls go through Better Auth's HTTP boundary, so the cookies their
+ * answers set stay here and the caller decides who gets them.
+ */
+export async function deleteCurrentSession({
+  headers,
+  requestURL,
+}: {
+  headers: Headers;
+  requestURL: string;
+}) {
+  const current = await sendNativeAuthRequest({
+    handler: auth.handler,
+    headers,
+    path: "/get-session",
+    query: { disableCookieCache: "true" },
+    requestURL,
+  });
+
+  const token = getString(isJsonObject(current.body) ? current.body.session : null, "token");
+
+  if (token) {
+    await prisma.session.deleteMany({ where: { token } });
   }
 
-  const signOut = await auth.api.signOut({ headers, returnHeaders: true });
+  const signOut = await sendNativeAuthRequest({
+    body: {},
+    handler: auth.handler,
+    headers,
+    path: "/sign-out",
+    requestURL,
+  });
+
   return { headers: signOut.headers };
 }

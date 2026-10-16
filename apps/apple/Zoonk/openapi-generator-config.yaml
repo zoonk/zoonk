@@ -32,5 +32,6 @@ filter:
     - listCourseChapters
     - listCourses
     - listCurrentUserCourses
+    - renewCurrentSession
     - searchCatalog
     - updateCurrentUser

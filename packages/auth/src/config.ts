@@ -5,6 +5,12 @@ import { type BetterAuthOptions } from "better-auth/types";
 export const BETTER_AUTH_BASE_PATH = process.env.NEXT_PUBLIC_AUTH_BASE_PATH || "/api/auth";
 
 export const SESSION_EXPIRES_IN_DAYS = 30;
+
+/**
+ * A session in use slides forward at most once a day, and only on a POST (`session-renewal.ts`):
+ * renewing writes, so reads (every GET) never do.
+ */
+export const SESSION_UPDATE_AGE_DAYS = 1;
 export const COOKIE_CACHE_MINUTES = 60;
 export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !== "false";
 

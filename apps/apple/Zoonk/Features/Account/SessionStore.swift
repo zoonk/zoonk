@@ -23,6 +23,15 @@ final class SessionStore {
   private var isReconciling = false
   private var didRestore = false
   private var token: String?
+  private var lastSessionRenewal: SessionRenewal?
+
+  /// The session a renewal was asked for, and when, so the app asks at most once a day per session.
+  private struct SessionRenewal: Equatable {
+    let requestedAt: Date
+    let session: AuthenticatedSession
+  }
+
+  private static let sessionRenewalInterval: TimeInterval = 24 * 60 * 60
 
   private enum StoredCredentialValidation {
     case active(CurrentAccount)
@@ -164,6 +173,34 @@ final class SessionStore {
     defer { isReconciling = false }
 
     _ = await loadLatestCredential()
+  }
+
+  /// Keeps the account's server session going while the app is used. Reads never renew a session, so the app asks once a day, on launch and whenever it returns to the foreground, and the server slides the session forward once it's a day old. A session that ended elsewhere signs this device out, unless a newer credential replaced it meanwhile; a failed request is asked again on the next return.
+  func renewSessionIfDue(now: Date = .now) async {
+    guard let authenticatedSession else {
+      return
+    }
+
+    // A renewal asked "in the future" (before the device's clock was set back) doesn't count.
+    if let lastSessionRenewal, lastSessionRenewal.session == authenticatedSession,
+      (0..<Self.sessionRenewalInterval).contains(
+        now.timeIntervalSince(lastSessionRenewal.requestedAt))
+    {
+      return
+    }
+
+    let renewal = SessionRenewal(requestedAt: now, session: authenticatedSession)
+    lastSessionRenewal = renewal
+
+    do {
+      try await api.renewSession(token: authenticatedSession.bearerToken)
+    } catch AccountAPIError.unauthorized {
+      await expire(authenticatedSession)
+    } catch {
+      if lastSessionRenewal == renewal {
+        lastSessionRenewal = nil
+      }
+    }
   }
 
   /// Begins the localized email flow without changing the session until the user proves ownership with the received code.
