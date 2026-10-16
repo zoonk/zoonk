@@ -3,6 +3,7 @@ import { explainQuestionWorkflow } from "@/workflows/v2/explain/explain-question
 import { goalContentWorkflow } from "@/workflows/v2/goals/goal-content-workflow";
 import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
+import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
 import { isResearchedGoalKind } from "@zoonk/core/goals/research";
 import { type GoalKind } from "@zoonk/db";
@@ -47,9 +48,21 @@ export async function startGoalGeneration({
   goal: GoalRef;
   researchId?: string | null;
 }): Promise<GoalGeneration> {
+  const previous = await getGoalGenerationId({ goalId: goal.id });
+
+  if (previous.status !== "ready") {
+    throw new Error("The goal is no longer available to start.");
+  }
+
   const generation = await startGoalRun({ goal, researchId });
 
-  await recordGoalGeneration({ generationId: generation.generationId, goalId: goal.id });
+  await recordGoalGeneration({
+    clearFailure: false,
+    expectedGenerationId: previous.generationId,
+    generationId: generation.generationId,
+    goalId: goal.id,
+  });
+
   return generation;
 }
 

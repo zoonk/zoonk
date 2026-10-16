@@ -5,15 +5,19 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 /**
  * Remembers the run writing a goal's curriculum (or its quick explanation), so onboarding and the
  * explanation's wait can follow it live and pick it up again after a reload. Called when the run
- * starts, so the goal's screens have it before they open, and again by the run itself (the same id
- * changes nothing; a run started without the first call is saved there). A run that joins another
- * stays saved: its stream hands followers over. A goal deleted meanwhile is left alone. A failure
- * an earlier run recorded is cleared, since this run builds the plan again.
+ * starts, so the goal's screens have it before they open, and again by the run itself. Only the
+ * workflow that acquired the run token clears an earlier failure: an HTTP receipt can arrive
+ * after that workflow failed, or belong to a run joining it. A goal deleted meanwhile is left alone.
  */
 export async function recordGoalGeneration({
+  clearFailure = true,
+  expectedGenerationId,
   generationId,
   goalId,
 }: {
+  clearFailure?: boolean;
+  /** The value observed before HTTP started the run; a newer workflow record wins. */
+  expectedGenerationId?: string | null;
   generationId: string;
   goalId: string;
 }): Promise<void> {
@@ -32,13 +36,19 @@ export async function recordGoalGeneration({
       const current = await tx.goal.findUnique({ where: { id: goalId } });
       const plan = goal.plan ? await tx.plan.findUnique({ where: { id: goal.plan.id } }) : null;
 
-      if (!current || (current.generationRunId === generationId && !plan?.buildFailedAt)) {
+      if (
+        !current ||
+        (expectedGenerationId !== undefined &&
+          current.generationRunId !== expectedGenerationId &&
+          current.generationRunId !== generationId) ||
+        (current.generationRunId === generationId && (!clearFailure || !plan?.buildFailedAt))
+      ) {
         return unchanged(null);
       }
 
       await tx.goal.updateMany({ data: { generationRunId: generationId }, where: { id: goalId } });
 
-      if (plan) {
+      if (plan && clearFailure) {
         await tx.plan.updateMany({
           data: { buildFailedAt: null },
           where: { buildFailedAt: { not: null }, id: plan.id },
