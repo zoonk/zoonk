@@ -7,8 +7,9 @@ import {
 } from "../../language/levels/language-skill-levels";
 import { getOverallLevel } from "../../language/levels/skill-level-rules";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
+import { type DayView } from "../../sessions/day-view";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
-import { loadTodayPattern } from "./_utils/today-pattern";
+import { keepsTodayPattern, loadTodayPattern } from "./_utils/today-pattern";
 import { type LanguageTodayView } from "./language-view-contract";
 
 export type LanguageTodayViewResult =
@@ -52,4 +53,32 @@ export async function getLanguageTodayView(
       speaking,
     },
   };
+}
+
+/**
+ * Today's language section beside the day Today read: its pattern steps aside when one of the
+ * day's missions is that drill (`keepsTodayPattern`). The read above already does this for a saved
+ * day. An unopened day's missions exist only in Today's own read, so the screen that shows both
+ * applies it to that read instead of building the day a second time.
+ */
+export function hidePatternCoveredByDay({
+  day,
+  language,
+}: {
+  day: Pick<DayView, "fullMeal" | "missions">;
+  language: LanguageTodayView;
+}): LanguageTodayView {
+  const { pattern } = language;
+
+  if (!pattern) {
+    return language;
+  }
+
+  const covered = day.missions.some(
+    (mission) => mission.opens?.kind === "pattern" && mission.opens.patternId === pattern.id,
+  );
+
+  return keepsTodayPattern({ covered, earned: day.fullMeal.earned, missions: day.missions })
+    ? language
+    : { ...language, pattern: null };
 }

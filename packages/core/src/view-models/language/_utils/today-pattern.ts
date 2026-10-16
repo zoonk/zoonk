@@ -2,9 +2,27 @@ import { type Goal } from "@zoonk/db";
 import { findFreshMistakePattern } from "../../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { findSavedDaySession } from "../../../sessions/_utils/saved-day-session";
-import { isFullMeal } from "../../../sessions/missions";
+import { type Mission, isFullMeal } from "../../../sessions/missions";
 import { readMissionDocument } from "../../../sessions/missions/catalog";
 import { getDayMissions, hasDayMissionBonus } from "../../../sessions/missions/get-day-missions";
+
+/**
+ * Whether Today keeps its pattern card beside a day whose missions offer the same drill
+ * (`covered`): the drill needs one entry, so the card steps aside. Unless the bonus was earned
+ * elsewhere and the day isn't a full meal: the missions card then shows an earned-elsewhere line
+ * instead of its unfinished rows, and hiding the card would remove the drill's only Today entry.
+ */
+export function keepsTodayPattern({
+  covered,
+  earned,
+  missions,
+}: {
+  covered: boolean;
+  earned: boolean;
+  missions: readonly Pick<Mission, "status">[];
+}): boolean {
+  return !covered || (earned && !isFullMeal(missions));
+}
 
 /** The Today view owns the prompt: a drill already offered as today's mission needs one entry. */
 export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: string }) {
@@ -35,7 +53,5 @@ export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: s
     hasDayMissionBonus({ now, session, timeZone }),
   ]);
 
-  // The card replaces its unfinished rows with an earned-elsewhere line. Keep the drill's
-  // separate entry in that state; otherwise suppression would remove its only Today entry.
-  return earned && !isFullMeal(missions) ? pattern : null;
+  return keepsTodayPattern({ covered, earned, missions }) ? pattern : null;
 }
