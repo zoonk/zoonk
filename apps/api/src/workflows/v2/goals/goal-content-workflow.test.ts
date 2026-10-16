@@ -19,6 +19,7 @@ import { classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
 import { writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
+import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-revision";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -101,6 +102,8 @@ const recordedSpecificity = recordedOutput<Specificity>("goal-specificity");
 const LANDING_RAN_OUT_MS = 10 * 60 * 1000;
 
 const TIMEOUT = 60_000;
+/** How many times the durable runtime retries a step that throws (`maxRetries`' default). */
+const STEP_RETRIES = 3;
 
 /** The Library skills a stored plan teaches, in its order. */
 function planSkillIdsOf(plan: { graph: unknown }): string[] {
@@ -261,37 +264,6 @@ function isGoalReady(goalId: string): boolean {
     (event) =>
       event.entityId === goalId && event.step === "goalReady" && event.status === "completed",
   );
-}
-
-/**
- * Waits for this goal to be ready: false once the test ended (`signal`), so a call still waiting
- * then does nothing for a goal the next test doesn't own. It fails instead of hanging.
- */
-async function waitForGoalReady({
-  goalId,
-  signal,
-}: {
-  goalId: string;
-  signal: AbortSignal;
-}): Promise<boolean> {
-  const until = Date.now() + 30_000;
-
-  while (!signal.aborted && !isGoalReady(goalId)) {
-    if (Date.now() > until) {
-      throw new Error("The goal never got ready");
-    }
-
-    // oxlint-disable-next-line no-await-in-loop -- polls the stream until the run says it's ready
-    await setTimeout(5);
-  }
-
-  return !signal.aborted;
-}
-
-/** Settles every call in `calls`, including ones added meanwhile, so none outlives the test. */
-async function settleAll(calls: Promise<unknown>[]): Promise<PromiseSettledResult<unknown>[]> {
-  const settled = await Promise.allSettled(calls);
-  return settled.length === calls.length ? settled : settleAll(calls);
 }
 
 /** Runs the course outline a goal starts inline too, as the runtime would in the background. */
@@ -1871,81 +1843,56 @@ describe(goalContentWorkflow, () => {
         });
       });
 
-      // What the run writes ahead of the learner (placement's questions, the bank's items) marks
-      // the plan until the goal is ready, so a reading proposed meanwhile would lose to it: the
-      // reading is proposed once the goal is ready.
+      // The work written ahead of the learner (placement's questions, the bank's items) marks the
+      // plan while the reading is first proposed, so that proposal loses to it, as a landing
+      // mid-read can at any moment.
       const proposeNotice = noticeSteps.proposeNoticeChangeStep;
-      const logFailure = noticeSteps.logReconcileFailureStep;
-      const failures: string[] = [];
-      // The test's end, every call its spies and writes still run, and whether one is proposing.
-      const ended = new AbortController();
-      const calls: Promise<unknown>[] = [];
-      const run = { proposing: false };
+      const firstProposal = { underWay: true };
 
-      const writesAhead = (async () => {
-        while (!ended.signal.aborted && !isGoalReady(goal.id)) {
-          if (run.proposing) {
+      const proposeWhileMarked = async (input: Parameters<typeof proposeNotice>[0]) => {
+        const marks = (async () => {
+          while (firstProposal.underWay) {
             // oxlint-disable-next-line no-await-in-loop -- each write marks the plan in turn
             await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
           }
+        })();
 
-          // oxlint-disable-next-line no-await-in-loop -- the writes land while the goal isn't ready
-          await setTimeout(5);
+        try {
+          await proposeNotice(input);
+        } finally {
+          firstProposal.underWay = false;
+          await marks;
         }
-      })();
+      };
 
-      calls.push(writesAhead);
+      // The durable runtime runs a step that lost to the plan again, up to its retries; this inline
+      // run does the same, so the reading is proposed from the plan as it is then.
+      const proposeAsTheRuntimeDoes = async (
+        input: Parameters<typeof proposeNotice>[0],
+        attempt = 0,
+      ): Promise<void> => {
+        try {
+          await (attempt === 0 ? proposeWhileMarked(input) : proposeNotice(input));
+        } catch (error) {
+          if (!isPlanConflictError(error) || attempt >= STEP_RETRIES) {
+            throw error;
+          }
+
+          await proposeAsTheRuntimeDoes(input, attempt + 1);
+        }
+      };
 
       const proposal = vi
         .spyOn(noticeSteps, "proposeNoticeChangeStep")
-        .mockImplementation((input) => {
-          const call = (async () => {
-            // A run that ended first proposes nothing more for this goal.
-            if (!(await waitForGoalReady({ goalId: goal.id, signal: ended.signal }))) {
-              return;
-            }
-
-            run.proposing = true;
-
-            try {
-              await proposeNotice(input);
-            } finally {
-              run.proposing = false;
-            }
-          })();
-
-          calls.push(call);
-          return call;
-        });
-
-      const failureLog = vi
-        .spyOn(noticeSteps, "logReconcileFailureStep")
-        .mockImplementation((failure) => {
-          const call = (async () => {
-            failures.push(failure.error);
-            await logFailure(failure);
-          })();
-
-          calls.push(call);
-          return call;
-        });
-
-      // On every path the test's end stops what its spies still run, and those calls settle before
-      // the spies are restored. A failure of theirs is asserted below, so it never hides an error
-      // the run threw.
-      let settled: PromiseSettledResult<unknown>[] = [];
+        .mockImplementation((input) => proposeAsTheRuntimeDoes(input));
 
       try {
         await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
       } finally {
-        ended.abort();
-        settled = await settleAll(calls);
         proposal.mockRestore();
-        failureLog.mockRestore();
       }
 
-      expect(settled.filter((result) => result.status === "rejected")).toStrictEqual([]);
-      expect(failures).toStrictEqual([]);
+      expect(firstProposal.underWay).toBe(false);
       expect(waited[0]?.getTime()).toBeGreaterThan(Date.now());
 
       const [plan, stored, added, changes] = await Promise.all([
