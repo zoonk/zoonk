@@ -4,6 +4,7 @@ import { auth as productionAuth } from "./auth";
 import { BETTER_AUTH_BASE_PATH, SESSION_EXPIRES_IN_DAYS } from "./config";
 import { deleteCurrentSession } from "./native-sessions";
 import { SESSION_HINT_COOKIE } from "./session-hint";
+import { SESSION_REFRESH_PATH } from "./session-refresh";
 
 const ORIGIN = "http://localhost:3000";
 const SESSION_COOKIE = "better-auth.session_token";
@@ -49,6 +50,20 @@ async function signInGuestWithSessionUsed({ days }: { days: number }) {
   return { cookies: new Headers({ cookie, origin: ORIGIN }), userId };
 }
 
+function findSession(userId: string) {
+  return prisma.session.findFirstOrThrow({
+    select: { expiresAt: true, updatedAt: true },
+    where: { userId },
+  });
+}
+
+/** The browser's refresh of its copy of the session, as a page in use sends it. */
+function refreshSessionCopy(cookies: Headers) {
+  return productionAuth.handler(
+    new Request(`${ORIGIN}${SESSION_REFRESH_PATH}`, { headers: cookies }),
+  );
+}
+
 /**
  * Makes production auth answer `path` with a failure. A failed session read or a refused sign-out
  * can't be produced safely on the shared test database, so this stands in for that outage.
@@ -64,6 +79,60 @@ function failAuthRoute({ path, status }: { path: string; status: number }) {
         : handler(authRequest),
     );
 }
+
+describe("session copy refresh", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("gives a session renewed within the day only a new copy, which reads then use", async () => {
+    const { cookies, userId } = await signInGuestWithSessionUsed({ days: 0.5 });
+    const before = await findSession(userId);
+
+    const response = await refreshSessionCopy(cookies);
+    const refreshed = readSetCookies(response);
+    const copy = refreshed.get(SESSION_CACHE_COOKIE)?.value;
+
+    expect(response.status).toBe(200);
+    expect(copy).toBeTruthy();
+    expect(refreshed.has(SESSION_COOKIE)).toBe(false);
+    await expect(findSession(userId)).resolves.toStrictEqual(before);
+
+    const { internalAdapter } = await productionAuth.$context;
+    const lookups = vi.spyOn(internalAdapter, "findSession");
+    const session = cookies.get("cookie")?.split("; ")[0];
+
+    const read = await productionAuth.api.getSession({
+      headers: new Headers({ cookie: `${session}; ${SESSION_CACHE_COOKIE}=${copy}` }),
+    });
+
+    expect(read?.user.id).toBe(userId);
+    expect(lookups).not.toHaveBeenCalled();
+
+    await prisma.user.delete({ where: { id: userId } });
+  });
+
+  it("renews a due session past the browser's copy, with its cookie and the session hint beside it", async () => {
+    const { cookies, userId } = await signInGuestWithSessionUsed({ days: 3 });
+    const before = await findSession(userId);
+
+    // A page's read answers from the copy and renews nothing.
+    await productionAuth.api.getSession({ headers: cookies });
+    await expect(findSession(userId)).resolves.toStrictEqual(before);
+
+    const response = await refreshSessionCopy(cookies);
+    const refreshed = readSetCookies(response);
+    const renewed = await findSession(userId);
+
+    expect(response.status).toBe(200);
+    expect(refreshed.get(SESSION_COOKIE)?.value).toBeTruthy();
+    expect(refreshed.get(SESSION_CACHE_COOKIE)?.value).toBeTruthy();
+    expect(refreshed.get(SESSION_HINT_COOKIE)?.value).toMatch(/^(?!0$)./u);
+    expect(renewed.updatedAt.getTime()).toBeGreaterThan(before.updatedAt.getTime());
+
+    await prisma.user.delete({ where: { id: userId } });
+  });
+});
 
 describe("native sign-out", () => {
   afterEach(() => {

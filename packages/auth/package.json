@@ -20,6 +20,7 @@
     "./native-sessions": "./src/native-sessions.ts",
     "./permissions": "./src/permissions.ts",
     "./session-hint": "./src/session-hint.ts",
+    "./session-refresh": "./src/session-refresh.ts",
     "./sign-up-events": "./src/sign-up-events.ts",
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",

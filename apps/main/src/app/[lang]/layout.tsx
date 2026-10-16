@@ -17,6 +17,7 @@ import { IdentityCoverScript } from "./identity-cover-script";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
+import { SessionRefresh } from "./session-refresh";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import "../globals.css";
 
@@ -81,6 +82,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           <LearnerSummarySync />
         </Suspense>
         <AppAnalytics locale={locale} />
+        <SessionRefresh />
       </body>
     </html>
   );
