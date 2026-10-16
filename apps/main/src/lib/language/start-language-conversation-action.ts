@@ -1,5 +1,6 @@
 "use server";
 
+import { prepareStudySession } from "@/lib/session/session-preparation";
 import { languageConversationStartInputSchema } from "@zoonk/core/language/conversations/contract";
 import { startLanguageConversation } from "@zoonk/core/language/conversations/start";
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
@@ -47,5 +48,15 @@ export async function startLanguageConversationAction(
     return { limit: { period: data.limit.period, tier: data.limit.tier } };
   }
 
-  return data.status === "ready" ? { conversationId: data.conversationId } : null;
+  if (data.status !== "ready") {
+    return null;
+  }
+
+  // A checkpoint's call starts its block: the rest of its day gets written meanwhile, as when
+  // Today opens a block.
+  if (data.sessionId) {
+    prepareStudySession(data.sessionId);
+  }
+
+  return { conversationId: data.conversationId };
 }

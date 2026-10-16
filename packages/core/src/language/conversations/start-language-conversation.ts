@@ -1,5 +1,6 @@
 import "server-only";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { cacheLife } from "next/cache";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -42,7 +43,12 @@ export type LanguageConversationIntro = Pick<
 >;
 
 type StartedCall =
-  | { conversationId: string; status: "ready" }
+  | {
+      conversationId: string;
+      /** A checkpoint's study session: starting its call starts its block. */
+      sessionId?: string;
+      status: "ready";
+    }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
 type CheckpointRefusal = Exclude<
@@ -203,7 +209,7 @@ async function startCheckpoint({
 
   if (existing) {
     return existing.userId === userId
-      ? { conversationId: existing.id, status: "ready" }
+      ? { conversationId: existing.id, sessionId: session.id, status: "ready" }
       : { status: "notFound" };
   }
 
@@ -253,7 +259,7 @@ async function startCheckpoint({
       userId,
     });
 
-    return { conversationId: conversation.id, status: "ready" };
+    return { conversationId: conversation.id, sessionId: session.id, status: "ready" };
   } catch (error) {
     if (!isPrismaUniqueConstraintError(error)) {
       throw error;
@@ -263,7 +269,7 @@ async function startCheckpoint({
       where: { studyBlockId: blockId },
     });
 
-    return { conversationId: winner.id, status: "ready" };
+    return { conversationId: winner.id, sessionId: session.id, status: "ready" };
   }
 }
 
@@ -333,10 +339,13 @@ export async function startLanguageConversation(
 /**
  * A language checkpoint's saved call or its read-only intro. Opening a screen creates nothing:
  * the learner's Start POST creates the conversation, writing its scenario only when still needed.
+ * Cached for the learner's own browser, so a link's prefetch can draw the page before the tap.
  */
 export async function openLanguageCheckpointCall(
   blockId: string,
 ): Promise<OpenLanguageCheckpointCallResult> {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {
@@ -356,5 +365,13 @@ export async function openLanguageCheckpointCall(
     return { conversationId: completed.id, status: "ready" };
   }
 
-  return startCheckpoint({ blockId, userId: session.user.id, write: false });
+  const call = await startCheckpoint({ blockId, userId: session.user.id, write: false });
+
+  // Today's study time comes back at the learner's midnight, which nothing announces to the
+  // browser: a refusal ("it'll be here tomorrow") is kept for the shortest time it allows.
+  if (call.status === "notStarted" && call.dailyLimitReached) {
+    cacheLife("seconds");
+  }
+
+  return call;
 }

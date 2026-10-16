@@ -54,13 +54,11 @@ function CheckpointSkeleton() {
 }
 
 async function CheckpointContent({ params, searchParams }: Props) {
-  // A checkpoint is the learner's own and reads as of today: render per request.
-  await connection();
   const [{ blockId, lang }, query] = await Promise.all([params, searchParams]);
 
   // A language goal's checkpoint is the unit's conversation, played on its own screen. Opening
   // the page never writes the call: a session's preparation writes it ahead, else the learner's
-  // tap does.
+  // tap does. Its read is cached for the learner's browser, so a link's prefetch draws the call.
   const call = await openLanguageCheckpointCall(blockId);
 
   if (call.status === "earlierFirst") {
@@ -93,6 +91,8 @@ async function CheckpointContent({ params, searchParams }: Props) {
     );
   }
 
+  // A duel or the week's challenge is the learner's own and reads as of today: render per request.
+  await connection();
   const result = await getCheckpoint(blockId);
 
   if (result.status === "unauthorized") {

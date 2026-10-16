@@ -31,7 +31,7 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
-import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type DayBlockRef, findNextCall } from "@zoonk/core/sessions/day-block";
 import { SpeakingPracticeRow } from "@zoonk/learn/language/speaking";
 import { LanguagePracticeRow } from "@zoonk/learn/language/today";
 import { MockEntryRow } from "@zoonk/learn/mock/entry";
@@ -223,6 +223,7 @@ function TodayDay({
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
+  const call = findNextCall({ goalKind: today.goal.kind, session: today.session });
 
   useFollowTimeZone({ goalId: today.goal.id, userId });
   const decidePlanChange = useDecidePlanChange({ refreshView, today });
@@ -270,6 +271,7 @@ function TodayDay({
           return outcome?.change ?? null;
         },
         chooseFocusHref: "/plan?focus=choose",
+        continueHref: call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null,
         continueSession: () => {
           const next = stepAt(today.session.nextPosition);
           return next ? taps.next(next) : Promise.resolve(false);

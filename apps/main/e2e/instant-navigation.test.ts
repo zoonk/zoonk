@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -15,6 +16,7 @@ import {
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
+import { createLanguageChallenge } from "./language-challenge-fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { createMistakeLearner, drillQuestion } from "./mistake-drill-days";
 import { openAs } from "./study-day";
@@ -788,6 +790,51 @@ test.describe("Instant navigation", () => {
 
     expect(writingRequests).toHaveLength(1);
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+
+    await page.context().close();
+  });
+
+  test("Today's Start opens its language call's intro at once", async ({ browser }) => {
+    const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+    const href = `/checkpoint/${block.id}?session=${block.sessionId}`;
+    const page = await openAs(browser, user);
+    const start = page.getByRole("link", { name: /^(?:Start|Continue) session/u });
+
+    // The call's page comes in with Start's own prefetch, before the tap.
+    const prefetched = page.waitForResponse((response) => {
+      const headers = response.request().headers();
+
+      return (
+        new URL(response.url()).pathname === `/checkpoint/${block.id}` &&
+        Boolean(headers["next-router-prefetch"] ?? headers["next-router-segment-prefetch"])
+      );
+    });
+
+    await openSettled(page, "/today");
+    await expect(start).toHaveAttribute("href", href);
+    const prefetch = await prefetched;
+    await prefetch.finished();
+
+    await instant(page, async () => {
+      await start.click();
+
+      await page.waitForURL(
+        new RegExp(`/checkpoint/${block.id}\\?session=${block.sessionId}$`, "u"),
+      );
+
+      await expectPainted(page);
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+    });
+
+    // Opening the intro starts nothing: the call is made by its own Start.
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
 
     await page.context().close();
   });

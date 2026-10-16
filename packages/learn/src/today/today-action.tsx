@@ -81,11 +81,39 @@ export function TodayContinueStatus({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Start or Continue for a next step whose page opens it without writing (`continueHref`): a link
+ * the router loads before the tap, so the step paints at once. Enter follows it.
+ */
+function ContinueLink({ href }: { href: string }) {
+  const t = useExtracted();
+  const { started } = useSessionState();
+  const switching = useGoalSwitchPending();
+  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
+
+  return (
+    <LearnLink
+      aria-describedby={NEXT_TITLE_ID}
+      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
+      href={href}
+      ref={ref}
+    >
+      {started ? t("Continue session") : t("Start session")}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+    </LearnLink>
+  );
+}
+
 /** Starts or continues the day from its button or Enter: it opens the next block. */
 function ContinueButton() {
   const t = useExtracted();
+  const { actions } = useTodayScreen();
   const { started } = useSessionState();
   const { isPending, run, wait } = useTodayContinue();
+
+  if (actions.continueHref) {
+    return <ContinueLink href={actions.continueHref} />;
+  }
 
   return (
     <>

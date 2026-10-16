@@ -629,7 +629,7 @@ test("a checkpoint refused at today's study time offers Start again once the lea
   const page = await openAs(browser, user);
   await page.goto("/today");
   const today = page.getByRole("region", { name: "Today's session" });
-  await today.getByRole("button", { name: /^(?:Start session|Continue)/u }).click();
+  await today.getByRole("link", { name: /^(?:Start session|Continue)/u }).click();
   await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
   const start = page.getByRole("button", { name: "Start the call" });
   await expect(start).toBeVisible();
@@ -657,7 +657,7 @@ test("a checkpoint refused at today's study time offers Start again once the lea
   await page.getByRole("link", { name: /^Today/u }).click();
   await expect(page).toHaveURL(/\/today$/u);
 
-  await today.getByRole("button", { name: /^(?:Start session|Continue)/u }).click();
+  await today.getByRole("link", { name: /^(?:Start session|Continue)/u }).click();
   await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
   await expect(page.getByRole("button", { name: "Start the call" })).toBeEnabled();
   await expect(page.getByRole("alert").filter({ hasText: STUDY_TIME_USED_UP })).toHaveCount(0);

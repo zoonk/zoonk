@@ -50,6 +50,12 @@ export type TodayActions = {
   chooseFocusHref: string;
   /** Where studying everything at the learner's own pace opens (the plan's sheet for it). */
   studyEverythingHref: string;
+  /**
+   * Where Start or Continue goes as a link the router loads before the tap, instead of
+   * `continueSession`'s request: a step whose page opens it without writing and starts it itself
+   * (a language call). Null for every other next step, and while opening the day would update it.
+   */
+  continueHref: string | null;
   continueSession: () => Promise<boolean>;
   /**
    * Answers the plan change on Today: apply or not now for a proposal, undo or "Got it" for a
