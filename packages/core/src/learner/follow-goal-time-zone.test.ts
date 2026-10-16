@@ -1,11 +1,13 @@
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -207,6 +209,68 @@ describe("following a learner who moves", () => {
     mockSession(other.id);
 
     await expect(followGoalTimeZone({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+  });
+
+  it("writes nothing, not even a transaction, for a goal already in the device's zone", async () => {
+    const { goal, user } = await setup();
+    const plan = await planFixture({ goalId: goal.id });
+    const before = await readVersions({ planId: plan.id, userId: user.id });
+
+    const counted = await countDatabaseStatements(() =>
+      followGoalTimeZone({ goalId: goal.id, timeZone: SAO_PAULO }),
+    );
+
+    expect(counted).toStrictEqual({
+      result: { moved: false, retryAt: expect.any(Number), status: "ready" },
+      statements: 1,
+      writes: 0,
+    });
+
+    await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(before);
+  });
+
+  // The API's Today may name no goal: it reads the learner's active goal, so that's the one to move.
+  it("follows the goal Today reads when the request names none", async () => {
+    const { goal: other, user } = await setup();
+    const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
+    await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
+    const zone = zoneOnAnotherDay();
+
+    await expect(followGoalTimeZone({ timeZone: zone })).resolves.toMatchObject({
+      moved: true,
+      status: "ready",
+    });
+
+    await expect(Promise.all([readZone(active.id), readZone(other.id)])).resolves.toStrictEqual([
+      zone,
+      SAO_PAULO,
+    ]);
+  });
+
+  it("follows the goal a request names, even when another goal is the active one", async () => {
+    const { goal: named, user } = await setup();
+    const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
+    await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
+    const zone = zoneOnAnotherDay();
+
+    await expect(followGoalTimeZone({ goalId: named.id, timeZone: zone })).resolves.toMatchObject({
+      moved: true,
+      status: "ready",
+    });
+
+    await expect(Promise.all([readZone(named.id), readZone(active.id)])).resolves.toStrictEqual([
+      zone,
+      SAO_PAULO,
+    ]);
+  });
+
+  it("follows nothing for a learner without a goal", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    await expect(followGoalTimeZone({ timeZone: "UTC" })).resolves.toStrictEqual({
       status: "notFound",
     });
   });

@@ -334,7 +334,7 @@ test.describe("Today API", () => {
     await api.dispose();
   });
 
-  test("reads the goal's day without changing its zone, even before the day starts", async () => {
+  test("reads the day in the goal's zone, and takes the request's before the learner's day starts", async () => {
     const [studied, fresh] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "today-zone-studied" }),
       createBearerLearner({ baseURL, prefix: "today-zone-fresh" }),
@@ -352,7 +352,7 @@ test.describe("Today API", () => {
     // She answered a question today in São Paulo, so her day stays the goal's until tomorrow.
     await attemptFixture({ localDate: localDay(SAO_PAULO), userId: studied.userId });
 
-    const [kept, unopened] = await Promise.all(
+    const [kept, moved] = await Promise.all(
       [studied, fresh].map(async ({ api }) => {
         const response = await api.get(`/v1/today?timeZone=${device}`);
         expect(response.status(), await response.text()).toBe(200);
@@ -361,7 +361,7 @@ test.describe("Today API", () => {
     );
 
     expect(kept?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
-    expect(unopened?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
+    expect(moved?.session.localDate).toBe(toIsoDay(localDay(device)));
 
     const zones = await prisma.goal.findMany({
       orderBy: { userId: "asc" },
@@ -370,7 +370,7 @@ test.describe("Today API", () => {
     });
 
     expect(Object.fromEntries(zones.map((goal) => [goal.userId, goal.timezone]))).toStrictEqual({
-      [fresh.userId]: SAO_PAULO,
+      [fresh.userId]: device,
       [studied.userId]: SAO_PAULO,
     });
 

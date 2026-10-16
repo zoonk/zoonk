@@ -4,16 +4,27 @@ import { parseQueryParams } from "@/lib/query-params";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeToday } from "@/lib/study-session-serializers";
 import { noGoalError, planNotReadyError } from "@/lib/today-errors";
+import { followGoalTimeZone } from "@zoonk/core/learner/follow-time-zone";
 import { todayStudySessionInputSchema } from "@zoonk/core/sessions/contract";
 import { getTodayView } from "@zoonk/core/view-models/today/get";
 import { NextResponse } from "next/server";
 
-/** Reads a saved day or its ID-free preview; rendering never opens or changes the day. */
+/**
+ * Reads a saved day or its ID-free preview, in the device's zone when the learner moved before
+ * their day started: the zone follows first, as Main's Today does with its own request. Reading
+ * never opens or changes the day.
+ */
 async function getToday(request: Request) {
   const query = parseQueryParams(new URL(request.url).searchParams, todayStudySessionInputSchema);
 
   if (!query.success) {
     return errors.validation(query.error);
+  }
+
+  const { goalId, timeZone } = query.data;
+
+  if (timeZone) {
+    await followGoalTimeZone({ goalId, timeZone });
   }
 
   const result = await getTodayView(query.data);
