@@ -8,7 +8,7 @@ The checks are oracles for tests and for the simulator: no product code imports 
 
 ## How to run them
 
-`checkRules(context)` in `check-rules.ts` runs every check on one step and returns `RuleViolation[]` (`{ rule: "R3", message, details }`). Each check is also exported on its own. A check finds nothing when the step doesn't carry what it reads, so a caller passes what it has. A step that isn't the plan's (`accountDeleted`, `promptChanged`) runs only the shared content rules (R29 to R31): it passes the last plan without the proposals a plan's step carries, so the plan's checks would judge it again with less to read (career seed 2014 flagged R13 at the deletion).
+Each check is exported on its own and returns `RuleViolation[]` (`{ rule: "R3", message, details }`). A check finds nothing when the step doesn't carry what it reads, so a caller passes what it has.
 
 The step (`RuleContext` in `rule-context.ts`):
 
@@ -54,7 +54,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); "cards/previews equal the diff of the saved plan" (round 13 brief).
 - **Check:** for the change the learner applied in the step, its effect equals the diff of the saved plan before and the one saved after: `lessonsAdded` and `lessonsRemoved` counted skill by skill, a lesson both plans hold counted under the skill the learner saw it under (a lesson two skills share is the same lesson wherever the new plan files it; Câmara seed 2009); `lessonsLeftOut` (lessons whose lesson, or stand-in's skill, is gone or set aside), `topicsLeftOut` and `topicsAdded` as sets; each `areaEnds`/`areaStarts` entry's days; each `areaLessons` entry's lessons still to do in the area before and after (a stand-in counts as its saved lessons); every steered area whose last lesson moved appears in `areaEnds`; `addedTopicsStart` is the first due lesson of the skills an `addSkills` operation adds. Not checked: `endDateBefore`/`endDateAfter` (the graph-sized end, not an item's day) and `todaySession`.
 - **Reads:** `changes` (the applied one), `before`, `after`, `event.operations`.
-- **Code:** `checkCardMatchesPlan` (change-truth-rules.ts).
 
 ### R4. A change of focus keeps today as the learner saw it
 
@@ -68,10 +67,9 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 ### R5. Every change is recorded and said
 
 - **Owner's words:** "plans adapt to progress but never change without progress or a learner action" (7 Oct); D8 (10 Oct): "every visible change to which topics are in the plan, whether from placement, a session, a refresh or a learner change, is recorded and said, naming the topics"; D11: "a missed-day change names the topics it leaves out".
-- **Automatic re-estimate exception (owner, 13 Oct):** a session-end refresh or written-lessons resize announces only when the net seen lesson count changes by more than `SMALL_CHANGE_LESSONS`; smaller changes stay quiet even when a topic changes. Placement, missed-day and learner-action rules keep naming their changes.
+- **Automatic re-estimate exception (owner, 13 Oct):** a session-end refresh or written-lessons resize announces only when the net seen lesson count changes by more than `SMALL_CHANGE_LESSONS`, or when it leaves out a lesson the learner saw: that one is named whatever the count (`effect.lessonsLeftOut`; the lead for the owner, 17 Oct: "every lesson it sets aside is named"). Other smaller changes stay quiet, even when a topic comes in. Placement, missed-day and learner-action rules keep naming their changes.
 - **Check:** for any step but plan creation, deletion or a prompt change: every notice topic that leaves the plan or comes into it is named by a change the step recorded (`effect.topicsLeftOut`/`topicsAdded`). Saying the plan covers less (`behind`) doesn't name them. A learner's change with a card is checked by R3 instead, and an undo by R38. An undo, the editor's Undo of the latest edit (`setBack`) included, takes back what that change's card named, so it isn't checked here. A graph without notice topics names its skills: each skill that leaves or comes in is named the same way (D8 holds for careers and languages too). A tested-out item keeps a topic in the plan but never brings one in: a skill out for time that a right answer settles gets a tested-out stand-in, so no re-plan brings it back, and the test-out's own change announces it.
 - **Reads:** `before`, `after`, `changes`.
-- **Code:** `checkChangesSaid` (stability-rules.ts).
 
 ### R6. Shown phase ends don't move through system changes
 
@@ -111,21 +109,18 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "plans adapt to progress but never change without progress or a learner action" (7 Oct). (Added after the others, so numbered out of order.)
 - **Check:** a `refresh` (the app opened again with no progress, no lessons landed and no change) leaves every item with the status and the day it had, loses none and adds none (items matched by `getRuleItemKey`; details count `moved`, `lost` and `added` apart). Progress is new: the first run to see what the learner finished since the plan was last planned (`event.progressed`: a partial session plans nothing, and an open that settles nothing doesn't plan) may adapt to it (class test seed 1113: lessons done ahead in a partial session freed the time that brings a lesson cut for time back after the week).
 - **Reads:** `before.items`, `after.items`, `event`.
-- **Code:** `checkRefreshChangesNothing` (stability-rules.ts).
 
 ### R33. A declined proposal isn't offered again until something new happens
 
 - **Owner's words:** D7 (10 Oct): "a declined proposal isn't offered again until something new happens, such as a new edition, a new date, or new progress that changes the answer." The lead (10 Oct): "a new edition counts as something new. Offer a declined notice change once per edition."
 - **Check:** no proposal the step makes has the kind, operations, effect and official date of one the learner declined (something new changes at least one of them), except on a `noticeEdition` step (a new edition of the exam's notice was read). On such a step, when following the edition changes the plan (`changesPlan`) and the learner declined a notice change before, the step proposes a notice change.
 - **Reads:** `changes` (the proposed ones), `declined`, `event`.
-- **Code:** `checkDeclinedNotReoffered` (proposal-rules.ts).
 
 ### R38. Undo gives back the plan the learner had
 
 - **Owner's words:** "plans adapt to progress but never change without progress or a learner action" (7 Oct). Undo is the learner asking for the plan they had before a change, so it may change nothing that change didn't. Found by the learner simulator's undo probe (10 Oct): 6 of 19 undos made right away moved items and phase ends.
 - **Check:** after an `undo` of an edit or a test-out, every item of the plan right before the undone change (`event.restores`) is in the plan with the status and the day it had, the plan holds nothing else, and each phase that hasn't ended ends where it did. Items matched by `getRuleItemKey`; details count `moved`, `lost` and `added` apart. A lesson the learner finished since the change stays done, and an item due on a day now past may come back from today on. The caller passes an undo only when nothing but finished lessons happened since the change (an edit can be undone only while the plan is as it left it). R5 doesn't apply: the undone change's card named what comes back.
 - **Reads:** `event.restores`, `before.items`, `after.items`, `after.phases`, `today`.
-- **Code:** `checkUndoRestores` (stability-rules.ts).
 
 ## C. What a plan keeps when time is short
 
@@ -178,14 +173,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "Known topics (one right answer) skip lessons but keep practice; a miss in practice brings the lessons back" (8 Oct). D2 (10 Oct): "A right answer on a skill may mark its direct prerequisites as 'to confirm', never as known. Lessons for a skill are skipped only after its own answers confirm it." D9: "No skipping basics on a self-claim alone. 'I know this well' marks them 'to confirm', and practice confirms them." The lead (10 Oct): D9 covers the level stated in onboarding: "Lower bands become 'to confirm': placement checks them early, confirmed ones are skipped, and misses bring lessons back. Only an explicit base choice 'Skip' removes them without evidence." Round 11 planner decisions: a focused topic needs 2 right answers of its own, true/false about 3. The lead (RULES 4): "'Too basic' works like 'Skip'. It's an explicit learner choice: the lower-band lessons leave right away and the card names them. The skills don't become known. They're 'to confirm', so they come up in practice, and a miss brings their lessons back with a change that names them. The same holds for bases set to 'Skip'."
 - **Check:** each skill a step (a new plan, placement, a session, a test-out, a learner's change) takes as known, with every one of its lessons tested out, has among `answers` a right answer of its own (two when the learner focused on it, or three true/false) and no wrong one anywhere. A lesson's checks are part of learning it, not a test, so they count neither way, as the claims read answers (`loadAnswerEvents`). Nothing else counts: not answers on other skills, not a subject the learner says they know, not a stated level, not a choice to pass basics over. A measured level is a test of its own (the lead, 10 Oct: "A measured level counts as evidence"): units below a language level test's band (`learner.measuredSkillIds`) may be tested out, with the undo, and still get practice (R18) and come back on a miss (R19).
 - **Reads:** `answers`, `before.items`, `after.items`, `after.settings.focusAreas`/`focusParts`.
-- **Code:** `checkKnownHasEvidence` (known-rules.ts).
 
 ### R18. Known topics keep practice
 
 - **Owner's words:** "Known topics (one right answer) skip lessons but keep practice" (8 Oct); D1 (10 Oct): "Known topics join mixed practice on the same spaced schedule as studied topics, starting about a week after they're confirmed. Each known topic gets at least one practice question within its first two weeks."
 - **Check:** for a known skill (every lesson tested out, confirmed on the day the first was), once 14 days have passed: if the learner studied in the second week, some session since it was confirmed asked it in practice. The same holds for a skill passed over by choice and still to confirm (no lesson of it to do, studied or tested out), counted from the day the learner chose it: their latest change that passed it over, or the plan's first day for a choice made while setting it up (RULES 4; the same two weeks as D1 is our reading of "they come up in practice"). The "about a week" start isn't checked. A skill of an area the learner took out (`skipAreas`) is left out: the area stays out, practice included. A review asking it counts as practice: a free exam plan past its trial has no mixed practice, so its quick review asks the known topics due to be confirmed (the lead, 10 Oct).
 - **Reads:** `sessions`, `after.items` (`completedAt`), `after.settings`, `learnerChanges`, `today`.
-- **Code:** `checkKnownGetsPractice` (known-rules.ts).
 
 ### R19. A miss on a known topic brings its lessons back
 
@@ -199,14 +192,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** the lead's decision (10 Oct): "listening-area skills are practiced only with recordings (no text 'conversation' items; picking skips them; they wait while other skills fill the day)". A text question about a conversation tests reading, not listening.
 - **Check:** on a skill the goal's exam practices only with recordings (`learner.listeningSkillIds`, from `getListeningSkillIds`: the skills in a listening section's area of a language exam with a public notice), the step's own answers include no question that isn't a recording's (`recording`), lesson steps aside. Placement asks text questions one at a time, so it never asks such a skill. No step takes it as known (every lesson tested out) without a right answer to a recording's question. That it waits while no recording is ready isn't checked.
 - **Reads:** `learner.listeningSkillIds`, `event.answers`, `answers`, `before.items`, `after.items`.
-- **Code:** `checkListeningOnlyRecorded` (known-rules.ts).
 
 ### R42. A finished lesson comes back when its end screen said
 
 - **Owner's words:** the lesson's end screen says when it comes back ("next review", `getLessonComesBack`: the first of its skills the memory model makes due); "never claim something about the plan that isn't true" (round 11). The lead (10 Oct): a studied skill gets its first review or practice on the schedule the learner was promised.
 - **Check:** for each lesson the learner finished whose end screen gave a day, by the second study session on or after that day (a day's reviews have a cap, so a full day may hold it to the next), some session after the day they finished it asked a skill the lesson trained, in a review or in practice: the plan's skill it counts for or one of the lesson's own, where its answers land. A lesson of an area the learner took out is left out (practice leaves that area out), and so is one whose end screen gave no day. Found by the learner simulator (10 Oct): answers land on a lesson's own skills while reviews and practice read only the plan's, so in a plan whose lessons teach finer skills of their own nothing studied came back.
 - **Reads:** `finishedLessons`, `sessions`, `after.settings`.
-- **Code:** `checkFinishedLessonsComeBack` (review-rules.ts).
 
 ## E. Days and exams
 
@@ -256,14 +247,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** none direct; the Journey shows each phase "ending with its challenge", and the lead (10 Oct, asking for a simulator scan): a challenge that tests content the learner hasn't studied yet is a finding. The lead's choice (10 Oct): after a missed day, an end whose challenge would come before its phase's core lessons moves to just after them. The lead (15 Oct): each phase's challenge tests its own phase's teaching and goes on the first study day after that teaching ends; a mid-phase challenge while the phase's lessons still run is incoherent for learners, and cumulative re-checking belongs to reviews.
 - **Check:** a phase's challenge still to do (`boss`) is due no earlier than the core lessons still to do of the skills it owns, wherever the plan dated or filed them. A challenge owns the skills it asks, read from the product's own rule (`getBossSkillIds`, the lead's (a), 10 Oct, and 15 Oct: the skills whose core lessons come by its day that its own phase's lessons study, though an earlier challenge asked them; with none, those no earlier one asked, then every finished skill, then the skills begun by its day. Work set aside or tested out is not teaching; completed teaching still counts. Checking again what earlier phases taught is review's work), and, when the plan's phases come from the skill graph (a learn plan, an exam without a date), the skills of its graph phase (10 Oct: lessons that no longer fit before a kept end are filed under the next phase's time, so career seed 1027 had all 13 lessons of one phase after its challenge, filed under the next). An exam plan with a date has time-boxed phases that have nothing to do with the graph's, so only the first applies there: a skill begun late in a window waits for a later challenge (every exam plan asked one before its core at creation). A skill its exam practices only with recordings (`learner.listeningSkillIds`) isn't asked by a challenge with written questions; only a phase of those skills alone is asked with recordings (`loadBossQuestions`), so it counts only then (IELTS seed 1107: listening lessons after phase 1's written challenge). A skill's core is its first lessons in the plan, done ones included, until they hold `getCoreLessons` of its lessons as the plan's last build counted them (`listCoreLessonItems`, `listSkillSizes`: `graph.skills[].plannedLessons`, one size for the plan, its challenges and the checks, the lead, 10 Oct; a stand-in counts as the lessons it plans. Career seed 2050: the graph guessed 7 lessons for a skill whose chapter has 6, so its third lesson is depth); the depth a plan short on time studies once every core is in may come later. A challenge held on the end the learner saw while Today's proposal to move that end waits, or after they kept it ("Keep mine") on a card whose move of that end said lessons it tests come after it (`lessonsFirst`), is left out, as in R21 (the lead, 10 Oct). So is a later phase's challenge while Today's proposal to move an earlier end so its lessons come first (`lessonsFirst`) waits: a phase's overflow spills a day into each later phase, moving that one end fits them all again, and the card truthfully names only it (language seed 2: applying it cleared phases 1 to 4). "Keep mine" on that card keeps the spill too, as the planner doesn't ask again (language seed 2090). Found by the lead's ask and the simulator's scan (IELTS seed 1011, whose landed lessons turned out to be depth).
 - **Reads:** `after.items`, `after.graph`, `after.phases`, `learner.listeningSkillIds`, `waiting`, `declined`.
-- **Code:** `checkChallengeAfterLessons` (challenge-rules.ts).
 
 ### R41. A landing moves only what it touches
 
 - **Owner's words:** "plans adapt to progress but never change without progress or a learner action" (7 Oct); round 9 R9-TODAY "system refreshes never remove/reorder blocks (append landed lessons at end within time)". The lead (10 Oct): a landing or an answer moves only the items it touches, beyond the day's carry.
 - **Check:** when the Library's lessons land in a run of their own (`outlinesLanded`), each landed skill's lessons take its stand-in's place: no lesson of another skill that was due after the stand-in's first day now comes before them (a lesson that no longer fits that day may start the next, IELTS seed 1). Every item of a skill whose lessons didn't land, and every item of no skill (a challenge, a mock), stays in the plan with its status, and none comes in (a landing never swaps topics); what is due before the first day a landed skill holds keeps its day. What comes after may move to fit lessons that take more or less time than their stand-in held, into a later phase's time too where a kept end holds (career seed 3: day one's landing moved 146 later items 1 to 5 days later, nothing lost). A practice day, a mock or a weekly challenge there is known by its date (`getRuleItemKey`), so it may move or give way (IELTS seed 2: the landed lessons took the review day after the plan's last lesson); R24 still holds the plan's mocks. A plan teaches a title once (`withoutRepeatedTitles`), so another skill's lesson whose title a landed lesson now holds leaves with it (career seed 1163: a lesson of user needs left once the problem-definition skill landed one with its title). Landed lessons that hold more than their stand-in did need time: in a plan without room, as many other lessons still to do may leave for it (R11 judges which, R5 that the change names their topics), but no more, and none comes in (career seed 1180: a 4-lesson stand-in landed as 7). Landed skills are the ones the plan held a stand-in for whose written lessons it now holds. Items matched by `getRuleItemKey`; details count `moved`, `lost`, `added` and the landed skills that start `late`. Today's session is R7's too. A landing in the day's first run settles the days before it (a `newDay`) and isn't judged here, nor yet a run an answer starts (10 Oct: OAB seed 2003 and Câmara seed 2001 swapped topics and moved landed lessons days away).
 - **Reads:** `before.items`, `after.items`, `event`.
-- **Code:** `checkLandingMovesOnlyLanded` (landing-rules.ts).
 
 ## F. What the learner is told
 
@@ -272,7 +261,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); pass 9 showed "you can study every topic" next to "2 of 202 don't fit" (in Portuguese).
 - **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`.
 - **Reads:** `syllabus`, `view.feasibility`, `after`.
-- **Code:** `checkCoverageTrue` (shown-rules.ts).
 
 ### R26. The recommended time covers the goal
 
@@ -299,7 +287,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 
 - **Owner's words:** "no shared/reusable content should be removed if a user is deleted. only their personal/private data should be removed" (9 Oct).
 - **Check:** after `accountDeleted`, every shared row of `sharedContent.before` is in `after`.
-- **Code:** `checkSharedContentKept` (content-rules.ts).
 
 ### R30. Shared prompts never carry the learner's own words
 
@@ -320,7 +307,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "Readiness must be strictly honest, including hard topics" (7 Oct); "coverage never counts test answers" (round 10); D10 (10 Oct): give the checks the preparation view.
 - **Check:** preparation's coverage counts no more skills as studied than those with an answer in their lessons, a lesson the learner finished (the plan's skill it counts for: a lesson's answers land on finer skills of its own, or on none when a step names no skill and the lesson teaches several) or a right answer in practice (a session, a review, a mock).
 - **Reads:** `preparation.components.coverage.studiedSkills`, `answers`, `finishedLessons`, `after.graph`.
-- **Code:** `checkCoverageShown` (readiness-rules.ts).
 
 ### R35. Readiness never says more than the evidence
 

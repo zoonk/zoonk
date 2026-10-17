@@ -43,6 +43,7 @@ export function isAutomaticPlanChange({
 
   if (change.kind === "estimateUpdated") {
     return (
+      (effect?.lessonsLeftOut?.length ?? 0) > 0 ||
       Math.abs((effect?.lessonsAdded ?? 0) - (effect?.lessonsRemoved ?? 0)) > SMALL_CHANGE_LESSONS
     );
   }

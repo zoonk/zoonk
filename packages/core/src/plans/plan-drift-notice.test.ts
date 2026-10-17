@@ -55,35 +55,31 @@ describe("notices for changes within an estimate", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it.each([
-    { seconds: 60, speed: "faster" },
-    { seconds: 600, speed: "slower" },
-  ])("announces an own-pace drift that makes lessons fit $speed", async ({ seconds, speed }) => {
+  // A faster pace adds nothing by itself (see estimate-update.test.ts).
+  it("announces an own-pace drift that makes fewer lessons fit", async () => {
     // Two weeks: an automatic run honestly keeps this week, and on an 8-day plan the final
-    // challenge (C2) took the only day left after it; two weeks keep the multi-lesson growth.
-    const fixture = {
-      dailyMinutes: speed === "faster" ? 15 : 30,
+    // challenge (C2) took the only day left after it; two weeks keep the multi-lesson change.
+    const { goal, plan, user } = await pacedPlanFixture({
+      dailyMinutes: 30,
       days: 14,
-      lessons: speed === "faster" ? 4 : 6,
-      skills: speed === "faster" ? 12 : 8,
-    };
+      lessons: 6,
+      skills: 8,
+    });
 
-    const { goal, plan, user } = await pacedPlanFixture(fixture);
-
-    // Faster: the plan starts short on time, with lessons left out a faster pace can bring in;
-    // slower: it starts whole, so a slower pace can only leave lessons out.
-    const planned = await prisma.planItem.count({ where: { kind: "lesson", planId: plan.id } });
-    expect(planned < fixture.skills * fixture.lessons).toBe(speed === "faster");
+    // The plan starts whole, so a slower pace can only leave lessons out.
+    await expect(
+      prisma.planItem.count({ where: { kind: "lesson", planId: plan.id } }),
+    ).resolves.toBe(8 * 6);
 
     await saveOwnPace({ factor: 1, planId: plan.id });
 
-    await studyEveryLesson({ planId: plan.id, seconds, userId: user.id });
+    await studyEveryLesson({ planId: plan.id, seconds: 600, userId: user.id });
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
     await declineProposals({ goalId: goal.id, planId: plan.id });
 
     const change = await latestChange(plan.id);
-    const more = (change?.effect?.lessonsAdded ?? 0) - (change?.effect?.lessonsRemoved ?? 0);
-    expect(speed === "faster" ? more : -more).toBeGreaterThan(1);
+    const fewer = (change?.effect?.lessonsRemoved ?? 0) - (change?.effect?.lessonsAdded ?? 0);
+    expect(fewer).toBeGreaterThan(1);
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const beforeReads = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
@@ -118,8 +114,10 @@ describe("notices for changes within an estimate", () => {
     await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 
+  // Every lesson a run leaves out is named, a single one too: the threshold keeps only small gains
+  // quiet.
   it.each([false, true])(
-    "keeps a one-lesson sampled change quiet (already own: %s)",
+    "names the one lesson a sampled change leaves out (already own: %s)",
     async (own) => {
       // 22 minutes: at 20, the 5% slower pace this week's kept work spilled past Sunday cost two
       // lessons once each phase's challenge took its 15 minutes (C2), not the one this asks about.
@@ -140,8 +138,10 @@ describe("notices for changes within an estimate", () => {
       expect(seen.topicsLeftOut).toBeUndefined();
       await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
       await declineProposals({ goalId: goal.id, planId: plan.id });
-      await expect(latestChange(plan.id)).resolves.toBeNull();
-      await expect(readTodayChange(goal.id)).resolves.toBeNull();
+      const change = await latestChange(plan.id);
+      expect(change?.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 1 });
+      expect(change?.effect?.lessonsLeftOut).toHaveLength(1);
+      await expect(readTodayChange(goal.id)).resolves.toMatchObject({ id: change?.id });
     },
   );
 

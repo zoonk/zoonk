@@ -32,9 +32,9 @@ describe("a closer estimate of how long lessons take", () => {
     vi.useRealTimers();
   });
 
-  it("says on Today how many more lessons fit by the date", async () => {
-    // Two weeks: a run after a session keeps this week as the learner saw it, and on a 7-day plan
-    // the final challenge (C2) took the one day left after it, so a faster pace fit one lesson more.
+  // A run the learner didn't ask for never takes a faster pace than the plan's (see
+  // `choosePlanSettings`): the plan adds no lesson because they studied faster.
+  it("adds no lesson by itself when a faster pace would fit more", async () => {
     const { goal, plan, user } = await pacedPlanFixture({
       dailyMinutes: 15,
       days: 14,
@@ -42,25 +42,25 @@ describe("a closer estimate of how long lessons take", () => {
       skills: 12,
     });
 
-    // Short on time: the plan leaves lessons out that a faster pace can bring in.
-    await expect(
-      prisma.planItem.count({ where: { kind: "lesson", planId: plan.id } }),
-    ).resolves.toBeLessThan(12 * 4);
+    const readLessons = async () => {
+      const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
+      return items.map((item) => item.lessonId ?? item.skillId).toSorted();
+    };
+
+    // Short on time: the plan leaves lessons out that a faster pace could bring in.
+    const before = await readLessons();
+    expect(before.length).toBeLessThan(12 * 4);
 
     await studyEveryLesson({ planId: plan.id, seconds: FASTER_SECONDS, userId: user.id });
+
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
-    await declineProposals({ goalId: goal.id, planId: plan.id });
+    await expect(readLessons()).resolves.toStrictEqual(before);
 
-    const change = await findChange({ kind: "estimateUpdated", planId: plan.id });
+    await expect(
+      prisma.planChange.count({ where: { kind: "estimateUpdated", planId: plan.id } }),
+    ).resolves.toBe(0);
 
-    expect(change.effect.lessonsAdded).toBeGreaterThan(change.effect.lessonsRemoved);
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      canUndo: false,
-      effect: { lessonsAdded: change.effect.lessonsAdded },
-      id: change.id,
-      kind: "estimateUpdated",
-    });
+    await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 
   it("says on Today how many fewer lessons fit by the date, and which", async () => {

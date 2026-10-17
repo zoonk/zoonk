@@ -7,11 +7,13 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { after as afterResponse } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { getMock } from "../exams/mocks/get-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
+import { readTodayChange } from "../plans/_test-utils/estimate-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -19,9 +21,11 @@ import { getGoalPlan } from "../plans/get-goal-plan";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { answerBlockInOrder } from "./_test-utils/answer-block";
 import { openTodayView } from "./_test-utils/open-today-view";
 import { completeLessonPlanItems, completePlanItem } from "./_utils/plan-items";
 import { readBlockPayload } from "./block-payload";
+import { finishStudyBlock } from "./finish-study-block";
 
 const START = "2020-09-28";
 const ORIGINAL_MOCK = "2020-10-09";
@@ -434,6 +438,107 @@ describe("funded mock sessions reserve all their fixed work", () => {
   afterEach(() => {
     vi.mocked(afterResponse).mockReset();
     vi.useRealTimers();
+  });
+
+  // The learner won the first challenge with two lessons done ahead, at the pace lessons estimate:
+  // the session's refresh plans again from tomorrow (the pace's source became their own) and fills
+  // the room their progress freed (P1 diagnosis: three lessons of the same skill). It never takes a
+  // faster pace, and it says what it added.
+  it("brings lessons back only as the learner's own progress frees room, and says so", async () => {
+    const fixture = await setup({ withBoss: true });
+    await moveOntoSavedBoss(fixture);
+    const finishDeferred = runDeferredWork();
+
+    await prisma.lesson.updateMany({
+      data: { contentStatus: "completed", specStatus: "completed" },
+      where: { id: { in: fixture.library.lessons.map((lesson) => lesson.id) } },
+    });
+
+    const readItems = () =>
+      prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { planId: fixture.plan.id },
+      });
+
+    const readPace = async () =>
+      parsePlanSettings(
+        (await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } })).settings,
+      ).pace;
+
+    const before = await readItems();
+    expect(writtenIds(before)).toHaveLength(45);
+    const beforeIds = new Set(before.map((item) => item.id));
+
+    // Every lesson the learner saw stays, as the same lesson: none removed or replaced.
+    const keptLessons = (items: PlanItem[]) =>
+      items
+        .filter((item) => item.kind === "lesson" && beforeIds.has(item.id))
+        .map(({ id, lessonId }) => ({ id, lessonId }))
+        .toSorted((left, right) => left.id.localeCompare(right.id));
+
+    const shownLessons = keptLessons(before);
+    const pace = await readPace();
+    const first = before.find((item) => item.kind === "boss" && item.phase === 0);
+
+    if (!first) {
+      throw new Error("Expected the real first phase challenge");
+    }
+
+    await finishTeaching({
+      beforeDate: FIRST_BOSS_DAY,
+      items: before.filter((item) => item.kind === "lesson" && item.phase === 0),
+      userId: fixture.user.id,
+    });
+
+    vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:00:00Z`));
+    const started = await startChallenge({ input: { timeZone: "UTC" }, planItemId: first.id });
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected the actual first boss: ${started.status}`);
+    }
+
+    const { blockId, sessionId } = started.destination;
+    await answerBlockInOrder({ blockId, sessionId });
+    vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:15:00Z`));
+
+    await expect(
+      finishStudyBlock({ blockId, input: { timeZone: "UTC" }, sessionId }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await finishDeferred();
+    const completed = await readItems();
+    const added = writtenIds(completed).length - writtenIds(before).length;
+
+    expect(keptLessons(completed)).toStrictEqual(shownLessons);
+    expect(added).toBeGreaterThan(0);
+
+    const changes = await prisma.planChange.findMany({
+      where: { kind: "estimateUpdated", planId: fixture.plan.id },
+    });
+
+    expect(changes).toHaveLength(1);
+
+    expect(changes[0]?.payload).toMatchObject({
+      effect: { lessonsAdded: added, lessonsRemoved: 0 },
+      source: "system",
+    });
+
+    await expect(readTodayChange(fixture.goal.id)).resolves.toMatchObject({
+      id: changes[0]?.id,
+      kind: "estimateUpdated",
+    });
+
+    expect((await readPace())?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
+
+    vi.setSystemTime(new Date("2020-10-08T12:00:00Z"));
+
+    await expect(
+      openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await finishDeferred();
+    await expect(readItems().then(keptLessons)).resolves.toStrictEqual(shownLessons);
+    expect((await readPace())?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
   });
 
   it("funds and can start the real 15-minute boss before the 165-minute moved mock", async () => {

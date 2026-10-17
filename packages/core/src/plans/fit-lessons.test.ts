@@ -120,13 +120,11 @@ describe("lessons the learner's own time fits", () => {
       status: "applied",
     });
 
-    // With lessons to do again, the next session's refresh saves the pace he studies at, as for
-    // any plan in progress.
+    // With lessons to do again, the next session's refresh doesn't take his faster pace, so it adds
+    // nothing by itself: the plan keeps the lessons Apply brought in.
+    const applied = await countLessonsLeft(plan.id);
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
-
-    await expect(readPlanScreen()).resolves.toMatchObject({
-      estimate: { pace: { source: "own" } },
-    });
+    await expect(countLessonsLeft(plan.id)).resolves.toBe(applied);
   });
 });
 

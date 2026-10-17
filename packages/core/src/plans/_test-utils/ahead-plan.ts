@@ -3,8 +3,9 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getPlanTabView } from "../../view-models/plan/get-plan-view";
+import { loadPaceSamples } from "../_utils/pace-samples";
 import { createGoalPlan } from "../create-goal-plan";
-import { refreshGoalPlan } from "../refresh-goal-plan";
+import { choosePace } from "../planner/plan-pace";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
 /** A Tuesday in 2020, before the learning events other tests write, which estimates read. */
@@ -42,12 +43,31 @@ export async function studyFaster({ planId, userId }: { planId: string; userId: 
   );
 }
 
+/** Saves the pace the learner's lessons sample as the plan's own. */
+async function saveSampledPace({
+  lessonIds,
+  planId,
+  userId,
+}: {
+  lessonIds: string[];
+  planId: string;
+  userId: string;
+}) {
+  const pace = choosePace(await loadPaceSamples({ lessonIds, now: new Date(), userId }));
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+
+  await prisma.plan.update({
+    data: { settings: { ...(plan.settings as object), pace } },
+    where: { id: planId },
+  });
+}
+
 /**
  * Pedro's plan: a goal about a week away (`days`), too soon for every phase at his time when the
  * plan was made, whose skills the graph sizes at one lesson each, while the Library wrote four for
  * each. Its date left its last phases out, and he studied every lesson it holds ahead of time, its
- * challenges still to win. `faster`: a session's refresh, while lessons were left, saved the faster
- * pace he studies at. Run at `AHEAD_START`.
+ * challenges still to win. `faster`: his plan holds the faster pace he studies at. Run at
+ * `AHEAD_START`.
  */
 export async function aheadPlanFixture({
   dailyMinutes,
@@ -85,7 +105,11 @@ export async function aheadPlanFixture({
 
   if (faster) {
     await studyFaster({ planId: plan.id, userId: user.id });
-    await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
+    await saveSampledPace({
+      lessonIds: library.lessons.map((lesson) => lesson.id),
+      planId: plan.id,
+      userId: user.id,
+    });
   }
 
   await prisma.planItem.updateMany({
