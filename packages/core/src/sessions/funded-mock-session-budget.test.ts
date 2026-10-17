@@ -460,19 +460,21 @@ describe("funded mock sessions reserve all their fixed work", () => {
         where: { planId: fixture.plan.id },
       });
 
-    const readPace = async () =>
-      parsePlanSettings(
-        (await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } })).settings,
-      ).pace;
+    const readPace = async () => {
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+      return parsePlanSettings(saved.settings).pace;
+    };
 
     const before = await readItems();
     expect(writtenIds(before)).toHaveLength(45);
     const beforeIds = new Set(before.map((item) => item.id));
 
-    // Every lesson the learner saw stays, as the same lesson: none removed or replaced.
+    // Every lesson the learner saw stays, as the same lesson: none removed, replaced or set aside.
     const keptLessons = (items: PlanItem[]) =>
       items
-        .filter((item) => item.kind === "lesson" && beforeIds.has(item.id))
+        .filter(
+          (item) => item.kind === "lesson" && item.status !== "skipped" && beforeIds.has(item.id),
+        )
         .map(({ id, lessonId }) => ({ id, lessonId }))
         .toSorted((left, right) => left.id.localeCompare(right.id));
 
@@ -528,7 +530,8 @@ describe("funded mock sessions reserve all their fixed work", () => {
       kind: "estimateUpdated",
     });
 
-    expect((await readPace())?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
+    const completedPace = await readPace();
+    expect(completedPace?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
 
     vi.setSystemTime(new Date("2020-10-08T12:00:00Z"));
 
@@ -538,7 +541,8 @@ describe("funded mock sessions reserve all their fixed work", () => {
 
     await finishDeferred();
     await expect(readItems().then(keptLessons)).resolves.toStrictEqual(shownLessons);
-    expect((await readPace())?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
+    const openedPace = await readPace();
+    expect(openedPace?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
   });
 
   it("funds and can start the real 15-minute boss before the 165-minute moved mock", async () => {
