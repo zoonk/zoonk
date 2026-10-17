@@ -8,7 +8,12 @@ import { getSession } from "./get-session";
 // `setup-tests.ts` replaces it for every other test: this one tests the real one.
 vi.unmock("./get-session");
 
-const authMocks = vi.hoisted(() => ({ getSession: vi.fn<(input: unknown) => Promise<unknown>>() }));
+const authMocks = vi.hoisted(() => ({
+  getSession:
+    vi.fn<
+      (input: { headers: Headers; query?: { disableRefresh?: boolean } }) => Promise<unknown>
+    >(),
+}));
 
 vi.mock("@zoonk/auth", () => ({ auth: { api: { getSession: authMocks.getSession } } }));
 
@@ -28,8 +33,21 @@ describe(getSession, () => {
 
     await expect(getSession()).resolves.toBe(session);
 
-    expect(auth.api.getSession).toHaveBeenCalledExactlyOnceWith({ headers: requestHeaders });
+    expect(auth.api.getSession).toHaveBeenCalledExactlyOnceWith({
+      headers: requestHeaders,
+      query: {},
+    });
+
     expect(cacheTag).toHaveBeenCalledExactlyOnceWith(getUserSessionCacheTag("user-id"));
+  });
+
+  it("leaves cookie session renewal to Better Auth's response that can set cookies", async () => {
+    const requestHeaders = new Headers({ cookie: "better-auth.session_token=token" });
+    vi.mocked(headers).mockResolvedValue(requestHeaders);
+
+    await getSession();
+
+    expect(authMocks.getSession.mock.calls[0]?.[0].query?.disableRefresh).toBe(true);
   });
 
   it("does not tag an unauthenticated request", async () => {
