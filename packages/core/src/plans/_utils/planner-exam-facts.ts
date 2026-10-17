@@ -1,9 +1,10 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { type ExamChoice, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
 import {
+  type ExamStructure,
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
@@ -38,6 +39,53 @@ type ExamFacts = {
   topicLevels: TopicLevel[];
 };
 
+type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure">;
+
+/**
+ * The exam as the learner takes it, only the options they picked of its choices counting
+ * (`parsed`), and as its mocks rehearse it (`structure`, see `toMockStructure`).
+ */
+function readNoticeStructure({
+  blueprint,
+  choices,
+}: {
+  blueprint: NoticeBlueprint | null;
+  choices: readonly ExamChoice[];
+}) {
+  const stored = examStructureSchema.safeParse(blueprint?.structure).data;
+  const parsed = stored ? toChosenStructure({ choices, structure: stored }) : null;
+  const ownerId = blueprint?.ownerId ?? null;
+  const noticeQuestions = examEditionSchema.safeParse(blueprint?.edition).data?.questionCount;
+
+  const structure =
+    parsed &&
+    toMockStructure({ noticeQuestions: noticeQuestions ?? null, ownerId, structure: parsed });
+
+  return { ownerId, parsed, structure };
+}
+
+/** How long the weekly mock takes: half the exam's first day, all of it in the final stretch. */
+function getMockMinutes(structure: ExamStructure | null) {
+  return {
+    fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
+    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
+  };
+}
+
+/**
+ * How long a goal's mocks take in its plan's runs (see `loadNoticeFacts`), from its exam's
+ * blueprint as already loaded: the challenge screen lays out the next run's days with them.
+ */
+export function readMockMinutes({
+  blueprint,
+  choices,
+}: {
+  blueprint: NoticeBlueprint | null;
+  choices: readonly ExamChoice[];
+}) {
+  return getMockMinutes(readNoticeStructure({ blueprint, choices }).structure);
+}
+
 /**
  * What the exam's notice tells the planner. How long its mocks take: the weekly mock, the first
  * exam day's sections at the real pace with half of each on regular weeks and the whole day, its
@@ -65,26 +113,15 @@ async function loadNoticeFacts({
       })
     : null;
 
-  const stored = examStructureSchema.safeParse(blueprint?.structure).data;
-
-  // The exam as the learner takes it: only the options they picked of its choices count.
-  const parsed = stored ? toChosenStructure({ choices, structure: stored }) : null;
-  const ownerId = blueprint?.ownerId ?? null;
-  const noticeQuestions = examEditionSchema.safeParse(blueprint?.edition).data?.questionCount;
-
-  const structure =
-    parsed &&
-    toMockStructure({ noticeQuestions: noticeQuestions ?? null, ownerId, structure: parsed });
-
+  const { ownerId, parsed, structure } = readNoticeStructure({ blueprint, choices });
   const topicFrequency = topicFrequencySchema.safeParse(blueprint?.topicFrequency).data ?? [];
 
   return {
     announcements: ownerId ? listAnnouncedQuestions(parsed?.formats ?? []) : [],
     areaShares: parsed ? getAreaShares({ graph, structure: parsed }) : null,
     examSubjects: parsed ? getExamSubjectShares({ graph, structure: parsed }) : null,
-    fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
+    ...getMockMinutes(structure),
     mockClocks: listMockClocks(structure),
-    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
   };
@@ -112,9 +149,8 @@ export function loadExamFacts({
     announcements: [],
     areaShares: null,
     examSubjects: null,
-    fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
+    ...getMockMinutes(null),
     mockClocks: listMockClocks(null),
-    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
     shortMockMinutes: null,
     topicLevels: [],
   };

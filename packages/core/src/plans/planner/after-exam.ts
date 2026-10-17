@@ -178,9 +178,9 @@ export function continueAfterExam({
 }
 
 /**
- * The days after the exam a phase's challenge can go on (see `listStudyDays`): the plan's days
- * there up to its last work, and the first one after it with study time, where a challenge whose
- * teaching ends on that last day goes.
+ * The days after the exam a phase's challenge can go on (see `listPhaseChallengeDays`): the plan's
+ * days there up to its last work, and the first one after it with study time, where a challenge
+ * whose teaching ends on that last day goes.
  */
 export function listAfterExamDays(afterExam: AfterExam | null): PlanDay[] {
   const end = afterExam?.span?.end;

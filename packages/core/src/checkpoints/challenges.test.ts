@@ -211,41 +211,6 @@ describe("a phase checkpoint's challenge", () => {
     });
   });
 
-  it("past today's study time in an exam's plan, names no day, as its runs pick the challenge's day", async () => {
-    const { boss, goal, user } = await bossSetup();
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toMatchObject({
-      status: "ready",
-    });
-
-    // Tomorrow has study time, but an exam's runs keep phase challenges off its eve and its mocks'
-    // own days (see `placeExamBosses`): a Friday's "tomorrow" can be a mock's Saturday, with the
-    // challenge back on Monday. So an exam's intro names no day.
-    await Promise.all([
-      prisma.goal.update({
-        data: { kind: "exam", targetDate: new Date("2026-12-15T00:00:00Z") },
-        where: { id: goal.id },
-      }),
-      prisma.subscription.create({
-        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-      }),
-      prisma.userLearningProfile.upsert({
-        create: { dailyLimitMinutes: 30, userId: user.id },
-        update: { dailyLimitMinutes: 30 },
-        where: { userId: user.id },
-      }),
-      dailyProgressFixtureMany([
-        { date: SESSION_TODAY, timeSpentSeconds: 30 * 60, userId: user.id },
-      ]),
-    ]);
-
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: true,
-      nextStudyDate: null,
-      status: "ready",
-    });
-  });
-
   it("counts today's study time on the learner's day, as Start does, when its goal is on another date", async () => {
     const { boss, goal, user } = await bossSetup();
 

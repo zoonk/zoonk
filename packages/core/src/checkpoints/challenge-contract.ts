@@ -102,12 +102,12 @@ export type ChallengeView = {
   /** Wrong answers cost points, as in Cebraspe exams (see `wrongPenalty`). */
   netScored: boolean;
   /**
-   * With `dailyLimitReached`, a phase challenge's next study day in its goal's plan, YYYY-MM-DD,
-   * within a week: it's back in that day's session ("It'll be here on Monday"). Null otherwise, when
-   * the coming week has no study time, and for the week's challenge, which doesn't come back on its
-   * own once its day is over: Move to Monday keeps it (`canMove`). Null for an exam's phase
-   * challenges too: its runs keep them off the exam's eve and its mocks' own days, which no day's
-   * study time tells.
+   * With `dailyLimitReached`, a phase challenge's next day in its goal's plan, YYYY-MM-DD, within a
+   * week: the first day the plan's next run can put it on, so it's back in that day's session
+   * ("It'll be here on Monday"). Null otherwise, when the coming week has no such day, and for the
+   * week's challenge, which doesn't come back on its own once its day is over: Move to Monday keeps
+   * it (`canMove`). Null for a dated exam's phase that teaches nothing of its own too: its runs
+   * place its challenge by what it would ask, which no day tells.
    */
   nextStudyDate: string | null;
   /** "Mock exam 3": this goal's mocks, counting this one. */

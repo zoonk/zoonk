@@ -30,7 +30,7 @@ function loadWorkGoal(goalId: string) {
 }
 
 /** The plan's study days before today: from its first day, the ones that plan some time. */
-function listStudyDays({ goal, today }: { goal: WorkGoal; today: Date }): string[] {
+function listPlannedDaysBefore({ goal, today }: { goal: WorkGoal; today: Date }): string[] {
   const settings = parsePlanSettings(goal.plan?.settings);
   const timeZone = goal.timezone && isValidTimeZone(goal.timezone) ? goal.timezone : "UTC";
 
@@ -68,7 +68,7 @@ export async function loadExamWork({
     loadCatchUpItems(goalId),
   ]);
 
-  const studyDays = goal ? listStudyDays({ goal, today }) : [];
+  const studyDays = goal ? listPlannedDaysBefore({ goal, today }) : [];
 
   const finished = new Set(
     sessions

@@ -1,5 +1,6 @@
 import { type BuildPlanInput } from "./build-plan";
-import { findDayIndex } from "./day-index";
+import { findDayIndex, isLessonRoom } from "./day-index";
+import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
@@ -332,7 +333,9 @@ function findRoomDay({
 
   const room = days.find(
     (day) =>
-      day.date > date && getLessonCapacity(day) > EPSILON && !challengeDays.has(day.date.getTime()),
+      day.date > date &&
+      canHoldPhaseChallenge({ day, rules: { kind: "lessons" } }) &&
+      !challengeDays.has(day.date.getTime()),
   );
 
   return room ? toIsoDate(room.date) : null;
@@ -372,7 +375,7 @@ export function listStrainedEnds({
       0,
     );
 
-    return capacity <= EPSILON || load > Math.max(capacity, boss.minutes) + EPSILON
+    return !isLessonRoom(capacity) || load > Math.max(capacity, boss.minutes) + EPSILON
       ? [
           {
             phase,

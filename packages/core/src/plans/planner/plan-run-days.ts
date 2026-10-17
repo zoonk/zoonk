@@ -24,17 +24,38 @@ import {
 import { createExamDays, createLearnDays } from "./plan-days";
 import { type ExistingPlanItem } from "./plan-items";
 import { findExamWindow, getKeptExamWindows } from "./plan-phases";
+import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
 
+/**
+ * What a run's days read of its input (see `createDays`): all a challenge's screen needs to lay
+ * out the days of the plan's next run from what it loaded.
+ */
+export type RunDayInput = Pick<
+  BuildPlanInput,
+  | "bossDays"
+  | "bossMinutes"
+  | "courseStart"
+  | "examWindows"
+  | "fullMockMinutes"
+  | "goal"
+  | "items"
+  | "mockMinutes"
+  | "settings"
+  | "today"
+>;
+
 /** The plan's first day: the day it was started, or today for a plan not saved yet. */
-export function getPlanStart(input: BuildPlanInput): Date {
+export function getPlanStart(input: Pick<RunDayInput, "settings" | "today">): Date {
   return input.settings.startDate ? fromIsoDate(input.settings.startDate) : input.today;
 }
 
 /** The learner's study time as the plan's calendar reads it. */
-export function getCalendar(input: BuildPlanInput): StudyCalendar {
+export function getCalendar(
+  input: Pick<RunDayInput, "goal" | "settings" | "today">,
+): StudyCalendar {
   return {
     dailyMinutes: input.goal.dailyMinutes,
     firstDay: getPlanStart(input),
@@ -47,7 +68,7 @@ export function getCalendar(input: BuildPlanInput): StudyCalendar {
  * The plan's days, each with what it holds (see `createExamDays`, `createLearnDays`), and an exam's
  * windows (see `getKeptExamWindows`).
  */
-export function createDays({ input, planStart }: { input: BuildPlanInput; planStart: Date }) {
+export function createDays({ input, planStart }: { input: RunDayInput; planStart: Date }) {
   const calendar = getCalendar(input);
   const eventWeekday = getWeeklyEventWeekday(calendar);
   const { practiceBias } = input.settings;
@@ -219,8 +240,57 @@ function replayMoves({ moves, ...options }: Parameters<typeof withMovedEvents>[0
 }
 
 /**
- * The days a run lays the plan out over, from today: what each holds (see `createDays`), with the
- * learner's moved events on their new days and the plan's mocks funded by the days before them
+ * What each day of a run holds before its mocks are funded (see `createDays`), with the events
+ * moved onto their new days. Moves compose in the order they were made: the learner's, then a mock
+ * an earlier run moved off its checkpoint's day (`mockRelocations`), which stays on its new day,
+ * as announced, while that day is still free, then the learner's moves of a mock from where that
+ * run put it. Returns the relocations that still hold.
+ */
+export function describeRunDays({
+  days,
+  settings,
+}: {
+  days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
+  settings: Pick<PlanSettings, "mockRelocations" | "movedEvents">;
+}) {
+  const moves = settings.movedEvents;
+
+  // A moved mock sits its exam day as its new day's phase has it: all of it in the final stretch.
+  const resolveMoved = (event: FixedEvent, date: Date): FixedEvent =>
+    event.mock
+      ? {
+          ...event,
+          mock: {
+            ...event.mock,
+            fullLength: findExamWindow({ date, windows: days.windows })?.kind === "finalStretch",
+          },
+        }
+      : event;
+
+  const relocatedTo = new Set(settings.mockRelocations.map((relocation) => relocation.to));
+  const earlier = moves.filter((move) => !relocatedTo.has(move.from));
+
+  const learnerMoved = replayMoves({ describeDay: days.describeDay, moves: earlier, resolveMoved });
+
+  const relocated = settings.mockRelocations.filter(
+    (relocation) =>
+      !earlier.some((move) => move.from === relocation.from) &&
+      findDayMock(learnerMoved(fromIsoDate(relocation.from))) !== undefined &&
+      learnerMoved(fromIsoDate(relocation.to)).events.length === 0,
+  );
+
+  const describeDay = replayMoves({
+    describeDay: replayMoves({ describeDay: learnerMoved, moves: relocated }),
+    moves: moves.filter((move) => relocatedTo.has(move.from)),
+    resolveMoved,
+  });
+
+  return { describeDay, relocated };
+}
+
+/**
+ * The days a run lays the plan out over, from today: what each holds, with the events moved onto
+ * their new days (see `describeRunDays`), and the plan's mocks funded by the days before them
  * (see `fundMocks`), after the time those days keep for the teaching a challenge tests and the
  * lesson the learner was promised (see `getKeptMinutes`). Returns the funding the plan saves.
  */
@@ -240,40 +310,7 @@ export function listFundedPlanDays({
   /** The plan's queue, which holds the lesson the learner was promised (see `findPromisedLesson`). */
   units?: readonly QueueUnit[];
 }) {
-  const moves = input.settings.movedEvents;
-
-  // A moved mock sits its exam day as its new day's phase has it: all of it in the final stretch.
-  const resolveMoved = (event: FixedEvent, date: Date): FixedEvent =>
-    event.mock
-      ? {
-          ...event,
-          mock: {
-            ...event.mock,
-            fullLength: findExamWindow({ date, windows: days.windows })?.kind === "finalStretch",
-          },
-        }
-      : event;
-
-  // Moves compose in the order they were made: the learner's, then a mock an earlier run moved off
-  // its checkpoint's day (`mockRelocations`), which stays on its new day, as announced, while that
-  // day is still free, then the learner's moves of a mock from where that run put it.
-  const relocatedTo = new Set(input.settings.mockRelocations.map((relocation) => relocation.to));
-  const earlier = moves.filter((move) => !relocatedTo.has(move.from));
-
-  const learnerMoved = replayMoves({ describeDay: days.describeDay, moves: earlier, resolveMoved });
-
-  const relocated = input.settings.mockRelocations.filter(
-    (relocation) =>
-      !earlier.some((move) => move.from === relocation.from) &&
-      findDayMock(learnerMoved(fromIsoDate(relocation.from))) !== undefined &&
-      learnerMoved(fromIsoDate(relocation.to)).events.length === 0,
-  );
-
-  const describeDay = replayMoves({
-    describeDay: replayMoves({ describeDay: learnerMoved, moves: relocated }),
-    moves: moves.filter((move) => relocatedTo.has(move.from)),
-    resolveMoved,
-  });
+  const { describeDay, relocated } = describeRunDays({ days, settings: input.settings });
 
   const planDays = listPlanDays({
     describeDay,
@@ -297,7 +334,7 @@ export function listFundedPlanDays({
       }),
       tested: input.testedTeaching ?? [],
     },
-    moves,
+    moves: input.settings.movedEvents,
     practice: selected.practice,
     requested: input.requestedMoveDates,
     resolution,

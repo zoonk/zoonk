@@ -1,4 +1,4 @@
-import { EPSILON, findDayIndex, findDayIndexFrom } from "./day-index";
+import { EPSILON, findDayIndex, findDayIndexFrom, findLessonDayFrom } from "./day-index";
 import { type ExistingPlanItem } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay } from "./schedule-units";
@@ -11,9 +11,10 @@ export type PlacedBoss = { beside: boolean; dayIndex: number; start: number; use
 
 /**
  * A phase's challenge on the first study day after the lessons before it (where the time they
- * take ends, `used`), so a day passes between learning and being tested: it leads that day, and
- * what the day has left goes to the work after it; longer than the day, it takes it all, past
- * the day's time, never two (its day asks for it, see `getPlannedMinutes`). One right after
+ * take ends, `used`), so a day passes between learning and being tested: a day with lesson time
+ * (see `canHoldPhaseChallenge`), never one whose minutes all go to fixed events. It leads that
+ * day, and what the day has left goes to the work after it; longer than the day, it takes it all,
+ * past the day's time, never two (its day asks for it, see `getPlannedMinutes`). One right after
  * another shares its day. With no study day left before the plan's end, it comes right after its
  * lessons on their last day, beside them. A kept phase end's challenge leads its kept day
  * (`heldOn`). Null for any other unit.
@@ -68,14 +69,17 @@ export function placeBoss({
   const lastDay = Math.max(reached, afterDay);
   const start = lastDay === -1 ? floor : Math.max(floor, cumulative[lastDay] ?? floor);
 
-  const next = findDayIndexFrom({
+  const covered = findDayIndexFrom({
     cumulative,
     from: Math.max(0, from, afterDay + 1),
     needed: start + 2 * EPSILON,
   });
 
+  const next = findLessonDayFrom({ cumulative, from: covered });
+
+  // Its minutes come from its own day's lesson time, never from the days it skipped.
   if (next !== -1) {
-    return lead(next, start);
+    return lead(next, Math.max(start, cumulative[next - 1] ?? 0));
   }
 
   return { beside: true, dayIndex: lastDay, start: floor, used: floor };

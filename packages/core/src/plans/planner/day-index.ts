@@ -81,3 +81,36 @@ export function findDayIndexFrom({
 
   return gallop(from + 1, 2);
 }
+
+/**
+ * Whether a day's lesson minutes leave room for new work. A day whose minutes all go to fixed
+ * events (a mock, the week's checkpoint on a day as short as it) has none, though the plan's study
+ * time reaches it: a phase challenge never leads it (see `canHoldPhaseChallenge`).
+ */
+export function isLessonRoom(capacity: number): boolean {
+  return capacity > EPSILON;
+}
+
+/**
+ * The first day from `from` with lesson minutes of its own (see `isLessonRoom`), or -1 when none
+ * is left.
+ */
+export function findLessonDayFrom({
+  cumulative,
+  from,
+}: {
+  cumulative: readonly number[];
+  from: number;
+}): number {
+  if (from < 0) {
+    return -1;
+  }
+
+  for (let dayIndex = from; dayIndex < cumulative.length; dayIndex += 1) {
+    if (isLessonRoom((cumulative[dayIndex] ?? 0) - (cumulative[dayIndex - 1] ?? 0))) {
+      return dayIndex;
+    }
+  }
+
+  return -1;
+}

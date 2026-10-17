@@ -2,7 +2,8 @@ import { getBossSkillIds, isBossTeachingItem } from "../../checkpoints/checkpoin
 import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
 import { type BossCandidate, listBossCandidates, projectBossPlan } from "./boss-projection";
 import { type BuildPlanInput } from "./build-plan";
-import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { getExamChallengeDayRules, listPhaseChallengeDays } from "./phase-challenge-days";
+import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { type PlanPhase } from "./plan-state";
 import { type FixedEvent, type PlanDay } from "./schedule-units";
@@ -255,34 +256,6 @@ function findStudyDayAfter(days: readonly string[], date: string): string | unde
 type Spot = { afterDay: boolean; day: Date; key: string; phase: number };
 
 /**
- * The days an exam's phase challenge can go (see `placeExamBosses`): with study time, before the
- * exam's eve, and not a weekly mock's own day. A day a mock was moved onto (`movedTo`: the
- * learner's move, or a run's, see `findRelocation`) still is: the two share it when its days fund
- * both, else the mock moves on.
- */
-function listStudyDays({
-  days,
-  movedTo,
-  targetDate,
-}: {
-  days: readonly PlanDay[];
-  movedTo: ReadonlySet<string>;
-  targetDate: Date | null;
-}): string[] {
-  const eve = targetDate ? addDays(targetDate, -1).getTime() : null;
-
-  return days.flatMap((day) => {
-    if (day.shape.minutes <= 0 || day.date.getTime() === eve) {
-      return [];
-    }
-
-    const date = toIsoDate(day.date);
-    const ownMock = day.shape.events.some((event) => event.kind === "mock" && event.replacesDay);
-    return !ownMock || movedTo.has(date) ? [date] : [];
-  });
-}
-
-/**
  * A phase with teaching of its own always uses this pass's first eligible day. Keeping an earlier
  * pass's later day would leave its challenge after an empty gap once funding settles. A phase
  * without its own teaching keeps the later day: moving back would free time, change the teaching
@@ -346,10 +319,10 @@ export function listBossEvents({
 
 /**
  * What a built plan says of where its exam's phase challenges can go (see `placeExamBosses`): the
- * study days (`listStudyDays`; a day a mock was moved onto, by the learner or a run, is one), and
- * the day each scheduled lesson's time ends, when later than its date, this week's kept lessons'
- * included (`kept`, by their last day of time, see `layOutAfterThisWeek`): a run that keeps a stand-in
- * this week tests it where its time ends, as a run that lays it out again does.
+ * study days (`listPhaseChallengeDays`; a day a mock was moved onto, by the learner or a run, is
+ * one), and the day each scheduled lesson's time ends, when later than its date, this week's kept
+ * lessons' included (`kept`, by their last day of time, see `layOutAfterThisWeek`): a run that
+ * keeps a stand-in this week tests it where its time ends, as a run that lays it out again does.
  */
 export function listBossDayFacts({
   days,
@@ -362,8 +335,6 @@ export function listBossDayFacts({
   kept: ReadonlyMap<string, readonly { date: string }[]>;
   units: readonly { key: string; teachingEnd?: Date }[];
 }): { studyDays: string[]; teachingEnds: Map<string, Date> } {
-  const { mockRelocations, movedEvents } = input.settings;
-
   const teachingEnds = new Map(
     units.flatMap((unit) => (unit.teachingEnd ? [[unit.key, unit.teachingEnd] as const] : [])),
   );
@@ -382,12 +353,11 @@ export function listBossDayFacts({
     }
   }
 
-  return {
-    studyDays: listStudyDays({
-      days,
-      movedTo: new Set([...movedEvents, ...mockRelocations].map((move) => move.to)),
-      targetDate: input.goal.targetDate,
-    }),
-    teachingEnds,
-  };
+  // Every plan's: a run reads them only for a dated exam's challenges, and they are the same days.
+  const rules = getExamChallengeDayRules({
+    settings: input.settings,
+    targetDate: input.goal.targetDate,
+  });
+
+  return { studyDays: listPhaseChallengeDays({ days, rules }), teachingEnds };
 }

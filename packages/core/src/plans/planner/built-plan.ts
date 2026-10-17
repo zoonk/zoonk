@@ -9,7 +9,7 @@ import { type PlanOutline } from "./summarize-plan";
 
 /** What a planning run builds (see `buildPlan`). */
 export type BuiltPlan = PlanOutline & {
-  /** The days an exam's phase challenge can go (see `listStudyDays`). */
+  /** The days an exam's phase challenge can go (see `listPhaseChallengeDays`). */
   studyDays: string[];
   /** The day each scheduled lesson's time ends, by its key, when later than its date. */
   teachingEnds: ReadonlyMap<string, Date>;
