@@ -22,17 +22,15 @@ const askedFollows = new Set<string>();
 export function useFollowTimeZone({ goalId, userId }: { goalId: string; userId: string }) {
   const learner = useLearnerSummary();
 
-  // Undefined until the summary is this goal's; null for a goal without a zone.
-  const savedZone =
-    learner.status === "ready" && learner.summary.activeGoalId === goalId
-      ? learner.summary.timeZone
-      : undefined;
+  const summary =
+    learner.status === "ready" && learner.summary.activeGoalId === goalId ? learner.summary : null;
 
+  // Each summary read checks the device's zone again: the learner may have moved with Today open.
   useEffect(() => {
     const deviceZone = getLocalTimeZone();
     const key = `${goalId}:${deviceZone}`;
 
-    if (savedZone === undefined || savedZone === deviceZone || askedFollows.has(key)) {
+    if (!summary || summary.timeZone === deviceZone || askedFollows.has(key)) {
       return;
     }
 
@@ -47,5 +45,5 @@ export function useFollowTimeZone({ goalId, userId }: { goalId: string; userId: 
       },
       () => null,
     );
-  }, [goalId, savedZone, userId]);
+  }, [goalId, summary, userId]);
 }
