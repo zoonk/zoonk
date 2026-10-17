@@ -1,8 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { instant } from "@next/playwright";
 import { type Browser, type Locator, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type Page, expect, test } from "./fixtures";
+import { type StreamEvent, followRun } from "./generation-run";
+import { expectHydrated } from "./on-demand-code";
 import { logStatusLines, readStatusLog } from "./status-lines";
 import { openAs } from "./study-day";
 import { createUnstartedDay } from "./unstarted-day-fixtures";
@@ -162,11 +165,6 @@ async function holdOpens(page: Page) {
 }
 
 type HeldOpens = Awaited<ReturnType<typeof holdOpens>>;
-
-/** A bare open names no step: the session screen sends it on its own for a day not opened yet. */
-function isBareOpen(body: string) {
-  return body.includes('"shownDate"') && !/"target":\{/u.test(body);
-}
 
 /** Runs a test as a fresh learner whose day isn't opened, its page watched for placeholders. */
 async function asUnstartedDay(
@@ -598,7 +596,7 @@ test.describe("An unstarted day", () => {
     });
   });
 
-  test("a direct load of the session screen opens the day once, keeping the step it shows", async ({
+  test("a direct load of the session screen saves nothing until Start opens the day", async ({
     browser,
   }) => {
     await asUnstartedDay(browser, { cpu: true }, async ({ day, opens, page }) => {
@@ -619,29 +617,85 @@ test.describe("An unstarted day", () => {
         { baseURL: getBaseURL() },
       );
 
-      expect(opens.bodies, "no open while only the shell shows").toStrictEqual([]);
+      const main = page.getByRole("main");
+      const start = main.getByRole("button", { exact: true, name: "Start" });
 
-      const step = page
-        .getByRole("main")
-        .getByRole("heading", { level: 2, name: /^(?:Quick review|Reviews)$/u });
+      await expect(main.getByText("Up next", { exact: true })).toBeVisible();
 
-      await expect(page.getByRole("main").getByText("Up next", { exact: true })).toBeVisible();
-      await expect(step).toBeVisible();
+      await expect(
+        main.getByRole("heading", { level: 2, name: /^(?:Quick review|Reviews)$/u }),
+      ).toBeVisible();
 
-      await step.evaluate((heading) => {
-        heading.dataset.kept = "";
+      // Shown, the screen opens nothing: the learner's Start opens the day, as Today's does.
+      await expectHydrated(start);
+      expect(opens.bodies, "no open while the step is only shown").toStrictEqual([]);
+
+      await start.click();
+      await opens.release();
+
+      await expect(page.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
+      await expect(countSessions(day.user.id)).resolves.toBe(1);
+      expect(opens.bodies).toHaveLength(1);
+      expect(opens.bodies[0]).toMatch(/"target":\{/u);
+    });
+  });
+
+  test("a lesson written while the session screen waits opens the day with it", async ({
+    browser,
+  }) => {
+    const day = await createUnstartedDay();
+    const lesson = day.lessons[1];
+    const runId = `e2e-unstarted-lesson-${randomUUID()}`;
+
+    // Nothing is due for review, so the day's first step is the second lesson, being written.
+    await Promise.all([
+      prisma.learnerSkill.updateMany({
+        data: { due: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+        where: { userId: day.user.id },
+      }),
+      prisma.lesson.update({
+        data: { contentRunId: runId, contentStatus: "running" },
+        where: { id: lesson?.id },
+      }),
+    ]);
+
+    const page = await openAs(browser, day.user);
+
+    try {
+      const opens = await holdOpens(page);
+
+      const events: StreamEvent[] = [
+        { entityId: lesson?.id, status: "started", step: "planLesson" },
+        { entityId: lesson?.id, status: "completed", step: "planLesson" },
+        { entityId: lesson?.id, status: "started", step: "writeLesson" },
+      ];
+
+      await followRun({ events, page, runId });
+      await page.goto("/session");
+
+      await expect(
+        page.getByRole("main").getByRole("heading", { level: 2, name: lesson?.title ?? "" }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
+      expect(opens.bodies, "no open while the lesson is written").toStrictEqual([]);
+
+      // The run says it's ready: the screen opens the day with that lesson, and plays it.
+      await prisma.lesson.update({
+        data: { contentStatus: "completed" },
+        where: { id: lesson?.id },
       });
 
-      const held = await opens.next();
-      expect(opens.bodies.filter(isBareOpen)).toHaveLength(1);
-      await held.continue();
+      events.push({ entityId: lesson?.id, status: "completed", step: "lessonReady" });
+      await opens.release();
 
-      await expect.poll(() => countSessions(day.user.id)).toBe(1);
-      await page.waitForLoadState("networkidle");
-      await expect(step).toHaveAttribute("data-kept", "");
-      await expect(step).toBeVisible();
+      await expect(page).toHaveURL(new RegExp(`/learn/${lesson?.id}\\?session=`, "u"));
+      await expect(countSessions(day.user.id)).resolves.toBe(1);
       expect(opens.bodies).toHaveLength(1);
-    });
+      expect(opens.bodies[0]).toMatch(/"target":\{/u);
+    } finally {
+      await page.context().close();
+    }
   });
 
   test("a saved day's Continue shows its step at once, then its question", async ({ browser }) => {

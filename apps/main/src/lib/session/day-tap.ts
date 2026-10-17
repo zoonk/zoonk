@@ -59,15 +59,15 @@ function noteOutcome({ generation, outcome }: { generation: number; outcome: Day
  * Opens the day the screen showed, from the learner's tap: the request leaves at once (call this in
  * the click, before navigating, so the navigation never holds it back). When it lost a race to
  * another write of the learner's (`retryable`), it's sent once more, in a request of its own, while
- * the tab is still where the tap was made for the same identity (`stillHere`, which may wait, as a
- * bare open waits for its page to be shown again); a second loss is a failure.
+ * the tab is still where the tap was made for the same identity (`stillHere`); a second loss is a
+ * failure.
  */
 export async function sendDayOpen({
   input,
   stillHere,
 }: {
   input: OpenStudyDayInput;
-  stillHere: () => boolean | Promise<boolean>;
+  stillHere: () => boolean;
 }): Promise<DayOpenOutcome> {
   const generation = getLearnerGeneration();
   const first = await openStudyDayAction(input);
@@ -75,7 +75,7 @@ export async function sendDayOpen({
   // Sent again only while the page still belongs to the browser's learner (`checkIdentity`).
   const again =
     first.status === "retryable" &&
-    (await stillHere()) &&
+    stillHere() &&
     generation === getLearnerGeneration() &&
     checkIdentity();
 

@@ -8,13 +8,7 @@ import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
 import { type TapDay, type TapResult, type TapStep } from "./day-entry";
-import {
-  beginDayEntry,
-  endDayEntry,
-  markDayOpened,
-  toDayKey,
-  updateDayEntry,
-} from "./day-entry-registry";
+import { beginDayEntry, endDayEntry, updateDayEntry } from "./day-entry-registry";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 import { type StudyDestination } from "./study-destination";
 import {
@@ -40,11 +34,6 @@ function toShownDate(localDate: Date): string {
   return localDate.toISOString().slice(0, 10);
 }
 
-/** A day this tab opens with a tap: the session screen never opens it again on its own. */
-function markShownDayOpened({ day, goalId, userId }: TapDay["shown"]) {
-  markDayOpened(toDayKey({ goalId, localDate: day.localDate, userId }));
-}
-
 /** Whether the tap was made from a control with focus, so the next screen's main action takes it. */
 function isFocusOnControl(): boolean {
   const active = document.activeElement;
@@ -68,7 +57,6 @@ type TapRequest = {
   next: boolean;
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
   sessionId: string | null;
-  shown: TapDay["shown"];
   step: TapStep;
   stillHere: () => boolean;
 };
@@ -82,7 +70,6 @@ function requestTap({
   next,
   openInput,
   sessionId,
-  shown,
   step,
   stillHere,
 }: TapRequest): Promise<TapResult> {
@@ -95,7 +82,6 @@ function requestTap({
     }
 
     const target = next ? { kind: "next" as const, shown: ref } : { kind: "ref" as const, ref };
-    markShownDayOpened(shown);
 
     return sendDayOpen({ input: openInput({ target }), stillHere }).then(toTapResult, () => {
       // No answer (a lost connection): the open may have saved the day anyway.
@@ -141,9 +127,9 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
   );
 
   const request = useCallback(
-    (tapped: Omit<TapRequest, "openInput" | "sessionId" | "shown">) =>
-      requestTap({ ...tapped, openInput, sessionId, shown }),
-    [openInput, sessionId, shown],
+    (tapped: Omit<TapRequest, "openInput" | "sessionId">) =>
+      requestTap({ ...tapped, openInput, sessionId }),
+    [openInput, sessionId],
   );
 
   /** Applies an answer on the screen that tapped, when it's still there for the same learner. */
@@ -237,8 +223,6 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         return sessionId;
       }
 
-      markShownDayOpened(shown);
-
       const outcome = await sendDayOpen({
         input: openInput({ keepEmpty: true }),
         stillHere: () => isStill(scope),
@@ -246,7 +230,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       return outcome.status === "opened" && isStill(scope) ? outcome.sessionId : null;
     },
-    [openInput, sessionId, shown],
+    [openInput, sessionId],
   );
 
   return {

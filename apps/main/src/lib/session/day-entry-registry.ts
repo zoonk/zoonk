@@ -140,31 +140,3 @@ export function subscribeToDayEntry(listener: () => void): () => void {
   registry.listeners.add(listener);
   return () => registry.listeners.delete(listener);
 }
-
-/**
- * Days this tab opened, with a tap or on its own: showing their step again never opens them again.
- * The database makes a repeat harmless; this saves the request, and keeps a bare open from
- * queueing ahead of what a tap is about to show.
- */
-const openedDays = new Set<string>();
-
-/** A study day by whose it is, its goal and its learner-local date (`YYYY-MM-DD`). */
-export function toDayKey({
-  goalId,
-  localDate,
-  userId,
-}: {
-  goalId: string;
-  localDate: Date;
-  userId: string;
-}): string {
-  return `${userId}:${goalId}:${localDate.toISOString().slice(0, 10)}`;
-}
-
-export function markDayOpened(dayKey: string): void {
-  openedDays.add(dayKey);
-}
-
-export function isDayOpened(dayKey: string): boolean {
-  return openedDays.has(dayKey);
-}

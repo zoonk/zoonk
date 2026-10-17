@@ -5,20 +5,15 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { type DayEntry, type TapStep } from "@/lib/session/day-entry";
 import {
   endDayEntry,
   failDayEntry,
-  isDayOpened,
   markDayEntryApplied,
-  markDayOpened,
   moveDayEntry,
-  toDayKey,
 } from "@/lib/session/day-entry-registry";
-import { sendDayOpen } from "@/lib/session/day-tap";
 import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
 import {
   answerStudyQuestionAction,
@@ -26,12 +21,7 @@ import {
 } from "@/lib/session/study-session-actions";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
-import {
-  getCurrentLocation,
-  useGoToStudyDestination,
-  useStudyNavigation,
-} from "@/lib/session/use-study-navigation";
-import { whenShown } from "@/lib/session/when-shown";
+import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -49,7 +39,7 @@ import {
 } from "@zoonk/learn/session/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
-import { startTransition, useCallback, useEffect, useEffectEvent, useTransition } from "react";
+import { useCallback, useEffect, useEffectEvent, useTransition } from "react";
 
 const EXIT_HREF = "/today";
 const SIGN_UP_HREF = "/login";
@@ -158,79 +148,11 @@ function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap 
 }
 
 /**
- * A day not opened yet, shown here with no tap opening it (a bookmark, a new tab, a reload): once
- * the screen is shown for real, the day is opened, nothing started, and the screen reads itself
- * again in place, so its step gets the ids it acts on. Never for a day this tab opened already, a
- * tap's own open included (`markDayOpened`), never while a link prepares the page ahead or the tab
- * is in the background, and never starting AI work.
- */
-function useBareOpen({
-  goalId,
-  localDate,
-  unstarted,
-  userId,
-}: {
-  goalId: string;
-  localDate: Date;
-  unstarted: boolean;
-  userId: string;
-}) {
-  const router = useRouter();
-  const dayKey = toDayKey({ goalId, localDate, userId });
-  const shownDate = localDate.toISOString().slice(0, 10);
-
-  useEffect(() => {
-    if (!unstarted || isDayOpened(dayKey)) {
-      return;
-    }
-
-    const left = new AbortController();
-
-    const stopWaiting = whenShown(() => {
-      markDayOpened(dayKey);
-
-      const generation = getLearnerGeneration();
-      const origin = getCurrentLocation();
-
-      const stillHere = () =>
-        !left.signal.aborted &&
-        generation === getLearnerGeneration() &&
-        origin === getCurrentLocation();
-
-      // Its one try again waits, like the open itself, until the page is shown for real.
-      const shownAgain = () =>
-        new Promise<boolean>((resolve) => {
-          const stop = whenShown(() => resolve(stillHere()));
-
-          left.signal.addEventListener("abort", () => {
-            stop();
-            resolve(false);
-          });
-        });
-
-      void sendDayOpen({
-        input: { goalId, shownDate, timeZone: getLocalTimeZone() },
-        stillHere: shownAgain,
-      }).then((outcome) => {
-        if (stillHere() && (!("actorId" in outcome) || outcome.actorId === userId)) {
-          startTransition(() => router.refresh());
-        }
-      });
-    });
-
-    return () => {
-      stopWaiting();
-      left.abort();
-    };
-  }, [dayKey, goalId, router, shownDate, unstarted, userId]);
-}
-
-/**
  * The next stop of either kind of day when nothing is open yet: the wait while its lesson is
  * written, following the run writing it live from the API, or why it won't be written now. A step
  * a tap from this tab named is drawn instead, busy from that tap until what it opened shows, even
- * when it isn't the day's next (a row further down Today's list); a day nobody tapped is opened
- * once it's shown (`useBareOpen`). Start opens the day with the step it shows.
+ * when it isn't the day's next (a row further down Today's list). Start opens a day not opened yet
+ * with the step it shows, as Today's does, and so does a lesson written while the step waited.
  */
 export function SessionNextStopClient({
   alternative,
@@ -282,8 +204,6 @@ export function SessionNextStopClient({
   const drawn = tapped ? tapped.step : step;
   const drawnRef = own ? stepRef : (entry?.step.ref ?? null);
 
-  useBareOpen({ goalId, localDate: day.localDate, unstarted: day.status === "unstarted", userId });
-
   const toTapStep = (target: DayStep): TapStep => ({
     blockId: "id" in target ? target.id : null,
     position: target.position,
@@ -291,20 +211,22 @@ export function SessionNextStopClient({
     screen: "session",
   });
 
+  const start = (target: DayStep) =>
+    target.position === step.position && sessionId === null
+      ? taps.next(toTapStep(target))
+      : taps.open(toTapStep(target));
+
   return (
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <NextStop
         actions={{
           openWrittenLesson: (target) =>
-            "id" in target ? navigation.openWrittenLesson(target.id) : Promise.resolve(false),
+            "id" in target ? navigation.openWrittenLesson(target.id) : start(target),
           readLesson: readWaitedLesson,
           recordWait: (milliseconds) =>
             void recordGenerationWaitAction({ contentKind: "lesson", locale, milliseconds }),
           refresh,
-          start: (target) =>
-            target.position === step.position && sessionId === null
-              ? taps.next(toTapStep(target))
-              : taps.open(toTapStep(target)),
+          start,
           stop: navigation.stop,
         }}
         alternative={tapped ? null : alternative}

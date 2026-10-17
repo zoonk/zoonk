@@ -52,8 +52,9 @@ test.describe("A phase challenge the plan hasn't saved yet", () => {
     await expect(main.getByRole("link", { name: /^Phase challenge/u })).toHaveCount(0);
     await expect(label.locator("xpath=../..")).toContainText(/\d/u);
 
-    // Opening the day (the session screen opens it on its own, asking for nothing) saves it.
+    // Opening the day (the session screen's Start) saves it.
     await page.goto("/session");
+    await main.getByRole("button", { exact: true, name: "Start" }).click();
     await expect.poll(() => prisma.studySession.count({ where: { userId: user.id } })).toBe(1);
 
     await page.goto("/plan");

@@ -66,19 +66,6 @@ describe(sendDayOpen, () => {
     await sendDayOpen({ input: INPUT, stillHere: () => false });
     expect(openStudyDayAction).toHaveBeenCalledOnce();
   });
-
-  it("tries again only once its page says it may, as a bare open waits to be shown again", async () => {
-    vi.mocked(openStudyDayAction).mockResolvedValueOnce(RETRYABLE).mockResolvedValueOnce(OPENED);
-    const shown = Promise.withResolvers<boolean>();
-
-    const outcome = sendDayOpen({ input: INPUT, stillHere: () => shown.promise });
-
-    await vi.waitFor(() => expect(openStudyDayAction).toHaveBeenCalledOnce());
-    shown.resolve(true);
-
-    await expect(outcome).resolves.toBe(OPENED);
-    expect(openStudyDayAction).toHaveBeenCalledTimes(2);
-  });
 });
 
 describe(toTapResult, () => {
