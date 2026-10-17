@@ -44,7 +44,10 @@ describe("a closer estimate of how long lessons take", () => {
 
     const readLessons = async () => {
       const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
-      return items.map((item) => item.lessonId ?? item.skillId).toSorted();
+
+      return items
+        .map((item) => item.lessonId ?? item.skillId ?? "")
+        .toSorted((left, right) => left.localeCompare(right));
     };
 
     // Short on time: the plan leaves lessons out that a faster pace could bring in.

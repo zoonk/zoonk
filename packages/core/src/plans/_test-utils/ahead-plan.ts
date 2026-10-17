@@ -6,6 +6,7 @@ import { getPlanTabView } from "../../view-models/plan/get-plan-view";
 import { loadPaceSamples } from "../_utils/pace-samples";
 import { createGoalPlan } from "../create-goal-plan";
 import { choosePace } from "../planner/plan-pace";
+import { parsePlanSettings } from "../planner/plan-state";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
 /** A Tuesday in 2020, before the learning events other tests write, which estimates read. */
@@ -57,7 +58,7 @@ async function saveSampledPace({
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
 
   await prisma.plan.update({
-    data: { settings: { ...(plan.settings as object), pace } },
+    data: { settings: { ...parsePlanSettings(plan.settings), pace } },
     where: { id: planId },
   });
 }
@@ -105,6 +106,7 @@ export async function aheadPlanFixture({
 
   if (faster) {
     await studyFaster({ planId: plan.id, userId: user.id });
+
     await saveSampledPace({
       lessonIds: library.lessons.map((lesson) => lesson.id),
       planId: plan.id,

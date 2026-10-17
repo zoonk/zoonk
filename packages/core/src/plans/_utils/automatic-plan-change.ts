@@ -16,6 +16,14 @@ function hasMovedMilestone(effect: PlanChangeView["effect"]): boolean {
   return (effect?.phaseEnds?.length ?? 0) > 0 || Boolean(effect?.nextMock);
 }
 
+/** A re-estimate is news when it leaves out a lesson or moves the net count past the threshold. */
+function isShownEstimate(effect: PlanChangeView["effect"]): boolean {
+  return (
+    (effect?.lessonsLeftOut?.length ?? 0) > 0 ||
+    Math.abs((effect?.lessonsAdded ?? 0) - (effect?.lessonsRemoved ?? 0)) > SMALL_CHANGE_LESSONS
+  );
+}
+
 /**
  * Computed and stored Today notices have the same eligibility. Past-date recovery already says
  * why work was set aside, so its missed-day warning must not appear only until Open persists it.
@@ -42,10 +50,7 @@ export function isAutomaticPlanChange({
   }
 
   if (change.kind === "estimateUpdated") {
-    return (
-      (effect?.lessonsLeftOut?.length ?? 0) > 0 ||
-      Math.abs((effect?.lessonsAdded ?? 0) - (effect?.lessonsRemoved ?? 0)) > SMALL_CHANGE_LESSONS
-    );
+    return isShownEstimate(effect);
   }
 
   const movesTopics = (effect?.topicsLeftOut?.length ?? 0) + (effect?.topicsAdded?.length ?? 0) > 0;
