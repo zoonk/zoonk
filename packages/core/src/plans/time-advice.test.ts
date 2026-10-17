@@ -10,7 +10,7 @@ import { roundShare } from "./_utils/plan-feasibility-view";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-import { getPlanTimeAdvice } from "./get-time-advice";
+import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { endNoticeWait, startNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
@@ -79,14 +79,36 @@ async function setup(lessons = 6, dailyMinutes = 5) {
   return { goal, library, user };
 }
 
+/**
+ * What the time question says for a week: what the time asked about covers, and, as the learner
+ * asks for it ("Find the time that covers everything"), the time that covers everything.
+ */
 async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
-  const result = await getPlanTimeAdvice({ goalId, input: { studyDays, ...week } });
+  const [coverage, found] = await Promise.all([
+    getPlanTimeAdvice({ goalId, input: { studyDays, ...week } }),
+    findPlanTimeToCover({ goalId, input: { studyDays, weekendMinutes: week.weekendMinutes } }),
+  ]);
 
-  if (result.status !== "ready") {
-    throw new Error(`Expected the time advice, got ${result.status}`);
+  if (coverage.status !== "ready" || found.status !== "ready") {
+    throw new Error(`Expected the time advice, got ${coverage.status} and ${found.status}`);
   }
 
-  return result.advice;
+  return {
+    ...coverage.advice,
+    maximum: found.time.maximum,
+    recommendedMinutes: found.time.recommendedMinutes,
+  };
+}
+
+/** The time the Plan finds for the week the learner saved, when they ask for it there. */
+async function readPlanTime(goalId: string) {
+  const result = await findPlanTimeToCover({ goalId, input: {} });
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected the time that covers everything, got ${result.status}`);
+  }
+
+  return result.time;
 }
 
 async function readFeasibility(goalId: string) {
@@ -174,18 +196,17 @@ describe(getPlanTimeAdvice, () => {
       const saved = await readFeasibility(goal.id);
       expect(saved?.fits).toBe(false);
       expect(roundShare(saved?.coveredShare ?? 0)).toBe(preview.coveredShare);
-      expect([preview.recommendedMinutes, saved?.recommendedMinutes]).toStrictEqual([50, 50]);
+      // eslint-disable-next-line no-await-in-loop -- The time the Plan finds for the accepted week.
+      const savedTime = await readPlanTime(goal.id);
+      expect([preview.recommendedMinutes, savedTime.recommendedMinutes]).toStrictEqual([50, 50]);
     }
 
     await expect(
       updateGoal({ goalId: goal.id, input: { dailyMinutes: 65, studyDays, timeZone: "UTC" } }),
     ).resolves.toMatchObject({ status: "updated" });
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
-      coveredShare: 1,
-      fits: true,
-      recommendedMinutes: 50,
-    });
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: 50 });
 
     const at65 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
@@ -200,6 +221,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(higher.status).toBe("updated");
     const saved70 = await readFeasibility(goal.id);
+    const time70 = await readPlanTime(goal.id);
     expect(saved70?.fits).toBe(false);
     expect(roundShare(saved70?.coveredShare ?? 0)).toBe(0.95);
     const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -236,8 +258,8 @@ describe(getPlanTimeAdvice, () => {
       preview50.recommendedMinutes,
       preview65.recommendedMinutes,
       preview70.recommendedMinutes,
-      saved70?.recommendedMinutes,
-      plan.status === "ready" && plan.plan.feasibility?.recommendedMinutes,
+      time70.recommendedMinutes,
+      (await readPlanTime(goal.id)).recommendedMinutes,
     ]).toStrictEqual([50, 50, 50, 50, 50, 50]);
   });
 
@@ -250,14 +272,15 @@ describe(getPlanTimeAdvice, () => {
     expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate: "2020-10-09" });
     expect(advice.recommendedMinutes).toBeGreaterThan(goal.dailyMinutes);
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
 
     await change(goal.id, [{ kind: "setDailyMinutes", minutes: advice.recommendedMinutes ?? 0 }]);
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
-      coveredShare: 1,
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
+
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
   });
@@ -308,7 +331,7 @@ describe(getPlanTimeAdvice, () => {
 
     await change(goal.id, [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0, 6] }]);
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: weekdays.recommendedMinutes,
     });
   });
@@ -331,7 +354,7 @@ describe(getPlanTimeAdvice, () => {
       { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
     ]);
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: withWeekend.recommendedMinutes,
     });
 
@@ -410,11 +433,8 @@ describe(getPlanTimeAdvice, () => {
 
     expect(picked.coveredShare).toBe(1);
 
-    expect(feasibility).toMatchObject({
-      coveredShare: picked.coveredShare,
-      fits: true,
-      recommendedMinutes: recommended,
-    });
+    expect(feasibility).toMatchObject({ coveredShare: picked.coveredShare, fits: true });
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({ recommendedMinutes: recommended });
   });
 
   it.each(WEEKEND_SCHEDULES)(
@@ -578,14 +598,15 @@ describe(getPlanTimeAdvice, () => {
       // reveal's one tap does, covers the whole goal.
       await change(goal.id, [{ kind: "setDailyMinutes", minutes: 6 }]);
 
-      await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      await expect(readPlanTime(goal.id)).resolves.toMatchObject({
         recommendedMinutes: before.recommendedMinutes,
       });
 
       await change(goal.id, [{ kind: "setDailyMinutes", minutes: before.recommendedMinutes ?? 0 }]);
 
-      await expect(readFeasibility(goal.id)).resolves.toMatchObject({
-        coveredShare: 1,
+      await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
+
+      await expect(readPlanTime(goal.id)).resolves.toMatchObject({
         recommendedMinutes: before.recommendedMinutes,
       });
     } finally {
@@ -626,7 +647,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(advice).toMatchObject({ ready: true });
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
   });
@@ -652,7 +673,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(advice).toMatchObject({ readingNotice: false, ready: true });
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
   });
@@ -668,7 +689,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(advice).toMatchObject({ readingNotice: false, ready: true });
 
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+    await expect(readPlanTime(goal.id)).resolves.toMatchObject({
       recommendedMinutes: advice.recommendedMinutes,
     });
   });

@@ -197,12 +197,11 @@ const planScopeSnapshotSchema = z.object({
         .object({
           // Snapshots saved before plans kept every topic in counted whole skills.
           coreFits: z.boolean().default(true),
-          coreMinutes: z.number().nullable().default(null),
           coveredShare: z.number(),
           fits: z.boolean(),
-          // Snapshots saved before coverage counted the exam's points measured the goal.
+          // Snapshots saved before coverage counted the exam's points measured the goal; ones saved
+          // before the buddy looked up the time that covers everything also kept it here (dropped).
           measure: z.enum(["exam", "goal"]).default("goal"),
-          recommendedMinutes: z.number().nullable(),
         })
         .nullable(),
       difficultyBias: z.string(),

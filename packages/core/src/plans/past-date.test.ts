@@ -7,6 +7,9 @@ import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { findPlanTimeToCover } from "./get-time-advice";
+import { type PlanChangeInput } from "./plan-contract";
+import { previewPlanChange } from "./preview-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** A Monday in 2020, before the learning events other tests write. */
@@ -28,6 +31,12 @@ async function readLeftLessons(planId: string) {
 async function readPlan() {
   const result = await getPlanTabView();
   return result.status === "ready" ? result.view.plan : null;
+}
+
+/** What a change would do, as the learner's Preview reads it; nothing is saved. */
+async function preview(goalId: string, operations: PlanChangeInput["operations"]) {
+  const result = await previewPlanChange({ goalId, input: { operations, timeZone: "UTC" } });
+  return result.status === "ready" ? result.preview : null;
 }
 
 /**
@@ -98,7 +107,7 @@ describe("a plan whose date came with lessons left", () => {
     vi.useRealTimers();
   });
 
-  it("keeps going past its own date: it offers the date the learner's time covers what's left by", async () => {
+  it("keeps going past its own date: asked, it finds the date the learner's time covers what's left by", async () => {
     const { goal, plan } = await pastDateGoal("learn");
     const { length: lessons } = await readLeftLessons(plan.id);
 
@@ -118,16 +127,19 @@ describe("a plan whose date came with lessons left", () => {
     expect(view?.status).toStrictEqual({ kind: "pastDate", lessons });
     expect(view?.end).toBeNull();
 
-    const offer = view?.pastDateOffer;
-    const [operation] = offer?.operations ?? [];
+    // Reading the plan searches no date: the learner's Preview asks for it.
+    expect(view).not.toHaveProperty("pastDateOffer");
 
-    expect(operation).toMatchObject({ kind: "setTargetDate", targetDate: expect.any(String) });
-
-    const targetDate = operation?.kind === "setTargetDate" ? operation.targetDate : null;
+    const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
+    const targetDate = found.status === "ready" ? found.time.fittingDate : null;
 
     expect(targetDate && targetDate > "2020-10-20").toBe(true);
-    expect(offer?.effect.lessonsAdded).toBe(lessons);
-    expect(offer?.effect.endDateAfter && offer.effect.endDateAfter < (targetDate ?? "")).toBe(true);
+
+    const operations: PlanChangeInput["operations"] = [{ kind: "setTargetDate", targetDate }];
+    const effect = (await preview(goal.id, operations))?.effect;
+
+    expect(effect?.lessonsAdded).toBe(lessons);
+    expect(effect?.endDateAfter && effect.endDateAfter < (targetDate ?? "")).toBe(true);
 
     const preparation = await getGoalPreparation(goal.id);
 
@@ -138,7 +150,7 @@ describe("a plan whose date came with lessons left", () => {
 
     const applied = await changeGoalPlan({
       goalId: goal.id,
-      input: { operations: offer?.operations ?? [], timeZone: "UTC" },
+      input: { operations, timeZone: "UTC" },
     });
 
     expect(applied.status).toBe("applied");
@@ -169,23 +181,30 @@ describe("a plan whose date came with lessons left", () => {
     expect(lessons).toBeGreaterThan(0);
     expect(view?.status).toStrictEqual({ kind: "pastDate", lessons });
 
-    expect(view?.pastDateOffer?.operations).toStrictEqual([
-      { fullCourse: true, kind: "setFullCourse" },
-    ]);
+    // An exam's date searches nothing: its plan going on after the exam is previewed when asked.
+    const operations: PlanChangeInput["operations"] = [{ fullCourse: true, kind: "setFullCourse" }];
 
     // Everything left comes back, and what the exam's time never fitted with it.
-    expect(view?.pastDateOffer?.effect.lessonsAdded).toBeGreaterThanOrEqual(lessons);
+    expect((await preview(goal.id, operations))?.effect?.lessonsAdded).toBeGreaterThanOrEqual(
+      lessons,
+    );
+
+    // The time it finds names no date: an exam's date is the exam's.
+    await expect(findPlanTimeToCover({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      status: "ready",
+      time: { fittingDate: null },
+    });
 
     const applied = await changeGoalPlan({
       goalId: goal.id,
-      input: { operations: view?.pastDateOffer?.operations ?? [], timeZone: "UTC" },
+      input: { operations, timeZone: "UTC" },
     });
 
     expect(applied.status).toBe("applied");
     await expect(readPlan()).resolves.not.toMatchObject({ status: { kind: "pastDate" } });
   });
 
-  it("is finished, with nothing to offer, when every lesson was studied by the date", async () => {
+  it("is finished when every lesson was studied by the date", async () => {
     const { goal, plan } = await pastDateGoal("learn");
 
     // Every lesson studied and the plan's challenge won (see `finished-plan.test.ts`).
@@ -200,6 +219,5 @@ describe("a plan whose date came with lessons left", () => {
 
     expect(view?.status).toStrictEqual({ kind: "finished" });
     expect(view?.end).toStrictEqual({ kind: "finished" });
-    expect(view?.pastDateOffer).toBeNull();
   });
 });

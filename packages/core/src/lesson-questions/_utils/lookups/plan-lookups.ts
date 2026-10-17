@@ -16,6 +16,7 @@ import {
   isWritingItem,
 } from "../../../plans/_utils/plan-phase-views";
 import { getGoalPlan } from "../../../plans/get-goal-plan";
+import { findPlanTimeToCover } from "../../../plans/get-time-advice";
 import { type PlanPhaseView, type PlanView } from "../../../plans/plan-view-contract";
 import { addDays, fromIsoDate, toIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
@@ -265,6 +266,34 @@ async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
 }
 
 /**
+ * The daily time that covers the learner's whole goal by its date, found by planning it at each
+ * daily time (see `findPlanTimeToCover`): exact, and only when the buddy asks for it, which it does
+ * only for a question about time. Not found without a date or while the plan is being built.
+ */
+async function lookUpTimeToCover(goal: Goal): Promise<GoalTutorLookUpResult> {
+  const what = "timeToCover";
+  const result = await findPlanTimeToCover({ goalId: goal.id, input: {} });
+
+  if (result.status !== "ready" || !result.time.ready || !result.time.targetDate) {
+    return { status: "notFound", what };
+  }
+
+  const { coreMinutes, fittingDate, maximum, measure, recommendedMinutes, targetDate } =
+    result.time;
+
+  return {
+    coreMinutes,
+    fittingDate,
+    maximum,
+    measure,
+    recommendedMinutes,
+    status: "found",
+    targetDate,
+    what,
+  };
+}
+
+/**
  * Reads what a plan lookup asks for (`PLAN_LOOKUPS`) from the learner's own goal: only the goal the
  * answer is about, which `lookUpTutorData` resolved from the signed-in learner's question.
  */
@@ -286,6 +315,8 @@ export function lookUpPlanData({
       return lookUpChallenges(goal);
     case "schedule":
       return lookUpSchedule({ goal, query });
+    case "timeToCover":
+      return lookUpTimeToCover(goal);
     default:
       return what satisfies never;
   }

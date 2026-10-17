@@ -70,6 +70,13 @@ export function PlanDate() {
   const noteFor = useDateNote();
   const course = useFullCourse();
   const [value, setValue] = useState(namedMonth ? "" : (targetDate ?? ""));
+  const [shownDate, setShownDate] = useState(targetDate);
+
+  // Another control moved the date (Move your date): the field shows the plan's new one.
+  if (shownDate !== targetDate) {
+    setShownDate(targetDate);
+    setValue(namedMonth ? "" : (targetDate ?? ""));
+  }
 
   if (goal.kind === "explain") {
     return null;

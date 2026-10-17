@@ -35,7 +35,10 @@ export function PlanChoices() {
   const summaryText = useSummaryText();
   const studyEverything = useStudyEverything();
   const [basesOpen, setBasesOpen] = useState(false);
-  const everything = course && !course.on && !coverage ? course : null;
+  const everything =
+    course && !course.on && !coverage && course.endDate
+      ? { ...course, endDate: course.endDate }
+      : null;
 
   if (!bases && !everything) {
     return null;

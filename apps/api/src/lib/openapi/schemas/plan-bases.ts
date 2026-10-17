@@ -5,8 +5,8 @@ const minutesSchema = z.int().min(1);
 
 /**
  * The plan's bases: the skills its topics or final work build on, worth less to the goal than what
- * builds on them, which the learner chooses how to study (`setBaseChoices`), with what the app
- * recommends.
+ * builds on them, which the learner chooses how to study (`setBaseChoices`). What the app
+ * recommends is asked for (`POST /v1/goals/{goalId}/plan/bases-advice`).
  */
 export const planBasesSchema = z
   .object({
@@ -14,7 +14,7 @@ export const planBasesSchema = z
       .int()
       .nullable()
       .meta({
-        description: "Days until the goal's date, for the recommendation's line; null without one",
+        description: "Days until the goal's date; null without one",
       }),
     items: z.array(
       z
@@ -46,12 +46,6 @@ export const planBasesSchema = z
       .meta({
         description:
           "Bases placement or a test-out found the learner knows: they're out of the plan already. Say so",
-      }),
-    recommended: z
-      .enum(["deep", "essential", "quick"])
-      .meta({
-        description:
-          "deep: the learner's time covers everything with every base in depth; otherwise quick when the goal's date is close (60 days or less), so the time goes to what matters most (what an exam asks most), and essential further away. Recommend it in one line, preselected for each subject; never as a pass. A new plan starts on it",
       }),
   })
   .meta({ id: "PlanBases" }) satisfies z.ZodType<PlanBasesView>;

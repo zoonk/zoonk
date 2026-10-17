@@ -1,3 +1,4 @@
+import { planBasesAdviceSchema } from "@zoonk/core/plans/bases-advice-contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -23,7 +24,7 @@ test.describe("Plan choices API", () => {
     await prisma.$disconnect();
   });
 
-  test("shows an exam's bases with the recommendation, previews a choice without saving it, then saves choices and studies everything", async () => {
+  test("shows an exam's bases, recommends a choice when asked, previews a choice without saving it, then saves choices and studies everything", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "plan-choices",
@@ -36,10 +37,8 @@ test.describe("Plan choices API", () => {
     // Opening the day the learner sees on Today (a POST) lays out the plan the run handed over.
     await openStudyDay({ api: apiContext, goalId: goal.id });
 
-    const before = await readBody({
-      response: await apiContext.get(plan),
-      schema: planResponseSchema,
-    });
+    const read = await apiContext.get(plan);
+    const before = await readBody({ response: read, schema: planResponseSchema });
 
     expect(before.bases).toMatchObject({
       daysLeft: 30,
@@ -48,8 +47,17 @@ test.describe("Plan choices API", () => {
         { area: "Biology", choice: "essential", name: "Living things", neededFor: ["Ecology"] },
       ],
       knownCount: 0,
-      recommended: "quick",
     });
+
+    // Reading the plan never plans every base in depth to recommend a choice: the learner asks.
+    expect((await read.json()).bases).not.toHaveProperty("recommended");
+
+    await expect(
+      readBody({
+        response: await apiContext.post(`${plan}/bases-advice`),
+        schema: planBasesAdviceSchema,
+      }),
+    ).resolves.toStrictEqual({ daysLeft: 30, ready: true, recommended: "quick" });
 
     const [base] = before.bases?.items ?? [];
     const { deep = 0, essential = 0, quick = 0 } = base?.minutes ?? {};
@@ -57,10 +65,6 @@ test.describe("Plan choices API", () => {
     expect(quick).toBeLessThan(essential);
     expect(essential).toBeLessThan(deep);
     expect(before.schedule.fullCourse).toBe(false);
-
-    // Studying everything would end after the exam.
-    const fullCourseEnd = before.feasibility?.fullCourseEndDate ?? "";
-    expect(fullCourseEnd > (before.schedule.targetDate ?? "")).toBe(true);
 
     const quickLessons = [cells, living].map((item) => ({
       choice: "quick" as const,
@@ -145,6 +149,9 @@ test.describe("Plan choices API", () => {
       fullCourse: true,
       targetDate: before.schedule.targetDate,
     });
+
+    // Studying everything ends after the exam: the plan says when once the learner switches it on.
+    expect((after.estimate.endDate ?? "") > (before.schedule.targetDate ?? "")).toBe(true);
 
     await apiContext.dispose();
   });

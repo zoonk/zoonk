@@ -46,6 +46,11 @@ export type TodayActions = {
    * to the change it made, or null when it wasn't saved.
    */
   chooseExamOption: (input: { group: string; subject: string }) => Promise<PlanChangeView | null>;
+  /**
+   * Where choosing the time a day opens (the plan editor at its time a day), as falling behind's
+   * more time and moved date do: the time or date picked there shows what it really covers.
+   */
+  adjustTimeHref: string;
   /** Where choosing where the plan's depth goes opens (the plan's focus). */
   chooseFocusHref: string;
   /** Where studying everything at the learner's own pace opens (the plan's sheet for it). */

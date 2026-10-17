@@ -20,8 +20,9 @@ import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-c
 import { usePlanChange } from "./use-plan-change";
 
 /**
- * The sheet's body: when the learner would finish everything and what it changes, before they
- * choose it, then what their choice did, with Undo.
+ * The sheet's body: what studying everything changes before they choose it, with when they'd
+ * finish when that's the plan's own end (see `useFullCourse`), then what their choice did, with
+ * Undo, which says when they finish.
  */
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
@@ -47,7 +48,11 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
   return (
     <>
       <DrawerContent className="flex flex-col gap-3 pt-2">
-        <p className="font-medium text-pretty">{text.finish(course)}</p>
+        {course.endDate && (
+          <p className="font-medium text-pretty">
+            {text.finish({ ...course, endDate: course.endDate })}
+          </p>
+        )}
         <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 
@@ -144,7 +149,7 @@ export function useStudyEverything(): (course: FullCourse) => void {
 /**
  * "Study everything", next to more time a day and choosing where to focus, for a plan whose time
  * doesn't cover its goal by its date: one small button on the notice's line of answers, opening
- * the sheet that says when the learner would finish everything at their time (an exam's after the
+ * the sheet that says what studying everything at their time changes (an exam's goes on after the
  * exam, which keeps its date) before they choose it.
  */
 export function StudyEverything({ course }: { course: FullCourse }) {

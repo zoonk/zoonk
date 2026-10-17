@@ -21,7 +21,6 @@ import { loadFitOffer } from "./fit-offer";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
-import { loadPastDateOffer } from "./past-date-offer";
 import { findPlanPhase } from "./phase-states";
 import { toPlanBasesView } from "./plan-bases-view";
 import { loadPlanChangeViews } from "./plan-change-view";
@@ -29,7 +28,7 @@ import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
-import { toFeasibilityView, toScreenFeasibilityView } from "./plan-feasibility-view";
+import { toFeasibilityView } from "./plan-feasibility-view";
 import { buildPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
@@ -158,11 +157,12 @@ function readPlanStatus({
 type PlanViewInput = { context: PlanContext; now: Date };
 
 /**
- * The changes the Plan offers worked out before the learner sees them: for a plan whose date came
- * with lessons left, the one that keeps it going; for any other, what the learner's own time fits
- * that it doesn't hold. None while the plan isn't planned.
+ * The lessons the learner's own time fits that the plan doesn't hold, worked out before the
+ * learner sees them: one change at their own time and date. None while the plan isn't planned, or
+ * once its date came with lessons left, whose way on (another date, or an exam's plan going on
+ * after it) the learner previews when they ask.
  */
-async function loadPlanOffers({
+async function loadPlanFitOffer({
   computed,
   context,
   status,
@@ -170,14 +170,12 @@ async function loadPlanOffers({
   computed: ComputedPlan | null;
   context: PlanContext;
   status: PlanView["status"];
-}): Promise<Pick<PlanView, "fitOffer" | "pastDateOffer">> {
-  if (!computed) {
-    return { fitOffer: null, pastDateOffer: null };
+}): Promise<PlanView["fitOffer"]> {
+  if (!computed || status?.kind === "pastDate") {
+    return null;
   }
 
-  return status?.kind === "pastDate"
-    ? { fitOffer: null, pastDateOffer: await loadPastDateOffer(context) }
-    : { fitOffer: await loadFitOffer({ computed, context }), pastDateOffer: null };
+  return loadFitOffer({ computed, context });
 }
 
 export function buildPlanView(input: PlanViewInput & { screen: true }): Promise<PlanScreenView>;
@@ -272,11 +270,7 @@ export async function buildPlanView({
     studiesPastTarget: fullCourse,
   });
 
-  const { fitOffer, pastDateOffer } = await loadPlanOffers({
-    computed,
-    context: savedContext,
-    status,
-  });
+  const fitOffer = await loadPlanFitOffer({ computed, context: savedContext, status });
 
   return {
     access,
@@ -298,15 +292,12 @@ export async function buildPlanView({
     estimate: buildEstimateView({ computed, context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility: computed
-      ? (screen ? toScreenFeasibilityView : toFeasibilityView)(computed.feasibility)
-      : null,
+    feasibility: computed ? toFeasibilityView(computed.feasibility) : null,
     fitOffer: fitOffer && foldChangeAreas({ change: fitOffer, partAreas }),
     goalId: goal.id,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: computed ? await buildPlanNumbersView({ computed, context, saved: true }) : null,
     ownLevel: getOwnLevel({ goal }),
-    pastDateOffer: pastDateOffer && foldChangeAreas({ change: pastDateOffer, partAreas }),
     phases: buildPlanPath({
       challengesOpen: phaseChallengesRequired && !access.freeWeekOver,
       chapterTitles,

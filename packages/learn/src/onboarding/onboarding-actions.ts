@@ -6,6 +6,8 @@ import { type LessonVisual } from "@zoonk/core/library/steps/contract";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
+  type PlanTimeToCover,
+  type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
 import {
@@ -186,13 +188,21 @@ export type OnboardingActions = {
   getPlacementMock: (goalId: string) => Promise<PlacementMockOutcome>;
   getPlan: (goalId: string) => Promise<PlanOutcome>;
   /**
-   * The daily time the goal's plan needs in the week the time question shows: its study days
-   * (Sunday is 0) and, when the weekend has its own time, the weekdays' and the weekend's. Null
-   * when it couldn't be read.
+   * What the time a day picked covers by the goal's date in the week the time question shows: its
+   * study days (Sunday is 0) and, when the weekend has its own time, the weekdays' and the
+   * weekend's. Null when it couldn't be read.
    */
   getTimeAdvice: (
     input: PlanTimeAdviceInput & { goalId: string; studyDays: number[] },
   ) => Promise<PlanTimeAdvice | null>;
+  /**
+   * The daily time that covers the goal by its date in the week the time question shows, when the
+   * learner taps "Find the time that covers everything" (see `PlanTimeToCover`). Null when it
+   * couldn't be found.
+   */
+  findTimeToCover: (
+    input: PlanTimeToCoverInput & { goalId: string; studyDays: number[] },
+  ) => Promise<PlanTimeToCover | null>;
   joinWaitlist: (input: { instrument: string; language: string }) => Promise<WaitlistOutcome>;
   answerPlacement: (input: {
     answer: PlacementAnswer;

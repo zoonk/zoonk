@@ -11,23 +11,27 @@ import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 
 /**
- * Studying everything at the learner's own pace: when they would finish it all at their time, and
- * the change that does it. Any goal with a date but an exam can always drop it (`setTargetDate`
- * null) for the whole course; an exam keeps its date and goes on after it (`setFullCourse`), which
- * changes something only while its time doesn't cover everything by then. Null when there's
- * nothing to choose: no date, a quick explanation, or an exam whose time covers it all.
+ * Studying everything at the learner's own pace, and the change that does it. Any goal with a date
+ * but an exam can always drop it (`setTargetDate` null) for the whole course; an exam keeps its
+ * date and goes on after it (`setFullCourse`), which changes something only while its time
+ * doesn't cover everything by then (`fits`, exact) or while it's on. `endDate` is when they'd
+ * finish it all, only when that's the plan's own end: an exam already studying everything, or a
+ * goal whose plan covers everything. Otherwise working it out would plan the goal again for a
+ * page, so the date shows once the learner switches it on (the applied change says it). Null when
+ * there's nothing to choose: no date, a quick explanation, or an exam whose time covers it all.
  */
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
   const { feasibility, schedule } = plan;
   const isExam = goal.kind === "exam";
+  const fits = feasibility?.fits ?? false;
 
-  const endDate =
-    feasibility?.fullCourseEndDate ?? (isExam ? null : (plan.estimate.endDate ?? null));
-
-  if (goal.kind === "explain" || !schedule.targetDate || !endDate) {
+  if (goal.kind === "explain" || !schedule.targetDate || (isExam && fits && !schedule.fullCourse)) {
     return null;
   }
+
+  const endsWithPlan = isExam ? schedule.fullCourse : fits;
+  const endDate = endsWithPlan ? (plan.estimate.endDate ?? null) : null;
 
   const operations = (on: boolean): LearnerPlanOperation[] =>
     isExam
@@ -59,8 +63,9 @@ export function useFullCourseText() {
     /**
      * "At 3 h a day, you finish in March 2027, after the exam on November 8, 2026": the exam's
      * year is named beside the finish month's, so November 2027 never reads as the exam's month.
+     * Only with the plan's own end (see `useFullCourse`).
      */
-    finish: (course: FullCourse): string => {
+    finish: (course: FullCourse & { endDate: string }): string => {
       const month = formatDate(course.endDate, "month");
 
       return course.isExam
@@ -124,9 +129,11 @@ export function FullCourseSwitch() {
       </div>
 
       <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-        {course.on
-          ? text.finish(course)
-          : t("What doesn't fit by the exam is left out of your plan.")}
+        {course.on && course.endDate
+          ? text.finish({ ...course, endDate: course.endDate })
+          : course.on
+            ? t("Every topic, even after the exam, at your own pace.")
+            : t("What doesn't fit by the exam is left out of your plan.")}
       </p>
 
       {failed && <PlanFailedMessage />}

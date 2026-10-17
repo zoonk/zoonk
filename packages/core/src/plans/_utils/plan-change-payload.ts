@@ -95,6 +95,8 @@ const planChangePayloadSchema = z.object({
   /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.
+   * Changes saved before it said only facts also kept the time and date a search found to offer;
+   * reading drops those keys.
    */
   behind: z
     .object({
@@ -102,10 +104,6 @@ const planChangePayloadSchema = z.object({
       coveredAfter: z.number(),
       coveredBefore: z.number(),
       currentMinutes: z.int().default(0),
-      dailyMinutes: z.int().nullable(),
-      fittingDate: z.string().nullable().default(null),
-      fullDepth: z.boolean(),
-      maximumShare: z.number().nullable().default(null),
       measure: z.enum(["exam", "goal"]),
     })
     .nullable()

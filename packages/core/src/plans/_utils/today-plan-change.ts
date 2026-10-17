@@ -9,14 +9,12 @@ import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { isPlanReady } from "./apply-plan-change";
 import { isAutomaticPlanChange } from "./automatic-plan-change";
 import { computeChange } from "./compute-change";
-import { getBehindChoices } from "./falling-behind";
 import { foldChangeAreas } from "./fold-part-areas";
 import { applyChangeOperations, loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
 import { loadPlanContext } from "./plan-context";
 import { isDateReached } from "./plan-end";
-import { computePlan } from "./replan";
 
 /** An automatic change is news for a day; after that it's simply how the plan is. */
 const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
@@ -99,8 +97,6 @@ async function findTodayChanges({
   return { automatic: automatic ?? null, proposals };
 }
 
-type Behind = NonNullable<PlanChangeView["behind"]>;
-
 /**
  * A proposal weighed against the plan as it is now, with the same dry run as accepting it: its
  * effect, null when the plan isn't ready or its operations can't apply, or `unchanged` when
@@ -182,40 +178,6 @@ async function pickTodayChange({
 }
 
 /**
- * Falling behind's choices as the plan offers them now, as the Plan reads them: the plan can
- * move after the day's settle (lessons written, a session ended), and Rafaela's card said "about
- * 54%" beside her Plan's "about 55%". What the missed days did (covered before and after)
- * stays the settle's.
- */
-async function loadCurrentBehind({
-  behind,
-  goal,
-  now,
-  timeZone,
-}: {
-  behind: Behind;
-  goal: Goal;
-  now: Date;
-  timeZone?: string | null;
-}): Promise<Behind> {
-  const context = await loadPlanContext({ goal, now, timeZone });
-
-  if (!context || context.phases.length === 0 || !isPlanReady(context)) {
-    return behind;
-  }
-
-  const computed = await computePlan({
-    context,
-    mode: "automatic",
-    now,
-    pace: "saved",
-    reuseReadBuild: true,
-  });
-
-  return { ...behind, ...getBehindChoices(computed) };
-}
-
-/**
  * The one plan change Today carries, so the learner can answer it where they are: OK or not now
  * for a proposal, and "Got it" (or an undo, while the plan is still as the change left it) for an
  * automatic change. Null when there's nothing to say.
@@ -259,21 +221,17 @@ export async function loadTodayPlanChange({
   }
 
   const { change, effect } = picked;
-  const { behind, planItemIds } = parsePlanChangePayload(change.payload);
+  const { planItemIds } = parsePlanChangePayload(change.payload);
 
-  const [chapterTitle, partAreas, currentBehind] = await Promise.all([
+  const [chapterTitle, partAreas] = await Promise.all([
     loadSkippedChapterTitle({ kind: change.kind, planItemIds }),
     loadGraphPartAreas({
       examBlueprintId: plan.goal.examBlueprintId,
       graph: parsePlanGraph(plan.graph),
     }),
-    behind ? loadCurrentBehind({ behind, goal, now, timeZone }) : null,
   ]);
 
   const view = toPlanChangeView({ change, goal: plan.goal, planVersion: plan.version });
 
-  return {
-    ...foldChangeAreas({ change: { ...view, behind: currentBehind, effect }, partAreas }),
-    chapterTitle,
-  };
+  return { ...foldChangeAreas({ change: { ...view, effect }, partAreas }), chapterTitle };
 }

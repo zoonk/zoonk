@@ -18,7 +18,7 @@ import { planBasesSchema } from "./plan-bases";
 import { planFeasibilitySchema } from "./plan-feasibility";
 import { planItemSchema } from "./plan-items";
 import { planMockScheduleSchema } from "./plan-mock-schedule";
-import { planFitOfferSchema, planPastDateOfferSchema } from "./plan-offers";
+import { planFitOfferSchema } from "./plan-offers";
 import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
@@ -100,7 +100,7 @@ export const planResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`, see `pastDateOffer`) and required challenges too (status `challengesLeft`)",
+          "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`)",
       }),
     estimate: z.object({
       endDate: isoDateSchema.nullable(),
@@ -136,7 +136,6 @@ export const planResponseSchema = z
     ownLevel: ownLevelSchema
       .nullable()
       .meta({ description: "The level the learner gave; null when they didn't say" }),
-    pastDateOffer: planPastDateOfferSchema,
     phases: z.array(planPhaseSchema),
     planId: z.uuid(),
     ready: z.boolean().meta({ description: "False while the planner is building the plan" }),

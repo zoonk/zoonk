@@ -37,7 +37,8 @@ export type PlanStatus =
   | { kind: "onTrack" }
   /**
    * The plan's date came (see `isDateReached`) with `lessons` left, to do or set aside: the plan
-   * doesn't end, it waits for the learner to adjust it (see `PlanView.pastDateOffer`).
+   * doesn't end, it waits for the learner to adjust it: a goal's date moves to the day its time
+   * covers what's left by (see `findPlanTimeToCover`), an exam's plan goes on after it.
    */
   | { kind: "pastDate"; lessons: number };
 

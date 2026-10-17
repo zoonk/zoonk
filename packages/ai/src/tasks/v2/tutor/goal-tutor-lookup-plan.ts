@@ -2,10 +2,11 @@ import { type TutorLink } from "./goal-tutor-pages";
 
 /**
  * What the buddy can look up about the learner's plan beyond its context: every lesson earlier days
- * left (the context lists the first few), the plan's days ahead, and every challenge and mock
- * ahead. Each item carries where it opens (`link`), as core points at it.
+ * left (the context lists the first few), the plan's days ahead, every challenge and mock ahead,
+ * and the daily time that covers everything, which plans the goal at each daily time, so only a
+ * question about time asks for it. Each item carries where it opens (`link`), as core points at it.
  */
-export const PLAN_LOOKUPS = ["catchUp", "schedule", "challenges"] as const;
+export const PLAN_LOOKUPS = ["catchUp", "schedule", "challenges", "timeToCover"] as const;
 
 export type PlanLookUp = (typeof PLAN_LOOKUPS)[number];
 
@@ -80,6 +81,21 @@ export type PlanLookUpFound =
       /** Weekly challenges and mocks ahead past the ones listed. */
       more: number;
       what: "challenges";
+    }
+  | {
+      /** When even every topic's core lessons don't fit by the date: the fewest minutes a day that bring every topic in. */
+      coreMinutes: number | null;
+      /** A goal that isn't an exam, when no daily time covers it by its date: the earliest date their own time covers it all by. */
+      fittingDate: string | null;
+      /** When no daily time covers everything in depth: what the most minutes a day cover by the date (a share, see `measure`), when it's more than their time does. */
+      maximum: { coveredShare: number; dailyMinutes: number } | null;
+      /** A share of the exam's questions and points (`exam`), or of the goal's skills by weight (`goal`). */
+      measure: "exam" | "goal";
+      /** The fewest minutes a day that study the whole goal in depth by its date; null when no daily time does. */
+      recommendedMinutes: number | null;
+      /** The goal's date. */
+      targetDate: string | null;
+      what: "timeToCover";
     };
 
 /** What each plan lookup holds and when it answers the learner, in the model's words. */
@@ -90,4 +106,6 @@ export const PLAN_LOOKUP_USES: Record<PlanLookUp, string> = {
     "every phase challenge still ahead (in phase order), then the next weekly challenges (`weekly`, the week's mixed challenge) and planned mock exams by day, with `more` for the rest: when each comes (on its `date`, in their next session, or after the challenge before it), its phase, whether starting it needs Plus (`locked`) and its link, and how many of each they already did. Takes no `area` or `query`. For when their next challenges and mocks are.",
   schedule:
     "the plan's study days ahead, up to 14 days from the day in `query` (YYYY-MM-DD; null for the day after the context's `today`, which the context already has): each day's lessons, reviews, challenges and mocks with their status, minutes for this week's days, and the challenges' and mocks' links. Ask again from the day after `to` for later days. For what comes on a day or in the next weeks.",
+  timeToCover:
+    "the daily time that studies their whole goal in depth by its date (`recommendedMinutes`), found by planning the goal at each daily time: exact, so it takes a moment. When no daily time does, what the most time a day covers (`maximum`) and, for a goal that isn't an exam, the earliest date their own time covers everything by (`fittingDate`); when even the topics' cores don't fit, the time that brings every topic in (`coreMinutes`). Takes no `area` or `query`. Only when they ask about their daily time, what more time would cover or when they'd finish everything: never for anything else.",
 };

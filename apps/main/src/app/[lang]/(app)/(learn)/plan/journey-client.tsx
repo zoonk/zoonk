@@ -7,6 +7,8 @@ import {
 } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
+import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
+import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
@@ -19,6 +21,7 @@ import {
   type JourneyLinks,
   JourneyScreen,
   type JourneyStanding,
+  type PlanActions,
   type PlanTutor,
 } from "@zoonk/learn/journey";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
@@ -76,12 +79,13 @@ function getJourneyLinks({
 
 /**
  * The buddy's "Choose where to focus" and Today's "Study everything" lead to the Plan with
- * this, which opens their sheet.
+ * this, which opens their sheet; Today's "more time" opens the plan editor at the time a day.
  */
 const FOCUS_PARAM = "focus";
 const CHOOSE_FOCUS = "choose";
 const STUDY_EVERYTHING = "everything";
 const ADJUST_PLAN = "adjust";
+const ADJUST_TIME = "time";
 
 /** The address the Plan opened at doesn't change while it's open: nothing to listen to. */
 function subscribeToArrival(): () => void {
@@ -123,8 +127,10 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
 
 type JourneyClientProps = Omit<
   JourneyScreenProps,
-  "goalStatus" | "links" | "refresh" | "standing" | "tutor"
+  "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
+  /** The plan's Server Actions; the advice the learner asks for is read from the API here. */
+  actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
   /** Whether the goal's mind maps page lists a chapter (`listGoalMindMaps`). */
@@ -175,6 +181,7 @@ function useGoalStatus({
  * the plan editor's last row does.
  */
 export function JourneyClient({
+  actions,
   buddy,
   goalId,
   goalStatus,
@@ -209,10 +216,15 @@ export function JourneyClient({
     <TopicOutlineProvider value={outlineActions}>
       <JourneyScreen
         {...props}
+        actions={{
+          ...actions,
+          adviseOnBases: () => getGoalBasesAdvice(goalId),
+          findTimeToCover: () => findGoalTimeToCover({ goalId }),
+        }}
         goalStatus={status}
         links={getJourneyLinks({ goalKind: props.goal.kind, hasMindMaps })}
         next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
-        openAdjust={arrival === ADJUST_PLAN}
+        openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}
         refresh={refreshOnPlanChange}

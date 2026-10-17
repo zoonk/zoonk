@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,74 +9,41 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { SuggestionAction } from "../_components/suggestion";
-import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
+import { useRef, useState } from "react";
+import { DoneMark } from "../_components/status-mark";
+import {
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionDescription,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { usePlanScreen } from "./plan-context";
-import { PlanOfferSuggestion } from "./plan-offer-suggestion";
+import {
+  CheckingChange,
+  OfferPreview,
+  getGoalDateMove,
+  useApplyPreview,
+} from "./plan-coverage-suggestion";
+import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
-import { type SlotItem, usePlanSuggestionSlot } from "./plan-suggestion-context";
+import {
+  SlotContent,
+  type SlotItem,
+  SlotUndo,
+  usePlanSuggestionSlot,
+  useSlotAnswer,
+  useSlotAnswered,
+} from "./plan-suggestion-context";
+import { useRequestTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
-type Offer = NonNullable<PlanView["pastDateOffer"]>;
-
-/**
- * What the offer does, over its diff, in the words studying everything and the coverage
- * suggestion use, since the plan then covers everything, what its date had cut included (its diff
- * can add more lessons than were left): a goal's own date moves to the day the learner's time
- * covers everything by; an exam's stays, and every topic comes after it, with when they'd finish.
- * Empty without an offer: the way on is the plan editor.
- */
-function useOfferText() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatGoalDate = useFormatGoalDate();
-  const formatDuration = useFormatDuration();
-  const { plan } = usePlanScreen();
-  const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
-
-  return function offerText(offer: Offer | null): string[] {
-    const [operation] = offer?.operations ?? [];
-    const end = offer?.effect.endDateAfter;
-
-    if (operation?.kind === "setTargetDate" && operation.targetDate) {
-      return [
-        t("Your time covers everything by {date}", {
-          date: formatDate(operation.targetDate, "long"),
-        }),
-      ];
-    }
-
-    if (operation?.kind !== "setFullCourse" || !end || !targetDate) {
-      return [];
-    }
-
-    return [
-      t("Every topic, even after the exam, at your own pace."),
-      t("At {time} a day, you finish in {month}, after the exam on {date}.", {
-        date: formatGoalDate({
-          isoDate: targetDate,
-          namedMonth: targetDateNamedMonth,
-          style: "longYear",
-        }),
-        month: formatDate(end, "month"),
-        time: formatDuration(dailyMinutes),
-      }),
-    ];
-  };
-}
-
-/** The goal's own date the offer moves, from the one the plan has; none for an exam's. */
-function useGoalDateMove() {
-  const { plan } = usePlanScreen();
-
-  return (offer: Offer) => {
-    const [operation] = offer.operations;
-
-    return operation?.kind === "setTargetDate" && operation.targetDate
-      ? { after: operation.targetDate, before: plan.schedule.targetDate }
-      : undefined;
-  };
-}
+/** An exam's date is the exam's: its plan goes on after it, at the learner's pace. */
+const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
 
 /**
  * The other ways on: the plan editor at its date (another date, an exam's next sitting), and "Not
@@ -101,45 +68,159 @@ function OtherOptions({ item }: { item: SlotItem }) {
   );
 }
 
+/** Where finding a goal's new date stands before its preview. */
+type DateSearch = "failed" | "finding" | "noDate" | null;
+
 /**
  * The plan's date came with lessons left (status `pastDate`): the plan doesn't end. The slot says
- * how many lessons are left and offers the one change that keeps the plan going (see
- * `PlanView.pastDateOffer`), worked out before the learner sees it, so its diff shows at once and
- * Apply is one tap (see `PlanOfferSuggestion`): their own date moves to the day their time covers
- * what's left by, or an exam's plan goes on after the exam, whose date is fixed. Lucas, a day past
- * his date, read "Your plan ended · 13 lessons were left out" and was offered the course's next
- * level. Without an offer, the way on is the plan editor at its date.
+ * how many lessons are left and what the change that keeps the plan going does: a goal's own date
+ * moves to the day the learner's time covers what's left, found when they tap Preview (it plans the
+ * goal at each candidate date, so never for the page); an exam's plan goes on after the exam,
+ * whose date is fixed. Preview shows the change's diff, with the date or the end it moves to, and
+ * Apply saves it. Lucas, a day past his date, read "Your plan ended · 13 lessons were left out"
+ * and was offered the course's next level. The editor at its date is the other way on.
  */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();
   const pastDateText = usePastDateText();
-  const offerText = useOfferText();
-  const getGoalDateMove = useGoalDateMove();
+  const texts = useTimeToCoverTexts();
+  const requestTime = useRequestTimeToCover();
   const { goal, plan } = usePlanScreen();
-  const { dismiss, host } = usePlanSuggestionSlot();
-  const offer = plan.pastDateOffer;
-  const { title } = pastDateText({ isExam: goal.kind === "exam", lessons: item.lessons });
+  const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
+  const { apply, failed, isPending } = useApplyPreview(item);
+  const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
+  const [search, setSearch] = useState<DateSearch>(null);
+  // Whether the learner still waits for the date, so one they put off ("Not now") shows nothing.
+  const waiting = useRef(false);
+  const answer = useSlotAnswer(item);
+  const answered = useSlotAnswered(item);
+  const isExam = goal.kind === "exam";
+  const { title } = pastDateText({ isExam, lessons: item.lessons });
+  const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
-  const actions = offer ? (
-    <OtherOptions item={item} />
-  ) : (
-    <>
-      <SuggestionAction onClick={() => host.onEdit("date")}>{t("Adjust plan")}</SuggestionAction>
-      <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
-        {t("Not now")}
-      </SuggestionAction>
-    </>
-  );
+  const showChange = async () => {
+    if (isExam) {
+      setOperations(STUDY_AFTER_EXAM);
+      void requestPreview(STUDY_AFTER_EXAM);
+      return;
+    }
+
+    waiting.current = true;
+    setSearch("finding");
+    const time = await requestTime();
+
+    if (!waiting.current) {
+      return;
+    }
+
+    waiting.current = false;
+
+    if (!time?.fittingDate) {
+      setSearch(time ? "noDate" : "failed");
+      return;
+    }
+
+    const moved: LearnerPlanOperation[] = [{ kind: "setTargetDate", targetDate: time.fittingDate }];
+    setSearch(null);
+    setOperations(moved);
+    void requestPreview(moved);
+  };
+
+  const stopWaiting = () => {
+    waiting.current = false;
+    setSearch(null);
+  };
+
+  const undo = answer && <SlotUndo item={item} />;
+
+  const body = () => {
+    if (preview.status !== "idle" && operations) {
+      return (
+        <OfferPreview
+          goalDate={getGoalDateMove({ operations, targetDate: plan.schedule.targetDate })}
+          onApply={() => apply(preview)}
+          onRetry={() => void requestPreview(operations)}
+          pending={isPending}
+          preview={preview}
+        />
+      );
+    }
+
+    if (search === "finding") {
+      return <CheckingChange onCancel={stopWaiting} />;
+    }
+
+    if (search === "noDate") {
+      return (
+        <>
+          <SuggestionDescription role="status">{texts.noDate}</SuggestionDescription>
+          <SuggestionActions>
+            <SuggestionAction onClick={() => host.onEdit("date")}>{t("Adjust plan")}</SuggestionAction>
+            <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
+              {t("Not now")}
+            </SuggestionAction>
+          </SuggestionActions>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <SuggestionDescription role={search === "failed" ? "status" : undefined}>
+          {search === "failed"
+            ? t("We couldn't check what changes.")
+            : isExam
+              ? t("Every topic, even after the exam, at your own pace.")
+              : t("Your date moves to the day your time covers what's left.")}
+        </SuggestionDescription>
+        <SuggestionActions>
+          <SuggestionAction key="preview" onClick={() => void showChange()}>
+            {search === "failed" ? t("Try again") : t("Preview")}
+          </SuggestionAction>
+          <OtherOptions item={item} />
+        </SuggestionActions>
+      </>
+    );
+  };
 
   return (
-    <PlanOfferSuggestion
-      actions={actions}
-      description={offerText(offer)}
-      goalDate={offer ? getGoalDateMove(offer) : undefined}
-      item={item}
-      mark={<CalendarClockIcon />}
-      offer={offer}
-      title={title}
-    />
+    <Suggestion
+      answered={answered}
+      label={t("Plan suggestion")}
+      mark={answer ? <DoneMark /> : <CalendarClockIcon />}
+    >
+      <SuggestionLine>
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            {undo}
+          </>
+        ) : (
+          <>
+            <SuggestionSummary>{title}</SuggestionSummary>
+            <SuggestionOpen />
+          </>
+        )}
+      </SuggestionLine>
+
+      <SlotContent>
+        <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
+
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            <SuggestionActions>{undo}</SuggestionActions>
+          </>
+        ) : (
+          <>
+            {body()}
+
+            {failed && (
+              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
+            )}
+          </>
+        )}
+      </SlotContent>
+    </Suggestion>
   );
 }

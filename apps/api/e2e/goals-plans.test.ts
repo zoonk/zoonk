@@ -3,7 +3,7 @@ import { request } from "@playwright/test";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planChangedSinceSchema } from "@zoonk/core/plans/changed-since-contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
-import { planTimeAdviceSchema } from "@zoonk/core/plans/time-advice-contract";
+import { planTimeAdviceSchema, planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -288,19 +288,15 @@ test.describe("Goals and plans API", () => {
 
     const [planView, preparation] = await read();
 
-    expect(planView).toMatchObject({
-      end: { kind: "finished" },
-      pastDateOffer: null,
-      status: { kind: "finished" },
-    });
+    expect(planView).toMatchObject({ end: { kind: "finished" }, status: { kind: "finished" } });
 
     expect(preparation.status).toStrictEqual({ kind: "finished" });
     await apiContext.dispose();
   });
 
-  // Lucas's date came with lessons left: his plan read "ended". It keeps going: the plan offers the
-  // change that does it, which clients send back as it is.
-  test("offers the change that keeps a plan going once its date came with lessons left", async () => {
+  // Lucas's date came with lessons left: his plan read "ended". It keeps going: asked, the API finds
+  // the date his time covers what's left by, previews the change and applies it as it is.
+  test("finds, previews and applies the change that keeps a plan going once its date came with lessons left", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL: process.env.E2E_BASE_URL ?? "",
       prefix: "plan-past-date",
@@ -339,18 +335,29 @@ test.describe("Goals and plans API", () => {
     expect(planView).toMatchObject({ end: null, status: { kind: "pastDate", lessons: left } });
     expect(preparation.status).toStrictEqual({ kind: "pastDate", lessons: left });
 
-    const offer = planView.pastDateOffer;
-    const [operation] = offer?.operations ?? [];
     const todayIso = new Date(today).toISOString().slice(0, 10);
 
-    const targetDate = operation?.kind === "setTargetDate" ? operation.targetDate : null;
+    const { fittingDate: targetDate } = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, { data: {} }),
+      schema: planTimeToCoverSchema,
+    });
 
-    expect(offer?.effect.lessonsAdded).toBe(left);
     expect(targetDate && targetDate > todayIso).toBe(true);
+
+    const operations = [{ kind: "setTargetDate", targetDate }];
+
+    const preview = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/change-previews`, {
+        data: { operations, timeZone: "UTC" },
+      }),
+      schema: planChangePreviewSchema,
+    });
+
+    expect(preview.effect?.lessonsAdded).toBe(left);
 
     const changed = await readBody({
       response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
-        data: { operations: offer?.operations ?? [] },
+        data: { operations },
       }),
       schema: planChangeResultSchema,
     });
@@ -363,7 +370,6 @@ test.describe("Goals and plans API", () => {
     });
 
     expect(after.status?.kind).not.toBe("pastDate");
-    expect(after.pastDateOffer).toBeNull();
 
     expect(after.schedule.targetDate).toBe(targetDate);
 
@@ -496,7 +502,7 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
-  test("recommends the daily time that covers the goal by its date: the one the plan shows", async () => {
+  test("says what a daily time covers, and finds the time that covers the goal only when asked", async () => {
     const [{ apiContext, user }, stranger] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "plans-time-advice" }),
       userFixture(),
@@ -528,7 +534,7 @@ test.describe("Goals and plans API", () => {
     const advice = await readBody({ response: everyDay, schema: planTimeAdviceSchema });
 
     expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate });
-    expect(advice.recommendedMinutes).toBeGreaterThan(12);
+    expect(advice.coveredShare).toBeLessThan(1);
     expect(advice.numbers).not.toBeNull();
     expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
@@ -543,11 +549,11 @@ test.describe("Goals and plans API", () => {
       Object.values(advice.numbers!.workload).reduce((sum, minutes) => sum + minutes, 0),
     );
 
-    const visiblePlan = await readBody({ response: plan, schema: planResponseSchema });
+    // Reads say only what the learner's own time does: no other daily time is searched for them.
+    expect(await everyDay.json()).not.toHaveProperty("recommendedMinutes");
+    expect((await plan.json()).feasibility).not.toHaveProperty("recommendedMinutes");
 
-    expect(visiblePlan).toMatchObject({
-      feasibility: { recommendedMinutes: advice.recommendedMinutes },
-    });
+    const visiblePlan = await readBody({ response: plan, schema: planResponseSchema });
 
     expect(visiblePlan.numbers?.context).toEqual(advice.numbers?.context);
     expect(visiblePlan.numbers?.coverage?.coveredShare).toBe(visiblePlan.feasibility?.coveredShare);
@@ -567,29 +573,77 @@ test.describe("Goals and plans API", () => {
 
     expect([invalid.status(), tooLong.status(), hidden.status()]).toStrictEqual([400, 400, 404]);
 
-    // The time question's estimate: what the time a day the learner looks at covers by the date,
-    // all of it at the time recommended, and never another time recommended.
-    const [atRecommended, atLeast, tooMuch] = await Promise.all([
-      apiContext.get(
-        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${advice.recommendedMinutes}`,
-      ),
+    // The learner asks for the time that covers everything: the fewest minutes that do.
+    const [found, foundWeekdays, foundWeekend, badDays, badWeekend, foundHidden] =
+      await Promise.all([
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, { data: {} }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
+          data: { studyDays: [1, 2, 3, 4, 5] },
+        }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
+          data: { weekendMinutes: 120 },
+        }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, { data: { studyDays: [7] } }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
+          data: { weekendMinutes: 999 },
+        }),
+        apiContext.post(`/v1/goals/${other.goal.id}/plan/time-to-cover`, { data: {} }),
+      ]);
+
+    const time = await readBody({ response: found, schema: planTimeToCoverSchema });
+
+    expect(time).toMatchObject({ measure: "goal", ready: true, targetDate });
+    expect(time.recommendedMinutes).toBeGreaterThan(12);
+
+    await expect(
+      readBody({ response: foundWeekdays, schema: planTimeToCoverSchema }),
+    ).resolves.toMatchObject({ ready: true });
+
+    await expect(
+      readBody({ response: foundWeekend, schema: planTimeToCoverSchema }),
+    ).resolves.toMatchObject({ ready: true });
+
+    expect([badDays.status(), badWeekend.status(), foundHidden.status()]).toStrictEqual([
+      400, 400, 404,
+    ]);
+
+    // What it found is exact: the plan at that time covers everything, and less time doesn't.
+    const [atFound, atLeast, tooMuch] = await Promise.all([
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${time.recommendedMinutes}`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=5`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=999`),
     ]);
 
     await expect(
-      readBody({ response: atRecommended, schema: planTimeAdviceSchema }),
-    ).resolves.toMatchObject({ coveredShare: 1, recommendedMinutes: advice.recommendedMinutes });
+      readBody({ response: atFound, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ coveredShare: 1 });
 
     const least = await readBody({ response: atLeast, schema: planTimeAdviceSchema });
 
     expect(least.coveredShare).toBeLessThan(1);
-    expect(least.recommendedMinutes).toBe(advice.recommendedMinutes);
     expect(tooMuch.status()).toBe(400);
+
+    // Finding the time changes nothing: the goal keeps its own time until the learner picks one.
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
+        schema: planTimeAdviceSchema,
+      }),
+    ).resolves.toMatchObject({ coveredShare: advice.coveredShare });
 
     /** The first day rests: its budget must use the scalar that accepting the weekend saves. */
     const weekday = new Date().getUTCDay();
     const studyDays = [0, 6].filter((day) => day !== weekday);
+
+    // Only the weekend's own 5 minutes: no weekday time covers more, so none is found.
+    await expect(
+      readBody({
+        response: await apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
+          data: { studyDays, weekendMinutes: 5 },
+        }),
+        schema: planTimeToCoverSchema,
+      }),
+    ).resolves.toMatchObject({ maximum: null, ready: true, recommendedMinutes: null });
 
     const weekendOnly = await readBody({
       response: await apiContext.get(
@@ -598,7 +652,6 @@ test.describe("Goals and plans API", () => {
       schema: planTimeAdviceSchema,
     });
 
-    expect(weekendOnly).toMatchObject({ maximum: null, recommendedMinutes: null });
     expect(weekendOnly.coveredShare).toBeLessThan(1);
 
     await expect(

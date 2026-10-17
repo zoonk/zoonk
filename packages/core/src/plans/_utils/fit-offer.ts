@@ -58,6 +58,6 @@ export async function loadFitOffer({
   });
 
   return change && !change.unchanged && change.effect.lessonsAdded > 0
-    ? { effect: change.effect, operations: FIT_OPERATIONS }
+    ? { effect: change.effect, fits: change.computed.feasibility.fits, operations: FIT_OPERATIONS }
     : null;
 }

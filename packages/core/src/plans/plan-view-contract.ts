@@ -191,16 +191,21 @@ export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay:
 /**
  * A plan with nothing left to do and every lesson studied or tested out (see `isPlanFinished`):
  * apps celebrate it and show what to study next. A plan whose date came with lessons left isn't
- * over: its status says `pastDate`, and `PlanView.pastDateOffer` keeps it going.
+ * over: its status says `pastDate`, and a change of date (an exam's plan going on after it) keeps
+ * it going.
  */
 type PlanEndView = { kind: "finished" };
 
 /**
  * A change the Plan offers, with what it does, computed before the learner sees it so Apply is one
- * tap after its diff: the one that keeps a plan going once its date came with lessons left (see
- * `pastDateOffer`), or the lessons the learner's own time fits (see `fitOffer`).
+ * tap after its diff: the lessons the learner's own time fits (see `fitOffer`).
  */
-export type PlanOffer = { effect: PlanEffect; operations: LearnerPlanOperation[] };
+export type PlanOffer = {
+  effect: PlanEffect;
+  /** The plan with the change covers everything in depth by its date, as that change plans it. */
+  fits: boolean;
+  operations: LearnerPlanOperation[];
+};
 
 /**
  * The checkpoint that closes a phase (the Trickster), by its plan item, whose page is its intro:
@@ -295,15 +300,14 @@ export type PlanBaseView = {
 };
 
 /**
- * The plan's bases with what the app recommends for them: `deep` when the time covers everything
- * with every base in depth, else `quick` for a date close by and `essential` further away.
- * `knownCount` bases placement or a test-out found the learner knows are out of the plan already.
+ * The plan's bases as the learner chooses how to study them. What the app recommends plans every
+ * base in depth, so the learner asks for it (see `PlanBasesAdvice`). `knownCount` bases placement
+ * or a test-out found the learner knows are out of the plan already.
  */
 export type PlanBasesView = {
   daysLeft: number | null;
   items: PlanBaseView[];
   knownCount: number;
-  recommended: Exclude<BaseChoice, "skip">;
 };
 
 /**
@@ -367,34 +371,21 @@ export type PlanView = {
   examChoices: ExamChoiceView[];
   /** What the exam's official documents are, for the plan's words (see `ExamDocument`). */
   examDocument: ExamDocument;
+  /**
+   * What the learner's own time covers by the goal's date, read from their plan: exact, and nothing
+   * about other daily times or dates, which the learner asks for (see `findPlanTimeToCover`).
+   */
   feasibility: {
-    alternative: { dailyMinutes: number; endDate: string | null } | null;
     /** Every topic (every skill's core) is in the plan; false only when even the cores don't fit. */
     coreFits: boolean;
-    /** When the cores don't all fit: the fewest daily minutes that bring every topic in. */
-    coreMinutes: number | null;
     /** The share of everything, in depth, the plan covers (see `measure`). */
     coveredShare: number;
     deadline: string | null;
     /** The topics the exam asks most keep more of their depth than the others. */
     deepensMostAsked: boolean;
     fits: boolean;
-    /**
-     * When no daily time covers a goal that isn't an exam by its date: the earliest date the
-     * learner's time covers everything by.
-     */
-    fittingDate: string | null;
-    /**
-     * When the plan leaves something out by its date: the day the learner finishes everything at
-     * their time, studying it all (an exam's after the exam, any other goal's without a date).
-     */
-    fullCourseEndDate: string | null;
-    /** When no daily time covers everything: what the most time a day covers, when it's more. */
-    maximum: { coveredShare: number; dailyMinutes: number } | null;
     /** A share of the exam's questions and points, or of the goal's skills by their weight. */
     measure: "exam" | "goal";
-    /** The daily minutes that study everything in depth. */
-    recommendedMinutes: number | null;
     /**
      * The learner's own daily time covers everything once the plan is planned again at it (see
      * `PlanFeasibility.timeCovers`): what the plan leaves out comes at their time (`fitOffer`).
@@ -423,13 +414,6 @@ export type PlanView = {
   fitOffer: PlanOffer | null;
   /** Future todo mocks whose saved funding has started, with real item IDs and durations. */
   fundedMocks: (PlanItemView & { id: string })[];
-  /**
-   * The one change that keeps the plan going when its date came with lessons left: a goal's own
-   * date moves to the day the learner's time covers what's left by (`setTargetDate`); an exam's
-   * date is the exam's, so its plan goes on after it at the learner's pace (`setFullCourse`). Null
-   * otherwise, and when no change brings the lessons back.
-   */
-  pastDateOffer: PlanOffer | null;
   phases: PlanPhaseView[];
   planId: string;
   /** False while the planner is still building the plan. */
@@ -492,7 +476,5 @@ export type PlanView = {
   writtenPractice: WrittenPractice | null;
 };
 
-/** Screens recommend the time for depth; the full API view also gives time for every topic. */
-export type PlanScreenView = Omit<PlanView, "feasibility"> & {
-  feasibility: Omit<NonNullable<PlanView["feasibility"]>, "coreMinutes"> | null;
-};
+/** The plan as the screens read it: the same view the API gives (see `getGoalPlanScreen`). */
+export type PlanScreenView = PlanView;

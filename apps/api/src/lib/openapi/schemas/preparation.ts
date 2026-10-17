@@ -80,7 +80,7 @@ export const planStatusSchema = z
       })
       .meta({
         description:
-          "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the plan's `pastDateOffer` (GET /v1/goals/{goalId}/plan), which keeps it going",
+          "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the change that keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)",
       }),
   ])
   .meta({ id: "PlanStatus" });

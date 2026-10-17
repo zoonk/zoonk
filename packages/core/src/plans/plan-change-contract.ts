@@ -43,29 +43,6 @@ export const planChangeSchema = z
           .int()
           .min(0)
           .meta({ description: "The learner's daily time, which covers coveredAfter" }),
-        dailyMinutes: z
-          .int()
-          .nullable()
-          .meta({
-            description:
-              "The daily time to offer: the one that covers the whole goal in depth again (fullDepth), else the most time a day; null when the learner already gives it",
-          }),
-        fittingDate: isoDateSchema
-          .nullable()
-          .meta({
-            description:
-              "When no daily time covers a goal that isn't an exam: the date the learner's time covers it all by, offered instead of more time (setTargetDate)",
-          }),
-        fullDepth: z.boolean(),
-        maximumShare: z
-          .number()
-          .min(0)
-          .max(1)
-          .nullable()
-          .meta({
-            description:
-              "When no daily time covers the goal (fullDepth false): the share dailyMinutes, the most time a day, covers by the date",
-          }),
         measure: z
           .enum(["exam", "goal"])
           .meta({ description: "A share of the exam's questions and points, or of the goal" }),
@@ -73,7 +50,7 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it). Offer that daily time, keeping the time with less depth, or choosing where to focus. On Today, the choices (dailyMinutes, fullDepth, maximumShare, fittingDate, canFocus) are the plan's as it is now, the same the plan's feasibility says. Null when the date isn't at risk",
+          "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
       }),
     canUndo: z
       .boolean()

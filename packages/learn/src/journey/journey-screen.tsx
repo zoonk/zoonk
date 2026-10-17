@@ -166,8 +166,11 @@ function useGoalMenu(control: GoalStatusControl | null) {
   return { archive, archiving, goal, resume, resumePreview, resuming, setArchiving, setResuming };
 }
 
-/** "Adjust plan", opened at one of its settings or from its top. */
-function usePlanEditor(openOnArrival: boolean) {
+/**
+ * "Adjust plan", opened at one of its settings or from its top. An arrival opens it from its top
+ * (`true`) or at the setting it names, as Today's "more time" opens it at the time a day.
+ */
+function usePlanEditor(arrival: boolean | PlanEditorSection) {
   const [editor, setEditor] = useState<{ open: boolean | null; section: PlanEditorSection | null }>(
     { open: null, section: null },
   );
@@ -176,8 +179,13 @@ function usePlanEditor(openOnArrival: boolean) {
   // while closing the editor still sticks for as long as the learner stays on the Plan.
   useLayoutEffect(() => () => setEditor({ open: null, section: null }), []);
 
+  const { open, section } = editor;
+
   return {
-    editor: { ...editor, open: editor.open ?? openOnArrival },
+    editor:
+      open === null
+        ? { open: arrival !== false, section: typeof arrival === "string" ? arrival : null }
+        : { open, section },
     open: (section: PlanEditorSection | null = null) => setEditor({ open: true, section }),
     setOpen: (open: boolean) => setEditor((current) => ({ ...current, open })),
   };
@@ -196,7 +204,7 @@ function JourneyBody({
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
   next: JourneyNext | null;
-  openAdjust: boolean;
+  openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
   syllabus: SyllabusView | null;
 }) {
@@ -338,8 +346,11 @@ export function JourneyScreen({
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
   next?: JourneyNext | null;
-  /** Opens the plan editor on arrival, as Today's fewer-lessons notice offers. */
-  openAdjust?: boolean;
+  /**
+   * Opens the plan editor on arrival, as Today's fewer-lessons notice offers, or at one of its
+   * settings, as Today's falling-behind "more time" opens it at the time a day.
+   */
+  openAdjust?: boolean | PlanEditorSection;
   /** Opens "Choose where to focus" on arrival, as the buddy's offer asks. */
   openFocus?: boolean;
   /** Opens "Study everything" on arrival, as Today's offer asks. */

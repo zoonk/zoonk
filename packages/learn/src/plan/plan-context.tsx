@@ -1,14 +1,17 @@
 "use client";
 
+import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
 import {
   type LearnerPlanOperation,
   type PlanChangeDecisionInput,
 } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanScreenView } from "@zoonk/core/plans/view-contract";
-import { createContext, use, useCallback, useEffect, useRef } from "react";
+import { createContext, use, useCallback, useEffect, useRef, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { isSamePreviewPlan } from "./plan-preview-state";
 
 /**
  * What a change did: applied (with the change, null while the plan isn't built yet), or for a focus
@@ -28,6 +31,15 @@ export type PlanActions = {
   change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
   /** What a change would do before the learner makes it; nothing is saved. Null when it failed. */
   preview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
+  /**
+   * The daily time that covers the whole goal by its date in the plan's own week, and for a goal
+   * that isn't an exam the date its time covers everything by, found when the learner taps "Find
+   * the time that covers everything" (see `PlanTimeToCover`). Nothing is saved and the plan isn't
+   * read again, so the page and its prefetched links stay as they are. Null when it failed.
+   */
+  findTimeToCover: () => Promise<PlanTimeToCover | null>;
+  /** What the app recommends for the plan's bases, when the learner asks; null when it failed. */
+  adviseOnBases: () => Promise<PlanBasesAdvice | null>;
   decide: (input: {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
@@ -78,6 +90,25 @@ type PlanScreenValue = {
   shareHref: string;
 };
 
+/**
+ * The learner's "Find the time that covers everything" for the plan as it is now: asked, waiting,
+ * answered, failed, or found the plan being built again. It belongs to the plan it was found for
+ * (`plan`, see `isSamePreviewPlan`): any change to the plan (its time, days, date, focus or bases)
+ * leaves it behind, and Find shows again while the plan still falls short.
+ */
+export type TimeToCoverState =
+  | { status: "idle" }
+  | { plan: object; status: "building" | "failed" | "pending" }
+  | { plan: object; status: "answered"; time: PlanTimeToCover };
+
+/** The find answer the Plan's card and editor share, since they ask the same question. */
+type TimeToCoverStore = {
+  /** The plan an answer is for: the same object while refreshes deliver it again unchanged. */
+  plan: object;
+  set: React.Dispatch<React.SetStateAction<TimeToCoverState>>;
+  state: TimeToCoverState;
+};
+
 /** Where focus goes when a save takes its control away and nothing closer can take it. */
 export const PLAN_TITLE_ID = "plan-title";
 
@@ -85,6 +116,7 @@ export const PLAN_TITLE_ID = "plan-title";
 type FocusTarget = () => HTMLElement | null;
 
 type PlanScreenContextValue = PlanScreenValue & {
+  timeToCover: TimeToCoverStore;
   /**
    * Call as a save starts. If the save takes the focused control away (an answered change leaves,
    * a tool's choice replaces its button), focus moves to `target` or the plan's title once the saved
@@ -136,6 +168,23 @@ function useKeepFocus(plan: PlanScreenView) {
   );
 }
 
+const IDLE: TimeToCoverState = { status: "idle" };
+
+/** One find answer for the plan as it is now (see `TimeToCoverState`). */
+function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
+  const [base, setBase] = useState<object>(plan);
+  const [state, set] = useState<TimeToCoverState>(IDLE);
+  const changed = !isSamePreviewPlan({ current: plan, previous: base });
+
+  if (changed) {
+    setBase(plan);
+  }
+
+  const current = changed ? plan : base;
+
+  return { plan: current, set, state: state.status !== "idle" && state.plan === current ? state : IDLE };
+}
+
 export function PlanScreenProvider({
   children,
   value,
@@ -144,8 +193,11 @@ export function PlanScreenProvider({
   value: PlanScreenValue;
 }) {
   const keepFocus = useKeepFocus(value.plan);
+  const timeToCover = useTimeToCoverStore(value.plan);
 
-  return <PlanScreenContext value={{ ...value, keepFocus }}>{children}</PlanScreenContext>;
+  return (
+    <PlanScreenContext value={{ ...value, keepFocus, timeToCover }}>{children}</PlanScreenContext>
+  );
 }
 
 export function usePlanScreen(): PlanScreenContextValue {

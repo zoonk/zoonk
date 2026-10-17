@@ -1,5 +1,7 @@
 "use client";
 
+import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
+import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type OnboardingView } from "@zoonk/core/view-models/onboarding/contract";
 import { type PlanActions } from "@zoonk/learn/journey";
@@ -13,7 +15,8 @@ export function StepsClient(props: {
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   onboarding: OnboardingView;
-  planActions: PlanActions;
+  /** The plan's Server Actions; the advice the learner asks for is read from the API here. */
+  planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
 }) {
   const navigation = useOnboardingNavigation();
   const goalId = props.onboarding.goal.id;
@@ -30,6 +33,11 @@ export function StepsClient(props: {
     <StepsFlow
       {...props}
       actions={WEB_ONBOARDING_ACTIONS}
+      planActions={{
+        ...props.planActions,
+        adviseOnBases: () => getGoalBasesAdvice(goalId),
+        findTimeToCover: () => findGoalTimeToCover({ goalId }),
+      }}
       generation={generation}
       navigation={navigation}
       routes={WEB_ONBOARDING_ROUTES}

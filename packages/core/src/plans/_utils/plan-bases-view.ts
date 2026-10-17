@@ -11,7 +11,7 @@ export function toPlanBasesView({
   bases,
   settings,
 }: {
-  bases: PlanBases;
+  bases: Pick<PlanBases, "bases" | "daysLeft">;
   settings: Pick<PlanSettings, "baseChoices">;
 }): PlanBasesView | null {
   if (bases.bases.length === 0) {
@@ -41,6 +41,5 @@ export function toPlanBasesView({
           ],
     ),
     knownCount: bases.bases.filter((base) => base.known).length,
-    recommended: bases.recommended,
   };
 }

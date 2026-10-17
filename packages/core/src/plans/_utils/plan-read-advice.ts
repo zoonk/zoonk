@@ -6,7 +6,12 @@ import { type PlanBases } from "../planner/plan-bases";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
 import { type PlanAnalysisPurpose, readPlanAnalysis } from "./read-plan-analysis";
 
-/** Read advice stays synchronous to consumers; callbacks and mutation analysis stay local. */
+/**
+ * Read advice stays synchronous to consumers; callbacks and mutation analysis stay local. A read
+ * takes what the plan covers at the learner's own time from the cached analysis; what other daily
+ * times would do stays a local, lazy search that no read asks for (reads advise with estimates, see
+ * `estimatePlanAdvice`).
+ */
 export async function loadPlanReadAdvice({
   advise,
   examSubjects,
@@ -33,19 +38,44 @@ export async function loadPlanReadAdvice({
 
   const analysis =
     reuseReadBuild && readAnalysis && !studyScheduleAt
-      ? await readPlanAnalysis({ examSubjects, input, landing, purpose: readAnalysis, userId })
+      ? await readPlanAnalysis({ examSubjects, input, landing, userId })
       : null;
 
   return {
-    bases: () => analysis?.bases ?? bases(),
+    bases: () =>
+      analysis
+        ? {
+            ...analysis.bases,
+            // Plans every base in depth: never read for a page (see `getPlanBasesAdvice`).
+            get recommended() {
+              return bases().recommended;
+            },
+          }
+        : bases(),
     feasibility: () =>
       analysis
         ? {
             ...analysis.feasibility,
+            get alternative() {
+              return local().alternative;
+            },
             get coreMinutes() {
-              return readAnalysis === "full"
-                ? (analysis.feasibility.coreMinutes ?? null)
-                : local().coreMinutes;
+              return local().coreMinutes;
+            },
+            get fittingDate() {
+              return local().fittingDate;
+            },
+            get fullCourseEndDate() {
+              return local().fullCourseEndDate;
+            },
+            get maximum() {
+              return local().maximum;
+            },
+            get recommendedMinutes() {
+              return local().recommendedMinutes;
+            },
+            get timeCovers() {
+              return local().timeCovers;
             },
           }
         : local(),

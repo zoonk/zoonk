@@ -18,8 +18,9 @@ import { readBuiltPlan } from "./_utils/read-built-plan";
 import { readPlanAnalysis } from "./_utils/read-plan-analysis";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan, getGoalPlanScreen } from "./get-goal-plan";
 import { getGoalResumePreview } from "./get-goal-resume-preview";
+import { findPlanTimeToCover } from "./get-time-advice";
 import { previewPlanChange } from "./preview-plan-change";
 
 // Observe the Next cache leaf while executing its real planner. Auth/cache are the existing
@@ -277,7 +278,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     const screen = await getGoalPlanScreen(goal.id);
     expect(screen.status).toBe("ready");
     const args = vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0];
-    expect(args).toMatchObject({ input: { goalId: goal.id }, purpose: "screen" });
+    expect(args).toMatchObject({ input: { goalId: goal.id } });
     expect(args).not.toHaveProperty("planned");
     expect(args).toHaveProperty("landing");
 
@@ -336,7 +337,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     await expect(savedPlan(plan.id)).resolves.toStrictEqual(before);
   });
 
-  it("shares the real past-date offer's undated and candidate builds without changing the plan", async () => {
+  it("finds a past date's new date only when asked, sharing its builds without changing the plan", async () => {
     const { goal, plan } = await setup();
 
     await expect(
@@ -350,26 +351,31 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     const before = await savedPlan(plan.id);
     vi.mocked(readBuiltPlan).mockClear();
 
-    const result = await getGoalPlanScreen(goal.id);
-
-    expect(result).toMatchObject({
-      plan: {
-        pastDateOffer: { operations: [{ kind: "setTargetDate", targetDate: expect.any(String) }] },
-        status: { kind: "pastDate" },
-      },
-      status: "ready",
-    });
-
-    expect(
+    const undatedBuilds = () =>
       vi
         .mocked(readBuiltPlan)
-        .mock.calls.some(
+        .mock.calls.filter(
           ([args]) =>
             args.input.goalId === goal.id &&
             args.input.mode === "forced" &&
             args.input.goal.targetDate === null,
-        ),
-    ).toBe(true);
+        ).length;
+
+    await expect(getGoalPlanScreen(goal.id)).resolves.toMatchObject({
+      plan: { status: { kind: "pastDate" } },
+      status: "ready",
+    });
+
+    // Reading the plan searches no date: no plan without its date is built for the screen.
+    expect(undatedBuilds()).toBe(0);
+
+    // The learner asks: the date search plans its undated and candidate builds as cached reads.
+    await expect(findPlanTimeToCover({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      status: "ready",
+      time: { fittingDate: expect.any(String) },
+    });
+
+    expect(undatedBuilds()).toBeGreaterThan(0);
 
     await expect(savedPlan(plan.id)).resolves.toStrictEqual(before);
   });
@@ -495,7 +501,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     expect(actual.items.some((item) => item.kind === "boss" && item.minutes === 9)).toBe(true);
   });
 
-  it("compiles our full actor key, nested analysis and tags with the installed Next compiler", async () => {
+  it("compiles our full actor key and nested analysis, kept across writes, with the installed Next compiler", async () => {
     const { goal, user } = await setup();
     await getGoalPlanScreen(goal.id);
     const owned = lastRead(goal.id);
@@ -526,11 +532,10 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     await expect(platform.readPlanAnalysis(analysis)).resolves.toStrictEqual(screen);
     expect(platform.fills).toHaveLength(3);
 
-    const full = await platform.readPlanAnalysis({ ...analysis, purpose: "full" });
-    expect(full.feasibility).toHaveProperty("coreMinutes");
-    expect(platform.coreSearches()).toBe(1);
-    expect(full.bases).toStrictEqual(screen.bases);
-    expect(full.feasibility.endDate).toStrictEqual(screen.feasibility.endDate);
+    // The API's full plan reads the same analysis: its core time is an estimate, never a search.
+    await getGoalPlan(goal.id);
+    expect(vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0]).toStrictEqual(analysis);
+    expect(platform.coreSearches()).toBe(0);
 
     mockSession(user.id);
 
@@ -541,9 +546,18 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
       }),
     ).resolves.toMatchObject({ status: "applied" });
 
+    // The key is all a build reads: the change's write leaves the old input's entries as they
+    // are (nothing in them went stale), and the plan read after it reads under its own key.
     const before = platform.fills.length;
     await platform.readBuiltPlan(owned);
     await platform.readPlanAnalysis(analysis);
-    expect(platform.fills).toHaveLength(before + 2);
+    expect(platform.fills).toHaveLength(before);
+
+    vi.mocked(readBuiltPlan).mockClear();
+    await getGoalPlanScreen(goal.id);
+    const changed = lastRead(goal.id);
+    await expect(encodedKey(changed)).resolves.not.toBe(await encodedKey(owned));
+    await platform.readBuiltPlan(changed);
+    expect(platform.fills).toHaveLength(before + 1);
   });
 });

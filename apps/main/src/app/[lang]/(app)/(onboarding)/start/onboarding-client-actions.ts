@@ -2,7 +2,7 @@ import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
 import { rememberLocale } from "@/i18n/remember-locale";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
-import { getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
+import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { withLearnerWrite } from "@/lib/learner/learner-views";
@@ -55,6 +55,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     (await ensureGuestSession())
       ? withLearnerWrite(() => createOnboardingGoalsAction(input), isCreated)
       : { status: "failed" },
+  findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
   getPlacementMock: getPlacementMockAction,

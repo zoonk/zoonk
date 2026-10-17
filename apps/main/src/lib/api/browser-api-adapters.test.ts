@@ -24,9 +24,14 @@ vi.mock("react", async (importOriginal) => ({
   useMemo: <T>(make: () => T) => make(),
 }));
 
-// The advice's schema isn't what's under test: whatever arrives passes through.
+// The advice's schemas aren't what's under test: whatever arrives passes through.
 vi.mock("@zoonk/core/plans/time-advice-contract", () => ({
   planTimeAdviceSchema: { safeParse: (data: unknown) => ({ data }) },
+  planTimeToCoverSchema: { safeParse: (data: unknown) => ({ data }) },
+}));
+
+vi.mock("@zoonk/core/plans/bases-advice-contract", () => ({
+  planBasesAdviceSchema: { safeParse: (data: unknown) => ({ data }) },
 }));
 
 const first = tagOf("first");
@@ -63,14 +68,34 @@ const ADAPTERS = [
     received: { source: { id: "source", title: "My notes" }, status: "attached" },
   },
   {
-    answer: { recommendedMinutes: 45 },
+    answer: { coveredShare: 0.8 },
     ask: async () => {
       const { getGoalTimeAdvice } = await import("@/lib/goals/goal-time-advice");
       return getGoalTimeAdvice({ dailyMinutes: 30, goalId: "goal", studyDays: [1, 2, 3] });
     },
     dropped: null,
     name: "a goal's time advice",
+    received: { coveredShare: 0.8 },
+  },
+  {
+    answer: { recommendedMinutes: 45 },
+    ask: async () => {
+      const { findGoalTimeToCover } = await import("@/lib/goals/goal-time-advice");
+      return findGoalTimeToCover({ goalId: "goal" });
+    },
+    dropped: null,
+    name: "the time that covers a goal",
     received: { recommendedMinutes: 45 },
+  },
+  {
+    answer: { recommended: "quick" },
+    ask: async () => {
+      const { getGoalBasesAdvice } = await import("@/lib/goals/goal-bases-advice");
+      return getGoalBasesAdvice("goal");
+    },
+    dropped: null,
+    name: "a plan's bases advice",
+    received: { recommended: "quick" },
   },
   {
     answer: { generationId: "run", status: "generating" },

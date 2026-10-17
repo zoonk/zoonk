@@ -3,7 +3,7 @@ import { type BuildPlanInput, buildPlan } from "../planner/build-plan";
 import { fromIsoDate } from "../planner/plan-calendar";
 import { getPlanFeasibility } from "../planner/plan-feasibility";
 import { parsePlanSettings } from "../planner/plan-state";
-import { getBehindChoices } from "./falling-behind";
+import { getFallingBehind } from "./falling-behind";
 
 function input(): BuildPlanInput {
   return {
@@ -27,41 +27,50 @@ function input(): BuildPlanInput {
   };
 }
 
-describe(getBehindChoices, () => {
+describe(getFallingBehind, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("keeps exact notice advice without computing unused topic-time and full-course alternatives", () => {
+  it("says what the missed days did at the learner's time, without planning other daily times or dates", () => {
     const source = input();
     const feasibility = getPlanFeasibility({ input: source, planned: buildPlan(source) });
-    // Observe the real lazy getters; their calculations and returned values are unchanged.
-    const core = vi.spyOn(feasibility, "coreMinutes", "get");
-    const fullCourse = vi.spyOn(feasibility, "fullCourseEndDate", "get");
-    const alternative = vi.spyOn(feasibility, "alternative", "get");
-    const endDate = vi.spyOn(feasibility, "endDate", "get");
-    const covers = vi.spyOn(feasibility, "timeCovers", "get");
+    // Observe the real lazy getters: each one plans the goal again at other daily times or dates.
+    const searches = (
+      [
+        "alternative",
+        "coreMinutes",
+        "fittingDate",
+        "fullCourseEndDate",
+        "maximum",
+        "recommendedMinutes",
+        "timeCovers",
+      ] as const
+    ).map((field) => vi.spyOn(feasibility, field, "get"));
 
-    const choices = getBehindChoices({
-      feasibility,
-      state: {
-        goal: { dailyMinutes: source.goal.dailyMinutes, targetDate: "2026-10-12" },
-        graph: source.graph,
-        settings: source.settings,
+    const behind = getFallingBehind({
+      computed: {
+        feasibility,
+        state: {
+          goal: { dailyMinutes: source.goal.dailyMinutes, targetDate: "2026-10-12" },
+          graph: source.graph,
+          settings: source.settings,
+        },
       },
+      context: { plan: { coveredShare: 1 } },
     });
 
-    expect(choices).toStrictEqual({
+    expect(feasibility.coveredShare).toBeLessThan(1);
+
+    expect(behind).toStrictEqual({
       canFocus: true,
+      coveredAfter: Math.round(feasibility.coveredShare * 100) / 100,
+      coveredBefore: 1,
       currentMinutes: 10,
-      dailyMinutes: feasibility.recommendedMinutes,
-      fittingDate: null,
-      fullDepth: true,
-      maximumShare: null,
       measure: "goal",
     });
 
-    for (const getter of [core, fullCourse, alternative, endDate, covers]) {
+    for (const getter of searches) {
       expect(getter).not.toHaveBeenCalled();
     }
   });

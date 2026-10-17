@@ -1,28 +1,22 @@
 "use client";
 
-import { getRecommendedTime } from "@zoonk/core/plans/time-advice-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatShare } from "../_utils/percent";
+import { useState } from "react";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
+import { useRequestTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
 /** Below half a percent, the share would read "0%". */
 const MIN_SHOWN_SHARE = 0.005;
 
 /**
- * The daily time a plan that doesn't cover the whole goal can switch to: the one time plans
- * recommend (`getRecommendedTime`), the same number the time step said.
- */
-type CoverageTarget = NonNullable<ReturnType<typeof getRecommendedTime>>;
-
-/**
- * How far the learner's time goes before their date, the daily time worth switching to, and, when
- * no daily time covers a goal that isn't an exam, the earliest date their time covers it by
- * (`fittingDate`). Null when the plan covers everything in depth or has no date to cover it by.
+ * How far the learner's own time goes before their date, exactly as their plan has it. Null when
+ * the plan covers everything in depth or has no date to cover it by. What other daily times or
+ * dates would do is the learner's to ask for (see `useTimeToCover`).
  */
 export function usePlanCoverage() {
   const { plan } = usePlanScreen();
@@ -36,9 +30,7 @@ export function usePlanCoverage() {
     coreFits: feasibility.coreFits,
     coveredShare: feasibility.coveredShare,
     deepensMostAsked: feasibility.deepensMostAsked,
-    fittingDate: feasibility.fittingDate,
     measure: feasibility.measure,
-    target: getRecommendedTime(feasibility),
   };
 }
 
@@ -107,89 +99,67 @@ export function CoveredSentence(props: CoveredProps) {
 }
 
 /**
- * The time worth switching to, and what it does: everything in depth, or, when no daily time
- * covers the goal by its date, honestly how much of it the most time a day studies in depth. Both
- * say "in depth": the share is of everything there is to study, so it never reads against the
- * learner's own time studying every topic (Rafaela read "even at 4 h, about 80%" over "2 h a day
- * studies every topic").
- */
-export function useTargetText() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const formatShare = useFormatShare();
-
-  return (target: CoverageTarget): string => {
-    const time = formatDuration(target.dailyMinutes);
-
-    switch (target.kind) {
-      case "inDepth":
-        return t("To study everything in depth: {time} a day.", { time });
-      case "more":
-        return t(
-          "Even at {time} a day, you'd study about {share} of everything in depth by your date.",
-          { share: formatShare(target.coveredShare), time },
-        );
-      default:
-        return target satisfies never;
-    }
-  };
-}
-
-/**
- * When the learner's own time a day covers everything, for a goal no daily time covers by its
- * date: the plan's notice and editor, and Today's card after days away, say it the same way.
- */
-export function useFittingDateText() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const formatDate = useFormatIsoDate();
-
-  return ({ dailyMinutes, fittingDate }: { dailyMinutes: number; fittingDate: string }): string =>
-    t("At {time} a day, your plan covers everything by {date}.", {
-      date: formatDate(fittingDate, "long"),
-      time: formatDuration(dailyMinutes),
-    });
-}
-
-export function TargetSentence({ target }: { target: CoverageTarget }) {
-  const targetText = useTargetText();
-  return <p className="font-semibold">{targetText(target)}</p>;
-}
-
-/**
- * One tap to the earliest date the learner's time covers everything by (see `usePlanCoverage`);
- * the plan re-plans from today and shows it. `onSwitched` hears when the move was saved.
+ * "Move your date to cover everything", for a goal that isn't an exam: one tap moves its date to
+ * the earliest day the learner's own time covers everything by. That's the date Find found for
+ * this plan when it found one; otherwise the tap finds it first, under the same pending state.
+ * The plan then re-plans from today and shows its new date. `onSwitched` hears when the move was
+ * saved.
  */
 export function MoveDateSwitch({
-  fittingDate,
   onSwitched,
+  ref,
 }: {
-  fittingDate: string;
   onSwitched?: () => void;
+  ref?: React.Ref<HTMLButtonElement>;
 }) {
   const t = useExtracted();
+  const texts = useTimeToCoverTexts();
+  const { answered } = useTimeToCover();
+  const requestTime = useRequestTimeToCover();
   const { change, failed, isPending } = usePlanChange();
+  const [finding, setFinding] = useState(false);
+  const [outcome, setOutcome] = useState<"failed" | "noDate" | null>(null);
+  const pending = finding || isPending;
 
-  const moveDate = () =>
-    change([{ kind: "setTargetDate", targetDate: fittingDate }], (outcome) => {
-      if (outcome?.status === "applied") {
+  const moveDate = async () => {
+    setOutcome(null);
+    setFinding(true);
+    const time = answered ?? (await requestTime());
+    setFinding(false);
+
+    if (!time?.fittingDate) {
+      setOutcome(time ? "noDate" : "failed");
+      return;
+    }
+
+    void change([{ kind: "setTargetDate", targetDate: time.fittingDate }], (saved) => {
+      if (saved?.status === "applied") {
         onSwitched?.();
       }
     });
+  };
 
   return (
     <>
       <Button
+        aria-busy={pending || undefined}
         className="self-start"
-        disabled={isPending}
+        disabled={pending}
         focusableWhenDisabled
         onClick={() => void moveDate()}
+        ref={ref}
         size="sm"
         variant="outline"
       >
+        {pending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
         {t("Move your date to cover everything")}
       </Button>
-      {failed && <PlanFailedMessage />}
+      {(failed || outcome === "failed") && <PlanFailedMessage />}
+      {outcome === "noDate" && (
+        <p className="text-destructive-text text-sm" role="alert">
+          {texts.noDate}
+        </p>
+      )}
     </>
   );
 }

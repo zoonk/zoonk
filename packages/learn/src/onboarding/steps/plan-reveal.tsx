@@ -196,10 +196,12 @@ export function PlanReveal({
   }
 
   const refreshingActions: PlanActions = {
+    adviseOnBases: planActions.adviseOnBases,
     change: (operations) => refreshAfter(planActions.change(operations)),
     chooseExamOption: (input) => refreshAfter(planActions.chooseExamOption(input)),
     chooseTools: (input) => refreshAfter(planActions.chooseTools(input)),
     decide: (input) => refreshAfter(planActions.decide(input)),
+    findTimeToCover: planActions.findTimeToCover,
     preview: planActions.preview,
   };
 

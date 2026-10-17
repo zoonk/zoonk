@@ -4,7 +4,6 @@ import { useExtracted } from "next-intl";
 import { SuggestionAction } from "../_components/suggestion";
 import { useFormatGoalDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
-import { useTimeEnough } from "./plan-coverage";
 import { PlanOfferSuggestion } from "./plan-offer-suggestion";
 import { type SlotItem, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useTopicsMovedSentence } from "./use-coverage-sentence";
@@ -14,7 +13,8 @@ const NAMED_TOPICS = 2;
 
 /**
  * The lessons the learner's own time fits that the plan doesn't hold (see `PlanView.fitOffer`),
- * at their time: "Your time covers everything by Oct 20" when it brings the rest of the goal in,
+ * at their time: "Your time covers everything by Oct 20" when the change it plans brings the rest
+ * of the goal in (its own result, so the title and the diff come from one plan),
  * "3 more lessons fit in your time" when it brings in more depth, with the topics that come back
  * and the diff, then Apply or "Not now". Pedro, ahead of his dated plan with every lesson done, was
  * offered "10 min a day covers everything" beside his 15, and a won challenge added 4 lessons
@@ -24,14 +24,13 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
   const t = useExtracted();
   const formatGoalDate = useFormatGoalDate();
   const topicsMoved = useTopicsMovedSentence();
-  const timeEnough = useTimeEnough();
   const { dismiss } = usePlanSuggestionSlot();
   const { plan } = usePlanScreen();
   const offer = plan.fitOffer;
   const { targetDate, targetDateNamedMonth } = plan.schedule;
 
   const title =
-    timeEnough && targetDate
+    offer?.fits && targetDate
       ? t("Your time covers everything by {date}", {
           date: formatGoalDate({
             isoDate: targetDate,
