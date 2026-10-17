@@ -364,6 +364,28 @@ describe("falling behind", () => {
     expect(found?.recommendedMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
   });
 
+  it("asks what to do when the one day left can't hold what days away left", async () => {
+    const user = await learner();
+    const { goal, plan } = await datedGoal(user.id);
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+    // Away until the day before the date: one day of 12 minutes for 24 minutes of lessons.
+    setToday("2020-10-08");
+    const result = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+    expect(result.status).toBe("ready");
+
+    const [change] = await prisma.planChange.findMany({ where: { planId: plan.id } });
+    const { behind } = parsePlanChangePayload(change?.payload);
+
+    expect(change?.kind).toBe("missedDays");
+    expect.soft(behind).toMatchObject({ coveredBefore: 1, measure: "goal" });
+    expect.soft(behind?.coveredAfter ?? 1).toBeLessThan(1);
+
+    // The plan the settling saved says what the one day holds.
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect.soft(saved.coveredShare ?? 1).toBeLessThan(1);
+  });
+
   it("leaves the date that covers it all to the learner's Find when no daily time does, and Today says only what the missed days did", async () => {
     const user = await learner();
 

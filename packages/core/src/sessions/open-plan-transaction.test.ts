@@ -8,6 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getGoalPlan } from "../plans/get-goal-plan";
 import * as producer from "../plans/planner/build-plan";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { toDayBlockRef } from "./day-block";
@@ -185,5 +186,29 @@ describe("opening a real-size selected plan", () => {
     await expect(
       prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
     ).resolves.toMatchObject({ learnerRevision: actor.learnerRevision });
+  });
+
+  // Away from 09-30 to 12-20: 1440 minutes of lessons left, and the twelve days of an hour left to
+  // the date hold about a quarter of them. Settled, the plan carries them all, dating what the days
+  // can't hold with the last of it, so it must not say they fit.
+  it("tells a learner back from weeks away that the date is at risk, and the plan says it", async () => {
+    const fixture = await setup();
+    const input = { goalId: fixture.goal.id, shownDate: "2026-12-20", timeZone: "UTC" };
+    const today = await getTodayView(input);
+    const notice = today.status === "ready" ? today.today.planChange : null;
+
+    expect.soft(notice).toMatchObject({ behind: { coveredBefore: 1 }, kind: "missedDays" });
+    expect.soft(notice?.behind?.coveredAfter ?? 1).toBeLessThan(1);
+
+    await expect(openStudyDay(input)).resolves.toMatchObject({ status: "opened" });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+    expect.soft(saved.coveredShare ?? 1).toBeLessThan(1);
+
+    const read = await getGoalPlan(fixture.goal.id);
+
+    expect
+      .soft(read.status === "ready" ? read.plan.feasibility : null)
+      .toMatchObject({ fits: false, timeCovers: false });
   });
 });

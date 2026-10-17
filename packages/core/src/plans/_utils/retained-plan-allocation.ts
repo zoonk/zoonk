@@ -39,9 +39,22 @@ function retainPlanAllocation({
       return [];
     }
 
-    const days: [string, number, number][] = facts.days ?? [
-      [toIsoDate(item.scheduledFor), facts.minutes, facts.parts.written + facts.parts.unwritten],
-    ];
+    // A one-day lesson's facts don't say whether its day held its time; the same work planned
+    // again does. Work earlier days left that the days before the deadline can't hold is dated with
+    // the last of it and takes none (see `placeCarriedWork`), so its day holds none of it either.
+    const timed = item.status !== "todo" || built.lessonRawMinutes.has(key);
+
+    const days: [string, number, number][] =
+      facts.days ??
+      (timed
+        ? [
+            [
+              toIsoDate(item.scheduledFor),
+              facts.minutes,
+              facts.parts.written + facts.parts.unwritten,
+            ],
+          ]
+        : []);
 
     return [{ days, end: fromIsoDate(facts.teachingEnd ?? toIsoDate(item.scheduledFor)), key }];
   });

@@ -5,7 +5,6 @@ import { type ExamSubjectShare, getExamWorth } from "./feasibility-coverage";
 import { hasEveryTopic } from "./feasibility-topics";
 import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
-import { toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { type SkillRequirement, isCompleted } from "./selected-requirement";
 
@@ -62,31 +61,29 @@ function listScope({
   };
 }
 
-/** The raw lesson minutes an item's time takes on days before the deadline (see `lessonRawMinutes`). */
+/**
+ * The raw lesson minutes an item's time takes on days before the deadline (see `lessonRawMinutes`).
+ * An item the plan dates without time of its own takes none: work earlier days left that the days
+ * before the deadline can't hold is due with the last of it (see `placeCarriedWork`), and counting
+ * it there told a learner back from weeks away that everything still fit.
+ */
 function sumRawBefore({
   built,
   deadline,
   item,
-  raw,
 }: {
   built: BuiltPlan;
   deadline: string;
   item: PlannedItem;
-  raw: number;
 }): number {
-  const days = built.lessonRawMinutes.get(item.key);
-
-  if (!days) {
-    return item.scheduledFor && toIsoDate(item.scheduledFor) < deadline ? raw : 0;
-  }
-
+  const days = built.lessonRawMinutes.get(item.key) ?? new Map<string, number>();
   return [...days].reduce((sum, [day, minutes]) => (day < deadline ? sum + minutes : sum), 0);
 }
 
 /**
  * The raw minutes each of the plan's written lessons covers by the deadline: whole when completed,
  * else its time's portions on days before it, so a long lesson that runs past the deadline counts
- * only what comes before. A lesson the plan doesn't hold covers nothing.
+ * only what comes before. A lesson the plan doesn't hold, or dates without time, covers nothing.
  */
 function listCoveredLessons({
   built,
@@ -110,7 +107,7 @@ function listCoveredLessons({
       }
 
       return item.status === "todo"
-        ? [[item.lessonId, sumRawBefore({ built, deadline, item, raw: minutes })] as const]
+        ? [[item.lessonId, sumRawBefore({ built, deadline, item })] as const]
         : [];
     }),
   );
@@ -129,7 +126,7 @@ function listCoveredStandIns({
       return covered;
     }
 
-    const before = sumRawBefore({ built, deadline, item, raw: 0 });
+    const before = sumRawBefore({ built, deadline, item });
     return covered.set(item.skillId, (covered.get(item.skillId) ?? 0) + before);
   }, new Map<string, number>());
 }
