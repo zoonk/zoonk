@@ -35,12 +35,12 @@ export type GoalTimeZoneMove =
  * Why a move found nothing to do once it held the learner's lock: the learner studied while it
  * waited (`studied`, the day stays theirs until the next one), another writer moved the zone
  * first (`zoneChanged`), a midnight passed that changes whether the plan's days move
- * (`dayChanged`), or the goal Today follows was paused, completed or archived (`goalNotActive`).
- * Only `zoneChanged` and `dayChanged` are worth trying again from a fresh read of the goal.
+ * (`dayChanged`), or the follow's caller no longer admits the goal (`refused`: Today no longer
+ * shows it a day). Only `zoneChanged` and `dayChanged` are worth trying again from a fresh read.
  *
  * @internal
  */
-export type TimeZoneUnchangedReason = "dayChanged" | "goalNotActive" | "studied" | "zoneChanged";
+export type TimeZoneUnchangedReason = "dayChanged" | "refused" | "studied" | "zoneChanged";
 
 /**
  * The move can't happen after all, found once it held the learner's lock: thrown so the caller's
@@ -97,12 +97,6 @@ function getNextDayStart(goal: { timezone: string | null }, checkedAt: Date): nu
     localDate: new Date(today.getTime() + MS_PER_DAY),
     timeZone,
   }).getTime();
-}
-
-/** Whether the goal is still active as the writer's transaction reads it now. */
-async function isGoalActive(tx: TransactionClient, goalId: string): Promise<boolean> {
-  const goal = await tx.goal.findUnique({ select: { status: true }, where: { id: goalId } });
-  return goal?.status === "active";
 }
 
 /** The goal's stored zone as the writer's transaction reads it now; undefined once it's gone. */
@@ -194,6 +188,9 @@ export async function moveGoalTimeZoneInTransaction(
   return { kind: "moved", learnerRevision, planInputsChanged: true };
 }
 
+/** A caller's check that it still wants the move, read through the move's transaction. */
+type FollowAdmits = (tx: TransactionClient) => Promise<boolean>;
+
 /**
  * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
  * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
@@ -201,14 +198,14 @@ export async function moveGoalTimeZoneInTransaction(
  * read itself again once; a goal that couldn't move says when it may (`retryAt`).
  */
 export async function followGoalTimeZone({
+  admits,
   attempt = 1,
   goalId,
-  requireActive,
   timeZone,
 }: {
+  admits?: FollowAdmits;
   attempt?: number;
   goalId: string;
-  requireActive?: boolean;
   timeZone: string;
 }): Promise<FollowGoalTimeZoneResult> {
   const owned = await findOwnedGoal(goalId);
@@ -217,32 +214,33 @@ export async function followGoalTimeZone({
     return owned;
   }
 
-  return followOwnedGoalTimeZone({ attempt, owned, requireActive, timeZone });
+  return followOwnedGoalTimeZone({ admits, attempt, owned, timeZone });
 }
 
 /**
  * `followGoalTimeZone` for a goal a public boundary already resolved from the session (Today, which
  * admits the goal first). A move that lost a race to another writer, or to midnight, tries once
- * more from a fresh read of the goal. With `requireActive` (Today's GET), only an active goal
- * moves, checked again under the locks: a goal paused while it waited for them keeps its zone.
+ * more from a fresh read of the goal. With `admits` (Today's GET: `stillAdmitted`), the move
+ * commits only while its caller still admits the goal, checked under the locks the move holds: a
+ * writer that changed what Today shows while the move waited rolls it back.
  *
  * @internal
  */
 export async function followOwnedGoalTimeZone({
+  admits,
   attempt = 1,
   owned,
-  requireActive = false,
   timeZone,
 }: {
+  admits?: FollowAdmits;
   attempt?: number;
   owned: Extract<OwnedGoal, { status: "ready" }>;
-  requireActive?: boolean;
   timeZone: string;
 }): Promise<FollowGoalTimeZoneResult> {
   const { goal, userId } = owned;
 
-  // Already the goal's zone, or a goal Today refuses: nothing moves, so no transaction is opened.
-  if (timeZone === goal.timezone || (requireActive && goal.status !== "active")) {
+  // Already the goal's zone: nothing can move, so no transaction is opened for it.
+  if (timeZone === goal.timezone) {
     return { moved: false, retryAt: Date.now(), status: "ready" };
   }
 
@@ -255,9 +253,9 @@ export async function followOwnedGoalTimeZone({
         userId,
       });
 
-      // A pause that committed while the move waited for its locks reads here: undo the move then.
-      if (requireActive && result.kind === "moved" && !(await isGoalActive(tx, goal.id))) {
-        throw new TimeZoneUnchangedError("goalNotActive", Date.now());
+      // A writer that committed while the move waited for its locks reads here: undo the move then.
+      if (admits && result.kind === "moved" && !(await admits(tx))) {
+        throw new TimeZoneUnchangedError("refused", Date.now());
       }
 
       return result;
@@ -272,7 +270,7 @@ export async function followOwnedGoalTimeZone({
     const raced = error.reason === "zoneChanged" || error.reason === "dayChanged";
 
     if (raced && attempt < MAX_FOLLOW_ATTEMPTS) {
-      return followGoalTimeZone({ attempt: attempt + 1, goalId: goal.id, requireActive, timeZone });
+      return followGoalTimeZone({ admits, attempt: attempt + 1, goalId: goal.id, timeZone });
     }
 
     return { moved: false, retryAt: error.retryAt, status: "ready" };

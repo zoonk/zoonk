@@ -111,6 +111,56 @@ async function refusedTodayFixture(refusal: "explainOnly" | "guestOnboarding" | 
   return { goal, plan, user };
 }
 
+/**
+ * Ana's goal in São Paulo, which Today shows a day for, and what her other device commits while
+ * Today's follow waits: archiving her last study goal (her quick explanation then has no day), or
+ * clearing a guest's onboarding answers (her goal then waits for them again).
+ */
+async function admittedTodayFixture(change: "lastStudyGoalArchived" | "onboardingCleared") {
+  const user = await userFixture();
+
+  if (change === "lastStudyGoalArchived") {
+    const study = await goalFixture({ userId: user.id });
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { kind: "explain", timezone: SAO_PAULO },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const write = (tx: TransactionClient) =>
+      tx.goal.update({ data: { status: "archived" }, where: { id: study.id } });
+
+    return { goal, plan, user, write };
+  }
+
+  const { goal, plan } = await sessionGoalFixture({
+    goal: {
+      dailyMinutes: 30,
+      kind: "exam",
+      targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
+      timezone: SAO_PAULO,
+    },
+    lessons: 1,
+    userId: user.id,
+  });
+
+  const details = {
+    answered: ["level", "targetDate", "buddy", "placement", "schedule"],
+    courseStart: { chapterId: null, dailyMinutes: 30 },
+    level: "basic",
+  };
+
+  await prisma.goal.update({ data: { details }, where: { id: goal.id } });
+  mockGuestSession(user.id);
+
+  const write = (tx: TransactionClient) =>
+    tx.goal.update({ data: { details: {} }, where: { id: goal.id } });
+
+  return { goal, plan, user, write };
+}
+
 /** The learner's revision and their goal plan's input version and pending reasons, as writers raise them. */
 async function readVersions({ planId, userId }: { planId: string; userId: string }) {
   const [user, plan] = await Promise.all([
@@ -716,6 +766,47 @@ describe("Today following the device while another writer holds the learner's lo
       learnerRevision: before.learnerRevision + 1n,
     });
   });
+
+  it.each([
+    ["lastStudyGoalArchived", "noGoal"],
+    ["onboardingCleared", "preparing"],
+  ] as const)(
+    "keeps the zone, revision and plan of a goal Today stops showing while its follow waits (%s: %s)",
+    async (change, status) => {
+      const { goal, plan, user, write } = await admittedTodayFixture(change);
+      const timeZone = zoneOnAnotherDay();
+
+      await expect(getTodayView({ goalId: goal.id, timeZone })).resolves.toMatchObject({
+        status: "ready",
+      });
+
+      const before = await readVersions({ planId: plan.id, userId: user.id });
+      const waitingBefore = new Set(await waitingOnRevision());
+      const other = holdLearnerLock(user.id, write);
+      await other.held;
+      const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone });
+
+      try {
+        await untilQueued(waitingBefore);
+      } finally {
+        other.release();
+      }
+
+      await other.done;
+      const followed = await today;
+      const refused = await getTodayView({ goalId: goal.id, timeZone });
+
+      expect(refused).toMatchObject({ status });
+      expect(followed).toStrictEqual(refused);
+      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
+
+      // Only the other writer's own revision: the refused read wrote nothing.
+      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+        ...before,
+        learnerRevision: before.learnerRevision + 1n,
+      });
+    },
+  );
 });
 
 describe("the moment a follow that couldn't move may ask again", () => {

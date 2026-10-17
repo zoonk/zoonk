@@ -28,7 +28,7 @@ import { type DayView } from "../../sessions/day-view";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
 import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
-import { type TodayAdmission, admitToday } from "./_utils/admit-today";
+import { type TodayAdmission, admitToday, stillAdmitted } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
@@ -345,7 +345,12 @@ export async function getTodayViewFollowingDevice(
     return readAdmittedToday({ admission, timeZone });
   }
 
-  await followOwnedGoalTimeZone({ owned: admission.owned, requireActive: true, timeZone });
+  // The move commits only while Today still shows the goal a day, as read under its locks.
+  await followOwnedGoalTimeZone({
+    admits: (tx) => stillAdmitted(tx, admission),
+    owned: admission.owned,
+    timeZone,
+  });
 
   // The follow may have moved the goal, or met another writer who just did: Today admits it again.
   const admitted = await admitToday(admission.owned.goal.id);
