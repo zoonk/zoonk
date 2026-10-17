@@ -9,6 +9,7 @@ import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 async function openBasesPlan(browser: Browser) {
   const user = await createE2EUser(getBaseURL());
@@ -67,6 +68,16 @@ test("coverage Apply requires a fresh preview after Adjust plan changes the sche
 }) => {
   const { goal, page } = await openBasesPlan(browser);
   await page.setViewportSize({ height: 900, width: 1440 });
+
+  // Main's E2E runs without the API: Find's search answers an hour a day, more than her 15 minutes
+  // and the 30 she picks later, so each Find previews a change.
+  await routeTimeToCover(page, {
+    goalId: goal.id,
+    time: {
+      recommendedMinutes: 60,
+      targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null,
+    },
+  });
 
   const suggestion = page
     .getByRole("group", { exact: true, name: "Plan suggestion" })

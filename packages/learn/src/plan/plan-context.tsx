@@ -9,7 +9,16 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
-import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
@@ -260,7 +269,9 @@ function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
   const counts = useRef({ saving: 0, started: 0 });
 
-  useEffect(() => {
+  // In the commit that hides or removes the plan, not after it: a link's transition can commit the
+  // departure before passive effects run, and a Find answering then would still move the date.
+  useLayoutEffect(() => {
     const current = counts.current;
 
     return () => {
