@@ -49,14 +49,14 @@ export const planNumbersSchema = z
     }),
     coverage: z
       .object({
-        basis: z.literal("graphSized"),
+        basis: z.literal("selected"),
         coveredShare: z.number().min(0).max(1),
         measure: z.enum(["exam", "goal"]),
         scope: z.literal("selectedCurriculum"),
       })
       .nullable()
       .describe(
-        "Existing graph-sized feasibility coverage by the date. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
+        "What the plan covers by the date, the share it saves: each measured skill's lesson time the plan lays out before the deadline, over what its chosen requirement needs. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
       ),
     milestoneExtraMinutesBeforeDeadline: minutesSchema
       .nullable()

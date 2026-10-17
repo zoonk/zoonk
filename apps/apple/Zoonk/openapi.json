@@ -32506,13 +32506,13 @@
           },
           "coverage": {
             "nullable": true,
-            "description": "Existing graph-sized feasibility coverage by the date. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
+            "description": "What the plan covers by the date, the share it saves: each measured skill's lesson time the plan lays out before the deadline, over what its chosen requirement needs. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
             "type": "object",
             "properties": {
               "basis": {
                 "type": "string",
                 "enum": [
-                  "graphSized"
+                  "selected"
                 ]
               },
               "coveredShare": {

@@ -3,6 +3,7 @@ import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { fromIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { parsePlanSettings } from "./plan-state";
+import { type PlannerLesson } from "./plan-units";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 const SKILLS = ["a", "b", "c"];
@@ -136,5 +137,63 @@ describe("selected coverage of shared lessons", () => {
 
     expect(result.coverage.coveredShare).toBeCloseTo(5 / 6);
     expect(result.requirement).toStrictEqual({ doneRaw: 9, remainingRaw: 3, totalRaw: 12 });
+  });
+});
+
+/** A skill's lessons the Library wrote, each 3 minutes long. */
+function writeLessons(skillId: string, count: number): PlannerLesson[] {
+  return Array.from({ length: count }, (_, index) => ({
+    chapterId: `${skillId}-chapter`,
+    lessonId: `${skillId}-${index}`,
+    minutes: 3,
+    skillIds: [skillId],
+    title: `${skillId} ${index}`,
+  }));
+}
+
+/** A learn plan due in two months: four lessons, a skill not outlined yet, then four more. */
+const LANDING: BuildPlanInput = {
+  goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2020-11-30") },
+  graph: {
+    phases: [{ milestone: null, name: "Only" }],
+    skills: [
+      { area: "First", lessons: 4, name: "first", phase: 0, skillId: "first", weight: 1 },
+      { area: "Landed", lessons: 8, name: "landed", phase: 0, skillId: "landed", weight: 1 },
+      { area: "Last", lessons: 4, name: "last", phase: 0, skillId: "last", weight: 1 },
+    ],
+  },
+  items: [],
+  lessons: [...writeLessons("first", 4), ...writeLessons("last", 4)],
+  mockMinutes: 150,
+  mode: "forced",
+  paceFactor: 1,
+  prerequisites: new Map(),
+  readiness: new Map(),
+  settings: parsePlanSettings({ startDate: "2020-09-28" }),
+  today: TODAY,
+};
+
+describe("selected coverage of lessons that land in a stand-in's place", () => {
+  // The Library writing a skill's lessons changes nothing the plan covers when they take its
+  // stand-in's time: a landing run places them by that time, so they count by it, as does what's
+  // left of the stand-in when it wrote only some.
+  it.each([8, 4])("counts %i written lessons as covered, as their stand-in was", (written) => {
+    const before = measure(LANDING);
+
+    const after = measure({
+      ...LANDING,
+      items: before.built.items.map((item, position) => ({ ...item, id: item.key, position })),
+      landedOnly: true,
+      lessons: [...LANDING.lessons, ...writeLessons("landed", written)],
+      mode: "automatic",
+    });
+
+    const landed = after.built.items.filter((item) => item.skillId === "landed" && item.lessonId);
+    expect(landed).toHaveLength(written);
+
+    expect({
+      after: after.coverage.coveredShare,
+      before: before.coverage.coveredShare,
+    }).toStrictEqual({ after: 1, before: 1 });
   });
 });

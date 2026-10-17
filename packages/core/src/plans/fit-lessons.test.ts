@@ -42,13 +42,14 @@ describe("lessons the learner's own time fits", () => {
     const { goal, plan } = await aheadPlanFixture({ dailyMinutes: 15, faster: true });
     const before = await readPlanScreen();
 
-    // Their time covers everything once planned again: no other time is offered, and the offer's
-    // own change says it covers everything ("Your time covers everything by …").
-    expect(before?.feasibility).toMatchObject({ coreFits: false, fits: false, timeCovers: true });
+    // The plan leaves topics out, and his own time planned again doesn't hold every lesson the
+    // Library wrote by his date either: the offer comes because every lesson the plan holds is done.
+    expect(before?.feasibility).toMatchObject({ coreFits: false, fits: false, timeCovers: false });
 
+    // The change brings Stocks back, and says what it is: his time still doesn't hold every lesson.
     expect(before?.fitOffer).toMatchObject({
       effect: { topicsAdded: [{ area: "Stocks" }] },
-      fits: true,
+      fits: false,
       operations: [{ kind: "fitLessons" }],
     });
 
@@ -66,8 +67,9 @@ describe("lessons the learner's own time fits", () => {
 
     await expect(countLessonsLeft(plan.id)).resolves.toBeGreaterThan(0);
 
+    // After Apply the Plan says what the offer said: every topic is in, and whether it all fits.
     await expect(readPlanScreen()).resolves.toMatchObject({
-      feasibility: { coreFits: true, fits: true },
+      feasibility: { coreFits: true, fits: before?.fitOffer?.fits },
       fitOffer: null,
     });
 
@@ -125,6 +127,28 @@ describe("lessons the learner's own time fits", () => {
     const applied = await countLessonsLeft(plan.id);
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
     await expect(countLessonsLeft(plan.id)).resolves.toBe(applied);
+  });
+
+  // The first case's plan at the pace it was made at: a session's refresh no longer saves his
+  // faster pace. The offer and the Plan read after Apply measure the same plan, so they say the
+  // same: the four lessons the Library wrote for each topic don't all fit by his date at 15
+  // minutes a day, so neither says his time covers everything.
+  it("says after Apply what the offer said at the plan's own pace", async () => {
+    const { goal } = await aheadPlanFixture({ dailyMinutes: 15 });
+    const before = await readPlanScreen();
+
+    expect(before?.fitOffer).toMatchObject({ operations: [{ kind: "fitLessons" }] });
+
+    await expect(
+      changeGoalPlan({ goalId: goal.id, input: { operations: [{ kind: "fitLessons" }] } }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const after = await readPlanScreen();
+
+    expect({ offer: before?.fitOffer?.fits, read: after?.feasibility?.fits }).toStrictEqual({
+      offer: false,
+      read: false,
+    });
   });
 });
 

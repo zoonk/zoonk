@@ -107,7 +107,7 @@ describe(getPlanFeasibility, () => {
     expect(goal.coveredShare).toBeCloseTo(byWeight / 6, 5);
   });
 
-  it("gives the same numbers before and after the Library outlines a plan's stand-ins", () => {
+  it("measures the plan it holds before and after the Library outlines its stand-ins", () => {
     const graph = {
       phases: [{ milestone: null, name: "Everything" }],
       skills: [skill("s1", { lessons: 40 }), skill("s2", { lessons: 40 })],
@@ -124,9 +124,12 @@ describe(getPlanFeasibility, () => {
     const before = getPlanFeasibility({ input: placeholders });
     const after = getPlanFeasibility({ input: written });
 
-    expect(before.coveredShare).toBeGreaterThan(0);
-    expect(before.coveredShare).toBeLessThan(1);
-    expect(after).toStrictEqual(before);
+    // Each measures the lessons it plans: the share moves as estimates become written lessons.
+    for (const feasibility of [before, after]) {
+      expect(feasibility.coveredShare).toBeGreaterThan(0);
+      expect(feasibility.coveredShare).toBeLessThan(1);
+      expect(feasibility.fits).toBe(false);
+    }
   });
 
   it("counts the lessons the learner finished as covered, and a skill they settled whole", () => {
@@ -175,7 +178,8 @@ describe(getPlanFeasibility, () => {
 
     const fresh = getPlanFeasibility({ input: planInput({ graph, lessons }) });
 
-    // A new day's settling set 30 lessons aside: a change brings them back, so they're still left.
+    // A new day's settling set 30 lessons aside: they're still left, and the plan as it stands
+    // covers none of them (a change brings them back).
     const setAside = getPlanFeasibility({ input: planInput({ graph, items: aside, lessons }) });
 
     // The Library couldn't write them: they left the plan's lessons, and nothing will teach them.
@@ -183,7 +187,7 @@ describe(getPlanFeasibility, () => {
       input: planInput({ graph, items: aside, lessons: lessons.slice(30) }),
     });
 
-    expect(setAside.coveredShare).toBe(fresh.coveredShare);
+    expect(setAside.coveredShare).toBeLessThanOrEqual(fresh.coveredShare);
     expect(setAside.fits).toBe(false);
     expect(heldBack.coveredShare).toBeGreaterThan(fresh.coveredShare);
   });

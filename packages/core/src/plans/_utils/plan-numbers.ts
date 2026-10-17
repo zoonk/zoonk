@@ -146,7 +146,7 @@ export function getPlanNumbers({
     coverage:
       target && coverage
         ? {
-            basis: "graphSized",
+            basis: "selected",
             coveredShare: Math.round(coverage.coveredShare * 100) / 100,
             measure: coverage.measure,
             scope: "selectedCurriculum",

@@ -10,7 +10,8 @@ const WRITTEN_LESSONS = 4;
 /**
  * An exam nine days away studied on Sundays alone, whose four skills the graph sizes at one lesson
  * each while the Library wrote four lessons for each: more time a day adds a weekly mock
- * that takes a study day, so a longer day can hold fewer topics than a shorter one.
+ * that takes a study day, so a longer day can hold fewer topics than a shorter one. The one Sunday
+ * before the exam's final stretch never holds all sixteen written lessons.
  */
 function sundayExam(): BuildPlanInput {
   const skills = Array.from({ length: SKILLS }, (_, index) => ({
@@ -46,11 +47,11 @@ function sundayExam(): BuildPlanInput {
   };
 }
 
-const fitsAt = (input: BuildPlanInput, minutes: number) =>
-  getPlanFeasibility({ input: withDailyMinutes(input, minutes) }).fits;
+const holdsEveryTopicAt = (input: BuildPlanInput, minutes: number) =>
+  getPlanFeasibility({ input: withDailyMinutes(input, minutes) }).coreFits;
 
 describe("the daily time a plan recommends", () => {
-  it("is the fewest minutes that cover everything, even when a longer day covers less", () => {
+  it("is the fewest minutes that bring every topic in, even when a longer day holds fewer", () => {
     const input = sundayExam();
     const accepted = buildPlan(withDailyMinutes(input, 95));
     const at130 = buildPlan(withDailyMinutes(input, 130));
@@ -80,31 +81,37 @@ describe("the daily time a plan recommends", () => {
     );
 
     const earlierTimes = Array.from({ length: 18 }, (_, index) => (index + 1) * 5);
-    expect(earlierTimes.some((minutes) => fitsAt(input, minutes))).toBe(false);
+    expect(earlierTimes.some((minutes) => holdsEveryTopicAt(input, minutes))).toBe(false);
 
-    // 95 to 110 minutes cover everything, 115 to 130 don't (a mock takes a day), 135 does again.
-    // With the mock's day the only study day after them, the phases' challenges come right after
-    // their lessons (see `placeExamBosses`).
-    expect([90, 95, 110, 115, 130, 135].map((minutes) => fitsAt(input, minutes))).toStrictEqual([
-      false,
-      true,
-      true,
-      false,
-      false,
-      true,
-    ]);
+    // 95 to 110 minutes bring every topic in, 115 to 130 don't (a mock takes a day), 135 does
+    // again. With the mock's day the only study day after them, the phases' challenges come right
+    // after their lessons (see `placeExamBosses`).
+    expect(
+      [90, 95, 110, 115, 130, 135].map((minutes) => holdsEveryTopicAt(input, minutes)),
+    ).toStrictEqual([false, true, true, false, false, true]);
 
-    expect(getPlanFeasibility({ input }).recommendedMinutes).toBe(95);
+    // No time a day covers all the lessons the Library wrote by the exam: the most says what it does.
+    expect(getPlanFeasibility({ input })).toMatchObject({
+      coreMinutes: 95,
+      maximum: { dailyMinutes: 240 },
+      recommendedMinutes: null,
+    });
   });
 
-  it("never takes a lower time that fits for the learner's own time covering everything", () => {
-    // At 130 minutes a day the plan leaves topics out, though 95 covers them: their time isn't
-    // enough, and the time that covers everything is the one that does, exactly as planned.
+  it("never takes a lower time that brings every topic in for the learner's own time", () => {
+    // At 130 minutes a day the plan leaves topics out, though 95 brings them in: their time isn't
+    // enough, and the time that brings every topic in is the one that does, exactly as planned.
     const at130 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 130) });
 
-    expect(at130).toMatchObject({ fits: false, recommendedMinutes: 95, timeCovers: false });
+    expect(at130).toMatchObject({
+      coreFits: false,
+      coreMinutes: 95,
+      fits: false,
+      timeCovers: false,
+    });
 
+    // At 105 every topic is in, and its lessons still don't all fit by the exam.
     const at105 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 105) });
-    expect(at105).toMatchObject({ fits: true, recommendedMinutes: 95, timeCovers: true });
+    expect(at105).toMatchObject({ coreFits: true, fits: false, timeCovers: false });
   });
 });

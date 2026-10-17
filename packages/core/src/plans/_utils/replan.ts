@@ -283,7 +283,7 @@ export async function computePlan({
     ? await readBuiltPlan({ input: builtInput, userId })
     : buildPlan(builtInput);
 
-  // Measuring what fits builds the plan again as its graph sizes it: Progress never asks.
+  // Measuring what other times would fit builds the plan again at each: Progress never asks.
   const { bases, feasibility } = await loadPlanReadAdvice({
     advise,
     examSubjects,

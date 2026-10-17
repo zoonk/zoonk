@@ -160,7 +160,7 @@ test.describe("Course goals API", () => {
     expect(dated.numbers.availableBeforeDeadlineMinutes).toBeGreaterThan(0);
 
     expect(dated.numbers.coverage).toMatchObject({
-      basis: "graphSized",
+      basis: "selected",
       scope: "selectedCurriculum",
     });
 

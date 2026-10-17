@@ -54,8 +54,8 @@ describe("plans laid out per read", () => {
 
     mockSession(user.userId);
 
-    // Her plan and what her own time covers: the plan she studies, the one its graph sizes, and,
-    // when that one is whole, the plan her own time plans once switched to (`timeCovers`).
+    // Her plan and what her own time covers: the plan she studies and, when it falls short, the
+    // plan her own time plans once switched to (`timeCovers`).
     const plan = await countBuilds(() => getGoalPlan(user.goalId));
     expect(plan.result.status).toBe("ready");
     expect.soft(plan.builds, "Plan").toBeLessThanOrEqual(3);

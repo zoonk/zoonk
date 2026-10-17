@@ -177,7 +177,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(preview50.coveredShare).toBe(1);
     expect(preview65.coveredShare).toBe(1);
-    expect(preview70.coveredShare).toBe(0.95);
+    expect(preview70.coveredShare).toBe(0.91);
 
     // Every smaller accepted candidate misses work; funding the added mock makes 70 worse again.
     for (const dailyMinutes of Array.from({ length: 9 }, (_, index) => (index + 1) * 5)) {
@@ -223,7 +223,7 @@ describe(getPlanTimeAdvice, () => {
     const saved70 = await readFeasibility(goal.id);
     const time70 = await readPlanTime(goal.id);
     expect(saved70?.fits).toBe(false);
-    expect(roundShare(saved70?.coveredShare ?? 0)).toBe(0.95);
+    expect(roundShare(saved70?.coveredShare ?? 0)).toBe(preview70.coveredShare);
     const at70 = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     expect(parsePlanSettings(at70.settings).mockFunding.map((entry) => entry.date)).toStrictEqual([
@@ -340,7 +340,8 @@ describe(getPlanTimeAdvice, () => {
 
   // The time step recommended the same time a day with two hours on weekends as without them.
   it("counts the weekend's own time: the number the plan shows once the week is set", async () => {
-    const { goal, library } = await setup();
+    // Enough written lessons that the weekdays' time a day shows the weekend's own time.
+    const { goal, library } = await setup(18);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const [everyDay, withWeekend] = await Promise.all([
@@ -402,7 +403,7 @@ describe(getPlanTimeAdvice, () => {
   });
 
   it("keeps lighter weekdays when recommending time with an unchanged weekend override", async () => {
-    const { goal, library } = await setup(21, 60);
+    const { goal, library } = await setup(28, 60);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await change(goal.id, [
@@ -520,7 +521,7 @@ describe(getPlanTimeAdvice, () => {
       readAdvice(goal.id, input.studyDays, { ...input, dailyMinutes: 240 }),
     ]);
 
-    expect(least).toMatchObject({ coveredShare: 0.61, maximum: null, recommendedMinutes: null });
+    expect(least).toMatchObject({ coveredShare: 0.83, maximum: null, recommendedMinutes: null });
     expect(most).toStrictEqual(least);
 
     await expect(

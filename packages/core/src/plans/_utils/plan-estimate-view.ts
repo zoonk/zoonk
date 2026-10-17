@@ -9,14 +9,24 @@ function toHours(minutes: number): number {
   return Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10;
 }
 
-function toIsoOrNull(date: Date | null): string | null {
-  return date ? toIsoDate(date) : null;
+/**
+ * The day the plan the Plan shows ends: its last item's, or the end of its time after the exam
+ * when that's later, as the build that saved it says (see `PlanFeasibility.endDate`). Read from
+ * the shown plan, so the change that saved it and the read after it say the same day: the read's
+ * own rebuild laid an exam's time after it out again and ended it a week sooner.
+ */
+function getShownEnd(context: PlanReadContext): string | null {
+  const dates = context.items.flatMap((item) =>
+    item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [],
+  );
+
+  const afterExam = context.phases.find((phase) => phase.kind === "afterExam")?.endDate;
+  return [...dates, ...(afterExam ? [afterExam] : [])].toSorted().at(-1) ?? null;
 }
 
 /**
- * The plan's size and end. The end is the one the plan's graph sizes (see `PlanFeasibility`), so
- * it stays put while the Library outlines lessons. A plan without a graph (a seeded one) keeps the
- * estimate it was saved with and ends on its last item.
+ * The plan's size and end (see `getShownEnd`). A plan without a graph (a seeded one) keeps the
+ * estimate it was saved with.
  */
 export function buildEstimateView({
   computed,
@@ -31,7 +41,7 @@ export function buildEstimateView({
     const { estimate } = computed.built;
 
     return {
-      endDate: toIsoOrNull(computed.feasibility.endDate),
+      endDate: getShownEnd(context),
       pace,
       remainingHours: toHours(estimate.remainingMinutes),
       totalHours: toHours(estimate.totalMinutes),
@@ -41,10 +51,9 @@ export function buildEstimateView({
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
   const todo = items.filter((item) => item.status === "todo").length;
-  const last = items.reduce((end, item) => Math.max(end, item.scheduledFor?.getTime() ?? 0), 0);
 
   return {
-    endDate: last > 0 ? toIsoDate(new Date(last)) : null,
+    endDate: getShownEnd(context),
     pace,
     remainingHours: items.length > 0 ? Math.round((totalHours * todo * 10) / items.length) / 10 : 0,
     totalHours: Math.round(totalHours * 10) / 10,

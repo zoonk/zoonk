@@ -133,11 +133,9 @@ describe("a plan whose date came with lessons left", () => {
     const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
     const targetDate = found.status === "ready" ? found.time.fittingDate : null;
 
-    // The lessons the plan set aside are left, so the date isn't tomorrow: it's the one his time
-    // covers all of them by, as the plan measures it. That measure prices each lesson at the
-    // graph's 4 minutes, where these written ones take 3, so it lands after 11-04, the day his
-    // written lessons would fit by. Follow-up: sized vs written layout parity.
-    expect(targetDate).toBe("2020-11-09");
+    // The lessons the plan set aside are left, so the date isn't tomorrow: it's the day his
+    // written lessons fit by, on the one measure the plan shows once the date moves.
+    expect(targetDate).toBe("2020-11-04");
 
     const operations: PlanChangeInput["operations"] = [{ kind: "setTargetDate", targetDate }];
     const previewed = await preview(goal.id, operations);

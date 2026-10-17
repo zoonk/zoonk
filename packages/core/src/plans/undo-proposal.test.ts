@@ -109,6 +109,38 @@ describe("undoing an applied suggestion", () => {
     await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
   });
 
+  // An hour a day after 30 minutes moves this plan's end a day at most, as it's built: no bigger
+  // than a lesson (see `needsApproval`), so it applies at once, and Undo puts the plan back.
+  it("applies a suggestion no bigger than a lesson at once, and Undo puts the plan back", async () => {
+    const { goal, plan } = await setup();
+
+    const older = await proposePlanChange({
+      goalId: goal.id,
+      operations: [{ kind: "setDailyMinutes", minutes: 30 }],
+      reason: "Longer days, so the plan ends sooner.",
+      source: "memory",
+    });
+
+    await decide(goal.id, "changeId" in older ? older.changeId : "", "applied");
+    const before = await readPlan(plan.id);
+
+    const hour = await proposePlanChange({
+      goalId: goal.id,
+      operations: [{ kind: "setDailyMinutes", minutes: 60 }],
+      reason: "An hour a day, to finish sooner.",
+      source: "memory",
+    });
+
+    expect(hour).toMatchObject({ status: "applied" });
+    await expect(readPlan(plan.id)).resolves.toMatchObject({ dailyMinutes: 60 });
+
+    await expect(
+      decide(goal.id, "changeId" in hour ? hour.changeId : "", "undone"),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
+  });
+
   it("lets a newer suggestion about the same thing win over the one it gives back", async () => {
     const { goal, plan } = await setup();
     const before = await readPlan(plan.id);
@@ -123,10 +155,11 @@ describe("undoing an applied suggestion", () => {
     const olderId = "changeId" in older ? older.changeId : "";
     await decide(goal.id, olderId, "applied");
 
+    // A day sooner applies at once (see `needsApproval`): five minutes a day moves the end weeks out.
     const newer = await proposePlanChange({
       goalId: goal.id,
-      operations: [{ kind: "setDailyMinutes", minutes: 60 }],
-      reason: "An hour a day, to finish a month earlier.",
+      operations: [{ kind: "setDailyMinutes", minutes: 5 }],
+      reason: "Five minutes a day, to keep each day light.",
       source: "memory",
     });
 

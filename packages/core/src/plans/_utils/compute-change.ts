@@ -150,14 +150,14 @@ function getWeeklyEventMove({
 /**
  * What a change does to the plan the learner sees (`shown`): the lessons it adds or removes, the
  * ones it leaves out whole by name, the notice topics it brings in or leaves out, when the topics
- * the learner adds start, the end the plan's graph sizes before and after (the one every screen
- * shows), and for a focus, when each focused area starts against the day the plan they see has it,
- * so "first" is never promised where what it builds on still comes before, nor "physics keeps its
- * basics" where its topics leave the plan, and the review day ahead its topics open: a class test's
- * day before has no lessons to move, only its questions. Read against the plan re-planned without
- * the change, a topic an earlier run already left out was said to "leave" (Lucas's "Origin and
- * evolution", out of his plan before his change). The day the next mock moves to is said too,
- * unless the week's mock day moves (`weeklyEvents` says it).
+ * the learner adds start, when the plan ends before and after (as each build lays it out), and for
+ * a focus, when each focused area starts against the day the plan they see has it, so "first" is
+ * never promised where what it builds on still comes before, nor "physics keeps its basics" where
+ * its topics leave the plan, and the review day ahead its topics open: a class test's day before
+ * has no lessons to move, only its questions. Read against the plan re-planned without the change,
+ * a topic an earlier run already left out was said to "leave" (Lucas's "Origin and evolution", out
+ * of his plan before his change). The day the next mock moves to is said too, unless the week's
+ * mock day moves (`weeklyEvents` says it).
  */
 function getChangeEffect({
   baseline,

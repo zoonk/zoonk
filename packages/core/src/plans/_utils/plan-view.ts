@@ -28,7 +28,11 @@ import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
-import { toFeasibilityView } from "./plan-feasibility-view";
+import {
+  type ShownFeasibility,
+  readShownFeasibility,
+  toFeasibilityView,
+} from "./plan-feasibility-view";
 import { buildPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
@@ -36,7 +40,6 @@ import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
-import { type ComputedPlan } from "./replan";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -163,19 +166,19 @@ type PlanViewInput = { context: PlanContext; now: Date };
  * after it) the learner previews when they ask.
  */
 async function loadPlanFitOffer({
-  computed,
   context,
+  feasibility,
   status,
 }: {
-  computed: ComputedPlan | null;
   context: PlanContext;
+  feasibility: ShownFeasibility | null;
   status: PlanView["status"];
 }): Promise<PlanView["fitOffer"]> {
-  if (!computed || status?.kind === "pastDate") {
+  if (!feasibility || status?.kind === "pastDate") {
     return null;
   }
 
-  return loadFitOffer({ computed, context });
+  return loadFitOffer({ context, feasibility });
 }
 
 export async function buildPlanView({
@@ -188,7 +191,13 @@ export async function buildPlanView({
     catchUp: selectedCatchUp,
     computed,
     context,
+    coverage,
   } = await loadPlanReadProjection({ context: savedContext, now });
+
+  // What fits reads the plan the Plan shows, so a change and the read after it say the same.
+  const feasibility = computed
+    ? readShownFeasibility({ coverage, feasibility: computed.feasibility })
+    : null;
 
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
@@ -267,7 +276,7 @@ export async function buildPlanView({
     studiesPastTarget: fullCourse,
   });
 
-  const fitOffer = await loadPlanFitOffer({ computed, context: savedContext, status });
+  const fitOffer = await loadPlanFitOffer({ context: savedContext, feasibility, status });
 
   return {
     access,
@@ -289,11 +298,14 @@ export async function buildPlanView({
     estimate: buildEstimateView({ computed, context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility: computed ? toFeasibilityView(computed.feasibility) : null,
+    feasibility: feasibility && toFeasibilityView(feasibility),
     fitOffer: fitOffer && foldChangeAreas({ change: fitOffer, partAreas }),
     goalId: goal.id,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers: computed ? await buildPlanNumbersView({ computed, context, saved: true }) : null,
+    numbers:
+      computed && feasibility
+        ? await buildPlanNumbersView({ computed, context, coverage: feasibility, saved: true })
+        : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
       challengesOpen: phaseChallengesRequired && !access.freeWeekOver,

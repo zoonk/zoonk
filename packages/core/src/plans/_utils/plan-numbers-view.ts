@@ -4,6 +4,7 @@ import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { type PlanNumbers } from "../numbers-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { getItemKey } from "../planner/plan-items";
+import { type ShownFeasibility } from "./plan-feasibility-view";
 import { getPlanNumbers, getPlanWorkload } from "./plan-numbers";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type ComputedPlan } from "./replan";
@@ -12,10 +13,13 @@ import { type ComputedPlan } from "./replan";
 export async function buildPlanNumbersView({
   computed,
   context,
+  coverage = computed.feasibility,
   saved = false,
 }: {
   computed: ComputedPlan;
   context: PlanReadContext;
+  /** What the plan covers: the Plan's is what the plan it shows covers (see `readShownFeasibility`). */
+  coverage?: Pick<ShownFeasibility, "coveredShare" | "measure">;
   saved?: boolean;
 }): Promise<PlanNumbers> {
   const { pace, state } = computed;
@@ -67,7 +71,7 @@ export async function buildPlanNumbersView({
       weekdayMinutes:
         settings.weekdayMinutes ?? Array.from({ length: 7 }, () => state.goal.dailyMinutes),
     },
-    coverage: computed.feasibility,
+    coverage,
     isExam: context.goal.kind === "exam",
     settings,
     workload,

@@ -1,7 +1,6 @@
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
-import { type ExamSubjectShare, getExamWorth } from "./feasibility-coverage";
 import { hasEveryTopic } from "./feasibility-topics";
 import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
@@ -11,7 +10,39 @@ import { type SkillRequirement, isCompleted } from "./selected-requirement";
 /** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
 
+/**
+ * A notice subject the plan teaches: the plan's areas it gathers and its share of the exam, so an
+ * exam's coverage counts what its questions are worth.
+ */
+export type ExamSubjectShare = { areas: readonly string[]; share: number };
+
+type ScopedSkill = { area: string; skillId: string; weight: number };
+
 type SelectedSkill = SelectedCoverage["skills"][number];
+
+/**
+ * What each skill is worth to an exam: its subject's share of the exam, shared among the subject's
+ * skills by their exam weight. Skills outside the notice's subjects (study strategy, say) aren't
+ * questions of the exam. Null when no subject has a share.
+ */
+function getExamWorth({
+  examSubjects,
+  skills,
+}: {
+  examSubjects: readonly ExamSubjectShare[];
+  skills: readonly ScopedSkill[];
+}): Map<string, number> | null {
+  const worth = examSubjects.flatMap((subject) => {
+    const own = skills.filter((skill) => subject.areas.includes(skill.area));
+    const weight = own.reduce((total, skill) => total + skill.weight, 0);
+
+    return weight > 0
+      ? own.map((skill) => [skill.skillId, (subject.share * skill.weight) / weight] as const)
+      : [];
+  });
+
+  return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
+}
 
 /**
  * The skills the plan measures: the graph's, without the ones the learner took out on purpose (an
@@ -179,7 +210,7 @@ function listShortLessons({
 }
 
 /** How much of a skill counts as covered: all of a settled one, none of an unknown one. */
-function getSkillValue(skill: SelectedSkill): number {
+export function getSkillValue(skill: SelectedSkill): number {
   if (skill.state === "settled") {
     return 1;
   }

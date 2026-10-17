@@ -4,7 +4,7 @@ import { type PlanOffer } from "../plan-view-contract";
 import { planLearnerChange } from "./learner-change";
 import { type PlanContext } from "./plan-context";
 import { areLessonsFinished, hasPlanDeadline } from "./plan-end";
-import { type ComputedPlan } from "./replan";
+import { type ShownFeasibility } from "./plan-feasibility-view";
 
 const FIT_OPERATIONS: LearnerPlanOperation[] = [{ kind: "fitLessons" }];
 
@@ -14,7 +14,14 @@ const FIT_OPERATIONS: LearnerPlanOperation[] = [{ kind: "fitLessons" }];
  * `refreshGoalPlan`), or their time covers everything while the plan doesn't (`timeCovers`): a
  * date they moved closer left topics out, and they then studied faster than planned.
  */
-function mayFitMore({ computed, context }: { computed: ComputedPlan; context: PlanContext }) {
+function mayFitMore({
+  context,
+  feasibility,
+}: {
+  context: PlanContext;
+  /** What fits in the plan the Plan shows (see `readShownFeasibility`). */
+  feasibility: Pick<ShownFeasibility, "fits" | "timeCovers">;
+}) {
   const { goal, items, state } = context;
   const studiesPastTarget = goal.kind === "exam" && state.settings.fullCourse;
   const targetDate = goal.targetDate;
@@ -22,8 +29,6 @@ function mayFitMore({ computed, context }: { computed: ComputedPlan; context: Pl
   if (!hasPlanDeadline({ studiesPastTarget, targetDate })) {
     return false;
   }
-
-  const { feasibility } = computed;
 
   const timeCovers = !feasibility.fits && feasibility.timeCovers;
 
@@ -41,13 +46,13 @@ function mayFitMore({ computed, context }: { computed: ComputedPlan; context: Pl
  * own). Null when the change adds no lesson, and for a plan its date has no room for.
  */
 export async function loadFitOffer({
-  computed,
   context,
+  feasibility,
 }: {
-  computed: ComputedPlan;
   context: PlanContext;
+  feasibility: Pick<ShownFeasibility, "fits" | "timeCovers">;
 }): Promise<PlanOffer | null> {
-  if (!mayFitMore({ computed, context })) {
+  if (!mayFitMore({ context, feasibility })) {
     return null;
   }
 

@@ -542,7 +542,7 @@ test.describe("Goals and plans API", () => {
     expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
     expect(advice.numbers?.coverage).toMatchObject({
-      basis: "graphSized",
+      basis: "selected",
       coveredShare: advice.coveredShare,
       measure: "goal",
       scope: "selectedCurriculum",

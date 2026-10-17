@@ -1,7 +1,7 @@
 import { type BuildPlanInput, type BuiltPlan } from "../planner/build-plan";
-import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { getItemKey } from "../planner/plan-items";
+import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
 import { type PlanContext } from "./plan-context";
 import { readSelectedItemFacts } from "./selected-item-contract";

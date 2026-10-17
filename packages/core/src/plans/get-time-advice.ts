@@ -135,11 +135,10 @@ async function planAtDate(context: PlanContext, targetDate: Date | null) {
 
 /**
  * The earliest date a goal's own time covers everything by, for a goal that isn't an exam (an
- * exam's date is the exam's), on the one measure every reach number uses, the plan as its graph
- * sizes it (see `findFittingDate`): from the day the plan without a date ends, a day at a time,
- * the first date the plan covers everything by, as it then shows (`fits`). So Move applies a date
- * whose plan says it covers everything, and outlining lessons never moves it. Null when none of the
- * tries does.
+ * exam's date is the exam's), on the plan's one measure (see `getSelectedCoverage`): from the day
+ * the plan without a date ends, a day at a time, the first date the plan covers everything by, as
+ * it then shows (`fits`). So Move applies a date whose plan says it covers everything. Null when
+ * none of the tries does.
  */
 async function findCoveringDate(context: PlanContext): Promise<string | null> {
   const open = await planAtDate(context, null);
