@@ -56,16 +56,19 @@ test.describe("Plan links", () => {
 
     await expectAccessibleScreen(page, "a shared plan");
 
-    // Onboarding reads the subject the way it reads any typed goal; the stored understanding skips the AI.
+    await page.getByRole("link", { name: "Start from this plan" }).click();
+    await expect(page).toHaveURL(new RegExp(`/start\\?goal=.+&plan=${plan.id}$`, "u"));
+
+    // Onboarding reads the subject the way it reads any typed goal; the stored understanding skips
+    // the AI. It's the guest's who sends it, made here as sending a goal makes one, and a session
+    // that starts under an open page redraws it for its learner: the page opens again for them.
     await goalUnderstandingFixture({
       goal: subject,
       result: { followUps: [], goals: [{ kind: "exam", subject, title: subject }], route: "goals" },
       userId: await ensureGuest(page),
     });
 
-    await page.getByRole("link", { name: "Start from this plan" }).click();
-
-    await expect(page).toHaveURL(new RegExp(`/start\\?goal=.+&plan=${plan.id}$`, "u"));
+    await page.reload();
     await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(subject);
 
     await page.getByRole("button", { name: "Build my plan" }).click();
