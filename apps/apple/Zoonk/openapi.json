@@ -23531,7 +23531,7 @@
     },
     "/today": {
       "get": {
-        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, an active goal follows the device first, as the apps' Today does: a goal without a zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. A goal Today refuses keeps its zone. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
+        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, the goal follows the device first, as the apps' Today does: a goal without a zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
         "operationId": "getToday",
         "security": [
           {
@@ -23561,10 +23561,10 @@
             "in": "query",
             "name": "timeZone",
             "schema": {
-              "description": "The device's IANA timezone. An active goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone",
+              "description": "The device's IANA timezone. The goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone",
               "type": "string"
             },
-            "description": "The device's IANA timezone. An active goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone"
+            "description": "The device's IANA timezone. The goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone"
           }
         ],
         "responses": {
