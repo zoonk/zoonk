@@ -56,7 +56,7 @@ export const todayResponseSchema = z
     mockFunding: mockFundingSchema
       .nullable()
       .describe(
-        "Exact saved contribution explaining a lighter study day; null on unrelated days, the mock's own day, and welcome-back sessions, which already explain the lighter day.",
+        "Exact saved contribution explaining a lighter study day, welcome-back sessions included; null on unrelated days and the mock's own day.",
       ),
     pattern: noticedPatternSchema
       .nullable()

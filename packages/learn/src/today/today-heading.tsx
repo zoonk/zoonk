@@ -129,7 +129,8 @@ function ExamDayPart() {
 
 /**
  * Why a study day is lighter than the learner's time: it sets some aside for a mock exam longer
- * than their day, which the Plan shows at its real length on its date.
+ * than their day, which the Plan shows at its real length on its date. A return after a break
+ * already says its day is lighter (see `useFreshStartText`), so it only names the mock.
  */
 function MockFundingPart() {
   const t = useExtracted();
@@ -140,11 +141,13 @@ function MockFundingPart() {
     return null;
   }
 
+  const date = formatDate(today.mockFunding.mockDate);
+
   return (
     <TodayEyebrowPart>
-      {t("Lighter day: saving time for {date}'s mock exam", {
-        date: formatDate(today.mockFunding.mockDate),
-      })}
+      {isWelcomeBackDay(today.session)
+        ? t("Saving time for {date}'s mock exam", { date })
+        : t("Lighter day: saving time for {date}'s mock exam", { date })}
     </TodayEyebrowPart>
   );
 }

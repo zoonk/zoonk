@@ -126,7 +126,7 @@ describe("public mock funding views", () => {
     });
   });
 
-  it("lets a persisted welcome-back session explain the lighter day while Plan keeps its funding", async () => {
+  it("keeps a persisted welcome-back session's funding, so Today can say what else its lighter day saves time for", async () => {
     const { goal, mock, plan } = await setup();
 
     await Promise.all([
@@ -154,10 +154,14 @@ describe("public mock funding views", () => {
       minutes: { dailyGoal: 15 },
     });
 
-    expect(today.today.mockFunding).toBeNull();
+    expect(today.today.mockFunding).toStrictEqual({
+      mockDate: MOCK_DATE,
+      mockMinutes: 165,
+      setAsideMinutes: 30,
+    });
 
     expect(todayResponseSchema.parse(serializeToday(today.today))).toMatchObject({
-      mockFunding: null,
+      mockFunding: today.today.mockFunding,
       session: { freshStart: "welcomeBack", minutes: { dailyGoal: 15 } },
     });
 

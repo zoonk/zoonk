@@ -1,14 +1,16 @@
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { formatDuration } from "@zoonk/utils/duration";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { unfundableMockMoveFixture } from "../../../packages/core/src/plans/_test-utils/unfundable-mock-move";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { openAs } from "./study-day";
+import { createStudyDay, openAs } from "./study-day";
 
 /** Minutes written with a fraction ("14.875 min", "14,9 min"): the shared formatter rounds them. */
 const RAW_MINUTES = /\d+[.,]\d+\s*min/u;
@@ -181,5 +183,54 @@ test.describe("A long mock the plan saves time for", () => {
       await expect(intro).toContainText(shownDuration(movedFunding?.minutes ?? 0));
       await expect(intro).not.toContainText(RAW_MINUTES);
     });
+  });
+
+  // Back after days away on a day that also saves time for a mock, the greeting said the day was
+  // lighter and nothing said part of it went to the mock: Today hid the reason to keep one message.
+  test("a day back that also saves time for a mock says so beside the greeting, without a second lighter day", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createStudyDay({ freshStart: "welcomeBack" });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const today = toUTCMidnight(new Date());
+    const mockDay = new Date(today.getTime() + 3 * MS_PER_DAY);
+
+    await planItemFixture({
+      kind: "mock",
+      planId: plan.id,
+      position: 1,
+      scheduledFor: mockDay,
+      titleSnapshot: "Full mock",
+    });
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          ...(isJsonObject(plan.settings) ? plan.settings : {}),
+          mockFunding: [
+            {
+              contributions: [{ date: toIsoDay(today), minutes: 5 }],
+              date: toIsoDay(mockDay),
+              minutes: 165,
+            },
+          ],
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    await expect(
+      page
+        .getByRole("region", { name: "Today's session" })
+        .getByText(/^Welcome back! Today is lighter, about .+, so it's easy to pick up again\.$/u),
+    ).toBeVisible();
+
+    // The greeting already says the day is lighter: the date line says what it saves time for.
+    await expect(page.getByText(/^Saving time for .+'s mock exam$/u)).toBeVisible();
+    await expect(page.getByRole("main").getByText(/Lighter day/u)).toHaveCount(0);
+    await page.context().close();
   });
 });

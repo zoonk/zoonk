@@ -97,7 +97,7 @@ export type TodayView = {
    * instead of opening to a wait. A block whose lesson isn't picked yet has no entry.
    */
   lessonStatus: Record<string, LessonGenerationState["status"]>;
-  /** Exact saved contribution explaining a lighter day; null without funding or on welcome back. */
+  /** Exact saved contribution explaining a lighter day, welcome backs included; null without one. */
   mockFunding: MockFundingView | null;
   /**
    * A language goal's pattern noticed in recent mistakes, offered beside the day; null when one of
@@ -249,14 +249,11 @@ async function readAdmittedToday({
     return { ...stamp, goal: { id, kind, title }, status: "preparing" };
   }
 
-  const mockFunding =
-    day.session.freshStart === "welcomeBack"
-      ? null
-      : await loadDayMockFunding({
-          goal: owned.goal,
-          localDate: day.session.localDate,
-          selectedSettings: day.selection?.state.settings,
-        });
+  const mockFunding = await loadDayMockFunding({
+    goal: owned.goal,
+    localDate: day.session.localDate,
+    selectedSettings: day.selection?.state.settings,
+  });
 
   const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
     await Promise.all([

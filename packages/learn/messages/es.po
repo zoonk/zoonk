@@ -12495,6 +12495,11 @@ msgid "{exam} today"
 msgstr "{exam} hoy"
 
 #: src/today/today-heading.tsx
+msgctxt "Ld_YBu"
+msgid "Saving time for {date}'s mock exam"
+msgstr "Guardamos tiempo para el simulacro del {date}"
+
+#: src/today/today-heading.tsx
 msgctxt "dYEY9n"
 msgid "Lighter day: saving time for {date}'s mock exam"
 msgstr "Día más ligero: guardamos tiempo para el simulacro del {date}"
