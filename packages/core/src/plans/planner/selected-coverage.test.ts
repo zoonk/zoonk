@@ -197,3 +197,53 @@ describe("selected coverage of lessons that land in a stand-in's place", () => {
     }).toStrictEqual({ after: 1, before: 1 });
   });
 });
+
+/** A learn plan due in two months: less of one area, more of the other, six lessons each. */
+const FOCUS: BuildPlanInput = {
+  ...LANDING,
+  graph: {
+    phases: [{ milestone: null, name: "Only" }],
+    skills: [
+      { area: "Less", lessons: 6, name: "less", phase: 0, skillId: "less", weight: 1 },
+      { area: "More", lessons: 6, name: "more", phase: 0, skillId: "more", weight: 1 },
+    ],
+  },
+  lessons: [...writeLessons("less", 6), ...writeLessons("more", 6)],
+};
+
+function isToday(item: { scheduledFor: Date | null }): boolean {
+  return item.scheduledFor?.getTime() === TODAY.getTime();
+}
+
+describe("selected coverage of the focused lessons today takes", () => {
+  // "More of one, less of the other" while today is shown: today gives the time the other area
+  // freed to the focused area's next lessons that fit (see `takeFocusedToday`), so they count by it.
+  it("counts them as covered by today's time", () => {
+    const before = measure(FOCUS);
+    const shown = before.built.items.map((item, position) => ({ ...item, id: item.key, position }));
+    const shownToday = new Set(shown.filter((item) => isToday(item)).map((item) => item.key));
+
+    const after = measure({
+      ...FOCUS,
+      carryOver: { lessonIds: [], todayExceptAreas: ["Less"] },
+      items: shown,
+      settings: parsePlanSettings({
+        focusAreas: ["More"],
+        reducedAreas: ["Less"],
+        startDate: "2020-09-28",
+      }),
+    });
+
+    const taken = new Set(
+      after.built.items.flatMap((item) =>
+        item.lessonId && isToday(item) && !shownToday.has(item.key) ? [item.lessonId] : [],
+      ),
+    );
+
+    expect(taken.size).toBeGreaterThan(0);
+
+    expect(
+      after.coverage.shortLessons.filter((lesson) => taken.has(lesson.lessonId)),
+    ).toStrictEqual([]);
+  });
+});

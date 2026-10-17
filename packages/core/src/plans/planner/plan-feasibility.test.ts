@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { fromIsoDate } from "./plan-calendar";
+import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { type ExistingPlanItem } from "./plan-items";
+import { getExamWindows } from "./plan-phases";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
@@ -65,6 +66,30 @@ function plannedLesson(lessonId: string, skillId: string): ExistingPlanItem {
 }
 
 describe(getPlanFeasibility, () => {
+  // Ana moved her exam from 400 days away to 36, two weeks into her foundations: the plan keeps the
+  // phase she's in open, so its final stretch starts November 10, where a calendar from the plan's
+  // start puts it on November 7 (see `getKeptExamWindows`). What the plan covers is counted up to
+  // its own final stretch, so that's the deadline it says.
+  it("says the deadline its share is measured to when an exam's moved date keeps its phases", () => {
+    const planStart = fromIsoDate("2026-09-26");
+
+    const feasibility = getPlanFeasibility({
+      input: planInput({
+        examWindows: getExamWindows({ planStart, targetDate: fromIsoDate("2027-11-14") }),
+        goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-11-15") },
+        graph: {
+          phases: [{ milestone: null, name: "Everything" }],
+          skills: [skill("s1", { lessons: 8 })],
+        },
+        lessons: lessonsFor("s1", 8),
+        settings: parsePlanSettings({ startDate: "2026-09-26" }),
+        today: fromIsoDate("2026-10-10"),
+      }),
+    });
+
+    expect(feasibility.deadline && toIsoDate(feasibility.deadline)).toBe("2026-11-10");
+  });
+
   it("counts an exam's coverage by what its subjects are worth, and other skills for nothing", () => {
     // 60 minutes of lessons in all, 36 of them before the deadline (two days at 30).
     const input = planInput({
@@ -163,7 +188,7 @@ describe(getPlanFeasibility, () => {
     expect(settled.coveredShare).toBeGreaterThan(fresh.coveredShare);
   });
 
-  it("counts lessons the plan set aside for time as left, and ones the Library held back as gone", () => {
+  it("counts lessons the plan set aside for time as left, and ones the Library held back as not written", () => {
     const graph = {
       phases: [{ milestone: null, name: "Everything" }],
       skills: [skill("s1", { lessons: 40 }), skill("s2", { lessons: 40 })],
@@ -182,14 +207,19 @@ describe(getPlanFeasibility, () => {
     // covers none of them (a change brings them back).
     const setAside = getPlanFeasibility({ input: planInput({ graph, items: aside, lessons }) });
 
-    // The Library couldn't write them: they left the plan's lessons, and nothing will teach them.
+    // The Library couldn't write them: they left the plan's lessons, so the plan counts what they'd
+    // teach as lessons not written yet, as if the Library had never written them.
     const heldBack = getPlanFeasibility({
       input: planInput({ graph, items: aside, lessons: lessons.slice(30) }),
     });
 
+    const neverWritten = getPlanFeasibility({
+      input: planInput({ graph, lessons: lessons.slice(30) }),
+    });
+
     expect(setAside.coveredShare).toBeLessThanOrEqual(fresh.coveredShare);
     expect(setAside.fits).toBe(false);
-    expect(heldBack.coveredShare).toBeGreaterThan(fresh.coveredShare);
+    expect(heldBack.coveredShare).toBe(neverWritten.coveredShare);
   });
 
   it("weighs another daily time as switching plans it, from today, this week included", () => {
