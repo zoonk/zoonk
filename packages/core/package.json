@@ -156,6 +156,7 @@
     "./language/conversations/recover": "./src/language/conversations/recover-live-calls.ts",
     "./language/conversations/redeem-sdp": "./src/language/conversations/redeem-live-call-sdp.ts",
     "./language/conversations/start": "./src/language/conversations/start-language-conversation.ts",
+    "./language/conversations/turn-limits": "./src/language/conversations/conversation-turn-limits.ts",
     "./language/exam-speaking/contract": "./src/language/exam-speaking/speaking-contract.ts",
     "./language/exam-speaking/formats": "./src/language/exam-speaking/speaking-formats.ts",
     "./language/exam-speaking/get-section": "./src/language/exam-speaking/get-speaking-section.ts",

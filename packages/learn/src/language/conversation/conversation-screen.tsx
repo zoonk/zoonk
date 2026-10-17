@@ -14,10 +14,11 @@ import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
 import { ConversationResult } from "./conversation-result";
 import { SpeakingMockResult } from "./speaking-mock-result";
-import { type LiveCallActions, type TappedCallAudio, useLiveCall } from "./use-live-call";
+import { type TappedCallAudio } from "./use-call-microphone";
+import { type LiveCallActions, useLiveCall } from "./use-live-call";
 
 export type { ConversationConnection } from "./use-call-connection";
-export type { TappedCallAudio } from "./use-live-call";
+export type { TappedCallAudio } from "./use-call-microphone";
 
 /**
  * Saving a finished call: it with its result and what it did to the day's missions, or why it

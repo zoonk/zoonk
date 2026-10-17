@@ -1,8 +1,8 @@
+import { type ConversationTurn } from "@zoonk/core/language/conversations/contract";
 import {
-  type ConversationTurn,
   MAX_CONVERSATION_TURNS,
   MAX_CONVERSATION_TURN_LENGTH,
-} from "@zoonk/core/language/conversations/contract";
+} from "@zoonk/core/language/conversations/turn-limits";
 
 const MS_PER_SECOND = 1000;
 

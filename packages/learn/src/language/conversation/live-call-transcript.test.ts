@@ -1,7 +1,7 @@
 import {
   MAX_CONVERSATION_TURNS,
   MAX_CONVERSATION_TURN_LENGTH,
-} from "@zoonk/core/language/conversations/contract";
+} from "@zoonk/core/language/conversations/turn-limits";
 import { describe, expect, it } from "vitest";
 import {
   type TranscriptTurn,

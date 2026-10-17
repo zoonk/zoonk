@@ -13,6 +13,7 @@ import {
   examTaskViewSchema,
 } from "../exam-speaking/speaking-contract";
 import { isWebRtcAudioOffer } from "./_utils/webrtc-offer";
+import { MAX_CONVERSATION_TURNS, MAX_CONVERSATION_TURN_LENGTH } from "./conversation-turn-limits";
 
 const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
@@ -22,9 +23,6 @@ const MAX_CALL_MINUTES = 20;
 
 /** Practice calls last from 1 to 5 minutes, as the unit page offers them. */
 export const PRACTICE_CONVERSATION_MINUTES = [1, 2, 3, MAX_PRACTICE_MINUTES] as const;
-/** The most turns a saved call keeps, and the longest turn: the longest exam task stays under both. */
-export const MAX_CONVERSATION_TURNS = 300;
-export const MAX_CONVERSATION_TURN_LENGTH = 2000;
 /** The longest call and the minute it may run over while the character says goodbye. */
 const MAX_SPOKEN_SECONDS = 1260;
 

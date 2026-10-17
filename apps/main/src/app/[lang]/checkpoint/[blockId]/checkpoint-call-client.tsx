@@ -3,14 +3,26 @@
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { runWhenIdle } from "@/lib/run-when-idle";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/start";
 import { CheckpointCallPreparing } from "@zoonk/learn/language/checkpoint-call";
 import { type TappedCallAudio } from "@zoonk/learn/language/conversation";
 import { CheckpointCallIntro } from "@zoonk/learn/language/conversation-intro";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { ConversationClient } from "../../conversation/[conversationId]/conversation-client";
+import { type ConversationClient } from "../../conversation/[conversationId]/conversation-client";
 import { startCheckpointCallAction } from "./checkpoint-call-actions";
+
+/**
+ * The call's own screen (the live call, its result, and the contract its turns are checked
+ * against) isn't part of the intro's first load: it loads once the intro is idle, and Start's tap
+ * waits for it alongside the call's creation. A load that failed is null.
+ */
+function loadConversationClient() {
+  return import("../../conversation/[conversationId]/conversation-client")
+    .then((mod) => mod.ConversationClient)
+    .catch(() => null);
+}
 
 /**
  * A language checkpoint whose call isn't written yet: the learner's tap writes it and opens it.
@@ -28,6 +40,7 @@ export function CheckpointCallPreviewClient({
   const router = useRouter();
 
   const [call, setCall] = useState<{
+    Client: typeof ConversationClient;
     audio: TappedCallAudio;
     conversation: LanguageConversationView;
   } | null>(null);
@@ -46,9 +59,19 @@ export function CheckpointCallPreviewClient({
     [],
   );
 
+  // The call's screen loads while the learner reads the intro, so Start rarely waits for it. Past
+  // today's study time there's no Start to load it for.
+  useEffect(() => {
+    if (dailyLimitReached) {
+      return;
+    }
+
+    return runWhenIdle(() => void loadConversationClient());
+  }, [dailyLimitReached]);
+
   if (call) {
     return (
-      <ConversationClient
+      <call.Client
         callAudio={call.audio}
         conversation={call.conversation}
         fromExam={false}
@@ -66,7 +89,11 @@ export function CheckpointCallPreviewClient({
         tappedAudio.current = audio;
         const mine = generation.current;
         const learnerGeneration = getLearnerGeneration();
-        const started = await startCheckpointCallAction(blockId);
+
+        const [started, Client] = await Promise.all([
+          startCheckpointCallAction(blockId),
+          loadConversationClient(),
+        ]);
 
         if (mine !== generation.current || learnerGeneration !== getLearnerGeneration()) {
           return "cancelled";
@@ -83,7 +110,12 @@ export function CheckpointCallPreviewClient({
           return started.status;
         }
 
-        setCall({ audio, conversation: started.conversation });
+        // Its screen didn't load (offline for a moment): Start tries again, and opens the same call.
+        if (!Client) {
+          return "failed";
+        }
+
+        setCall({ Client, audio, conversation: started.conversation });
         return "ready";
       }}
     />

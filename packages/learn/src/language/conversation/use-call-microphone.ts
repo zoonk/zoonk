@@ -46,6 +46,27 @@ export async function openCallAudio(): Promise<{
 export type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
 
 /**
+ * The microphone a tap opened before its call's screen existed (a checkpoint's Start creates the
+ * call first). Safari on iOS asks for it, and asks again after "Don't Allow", only while the tap is
+ * still active, so the tap asks and the call's first start takes what it got. It's taken once:
+ * `release` lets it go unless a start took it first, and every later `take` finds nothing. It's
+ * part of the intro's own code, so the tap asks before the call's screen loads or anything waits.
+ */
+export function openCallAudioInTap() {
+  const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
+
+  const take = () => {
+    const { audio } = held;
+    held.audio = null;
+    return audio;
+  };
+
+  return { release: () => void take()?.then((audio) => audio.stop()), take };
+}
+
+export type TappedCallAudio = ReturnType<typeof openCallAudioInTap>;
+
+/**
  * The call's microphone: open for the whole call, closed when the call fails or ends and when the
  * screen closes, even a screen left while the call was still opening. It must not close when the
  * session is set: that would cut the audio GPT-Live needs before it says a word.

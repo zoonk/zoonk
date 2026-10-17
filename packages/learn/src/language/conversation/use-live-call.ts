@@ -16,6 +16,7 @@ import {
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { getCallEndsAt } from "./call-deadline";
 import { type LiveCallSession } from "./live-call-session";
+import { loadLiveCallSession } from "./load-live-call-session";
 import {
   type CallConnectionActions,
   type ConversationConnection,
@@ -31,7 +32,12 @@ import {
 } from "./use-call-controls";
 import { type CallLength, useCallClock, useOpeningCue } from "./use-call-cues";
 import { useCallEvents } from "./use-call-events";
-import { type CallAudio, openCallAudio, useCallMicrophone } from "./use-call-microphone";
+import {
+  type CallAudio,
+  type TappedCallAudio,
+  openCallAudio,
+  useCallMicrophone,
+} from "./use-call-microphone";
 import { useCallObjectives } from "./use-objective-checks";
 
 /**
@@ -71,34 +77,6 @@ const noSubscription = () => () => {
 };
 
 const emptySnapshot = () => EMPTY_STATE;
-
-/**
- * The realtime client (the AI SDK's session and GPT-Live's events) loads for a call, when it
- * starts or as the learner reaches for Start, not with the intro. A load that failed is null.
- */
-export function loadLiveCallSession() {
-  return import("./live-call-session").catch(() => null);
-}
-
-/**
- * The microphone a tap opened before its call's screen existed (a checkpoint's Start creates the
- * call first). Safari on iOS asks for it, and asks again after "Don't Allow", only while the tap is
- * still active, so the tap asks and the call's first start takes what it got. It's taken once:
- * `release` lets it go unless a start took it first, and every later `take` finds nothing.
- */
-export function openCallAudioInTap() {
-  const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
-
-  const take = () => {
-    const { audio } = held;
-    held.audio = null;
-    return audio;
-  };
-
-  return { release: () => void take()?.then((audio) => audio.stop()), take };
-}
-
-export type TappedCallAudio = ReturnType<typeof openCallAudioInTap>;
 
 /**
  * What a call needs before it's reserved, since the server's deadline starts when it is: the
