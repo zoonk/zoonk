@@ -1,10 +1,10 @@
 import { once } from "@zoonk/utils/once";
 import { type BuildPlanInput, type BuiltPlan } from "../planner/build-plan";
 import { type StudyScheduleAt } from "../planner/daily-time-plans";
+import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { type PlanBases } from "../planner/plan-bases";
 import { daysBetween } from "../planner/plan-calendar";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
-import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { readPlanAnalysis } from "./read-plan-analysis";
 
 /**

@@ -1,8 +1,8 @@
 import "server-only";
 import { chooseBases } from "../planner/base-choices";
 import { type BuildPlanInput } from "../planner/build-plan";
-import { getPlanFeasibility } from "../planner/plan-feasibility";
 import { type ExamSubjectShare } from "../planner/feasibility-coverage";
+import { getPlanFeasibility } from "../planner/plan-feasibility";
 import { readBuiltPlan } from "./read-built-plan";
 
 /**
