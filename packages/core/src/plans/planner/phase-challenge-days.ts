@@ -1,4 +1,3 @@
-import { type BuildPlanInput } from "./build-plan";
 import { isLessonRoom } from "./day-index";
 import { addDays, toIsoDate } from "./plan-calendar";
 import { type PlanSettings } from "./plan-state";
@@ -31,22 +30,6 @@ export function getExamChallengeDayRules({
     kind: "examDays",
     movedTo: new Set([...settings.movedEvents, ...settings.mockRelocations].map((move) => move.to)),
   };
-}
-
-/**
- * The rules a goal's runs place its phase challenges by: an exam with a date lays its days out by
- * the exam's calendar (see `createDays`), every other goal by its lessons.
- */
-export function getPhaseChallengeDayRules({
-  goal,
-  settings,
-}: {
-  goal: Pick<BuildPlanInput["goal"], "kind" | "targetDate">;
-  settings: MoveSettings;
-}): PhaseChallengeDayRules {
-  return goal.kind === "exam" && goal.targetDate
-    ? getExamChallengeDayRules({ settings, targetDate: goal.targetDate })
-    : { kind: "lessons" };
 }
 
 /**

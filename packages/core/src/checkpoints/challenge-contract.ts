@@ -106,8 +106,9 @@ export type ChallengeView = {
    * week: the first day the plan's next run can put it on, so it's back in that day's session
    * ("It'll be here on Monday"). Null otherwise, when the coming week has no such day, and for the
    * week's challenge, which doesn't come back on its own once its day is over: Move to Monday keeps
-   * it (`canMove`). Null for a dated exam's phase that teaches nothing of its own too: its runs
-   * place its challenge by what it would ask, which no day tells.
+   * it (`canMove`). Null for an exam's phase challenges too: its runs keep them off the exam's eve
+   * and the days its mocks take, as the plan funds them from earlier days, which no day's study
+   * time tells.
    */
   nextStudyDate: string | null;
   /** "Mock exam 3": this goal's mocks, counting this one. */

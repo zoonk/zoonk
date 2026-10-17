@@ -2,12 +2,8 @@ import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { readCourseStart } from "../../goals/course-start-details";
 import { readMockMinutes } from "../../plans/_utils/planner-exam-facts";
-import {
-  canHoldPhaseChallenge,
-  getPhaseChallengeDayRules,
-} from "../../plans/planner/phase-challenge-days";
+import { canHoldPhaseChallenge } from "../../plans/planner/phase-challenge-days";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
-import { getItemKey } from "../../plans/planner/plan-items";
 import { toExamWindows } from "../../plans/planner/plan-phases";
 import {
   type RunDayInput,
@@ -24,8 +20,6 @@ import {
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { type CheckpointKind } from "../../sessions/brain-power";
-import { isBossTeachingItem } from "../checkpoint-rules";
-import { readBossOffer } from "./challenge-offer";
 import { type OwnedChallenge } from "./owned-challenge";
 
 /**
@@ -62,58 +56,41 @@ function getTomorrowRunInput({
 }
 
 /**
- * Whether a phase challenge tests teaching of its own phase, as its plan's last run saved what it
- * tests (`testedKeys`). A dated exam's run puts one that doesn't (a window of practice and mocks)
- * where what it would ask from earlier phases settles (see `placeAfterWindow`), which no day's
- * shape tells. Without saved facts, it doesn't.
- */
-function testsOwnPhase({ item, items }: Pick<OwnedChallenge, "item" | "items">): boolean {
-  const tested = new Set(readBossOffer({ item })?.testedKeys);
-
-  return items.some(
-    (planItem) =>
-      planItem.phase === item.phase &&
-      isBossTeachingItem(planItem) &&
-      tested.has(getItemKey(planItem)),
-  );
-}
-
-/**
  * When a phase challenge today's study time holds back is here again, YYYY-MM-DD: the first day,
- * within a week, that the plan's next run can put it on, by the rule its runs place one by (see
+ * within a week, that the plan's next run can put it on, a day with lesson time (see
  * `canHoldPhaseChallenge`), on the days as tomorrow's run lays them out (see `describeRunDays`),
  * since a boss left to do carries into that day's session. None for the week's challenge: left
  * unstarted, it leaves the plan once a later day re-plans (RULES R24), and Move to Monday keeps it
- * (see `ChallengeView.nextStudyDate`). None for a dated exam's phase that teaches nothing of its
- * own either (see `testsOwnPhase`): its copy names no day rather than guess one.
+ * (see `ChallengeView.nextStudyDate`). None for an exam's either: its runs keep phase challenges
+ * off the exam's eve and the days its mocks take, as the plan funds them from earlier days (see
+ * `placeExamBosses`), which no day's study time tells, so its copy names no day.
  */
 export function getNextStudyDay({
   challenge,
   dailyLimitReached,
   kind,
 }: {
-  challenge: Pick<OwnedChallenge, "goal" | "item" | "items" | "plan" | "today">;
+  challenge: Pick<OwnedChallenge, "goal" | "items" | "plan" | "today">;
   dailyLimitReached: boolean;
   kind: CheckpointKind;
 }): string | null {
-  if (!dailyLimitReached || kind === "weekly") {
+  if (!dailyLimitReached || kind === "weekly" || challenge.goal.kind === "exam") {
     return null;
   }
 
   const settings = parsePlanSettings(challenge.plan.settings);
-  const rules = getPhaseChallengeDayRules({ goal: challenge.goal, settings });
-
-  if (rules.kind === "examDays" && !testsOwnPhase(challenge)) {
-    return null;
-  }
-
   const input = getTomorrowRunInput({ challenge, settings });
   const days = createDays({ input, planStart: getPlanStart(input) });
   const { describeDay } = describeRunDays({ days, settings });
 
   const date = Array.from({ length: DAYS_PER_WEEK }, (_, offset) =>
     addDays(input.today, offset),
-  ).find((day) => canHoldPhaseChallenge({ day: { date: day, shape: describeDay(day) }, rules }));
+  ).find((day) =>
+    canHoldPhaseChallenge({
+      day: { date: day, shape: describeDay(day) },
+      rules: { kind: "lessons" },
+    }),
+  );
 
   return date ? toIsoDate(date) : null;
 }

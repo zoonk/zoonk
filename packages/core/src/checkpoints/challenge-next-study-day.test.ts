@@ -1,36 +1,18 @@
 import { type PlanItem, prisma } from "@zoonk/db";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
-import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { toIsoDate } from "../plans/planner/plan-calendar";
-import { parsePlanSettings } from "../plans/planner/plan-state";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { MIN_CHECKPOINT_QUESTIONS } from "./checkpoint-rules";
 import { getChallenge } from "./get-challenge";
 
 const DAY_MS = 86_400_000;
 const LEARN_KINDS: PlanItem["kind"][] = ["chapter", "lesson"];
-
-const EXAM_STRUCTURE = {
-  formats: [],
-  mock: {
-    adaptive: false,
-    citations: [],
-    order: null,
-    scoring: { description: "Right answers", method: "raw" },
-    sections: [{ day: null, minutes: 30, name: "Math", questions: 18 }],
-    timeLimitMinutes: 30,
-    totalQuestions: 18,
-  },
-  rules: [],
-  subjects: [],
-};
 
 /** Noon on a learner-local date, so the clock reads that day in UTC. */
 function noonOn(date: Date): Date {
@@ -68,39 +50,6 @@ async function challengeOf(planItemId: string) {
   return result.challenge;
 }
 
-/** A dated exam's plan, with Plus (its phase challenges after the first week are Plus's). */
-async function datedExamPlanFixture() {
-  const [user, blueprint, library] = await Promise.all([
-    userFixture(),
-    examBlueprintFixture({ structure: EXAM_STRUCTURE }),
-    planLibraryFixture({ skills: [{ area: "Math", lessons: 40 }] }),
-  ]);
-
-  await Promise.all([
-    questionBankFixture(library.skills[0]?.id ?? ""),
-    prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-    }),
-  ]);
-
-  const { goal, plan } = await unplannedGoalFixture({
-    createdAt: new Date("2020-09-28"),
-    dailyMinutes: 60,
-    details: { placementDeclined: true },
-    examBlueprintId: blueprint.id,
-    kind: "exam",
-    settings: { startDate: "2020-09-28" },
-    targetDate: new Date("2020-12-18"),
-    timezone: "UTC",
-    userId: user.id,
-  });
-
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
-  mockSession(user.id);
-
-  return { goal, plan, user };
-}
-
 /** A phase's challenge still to win, on the day the plan saved it. */
 async function findPhaseChallenge({ phase, planId }: { phase: number; planId: string }) {
   const boss = await prisma.planItem.findFirst({
@@ -126,7 +75,7 @@ async function openTheNextDay({ date, goalId }: { date: Date; goalId: string }) 
   });
 }
 
-describe("a phase challenge past today's study time names the day the plan's next run puts it on", () => {
+describe("a learn plan's phase challenge past today's study time names the day its next run puts it on", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
   });
@@ -135,7 +84,7 @@ describe("a phase challenge past today's study time names the day the plan's nex
     vi.useRealTimers();
   });
 
-  it("on a learn plan, past a weekly checkpoint day its 15 minutes leave no lesson time on", async () => {
+  it("past a weekly checkpoint day its 15 minutes leave no lesson time on", async () => {
     // A Monday in 2020, before other tests' learning events, so the planner's pace is its own.
     vi.setSystemTime(new Date("2020-10-05T12:00:00Z"));
 
@@ -211,116 +160,5 @@ describe("a phase challenge past today's study time names the day the plan's nex
     // Sunday has study time, but the week's checkpoint takes all of it: the challenge isn't there.
     expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(sunday));
     expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
-  });
-
-  it("on a dated exam's plan, past a weekly mock's own day", async () => {
-    // A Monday in 2020, before other tests' learning events, so the planner's pace is its own.
-    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
-    const { goal, plan, user } = await datedExamPlanFixture();
-
-    const [boss, saved] = await Promise.all([
-      findPhaseChallenge({ phase: 0, planId: plan.id }),
-      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
-    ]);
-
-    // A day a mock was moved onto can hold a challenge too; a mock's own day can't.
-    const { mockRelocations, movedEvents } = parsePlanSettings(saved.settings);
-    const movedTo = new Set([...movedEvents, ...mockRelocations].map((move) => move.to));
-
-    const mockDay = saved.items
-      .flatMap((item) =>
-        item.kind === "mock" && item.scheduledFor && item.scheduledFor > boss.scheduledFor
-          ? [item.scheduledFor]
-          : [],
-      )
-      .filter((date) => !movedTo.has(toIsoDate(date)))
-      .toSorted((a, b) => a.getTime() - b.getTime())
-      .at(0);
-
-    if (!mockDay) {
-      throw new Error("Expected a weekly mock after the first phase's challenge");
-    }
-
-    const today = new Date(mockDay.getTime() - DAY_MS);
-
-    // The learner kept up: every lesson before today is done, and the first phase's challenge is
-    // today, the day before a mock.
-    await Promise.all([
-      prisma.planItem.updateMany({
-        data: { completedAt: new Date(today.getTime() - DAY_MS / 2), status: "done" },
-        where: { kind: { in: LEARN_KINDS }, planId: plan.id, scheduledFor: { lt: today } },
-      }),
-      prisma.planItem.update({ data: { scheduledFor: today }, where: { id: boss.id } }),
-    ]);
-
-    vi.setSystemTime(noonOn(today));
-    await useUpStudyTime({ date: today, userId: user.id });
-
-    const held = await challengeOf(boss.id);
-
-    expect(held).toMatchObject({
-      dailyLimitReached: true,
-      status: "ready",
-      today: toIsoDate(today),
-    });
-
-    await openTheNextDay({ date: mockDay, goalId: goal.id });
-    const replanned = await findPhaseChallenge({ phase: 0, planId: plan.id });
-
-    // Tomorrow has study time, but the mock takes the day whole: the challenge comes after it.
-    expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(mockDay));
-    expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
-  });
-
-  it("on a dated exam's plan, names no day for a phase that teaches nothing of its own", async () => {
-    // A Monday in 2020, before other tests' learning events, so the planner's pace is its own.
-    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
-    const { goal, plan, user } = await datedExamPlanFixture();
-
-    const saved = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
-      where: { id: plan.id },
-    });
-
-    const taught = new Set(
-      saved.items.flatMap((item) => (LEARN_KINDS.includes(item.kind) ? [item.phase] : [])),
-    );
-
-    // A window of practice and mocks: its challenge asks earlier phases' lessons, none of its own.
-    const boss = saved.items.find(
-      (item) =>
-        item.kind === "boss" &&
-        item.status === "todo" &&
-        !taught.has(item.phase) &&
-        (readSelectedItemFacts(item.facts)?.boss?.testedKeys.length ?? 0) > 0,
-    );
-
-    if (!boss?.scheduledFor) {
-      throw new Error("Expected a challenge for a phase that teaches nothing of its own");
-    }
-
-    const today = boss.scheduledFor;
-
-    // The learner kept up: every lesson and challenge before today is done.
-    await prisma.planItem.updateMany({
-      data: { completedAt: new Date(today.getTime() - DAY_MS / 2), status: "done" },
-      where: {
-        kind: { in: [...LEARN_KINDS, "boss"] },
-        planId: plan.id,
-        scheduledFor: { lt: today },
-      },
-    });
-
-    vi.setSystemTime(noonOn(today));
-    await useUpStudyTime({ date: today, userId: user.id });
-
-    // Its runs put it where what it asks from earlier phases settles, which no day tells: the
-    // screen names no day rather than guess one.
-    await expect(challengeOf(boss.id)).resolves.toMatchObject({
-      dailyLimitReached: true,
-      goalId: goal.id,
-      nextStudyDate: null,
-      status: "ready",
-    });
   });
 });
