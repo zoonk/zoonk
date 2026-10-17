@@ -43,7 +43,7 @@ describe("POST /v1/uploads/tokens", () => {
     vi.mocked(createSourceUploadToken).mockResolvedValue({
       status: "ready",
       token: signedToken(),
-      urlOptions: { addRandomSuffix: true },
+      urlOptions: { addRandomSuffix: false, allowOverwrite: false },
     });
   });
 
@@ -55,7 +55,10 @@ describe("POST /v1/uploads/tokens", () => {
     await expect(response.json()).resolves.toStrictEqual({
       presignedUrlPayload: {
         delegationToken: signedToken().delegationToken,
-        params: { "vercel-blob-add-random-suffix": "true" },
+        params: {
+          "vercel-blob-add-random-suffix": "false",
+          "vercel-blob-allow-overwrite": "false",
+        },
         signature: expect.any(String),
       },
       type: "blob.generate-presigned-url",

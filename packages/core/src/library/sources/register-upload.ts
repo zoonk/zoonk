@@ -8,7 +8,7 @@ import { type RefusedUsage } from "../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
-import { isOwnUploadPathname } from "./create-upload-token";
+import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { deleteUploadedBlob } from "./upload-blob";
 
@@ -167,8 +167,11 @@ async function storeUpload({
     findStoredCopy({ hash: content.hash, userId }),
   ]);
 
-  const sourceId = storedCopy?.id ?? randomUUID();
-  const refusal = await claimUpload(sourceId);
+  // A file was claimed when its upload was signed, and a new source keeps that claim as its id, so
+  // pasting the same document later finds the claim too.
+  const uploadId = input.kind === "file" ? getUploadClaimId(input.pathname) : randomUUID();
+  const sourceId = storedCopy?.id ?? uploadId;
+  const refusal = await claimUpload(input.kind === "file" ? uploadId : sourceId);
 
   if (refusal || storedCopy) {
     await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });

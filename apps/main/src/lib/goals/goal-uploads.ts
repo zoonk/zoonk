@@ -101,9 +101,10 @@ export async function attachGoalFile({
   }
 
   const headers = await getWorkflowAuthHeaders();
-  // The file must sit right in the folder: a name can't nest folders or climb out with "..".
+  // The file must sit right in the folder: a name can't nest folders or climb out with "..". Its
+  // own id keeps two files with the same name apart, since an upload never replaces a stored file.
   const fileName = file.name.replaceAll("/", "-").replaceAll(/\.{2,}/gu, ".");
-  const pathname = `${getSourceUploadFolder(session.user.id)}${fileName}`;
+  const pathname = `${getSourceUploadFolder(session.user.id)}${crypto.randomUUID()}-${fileName}`;
 
   const { data: blob, error } = await safeAsync(() =>
     uploadPresigned(pathname, file, {

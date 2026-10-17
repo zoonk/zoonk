@@ -23,6 +23,9 @@ export type UploadContent = {
 /** What a pasted link may point at: a web page, a PDF or plain text. */
 const LINK_CONTENT_TYPES = new Set(["application/pdf", "text/html", "text/markdown", "text/plain"]);
 
+/** The id an app puts before a file's name, so two files with the same name never share a path. */
+const UPLOAD_ID_PREFIX = /^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}-/iu;
+
 /** A page's address without the scheme, readable: "en.wikipedia.org/wiki/Glycolysis". */
 function getTitleFromUrl(value: string): string {
   const url = new URL(value);
@@ -45,11 +48,11 @@ export function getDefaultTitle(input: UploadRead): string {
   }
 }
 
-/** The file name the learner chose, without Blob's random suffix and extension. */
+/** The file name the learner chose, without the upload's id and the extension. */
 function getTitleFromPathname(pathname: string): string {
   const fileName = pathname.split("/").at(-1) ?? pathname;
 
-  return fileName.replace(/-[A-Za-z0-9]{30}(?=\.[^.]+$)/u, "").replace(/\.[^.]+$/u, "");
+  return fileName.replace(UPLOAD_ID_PREFIX, "").replace(/\.[^.]+$/u, "");
 }
 
 export type ReadContent =

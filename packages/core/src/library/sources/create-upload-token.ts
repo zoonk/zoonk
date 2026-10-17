@@ -1,10 +1,11 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { type IssuedSignedToken, issueSignedToken } from "@vercel/blob";
 import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 import { getSourceUploadFolder, isFileInFolder } from "@zoonk/utils/user-blobs";
-import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { findReachedUsageLimit } from "../../entitlements/_utils/reached-usage-limit";
-import { type AllowanceLimit } from "../../entitlements/contract";
+import { claimUsage } from "../../entitlements/claim-usage";
+import { type RefusedUsage } from "../../entitlements/contract";
+import { getSession } from "../../users/get-session";
 import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-contract";
 
 /** Long enough to upload a 20 MB file on a slow phone connection, short enough to be useless if leaked. */
@@ -12,15 +13,21 @@ const TOKEN_LIFETIME_MINUTES = 15;
 const TOKEN_LIFETIME_MS = TOKEN_LIFETIME_MINUTES * 60 * 1000;
 
 /**
- * How the signed upload URL stores the file: under a random suffix, so two files with the same name
- * never replace each other.
+ * How the signed upload URL stores the file: at exactly its path and never over a file already
+ * there, so a signature stores one file however often it's sent, and its claim covers that file.
  */
-const UPLOAD_URL_OPTIONS = { addRandomSuffix: true };
+const UPLOAD_URL_OPTIONS = { addRandomSuffix: false, allowOverwrite: false };
+
+/**
+ * A hash written as a UUID of version 8 (custom data): its version and variant digits are fixed,
+ * so every UUID check accepts it.
+ */
+const HASH_AS_UUID = /^(?<p1>.{8})(?<p2>.{4}).(?<p3>.{3}).(?<p4>.{3})(?<p5>.{12}).*$/u;
 
 export type SourceUploadToken =
   | { status: "unauthorized" }
   | { status: "invalidPathname" }
-  | { limit: AllowanceLimit; status: "limitReached" }
+  | RefusedUsage
   | { status: "ready"; token: IssuedSignedToken; urlOptions: typeof UPLOAD_URL_OPTIONS };
 
 /** A file name inside the learner's own folder, without climbing out of it. */
@@ -35,33 +42,43 @@ export function isOwnUploadPathname({
 }
 
 /**
+ * The plan's claim for the file at this path: signing its upload makes it and registering the
+ * file finds it again, so the file counts once. A new source from the file takes it as its id.
+ */
+export function getUploadClaimId(pathname: string): string {
+  return createHash("sha256")
+    .update(pathname)
+    .digest("hex")
+    .replace(HASH_AS_UUID, "$<p1>-$<p2>-8$<p3>-8$<p4>-$<p5>");
+}
+
+/**
  * Signs the upload a browser or app sends straight to the private Blob store, since function
  * requests are capped at 4.5 MB. The signature only accepts this file in the learner's own folder,
- * the supported types and the size limit, and it's refused once the plan's uploads are used up (the
- * claim happens when the file is registered, so a failed upload costs nothing). Signing works with
- * the deployment's OIDC credentials, so no long-lived store token is needed on Vercel.
+ * the supported types and the size limit. Signing counts the upload against the plan, since a file
+ * stored without being registered takes storage all the same (a failed upload counts too); signing
+ * the same path again and registering its file count nothing more. Signing works with the
+ * deployment's OIDC credentials, so no long-lived store token is needed on Vercel.
  */
 export async function createSourceUploadToken({
   pathname,
 }: {
   pathname: string;
 }): Promise<SourceUploadToken> {
-  const viewer = await getEntitlementViewer();
+  const session = await getSession();
 
-  if (!viewer) {
+  if (!session) {
     return { status: "unauthorized" };
   }
 
-  const { tier, userId } = viewer;
-
-  if (!isOwnUploadPathname({ pathname, userId })) {
+  if (!isOwnUploadPathname({ pathname, userId: session.user.id })) {
     return { status: "invalidPathname" };
   }
 
-  const limit = await findReachedUsageLimit({ kind: "upload", tier, userId });
+  const decision = await claimUsage({ kind: "upload", targetId: getUploadClaimId(pathname) });
 
-  if (limit) {
-    return { limit, status: "limitReached" };
+  if (decision.status !== "allowed") {
+    return decision;
   }
 
   const token = await issueSignedToken({

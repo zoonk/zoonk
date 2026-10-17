@@ -1,11 +1,22 @@
+import { randomUUID } from "node:crypto";
 import { issueSignedToken } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { isUuid } from "@zoonk/utils/uuid";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
-import { createSourceUploadToken, isOwnUploadPathname } from "./create-upload-token";
+import {
+  createSourceUploadToken,
+  getUploadClaimId,
+  isOwnUploadPathname,
+} from "./create-upload-token";
 import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-contract";
+
+/** A file the learner names for upload: its own id first, as the apps name them. */
+function uploadPathname(userId: string) {
+  return `sources/${userId}/${randomUUID()}-edital.pdf`;
+}
 
 const SIGNED_TOKEN = {
   clientSigningToken: "client-signing-token",
@@ -40,7 +51,7 @@ describe(createSourceUploadToken, () => {
     await expect(createSourceUploadToken({ pathname })).resolves.toStrictEqual({
       status: "ready",
       token: SIGNED_TOKEN,
-      urlOptions: { addRandomSuffix: true },
+      urlOptions: { addRandomSuffix: false, allowOverwrite: false },
     });
 
     expect(issueSignedToken).toHaveBeenCalledExactlyOnceWith({
@@ -54,6 +65,38 @@ describe(createSourceUploadToken, () => {
     });
 
     expect(vi.mocked(issueSignedToken).mock.calls[0]?.[0].validUntil).toBeGreaterThan(Date.now());
+  });
+
+  // A file stored without being registered takes storage all the same, so signing is what counts.
+  it("counts each signed file, so a free account can't sign more uploads than its plan allows", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const firstPathname = uploadPathname(user.id);
+    const pathnames = [firstPathname, uploadPathname(user.id), uploadPathname(user.id)];
+
+    const signed = await Promise.all(
+      pathnames.map((pathname) => createSourceUploadToken({ pathname })),
+    );
+
+    expect(signed.map((result) => result.status)).toStrictEqual(["ready", "ready", "ready"]);
+
+    await expect(
+      createSourceUploadToken({ pathname: uploadPathname(user.id) }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 3, period: "day", resource: "upload", tier: "free" },
+      status: "limitReached",
+    });
+
+    // Signing a path again stores no second file there, so it counts nothing more.
+    await expect(createSourceUploadToken({ pathname: firstPathname })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
+    ).resolves.toBe(3);
+
+    expect(issueSignedToken).toHaveBeenCalledTimes(4);
   });
 
   it("refuses another learner's folder", async () => {
@@ -148,5 +191,16 @@ describe(isOwnUploadPathname, () => {
     expect(isOwnUploadPathname({ pathname: "sources/user-1/notes/a.pdf", userId: "user-1" })).toBe(
       false,
     );
+  });
+});
+
+describe(getUploadClaimId, () => {
+  // It's also the id of the source the file becomes, which API clients send back.
+  it("names each path's claim with a valid UUID, the same one every time", () => {
+    const claim = getUploadClaimId("sources/user-1/a.pdf");
+
+    expect(isUuid(claim)).toBe(true);
+    expect(getUploadClaimId("sources/user-1/a.pdf")).toBe(claim);
+    expect(getUploadClaimId("sources/user-1/b.pdf")).not.toBe(claim);
   });
 });

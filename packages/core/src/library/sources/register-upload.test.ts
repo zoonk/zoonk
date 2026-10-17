@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { del, get } from "@vercel/blob";
+import { del, get, issueSignedToken } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -7,6 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { createSourceUploadToken } from "./create-upload-token";
 import { registerSourceUpload } from "./register-upload";
 
 /** The private store uploads live in. */
@@ -52,8 +53,9 @@ function uniqueText() {
   return `${NOTICE_TEXT} ${randomUUID()}`;
 }
 
+/** A notice uploaded the way the apps name it: its own id, then the learner's file name. */
 function uploadNotice({ text, userId }: { text: string; userId: string }) {
-  const pathname = `sources/${userId}/edital-${randomUUID()}.md`;
+  const pathname = `sources/${userId}/${randomUUID()}-edital.md`;
   const bytes = new TextEncoder().encode(text);
 
   return { pathname, url: mockUploadedFile({ bytes, contentType: "text/markdown", pathname }) };
@@ -90,7 +92,7 @@ describe(registerSourceUpload, () => {
     expect(get).not.toHaveBeenCalled();
   });
 
-  it("stores a new file as a private source of its owner and asks for a visibility check", async () => {
+  it("stores a new file as a private source of its owner, titled by its name, and asks for a visibility check", async () => {
     const user = await userFixture();
     mockSession(user.id);
     const text = uniqueText();
@@ -113,7 +115,7 @@ describe(registerSourceUpload, () => {
       visibility: "private",
     });
 
-    expect(source.title).toMatch(/^edital-/u);
+    expect(source.title).toBe("edital");
     expect(source.identityKey).toBe(`private:${user.id}:upload:${source.contentHash}`);
     expect(source.learnerSources).toMatchObject([{ origin: "upload", userId: user.id }]);
     expect(del).not.toHaveBeenCalled();
@@ -315,6 +317,38 @@ describe(registerSourceUpload, () => {
 
     expect(del).toHaveBeenCalledWith(url, PRIVATE_STORE);
     await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(0);
+  });
+
+  it("counts a file once: signing its upload, registering it and pasting the same text", async () => {
+    const user = await userFixture();
+    await usageRecordsFixture({ count: 2, kind: "upload", userId: user.id });
+    mockSession(user.id);
+
+    vi.mocked(issueSignedToken).mockResolvedValue({
+      clientSigningToken: "client-signing-token",
+      delegationToken: "delegation-token",
+      validUntil: Date.now(),
+    });
+
+    const text = uniqueText();
+    const { pathname } = uploadNotice({ text, userId: user.id });
+
+    const countUploads = () =>
+      prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } });
+
+    await expect(createSourceUploadToken({ pathname })).resolves.toMatchObject({ status: "ready" });
+    await expect(countUploads()).resolves.toBe(3);
+
+    // Signing took the day's last upload: registering the file or pasting its text takes no other.
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      registerSourceUpload({ kind: "text", language: "pt", text }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(countUploads()).resolves.toBe(3);
   });
 
   it("doesn't let guests upload", async () => {

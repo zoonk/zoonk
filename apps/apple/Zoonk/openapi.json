@@ -21591,7 +21591,7 @@
     },
     "/uploads": {
       "post": {
-        "description": "Counts as one of the plan's uploads (registering the same document again doesn't). A refusal is `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 asks a guest to create an account, 402 a free learner to upgrade or come back, 429 Plus to come back after it resets), or `SLOW_DOWN` (429) under fair use.",
+        "description": "Counts as one of the plan's uploads unless it already counted: a file whose upload POST /uploads/tokens signed, or a document registered before, counts nothing more. A refusal is `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 asks a guest to create an account, 402 a free learner to upgrade or come back, 429 Plus to come back after it resets), or `SLOW_DOWN` (429) under fair use.",
         "operationId": "createUpload",
         "security": [
           {
@@ -21720,7 +21720,7 @@
     },
     "/uploads/tokens": {
       "post": {
-        "description": "Refused with `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 for a guest, 402 for a free learner, 429 for Plus). Signing counts nothing: the upload is counted when the file is registered with POST /uploads.",
+        "description": "Counts as one of the plan's uploads, whether or not the file is then sent: signing the same path again, and registering its file with POST /uploads, count nothing more. The file is stored at exactly that path and never replaces a stored file, so each file needs a new path. Refused with `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 for a guest, 402 for a free learner, 429 for Plus), or `SLOW_DOWN` (429) under fair use.",
         "operationId": "createUploadToken",
         "security": [
           {
@@ -28188,7 +28188,7 @@
               "pathname": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Must be inside `sources/{userId}/`, the learner's own folder"
+                "description": "Must be inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID)"
               }
             },
             "required": [

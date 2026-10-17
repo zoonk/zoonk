@@ -77,7 +77,10 @@ export const uploadTokenRequestSchema = z
       pathname: z
         .string()
         .min(1)
-        .meta({ description: "Must be inside `sources/{userId}/`, the learner's own folder" }),
+        .meta({
+          description:
+            "Must be inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID)",
+        }),
     }),
     type: z.literal("blob.generate-presigned-url"),
   })
