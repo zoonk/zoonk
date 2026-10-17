@@ -90,7 +90,7 @@ describe(placeContinuations, () => {
     const readPlans = () =>
       prisma.plan.findMany({
         orderBy: { id: "asc" },
-        select: { id: true, inputVersion: true, pendingAdaptation: true },
+        select: { id: true, inputVersion: true },
         where: { id: { in: [reading.id, unrelated.id] } },
       });
 
@@ -101,9 +101,7 @@ describe(placeContinuations, () => {
 
     await expect(readPlans()).resolves.toStrictEqual(
       before.map((plan) =>
-        plan.id === reading.id
-          ? { ...plan, inputVersion: plan.inputVersion + 1, pendingAdaptation: ["content"] }
-          : plan,
+        plan.id === reading.id ? { ...plan, inputVersion: plan.inputVersion + 1 } : plan,
       ),
     );
 

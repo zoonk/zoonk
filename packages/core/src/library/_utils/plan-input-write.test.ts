@@ -13,34 +13,31 @@ async function dependentPlan(attrs: Omit<Parameters<typeof planFixture>[0], "goa
 function readPlans(planIds: readonly string[]) {
   return Promise.all(
     planIds.map((id) =>
-      prisma.plan.findUniqueOrThrow({
-        select: { inputVersion: true, pendingAdaptation: true },
-        where: { id },
-      }),
+      prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id } }),
     ),
   );
 }
 
 describe(lockPlanInputWrite, () => {
-  it("marks every dependent plan changed content, joining the reasons it already waited on", async () => {
-    const [waiting, fresh, unrelated] = await Promise.all([
-      dependentPlan({ pendingAdaptation: ["content", "evidence"] }),
+  it("marks every dependent plan changed, and no other", async () => {
+    const [first, second, unrelated] = await Promise.all([
+      dependentPlan(),
       dependentPlan(),
       dependentPlan(),
     ]);
 
     await writePlanInputs((tx) =>
       lockPlanInputWrite({
-        loadPlanIds: async () => [waiting.id, fresh.id],
+        loadPlanIds: async () => [first.id, second.id],
         lockSources: async () => {},
         tx,
       }),
     );
 
-    await expect(readPlans([waiting.id, fresh.id, unrelated.id])).resolves.toStrictEqual([
-      { inputVersion: waiting.inputVersion + 1, pendingAdaptation: ["content", "evidence"] },
-      { inputVersion: fresh.inputVersion + 1, pendingAdaptation: ["content"] },
-      { inputVersion: unrelated.inputVersion, pendingAdaptation: [] },
+    await expect(readPlans([first.id, second.id, unrelated.id])).resolves.toStrictEqual([
+      { inputVersion: first.inputVersion + 1 },
+      { inputVersion: second.inputVersion + 1 },
+      { inputVersion: unrelated.inputVersion },
     ]);
   });
 
@@ -63,8 +60,8 @@ describe(lockPlanInputWrite, () => {
     expect(loads).toBe(4);
 
     await expect(readPlans([first.id, joined.id])).resolves.toStrictEqual([
-      { inputVersion: first.inputVersion + 1, pendingAdaptation: ["content"] },
-      { inputVersion: joined.inputVersion + 1, pendingAdaptation: ["content"] },
+      { inputVersion: first.inputVersion + 1 },
+      { inputVersion: joined.inputVersion + 1 },
     ]);
   });
 });

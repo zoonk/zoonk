@@ -109,7 +109,7 @@ describe(pullLessonForFix, () => {
     ).resolves.toMatchObject({ contentStatus: "failed" });
   });
 
-  it("marks each plan reading the lesson's skill changed content, keeping the reasons it already waited on", async () => {
+  it("marks each plan reading the lesson's skill changed, and no other", async () => {
     const [user, other, skill, published] = await Promise.all([
       userFixture(),
       userFixture(),
@@ -124,7 +124,7 @@ describe(pullLessonForFix, () => {
     ]);
 
     const [dependent, unrelated] = await Promise.all([
-      planFixture({ goalId: goal.id, pendingAdaptation: ["evidence"], sourceSkillIds: [skill.id] }),
+      planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] }),
       planFixture({ goalId: otherGoal.id, sourceSkillIds: [] }),
     ]);
 
@@ -133,14 +133,11 @@ describe(pullLessonForFix, () => {
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: dependent.id } }),
-    ).resolves.toMatchObject({
-      inputVersion: dependent.inputVersion + 1,
-      pendingAdaptation: ["content", "evidence"],
-    });
+    ).resolves.toMatchObject({ inputVersion: dependent.inputVersion + 1 });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: unrelated.id } }),
-    ).resolves.toMatchObject({ inputVersion: unrelated.inputVersion, pendingAdaptation: [] });
+    ).resolves.toMatchObject({ inputVersion: unrelated.inputVersion });
   });
 });
 

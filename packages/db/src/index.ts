@@ -117,7 +117,6 @@ export {
   MilestoneKind,
   MistakeCause,
   MistakeStatus,
-  PlanAdaptationReason,
   PlanChangeStatus,
   PlanItemKind,
   PlanItemStatus,

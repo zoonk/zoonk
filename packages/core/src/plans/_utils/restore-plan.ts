@@ -68,9 +68,8 @@ function restoreStatus({
  * and every item on its day with its status, items the change removed included; items the change
  * added leave. Restored items keep their snapshot ids, so today's restored block payloads still
  * reach them. What the learner finished since stays done, and the restored summary counts it (see
- * `reduceRestoredSummary`). The plan's pending adaptation stays as it is, and the plan reads as not
- * checked against its inputs since. `items` are the snapshot's, with what the undo changes about
- * them (a test-out's skipped lessons, todo again).
+ * `reduceRestoredSummary`). `items` are the snapshot's, with what the undo changes about them (a
+ * test-out's skipped lessons, todo again).
  */
 export async function restorePlan({
   context,
@@ -104,10 +103,8 @@ export async function restorePlan({
         ? (summary.selected.coverage?.coveredShare ?? null)
         : snapshot.coveredShare,
       estimateHours: snapshot.estimateHours,
-      inputsChecked: false,
       inputsKey: snapshot.inputsKey,
       items: items.map(({ position: _position, ...item }) => item),
-      layoutKeys: snapshot.layoutKeys,
       phases: snapshot.phases,
       sourceSkillIds: snapshot.sourceSkillIds,
       standInLessons: getSnapshotStandInLessons(snapshot),

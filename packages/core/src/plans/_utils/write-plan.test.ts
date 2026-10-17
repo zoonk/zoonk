@@ -1,4 +1,4 @@
-import { type PlanAdaptationReason, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
@@ -11,7 +11,7 @@ import { markPlanWrite } from "./mark-plan-write";
 import { loadPlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
 import { computePlan } from "./replan";
-import { acknowledgePlanInputs, writePlan } from "./write-plan";
+import { savePlanInputsKey, writePlan } from "./write-plan";
 
 const NOW = new Date("2026-10-12T12:00:00Z");
 
@@ -47,29 +47,7 @@ async function setup() {
   return { goal, loadContext, readPlan };
 }
 
-const KEYS = { placement: "placement-key", scope: "scope-key", version: 1 as const };
-
-/** An input writer's marker: the reasons join the plan's, with its input version, as S-B writes them. */
-async function addReasons({
-  pace,
-  planId,
-  reasons,
-}: {
-  pace?: { factor: number; source: "own" };
-  planId: string;
-  reasons: PlanAdaptationReason[];
-}) {
-  await prisma.$transaction(async (tx) => {
-    await markPlansChanged(tx, { planIds: [planId] });
-
-    await tx.plan.update({
-      data: { pendingAdaptation: { push: reasons }, ...(pace && { pendingPace: pace }) },
-      where: { id: planId },
-    });
-  });
-}
-
-describe("plan writes and pending adaptation", () => {
+describe("plan writes", () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -81,7 +59,7 @@ describe("plan writes and pending adaptation", () => {
     vi.restoreAllMocks();
   });
 
-  it("posts a summary that describes the plan it saves, checked against its inputs", async () => {
+  it("posts a summary that describes the plan it saves", async () => {
     const { goal, readPlan } = await setup();
     const plan = await readPlan();
 
@@ -91,51 +69,13 @@ describe("plan writes and pending adaptation", () => {
         value: plan.summary,
       }),
     ).toMatchObject({ basis: { planVersion: plan.version }, schemaVersion: 2 });
-
-    expect(plan.checkedInputVersion).toBe(plan.inputVersion);
-    expect(plan.pendingAdaptation).toStrictEqual([]);
   });
 
-  it("clears only the reasons a layout took in, and the pace waiting with `pace`", async () => {
-    const { loadContext, readPlan } = await setup();
-    const { id: planId } = await readPlan();
-
-    await addReasons({
-      pace: { factor: 1.3, source: "own" },
-      planId,
-      reasons: ["evidence", "pace", "content"],
-    });
-
+  it("refuses a layout an input writer marked since", async () => {
+    const { loadContext } = await setup();
     const context = await loadContext();
     const computed = await computePlan({ context, mode: "automatic" });
-
-    await prisma.$transaction(async (tx) => {
-      const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
-
-      await writePlan({
-        context: writeContext,
-        plan: {
-          ...toComputedPlanWrite({ computed, context: writeContext, layoutKeys: KEYS }),
-          absorbedAdaptation: ["pace", "content"],
-        },
-        tx,
-      });
-    });
-
-    const after = await readPlan();
-
-    expect(after.pendingAdaptation).toStrictEqual(["evidence"]);
-    expect(after.pendingPace).toBeNull();
-    expect(after.layoutKeys).toStrictEqual(KEYS);
-    expect(after.checkedInputVersion).toBe(after.inputVersion);
-    expect(after.version).toBe(context.plan.version + 1);
-  });
-
-  it("refuses a layout an input writer marked since, and keeps that writer's reason", async () => {
-    const { loadContext, readPlan } = await setup();
-    const context = await loadContext();
-    const computed = await computePlan({ context, mode: "automatic" });
-    await addReasons({ planId: context.plan.id, reasons: ["content"] });
+    await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [context.plan.id] }));
 
     await expect(
       prisma.$transaction(async (tx) => {
@@ -143,56 +83,41 @@ describe("plan writes and pending adaptation", () => {
 
         await writePlan({
           context: writeContext,
-          plan: {
-            ...toComputedPlanWrite({ computed, context: writeContext }),
-            absorbedAdaptation: ["content"],
-          },
+          plan: toComputedPlanWrite({ computed, context: writeContext }),
           tx,
         });
       }),
     ).rejects.toBeInstanceOf(PlanConflictError);
-
-    await expect(readPlan()).resolves.toMatchObject({ pendingAdaptation: ["content"] });
   });
 
-  it("acknowledges unchanged inputs without touching the layout, clearing only checked reasons", async () => {
+  it("keeps a run's key on a plan it left as it was, without touching its layout", async () => {
     const { loadContext, readPlan } = await setup();
-    const { id: planId } = await readPlan();
-    await addReasons({ planId, reasons: ["evidence", "rebalance"] });
-    const marked = await readPlan();
     const context = await loadContext();
+    const before = await readPlan();
 
-    await prisma.$transaction(async (tx) => {
-      const plan = await markPlanWrite(tx, context.plan);
-      await acknowledgePlanInputs(tx, { checkedAdaptation: ["evidence"], layoutKeys: KEYS, plan });
-    });
+    await savePlanInputsKey({ context, graph: context.state.graph, inputsKey: "same-inputs" });
 
     const after = await readPlan();
 
-    expect(after.pendingAdaptation).toStrictEqual(["rebalance"]);
-    expect(after.inputVersion).toBe(marked.inputVersion + 1);
-    expect(after.checkedInputVersion).toBe(after.inputVersion);
-    expect(after.layoutKeys).toStrictEqual(KEYS);
+    expect(after.inputsKey).toBe("same-inputs");
+    expect(after.inputVersion).toBe(before.inputVersion + 1);
 
     // The layout stays byte for byte, at its version.
-    const layout = ({ graph, phases, settings, summary, version }: typeof after) => ({
-      graph,
+    const layout = ({ phases, settings, summary, version }: typeof after) => ({
       phases,
       settings,
       summary,
       version,
     });
 
-    expect(layout(after)).toStrictEqual(layout(marked));
+    expect(layout(after)).toStrictEqual(layout(before));
 
-    // A stamp another write moved since is a conflict, never a silent acknowledgment.
+    // A plan another write moved since keeps its own key, never a silent overwrite.
     await expect(
-      prisma.$transaction((tx) =>
-        acknowledgePlanInputs(tx, { checkedAdaptation: ["rebalance"], plan: context.plan }),
-      ),
+      savePlanInputsKey({ context, graph: context.state.graph, inputsKey: "stale-inputs" }),
     ).rejects.toBeInstanceOf(PlanConflictError);
 
-    await expect(readPlan()).resolves.toMatchObject({ pendingAdaptation: ["rebalance"] });
+    await expect(readPlan()).resolves.toMatchObject({ inputsKey: "same-inputs" });
   });
 
   // A content write finds the plans it changes by their sources: a waiting quote's own sources must

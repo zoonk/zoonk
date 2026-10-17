@@ -31,7 +31,7 @@ export function hasOverduePlanWork({ items, today }: Pick<PlanContext, "items" |
  * the plan's order: lessons and challenges due before today and still to do, and lessons the last
  * study day gave the learner (`givenLessonIds`) that the plan has after today.
  */
-export function selectLeftWork<Item extends LeftWorkItem>({
+function selectLeftWork<Item extends LeftWorkItem>({
   givenLessonIds,
   items,
   today,
@@ -57,7 +57,7 @@ export function selectLeftWork<Item extends LeftWorkItem>({
  * The lessons the last study day gave the learner that still count as given: none once today
  * settled them (a new day's settling, or a resume, see `loadTodaySettle`).
  */
-export function listGivenLessonIds(snapshot: PlanCarrySnapshot): Set<string> {
+function listGivenLessonIds(snapshot: PlanCarrySnapshot): Set<string> {
   return new Set(snapshot.settle === null ? snapshot.previous.lessonIds : []);
 }
 

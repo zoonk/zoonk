@@ -41,9 +41,8 @@ export type PlanSummary = z.infer<typeof planSummarySchema>;
 
 /**
  * The stored plan's summary when it describes that plan: the version it was posted with is the
- * plan's, for its owner. It describes the plan whatever happened since (studying, a new day): what
- * the plan may not reflect yet is the plan's pending adaptation, never a reason to build again.
- * Null for a legacy or unrecognized value, which reads as pending, never as a plan with no work.
+ * plan's, for its owner. It describes the plan whatever happened since (studying, a new day), never
+ * a reason to build again. Null for a legacy or unrecognized value, which reads as pending, never as a plan with no work.
  */
 export function readPlanSummary({
   plan,

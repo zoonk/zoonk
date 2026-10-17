@@ -1,53 +1,15 @@
-import { type Plan, type PlanAdaptationReason, type TransactionClient, sql } from "./index";
+import { type TransactionClient } from "./index";
 
 /** Marking only runs SQL, so any transaction or client that can do that may mark. */
 export type LearnerRevisionTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
 
-/**
- * The reasons an input writer can mark. `newSources` isn't one: only the plan's own source
- * publication adds or takes it out, with the sources it registers.
- */
-type MarkedReason = Exclude<PlanAdaptationReason, "newSources">;
-
-export type PlanInputChange = {
-  adaptation?: readonly MarkedReason[];
-  /** Adaptation and pendingPace apply only to this goal when given, otherwise to every marked plan. */
-  adaptationGoalId?: string;
-  /** Applies to every plan this mark raises, regardless of the goal scope or number of learners. */
-  allPlansAdaptation?: readonly Exclude<MarkedReason, "pace">[];
-  pendingPace?: Plan["pendingPace"];
-};
-
-/** Prisma's enum names may differ from the stored PostgreSQL literals. */
-function toDatabaseReasons(reasons: readonly MarkedReason[]) {
-  return reasons.map((reason) => (reason === "goalSource" ? "goal_source" : reason));
-}
-
-/** The caller already holds these plan locks. Reasons and pace share the epoch's atomic write. */
+/** Raises these plans' input version. The caller already holds their locks. */
 export async function markLockedPlanInputsChanged(
   tx: LearnerRevisionTransaction,
-  {
-    adaptation = [],
-    adaptationGoalId,
-    allPlansAdaptation = [],
-    pendingPace,
-    planIds,
-  }: PlanInputChange & { planIds: readonly string[] },
+  { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
-  const reasons = toDatabaseReasons(adaptation);
-  const allReasons = toDatabaseReasons(allPlansAdaptation);
-  const applies = adaptationGoalId ? sql`goal_id = ${adaptationGoalId}::uuid` : sql`TRUE`;
-
   await tx.$executeRaw`
-    UPDATE plans SET input_version = input_version + 1,
-      pending_adaptation = ARRAY(
-        SELECT DISTINCT reason
-        FROM unnest(pending_adaptation || ${allReasons}::"PlanAdaptationReason"[] || CASE WHEN ${applies}
-          THEN ${reasons}::"PlanAdaptationReason"[] ELSE '{}'::"PlanAdaptationReason"[] END) AS reason
-        ORDER BY reason
-      ),
-      pending_pace = CASE WHEN ${applies} AND ${pendingPace !== undefined}
-        THEN ${pendingPace === null || pendingPace === undefined ? null : JSON.stringify(pendingPace)}::jsonb ELSE pending_pace END
+    UPDATE plans SET input_version = input_version + 1
     WHERE id = ANY(${[...planIds]}::uuid[])
   `;
 }
@@ -78,24 +40,10 @@ async function lockLearnerPlans(
  */
 export async function markPlanInputsChanged(
   tx: LearnerRevisionTransaction,
-  {
-    adaptation,
-    adaptationGoalId,
-    allPlansAdaptation,
-    pendingPace,
-    userIds,
-  }: PlanInputChange & { userIds: readonly string[] },
+  { userIds }: { userIds: readonly string[] },
 ): Promise<string[]> {
   const planIds = await lockLearnerPlans(tx, { userIds });
-
-  await markLockedPlanInputsChanged(tx, {
-    adaptation,
-    adaptationGoalId,
-    allPlansAdaptation,
-    pendingPace,
-    planIds,
-  });
-
+  await markLockedPlanInputsChanged(tx, { planIds });
   return planIds;
 }
 

@@ -67,21 +67,14 @@ function todayGoalId(result: TodayViewResult): string | null {
   return "goal" in result ? result.goal.id : null;
 }
 
-/** The learner's revision and their goal plan's input version and pending reasons, as writers raise them. */
+/** The learner's revision and their goal plan's input version, as writers raise them. */
 async function readVersions({ planId, userId }: { planId: string; userId: string }) {
   const [user, plan] = await Promise.all([
     prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
-    prisma.plan.findUniqueOrThrow({
-      select: { inputVersion: true, pendingAdaptation: true },
-      where: { id: planId },
-    }),
+    prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } }),
   ]);
 
-  return {
-    inputVersion: plan.inputVersion,
-    learnerRevision: user.learnerRevision,
-    pendingAdaptation: plan.pendingAdaptation,
-  };
+  return { inputVersion: plan.inputVersion, learnerRevision: user.learnerRevision };
 }
 
 describe("the learner's day", () => {
@@ -139,13 +132,12 @@ describe("following a learner who moves", () => {
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 1n,
-      pendingAdaptation: ["calendar"],
     });
 
-    // The learner's other goal kept its zone: its plan is checked again with no reason to wait on.
+    // The learner's other goal kept its zone; marking a learner's plan inputs marks all their plans.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
-    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1, pendingAdaptation: [] });
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
   });
 
   it("raises the learner's revision and marks the plan's calendar changed when the zone moves within the same date", async () => {
@@ -161,7 +153,6 @@ describe("following a learner who moves", () => {
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 1n,
-      pendingAdaptation: ["calendar"],
     });
   });
 
@@ -351,7 +342,6 @@ describe("following a learner who studies while the move waits", () => {
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion,
       learnerRevision: before.learnerRevision + 1n,
-      pendingAdaptation: [],
     });
   });
 });
@@ -440,7 +430,6 @@ describe("following a learner whose goal moves or whose day turns while the move
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 2n,
-      pendingAdaptation: ["calendar"],
     });
   });
 });

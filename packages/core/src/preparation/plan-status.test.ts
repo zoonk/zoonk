@@ -1,12 +1,6 @@
 import { type PlanItemStatus } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
-import {
-  type PlanStatusItem,
-  getPlanLifecycle,
-  getPlanPace,
-  getPlanStatus,
-  hasWorkAfterDate,
-} from "./plan-status";
+import { type PlanStatusItem, getPlanStatus } from "./plan-status";
 
 const TODAY = new Date("2026-09-10T00:00:00Z");
 
@@ -275,94 +269,5 @@ describe(getPlanStatus, () => {
         today: TODAY,
       }),
     ).not.toMatchObject({ kind: "pastDate" });
-  });
-});
-
-const readPace = (finished: number, attrs: Partial<Parameters<typeof getPlanPace>[0]> = {}) =>
-  getPlanPace({
-    catchUp: 0,
-    freeWeekOver: false,
-    items: schedule(finished),
-    minutesPerItem: 4,
-    phaseChallengesRequired: true,
-    targetDate: new Date("2026-09-20T00:00:00Z"),
-    today: TODAY,
-    ...attrs,
-  });
-
-const readWorkAfter = (targetDate: string, studiesPastTarget = false) =>
-  hasWorkAfterDate({
-    items: schedule(8),
-    phaseChallengesRequired: true,
-    studiesPastTarget,
-    targetDate: new Date(`${targetDate}T00:00:00Z`),
-  });
-
-const readLifecycle = (finished: number, today = TODAY) =>
-  getPlanLifecycle({
-    freeWeekOver: false,
-    goalKind: "learn",
-    items: schedule(finished),
-    phaseChallengesRequired: true,
-    studiesPastTarget: false,
-    targetDate: new Date("2026-09-20T00:00:00Z"),
-    today,
-  });
-
-describe(getPlanPace, () => {
-  it("reads the learner's pace against the stored dates, never whether the plan fits", () => {
-    expect(readPace(8)).toStrictEqual({ kind: "onPace" });
-    expect(readPace(14)).toStrictEqual({ days: 2, kind: "ahead" });
-
-    expect(readPace(4)).toStrictEqual({
-      catchUp: { days: 2, extraMinutesPerDay: 10 },
-      kind: "behind",
-      lessons: null,
-    });
-  });
-
-  // Far behind is still a pace: whether the plan reaches the goal is its fit's to say.
-  it("says behind without a small fix when none catches up, never needs adjusting", () => {
-    expect(readPace(0, { minutesPerItem: 20 })).toStrictEqual({
-      catchUp: null,
-      kind: "behind",
-      lessons: null,
-    });
-  });
-
-  it("is behind by the lessons earlier days left while they aren't done", () => {
-    expect(readPace(8, { catchUp: 3 })).toStrictEqual({
-      catchUp: null,
-      kind: "behind",
-      lessons: 3,
-    });
-  });
-
-  it("has no pace before anything is scheduled, or for a plan only Plus moves", () => {
-    expect(readPace(8, { items: [] })).toBeNull();
-    expect(readPace(8, { freeWeekOver: true })).toBeNull();
-  });
-});
-
-describe(hasWorkAfterDate, () => {
-  it("reads work still to do after the goal's date, unless the learner studies past it", () => {
-    expect(readWorkAfter("2026-09-20")).toBe(false);
-    expect(readWorkAfter("2026-09-12")).toBe(true);
-    expect(readWorkAfter("2026-09-12", true)).toBe(false);
-  });
-});
-
-describe(getPlanLifecycle, () => {
-  it("goes on while lessons are left before the date", () => {
-    expect(readLifecycle(8)).toBeNull();
-  });
-
-  it("is finished once nothing is left, and past its date once it came with lessons left", () => {
-    expect(readLifecycle(20)).toStrictEqual({ kind: "finished" });
-
-    expect(readLifecycle(8, new Date("2026-09-21T00:00:00Z"))).toStrictEqual({
-      kind: "pastDate",
-      lessons: 12,
-    });
   });
 });

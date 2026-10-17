@@ -128,12 +128,7 @@ async function copyToGoal({
     return;
   }
 
-  const marker = {
-    adaptation: ["goalSource"] as const,
-    adaptationGoalId: goalId,
-    planInputs: true,
-    userId: goal.userId,
-  };
+  const marker = { planInputs: true, userId: goal.userId };
 
   const count = await writeLearnerChange(marker, async (tx) => {
     const updated = await tx.$executeRaw`

@@ -268,7 +268,6 @@ describe(saveLessonContent, () => {
     // The plan's mark rolled back with the publication.
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
     });
   });
 
@@ -287,10 +286,7 @@ describe(saveLessonContent, () => {
       workflowRunId,
     });
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["content"],
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
 
     await saveLessonVersion({
       language: "en",
@@ -300,10 +296,7 @@ describe(saveLessonContent, () => {
       summary: [],
     });
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 2,
-      pendingAdaptation: ["content"],
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 2 });
   });
 
   it("repairs skills in replacement versions too", async () => {

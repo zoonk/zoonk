@@ -5,13 +5,31 @@ import {
   isDateReached,
   isPlanFinished,
 } from "../plans/_utils/plan-end";
-import {
-  type PlanAdjustment,
-  type PlanLifecycle,
-  type PlanPace,
-} from "../plans/plan-assessment-contract";
 import { daysBetween } from "../plans/planner/plan-calendar";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
+
+/**
+ * What the learner can change when the plan doesn't fit: more daily time, less to study, or a later
+ * date (only for a goal with a date).
+ */
+type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
+
+/** Where a plan's life stands once it ended or waits on challenges (see `getPlanLifecycle`). */
+type PlanLifecycle =
+  | { challenges: number; kind: "challengesLeft" }
+  | { kind: "finished" }
+  | { kind: "pastDate"; lessons: number };
+
+/**
+ * The learner's pace against the plan's dates, never whether it reaches the goal (see
+ * `getPlanPace`). Behind either by `lessons` earlier days left, which a new day moves first, or by
+ * the dates, with the small fix that catches up (`catchUp`; null when no small fix does).
+ */
+type PlanPace =
+  | { days: number; kind: "ahead" }
+  | { kind: "onPace" }
+  | { catchUp: null; kind: "behind"; lessons: number }
+  | { catchUp: { days: number; extraMinutesPerDay: number } | null; kind: "behind"; lessons: null };
 
 /**
  * The learner's pace against their plan: keeping pace, ahead (by how many days), a bit behind
@@ -83,7 +101,7 @@ export function getMinutesPerItem({
 }
 
 /** What the learner can change when the plan doesn't fit. */
-export function getPlanAdjustments(targetDate: Date | null): PlanAdjustment[] {
+function getPlanAdjustments(targetDate: Date | null): PlanAdjustment[] {
   const options: PlanAdjustment[] = ["addTime", "narrowScope"];
   return targetDate ? [...options, "moveDate"] : options;
 }
@@ -107,7 +125,7 @@ function listRequired({
  * Whether the stored plan has work still to do after the goal's date, unless the learner chose to
  * go on after it (`studiesPastTarget`): the plan doesn't fit by the date, whatever its pace.
  */
-export function hasWorkAfterDate({
+function hasWorkAfterDate({
   items,
   phaseChallengesRequired,
   studiesPastTarget,
@@ -151,7 +169,7 @@ function isDue({ item, today }: { item: PlanStatusItem; today: Date }): boolean 
  * its date, never "Too tight": Pedro's read "Finished" beside "0 of 4 phases done". A plan only
  * Plus moves (`freeWeekOver`) is only ever finished.
  */
-export function getPlanLifecycle({
+function getPlanLifecycle({
   freeWeekOver,
   goalKind,
   items,
@@ -197,7 +215,7 @@ export function getPlanLifecycle({
  * pace. Null while nothing is scheduled, and for a plan only Plus moves (`freeWeekOver`): it has
  * no pace to keep.
  */
-export function getPlanPace({
+function getPlanPace({
   catchUp,
   freeWeekOver,
   items,
@@ -256,10 +274,8 @@ export function getPlanPace({
 }
 
 /**
- * The plan's status as one value, for its readers until they read `PlanAssessment` (whose fit says
- * whether the plan reaches the goal, and its pace only how the learner keeps it): its lifecycle,
- * else work after its date (needs adjusting), else its pace, one too far behind for a small fix
- * needing adjusting too.
+ * The plan's status as one value: its lifecycle, else work after its date (needs adjusting), else
+ * its pace, one too far behind for a small fix needing adjusting too.
  */
 export function getPlanStatus({
   phaseChallengesRequired = true,

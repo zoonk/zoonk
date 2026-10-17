@@ -61,7 +61,7 @@ async function lookUp(goalId: string, year = YEAR) {
 }
 
 describe(findCourseWeightsLookup, () => {
-  it("looks up an entrance exam goal's course weights once, marking the goal source changed, and the planner then reads them", async () => {
+  it("looks up an entrance exam goal's course weights once, marking the learner's plans changed, and the planner then reads them", async () => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
     const lookup = await lookUp(goal.id);
 
@@ -86,23 +86,15 @@ describe(findCourseWeightsLookup, () => {
     ]);
 
     const readPlan = (planId = plan.id) =>
-      prisma.plan.findUniqueOrThrow({
-        select: { inputVersion: true, pendingAdaptation: true },
-        where: { id: planId },
-      });
+      prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } });
 
     await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
     await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
 
-    await expect(readPlan()).resolves.toStrictEqual({
-      inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["goalSource"],
-    });
+    await expect(readPlan()).resolves.toStrictEqual({ inputVersion: plan.inputVersion + 1 });
 
-    // Only this goal's source changed; the learner's other plan is checked with no reason.
     await expect(readPlan(otherPlan.id)).resolves.toStrictEqual({
       inputVersion: otherPlan.inputVersion + 1,
-      pendingAdaptation: [],
     });
 
     await Promise.all([

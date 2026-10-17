@@ -58,7 +58,6 @@ describe(saveLanguageLesson, () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["content"],
     });
   });
 });

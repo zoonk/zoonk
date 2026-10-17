@@ -23,16 +23,12 @@ export type PlanContext = {
   items: ContextPlanItem[];
   plan: Pick<
     Plan,
-    | "checkedInputVersion"
     | "coveredShare"
     | "estimateHours"
     | "id"
     | "inputsKey"
     | "inputVersion"
-    | "layoutKeys"
     | "noticeWaitUntil"
-    | "pendingAdaptation"
-    | "pendingPace"
     | "sourceSkillIds"
     | "summary"
     | "version"
@@ -111,16 +107,12 @@ export async function loadPlanContext({
     items: plan.items.map((item) => ({ ...item, facts: readSelectedItemFacts(item.facts) })),
     phases: parsePlanPhases(plan.phases),
     plan: {
-      checkedInputVersion: plan.checkedInputVersion,
       coveredShare: plan.coveredShare,
       estimateHours: plan.estimateHours,
       id: plan.id,
       inputVersion: plan.inputVersion,
       inputsKey: plan.inputsKey,
-      layoutKeys: plan.layoutKeys,
       noticeWaitUntil: plan.noticeWaitUntil,
-      pendingAdaptation: plan.pendingAdaptation,
-      pendingPace: plan.pendingPace,
       sourceSkillIds: plan.sourceSkillIds,
       summary: plan.summary,
       version: plan.version,

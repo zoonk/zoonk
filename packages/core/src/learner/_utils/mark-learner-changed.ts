@@ -1,7 +1,6 @@
 import "server-only";
 import {
   type LearnerRevisionTransaction,
-  type PlanInputChange,
   markLearnerRevision,
   markLockedPlanInputsChanged,
   markPlanInputsChanged,
@@ -11,40 +10,24 @@ import {
 export async function markLearnerChanged(
   tx: LearnerRevisionTransaction,
   {
-    adaptation = [],
-    adaptationGoalId,
-    allPlansAdaptation = [],
     lockPlanIds = [],
-    pendingPace,
     planInputs = false,
     userId,
-  }: PlanInputChange & { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
+  }: { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
 ): Promise<{ learnerRevision: bigint }> {
-  const changesPlanInputs =
-    planInputs ||
-    adaptation.length > 0 ||
-    allPlansAdaptation.length > 0 ||
-    pendingPace !== undefined;
-
-  if (changesPlanInputs) {
+  if (planInputs) {
     /** Always acquire plan locks before the learner row, including in mixed writer transactions. */
-    await markPlanInputsChanged(tx, {
-      adaptation,
-      adaptationGoalId,
-      allPlansAdaptation,
-      pendingPace,
-      userIds: [userId],
-    });
+    await markPlanInputsChanged(tx, { userIds: [userId] });
   }
 
   /** Planning-input writes already hold every owned plan; revision-only plan writes opt in. */
-  return markLearnerRevision(tx, { lockPlanIds: changesPlanInputs ? [] : lockPlanIds, userId });
+  return markLearnerRevision(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
 }
 
 /** A shared-content writer marks dependent plans, without returning another learner's revision. */
 export async function markPlansChanged(
   tx: LearnerRevisionTransaction,
-  { adaptation, planIds }: Pick<PlanInputChange, "adaptation"> & { planIds: readonly string[] },
+  { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
   if (planIds.length === 0) {
     return;
@@ -57,7 +40,7 @@ export async function markPlansChanged(
     ORDER BY plan.id FOR UPDATE OF plan
   `;
 
-  await markLockedPlanInputsChanged(tx, { adaptation, planIds: plans.map((plan) => plan.id) });
+  await markLockedPlanInputsChanged(tx, { planIds: plans.map((plan) => plan.id) });
 
   /** Stable lock order prevents overlapping multi-owner writes from deadlocking each other. */
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();

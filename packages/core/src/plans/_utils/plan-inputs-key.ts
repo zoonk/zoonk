@@ -151,7 +151,7 @@ function toKeyedLessons(lessons: readonly PlannerLesson[]) {
 }
 
 /** The hash of a value as JSON that says the same thing the same way (see `toStable`). */
-export function hashKeyed(value: unknown): string {
+function hashKeyed(value: unknown): string {
   return createHash("sha256")
     .update(JSON.stringify(toStable(value)))
     .digest("hex");
@@ -162,7 +162,7 @@ export function hashKeyed(value: unknown): string {
  * counted, the Library's lessons by id without their chapter, what the bank holds for the bosses,
  * and the settings without the checkpoints' overflow the build derived, which no run reads.
  */
-export function readKeyedInput(input: BuildPlanInput) {
+function readKeyedInput(input: BuildPlanInput) {
   return {
     ...input,
     // What the bank holds for the bosses; the skills the Library says lessons teach are in the

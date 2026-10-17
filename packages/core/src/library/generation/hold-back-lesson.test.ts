@@ -30,18 +30,12 @@ describe(holdBackLessonDraft, () => {
       holdBackLessonDraft({ ...draft, workflowRunId: randomUUID() }),
     ).resolves.toBeNull();
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
 
     await expect(holdBackLessonDraft({ ...draft, workflowRunId })).resolves.toMatchObject({
       setAside: false,
     });
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["content"],
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
   });
 });

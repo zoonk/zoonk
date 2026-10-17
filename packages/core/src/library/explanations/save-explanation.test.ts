@@ -146,16 +146,11 @@ describe(saveExplanationLesson, () => {
           plans.map((plan) => {
             const current = updated.find((row) => row.id === plan.id);
 
-            return {
-              inputVersion: current?.inputVersion,
-              pendingAdaptation: current?.pendingAdaptation,
-              version: current?.version,
-            };
+            return { inputVersion: current?.inputVersion, version: current?.version };
           }),
         ).toStrictEqual(
           plans.map((plan, index) => ({
             inputVersion: plan.inputVersion + (index < 3 ? writes : 0),
-            pendingAdaptation: index < 3 && writes > 0 ? ["content"] : [],
             version: plan.version,
           })),
         );
@@ -253,7 +248,6 @@ describe(saveExplanationLesson, () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
     });
   });
 
@@ -295,6 +289,11 @@ describe(linkExplanationToGoal, () => {
       question: "what does it mean when the market is up 2%?",
     });
 
+    // Building the explain plan marks only that plan; a goal source change marks all of the
+    // learner's plans, so their other plan shows it.
+    const otherGoal = await goalFixture({ userId: user.id });
+    const otherPlan = await planFixture({ goalId: otherGoal.id });
+
     await linkExplanationToGoal({
       courseId: course.id,
       goalId: goal.id,
@@ -305,8 +304,8 @@ describe(linkExplanationToGoal, () => {
 
     // The Overview course became the goal's main course: a goal source the plan reads.
     await expect(
-      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
-    ).resolves.toMatchObject({ pendingAdaptation: ["goalSource"] });
+      prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
 
     const revisionBefore = await readRevision(user.id);
 
@@ -382,15 +381,12 @@ describe(linkGoFurtherCourse, () => {
     });
 
     const revisionBefore = await readRevision(user.id);
-    const otherGoal = await goalFixture({ userId: user.id });
-    await planFixture({ goalId: otherGoal.id });
-    const readPlan = (goalId = goal.id) => prisma.plan.findUniqueOrThrow({ where: { goalId } });
-    await expect(readPlan()).resolves.toMatchObject({ pendingAdaptation: [] });
+    const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const planBefore = await readPlan();
 
     await linkGoFurtherCourse({ courseId: first.id, goalId: goal.id, lessonId: saved.lessonId });
     await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
-    await expect(readPlan()).resolves.toMatchObject({ pendingAdaptation: ["goalSource"] });
-    await expect(readPlan(otherGoal.id)).resolves.toMatchObject({ pendingAdaptation: [] });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: planBefore.inputVersion + 1 });
     await linkGoFurtherCourse({ courseId: second.id, goalId: goal.id, lessonId: saved.lessonId });
     await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
 

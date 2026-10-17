@@ -427,8 +427,6 @@
     "./navigation/decode-route-param": "./src/navigation/decode-route-param.ts",
     "./navigation/document-route": "./src/navigation/document-route.ts",
     "./plans/acknowledge-today-change": "./src/plans/acknowledge-today-plan-change.ts",
-    "./plans/assessment": "./src/plans/get-goal-plan-assessment.ts",
-    "./plans/assessment-contract": "./src/plans/plan-assessment-contract.ts",
     "./plans/bases-advice": "./src/plans/get-bases-advice.ts",
     "./plans/bases-advice-contract": "./src/plans/plan-bases-advice-contract.ts",
     "./plans/change": "./src/plans/change-goal-plan.ts",

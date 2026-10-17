@@ -8,7 +8,7 @@ import { linkGuestAccount } from "./link-guest-account";
 vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
 
 describe(linkGuestAccount, () => {
-  it("marks the account's and the guest's plans waiting on the linked account, keeping the reasons they had", async () => {
+  it("marks the account's and the guest's plans changed", async () => {
     const [account, guest] = await Promise.all([
       createExistingAccount({ createdAt: new Date() }),
       signInAsGuest(),
@@ -20,7 +20,7 @@ describe(linkGuestAccount, () => {
     ]);
 
     const plans = await Promise.all([
-      prisma.plan.create({ data: { goalId: accountGoal.id, pendingAdaptation: ["calendar"] } }),
+      prisma.plan.create({ data: { goalId: accountGoal.id } }),
       prisma.plan.create({ data: { goalId: guestGoal.id } }),
     ]);
 
@@ -28,16 +28,13 @@ describe(linkGuestAccount, () => {
 
     const linked = await Promise.all(
       plans.map((plan) =>
-        prisma.plan.findUniqueOrThrow({
-          select: { inputVersion: true, pendingAdaptation: true },
-          where: { id: plan.id },
-        }),
+        prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: plan.id } }),
       ),
     );
 
     expect(linked).toStrictEqual([
-      { inputVersion: plans[0].inputVersion + 1, pendingAdaptation: ["calendar", "account"] },
-      { inputVersion: plans[1].inputVersion + 1, pendingAdaptation: ["account"] },
+      { inputVersion: plans[0].inputVersion + 1 },
+      { inputVersion: plans[1].inputVersion + 1 },
     ]);
   });
 });

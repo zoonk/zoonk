@@ -28,18 +28,6 @@ enum PlanItemStatus {
   testedOut @map("tested_out")
 }
 
-/// Why a stored plan may not reflect its inputs yet (see `Plan.pendingAdaptation`).
-enum PlanAdaptationReason {
-  content
-  goalSource @map("goal_source")
-  calendar
-  pace
-  evidence
-  account
-  rebalance
-  newSources @map("new_sources")
-}
-
 /// One piece of a new plan's setup, done once after the plan is built (see `Plan.setupTasks`).
 enum PlanSetupTask {
   placement
@@ -185,20 +173,6 @@ model Plan {
   /// A task leaves the list in the same transaction as its effect, so a retry or a later request
   /// finishes what's left and never repeats one. Empty once the plan is set up.
   setupTasks          PlanSetupTask[]        @default([]) @map("setup_tasks")
-  /// Why the stored plan may not reflect its inputs yet: each input writer adds its reason in the
-  /// transaction that marks the plan's inputs changed, and only the write that lays the plan out
-  /// again (or finds its inputs unchanged) clears the reasons it took in. Undo never touches it.
-  pendingAdaptation   PlanAdaptationReason[] @default([]) @map("pending_adaptation")
-  /// The pace a session's end sampled that the stored plan doesn't use yet (with the `pace`
-  /// reason): the layout that takes it into `settings.pace` clears both. Null when none waits.
-  pendingPace         Json?                  @map("pending_pace")
-  /// The versioned scope and placement keys the stored layout was planned from (see
-  /// `getPlanInputKeys`), compared before any build. Null until a layout writes them.
-  layoutKeys          Json?                  @map("layout_keys")
-  /// The input version a write last verified the stored plan against its inputs at (a layout, an
-  /// acknowledgment, a re-key, or Open's day once its gate checked): equal to `inputVersion`, no
-  /// input moved since. Null when never checked, and after an undo.
-  checkedInputVersion Int?                   @map("checked_input_version")
   createdAt           DateTime               @default(now()) @map("created_at")
   updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at")
   items               PlanItem[]

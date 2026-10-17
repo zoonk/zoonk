@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parsePlanSnapshot } from "./plan-snapshot";
 
-/** A snapshot an undo saved before summaries described their plan version and plans had keys. */
+/** A snapshot an undo saved before summaries described their plan version. */
 const legacy = {
   coveredShare: 0.5,
   estimateHours: 2,
@@ -25,21 +25,12 @@ const legacy = {
 };
 
 describe(parsePlanSnapshot, () => {
-  it("still restores a snapshot saved before, its summary pending and without keys", () => {
-    expect(parsePlanSnapshot(legacy)).toMatchObject({
-      inputsKey: "legacy-key",
-      layoutKeys: null,
-      summary: null,
-    });
-  });
-
-  it("keeps the keys of what the plan was planned from", () => {
-    const layoutKeys = { placement: "placement-key", scope: "scope-key", version: 1 };
-    expect(parsePlanSnapshot({ ...legacy, layoutKeys })?.layoutKeys).toStrictEqual(layoutKeys);
+  it("still restores a snapshot saved before, its summary pending", () => {
+    expect(parsePlanSnapshot(legacy)).toMatchObject({ inputsKey: "legacy-key", summary: null });
   });
 
   it("restores a snapshot saved before plans had a summary", () => {
     const { summary: _summary, ...older } = legacy;
-    expect(parsePlanSnapshot(older)).toMatchObject({ layoutKeys: null, summary: null });
+    expect(parsePlanSnapshot(older)).toMatchObject({ summary: null });
   });
 });

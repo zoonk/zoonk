@@ -9,7 +9,7 @@ import { getGoalsCacheTag } from "../../cache/tags";
 import { getGoalCourseFormat, setGoalPrimaryCourse } from "./goal-primary-course";
 
 describe(setGoalPrimaryCourse, () => {
-  it("points a goal without a main course at the course its first phase is taught in, marking only its plan's goal source changed", async () => {
+  it("points a goal without a main course at the course its first phase is taught in, marking the learner's plans changed", async () => {
     const [user, course] = await Promise.all([userFixture(), courseFixture()]);
 
     const [goal, otherGoal] = await Promise.all([
@@ -18,7 +18,7 @@ describe(setGoalPrimaryCourse, () => {
     ]);
 
     const [plan, otherPlan] = await Promise.all([
-      planFixture({ goalId: goal.id, pendingAdaptation: ["pace"] }),
+      planFixture({ goalId: goal.id }),
       planFixture({ goalId: otherGoal.id }),
     ]);
 
@@ -30,13 +30,12 @@ describe(setGoalPrimaryCourse, () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["goalSource", "pace"],
     });
 
-    // The learner's other plan is checked again, but its own goal source didn't change.
+    // Marking is per learner, so their other plan is marked too.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
-    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1, pendingAdaptation: [] });
+    ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
 
     expect(revalidateTag).toHaveBeenCalledWith(getGoalsCacheTag(user.id), { expire: 0 });
   });
@@ -59,7 +58,6 @@ describe(setGoalPrimaryCourse, () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
     });
 
     expect(revalidateTag).not.toHaveBeenCalled();

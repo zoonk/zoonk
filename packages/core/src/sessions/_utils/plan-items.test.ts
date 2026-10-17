@@ -22,7 +22,7 @@ async function postedPlan({
   userId: string;
 }) {
   const [goal, skill] = await Promise.all([goalFixture({ userId }), skillFixture()]);
-  const plan = await planFixture({ goalId: goal.id, pendingAdaptation: ["content"] });
+  const plan = await planFixture({ goalId: goal.id });
 
   const summary = planSummarySchema.parse({
     basis: {
@@ -100,7 +100,7 @@ async function postedPlan({
 }
 
 describe("completion reduces posted coverage without planning", () => {
-  it("credits a shared short lesson once in each plan and preserves pending reasons", async () => {
+  it("credits a shared short lesson once in each plan", async () => {
     const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
 
     const plans = await Promise.all([
@@ -125,7 +125,6 @@ describe("completion reduces posted coverage without planning", () => {
     for (const row of saved) {
       expect(row).toMatchObject({
         coveredShare: 1,
-        pendingAdaptation: ["content"],
         summary: { selected: { coverage: { coveredShare: 1, fits: true, shortLessons: [] } } },
       });
     }
@@ -164,7 +163,6 @@ describe("completion reduces posted coverage without planning", () => {
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(saved.summary).toStrictEqual(summary);
     expect(JSON.stringify(saved.summary)).toBe(JSON.stringify(posted.summary));
-    expect(saved.pendingAdaptation).toStrictEqual(["content"]);
   });
 
   it("reads no plan when the item it checks off isn't a lesson", async () => {

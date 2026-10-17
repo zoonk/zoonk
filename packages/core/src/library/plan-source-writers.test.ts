@@ -8,7 +8,6 @@ import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/v2/items/past-questions";
 import { generateAlphabetLesson } from "@zoonk/ai/tasks/v2/language/alphabet-lesson";
 import { type Plan, type TransactionClient, prisma } from "@zoonk/db";
-import { type PlanInputChange } from "@zoonk/db/learner-revision";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
@@ -448,21 +447,17 @@ const PLAN_WRITE = new RegExp(
   "u",
 );
 
-const PLAN_SOURCE_FIELD =
-  /\b(?:sourceSkillIds|source_skill_ids|pendingAdaptation|pending_adaptation)\b/u;
+const PLAN_SOURCE_FIELD = /\b(?:sourceSkillIds|source_skill_ids)\b/u;
 
 /**
- * The only writes of a plan's registered sources and pending reasons, which a plan's source
- * publication will own: anything else writing them would bypass it.
+ * The only writes of a plan's registered sources, which a plan's source publication will own:
+ * anything else writing them would bypass it.
  */
 const PLAN_SOURCE_WRITERS: Record<string, string> = {
-  "../../db/src/learner-revision.ts":
-    "input markers add pending reasons (`markLockedPlanInputsChanged`)",
-  "plans/_utils/write-plan.ts":
-    "layouts register their sources and take out the reasons they absorbed",
+  "plans/_utils/write-plan.ts": "layouts register their sources",
 };
 
-/** Whether the code writes a plan and names its sources or pending reasons. */
+/** Whether the code writes a plan and names its sources. */
 function writesPlanSources(code: string): boolean {
   return PLAN_WRITE.test(code) && PLAN_SOURCE_FIELD.test(code);
 }
@@ -502,7 +497,7 @@ describe("plan source writer coverage", () => {
     expect(stale).toStrictEqual([]);
   });
 
-  it("writes a plan's sources and pending reasons only where they're registered", () => {
+  it("writes a plan's sources only where they're registered", () => {
     const writers = [
       ...listSourceFiles(SOURCE_ROOT),
       ...listSourceFiles(DATABASE_ROOT).filter(
@@ -513,12 +508,12 @@ describe("plan source writer coverage", () => {
     expect(writers.toSorted()).toStrictEqual(Object.keys(PLAN_SOURCE_WRITERS).toSorted());
   });
 
-  it("recognizes every form a plan's sources or pending reasons can be written in", () => {
+  it("recognizes every form a plan's sources can be written in", () => {
     const writes = [
       "await tx.plan.update({ data: { sourceSkillIds }, where: { id } })",
-      "await tx.plan.updateManyAndReturn({ data: { pendingAdaptation: [] } })",
+      "await tx.plan.updateManyAndReturn({ data: { sourceSkillIds: [] } })",
       "await prisma.plan.createManyAndReturn({ data: [{ sourceSkillIds }] })",
-      'UPDATE "plans" SET pending_adaptation = $1',
+      'UPDATE "plans" SET source_skill_ids = $1',
       "INSERT INTO plans (source_skill_ids) VALUES ($1)",
     ];
 
@@ -570,13 +565,6 @@ describe("plan source writer coverage", () => {
     expect(
       helpers.filter((name) => new RegExp(String.raw`\b${name}\b`, "u").test(loaders)),
     ).toStrictEqual([]);
-  });
-
-  it("lets no input writer name the reason only source publication sets", () => {
-    // @ts-expect-error Only a plan's own source publication adds or takes out `newSources`.
-    const marked: PlanInputChange = { adaptation: ["newSources"] };
-
-    expect(marked.adaptation).toHaveLength(1);
   });
 });
 
@@ -658,10 +646,7 @@ async function writeWhileRead({ beforeRelease, expectWritten, plan, root, write 
 
   await expectWritten();
 
-  return prisma.plan.findUniqueOrThrow({
-    select: { inputVersion: true, pendingAdaptation: true },
-    where: { id: plan.id },
-  });
+  return prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: plan.id } });
 }
 
 function lessonRoot(id: string): SourceRoot {
@@ -1652,7 +1637,6 @@ describe("plan source writers lock what plans read and mark them", () => {
     // Each of the call's writes that changes what the plan reads marks it once, as changed content.
     await expect(writeWhileRead(writer)).resolves.toStrictEqual({
       inputVersion: writer.plan.inputVersion + (writer.marks ?? 1),
-      pendingAdaptation: ["content"],
     });
   });
 });
@@ -1839,7 +1823,6 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
     });
 
     await expect(readLearnerRevision(userId)).resolves.toBe(revision);

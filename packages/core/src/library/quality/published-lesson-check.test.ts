@@ -551,7 +551,6 @@ describe("set-aside selection admission", () => {
       plans.map((plan) =>
         expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
           inputVersion: plan.inputVersion + Number(plan.id !== plans[3]!.id),
-          pendingAdaptation: plan.id === plans[3]!.id ? [] : ["content"],
         }),
       ),
     );
@@ -589,7 +588,6 @@ describe("set-aside selection admission", () => {
       plans.map((plan) =>
         expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
           inputVersion: plan.inputVersion,
-          pendingAdaptation: [],
         }),
       ),
     );

@@ -1,11 +1,7 @@
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
-import { markPlanWrite } from "../../plans/_utils/mark-plan-write";
-import { acknowledgePlanInputs } from "../../plans/_utils/write-plan";
-import { PlanConflictError } from "../../plans/plan-conflict";
 import { markLearnerChanged, markPlansChanged } from "./mark-learner-changed";
 
 async function revision(userId: string) {
@@ -51,54 +47,6 @@ function observeStatements() {
 }
 
 describe(markLearnerChanged, () => {
-  it("stores a session's pending pace only on that goal while preserving all epoch guards", async () => {
-    const user = await userFixture();
-    const [sessionPlan, otherPlan] = await Promise.all([plan(user.id), plan(user.id)]);
-
-    await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, {
-        adaptation: ["pace", "rebalance"],
-        adaptationGoalId: sessionPlan.goalId,
-        pendingPace: { factor: 1.2, source: "own" },
-        planInputs: true,
-        userId: user.id,
-      }),
-    );
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: sessionPlan.id } }),
-    ).resolves.toMatchObject({
-      inputVersion: 1,
-      pendingAdaptation: ["pace", "rebalance"],
-      pendingPace: { factor: 1.2, source: "own" },
-    });
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
-    ).resolves.toMatchObject({ inputVersion: 1, pendingAdaptation: [], pendingPace: null });
-  });
-
-  it("unions reasons with the epoch mark and preserves them on a harmless write", async () => {
-    const user = await userFixture();
-    const saved = await plan(user.id);
-
-    await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, {
-        adaptation: ["goalSource", "content", "content"],
-        planInputs: true,
-        userId: user.id,
-      }),
-    );
-
-    await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, { planInputs: true, userId: user.id }),
-    );
-
-    await expect(prisma.plan.findUniqueOrThrow({ where: { id: saved.id } })).resolves.toMatchObject(
-      { inputVersion: saved.inputVersion + 2, pendingAdaptation: ["content", "goalSource"] },
-    );
-  });
-
   it("increments monotonically once per call, including plan-input changes", async () => {
     const user = await userFixture();
     await expect(revision(user.id)).resolves.toBe(0n);
@@ -203,71 +151,14 @@ describe(markLearnerChanged, () => {
       prisma.$transaction((tx) => markLearnerChanged(tx, { userId: user.id })),
     ).resolves.toStrictEqual({ learnerRevision: 1n });
   });
-});
 
-describe("all-plan adaptation composition", () => {
-  it("unions global reasons without broadening a session goal's reasons or pace", async () => {
-    const [user, stranger] = await Promise.all([userFixture(), userFixture()]);
-
-    const [sessionPlan, sibling, foreign] = await Promise.all([
-      plan(user.id),
-      plan(user.id),
-      plan(stranger.id),
-    ]);
-
-    const priorPace = { factor: 0.8, source: "own" };
-    const sampledPace = { factor: 1.2, source: "shared" };
-
-    await prisma.plan.update({
-      data: { pendingAdaptation: ["content"], pendingPace: priorPace },
-      where: { id: sibling.id },
-    });
-
-    await prisma.goal.update({ data: { status: "paused" }, where: { id: sibling.goalId } });
-
-    await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, {
-        adaptation: ["calendar", "pace", "rebalance"],
-        adaptationGoalId: sessionPlan.goalId,
-        allPlansAdaptation: ["calendar", "calendar", "goalSource"],
-        pendingPace: sampledPace,
-        userId: user.id,
-      }),
-    );
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: sessionPlan.id } }),
-    ).resolves.toMatchObject({
-      inputVersion: sessionPlan.inputVersion + 1,
-      pendingAdaptation: ["goalSource", "calendar", "pace", "rebalance"],
-      pendingPace: sampledPace,
-      version: sessionPlan.version,
-    });
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: sibling.id } }),
-    ).resolves.toMatchObject({
-      inputVersion: sibling.inputVersion + 1,
-      pendingAdaptation: ["content", "goalSource", "calendar"],
-      pendingPace: priorPace,
-      version: sibling.version,
-    });
-
-    await expect(
-      prisma.plan.findUniqueOrThrow({ where: { id: foreign.id } }),
-    ).resolves.toStrictEqual(foreign);
-
-    await expect(revision(user.id)).resolves.toBe(1n);
-    await expect(revision(stranger.id)).resolves.toBe(0n);
-  });
-
-  it("upgrades a revision-only marker with exactly one plans update before one user update", async () => {
+  it("marks plan inputs with one plans update, its locks taken before one user update", async () => {
     const user = await userFixture();
     const plans = await Promise.all([plan(user.id), plan(user.id)]);
     const { client, statements } = observeStatements();
 
     await client.$transaction((tx) =>
-      markLearnerChanged(tx, { allPlansAdaptation: ["calendar"], userId: user.id }),
+      markLearnerChanged(tx, { planInputs: true, userId: user.id }),
     );
 
     expect(statements.filter((query) => /^\s*UPDATE plans\b/iu.test(query))).toHaveLength(1);
@@ -283,171 +174,16 @@ describe("all-plan adaptation composition", () => {
     await expect(revision(user.id)).resolves.toBe(1n);
     const rows = await prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } });
     expect(rows.every((row) => row.inputVersion === 1 && row.version === 1)).toBe(true);
-    expect(rows.every((row) => row.pendingAdaptation.join(",") === "calendar")).toBe(true);
   });
 
-  it.each([false, true])(
-    "preserves distinct pending pace and reasons without a goal (move: %s)",
-    async (move) => {
-      const user = await userFixture();
-      const plans = await Promise.all([plan(user.id), plan(user.id)]);
-
-      const before = await Promise.all(
-        plans.map((row, index) =>
-          prisma.plan.update({
-            data: {
-              pendingAdaptation: [index === 0 ? "content" : "goalSource"],
-              pendingPace: {
-                factor: index === 0 ? 0.8 : 1.4,
-                source: index === 0 ? "own" : "shared",
-              },
-            },
-            where: { id: row.id },
-          }),
-        ),
-      );
-
-      await prisma.$transaction((tx) =>
-        markLearnerChanged(tx, { allPlansAdaptation: move ? ["calendar"] : [], userId: user.id }),
-      );
-
-      await Promise.all(
-        before.map((row) =>
-          expect(prisma.plan.findUniqueOrThrow({ where: { id: row.id } })).resolves.toStrictEqual({
-            ...row,
-            inputVersion: row.inputVersion + (move ? 1 : 0),
-            pendingAdaptation: move
-              ? [...row.pendingAdaptation, "calendar"]
-              : row.pendingAdaptation,
-          }),
-        ),
-      );
-
-      await expect(revision(user.id)).resolves.toBe(1n);
-    },
-  );
-
-  it("marks a learner with zero plans without inventing a target", async () => {
+  it("marks the plan inputs of a learner with zero plans without inventing a target", async () => {
     const user = await userFixture();
 
     await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, { allPlansAdaptation: ["calendar"], userId: user.id }),
+      markLearnerChanged(tx, { planInputs: true, userId: user.id }),
     );
 
     await expect(prisma.plan.count({ where: { goal: { userId: user.id } } })).resolves.toBe(0);
-    await expect(revision(user.id)).resolves.toBe(1n);
-  });
-
-  it("rolls both reason scopes, sample and all epochs back with the domain write", async () => {
-    const user = await userFixture();
-    const plans = await Promise.all([plan(user.id), plan(user.id)]);
-
-    await expect(
-      prisma.$transaction(async (tx) => {
-        await markLearnerChanged(tx, {
-          adaptation: ["rebalance", "pace"],
-          adaptationGoalId: plans[0]!.goalId,
-          allPlansAdaptation: ["calendar"],
-          pendingPace: { factor: 1.2, source: "own" },
-          userId: user.id,
-        });
-
-        throw new Error("Completion changed nothing");
-      }),
-    ).rejects.toThrow("Completion changed nothing");
-
-    await Promise.all(
-      plans.map((row) =>
-        expect(prisma.plan.findUniqueOrThrow({ where: { id: row.id } })).resolves.toStrictEqual(
-          row,
-        ),
-      ),
-    );
-
-    await expect(revision(user.id)).resolves.toBe(0n);
-  });
-
-  it.each(["calendar", "pace"] as const)(
-    "retains sibling samples and reasons when %s commits first",
-    async (first) => {
-      const user = await userFixture();
-      const [one, two] = await Promise.all([plan(user.id), plan(user.id)]);
-      const pace = { factor: 1.4, source: "own" };
-      const held = Promise.withResolvers<number>();
-      const release = Promise.withResolvers<null>();
-
-      const write = (tx: TransactionClient, kind: "calendar" | "pace") =>
-        kind === "calendar"
-          ? markLearnerChanged(tx, {
-              adaptation: ["rebalance"],
-              adaptationGoalId: one.goalId,
-              allPlansAdaptation: ["calendar"],
-              userId: user.id,
-            })
-          : markLearnerChanged(tx, {
-              adaptation: ["pace"],
-              adaptationGoalId: two.goalId,
-              pendingPace: pace,
-              userId: user.id,
-            });
-
-      const winner = prisma.$transaction(async (tx) => {
-        await write(tx, first);
-        const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-        held.resolve(backend?.pid ?? 0);
-        await release.promise;
-      });
-
-      winner.catch((error: unknown) => held.reject(error));
-      const pid = await held.promise;
-
-      const waiter = prisma.$transaction((tx) =>
-        write(tx, first === "calendar" ? "pace" : "calendar"),
-      );
-
-      try {
-        await waitForBlockedStatement(pid, /SELECT plan\.id[\s\S]*FOR UPDATE OF plan/u);
-      } finally {
-        release.resolve(null);
-        await Promise.all([winner, waiter]);
-      }
-
-      await expect(prisma.plan.findUniqueOrThrow({ where: { id: one.id } })).resolves.toMatchObject(
-        { inputVersion: 2, pendingAdaptation: ["calendar", "rebalance"], pendingPace: null },
-      );
-
-      await expect(prisma.plan.findUniqueOrThrow({ where: { id: two.id } })).resolves.toMatchObject(
-        { inputVersion: 2, pendingAdaptation: ["calendar", "pace"], pendingPace: pace },
-      );
-
-      await expect(revision(user.id)).resolves.toBe(2n);
-    },
-  );
-
-  it("keeps global calendar on both plans when an older plan acknowledgment loses its CAS", async () => {
-    const user = await userFixture();
-    const [stale, sibling] = await Promise.all([plan(user.id), plan(user.id)]);
-
-    await prisma.$transaction((tx) =>
-      markLearnerChanged(tx, { allPlansAdaptation: ["calendar"], userId: user.id }),
-    );
-
-    await expect(
-      prisma.$transaction(async (tx) => {
-        const marked = await markPlanWrite(tx, stale);
-        await acknowledgePlanInputs(tx, { checkedAdaptation: ["calendar"], plan: marked });
-      }),
-    ).rejects.toThrow(PlanConflictError);
-
-    await Promise.all(
-      [stale, sibling].map((row) =>
-        expect(prisma.plan.findUniqueOrThrow({ where: { id: row.id } })).resolves.toMatchObject({
-          inputVersion: 1,
-          pendingAdaptation: ["calendar"],
-        }),
-      ),
-    );
-
     await expect(revision(user.id)).resolves.toBe(1n);
   });
 });

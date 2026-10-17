@@ -16,7 +16,6 @@ import {
   planStateSchema,
 } from "../planner/plan-state";
 import { type ContextPlanItem, type PlanContext } from "./plan-context";
-import { type PlanInputKeys, readLayoutKeys } from "./plan-input-classes";
 import { type PlanSummary, planSummarySchema } from "./plan-summary";
 import { readSelectedItemFacts, selectedItemFactsSchema } from "./selected-item-contract";
 import { isStandIn } from "./stand-in-lessons";
@@ -42,10 +41,6 @@ const planSnapshotSchema = z.object({
   estimateHours: z.number().nullable(),
   inputsKey: z.string().nullable().default(null),
   items: z.array(snapshotItemSchema),
-  layoutKeys: z
-    .unknown()
-    .optional()
-    .transform((value) => readLayoutKeys(value)),
   phases: z.unknown(),
   sourceSkillIds: z.array(z.string()).default([]),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
@@ -69,8 +64,6 @@ export type PlanSnapshot = {
   /** What the plan was planned from, which the undo gives back with it (see `getPlanInputsKey`). */
   inputsKey: string | null;
   items: ContextPlanItem[];
-  /** The keys of what the plan was planned from, which the undo gives back with it (see `getPlanInputKeys`). */
-  layoutKeys: PlanInputKeys | null;
   phases: PlanPhase[];
   sourceSkillIds: string[];
   state: PlanState;
@@ -107,7 +100,6 @@ function toPlanSnapshot({
       status: item.status,
       titleSnapshot: item.titleSnapshot,
     })),
-    layoutKeys: readLayoutKeys(context.plan.layoutKeys),
     phases: context.phases,
     sourceSkillIds: context.plan.sourceSkillIds,
     state: context.state,

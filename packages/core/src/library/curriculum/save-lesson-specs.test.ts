@@ -236,7 +236,6 @@ describe(saveLessonSpecs, () => {
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
-      pendingAdaptation: [],
     });
 
     await expect(readLearnerRevision(user.id)).resolves.toBe(revision);

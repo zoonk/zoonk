@@ -76,11 +76,6 @@ async function saveMetadata({
   try {
     return await prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, {
-        adaptation: [
-          ...(input.details === undefined ? [] : ["goalSource" as const]),
-          ...(input.timeZone === undefined ? [] : ["calendar" as const]),
-        ],
-        adaptationGoalId: goal.id,
         planInputs:
           input.details !== undefined || input.status !== undefined || input.timeZone !== undefined,
         userId,

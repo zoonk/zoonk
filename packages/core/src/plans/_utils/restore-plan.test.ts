@@ -13,7 +13,6 @@ import { planSummarySchema, readPlanSummary } from "./plan-summary";
 import { loadPlanSnapshot, restorePlan } from "./restore-plan";
 
 const NOW = new Date("2026-10-12T12:00:00Z");
-const KEYS = { placement: "placement-key", scope: "scope-key", version: 1 as const };
 
 describe(restorePlan, () => {
   beforeEach(async () => {
@@ -27,7 +26,7 @@ describe(restorePlan, () => {
     vi.restoreAllMocks();
   });
 
-  it("gives back the layout and its keys, keeps what's pending, and isn't checked since", async () => {
+  it("gives back the layout and keeps what the learner finished since", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
       planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 3 }] }),
@@ -43,7 +42,6 @@ describe(restorePlan, () => {
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    await prisma.plan.update({ data: { layoutKeys: KEYS }, where: { id: plan.id } });
 
     const loadContext = async () => {
       const context = await loadPlanContext({ goal, timeZone: "UTC" });
@@ -71,22 +69,14 @@ describe(restorePlan, () => {
       savePlanSnapshot({ changeId: change.id, context: before, tx }),
     );
 
-    // Since the change: a newer layout without keys, the learner finished a lesson, and two input
-    // writers marked the plan with what it doesn't reflect yet.
+    // Since the change: a newer layout, an input writer marked the plan, and the learner finished a
+    // lesson.
     const lesson = before.items.find((item) => item.kind === "lesson" && item.status === "todo");
 
     await prisma.$transaction(async (tx) => {
       await markPlansChanged(tx, { planIds: [plan.id] });
 
-      await tx.plan.update({
-        data: {
-          layoutKeys: { ...KEYS, scope: "newer" },
-          pendingAdaptation: { push: ["evidence", "pace"] },
-          pendingPace: { factor: 1.4, source: "own" },
-          version: { increment: 1 },
-        },
-        where: { id: plan.id },
-      });
+      await tx.plan.update({ data: { version: { increment: 1 } }, where: { id: plan.id } });
 
       await tx.planItem.update({
         data: { completedAt: NOW, status: "done" },
@@ -101,19 +91,12 @@ describe(restorePlan, () => {
       throw new Error("Expected the change's snapshot");
     }
 
-    expect(snapshot.layoutKeys).toStrictEqual(KEYS);
-
     await prisma.$transaction(async (tx) => {
       const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
       await restorePlan({ context: writeContext, items: snapshot.items, snapshot, tx });
     });
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-
-    expect(after.layoutKeys).toStrictEqual(KEYS);
-    expect(after.pendingAdaptation.toSorted()).toStrictEqual(["evidence", "pace"]);
-    expect(after.pendingPace).toStrictEqual({ factor: 1.4, source: "own" });
-    expect(after.checkedInputVersion).toBeNull();
 
     expect(
       readPlanSummary({

@@ -468,7 +468,6 @@ describe(createItems, () => {
     // The bank the plan reads changed once: the retry wrote nothing.
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["content"],
     });
   });
 

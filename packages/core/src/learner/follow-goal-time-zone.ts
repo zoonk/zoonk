@@ -123,12 +123,7 @@ export async function moveGoalTimeZoneInTransaction(
 
   const dateChanges = movesTheDate({ goal, now: readAt, toZone });
 
-  const { learnerRevision } = await markLearnerChanged(tx, {
-    adaptation: ["calendar"],
-    adaptationGoalId: goalId,
-    planInputs: true,
-    userId,
-  });
+  const { learnerRevision } = await markLearnerChanged(tx, { planInputs: true, userId });
 
   const lockedAt = new Date();
 

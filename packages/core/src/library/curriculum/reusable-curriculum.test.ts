@@ -923,10 +923,7 @@ describe("saving an exam's graph again", () => {
     // A goal reusing the exam's graph saves it again as it is: nothing a plan reads changes.
     await save(built.graph);
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion,
-      pendingAdaptation: plan.pendingAdaptation,
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
 
     // Another run's graph never replaces the exam's.
     await save(
@@ -944,9 +941,6 @@ describe("saving an exam's graph again", () => {
       skills: [...built.graph.skills, { ...built.graph.skills[0], skillId: added.id }],
     } as typeof built.graph);
 
-    await expect(readPlan()).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 1,
-      pendingAdaptation: ["content"],
-    });
+    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
   });
 });
