@@ -3,13 +3,15 @@ import OpenAPIRuntime
 
 protocol CourseCatalogAPIClient: Sendable {
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage
-  func getCourse(id: String) async throws -> Course
-  func getChapter(id: String) async throws -> CourseChapter
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter]
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson]
+  /// Course and chapter reads send the session when there is one, so owners can read their private
+  /// courses; everyone else gets not found.
+  func getCourse(id: String, token: String?) async throws -> Course
+  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter]
+  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws -> [CourseLesson]
   func getCourseNextLesson(courseID: String, token: String?) async throws
     -> CatalogContinuationTarget
-  func getChapterNextLesson(chapterID: String, token: String?) async throws
+  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress
   func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress
@@ -42,13 +44,13 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getCourse(id: String) async throws -> Course {
-    try await perform { client in
+  func getCourse(id: String, token: String?) async throws -> Course {
+    try await perform(token: token) { client in
       let output = try await client.getCourse(.init(path: .init(courseId: id)))
 
       switch output {
       case .ok(let response):
-        return try makeCourse(try response.body.json)
+        return makeCourse(try response.body.json)
       case .notFound:
         throw CourseCatalogFailure.notFound
       case .badRequest, .internalServerError, .undocumented:
@@ -57,9 +59,12 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getChapter(id: String) async throws -> CourseChapter {
-    try await perform { client in
-      let output = try await client.getChapter(.init(path: .init(chapterId: id)))
+  /// Reads the chapter as the given course places it. A course that doesn't place the chapter is
+  /// not found.
+  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
+    try await perform(token: token) { client in
+      let output = try await client.getChapter(
+        .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
       switch output {
       case .ok(let response):
@@ -72,8 +77,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-    try await perform { client in
+  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
+    try await perform(token: token) { client in
       let output = try await client.listCourseChapters(
         .init(path: .init(courseId: courseID)))
 
@@ -88,10 +93,10 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
-    try await perform { client in
+  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws -> [CourseLesson] {
+    try await perform(token: token) { client in
       let output = try await client.listChapterLessons(
-        .init(path: .init(chapterId: chapterID)))
+        .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
       switch output {
       case .ok(let response):
@@ -122,12 +127,12 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getChapterNextLesson(chapterID: String, token: String?) async throws
+  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   {
     try await perform(token: token) { client in
       let output = try await client.getChapterNextLesson(
-        .init(path: .init(chapterId: chapterID)))
+        .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
       switch output {
       case .ok(let response):
@@ -285,27 +290,50 @@ private func makeCourseSummary(
 
 private func makeCourse(
   _ payload: Components.Schemas.CourseResource
-) throws -> Course {
+) -> Course {
   Course(
-    categories: try payload.categories.map(makeCourseCategory),
+    categories: payload.categories.map(makeCourseCategory),
     description: payload.description,
+    generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
     imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
-    organization: makeCourseOrganization(payload.organization),
+    organization: payload.organization.map { makeCourseOrganization($0.value1) },
     slug: payload.slug,
     targetLanguage: payload.targetLanguage,
     title: payload.title)
 }
 
+/// Maps every generated category explicitly, so regenerating the spec with a new category fails the
+/// build until the app can title and draw it, instead of failing the course at runtime.
 private func makeCourseCategory(
   _ payload: Components.Schemas.CourseResource.CategoriesPayloadPayload
-) throws -> CourseCategory {
-  guard let category = CourseCategory(rawValue: payload.rawValue) else {
-    throw CourseCatalogFailure.unavailable
+) -> CourseCategory {
+  switch payload {
+  case .arts: .arts
+  case .business: .business
+  case .communication: .communication
+  case .culture: .culture
+  case .economics: .economics
+  case .engineering: .engineering
+  case .geography: .geography
+  case .health: .health
+  case .history: .history
+  case .languages: .languages
+  case .law: .law
+  case .math: .math
+  case .science: .science
+  case .society: .society
+  case .tech: .tech
   }
+}
 
-  return category
+/// Generation states share one set of values across resources. A value the app doesn't know yet
+/// shows the content that exists, like a finished course.
+private func makeCatalogGenerationStatus<Payload: RawRepresentable>(
+  _ payload: Payload
+) -> CatalogGenerationStatus where Payload.RawValue == String {
+  CatalogGenerationStatus(rawValue: payload.rawValue) ?? .completed
 }
 
 func makeCourseOrganization(
@@ -324,10 +352,11 @@ private func makeCourseChapter(
   CourseChapter(
     courseID: payload.courseId,
     description: payload.description,
+    generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
-    imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
     lessonCount: payload.lessonCount,
+    level: makeCourseLevel(payload.level),
     position: payload.position,
     slug: payload.slug,
     title: payload.title)
@@ -339,10 +368,11 @@ private func makeCourseChapter(
   CourseChapter(
     courseID: payload.courseId,
     description: payload.description,
+    generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
-    imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
     lessonCount: nil,
+    level: makeCourseLevel(payload.level),
     position: payload.position,
     slug: payload.slug,
     title: payload.title)
@@ -350,28 +380,24 @@ private func makeCourseChapter(
 
 private func makeCourseLesson(
   _ payload: Components.Schemas.LessonResource
-) throws -> CourseLesson {
+) -> CourseLesson {
   CourseLesson(
     chapterID: payload.chapterId,
     courseID: payload.courseId,
     description: payload.description,
     id: payload.id,
-    imageURL: payload.imageUrl.flatMap(URL.init(string:)),
-    kind: try makeLessonKind(payload.kind),
     language: payload.language,
     position: payload.position,
     slug: payload.slug,
     title: payload.title)
 }
 
-private func makeLessonKind(
-  _ payload: Components.Schemas.LessonResource.KindPayload
-) throws -> LessonKind {
-  guard let kind = LessonKind(rawValue: payload.rawValue) else {
-    throw CourseCatalogFailure.unavailable
-  }
-
-  return kind
+/// Both chapter resources declare the same level values inline, so they map by raw value. A level the
+/// app doesn't know yet joins the overview band instead of hiding the chapter.
+private func makeCourseLevel<Payload: RawRepresentable>(
+  _ payload: Payload
+) -> CourseLevel where Payload.RawValue == String {
+  CourseLevel(rawValue: payload.rawValue) ?? .overview
 }
 
 private func makeCatalogContinuationTarget(
@@ -461,7 +487,6 @@ private func makeCatalogChapterSearchResult(
     courseTitle: payload.courseTitle,
     description: payload.description,
     id: payload.id,
-    imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
     organizationSlug: payload.organizationSlug,
     slug: payload.slug,

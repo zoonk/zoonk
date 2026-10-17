@@ -1,12 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { headers } from "next/headers";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getGenerationQuotaRules } from "../generation-quotas/limits";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
 import {
   parseLessonQuestionContextSnapshot,
@@ -20,8 +16,12 @@ import {
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn() }));
+/** The run that wrote a test answer, as the answers route passes it from the task's provenance. */
+const ANSWER_RUN = {
+  generatedAt: "2026-09-27T12:00:00.000Z",
+  promptVersion: "lesson-question-test",
+  runId: "run-lesson-question-test",
+};
 
 async function createFollowUpQuestion({
   lessonId,
@@ -32,7 +32,7 @@ async function createFollowUpQuestion({
 }) {
   const created = await createLessonQuestion({
     input: { context: { kind: "lesson" }, question, requestId: randomUUID() },
-    lessonId,
+    target: { kind: "lesson", lessonId },
   });
 
   if (created.status !== "created") {
@@ -42,48 +42,20 @@ async function createFollowUpQuestion({
   return created.question;
 }
 
-async function setLessonQuestionDailyQuota({
-  count,
-  questionId,
-}: {
-  count: number;
-  questionId: string;
-}) {
-  const claim = await prisma.generationQuotaClaim.findUniqueOrThrow({
-    where: { generationQuotaClaim: { resource: "lessonQuestion", targetId: questionId } },
-  });
-
-  await prisma.generationQuotaCounter.updateMany({
-    data: { count },
-    where: { actorKey: claim.actorKey, period: "day", resource: "lessonQuestion" },
-  });
-}
-
 describe("lesson question answer lifecycle", () => {
   beforeEach(() => {
-    vi.mocked(headers).mockResolvedValue(new Headers());
     mockSession(null);
   });
 
   it("isolates generation and follow-up history by step", async () => {
-    const { lesson, question } = await createLessonQuestionFixture();
+    const { lesson, question, steps } = await createLessonQuestionFixture({
+      steps: ["explanation", "workedExample"],
+    });
 
     await prisma.lessonQuestion.update({
       data: { answer: "Lesson summary", status: "completed" },
       where: { id: question.id },
     });
-
-    const steps = await Promise.all(
-      [0, 1].map((position) =>
-        stepFixture({
-          content: { text: "A lesson concept", title: "Concept", variant: "text" },
-          isPublished: true,
-          kind: "static",
-          lessonId: lesson.id,
-          position,
-        }),
-      ),
-    );
 
     const created = await Promise.all(
       steps.map((step) =>
@@ -93,7 +65,7 @@ describe("lesson question answer lifecycle", () => {
             question: `Explain step ${step.position}`,
             requestId: randomUUID(),
           },
-          lessonId: lesson.id,
+          target: { kind: "lesson", lessonId: lesson.id },
         }),
       ),
     );
@@ -135,7 +107,7 @@ describe("lesson question answer lifecycle", () => {
         question: "Can you give an example?",
         requestId: randomUUID(),
       },
-      lessonId: lesson.id,
+      target: { kind: "lesson", lessonId: lesson.id },
     });
 
     if (followUp.status !== "created") {
@@ -221,23 +193,6 @@ describe("lesson question answer lifecycle", () => {
     ).resolves.toMatchObject([{ status: "running" }, { status: "pending" }]);
   });
 
-  it("rechecks paid lesson access before starting answer generation", async () => {
-    const { question, user } = await createLessonQuestionFixture({ chapterPosition: 1 });
-
-    await prisma.subscription.updateMany({
-      data: { status: "canceled" },
-      where: { referenceId: user.id },
-    });
-
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: "openai/gpt-6-luna" }),
-    ).resolves.toStrictEqual({ status: "subscriptionRequired" });
-
-    await expect(
-      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
-    ).resolves.toMatchObject({ generationRevision: 0, status: "pending" });
-  });
-
   it("does not answer retained history after its lesson is removed", async () => {
     const { lesson, question } = await createLessonQuestionFixture();
 
@@ -253,7 +208,7 @@ describe("lesson question answer lifecycle", () => {
   });
 
   it.each(["failed", "abandoned"])("safely retries a %s answer", async (cause) => {
-    const { lesson, question } = await createLessonQuestionFixture();
+    const { lesson, question, user } = await createLessonQuestionFixture();
 
     const firstClaim = await claimLessonQuestionAnswer({
       questionId: question.id,
@@ -287,42 +242,34 @@ describe("lesson question answer lifecycle", () => {
 
     expect(retry.claim.revision).toBe(2);
 
-    const quotaClaim = await prisma.generationQuotaClaim.findUniqueOrThrow({
-      where: { generationQuotaClaim: { resource: "lessonQuestion", targetId: question.id } },
-    });
-
-    const quotaCounters = await prisma.generationQuotaCounter.findMany({
-      where: { actorKey: quotaClaim.actorKey, resource: "lessonQuestion" },
-    });
-
-    expect(quotaCounters).toHaveLength(2);
-    expect(quotaCounters.every((counter) => counter.count === 1)).toBe(true);
+    // A retry answers the same message, so the tutor allowance counts it once.
+    await expect(
+      prisma.usageRecord.count({
+        where: { kind: "tutorMessage", targetId: question.id, userId: user.id },
+      }),
+    ).resolves.toBe(1);
 
     await expect(
       completeLessonQuestionAnswer({
+        ...ANSWER_RUN,
         answer: "Stale answer",
         finishReason: "stop",
-        inputTokens: 10,
         model: "openai/gpt-6-luna",
-        outputTokens: 5,
         provider: "openai",
         questionId: question.id,
         revision: firstClaim.claim.revision,
-        totalTokens: 15,
       }),
     ).resolves.toStrictEqual({ status: "stale" });
 
     await expect(
       completeLessonQuestionAnswer({
+        ...ANSWER_RUN,
         answer: "Current answer",
         finishReason: "stop",
-        inputTokens: 12,
         model: "google/gemini-3.1-flash-lite",
-        outputTokens: 6,
         provider: "google",
         questionId: question.id,
         revision: retry.claim.revision,
-        totalTokens: 18,
       }),
     ).resolves.toStrictEqual({ status: "updated" });
 
@@ -331,163 +278,24 @@ describe("lesson question answer lifecycle", () => {
     expect(stored).toMatchObject({
       answer: "Current answer",
       finishReason: "stop",
+      generatedAt: new Date(ANSWER_RUN.generatedAt),
       generationRevision: 2,
-      inputTokens: 12,
       model: "google/gemini-3.1-flash-lite",
-      outputTokens: 6,
+      promptVersion: ANSWER_RUN.promptVersion,
       provider: "google",
+      runId: ANSWER_RUN.runId,
       status: "completed",
-      totalTokens: 18,
     });
 
-    const thread = await getLessonQuestionThread({ lessonId: lesson.id });
+    const thread = await getLessonQuestionThread({
+      target: { kind: "lesson", lessonId: lesson.id },
+    });
 
     expect(thread).toMatchObject({
       status: "ready",
       thread: {
         questions: [expect.objectContaining({ answer: "Current answer", status: "completed" })],
       },
-    });
-  });
-
-  it("atomically reserves the last quota slot and releases the rejected question revision", async () => {
-    const { chapter, organization, question, user } = await createLessonQuestionFixture();
-
-    const seedClaim = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
-
-    if (seedClaim.status !== "ready") {
-      throw new Error(`Expected a ready quota seed, received ${seedClaim.status}`);
-    }
-
-    await failLessonQuestionAnswer({ questionId: question.id, revision: seedClaim.claim.revision });
-
-    const dailyLimit = getGenerationQuotaRules({
-      now: new Date(),
-      resource: "lessonQuestion",
-      viewer: "subscriber",
-    }).find((rule) => rule.period === "day")?.limit;
-
-    if (!dailyLimit) {
-      throw new Error("Expected a subscriber daily lesson-question limit");
-    }
-
-    await setLessonQuestionDailyQuota({ count: dailyLimit - 1, questionId: question.id });
-
-    const [firstLesson, secondLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 1,
-      }),
-      lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 2,
-      }),
-    ]);
-
-    const [firstQuestion, secondQuestion] = await Promise.all([
-      createFollowUpQuestion({ lessonId: firstLesson.id, question: "What is the first example?" }),
-      createFollowUpQuestion({
-        lessonId: secondLesson.id,
-        question: "What is the second example?",
-      }),
-    ]);
-
-    const results = await Promise.all(
-      [firstQuestion, secondQuestion].map((candidate) =>
-        claimLessonQuestionAnswer({
-          questionId: candidate.id,
-          requestedModel: "openai/gpt-6-luna",
-        }),
-      ),
-    );
-
-    expect(results.map((result) => result.status).toSorted()).toStrictEqual([
-      "limitReached",
-      "ready",
-    ]);
-
-    const limitResult = results.find((result) => result.status === "limitReached");
-
-    expect(limitResult).toMatchObject({
-      actor: { distinctId: user.id, username: null },
-      limit: { period: "day", resource: "lessonQuestion", viewer: "subscriber" },
-      status: "limitReached",
-    });
-
-    const storedQuestions = await prisma.lessonQuestion.findMany({
-      where: { id: { in: [firstQuestion.id, secondQuestion.id] } },
-    });
-
-    for (const [index, result] of results.entries()) {
-      const candidate = [firstQuestion, secondQuestion][index];
-      const stored = storedQuestions.find((item) => item.id === candidate?.id);
-
-      expect(stored).toMatchObject({
-        generationRevision: 1,
-        status: result.status === "ready" ? "running" : "failed",
-      });
-    }
-
-    await expect(
-      prisma.generationQuotaCounter.findFirstOrThrow({
-        where: { actorKey: `user:${user.id}`, period: "day", resource: "lessonQuestion" },
-      }),
-    ).resolves.toMatchObject({ count: dailyLimit });
-  });
-
-  it("supplies only earlier completed turns as generation history", async () => {
-    const { lesson, question } = await createLessonQuestionFixture();
-
-    const firstClaim = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
-
-    if (firstClaim.status !== "ready") {
-      throw new Error(`Expected a ready claim, received ${firstClaim.status}`);
-    }
-
-    await completeLessonQuestionAnswer({
-      answer: "It builds on the earlier example.",
-      finishReason: "stop",
-      model: "openai/gpt-6-luna",
-      provider: "openai",
-      questionId: question.id,
-      revision: firstClaim.claim.revision,
-    });
-
-    const followUp = await createLessonQuestion({
-      input: {
-        context: { kind: "lesson" },
-        question: "Can you give me another example?",
-        requestId: randomUUID(),
-      },
-      lessonId: lesson.id,
-    });
-
-    if (followUp.status !== "created") {
-      throw new Error(`Expected a created follow-up, received ${followUp.status}`);
-    }
-
-    const followUpClaim = await claimLessonQuestionAnswer({
-      questionId: followUp.question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
-
-    expect(followUpClaim).toMatchObject({
-      claim: {
-        priorTurns: [
-          { answer: "It builds on the earlier example.", question: "How does this connect?" },
-        ],
-      },
-      status: "ready",
     });
   });
 
@@ -565,6 +373,7 @@ describe("lesson question answer lifecycle", () => {
 
     await expect(
       completeLessonQuestionAnswer({
+        ...ANSWER_RUN,
         answer: "Not yours",
         finishReason: "stop",
         model: "openai/gpt-6-luna",

@@ -13,17 +13,31 @@ permissions:
 
 jobs:
   e2e:
+    name: e2e (${{ matrix.suite }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      # Playwright shards only top-level projects and runs their dependencies whole in each shard,
+      # so the dependent live-call-states project runs in its own job instead of under --shard.
       matrix:
-        shard: [1, 2, 3]
+        include:
+          - suite: chromium 1/4
+            args: --project=chromium --shard=1/4
+          - suite: chromium 2/4
+            args: --project=chromium --shard=2/4
+          - suite: chromium 3/4
+            args: --project=chromium --shard=3/4
+          - suite: chromium 4/4
+            args: --project=chromium --shard=4/4
+          - suite: live-call-states
+            args: --project=live-call-states --no-deps
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
+      MAIN_PERF_GATES: "true"
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -48,32 +62,45 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
+      # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
+      # again, and `hashFiles` would then walk every node_modules (about 20 s per cache).
+      - name: Compute cache keys
+        id: cache-keys
+        run: |
+          echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
+          echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
+
       - name: Cache turbo build setup
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-turbo-
 
       - name: Cache Next.js build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-main-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-nextjs-main-
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e
 
-      - name: Run E2E tests
-        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+      - name: Test performance gates
+        run: pnpm test:deploy scripts/perf
+
+      # The supervisor times build:e2e and gates its artifacts before starting Playwright.
+      - name: Build, check performance budgets, and run E2E tests
+        run: pnpm e2e:main ${{ matrix.args }} --workers=2

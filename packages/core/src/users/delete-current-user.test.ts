@@ -78,6 +78,21 @@ describe(deleteCurrentUser, () => {
     expect(mocks.reauthorizeApple).not.toHaveBeenCalled();
   });
 
+  it("logs the deleted account's id and nothing else, so its analytics can be removed", async () => {
+    await deleteCurrentUser({});
+
+    await expect(
+      prisma.accountDeletion.findMany({ where: { userId: currentUserId } }),
+    ).resolves.toStrictEqual([
+      {
+        analyticsRemovedAt: null,
+        deletedAt: expect.any(Date),
+        id: expect.any(String),
+        userId: currentUserId,
+      },
+    ]);
+  });
+
   it("keeps deletion available without fresh Apple credentials", async () => {
     await appleAccountFixture({ userId: currentUserId });
 
@@ -184,6 +199,10 @@ describe(deleteCurrentUser, () => {
     mocks.deleteUser.mockRejectedValue(deletionError);
 
     await expect(deleteCurrentUser(input)).rejects.toBe(deletionError);
+
+    await expect(prisma.accountDeletion.count({ where: { userId: currentUserId } })).resolves.toBe(
+      0,
+    );
 
     await expect(
       prisma.session.findUnique({ where: { token: temporarySessionToken } }),

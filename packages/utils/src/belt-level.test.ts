@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBeltLevel } from "./belt-level";
+import { BELT_COLORS_ORDER, calculateBeltLevel, getBeltStartBrainPower } from "./belt-level";
 
 describe(calculateBeltLevel, () => {
   describe("white belt (250 BP per level)", () => {
@@ -151,174 +151,6 @@ describe(calculateBeltLevel, () => {
     });
   });
 
-  describe("green belt (5000 BP per level)", () => {
-    it("17500 BP returns Green 1 with 5000 BP to next", () => {
-      const result = calculateBeltLevel(17_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 5000,
-        bpToNextLevel: 5000,
-        color: "green",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("67499 BP returns Green 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(67_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 5000,
-        bpToNextLevel: 1,
-        color: "green",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 4999,
-      });
-    });
-  });
-
-  describe("blue belt (10000 BP per level)", () => {
-    it("67500 BP returns Blue 1 with 10000 BP to next", () => {
-      const result = calculateBeltLevel(67_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 10_000,
-        bpToNextLevel: 10_000,
-        color: "blue",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("167499 BP returns Blue 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(167_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 10_000,
-        bpToNextLevel: 1,
-        color: "blue",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 9999,
-      });
-    });
-  });
-
-  describe("purple belt (20000 BP per level)", () => {
-    it("167500 BP returns Purple 1 with 20000 BP to next", () => {
-      const result = calculateBeltLevel(167_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 20_000,
-        bpToNextLevel: 20_000,
-        color: "purple",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("367499 BP returns Purple 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(367_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 20_000,
-        bpToNextLevel: 1,
-        color: "purple",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 19_999,
-      });
-    });
-  });
-
-  describe("brown belt (40000 BP per level)", () => {
-    it("367500 BP returns Brown 1 with 40000 BP to next", () => {
-      const result = calculateBeltLevel(367_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 40_000,
-        bpToNextLevel: 40_000,
-        color: "brown",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("767499 BP returns Brown 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(767_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 40_000,
-        bpToNextLevel: 1,
-        color: "brown",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 39_999,
-      });
-    });
-  });
-
-  describe("red belt (60000 BP per level)", () => {
-    it("767500 BP returns Red 1 with 60000 BP to next", () => {
-      const result = calculateBeltLevel(767_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 60_000,
-        bpToNextLevel: 60_000,
-        color: "red",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("1367499 BP returns Red 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(1_367_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 60_000,
-        bpToNextLevel: 1,
-        color: "red",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 59_999,
-      });
-    });
-  });
-
-  describe("gray belt (80000 BP per level)", () => {
-    it("1367500 BP returns Gray 1 with 80000 BP to next", () => {
-      const result = calculateBeltLevel(1_367_500);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 80_000,
-        bpToNextLevel: 80_000,
-        color: "gray",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 0,
-      });
-    });
-
-    it("2167499 BP returns Gray 10 with 1 BP to next", () => {
-      const result = calculateBeltLevel(2_167_499);
-
-      expect(result).toStrictEqual({
-        bpPerLevel: 80_000,
-        bpToNextLevel: 1,
-        color: "gray",
-        isMaxLevel: false,
-        level: 10,
-        progressInLevel: 79_999,
-      });
-    });
-  });
-
   describe("black belt (100000 BP per level)", () => {
     it("2167500 BP returns Black 1 with 100000 BP to next", () => {
       const result = calculateBeltLevel(2_167_500);
@@ -375,20 +207,32 @@ describe(calculateBeltLevel, () => {
     });
   });
 
-  describe("progress percentage at boundaries", () => {
-    it("tracks 0 BP progress at start of level", () => {
-      const result = calculateBeltLevel(0);
-      expect(result.progressInLevel).toBe(0);
+  it.each(
+    BELT_COLORS_ORDER.slice(1).map((color, index) => ({
+      color,
+      previous: BELT_COLORS_ORDER[index],
+    })),
+  )("starts $color level 1 right after $previous level 10 ends", ({ color, previous }) => {
+    const start = getBeltStartBrainPower(color);
+
+    expect(calculateBeltLevel(start - 1)).toMatchObject({
+      bpToNextLevel: 1,
+      color: previous,
+      level: 10,
     });
 
-    it("tracks mid-level BP progress", () => {
-      const result = calculateBeltLevel(125);
-      expect(result.progressInLevel).toBe(125);
-    });
+    expect(calculateBeltLevel(start)).toMatchObject({ color, level: 1, progressInLevel: 0 });
+  });
+});
 
-    it("tracks BP progress just before level-up", () => {
-      const result = calculateBeltLevel(248);
-      expect(result.progressInLevel).toBe(248);
+describe(getBeltStartBrainPower, () => {
+  it("returns where each belt color starts", () => {
+    expect(getBeltStartBrainPower("white")).toBe(0);
+    expect(getBeltStartBrainPower("orange")).toBe(7500);
+
+    expect(calculateBeltLevel(getBeltStartBrainPower("green"))).toMatchObject({
+      color: "green",
+      level: 1,
     });
   });
 });

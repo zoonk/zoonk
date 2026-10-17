@@ -1,20 +1,17 @@
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { Client } from "pg";
 import { getContentDatabaseUrls } from "./_sync-content/config";
-import { copyContent } from "./_sync-content/copy";
+import { copyCatalog } from "./_sync-content/copy";
 import {
-  assertDestinationContentIsolation,
+  assertNoUnkeptReferences,
   clearDestinationContent,
+  markRemovedContent,
 } from "./_sync-content/destination";
-import {
-  assertCompatibleSchemas,
-  getContentIds,
-  getOrganizationId,
-} from "./_sync-content/metadata";
-import {
-  restoreDestinationReferences,
-  snapshotDestinationReferences,
-} from "./_sync-content/preserve";
+import { readKeptKeys, withoutKeptKeys } from "./_sync-content/kept-keys";
+import { assertCompatibleSchemas, getOrganizationId } from "./_sync-content/metadata";
+import { restoreLearnerReferences, snapshotLearnerReferences } from "./_sync-content/preserve";
+import { getColumnValues } from "./_sync-content/rows";
+import { readSourceCatalog } from "./_sync-content/source";
 
 async function rollback(client: Client): Promise<void> {
   await client.query("ROLLBACK");
@@ -40,37 +37,32 @@ async function synchronizeConnectedClients({
       getOrganizationId({ client: destination, slug: "ai" }),
     ]);
 
-    const ids = await getContentIds({ organizationId: sourceOrganizationId, source });
+    const sourceCatalog = await readSourceCatalog({ organizationId: sourceOrganizationId, source });
 
-    if (ids.courseIds.length === 0) {
+    if (sourceCatalog.courses.rows.length === 0) {
       throw new Error("The source AI organization has no catalog courses");
     }
 
-    await assertDestinationContentIsolation({
+    await markRemovedContent({
+      courseSlugs: getColumnValues(sourceCatalog.courses, "slug"),
       destination,
       organizationId: destinationOrganizationId,
     });
 
-    const references = await snapshotDestinationReferences({
-      destination,
-      organizationId: destinationOrganizationId,
+    const catalog = withoutKeptKeys({
+      catalog: sourceCatalog,
+      keys: await readKeptKeys({ destination, organizationId: destinationOrganizationId }),
     });
+
+    await assertNoUnkeptReferences(destination);
+
+    const references = await snapshotLearnerReferences(destination);
 
     await clearDestinationContent({ destination, organizationId: destinationOrganizationId });
 
-    await copyContent({
-      destination,
-      destinationOrganizationId,
-      ids,
-      source,
-      sourceOrganizationId,
-    });
+    await copyCatalog({ catalog, destination, organizationId: destinationOrganizationId });
 
-    await restoreDestinationReferences({
-      destination,
-      expected: references,
-      organizationId: destinationOrganizationId,
-    });
+    await restoreLearnerReferences({ destination, expected: references });
 
     await source.query("COMMIT");
     await destination.query("COMMIT");

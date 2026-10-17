@@ -1,0 +1,132 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+
+const SHORT_ID_LENGTH = 6;
+const LESSONS = 3;
+const QUESTIONS_PER_SKILL = 3;
+
+/** The skill a review brings back was last reviewed a few days ago, so today is a later-day recall. */
+const LAST_REVIEW_DAYS_AGO = 4;
+const FIRST_LESSON_DONE_DAYS_AGO = 3;
+
+function daysAgo(days: number): Date {
+  return new Date(Date.now() - days * MS_PER_DAY);
+}
+
+/**
+ * A learner whose day isn't opened yet, as core's `sessionGoalFixture` sets one up: a 45-minute
+ * learn goal in UTC with placement declined, three written lessons in its plan (each teaching its
+ * own skill, three choice questions per skill), the first one done three days ago, its skill due
+ * since yesterday with a mistake on its first question. No study session exists, so Today shows the
+ * day's preview: a review of the first skill, the second and third lessons, then practice of the
+ * learner's mistakes. Titles and questions carry a tag of their own, so each test finds only its
+ * own learner's words. The right option is always the first.
+ */
+export async function createUnstartedDay() {
+  // A letter first: rich text groups a long number's digits ("775,202"), which no title search finds.
+  const tag = `t${randomUUID().slice(0, SHORT_ID_LENGTH)}`;
+
+  const [user, skills, written] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    Promise.all(
+      Array.from({ length: LESSONS }, (_, index) =>
+        skillFixture({ name: `Skill ${index + 1} ${tag}` }),
+      ),
+    ),
+    Promise.all(
+      Array.from({ length: LESSONS }, (_, index) =>
+        playableLessonFixture({
+          lesson: { canDo: `You'll do thing ${index + 1}`, title: `Lesson ${index + 1} ${tag}` },
+        }),
+      ),
+    ),
+  ]);
+
+  const lessons = written.map((playable) => playable.lesson);
+
+  const goal = await goalFixture({
+    dailyMinutes: 45,
+    details: { placementDeclined: true },
+    timezone: "UTC",
+    title: `Unstarted day ${tag}`,
+    userId: user.id,
+  });
+
+  const [plan, questions] = await Promise.all([
+    planFixture({ goalId: goal.id, phases: [{ name: "Basics" }, { name: "Practice" }] }),
+    Promise.all(
+      skills.map((skill, index) =>
+        Promise.all(
+          Array.from({ length: QUESTIONS_PER_SKILL }, (_, question) =>
+            itemFixture({
+              content: choiceItemContent(`Skill ${index + 1} ${tag} question ${question + 1}?`),
+              skillId: skill.id,
+            }),
+          ),
+        ),
+      ),
+    ),
+    ...lessons.map((lesson, index) =>
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
+    ),
+  ]);
+
+  const planItems = await Promise.all(
+    lessons.map((lesson, position) =>
+      planItemFixture({
+        kind: "lesson",
+        lessonId: lesson.id,
+        phase: 0,
+        planId: plan.id,
+        position,
+        titleSnapshot: lesson.title,
+      }),
+    ),
+  );
+
+  const [firstSkill] = skills;
+  const [firstQuestion] = questions[0] ?? [];
+
+  await Promise.all([
+    prisma.planItem.update({
+      data: { completedAt: daysAgo(FIRST_LESSON_DONE_DAYS_AGO), status: "done" },
+      where: { id: planItems[0]?.id },
+    }),
+    learnerSkillFixture({
+      difficulty: 5,
+      due: daysAgo(1),
+      lastReviewedAt: daysAgo(LAST_REVIEW_DAYS_AGO),
+      reps: 2,
+      skillId: firstSkill?.id ?? "",
+      stability: 3,
+      state: "learning",
+      userId: user.id,
+    }),
+    mistakeFixture({
+      createdAt: daysAgo(1),
+      itemId: firstQuestion?.id,
+      skillId: firstSkill?.id,
+      userId: user.id,
+    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  return {
+    goal,
+    lessons,
+    /** Any of the learner's own questions, as the review and practice title them. */
+    question: new RegExp(`^Skill \\d ${tag} question \\d\\?`, "u"),
+    /** The first skill's questions, the ones its review brings back. */
+    reviewQuestion: new RegExp(`^Skill 1 ${tag} question \\d\\?`, "u"),
+    user,
+  };
+}

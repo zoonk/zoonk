@@ -1,6 +1,5 @@
-import { errors } from "@/lib/api-errors";
+import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { lessonQuestionAccessError } from "@/lib/lesson-question-errors";
 import { lessonQuestionPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { getLessonQuestion } from "@zoonk/core/lesson-questions/get";
@@ -19,7 +18,7 @@ async function getQuestion(_request: Request, context: RouteContext<"/v1/questio
   const result = await getLessonQuestion({ questionId: path.data.questionId });
 
   if (result.status !== "ready") {
-    return lessonQuestionAccessError(result.status);
+    return accessError(result.status);
   }
 
   return NextResponse.json(result.question);

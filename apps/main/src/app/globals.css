@@ -1,2 +1,20 @@
 @import "@zoonk/ui/globals.css";
 @import "@zoonk/player/questions/styles.css";
+
+/*
+ * `@zoonk/ui/globals.css` scans every workspace. Main's stylesheet loads on every page, so it skips
+ * the other apps' sources and keeps only the classes main and its packages use.
+ */
+@source not "../../../admin";
+@source not "../../../api";
+@source not "../../../blog";
+@source not "../../../evals";
+@source not "../../../mailbox";
+
+/*
+ * `signed-in:` applies while the browser's session hint says it holds a session
+ * (`SignedInHintScript` marks `<html>` before the first paint), so a static page can show a learner
+ * a quiet place for their account instead of a visitor's way in until their learner summary
+ * arrives.
+ */
+@custom-variant signed-in (&:where([data-signed-in] *));

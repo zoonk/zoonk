@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Organization, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { type Organization, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
 function organizationAttrs(
@@ -27,22 +27,11 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
 }
 
 export async function aiOrganizationFixture() {
-  try {
-    return await prisma.organization.upsert({
-      create: { id: randomUUID(), kind: "brand", name: "Zoonk AI", slug: AI_ORG_SLUG },
-      update: {},
-      where: { slug: AI_ORG_SLUG },
-    });
-  } catch (error) {
-    // Handle upsert race condition - another test may have created the org concurrently
-    if (isPrismaUniqueConstraintError(error)) {
-      const existing = await prisma.organization.findUnique({ where: { slug: AI_ORG_SLUG } });
+  // One statement that waits for another writer of the organization instead of failing on it.
+  await prisma.organization.createMany({
+    data: [{ id: randomUUID(), kind: "brand", name: "Zoonk AI", slug: AI_ORG_SLUG }],
+    skipDuplicates: true,
+  });
 
-      if (existing) {
-        return existing;
-      }
-    }
-
-    throw error;
-  }
+  return prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 }

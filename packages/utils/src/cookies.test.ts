@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { setCookie } from "./cookies";
+import { readCookie, setCookie } from "./cookies";
 
 /**
  * Provides the initial resolver value before the Promise constructor replaces
@@ -106,5 +106,30 @@ describe(setCookie, () => {
 
     expect(set).not.toHaveBeenCalled();
     expect(writtenCookies).toStrictEqual(["session=abc123; path=/; samesite=lax"]);
+  });
+});
+
+describe(readCookie, () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reads a cookie's decoded value by its exact name", () => {
+    vi.stubGlobal("document", { cookie: "zoonk-hint-old=no; zoonk-hint=yes;other=a%20b" });
+
+    expect(readCookie("zoonk-hint")).toBe("yes");
+    expect(readCookie("other")).toBe("a b");
+  });
+
+  it("has nothing for a cookie that isn't set", () => {
+    vi.stubGlobal("document", { cookie: "other=1" });
+
+    expect(readCookie("zoonk-hint")).toBeNull();
+  });
+
+  it("keeps a value it can't decode as it is", () => {
+    vi.stubGlobal("document", { cookie: "broken=%E0%A4%A" });
+
+    expect(readCookie("broken")).toBe("%E0%A4%A");
   });
 });

@@ -1,278 +1,262 @@
 import { randomUUID } from "node:crypto";
-import { type Route } from "@playwright/test";
-import { setLocale } from "@zoonk/e2e/fixtures/locale";
-import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { coursePromptFixture } from "@zoonk/testing/fixtures/course-prompts";
+import { type Locator } from "@playwright/test";
+import { getExamBlueprintCacheTag } from "@zoonk/core/cache-tags";
+import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { normalizeString } from "@zoonk/utils/string";
-import { expect, test } from "./fixtures";
-import { isGenerationEvents, isGenerationTrigger, routeGenerationApis } from "./generation-api";
+import { type Page, expect, test } from "./fixtures";
 
-const TEST_RUN_ID = "test-run-id-course-detail";
-const UUID_SHORT_LENGTH = 8;
+/** Matches Main's Playwright-only cache hook secret (`playwright.config.ts`). */
+const CACHE_SECRET_HEADERS = { "x-zoonk-cache-secret": "e2e-cache-tags-secret" };
 
-/**
- * Mock the course-generation APIs to avoid hitting real services.
- */
-async function mockCourseGenerationApis(route: Route) {
-  const url = route.request().url();
+/** The seeded course whose outline core can plan at the time a day its example shows. */
+const PLANNED_COURSE_PATH = `/b/${AI_ORG_SLUG}/c/quantum-physics-from-scratch`;
 
-  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
-    await route.fulfill({
-      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
-      contentType: "application/json",
-      status: 202,
-    });
+/** The example plan's headline number: its weeks to the course's end. */
+async function readPlanWeeks(plan: Locator): Promise<number> {
+  const text = await plan
+    .getByText(/~\d+\s*weeks?/u)
+    .first()
+    .innerText();
 
-    return;
-  }
-
-  if (isGenerationEvents(url)) {
-    await route.fulfill({
-      body: `data: ${JSON.stringify({ status: "started", step: "getCoursePrompt" })}\n\n`,
-      contentType: "text/event-stream",
-      status: 200,
-    });
-
-    return;
-  }
-
-  await route.continue();
+  return Number(/~(?<weeks>\d+)\s*weeks?/u.exec(text)?.groups?.weeks);
 }
 
-const testData: {
-  courseNoImageTitle: string;
-  courseNoImageUrl: string;
-  courseWithImageDescription: string;
-  courseWithImageTitle: string;
-  courseWithImageUrl: string;
-  ptCourseUrl: string;
-  regionalCourseTitle: string;
-  regionalCourseUrl: string;
-} = {
-  courseNoImageTitle: "",
-  courseNoImageUrl: "",
-  courseWithImageDescription: "",
-  courseWithImageTitle: "",
-  courseWithImageUrl: "",
-  ptCourseUrl: "",
-  regionalCourseTitle: "",
-  regionalCourseUrl: "",
-};
+/** The latest week any chapter of the outline shows ("Week 3", "Weeks 18–20"), at the example's time a day. */
+async function readLastOutlineWeek(page: Page): Promise<number> {
+  const marks = await page
+    .getByRole("region", { name: "Course outline" })
+    .getByText(/^Weeks? \d+(?:–\d+)?$/u)
+    .filter({ visible: true })
+    .allInnerTexts();
 
-test.beforeAll(async () => {
-  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
+  return Math.max(...marks.map((mark) => Number(/(?<last>\d+)$/u.exec(mark)?.groups?.last)));
+}
+
+async function publishedCourse(attrs: {
+  language: string;
+  targetLanguage?: string;
+  title: string;
+}) {
   const org = await getAiOrganization();
 
-  testData.courseWithImageTitle = `E2E Image Course ${uniqueId}`;
-  testData.courseWithImageDescription = `Description for image course ${uniqueId}`;
-  testData.courseNoImageTitle = `E2E No Image Course ${uniqueId}`;
-  const ptCourseTitle = `E2E Curso PT ${uniqueId}`;
-  testData.regionalCourseTitle = `E2E Regional Course ${uniqueId}`;
+  const course = await courseFixture({
+    ...attrs,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-course-detail-${randomUUID().slice(0, 8)}`,
+  });
 
-  const [courseWithImage, courseNoImage, ptCourse, regionalCourse] = await Promise.all([
-    courseFixture({
-      description: testData.courseWithImageDescription,
-      imageUrl: "https://placehold.co/200x200.png",
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(testData.courseWithImageTitle),
-      organizationId: org.id,
-      slug: `e2e-img-course-${uniqueId}`,
-      title: testData.courseWithImageTitle,
-    }),
-    courseFixture({
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(testData.courseNoImageTitle),
-      organizationId: org.id,
-      slug: `e2e-noimg-course-${uniqueId}`,
-      title: testData.courseNoImageTitle,
-    }),
-    courseFixture({
-      isPublished: true,
-      language: "pt",
-      normalizedTitle: normalizeString(ptCourseTitle),
-      organizationId: org.id,
-      slug: `e2e-pt-course-${uniqueId}`,
-      title: ptCourseTitle,
-    }),
-    courseFixture({
-      isPublished: true,
-      language: "pt-BR",
-      normalizedTitle: normalizeString(testData.regionalCourseTitle),
-      organizationId: org.id,
-      slug: `e2e-regional-course-${uniqueId}`,
-      title: testData.regionalCourseTitle,
-    }),
+  return { course, path: `/b/${org.slug}/c/${course.slug}` };
+}
+
+const MS_PER_DAY = 86_400_000;
+
+/** A day some days from now, as a notice writes it ("YYYY-MM-DD", UTC). */
+function dayIn(days: number): string {
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
+}
+
+/** A notice edition with its exam days, in UTC. */
+function examEdition(dates: string[]) {
+  return {
+    citations: [],
+    dates: dates.map((date) => ({
+      citation: { passage: "Exam day", sourceId: "notice" },
+      date,
+      kind: "exam",
+      label: "Exam",
+    })),
+    noticeUrl: null,
+    questionCount: null,
+    sourceHash: null,
+    timeZone: "UTC",
+    year: Number(dates[0]?.slice(0, 4)),
+  };
+}
+
+/** A published exam course whose stored exam graph starts on it, with its notice's days. */
+async function publishedExamCourse(dates: string[]) {
+  const { course, path } = await publishedCourse({
+    language: "en",
+    title: `E2E Exam Course ${randomUUID().slice(0, 8)}`,
+  });
+
+  await prisma.course.update({ data: { format: "exam" }, where: { id: course.id } });
+
+  const [blueprint, [band]] = await Promise.all([
+    examBlueprintFixture({ edition: examEdition(dates) }),
+    courseBandsFixture({ courseId: course.id, levels: ["beginner"] }),
   ]);
 
-  // Courses need at least one chapter to avoid the generate redirect
-  await Promise.all([
-    chapterFixture({
-      courseId: courseWithImage.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-img-ch-${uniqueId}`,
-      title: `Image Course Chapter ${uniqueId}`,
-    }),
-    chapterFixture({
-      courseId: courseNoImage.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-noimg-ch-${uniqueId}`,
-      title: `No Image Course Chapter ${uniqueId}`,
-    }),
-    chapterFixture({
-      courseId: ptCourse.id,
-      isPublished: true,
-      language: "pt",
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-pt-ch-${uniqueId}`,
-      title: `Capítulo PT ${uniqueId}`,
-    }),
-    chapterFixture({
-      courseId: regionalCourse.id,
-      isPublished: true,
-      language: "pt-BR",
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-regional-ch-${uniqueId}`,
-      title: `Regional Chapter ${uniqueId}`,
-    }),
-  ]);
+  await prisma.examSkillGraph.create({
+    data: {
+      examBlueprintId: blueprint.id,
+      generatedAt: new Date(),
+      graph: {
+        phases: [{ milestone: null, name: "Exam" }],
+        skills: [
+          {
+            area: null,
+            courseIds: [course.id],
+            lessons: 1,
+            name: band?.skill.name ?? "",
+            phase: 0,
+            skillId: band?.skill.id ?? "",
+            weight: null,
+          },
+        ],
+      },
+      model: "fixture",
+      primaryCourseId: course.id,
+      promptVersion: "fixture",
+      runId: "fixture",
+    },
+  });
 
-  testData.courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
-  testData.courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
-  testData.ptCourseUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
-  testData.regionalCourseUrl = `/b/${AI_ORG_SLUG}/c/${regionalCourse.slug}`;
-});
+  return { blueprint, course, path };
+}
+
+/** A notice day as the page's eyebrow writes it ("Nov 8"). */
+function eyebrowDay(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+}
 
 test.describe("Course Detail Page", () => {
-  test("shows course content with title, description, and image", async ({ page }) => {
-    await page.goto(testData.courseWithImageUrl);
+  test("a course that doesn't exist answers 404 inside the catalog, with the way to the courses", async ({
+    page,
+  }) => {
+    const response = await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
+    const main = page.getByRole("main");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: testData.courseWithImageTitle }),
-    ).toBeVisible();
+    expect(response?.status()).toBe(404);
+    await expect(main.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    await expect(main.getByRole("link", { name: "Back to Explore courses" })).toBeVisible();
+    await expectAccessibleScreen(page, "a missing course");
 
-    await expect(page.getByText(testData.courseWithImageDescription).first()).toBeVisible();
-
-    const courseImage = page.getByRole("img", { name: testData.courseWithImageTitle });
-    await expect(courseImage).toBeVisible();
+    await main.getByRole("link", { exact: true, name: "Explore courses" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Explore courses" })).toBeVisible();
   });
 
-  test("non-existent course invites the learner to create it", async ({ page }) => {
-    await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
+  test("a language course whose outline isn't written yet leads with its flag and stays on its page", async ({
+    page,
+  }) => {
+    const title = `E2E Language Course ${randomUUID().slice(0, 8)}`;
+    const { course, path } = await publishedCourse({ language: "en", targetLanguage: "pt", title });
+
+    await page.goto(path);
+
+    await expect(page).toHaveURL(path);
+    await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+    await expect(page.getByRole("img", { name: "Brazilian Portuguese" })).toBeVisible();
 
     await expect(
-      page.getByRole("heading", { name: "You found a course that hasn't been written yet" }),
+      page.getByText(
+        "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level.",
+      ),
     ).toBeVisible();
 
-    await expect(
-      page.getByRole("img", { name: "An open book becoming a learning path" }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "Create this course" })).toHaveAttribute(
+    // Its start asks the visitor's level for the whole course, whose outline comes once it starts.
+    await expect(page.getByRole("link", { name: "Build my plan" }).first()).toHaveAttribute(
       "href",
-      "/start/learn",
+      `/start/course/${course.id}`,
     );
-  });
 
-  test("redirects to generate page when course has no chapters", async ({ authenticatedPage }) => {
-    const org = await getAiOrganization();
-
-    const slug = `e2e-no-chapters-${randomUUID().slice(0, UUID_SHORT_LENGTH)}`;
-
-    const title = "E2E No Chapters Course";
-
-    const course = await courseFixture({
-      generationStatus: "running",
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(title),
-      organizationId: org.id,
-      slug,
-      title,
-    });
-
-    const request = await coursePromptFixture({
-      canonicalTitle: title,
-      courseId: course.id,
-      generationStatus: "running",
-      prompt: `Generate ${title} ${slug}`,
-    });
-
-    await routeGenerationApis({ handler: mockCourseGenerationApis, page: authenticatedPage });
-
-    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${slug}`);
-
-    await authenticatedPage.waitForURL(`/generate/course/${request.id}`, { timeout: 10_000 });
+    // On a phone the invitation reads whole, with nothing scrolling sideways.
+    await page.setViewportSize({ height: 844, width: 390 });
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: `Creating the ${title} course` }),
-    ).toBeVisible({ timeout: 10_000 });
-  });
-
-  test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
-    const org = await createOrganization();
-
-    const course = await courseFixture({
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString(`Non AI Empty Course ${uniqueId}`),
-      organizationId: org.id,
-      slug: `non-ai-empty-course-${uniqueId}`,
-      title: `Non AI Empty Course ${uniqueId}`,
-    });
-
-    const url = `/b/${org.slug}/c/${course.slug}`;
-
-    await page.goto(url);
-
-    await expect(page).toHaveURL(url);
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: `Non AI Empty Course ${uniqueId}` }),
+      page.getByRole("region", { name: "Course outline" }).getByText(/^Build your plan and Zoonk/u),
     ).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /^start$/iu })).not.toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      ),
+    ).toBe(0);
+
+    await expectAccessibleScreen(page, "a course whose outline isn't written yet, on a phone");
   });
 
-  test("shows fallback icon when course has no image", async ({ page }) => {
-    await page.goto(testData.courseNoImageUrl);
+  test("an exam course's page reads a notice another app revised once its tag reaches this app", async ({
+    page,
+    request,
+  }) => {
+    const first = dayIn(40);
+    const revised = dayIn(54);
+    const { blueprint, path } = await publishedExamCourse([first]);
 
-    await expect(page.getByRole("heading", { name: testData.courseNoImageTitle })).toBeVisible();
+    await page.goto(path);
+    await expect(page.getByText(new RegExp(`^Exam on ${eyebrowDay(first)} · `, "u"))).toBeVisible();
 
-    const fallbackIcon = page.getByRole("img", { name: testData.courseNoImageTitle }).first();
-    await expect(fallbackIcon).toBeVisible();
-    await expect(fallbackIcon).not.toHaveAttribute("src");
-  });
+    // The API's notice research revises the edition, then its tag expiry reaches this app the way
+    // `revalidateCacheTags` forwards it: until then the page keeps the sitting it showed.
+    await prisma.examBlueprint.update({
+      data: { edition: examEdition([revised]) },
+      where: { id: blueprint.id },
+    });
 
-  test("renders metadata for a course with a regional language tag", async ({ page }) => {
-    await page.goto(testData.regionalCourseUrl);
+    await page.reload();
+    await expect(page.getByText(new RegExp(`^Exam on ${eyebrowDay(first)} · `, "u"))).toBeVisible();
+
+    const expired = await request.post("/api/cache/tags", {
+      data: { tags: [getExamBlueprintCacheTag(blueprint.id)] },
+      headers: CACHE_SECRET_HEADERS,
+    });
+
+    expect(expired.status()).toBe(200);
+
+    await page.reload();
 
     await expect(
-      page.getByRole("heading", { level: 1, name: testData.regionalCourseTitle }),
+      page.getByText(new RegExp(`^Exam on ${eyebrowDay(revised)} · `, "u")),
+    ).toBeVisible();
+  });
+
+  test("titles a course with a regional language tag in its own language", async ({ page }) => {
+    const title = `E2E Regional Course ${randomUUID().slice(0, 8)}`;
+    const { path } = await publishedCourse({ language: "pt-BR", title });
+
+    await page.goto(path);
+
+    await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+    await expect(page).toHaveTitle(`Aprenda ${title} | Zoonk`);
+  });
+
+  test("the example plan shows one time a day, and the outline's weeks and Build my plan follow it", async ({
+    page,
+  }) => {
+    await page.goto(PLANNED_COURSE_PATH);
+
+    const plan = page.getByRole("main").locator("[data-slot='course-plan']");
+    const outline = page.getByRole("region", { name: "Course outline" });
+
+    // One example, at 15 minutes a day: weeks to the course's end, and the outline marked at it.
+    await expect(plan.getByRole("heading", { name: "Example plan" })).toBeVisible();
+
+    await expect(
+      plan.getByText(/at 15 minutes a day, Monday to Friday, from scratch/u),
     ).toBeVisible();
 
-    await expect(page).toHaveTitle(`Aprenda ${testData.regionalCourseTitle} | Zoonk`);
-  });
-});
+    await expect(plan.getByRole("radio")).toHaveCount(0);
+    await expect(outline.getByText("Your plan at 15 minutes a day, from scratch")).toBeVisible();
 
-test.describe("Course Detail Page - Locale", () => {
-  test("course page renders in Portuguese locale", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto(`/pt${testData.ptCourseUrl}`);
+    const weeks = await readPlanWeeks(plan);
+    expect(weeks).toBeGreaterThan(0);
+    // No chapter starts after the course ends.
+    expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(weeks);
+    await expectAccessibleScreen(page, "a course's example plan");
 
-    await expect(page).toHaveURL(`/pt${testData.ptCourseUrl}`);
-    await expect(page.locator("html")).toHaveAttribute("lang", "pt");
-    await expect(page.getByRole("searchbox", { name: "Buscar capítulos…" })).toBeVisible();
+    // "Build my plan" starts the plan at the example's time a day.
+    const start = page.getByRole("main").getByRole("link", { name: "Build my plan" }).first();
+    await expect(start).toHaveAttribute("href", /\?minutes=15$/u);
   });
 });

@@ -1,15 +1,53 @@
-model LessonQuestionThread {
-  id        String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId    String           @map("user_id") @db.Uuid
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId  String?          @map("lesson_id") @db.Uuid
-  lesson    Lesson?          @relation(fields: [lessonId], references: [id], onDelete: SetNull)
-  createdAt DateTime         @default(now()) @map("created_at")
-  updatedAt DateTime         @default(now()) @updatedAt @map("updated_at")
-  questions LessonQuestion[]
+/// The tutor's suggestions a learner taps to ask about a lesson screen: explain it more simply, go
+/// deeper, another example. The server words a tapped one itself, so its words are never a learner's.
+enum LessonScreenSuggestion {
+  simpler
+  deeper
+  example
+}
 
-  @@unique([userId, lessonId], name: "userLessonQuestionThread")
-  @@index([lessonId])
+/// A learner's questions to the tutor about one thing, named by `kind`: a Library lesson, a Library
+/// chapter, a goal (`plan`: the conversation with the buddy about the goal, its subject and its plan,
+/// where plan changes are proposed by talking), a subject of a goal's syllabus (`subject`: by its goal
+/// and its key there), a question of the item bank asked in a session or practice (`item`) or a
+/// finished mock. One thread per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
+/// from before learning v2 have none left); plan, subject and mock threads belong to the learner's own
+/// goal and mock and go with them.
+model LessonQuestionThread {
+  id              String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String           @map("user_id") @db.Uuid
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind            TutorThreadKind  @default(lesson)
+  libraryLessonId String?          @map("library_lesson_id") @db.Uuid
+  libraryLesson   Lesson?          @relation(fields: [libraryLessonId], references: [id], onDelete: SetNull)
+  chapterId       String?          @map("chapter_id") @db.Uuid
+  chapter         Chapter?         @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  goalId          String?          @map("goal_id") @db.Uuid
+  goal            Goal?            @relation("GoalQuestionThreads", fields: [goalId], references: [id], onDelete: Cascade)
+  subjectGoalId   String?          @map("subject_goal_id") @db.Uuid
+  subjectGoal     Goal?            @relation("SubjectQuestionThreads", fields: [subjectGoalId], references: [id], onDelete: Cascade)
+  /// The subject's key in its goal's syllabus, stable within it.
+  subjectKey      String?          @map("subject_key")
+  itemId          String?          @map("item_id") @db.Uuid
+  item            Item?            @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  mockExamId      String?          @map("mock_exam_id") @db.Uuid
+  mockExam        MockExam?        @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @default(now()) @updatedAt @map("updated_at")
+  questions       LessonQuestion[]
+
+  @@unique([userId, libraryLessonId], name: "userLibraryLessonQuestionThread")
+  @@unique([userId, chapterId], name: "userChapterQuestionThread")
+  @@unique([userId, goalId], name: "userGoalQuestionThread")
+  @@unique([userId, mockExamId], name: "userMockQuestionThread")
+  @@unique([userId, subjectGoalId, subjectKey], name: "userSubjectQuestionThread")
+  @@unique([userId, itemId], name: "userItemQuestionThread")
+  @@index([libraryLessonId])
+  @@index([chapterId])
+  @@index([goalId])
+  @@index([subjectGoalId])
+  @@index([itemId])
+  @@index([mockExamId])
   @@map("lesson_question_threads")
 }
 
@@ -19,28 +57,71 @@ model LessonQuestion {
   thread             LessonQuestionThread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
   requestId          String                    @map("request_id") @db.Uuid
   requestFingerprint String                    @map("request_fingerprint")
-  stepId             String?                   @map("step_id") @db.Uuid
-  step               Step?                     @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  /// The Library step a question in a Library lesson's thread is about.
+  libraryStepId      String?                   @map("library_step_id") @db.Uuid
+  libraryStep        Step?                     @relation(fields: [libraryStepId], references: [id], onDelete: SetNull)
   stepNumber         Int?                      @map("step_number")
   contextKind        LessonQuestionContextKind @map("context_kind")
   contextSnapshot    Json                      @map("context_snapshot")
   question           String
+  /// The tutor's suggestion the learner tapped, which `question` words in the thread's language.
+  suggestion         LessonScreenSuggestion?
   answer             String?
   status             LessonQuestionStatus      @default(pending)
   generationRevision Int                       @default(0) @map("generation_revision")
   requestedModel     String?                   @map("requested_model")
   model              String?
+  promptVersion      String?                   @map("prompt_version")
+  runId              String?                   @map("run_id")
+  generatedAt        DateTime?                 @map("generated_at")
   provider           String?
   finishReason       String?                   @map("finish_reason")
-  inputTokens        Int?                      @map("input_tokens")
-  outputTokens       Int?                      @map("output_tokens")
-  totalTokens        Int?                      @map("total_tokens")
+  /// The shared answer this question was served from, when it was a suggestion about a screen.
+  sharedAnswerId     String?                   @map("shared_answer_id") @db.Uuid
+  sharedAnswer       TutorSharedAnswer?        @relation(fields: [sharedAnswerId], references: [id], onDelete: SetNull)
+  /// The plan change the buddy proposed in this answer, waiting for the learner's tap (or answered).
+  planChangeId       String?                   @map("plan_change_id") @db.Uuid
+  planChange         PlanChange?               @relation(fields: [planChangeId], references: [id], onDelete: SetNull)
+  /// One of the app's tools the buddy offered in this answer: a chapter's test, choosing where to focus, a practice call.
+  toolOffer          Json?                     @map("tool_offer")
+  /// The goal whose plan the buddy read when the question was asked (its own conversation's goal,
+  /// or the goal a chapter, lesson, subject, item or mock belongs to): the answer looks up, proposes
+  /// changes to and offers the app's tools for this goal alone, even after the learner opens
+  /// another. Null without one, and on questions asked before it was saved.
+  goalId             String?                   @map("goal_id") @db.Uuid
+  goal               Goal?                     @relation("TutorQuestionGoal", fields: [goalId], references: [id], onDelete: SetNull)
   createdAt          DateTime                  @default(now()) @map("created_at")
   updatedAt          DateTime                  @default(now()) @updatedAt @map("updated_at")
 
   @@unique([threadId, requestId], name: "threadLessonQuestionRequest")
   @@index([createdAt])
   @@index([threadId, createdAt])
-  @@index([stepId])
+  @@index([libraryStepId])
+  @@index([sharedAnswerId])
+  @@index([planChangeId])
+  @@index([goalId])
   @@map("lesson_questions")
+}
+
+/// The tutor's answer to one of its suggestions about a lesson screen ("Explain it more simply"),
+/// written without any learner's memory or conversation and shared by everyone who taps it there.
+/// Only the tutor's own suggestions are shared, never what a learner typed, so no learner's words
+/// are ever in it. Goes away with its screen.
+model TutorSharedAnswer {
+  id            String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  stepId        String                 @map("step_id") @db.Uuid
+  step          Step                   @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  suggestion    LessonScreenSuggestion
+  /// The suggestion as the app words it in the lesson's language, for review.
+  question      String
+  answer        String
+  model         String
+  promptVersion String                 @map("prompt_version")
+  runId         String                 @map("run_id")
+  generatedAt   DateTime               @default(now()) @map("generated_at")
+  createdAt     DateTime               @default(now()) @map("created_at")
+  questions     LessonQuestion[]
+
+  @@unique([stepId, suggestion], name: "stepSuggestion")
+  @@map("tutor_shared_answers")
 }

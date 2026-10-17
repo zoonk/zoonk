@@ -1,0 +1,84 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday apartment-rental call directly within the unit. Sarah is a plausible US landlord, the place name is short, and the dollar rent and viewing times are realistic.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Sarah, and invites the learner to speak without completing an objective. The hints are short, complete, usable A2 sentences and cover all listed objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered naturally, observable in speech, and achievable in a short call. Their labels meet the verb-first and length requirements. However, asking what rent includes is not an objective despite being a central unit skill, and suggesting a viewing time does not necessarily complete a booking.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 guidance, concrete rent and utility facts, viewing slots, a simple twist, and a closing instruction. The listed objectives have sufficient factual support, so the missing-objective-facts cap is not triggered. However, the requested address confirmation lacks a complete address, and the instruction to reject the first suggested time and offer 'the other one' is underspecified when the learner proposes a different slot.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are English, and the brief is English. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1926,
+          "inputTokens": 1929,
+          "outputTokens": 1102,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The objectives omit asking what is included in the rent, a central unit skill, although a hint supports it. The brief instructs Sarah to confirm the address without supplying a complete address. Its scheduling twist also assumes the learner will first suggest one of the two listed slots, making 'offer the other one' unclear for other suggestions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the booking objective require agreeing on a day and time, rather than only suggesting one, so successful completion clearly represents a booked viewing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-scenario"
+}

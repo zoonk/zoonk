@@ -2,6 +2,7 @@
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
@@ -54,11 +55,18 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
  * The Viewport wrapper is required for swipe gestures to work.
  * The Popup tracks the swipe via `translateY(var(--drawer-swipe-movement-y))`
  * and uses velocity-based exit duration via `--drawer-swipe-strength`.
+ * `backdropClassName` changes the backdrop, such as a lighter one that
+ * leaves what the drawer is about readable above it.
  */
-function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
+function DrawerPopup({
+  backdropClassName,
+  className,
+  children,
+  ...props
+}: DrawerPrimitive.Popup.Props & { backdropClassName?: string }) {
   return (
     <DrawerPortal>
-      <DrawerBackdrop />
+      <DrawerBackdrop className={backdropClassName} />
       <DrawerPrimitive.Viewport
         className="fixed inset-0 z-50 flex items-end justify-center"
         data-slot="drawer-viewport"
@@ -78,7 +86,7 @@ function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Pr
           {...props}
         >
           <div className="bg-muted mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
-          {children}
+          <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
     </DrawerPortal>

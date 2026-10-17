@@ -1,4 +1,6 @@
-import { LOCALE_COOKIE, getLocaleFromRequest } from "@zoonk/utils/locale";
+import { playerMessages } from "@zoonk/player/messages";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { AUTH_LOCALE_HEADER } from "./auth-locale";
@@ -15,7 +17,14 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
     overrideLocale: overrideLocale ?? headerStore.get(AUTH_LOCALE_HEADER),
   });
 
-  const translations = await import(`../../messages/${locale}.po`);
+  const [translations, player] = await Promise.all([
+    import(`../../messages/${locale}.po`),
+    playerMessages(locale),
+  ]);
 
-  return { locale, messages: translations.default };
+  // The tutor's suggestions are worded once, in the player's catalog, for every app.
+  return {
+    locale,
+    messages: { ...translations.default, tutorSuggestions: player.tutorSuggestions },
+  };
 });

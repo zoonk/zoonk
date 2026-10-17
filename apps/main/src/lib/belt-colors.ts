@@ -1,20 +1,8 @@
+import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { BELT_COLORS_ORDER, type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
 
 type BeltColorOption = { bgClass: string; key: BeltColor; label: string };
-
-export const BELT_BG_CLASSES: Record<BeltColor, string> = {
-  black: "bg-belt-black",
-  blue: "bg-belt-blue",
-  brown: "bg-belt-brown",
-  gray: "bg-belt-gray",
-  green: "bg-belt-green",
-  orange: "bg-belt-orange",
-  purple: "bg-belt-purple",
-  red: "bg-belt-red",
-  white: "bg-belt-white",
-  yellow: "bg-belt-yellow",
-};
 
 /**
  * The progression dots and visible level copy share these options so every belt
@@ -24,10 +12,10 @@ export async function getBeltColors(): Promise<BeltColorOption[]> {
   const t = await getExtracted();
 
   return BELT_COLORS_ORDER.map((key) => ({
-    bgClass: BELT_BG_CLASSES[key],
+    bgClass: beltColorClasses[key],
     key,
     label: t(
-      "{color, select, white {White Belt} yellow {Yellow Belt} orange {Orange Belt} green {Green Belt} blue {Blue Belt} purple {Purple Belt} brown {Brown Belt} red {Red Belt} gray {Gray Belt} black {Black Belt} other {Belt}}",
+      "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}",
       { color: key },
     ),
   }));

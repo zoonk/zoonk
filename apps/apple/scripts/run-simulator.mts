@@ -27,6 +27,8 @@ const PREFERRED_DEVICE_TYPES = {
   iphone: "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
 } satisfies Record<DeviceFamily, string>;
 
+const SIMULATOR_APP_BUNDLE_IDENTIFIERS = ["com.apple.iphonesimulator", "com.apple.dt.Devices"];
+
 const appleDirectory = path.resolve(import.meta.dirname, "..");
 const derivedDataPath = path.join(appleDirectory, "DerivedData", "Simulator");
 const projectPath = path.join(appleDirectory, `${APP_SCHEME}.xcodeproj`);
@@ -174,6 +176,10 @@ function bootSimulator(device: Simulator) {
   runCommand({ arguments: ["simctl", "bootstatus", device.udid, "-b"], command: "xcrun" });
 }
 
+/**
+ * Signs the simulator build to run locally (no provisioning profile needed) so it carries its
+ * entitlements: an unsigned build can't use the Keychain, so sign-in could never be saved.
+ */
 function buildApp(device: Simulator) {
   runCommand({
     arguments: [
@@ -189,7 +195,6 @@ function buildApp(device: Simulator) {
       `id=${device.udid}`,
       "-derivedDataPath",
       derivedDataPath,
-      "CODE_SIGNING_ALLOWED=NO",
       "build",
     ],
     command: "xcodebuild",
@@ -220,15 +225,29 @@ function getBundleIdentifier(appPath: string) {
   });
 }
 
+/**
+ * Brings the device window forward. Xcode 27 replaced the Simulator app with DeviceHub, so this
+ * falls back to it when Simulator isn't installed.
+ */
+function showSimulator(device: Simulator) {
+  const isOpen = SIMULATOR_APP_BUNDLE_IDENTIFIERS.some(
+    (bundleIdentifier) =>
+      spawnSync("open", ["-b", bundleIdentifier, "--args", "-CurrentDeviceUDID", device.udid], {
+        stdio: "ignore",
+      }).status === 0,
+  );
+
+  if (!isOpen) {
+    throw new Error("Neither Simulator nor DeviceHub could be opened.");
+  }
+}
+
 function installAndLaunchApp({ appPath, device }: { appPath: string; device: Simulator }) {
   const bundleIdentifier = getBundleIdentifier(appPath);
 
   runCommand({ arguments: ["simctl", "install", device.udid, appPath], command: "xcrun" });
 
-  runCommand({
-    arguments: ["-a", "Simulator", "--args", "-CurrentDeviceUDID", device.udid],
-    command: "open",
-  });
+  showSimulator(device);
 
   runCommand({
     arguments: ["simctl", "launch", "--terminate-running-process", device.udid, bundleIdentifier],

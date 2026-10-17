@@ -1,3 +1,5 @@
+const MS_PER_SECOND = 1000;
+
 /**
  * DateTimeFormat returns multiple part kinds, so this helper makes the required
  * calendar fields explicit before they become a UTC date-only value.
@@ -7,7 +9,7 @@ function getNumericDatePart({
   type,
 }: {
   dateParts: Intl.DateTimeFormatPart[];
-  type: "day" | "month" | "year";
+  type: "day" | "hour" | "minute" | "month" | "second" | "year";
 }): number {
   return Number(dateParts.find((part) => part.type === type)?.value);
 }
@@ -32,6 +34,43 @@ export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: st
       getNumericDatePart({ dateParts, type: "day" }),
     ),
   );
+}
+
+/**
+ * Returns the 0-23 hour an instant falls in for one IANA timezone, so learner-local time-of-day
+ * stats never depend on the server's timezone. `hourCycle: "h23"` keeps midnight at 0, not 24.
+ */
+export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): number {
+  const hour = new Intl.DateTimeFormat("en", { hour: "numeric", hourCycle: "h23", timeZone })
+    .formatToParts(date)
+    .find((part) => part.type === "hour")?.value;
+
+  return Number(hour);
+}
+
+/** How far a timezone's wall clock is ahead of UTC at one instant, in milliseconds. */
+export function getTimeZoneOffsetMs({ date, timeZone }: { date: Date; timeZone: string }): number {
+  const dateParts = new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    hour: "numeric",
+    hourCycle: "h23",
+    minute: "numeric",
+    month: "numeric",
+    second: "numeric",
+    timeZone,
+    year: "numeric",
+  }).formatToParts(date);
+
+  const wallClock = Date.UTC(
+    getNumericDatePart({ dateParts, type: "year" }),
+    getNumericDatePart({ dateParts, type: "month" }) - 1,
+    getNumericDatePart({ dateParts, type: "day" }),
+    getNumericDatePart({ dateParts, type: "hour" }),
+    getNumericDatePart({ dateParts, type: "minute" }),
+    getNumericDatePart({ dateParts, type: "second" }),
+  );
+
+  return wallClock - Math.floor(date.getTime() / MS_PER_SECOND) * MS_PER_SECOND;
 }
 
 /**

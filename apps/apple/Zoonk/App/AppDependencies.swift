@@ -2,6 +2,7 @@
 struct AppDependencies {
   let courseCatalogStore: CourseCatalogStore
   let myCoursesStore: MyCoursesStore
+  let privateImageLoader: PrivateImageLoader
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let subscriptionStore: AppStoreSubscriptionStore
@@ -22,6 +23,7 @@ struct AppDependencies {
       myCoursesStore: MyCoursesStore(
         api: MyCoursesAPI(clients: clients),
         session: sessionStore),
+      privateImageLoader: .live(configuration: configuration),
       progressStore: ProgressStore(
         api: ProgressAPI(clients: clients),
         session: sessionStore),

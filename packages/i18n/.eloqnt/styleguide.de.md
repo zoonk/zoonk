@@ -1,24 +1,85 @@
 # `de` styleguide
 
-- Use an informal, approachable register. Address the user as "du".
-- Use standard German spelling and grammar.
+## Voice and locale
+
+- Use German for Germany and informal “du”.
+- Localize illustrative exam examples for Germany, such as the Abitur.
+- Treat “Brain Power” as a product name without an article in short labels and headings.
 
 ## Glossary
 
-- "course": "Kurs"
-- "chapter": "Kapitel"
-- "lesson": "Lektion"
-- "hello@zoonk.com": "hello@zoonk.com"
-- "Brain Power": "Brain Power"
-- "BP": "BP"
-- "Energy": "Energie"
-- "score": "Score"
-- "listening": "Hören"
-- "level": "Level"
-- "step": "Schritt"
+- “course”: “Kurs”
+- “chapter”: “Kapitel”
+- “lesson”: “Lektion”
+- “goal” (the learner's goal): “Ziel”, not “Lernziel”
+- “plan” (study plan): “Plan”; subscription plan: “Tarif”
+- “Free” (subscription name): “Free”
+- “session” (study): “Lerneinheit”; sign-in session: “Sitzung”
+- “check” (an answer): “prüfen”
+- “write” (Zoonk generating content): “erstellen”; learner writing: “schreiben”
+- “Brain Power”: “Brain Power”
+- “BP”: “BP”
+- “Energy”: “Energie”
+- “score”: “Score”
+- “level”: “Level”
+- “step”: “Schritt”
+- “listening”: “Hören”
+- “Speaking”: “Sprechen”
+- “mind map”: “Mindmap”
 
-## Special Cases
+## Feature names and states
 
-- Treat "Brain Power" as a product-like term. Do not add German articles before it in headings or short labels.
-- For belt colors, use masculine forms. For example, "White Belt" = "Weißer Gürtel", "Yellow Belt" = "Gelber Gürtel", etc. If it's color alone in the context of belts, use "Yellow" = "Gelb", "White" = "Weiß", etc.
-- For "thinking messages", keep this in mind: Infinitives as loading states feel static and impersonal in German. English "-ing" naturally implies ongoing action; German infinitives don't carry that.
+- “Today”: “Heute”
+- “Buddy”: “Kumpel”
+- “Progress”: “Fortschritt”
+- “Content”: “Inhalte”
+- “Cards”: “Lernkarten”, not “Spielkarten”
+- “Time capsules”: “Zeitkapseln”
+- “Missions”: “Missionen”
+- Mission names (missions list, first steps): infinitive: “Deine erste Lektion abschließen”, “{area} üben”
+- “call” (speaking practice): “Gespräch”, not “Anruf”
+- “Hyperdrive”: “Hyperantrieb”
+- “Mistakes notebook”: “Fehlerheft”
+- “To fix” / “Fixed” (notebook tabs): “Noch offen” / “Korrigiert”
+- “New” / “Learning” / “Solid” / “Mastered” (mastery): “Neu” / “Im Aufbau” / “Sicher” / “Gemeistert”
+- “Known before”: “Schon bekannt”; “Known” (progress legend): “Bekannt”
+- “Preparation”: “Vorbereitung”
+- “Boss”: “Endgegner”
+- “the Trickster”: “der Trickser”
+- “Broken” / “Held” (shield): “Zerbrochen” / “Gehalten”
+- “Big Challenge”: “Große Herausforderung”
+- “Phase challenge”: “Phasen-Herausforderung”
+- “Weekly challenge”: “Wöchentliche Herausforderung”
+- “Mock exam”, including speaking mocks: “Probeprüfung”, not “Probeklausur”, “Probetest”, or “Simulation”
+- “Full meal”: “Volle Mahlzeit”
+- “Logbook”: “Logbuch”
+- “Fading” (needs review): “Nachlassend”
+- “Gold” (card remembered on three different days): “Gold”
+- “Overview” (course level): “Überblick”
+- “Appearance” (settings): “Aussehen”
+- “Focus test”: “Fokustest”
+
+## Plan terminology
+
+- “Pace”: “Tempo”
+- “Paused”: “Pausiert”
+- “Finished”: “Abgeschlossen”
+- “Past date”: “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
+- “Needs adjusting”: “Anpassung nötig”
+- “Too tight”: “Zu knapp”
+- “Even across skills”: “Alle Fähigkeiten gleichauf”
+- “Ahead” / “Behind”: “Voraus” / “Im Rückstand”
+- “left out”: “ausgelassen”, not “übersprungen”
+- “Daily time”: “Tägliche Lernzeit”, not “Zeitbudget”
+- “Next date”: “Nächster Termin”
+
+## Buddy names
+
+- “Zu”: “Zu”
+- “Noodle”: “Grips”
+- “Beep”: “Piep”
+- “Otto”: “Otto”
+
+## Formatting preference
+
+- Match the app's compact durations: “2 Std. 30 Min.”, “30 Sek.”.

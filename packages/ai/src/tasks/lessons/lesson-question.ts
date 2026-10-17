@@ -1,72 +1,74 @@
 import "server-only";
 import { type Reasoning, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { generateText, streamText } from "ai";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { runTaskGeneration, startTaskGeneration } from "../../provenance/run-task-generation";
+import { type TaskProvenance } from "../../provenance/task-provenance";
+import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
+import chapterPrompt from "./lesson-question-chapter.prompt.md";
+import {
+  type LessonQuestionContextSnapshot,
+  type PlanScopeContext,
+} from "./lesson-question-context";
+import lessonPrompt from "./lesson-question-lesson.prompt.md";
+import mockPrompt from "./lesson-question-mock.prompt.md";
 import systemPrompt from "./lesson-question.prompt.md";
 
 export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
-const configuredModels = [LESSON_QUESTION_MODEL, ...fallbackModels];
+/**
+ * Haiku first: in the memory eval it was the fallback that never forced an unrelated memory fact
+ * into an answer. Flash Lite stays last as the cheapest option.
+ */
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.1-flash-lite"] as const;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
-
-export type LessonQuestionStepContext = {
-  content: unknown;
-  kind: string;
-  sentence: {
-    explanation: string | null;
-    romanization: string | null;
-    sentence: string;
-    translation: string;
-  } | null;
-  stepNumber: number;
-  word: {
-    pronunciation: string | null;
-    romanization: string | null;
-    translation: string;
-    word: string;
-  } | null;
-};
-
-export type LessonQuestionContextSnapshot = {
-  answer: {
-    correctAnswer: string | null;
-    feedback: string | null;
-    isCorrect: boolean;
-    selectedAnswer: string;
-  } | null;
-  chapter: { description: string | null; title: string };
-  course: {
-    description: string | null;
-    language: string;
-    targetLanguage: string | null;
-    title: string;
-  };
-  lesson: { description: string | null; kind: string; language: string; title: string | null };
-  lessonSteps: LessonQuestionStepContext[];
-  scope: { kind: "answer" | "lesson" | "step" };
-  step: LessonQuestionStepContext | null;
-  version: 1;
-};
+const LESSON_QUESTION_TASK = "lesson-question";
 
 export type LessonQuestionPriorTurn = { answer: string; question: string };
 
+/** What the lesson tutor answers about: a goal's plan goes to the buddy, the goal's tutor. */
+type LessonTutorContextSnapshot = Exclude<LessonQuestionContextSnapshot, PlanScopeContext>;
+
+/**
+ * Each scope's own rules come after the ones every question shares: a lesson, a screen or an
+ * answer gets the rules for those, and a chapter or a finished mock what its context describes.
+ */
+const SCOPE_PROMPTS = {
+  answer: lessonPrompt,
+  chapter: `${beyondLessonPrompt}\n${chapterPrompt}`,
+  lesson: lessonPrompt,
+  mock: `${beyondLessonPrompt}\n${mockPrompt}`,
+  step: lessonPrompt,
+} satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
+
+function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
+  return `${systemPrompt}\n${SCOPE_PROMPTS[contextSnapshot.scope.kind]}`;
+}
+
+/** A finished answer with the run that wrote it, as the tutor stores it. */
 export type LessonQuestionAnswerCompletion = {
   answer: string;
   finishReason: string;
-  inputTokens?: number;
+  generatedAt: string;
   model: string;
-  outputTokens?: number;
+  promptVersion: string;
   provider: string;
-  totalTokens?: number;
+  /** The call's run, whose tokens and cost are in the AI call log. */
+  runId: string;
 };
 
 type StreamLessonQuestionAnswerParams = {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  analytics?: AiGenerationContext;
+  contextSnapshot: LessonTutorContextSnapshot;
+  /** Facts the learner shared before (their goals, how they learn), when memory is on. */
+  learnerMemory?: readonly string[];
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 };
 
 export type GenerateLessonQuestionAnswerParams = {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  analytics?: AiGenerationContext;
+  contextSnapshot: LessonTutorContextSnapshot;
+  learnerMemory?: readonly string[];
   model?: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -83,11 +85,21 @@ function toHistoryMessages(priorTurns: readonly LessonQuestionPriorTurn[]) {
   ]);
 }
 
+function createLearnerMemoryLines(learnerMemory: readonly string[]): string[] {
+  if (learnerMemory.length === 0) {
+    return [];
+  }
+
+  return ["<LEARNER_MEMORY>", ...learnerMemory.map((fact) => `- ${fact}`), "</LEARNER_MEMORY>"];
+}
+
 function createCurrentQuestionMessage({
   contextSnapshot,
+  learnerMemory,
   question,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
+  learnerMemory: readonly string[];
   question: string;
 }) {
   return {
@@ -95,6 +107,7 @@ function createCurrentQuestionMessage({
       "<CURRENT_CONTEXT>",
       JSON.stringify(contextSnapshot),
       "</CURRENT_CONTEXT>",
+      ...createLearnerMemoryLines(learnerMemory),
       "<LEARNER_QUESTION>",
       question,
       "</LEARNER_QUESTION>",
@@ -105,28 +118,32 @@ function createCurrentQuestionMessage({
 
 function createLessonQuestionMessages({
   contextSnapshot,
+  learnerMemory,
   priorTurns,
   question,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
+  learnerMemory: readonly string[];
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
 }) {
   return [
     ...toHistoryMessages(priorTurns),
-    createCurrentQuestionMessage({ contextSnapshot, question }),
+    createCurrentQuestionMessage({ contextSnapshot, learnerMemory, question }),
   ];
 }
 
 function createLessonQuestionGenerationOptions({
   contextSnapshot,
+  learnerMemory = [],
   model,
   priorTurns,
   question,
   reasoning,
   useFallback,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
+  learnerMemory?: readonly string[];
   model: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -134,8 +151,13 @@ function createLessonQuestionGenerationOptions({
   useFallback: boolean;
 }) {
   return {
-    instructions: systemPrompt,
-    messages: createLessonQuestionMessages({ contextSnapshot, priorTurns, question }),
+    instructions: getSystemPrompt(contextSnapshot),
+    messages: createLessonQuestionMessages({
+      contextSnapshot,
+      learnerMemory,
+      priorTurns,
+      question,
+    }),
     model,
     providerOptions: buildProviderOptions({ fallbackModels, model, useFallback }),
     reasoning,
@@ -158,7 +180,9 @@ function suppressLessonQuestionProviderError() {
  * a model and persist the complete prompt, output, and usage for comparison.
  */
 export async function generateLessonQuestionAnswer({
+  analytics,
   contextSnapshot,
+  learnerMemory,
   model = LESSON_QUESTION_MODEL,
   priorTurns,
   question,
@@ -167,6 +191,7 @@ export async function generateLessonQuestionAnswer({
 }: GenerateLessonQuestionAnswerParams) {
   const generationOptions = createLessonQuestionGenerationOptions({
     contextSnapshot,
+    learnerMemory,
     model,
     priorTurns,
     question,
@@ -174,53 +199,66 @@ export async function generateLessonQuestionAnswer({
     useFallback,
   });
 
-  const { text, usage } = await generateText(generationOptions);
+  const { provenance, result } = await runTaskGeneration({
+    analytics: { contentScope: "personal", ...analytics },
+    generate: () => generateText(generationOptions),
+    systemPrompt: generationOptions.instructions,
+    task: LESSON_QUESTION_TASK,
+  });
 
-  if (!text.trim()) {
+  if (!result.text.trim()) {
     throw new Error(EMPTY_ANSWER_MESSAGE);
   }
 
   return {
-    data: { answer: text },
-    systemPrompt,
-    usage,
+    data: { answer: result.text },
+    provenance,
+    systemPrompt: generationOptions.instructions,
+    usage: result.usage,
     userPrompt: serializeLessonQuestionMessages(generationOptions.messages),
   };
 }
 
-export function resolveLessonQuestionAnswerModel({
-  modelId,
-  provider,
-}: {
-  modelId: string;
-  provider: string;
-}) {
-  const configuredModel = configuredModels.find(
-    (candidate) => candidate === modelId || candidate.endsWith(`/${modelId}`),
-  );
-
-  const model = configuredModel ?? modelId;
-  const providerSeparator = model.indexOf("/");
-
-  return { model, provider: providerSeparator > 0 ? model.slice(0, providerSeparator) : provider };
-}
-
 /**
- * Keeps the model and fallback policy in the task while delivery adapters choose
- * how to stream and persist the generated response.
+ * Keeps the model and fallback policy in the task while delivery adapters choose how to stream
+ * and persist the answer. `provenance` resolves once the answer ends (and sends the run's
+ * `$ai_generation` event); it rejects when the stream fails, which the adapter reads from the
+ * stream itself.
  */
 export function streamLessonQuestionAnswer({
+  analytics,
   contextSnapshot,
+  learnerMemory,
   priorTurns,
   question,
-}: StreamLessonQuestionAnswerParams) {
-  const generationOptions = createLessonQuestionGenerationOptions({
-    contextSnapshot,
-    model: LESSON_QUESTION_MODEL,
-    priorTurns,
-    question,
-    useFallback: true,
+}: StreamLessonQuestionAnswerParams): {
+  generation: ReturnType<typeof streamText>;
+  provenance: Promise<TaskProvenance>;
+} {
+  const run = startTaskGeneration({
+    analytics: { contentScope: "personal", ...analytics },
+    systemPrompt: getSystemPrompt(contextSnapshot),
+    task: LESSON_QUESTION_TASK,
   });
 
-  return streamText({ ...generationOptions, onError: suppressLessonQuestionProviderError });
+  const generation = streamText({
+    ...createLessonQuestionGenerationOptions({
+      contextSnapshot,
+      learnerMemory,
+      model: LESSON_QUESTION_MODEL,
+      priorTurns,
+      question,
+      useFallback: true,
+    }),
+    onError: suppressLessonQuestionProviderError,
+  });
+
+  const provenance = Promise.all([generation.finalStep, generation.steps, generation.usage]).then(
+    ([finalStep, steps, usage]) => run.finish({ finalStep, steps, usage }),
+  );
+
+  // A failed stream rejects this too; nothing else may be waiting for it.
+  void provenance.catch(() => null);
+
+  return { generation, provenance };
 }

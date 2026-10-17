@@ -1,5 +1,10 @@
 import "server-only";
-import { type Sql, prisma, sql } from "@zoonk/db";
+import { type DailyProgress, prisma } from "@zoonk/db";
+import {
+  type ProgressHistoryOptions,
+  dailyProgressInWindow,
+  readLifetimeDailyProgress,
+} from "./_utils/daily-progress-rows";
 import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { type ScoreDateRange, getScoreDateRange } from "./score-date-range";
@@ -25,14 +30,16 @@ type WeekdayScoreRow = {
   dayOfWeek: number;
 };
 
-type TimeScoreRow = {
-  correctAnswers: number | null;
-  incorrectAnswers: number | null;
-  period: number | null;
+type HourScoreRow = {
+  _sum: { correctAnswers: number | null; incorrectAnswers: number | null };
+  hour: number;
 };
+
+type AnswerTotals = { correctAnswers: number; incorrectAnswers: number };
 
 const WEEKDAY_COUNT = 7;
 const TIME_PERIOD_COUNT = 4;
+const HOURS_PER_TIME_PERIOD = 6;
 
 const EMPTY_SCORE_PERFORMANCE: ScorePerformance = {
   correctAnswers: 0,
@@ -55,16 +62,52 @@ function toWeekdayScorePerformance(row: WeekdayScoreRow): WeekdayScorePattern | 
 }
 
 /**
- * Converts one time-of-day aggregate into the shared Score shape while keeping
- * the existing 0-to-3 period key used by Home and translations.
+ * Sums the ledger's hourly answer totals that fall in one 0-to-3 daypart
+ * (night, morning, afternoon, evening), the period key used by Home and
+ * translations.
  */
-function toTimeScorePerformance(row: TimeScoreRow): TimeScorePattern | null {
-  const performance = getScorePerformance({
-    correctAnswers: row.correctAnswers ?? 0,
-    incorrectAnswers: row.incorrectAnswers ?? 0,
-  });
+function getPeriodAnswerTotals({
+  period,
+  rows,
+}: {
+  period: number;
+  rows: HourScoreRow[];
+}): AnswerTotals {
+  const periodRows = rows.filter((row) => Math.floor(row.hour / HOURS_PER_TIME_PERIOD) === period);
 
-  return performance ? { ...performance, period: row.period ?? 0 } : null;
+  return {
+    correctAnswers: periodRows.reduce((total, row) => total + (row._sum.correctAnswers ?? 0), 0),
+    incorrectAnswers: periodRows.reduce(
+      (total, row) => total + (row._sum.incorrectAnswers ?? 0),
+      0,
+    ),
+  };
+}
+
+/**
+ * Converts one daypart's answer totals into the shared Score shape while
+ * keeping its period key.
+ */
+function toTimeScorePattern({
+  period,
+  rows,
+}: {
+  period: number;
+  rows: HourScoreRow[];
+}): TimeScorePattern | null {
+  const performance = getScorePerformance(getPeriodAnswerTotals({ period, rows }));
+
+  return performance ? { ...performance, period } : null;
+}
+
+/**
+ * Converts hourly ledger totals into daypart Score rows, keeping only the
+ * dayparts with answers.
+ */
+function getTimeScorePatterns(rows: HourScoreRow[]): TimeScorePattern[] {
+  return getObservedPerformance(
+    Array.from({ length: TIME_PERIOD_COUNT }, (_, period) => toTimeScorePattern({ period, rows })),
+  );
 }
 
 /**
@@ -75,53 +118,81 @@ function getObservedPerformance<T>(rows: (T | null)[]): T[] {
   return rows.filter((row) => row !== null);
 }
 
-/**
- * Uses an explicit SQL predicate for the shared closed range because raw-query
- * interpolation cannot accept Prisma's object-shaped date filter.
- */
-function getAnsweredAtRangeFilter({ endDate, startDate }: { endDate: Date; startDate: Date }): Sql {
-  return sql`answered_at >= ${startDate} AND answered_at <= ${endDate}`;
+/** Uses the daily rows already loaded for lifetime Energy without changing Score's window. */
+function weekdayDailyTotals({
+  dayOfWeek,
+  rows,
+}: {
+  dayOfWeek: number;
+  rows: DailyProgress[];
+}): WeekdayScoreRow {
+  const days = rows.filter((row) => row.dayOfWeek === dayOfWeek);
+
+  return {
+    _sum: {
+      correctAnswers: days.reduce((sum, row) => sum + row.correctAnswers, 0),
+      incorrectAnswers: days.reduce((sum, row) => sum + row.incorrectAnswers, 0),
+    },
+    dayOfWeek,
+  };
+}
+
+async function readWeekdayTotals({
+  endDate,
+  startDate,
+  userId,
+  history,
+}: ScoreDateRange & ProgressHistoryOptions & { userId: string }): Promise<WeekdayScoreRow[]> {
+  if (history === "lifetime") {
+    const rows = dailyProgressInWindow({
+      endDate,
+      rows: await readLifetimeDailyProgress(userId),
+      startDate,
+    });
+
+    return Array.from({ length: WEEKDAY_COUNT }, (_, dayOfWeek) =>
+      weekdayDailyTotals({ dayOfWeek, rows }),
+    );
+  }
+
+  const rows = await prisma.dailyProgress.groupBy({
+    _sum: { correctAnswers: true, incorrectAnswers: true },
+    by: ["dayOfWeek"],
+    orderBy: { dayOfWeek: "asc" },
+    where: { date: { gte: startDate, lte: endDate }, userId },
+  });
+
+  return rows;
 }
 
 /**
  * Loads weekday and time-of-day aggregates in parallel so the Patterns page
- * gets one coherent window without creating a database waterfall.
- * Attempts without saved answer totals retain their original boolean score.
+ * gets one coherent window without creating a database waterfall. Weekdays
+ * come from the daily totals and dayparts from the learning ledger's
+ * learner-local hour, so neither depends on content tables. A session's own
+ * row sums the answers its lessons and blocks already recorded, so it's left
+ * out to count each answer once.
  */
 async function queryScorePatterns({
-  dailyProgress,
-  stepAttempts,
+  endDate,
+  startDate,
   userId,
-}: ScoreDateRange & { userId: string }): Promise<ScorePatternsData | null> {
-  const answeredAtRangeFilter = getAnsweredAtRangeFilter(stepAttempts);
-
-  const [weekdayRows, timeRows] = await Promise.all([
-    prisma.dailyProgress.groupBy({
+  history,
+}: ScoreDateRange &
+  ProgressHistoryOptions & { userId: string }): Promise<ScorePatternsData | null> {
+  const [weekdayRows, hourRows] = await Promise.all([
+    readWeekdayTotals({ endDate, history, startDate, userId }),
+    prisma.learningEvent.groupBy({
       _sum: { correctAnswers: true, incorrectAnswers: true },
-      by: ["dayOfWeek"],
-      orderBy: { dayOfWeek: "asc" },
-      where: { date: { gte: dailyProgress.startDate, lte: dailyProgress.endDate }, userId },
+      by: ["hour"],
+      orderBy: { hour: "asc" },
+      where: { kind: { not: "session" }, localDate: { gte: startDate, lte: endDate }, userId },
     }),
-    prisma.$queryRaw<TimeScoreRow[]>`
-      SELECT
-        CASE
-          WHEN hour_of_day BETWEEN 0 AND 5 THEN 0
-          WHEN hour_of_day BETWEEN 6 AND 11 THEN 1
-          WHEN hour_of_day BETWEEN 12 AND 17 THEN 2
-          ELSE 3
-        END AS "period",
-        SUM(COALESCE(correct_answers, is_correct::int))::int AS "correctAnswers",
-        SUM(COALESCE(incorrect_answers, (NOT is_correct)::int))::int AS "incorrectAnswers"
-      FROM step_attempts
-      WHERE user_id = ${userId} AND ${answeredAtRangeFilter}
-      GROUP BY 1
-      ORDER BY 1
-    `,
   ]);
 
   const weekdays = getObservedPerformance(weekdayRows.map((row) => toWeekdayScorePerformance(row)));
 
-  const times = getObservedPerformance(timeRows.map((row) => toTimeScorePerformance(row)));
+  const times = getTimeScorePatterns(hourRows);
 
   if (weekdays.length === 0 && times.length === 0) {
     return null;
@@ -139,7 +210,9 @@ async function queryScorePatterns({
  * Returns every observed performance pattern plus the strongest weekday and
  * time of day for the current learner's 90-day Score window.
  */
-export async function getScorePatterns(): Promise<ScorePatternsData | null> {
+export async function getScorePatterns({
+  history,
+}: ProgressHistoryOptions = {}): Promise<ScorePatternsData | null> {
   "use cache: private";
 
   const [session, dateContext] = await Promise.all([
@@ -156,7 +229,7 @@ export async function getScorePatterns(): Promise<ScorePatternsData | null> {
     timeZone: dateContext.timeZone,
   });
 
-  return queryScorePatterns({ ...dateRange, userId: session.user.id });
+  return queryScorePatterns({ ...dateRange, history, userId: session.user.id });
 }
 
 /**
@@ -217,12 +290,15 @@ function completeScorePatterns(patterns: ScorePatternsData): ScorePatternsData {
  * missing authentication from an authenticated learner with no observed
  * answers in the rolling window.
  */
-export async function getCurrentUserScorePatterns(): Promise<{
-  patterns: ScorePatternsData | null;
-} | null> {
+export async function getCurrentUserScorePatterns({
+  history,
+}: ProgressHistoryOptions = {}): Promise<{ patterns: ScorePatternsData | null } | null> {
   "use cache: private";
 
-  const [session, patterns] = await Promise.all([getProgressSession(), getScorePatterns()]);
+  const [session, patterns] = await Promise.all([
+    getProgressSession(),
+    history ? getScorePatterns({ history }) : getScorePatterns(),
+  ]);
 
   if (!session) {
     return null;

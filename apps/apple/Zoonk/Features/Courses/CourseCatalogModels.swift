@@ -18,6 +18,28 @@ enum CourseCategory: String, CaseIterable, Codable, Equatable, Sendable {
   case tech
 }
 
+/// Where the server is in writing a course's chapter outline or a chapter's lesson outline. After a
+/// content reset, a course can be listed before its chapters exist, and a chapter before its
+/// lessons. Pending outlines are written when the first learner starts them.
+enum CatalogGenerationStatus: String, Codable, Equatable, Sendable {
+  case completed
+  case failed
+  case pending
+  case running
+
+  var isBeingWritten: Bool {
+    self == .running
+  }
+}
+
+/// The level band a course places a chapter in, from overview to advanced.
+enum CourseLevel: String, CaseIterable, Codable, Equatable, Sendable {
+  case overview
+  case beginner
+  case intermediate
+  case advanced
+}
+
 struct CourseOrganization: Codable, Equatable, Identifiable, Sendable {
   let id: String
   let logoURL: URL?
@@ -35,56 +57,55 @@ struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   let title: String
 }
 
+/// A course's details. A learner's own private course has no organization and is only readable with
+/// their session.
 struct Course: Codable, Equatable, Identifiable, Sendable {
   let categories: [CourseCategory]
   let description: String?
+  let generationStatus: CatalogGenerationStatus
   let id: String
   let imageURL: URL?
   let language: String
-  let organization: CourseOrganization
+  let organization: CourseOrganization?
   let slug: String
   let targetLanguage: String?
   let title: String
 }
 
+/// A chapter as one course places it. Chapters can be shared by several courses, so `courseID`,
+/// `level` and `position` describe the course the chapter was listed or fetched in, not its only
+/// parent. `position` counts from 0 across the course's whole outline.
 struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   let courseID: String
   let description: String
+  let generationStatus: CatalogGenerationStatus
   let id: String
-  let imageURL: URL?
   let language: String
   let lessonCount: Int?
+  let level: CourseLevel
   let position: Int
   let slug: String
   let title: String
 }
 
-enum LessonKind: String, CaseIterable, Codable, Equatable, Sendable {
-  case alphabet
-  case custom
-  case explanation
-  case grammar
-  case listening
-  case practice
-  case quiz
-  case reading
-  case review
-  case translation
-  case tutorial
-  case vocabulary
-}
-
+/// A lesson as one chapter lists it. Lessons can be shared by several chapters, so `chapterID`,
+/// `courseID` and `position` describe the listing, not the lesson's only parent.
 struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let chapterID: String
   let courseID: String
   let description: String?
   let id: String
-  let imageURL: URL?
-  let kind: LessonKind
   let language: String
   let position: Int
   let slug: String
   let title: String?
+}
+
+/// Identifies a chapter page by the course it was opened from, since a shared chapter shows a
+/// different position and course in each course.
+struct CatalogChapterKey: Hashable, Sendable {
+  let chapterID: String
+  let courseID: String
 }
 
 struct CourseCatalogPage: Codable, Equatable, Sendable {
@@ -105,7 +126,7 @@ struct CatalogChapterContinuation: Codable, Equatable, Sendable {
   let courseID: String
   let courseSlug: String
   let hasStarted: Bool
-  let organizationSlug: String
+  let organizationSlug: String?
 }
 
 struct CatalogEmptyContinuation: Codable, Equatable, Sendable {
@@ -124,7 +145,7 @@ struct CatalogLessonContinuation: Codable, Equatable, Sendable {
   let lessonID: String
   let lessonPosition: Int
   let lessonSlug: String
-  let organizationSlug: String
+  let organizationSlug: String?
 }
 
 enum CatalogContinuationTarget: Codable, Equatable, Sendable {
@@ -224,7 +245,6 @@ struct CatalogChapterSearchResult: Codable, Equatable, Identifiable, Sendable {
   let courseTitle: String
   let description: String
   let id: String
-  let imageURL: URL?
   let language: String
   let organizationSlug: String
   let slug: String

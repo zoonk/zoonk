@@ -1,3 +1,4 @@
+import { toApiImageUrl } from "@/lib/file-urls";
 import { type CurrentUser } from "@zoonk/core/users/current";
 import { type Subscription } from "@zoonk/db";
 import { serializeDate } from "@zoonk/utils/date";
@@ -16,7 +17,7 @@ function serializeUser(user: CurrentUser) {
     email: user.email,
     emailVerified: user.emailVerified,
     id: user.id,
-    image: user.image ?? null,
+    image: user.image ? toApiImageUrl(user.image) : null,
     name: user.name,
     updatedAt: serializeDate(user.updatedAt) ?? "",
     username: user.username ?? null,

@@ -1,13 +1,18 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
+import { anonymizeLearnerRecords } from "@zoonk/db/anonymous-records";
 import { revokeStoredAppleAuthorization } from "./providers/apple-revocation";
 import { stripeClient } from "./stripe/client";
+import { deleteUserBlobs } from "./user-blobs";
 
 type AccountDeletionCleanupReporter = {
   reportAppleAuthorizationRevocation: (revoked: boolean | null) => void;
 };
 
 const accountDeletionCleanupReporter = new AsyncLocalStorage<AccountDeletionCleanupReporter>();
+
+/** Keeping a long-time learner's anonymous records copies all their answers, past the default. */
+const ANONYMIZE_TIMEOUT_MS = 60_000;
 
 /**
  * Runs Better Auth's user deletion with a request-local channel for provider
@@ -63,70 +68,24 @@ function getEmailOTPIdentifiers(email: string) {
   ];
 }
 
-type CourseMembershipOwnership = { course: { userId: string | null }; courseId: string };
-
-/**
- * Returns every course that survives deletion of this user. A course owned by
- * someone else survives just like a shared course, so its denormalized learner
- * count must also change. Only courses owned by the deleting user are skipped
- * because the User foreign-key cascade removes those course rows entirely.
- */
-function getSurvivingCourseIds({
-  deletingUserId,
-  memberships,
-}: {
-  deletingUserId: string;
-  memberships: CourseMembershipOwnership[];
-}) {
-  return memberships
-    .filter((membership) => membership.course.userId !== deletingUserId)
-    .map((membership) => membership.courseId);
-}
-
-/**
- * Removes the learner's course memberships before the User cascade and keeps
- * surviving course counts accurate in the same transaction. Reading membership
- * IDs first makes the decrement retry-safe: a retry finds no removed rows and
- * therefore cannot decrement the same course twice.
- */
-async function removeCourseMemberships(userId: string) {
-  await prisma.$transaction(async (transaction: TransactionClient) => {
-    const memberships = await transaction.courseUser.findMany({
-      include: { course: { select: { userId: true } } },
-      where: { userId },
-    });
-
-    const survivingCourseIds = getSurvivingCourseIds({ deletingUserId: userId, memberships });
-
-    if (survivingCourseIds.length === 0) {
-      await transaction.courseUser.deleteMany({ where: { userId } });
-      return;
-    }
-
-    await Promise.all([
-      transaction.courseUser.deleteMany({ where: { userId } }),
-      transaction.course.updateMany({
-        data: { userCount: { decrement: 1 } },
-        where: { id: { in: survivingCourseIds }, userCount: { gt: 0 } },
-      }),
-    ]);
-  });
-}
-
 /**
  * Removes local dependencies that must be gone before the User cascade runs.
  * The explicit subscription cleanup closes the normal deletion path promptly;
  * user-owned store rows also have a cascade so a concurrent notification cannot
- * survive the later User deletion. These independent deletes are idempotent, so
- * a later Better Auth failure can be retried safely.
+ * survive the later User deletion. What the learner's study teaches everyone is
+ * kept anonymously, and their feedback without their email. These steps are
+ * idempotent, so a later Better Auth failure can be retried safely.
  */
 async function deleteLocalUserDependencies({ email, userId }: { email: string; userId: string }) {
   await Promise.all([
-    removeCourseMemberships(userId),
     prisma.subscription.deleteMany({ where: { referenceId: userId } }),
     prisma.verification.deleteMany({
       where: { identifier: { in: getEmailOTPIdentifiers(email) } },
     }),
+    prisma.$transaction(
+      (transaction) => anonymizeLearnerRecords({ emails: [email], transaction, userIds: [userId] }),
+      { timeout: ANONYMIZE_TIMEOUT_MS },
+    ),
   ]);
 }
 
@@ -150,12 +109,16 @@ async function cancelStripeSubscriptions(userId: string) {
 }
 
 /**
- * Cleans provider state and local records that need work before the User
- * foreign-key cascade. Better Auth invokes this hook only after it validates the
- * authoritative session and its freshness, so stale credentials cannot revoke
- * Apple access or remove data.
+ * Deletes the learner's private files, then cleans provider state and local
+ * records that need work before the User foreign-key cascade. Better Auth
+ * invokes this hook only after it validates the authoritative session and its
+ * freshness, so stale credentials cannot revoke Apple access or remove data.
  */
 export async function deleteUserDependenciesBeforeAuthDelete(user: { email: string; id: string }) {
+  // First, before anything that can't be undone: a failure here stops the deletion, and a retry
+  // finishes it, so a learner's uploads and private pictures never outlive their account.
+  await deleteUserBlobs(user.id);
+
   const appleAuthorizationRevoked = await revokeAppleAuthorizations(user.id);
 
   accountDeletionCleanupReporter

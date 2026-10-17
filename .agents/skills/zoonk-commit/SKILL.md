@@ -9,7 +9,9 @@ metadata:
 
 # Commit and PR wording
 
-Follow the repository's local-review and explicit-commit boundary. Drafting a message does not authorize a commit or push. An authorized PR uses one commit; never amend or force-push.
+Commit each change's own files as it lands. Stage only that change's paths; never use `git add -A`, `git add .`, or `git commit -a` on a shared tree. Before committing, check the path list and diff for secrets, `.env*`, keys, logs, and temporary or scratch files. Never amend, force-push, or use `--no-verify`. Push only when asked.
+
+Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. The full [root PR verification gate](../../../AGENTS.md#pr-verification-gate) applies only before opening a PR (including a draft), marking it ready for review, or merging it. It includes the full local PR and `main` quality checks, including Main and API E2E. Include the final results in the PR's verification section.
 
 Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
 
@@ -37,6 +39,16 @@ chore(agents): simplify repository instructions
 
 ## PR description
 
-Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history and verification command lists.
+Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history.
+
+End with a short **Verification** section that tells the reviewer what was proven and what wasn't, in plain language rather than command lists or logs:
+
+- For user-facing changes, the [persona walkthroughs](../zoonk-persona-walkthrough/SKILL.md): which personas, which journeys including bad-day paths, what they exposed and what changed.
+- The regression tests added for problems found, and the suites that matter for the change, with their results.
+- What remains unverified.
 
 For multiline bodies, use a structured tool argument or write the exact text to a temporary file and pass `gh ... --body-file <path>`.
+
+## New commits on an open PR
+
+After pushing commits to a PR that already exists, read its live title and body and update them in the same step when the new commits change what a reviewer would read there: the behavior or scope, what must happen before merging, open decisions, or the verification (new results, or results the change made stale). Edit the live text rather than an earlier copy, so others' edits survive. Keep the description about the PR as it now stands, not a log of commits. Leave it alone when a commit changes none of that, such as a typo or lint fix.

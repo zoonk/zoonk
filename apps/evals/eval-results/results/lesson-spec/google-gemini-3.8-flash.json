@@ -1,0 +1,1410 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "There is one coherent central idea and one verb-led skill, with a canonical topic, description, example and use case. However, the skill's immediate-escape example is inaccurate, and its use case conflates atomic stability with matter resisting collapse under its own weight. This makes the sole skill weak and triggers the maximum score of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The collapse puzzle is a potentially engaging hook, and explanation-first support fits a new quantum idea. However, both checks mostly retrieve explanations just given, triggering the cap of 7. The second lacks a named distractor, and the final screen supplies an everyday claim instead of eliciting application. The sequence also moves into abstract confinement language without the requested concrete analogy.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "No interactive activity is required here, so the absence of templates is not a defect. Several proposed visuals are poorly chosen: photons mix quantum imagery into the classical radiation account, the bouncing particle suggests a classical confined object, and the force-balance diagram suggests a separate outward quantum force. These trigger the cap of 7 for several poorly chosen visuals. A clear cloud-versus-orbit comparison is also missing.",
+          "score": 7,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The result is predominantly Brazilian Portuguese and contains no formulas or mathematical notation. Nevertheless, it develops uncertainty across several screens rather than limiting the neighboring topic to a sentence, introduces an unexplained femtometer-scale example, and substitutes technical confinement language for the requested everyday story. These multiple level and scope slips trigger the cap of 7. Corrupted characters further reduce language polish.",
+          "score": 7,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3321,
+          "inputTokens": 3324,
+          "outputTokens": 1039,
+          "reasoningTokens": 270
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The quantum explanation risks teaching a false mechanical model: confinement is depicted as an outward force balancing attraction, producing a cloud with a fixed radius. Atomic clouds have spatial distributions, not rigid boundaries. The skill example also incorrectly guarantees that an electron confined to nuclear dimensions would immediately escape because of its speed; increased localization energy does not justify that claim. The application overattributes solidity to stable cloud volume, without distinguishing atomic stability from resistance to overlapping matter. Finally, the lesson develops the uncertainty principle across multiple screens despite that being a neighboring lesson, and lacks the requested story and everyday comparison.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The first check largely repeats the preceding explanation, and the second also asks for the stated reason without naming a tempting wrong answer. The final screen tells learners an application rather than asking them to use the idea. The hook attributes classical collapse to attraction alone, although the next screen correctly introduces radiative energy loss. One visual brief contains corrupted Portuguese characters.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Build the lesson around a simple everyday comparison and a side-by-side orbit-versus-probability-cloud visual, explicitly distinguishing a cloud from a blurred trajectory. Explain that an atom has a lowest-energy stable state without developing uncertainty or inventing a balancing force. Replace recall checks with a light choice between competing explanations, and end by having the learner correct an atom illustration or explain atomic stability to a curious friend.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview lesson for a curious adult: why the electron doesn't fall into the nucleus, told as a story with an everyday comparison (a blurred fan, a cloud) and no formulas, equations or notation\n      - A guess-first hook fits (\"the electron orbits like the Earth around the Sun?\"); checks are light and fun\n      - No worked examples are needed for an overview idea; a visual of the cloud versus the old orbit picture helps\n      - Orbitals in detail, quantum numbers and the uncertainty principle's math belong elsewhere\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "lessonCanDo": "Explicar por que o elétron não cai no núcleo",
+          "lessonDescription": "Descubra por que o elétron não despenca no núcleo e por que isso faz os átomos, e você, existirem.",
+          "lessonTitle": "Por que o elétron não cai no núcleo",
+          "level": "overview",
+          "otherLessonTitles": [
+            "A luz em pacotes",
+            "Onda ou partícula?",
+            "O princípio da incerteza"
+          ],
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two skills are closely linked parts of producing a pivot-table summary. Both start with action verbs and include a topic, a one-sentence description, a concrete example and a workplace use. The title and can-do line are appropriately focused; no split is needed.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "Explanation-first fits beginners, and both checks involve decisions with identifiable wrong answers. However, the worked example supplies only a range and field-placement instructions, not concrete source data or results; it never teaches the Columns assignment needed for the intended report. Its follow-up is only a partial placement question rather than a similar complete procedure. The final application also lacks the file or numbers needed to write it and misses the required region-by-month question. The cap of 7 for insufficiently concrete briefs applies.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The field-placement diagram, insertion sequence and summary-function menu are instructionally relevant. No decorative activity template is used. However, the timer comparing hours with a two-second click is a poorly chosen promotional visual rather than a grounded demonstration, triggering the cap of 8. Seeing a small source table transform into an actual cross-tabulation would be substantially more useful.",
+          "score": 8,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text is compatible with Spain Spanish and introduces ordinary spreadsheet terminology without formulas, code or unnecessary notation. The lesson stays within pivot tables rather than expanding into the neighboring lessons on filtering, conditional functions or charts. There are no filler summary or study-tip screens.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3436,
+          "inputTokens": 3439,
+          "outputTokens": 922,
+          "reasoningTokens": 241
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The worked example does not provide a small sales dataset, actual amounts or a calculated result. It omits Columns and the summary-function choice, so it does not demonstrate the required region-by-month procedure. The subsequent checks practise field placement and Recuento separately but never require choosing rows, columns and a summary function together. The final application asks about stores and average tickets rather than sales by region and month, and depends on an unspecified real file.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The hook's hours-versus-two-seconds visual makes an unsupported speed claim and exaggerates the simplicity of creating the report. Terminology and contexts shift repeatedly between Vendedor, Región, Producto, Cliente and Tienda, adding avoidable friction for beginners.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use one consistent sales table throughout. Show the source records beside the resulting region-by-month totals, then provide a similar dataset with less guidance. A stepSolver activity could let learners choose Filas, Columnas, Valores and Suma, with feedback explaining why Recuento and Promedio answer different questions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish)\n      - Beginner lesson on pivot tables in a spreadsheet for someone who builds sales reports at work\n      - Building a pivot table is a procedure, so it needs a worked example on a small sales table (rows, columns, values, summary function) and then a similar task with less help\n      - Checks should make the learner choose rows, columns and the summary (sum vs count vs average) for a question\n      - The application answers a real work question (sales by region and month); an activity like categorize or chart reading may fit, but a decorative one does not\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-tablas-dinamicas-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Resumir datos",
+          "courseTitle": "Análisis de datos con hojas de cálculo",
+          "language": "es",
+          "lessonCanDo": "Resumir una tabla de ventas con una tabla dinámica",
+          "lessonDescription": "Convierte cientos de filas de ventas en un resumen por región y mes con una tabla dinámica.",
+          "lessonTitle": "Tablas dinámicas",
+          "level": "beginner",
+          "otherLessonTitles": [
+            "Ordenar y filtrar datos",
+            "Funciones SUMAR.SI y CONTAR.SI",
+            "Gráficos a partir de tablas"
+          ],
+          "skills": [
+            "Crear una tabla dinámica",
+            "Elegir la función de resumen de una tabla dinámica"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two lessons follow the natural center-versus-spread boundary and teaching order. Both have canonical titles, scoped descriptions, concrete can-do lines, and three action-based skills with examples and uses. However, the standard-deviation skill's numerical example is incorrect as written and does not specify the sample convention. This is one weak skill, triggering the cap of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hooks are concrete, most checks require calculation and name plausible errors, and worked examples support the harder procedures. However, standard deviation has no less-supported calculation follow-up, explicitly triggering the cap of 7. The mode distractor duplicates the correct answer, quartile-finding instructions are incomplete, and the final spread application lacks concrete numbers. Several explanations also lead with definitions rather than concrete cases.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Most visuals teach directly: the salary bars show outlier influence, ordered boxes show the median, and the calculation table supports standard deviation. No interactive activity is required merely for its own sake. However, the mutual-fund growth visual conflates identical average annual returns with identical cumulative outcomes; arithmetic average returns do not ensure the same compounded endpoint. This poorly chosen visual triggers the cap of 8.",
+          "score": 8,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text is in US English and largely stays within the requested descriptive-statistics scope without filler or excursions into neighboring lessons. Beginner scaffolding is weaker for quartiles and for the unexplained n − 1 sample calculation. Variance, explicitly included in the requested scope, is omitted as a named concept, while the mutual-fund application adds avoidable financial complexity. These multiple level and scope slips trigger the cap of 7.",
+          "score": 7,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5306,
+          "inputTokens": 5309,
+          "outputTokens": 898,
+          "reasoningTokens": 152
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The standard-deviation skill example incorrectly says the squared deviations for 2, 4, 6 average to 4; their average is 8/3. The worked example correctly obtains sample standard deviation 2 by dividing by n − 1, but does not explain this distinction. Variance is never named or explained despite being in scope. The standard-deviation worked example also lacks a similar calculation problem with less help; the following check tests interpretation instead.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The mode check uses 4 as both the correct mode and the proposed median distractor, so it cannot distinguish those strategies. The IQR example gives quartiles without explicitly teaching how to find the medians of the two halves or handle the overall median. The final spread application supplies no numerical spreads, and its growth-line visual misleadingly suggests identical average annual returns imply identical ending values.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Introduce each new measure through an actual data set before naming it. Use a more familiar final spread application, such as delivery-time consistency, with concrete range, IQR, and standard-deviation values so learners must choose and justify an appropriate measure.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The input bundles six skills, so the output MUST be split into several lessons, each with 1 to 3 closely linked skills, in teaching order\n      - Natural boundaries: measures of center (mean, median, mode, and which to use when there are outliers) apart from measures of spread (range, interquartile range, variance and standard deviation); standard deviation is hard and needs a worked example\n      - Each lesson needs its own canonical title, a scoped description, a concrete can-do line, a hook and one application\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-describing-data-oversized-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Describing data",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "lessonCanDo": "Summarize a data set with the right numbers",
+          "lessonDescription": "Mean, median, mode, range, interquartile range, variance and standard deviation, and when to use each.",
+          "lessonTitle": "Summarizing a data set",
+          "level": "beginner",
+          "otherLessonTitles": ["Types of data", "Histograms", "Box plots"],
+          "skills": [
+            "Calculate the mean",
+            "Find the median",
+            "Find the mode",
+            "Calculate the range",
+            "Calculate the interquartile range",
+            "Calculate the standard deviation"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "Acquiring stability and understanding its limits are closely linked skills and appropriately remain in one lesson. Both skill names start with action verbs, and the title and can-do line are focused. However, the skill examples are abstract restatements rather than concrete cases; the second additionally models an incomplete, exclusive two-route rule. This is a weak skill specification, triggering the cap of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook uses a recognizable Brazilian situation, and the Lorena check targets the required misconception about time alone. However, explanations largely start with legal categories rather than concrete cases. The decision tree would teach an incorrect decision rule, the Raimundo check lacks a named tempting alternative, and the final application requires untaught probationary procedures. Together these make the planned instruction unclear and unreliable, triggering the cap of 6.",
+          "score": 6,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Text-only screens are suitable for these short legal rules and cases; decorative images are appropriately absent. A decisionTree is a suitable template in principle, but the actual activity lacks a complete case and valid branching logic, omits periodic evaluation, and ambiguously requires alternative grounds together. This poorly specified activity triggers the cap of 8; its central instructional error warrants a score of 7.",
+          "score": 7,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The output uses Brazilian Portuguese and locally appropriate names, cities, a prefeitura, and a municipal agency. It nevertheless introduces several unexplained legal expressions for beginners, adds reintegration and remedies for nonstable employees, and asks for probationary dismissal procedures beyond what it teaches. These are several level and scope slips, triggering the cap of 7.",
+          "score": 7,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8442,
+          "outputTokens": 1061,
+          "reasoningTokens": 266
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The plan incorrectly presents Article 41's grounds as universally exhaustive rather than limiting them to misconduct or poor performance. The decision tree compounds this by omitting periodic performance evaluation and treating the absence of a judicial decision or PAD as proof of illegality; its 'any missing element' wording also confuses alternative routes with cumulative requirements. Two further legal claims are false: not all time away from work is excluded from effective service, and employees without stability are not categorically limited to compensation when an unlawful dismissal is overturned. The acquisition rule correctly requires three years and approval in a special evaluation by a commission, and a check explicitly targets the time-alone trap.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The loss-of-post explanation introduces technical labels without a concrete example or plain-language explanation of terms such as 'transitada em julgado'. The Raimundo check supplies the conclusion and lacks a named tempting wrong answer. The final application asks learners to specify procedures for probationary failure that the preceding screens have not taught. Reintegration and remedies for nonstable employees also expand the lesson beyond its stated skills.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a concrete misconduct or poor-performance case before naming the three Article 41 routes, explicitly delimit that discussion, and explain the legal terms in everyday Portuguese. Rebuild the decision tree with complete, alternative branches and a fully specified case. Replace the reintegration screen with a less-supported transfer check on the acquisition conditions, and make the final application assess only procedures actually explained.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, with Brazilian examples (names, cities, a prefeitura or órgão federal)\n      - The stability rule matches SOURCES (Constituição, art. 41): three years of effective service plus approval in the special performance evaluation by a commission; never 24 months or 2 years\n      - For misconduct or poor performance, the ways a stable servant loses the post are the three in the article (final court decision, administrative process with a defense, periodic evaluation); the plan never claims they are the only ways in every case\n      - A check plans the trap of thinking time alone gives stability\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-estabilidade-sourced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "A model of formulas to play with: sliders drive outputs computed from formulas, with one output drawn across one slider's range, like money growing at a rate, where a thrown ball lands, an extra mortgage payment or a coffee cart's profit. Optional what-if `events` are 0/1 names the formulas use, off at the start; a check turns one on with an input of 1. `plot` names the slider on the x axis and the output on the y axis (default: the first of each), and `compareAt` marks one x value to compare with. A numeric check reads `output` (default: the plotted output) with the sliders at `inputs`. Fills: the formulas, the sliders with ranges and units, the outputs, any what-ifs, a short `title` for a named model (\"Projectile\") and the check question.",
+              "explore": true,
+              "id": "formulaModel"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "explore": true,
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "explore": true,
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "explore": true,
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "explore": false,
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first (linear or log), then see the real value next to the guess, so the gap is memorable, like how many seconds are in a year or how much the usual world map shrinks Africa. The real value is computed by code (`truth.kind` \"computed\": an expression and the workings that reach it) or cited data (`truth.kind` \"cited\": the value, with its source in `data`). Fills: the question, the scale and its range, the real value, an optional concrete comparison and the takeaway.",
+              "explore": false,
+              "id": "guessReveal"
+            },
+            {
+              "description": "Drag the corners of a shape and watch what always stays true: the angles add up to the same total, a² + b² = c² with a square on each side of a right triangle (its right-angle corner stays fixed and the other corners slide along their sides with `track`), or the area when a corner slides parallel to the line through its fixed neighbours. Code draws the angles, lengths, squares and area as the corners move. A numeric check, or options with values, needs a number that never changes: the angle sum, or that fixed area. Fills: the points, which ones move and along which track, what to measure, what always stays true and the check question.",
+              "explore": true,
+              "id": "geometryBoard"
+            },
+            {
+              "description": "Turn a point around a circle of radius 1 and watch sine (height), cosine (sideways distance) and tangent draw themselves, with the wave each one traces. The learner turns once around, so angles go from 0 to 360° (or 0 to 2π). A numeric check reads `output` (sin, cos or tan, one of the values shown) at the `angle` input. Fills: the start angle, degrees or radians, which values to show, the real-world frame and the check question.",
+              "explore": true,
+              "id": "unitCircle"
+            },
+            {
+              "description": "Run something random hundreds of times and watch the results settle. Mode \"chance\": guess how often a hit happens (binomial trials, a sum of dice or a shared birthday), then run it and compare; code computes the exact chance, each guess option carries the chance it stands for in `value` and the closest one is correct (choice checks only). Mode \"sampling\": many polls or samples of each size from a population (a proportion or a mean with its unit), so the spread of results shrinks as samples grow; by default the computed answer is how much the error shrinks from the smallest to the largest sample (standard error ratio), and with `output` \"standardError\" and a `sampleSize` input it is that size's standard error. Fills: the model or population, what a trial and a hit are or what a sample size counts, the number of runs and the check question.",
+              "explore": true,
+              "id": "randomSimulation"
+            },
+            {
+              "description": "Drag two handles along a distribution and read the percent of values between them, with the tails outside. Code computes the percent (0 to 100) inside `target`; a numeric check's answer is that percent, and the handles start away from the target so the learner moves them there. Fills: the distribution and its parameters, units and source, the starting handles, the target range and the check question.",
+              "explore": true,
+              "id": "distributionExplorer"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "explore": true,
+              "id": "chartReader"
+            },
+            {
+              "description": "Put names on the numbered parts of one picture, like the chambers of the heart or the parts of a flower: code draws the whole once (`picture`: what it shows, with no words in it, and its alt text) with a number on each part, 1 for the first in `parts`, and the learner matches each number with its name. The parts are pieces of one whole, never separate things. Fills: the picture, the parts in order (each with its name in the lesson's language and, in English, the part its number marks), distractor names and feedback for each likely mix-up.",
+              "explore": true,
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Arrange the steps of a process in order, like photosynthesis, and learn why each needs the one before. Steps are written in their true order; the player shuffles them. Fills: the steps, an icon for each from the allowed Lucide names and why each step comes after the previous one.",
+              "explore": true,
+              "id": "processOrder"
+            },
+            {
+              "description": "Connect atoms until every bond is filled, like carbon dioxide. Code knows how many bonds each element makes (B, Br, C, Cl, F, H, I, N, O, P, S, Si) and accepts any complete structure with the formula's atoms. Keep it to 12 atoms or fewer. The computed number is the bond count (a double bond counts twice). Fills: the target formula, the elements offered (an extra one makes the learner think) and the check question.",
+              "explore": true,
+              "id": "moleculeBuilder"
+            },
+            {
+              "description": "A grid where every cell combines its row and its column, filled by code: two parents' alleles (`rule` \"alleles\", a Punnett square like Mendel's peas, one gene and one letter, the uppercase allele dominant, with what each genotype shows in `traits`) or two numbers added or multiplied (`rule` \"sum\" or \"product\", like the 36 outcomes of two dice or a times table). On a grid of 9 cells or fewer the learner fills every cell before answering, whatever the check (an interaction check grades the fill itself); a larger grid is shown filled, to read. The computed number is the share of cells (0 to 1) matching `output`: \"recessive\" (default), \"dominant\" or a genotype like \"Pp\" for alleles, a cell value like \"7\" for numbers. Fills: the title, the rows and columns with their labels and values, the traits for alleles and the check question.",
+              "explore": true,
+              "id": "combinationGrid"
+            },
+            {
+              "description": "Two straight lines on one chart and where they cross; the learner drags one line to explain a change and watches the crossing move. Supply and demand (a real price change, like the 2022 egg price spike), cost and revenue (break-even), a budget line, two motions meeting or two equations. Lines are y = intercept + slope × x, each with an id and a label. `shift` is what really happened: which line moves, which way (\"left\", \"right\", \"up\" or \"down\") and how far. The interaction check expects that line moved that way; the computed number is the new crossing's `output` \"y\" (default) or \"x\". Fills: the axis labels, both lines, what changed, the shift and feedback for moving the wrong line or the wrong way.",
+              "explore": true,
+              "id": "lineCrossing"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "explore": true,
+              "id": "codeRunner"
+            },
+            {
+              "description": "Step through code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+              "explore": true,
+              "id": "codeTracer"
+            },
+            {
+              "description": "Query small tables with real SQLite in the browser, like filtering countries by continent and population. The learner's result must equal the expected rows (in order when `orderMatters`). Code runs the reference `solution` before publishing and the player runs it too, so its result must equal the expected rows exactly: the same column names, the same values (no rounding the query doesn't do) and, when `orderMatters`, the same order. Fills: the schema and rows (cited or labeled as an example), the question, the expected result and feedback for likely mistakes.",
+              "explore": true,
+              "id": "sqlPlayground"
+            },
+            {
+              "description": "Write a regular expression (mode \"regex\") or a spreadsheet-style formula (mode \"formula\", cells as variables like A1) and see it checked live against examples, like US ZIP codes. Code runs the reference solution against every example before publishing. Regexes use JavaScript syntax; repeated groups that repeat or alternate inside are refused. Fills: the task, examples that should and should not match (or inputs with outputs), the solution and hints for likely mistakes.",
+              "explore": true,
+              "id": "patternTester"
+            },
+            {
+              "description": "See a full pattern for a model word, then complete it for a new word by choosing endings, like hablar to comer. Code finds each blank's ending from its answer (endings are written without a hyphen, like \"éis\"). Fills: the pattern rows, the model word, the new word, which cells are blank, the ending choices and, for a learner who reads another language, the meaning of each word and row label (\"to speak\", \"I\").",
+              "explore": false,
+              "id": "patternTable"
+            },
+            {
+              "description": "Choose the reply that keeps a real conversation polite and natural, like using usted with a pharmacist. Exactly one reply is best. Fills: the target language code, the scene, each line with its translation, reply options, the best reply and the why for each.",
+              "explore": false,
+              "id": "dialogueSimulator"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "explore": true,
+              "id": "timeline"
+            },
+            {
+              "description": "Tap places on a map to uncover evidence, like John Snow tracing the 1854 cholera outbreak to one pump. Pick a base map and give each place real coordinates inside it (latitude north positive, longitude east positive). Base maps: \"world\" (the whole world by country; latitude -90 to 90, longitude -180 to 180), \"world-continents\" (the whole world by continent; latitude -90 to 90, longitude -180 to 180), \"europe\" (Europe by country, from Iceland and Portugal to the Volga; latitude 34 to 72, longitude -25 to 50), \"americas\" (North, Central and South America by country; latitude -56 to 75, longitude -170 to -20), \"africa\" (Africa by country, with Madagascar and the islands around it; latitude -36 to 38, longitude -26 to 60), \"asia\" (Asia by country, from Turkey and the Middle East to Japan and Indonesia; latitude -11 to 78, longitude 25 to 180), \"usa-states\" (the United States by state, with Alaska and Hawaii in insets; latitude 24 to 49.5, longitude -125 to -66.5 or latitude 51 to 71.5, longitude -180 to -129.5 or latitude 18.5 to 22.5, longitude -160.5 to -154.5), \"brazil-states\" (Brazil by state, with its neighbors; latitude -34 to 5.5, longitude -74 to -34.5), \"roman-empire-117\" (the Roman Empire at its largest, in 117 CE, with the Parthian Empire; latitude 23 to 57, longitude -10 to 50), \"europe-1914\" (Europe's countries and empires in 1914, on the eve of the First World War; latitude 34 to 66, longitude -12 to 45), \"london-1854\" (the streets of Soho, London, in 1854, around the Broad Street pump from John Snow's cholera map; latitude 51.509 to 51.517, longitude -0.144 to -0.129). Fills: the base map, places with coordinates, what each tap reveals and the check question.",
+              "explore": true,
+              "id": "mapExplorer"
+            },
+            {
+              "description": "Link causes to their effects, like plowed-up prairie and drought turning into the Dust Bowl. Code checks the links run forward in time and never loop. Fills: causes and effects with dates, the correct links with why, and the check question.",
+              "explore": true,
+              "id": "causeEffectChain"
+            },
+            {
+              "description": "Read two eyewitness sources side by side and mark passages, like two accounts of Lexington in 1775, to see how who wrote a source shapes it. Each passage must be quoted exactly from its excerpt. Fills: two short excerpts with author, date and citation, the passages to mark, what to mark and the check question.",
+              "explore": false,
+              "id": "sourceComparison"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "explore": false,
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "explore": false,
+              "id": "matchPairs"
+            },
+            {
+              "description": "Build an argument from a claim, evidence and reasoning, and see why a quote must support the claim. Exactly one evidence and one reasoning option are strong. Fills: the claim, candidate quotes with citations, reasoning options and why each is strong or weak.",
+              "explore": false,
+              "id": "argumentBuilder"
+            },
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step.",
+              "explore": false,
+              "id": "findError"
+            },
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome.",
+              "explore": true,
+              "id": "decisionTree"
+            },
+            {
+              "description": "Press notes on a piano keyboard or guitar fretboard and see where they sit on both, like turning C major into C minor. Code draws the keys and frets, computes a chord's notes from its root and quality, and plays the sound. Notes are letters with \"#\" or \"b\" (C, Eb, F#). With `byEar` the target is played, not named, until the learner answers: ear training, like a perfect fifth (two notes, played one after the other) or a minor chord (played together); the learner finds it on the keys (interaction) or names what they heard (choice, with the names as options). Fills: the notes or chord to find (`target`), optionally the notes or chord already pressed at the start (`start`, for \"change one note\" tasks), which instruments to show, whether it's by ear and, for a choice check, the question about what the learner hears or sees.",
+              "explore": true,
+              "id": "keyboardFretboard"
+            },
+            {
+              "description": "Read a short melody on the staff or as guitar tab while it plays, like Ode to Joy. Notes are written in ABC notation with T: (title), optional C: (composer), M: (meter), L: (unit length) and K: (key) headers, the notes last. Fills: the notes in ABC, the tempo, staff or tab and the check question.",
+              "explore": true,
+              "id": "notationPlayer"
+            },
+            {
+              "description": "Tap along to a rhythm while the device times each tap, like the son clave. It never uses the microphone. The pattern is one bar on a beat grid of \"x\" (tap) and \".\" (rest), repeated for each round over a steady click. Fills: the pattern, steps per beat, tempo, number of rounds and how early or late still counts (80 ms or more for beginners).",
+              "explore": false,
+              "id": "rhythmTapper"
+            },
+            {
+              "description": "Compare two states side by side to see what a change really did, like Ford's factory before and after the moving assembly line. Both states list the same facts; the computed number is the after/before ratio of the fact named in `output` (default: the first). Fills: both states, what changed, the numbers with sources and the check question.",
+              "explore": true,
+              "id": "beforeAfter"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Cargos, empregos e funções públicas" },
+            { "order": "after", "title": "Regime disciplinar" }
+          ],
+          "chapterTitle": "Agentes públicos",
+          "courseTitle": "Direito Administrativo",
+          "language": "pt",
+          "lessonCanDo": "Dizer quando um servidor fica estável e como pode perder o cargo",
+          "lessonDescription": "Quando o servidor concursado adquire estabilidade e em que casos o servidor estável perde o cargo.",
+          "lessonTitle": "Estabilidade do servidor público",
+          "level": "beginner",
+          "skills": [
+            "Identificar quando o servidor adquire estabilidade",
+            "Reconhecer como o servidor estável pode perder o cargo"
+          ],
+          "sources": "<page ref=\"S1:1\" of=\"Constituição da República Federativa do Brasil de 1988, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 1º O servidor público estável só perderá o cargo:\nI - em virtude de sentença judicial transitada em julgado;\nII - mediante processo administrativo em que lhe seja assegurada ampla defesa;\nIII - mediante procedimento de avaliação periódica de desempenho, na forma de lei complementar, assegurada ampla defesa.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two verb-led skills naturally belong together: calculating percent change and explaining why reversing a change requires a different percentage. Both have a topic, a one-sentence idea, an example, and practical uses. The title, description, and can-do line maintain a coherent focus.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook poses a useful recovery puzzle, the support mode is explanation first, and the accurate $40-to-$50 worked example is followed by a less-supported $80-to-$60 calculation. That check explicitly includes the new-value denominator trap. However, the first explanation moves directly to the rule without building the denominator intuition, and the later own-words check mostly repeats the explanation without a named tempting wrong answer. The weak-check cap of 8 applies.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The findError template checks numerical expression-result errors, whereas this activity supplies a wrong denominator with an otherwise valid division. A normal spot-the-error check would fit better. In addition, the hook and asymmetry screen ask learners to compare price states without directing the writer to show a table or chart with the exact values. Several activity/representation issues trigger the cap of 7.",
+          "score": 7,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The language is US English, the numbers are beginner-friendly, and the mathematical examples are accurate. However, the final screen explicitly teaches finding a discount amount and sale price, exceeding the permitted sentence of context for the neighboring Discounts and markups lesson. This scope slip triggers the cap of 8.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8109,
+          "outputTokens": 971,
+          "reasoningTokens": 292
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final application teaches calculating a discount rather than keeping discounts to a sentence of context, intruding on the next lesson. The findError activity also mismatches the supplied template: dividing by the new value is a conceptual setup error, but the template detects an expression whose claimed numerical result is wrong. The proposed division can be arithmetically correct while answering the wrong question.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The first explanation introduces the formula without first explaining concretely why the change is compared with the starting amount. The asymmetry check largely asks learners to restate the preceding explanation and names no tempting wrong answer. The hook and asymmetry explanation present numerical comparisons without specifying a table or chart to show them.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Clarify the reporting convention for decreases: either calculate a signed change using new minus original, or calculate the magnitude and explicitly label it an increase or decrease. The current worked example shows +25%, while the decrease check uses an unsigned 25% decrease without explaining that distinction.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Beginner lesson on percent change: explanation first; a hook such as a price that rises 50% then falls 50% and doesn't return to the start\n      - Calculating a percent change is a procedure, so it needs a worked example with real numbers followed by a similar check with less help\n      - Checks should include the classic trap of dividing by the new value instead of the original\n      - The application uses a realistic case (a rent increase, a salary raise, a sale price)\n      - Discounts, markups and percentage points belong to the other lessons and get at most a sentence\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "A model of formulas to play with: sliders drive outputs computed from formulas, with one output drawn across one slider's range, like money growing at a rate, where a thrown ball lands, an extra mortgage payment or a coffee cart's profit. Optional what-if `events` are 0/1 names the formulas use, off at the start; a check turns one on with an input of 1. `plot` names the slider on the x axis and the output on the y axis (default: the first of each), and `compareAt` marks one x value to compare with. A numeric check reads `output` (default: the plotted output) with the sliders at `inputs`. Fills: the formulas, the sliders with ranges and units, the outputs, any what-ifs, a short `title` for a named model (\"Projectile\") and the check question.",
+              "explore": true,
+              "id": "formulaModel"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "explore": true,
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "explore": true,
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "explore": true,
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "explore": false,
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first (linear or log), then see the real value next to the guess, so the gap is memorable, like how many seconds are in a year or how much the usual world map shrinks Africa. The real value is computed by code (`truth.kind` \"computed\": an expression and the workings that reach it) or cited data (`truth.kind` \"cited\": the value, with its source in `data`). Fills: the question, the scale and its range, the real value, an optional concrete comparison and the takeaway.",
+              "explore": false,
+              "id": "guessReveal"
+            },
+            {
+              "description": "Drag the corners of a shape and watch what always stays true: the angles add up to the same total, a² + b² = c² with a square on each side of a right triangle (its right-angle corner stays fixed and the other corners slide along their sides with `track`), or the area when a corner slides parallel to the line through its fixed neighbours. Code draws the angles, lengths, squares and area as the corners move. A numeric check, or options with values, needs a number that never changes: the angle sum, or that fixed area. Fills: the points, which ones move and along which track, what to measure, what always stays true and the check question.",
+              "explore": true,
+              "id": "geometryBoard"
+            },
+            {
+              "description": "Turn a point around a circle of radius 1 and watch sine (height), cosine (sideways distance) and tangent draw themselves, with the wave each one traces. The learner turns once around, so angles go from 0 to 360° (or 0 to 2π). A numeric check reads `output` (sin, cos or tan, one of the values shown) at the `angle` input. Fills: the start angle, degrees or radians, which values to show, the real-world frame and the check question.",
+              "explore": true,
+              "id": "unitCircle"
+            },
+            {
+              "description": "Run something random hundreds of times and watch the results settle. Mode \"chance\": guess how often a hit happens (binomial trials, a sum of dice or a shared birthday), then run it and compare; code computes the exact chance, each guess option carries the chance it stands for in `value` and the closest one is correct (choice checks only). Mode \"sampling\": many polls or samples of each size from a population (a proportion or a mean with its unit), so the spread of results shrinks as samples grow; by default the computed answer is how much the error shrinks from the smallest to the largest sample (standard error ratio), and with `output` \"standardError\" and a `sampleSize` input it is that size's standard error. Fills: the model or population, what a trial and a hit are or what a sample size counts, the number of runs and the check question.",
+              "explore": true,
+              "id": "randomSimulation"
+            },
+            {
+              "description": "Drag two handles along a distribution and read the percent of values between them, with the tails outside. Code computes the percent (0 to 100) inside `target`; a numeric check's answer is that percent, and the handles start away from the target so the learner moves them there. Fills: the distribution and its parameters, units and source, the starting handles, the target range and the check question.",
+              "explore": true,
+              "id": "distributionExplorer"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "explore": true,
+              "id": "chartReader"
+            },
+            {
+              "description": "Put names on the numbered parts of one picture, like the chambers of the heart or the parts of a flower: code draws the whole once (`picture`: what it shows, with no words in it, and its alt text) with a number on each part, 1 for the first in `parts`, and the learner matches each number with its name. The parts are pieces of one whole, never separate things. Fills: the picture, the parts in order (each with its name in the lesson's language and, in English, the part its number marks), distractor names and feedback for each likely mix-up.",
+              "explore": true,
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Arrange the steps of a process in order, like photosynthesis, and learn why each needs the one before. Steps are written in their true order; the player shuffles them. Fills: the steps, an icon for each from the allowed Lucide names and why each step comes after the previous one.",
+              "explore": true,
+              "id": "processOrder"
+            },
+            {
+              "description": "Connect atoms until every bond is filled, like carbon dioxide. Code knows how many bonds each element makes (B, Br, C, Cl, F, H, I, N, O, P, S, Si) and accepts any complete structure with the formula's atoms. Keep it to 12 atoms or fewer. The computed number is the bond count (a double bond counts twice). Fills: the target formula, the elements offered (an extra one makes the learner think) and the check question.",
+              "explore": true,
+              "id": "moleculeBuilder"
+            },
+            {
+              "description": "A grid where every cell combines its row and its column, filled by code: two parents' alleles (`rule` \"alleles\", a Punnett square like Mendel's peas, one gene and one letter, the uppercase allele dominant, with what each genotype shows in `traits`) or two numbers added or multiplied (`rule` \"sum\" or \"product\", like the 36 outcomes of two dice or a times table). On a grid of 9 cells or fewer the learner fills every cell before answering, whatever the check (an interaction check grades the fill itself); a larger grid is shown filled, to read. The computed number is the share of cells (0 to 1) matching `output`: \"recessive\" (default), \"dominant\" or a genotype like \"Pp\" for alleles, a cell value like \"7\" for numbers. Fills: the title, the rows and columns with their labels and values, the traits for alleles and the check question.",
+              "explore": true,
+              "id": "combinationGrid"
+            },
+            {
+              "description": "Two straight lines on one chart and where they cross; the learner drags one line to explain a change and watches the crossing move. Supply and demand (a real price change, like the 2022 egg price spike), cost and revenue (break-even), a budget line, two motions meeting or two equations. Lines are y = intercept + slope × x, each with an id and a label. `shift` is what really happened: which line moves, which way (\"left\", \"right\", \"up\" or \"down\") and how far. The interaction check expects that line moved that way; the computed number is the new crossing's `output` \"y\" (default) or \"x\". Fills: the axis labels, both lines, what changed, the shift and feedback for moving the wrong line or the wrong way.",
+              "explore": true,
+              "id": "lineCrossing"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "explore": true,
+              "id": "codeRunner"
+            },
+            {
+              "description": "Step through code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+              "explore": true,
+              "id": "codeTracer"
+            },
+            {
+              "description": "Query small tables with real SQLite in the browser, like filtering countries by continent and population. The learner's result must equal the expected rows (in order when `orderMatters`). Code runs the reference `solution` before publishing and the player runs it too, so its result must equal the expected rows exactly: the same column names, the same values (no rounding the query doesn't do) and, when `orderMatters`, the same order. Fills: the schema and rows (cited or labeled as an example), the question, the expected result and feedback for likely mistakes.",
+              "explore": true,
+              "id": "sqlPlayground"
+            },
+            {
+              "description": "Write a regular expression (mode \"regex\") or a spreadsheet-style formula (mode \"formula\", cells as variables like A1) and see it checked live against examples, like US ZIP codes. Code runs the reference solution against every example before publishing. Regexes use JavaScript syntax; repeated groups that repeat or alternate inside are refused. Fills: the task, examples that should and should not match (or inputs with outputs), the solution and hints for likely mistakes.",
+              "explore": true,
+              "id": "patternTester"
+            },
+            {
+              "description": "See a full pattern for a model word, then complete it for a new word by choosing endings, like hablar to comer. Code finds each blank's ending from its answer (endings are written without a hyphen, like \"éis\"). Fills: the pattern rows, the model word, the new word, which cells are blank, the ending choices and, for a learner who reads another language, the meaning of each word and row label (\"to speak\", \"I\").",
+              "explore": false,
+              "id": "patternTable"
+            },
+            {
+              "description": "Choose the reply that keeps a real conversation polite and natural, like using usted with a pharmacist. Exactly one reply is best. Fills: the target language code, the scene, each line with its translation, reply options, the best reply and the why for each.",
+              "explore": false,
+              "id": "dialogueSimulator"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "explore": true,
+              "id": "timeline"
+            },
+            {
+              "description": "Tap places on a map to uncover evidence, like John Snow tracing the 1854 cholera outbreak to one pump. Pick a base map and give each place real coordinates inside it (latitude north positive, longitude east positive). Base maps: \"world\" (the whole world by country; latitude -90 to 90, longitude -180 to 180), \"world-continents\" (the whole world by continent; latitude -90 to 90, longitude -180 to 180), \"europe\" (Europe by country, from Iceland and Portugal to the Volga; latitude 34 to 72, longitude -25 to 50), \"americas\" (North, Central and South America by country; latitude -56 to 75, longitude -170 to -20), \"africa\" (Africa by country, with Madagascar and the islands around it; latitude -36 to 38, longitude -26 to 60), \"asia\" (Asia by country, from Turkey and the Middle East to Japan and Indonesia; latitude -11 to 78, longitude 25 to 180), \"usa-states\" (the United States by state, with Alaska and Hawaii in insets; latitude 24 to 49.5, longitude -125 to -66.5 or latitude 51 to 71.5, longitude -180 to -129.5 or latitude 18.5 to 22.5, longitude -160.5 to -154.5), \"brazil-states\" (Brazil by state, with its neighbors; latitude -34 to 5.5, longitude -74 to -34.5), \"roman-empire-117\" (the Roman Empire at its largest, in 117 CE, with the Parthian Empire; latitude 23 to 57, longitude -10 to 50), \"europe-1914\" (Europe's countries and empires in 1914, on the eve of the First World War; latitude 34 to 66, longitude -12 to 45), \"london-1854\" (the streets of Soho, London, in 1854, around the Broad Street pump from John Snow's cholera map; latitude 51.509 to 51.517, longitude -0.144 to -0.129). Fills: the base map, places with coordinates, what each tap reveals and the check question.",
+              "explore": true,
+              "id": "mapExplorer"
+            },
+            {
+              "description": "Link causes to their effects, like plowed-up prairie and drought turning into the Dust Bowl. Code checks the links run forward in time and never loop. Fills: causes and effects with dates, the correct links with why, and the check question.",
+              "explore": true,
+              "id": "causeEffectChain"
+            },
+            {
+              "description": "Read two eyewitness sources side by side and mark passages, like two accounts of Lexington in 1775, to see how who wrote a source shapes it. Each passage must be quoted exactly from its excerpt. Fills: two short excerpts with author, date and citation, the passages to mark, what to mark and the check question.",
+              "explore": false,
+              "id": "sourceComparison"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "explore": false,
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "explore": false,
+              "id": "matchPairs"
+            },
+            {
+              "description": "Build an argument from a claim, evidence and reasoning, and see why a quote must support the claim. Exactly one evidence and one reasoning option are strong. Fills: the claim, candidate quotes with citations, reasoning options and why each is strong or weak.",
+              "explore": false,
+              "id": "argumentBuilder"
+            },
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step.",
+              "explore": false,
+              "id": "findError"
+            },
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome.",
+              "explore": true,
+              "id": "decisionTree"
+            },
+            {
+              "description": "Press notes on a piano keyboard or guitar fretboard and see where they sit on both, like turning C major into C minor. Code draws the keys and frets, computes a chord's notes from its root and quality, and plays the sound. Notes are letters with \"#\" or \"b\" (C, Eb, F#). With `byEar` the target is played, not named, until the learner answers: ear training, like a perfect fifth (two notes, played one after the other) or a minor chord (played together); the learner finds it on the keys (interaction) or names what they heard (choice, with the names as options). Fills: the notes or chord to find (`target`), optionally the notes or chord already pressed at the start (`start`, for \"change one note\" tasks), which instruments to show, whether it's by ear and, for a choice check, the question about what the learner hears or sees.",
+              "explore": true,
+              "id": "keyboardFretboard"
+            },
+            {
+              "description": "Read a short melody on the staff or as guitar tab while it plays, like Ode to Joy. Notes are written in ABC notation with T: (title), optional C: (composer), M: (meter), L: (unit length) and K: (key) headers, the notes last. Fills: the notes in ABC, the tempo, staff or tab and the check question.",
+              "explore": true,
+              "id": "notationPlayer"
+            },
+            {
+              "description": "Tap along to a rhythm while the device times each tap, like the son clave. It never uses the microphone. The pattern is one bar on a beat grid of \"x\" (tap) and \".\" (rest), repeated for each round over a steady click. Fills: the pattern, steps per beat, tempo, number of rounds and how early or late still counts (80 ms or more for beginners).",
+              "explore": false,
+              "id": "rhythmTapper"
+            },
+            {
+              "description": "Compare two states side by side to see what a change really did, like Ford's factory before and after the moving assembly line. Both states list the same facts; the computed number is the after/before ratio of the fact named in `output` (default: the first). Fills: both states, what changed, the numbers with sources and the check question.",
+              "explore": true,
+              "id": "beforeAfter"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Percent of a quantity" },
+            { "order": "after", "title": "Discounts and markups" },
+            { "order": "after", "title": "Percentage points" }
+          ],
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "lessonCanDo": "Calculate how much a price changed in percent",
+          "lessonDescription": "Work out how much a price or a salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "skills": ["Calculate a percent change"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "Classification, simple rule of three, and compound rule of three are closely linked and follow a coherent teaching order. Titles, descriptions, can-do statements, and verb-led skills are appropriately scoped. However, the compound skill's example gives a target workforce, wall length, and daily hours without any baseline productivity, making it a weak concrete example. The one-weak-skill cap of 8 applies.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook offers a plausible tempting answer, and the inverse worked example is correct and followed by independent practice. However, the required direct worked example is absent, the declared support mode is explanationFirst, and the initial definition does not establish the constant-factor criterion for direct proportion. The compound explanation precedes its concrete case, and the error-spotting brief has no numbers or actual steps, triggering the vague-brief cap of 7. The infeasible exact painter headcount further undermines the final application. Together these are substantial instructional failures.",
+          "score": 6,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The findError template checks a step whose computed arithmetic result is wrong, whereas the proposed activity identifies an incorrectly modeled proportional relationship without supplying an arithmetic mismatch or any worked steps. Multiple numerical comparisons, especially the compound printer example and painter application, also lack explicit tables with their given values. The earlier request to show a table does not supply its data. These multiple activity and display weaknesses trigger the cap of 7.",
+          "score": 7,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The learner-facing text is Brazilian Portuguese, and the terminology and calculations are suitable for intermediate mathematics. The lesson remains within direct, inverse, simple, and compound proportion, without digressions into percentages or filler screens. The neighboring lesson inputs provide no cases or numbers that establish prohibited reuse. The brief classification review also serves the explicit requirement to distinguish relationships before calculation.",
+          "score": 9,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8422,
+          "outputTokens": 1070,
+          "reasoningTokens": 271
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The lesson omits the required worked example of direct proportion and specifies explanationFirst despite this audience needing question-first support. Defining direct proportion merely as quantities changing in the same direction is mathematically insufficient; the same multiplicative factor is essential. The final application asks for an exact number of additional painters, but its data require 19.2 painters in total, or 15.2 additional painters, which is not a feasible headcount without a rounding instruction. The findError activity supplies neither numbers nor worked steps and targets a modeling error that the template's arithmetic-result checking does not directly support.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The compound-proportion skill's example lacks the reference productivity data needed to make it a concrete solvable example. Several numerical comparisons have no specified table or other structured display. The compound-method explanation starts with an abstract procedure rather than a concrete case, and the classification explanation requests a table without specifying its data.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Build on the existing question hook, then explicitly test multiplicative relationships before setting up equations. Add a direct-proportion worked example and a less-supported follow-up. For the final application, either use numbers yielding whole painters or ask for the minimum whole-number staffing needed to meet the deadline: 20 painters total, so 16 additional painters.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know, so question first is a good fit\n      - Must teach how to tell direct from inverse proportion before setting up the rule of three, with a worked example of each (inverse ones are the common trap)\n      - Compound rule of three may be split into its own lesson or kept only if the lesson still fits; either is fine if the plan is coherent\n      - Applications should look like real problems (workers and days, recipes, fuel and distance)\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "A model of formulas to play with: sliders drive outputs computed from formulas, with one output drawn across one slider's range, like money growing at a rate, where a thrown ball lands, an extra mortgage payment or a coffee cart's profit. Optional what-if `events` are 0/1 names the formulas use, off at the start; a check turns one on with an input of 1. `plot` names the slider on the x axis and the output on the y axis (default: the first of each), and `compareAt` marks one x value to compare with. A numeric check reads `output` (default: the plotted output) with the sliders at `inputs`. Fills: the formulas, the sliders with ranges and units, the outputs, any what-ifs, a short `title` for a named model (\"Projectile\") and the check question.",
+              "explore": true,
+              "id": "formulaModel"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "explore": true,
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "explore": true,
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "explore": true,
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "explore": false,
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first (linear or log), then see the real value next to the guess, so the gap is memorable, like how many seconds are in a year or how much the usual world map shrinks Africa. The real value is computed by code (`truth.kind` \"computed\": an expression and the workings that reach it) or cited data (`truth.kind` \"cited\": the value, with its source in `data`). Fills: the question, the scale and its range, the real value, an optional concrete comparison and the takeaway.",
+              "explore": false,
+              "id": "guessReveal"
+            },
+            {
+              "description": "Drag the corners of a shape and watch what always stays true: the angles add up to the same total, a² + b² = c² with a square on each side of a right triangle (its right-angle corner stays fixed and the other corners slide along their sides with `track`), or the area when a corner slides parallel to the line through its fixed neighbours. Code draws the angles, lengths, squares and area as the corners move. A numeric check, or options with values, needs a number that never changes: the angle sum, or that fixed area. Fills: the points, which ones move and along which track, what to measure, what always stays true and the check question.",
+              "explore": true,
+              "id": "geometryBoard"
+            },
+            {
+              "description": "Turn a point around a circle of radius 1 and watch sine (height), cosine (sideways distance) and tangent draw themselves, with the wave each one traces. The learner turns once around, so angles go from 0 to 360° (or 0 to 2π). A numeric check reads `output` (sin, cos or tan, one of the values shown) at the `angle` input. Fills: the start angle, degrees or radians, which values to show, the real-world frame and the check question.",
+              "explore": true,
+              "id": "unitCircle"
+            },
+            {
+              "description": "Run something random hundreds of times and watch the results settle. Mode \"chance\": guess how often a hit happens (binomial trials, a sum of dice or a shared birthday), then run it and compare; code computes the exact chance, each guess option carries the chance it stands for in `value` and the closest one is correct (choice checks only). Mode \"sampling\": many polls or samples of each size from a population (a proportion or a mean with its unit), so the spread of results shrinks as samples grow; by default the computed answer is how much the error shrinks from the smallest to the largest sample (standard error ratio), and with `output` \"standardError\" and a `sampleSize` input it is that size's standard error. Fills: the model or population, what a trial and a hit are or what a sample size counts, the number of runs and the check question.",
+              "explore": true,
+              "id": "randomSimulation"
+            },
+            {
+              "description": "Drag two handles along a distribution and read the percent of values between them, with the tails outside. Code computes the percent (0 to 100) inside `target`; a numeric check's answer is that percent, and the handles start away from the target so the learner moves them there. Fills: the distribution and its parameters, units and source, the starting handles, the target range and the check question.",
+              "explore": true,
+              "id": "distributionExplorer"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "explore": true,
+              "id": "chartReader"
+            },
+            {
+              "description": "Put names on the numbered parts of one picture, like the chambers of the heart or the parts of a flower: code draws the whole once (`picture`: what it shows, with no words in it, and its alt text) with a number on each part, 1 for the first in `parts`, and the learner matches each number with its name. The parts are pieces of one whole, never separate things. Fills: the picture, the parts in order (each with its name in the lesson's language and, in English, the part its number marks), distractor names and feedback for each likely mix-up.",
+              "explore": true,
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Arrange the steps of a process in order, like photosynthesis, and learn why each needs the one before. Steps are written in their true order; the player shuffles them. Fills: the steps, an icon for each from the allowed Lucide names and why each step comes after the previous one.",
+              "explore": true,
+              "id": "processOrder"
+            },
+            {
+              "description": "Connect atoms until every bond is filled, like carbon dioxide. Code knows how many bonds each element makes (B, Br, C, Cl, F, H, I, N, O, P, S, Si) and accepts any complete structure with the formula's atoms. Keep it to 12 atoms or fewer. The computed number is the bond count (a double bond counts twice). Fills: the target formula, the elements offered (an extra one makes the learner think) and the check question.",
+              "explore": true,
+              "id": "moleculeBuilder"
+            },
+            {
+              "description": "A grid where every cell combines its row and its column, filled by code: two parents' alleles (`rule` \"alleles\", a Punnett square like Mendel's peas, one gene and one letter, the uppercase allele dominant, with what each genotype shows in `traits`) or two numbers added or multiplied (`rule` \"sum\" or \"product\", like the 36 outcomes of two dice or a times table). On a grid of 9 cells or fewer the learner fills every cell before answering, whatever the check (an interaction check grades the fill itself); a larger grid is shown filled, to read. The computed number is the share of cells (0 to 1) matching `output`: \"recessive\" (default), \"dominant\" or a genotype like \"Pp\" for alleles, a cell value like \"7\" for numbers. Fills: the title, the rows and columns with their labels and values, the traits for alleles and the check question.",
+              "explore": true,
+              "id": "combinationGrid"
+            },
+            {
+              "description": "Two straight lines on one chart and where they cross; the learner drags one line to explain a change and watches the crossing move. Supply and demand (a real price change, like the 2022 egg price spike), cost and revenue (break-even), a budget line, two motions meeting or two equations. Lines are y = intercept + slope × x, each with an id and a label. `shift` is what really happened: which line moves, which way (\"left\", \"right\", \"up\" or \"down\") and how far. The interaction check expects that line moved that way; the computed number is the new crossing's `output` \"y\" (default) or \"x\". Fills: the axis labels, both lines, what changed, the shift and feedback for moving the wrong line or the wrong way.",
+              "explore": true,
+              "id": "lineCrossing"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "explore": true,
+              "id": "codeRunner"
+            },
+            {
+              "description": "Step through code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+              "explore": true,
+              "id": "codeTracer"
+            },
+            {
+              "description": "Query small tables with real SQLite in the browser, like filtering countries by continent and population. The learner's result must equal the expected rows (in order when `orderMatters`). Code runs the reference `solution` before publishing and the player runs it too, so its result must equal the expected rows exactly: the same column names, the same values (no rounding the query doesn't do) and, when `orderMatters`, the same order. Fills: the schema and rows (cited or labeled as an example), the question, the expected result and feedback for likely mistakes.",
+              "explore": true,
+              "id": "sqlPlayground"
+            },
+            {
+              "description": "Write a regular expression (mode \"regex\") or a spreadsheet-style formula (mode \"formula\", cells as variables like A1) and see it checked live against examples, like US ZIP codes. Code runs the reference solution against every example before publishing. Regexes use JavaScript syntax; repeated groups that repeat or alternate inside are refused. Fills: the task, examples that should and should not match (or inputs with outputs), the solution and hints for likely mistakes.",
+              "explore": true,
+              "id": "patternTester"
+            },
+            {
+              "description": "See a full pattern for a model word, then complete it for a new word by choosing endings, like hablar to comer. Code finds each blank's ending from its answer (endings are written without a hyphen, like \"éis\"). Fills: the pattern rows, the model word, the new word, which cells are blank, the ending choices and, for a learner who reads another language, the meaning of each word and row label (\"to speak\", \"I\").",
+              "explore": false,
+              "id": "patternTable"
+            },
+            {
+              "description": "Choose the reply that keeps a real conversation polite and natural, like using usted with a pharmacist. Exactly one reply is best. Fills: the target language code, the scene, each line with its translation, reply options, the best reply and the why for each.",
+              "explore": false,
+              "id": "dialogueSimulator"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "explore": true,
+              "id": "timeline"
+            },
+            {
+              "description": "Tap places on a map to uncover evidence, like John Snow tracing the 1854 cholera outbreak to one pump. Pick a base map and give each place real coordinates inside it (latitude north positive, longitude east positive). Base maps: \"world\" (the whole world by country; latitude -90 to 90, longitude -180 to 180), \"world-continents\" (the whole world by continent; latitude -90 to 90, longitude -180 to 180), \"europe\" (Europe by country, from Iceland and Portugal to the Volga; latitude 34 to 72, longitude -25 to 50), \"americas\" (North, Central and South America by country; latitude -56 to 75, longitude -170 to -20), \"africa\" (Africa by country, with Madagascar and the islands around it; latitude -36 to 38, longitude -26 to 60), \"asia\" (Asia by country, from Turkey and the Middle East to Japan and Indonesia; latitude -11 to 78, longitude 25 to 180), \"usa-states\" (the United States by state, with Alaska and Hawaii in insets; latitude 24 to 49.5, longitude -125 to -66.5 or latitude 51 to 71.5, longitude -180 to -129.5 or latitude 18.5 to 22.5, longitude -160.5 to -154.5), \"brazil-states\" (Brazil by state, with its neighbors; latitude -34 to 5.5, longitude -74 to -34.5), \"roman-empire-117\" (the Roman Empire at its largest, in 117 CE, with the Parthian Empire; latitude 23 to 57, longitude -10 to 50), \"europe-1914\" (Europe's countries and empires in 1914, on the eve of the First World War; latitude 34 to 66, longitude -12 to 45), \"london-1854\" (the streets of Soho, London, in 1854, around the Broad Street pump from John Snow's cholera map; latitude 51.509 to 51.517, longitude -0.144 to -0.129). Fills: the base map, places with coordinates, what each tap reveals and the check question.",
+              "explore": true,
+              "id": "mapExplorer"
+            },
+            {
+              "description": "Link causes to their effects, like plowed-up prairie and drought turning into the Dust Bowl. Code checks the links run forward in time and never loop. Fills: causes and effects with dates, the correct links with why, and the check question.",
+              "explore": true,
+              "id": "causeEffectChain"
+            },
+            {
+              "description": "Read two eyewitness sources side by side and mark passages, like two accounts of Lexington in 1775, to see how who wrote a source shapes it. Each passage must be quoted exactly from its excerpt. Fills: two short excerpts with author, date and citation, the passages to mark, what to mark and the check question.",
+              "explore": false,
+              "id": "sourceComparison"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "explore": false,
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "explore": false,
+              "id": "matchPairs"
+            },
+            {
+              "description": "Build an argument from a claim, evidence and reasoning, and see why a quote must support the claim. Exactly one evidence and one reasoning option are strong. Fills: the claim, candidate quotes with citations, reasoning options and why each is strong or weak.",
+              "explore": false,
+              "id": "argumentBuilder"
+            },
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step.",
+              "explore": false,
+              "id": "findError"
+            },
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome.",
+              "explore": true,
+              "id": "decisionTree"
+            },
+            {
+              "description": "Press notes on a piano keyboard or guitar fretboard and see where they sit on both, like turning C major into C minor. Code draws the keys and frets, computes a chord's notes from its root and quality, and plays the sound. Notes are letters with \"#\" or \"b\" (C, Eb, F#). With `byEar` the target is played, not named, until the learner answers: ear training, like a perfect fifth (two notes, played one after the other) or a minor chord (played together); the learner finds it on the keys (interaction) or names what they heard (choice, with the names as options). Fills: the notes or chord to find (`target`), optionally the notes or chord already pressed at the start (`start`, for \"change one note\" tasks), which instruments to show, whether it's by ear and, for a choice check, the question about what the learner hears or sees.",
+              "explore": true,
+              "id": "keyboardFretboard"
+            },
+            {
+              "description": "Read a short melody on the staff or as guitar tab while it plays, like Ode to Joy. Notes are written in ABC notation with T: (title), optional C: (composer), M: (meter), L: (unit length) and K: (key) headers, the notes last. Fills: the notes in ABC, the tempo, staff or tab and the check question.",
+              "explore": true,
+              "id": "notationPlayer"
+            },
+            {
+              "description": "Tap along to a rhythm while the device times each tap, like the son clave. It never uses the microphone. The pattern is one bar on a beat grid of \"x\" (tap) and \".\" (rest), repeated for each round over a steady click. Fills: the pattern, steps per beat, tempo, number of rounds and how early or late still counts (80 ms or more for beginners).",
+              "explore": false,
+              "id": "rhythmTapper"
+            },
+            {
+              "description": "Compare two states side by side to see what a change really did, like Ford's factory before and after the moving assembly line. Both states list the same facts; the computed number is the after/before ratio of the fact named in `output` (default: the first). Fills: both states, what changed, the numbers with sources and the check question.",
+              "explore": true,
+              "id": "beforeAfter"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "Razão e escala" },
+            { "order": "before", "title": "Grandezas proporcionais" },
+            { "order": "after", "title": "Porcentagem" }
+          ],
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lessonCanDo": "Resolver problemas com grandezas direta e inversamente proporcionais",
+          "lessonDescription": "Monte e resolva regras de três simples e compostas, reconhecendo quando as grandezas são direta ou inversamente proporcionais.",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "skills": [
+            "Identificar grandezas direta e inversamente proporcionais",
+            "Resolver regra de três simples",
+            "Resolver regra de três composta"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. Lesson 1 (\"Particle in a box\"): \"Apply boundary conditions to wavefunctions in a box\" is hard but has no worked example.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. Lesson 1 (\"Particle in a box\"): \"Apply boundary conditions to wavefunctions in a box\" is hard but has no worked example.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. Lesson 1 (\"Particle in a box\"): \"Apply boundary conditions to wavefunctions in a box\" is hard but has no worked example.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Advanced lesson: deriving the energy levels of a particle in a one-dimensional infinite well from the time-independent Schrödinger equation (boundary conditions, sine solutions, quantized wave numbers, E_n proportional to n squared over L squared)\n      - The derivation is one idea that may not split; up to 6 minutes is allowed for one skill at the advanced level\n      - Notation is expected here but should follow a picture of standing waves on a string; a worked derivation with a check after the boundary conditions\n      - An activity such as a slider graph (energy against n or L) or a visual of the first standing waves fits\n      - The time-dependent equation, tunneling and the harmonic oscillator belong to other lessons\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "A model of formulas to play with: sliders drive outputs computed from formulas, with one output drawn across one slider's range, like money growing at a rate, where a thrown ball lands, an extra mortgage payment or a coffee cart's profit. Optional what-if `events` are 0/1 names the formulas use, off at the start; a check turns one on with an input of 1. `plot` names the slider on the x axis and the output on the y axis (default: the first of each), and `compareAt` marks one x value to compare with. A numeric check reads `output` (default: the plotted output) with the sliders at `inputs`. Fills: the formulas, the sliders with ranges and units, the outputs, any what-ifs, a short `title` for a named model (\"Projectile\") and the check question.",
+              "explore": true,
+              "id": "formulaModel"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump, so operations across zero make sense before the rule does. Fills: the range and step, the start value, the moves to make, where it should land, the check and the why.",
+              "explore": true,
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle (area model) or a bar (bar model) into easy parts to see why a product or a share works. The answer is the area (width total × height total) or the bar total. Fills: the model, sizes, where to split, units, the check question and the why.",
+              "explore": true,
+              "id": "areaModel"
+            },
+            {
+              "description": "An equation as a balance: the learner takes the same thing off both sides and watches it stay level. The equation must be linear in one variable; code solves it and checks every step keeps the same solution. Fills: the equation, what each object stands for, the solution steps and a hint for each wrong move.",
+              "explore": true,
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time: the learner picks each next move and sees it as a picture and as math. Each step's value is computed from its expression. A numeric check reads the last step, or the step named in `output`. Fills: the problem, each step's math and expression, the choice at each step and the why for each answer.",
+              "explore": false,
+              "id": "stepSolver"
+            },
+            {
+              "description": "Guess on a scale first (linear or log), then see the real value next to the guess, so the gap is memorable, like how many seconds are in a year or how much the usual world map shrinks Africa. The real value is computed by code (`truth.kind` \"computed\": an expression and the workings that reach it) or cited data (`truth.kind` \"cited\": the value, with its source in `data`). Fills: the question, the scale and its range, the real value, an optional concrete comparison and the takeaway.",
+              "explore": false,
+              "id": "guessReveal"
+            },
+            {
+              "description": "Drag the corners of a shape and watch what always stays true: the angles add up to the same total, a² + b² = c² with a square on each side of a right triangle (its right-angle corner stays fixed and the other corners slide along their sides with `track`), or the area when a corner slides parallel to the line through its fixed neighbours. Code draws the angles, lengths, squares and area as the corners move. A numeric check, or options with values, needs a number that never changes: the angle sum, or that fixed area. Fills: the points, which ones move and along which track, what to measure, what always stays true and the check question.",
+              "explore": true,
+              "id": "geometryBoard"
+            },
+            {
+              "description": "Turn a point around a circle of radius 1 and watch sine (height), cosine (sideways distance) and tangent draw themselves, with the wave each one traces. The learner turns once around, so angles go from 0 to 360° (or 0 to 2π). A numeric check reads `output` (sin, cos or tan, one of the values shown) at the `angle` input. Fills: the start angle, degrees or radians, which values to show, the real-world frame and the check question.",
+              "explore": true,
+              "id": "unitCircle"
+            },
+            {
+              "description": "Run something random hundreds of times and watch the results settle. Mode \"chance\": guess how often a hit happens (binomial trials, a sum of dice or a shared birthday), then run it and compare; code computes the exact chance, each guess option carries the chance it stands for in `value` and the closest one is correct (choice checks only). Mode \"sampling\": many polls or samples of each size from a population (a proportion or a mean with its unit), so the spread of results shrinks as samples grow; by default the computed answer is how much the error shrinks from the smallest to the largest sample (standard error ratio), and with `output` \"standardError\" and a `sampleSize` input it is that size's standard error. Fills: the model or population, what a trial and a hit are or what a sample size counts, the number of runs and the check question.",
+              "explore": true,
+              "id": "randomSimulation"
+            },
+            {
+              "description": "Drag two handles along a distribution and read the percent of values between them, with the tails outside. Code computes the percent (0 to 100) inside `target`; a numeric check's answer is that percent, and the handles start away from the target so the learner moves them there. Fills: the distribution and its parameters, units and source, the starting handles, the target range and the check question.",
+              "explore": true,
+              "id": "distributionExplorer"
+            },
+            {
+              "description": "Measure spans on a real chart to see a trend, like the rise of CO₂ speeding up. Code measures the span named in `output` (or the first) with the chosen statistic. Fills: the dataset and its source, axis labels, which spans can be measured, the check question and the why.",
+              "explore": true,
+              "id": "chartReader"
+            },
+            {
+              "description": "Put names on the numbered parts of one picture, like the chambers of the heart or the parts of a flower: code draws the whole once (`picture`: what it shows, with no words in it, and its alt text) with a number on each part, 1 for the first in `parts`, and the learner matches each number with its name. The parts are pieces of one whole, never separate things. Fills: the picture, the parts in order (each with its name in the lesson's language and, in English, the part its number marks), distractor names and feedback for each likely mix-up.",
+              "explore": true,
+              "id": "labeledDiagram"
+            },
+            {
+              "description": "Arrange the steps of a process in order, like photosynthesis, and learn why each needs the one before. Steps are written in their true order; the player shuffles them. Fills: the steps, an icon for each from the allowed Lucide names and why each step comes after the previous one.",
+              "explore": true,
+              "id": "processOrder"
+            },
+            {
+              "description": "Connect atoms until every bond is filled, like carbon dioxide. Code knows how many bonds each element makes (B, Br, C, Cl, F, H, I, N, O, P, S, Si) and accepts any complete structure with the formula's atoms. Keep it to 12 atoms or fewer. The computed number is the bond count (a double bond counts twice). Fills: the target formula, the elements offered (an extra one makes the learner think) and the check question.",
+              "explore": true,
+              "id": "moleculeBuilder"
+            },
+            {
+              "description": "A grid where every cell combines its row and its column, filled by code: two parents' alleles (`rule` \"alleles\", a Punnett square like Mendel's peas, one gene and one letter, the uppercase allele dominant, with what each genotype shows in `traits`) or two numbers added or multiplied (`rule` \"sum\" or \"product\", like the 36 outcomes of two dice or a times table). On a grid of 9 cells or fewer the learner fills every cell before answering, whatever the check (an interaction check grades the fill itself); a larger grid is shown filled, to read. The computed number is the share of cells (0 to 1) matching `output`: \"recessive\" (default), \"dominant\" or a genotype like \"Pp\" for alleles, a cell value like \"7\" for numbers. Fills: the title, the rows and columns with their labels and values, the traits for alleles and the check question.",
+              "explore": true,
+              "id": "combinationGrid"
+            },
+            {
+              "description": "Two straight lines on one chart and where they cross; the learner drags one line to explain a change and watches the crossing move. Supply and demand (a real price change, like the 2022 egg price spike), cost and revenue (break-even), a budget line, two motions meeting or two equations. Lines are y = intercept + slope × x, each with an id and a label. `shift` is what really happened: which line moves, which way (\"left\", \"right\", \"up\" or \"down\") and how far. The interaction check expects that line moved that way; the computed number is the new crossing's `output` \"y\" (default) or \"x\". Fills: the axis labels, both lines, what changed, the shift and feedback for moving the wrong line or the wrong way.",
+              "explore": true,
+              "id": "lineCrossing"
+            },
+            {
+              "description": "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+              "explore": true,
+              "id": "codeRunner"
+            },
+            {
+              "description": "Step through code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+              "explore": true,
+              "id": "codeTracer"
+            },
+            {
+              "description": "Query small tables with real SQLite in the browser, like filtering countries by continent and population. The learner's result must equal the expected rows (in order when `orderMatters`). Code runs the reference `solution` before publishing and the player runs it too, so its result must equal the expected rows exactly: the same column names, the same values (no rounding the query doesn't do) and, when `orderMatters`, the same order. Fills: the schema and rows (cited or labeled as an example), the question, the expected result and feedback for likely mistakes.",
+              "explore": true,
+              "id": "sqlPlayground"
+            },
+            {
+              "description": "Write a regular expression (mode \"regex\") or a spreadsheet-style formula (mode \"formula\", cells as variables like A1) and see it checked live against examples, like US ZIP codes. Code runs the reference solution against every example before publishing. Regexes use JavaScript syntax; repeated groups that repeat or alternate inside are refused. Fills: the task, examples that should and should not match (or inputs with outputs), the solution and hints for likely mistakes.",
+              "explore": true,
+              "id": "patternTester"
+            },
+            {
+              "description": "See a full pattern for a model word, then complete it for a new word by choosing endings, like hablar to comer. Code finds each blank's ending from its answer (endings are written without a hyphen, like \"éis\"). Fills: the pattern rows, the model word, the new word, which cells are blank, the ending choices and, for a learner who reads another language, the meaning of each word and row label (\"to speak\", \"I\").",
+              "explore": false,
+              "id": "patternTable"
+            },
+            {
+              "description": "Choose the reply that keeps a real conversation polite and natural, like using usted with a pharmacist. Exactly one reply is best. Fills: the target language code, the scene, each line with its translation, reply options, the best reply and the why for each.",
+              "explore": false,
+              "id": "dialogueSimulator"
+            },
+            {
+              "description": "Place events on a true-to-scale axis to see how far apart they really are. Years are whole numbers, negative for BCE; code orders the events by year. Fills: the axis range, anchor events with dates, the events to place and the check question.",
+              "explore": true,
+              "id": "timeline"
+            },
+            {
+              "description": "Tap places on a map to uncover evidence, like John Snow tracing the 1854 cholera outbreak to one pump. Pick a base map and give each place real coordinates inside it (latitude north positive, longitude east positive). Base maps: \"world\" (the whole world by country; latitude -90 to 90, longitude -180 to 180), \"world-continents\" (the whole world by continent; latitude -90 to 90, longitude -180 to 180), \"europe\" (Europe by country, from Iceland and Portugal to the Volga; latitude 34 to 72, longitude -25 to 50), \"americas\" (North, Central and South America by country; latitude -56 to 75, longitude -170 to -20), \"africa\" (Africa by country, with Madagascar and the islands around it; latitude -36 to 38, longitude -26 to 60), \"asia\" (Asia by country, from Turkey and the Middle East to Japan and Indonesia; latitude -11 to 78, longitude 25 to 180), \"usa-states\" (the United States by state, with Alaska and Hawaii in insets; latitude 24 to 49.5, longitude -125 to -66.5 or latitude 51 to 71.5, longitude -180 to -129.5 or latitude 18.5 to 22.5, longitude -160.5 to -154.5), \"brazil-states\" (Brazil by state, with its neighbors; latitude -34 to 5.5, longitude -74 to -34.5), \"roman-empire-117\" (the Roman Empire at its largest, in 117 CE, with the Parthian Empire; latitude 23 to 57, longitude -10 to 50), \"europe-1914\" (Europe's countries and empires in 1914, on the eve of the First World War; latitude 34 to 66, longitude -12 to 45), \"london-1854\" (the streets of Soho, London, in 1854, around the Broad Street pump from John Snow's cholera map; latitude 51.509 to 51.517, longitude -0.144 to -0.129). Fills: the base map, places with coordinates, what each tap reveals and the check question.",
+              "explore": true,
+              "id": "mapExplorer"
+            },
+            {
+              "description": "Link causes to their effects, like plowed-up prairie and drought turning into the Dust Bowl. Code checks the links run forward in time and never loop. Fills: causes and effects with dates, the correct links with why, and the check question.",
+              "explore": true,
+              "id": "causeEffectChain"
+            },
+            {
+              "description": "Read two eyewitness sources side by side and mark passages, like two accounts of Lexington in 1775, to see how who wrote a source shapes it. Each passage must be quoted exactly from its excerpt. Fills: two short excerpts with author, date and citation, the passages to mark, what to mark and the check question.",
+              "explore": false,
+              "id": "sourceComparison"
+            },
+            {
+              "description": "Sort examples into groups to learn the rule that separates them, like chemical versus physical change. Fills: group names and rules, items with their right group and why each belongs.",
+              "explore": false,
+              "id": "categorize"
+            },
+            {
+              "description": "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+              "explore": false,
+              "id": "matchPairs"
+            },
+            {
+              "description": "Build an argument from a claim, evidence and reasoning, and see why a quote must support the claim. Exactly one evidence and one reasoning option are strong. Fills: the claim, candidate quotes with citations, reasoning options and why each is strong or weak.",
+              "explore": false,
+              "id": "argumentBuilder"
+            },
+            {
+              "description": "Spot the wrong step in a worked answer, like a price change that looks symmetric but isn't. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to \"ai\" for \"Spot the AI's mistake\": the steps are an AI assistant's answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step.",
+              "explore": false,
+              "id": "findError"
+            },
+            {
+              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome.",
+              "explore": true,
+              "id": "decisionTree"
+            },
+            {
+              "description": "Press notes on a piano keyboard or guitar fretboard and see where they sit on both, like turning C major into C minor. Code draws the keys and frets, computes a chord's notes from its root and quality, and plays the sound. Notes are letters with \"#\" or \"b\" (C, Eb, F#). With `byEar` the target is played, not named, until the learner answers: ear training, like a perfect fifth (two notes, played one after the other) or a minor chord (played together); the learner finds it on the keys (interaction) or names what they heard (choice, with the names as options). Fills: the notes or chord to find (`target`), optionally the notes or chord already pressed at the start (`start`, for \"change one note\" tasks), which instruments to show, whether it's by ear and, for a choice check, the question about what the learner hears or sees.",
+              "explore": true,
+              "id": "keyboardFretboard"
+            },
+            {
+              "description": "Read a short melody on the staff or as guitar tab while it plays, like Ode to Joy. Notes are written in ABC notation with T: (title), optional C: (composer), M: (meter), L: (unit length) and K: (key) headers, the notes last. Fills: the notes in ABC, the tempo, staff or tab and the check question.",
+              "explore": true,
+              "id": "notationPlayer"
+            },
+            {
+              "description": "Tap along to a rhythm while the device times each tap, like the son clave. It never uses the microphone. The pattern is one bar on a beat grid of \"x\" (tap) and \".\" (rest), repeated for each round over a steady click. Fills: the pattern, steps per beat, tempo, number of rounds and how early or late still counts (80 ms or more for beginners).",
+              "explore": false,
+              "id": "rhythmTapper"
+            },
+            {
+              "description": "Compare two states side by side to see what a change really did, like Ford's factory before and after the moving assembly line. Both states list the same facts; the computed number is the after/before ratio of the fact named in `output` (default: the first). Fills: both states, what changed, the numbers with sources and the check question.",
+              "explore": true,
+              "id": "beforeAfter"
+            }
+          ],
+          "chapterLessons": [
+            { "order": "before", "title": "The time-independent Schrödinger equation" },
+            { "order": "after", "title": "Quantum tunneling" },
+            { "order": "after", "title": "The quantum harmonic oscillator" }
+          ],
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "lessonCanDo": "Derive the energy levels of a particle in a box",
+          "lessonDescription": "Solve the time-independent Schrödinger equation for a particle trapped in a one-dimensional box and see why its energy comes in steps.",
+          "lessonTitle": "Particle in a box",
+          "level": "advanced",
+          "skills": ["Derive the energy levels of a particle in a box"]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-spec"
+}

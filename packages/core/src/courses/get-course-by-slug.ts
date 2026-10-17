@@ -1,23 +1,24 @@
 import "server-only";
-import { getPublishedCourseWhere, prisma } from "@zoonk/db";
-import { cacheTag } from "next/cache";
+import { getCourseRouteWhere, prisma } from "@zoonk/db";
+import { cacheLife, cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
 
 /**
- * Caches one normalized public course route and tags the resolved resource so
- * route misses and course updates can both be invalidated precisely.
+ * Caches one normalized public course route for the catalog's lifetime and tags the route and the
+ * course it resolves to: publishing, renaming or unpublishing expires the route's tags, so a cached
+ * "not found" never hides a newly published course, and a course's edits expire its own tag. A
+ * write whose tags don't reach this app shows within the catalog's lifetime. Only shared courses:
+ * the pages that read it are the same for everyone and never read a session.
  */
 async function getCachedCourse(params: { brandSlug: string; courseSlug: string }) {
   "use cache";
+  cacheLife("catalog");
   cacheTag(getCourseRouteCacheTag(params));
 
   const course = await prisma.course.findFirst({
     include: { categories: true, organization: true },
-    where: getPublishedCourseWhere({
-      organization: { kind: "brand", slug: params.brandSlug },
-      slug: params.courseSlug,
-    }),
+    where: { ...getCourseRouteWhere(params), visibility: "public" },
   });
 
   if (course) {
@@ -28,9 +29,8 @@ async function getCachedCourse(params: { brandSlug: string; courseSlug: string }
 }
 
 /**
- * Loads the public course identified by the brand and course slugs used in
- * catalog routes. Normalizing before the cached boundary makes encoded and
- * decoded versions of the same route share one cache entry.
+ * Loads the public course identified by the brand and course slugs used in catalog routes.
+ * Normalizing before the cache boundary lets encoded and decoded routes share their entry.
  */
 export async function getCourse(params: { brandSlug: string; courseSlug: string }) {
   return getCachedCourse({

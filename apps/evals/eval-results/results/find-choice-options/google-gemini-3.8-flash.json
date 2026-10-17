@@ -1,0 +1,18 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "options": 5 },
+        "id": "pt-enem-1",
+        "userInput": { "board": "Inep", "exam": "Enem", "today": "2026-10-07" }
+      }
+    }
+  ],
+  "taskId": "find-choice-options"
+}

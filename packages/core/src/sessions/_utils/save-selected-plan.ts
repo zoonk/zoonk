@@ -1,0 +1,183 @@
+import "server-only";
+import { type TransactionClient } from "@zoonk/db";
+import { toComputedPlanWrite } from "../../plans/_utils/computed-plan-write";
+import { getEstimateChange } from "../../plans/_utils/estimate-change";
+import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
+import { type PlanContext } from "../../plans/_utils/plan-context";
+import { type SavedPlanSummary, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
+import { type PlanChangeRecord } from "../../plans/_utils/replan";
+import { getSettledPlanChange } from "../../plans/_utils/settled-change";
+import { type PlanWrite, writePlan } from "../../plans/_utils/write-plan";
+import { PHASE_DATES_SOURCE } from "../../plans/plan-change-contract";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { type PlanState } from "../../plans/planner/plan-state";
+import { type SelectedDayPlan } from "./selected-day-plan";
+
+export function getSelectedPlanChange(selection: SelectedDayPlan): PlanChangeRecord | null {
+  const { computed, context, left } = selection;
+
+  if (!computed) {
+    return null;
+  }
+
+  if (left.length === 0) {
+    return getEstimateChange({ computed, context });
+  }
+
+  return getSettledPlanChange({ computed, context, left });
+}
+
+type SelectedPlanMetadata = {
+  graph?: PlanState["graph"];
+  inputsKey?: string;
+  summary?: SavedPlanSummary;
+};
+
+/** Only materialized data enters the transaction; lazy advice cannot extend its lock lifetime. */
+export type PreparedSelectedPlanSave =
+  | { kind: "skip" }
+  | { data: SelectedPlanMetadata | null; kind: "metadata" }
+  | {
+      change: PlanChangeRecord | null;
+      kind: "computed";
+      replacesPhaseDates: boolean;
+      write: PlanWrite;
+    };
+
+function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | null {
+  const { context } = selection;
+  const update = selection.inputKeyUpdate;
+
+  const summary = readFreshPlanSummary({
+    basis: {
+      inputVersion: context.plan.inputVersion,
+      planId: context.plan.id,
+      planVersion: context.plan.version,
+      studyDay: toIsoDate(context.today),
+      timeZone: context.timeZone,
+      userId: context.goal.userId,
+    },
+    value: context.plan.summary,
+  });
+
+  const selected = update?.summary ?? summary?.selected;
+
+  if (!selected && !update) {
+    return null;
+  }
+
+  return {
+    ...(update && { graph: update.graph, inputsKey: update.inputsKey }),
+    ...(selected && {
+      summary: {
+        basis: {
+          inputVersion: context.plan.inputVersion + 1,
+          planId: context.plan.id,
+          planVersion: context.plan.version,
+          studyDay: toIsoDate(context.today),
+          timeZone: context.timeZone,
+          userId: context.goal.userId,
+        },
+        schemaVersion: 1,
+        selected,
+      },
+    }),
+  };
+}
+
+/** The same selected plan's exact write and notice are prepared before taking any row locks. */
+export function prepareSelectedPlanSave({
+  selection,
+  shown,
+}: {
+  selection: SelectedDayPlan;
+  shown: boolean;
+}): PreparedSelectedPlanSave {
+  const { computed, context } = selection;
+
+  if (!shown) {
+    return { kind: "skip" };
+  }
+
+  if (!computed) {
+    return { data: prepareMetadata(selection), kind: "metadata" };
+  }
+
+  const change = getSelectedPlanChange(selection);
+
+  return {
+    change,
+    kind: "computed",
+    replacesPhaseDates:
+      change !== null &&
+      (parsePlanChangePayload(change.payload).effect?.phaseEnds?.length ?? 0) > 0,
+    write: toComputedPlanWrite({
+      computed,
+      context: {
+        ...context,
+        plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
+      },
+    }),
+  };
+}
+
+export async function saveSelectedPlan({
+  acknowledge,
+  context,
+  prepared,
+  tx,
+}: {
+  acknowledge?: { revision: string; studyDay: string };
+  context: PlanContext;
+  prepared: PreparedSelectedPlanSave;
+  tx: TransactionClient;
+}): Promise<number> {
+  if (prepared.kind === "skip") {
+    return context.plan.version;
+  }
+
+  if (prepared.kind === "metadata") {
+    if (prepared.data) {
+      await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
+    }
+
+    return context.plan.version;
+  }
+
+  await writePlan({
+    context: { ...context, plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 } },
+    plan: prepared.write,
+    tx,
+  });
+
+  const { change } = prepared;
+
+  if (change) {
+    if (prepared.replacesPhaseDates) {
+      await tx.planChange.updateMany({
+        data: { status: "replaced" },
+        where: {
+          payload: { equals: PHASE_DATES_SOURCE, path: ["source"] },
+          planId: context.plan.id,
+          status: "proposed",
+        },
+      });
+    }
+
+    await tx.planChange.create({
+      data: {
+        kind: change.kind,
+        payload: {
+          ...change.payload,
+          ...(acknowledge && { acknowledgedRead: acknowledge, seenAt: new Date().toISOString() }),
+          versionAfter: context.plan.version + 1,
+        },
+        planId: context.plan.id,
+        reason: change.reason,
+        status: change.status,
+      },
+    });
+  }
+
+  return context.plan.version + 1;
+}

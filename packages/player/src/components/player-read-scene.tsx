@@ -2,18 +2,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PlayerRichText } from "./player-rich-text";
 import { PlayerContentFrame } from "./step-layouts";
 
-type PlayerReadSceneTitleTone = "destructive" | "foreground" | "muted" | "success" | "warning";
-
-const PLAYER_READ_SCENE_TITLE_TONE_CLASS: Record<PlayerReadSceneTitleTone, string> = {
-  destructive: "text-destructive",
-  foreground: "text-foreground",
-  muted: "text-muted-foreground",
-  success: "text-success",
-  warning: "text-warning",
-};
-
 /**
- * Shared read-only scene shell for centered player content.
+ * Shared read-only scene shell for player content, starting at the top like
+ * the interactive screens.
  *
  * Static lesson copy and vocabulary steps live in the same visual family:
  * read something, then move forward. This component keeps that family on one
@@ -28,10 +19,7 @@ export function PlayerReadScene({
 }) {
   return (
     <PlayerContentFrame
-      className={cn(
-        "relative my-auto flex flex-col items-start justify-center gap-3 py-4 sm:gap-6 sm:py-6",
-        className,
-      )}
+      className={cn("relative flex flex-col items-start gap-6 pt-4 pb-6", className)}
       data-slot="player-read-scene"
     >
       {children}
@@ -59,32 +47,6 @@ export function PlayerReadSceneStack({
     >
       {children}
     </div>
-  );
-}
-
-/**
- * Shared read-scene title styling.
- *
- * Static text needs a readable headline treatment. Keeping it here makes
- * title changes fan out once.
- */
-export function PlayerReadSceneTitle({
-  children,
-  tone = "muted",
-}: {
-  children: React.ReactNode;
-  tone?: PlayerReadSceneTitleTone;
-}) {
-  return (
-    <h2
-      className={cn(
-        "text-lg font-semibold tracking-tight sm:text-xl",
-        PLAYER_READ_SCENE_TITLE_TONE_CLASS[tone],
-      )}
-      data-slot="player-read-scene-title"
-    >
-      {typeof children === "string" ? <PlayerRichText text={children} /> : children}
-    </h2>
   );
 }
 

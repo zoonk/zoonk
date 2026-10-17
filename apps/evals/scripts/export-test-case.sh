@@ -9,7 +9,7 @@ TEST_CASE_ID="${2:-}"
 
 if [[ -z "$TASK_ID" || -z "$TEST_CASE_ID" ]]; then
   echo "Usage: pnpm evals:export taskId testCaseId"
-  echo "Example: pnpm evals:export course-chapters en-machine-learning-1"
+  echo "Example: pnpm evals:export course-intent topic-biology"
   exit 1
 fi
 

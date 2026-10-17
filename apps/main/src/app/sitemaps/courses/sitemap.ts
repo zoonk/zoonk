@@ -1,15 +1,10 @@
-import {
-  SITEMAP_BATCH_SIZE,
-  countSitemapCourses,
-  listSitemapCourses,
-} from "@/data/sitemaps/courses";
+import { listSitemapCourses } from "@/data/sitemaps/courses";
+import { getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { type MetadataRoute } from "next";
 
-export async function generateSitemaps() {
-  const count = await countSitemapCourses();
-  const pages = Math.ceil(count / SITEMAP_BATCH_SIZE);
-  return Array.from({ length: Math.max(pages, 1) }, (_, i) => ({ id: i }));
+export function generateSitemaps() {
+  return getSitemapPageIds("courses").map((id) => ({ id }));
 }
 
 export default async function sitemap(props: {

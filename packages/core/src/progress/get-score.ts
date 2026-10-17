@@ -1,9 +1,18 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import {
+  type ProgressHistoryOptions,
+  dailyProgressInWindow,
+  readLifetimeDailyProgress,
+} from "./_utils/daily-progress-rows";
 import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScoreDateRange } from "./score-date-range";
-import { type ScorePerformance, getScorePerformance } from "./score-performance";
+import {
+  type ScorePerformance,
+  getCombinedScorePerformance,
+  getScorePerformance,
+} from "./score-performance";
 
 /**
  * Loads only the weighted answer totals needed by compact Score surfaces such
@@ -32,7 +41,9 @@ async function findScore({
 /**
  * Returns the authenticated learner's weighted Score for the current 90 local dates.
  */
-export async function getScore(): Promise<ScorePerformance | null> {
+export async function getScore({
+  history,
+}: ProgressHistoryOptions = {}): Promise<ScorePerformance | null> {
   "use cache: private";
 
   const [session, dateContext] = await Promise.all([
@@ -49,5 +60,14 @@ export async function getScore(): Promise<ScorePerformance | null> {
     timeZone: dateContext.timeZone,
   });
 
-  return findScore({ ...dateRange.dailyProgress, userId: session.user.id });
+  if (history === "lifetime") {
+    const rows = dailyProgressInWindow({
+      ...dateRange,
+      rows: await readLifetimeDailyProgress(session.user.id),
+    });
+
+    return getCombinedScorePerformance(rows);
+  }
+
+  return findScore({ ...dateRange, userId: session.user.id });
 }

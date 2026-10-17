@@ -1,5 +1,9 @@
 import { getPathname } from "@/i18n/navigation";
-import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  getSupportedLocaleFromLanguage,
+} from "@zoonk/utils/locale";
 import { SITE_URL } from "@zoonk/utils/url";
 
 /**
@@ -11,4 +15,19 @@ export function getLocalizedUrl({ href, language }: { href: string; language: st
   const locale = getSupportedLocaleFromLanguage(language);
   const pathname = getPathname({ href, locale });
   return new URL(pathname, SITE_URL).toString();
+}
+
+/**
+ * A page translated into every supported language: its canonical URL in this language and the
+ * other languages' versions, so search engines show each visitor the page in their language.
+ */
+export function getLocalizedAlternates({ href, language }: { href: string; language: string }) {
+  const languages = Object.fromEntries(
+    SUPPORTED_LOCALES.map((locale) => [locale, getLocalizedUrl({ href, language: locale })]),
+  );
+
+  return {
+    canonical: getLocalizedUrl({ href, language }),
+    languages: { ...languages, "x-default": getLocalizedUrl({ href, language: DEFAULT_LOCALE }) },
+  };
 }

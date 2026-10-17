@@ -1,14 +1,8 @@
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { calculateDateRanges } from "@zoonk/utils/date-ranges";
-import { getAiOrganization } from "./orgs";
 
-const SHORT_UUID_LENGTH = 8;
 const DAYS_PER_GROUP = 5;
 const CURRENT_MONTH_CORRECT = 17;
 const PREVIOUS_MONTH_CORRECT = 13;
@@ -35,10 +29,11 @@ function getEnergyAtEnd({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: 
 }
 
 /**
- * The Level learning-days card counts DailyProgress completion rows, so the
- * fixture marks the same current-day row that represents the completed lesson.
+ * The Level learning-days card and the Activity calendar count DailyProgress
+ * completion rows, so the fixture marks the same current-day row that
+ * represents the completed lesson.
  */
-function getStaticCompleted({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
+function getLessonsCompleted({ dayIndex, isCurrent }: { dayIndex: number; isCurrent: boolean }) {
   if (isCurrent && dayIndex === 0) {
     return 1;
   }
@@ -85,7 +80,8 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
       date,
       energyAtEnd: getEnergyAtEnd({ dayIndex, isCurrent }),
       incorrectAnswers: isCurrent ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
-      staticCompleted: getStaticCompleted({ dayIndex, isCurrent }),
+      lessonsCompleted: getLessonsCompleted({ dayIndex, isCurrent }),
+      staticCompleted: getLessonsCompleted({ dayIndex, isCurrent }),
       timeSpentSeconds: getTimeSpentSeconds({ dayIndex, isCurrent }),
     };
   }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
@@ -118,126 +114,65 @@ function buildDailyProgressInputs(today: Date, userId: string) {
     .map((entry) => ({ ...entry, userId }));
 }
 
+const DAY_PART_CONFIGS = [
+  { correct: 9, hourOfDay: 9, incorrect: 1 },
+  { correct: 8, hourOfDay: 15, incorrect: 2 },
+  { correct: 7, hourOfDay: 21, incorrect: 3 },
+];
+
 /**
- * Seed a small spread of step attempts across multiple day parts.
- * The progress summaries depend on answer counts and hour-of-day buckets, so
- * this helper creates that coverage once instead of repeating it in browser setup.
+ * Seed the learning ledger rows: one finished activity per day part, which
+ * Patterns reads by learner-local hour, plus the completed lesson itself.
  */
-async function createStepAttempts(stepId: string, userId: string, now: Date) {
-  const configs = [
-    { correct: 9, hourOfDay: 9, incorrect: 1 },
-    { correct: 8, hourOfDay: 15, incorrect: 2 },
-    { correct: 7, hourOfDay: 21, incorrect: 3 },
-  ];
+async function createLearningEvents({
+  now,
+  today,
+  userId,
+}: {
+  now: Date;
+  today: Date;
+  userId: string;
+}) {
+  const startedAt = new Date(now.getTime() - COMPLETED_LESSON_START_OFFSET_SECONDS * 1000);
 
-  const attempts = configs.flatMap((config) => [
-    ...Array.from({ length: config.correct }, (_, idx) => ({
-      answer: { selectedOption: 1 },
-      answeredAt: new Date(now.getTime() - idx * 60 * 1000),
-      dayOfWeek: now.getDay(),
-      durationSeconds: 15,
-      hourOfDay: config.hourOfDay,
-      isCorrect: true,
-      stepId,
-      userId,
-    })),
-    ...Array.from({ length: config.incorrect }, (_, idx) => ({
-      answer: { selectedOption: 0 },
-      answeredAt: new Date(now.getTime() - (config.correct + idx) * 60 * 1000),
-      dayOfWeek: now.getDay(),
-      durationSeconds: 15,
-      hourOfDay: config.hourOfDay,
-      isCorrect: false,
-      stepId,
-      userId,
-    })),
-  ]);
-
-  await prisma.stepAttempt.createMany({ data: attempts });
+  await prisma.learningEvent.createMany({
+    data: [
+      ...DAY_PART_CONFIGS.map((config) => ({
+        correctAnswers: config.correct,
+        endedAt: now,
+        hour: config.hourOfDay,
+        incorrectAnswers: config.incorrect,
+        kind: "review" as const,
+        localDate: today,
+        startedAt,
+        userId,
+        weekday: today.getUTCDay(),
+      })),
+      {
+        endedAt: new Date(now.getTime() - 60 * 1000),
+        hour: now.getUTCHours(),
+        kind: "lesson" as const,
+        lessonKind: "explanation",
+        localDate: today,
+        seconds: COMPLETED_LESSON_DURATION_SECONDS,
+        startedAt,
+        userId,
+        weekday: today.getUTCDay(),
+      },
+    ],
+  });
 }
 
 /**
- * Seed the minimal progress graph data used by account-level e2e tests.
- * This creates one published course path, enough attempts for score and best-
- * time widgets, and a partially completed lesson so continue-learning UI has
- * a stable "next" target.
+ * Seed the progress data used by account-level e2e tests: Energy and Brain
+ * Power, daily totals for every chart period, and the ledger rows Patterns and
+ * Activity read, including one finished lesson today.
  */
 export async function createE2EProgressData(userId: string): Promise<void> {
-  const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, SHORT_UUID_LENGTH);
   const now = new Date();
-  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-progress-course-${uniqueId}`,
-    title: `E2E Progress Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    generationStatus: "completed",
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-progress-chapter-${uniqueId}`,
-    title: `E2E Progress Chapter ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    generationStatus: "completed",
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-progress-lesson-${uniqueId}`,
-    title: `E2E Progress Lesson ${uniqueId}`,
-  });
-
-  const [completedLesson, _nextLesson] = await Promise.all([
-    lessonFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "explanation",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 0,
-      title: `E2E Completed Lesson ${uniqueId}`,
-    }),
-    lessonFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 1,
-      title: `E2E Next Lesson ${uniqueId}`,
-    }),
-  ]);
-
-  const step = await stepFixture({
-    content: { text: "E2E step content", title: "E2E Step" },
-    isPublished: true,
-    kind: "multipleChoice",
-    lessonId: completedLesson.id,
-  });
+  const today = toUTCMidnight(now);
 
   await userProgressFixture({ currentEnergy: 75, totalBrainPower: 15_000n, userId });
-
   await dailyProgressFixtureMany(buildDailyProgressInputs(today, userId));
-  await createStepAttempts(step.id, userId, now);
-
-  await Promise.all([
-    prisma.lessonProgress.create({
-      data: {
-        completedAt: new Date(now.getTime() - 60 * 1000),
-        completedDate: today,
-        durationSeconds: COMPLETED_LESSON_DURATION_SECONDS,
-        lessonId: completedLesson.id,
-        startedAt: new Date(now.getTime() - COMPLETED_LESSON_START_OFFSET_SECONDS * 1000),
-        userId,
-      },
-    }),
-    prisma.courseUser.create({ data: { courseId: course.id, userId } }),
-    prisma.course.update({ data: { userCount: { increment: 1 } }, where: { id: course.id } }),
-  ]);
+  await createLearningEvents({ now, today, userId });
 }

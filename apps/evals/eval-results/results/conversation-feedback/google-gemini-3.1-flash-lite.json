@@ -1,0 +1,333 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "The selected learner quote is genuine and addresses an important mistake, but the proposed correction has incorrect agreement with “water and electricity.” This triggers the wrong-correction cap of 5. The explanation also fails to address the missing subject or the relevant Portuguese comparison.",
+          "score": 5,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Both praised phrases are correct, were spoken by the learner, and helped achieve the call's objectives. No pronunciation mistake is claimed. However, “electricity” was never spoken by the learner, violating the task-specific pronunciation requirement. The /v/ articulation advice also risks implying that /f/ uses a different mouth position.",
+          "score": 6,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanatory fields are in natural Brazilian Portuguese, and the quoted phrases and correction are in English, so no wrong-language cap applies. However, “particípio” and “perguntas passivas” make the explanation unnecessarily technical for A2.",
+          "score": 8,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The feedback is short, direct, and respectful. The encouragement addresses the learner as “você,” accurately recognizes the successful booking, and contains no scores, level labels, promises, guilt, excessive praise, or references to the transcript or app.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "6 of 7 parts passed. Pronunciation word \"electricity\" isn't in the learner's turns.",
+          "score": 8.714285714285714,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2078,
+          "inputTokens": 2081,
+          "outputTokens": 887,
+          "reasoningTokens": 293
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The correction introduces a subject–verb agreement error: “Is the water and electricity included?” requires “Are.” A simpler, more useful correction is “Does it include water and electricity?” Also, “electricity” was not said by the learner, so it is not an eligible pronunciation word.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The explanation uses technical passive-voice terminology for an A2 learner and misses the useful comparison with Portuguese subject omission. The /v/ tip should clarify that both /v/ and /f/ use the lower lip and upper teeth; voicing distinguishes them.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a short explanation of “Does it include...?” and explicitly connect the required subject “it” to Portuguese, where subjects can be omitted. Replace “electricity” with a word the learner actually used, such as “rent,” and frame pronunciation practice as a common challenge for Brazilians rather than leaving its relevance implicit.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A2 Brazilian learner who reached two objectives with typical mistakes: dropping the subject (\"Is available?\", \"Is include the water\"), \"in Saturday\" for \"on Saturday\" and \"in the internet\". The fix should be one of these, most usefully the missing subject or \"Does it include...\", with a \"why\" that mentions Portuguese dropping the subject when relevant. \"Went well\" can quote \"How much is the rent?\" or \"Saturday at two is perfect\". Pronunciation words must be ones the learner said, like \"rent\" or \"Thank you\", presented as often hard for Brazilians. In Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-mistakes-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "objectivesMet": ["Ask about the rent", "Book a viewing"],
+          "scenario": {
+            "characterName": "Sarah",
+            "objectives": ["Ask about the rent", "Ask what's included", "Book a viewing"],
+            "situation": "Você viu um anúncio de apartamento na Queen Street e liga para a proprietária, Sarah, para perguntar o aluguel e marcar uma visita.",
+            "title": "Ligar para marcar uma visita"
+          },
+          "targetLanguage": "en",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hi, this is Sarah from Queen Street Apartments. How can I help?"
+            },
+            {
+              "speaker": "learner",
+              "text": "Hello, I see the apartment in the internet. Is available?"
+            },
+            {
+              "speaker": "character",
+              "text": "Yes, it's still available. It's a one-bedroom on the second floor."
+            },
+            { "speaker": "learner", "text": "How much is the rent?" },
+            { "speaker": "character", "text": "It's twelve hundred dollars a month." },
+            { "speaker": "learner", "text": "Is include the water and the light?" },
+            { "speaker": "character", "text": "Water is included, but electricity isn't." },
+            { "speaker": "learner", "text": "Ok. I can visit the apartment in Saturday?" },
+            {
+              "speaker": "character",
+              "text": "Saturday morning is taken, but I can do Saturday at 2 p.m."
+            },
+            {
+              "speaker": "learner",
+              "text": "Yes, Saturday at two is perfect. Thank you very much."
+            },
+            { "speaker": "character", "text": "Great, see you then!" }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "There is exactly one useful correction, grounded in the learner's actual words. “What is the monthly rent?” is correct, natural, appropriate for A2, and expresses the intended apartment-price question. The brief Portuguese explanation is accurate. The task explicitly allows teaching a complete price question instead of a clarification request.",
+          "score": 10,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The praise is short and both phrases were spoken, but “Yes” should be omitted when “Thank you” is available. The single pronunciation word was spoken by the learner and has a relevant final-consonant challenge for Brazilian Portuguese speakers. No pronunciation mistake is claimed, although “bem suave” is an imprecise articulation cue.",
+          "score": 8,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Explanations, the pronunciation tip, and encouragement are in natural Brazilian Portuguese. The correction and quoted practice phrases are in English, and the corrected question is accessible at A2.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The response is brief, direct, and kind, with no guilt, scores, promises, or prohibited references. However, saying the learner managed to follow the conversation is mildly inflated given the comprehension breakdown; encouragement about making the attempt would be better grounded.",
+          "score": 8,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1880,
+          "inputTokens": 1883,
+          "outputTokens": 793,
+          "reasoningTokens": 275
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Praising “Yes” is unnecessary when the more useful “Thank you” is available and the learner barely spoke. The encouragement also slightly overstates success by saying the learner followed the conversation despite explicitly not understanding the rent and ending the call shortly afterward.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the pronunciation tip more actionable: explain that “price” ends in an /s/-like sound without an added vowel, rather than asking for a “bem suave” sound. Keep the encouragement focused on trying to ask about the apartment.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The learner barely spoke English and switched to Portuguese once. \"Went well\" may be empty or hold only a real short phrase; nothing should be over-praised. The fix should still be useful, for example how to say \"Desculpa, não entendi\" in English (\"Sorry, I didn't understand. Could you repeat that?\") or how to ask the price as a sentence. At most one or two pronunciation words, only ones the learner said. The encouragement is kind about trying, with no guilt. In Brazilian Portuguese.",
+        "id": "pt-en-a2-barely-spoke-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "objectivesMet": [],
+          "scenario": {
+            "characterName": "Sarah",
+            "objectives": ["Ask about the rent", "Ask what's included", "Book a viewing"],
+            "situation": "Você viu um anúncio de apartamento na Queen Street e liga para a proprietária, Sarah, para perguntar o aluguel e marcar uma visita.",
+            "title": "Ligar para marcar uma visita"
+          },
+          "targetLanguage": "en",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hi, this is Sarah from Queen Street Apartments. How can I help?"
+            },
+            { "speaker": "learner", "text": "Hello." },
+            { "speaker": "character", "text": "Hi there! Are you calling about the apartment?" },
+            { "speaker": "learner", "text": "Yes... apartment... price?" },
+            {
+              "speaker": "character",
+              "text": "Sure, it's twelve hundred dollars a month. Would you like to see it?"
+            },
+            { "speaker": "learner", "text": "Desculpa, não entendi." },
+            {
+              "speaker": "character",
+              "text": "No problem. Twelve hundred dollars. Do you want to visit?"
+            },
+            { "speaker": "learner", "text": "Yes. Thank you. Bye." }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fix",
+          "reasoning": "There is exactly one fix, using the learner's actual words and correcting the most important grammatical slip without changing the meaning. The explanation gives the relevant subject–verb order, but does not make the explicitly requested comparison with Portuguese 'quanto custa a consulta'. Neither correction-related cap is triggered.",
+          "score": 8,
+          "label": "One clear, useful fix",
+          "weight": 35
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Both praised phrases were actually said, are correct, and contributed meaningfully to the call. The pronunciation words are reasonable choices for a Portuguese speaker, and no pronunciation mistake is claimed. However, 'THÂR-zdei' is not fully readable through Portuguese spelling conventions, and the articulation guidance for 'cough' should identify the lower lip specifically. Neither honesty cap is triggered.",
+          "score": 8,
+          "label": "Honest praise and pronunciation",
+          "weight": 25
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The explanation, pronunciation tips, and encouragement are in natural Brazilian Portuguese; the correction and quoted phrases remain in English. The feedback is appropriate for this B2 performance, and no field is in the wrong language.",
+          "score": 10,
+          "label": "Right language and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "tone",
+          "reasoning": "The response is warm, direct, and brief. Its single encouragement sentence addresses the learner as 'você' and accurately recognizes successful symptom explanation and rescheduling, without scores, level labels, promises, excessive praise, or references to transcripts, models, or the app.",
+          "score": 10,
+          "label": "Kind and safe",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2061,
+          "inputTokens": 2064,
+          "outputTokens": 797,
+          "reasoningTokens": 255
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The correction targets the right mistake, but its explanation omits the requested comparison with Portuguese: 'quanto custa a consulta' versus the English indirect-question order 'how much the consultation costs'. Also, 'THÂR-zdei' retains an English 'TH' rather than providing a fully Portuguese-readable pronunciation cue.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Quoting 'I've had it for about two weeks now' would better recognize the learner's successful symptom explanation. For 'cough', specify that the lower lip lightly touches the upper teeth to produce the final /f/ sound.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A strong B2 call where every objective was met. \"Went well\" should quote strong phrases like \"something came up at work and I was wondering if I could move it to Friday\" or \"I've had it for about two weeks now\". The fix should be the one real slip, the word order in \"how much costs the consultation\" (\"how much the consultation costs\"), explained from Portuguese (\"quanto custa a consulta\"). Pronunciation words are optional. In Brazilian Portuguese.",
+        "id": "pt-en-b2-strong-call-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "level": "B2",
+          "objectivesMet": [
+            "Reschedule the appointment",
+            "Explain your symptoms",
+            "Ask about the cost"
+          ],
+          "scenario": {
+            "characterName": "Linda",
+            "objectives": [
+              "Reschedule the appointment",
+              "Explain your symptoms",
+              "Ask about the cost"
+            ],
+            "situation": "Você tem uma consulta na quinta, mas surgiu um compromisso. Ligue para a recepcionista, Linda, para remarcar e avisar como está.",
+            "title": "Remarcar uma consulta"
+          },
+          "targetLanguage": "en",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Good morning, Riverside Clinic, this is Linda speaking. How can I help you?"
+            },
+            {
+              "speaker": "learner",
+              "text": "Hi Linda, I have an appointment with Doctor Patel on Thursday at ten, but something came up at work and I was wondering if I could move it to Friday."
+            },
+            {
+              "speaker": "character",
+              "text": "Let me check. Friday we have 11:30 or 3 p.m. Which works better?"
+            },
+            {
+              "speaker": "learner",
+              "text": "Eleven thirty would be ideal, thanks. Also, I should mention that the cough has gotten worse. I've had it for about two weeks now."
+            },
+            {
+              "speaker": "character",
+              "text": "Thanks for letting me know, I'll add that to your file. Anything else?"
+            },
+            {
+              "speaker": "learner",
+              "text": "Yes, actually. Could you tell me how much costs the consultation if my insurance doesn't cover it?"
+            },
+            {
+              "speaker": "character",
+              "text": "Without insurance it's one hundred and fifty dollars."
+            },
+            {
+              "speaker": "learner",
+              "text": "Okay, that's fine. I'll bring my insurance card anyway, just in case. Thanks so much for your help."
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-feedback"
+}

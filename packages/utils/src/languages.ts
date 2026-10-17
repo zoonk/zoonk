@@ -1,5 +1,5 @@
 /**
- * ISO 639-1 codes for languages supported by Gemini TTS (gemini-2.5-flash-preview-tts).
+ * ISO 639-1 codes for languages supported by Gemini TTS (gemini-3.8-flash-tts and its Lite model).
  * Source: https://ai.google.dev/gemini-api/docs/speech-generation
  *
  * Some Gemini codes differ from ISO 639-1 (e.g., `cmn` for Mandarin, `fil` for Filipino,
@@ -80,10 +80,8 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "zh",
 ] as const;
 
-export type TTSSupportedLanguageCode = (typeof TTS_SUPPORTED_LANGUAGE_CODES)[number];
-
 /**
- * ISO 639-1 codes supported by OpenAI TTS. OpenAI documents its TTS language
+ * ISO 639-1 codes OpenAI's voices speak. OpenAI documents its speech language
  * support as following Whisper, while Gemini covers the broader course list.
  * Source: https://developers.openai.com/api/docs/guides/text-to-speech#supported-languages
  */
@@ -162,6 +160,42 @@ export function isOpenAITTSSupportedLanguage(
   return typeof code === "string" && OPENAI_TTS_SUPPORTED_LANGUAGE_SET.has(code);
 }
 
+/**
+ * The locale MAI-Voice speaks each of its 23 languages in, by ISO 639-1 code (Microsoft Learn,
+ * "MAI-Voice-2.1 and MAI-Voice-2.1-Flash", checked 11 Oct 2026). Portuguese and Spanish are
+ * Brazilian and Mexican, the regions its every-language voice speaks.
+ */
+const MAI_VOICE_LOCALES: Readonly<Record<string, string>> = {
+  cs: "cs-CZ",
+  da: "da-DK",
+  de: "de-DE",
+  en: "en-US",
+  es: "es-MX",
+  fi: "fi-FI",
+  fr: "fr-FR",
+  hi: "hi-IN",
+  hu: "hu-HU",
+  id: "id-ID",
+  it: "it-IT",
+  ko: "ko-KR",
+  nl: "nl-NL",
+  no: "nb-NO",
+  pl: "pl-PL",
+  pt: "pt-BR",
+  ro: "ro-RO",
+  ru: "ru-RU",
+  sv: "sv-SE",
+  th: "th-TH",
+  tr: "tr-TR",
+  vi: "vi-VN",
+  zh: "zh-CN",
+};
+
+/** The locale MAI-Voice speaks a language in ("pt-BR" for "pt"), or null when it doesn't. */
+export function getMaiVoiceLocale(code: string): string | null {
+  return MAI_VOICE_LOCALES[code] ?? null;
+}
+
 const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);
 
 export function isTTSSupportedLanguage(
@@ -182,13 +216,11 @@ export function getLanguageName(params: { targetLanguage: string; userLanguage?:
 }
 
 /**
- * ISO 639-1 codes for languages whose primary writing system is non-Roman.
- * Used to decide whether romanized (Latin-script) versions of text
- * should be generated alongside the native script — for example,
- * showing "konnichiwa" next to "こんにちは" to help learners
- * who can't yet read the native script.
+ * ISO 639-1 codes for languages whose primary writing system isn't the Latin one. Learners have to
+ * learn the script before reading them, so their courses start with the alphabet and their text
+ * gets a romanized version ("konnichiwa" next to "こんにちは").
  */
-const NON_ROMAN_SCRIPT_LANGUAGES = new Set([
+const NON_LATIN_SCRIPT_LANGUAGES = new Set([
   "am",
   "ar",
   "be",
@@ -230,14 +262,28 @@ const NON_ROMAN_SCRIPT_LANGUAGES = new Set([
   "zh",
 ]);
 
+/** The language of a tag without its region: "pt" for "pt-BR" or "PT_br". */
+export function getBaseLanguage(language: string): string {
+  return language.toLowerCase().split(/[-_]/u)[0] ?? "";
+}
+
 /**
- * Returns true for languages whose primary writing system is non-Roman.
- * This is used to decide whether we need to generate a romanized
- * (Latin-script) transliteration of content so learners who can't
- * yet read the native script can still follow along phonetically.
+ * Whether the learner reads the app in the language they're learning, such as an IELTS candidate
+ * reading it in English: nothing can be translated, so a word's meaning is a definition.
  */
-export function needsRomanization(languageCode: string): boolean {
-  return NON_ROMAN_SCRIPT_LANGUAGES.has(languageCode);
+export function isSameLanguage({
+  learnerLanguage,
+  targetLanguage,
+}: {
+  learnerLanguage: string;
+  targetLanguage: string;
+}): boolean {
+  return getBaseLanguage(learnerLanguage) === getBaseLanguage(targetLanguage);
+}
+
+/** Whether a language (an ISO code like "ja" or "pt-BR") uses a script other than the Latin one. */
+export function usesNonLatinScript(language: string): boolean {
+  return NON_LATIN_SCRIPT_LANGUAGES.has(getBaseLanguage(language));
 }
 
 export const TTS_VOICES = [

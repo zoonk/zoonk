@@ -54,9 +54,8 @@ test.describe("API Documentation", () => {
 
     expect(spec.paths).toHaveProperty("/catalog/search");
     expect(spec.paths).toHaveProperty("/courses");
-    expect(spec.paths).toHaveProperty("/lessons/{lessonId}/content");
+    expect(spec.paths).toHaveProperty("/library/lessons/{lessonId}");
     expect(spec.paths).toHaveProperty("/me/progress");
-    expect(spec.paths).toHaveProperty("/generations");
     expect(spec.paths).toHaveProperty("/generations/{generationId}");
     expect(spec.paths).toHaveProperty("/generations/{generationId}/events");
     expect(spec.paths).toHaveProperty("/feedback");

@@ -68,7 +68,7 @@ export function WizardDescription({ className, ...props }: React.ComponentProps<
 export function WizardError({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-destructive min-h-5 text-sm", className)}
+      className={cn("text-destructive-text min-h-5 text-sm", className)}
       data-slot="wizard-error"
       {...props}
     />

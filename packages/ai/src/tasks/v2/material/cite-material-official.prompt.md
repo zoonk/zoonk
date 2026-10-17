@@ -1,0 +1,1 @@
+- An official document supports a screen only when it states the screen's fact (the article, number, date or rule), not when it merely lists the topic.

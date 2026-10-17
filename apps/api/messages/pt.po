@@ -51,6 +51,11 @@ msgid "Sign in or create an account"
 msgstr "Entre ou crie uma conta"
 
 #: src/app/auth/login/page.tsx
+msgctxt "o_pwJP"
+msgid "That sign-in expired. Try again."
+msgstr "Esse link de acesso expirou. Tente de novo."
+
+#: src/app/auth/login/page.tsx
 msgctxt "4wpUNc"
 msgid "Or"
 msgstr "Ou"
@@ -71,9 +76,64 @@ msgid "Continue with Apple"
 msgstr "Continuar com Apple"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "O código que você digitou está incorreto. Tente de novo ou fale com contato@zoonk.com"
+msgctxt "_8e0dn"
+msgid "Something went wrong. Try again in a moment."
+msgstr "Algo deu errado. Tente de novo daqui a pouco."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "__wP3o"
+msgid "This code expired. Get a new one."
+msgstr "Este código expirou. Peça outro."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "Muitas tentativas. Espere um minuto e tente de novo."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "P-D93T"
+msgid "Too many wrong tries with this code. Get a new one."
+msgstr "Você digitou o código errado muitas vezes. Peça outro."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "AFMAKd"
+msgid "That code isn't right. Check the email and try again."
+msgstr "Esse código está errado. Confira o email e tente de novo."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "U2LhAf"
+msgid "We sent a new code to {email}."
+msgstr "Enviamos um novo código para {email}."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "E05GNf"
+msgid "Wait a minute before asking for another code."
+msgstr "Espere um minuto antes de pedir outro código."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "bWxjFV"
+msgid "We couldn't send a new code. Try again."
+msgstr "Não foi possível enviar um novo código. Tente de novo."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "5UeJRL"
+msgid "Code from the email"
+msgstr "Código recebido por email"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "gdlGkp"
+msgid "Send a new code"
+msgstr "Enviar novo código"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "X1bhjS"
+msgid "Didn't get it?"
+msgstr "Não recebeu?"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "qs4xBq"
+msgid "Send again"
+msgstr "Enviar de novo"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
@@ -86,19 +146,24 @@ msgid "Check your email"
 msgstr "Confira seu email"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
-msgstr "Digite o código que a gente enviou para {email}:"
+msgctxt "AmelVC"
+msgid "Enter the code we sent to {email}."
+msgstr "Digite o código que enviamos para {email}."
 
 #: src/app/auth/setup/page.tsx
-msgctxt "CYqIel"
-msgid "Complete your profile"
-msgstr "Complete seu perfil"
+msgctxt "CjpGzJ"
+msgid "Create your profile"
+msgstr "Crie seu perfil"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "7463XU"
-msgid "Choose a name and username before continuing."
-msgstr "Escolha um nome e nome de usuário antes de continuar."
+msgctxt "SmuYUd"
+msgid "What should we call you?"
+msgstr "Como devemos chamar você?"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "y9wzAs"
+msgid "You can change it later in your profile."
+msgstr "Você pode mudar isso depois no seu perfil."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
@@ -118,7 +183,22 @@ msgstr "{username} já está em uso"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3 a 30 caracteres. Use apenas letras, números e sublinhados."
+msgstr "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9j8lDu"
+msgid "Your username: @{username}"
+msgstr "Seu nome de usuário: @{username}"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "UJWPJj"
+msgid "Change username"
+msgstr "Mudar nome de usuário"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "BY343C"
+msgid "Change"
+msgstr "Mudar"
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"
@@ -131,14 +211,9 @@ msgid "Username"
 msgstr "Nome de usuário"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "XLl_pd"
-msgid "your-username"
-msgstr "seu-nome-de-usuario"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "yCCLud"
-msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
-msgstr "Não foi possível configurar seu perfil. Tente de novo ou fale com contato@zoonk.com"
+msgctxt "bz5AYp"
+msgid "We couldn't save your profile. Try again."
+msgstr "Não foi possível salvar seu perfil. Tente de novo."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "1vqX2W"
@@ -151,16 +226,76 @@ msgid "The destination URL is not recognized as a trusted Zoonk application."
 msgstr "A URL de destino não é reconhecida como um aplicativo confiável do Zoonk."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "wkO19y"
-msgid "Security warning"
-msgstr "Aviso de segurança"
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "585u5Z"
-msgid "For your safety, we cannot redirect you to an unrecognized destination."
-msgstr "Para sua segurança, a gente não pode te redirecionar para um destino não reconhecido."
-
-#: src/app/auth/untrusted-origin/page.tsx
 msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
 msgstr "Continuar para o Zoonk"
+
+#: src/components/auth-frame.tsx
+msgctxt "m-X1D0"
+msgid "Back to Zoonk"
+msgstr "Voltar para o Zoonk"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "Sd1Qq1"
+msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."
+msgstr "Abaixo está um teste rápido sobre {chapter}: se você passar, vai pular as aulas que já conhece."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "OPj8y4"
+msgid "Below you can choose where to focus, or take a short test that chooses for you."
+msgstr "Abaixo, você pode escolher em que focar ou fazer um teste rápido que escolhe por você."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "ejo0Qg"
+msgid "Below you can start a short practice call whenever you're ready."
+msgstr "Abaixo, você pode começar uma conversa rápida para praticar quando quiser."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "c7OWI5"
+msgid "Below you can see when your plan practices {subject}."
+msgstr "Abaixo, você pode ver quando seu plano pratica {subject}."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "zPC6bz"
+msgid "Below is your week in review."
+msgstr "Abaixo está o resumo da sua semana."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "CinPvg"
+msgid "Below you can see and change what I remember about you."
+msgstr "Abaixo, você pode ver e mudar o que eu lembro sobre você."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "u6lEYv"
+msgid "Below is your mistakes notebook, with practice for each one."
+msgstr "Abaixo está seu Caderno de erros, com exercícios para cada erro."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "qmjNYT"
+msgid "Below you can choose a mock exam to take now."
+msgstr "Abaixo, você pode escolher um simulado para fazer agora."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "aK1CcD"
+msgid "Below is the Plus page."
+msgstr "Abaixo está a página do Plus."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "KAqcUe"
+msgid "Below you can say again the words that were hard to pronounce."
+msgstr "Abaixo, você pode repetir as palavras que foram difíceis de pronunciar."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "BXdAAo"
+msgid "I've put the change to your plan below. Nothing changes until you apply it."
+msgstr "Abaixo está a mudança no seu plano. Nada muda até você aplicar."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "cVQNWB"
+msgid "Below you can start it as a new goal."
+msgstr "Abaixo, você pode começar isso como uma nova meta."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "40I13C"
+msgid "Below are your statistics."
+msgstr "Abaixo estão suas estatísticas."

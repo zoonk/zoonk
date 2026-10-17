@@ -13,12 +13,7 @@ import {
 import { type VerifiedAppleSubscription } from "./apple-store-payload";
 import { processAppleSubscriptionNotification } from "./process-apple-subscription-notification";
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
-import {
-  AppleSubscriptionError,
-  syncCurrentUserAppleSubscription,
-} from "./sync-apple-subscription";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+import { syncCurrentUserAppleSubscription } from "./sync-apple-subscription";
 
 vi.mock("./apple-store", () => ({
   getAppleSubscriptionFromNotification: vi.fn(),
@@ -286,7 +281,7 @@ describe(processAppleSubscriptionNotification, () => {
 
     await expect(
       reconcileAppleSubscription({ product, referenceId: user.id, verifiedSubscription }),
-    ).rejects.toMatchObject({ code: "P2003" });
+    ).rejects.toThrow("Cannot mark a missing learner changed");
 
     await expect(
       prisma.subscription.count({
@@ -390,14 +385,5 @@ describe(processAppleSubscriptionNotification, () => {
     await expect(
       processAppleSubscriptionNotification({ signedPayload: "test-notification" }),
     ).resolves.toBeNull();
-  });
-});
-
-describe(AppleSubscriptionError, () => {
-  it("preserves a stable reason for API error mapping", () => {
-    expect(new AppleSubscriptionError("invalidTransaction")).toMatchObject({
-      name: "AppleSubscriptionError",
-      reason: "invalidTransaction",
-    });
   });
 });

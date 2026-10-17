@@ -1,0 +1,182 @@
+import "server-only";
+import { type Goal, type TransactionClient } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readBlockPayload } from "../block-payload";
+import { ensureStudySession } from "../ensure-study-session";
+import { type ExtraTimeReason, getExtraTime } from "../extra-time";
+import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
+import {
+  appendExtraBlock,
+  buildExtraLesson,
+  buildExtraPractice,
+  withSessionAppendLock,
+} from "./extra-blocks";
+import { type StudyBlockView, toStudyBlockView } from "./session-view";
+import { type StudySessionRow } from "./study-session-access";
+
+export type TargetedPracticeResult =
+  | { block: StudyBlockView; sessionId: string; status: "ready" }
+  | { status: "nothingToPractice" }
+  | { reason: ExtraTimeReason; status: "unavailable" };
+
+/**
+ * What a bonus block practices: a chapter's area (`areaId`), or the goal's fading and due skills
+ * for Content's "Review" (`refresh`, no area). Either names the block, so a second tap finds the
+ * same unfinished block; a refresh first opens a block of today's session that already asks about
+ * these skills (today's reviews of them), before adding anything. When nothing is left to
+ * practice, `planItemIds` are where its next lesson comes from (none: practice only).
+ */
+export type PracticeTarget = {
+  planItemIds: string[] | null;
+  skillIds: string[];
+  title: string | null;
+} & ({ areaId: string; refresh: false } | { areaId: null; refresh: true });
+
+function isUnfinished(block: StudySessionRow["blocks"][number]) {
+  return block.status === "pending" || block.status === "active";
+}
+
+/** An unfinished block of today's session that asks about any of these skills. */
+function findCoveringBlock({
+  session,
+  skillIds,
+}: {
+  session: StudySessionRow;
+  skillIds: string[];
+}) {
+  const wanted = new Set(skillIds);
+
+  return session.blocks.find((block) => {
+    const { capsules, skillIds: practiced } = readBlockPayload(block);
+    const blockSkills = [...practiced, ...capsules.flatMap((capsule) => capsule.skillIds)];
+
+    return isUnfinished(block) && blockSkills.some((skillId) => wanted.has(skillId));
+  });
+}
+
+/** A second tap opens the target's unfinished block instead of adding another. */
+function findUnfinishedBlock({
+  session,
+  target,
+}: {
+  session: StudySessionRow;
+  target: PracticeTarget;
+}) {
+  return session.blocks.find((block) => {
+    const payload = readBlockPayload(block);
+
+    return (
+      isUnfinished(block) &&
+      payload.extra &&
+      payload.areaId === target.areaId &&
+      payload.refresh === target.refresh
+    );
+  });
+}
+
+async function addToLockedSession({
+  remainingLimitMinutes,
+  session,
+  target,
+  transaction,
+  userId,
+}: {
+  remainingLimitMinutes: number | null;
+  session: StudySessionRow;
+  target: PracticeTarget;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<TargetedPracticeResult> {
+  const reused =
+    findUnfinishedBlock({ session, target }) ??
+    (target.refresh ? findCoveringBlock({ session, skillIds: target.skillIds }) : undefined);
+
+  if (reused) {
+    return {
+      block: toStudyBlockView({ answeredItemIds: new Set(), block: reused }),
+      sessionId: session.id,
+      status: "ready",
+    };
+  }
+
+  const extraTime = getExtraTime({
+    anytime: true,
+    blocks: session.blocks.map((block) => ({
+      extra: readBlockPayload(block).extra,
+      status: block.status,
+    })),
+    remainingLimitMinutes,
+  });
+
+  if (!extraTime.available) {
+    return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
+  }
+
+  const { areaId, planItemIds, refresh, skillIds, title } = target;
+
+  // Practice first; with nothing studied (or asked already today), the target's next lesson.
+  const planned =
+    (await buildExtraPractice({
+      areaId,
+      minutes: extraTime.minutes,
+      refresh,
+      session,
+      skillIds,
+      title,
+      userId,
+    })) ?? (planItemIds ? await buildExtraLesson({ areaId, planItemIds, session, userId }) : null);
+
+  if (!planned) {
+    return { status: "nothingToPractice" };
+  }
+
+  return {
+    block: await appendExtraBlock({ planned, session, transaction }),
+    sessionId: session.id,
+    status: "ready",
+  };
+}
+
+/**
+ * Adds a bonus block of practice on some of a goal's skills to today's session (a chapter's
+ * "Practice now", Content's "Review" of fading and due skills). It can start before the day's
+ * session is done, but it counts as extra time like "10 more minutes": at most two bonus blocks a
+ * day, never past the learner's daily limit, and its Brain Power is capped. Two taps at once see each
+ * other's block.
+ */
+export async function addTargetedPracticeBlock({
+  goal,
+  target,
+  timeZone: requestTimeZone,
+  userId,
+}: {
+  goal: Goal;
+  target: PracticeTarget;
+  timeZone?: string;
+  userId: string;
+}): Promise<TargetedPracticeResult> {
+  const timeZone = getAnswerTimeZone({ goal, timeZone: requestTimeZone });
+
+  const [session, limit] = await Promise.all([
+    ensureStudySession({
+      goal,
+      localDate: getDateInTimeZone({ date: new Date(), timeZone }),
+      timeZone,
+      userId,
+    }),
+    getDailyTimeLimitStatus(),
+  ]);
+
+  return withSessionAppendLock({
+    run: ({ session: locked, transaction }) =>
+      addToLockedSession({
+        remainingLimitMinutes: limit?.remainingMinutes ?? null,
+        session: locked,
+        target,
+        transaction,
+        userId,
+      }),
+    session,
+  });
+}

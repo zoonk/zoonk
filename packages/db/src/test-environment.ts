@@ -12,8 +12,7 @@ function readEnvironment(path: string): Record<string, string> {
 
 /**
  * Keeps Prisma, Vitest, Playwright, and E2E builds on the same database, even when the shell has a development URL.
- * This package entrypoint is for test tooling and is intentionally absent from production app bundles.
- * @public
+ * Test tooling only: test configs import it by path, so it's absent from production app bundles.
  */
 export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string> {
   const directory = resolve(import.meta.dirname, "..");
@@ -39,4 +38,42 @@ export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string>
   }
 
   return { ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) };
+}
+
+/** Marks a test run's own copy of the test database; the id of the process that made it follows. */
+export const TEST_RUN_DATABASE_MARKER = "_run_";
+
+/** Postgres cuts longer names short. */
+const MAX_DATABASE_NAME_LENGTH = 63;
+
+function toRunDatabaseUrl(url: string): string {
+  const run = new URL(url);
+  const name = `${decodeURIComponent(run.pathname.slice(1))}${TEST_RUN_DATABASE_MARKER}${process.pid}`;
+
+  if (name.length > MAX_DATABASE_NAME_LENGTH) {
+    throw new Error(`The test run's database name ${name} is longer than Postgres allows.`);
+  }
+
+  run.pathname = `/${encodeURIComponent(name)}`;
+  return run.toString();
+}
+
+/**
+ * The test environment pointing at this run's own copy of the test database, for a Vitest config's
+ * `test.env`. The `test-database.ts` global setup creates that copy and drops it after the
+ * run; the copy is named after the process, which runs both the config and its global setup.
+ */
+export function getTestRunEnvironment(): Record<string, string> {
+  const environment = getTestEnvironment("test");
+  const { DATABASE_URL: pooled, DATABASE_URL_UNPOOLED: unpooled } = environment;
+
+  if (!pooled || !unpooled) {
+    throw new Error("The test environment has no DATABASE_URL and DATABASE_URL_UNPOOLED.");
+  }
+
+  return {
+    ...environment,
+    DATABASE_URL: toRunDatabaseUrl(pooled),
+    DATABASE_URL_UNPOOLED: toRunDatabaseUrl(unpooled),
+  };
 }

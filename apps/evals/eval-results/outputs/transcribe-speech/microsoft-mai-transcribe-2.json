@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-10-11T17:41:28.206Z",
+  "modelId": "microsoft/mai-transcribe-2",
+  "outputs": [
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1076.739041,
+      "output": "{\n  \"text\": \"How much is the rent?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-rent-correct-1",
+      "userPrompt": "Clip of \"How much is the rent?\" (expected \"How much is the rent?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 4563.336833,
+      "output": "{\n  \"text\": \"How much is the hint?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-rent-hent-1",
+      "userPrompt": "Clip of \"How much is the hent?\" (expected \"How much is the rent?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 11251.846333,
+      "output": "{\n  \"text\": \"I live here since 2020.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-lived-live-1",
+      "userPrompt": "Clip of \"I live here since 2020.\" (expected \"I've lived here since 2020.\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 10199.721916999999,
+      "output": "{\n  \"text\": \"Is the apartment still available?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-available-correct-1",
+      "userPrompt": "Clip of \"Is the apartment still available?\" (expected \"Is the apartment still available?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 529.1527920000001,
+      "output": "{\n  \"text\": \"Can I see apartment on Saturday?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-missing-the-1",
+      "userPrompt": "Clip of \"Can I see apartment on Saturday?\" (expected \"Can I see the apartment on Saturday?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1792.7347919999997,
+      "output": "{\n  \"text\": \"The sheep is very big.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-ship-sheep-1",
+      "userPrompt": "Clip of \"The sheep is very big\" (expected \"The ship is very big\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 3644.9321670000004,
+      "output": "{\n  \"text\": \"I think it's cheap.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "en-think-sink-1",
+      "userPrompt": "Clip of \"I sink it's cheap\" (expected \"I think it's cheap\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1051.1180829999994,
+      "output": "{\n  \"text\": \"O apartamento ainda está disponível?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-disponivel-correct-1",
+      "userPrompt": "Clip of \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 6394.935749999999,
+      "output": "{\n  \"text\": \"o apartamento ainda estar disponível?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-estar-1",
+      "userPrompt": "Clip of \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 13093.626666,
+      "output": "{\n  \"text\": \"Eu quero mais café.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "pt-mais-mas-1",
+      "userPrompt": "Clip of \"Eu quero mas café\" (expected \"Eu quero mais café\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 20648.104333,
+      "output": "{\n  \"text\": \"¿Cuánto cuesta el alquiler?\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-alquiler-correct-1",
+      "userPrompt": "Clip of \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 917.8013329999994,
+      "output": "{\n  \"text\": \"Tengo un pero.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-perro-pero-1",
+      "userPrompt": "Clip of \"Tengo un pero\" (expected \"Tengo un perro\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 6806.159042000001,
+      "output": "{\n  \"text\": \"Quiero ver piso mañana.\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "es-missing-el-1",
+      "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    }
+  ],
+  "taskId": "transcribe-speech"
+}

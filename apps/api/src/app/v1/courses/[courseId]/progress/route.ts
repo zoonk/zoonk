@@ -2,11 +2,11 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
-import { getCourseProgressResource } from "@zoonk/core/progress/get-course";
+import { getCatalogCourseProgress } from "@zoonk/core/catalog/progress";
 import { NextResponse } from "next/server";
 
 /**
- * Returns progress for a validated course resource.
+ * Returns the learner's progress in a validated course.
  */
 async function getCourseProgress(
   _request: Request,
@@ -18,7 +18,7 @@ async function getCourseProgress(
     return errors.validation(parsed.error);
   }
 
-  const progress = await getCourseProgressResource({ courseId: parsed.data.courseId });
+  const progress = await getCatalogCourseProgress({ courseId: parsed.data.courseId });
 
   if (!progress) {
     return errors.notFound();

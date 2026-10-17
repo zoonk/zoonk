@@ -1,6 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { formatLabel } from "@zoonk/utils/chart";
+import {
+  type ProgressHistoryOptions,
+  dailyProgressInWindow,
+  readLifetimeDailyProgress,
+} from "./_utils/daily-progress-rows";
 import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { type ScoreDateRange, getScoreDateRange } from "./score-date-range";
@@ -93,7 +98,9 @@ async function findScoreHistoryRows({
  * UI callers can add localized labels while API callers preserve date-only
  * values without generating or discarding presentation text.
  */
-async function getCurrentUserScoreHistoryResource(): Promise<CurrentUserScoreHistoryResource> {
+async function getCurrentUserScoreHistoryResource({
+  history,
+}: ProgressHistoryOptions = {}): Promise<CurrentUserScoreHistoryResource> {
   "use cache: private";
 
   const [session, dateContext] = await Promise.all([
@@ -110,8 +117,15 @@ async function getCurrentUserScoreHistoryResource(): Promise<CurrentUserScoreHis
     timeZone: dateContext.timeZone,
   });
 
-  const rows = await findScoreHistoryRows({ ...dateRange.dailyProgress, userId: session.user.id });
-  const score = buildScoreHistory({ ...dateRange.dailyProgress, rows });
+  const rows =
+    history === "lifetime"
+      ? dailyProgressInWindow({
+          ...dateRange,
+          rows: await readLifetimeDailyProgress(session.user.id),
+        })
+      : await findScoreHistoryRows({ ...dateRange, userId: session.user.id });
+
+  const score = buildScoreHistory({ ...dateRange, rows });
 
   return { isAuthenticated: true, score };
 }
@@ -141,12 +155,13 @@ function localizeScoreHistory({
  */
 export async function getScoreHistory({
   locale,
-}: {
-  locale: string;
-}): Promise<ScoreHistoryData | null> {
+  history,
+}: ProgressHistoryOptions & { locale: string }): Promise<ScoreHistoryData | null> {
   "use cache: private";
 
-  const resource = await getCurrentUserScoreHistoryResource();
+  const resource = history
+    ? await getCurrentUserScoreHistoryResource({ history })
+    : await getCurrentUserScoreHistoryResource();
 
   if (!resource.isAuthenticated || !resource.score) {
     return null;

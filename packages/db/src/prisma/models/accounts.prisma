@@ -1,40 +1,74 @@
 // Better Auth models for Prisma
 
 model User {
-  id                 String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  name               String
-  email              String
-  emailVerified      Boolean                @default(false) @map("email_verified")
-  image              String?
-  createdAt          DateTime               @default(now()) @map("created_at")
-  updatedAt          DateTime               @updatedAt @map("updated_at")
-  role               String?
-  banned             Boolean?               @default(false)
-  banReason          String?                @map("ban_reason")
-  banExpires         DateTime?              @map("ban_expires")
-  analyticsDisabled  Boolean                @default(false) @map("analytics_disabled")
-  stripeCustomerId   String?                @map("stripe_customer_id")
-  username           String?
-  displayUsername    String?                @map("display_username")
-  sessions           Session[]
-  accounts           Account[]
-  members            Member[]
-  invitations        Invitation[]
-  courses            CourseUser[]
-  ownedCourses       Course[]
-  learningProfile    UserLearningProfile?
-  lessonProgress     LessonProgress[]
-  chapterCompletions ChapterCompletion[]
-  courseCompletions  CourseCompletion[]
-  stepAttempts       StepAttempt[]
-  progress           UserProgress?
-  dailyProgress      DailyProgress[]
-  subscriptions      Subscription[]
-  questionThreads    LessonQuestionThread[]
+  id                    String                    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name                  String
+  email                 String
+  emailVerified         Boolean                   @default(false) @map("email_verified")
+  image                 String?
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+  role                  String?
+  banned                Boolean?                  @default(false)
+  banReason             String?                   @map("ban_reason")
+  banExpires            DateTime?                 @map("ban_expires")
+  analyticsDisabled     Boolean                   @default(false) @map("analytics_disabled")
+  stripeCustomerId      String?                   @map("stripe_customer_id")
+  /// Guests are anonymous Better Auth users. Their progress moves to the account they sign up with,
+  /// and guests with no activity for 30 days are deleted.
+  isAnonymous           Boolean                   @default(false) @map("is_anonymous")
+  learnerRevision       BigInt                    @default(0) @map("learner_revision")
+  username              String?
+  displayUsername       String?                   @map("display_username")
+  sessions              Session[]
+  accounts              Account[]
+  members               Member[]
+  invitations           Invitation[]
+  ownedCourses          Course[]
+  learningProfile       UserLearningProfile?
+  progress              UserProgress?
+  dailyProgress         DailyProgress[]
+  subscriptions         Subscription[]
+  questionThreads       LessonQuestionThread[]
+  ownedChapters         Chapter[]
+  ownedLessons          Lesson[]
+  ownedSources          Source[]
+  ownedSkills           Skill[]
+  ownedMediaAssets      MediaAsset[]
+  ownedExamBlueprints   ExamBlueprint[]
+  learnerSources        LearnerSource[]
+  goals                 Goal[]
+  learnerSkills         LearnerSkill[]
+  attempts              Attempt[]
+  mistakes              Mistake[]
+  studySessions         StudySession[]
+  memoryFacts           MemoryFact[]
+  memoryInsights        MemoryInsight[]
+  evaluationRuns        EvaluationRun[]
+  aiCalls               AiCall[]
+  pronunciationReviews  PronunciationReview[]
+  milestones            Milestone[]
+  stepExampleLines      StepExampleLine[]
+  contentFeedback       ContentFeedback[]
+  feedback              Feedback[]
+  learningEvents        LearningEvent[]
+  usageRecords          UsageRecord[]
+  instrumentWaitlist    InstrumentWaitlistEntry[]
+  mockExams             MockExam[]
+  examResults           ExamResult[]
+  essayGradeClaims      EssayGradeClaim[]
+  languageSkillLevels   LanguageSkillLevel[]
+  learnerWords          LearnerWord[]
+  languageConversations LanguageConversation[]
+  mistakePatterns       MistakePattern[]
+  suggestedGoals        SuggestedGoal[]
+  onboardingDrafts      OnboardingDraft[]
+  goalUnderstandings    GoalUnderstanding[]
 
   @@unique([email])
   @@unique([username])
   @@unique([displayUsername])
+  @@index([isAnonymous, createdAt])
   @@map("users")
 }
 
@@ -100,8 +134,6 @@ model Organization {
   members          Member[]
   invitations      Invitation[]
   courses          Course[]
-  chapters         Chapter[]
-  lessons          Lesson[]
   stripeCustomerId String?      @map("stripe_customer_id")
   words            Word[]
   sentences        Sentence[]
@@ -190,4 +222,18 @@ model RateLimit {
   lastRequest BigInt @map("last_request")
 
   @@map("rate_limits")
+}
+
+/// One account a learner deleted, kept so its analytics can be removed from PostHog by hand. `userId`
+/// is the deleted account's id, which is its PostHog distinct id; it's a plain id since the user row is
+/// gone, and nothing else about the person is kept. `analyticsRemovedAt` is null until an admin
+/// removes that person in PostHog and marks it done.
+model AccountDeletion {
+  id                 String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  deletedAt          DateTime  @default(now()) @map("deleted_at")
+  analyticsRemovedAt DateTime? @map("analytics_removed_at")
+
+  @@index([analyticsRemovedAt, deletedAt])
+  @@map("account_deletions")
 }

@@ -1,10 +1,9 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { toGenerationResource } from "@/lib/generation-resource";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { readClientRunStatus } from "@/workflows/v2/_shared/run-activity";
 import { NextResponse } from "next/server";
-import { getRun } from "workflow/api";
 
 /**
  * Returns the current status of a durable generation so clients can recover
@@ -23,13 +22,15 @@ async function getGeneration(
     return errors.validation(path.error);
   }
 
-  const run = getRun(path.data.generationId);
+  const status = await readClientRunStatus(path.data.generationId);
 
-  if (!(await run.exists)) {
+  if (!status) {
     return errors.notFound("Generation not found");
   }
 
-  return NextResponse.json(await toGenerationResource(run));
+  // Only the run id and status: clients never see Workflow's own run shape. A run that stalled
+  // reads as failed, so the client offers to start it again (see `readClientRunStatus`).
+  return NextResponse.json({ id: path.data.generationId, status });
 }
 
 export const GET = withApiErrorBoundary(getGeneration);

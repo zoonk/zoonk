@@ -1,9 +1,11 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
+import { findAvailableUsername } from "@zoonk/auth/available-username";
 import { normalizeUsername } from "@zoonk/auth/username-rules";
 import { type User, prisma } from "@zoonk/db";
-import { cacheTag, revalidateTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { headers } from "next/headers";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getSession } from "./get-session";
 
@@ -80,10 +82,11 @@ function getSessionUserUpdate({
   currentUser: CurrentUser;
   input: CurrentUserUpdate;
 }): CurrentUserUpdate {
+  const username = input.username === undefined ? undefined : normalizeUsername(input.username);
+
   return {
     ...(input.name !== undefined && input.name !== currentUser.name && { name: input.name }),
-    ...(input.username !== undefined &&
-      input.username !== currentUser.username && { username: input.username }),
+    ...(username !== undefined && username !== currentUser.username && { username }),
   };
 }
 
@@ -126,7 +129,7 @@ export async function updateCurrentUser({ input }: { input: CurrentUserUpdate })
     return null;
   }
 
-  revalidateTag(getUserSessionCacheTag(user.id), { expire: 0 });
+  revalidateCacheTags([getUserSessionCacheTag(user.id)]);
 
   return user;
 }
@@ -143,4 +146,25 @@ export async function getUsernameAvailability(username: string) {
   const result = await auth.api.isUsernameAvailable({ body: { username: normalizedUsername } });
 
   return { isAvailable: result.available, username: normalizedUsername };
+}
+
+/**
+ * The username a new account's setup starts from: the one it has, or a free one made from its
+ * email, so the learner only types one when they want another. Null without a session, or when
+ * every username made from the email is taken.
+ */
+export async function suggestCurrentUsername(): Promise<string | null> {
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  const currentUser = await findCurrentUser(session.user.id);
+
+  if (!currentUser) {
+    return null;
+  }
+
+  return currentUser.username ?? findAvailableUsername(currentUser.email);
 }

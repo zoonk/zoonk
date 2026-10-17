@@ -1,3 +1,4 @@
+import { DetailField } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import {
   type UserLearningKindStat,
@@ -14,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import { DetailField } from "./detail-field";
 
 const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
   maximumFractionDigits: 1,

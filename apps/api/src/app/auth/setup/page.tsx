@@ -1,46 +1,58 @@
+import { AuthFrame } from "@/components/auth-frame";
 import { Setup, SetupDescription, SetupHeader, SetupTitle } from "@/components/setup";
+import { suggestCurrentUsername } from "@zoonk/core/users/current";
 import { getSession } from "@zoonk/core/users/session";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import { connection } from "next/server";
+import { getCallbackHref, getLoginHref, readRedirectTo } from "../_utils/auth-redirect";
+import { getReturnAppUrl } from "../_utils/return-app";
 import { SetupProfileForm } from "./setup-form";
 
-async function SetupView({ searchParams }: PageProps<"/auth/setup">) {
-  const { redirectTo } = await searchParams;
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
+  return { title: t("Create your profile") };
+}
+
+/**
+ * A new account's one question, its name, with a username made from the email already picked and
+ * shown under it to change in place. Accounts Google or Apple named on the web get their username
+ * as they're created and never see this screen; an account with a name but no username sees it
+ * with its name filled in.
+ */
+export default async function SetupPage({ searchParams }: PageProps<"/auth/setup">) {
+  const params = await searchParams;
+  const redirectTo = readRedirectTo(params.redirectTo);
   const session = await getSession();
 
   if (!session) {
-    redirect("/auth/login");
+    redirect(getLoginHref(redirectTo));
   }
 
-  const hasName = Boolean(session.user.name);
-  const hasUsername = Boolean(session.user.username);
-
-  if (hasName && hasUsername) {
-    redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+  if (session.user.name && session.user.username) {
+    redirect(getCallbackHref(redirectTo));
   }
 
+  // The suggested username tries random suffixes when the plain one is taken: render per request.
+  await connection();
+  const suggestedUsername = await suggestCurrentUsername();
   const t = await getExtracted();
 
   return (
-    <>
-      <SetupHeader>
-        <SetupTitle>{t("Complete your profile")}</SetupTitle>
-        <SetupDescription>{t("Choose a name and username before continuing.")}</SetupDescription>
-      </SetupHeader>
+    <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
+      <Setup>
+        <SetupHeader>
+          <SetupTitle>{t("What should we call you?")}</SetupTitle>
+          <SetupDescription>{t("You can change it later in your profile.")}</SetupDescription>
+        </SetupHeader>
 
-      <SetupProfileForm defaultName={session.user.name} redirectTo={String(redirectTo)} />
-    </>
-  );
-}
-
-export default async function SetupPage(props: PageProps<"/auth/setup">) {
-  return (
-    <Setup>
-      <Suspense fallback={<FullPageLoading />}>
-        <SetupView {...props} />
-      </Suspense>
-    </Setup>
+        <SetupProfileForm
+          defaultName={session.user.name}
+          defaultUsername={suggestedUsername ?? ""}
+          redirectTo={redirectTo}
+        />
+      </Setup>
+    </AuthFrame>
   );
 }

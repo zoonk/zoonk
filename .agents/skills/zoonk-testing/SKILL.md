@@ -1,6 +1,6 @@
 ---
 name: zoonk-testing
-description: Design, add, or debug Zoonk E2E, database integration, and pure-function tests.
+description: Design, add, or debug Zoonk E2E, lesson player browser, database integration, and pure-function tests.
 license: MIT
 metadata:
   author: zoonk
@@ -15,12 +15,14 @@ For behavior changes, prefer a failing regression test before implementation whe
 
 ## Choose coverage
 
-| Behavior                                                          | Boundary                               | Guidance to load                                                                      |
-| ----------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------- |
-| User flow, browser interaction, or public HTTP endpoint           | Playwright against real product routes | [E2E](references/e2e.md)                                                              |
-| Persistence, permissions, transactions, or business orchestration | Vitest with the real test database     | [Database integration](references/integration.md)                                     |
-| Non-trivial pure transformation or domain rule                    | Vitest beside the owning code          | Exercise the exported behavior with meaningful inputs; no additional reference needed |
-| Native behavior                                                   | The app's native test tools            | Read the owning app's AGENTS.md                                                       |
+| Behavior                                                                     | Boundary                                 | Guidance to load                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User flow, browser interaction, or public HTTP endpoint                      | Playwright against real product routes   | [E2E](references/e2e.md)                                                                                                                                                                                                |
+| Lesson player behavior: a lesson's screens, answers and feedback             | Vitest browser mode in `packages/player` | Play whole lessons with `renderLessonPlayer` in `packages/player/src/_browser-tests/`, faking only the adapters' server calls. Every app reuses the player, so its behavior is tested there once, not in each app's E2E |
+| Persistence, permissions, transactions, or business orchestration            | Vitest with the real test database       | [Database integration](references/integration.md)                                                                                                                                                                       |
+| Non-trivial pure transformation or domain rule                               | Vitest beside the owning code            | Exercise the exported behavior with meaningful inputs; no additional reference needed                                                                                                                                   |
+| Planner behavior across a learner's life, against the owner's planning rules | The learner simulator in `packages/core` | [Learner simulator](references/simulator.md)                                                                                                                                                                            |
+| Native behavior                                                              | The app's native test tools              | Read the owning app's AGENTS.md                                                                                                                                                                                         |
 
 Do not write React component unit tests or add tests for `admin`, `evals`, or `blog`. Do not test static configuration against itself, CSS, copy, prompt wording, Zod internals, or framework behavior. Do not export implementation details solely to test them.
 
@@ -33,8 +35,18 @@ Do not write React component unit tests or add tests for `admin`, `evals`, or `b
 
 ## Running tests
 
-Use the owning package's scripts and configured test database; do not substitute a development or production database. Confirm any setup/reset command targets the intended disposable database before running it. Relevant local test runs and repairs are part of the authorized implementation work.
+Use the owning package's scripts and configured test database; do not substitute a development or production database. Each Vitest run tests on its own fresh copy of that database: earlier runs' rows never reach it, while the run's test files still share it. See the [development guide](../../guides/development.md) for the template it copies. Confirm any setup/reset command targets the intended disposable database before running it. Relevant local test runs and repairs are part of the authorized implementation work.
 
 Run the affected tests, then broaden only for affected consumers or unresolved risks. Investigate intermittent failures rather than hiding them with retries, forced interactions, weaker assertions, or larger timeouts. Repeat focused coverage for timing, concurrency, fixture isolation, or a reproduced flaky failure; an arbitrary five-run loop is not a completion requirement.
+
+Keep each test file well under 20 seconds locally: CI splits work by whole files, so one long file sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
+
+## Production read-shape ratchets
+
+Database integration tests verify a fact's shape and authorization, but Vitest has no Next.js request `workStore` and cannot prove private-cache dedupe. Ratchet (a) measures exact-repeat physical SQL per production request: normalize the statement and hash its complete bound parameter array without logging values. Keep timestamp-varied groups separate; they can be intentional windows rather than duplicates.
+
+Use the L0 production harness, currently `/tmp/zoonk-review/round-am/fpa-measure/ratchet.mjs`, against the change's isolated worktree and E2E database: `mise x -- node <harness> --worktree <worktree> --port <high-port> --db <own-e2e-db> --label <cut> --routes-only`. Coordinate sequential builds with L0. Reuse the same personas and route IDs for the baseline and each fact's cut on Today API, Plan, Buddy, Chapter and Mind maps. Preserve the source SHA, dirty patch, warmup and three measured repetitions. Compare each fact's SQL/parameter families against the accepted budget in the harness's `ratchet-ledger.md`; do not infer savings from static call-site counts or a zero-repeat total alone.
+
+Pair repeat budgets with process CPU, returned rows, response bytes and process memory. For large facts, measure the internal Flight encoding and decoding cost and bytes separately; process RSS is not allocation attributable to one fact. Report clock, fixture, wrong-kind/not-found and unrun-path limits. Fresh write/workflow checks and private-source visibility guards remain part of acceptance. Ratchet (b), plan-build entries per GET, belongs to plan-compute; ratchet (c), action-induced requests and SQL, belongs to D6.
 
 For Vitest, a package-scoped command is `mise x -- pnpm --filter <workspace> test <test-file>`. E2E build and launch details are in the E2E reference. Report checks accurately, including failures and anything not exercised.

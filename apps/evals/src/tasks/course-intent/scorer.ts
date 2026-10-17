@@ -13,4 +13,5 @@ export const scoreCourseIntent = createDeterministicStringFieldScorer<CourseInte
   field: "intent",
   generatedLabel: "Generated intent",
   getAcceptedValues: (expected) => expected?.intents ?? [],
+  reportsLabels: true,
 });

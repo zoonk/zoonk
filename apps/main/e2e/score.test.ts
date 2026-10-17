@@ -1,94 +1,217 @@
-import { type Page } from "@playwright/test";
+import { instant } from "@next/playwright";
 import { expect, test } from "./fixtures";
+import {
+  AT_ONCE_MS,
+  followRequests,
+  markPaintedFrames,
+  paintedFramesSince,
+  settleIdleWork,
+  slowCodeFromNow,
+  watchPaintedFrames,
+} from "./on-demand-code";
+
+const CHART_SIZE_WARNING = "The width(-1) and height(-1) of chart should be greater than 0";
+
+const TREND = 'figure[aria-label="Weekly score trend"]';
+
+/** The trend's box, and the trend drawn in it. */
+const TREND_FRAMES = { drawn: `${TREND}:has(svg)`, empty: `${TREND}:not(:has(svg))` };
 
 /**
- * Opens one progress page at the shared phone size and verifies the document
- * does not force horizontal scrolling.
+ * How long a hydrated page may take to draw its trend: a frame or two, far under the 300 ms React
+ * holds a Suspense fallback once it's shown.
  */
-async function expectPageToFitMobileViewport({ page, path }: { page: Page; path: string }) {
-  await page.goto(path);
-  await expect(page.getByRole("figure", { name: /weekly score trend/iu })).toBeVisible();
-
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-  );
-
-  expect(hasHorizontalOverflow).toBe(false);
-}
+const DRAWN_WITH_PAGE_MS = 200;
 
 test.describe("Score", () => {
-  test("unauthenticated visitors see a login prompt", async ({ page }) => {
-    await page.goto("/score");
-
-    await expect(page.getByText(/log in to track your progress/iu)).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
-  });
-
-  test("new learners see a start-learning prompt", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/score");
-
-    await expect(
-      userWithoutProgress.getByText(/start learning to track your progress/iu),
-    ).toBeVisible();
-  });
-
-  test("shows one weighted 90-day score with its denominator and weekly trend", async ({
-    authenticatedPage,
+  test("shows one weighted 90-day score with its answers on tiles, the weekly trend and one line", async ({
+    browser,
+    withProgressUser,
   }) => {
-    await authenticatedPage.goto("/score");
+    const context = await browser.newContext({ storageState: withProgressUser.storageState });
+    const page = await context.newPage();
+    const chartWarnings: string[] = [];
 
-    await expect(
-      authenticatedPage.getByRole("heading", { exact: true, level: 1, name: "Score" }),
-    ).toBeVisible();
-
-    const scoreSummary = authenticatedPage.getByRole("region", { name: /score summary/iu });
-    const scoreChart = authenticatedPage.getByRole("figure", { name: /weekly score trend/iu });
-
-    await expect(scoreSummary).toContainText(/\d+(?:\.\d+)?%/u);
-    await expect(scoreSummary).toContainText(/\d+ of \d+ answers correct/iu);
-    await expect(scoreChart).toBeVisible();
-    await expect(scoreChart).toContainText(/past 90 days/iu);
-    await expect(scoreChart).toContainText(/\d+ answers/iu);
-
-    await expect(
-      authenticatedPage.getByRole("navigation", { name: /period selection/iu }),
-    ).toHaveCount(0);
-
-    await expect(
-      authenticatedPage.getByRole("button", { name: /previous period|next period/iu }),
-    ).toHaveCount(0);
-  });
-
-  test("keeps Score within a mobile viewport", async ({ browser, withProgressUser }) => {
-    const browserContext = await browser.newContext({
-      storageState: withProgressUser.storageState,
-      viewport: { height: 812, width: 375 },
+    page.on("console", (message) => {
+      if (message.text().includes(CHART_SIZE_WARNING)) {
+        chartWarnings.push(message.text());
+      }
     });
 
-    const scorePage = await browserContext.newPage();
-
     try {
-      await expectPageToFitMobileViewport({ page: scorePage, path: "/score" });
+      await page.goto("/score");
+
+      await expect(
+        page.getByRole("heading", { exact: true, level: 1, name: "Score" }),
+      ).toBeAttached();
+
+      const tiles = page.locator('[data-slot="stat-tile"]');
+      const scoreChart = page.getByRole("figure", { name: /weekly score trend/iu });
+
+      await expect(tiles.filter({ hasText: /^Score/u })).toContainText(/\d+(?:\.\d+)?%/u);
+      await expect(tiles.filter({ hasText: /^Right/u })).toContainText(/\d+ of \d+/u);
+      await expect(scoreChart).toBeVisible();
+
+      // The 90-day window is said once, on its tile.
+      await expect(page.getByText(/90 days/iu)).toHaveCount(1);
+
+      // The trend renders at its size, without the chart library's invalid size warnings.
+      expect(chartWarnings).toEqual([]);
+
+      await expect(
+        page.getByText(
+          "Every answer counts the same, so harder lessons can lower your score for a while.",
+        ),
+      ).toBeVisible();
     } finally {
-      await browserContext.close();
+      await context.close();
     }
   });
 
-  test("explains Score in one concise section", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/score");
+  test("draws the trend as its page hydrates, wherever the page shows it", async ({
+    browser,
+    withProgressUser,
+  }) => {
+    // The overview shows it from a tablet up; Score at every width.
+    const opened = [
+      { path: "/stats", width: 1280 },
+      { path: "/score", width: 1280 },
+      { path: "/score", width: 390 },
+    ];
 
-    await expect(authenticatedPage.getByRole("heading", { name: /what is score/iu })).toBeVisible();
+    for (const { path, width } of opened) {
+      // oxlint-disable-next-line no-await-in-loop -- Each page opens in a new tab, one after another.
+      const context = await browser.newContext({
+        storageState: withProgressUser.storageState,
+        viewport: { height: 900, width },
+      });
 
-    await expect(
-      authenticatedPage.getByText(/percentage of questions you answered correctly/iu),
-    ).toBeVisible();
+      // oxlint-disable-next-line no-await-in-loop
+      await watchPaintedFrames(context, TREND_FRAMES);
+      // oxlint-disable-next-line no-await-in-loop
+      const page = await context.newPage();
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /how do i improve score/iu }),
-    ).toHaveCount(0);
+      try {
+        // oxlint-disable-next-line no-await-in-loop
+        await page.goto(path);
+        // oxlint-disable-next-line no-await-in-loop
+        await expect(page.locator(TREND_FRAMES.drawn)).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /why is score important/iu }),
-    ).toHaveCount(0);
+        // oxlint-disable-next-line no-await-in-loop
+        const frames = await paintedFramesSince(page);
+        const hydrated = frames.find((frame) => frame.seen.empty === "hydrated");
+        const drawn = frames.find((frame) => frame.seen.drawn !== "none");
+
+        // Its code was on the way while the page loaded: once the page hydrates, the trend is drawn.
+        expect(drawn, `${path} at ${width}px`).toBeDefined();
+
+        expect(
+          (drawn?.at ?? 0) - (hydrated?.at ?? drawn?.at ?? 0),
+          `${path} at ${width}px`,
+        ).toBeLessThanOrEqual(DRAWN_WITH_PAGE_MS);
+      } finally {
+        // oxlint-disable-next-line no-await-in-loop
+        await context.close();
+      }
+    }
+  });
+
+  test("a phone opens Score from its tile with the trend drawn, even when code arrives slowly", async ({
+    browser,
+    withProgressUser,
+  }) => {
+    const context = await browser.newContext({
+      hasTouch: true,
+      isMobile: true,
+      storageState: withProgressUser.storageState,
+      viewport: { height: 844, width: 390 },
+    });
+
+    await watchPaintedFrames(context, TREND_FRAMES);
+    const page = await context.newPage();
+    const requests = followRequests(page);
+
+    try {
+      await page.goto("/stats");
+      await expect(page.getByRole("heading", { level: 1, name: "Statistics" })).toBeVisible();
+
+      // From here on code arrives as over a phone's network. The overview, which doesn't show the
+      // trend on a phone, loads its code once it's idle, for its Score tile.
+      await slowCodeFromNow(page);
+      await settleIdleWork(page, requests);
+      await markPaintedFrames(page);
+
+      await page.getByRole("link", { name: /^Score /u }).tap();
+
+      // Score opens at once with its trend drawn: never an empty box, never a tap that waits.
+      await expect(page.locator(TREND_FRAMES.drawn)).toBeVisible({ timeout: AT_ONCE_MS });
+      await expect(page).toHaveURL(/\/score$/u);
+
+      const frames = await paintedFramesSince(page);
+      expect(frames.filter((frame) => frame.seen.empty !== "none")).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("the sidebar's Statistics opens the overview with its trend drawn once reached for, even when code arrives slowly", async ({
+    browser,
+    withProgressUser,
+  }) => {
+    // A pointer resting on the link, or the keyboard's focus on it.
+    for (const reach of ["hover", "focus"] as const) {
+      // oxlint-disable-next-line no-await-in-loop -- Each way in opens in a new tab, one after another.
+      const context = await browser.newContext({
+        storageState: withProgressUser.storageState,
+        viewport: { height: 900, width: 1280 },
+      });
+
+      // oxlint-disable-next-line no-await-in-loop
+      await watchPaintedFrames(context, TREND_FRAMES);
+      // oxlint-disable-next-line no-await-in-loop
+      const page = await context.newPage();
+      const requests = followRequests(page);
+
+      try {
+        // oxlint-disable-next-line no-await-in-loop
+        await page.goto("/level");
+
+        const statistics = page
+          .getByRole("complementary", { name: "Sidebar" })
+          .getByRole("link", { name: "Statistics" });
+
+        // oxlint-disable-next-line no-await-in-loop
+        await expect(statistics).toBeVisible();
+
+        // From here on code arrives as over a slow network. Reaching for the link starts loading
+        // the trend's code along with the page.
+        // oxlint-disable-next-line no-await-in-loop
+        await slowCodeFromNow(page);
+        // oxlint-disable-next-line no-await-in-loop
+        await (reach === "hover" ? statistics.hover() : statistics.focus());
+        // oxlint-disable-next-line no-await-in-loop
+        await requests.settled();
+        // oxlint-disable-next-line no-await-in-loop
+        await markPaintedFrames(page);
+
+        // oxlint-disable-next-line no-await-in-loop
+        await instant(page, async () => {
+          await (reach === "hover" ? statistics.click() : page.keyboard.press("Enter"));
+          await expect(page).toHaveURL(/\/stats$/u);
+
+          await expect(page.locator(TREND_FRAMES.drawn), reach).toBeVisible({
+            timeout: AT_ONCE_MS,
+          });
+        });
+
+        // oxlint-disable-next-line no-await-in-loop
+        const frames = await paintedFramesSince(page);
+        const empty = frames.filter((frame) => frame.seen.empty !== "none");
+        expect(empty, reach).toEqual([]);
+      } finally {
+        // oxlint-disable-next-line no-await-in-loop
+        await context.close();
+      }
+    }
   });
 });

@@ -6,6 +6,10 @@
 - **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
 - **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
 - Think from first principles. Preserve intended behavior, question assumptions and existing patterns, and choose maintainable designs without expanding the requested scope.
+- When progress stalls (repeated review rounds, small optimizations that don't converge, growing machinery), stop and reframe; otherwise you keep optimizing the wrong thing. Question the problem itself: what does the user actually need, and what is the minimal work if you built it from scratch? Approach it from different angles like a polymath, borrowing proven principles from other fields and products: keep a running balance instead of re-summing the ledger, compute derived facts when their inputs change and only read them on views, load each fact once per request. Prefer removing work and machinery over optimizing it.
+- Before declaring a capability unavailable, adding infrastructure, or implementing behavior a dependency might own, check installed versions and current official documentation. Research relevant newer models, products, and libraries when they could materially simplify the solution; prefer supported capabilities and composition over rebuilding them. Use [capability research](.agents/skills/zoonk-capability-research/SKILL.md) for these decisions.
+- Before choosing, adding, or replacing a model, dependency, API, or version, check the provider's current catalog or registry for the latest option and its lifecycle (deprecation and shutdown dates on every route we call). Existing code, your training data, and a deprecation notice's suggested replacement may already be outdated.
+- Write engineering work in US English: code, identifiers, comments, docs, commit messages, and examples in them. Use other languages only where the content is about that language or its learners: translation catalogs, language guides, test inputs and fixtures, eval cases, and AI prompt variants written for a language.
 - Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
 
 ## Scope and completion
@@ -13,26 +17,55 @@
 - Own the user’s intended outcome through implementation and verification. Before declaring completion, reconcile the intended outcome, the resulting implementation, and the evidence collected. Close material gaps that can be investigated within the authorized task. Passing selected checks establishes only what those checks exercise. Carry earlier evidence forward only while subsequent changes leave it applicable.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
+- Act as a product peer: when a requested approach or repository rule creates observed UX friction or unnecessary complexity, explain the conflict and propose a simpler way to achieve the user's goal. Make improvements within the authorized scope; surface decisions that would change explicit requirements.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
 - Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
 - Don't patch dependencies unless explicitly requested. If a library bug is discovered, report it instead and figure out a workaround we can use in the meantime.
+
+## Agent orchestration
+
+Use supported subagents and cross-provider orchestration when available. Discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. Resolve the latest Claude Opus and GPT Sol from the live catalog (currently Opus 5.5 and GPT-6.1-Sol); map effort names to supported equivalents. Existing approval and verification rules still apply.
+
+- **Design:** UI and UX work, including UI elements, layouts, and interactions, is design work. Use Opus with extra-high reasoning for small tweaks and max reasoning for design reviews, large changes, or new feature design.
+- **Copywriting:** Prefer Opus with extra-high reasoning.
+- **Marketing:** Prefer Opus with extra-high reasoning for marketing, landing pages, motion videos, and animation.
+- **Computer use:** Prefer GPT Sol through Codex with medium reasoning.
+- **Code review:** Use GPT Sol with extra-high reasoning.
+- **Small code changes:** Use GPT Sol with medium reasoning.
+- **Architecture:** Have GPT Sol and Opus, both at extra-high reasoning, exchange proposals, objections, and revisions until they agree on the best approach. Relay their responses if direct communication is unavailable. Opus may then implement at medium effort, but GPT Sol must review at extra-high reasoning before opening a PR.
+- **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits.
+- **Nested delegation:** These rules apply at every level. A subagent that splits work delegates to the providers with the most remaining capacity instead of fanning out on its own provider.
+- **Usage limits:** Recheck quotas periodically, at task boundaries, and when a provider is limited. If its reset is less than 15 minutes away, waiting is acceptable; otherwise transfer unfinished work to an eligible provider with quota. Include the brief, decisions, changed files, verification, and open issues in the handoff; stop the original task to avoid duplicate work. Keep checking so available providers take over work blocked by longer resets.
+- **Opus fallback:** If no Opus provider is available, use GPT Sol for design at the prescribed effort. Track the pending design review and have Opus review at max effort as soon as it becomes available again.
 
 ## Architecture shared by all workspaces
 
 - Put reusable business rules, authorization, persistence, and orchestration in `@zoonk/core`. Apps own delivery: HTTP parsing/serialization, UI composition, translations, URLs, metadata, and presentation fallbacks. Do not add framework abstraction until another framework is adopted.
 - Apps call authenticated core capabilities rather than supplying an acting user ID. Read the [core capability contract](packages/core/AGENTS.md) when adding or changing those capabilities or their callers.
 - Reusable product behavior must be reachable through the public API. Main owns its [capability parity audit](apps/main/AGENTS.md); API owns the [public contract and transport rules](apps/api/AGENTS.md).
+- AI work (a model call or a workflow that generates) starts only from a POST (a Server Action or an API POST) by a signed-in learner or a guest, never from a GET, a render (`after()` during one included), metadata, an OG image, a sitemap or a page load without a click. The one exception is system work behind a secret, such as the Vercel Cron's `GET /cron/daily-sweeps`.
+- Page renders, prefetches and read endpoints don't make unnecessary writes that a crawler, link preview or prefetch could trigger, such as saving a rebuilt plan or creating the day's session or a call because a page opened; the learner's POST makes those. Writes a request needs are fine on a GET (Better Auth's session refresh, rate limits, sign-in callbacks, the Stripe checkout return). Never disable, re-route or wrap Better Auth endpoints or behavior for this rule.
 
 ## Verification
 
 - Derive verification scope from the behavior and contracts being changed, including affected consumers and tests in unchanged files. Use focused checks when that scope is demonstrably bounded. When the impact is broad or uncertain, run the relevant containing suites. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
-- Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
+- Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, Vitest browser tests in `packages/player` for lesson player behavior, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
+- For user-facing changes, use [zoonk-persona-walkthrough](.agents/skills/zoonk-persona-walkthrough/SKILL.md) to use the running product as contrasting learner personas, from entry to outcome and return visits, including their bad days, with eyes that haven't seen the implementation where possible. Judge clarity, effort, honesty, recovery, and unnecessary UI; passing automated happy paths is insufficient. Fix observed issues, add regression coverage for reproducible problems, and report the evidence.
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
-- Once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
+- During implementation, once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
+- Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. Commits do not require the full PR verification gate.
+
+### PR verification gate
+
+- Before opening a PR (including a draft), marking a PR ready for review, or merging a PR, run locally the full set of quality checks from both the PR and `main` CI pipelines, including checks that only run after merge. It applies to every change type; focused checks during implementation do not replace it.
+- Read the current [.github/workflows](.github/workflows), including reusable workflows, as the source of truth for commands, setup, matrices, and platform-specific path conditions. Cover formatting, lint, type checks, both Knip modes, translations, generated API contracts, deployment orchestration tests, all Vitest suites (unit, database integration, and player browser tests), and the full Main and API E2E pipelines with their build and database setup prerequisites. Cover every configured test project and shard; an unsharded run is sufficient when it exercises the same full suite. Include applicable native CI checks. Use the [development guide](.agents/guides/development.md) for local environment and browser execution requirements.
+- Verify the final tree before opening a PR, marking it ready for review, or merging it. If it changes after verification, rerun the full gate. Fix failures in the affected scope and report unrelated failures or missing prerequisites with evidence; do not open a PR, mark it ready, or merge it while required checks are failing, blocked, or unrun. Report the checks and results with the handoff.
 
 ## Task-specific guidance
 
 Read the scoped `AGENTS.md` files governing paths you change, including when working from the repository root. Read shared guides only when the task matches their scope; this index is not a required reading list for every edit.
+
+Use the shared [Eloqnt style guides](packages/i18n/.eloqnt/styleguide.md) for recurring Zoonk tone and terminology choices; put locale-specific choices in `styleguide.<locale>.md`. Keep them brief and self-contained: Eloqnt supplies translation best practices, so avoid generic i18n rules and one-off copy fixes. For example, `goal → meta` belongs in the Portuguese glossary; lists of ordinary UI translations like “Save”, “Cancel”, and “Next”, or tutorials on ICU plurals, do not.
 
 | Task                                                            | Guidance                                                                           |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -47,8 +80,22 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Apple app                                                       | [Apple app](apps/apple/AGENTS.md)                                                  |
 | Android UI                                                      | [Android Material guidelines](.agents/skills/android-material-guidelines/SKILL.md) |
 | AI task prompts                                                 | [AI package](packages/ai/AGENTS.md)                                                |
+| Adding a supported language                                     | [Adding a language](.agents/guides/adding-a-language.md)                           |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
 
 ## Maintaining these instructions
 
 Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant skill and load supporting references only as needed.
+
+Keep `.agents/skills` as the source of truth. When adding, renaming, or removing a skill, update its relative symlink in `.claude/skills` and verify every canonical skill resolves there to the same directory.
+
+<!-- BEGIN:turborepo-agent-rules -->
+
+# This is NOT the Turborepo you know
+
+Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
+
+Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
+
+This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
+<!-- END:turborepo-agent-rules -->

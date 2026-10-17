@@ -2,18 +2,36 @@
 
 ## Audience
 
-Zoonk helps anyone learn anything, with a focus on people outside privileged environments — small towns, under-resourced communities, first-time learners. Write for them: clear, welcoming, and free of jargon.
+Zoonk helps anyone learn anything, especially people in small towns, under-resourced communities, and first-time learners. Write clear, welcoming text without jargon.
 
 ## Voice and tone
 
-- Simple, concise, everyday language. Prefer common words over formal or technical ones.
-- Practical and encouraging. Motivate without being condescending.
-- Friendly and light, in the spirit of products like Duolingo.
+- Use simple, concise, everyday language.
+- Be practical, friendly, and encouraging without being condescending.
+- Praise effort and strategy, not talent. Never scold or guilt learners for mistakes, breaks, or missed days.
+- Use “…” for ellipses. Avoid em dashes.
 
-## Do not translate
+## Honest progress
 
-- The brand name "Zoonk"
+- Describe preparation without promising a pass, score, admission, certificate, or job. Use “Preparation”, not “Readiness”.
+- Estimated scores appear only as ranges after mock exams, labeled “Estimated”.
 
-## Punctuation
+## Product terminology
 
-- Use the ellipsis character "…" instead of three periods "..." for loading states and other UI copy.
+- Learners “start” a goal, rather than add, set, or create one.
+- Cards are flashcards for studying, not playing cards.
+- Buddies are learning partners, not pets. Their localized names are proper names.
+- “Known” and “Known before” mean the learner knew something before studying it in Zoonk.
+- In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.
+- Keep the brand name “Zoonk” unchanged. Use each locale's glossary consistently across web, lesson player, Apple, and Android catalogs, including inflected forms.
+
+## Plan language
+
+- “Finished” means the learner completed the plan. “Past date” means its date passed with lessons remaining; the plan stays available for adjustment.
+- “Left out” means the plan omitted content for lack of time. “Skipped” means a test showed prior knowledge; “Skip” is the learner's choice.
+- Describe proposed changes as proposals, and applied changes as completed actions.
+
+## Placeholder context
+
+- Learners can choose buddy names and goal titles. Their gender and number are unknown; use neutral wording around names and the word for “goal” when a title needs agreement.
+- Duration placeholders such as “{time}” already include localized units; do not add units around them.

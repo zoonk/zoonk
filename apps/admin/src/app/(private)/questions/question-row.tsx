@@ -1,12 +1,39 @@
+import { VoteTotalsLabel } from "@/components/vote-totals";
+import { type VoteTotals } from "@/data/feedback/get-vote-totals";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
-import { getAdminLessonLabel } from "@/lib/lesson-label";
-import { getAdminQuestionStatusVariant } from "@/lib/lesson-question";
+import {
+  getAdminQuestionLessonContext,
+  getAdminQuestionStatusVariant,
+} from "@/lib/lesson-question";
 import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
-  const { lesson, user } = question.thread;
+function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
+  const context = getAdminQuestionLessonContext(question.thread);
+
+  if (!context) {
+    return <span className="text-muted-foreground">Deleted lesson</span>;
+  }
+
+  return (
+    <>
+      <span className="line-clamp-1 font-medium">{context.course?.title ?? "—"}</span>
+      <span className="text-muted-foreground line-clamp-1 text-xs">
+        {[context.chapterTitle, context.lessonLabel].filter(Boolean).join(" · ")}
+      </span>
+    </>
+  );
+}
+
+export function QuestionRow({
+  question,
+  votes,
+}: {
+  question: ListedLessonQuestion;
+  votes: VoteTotals;
+}) {
+  const { user } = question.thread;
 
   return (
     <TableRow>
@@ -29,12 +56,10 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
         </Link>
       </TableCell>
       <TableCell className="max-w-56 min-w-48 whitespace-normal">
-        <span className="line-clamp-1 font-medium">
-          {lesson?.chapter.course.title ?? "Deleted lesson"}
-        </span>
-        <span className="text-muted-foreground line-clamp-1 text-xs">
-          {lesson ? getAdminLessonLabel({ kind: lesson.kind, title: lesson.title }) : "—"}
-        </span>
+        <QuestionLessonCell question={question} />
+      </TableCell>
+      <TableCell>
+        <VoteTotalsLabel totals={votes} />
       </TableCell>
       <TableCell>
         <div className="flex flex-col items-start gap-1">

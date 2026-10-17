@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import createAndroidXmlCodec from "@eloqnt/format-android-xml";
 import { onTestFinished, test } from "vitest";
 import { createTrackedAndroidXmlCodec } from "./tracked-android-xml.mts";
@@ -16,7 +17,11 @@ const CLI = fileURLToPath(
 
 const CODEC = fileURLToPath(new URL("tracked-android-xml.mts", import.meta.url));
 
-async function fixture() {
+/**
+ * A project whose Spanish catalog was translated from `SOURCE`, with the English catalog now
+ * reading `source`, and no Spanish catalog at all when `translated` is false.
+ */
+async function fixture({ source = SOURCE, translated = true } = {}) {
   const directory = await mkdtemp(join(tmpdir(), "zoonk-android-i18n-"));
   onTestFinished(() => rm(directory, { force: true, recursive: true }));
   await mkdir(join(directory, ".eloqnt"));
@@ -32,8 +37,8 @@ async function fixture() {
   );
 
   await Promise.all([
-    writeFile(sourceFile, SOURCE),
-    writeFile(targetFile, target),
+    writeFile(sourceFile, source),
+    translated ? writeFile(targetFile, target) : undefined,
     writeFile(
       codecFile,
       `
@@ -53,42 +58,46 @@ async function fixture() {
     ),
   ]);
 
-  return { directory, sourceFile, target, targetFile };
+  return directory;
 }
 
-function lint(directory: string) {
-  const result = spawnSync(process.execPath, [CLI, "lint", "--strict"], {
-    cwd: directory,
-    encoding: "utf8",
-    timeout: 30_000,
-  });
+const execFileAsync = promisify(execFile);
 
-  if (result.error) {
-    throw result.error;
+/** `eloqnt lint --strict` in the project: its exit status and everything it printed. */
+async function lint(directory: string) {
+  try {
+    const { stderr, stdout } = await execFileAsync(process.execPath, [CLI, "lint", "--strict"], {
+      cwd: directory,
+      timeout: 30_000,
+    });
+
+    return { output: `${stdout}${stderr}`, status: 0 };
+  } catch (error) {
+    // A lint that finds problems exits with 1, which `execFile` rejects with, output included.
+    if (!(error instanceof Error && "code" in error && typeof error.code === "number")) {
+      throw error;
+    }
+
+    const output = ["stdout" in error ? error.stdout : "", "stderr" in error ? error.stderr : ""];
+    return { output: output.join(""), status: error.code };
   }
-
-  return { output: `${result.stdout}${result.stderr}`, status: result.status };
 }
 
+// Each case is its own project, linted at the same time: one CLI start at a time took over 5 s on a
+// busy CI runner.
 test("the real Eloqnt CLI rejects stale, missing, and removed entries without model credentials", async () => {
-  const { directory, sourceFile, targetFile, target } = await fixture();
-  const clean = lint(directory);
-  assert.equal(clean.status, 0, clean.output);
+  const [clean, stale, missingLocale, removed] = await Promise.all([
+    fixture().then(lint),
+    fixture({ source: SOURCE.replace("Home", "Your home") }).then(lint),
+    fixture({ translated: false }).then(lint),
+    fixture({ source: "<resources />" }).then(lint),
+  ]);
 
-  await writeFile(sourceFile, SOURCE.replace("Home", "Your home"));
-  const stale = lint(directory);
+  assert.equal(clean.status, 0, clean.output);
   assert.equal(stale.status, 1, stale.output);
   assert.match(stale.output, /missing-translation/u);
-
-  await writeFile(sourceFile, SOURCE);
-  await rm(targetFile);
-  const missingLocale = lint(directory);
   assert.equal(missingLocale.status, 1, missingLocale.output);
   assert.match(missingLocale.output, /missing-translation/u);
-
-  await writeFile(targetFile, target);
-  await writeFile(sourceFile, "<resources />");
-  const removed = lint(directory);
   assert.equal(removed.status, 1, removed.output);
   assert.match(removed.output, /superfluous-key/u);
 });

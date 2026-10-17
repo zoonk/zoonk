@@ -6,7 +6,7 @@ import { type DecodedAudio, assertAudibleAudioSignal } from "./validate-audio-si
 const MP3_BITRATE_KBPS = 48;
 const MP3_SAMPLE_RATE = 24_000;
 
-type EncodableAudio = DecodedAudio & { channelCount: 1 | 2 };
+export type EncodableAudio = DecodedAudio & { channelCount: 1 | 2 };
 
 /**
  * Rejects empty or unsupported provider WAV shapes before they reach the
@@ -80,20 +80,31 @@ function combineMp3Chunks({
 }
 
 /**
- * Validates provider WAV and encodes it as a compact 48 kbps MP3. Keeping one
- * final codec avoids shipping separate decoder paths and gives storage and
- * playback a consistent media contract.
+ * Decodes provider WAV and checks it is speech of a plausible length (`assertAudibleAudioSignal`):
+ * the samples a clip, or one line of a longer recording, is made of.
  */
-export async function convertWavToMp3({
+export function decodeSpeechWav({
   audio,
+  maxSeconds,
   model,
 }: {
   audio: Uint8Array;
+  maxSeconds: number;
   model: SpeechModelName;
-}): Promise<Uint8Array> {
+}): EncodableAudio {
   const decodedAudio = decodeWavAudio({ audio, model });
-  assertAudibleAudioSignal({ audio: decodedAudio, model });
+  assertAudibleAudioSignal({ audio: decodedAudio, maxSeconds, model });
+  return decodedAudio;
+}
 
+/**
+ * Encodes decoded speech as a compact 48 kbps MP3, with how long it plays. Keeping one final codec
+ * avoids shipping separate decoder paths and gives storage and playback a consistent media
+ * contract.
+ */
+export async function encodeMp3(
+  decodedAudio: EncodableAudio,
+): Promise<{ audio: Uint8Array; durationSeconds: number }> {
   const encoder = await createMp3Encoder();
 
   encoder.configure({
@@ -105,5 +116,19 @@ export async function convertWavToMp3({
 
   const firstChunk = Uint8Array.from(encoder.encode(decodedAudio.channelData));
   const finalChunk = Uint8Array.from(encoder.finalize());
-  return combineMp3Chunks({ finalChunk, firstChunk });
+
+  return {
+    audio: combineMp3Chunks({ finalChunk, firstChunk }),
+    durationSeconds: decodedAudio.samplesDecoded / decodedAudio.sampleRate,
+  };
+}
+
+/** Validates provider WAV and encodes it as MP3 (`decodeSpeechWav`, then `encodeMp3`). */
+export async function convertWavToMp3(input: {
+  audio: Uint8Array;
+  maxSeconds: number;
+  model: SpeechModelName;
+}): Promise<{ audio: Uint8Array; durationSeconds: number }> {
+  const decoded = decodeSpeechWav(input);
+  return encodeMp3(decoded);
 }

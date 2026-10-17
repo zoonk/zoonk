@@ -1,8 +1,21 @@
+import { type Page, type Route } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const TEST_EMAIL = `e2e-otp-${Date.now()}@zoonk.test`;
 const REDIRECT_URL = "http://localhost:49152/test";
+
+/** Holds each request to `url` until the test lets it through, like a slow phone network. */
+async function holdRequests(page: Page, url: string) {
+  const held: Route[] = [];
+
+  await page.route(url, (route) => {
+    held.push(route);
+  });
+
+  return held;
+}
 
 test.describe("OTP Login Flow", () => {
   test.afterAll(async () => {
@@ -19,6 +32,13 @@ test.describe("OTP Login Flow", () => {
     await expect(page.getByRole("heading", { name: /check your email/iu })).toBeVisible();
 
     await expect(page.getByText(TEST_EMAIL)).toBeVisible();
+
+    // Ready for the code at once: focused, with the phone's number pad and its code suggestion.
+    const code = page.getByRole("textbox", { name: "Code from the email" });
+
+    await expect(code).toBeFocused();
+    await expect(code).toHaveAttribute("inputmode", "numeric");
+    await expect(code).toHaveAttribute("autocomplete", "one-time-code");
   });
 
   test("validates OTP and redirects to setup for new user", async ({ page }) => {
@@ -35,13 +55,25 @@ test.describe("OTP Login Flow", () => {
       throw new Error("OTP not found in database");
     }
 
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    // Pasted straight into the focused input, even copied with a space in the middle. The paste
+    // waits for the input to take focus, as a learner's does: the form arrives after the URL does.
+    const input = page.getByRole("textbox", { name: "Code from the email" });
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
-    // New users without name/username are redirected to setup
+    await page.evaluate(
+      (code) => navigator.clipboard.writeText(code),
+      `${otp.slice(0, 3)} ${otp.slice(3)}`,
+    );
+
+    await expect(input).toBeFocused();
+    await page.keyboard.press("ControlOrMeta+V");
+
+    // The sixth digit sends the code: nothing else to press.
+    await expect(input).toHaveValue(otp);
+
+    // New users without a name are asked for one
     await page.waitForURL(/\/auth\/setup/u);
-    await expect(page.getByRole("heading", { name: /complete your profile/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
     await cleanupVerifications(email);
   });
@@ -54,9 +86,211 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type("000000");
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
-    await expect(page.getByText(/incorrect/iu)).toBeVisible();
+    await expect(
+      page.getByText("That code isn't right. Check the email and try again."),
+    ).toBeVisible();
+
+    // Continue tries the same code again from the keyboard, also after the connection drops.
+    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeEnabled();
+    await page.route("**/sign-in/email-otp", (route) => route.abort("internetdisconnected"));
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByText("Something went wrong. Try again in a moment.")).toBeVisible();
+
+    await page.unroute("**/sign-in/email-otp");
+    await page.keyboard.press("Enter");
+
+    await expect(
+      page.getByText("That code isn't right. Check the email and try again."),
+    ).toBeVisible();
+  });
+
+  test("after too many wrong tries, asks for a new code, and the new code signs in", async ({
+    page,
+  }) => {
+    const email = `e2e-otp-attempts-${Date.now()}@zoonk.test`;
+
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
+
+    const code = await getOTPForEmail(email);
+    const wrongCode = code === "000000" ? "111111" : "000000";
+    const input = page.getByRole("textbox", { name: "Code from the email" });
+    const continueButton = page.getByRole("button", { name: /^continue$/iu });
+    const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
+
+    /**
+     * One try: the sixth digit sends it, from an empty box, as a learner retyping it would. It starts
+     * once the last answer shows (Continue is ready again): the same code retyped while it's still
+     * checked isn't sent twice.
+     */
+    async function tryCode(attempt: string) {
+      await expect(continueButton).toBeEnabled();
+
+      const checked = page.waitForResponse((response) =>
+        response.url().includes("/sign-in/email-otp"),
+      );
+
+      await input.fill("");
+      await input.fill(attempt);
+      await checked;
+    }
+
+    await tryCode(wrongCode);
+
+    await expect(
+      page.getByText("That code isn't right. Check the email and try again."),
+    ).toBeVisible();
+
+    await tryCode(wrongCode);
+    await tryCode(wrongCode);
+
+    // Auth allows three tries per code: the fourth, even the right code, says the code is gone.
+    await tryCode(code ?? "");
+    await expect(tooMany).toBeVisible();
+
+    await expect(continueButton).toHaveCount(0);
+    await expect(input).toBeDisabled();
+
+    await page.getByRole("button", { name: "Send a new code" }).click();
+    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+
+    const newCode = await getOTPForEmail(email);
+    await input.fill(newCode ?? "");
+
+    await page.waitForURL(/\/auth\/setup/u);
+
+    await cleanupVerifications(email);
+  });
+
+  test("a code typed while the last one is checked is checked next, and only once", async ({
+    page,
+  }) => {
+    const email = `e2e-otp-in-flight-${Date.now()}@zoonk.test`;
+
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
+
+    const code = (await getOTPForEmail(email)) ?? "";
+    const wrongCode = code === "000000" ? "111111" : "000000";
+    const input = page.getByRole("textbox", { name: "Code from the email" });
+    const checks = await holdRequests(page, "**/sign-in/email-otp");
+    const checkedCodes = () => checks.map((check) => String(check.request().postDataJSON().otp));
+
+    // Retyping the code being checked waits for its answer instead of trying it twice.
+    await input.fill(wrongCode);
+    await expect.poll(checkedCodes).toEqual([wrongCode]);
+    await input.fill("");
+    await input.fill(wrongCode);
+    await checks[0]?.continue();
+
+    await expect(
+      page.getByText("That code isn't right. Check the email and try again."),
+    ).toBeVisible();
+
+    expect(checkedCodes()).toEqual([wrongCode]);
+
+    // A different code typed before the answer arrives is checked next, instead of sitting under
+    // the older code's error. No new code can be asked for meanwhile: the answer would land on it.
+    await input.fill("");
+    await input.fill(wrongCode);
+    await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode]);
+    await expect(page.getByRole("button", { name: "Send again" })).toBeDisabled();
+    await input.fill("");
+    await input.fill(code);
+    await checks[1]?.continue();
+
+    await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode, code]);
+    await checks[2]?.continue();
+
+    await page.waitForURL(/\/auth\/setup/u);
+
+    await cleanupVerifications(email);
+  });
+
+  test("an expired code asks for a new one", async ({ page }) => {
+    const email = `e2e-otp-expired-${Date.now()}@zoonk.test`;
+
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
+
+    const code = await getOTPForEmail(email);
+
+    await prisma.verification.updateMany({
+      data: { expiresAt: new Date(Date.now() - 60_000) },
+      where: { identifier: `sign-in-otp-${email}` },
+    });
+
+    await page.getByRole("textbox", { name: "Code from the email" }).fill(code ?? "");
+
+    await expect(page.getByText("This code expired. Get a new one.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send a new code" })).toBeVisible();
+
+    await cleanupVerifications(email);
+  });
+
+  test("sends a new code on request, and only the new one works", async ({ page }) => {
+    const email = `e2e-otp-resend-${Date.now()}@zoonk.test`;
+
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.getByLabel(/email/iu).fill(email);
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await page.waitForURL(/\/auth\/otp/u);
+
+    const firstCode = (await getOTPForEmail(email)) ?? "";
+    const wrongCode = firstCode === "000000" ? "111111" : "000000";
+    const input = page.getByRole("textbox", { name: "Code from the email" });
+    const sendAgain = page.getByRole("button", { name: "Send again" });
+    const newCodeUrl = "**/email-otp/send-verification-otp";
+    const checkedCodes: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.url().includes("/sign-in/email-otp")) {
+        checkedCodes.push(request.postDataJSON().otp);
+      }
+    });
+
+    // A new code that never leaves the phone says so, and codes can still be tried.
+    await page.route(newCodeUrl, (route) => route.abort("internetdisconnected"));
+    await sendAgain.click();
+
+    await expect(page.getByText("We couldn't send a new code. Try again.")).toBeVisible();
+
+    await page.unroute(newCodeUrl);
+    await input.fill(wrongCode);
+
+    await expect(
+      page.getByText("That code isn't right. Check the email and try again."),
+    ).toBeVisible();
+
+    const newCodeRequests = await holdRequests(page, newCodeUrl);
+    await sendAgain.click();
+    await expect.poll(() => newCodeRequests).toHaveLength(1);
+
+    // The old code, finished while the new one is on its way, isn't tried: it's about to stop working.
+    await input.fill("");
+    await input.fill(firstCode);
+    await newCodeRequests[0]?.continue();
+
+    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+    await expect(input).toHaveValue("");
+    expect(checkedCodes).toEqual([wrongCode]);
+
+    await expect.poll(() => getOTPForEmail(email)).not.toBe(firstCode);
+    const newCode = await getOTPForEmail(email);
+
+    await input.fill(newCode ?? "");
+
+    await page.waitForURL(/\/auth\/setup/u);
+
+    await cleanupVerifications(email);
   });
 
   test("allows changing email (back to login)", async ({ page }) => {
@@ -68,7 +302,7 @@ test.describe("OTP Login Flow", () => {
     const changeEmailLink = page.getByRole("link", { name: /change email/iu });
 
     await expect(continueButton).toHaveAttribute("aria-keyshortcuts", "Enter");
-    await expect(continueButton.getByText("Enter")).toBeVisible();
+    await expect(continueButton.getByText("⏎")).toBeVisible();
     await expect(changeEmailLink).toHaveAttribute("aria-keyshortcuts", "Escape");
     await expect(changeEmailLink.getByText("Esc")).toBeVisible();
 
@@ -98,15 +332,12 @@ test.describe("OTP Login Flow", () => {
 
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
 
     // New user will be redirected to setup first
     await page.waitForURL(/\/auth\/setup/u);
 
     // Complete setup to continue the redirect flow
     await page.getByRole("textbox", { name: /^name$/iu }).fill("Trailing Slash User");
-    await page.getByRole("textbox", { name: /username/iu }).fill(`trailing${Date.now()}`);
-    await expect(page.getByText(/is available/iu)).toBeVisible();
 
     // Register listener BEFORE the click that triggers the redirect.
     // waitForRequest only captures requests after registration,

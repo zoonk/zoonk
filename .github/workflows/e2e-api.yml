@@ -45,29 +45,38 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
+      # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
+      # again, and `hashFiles` would then walk every node_modules (about 20 s per cache).
+      - name: Compute cache keys
+        id: cache-keys
+        run: |
+          echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
+          echo "sources=${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
+
       - name: Cache turbo build setup
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-turbo-
 
       - name: Cache Next.js build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-nextjs-api-
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e

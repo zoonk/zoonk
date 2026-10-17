@@ -88,30 +88,3 @@ export async function createAuthenticatedApiContext({
 
   return { apiContext, token, uniqueId: credentials.uniqueId, user };
 }
-
-/**
- * Adds the active subscription row expected by workflow trigger routes that
- * still require a paid plan after the user is authenticated.
- */
-export async function createSubscribedApiContext({
-  baseURL,
-  prefix,
-}: {
-  baseURL: string;
-  prefix: string;
-}) {
-  const authContext = await createAuthenticatedApiContext({ baseURL, prefix });
-
-  await prisma.subscription.create({
-    data: {
-      id: randomUUID(),
-      plan: "plus",
-      referenceId: authContext.user.id,
-      status: "active",
-      stripeCustomerId: `cus_test_${authContext.uniqueId}`,
-      stripeSubscriptionId: `sub_test_${authContext.uniqueId}`,
-    },
-  });
-
-  return authContext;
-}

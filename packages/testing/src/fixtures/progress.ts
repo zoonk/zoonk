@@ -13,6 +13,7 @@ export async function dailyProgressFixtureMany(
     energyAtEnd?: number;
     interactiveCompleted?: number;
     incorrectAnswers?: number;
+    lessonsCompleted?: number;
     staticCompleted?: number;
     timeSpentSeconds?: number;
     userId: string;
@@ -27,6 +28,7 @@ export async function dailyProgressFixtureMany(
       energyAtEnd: input.energyAtEnd ?? 0,
       incorrectAnswers: input.incorrectAnswers ?? 0,
       interactiveCompleted: input.interactiveCompleted ?? 0,
+      lessonsCompleted: input.lessonsCompleted ?? 0,
       staticCompleted: input.staticCompleted ?? 0,
       timeSpentSeconds: input.timeSpentSeconds ?? 0,
       userId: input.userId,

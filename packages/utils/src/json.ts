@@ -101,3 +101,25 @@ export function stringifyUnknown(value: unknown): string {
     return "";
   }
 }
+
+/**
+ * Rewrites every string inside a JSON-like value (objects and arrays at any depth) and keeps keys
+ * and other values, without changing the input, for repairs that apply to all generated text.
+ */
+export function mapJsonStrings(value: unknown, rewrite: (text: string) => string): unknown {
+  if (typeof value === "string") {
+    return rewrite(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => mapJsonStrings(entry, rewrite));
+  }
+
+  if (isJsonObject(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, mapJsonStrings(entry, rewrite)]),
+    );
+  }
+
+  return value;
+}

@@ -11,69 +11,33 @@ function normalizeArrangeWord(word: string): string {
 }
 
 /**
- * Build one stable key for a word sequence so deduplication and answer matching can
- * both reuse the same comparison logic instead of reimplementing element-by-element checks.
+ * Build one stable key for a word sequence so answer matching compares normalized words
+ * instead of reimplementing element-by-element checks.
  */
 function getSequenceKey(words: string[]): string {
   return words.map((word) => normalizeArrangeWord(word)).join(SEQUENCE_SEPARATOR);
 }
 
 /**
- * Segment raw arrange-words text in one shared place so every caller uses the same
- * tokenization rules before it deduplicates, validates, or builds helper data.
+ * Build the accepted arrange-words sequences from the sentence. A blank or punctuation-only
+ * sentence has no sequence, so it never becomes an accepted answer.
  */
-function getWordSequence(text: string): string[] {
-  return segmentWords(text);
+export function buildAcceptedArrangeWordSequences(text: string): string[][] {
+  const words = segmentWords(text);
+  return words.length > 0 ? [words] : [];
 }
 
 /**
- * Treat blank or punctuation-only texts as "no sequence" so they never become
- * accepted answers or pollute derived helper sets.
- */
-function hasWords(words: string[]): boolean {
-  return words.length > 0;
-}
-
-/**
- * Deduplicate accepted sequences by their normalized key while preserving the first
- * original tokenization we saw. That keeps the canonical display words stable.
- */
-function deduplicateAcceptedWordSequences(wordSequences: string[][]): string[][] {
-  return [
-    ...new Map(wordSequences.map((words) => [getSequenceKey(words), words] as const)).values(),
-  ];
-}
-
-/**
- * Build the accepted arrange-words sequences from the primary text plus alternatives,
- * while ignoring blank entries and deduplicating punctuation/casing variants.
- */
-export function buildAcceptedArrangeWordSequences(
-  primaryText: string,
-  alternatives: string[],
-): string[][] {
-  return deduplicateAcceptedWordSequences(
-    [primaryText, ...alternatives]
-      .map((text) => getWordSequence(text))
-      .filter((words) => hasWords(words)),
-  );
-}
-
-/**
- * Collect the distinct accepted sequence lengths so UI helpers can quickly decide which
- * answer lengths are valid without inspecting every full sequence each time.
+ * Collect the accepted sequence lengths so UI helpers can quickly decide which answer
+ * lengths are valid without inspecting every full sequence each time.
  */
 export function getAcceptedArrangeWordLengths(acceptedWordSequences: string[][]): number[] {
-  return [
-    ...new Set(
-      acceptedWordSequences.filter((words) => hasWords(words)).map((words) => words.length),
-    ),
-  ].toSorted((left, right) => left - right);
+  return acceptedWordSequences.map((words) => words.length);
 }
 
 /**
- * Compare a user's arranged words against the accepted sequences with the same normalized
- * sequence key used for deduplication. One rule stays easier to reason about than two.
+ * Compare a user's arranged words against the accepted sequences by their normalized
+ * sequence key, so punctuation and casing never decide the answer.
  */
 export function matchesAcceptedArrangeWords(
   acceptedWordSequences: string[][],

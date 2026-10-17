@@ -1,0 +1,287 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The numbered steps and 'one fourth' explanation make the calculation somewhat easier to follow, and there is no formula. However, the example is unchanged and the rewrite uses more words rather than fewer. It is only a little simpler, triggering the cap of 8.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The explanation preserves the original idea and explicitly compares the change with the starting value rather than the new value. All numbers are correct: the increase is $20, which is one fourth, or 25%, of $80. There is no conceptual drift.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text uses US English, short sentences, and direct address. However, it is noticeably longer than the original and repeatedly restates the same instruction. That redundant filler triggers the cap of 7.",
+          "score": 7,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1419,
+          "inputTokens": 1422,
+          "outputTokens": 660,
+          "reasoningTokens": 234
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The rewrite is only a little simpler: numbered steps help, but it keeps the same ticket example and adds length and repetition. The opening, second step, and closing repeat the starting-value rule. The added exampleLineIdea and image fields are null, so not every returned field is filled.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a smaller everyday purchase with easier numbers, such as a snack increasing from $2 to $3. Explain the increase once, then state briefly that you compare it with the starting price, not the new price.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A clearly simpler version of the percent change explanation: easier words, a more everyday example, no formula or a formula explained word by word\n      - Still says that the change is compared with the starting value, not the new one\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Percent change compares a change with the **starting value**. A ticket going from $80 to $100 changed by $20, and $20 is 25% of $80. So the price rose 25%, even though $20 is only 20% of the new $100.",
+              "title": "Compare with the start"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The additional vocabulary and variable notation do not explain how the calculation works underneath. The baseline is prescribed rather than justified, and no decrease, edge case, or more technical example is included. This triggers the cap of 6 for a deeper version that adds nothing substantive.",
+          "score": 6,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The screen retains the same ticket-price problem and percent-change idea. All calculations are correct: 100 − 80 = 20, 20 ÷ 80 = 0.25, and the increase is +25%. It remains a worked example with the substantive original fields filled and introduces no conflicting lesson content.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The output is in US English and remains a compact screen, but it is not consistently plain or reader-directed. Formal phrases replace everyday wording, and “using formal relative change” is unnecessary filler, triggering the cap of 7. The added abstraction is especially unhelpful for the specified beginner audience.",
+          "score": 7,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1595,
+          "inputTokens": 1598,
+          "outputTokens": 779,
+          "reasoningTokens": 267
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The requested depth is missing. The steps mostly restate the original procedure with formal terminology and symbols. They do not explain why the starting $80 is the reference, why multiplying by 100 produces a percent, or how a decrease produces a negative change. There is no edge case or more technical example.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The wording is unnecessarily formal for a beginner: “initial baseline,” “relative shift,” and “using formal relative change” make the screen harder to read without adding understanding. The title also replaces the concrete price comparison with an abstract label.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the concrete ticket-price framing and introduce notation only after the intuition. A brief explanation that you measure the $20 increase against the original $80, followed by a compact negative-change example, would add useful depth without making the screen long.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - A deeper version of the worked example: the same problem with the reasoning behind each step, such as why the starting value is the reference and how a decrease is written as a negative change\n      - Every number stays correct: from $80 to $100 is +$20, and 20 ÷ 80 = 0.25 = 25%\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-worked-deeper-1",
+        "userInput": {
+          "key": "",
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "problem": "A concert ticket went from $80 to $100. By what percent did the price change?",
+              "result": "The price rose 25%.",
+              "steps": [
+                { "math": "100 - 80 = 20", "text": "Find the change: new price minus old price." },
+                {
+                  "math": "\\frac{20}{80} = 0.25",
+                  "text": "Divide the change by the starting price."
+                },
+                { "math": "0.25 = 25\\%", "text": "Write it as a percent." }
+              ],
+              "title": "From $80 to $100"
+            },
+            "kind": "workedExample"
+          },
+          "variant": "deeper"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "“Mais pessoas” and the explanations “Um sobe e o outro desce” and “Os dois sobem juntos” make the vocabulary and relationship labels more accessible. However, the result uses more words and a less concrete example, so it is only a little simpler. The applicable cap is 8.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The original idea is preserved accurately: with the work fixed, more people means less time; with the team fixed, more work means more time. The corresponding inverse and direct labels are correct, and no unrelated lesson content is introduced.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text is in Brazilian Portuguese and remains a single readable explanation screen with short sentences. However, the opening “Para não se confundir” and the repetitive “O segredo é” closing add filler and unnecessary length. The explicit filler cap limits this category to 7.",
+          "score": 7,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1432,
+          "inputTokens": 1435,
+          "outputTokens": 761,
+          "reasoningTokens": 312
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The simplification is modest: the text is substantially longer than the original and replaces the concrete order-and-labels example with generic work and tasks. Phrases such as “Para não se confundir” and “O segredo é” add filler. However, the explanations of direct and inverse relationships remain clear and correct.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use one concrete, everyday example and remove the opening advice and repetitive closing sentence. Keep the two fixed conditions explicit: the same order with more people takes less time; the same team with a bigger order takes more time.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A clearly simpler version: more everyday words and example, no new terms like \"grandeza\" left unexplained\n      - Still says what stays fixed decides whether the relation is direct or inverse: same order, more people, less time; same team, bigger order, more time\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "screen": {
+            "content": {
+              "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+              "title": "O que fica fixo?"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The result genuinely goes deeper by introducing the uncertainty principle, kinetic energy, and the limiting case of point confinement. However, it names the technical principle before explaining the intuition, and its wording does not clearly reveal the crucial spread of possible momenta. It therefore falls short of a fully successful story-like deeper version.",
+          "score": 8,
+          "label": "Actually simpler or deeper",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The result stays on the original topic and does not explicitly invent a literal spring or outward force. However, saying the velocity itself becomes greater confuses increased momentum uncertainty with an increase in mean velocity. Because this is an error in the central mechanism, the explicit accuracy cap of 6 applies.",
+          "score": 6,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The response uses Brazilian Portuguese, addresses the reader with 'você', and has no introductory filler. Nevertheless, the screen is nearly twice as long as the original and uses substantially longer, more technical sentences. The much-longer-screen cap of 7 applies.",
+          "score": 7,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1497,
+          "inputTokens": 1500,
+          "outputTokens": 974,
+          "reasoningTokens": 477
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation says confinement makes the electron's velocity greater. The uncertainty principle instead requires a greater spread of momentum, not a necessarily greater mean velocity. This distinction matters because that spread is the requested underlying mechanism connecting confinement to increased kinetic energy.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The text is nearly twice the original's length, with longer sentences and denser terminology. Also, exampleLineIdea and image are null, so not every returned field is filled as requested.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Start with the intuitive mechanism: narrowing the electron's possible positions broadens its possible momenta, increasing kinetic energy. Name Heisenberg's uncertainty principle afterward. Keep the point-confinement limit, but describe atomic stability as a balance of energy costs rather than an 'exact equilibrium' with quantum resistance.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A deeper version for a curious adult of why squeezing the electron costs energy: the more precisely its position is confined, the more its motion spreads (the uncertainty principle), so its kinetic energy rises\n      - It may name the idea precisely, but no heavy formulas: the lesson is an overview, so one step deeper still reads as a story\n      - Must not claim there is a literal spring or force pushing the electron out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-deeper-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Por que o elétron não cai no núcleo",
+          "level": "overview",
+          "screen": {
+            "content": {
+              "text": "O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.",
+              "title": "Apertar exige energia"
+            },
+            "kind": "explanation"
+          },
+          "variant": "deeper"
+        }
+      }
+    }
+  ],
+  "taskId": "step-variant"
+}

@@ -1,27 +1,34 @@
-import { prisma } from "@zoonk/db";
-import { cacheTag } from "next/cache";
+import { type TransactionClient, prisma } from "@zoonk/db";
+import { cacheTag, io } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { getActiveSubscriptionQuery, readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 
 /**
  * Keeps the active and trialing status rule in one query while letting callers
  * choose whether the result is a cached display read or a fresh permission
- * check.
+ * check. Workflow bridges pass the owner of the goal they work for, never a
+ * caller's choice.
  */
-function findActiveSubscription(userId: string) {
+export async function findActiveSubscription(userId: string) {
+  /** A session's private read can be prefetched separately; the fresh check owns its clock. */
+  await io();
   const now = new Date();
 
-  return prisma.subscription.findFirst({
-    orderBy: { id: "desc" },
-    where: {
-      OR: [
-        { provider: { not: "apple" } },
-        { endedAt: null, periodEnd: { gt: now }, provider: "apple" },
-      ],
-      referenceId: userId,
-      status: { in: ["active", "trialing"] },
-    },
-  });
+  return findActiveSubscriptionForUser({ now, userId });
+}
+
+/** Internal fresh permission query shared by normal reads and atomic entitlement writes. */
+export function findActiveSubscriptionForUser({
+  client = prisma,
+  now,
+  userId,
+}: {
+  client?: TransactionClient;
+  now: Date;
+  userId: string;
+}) {
+  return client.subscription.findFirst(getActiveSubscriptionQuery({ now, userId }));
 }
 
 /**
@@ -40,7 +47,7 @@ export async function getActiveSubscription() {
   }
 
   cacheTag(getUserSubscriptionCacheTag(session.user.id));
-  return findActiveSubscription(session.user.id);
+  return readActiveSubscription(session.user.id);
 }
 
 /**

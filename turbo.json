@@ -7,22 +7,24 @@
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
-      "BLOB_READ_WRITE_TOKEN",
+      "BLOB_*",
       "DATABASE_*",
       "E2E_TESTING",
-      "GEMINI_API_KEY",
       "GOOGLE_*",
       "MAILER_API_KEY",
       "MAILBOX_URL",
+      "MAIN_APP_URL",
       "NEXT_PUBLIC_API_URL",
       "OPENAI_API_KEY",
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
       "VERCEL_*",
       "PORTLESS_*",
+      "PRIVATE_BLOB_*",
       "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",
+    "passThroughEnv": ["CODEX_SANDBOX"],
     "cacheMaxAge": "7d",
     "cacheMaxSize": "10GB"
   },
@@ -78,7 +80,7 @@
     "i18n": { "cache": false },
     "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
     "test": {
-      "dependsOn": ["db:generate", "^db:setup:test", "^test"],
+      "dependsOn": ["db:generate", "^db:setup:test", "transit"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"]
     },
     "test:watch": {
@@ -87,6 +89,7 @@
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"],
       "persistent": true
     },
+    "transit": { "dependsOn": ["^transit"] },
     "typecheck": {
       "dependsOn": ["db:generate", "^typecheck"],
       "outputs": [".next/types/**", "next-env.d.ts"]

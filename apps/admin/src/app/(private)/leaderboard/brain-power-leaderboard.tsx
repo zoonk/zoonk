@@ -61,6 +61,7 @@ async function CachedBrainPowerLeaderboard({
 
   const { currentPeriodStart } = getRollingUtcDateWindowStarts({
     days: getLeaderboardPeriodDays(period),
+    // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
     now: new Date(),
   });
 

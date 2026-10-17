@@ -30,6 +30,35 @@
         }
       }
     },
+    "A security check blocked this request. Try again or contact hello@zoonk.com." : {
+      "comment" : "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es noch einmal oder kontaktiere hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una comprobación de seguridad ha bloqueado esta solicitud. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un contrôle de sécurité a bloqué cette demande. Réessaie ou contacte hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O sistema de segurança bloqueou este pedido. Tente de novo ou mande um email para contato@zoonk.com."
+          }
+        }
+      }
+    },
     "Account" : {
       "comment" : "Accessibility label for the account button\nAccount sheet navigation title",
       "localizations" : {
@@ -610,35 +639,6 @@
         }
       }
     },
-    "Course progress" : {
-      "comment" : "Learning data removed during account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kursfortschritt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progreso del curso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progression du cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progresso do curso"
-          }
-        }
-      }
-    },
     "Delete account" : {
       "comment" : "Account deletion navigation title\nAccount option that opens permanent account deletion\nConfirms permanent account deletion\nStarts permanent account deletion",
       "localizations" : {
@@ -987,6 +987,35 @@
         }
       }
     },
+    "Goals, plans and progress" : {
+      "comment" : "Learning goals, study plans and progress removed during account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziele, Pläne und Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivos, planes y progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectifs, plans et progression"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metas, planos e progresso"
+          }
+        }
+      }
+    },
     "Google Play" : {
       "comment" : "Status shown when an active subscription is managed by Google Play",
       "localizations" : {
@@ -1219,6 +1248,35 @@
         }
       }
     },
+    "Memory, feedback and uploads" : {
+      "comment" : "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Informationen, Feedback und Uploads"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria, comentarios y archivos subidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire, retours et fichiers importés"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memória, comentários e arquivos enviados"
+          }
+        }
+      }
+    },
     "My courses" : {
       "comment" : "Account option that opens the learner's enrolled courses",
       "localizations" : {
@@ -1389,35 +1447,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Excluídos permanentemente"
-          }
-        }
-      }
-    },
-    "Personalized courses" : {
-      "comment" : "Personalized learning data removed during account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Personalisierte Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos personalizados"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cours personnalisés"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos personalizados"
           }
         }
       }
@@ -2205,31 +2234,31 @@
         }
       }
     },
-    "This permanently deletes your profile, progress, and personalized courses. This can't be undone." : {
+    "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone." : {
       "comment" : "Explains the consequences of confirming permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dadurch werden dein Profil, dein Fortschritt und deine personalisierten Kurse dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden."
+            "value" : "Dein Profil, deine Ziele, Pläne, dein Fortschritt, gespeicherte Informationen, dein Feedback und deine Uploads werden dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto elimina permanentemente tu perfil, tu progreso y tus cursos personalizados. No se puede deshacer."
+            "value" : "Esto eliminará permanentemente tu perfil, objetivos, planes, progreso, memoria, comentarios y archivos subidos. Esta acción no se puede deshacer."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton profil, ta progression et tes cours personnalisés seront supprimés définitivement. Cette action est irréversible."
+            "value" : "Cette action supprimera définitivement ton profil, tes objectifs, tes plans, ta progression, ta mémoire, tes retours et tes fichiers importés. Cette action est irréversible."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso exclui permanentemente seu perfil, seu progresso e seus cursos personalizados. Não é possível desfazer."
+            "value" : "Isso apaga permanentemente seu perfil, metas, planos, progresso, memória, comentários e arquivos enviados. Não dá para desfazer."
           }
         }
       }
@@ -2437,35 +2466,6 @@
         }
       }
     },
-    "username" : {
-      "comment" : "Placeholder for the username field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "benutzername"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nombre de usuario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nom d’utilisateur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome de usuário"
-          }
-        }
-      }
-    },
     "Username" : {
       "comment" : "Profile username field label",
       "localizations" : {
@@ -2491,6 +2491,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome de usuário"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
           }
         }
       }
@@ -2855,7 +2884,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no pudo eliminar tu cuenta. Inténtalo de nuevo o contacta con hello@zoonk.com."
+            "value" : "Zoonk no ha podido eliminar tu cuenta. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -2867,7 +2896,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não conseguiu excluir sua conta. Tente novamente ou entre em contato pelo email hello@zoonk.com."
+            "value" : "O Zoonk não conseguiu excluir sua conta. Tente de novo ou mande um email para contato@zoonk.com."
           }
         }
       }
@@ -2901,6 +2930,35 @@
         }
       }
     },
+    "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com." : {
+      "comment" : "Generic email verification code delivery failure",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk konnte den Bestätigungscode nicht senden. Versuch es noch einmal oder kontaktiere hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk no ha podido enviar el código de verificación. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk n’a pas pu envoyer le code de vérification. Réessaie ou contacte hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk não conseguiu enviar o código de verificação. Tente de novo ou mande um email para contato@zoonk.com."
+          }
+        }
+      }
+    },
     "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com." : {
       "comment" : "Generic sign-in failure message",
       "localizations" : {
@@ -2913,7 +2971,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no pudo iniciar tu sesión. Inténtalo de nuevo o escribe a hello@zoonk.com."
+            "value" : "Zoonk no ha podido iniciar tu sesión. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -2925,7 +2983,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível entrar no Zoonk. Tente de novo ou fale com hello@zoonk.com."
+            "value" : "Não foi possível entrar no Zoonk. Tente de novo ou mande um email para contato@zoonk.com."
           }
         }
       }

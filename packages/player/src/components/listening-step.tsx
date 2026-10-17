@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { PlayAudioButton } from "./play-audio-button";
 import { QuestionText } from "./question-text";
@@ -18,7 +18,7 @@ function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   return (
     <div className="flex flex-col gap-3">
       <SectionLabel>{t("What do you hear?")}</SectionLabel>
-      <PlayAudioButton audioUrl={audioUrl} />
+      <PlayAudioButton audioUrl={audioUrl} variant="labeled" />
     </div>
   );
 }
@@ -28,7 +28,7 @@ function TextPrompt({ sentence }: { sentence: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <SectionLabel>{t("Translate this sentence:")}</SectionLabel>
+      <SectionLabel>{t("Translate")}</SectionLabel>
       <QuestionText>{sentence}</QuestionText>
     </div>
   );
@@ -40,7 +40,7 @@ export function ListeningStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
@@ -49,7 +49,7 @@ export function ListeningStep({
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation);
   const correctWords = acceptedWordSequences[0] ?? [];
   const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 
@@ -61,7 +61,6 @@ export function ListeningStep({
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}
-      stepId={step.id}
       wordBankOptions={step.wordBankOptions}
     >
       {step.sentence.audioUrl ? (

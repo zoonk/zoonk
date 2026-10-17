@@ -1,0 +1,197 @@
+import "server-only";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import {
+  loadGoalListeningSkillIds,
+  loadLearnerListeningSkillIds,
+} from "../exams/listening/listening-skills";
+import { loadGoalSkillScope } from "../learner/_utils/goal-skill-graph";
+import { getStartOfLocalDay } from "../learner/_utils/local-time";
+import { getGoalField } from "../library/items/item-field";
+import { type MistakeAvailability } from "./contract";
+import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
+
+/** A mistake is fixed by recall on a later local day, rather than repeating the answer just shown. */
+export function getMistakePracticeBefore({
+  localDate,
+  timeZone,
+}: {
+  localDate: Date;
+  timeZone: string;
+}): Date {
+  return getStartOfLocalDay({ localDate, timeZone });
+}
+
+/** The notebook and the day's fix mission use this same boundary. */
+function isMistakePracticeAvailable({
+  createdAt,
+  startOfToday,
+  status,
+}: {
+  createdAt: Date;
+  startOfToday: Date;
+  status: "fixed" | "open";
+}): boolean {
+  return status === "open" && createdAt.getTime() < startOfToday.getTime();
+}
+
+/** Whose mistakes, in which goal's scope (or `skillIds`, or every goal without either). */
+type MistakeScopeInput = {
+  /** The known goal's exam blueprint when the caller already read it (a GET), so it isn't again. */
+  blueprint?: ExamBlueprint | null;
+  /** The goal's row when the caller already read it (the learner summary), so it isn't again. */
+  goal?: Goal | null;
+  goalId?: string | null;
+  skillIds?: readonly string[] | null;
+  userId: string;
+};
+
+type AvailabilityInput = MistakeScopeInput & { localDate: Date; timeZone: string };
+
+/** The goal's row, its skill scope (`getSkillOwners` of its plan) and its listening skills. */
+async function loadGoalScope({
+  blueprint,
+  goal: known,
+  goalId,
+}: {
+  blueprint?: ExamBlueprint | null;
+  goal?: Goal | null;
+  goalId: string;
+}) {
+  const isKnown = known?.id === goalId;
+
+  const [scope, goal] = await Promise.all([
+    loadGoalSkillScope(goalId),
+    isKnown ? known : prisma.goal.findUnique({ where: { id: goalId } }),
+  ]);
+
+  const listeningSkillIds = goal
+    ? await loadGoalListeningSkillIds({
+        blueprint: isKnown ? blueprint : undefined,
+        goal,
+        graph: scope.graph,
+      })
+    : new Set<string>();
+
+  return { goal, listeningSkillIds, ownerOf: scope.ownerOf };
+}
+
+/**
+ * The open mistakes in scope that practice material can drill: whichever day it is, what's ready
+ * to practice is those made before its start. Internal: the caller resolved the learner and owns
+ * the goal, when scoped.
+ */
+async function loadPracticeEligibleMistakes({
+  blueprint,
+  goal: knownGoal,
+  goalId,
+  skillIds,
+  userId,
+}: MistakeScopeInput) {
+  const scope = goalId ? await loadGoalScope({ blueprint, goal: knownGoal, goalId }) : null;
+  const ownerOf = scope?.ownerOf ?? new Map<string, string>();
+  const scopedSkillIds = skillIds ?? (goalId ? [...ownerOf.keys()] : null);
+
+  const where = {
+    status: "open" as const,
+    userId,
+    ...(scopedSkillIds ? { skillId: { in: [...scopedSkillIds] } } : {}),
+  };
+
+  const [mistakes, listeningSkillIds] = await Promise.all([
+    prisma.mistake.findMany({ omit: { snapshot: true }, where }),
+    scope ? scope.listeningSkillIds : loadLearnerListeningSkillIds(userId),
+  ]);
+
+  const goal = scope?.goal ?? null;
+
+  return filterMistakesWithPracticeMaterial({
+    examBlueprintId: goal?.examBlueprintId ?? null,
+    field: getGoalField(goal?.details),
+    listeningSkillIds,
+    mistakes,
+    ownerOf,
+  });
+}
+
+type EligibleMistake = Awaited<ReturnType<typeof loadPracticeEligibleMistakes>>[number];
+
+/** The eligible mistakes ready to practice on the learner's `localDate`, by id. */
+function findReadyIds({
+  eligible,
+  localDate,
+  timeZone,
+}: {
+  eligible: readonly EligibleMistake[];
+  localDate: Date;
+  timeZone: string;
+}): Set<string> {
+  const startOfToday = getMistakePracticeBefore({ localDate, timeZone });
+
+  return new Set(
+    eligible
+      .filter((mistake) => isMistakePracticeAvailable({ ...mistake, startOfToday }))
+      .map((mistake) => mistake.id),
+  );
+}
+
+/** Internal: the caller has resolved the learner and owns the goal, when scoped. */
+export async function loadMistakePracticeAvailability(
+  input: AvailabilityInput,
+): Promise<{
+  availability: MistakeAvailability;
+  readyIds: ReadonlySet<string>;
+  tomorrowIds: ReadonlySet<string>;
+}> {
+  const eligible = await loadPracticeEligibleMistakes(input);
+  const readyIds = findReadyIds({ eligible, ...input });
+
+  const tomorrowIds = new Set(
+    eligible.filter((mistake) => !readyIds.has(mistake.id)).map((mistake) => mistake.id),
+  );
+
+  return {
+    availability: { ready: readyIds.size, tomorrow: tomorrowIds.size },
+    readyIds,
+    tomorrowIds,
+  };
+}
+
+/**
+ * The notebook's ready count (`availability.ready`) on the learner's `today` and on earlier days
+ * (a day carried over from the night before), from one read of the eligible mistakes. While no
+ * open mistake was made before the start of `today` (one indexed check), none can be ready on any
+ * of those days, so nothing else is read.
+ */
+export function countReadyMistakesByDay({
+  timeZone,
+  today,
+  ...scope
+}: MistakeScopeInput & { timeZone: string; today: Date }): (localDate: Date) => Promise<number> {
+  let eligible: Promise<readonly EligibleMistake[]> | undefined;
+
+  async function loadEligible() {
+    const candidate = await prisma.mistake.findFirst({
+      select: { id: true },
+      where: {
+        createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
+        status: "open",
+        userId: scope.userId,
+      },
+    });
+
+    return candidate ? loadPracticeEligibleMistakes(scope) : [];
+  }
+
+  return async (localDate) => {
+    eligible ??= loadEligible();
+    return findReadyIds({ eligible: await eligible, localDate, timeZone }).size;
+  };
+}
+
+/** The same actionable notebook mistakes feed the fix mission, with or without scheduled drills. */
+export async function loadMistakeAvailability(
+  input: AvailabilityInput,
+): Promise<MistakeAvailability> {
+  const result = await loadMistakePracticeAvailability(input);
+  return result.availability;
+}

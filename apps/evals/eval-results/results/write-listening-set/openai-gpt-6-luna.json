@@ -1,0 +1,229 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "The home-town answer cannot be established from the script: Wichita is where Leah is visiting family, not necessarily where she lives. This triggers the maximum score of 6 for a wrong key. The other four keys match the recording and require listening, although one accepted date variant violates the answer-length limit.",
+          "score": 6,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The two-person registration call, form-completion questions, chronological answer order and specified British/Australian speakers fit Part 1. However, the script is far below the required 4–5 minutes, triggering the at-most-7 cap. Missing answer-bearing self-corrections, the ingredient answer outside the specified answer types, and the absent word-limit instruction further reduce fidelity. Five questions matches the requested count and is not itself a defect.",
+          "score": 6,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue reads naturally as a short service call, with contractions, brief reactions, a plausible opening and closing, and appropriate conversational expressions. Turns contain only spoken words, and the supporting guidance is in English. No written-prose, stage-direction or wrong-language cap is triggered.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2515,
+          "outputTokens": 790,
+          "reasoningTokens": 229
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Question 2 has an unsupported key: visiting family in Wichita does not establish Wichita as Leah's home town. The recording is only about 240 words, roughly 1.5–2 minutes at a normal pace, rather than the required 4–5 minutes. None of the answers follows a speaker's self-correction; the alternative dates and times provide distractors but do not satisfy that requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The accepted answer 'the fourteenth of June' exceeds the two-word-and/or-a-number limit. The question set also omits an explicit answer-length instruction. Question 5 asks for an ingredient rather than one of the specified answer types: names, numbers, dates, prices or addresses.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use additional practical booking dialogue to reach the intended duration without padding. Preserve the requested five questions and their chronological order, while incorporating one or two genuine self-corrections into the assessed details.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), about 4 to 5 minutes, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits. Speakers mix the British and Australian accents listed.",
+        "id": "en-ielts-part-1-form-completion-1",
+        "userInput": {
+          "accents": ["British English", "Australian English"],
+          "count": 5,
+          "exam": "IELTS",
+          "formats": ["typed"],
+          "language": "en",
+          "level": "band 6",
+          "plays": 1,
+          "scriptLanguage": "en",
+          "task": "Part 1: a conversation between two people set in an everyday social context; form completion, write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer. 10 questions in the real test."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All four keys are supported by the script, including the corrected Thursday-at-five deadline. No distractor is also defensible as the answer. The questions require script-specific information; general plausibility alone does not establish their answers. Neither key-related cap is triggered.",
+          "score": 10,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The campus student–professor conversation, roughly 430-word length, four-option questions, chronological ordering, and distractors based on rejected plans and a corrected deadline fit the task well. However, there is no attitude or implied-meaning question, and the opening item assesses the project topic rather than the conversation’s purpose. These are meaningful coverage weaknesses, but the set is not sufficiently out of place to trigger the specified realism cap.",
+          "score": 8,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The dialogue uses contractions, reactions, natural transitions, and an appropriate closing, with no stage directions or narrator text. The accents are allowed, and reasons and misconceptions are in Brazilian Portuguese and grounded in the conversation. 'Professor Caleb' sounds slightly unusual if Caleb is intended as a first name; a surname would be more idiomatic. Neither natural-speech cap is triggered.",
+          "score": 9,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3343,
+          "outputTokens": 793,
+          "reasoningTokens": 275
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set omits the required question about a speaker’s attitude or implied meaning. All four questions test explicitly stated information, leaving a required listening skill unassessed.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The first question tests the project’s topic rather than the main purpose of the conversation—getting help planning and narrowing the project. The deadline question also repeats the recording’s wording rather than meaningfully paraphrasing it.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace one detail question with an inference question about Caleb’s attitude toward revising the research approach. Reframe the opening question around why Iris consults the professor. Using a surname after 'Professor' would make the opening more typical of a university conversation.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "TOEFL iBT \"Listen to a Conversation\" for a Brazilian learner: a campus conversation between a student and a professor or staff member, about 2 to 3 minutes, with 4-option multiple-choice questions on the main purpose, details and a speaker's attitude or implied meaning, in English. Reasons and misconceptions are in Brazilian Portuguese. Speakers use North American English, with a British or Australian accent allowed.",
+        "id": "pt-toefl-campus-conversation-1",
+        "userInput": {
+          "accents": ["American English", "British English", "Australian English"],
+          "count": 4,
+          "exam": "TOEFL iBT",
+          "formats": ["multipleChoice"],
+          "language": "pt",
+          "level": "B2",
+          "optionCount": 4,
+          "plays": 1,
+          "scriptLanguage": "en",
+          "task": "Listen to a Conversation: a conversation on a university campus between a student and a professor or a staff member; multiple-choice questions with one answer."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "The supplied answer, 'Saturday mornings', is explicitly supported after Sunday afternoons and weekday evenings are rejected. It genuinely requires listening. However, the accepted answers omit another recording-supported completion, 'the first Saturday of every month'. This is an answer-coverage weakness, not an incorrect supplied key.",
+          "score": 8,
+          "label": "Right, fair keys",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The single-speaker account of community work, approximately 500-word script, typed sentence completion and nearby scheduling distractors fit the requested part. However, providing just one question rather than six makes this substantially incomplete and unrepresentative as a Part 2 practice set. The out-of-place-set cap of 7 applies; the extent of the omission warrants 6.",
+          "score": 6,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "naturalSpeech",
+          "reasoning": "The script is a credible spoken community presentation, with a natural introduction and closing, contractions and conversational transitions. British usage includes 'travelling', 'tyres' and 'cupboard'. The Tulsa setting does not contradict a British-accented speaker. The text contains only spoken words, without stage directions or inappropriate narrator material.",
+          "score": 10,
+          "label": "Natural speech & language",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 7 parts passed. Two accepted answers are the same. Two accepted answers are the same. Two accepted answers are the same. Two accepted answers are the same. Two accepted answers are the same.",
+          "score": 3.571428571428571,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2140,
+          "outputTokens": 861,
+          "reasoningTokens": 360
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Only one sentence-completion question is supplied instead of the requested six. This materially reduces the exercise's usefulness: most of the otherwise appropriately sized monologue is not assessed.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The accepted-answer list is narrower than the question warrants. The recording also says the event happens on 'the first Saturday of every month', which completes the sentence correctly but is not accepted. The day-and-time requirement in keyPoints is not clear from the question itself.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the existing details about storage, bicycles, online booking and confidence to build the missing questions in recording order. Maintain the scheduling question's useful pattern of earlier alternatives followed by the final arrangement.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Cambridge B2 First Listening Part 2 for an English-speaking learner: one speaker talking for 3 to 4 minutes about their work, a hobby or an experience, with sentence completion: each question is a sentence with a gap, filled with a word or short phrase the speaker says. Gaps target concrete details with distractors nearby (two things mentioned, one corrected). Played twice. British English.",
+        "id": "en-cambridge-first-part-2-sentence-completion-1",
+        "userInput": {
+          "accents": ["British English"],
+          "count": 6,
+          "exam": "Cambridge B2 First",
+          "formats": ["typed"],
+          "language": "en",
+          "level": "B2",
+          "plays": 2,
+          "scriptLanguage": "en",
+          "task": "Part 2: a monologue of 3 to 4 minutes; sentence completion, write a word or short phrase you hear in each gap. 10 questions in the real test."
+        }
+      }
+    }
+  ],
+  "taskId": "write-listening-set"
+}

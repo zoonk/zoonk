@@ -35,11 +35,11 @@ function getAggregatedPoints(
   period: HistoryPeriod,
 ): { date: Date; value: number }[] {
   if (period === "all") {
-    return aggregateByPeriod(rawPoints, (point) => point.count, "sum", "year");
+    return aggregateByPeriod(rawPoints, (point) => point.count, "year");
   }
 
   if (period === "year") {
-    return aggregateByPeriod(rawPoints, (point) => point.count, "sum", "month");
+    return aggregateByPeriod(rawPoints, (point) => point.count, "month");
   }
 
   return rawPoints.map((point) => ({ date: point.date, value: point.count }));

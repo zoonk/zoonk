@@ -1,7 +1,15 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import {
+  type ProgressHistoryOptions,
+  readLifetimeDailyProgress,
+} from "./_utils/daily-progress-rows";
 import { getProgressSession } from "./_utils/progress-cache";
-import { getTotalLearningDays, getTotalLearningTime } from "./progress-metrics";
+import {
+  countActivitiesCompleted,
+  getTotalLearningDays,
+  getTotalLearningTime,
+  getTotalLessonsCompleted,
+} from "./progress-metrics";
 
 export type LearningActivityTotals = {
   learningDays: number;
@@ -10,32 +18,33 @@ export type LearningActivityTotals = {
 };
 
 /**
- * LessonProgress records each lesson's first durable completion, so reviews
- * never inflate the lesson total shown on Home and Activity.
- */
-function findTotalCompletedLessons({ userId }: { userId: string }): Promise<number> {
-  return prisma.lessonProgress.count({ where: { completedAt: { not: null }, userId } });
-}
-
-/**
- * Composes the existing lifetime day and time sources with the unique lesson
- * total so every progress surface shares one definition of each metric.
+ * Composes the lifetime day, time and first-completion totals from the daily
+ * table so every progress surface shares one definition of each metric.
  */
 async function findLearningActivityTotals({
+  history,
   userId,
-}: {
-  userId: string;
-}): Promise<LearningActivityTotals> {
-  const [learningDays, learningTime, totalLessonCompletions] = await Promise.all([
+}: ProgressHistoryOptions & { userId: string }): Promise<LearningActivityTotals> {
+  if (history === "lifetime") {
+    const rows = await readLifetimeDailyProgress(userId);
+
+    return {
+      learningDays: rows.filter((row) => countActivitiesCompleted(row) > 0).length,
+      totalLearningSeconds: rows.reduce((sum, row) => sum + row.timeSpentSeconds, 0),
+      totalLessonCompletions: rows.reduce((sum, row) => sum + row.lessonsCompleted, 0),
+    };
+  }
+
+  const [learningDays, learningTime, lessonsCompleted] = await Promise.all([
     getTotalLearningDays({ userId }),
     getTotalLearningTime({ userId }),
-    findTotalCompletedLessons({ userId }),
+    getTotalLessonsCompleted({ userId }),
   ]);
 
   return {
     learningDays: learningDays.learningDays,
     totalLearningSeconds: learningTime.totalLearningSeconds,
-    totalLessonCompletions,
+    totalLessonCompletions: lessonsCompleted.totalLessonCompletions,
   };
 }
 
@@ -43,10 +52,12 @@ async function findLearningActivityTotals({
  * Returns the signed-in learner's lifetime activity totals without loading the
  * daily calendar rows used only by the Activity page.
  */
-export async function getLearningActivityTotals(): Promise<LearningActivityTotals | null> {
+export async function getLearningActivityTotals({
+  history,
+}: ProgressHistoryOptions = {}): Promise<LearningActivityTotals | null> {
   "use cache: private";
 
   const session = await getProgressSession();
 
-  return session ? findLearningActivityTotals({ userId: session.user.id }) : null;
+  return session ? findLearningActivityTotals({ history, userId: session.user.id }) : null;
 }

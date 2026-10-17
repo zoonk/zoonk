@@ -1,0 +1,90 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1185,
+          "outputTokens": 95,
+          "reasoningTokens": 38
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"es\"; translations for en, pt, fr and de.\n- Each says a minimum of 30 points in Group 1 and 30 points in Group 2 (\"Grupo 1\" becomes that language's word for group), and keeps the official grade \"Apto\" in quotation marks after its translation (Portuguese \"Aprovado\", English \"Pass\").",
+        "id": "es-dele-b2-groups-1",
+        "userInput": {
+          "languages": ["en", "es", "pt", "fr", "de"],
+          "texts": ["Apto con un mínimo de 30 puntos en el Grupo 1 y 30 puntos en el Grupo 2."]
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1270,
+          "outputTokens": 79,
+          "reasoningTokens": 22
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"en\"; translations for es, pt, fr and de, each with both lines.\n- The first line keeps 60 of the 100 points; the second keeps the minimum of 20 points in each of the four tests, and keeps \"Reading\", \"Listening\", \"Writing\" and \"Speaking\" understandable (translated or kept as names).",
+        "id": "en-two-pass-marks-1",
+        "userInput": {
+          "languages": ["en", "es", "pt", "fr", "de"],
+          "texts": [
+            "To pass, candidates need at least 60 of the 100 points.",
+            "Candidates must also score at least 20 points in each of Reading, Listening, Writing and Speaking."
+          ]
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1195,
+          "outputTokens": 210,
+          "reasoningTokens": 112
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The German phrase “50 % der Antworten richtig beantwortet” is awkward: candidates answer questions, not answers. “Mindestens 50 % richtige Antworten erzielt” would be more natural while preserving the meaning and percentage.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n- `language` is the ISO 639-1 code of the texts' language, and `translations` has one entry for every other requested language, never one for the texts' own.\n- Each entry translates every line, in order, one for one, in natural wording for that language.\n- Every number, score and percentage is kept exactly; nothing is converted, rounded, added up or explained.\n- Says only what each line says: no advice, no estimate of anyone's chances, no promise of a result.\n- No em dashes and no Markdown.\n\n- `language` is \"pt\"; translations for en, es, fr and de.\n- Each says candidates pass the objective test with at least 50% right answers, that is a score of 40.00 points or more (the decimal written as that language writes it).",
+        "id": "pt-oab-objective-1",
+        "userInput": {
+          "languages": ["en", "es", "pt", "fr", "de"],
+          "texts": [
+            "Aprovado na prova objetiva quem obtiver no mínimo 50% de acertos, ou seja, nota igual ou superior a 40,00 pontos."
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "translate-pass-marks"
+}

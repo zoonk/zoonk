@@ -1,7 +1,7 @@
 import { type SpeechModelName } from "@zoonk/ai/speech-models";
 import {
-  type LanguageAudioTextType,
   type LanguageAudioUsage,
+  type SpeechProvenance,
   generateLanguageAudio as generateAudio,
 } from "@zoonk/ai/tasks/audio";
 import { type SafeReturn } from "@zoonk/utils/error";
@@ -9,29 +9,27 @@ import { type TTSVoice } from "@zoonk/utils/languages";
 import { toSlug } from "@zoonk/utils/string";
 import { uploadAudio } from "./upload-audio";
 
+/** Voices a word or sentence and uploads the clip; the result names the run that voiced it. */
 export async function generateLanguageAudio({
   language,
   model,
   orgSlug,
   text,
-  textType,
   usage,
   voice,
 }: {
-  language?: string;
+  language: string;
   model?: SpeechModelName;
   orgSlug?: string;
   text: string;
-  textType?: LanguageAudioTextType;
   usage?: LanguageAudioUsage;
   voice?: TTSVoice;
-}): Promise<SafeReturn<string>> {
+}): Promise<SafeReturn<{ provenance: SpeechProvenance; url: string }>> {
   const { data: audioResult, error: generateError } = await generateAudio({
     language,
     ...(model ? { model } : {}),
     text,
-    ...(textType ? { textType } : {}),
-    voice,
+    ...(voice ? { voice } : {}),
     ...(usage ? { usage } : {}),
   });
 
@@ -51,5 +49,5 @@ export async function generateLanguageAudio({
     return { data: null, error: uploadError };
   }
 
-  return { data: url, error: null };
+  return { data: { provenance: audioResult.provenance, url }, error: null };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { type StepImage } from "@zoonk/core/steps/contract/image";
+import { type ExerciseImage } from "@zoonk/core/library/steps/contract/language-exercises";
 import Image from "next/image";
 import { useState } from "react";
 import { STEP_IMAGE_SIZES } from "../image-config";
@@ -19,7 +19,7 @@ function StepImageFallback({ prompt }: { prompt: string }) {
  * steps so a missing upload still leaves the learner with the intended prompt.
  * Images are contained so diagrams and screenshots are not clipped.
  */
-export function StepImageView({ image }: { image: StepImage }) {
+export function StepImageView({ image }: { image: ExerciseImage }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
 
   if (!image.url || errorUrl === image.url) {

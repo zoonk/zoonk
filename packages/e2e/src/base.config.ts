@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
+import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
+import { getTestEnvironment } from "../../db/src/test-environment";
 
 const CHROMIUM_PROJECT = {
   name: "chromium",
@@ -11,6 +12,8 @@ export function createBaseConfig(options: {
   testDir: string;
   webServerEnv?: Record<string, string>;
 }) {
+  assertBrowserLaunchAllowed();
+
   return defineConfig({
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
@@ -21,6 +24,9 @@ export function createBaseConfig(options: {
     testDir: options.testDir,
     use: {
       screenshot: process.env.CI ? "off" : "only-on-failure",
+      // Learners in tests live in UTC, the zone their goals and fixtures date days in, so the
+      // learner's day never differs from the UTC day late at night on a machine in another zone.
+      timezoneId: "UTC",
       trace: process.env.CI ? "off" : "on-first-retry",
       video: process.env.CI ? "off" : "retain-on-failure",
     },

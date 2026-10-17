@@ -1,60 +1,85 @@
-import { type ModelConfig, getModelById } from "./models";
-import { type EvalResult, type TaskEvalResults } from "./types";
+import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
+import { type ClassificationSummary, summarizeClassification } from "./classification-metrics";
+import { estimateCostPer1000Runs, getCallCost } from "./cost";
+import { summarizeLatency } from "./latency";
+import { average, sum } from "./math";
+import { getModelById } from "./models";
+import { type ModelCall, type TaskEvalResults } from "./types";
 
-const TOKENS_PER_MILLION = 1_000_000;
-const COST_MULTIPLIER = 1000;
-const MS_TO_SECONDS = 1000;
-
-type TaskStats = {
+export type TaskStats = {
   averageInputTokens: number;
   averageOutputTokens: number;
-  averageDuration: number;
-  totalCost: number;
+  latencyP50: number;
+  latencyP95: number;
+  /** What 1,000 runs would cost at this model's average usage. */
+  costPer1000Runs: number;
+  /** What generating these outputs actually cost. */
+  runCost: number;
+  /** What scoring these outputs actually cost. Zero for code-scored tasks. */
+  judgeCost: number;
+  /** What the generations' other model calls cost, such as a pipeline's checks (`extraCalls`). */
+  extraCost: number;
+  classification: ClassificationSummary | null;
 };
 
-function calculateAverage(
-  results: EvalResult[],
-  key: "inputTokens" | "outputTokens" | "duration",
-): number {
-  if (results.length === 0) {
-    return 0;
-  }
-
-  const total = results.reduce((sum, result) => sum + result[key], 0);
-
-  return total / results.length;
+function getCallsCost({ calls, prices }: { calls: ModelCall[]; prices: GatewayPrices }): number {
+  return sum(
+    calls.map((call) => getCallCost({ modelId: call.modelId, prices, usage: call.usage })),
+  );
 }
 
-function calculateCost(tokens: number, cost: number): number {
-  return (tokens / TOKENS_PER_MILLION) * cost * COST_MULTIPLIER;
+/** Everything a run spent: the evaluated model's answers, the judge and every other call. */
+export function getSpent(stats: Pick<TaskStats, "extraCost" | "judgeCost" | "runCost">): number {
+  return stats.runCost + stats.judgeCost + stats.extraCost;
 }
 
-function calculateTotalCost(inputTokens: number, outputTokens: number, model: ModelConfig): number {
-  const { inputCost, outputCost } = model;
-
-  const totalInputCost = calculateCost(inputTokens, inputCost);
-  const totalOutputCost = calculateCost(outputTokens, outputCost);
-
-  return totalInputCost + totalOutputCost;
-}
-
-function calculateStats(results: EvalResult[], modelId: string): TaskStats {
-  const model = getModelById(modelId);
+/**
+ * Summarizes one model's scored results with gateway prices: cached input and
+ * reasoning tokens use the rates the gateway bills, and latency is reported
+ * as p50 and p95 because learners wait on the tail, not the average.
+ */
+export function getStatsFromResults({
+  evalResults,
+  prices,
+}: {
+  evalResults: TaskEvalResults;
+  prices: GatewayPrices;
+}): TaskStats {
+  const model = getModelById(evalResults.modelId);
 
   if (!model) {
-    throw new Error(`Model ${modelId} not found`);
+    throw new Error(`Model ${evalResults.modelId} not found`);
   }
 
-  const averageInputTokens = calculateAverage(results, "inputTokens");
-  const averageOutputTokens = calculateAverage(results, "outputTokens");
-  const averageDurationMs = calculateAverage(results, "duration");
-  const averageDuration = averageDurationMs / MS_TO_SECONDS;
+  const { results } = evalResults;
 
-  const totalCost = calculateTotalCost(averageInputTokens, averageOutputTokens, model);
+  /**
+   * Transcription is billed per minute of audio, speech per second of audio or per character, and
+   * GPT-Live per second of session, which token prices can't express.
+   */
+  const runCosts =
+    model.kind === "transcription" || model.kind === "realtime" || model.kind === "speech"
+      ? []
+      : results.map((result) =>
+          getCallCost({ modelId: model.gatewayModelId, prices, usage: result }),
+        );
 
-  return { averageDuration, averageInputTokens, averageOutputTokens, totalCost };
-}
+  const latency = summarizeLatency(results.map((result) => result.duration));
 
-export function getStatsFromResults(evalResults: TaskEvalResults): TaskStats {
-  return calculateStats(evalResults.results, evalResults.modelId);
+  return {
+    averageInputTokens: average(results.map((result) => result.inputTokens)),
+    averageOutputTokens: average(results.map((result) => result.outputTokens)),
+    classification: summarizeClassification(
+      results.flatMap((result) => (result.classification ? [result.classification] : [])),
+    ),
+    costPer1000Runs: estimateCostPer1000Runs(runCosts),
+    extraCost: getCallsCost({
+      calls: results.flatMap((result) => result.extraCalls ?? []),
+      prices,
+    }),
+    judgeCost: getCallsCost({ calls: results.flatMap((result) => result.judge ?? []), prices }),
+    latencyP50: latency.p50,
+    latencyP95: latency.p95,
+    runCost: sum(runCosts),
+  };
 }

@@ -1,10 +1,9 @@
 "use server";
 
 import { assertAdmin } from "@/lib/admin-guard";
-import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { renameCourseForAdmin } from "@zoonk/core/courses/rename";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
-import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidatePath } from "next/cache";
 
@@ -16,28 +15,18 @@ export type UpdateCourseState = {
   title: string;
 };
 
-/**
- * An unchanged stored slug must remain byte-for-byte stable, including older
- * values that may predate today's slug length rules. New input is normalized
- * through the shared slug function before it is persisted.
- */
-function getUpdatedSlug({
-  currentSlug,
-  submittedSlug,
-}: {
-  currentSlug: string;
-  submittedSlug: string;
-}) {
-  if (submittedSlug === currentSlug) {
-    return currentSlug;
-  }
-
-  return toSlug(submittedSlug);
-}
+const ERRORS = {
+  forbidden: "You can't edit courses.",
+  invalidSlug: "Enter a slug with at least one letter or number.",
+  notFound: "Course not found.",
+  slugTaken: "That slug is already used by another course with the same owner.",
+  unauthorized: "You can't edit courses.",
+} as const;
 
 /**
  * Keeps a course's display title, normalized search title, and URL slug in sync
- * while preserving the admin's ability to choose a slug independently.
+ * while preserving the admin's ability to choose a slug independently. Core checks
+ * the admin role again and expires the catalog's caches of both addresses.
  */
 export async function updateCourseAction(
   previousState: UpdateCourseState,
@@ -61,51 +50,11 @@ export async function updateCourseAction(
 
   const submittedState = { slug: submittedSlug, title };
 
-  const { data: course, error: readError } = await safeAsync(() =>
-    prisma.course.findUnique({ where: { id } }),
+  const { data: result, error } = await safeAsync(() =>
+    renameCourseForAdmin({ courseId: id, slug: submittedSlug, title }),
   );
 
-  if (readError) {
-    return {
-      ...submittedState,
-      error: "Could not load this course. Please try again.",
-      status: "error",
-      submissionId,
-    };
-  }
-
-  if (!course) {
-    return { ...submittedState, error: "Course not found.", status: "error", submissionId };
-  }
-
-  const slug = getUpdatedSlug({ currentSlug: course.slug, submittedSlug });
-
-  if (!slug) {
-    return {
-      ...submittedState,
-      error: "Enter a slug with at least one letter or number.",
-      status: "error",
-      submissionId,
-    };
-  }
-
-  const { error: updateError } = await safeAsync(() =>
-    prisma.course.update({
-      data: { normalizedTitle: normalizeString(title), slug, title },
-      where: { id },
-    }),
-  );
-
-  if (isPrismaUniqueConstraintError(updateError)) {
-    return {
-      ...submittedState,
-      error: "That slug is already used by another course with the same owner.",
-      status: "error",
-      submissionId,
-    };
-  }
-
-  if (updateError) {
+  if (error) {
     return {
       ...submittedState,
       error: "Could not save this course. Please try again.",
@@ -114,8 +63,12 @@ export async function updateCourseAction(
     };
   }
 
+  if (result.status !== "renamed") {
+    return { ...submittedState, error: ERRORS[result.status], status: "error", submissionId };
+  }
+
   revalidatePath("/courses");
   revalidatePath(`/courses/${id}`);
 
-  return { error: null, slug, status: "success", submissionId, title };
+  return { error: null, slug: result.slug, status: "success", submissionId, title };
 }

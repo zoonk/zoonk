@@ -3,6 +3,7 @@ import {
   AdminEditFormSkeletonActions,
   AdminEditFormSkeletonField,
 } from "@/components/admin-edit-form";
+import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getCourse } from "@/data/courses/get-course";
 import {
   Breadcrumb,
@@ -24,6 +25,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { CourseCurriculum } from "./course-curriculum";
 import { CourseForm } from "./course-form";
 
 export const metadata: Metadata = { title: "Edit Course" };
@@ -60,14 +62,18 @@ export default function CourseEditPage({ params }: PageProps<"/courses/[id]">) {
           <CourseBreadcrumb />
           <ContainerTitle>Edit course</ContainerTitle>
           <ContainerDescription>
-            Update the learner-facing title and course URL slug.
+            Update the learner-facing title and URL slug, and review the curriculum.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <ContainerBody>
+      <ContainerBody className="gap-8">
         <Suspense fallback={<CourseFormSkeleton />}>
           <CourseFormContent params={params} />
+        </Suspense>
+
+        <Suspense fallback={<AdminSectionSkeleton />}>
+          <CourseCurriculumContent params={params} />
         </Suspense>
       </ContainerBody>
     </Container>
@@ -92,6 +98,17 @@ async function CourseFormContent({ params }: Pick<PageProps<"/courses/[id]">, "p
   }
 
   return <CourseForm course={{ id: course.id, slug: course.slug, title: course.title }} />;
+}
+
+/** The curriculum streams on its own, after the same id check as the form. */
+async function CourseCurriculumContent({ params }: Pick<PageProps<"/courses/[id]">, "params">) {
+  const { id } = await params;
+
+  if (!isUuid(id)) {
+    notFound();
+  }
+
+  return <CourseCurriculum courseId={id} />;
 }
 
 /**
