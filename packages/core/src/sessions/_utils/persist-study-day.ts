@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
+import { loadDayPlanVersion } from "./day-plan-version";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
@@ -59,7 +60,16 @@ export async function persistStudyDay({
         throw new StudyDayUnchangedError("stale");
       }
 
-      const planVersion = await saveSelectedPlan({ context: selection.context, prepared, tx });
+      await saveSelectedPlan({ context: selection.context, prepared, tx });
+
+      // A day holding time for lessons still being outlined says so, for them to join it once they
+      // land (see `appendLandedLessons`).
+      const planVersion = await loadDayPlanVersion({
+        client: tx,
+        goal: day.goal,
+        localDate: day.localDate,
+      });
+
       const rows = await tx.planItem.findMany({ where: { planId: selection.context.plan.id } });
       const ids = new Map(rows.map((item) => [getItemKey(item), item.id]));
 

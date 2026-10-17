@@ -51,8 +51,9 @@ export async function listGoalsWaitingOnSkills({
  * Re-plans a goal now that an outline gave the skills it waited on their lessons. The graph stays
  * the same, so the real lessons take the stand-ins' places, this week's too, and past work and the
  * dates the learner saw are kept: the plan takes them as any refresh does (see `refreshGoalPlan`).
- * Today's session may have been built from the stand-ins: it takes the real lessons the next time
- * the learner opens it, without moving anything they were shown (see `refreshDayFromPlan`). Throws
+ * Today's session may have been built from the stand-ins: it takes the real lessons at its end the
+ * next time the learner opens or continues it, without moving anything they were shown (see
+ * `appendLandedLessons`). Throws
  * when the plan kept changing while it was planned (see `isPlanConflictError`), for the caller to
  * try again later.
  */

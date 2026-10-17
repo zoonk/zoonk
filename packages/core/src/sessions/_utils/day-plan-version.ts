@@ -15,13 +15,13 @@ async function loadPlanVersion({
 }
 
 /** What a day still waiting on outlines records instead of its plan's version (see below). */
-const AWAITING_OUTLINES_VERSION = 0;
+export const AWAITING_OUTLINES_VERSION = 0;
 
 /**
- * The plan version a day records once built or refreshed: the plan's, so the day isn't read
- * again until the plan changes; or, while it holds time for lessons still being outlined
- * (`isDayAwaitingOutlines`), one older than any plan's, so every read checks it again until they
- * land or nobody is writing them anymore, and the day fills up then.
+ * The plan version a day records once built or refreshed: the plan's; or, while it holds time for
+ * lessons still being outlined (`isDayAwaitingOutlines`), one older than any plan's, so the
+ * learner's next Open or Continue checks it again until they land or nobody is writing them
+ * anymore, and the day fills up then (`appendLandedLessons`).
  */
 export async function loadDayPlanVersion({
   client = prisma,

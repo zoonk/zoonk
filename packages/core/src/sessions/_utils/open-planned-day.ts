@@ -2,6 +2,7 @@ import "server-only";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { persistStudyDay } from "./persist-study-day";
 import { type PlannedStudyDay, planStudyDay } from "./plan-study-day";
+import { appendLandedLessons } from "./refresh-day-session";
 import { findSavedDaySession } from "./saved-day-session";
 import { selectDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -19,8 +20,14 @@ export async function openPlannedDay(
   const saved = await findSavedDaySession({ goalId: goal.id, now, timeZone, userId });
 
   if (saved) {
-    const session = await persistEntitlementLapseRefill({ goal, session: saved, timeZone });
-    return session ? { created: false, session, status: "opened" } : { status: "stale" };
+    const refilled = await persistEntitlementLapseRefill({ goal, session: saved, timeZone });
+
+    if (!refilled) {
+      return { status: "stale" };
+    }
+
+    const session = await appendLandedLessons({ goal, session: refilled, timeZone });
+    return { created: false, session, status: "opened" };
   }
 
   const selection = await selectDayPlan({ goal, now, timeZone });

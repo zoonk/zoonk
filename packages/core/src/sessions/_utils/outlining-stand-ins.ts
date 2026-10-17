@@ -91,7 +91,7 @@ async function loadDayStandInSkills({
 /**
  * Whether the goal's day holds time for lessons still being outlined: a stand-in takes the day's
  * time (`loadDayStandInSkills`) and its course's outline is being written (or hasn't started
- * yet), so its lessons land within minutes and join the end of the day (`refreshDayFromPlan`),
+ * yet), so its lessons land within minutes and join the end of the day (`appendLandedLessons`),
  * which Today says. A stand-in whose course isn't being outlined (its next chapter waits for a
  * later preparation) holds nothing: the day fills as usual instead of waiting on lessons nobody is
  * writing.

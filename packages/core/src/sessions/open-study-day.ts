@@ -10,6 +10,7 @@ import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
 import { openPlannedDay } from "./_utils/open-planned-day";
+import { appendLandedLessons } from "./_utils/refresh-day-session";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type StudySessionResult } from "./get-study-session";
@@ -121,11 +122,13 @@ export async function openStudySession({
     return { status: "goalNotActive" };
   }
 
-  const current = await persistEntitlementLapseRefill({ goal: session.goal, session, timeZone });
+  const refilled = await persistEntitlementLapseRefill({ goal: session.goal, session, timeZone });
 
-  if (!current) {
+  if (!refilled) {
     return { status: "retryable" };
   }
+
+  const current = await appendLandedLessons({ goal: session.goal, session: refilled, timeZone });
 
   return {
     session: await loadOpenedDayView({ session: current, timeZone, userId }),

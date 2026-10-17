@@ -5,7 +5,7 @@ import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-mi
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
-import { loadDayPlanVersion } from "./day-plan-version";
+import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
@@ -274,4 +274,67 @@ export async function followPlanChangeToday({
   }
 
   return replaceNotStartedBlocks({ day: { goal: session.goal, session, timeZone } });
+}
+
+/**
+ * A day opened while it held time for lessons still being outlined (its plan version says so, see
+ * `loadDayPlanVersion`): once they land, or nobody is writing them anymore, the learner's next Open
+ * or Continue adds the new lessons to its end, up to the day's time, without moving anything they
+ * were shown, as Today's "more as you go" said. A finished day stays as it is. Returns the day as
+ * it is now.
+ */
+export async function appendLandedLessons({
+  goal,
+  session,
+  timeZone,
+}: DaySession): Promise<StudySessionRow> {
+  if (session.planVersion !== AWAITING_OUTLINES_VERSION || session.status === "completed") {
+    return session;
+  }
+
+  const planVersion = await loadDayPlanVersion({ goal, localDate: session.localDate });
+
+  if (planVersion === AWAITING_OUTLINES_VERSION) {
+    return session;
+  }
+
+  const planned = await planRestOfDay({ day: { goal, session, timeZone }, kept: session.blocks });
+  const lessons = planned.filter((block) => block.kind === "learn");
+
+  if (lessons.length === 0) {
+    await prisma.studySession.update({ data: { planVersion }, where: { id: session.id } });
+    return { ...session, planVersion };
+  }
+
+  await withSessionAppendLock({
+    run: async ({ session: locked, transaction }) => {
+      if (
+        locked.status === "completed" ||
+        !hasSameBlocks({ locked: locked.blocks, read: session.blocks })
+      ) {
+        return;
+      }
+
+      const firstPosition = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
+
+      await transaction.studySessionBlock.createMany({
+        data: lessons.map((block, index) => ({
+          ...block,
+          position: firstPosition + index,
+          sessionId: session.id,
+        })),
+      });
+
+      await transaction.studySession.update({
+        data: { planVersion, plannedMinutes: getKeptMinutes(session.blocks) + sumMinutes(lessons) },
+        where: { id: session.id },
+      });
+    },
+    session,
+  });
+
+  return prisma.studySession.findUniqueOrThrow({
+    include: STUDY_SESSION_INCLUDE,
+    where: { id: session.id },
+  });
 }

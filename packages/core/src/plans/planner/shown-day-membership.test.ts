@@ -57,6 +57,10 @@ function save(built: ReturnType<typeof buildPlan>, source?: BuildPlanInput) {
   }));
 }
 
+function totalMinutes(entries: readonly { minutes: number }[]): number {
+  return entries.reduce((sum, entry) => sum + entry.minutes, 0);
+}
+
 function onToday(built: ReturnType<typeof buildPlan>) {
   return [...built.lessonRawMinutes].flatMap(([key, days]) => {
     const minutes = days.get(toIsoDate(TODAY));
@@ -266,7 +270,9 @@ describe("shown-day membership", () => {
     expect(opened.lessonRawMinutes.get("skill:D")?.get(toIsoDate(TODAY))).toBeUndefined();
   });
 
-  it("lands new written lessons after a shown stand-in's day, without refilling today", () => {
+  // An opened day said more lessons were on the way: once they land they take the time its
+  // stand-in held there, after what the day showed, and never more than the day held.
+  it("lands new written lessons in the time a shown stand-in held, keeping what the day showed", () => {
     const base = input("2026-09-30");
 
     const original = {
@@ -302,12 +308,11 @@ describe("shown-day membership", () => {
     const opened = buildPlan({ ...next, ...landing });
     const written = onToday(first).filter((entry) => entry.key.startsWith("lesson:"));
 
-    expect(onToday(opened).filter((entry) => entry.key.startsWith("lesson:"))).toStrictEqual(
-      written,
-    );
-
     expect(
-      opened.items.find((item) => item.lessonId === "a1")?.scheduledFor?.getTime(),
-    ).toBeGreaterThan(TODAY.getTime());
+      onToday(opened).filter((entry) => written.some((shown) => shown.key === entry.key)),
+    ).toStrictEqual(written);
+
+    expect(opened.items.find((item) => item.lessonId === "a1")?.scheduledFor).toStrictEqual(TODAY);
+    expect(totalMinutes(onToday(opened))).toBeLessThanOrEqual(totalMinutes(onToday(first)));
   });
 });

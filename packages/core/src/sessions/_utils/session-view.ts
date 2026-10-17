@@ -130,9 +130,10 @@ export type StudySessionView = {
   extraTime: ExtraTime;
   freshStart: StudySessionRow["freshStart"];
   /**
-   * The day has blocks and holds time for more lessons still being outlined: they join its end on
-   * their own once they land (read it again), so the learner hears more is coming instead of the
-   * day growing unannounced. False otherwise, and on a day without blocks (`emptyDay` says why).
+   * The day has blocks and holds time for more lessons still being outlined: they join its end once
+   * they land, at the learner's next Open or Continue, so the learner hears more is coming instead
+   * of the day growing unannounced. False otherwise, and on a day without blocks (`emptyDay` says
+   * why).
    */
   lessonsComing: boolean;
   fullMeal: { bonus: number; earned: boolean; ready: boolean };

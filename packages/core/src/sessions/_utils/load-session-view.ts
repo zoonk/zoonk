@@ -56,7 +56,7 @@ async function loadEmptyDay({
 /**
  * Whether the day holds time for lessons still being outlined: it's the learner's day, not done,
  * with time left for a lesson, and its outlines are being written (`isDayAwaitingOutlines`); they
- * join its end once they land (`refreshDayFromPlan`).
+ * join its end once they land (`appendLandedLessons`).
  */
 async function loadLessonsComing({
   current,
