@@ -18,13 +18,14 @@ import { type ChallengeStartState } from "./use-challenge-start";
  * retry error; `earlierFirst` retains whether lessons or a challenge come first. A move
  * and its undo take the learner to the challenge on its day when they went through (a dated plan
  * item is a new one once it moves); each resolves to false when it didn't. A move the plan refuses
- * because the days before the new one can't save a mock's time resolves to that day and the mock's
- * length (`unfundedMove`), and one onto a day that already has a mock to `mockCollision`, for the
- * screen to say why; any other failure to `"failed"`.
+ * because it can't make room for a mock on the new day resolves to that day and the mock's length
+ * (`unfundedMove`), one onto a day that already has a mock to `mockCollision`, and a weekly
+ * challenge it can't put there to `noRoom`, for the screen to say why; any other failure to
+ * `"failed"`.
  */
 export type ChallengeActions = {
   move: () => Promise<
-    "failed" | "moved" | { mockCollision: true } | { unfundedMove: UnfundedMove }
+    "failed" | "moved" | { mockCollision: true } | { noRoom: true } | { unfundedMove: UnfundedMove }
   >;
   start: () => Promise<
     | Extract<StartChallengeResult, { status: "earlierFirst" }>

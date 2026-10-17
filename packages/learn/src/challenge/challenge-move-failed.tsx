@@ -6,10 +6,11 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useChallengeScreen } from "./challenge-context";
 
 /**
- * A move or its undo that didn't go through. A mock the days before Monday can't save its time for
- * says so, with the day and its real length; one onto a day that already has a mock says that.
- * Either way it stays where it is, and the line says so instead of asking for another day: Monday
- * is this screen's only move, and Undo's only day is the one it came from.
+ * A move or its undo that didn't go through. A mock the plan can't make room for on Monday says
+ * so, with the day and its real length; one onto a day that already has a mock says that, and a
+ * weekly challenge the plan can't put on Monday says that. Each stays where it is, and the line
+ * says so instead of asking for another try or another day: Monday is this screen's only move, and
+ * Undo's only day is the one it came from.
  */
 export function MoveFailed() {
   const t = useExtracted();
@@ -21,6 +22,14 @@ export function MoveFailed() {
     return (
       <p className="text-destructive-text text-sm text-pretty" role="alert">
         {t("That day already has a mock exam, so this one stays where it is.")}
+      </p>
+    );
+  }
+
+  if (move.refusal?.kind === "noRoom") {
+    return (
+      <p className="text-destructive-text text-sm text-pretty" role="alert">
+        {t("Your plan can't make room for this challenge on Monday. It stays where it is.")}
       </p>
     );
   }

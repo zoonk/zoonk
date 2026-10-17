@@ -98,4 +98,45 @@ describe("moving a funded mock to Monday", () => {
     expect(newDays.length).toBeGreaterThan(0);
     expect(newDays.every((date) => date < (nextMock ?? ""))).toBe(true);
   });
+
+  // With her exam on the Tuesday, Monday's lessons had no later day before it to go to, and the
+  // screen said "Try again in a moment" for a move the plan can only refuse again.
+  it("refuses Ana's mock when no day before her exam has room for Monday's lessons, saying why", async () => {
+    const copyKey = randomUUID().slice(0, 8);
+
+    const copy = await seedV2PersonaCopy({
+      copyKey,
+      email: `move-funded-mock-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    await prisma.goal.update({
+      data: { targetDate: new Date("2026-11-10T00:00:00Z") },
+      where: { id: copy.goalId },
+    });
+
+    const before = await readPlan(copy.goalId);
+
+    const mock = before.plan.items.find(
+      (item) =>
+        item.kind === "mock" &&
+        item.status === "todo" &&
+        item.scheduledFor?.toISOString().slice(0, 10) === SUNDAY,
+    );
+
+    mockSession(copy.userId);
+
+    const moved = await moveChallenge({
+      input: { timeZone: "America/Sao_Paulo" },
+      planItemId: mock?.id ?? "",
+    });
+
+    expect(moved).toStrictEqual({
+      error: "unfundedMove",
+      status: "invalid",
+      unfundedMove: { date: MONDAY, minutes: mock?.minutes },
+    });
+
+    await expect(readPlan(copy.goalId)).resolves.toStrictEqual(before);
+  });
 });

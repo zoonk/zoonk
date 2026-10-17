@@ -85,15 +85,16 @@ type NotDone = "notDone";
 
 /**
  * "Move to Monday": the week's challenge moves through the plan, and the page goes on to it on its
- * new day (a dated plan item is a new one once it moves) with the move's undo. A mock the days
- * before that Monday can't save its time for stays where it is, and the answer says when and how
- * long, for the screen to say why (`unfundedMove`); one onto a day that already has a mock says
- * that (`mockCollision`).
+ * new day (a dated plan item is a new one once it moves) with the move's undo. A mock the plan
+ * can't make room for that Monday stays where it is, and the answer says when and how long, for
+ * the screen to say why (`unfundedMove`); one onto a day that already has a mock says that
+ * (`mockCollision`); a weekly challenge the plan can't put there says so too (`noRoom`), since
+ * asking again can only be refused again.
  */
 export async function moveChallengeAction(
   { page, planItemId }: { page: ChallengePage; planItemId: unknown },
   timeZone: unknown,
-): Promise<NotDone | { mockCollision: true } | { unfundedMove: UnfundedMove }> {
+): Promise<NotDone | { mockCollision: true } | { noRoom: true } | { unfundedMove: UnfundedMove }> {
   const id = planItemIdSchema.safeParse(planItemId);
   const input = studySessionTimeZoneInputSchema.safeParse({ timeZone });
   const locale = localeSchema.safeParse(page.locale).data ?? DEFAULT_LOCALE;
@@ -110,6 +111,10 @@ export async function moveChallengeAction(
 
   if (result.status === "invalid" && result.error === "mockCollision") {
     return { mockCollision: true };
+  }
+
+  if (result.status === "invalid" && result.error === "badMove") {
+    return { noRoom: true };
   }
 
   if (result.status !== "moved") {

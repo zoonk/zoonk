@@ -220,8 +220,10 @@ async function computeRequest({
   // A stale or inconsistent source day must not save a move with no challenge at its destination.
   // The caller would otherwise report success, skip today's block and lose its confirmation/Undo.
   if (hasMissingWeeklyMove({ items: change.computed.built.items, operations })) {
-    // A mock moved where the days before it can't fund it is refused with why (see `fundMocks`).
+    // A mock the plan can't fund there (see `fundMocks`) or place before the goal's date is refused
+    // with why; a weekly challenge that can't go there is a bad move.
     const unfundedMove = findUnfundedMove({
+      items: context.items,
       operations,
       unfunded: change.computed.built.mocks.unfundedMocks,
     });

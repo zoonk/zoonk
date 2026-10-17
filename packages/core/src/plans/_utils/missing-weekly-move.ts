@@ -59,14 +59,54 @@ export function hasWeeklyEventCollision({
   );
 }
 
+type MovedItem = Pick<ExistingPlanItem, "kind" | "scheduledFor" | "status"> & {
+  minutes?: number | null;
+};
+
+/**
+ * A mock a learner's move asked for that the plan couldn't place on its new day (no day before the
+ * goal's date has room for the work it would push there, see `layOutLocalMockMove`), with its
+ * length as the plan holds it. Null for a move of anything else, or without a length.
+ */
+function findUnplacedMockMove({
+  items,
+  operations,
+}: {
+  items: readonly MovedItem[];
+  operations: readonly PlanOperation[];
+}): UnfundedMove | null {
+  const [refused] = operations.flatMap((operation) => {
+    if (operation.kind !== "moveWeeklyEvent") {
+      return [];
+    }
+
+    const mock = items.find(
+      (item) =>
+        item.kind === "mock" &&
+        item.status === "todo" &&
+        item.scheduledFor !== null &&
+        toIsoDate(item.scheduledFor) === operation.from,
+    );
+
+    return mock?.minutes ? [{ date: operation.to, minutes: mock.minutes }] : [];
+  });
+
+  return refused ?? null;
+}
+
 /**
  * A mock a learner's move takes to a day whose study days before it can't set aside its time (see
- * `fundMocks`): its new day and its real length there. Null when every move is funded.
+ * `fundMocks`): its new day and its real length there. One the plan couldn't place there at all is
+ * refused the same way (`findUnplacedMockMove`), since asking again can only be refused again.
+ * Null when every move is funded and placed.
  */
 export function findUnfundedMove({
+  items,
   operations,
   unfunded,
 }: {
+  /** The saved plan's items, where a moved mock's length comes from. */
+  items: readonly MovedItem[];
   operations: readonly PlanOperation[];
   unfunded: readonly UnfundedMove[];
 }): UnfundedMove | null {
@@ -74,7 +114,9 @@ export function findUnfundedMove({
     operations.flatMap((operation) => (operation.kind === "moveWeeklyEvent" ? [operation.to] : [])),
   );
 
-  return unfunded.find((mock) => moved.has(mock.date)) ?? null;
+  return (
+    unfunded.find((mock) => moved.has(mock.date)) ?? findUnplacedMockMove({ items, operations })
+  );
 }
 
 /**
