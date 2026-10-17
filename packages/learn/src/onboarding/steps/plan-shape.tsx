@@ -87,10 +87,12 @@ export function PlanChapterList() {
 }
 
 /**
- * What each area of the exam weighs, every one of the notice's (Redação too), the heaviest first:
- * a dot, the area, a thin bar of its share of the whole and its percentage in the mono face. The
- * percentages are core's (`displayWeight`), which add up to 100; one the notice doesn't state is an
- * estimate, marked "~" and said under the list. The full syllabus stays one tap away under it.
+ * What each area of the exam weighs, every one its source names (a notice's Redação too), the
+ * heaviest first: a dot, the area, a thin bar of its share of the whole and its percentage in the
+ * mono face. The percentages are core's (`displayWeight`), which add up to 100; one its source
+ * doesn't state is an estimate, marked "~" and said under the list, naming that source as the
+ * syllabus does: the learner's own material is never called a notice. The full syllabus stays one
+ * tap away under it.
  */
 export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
   const t = useExtracted();
@@ -110,6 +112,7 @@ export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
   }
 
   const assumed = weighed.filter((area) => area.weight.basis === "assumed").length;
+  const source = syllabus?.fromMaterial ? "material" : (syllabus?.examDocument ?? "notice");
 
   return (
     <section aria-labelledby="plan-weights" className="flex flex-col gap-1">
@@ -141,8 +144,8 @@ export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
       {assumed > 0 && (
         <p className="text-muted-foreground pt-1 text-xs text-pretty">
           {t(
-            "{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}",
-            { count: assumed },
+            "{source, select, material {{count, plural, one {~ Estimated: your material doesn't say how much this area weighs.} other {~ Estimated: your material doesn't say how much these areas weigh.}}} guide {{count, plural, one {~ Estimated: the official guide doesn't say how much this area weighs.} other {~ Estimated: the official guide doesn't say how much these areas weigh.}}} other {{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}}}",
+            { count: assumed, source },
           )}
         </p>
       )}

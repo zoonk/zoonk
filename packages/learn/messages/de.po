@@ -8873,9 +8873,9 @@ msgid "~{percent}"
 msgstr "~{percent}"
 
 #: src/onboarding/steps/plan-shape.tsx
-msgctxt "8QCeck"
-msgid "{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}"
-msgstr "{count, plural, one {~ Geschätzt: In der Bekanntmachung steht nicht, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: In der Bekanntmachung steht nicht, wie stark diese Bereiche gewichtet werden.}}"
+msgctxt "sDWtMl"
+msgid "{source, select, material {{count, plural, one {~ Estimated: your material doesn't say how much this area weighs.} other {~ Estimated: your material doesn't say how much these areas weigh.}}} guide {{count, plural, one {~ Estimated: the official guide doesn't say how much this area weighs.} other {~ Estimated: the official guide doesn't say how much these areas weigh.}}} other {{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}}}"
+msgstr "{source, select, material {{count, plural, one {~ Geschätzt: Aus deinem Material geht nicht hervor, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Aus deinem Material geht nicht hervor, wie stark diese Bereiche gewichtet werden.}}} guide {{count, plural, one {~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark diese Bereiche gewichtet werden.}}} other {{count, plural, one {~ Geschätzt: Aus der Bekanntmachung geht nicht hervor, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Aus der Bekanntmachung geht nicht hervor, wie stark diese Bereiche gewichtet werden.}}}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "w_jfVo"

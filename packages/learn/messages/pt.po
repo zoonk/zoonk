@@ -8873,9 +8873,9 @@ msgid "~{percent}"
 msgstr "~{percent}"
 
 #: src/onboarding/steps/plan-shape.tsx
-msgctxt "8QCeck"
-msgid "{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}"
-msgstr "{count, plural, one {~ Estimativa: o edital não diz quanto esta área pesa.} other {~ Estimativa: o edital não diz quanto estas áreas pesam.}}"
+msgctxt "sDWtMl"
+msgid "{source, select, material {{count, plural, one {~ Estimated: your material doesn't say how much this area weighs.} other {~ Estimated: your material doesn't say how much these areas weigh.}}} guide {{count, plural, one {~ Estimated: the official guide doesn't say how much this area weighs.} other {~ Estimated: the official guide doesn't say how much these areas weigh.}}} other {{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}}}"
+msgstr "{source, select, material {{count, plural, one {~ Estimativa: seu material não informa o peso desta área.} other {~ Estimativa: seu material não informa o peso destas áreas.}}} guide {{count, plural, one {~ Estimativa: o guia oficial não informa o peso desta área.} other {~ Estimativa: o guia oficial não informa o peso destas áreas.}}} other {{count, plural, one {~ Estimativa: o edital não informa o peso desta área.} other {~ Estimativa: o edital não informa o peso destas áreas.}}}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "w_jfVo"

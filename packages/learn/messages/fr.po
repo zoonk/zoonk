@@ -8873,9 +8873,9 @@ msgid "~{percent}"
 msgstr "~{percent}"
 
 #: src/onboarding/steps/plan-shape.tsx
-msgctxt "8QCeck"
-msgid "{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}"
-msgstr "{count, plural, one {~ Estimation : l’avis officiel ne précise pas le poids de ce domaine.} other {~ Estimation : l’avis officiel ne précise pas le poids de ces domaines.}}"
+msgctxt "sDWtMl"
+msgid "{source, select, material {{count, plural, one {~ Estimated: your material doesn't say how much this area weighs.} other {~ Estimated: your material doesn't say how much these areas weigh.}}} guide {{count, plural, one {~ Estimated: the official guide doesn't say how much this area weighs.} other {~ Estimated: the official guide doesn't say how much these areas weigh.}}} other {{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}}}"
+msgstr "{source, select, material {{count, plural, one {~ Estimation : ton contenu ne précise pas le poids de ce domaine.} other {~ Estimation : ton contenu ne précise pas le poids de ces domaines.}}} guide {{count, plural, one {~ Estimation : le guide officiel ne précise pas le poids de ce domaine.} other {~ Estimation : le guide officiel ne précise pas le poids de ces domaines.}}} other {{count, plural, one {~ Estimation : l’avis officiel ne précise pas le poids de ce domaine.} other {~ Estimation : l’avis officiel ne précise pas le poids de ces domaines.}}}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "w_jfVo"
