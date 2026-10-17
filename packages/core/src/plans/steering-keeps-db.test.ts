@@ -8,7 +8,6 @@ import { getChallenge } from "../checkpoints/get-challenge";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
@@ -120,36 +119,5 @@ describe("asking to move the phase dates a run keeps", () => {
         },
       },
     });
-  });
-
-  /*
-   * R40 (career seed 2107): the focus replaced Today's card to move the phase dates and kept the
-   * dates, so the first phase's challenge stayed before two of its lessons with no card. Moving them
-   * was planned with today's time open again, fitted those lessons before the challenge on paper,
-   * and Today didn't ask. Moving them is planned as the change was (`askPhaseDatesAfterChange`).
-   * Lived through the real capabilities: a plan built by hand didn't leave today's time to a focus.
-   */
-  it("asks again to move the phase dates after a focus, planned as the change was", async () => {
-    const { violations } = await runSimLifeInDb(
-      {
-        dailyMinutes: 15,
-        fixture: "career",
-        knownAreas: [],
-        mockOffers: "focus",
-        pending: [4, 16, 25],
-        seed: 2107,
-        speed: 1.2,
-        start: "2026-10-12",
-        steps: [
-          { finish: 1, kind: "study", misses: [] },
-          { kind: "change", spec: { area: 2, kind: "focus" }, via: "buddy" },
-        ],
-        subscribed: false,
-        targetInDays: 103,
-      },
-      { rules: ["R40"] },
-    );
-
-    expect(violations).toStrictEqual([]);
   });
 });

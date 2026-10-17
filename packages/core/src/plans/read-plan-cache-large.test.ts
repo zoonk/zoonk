@@ -1,5 +1,3 @@
-import { writeFileSync } from "node:fs";
-import { serialize } from "node:v8";
 import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -9,7 +7,6 @@ import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { planCacheKey } from "./_test-utils/plan-cache-platform";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { readBuiltPlan } from "./_utils/read-built-plan";
-import { readPlanAnalysis } from "./_utils/read-plan-analysis";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlanScreen } from "./get-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
@@ -18,11 +15,6 @@ import { parsePlanSettings } from "./planner/plan-state";
 vi.mock("./_utils/read-built-plan", async (importOriginal) => {
   const actual = await importOriginal<{ readBuiltPlan: typeof readBuiltPlan }>();
   return { ...actual, readBuiltPlan: vi.fn(actual.readBuiltPlan) };
-});
-
-vi.mock("./_utils/read-plan-analysis", async (importOriginal) => {
-  const actual = await importOriginal<{ readPlanAnalysis: typeof readPlanAnalysis }>();
-  return { ...actual, readPlanAnalysis: vi.fn(actual.readPlanAnalysis) };
 });
 
 const NOW = new Date("2026-10-14T12:00:00Z");
@@ -97,9 +89,8 @@ describe("large real planning cache inputs", () => {
 
     const first = await getGoalPlanScreen(goal.id);
     const args = vi.mocked(readBuiltPlan).mock.calls.at(-1)?.[0];
-    const analysis = vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0];
 
-    if (!args || !analysis) {
+    if (!args) {
       throw new Error("The exported large Plan must load its real fresh cache inputs");
     }
 
@@ -118,21 +109,5 @@ describe("large real planning cache inputs", () => {
         where: { id: plan.id },
       }),
     ).resolves.toStrictEqual(saved);
-
-    // Opt-in local measurement captures actual DB-loaded input/results; CI asserts no wall time.
-    if (process.env.PLAN_CACHE_MEASURE === "1") {
-      const built: Awaited<ReturnType<typeof readBuiltPlan>> = await vi
-        .mocked(readBuiltPlan)
-        .mock.results.at(-1)?.value;
-
-      const output: Awaited<ReturnType<typeof readPlanAnalysis>> = await vi
-        .mocked(readPlanAnalysis)
-        .mock.results.at(-1)?.value;
-
-      writeFileSync(
-        "/tmp/zoonk-review/round-am/prefetch-cache-undated-snapshot.bin",
-        serialize({ analysis, args, built, output }),
-      );
-    }
   });
 });

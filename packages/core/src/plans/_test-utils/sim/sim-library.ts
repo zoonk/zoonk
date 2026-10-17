@@ -4,19 +4,14 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type PlanGraph } from "../../planner/plan-state";
 import { type SimFixture, type SimFixtureName, readSimFixture } from "./sim-fixture";
 
-export const SIM_PROVENANCE = {
-  model: "sim/fixture",
-  promptVersion: "sim-v1",
-  runId: "sim-library",
-};
+const SIM_PROVENANCE = { model: "sim/fixture", promptVersion: "sim-v1", runId: "sim-library" };
 
 /** Rows keep the fixture's order, which the planner breaks ties by (creation order). */
 const ORDER_BASE = new Date("2026-01-01T00:00:00Z").getTime();
 
 /**
- * A fixture's library in the test database: its rows have stable UUIDs made from the fixture's
- * short ids and a namespace, so a life can have a copy of its own (whose skills it lands) while
- * the shared copy is seeded once per run.
+ * A fixture's shared library in the test database: its rows have stable UUIDs made from the
+ * fixture's short ids and namespace, and it is seeded once per run.
  */
 export type SimLibrary = {
   /** The exam's blueprint, unless it's the learner's own (a class test: `createOwnBlueprint`). */
@@ -79,13 +74,7 @@ export function listTaughtBy(library: Pick<SimLibrary, "fixture" | "toId">): Map
 }
 
 /** The links that tie lessons to skills: held back for skills not outlined yet. */
-export function listSkillLinks({
-  library,
-  skills,
-}: {
-  library: SimLibrary;
-  skills: ReadonlySet<string>;
-}) {
+function listSkillLinks({ library, skills }: { library: SimLibrary; skills: ReadonlySet<string> }) {
   const { fixture, toId } = library;
 
   return {
@@ -317,22 +306,4 @@ export function seedSimLibrary(name: SimFixtureName): Promise<SimLibrary> {
   const promise = insertRows({ library, pending: new Set() }).then(() => library);
   seeded.set(name, promise);
   return promise;
-}
-
-/**
- * A life's own copy of a fixture's library, whose `pending` skills (short ids) the Library hasn't
- * outlined yet: their lessons aren't tied to them until `landSimSkills`.
- */
-export async function seedSimLibraryCopy({
-  name,
-  namespace,
-  pending,
-}: {
-  name: SimFixtureName;
-  namespace: string;
-  pending: ReadonlySet<string>;
-}): Promise<SimLibrary> {
-  const library = createLibrary({ name, namespace: `${name}:${namespace}` });
-  await insertRows({ library, pending });
-  return library;
 }

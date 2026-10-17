@@ -168,17 +168,6 @@ export function getRuleItemKey(item: RuleItem): string {
   return `${item.kind}:${toDay(item.scheduledFor?.getTime() ?? null) ?? item.titleSnapshot}`;
 }
 
-/** An item as the learner sees it: what it is, its status and its day. */
-export function describeItem(item: RuleItem): string {
-  return `${getRuleItemKey(item)}|${item.status}|${toDay(item.scheduledFor?.getTime() ?? null) ?? "-"}`;
-}
-
-/** The items of `from` whose key `to` doesn't have: items one plan holds and the other lost. */
-export function listMissingItems({ from, to }: { from: RulePlan; to: RulePlan }): RuleItem[] {
-  const keys = new Set(to.items.map((item) => getRuleItemKey(item)));
-  return from.items.filter((item) => !keys.has(getRuleItemKey(item)));
-}
-
 /**
  * The skills the learner chose to pass over: bases they chose to skip ("Skip") and the basics of
  * areas they said are too basic (`setAreaStart` with `pastBasics`: the areas' foundations, see
@@ -217,29 +206,13 @@ export function listOutByChoice(plan: RulePlan): Set<string> {
  * The skills of areas the learner took out (`skipAreas`): the learner's to leave, so they stay out
  * whatever happens, practice and a miss included.
  */
-export function listTakenOut(plan: RulePlan): Set<string> {
+function listTakenOut(plan: RulePlan): Set<string> {
   const areaOf = getAreaOf(plan.graph);
 
   return new Set(
     plan.graph.skills
       .map((skill) => skill.skillId)
       .filter((skillId) => plan.settings.skippedAreas.includes(areaOf(skillId) ?? "")),
-  );
-}
-
-/**
- * The skills passed over by choice that are still "to confirm": the plan holds no lesson of them
- * still to do, the learner didn't study them, and their own answers didn't test them out. An area
- * taken out whole is the learner's to leave, so its skills aren't among them.
- */
-export function listPassedOver(plan: RulePlan): Set<string> {
-  const inPlan = listPlannedSkills(plan.items);
-  const takenOut = listTakenOut(plan);
-
-  return new Set(
-    [...listChosenToPassOver(plan)].filter(
-      (skillId) => !inPlan.has(skillId) && !takenOut.has(skillId),
-    ),
   );
 }
 

@@ -9,7 +9,7 @@ import { planGraphSchema } from "../../planner/plan-state";
  * rebuilt from persona Pedro's notes, whose private content left with him). Ids are short (`s1`
  * skills, `k1` courses, `c1` chapters, `l1` lessons); `seedSimLibrary` turns them into rows.
  */
-export const SIM_FIXTURES = [
+const SIM_FIXTURES = [
   "enem",
   "oab",
   "camara",

@@ -6,7 +6,7 @@ import { getSeenEffect, withSeenTopics } from "../../_utils/seen-effect";
 import { toIsoDate } from "../../planner/plan-calendar";
 import { type RuleAnswer, type RuleEvent } from "../rules/rule-context";
 import { getPlacementAnswerTime } from "./sim-claims";
-import { toRuleFormat, toSimItemFormat } from "./sim-db-items";
+import { toRuleFormat, toSimItemFormat } from "./sim-items";
 import { type SimLifeStep } from "./sim-life-plan";
 import { listSimPlacementListeningAreas } from "./sim-listening-starts";
 import { commitSimPlan, computeSimPlan } from "./sim-planner";

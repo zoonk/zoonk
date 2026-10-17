@@ -1,5 +1,4 @@
 import { addDays, toIsoDate } from "../../planner/plan-calendar";
-import { checkRules } from "../rules/check-rules";
 import { computeSavedSimChange } from "./sim-change";
 import { createSimPlan } from "./sim-create";
 import { loadSimInputs } from "./sim-inputs";
@@ -204,13 +203,12 @@ async function runStep(runner: Runner, step: SimLifeStep, index: number): Promis
 }
 
 /**
- * Lives a simulated learner's life through the real planner and checks the owner's rules
- * (`checkRules`) after each thing that happens. Pure: no database, no AI (the library's inputs
- * were loaded once).
+ * Lives a simulated learner's life through the real planner and checks the supplied rule after
+ * each thing that happens. The library's inputs are loaded once; steps use no database or AI.
  */
 export async function runSimLife(
   life: SimLife,
-  { check = checkRules, trace = false }: { check?: SimCheck; trace?: boolean } = {},
+  { check, trace = false }: { check: SimCheck; trace?: boolean },
 ): Promise<SimResult> {
   const inputs = await loadSimInputs(life.fixture);
   const runner = await startRunner({ check, inputs, life, trace });

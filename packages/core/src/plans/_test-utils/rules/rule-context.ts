@@ -142,7 +142,7 @@ type RuleLearnerChange = { day: Date; operations: readonly PlanOperation[] };
 type RuleText = { quoted?: boolean; source: string; text: string };
 
 /** Shared Library rows at one moment: `table:id` to a version (its `updatedAt` or a hash). */
-export type SharedContentSnapshot = ReadonlyMap<string, string>;
+type SharedContentSnapshot = ReadonlyMap<string, string>;
 
 /** An AI task the step started (the simulator's stand-ins record them), with what it was sent. */
 type RuleGeneration = { input: string; shared: boolean; task: string };
@@ -236,7 +236,7 @@ type RuleFinishedLesson = {
  * finished mocks are added): the overall number, its coverage and test parts, the estimated score,
  * and every finished mock with its questions and whether it sat one subject only.
  */
-export type RulePreparation = {
+type RulePreparation = {
   components: {
     coverage: Pick<PreparationComponents["coverage"], "studiedSkills" | "value">;
     mocks: Pick<PreparationComponents["mocks"], "taken">;

@@ -12,13 +12,13 @@ import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
 import { getProgressView } from "../view-models/progress/get-progress-view";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { AHEAD_START, aheadPlanFixture } from "./_test-utils/ahead-plan";
-import { planCacheKey, planCachePlatform } from "./_test-utils/plan-cache-platform";
+import { planCacheKey } from "./_test-utils/plan-cache-platform";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { readBuiltPlan } from "./_utils/read-built-plan";
 import { readPlanAnalysis } from "./_utils/read-plan-analysis";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlan, getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlanScreen } from "./get-goal-plan";
 import { getGoalResumePreview } from "./get-goal-resume-preview";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { previewPlanChange } from "./preview-plan-change";
@@ -499,65 +499,5 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
       .mock.results.at(-1)?.value;
 
     expect(actual.items.some((item) => item.kind === "boss" && item.minutes === 9)).toBe(true);
-  });
-
-  it("compiles our full actor key and nested analysis, kept across writes, with the installed Next compiler", async () => {
-    const { goal, user } = await setup();
-    await getGoalPlanScreen(goal.id);
-    const owned = lastRead(goal.id);
-    const analysis = vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0];
-
-    if (!analysis) {
-      throw new Error("Expected actual pre-landing analysis arguments");
-    }
-
-    const platform = await planCachePlatform();
-    const built = await platform.readBuiltPlan(owned);
-    platform.nextRequest();
-    await expect(platform.readBuiltPlan(owned)).resolves.toStrictEqual(built);
-    expect(platform.fills).toStrictEqual(["default"]);
-
-    const other = await userFixture();
-
-    await expect(platform.readBuiltPlan({ ...owned, userId: other.id })).resolves.toStrictEqual(
-      built,
-    );
-
-    expect(platform.fills).toStrictEqual(["default", "default"]);
-    const screen = await platform.readPlanAnalysis(analysis);
-    expect(platform.coreSearches()).toBe(0);
-    expect(screen.feasibility).not.toHaveProperty("coreMinutes");
-    expect(platform.fills).toHaveLength(3);
-    platform.nextRequest();
-    await expect(platform.readPlanAnalysis(analysis)).resolves.toStrictEqual(screen);
-    expect(platform.fills).toHaveLength(3);
-
-    // The API's full plan reads the same analysis: no core-time search on a read.
-    await getGoalPlan(goal.id);
-    expect(vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0]).toStrictEqual(analysis);
-    expect(platform.coreSearches()).toBe(0);
-
-    mockSession(user.id);
-
-    await expect(
-      changeGoalPlan({
-        goalId: goal.id,
-        input: { operations: [{ kind: "setDailyMinutes", minutes: 45 }], timeZone: "UTC" },
-      }),
-    ).resolves.toMatchObject({ status: "applied" });
-
-    // The key is all a build reads: the change's write leaves the old input's entries as they
-    // are (nothing in them went stale), and the plan read after it reads under its own key.
-    const before = platform.fills.length;
-    await platform.readBuiltPlan(owned);
-    await platform.readPlanAnalysis(analysis);
-    expect(platform.fills).toHaveLength(before);
-
-    vi.mocked(readBuiltPlan).mockClear();
-    await getGoalPlanScreen(goal.id);
-    const changed = lastRead(goal.id);
-    await expect(encodedKey(changed)).resolves.not.toBe(await encodedKey(owned));
-    await platform.readBuiltPlan(changed);
-    expect(platform.fills).toHaveLength(before + 1);
   });
 });

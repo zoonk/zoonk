@@ -4,7 +4,6 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayView } from "../view-models/today/get-today-view";
-import { planCachePlatform } from "./_test-utils/plan-cache-platform";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { readBuiltPlan } from "./_utils/read-built-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -96,37 +95,5 @@ describe("Today shares only its pure build with complete fresh keys", () => {
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
       before,
     );
-  });
-
-  it("shares unchanged requests but rebuilds for every scope, day and real selected-input change", async () => {
-    const { goal } = await setup();
-    await getTodayView({ goalId: goal.id, timeZone: "UTC" });
-    const args = readArgs(goal.id);
-    const scope = args.scope;
-
-    if (!scope) {
-      throw new Error("Expected the real Today cache scope");
-    }
-
-    const platform = await planCachePlatform();
-    const built = await platform.readBuiltPlan(args);
-    platform.nextRequest();
-    await expect(platform.readBuiltPlan(args)).resolves.toStrictEqual(built);
-    expect(platform.fills).toHaveLength(1);
-
-    const variants: Parameters<typeof readBuiltPlan>[0][] = [
-      { ...args, userId: "another-authenticated-owner" },
-      { ...args, scope: { ...scope, planId: "another-owned-plan" } },
-      { ...args, scope: { ...scope, inputVersion: scope.inputVersion + 1 } },
-      { ...args, scope: { ...scope, planVersion: scope.planVersion + 1 } },
-      { ...args, scope: { ...scope, timeZone: "America/Sao_Paulo" } },
-      { ...args, scope: { ...scope, entitlement: "plus" } },
-      { ...args, input: { ...args.input, today: new Date("2020-10-02T00:00:00Z") } },
-      { ...args, input: { ...args.input, goal: { ...args.input.goal, dailyMinutes: 15 } } },
-    ];
-
-    platform.nextRequest();
-    await Promise.all(variants.map((variant) => platform.readBuiltPlan(variant)));
-    expect(platform.fills).toHaveLength(1 + variants.length);
   });
 });

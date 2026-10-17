@@ -67,13 +67,7 @@ export type Runner = {
  * A refresh after the learner finished something the plan wasn't planned with since (a partial
  * session plans nothing, an open that settles nothing doesn't plan) is the first run to see it.
  */
-export function withProgress({
-  event,
-  progressed,
-}: {
-  event: RuleEvent;
-  progressed: boolean;
-}): RuleEvent {
+function withProgress({ event, progressed }: { event: RuleEvent; progressed: boolean }): RuleEvent {
   return event.kind === "refresh" && progressed ? { ...event, progressed } : event;
 }
 

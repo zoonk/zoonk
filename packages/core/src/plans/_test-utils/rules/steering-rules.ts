@@ -44,7 +44,7 @@ function getSteering(context: RuleContext): readonly PlanOperation[] | null {
   return hasReviewAhead(context) ? null : event.operations;
 }
 
-export function listAreaSkills({ area, plan }: { area: string; plan: RulePlan }): Set<string> {
+function listAreaSkills({ area, plan }: { area: string; plan: RulePlan }): Set<string> {
   const areaOf = getAreaOf(plan.graph);
 
   return new Set(
@@ -53,7 +53,7 @@ export function listAreaSkills({ area, plan }: { area: string; plan: RulePlan })
 }
 
 /** Each area a focus names, or the part of it the change (or the plan) narrows it to. */
-export function listFocusTargets({
+function listFocusTargets({
   operations,
   plan,
 }: {
@@ -77,7 +77,7 @@ export function listFocusTargets({
   });
 }
 
-export function listReducedAreas(operations: readonly PlanOperation[]): string[] {
+function listReducedAreas(operations: readonly PlanOperation[]): string[] {
   return operations.flatMap((operation) =>
     operation.kind === "reduceAreas" ? operation.areas : [],
   );
