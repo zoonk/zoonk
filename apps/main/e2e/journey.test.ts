@@ -571,7 +571,7 @@ test.describe("Journey", () => {
       await prisma.goal.update({ data: { targetDate: examDate }, where: { id: user.goalId } });
 
       // Main's E2E runs without the API: Find finds that an hour a day covers everything.
-      await routeTimeToCover(page, {
+      const asked = await routeTimeToCover(page, {
         goalId: user.goalId,
         time: { recommendedMinutes: 60, targetDate: examDate.toISOString().slice(0, 10) },
       });
@@ -616,12 +616,14 @@ test.describe("Journey", () => {
       await page.clock.fastForward(20_000);
       await expect(undo).toBeFocused();
 
-      // Undo puts the plan back and the suggestion with it, as Gmail's undo gives the message
-      // back: what her time covers returns at once, with Find, and the keyboard lands on it.
+      // Undo puts the plan back and the suggestion with it: the time Find found for this plan comes
+      // back too (no second search), and the keyboard lands on it.
       await page.keyboard.press("Enter");
-      await expect(panel.getByRole("heading")).toHaveText(/^15\smin a day /u);
-      await expect(find).toBeVisible();
+      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
+      await expect(panel.getByRole("button", { name: "Preview" })).toBeVisible();
+      await expect(find).toHaveCount(0);
       await expect(suggestion).toBeFocused();
+      expect(asked).toHaveLength(1);
     });
   });
 
