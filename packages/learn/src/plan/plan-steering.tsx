@@ -4,11 +4,11 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { useDifficultySentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
+import { useTappedChoice } from "./use-tapped-choice";
 
 type SteerOperation = Extract<
   LearnerPlanOperation,
@@ -74,8 +74,8 @@ export function PlanSteering() {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
-  const [asked, setAsked] = useState<SteerOperation | null>(null);
-  const steering = isPending && asked ? applySteer(plan.steering, asked) : plan.steering;
+  const asked = useTappedChoice<SteerOperation | null>(null);
+  const steering = asked.shown ? applySteer(plan.steering, asked.shown) : plan.steering;
   const steers = useSteers(steering);
   const difficultySentence = useDifficultySentence();
   const { difficultyBias } = steering;
@@ -97,8 +97,7 @@ export function PlanSteering() {
             key={steer.label}
             onPressedChange={() => {
               const operation = steer.operation(steer.active);
-              setAsked(operation);
-              void change([operation]);
+              void change([operation], asked.pick(operation));
             }}
             pressed={steer.active}
             variant="outline"

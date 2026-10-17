@@ -15,6 +15,7 @@ import { z } from "zod";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { carryLessons, createStudyDay, openAs } from "./study-day";
 
 /**
@@ -51,9 +52,6 @@ const ONE_HOUR = /^1 hr\s*(?:all in depth|recommended)?$/u;
 
 /** A list row's least height: a tap target with room for its title. */
 const MIN_ROW_HEIGHT = 44;
-
-/** How long a change that plans again may take before the editor says what it did, under load. */
-const REPLAN_TIMEOUT_MS = 15_000;
 
 async function openJourney(page: Page) {
   await page.goto("/plan");

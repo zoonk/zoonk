@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
+import { useTappedChoice } from "./use-tapped-choice";
 
 /** The names learners know each kind of language practice by. */
 export function useActivityName() {
@@ -26,13 +27,15 @@ export function useActivityName() {
 
 /**
  * A language plan's practice, one toggle each: turning one off ("I don't need writing") leaves it
- * out of lessons from now on, and turning it on brings it back.
+ * out of lessons from now on, and turning it on brings it back. A tapped one shows its new state
+ * while its change saves.
  */
 export function PlanActivities() {
   const t = useExtracted();
   const activityName = useActivityName();
   const { goal, plan } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
+  const tapped = useTappedChoice<{ activity: LanguageActivityType; isOn: boolean } | null>(null);
 
   if (goal.kind !== "language") {
     return null;
@@ -55,11 +58,12 @@ export function PlanActivities() {
               focusableWhenDisabled
               key={activity}
               onPressedChange={() =>
-                change([
-                  { activities: [activity], kind: isOn ? "skipActivities" : "restoreActivities" },
-                ])
+                change(
+                  [{ activities: [activity], kind: isOn ? "skipActivities" : "restoreActivities" }],
+                  tapped.pick({ activity, isOn: !isOn }),
+                )
               }
-              pressed={isOn}
+              pressed={tapped.shown?.activity === activity ? tapped.shown.isOn : isOn}
               variant="outline"
             >
               {activityName(activity)}

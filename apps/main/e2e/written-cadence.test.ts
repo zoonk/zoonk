@@ -3,6 +3,7 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 /**
  * When an exam's written tests are practiced is the learner's choice (every week by default, every
@@ -52,15 +53,73 @@ test.describe("Written practice cadence", () => {
 
       await expect(cadence.getByRole("radio", { name: "Only the final weeks" })).toBeChecked();
       await expect(editor.getByText(/concentrated in the final weeks/u)).toBeVisible();
-      await expect.poll(() => loadCadence(user.goalId)).toBe("finalWeeks");
+
+      // Saving plans again, which can take a while: the next choice waits for the new plan.
+      await expect
+        .poll(() => loadCadence(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
+        .toBe("finalWeeks");
+
+      await expect(cadence.getByRole("radio", { name: "Only the final weeks" })).toBeEnabled({
+        timeout: REPLAN_TIMEOUT_MS,
+      });
 
       // From the keyboard: the arrow moves the choice back to every other week.
-      await expect(cadence.getByRole("radio", { name: "Only the final weeks" })).toBeEnabled();
       await cadence.getByRole("radio", { name: "Only the final weeks" }).focus();
       await page.keyboard.press("ArrowLeft");
 
-      await expect.poll(() => loadCadence(user.goalId)).toBe("biweekly");
+      await expect
+        .poll(() => loadCadence(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
+        .toBe("biweekly");
+
       await expect(editor.getByText(/alternate weeks/u)).toBeVisible();
+    });
+  });
+
+  test("on the essay's own page, the cadence she taps shows at once, and the saved one again when the change doesn't save", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+      // The change is held on its way to the server, and then never reaches it.
+      const held: (() => void)[] = [];
+
+      await page.route(
+        (url) => url.pathname.startsWith("/plan/"),
+        async (route) => {
+          if (!route.request().postData()?.includes('"setWrittenCadence"')) {
+            await route.fallback();
+            return;
+          }
+
+          await new Promise<void>((release) => {
+            held.push(release);
+          });
+
+          await route.abort();
+        },
+      );
+
+      await page.goto("/plan");
+
+      await page
+        .getByRole("region", { exact: true, name: "Subjects" })
+        .getByRole("link", { name: /^Redação/u })
+        .click();
+
+      const written = page.getByRole("group", { name: "When to practice Redação" });
+      const everyOtherWeek = written.getByRole("radio", { name: "Every other week" });
+
+      await everyOtherWeek.click();
+      await expect.poll(() => held.length).toBe(1);
+      await expect(everyOtherWeek).toBeChecked();
+      await expect(written.getByText(/alternate weeks/u)).toBeVisible();
+
+      held[0]?.();
+
+      await expect(written.getByRole("alert")).toHaveText(
+        "That didn't work. Try again in a moment.",
+      );
+
+      await expect(written.getByRole("radio", { name: "Every week" })).toBeChecked();
     });
   });
 

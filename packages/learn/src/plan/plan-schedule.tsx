@@ -23,6 +23,7 @@ import { getEditorSectionId } from "./plan-editor-sections";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { usePlanChange } from "./use-plan-change";
+import { useTappedChoice } from "./use-tapped-choice";
 
 const DAYS_PER_WEEK = 7;
 
@@ -139,7 +140,7 @@ function usePresetNote() {
  * says so under it ("all in depth"), or that it's recommended when no time does. While the
  * weekend has its own time (`weekendOn`), it changes the weekdays alone, so the weekend keeps what
  * the learner gave it; otherwise every study day moves with it. The tapped preset shows picked
- * while its change saves; another tap waits for it.
+ * while its change saves (see `useTappedChoice`); another tap waits for it.
  */
 function DailyMinutes({
   planChange: { change, isPending },
@@ -153,8 +154,8 @@ function DailyMinutes({
   const { plan } = usePlanScreen();
   const shape = useWeekShape();
   const presetNote = usePresetNote();
-  const [picked, setPicked] = useState<number | null>(null);
   const current = shape.weekdays;
+  const time = useTappedChoice(current);
   const target = plan.feasibility && getRecommendedTime(plan.feasibility);
   const recommended = target?.dailyMinutes ?? null;
 
@@ -163,13 +164,14 @@ function DailyMinutes({
       return;
     }
 
-    setPicked(minutes);
-
-    void change([
-      weekendOn && shape.canDiffer
-        ? { kind: "setWeekdayMinutes", minutes, weekdays: shape.weekdayDays }
-        : { kind: "setDailyMinutes", minutes },
-    ]);
+    void change(
+      [
+        weekendOn && shape.canDiffer
+          ? { kind: "setWeekdayMinutes", minutes, weekdays: shape.weekdayDays }
+          : { kind: "setDailyMinutes", minutes },
+      ],
+      time.pick(minutes),
+    );
   };
 
   return (
@@ -189,7 +191,7 @@ function DailyMinutes({
           label={t("Time a day")}
           numberKeys={false}
           onChange={(value) => setMinutes(Number(value))}
-          value={String(isPending && picked !== null ? picked : current)}
+          value={String(time.shown)}
           variant="chips"
         />
       </div>
@@ -199,11 +201,16 @@ function DailyMinutes({
   );
 }
 
+/**
+ * One toggle a day, pressed while it's a study day. A tapped day shows its new state while its
+ * change saves.
+ */
 function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChange }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const { weekdayMinutes } = plan.schedule;
   const shape = useWeekShape();
+  const tapped = useTappedChoice<{ studies: boolean; weekday: number } | null>(null);
 
   // A day back on the plan takes the time of its part of the week.
   const minutesFor = (weekday: number) =>
@@ -231,15 +238,18 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
             focusableWhenDisabled
             key={day.weekday}
             onPressedChange={(pressed) =>
-              change([
-                {
-                  kind: "setWeekdayMinutes",
-                  minutes: pressed ? minutesFor(day.weekday) : 0,
-                  weekdays: [day.weekday],
-                },
-              ])
+              change(
+                [
+                  {
+                    kind: "setWeekdayMinutes",
+                    minutes: pressed ? minutesFor(day.weekday) : 0,
+                    weekdays: [day.weekday],
+                  },
+                ],
+                tapped.pick({ studies: pressed, weekday: day.weekday }),
+              )
             }
-            pressed={day.studies}
+            pressed={tapped.shown?.weekday === day.weekday ? tapped.shown.studies : day.studies}
             variant="outline"
             weekday={day.weekday}
           />
@@ -252,7 +262,7 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
 /**
  * Saturday and Sunday's own time, as onboarding asks it: switched on, the weekend gets its time in
  * the same choices as the rest of the week; switched off, it goes back to the weekdays' time. Only
- * for a week studied both on weekdays and on the weekend.
+ * for a week studied both on weekdays and on the weekend. The time picked shows while it saves.
  */
 function WeekendMinutes({
   checked,
@@ -266,15 +276,18 @@ function WeekendMinutes({
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const shape = useWeekShape();
+  const current = shape.weekend ?? shape.weekdays;
+  const weekend = useTappedChoice(current);
 
   if (!shape.canDiffer) {
     return null;
   }
 
-  const current = shape.weekend ?? shape.weekdays;
-
   const setWeekend = (minutes: number) =>
-    change([{ kind: "setWeekdayMinutes", minutes, weekdays: shape.weekendDays }]);
+    change(
+      [{ kind: "setWeekdayMinutes", minutes, weekdays: shape.weekendDays }],
+      weekend.pick(minutes),
+    );
 
   return (
     <WeekendTime
@@ -296,7 +309,7 @@ function WeekendMinutes({
         disabled={isPending}
         focusableWhenDisabled
         onChange={(event) => setWeekend(Number(event.target.value))}
-        value={current}
+        value={weekend.shown}
       >
         {getMinuteChoices({ current, recommended: null }).map((minutes) => (
           <NativeSelectOption key={minutes} value={minutes}>

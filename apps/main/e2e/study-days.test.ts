@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 /**
  * Which days the learner studies is theirs to choose in "Adjust your plan": one button a day, named
@@ -43,7 +44,72 @@ test.describe("Study days", () => {
       await sunday.click();
 
       await expect(sunday).toHaveAttribute("aria-pressed", "false");
-      await expect.poll(() => loadSundayMinutes(user.goalId)).toBe(0);
+
+      await expect
+        .poll(() => loadSundayMinutes(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
+        .toBe(0);
+    });
+  });
+
+  test("shows the day she taps at once, and her saved week again when the change doesn't save", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      await prisma.goal.update({ data: { dailyMinutes: 30 }, where: { id: user.goalId } });
+      const sundayBefore = await loadSundayMinutes(user.goalId);
+
+      // Every change to her week is held on its way to the server, and then never reaches it.
+      const held: (() => void)[] = [];
+
+      await page.route(
+        (url) => url.pathname === "/plan",
+        async (route) => {
+          if (!/"set(?:Daily|Weekday)Minutes"/u.test(route.request().postData() ?? "")) {
+            await route.fallback();
+            return;
+          }
+
+          await new Promise<void>((release) => {
+            held.push(release);
+          });
+
+          await route.abort();
+        },
+      );
+
+      await page.goto("/plan");
+      await page.getByRole("button", { name: "Adjust plan" }).click();
+
+      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+      const days = editor.getByRole("group", { name: "Study days" });
+      const sunday = days.getByRole("button", { exact: true, name: "Sunday" });
+      const monday = days.getByRole("button", { exact: true, name: "Monday" });
+      const time = editor.getByRole("radiogroup", { name: "Time a day" });
+      const failed = editor.getByRole("alert");
+
+      // Sunday shows off as soon as she taps it, while the other days wait for the plan to save.
+      await sunday.click();
+      await expect.poll(() => held.length).toBe(1);
+      await expect(sunday).toHaveAttribute("aria-pressed", "false");
+      await expect(monday).toBeDisabled();
+
+      held[0]?.();
+      await expect(failed).toHaveText("That didn't work. Try again in a moment.");
+      await expect(sunday).toHaveAttribute("aria-pressed", "true");
+      await expect(monday).toBeEnabled();
+
+      // The time she picks next shows picked while it saves, and the Sunday that didn't save
+      // never shows off again meanwhile.
+      await time.getByText("45 min", { exact: true }).click();
+      await expect.poll(() => held.length).toBe(2);
+      await expect(time.getByRole("radio", { name: /^45 min/u })).toBeChecked();
+      await expect(failed).toBeHidden();
+      await expect(sunday).toHaveAttribute("aria-pressed", "true");
+
+      held[1]?.();
+      await expect(failed).toBeVisible();
+      await expect(time.getByRole("radio", { name: /^30 min/u })).toBeChecked();
+      expect(await loadSundayMinutes(user.goalId)).toBe(sundayBefore);
     });
   });
 });

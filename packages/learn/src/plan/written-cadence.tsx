@@ -7,6 +7,7 @@ import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
+import { useTappedChoice } from "./use-tapped-choice";
 
 type WrittenCadence = WrittenPractice["cadence"];
 
@@ -48,7 +49,8 @@ function isCadence(value: unknown): value is WrittenCadence {
 /**
  * When the exam's written tests are practiced, one tap each: every week (recommended), every
  * other week, or only the final weeks when the plan has a date to count back from. The chosen
- * one says what it does, so the trade-off is clear before and after the tap.
+ * one says what it does, so the trade-off is clear before and after the tap, which shows at once
+ * while its change saves.
  */
 export function WrittenCadenceChoice({
   failed,
@@ -57,13 +59,15 @@ export function WrittenCadenceChoice({
   practice,
 }: {
   failed: boolean;
-  onChange: (cadence: WrittenCadence) => void;
+  /** Saves the cadence; `answered` runs when its change answers, with the page it changed. */
+  onChange: (cadence: WrittenCadence, answered: () => void) => void;
   pending: boolean;
   practice: WrittenPractice;
 }) {
   const t = useExtracted();
   const format = useFormatter();
   const words = useWrittenCadenceWords();
+  const choice = useTappedChoice(practice.cadence);
   const parts = format.list(practice.parts, { type: "conjunction" });
 
   const cadences = CADENCES.filter(
@@ -81,10 +85,10 @@ export function WrittenCadenceChoice({
         disabled={pending}
         onValueChange={(value) => {
           if (isCadence(value) && value !== practice.cadence) {
-            onChange(value);
+            onChange(value, choice.pick(value));
           }
         }}
-        value={practice.cadence}
+        value={choice.shown}
       >
         {cadences.map((cadence) => (
           <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
@@ -99,7 +103,7 @@ export function WrittenCadenceChoice({
         aria-live="polite"
         className="text-muted-foreground text-sm aria-busy:opacity-60"
       >
-        {words.effect(practice.cadence)}
+        {words.effect(choice.shown)}
       </p>
 
       {failed && <PlanFailedMessage />}
@@ -120,7 +124,7 @@ export function PlanWrittenPractice() {
   return (
     <WrittenCadenceChoice
       failed={failed}
-      onChange={(cadence) => change([{ cadence, kind: "setWrittenCadence" }])}
+      onChange={(cadence, answered) => change([{ cadence, kind: "setWrittenCadence" }], answered)}
       pending={isPending}
       practice={practice}
     />
