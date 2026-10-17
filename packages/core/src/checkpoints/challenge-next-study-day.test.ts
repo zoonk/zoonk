@@ -32,17 +32,6 @@ const EXAM_STRUCTURE = {
   subjects: [],
 };
 
-/** An exam whose first day is an hour: its regular mock takes half of it, 30 minutes. */
-const HOUR_EXAM_STRUCTURE = {
-  ...EXAM_STRUCTURE,
-  mock: {
-    ...EXAM_STRUCTURE.mock,
-    sections: [{ day: null, minutes: 60, name: "Math", questions: 36 }],
-    timeLimitMinutes: 60,
-    totalQuestions: 36,
-  },
-};
-
 /** Noon on a learner-local date, so the clock reads that day in UTC. */
 function noonOn(date: Date): Date {
   return new Date(date.getTime() + DAY_MS / 2);
@@ -80,14 +69,10 @@ async function challengeOf(planItemId: string) {
 }
 
 /** A dated exam's plan, with Plus (its phase challenges after the first week are Plus's). */
-async function datedExamPlanFixture({
-  dailyMinutes = 60,
-  structure = EXAM_STRUCTURE,
-  targetDate = new Date("2020-12-18"),
-}: { dailyMinutes?: number; structure?: typeof EXAM_STRUCTURE; targetDate?: Date } = {}) {
+async function datedExamPlanFixture() {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure }),
+    examBlueprintFixture({ structure: EXAM_STRUCTURE }),
     planLibraryFixture({ skills: [{ area: "Math", lessons: 40 }] }),
   ]);
 
@@ -100,12 +85,12 @@ async function datedExamPlanFixture({
 
   const { goal, plan } = await unplannedGoalFixture({
     createdAt: new Date("2020-09-28"),
-    dailyMinutes,
+    dailyMinutes: 60,
     details: { placementDeclined: true },
     examBlueprintId: blueprint.id,
     kind: "exam",
     settings: { startDate: "2020-09-28" },
-    targetDate,
+    targetDate: new Date("2020-12-18"),
     timezone: "UTC",
     userId: user.id,
   });
@@ -284,61 +269,6 @@ describe("a phase challenge past today's study time names the day the plan's nex
 
     // Tomorrow has study time, but the mock takes the day whole: the challenge comes after it.
     expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(mockDay));
-    expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
-  });
-
-  it("on a dated exam's plan, past a day the next mock takes whole", async () => {
-    // A Monday in 2020, before other tests' learning events, so the planner's pace is its own.
-    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
-
-    const friday = new Date("2020-10-16T00:00:00Z");
-    const saturday = new Date("2020-10-17T00:00:00Z");
-    const sunday = new Date("2020-10-18T00:00:00Z");
-
-    // 15 minutes every day: the first phase runs to Monday the 19th, and its regular mock is 30.
-    const { goal, plan, user } = await datedExamPlanFixture({
-      dailyMinutes: 15,
-      structure: HOUR_EXAM_STRUCTURE,
-      targetDate: new Date("2020-12-22"),
-    });
-
-    const carried = await findPhaseChallenge({ phase: 0, planId: plan.id });
-
-    // The first phase's lessons all done on Friday, none of its mocks taken, and its challenge left
-    // from Friday: Saturday's open re-plans it (it's overdue, see `hasOverduePlanWork`).
-    await Promise.all([
-      prisma.planItem.updateMany({
-        data: { completedAt: noonOn(friday), scheduledFor: friday, status: "done" },
-        where: { kind: { in: LEARN_KINDS }, phase: 0, planId: plan.id },
-      }),
-      prisma.planItem.update({ data: { scheduledFor: friday }, where: { id: carried.id } }),
-    ]);
-
-    // Saturday's run puts the challenge on Saturday, which it takes whole, and gives the phase a
-    // mock of its own on Monday, its last study day, which all of Sunday's 15 minutes fund.
-    await openTheNextDay({ date: saturday, goalId: goal.id });
-
-    const [boss, saved] = await Promise.all([
-      findPhaseChallenge({ phase: 0, planId: plan.id }),
-      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    ]);
-
-    expect(toIsoDate(boss.scheduledFor)).toBe("2020-10-17");
-
-    expect(
-      parsePlanSettings(saved.settings).mockFunding.find((entry) => entry.date === "2020-10-19"),
-    ).toMatchObject({ contributions: [{ date: "2020-10-18", minutes: 15 }] });
-
-    await useUpStudyTime({ date: saturday, userId: user.id });
-
-    const held = await challengeOf(boss.id);
-    expect(held).toMatchObject({ dailyLimitReached: true, status: "ready", today: "2020-10-17" });
-
-    await openTheNextDay({ date: sunday, goalId: goal.id });
-    const replanned = await findPhaseChallenge({ phase: 0, planId: plan.id });
-
-    // Sunday has study time, but Monday's mock takes all of it: the challenge comes after them.
-    expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(sunday));
     expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
   });
 

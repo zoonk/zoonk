@@ -1,8 +1,7 @@
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { readCourseStart } from "../../goals/course-start-details";
-import { readMockFacts } from "../../plans/_utils/planner-exam-facts";
-import { fundCommittedMocks } from "../../plans/planner/committed-mock-funding";
+import { readMockMinutes } from "../../plans/_utils/planner-exam-facts";
 import {
   canHoldPhaseChallenge,
   getPhaseChallengeDayRules,
@@ -22,7 +21,6 @@ import {
   parsePlanPhases,
   parsePlanSettings,
 } from "../../plans/planner/plan-state";
-import { listPlanDays } from "../../plans/planner/schedule-units";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { type CheckpointKind } from "../../sessions/brain-power";
@@ -45,11 +43,9 @@ export async function readDailyLimitReachedToday(userId: string): Promise<boolea
  */
 function getTomorrowRunInput({
   challenge,
-  mockMinutes,
   settings,
 }: {
   challenge: Pick<OwnedChallenge, "goal" | "items" | "plan" | "today">;
-  mockMinutes: Pick<RunDayInput, "fullMockMinutes" | "mockMinutes">;
   settings: PlanSettings;
 }): RunDayInput {
   const { goal, items, plan, today } = challenge;
@@ -59,7 +55,7 @@ function getTomorrowRunInput({
     examWindows: toExamWindows(parsePlanPhases(plan.phases)),
     goal: { dailyMinutes: goal.dailyMinutes, kind: goal.kind, targetDate: goal.targetDate },
     items,
-    ...mockMinutes,
+    ...readMockMinutes({ blueprint: goal.examBlueprint, choices: settings.examChoices }),
     settings,
     today: addDays(today, 1),
   };
@@ -85,13 +81,11 @@ function testsOwnPhase({ item, items }: Pick<OwnedChallenge, "item" | "items">):
 /**
  * When a phase challenge today's study time holds back is here again, YYYY-MM-DD: the first day,
  * within a week, that the plan's next run can put it on, by the rule its runs place one by (see
- * `canHoldPhaseChallenge`), on the days as tomorrow's run lays them out (see `describeRunDays`)
- * with the plan's mocks funded as it saved them (see `fundCommittedMocks`): a day a mock takes
- * whole has no time left for it. A boss left to do carries into that day's session. None for the
- * week's challenge: left unstarted, it leaves the plan once a later day re-plans (RULES R24), and
- * Move to Monday keeps it (see `ChallengeView.nextStudyDate`). None for a dated exam's phase that
- * teaches nothing of its own either (see `testsOwnPhase`): its copy names no day rather than guess
- * one.
+ * `canHoldPhaseChallenge`), on the days as tomorrow's run lays them out (see `describeRunDays`),
+ * since a boss left to do carries into that day's session. None for the week's challenge: left
+ * unstarted, it leaves the plan once a later day re-plans (RULES R24), and Move to Monday keeps it
+ * (see `ChallengeView.nextStudyDate`). None for a dated exam's phase that teaches nothing of its
+ * own either (see `testsOwnPhase`): its copy names no day rather than guess one.
  */
 export function getNextStudyDay({
   challenge,
@@ -113,24 +107,13 @@ export function getNextStudyDay({
     return null;
   }
 
-  const { mockClocks, ...mockMinutes } = readMockFacts({
-    blueprint: challenge.goal.examBlueprint,
-    choices: settings.examChoices,
-  });
-
-  const input = getTomorrowRunInput({ challenge, mockMinutes, settings });
+  const input = getTomorrowRunInput({ challenge, settings });
   const days = createDays({ input, planStart: getPlanStart(input) });
   const { describeDay } = describeRunDays({ days, settings });
 
-  // What each day gives the mocks, and the mocks the plan funds, as it saved them: the days the
-  // planner places a challenge on, and Today reads.
-  const week = fundCommittedMocks({
-    clocks: mockClocks,
-    days: listPlanDays({ describeDay, horizonDays: DAYS_PER_WEEK, start: input.today }),
-    funding: settings.mockFunding,
-    moves: [],
-  }).days;
+  const date = Array.from({ length: DAYS_PER_WEEK }, (_, offset) =>
+    addDays(input.today, offset),
+  ).find((day) => canHoldPhaseChallenge({ day: { date: day, shape: describeDay(day) }, rules }));
 
-  const day = week.find((planDay) => canHoldPhaseChallenge({ day: planDay, rules }));
-  return day ? toIsoDate(day.date) : null;
+  return date ? toIsoDate(date) : null;
 }
