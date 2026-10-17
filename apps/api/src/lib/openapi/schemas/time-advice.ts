@@ -37,12 +37,16 @@ export const planTimeAdviceQuerySchema = z
  * The week a learner would study, for the daily time that covers their whole goal: its days and the
  * weekend's own time, which a new daily time leaves as it is. The plan's own week when absent.
  */
+/** Weekdays as plans count them: Sunday is 0, Saturday 6. */
+const LAST_WEEKDAY = 6;
+const DAYS_PER_WEEK = 7;
+
 export const planTimeToCoverInputSchema = z
   .object({
     studyDays: z
-      .array(z.int().min(0).max(6))
+      .array(z.int().min(0).max(LAST_WEEKDAY))
       .min(1)
-      .max(7)
+      .max(DAYS_PER_WEEK)
       .optional()
       .meta({
         description:

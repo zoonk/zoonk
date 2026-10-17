@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 const LEARN_KINDS = ["chapter", "lesson"] as const;
 
@@ -47,6 +48,29 @@ async function passTheDate(goalId: string) {
   return { date, setAside: await countSetAside(goalId) };
 }
 
+/**
+ * Main's E2E runs without the API: Preview finds the day his time covers what's left by (the date
+ * search runs only when he asks), here two months out.
+ */
+async function routeFoundDate({
+  date,
+  goalId,
+  page,
+}: {
+  date: string;
+  goalId: string;
+  page: Page;
+}) {
+  const fittingDate = isoDaysFromNow(60);
+
+  await routeTimeToCover(page, {
+    goalId,
+    time: { fittingDate, measure: "goal", targetDate: date },
+  });
+
+  return fittingDate;
+}
+
 /** The Plan's one suggestion: the aside's panel from 72rem, the line in the page's column under it. */
 function suggestionSlot(page: Page) {
   return page.locator('[data-slot="plan-suggestion"]').filter({ visible: true });
@@ -56,11 +80,12 @@ test.describe("A plan whose date came with lessons left", () => {
   // Lucas's plan read "Ended" and "Your plan ended · 13 lessons were left out" the day after his
   // date, and offered the course's next level over them. The owner: plans don't end; offer a way
   // to adjust them automatically.
-  test("keeps going in one tap from the Plan, its diff first, and undo brings it back", async ({
+  test("keeps going from the Plan once he previews it, its diff first, and undo brings it back", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const { date, setAside } = await passTheDate(user.goalId);
+      const fittingDate = await routeFoundDate({ date, goalId: user.goalId, page });
 
       expect(setAside).toBeGreaterThan(0);
 
@@ -73,8 +98,15 @@ test.describe("A plan whose date came with lessons left", () => {
       await expect(page.getByText("You finished your plan")).toHaveCount(0);
       await expect(page.getByRole("button", { name: /^Continue at/u })).toHaveCount(0);
 
-      // The change that keeps the plan going shows what it does before Apply.
-      // It leads with the lessons it brings back.
+      // What the change does is said before he asks, and the new date is found once he taps
+      // Preview, since the page searches nothing: then its diff, leading with the lessons back.
+      await expect(
+        slot.getByText("Move your date to the day your time covers what's left."),
+      ).toBeVisible();
+
+      await expect(slot.locator('[data-slot="diff-lines"]')).toHaveCount(0);
+      await slot.getByRole("button", { exact: true, name: "Preview" }).click();
+
       await expect(
         slot.locator('[data-slot="diff-lines"]').getByRole("listitem").first(),
       ).toHaveText(/Adds (?:about )?\d+ lessons?$/u);
@@ -83,9 +115,7 @@ test.describe("A plan whose date came with lessons left", () => {
 
       await expect(slot.getByText("Plan updated", { exact: true })).toBeVisible();
       await expect.poll(() => countSetAside(user.goalId)).toBe(0);
-
-      const moved = await readTargetDate(user.goalId);
-      expect(moved && moved > isoDaysFromNow(0)).toBe(true);
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(fittingDate);
 
       await slot.getByRole("button", { exact: true, name: "Undo" }).click();
       await expect.poll(() => readTargetDate(user.goalId)).toBe(date);
@@ -93,8 +123,7 @@ test.describe("A plan whose date came with lessons left", () => {
 
       // Undo gives the offer back with the plan: he read "Undone" with no way back to it until he
       // reloaded.
-      await expect(slot.getByRole("button", { exact: true, name: "Apply" })).toBeVisible();
-      await expect(slot.locator('[data-slot="diff-lines"]')).toBeVisible();
+      await expect(slot.getByRole("button", { exact: true, name: "Preview" })).toBeVisible();
     });
   });
 
@@ -102,7 +131,8 @@ test.describe("A plan whose date came with lessons left", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
-      await passTheDate(user.goalId);
+      const { date } = await passTheDate(user.goalId);
+      await routeFoundDate({ date, goalId: user.goalId, page });
 
       await page.setViewportSize({ height: 844, width: 390 });
       await page.goto("/today");
@@ -119,10 +149,11 @@ test.describe("A plan whose date came with lessons left", () => {
       await page.getByRole("link", { name: "See your plan" }).filter({ visible: true }).click();
       await expect(page).toHaveURL(/\/plan$/u);
 
-      // On a phone the slot is a line; its sheet holds the diff and Apply.
+      // On a phone the slot is a line; its sheet holds Preview, then the diff and Apply.
       await suggestionSlot(page).getByRole("button", { exact: true, name: "View" }).click();
       const sheet = page.getByRole("dialog");
 
+      await sheet.getByRole("button", { exact: true, name: "Preview" }).click();
       await expect(sheet.locator('[data-slot="diff-lines"]')).toBeVisible();
       await sheet.getByRole("button", { exact: true, name: "Apply" }).click();
       await expect.poll(() => countSetAside(user.goalId)).toBe(0);

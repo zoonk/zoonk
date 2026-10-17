@@ -45,6 +45,7 @@ import { mockSittingPaths } from "./paths/mock-sitting";
 import { mockPaths } from "./paths/mocks";
 import { onboardingPaths } from "./paths/onboarding";
 import { placementPaths } from "./paths/placement";
+import { planAdvicePaths } from "./paths/plan-advice";
 import { planChangedSincePaths } from "./paths/plan-changed-since";
 import { planPreviewPaths } from "./paths/plan-previews";
 import { planPaths } from "./paths/plans";
@@ -145,6 +146,7 @@ const paths = withInternalErrorResponses({
   ...goalPaths,
   ...goalMapPaths,
   ...planPaths,
+  ...planAdvicePaths,
   ...planChangedSincePaths,
   ...planPreviewPaths,
   ...memoryPaths,

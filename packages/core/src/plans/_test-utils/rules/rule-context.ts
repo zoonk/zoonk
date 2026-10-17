@@ -9,6 +9,7 @@ import { type PlanOperation } from "../../plan-contract";
 import { type PlanChangeView, type PlanView } from "../../plan-view-contract";
 import { type ExistingPlanItem } from "../../planner/plan-items";
 import { type PlanGraph, type PlanPhase, type PlanSettings } from "../../planner/plan-state";
+import { type PlanTimeToCover } from "../../time-advice-contract";
 
 /**
  * A plan item as a check reads it: the planner's own fields, so a planning run's items
@@ -182,6 +183,11 @@ export type RuleContext = {
   /** Shared Library rows before and after the step (the database tier). */
   sharedContent?: { after: SharedContentSnapshot; before: SharedContentSnapshot };
   shown?: readonly RuleText[];
+  /**
+   * The daily time that covers everything, as Find answered it when the step asked for it ("Find
+   * the time that covers everything": see `findPlanTimeToCover`); screens never show it unasked.
+   */
+  timeToCover?: Pick<PlanTimeToCover, "recommendedMinutes">;
   /** The goal's syllabus after the step, as clients read it. */
   syllabus?: RuleSyllabus;
   /** The learner-local day of the step, at UTC midnight. */
@@ -196,10 +202,7 @@ export type RuleContext = {
 
 /** The parts of the plan view the checks read: a whole `PlanView` fits. */
 export type RuleView = {
-  feasibility: Pick<
-    NonNullable<PlanView["feasibility"]>,
-    "coreFits" | "fits" | "recommendedMinutes"
-  > | null;
+  feasibility: Pick<NonNullable<PlanView["feasibility"]>, "coreFits" | "fits"> | null;
   schedule: Pick<PlanView["schedule"], "dailyMinutes">;
 };
 

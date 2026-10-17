@@ -190,6 +190,7 @@ export function OnboardingStepScreen({
           // An exam takes its notice's day when the learner gave none.
           dated={view.goal.targetDate !== null || view.goal.kind === "exam"}
           exam={view.goal.kind === "exam"}
+          findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
           recommendedMinutes={view.recommendedMinutes}

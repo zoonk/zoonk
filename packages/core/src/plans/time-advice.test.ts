@@ -253,13 +253,15 @@ describe(getPlanTimeAdvice, () => {
       status: "ready",
     });
 
+    const planTime = await readPlanTime(goal.id);
+
     expect([
       advice.recommendedMinutes,
       preview50.recommendedMinutes,
       preview65.recommendedMinutes,
       preview70.recommendedMinutes,
       time70.recommendedMinutes,
-      (await readPlanTime(goal.id)).recommendedMinutes,
+      planTime.recommendedMinutes,
     ]).toStrictEqual([50, 50, 50, 50, 50, 50]);
   });
 

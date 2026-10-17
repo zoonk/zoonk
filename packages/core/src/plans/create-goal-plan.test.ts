@@ -683,7 +683,8 @@ describe(getGoalPlan, () => {
     expect(plan?.week.days[0]).toMatchObject({ date: "2020-09-28", minutes: 12, state: "today" });
     expect(plan?.week.days[0]?.items.map((item) => item.kind)).toStrictEqual(["lesson", "lesson"]);
     expect(plan?.estimate.endDate).toBe("2020-10-04");
-    expect(plan?.feasibility?.alternative?.dailyMinutes).toBe(60);
+    // What another daily time would do plans the goal again: a read never works it out.
+    expect(plan?.feasibility).not.toHaveProperty("alternative");
   });
 
   /*

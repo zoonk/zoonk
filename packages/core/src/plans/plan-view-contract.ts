@@ -41,18 +41,14 @@ export type PlanChangeView = {
   createdAt: string;
   /**
    * For `missedDays`, when falling behind made the plan cover less of its goal by its date: what it
-   * covered before and now, and the daily time to offer, or the date to move to (see
-   * `FallingBehind`). Null when the date isn't at risk.
+   * covered before and now, at the learner's time (see `FallingBehind`). Null when the date isn't
+   * at risk.
    */
   behind: {
     canFocus: boolean;
     coveredAfter: number;
     coveredBefore: number;
     currentMinutes: number;
-    dailyMinutes: number | null;
-    fittingDate: string | null;
-    fullDepth: boolean;
-    maximumShare: number | null;
     measure: "exam" | "goal";
   } | null;
   /** For `missedDays`: the earlier days that left lessons, now first on the plan. */
@@ -304,11 +300,7 @@ export type PlanBaseView = {
  * base in depth, so the learner asks for it (see `PlanBasesAdvice`). `knownCount` bases placement
  * or a test-out found the learner knows are out of the plan already.
  */
-export type PlanBasesView = {
-  daysLeft: number | null;
-  items: PlanBaseView[];
-  knownCount: number;
-};
+export type PlanBasesView = { daysLeft: number | null; items: PlanBaseView[]; knownCount: number };
 
 /**
  * When an exam plan's mock exams still to take fall, from their scheduled days: how many, the next

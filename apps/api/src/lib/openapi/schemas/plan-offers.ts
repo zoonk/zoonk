@@ -9,7 +9,7 @@ const planOfferSchema = z.object({
     .boolean()
     .meta({
       description:
-        "The plan with the change covers everything in depth by its date, as the change plans it: say so (\"Your time covers everything by …\") only then",
+        'The plan with the change covers everything in depth by its date, as the change plans it: say so ("Your time covers everything by …") only then',
     }),
   operations: planChangeInputSchema.shape.operations,
 });

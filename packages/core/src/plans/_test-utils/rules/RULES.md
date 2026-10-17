@@ -277,8 +277,8 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 ### R26. The recommended time covers the goal
 
 - **Owner's words:** "by default recommend the daily minutes that cover 100% of the goal by its date" (7 Oct).
-- **Check:** with the daily time at or above `recommendedMinutes`, the plan fits; the recommendation is never more than 240 minutes.
-- **Reads:** `view.feasibility`, `view.schedule.dailyMinutes`.
+- **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits; the recommendation is never more than 240 minutes.
+- **Reads:** `timeToCover`, `view.feasibility`, `view.schedule.dailyMinutes`.
 - **Code:** `checkRecommendedTimeCovers`.
 
 ### R27. No em dashes

@@ -32,7 +32,7 @@ function syllabus(sintaxe: RuleSyllabus["subjects"][number]["topics"][number]): 
 
 function view(feasibility: Partial<NonNullable<RuleView["feasibility"]>>): RuleView {
   return {
-    feasibility: { coreFits: false, fits: false, recommendedMinutes: null, ...feasibility },
+    feasibility: { coreFits: false, fits: false, ...feasibility },
     schedule: { dailyMinutes: 120 },
   };
 }
@@ -101,15 +101,21 @@ describe("R26 the recommended time covers the goal", () => {
   it("passes when the plan at the recommended time fits", () => {
     const context = ruleContext({
       after,
-      view: view({ coreFits: true, fits: true, recommendedMinutes: 90 }),
+      timeToCover: { recommendedMinutes: 90 },
+      view: view({ coreFits: true, fits: true }),
     });
 
     expect(checkRecommendedTimeCovers(context)).toStrictEqual([]);
   });
 
   it("flags a plan at the recommended time that doesn't fit", () => {
-    const context = ruleContext({ after, view: view({ recommendedMinutes: 90 }) });
+    const context = ruleContext({ after, timeToCover: { recommendedMinutes: 90 }, view: view({}) });
     expect(checkRecommendedTimeCovers(context)).toHaveLength(1);
+  });
+
+  it("reads nothing into a plan whose learner didn't ask for the time", () => {
+    const context = ruleContext({ after, view: view({}) });
+    expect(checkRecommendedTimeCovers(context)).toStrictEqual([]);
   });
 });
 

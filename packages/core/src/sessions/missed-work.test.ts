@@ -11,7 +11,9 @@ import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
+import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
+import { getRecommendedTime } from "../plans/time-advice-contract";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { catchUpToday } from "./catch-up-today";
@@ -66,6 +68,26 @@ async function learnGoal(userId: string) {
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
   return { goal, plan };
+}
+
+/** The keys Today's falling-behind card read from a search: a change saves only facts now. */
+const SEARCHED_KEYS = ["dailyMinutes", "fittingDate", "fullDepth", "maximumShare"];
+
+/** The saved `behind` keeps what the missed days did, and no searched time or date to offer. */
+function expectOnlyFacts(payload: unknown) {
+  const saved = isJsonObject(payload) && isJsonObject(payload.behind) ? payload.behind : null;
+
+  expect(saved).not.toBeNull();
+
+  for (const key of SEARCHED_KEYS) {
+    expect(saved).not.toHaveProperty(key);
+  }
+}
+
+/** The time that covers the goal, as the learner's Find works it out (see `findPlanTimeToCover`). */
+async function findTime(goalId: string) {
+  const result = await findPlanTimeToCover({ goalId, input: {} });
+  return result.status === "ready" && result.time.ready ? result.time : null;
 }
 
 async function learner() {
@@ -326,12 +348,23 @@ describe("falling behind", () => {
     const { behind } = parsePlanChangePayload(change?.payload);
 
     expect(change?.kind).toBe("missedDays");
-    expect(behind).toMatchObject({ coveredBefore: 1, fullDepth: true, measure: "goal" });
+
+    expect(behind).toMatchObject({
+      coveredBefore: 1,
+      currentMinutes: goal.dailyMinutes,
+      measure: "goal",
+    });
+
     expect(behind?.coveredAfter ?? 1).toBeLessThan(1);
-    expect(behind?.dailyMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
+    expectOnlyFacts(change?.payload);
+
+    // The time that covers it all again is the learner's to find, from Today's link to the editor.
+    const found = await findTime(goal.id);
+    expect(found && getRecommendedTime(found)).toMatchObject({ kind: "inDepth" });
+    expect(found?.recommendedMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
   });
 
-  it("offers the date that covers it all when, after days away, no daily time does, and says what more time covers as the Journey does", async () => {
+  it("leaves the date that covers it all to the learner's Find when no daily time does, and Today says only what the missed days did", async () => {
     const user = await learner();
 
     const library = await planLibraryFixture({
@@ -359,38 +392,46 @@ describe("falling behind", () => {
 
     const { behind } = parsePlanChangePayload(change.payload);
 
-    expect(behind).toMatchObject({ fullDepth: false, measure: "goal" });
-    expect(behind?.maximumShare ?? 0).toBeGreaterThan(behind?.coveredAfter ?? 1);
-    expect(behind?.maximumShare ?? 1).toBeLessThan(1);
-    expect(behind?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
-    expect((behind?.fittingDate ?? "") > "2020-10-09").toBe(true);
+    expect(behind).toMatchObject({ measure: "goal" });
+    expect(behind?.coveredAfter ?? 1).toBeLessThan(behind?.coveredBefore ?? 0);
+    expectOnlyFacts(change.payload);
 
-    // The plan moved after the morning's settle (lessons written, a session ended): Rafaela's
-    // card said "about 54%" while her Plan said "about 55%".
+    // Find works it out exactly when the learner asks: what the most time a day covers, and the
+    // date their own time covers it all by, which "Move your date" applies.
+    const found = await findTime(goal.id);
+
+    expect(found?.recommendedMinutes).toBeNull();
+    expect(found?.maximum?.coveredShare ?? 0).toBeGreaterThan(behind?.coveredAfter ?? 1);
+    expect(found?.maximum?.coveredShare ?? 1).toBeLessThan(1);
+    expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
+    expect((found?.fittingDate ?? "") > "2020-10-09").toBe(true);
+
+    // A change saved before Today said only facts kept the time and date a search found to offer
+    // (Rafaela's card said "about 54%" while her Plan said "about 55%"): reading it drops them.
     const payload = isJsonObject(change.payload) ? change.payload : {};
 
     await prisma.planChange.update({
-      data: { payload: { ...payload, behind: { ...behind, maximumShare: 0.03 } } },
+      data: {
+        payload: {
+          ...payload,
+          behind: {
+            ...behind,
+            dailyMinutes: 240,
+            fittingDate: null,
+            fullDepth: false,
+            maximumShare: 0.03,
+          },
+        },
+      },
       where: { id: change.id },
     });
 
-    const [today, journey] = await Promise.all([
-      prisma.goal
-        .findUniqueOrThrow({ where: { id: goal.id } })
-        .then((saved) => loadTodayPlanChange({ goal: saved, now: new Date(), timeZone: "UTC" })),
-      getGoalPlan(goal.id),
-    ]);
+    const today = await prisma.goal
+      .findUniqueOrThrow({ where: { id: goal.id } })
+      .then((saved) => loadTodayPlanChange({ goal: saved, now: new Date(), timeZone: "UTC" }));
 
-    const feasibility = journey.status === "ready" ? journey.plan.feasibility : null;
-
-    expect(feasibility?.maximum?.coveredShare).toBeGreaterThan(0.03);
-
-    // What the missed days did stays as the settle said it.
-    expect(today?.behind).toMatchObject({
-      coveredAfter: behind?.coveredAfter,
-      coveredBefore: behind?.coveredBefore,
-      maximumShare: feasibility?.maximum?.coveredShare,
-    });
+    // What the missed days did stays as the settle said it, and nothing searched.
+    expect(today?.behind).toStrictEqual(behind);
   });
 
   it("only moves the plan on when the time left still covers the goal", async () => {

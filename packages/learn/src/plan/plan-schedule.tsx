@@ -2,30 +2,36 @@
 
 import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/time-advice-contract";
 import { getWeekShape, isWeekend } from "@zoonk/core/plans/week-shape";
-import { Button } from "@zoonk/ui/components/button";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChoiceList } from "../onboarding/choice-list";
 import { MINUTE_OPTIONS } from "../onboarding/steps/daily-minutes";
 import { usePlanScreen } from "./plan-context";
-import { CoveredSentence, MoveDateSwitch, usePlanCoverage, useTimeEnough } from "./plan-coverage";
+import {
+  CoveredSentence,
+  MoveDateSwitch,
+  useCanMoveDate,
+  usePlanCoverage,
+  useTimeEnough,
+} from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
 import { PlanFailedMessage } from "./plan-failed-message";
+import {
+  FIND_ACTIONS_ID,
+  FindLine,
+  MOVE_DATE_ID,
+  useFindAnswer,
+  useFocusFindAnswer,
+} from "./plan-find-line";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import {
-  type TimeToCoverAnswer,
-  readTimeToCover,
-  useTimeToCover,
-  useTimeToCoverTexts,
-} from "./use-time-to-cover";
+import { useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
@@ -40,141 +46,6 @@ function getMinuteChoices(current: number, found?: number | null): number[] {
   return [...new Set(times)].toSorted((a, b) => a - b);
 }
 
-/** The find answer of the plan as it is now, in what it says about daily time. */
-function useFindAnswer(): TimeToCoverAnswer | null {
-  const { answered } = useTimeToCover();
-  return answered && readTimeToCover(answered);
-}
-
-/** Where the editor moves focus once Find answers, since the Find button that had it is gone. */
-type FindFocus = {
-  /** The time chips, to focus the one the answer marks. */
-  chips: React.RefObject<HTMLDivElement | null>;
-  /** The answer itself, when nothing below can take focus. */
-  line: React.RefObject<HTMLDivElement | null>;
-  /** "Move your date to cover everything", for a goal the most time doesn't cover. */
-  move: React.RefObject<HTMLButtonElement | null>;
-  /** The actions under the answer: moving the date, choosing where to focus. */
-  actions: React.RefObject<HTMLDivElement | null>;
-};
-
-/**
- * Moves focus once this editor's Find answers: to the chip of the time found, so Space picks it;
- * to Move your date, when it's the one way that covers everything; to the most time's chip for an
- * exam; or, when no time covers more, to the first action below. `ask` marks that this editor
- * asked, so an answer found elsewhere (the Plan's card) moves nothing.
- */
-function useFocusFindAnswer({ choices, refs }: { choices: number[]; refs: FindFocus }) {
-  const { goal } = usePlanScreen();
-  const { answered, state } = useTimeToCover();
-  const asked = useRef(false);
-
-  useEffect(() => {
-    if (!asked.current || state.status === "pending") {
-      return;
-    }
-
-    asked.current = false;
-
-    if (!answered) {
-      return;
-    }
-
-    const answer = readTimeToCover(answered);
-    const radios = refs.chips.current?.querySelectorAll<HTMLElement>('[role="radio"]');
-    const chip = (minutes: number) => radios?.[choices.indexOf(minutes)] ?? null;
-    const firstAction = refs.actions.current?.querySelector<HTMLElement>("button") ?? null;
-
-    const target =
-      answer.kind === "covers"
-        ? chip(answer.minutes)
-        : answer.kind === "more" && goal.kind !== "exam" && answered.fittingDate
-          ? refs.move.current
-          : answer.kind === "more"
-            ? chip(answer.minutes)
-            : firstAction;
-
-    (target ?? refs.line.current)?.focus();
-  }, [answered, choices, goal.kind, refs, state.status]);
-
-  return () => {
-    asked.current = true;
-  };
-}
-
-/**
- * "Find the time that covers everything", where it answers (a polite live region, always there):
- * the button while nothing's found, the answer in its place once found, or why it couldn't be
- * found, with Try again in the button's own place, so focus stays on it.
- */
-function FindLine({ canFind, line, onAsk }: { canFind: boolean; line: FindFocus["line"]; onAsk: () => void }) {
-  const { goal, plan } = usePlanScreen();
-  const texts = useTimeToCoverTexts();
-  const { answered, find, state } = useTimeToCover();
-  const pending = state.status === "pending";
-  const retry = state.status === "failed" || state.status === "building";
-
-  const ask = () => {
-    onAsk();
-    void find();
-  };
-
-  const answer = answered && readTimeToCover(answered);
-
-  return (
-    <div
-      aria-live="polite"
-      className="flex flex-col gap-2 empty:hidden focus-visible:outline-none"
-      ref={line}
-      role="status"
-      tabIndex={-1}
-    >
-      {answer?.kind === "covers" && answered?.targetDate && (
-        <p className="font-semibold">
-          {texts.covers({
-            minutes: answer.minutes,
-            targetDate: answered.targetDate,
-            targetDateNamedMonth: answered.targetDateNamedMonth,
-          })}
-        </p>
-      )}
-
-      {answer?.kind === "more" && <p className="font-semibold">{texts.more(answer)}</p>}
-
-      {answer?.kind === "more" && goal.kind !== "exam" && answered?.fittingDate && (
-        <p>
-          {texts.fittingDate({
-            dailyMinutes: plan.schedule.dailyMinutes,
-            fittingDate: answered.fittingDate,
-          })}
-        </p>
-      )}
-
-      {answer?.kind === "none" && <p>{texts.none(MAX_DAILY_MINUTES)}</p>}
-
-      {retry && <p>{state.status === "building" ? texts.building : texts.failed}</p>}
-
-      {!answer && (canFind || retry) && (
-        <Button
-          aria-busy={pending || undefined}
-          className="self-start"
-          disabled={pending}
-          focusableWhenDisabled
-          key="find"
-          onClick={ask}
-          size="sm"
-          variant="outline"
-        >
-          {pending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
-          {retry ? texts.tryAgain : texts.find}
-        </Button>
-      )}
-
-      {pending && <span className="sr-only">{texts.finding}</span>}
-    </div>
-  );
-}
-
 /**
  * What the chosen time covers, under the presets, so each change shows its effect right away: the
  * whole goal, or what it leaves lighter, exactly as the plan has it; then Find, which plans the
@@ -187,18 +58,20 @@ function FindLine({ canFind, line, onAsk }: { canFind: boolean; line: FindFocus[
 function DailyCoverage({
   canFind,
   onAsk,
-  pending,
-  refs,
+  onMoving,
+  planChange,
 }: {
   canFind: boolean;
   onAsk: () => void;
-  pending: boolean;
-  refs: FindFocus;
+  onMoving: (moving: boolean) => void;
+  planChange: PlanChange;
 }) {
+  const pending = planChange.isPending;
   const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
+  const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const canChooseFocus = useCanChooseFocus();
+  const canMoveDate = useCanMoveDate();
 
   if (!plan.feasibility?.deadline) {
     return null;
@@ -223,16 +96,16 @@ function DailyCoverage({
                 measure={coverage.measure}
               />
             </div>
-            <FindLine canFind={canFind} line={refs.line} onAsk={onAsk} />
-            <div className="flex flex-wrap items-center gap-2 empty:hidden" ref={refs.actions}>
-              {goal.kind !== "exam" && <MoveDateSwitch ref={refs.move} />}
+            <FindLine canFind={canFind} onAsk={onAsk} />
+            <div className="flex flex-wrap items-center gap-2 empty:hidden" id={FIND_ACTIONS_ID}>
+              {canMoveDate && (
+                <MoveDateSwitch id={MOVE_DATE_ID} onMoving={onMoving} planChange={planChange} />
+              )}
               {canChooseFocus && <ChooseFocus />}
             </div>
           </>
         ) : (
-          <p className="text-muted-foreground">
-            {t("Covers your whole goal.")}
-          </p>
+          <p className="text-muted-foreground">{t("Covers your whole goal.")}</p>
         )}
       </div>
     </div>
@@ -257,12 +130,19 @@ function useWeekShape() {
  * tap waits for it.
  */
 function DailyMinutes({
-  planChange: { change, isPending },
+  moving,
+  onMoving,
+  planChange,
   weekendOn,
 }: {
+  /** Move your date is finding or saving its date: the chips wait, as for any change. */
+  moving: boolean;
+  onMoving: (moving: boolean) => void;
   planChange: PlanChange;
   weekendOn: boolean;
 }) {
+  const { change } = planChange;
+  const isPending = planChange.isPending || moving;
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const texts = useTimeToCoverTexts();
@@ -272,12 +152,7 @@ function DailyMinutes({
   const current = shape.weekdays;
   const time = useTappedChoice(current);
   const choices = getMinuteChoices(current, answer?.kind === "covers" ? answer.minutes : null);
-  const chips = useRef<HTMLDivElement>(null);
-  const line = useRef<HTMLDivElement>(null);
-  const move = useRef<HTMLButtonElement>(null);
-  const actions = useRef<HTMLDivElement>(null);
-  const [refs] = useState<FindFocus>(() => ({ actions, chips, line, move }));
-  const onAsk = useFocusFindAnswer({ choices, refs });
+  const onAsk = useFocusFindAnswer(choices);
 
   const setMinutes = (minutes: number) => {
     if (isPending || minutes === current) {
@@ -301,7 +176,7 @@ function DailyMinutes({
         {t("Time a day")}
       </span>
 
-      <div aria-busy={isPending} className="aria-busy:opacity-80" ref={chips}>
+      <div aria-busy={isPending} className="aria-busy:opacity-80">
         <ChoiceList
           choices={choices.map((minutes) => ({
             description: (answer && texts.note(answer, minutes)) ?? undefined,
@@ -319,8 +194,8 @@ function DailyMinutes({
       <DailyCoverage
         canFind={current < MAX_DAILY_MINUTES && !timeEnough}
         onAsk={onAsk}
-        pending={isPending}
-        refs={refs}
+        onMoving={onMoving}
+        planChange={planChange}
       />
     </div>
   );
@@ -457,15 +332,24 @@ export function PlanSchedule() {
   const planChange = usePlanChange();
   const [weekendChoice, setWeekendChoice] = useState<boolean | null>(null);
   const weekendOn = weekendChoice ?? shape.weekend !== null;
+  // While Move your date finds its date and saves it, the other settings wait, as for any change:
+  // a time picked meanwhile would leave the date it found for the plan before.
+  const [moving, setMoving] = useState(false);
+  const schedule = { ...planChange, isPending: planChange.isPending || moving };
 
   return (
     <>
-      <DailyMinutes planChange={planChange} weekendOn={weekendOn} />
-      <StudyDays planChange={planChange} />
+      <DailyMinutes
+        moving={moving}
+        onMoving={setMoving}
+        planChange={planChange}
+        weekendOn={weekendOn}
+      />
+      <StudyDays planChange={schedule} />
       <WeekendMinutes
         checked={weekendOn}
         onCheckedChange={setWeekendChoice}
-        planChange={planChange}
+        planChange={schedule}
       />
       {planChange.failed && <PlanFailedMessage />}
     </>

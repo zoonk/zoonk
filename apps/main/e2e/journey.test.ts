@@ -17,6 +17,7 @@ import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { carryLessons, createStudyDay, openAs } from "./study-day";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 /**
  * The Plan replaces Plan, Progress and Content: where the learner stands in two
@@ -47,8 +48,8 @@ function minutesLabel(minutes: number): string {
   return rest === 0 ? `${hours} hr` : `${hours} hr ${rest} min`;
 }
 
-/** The editor's one-hour preset, whether or not it's the time plans recommend. */
-const ONE_HOUR = /^1 hr\s*(?:all in depth|recommended)?$/u;
+/** The editor's one-hour preset: no chip says what it covers until the learner asks Find. */
+const ONE_HOUR = /^1 hr$/u;
 
 /** A list row's least height: a tap target with room for its title. */
 const MIN_ROW_HEIGHT = 44;
@@ -460,18 +461,22 @@ test.describe("Journey", () => {
         new Date(targetDate.getTime() - MS_PER_DAY).toISOString().slice(0, 10),
       );
 
-      // Fifteen minutes don't cover it all: the Plan's one suggestion says what they cover, and
-      // offers the one time plans recommend, the number the time step said, not a second "every
-      // topic" time.
+      // Fifteen minutes don't cover it all: the Plan's one suggestion says exactly what they cover,
+      // and works out the time that covers everything only when she asks (no searched time on a
+      // page, so nothing to read before she taps).
       const suggestion = suggestionPanel(page);
 
-      await expect(suggestion).toContainText(
-        /15\smin a day (?:doesn't reach every topic|studies every topic of the exam)/u,
+      await expect(suggestion.getByRole("heading")).toHaveText(
+        /^15\smin a day (?:doesn't reach every topic|studies every topic of the exam)/u,
       );
 
-      await expect(suggestion.getByRole("heading")).toHaveText(
-        /a day covers (?:everything|about \d+%) in depth$/u,
-      );
+      await expect(
+        suggestion.getByRole("button", { name: "Find the time that covers everything" }),
+      ).toBeVisible();
+
+      await expect(
+        suggestion.getByText(/a day covers (?:everything|about \d+%) in depth/u),
+      ).toHaveCount(0);
 
       await expect(page.getByText(/^To study every topic:/u)).toHaveCount(0);
 
@@ -499,10 +504,14 @@ test.describe("Journey", () => {
 
       await adjustPlanButton(page).click();
 
-      // One preset is the time that covers it all (or the most), and says so.
+      // No preset says what it covers until she asks: Find sits under them.
       await expect(
-        minutes.getByRole("radio", { name: /(?:all in depth|recommended)$/u }),
-      ).toHaveCount(1);
+        minutes.getByRole("radio", { name: /(?:Covers everything|About \d+%)$/u }),
+      ).toHaveCount(0);
+
+      await expect(
+        editor.getByRole("button", { name: "Find the time that covers everything" }),
+      ).toBeVisible();
 
       await expectAccessibleScreen(page, "the plan editor");
 
@@ -557,10 +566,14 @@ test.describe("Journey", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      // Two months to her exam at 15 minutes a day: the Plan offers the time that covers it all.
-      await prisma.goal.update({
-        data: { targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY) },
-        where: { id: user.goalId },
+      // Two months to her exam at 15 minutes a day: the Plan finds the time that covers it all.
+      const examDate = new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY);
+      await prisma.goal.update({ data: { targetDate: examDate }, where: { id: user.goalId } });
+
+      // Main's E2E runs without the API: Find finds that an hour a day covers everything.
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: { recommendedMinutes: 60, targetDate: examDate.toISOString().slice(0, 10) },
       });
 
       await page.clock.install();
@@ -578,10 +591,18 @@ test.describe("Journey", () => {
 
       const panel = suggestionPanel(page);
       const suggestion = page.locator('[data-slot="suggestion"]').filter({ visible: true });
-      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
+      const find = panel.getByRole("button", { name: "Find the time that covers everything" });
+      await expect(panel.getByRole("heading")).toHaveText(/^15\smin a day /u);
 
-      await panel.getByRole("button", { name: "Preview" }).click();
+      // One tap on Find finds the time and shows what it changes.
+      await find.click();
+
+      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u, {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       const apply = panel.getByRole("button", { name: "Apply" });
+      await expect(apply).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
       await apply.focus();
       await page.keyboard.press("Enter");
 
@@ -596,10 +617,10 @@ test.describe("Journey", () => {
       await expect(undo).toBeFocused();
 
       // Undo puts the plan back and the suggestion with it, as Gmail's undo gives the message
-      // back: the offer returns at once, and the keyboard lands on it.
+      // back: what her time covers returns at once, with Find, and the keyboard lands on it.
       await page.keyboard.press("Enter");
-      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
-      await expect(panel.getByRole("button", { name: "Preview" })).toBeVisible();
+      await expect(panel.getByRole("heading")).toHaveText(/^15\smin a day /u);
+      await expect(find).toBeVisible();
       await expect(suggestion).toBeFocused();
     });
   });
@@ -633,7 +654,7 @@ test.describe("Journey", () => {
     await page.context().close();
   });
 
-  test("a goal no daily time covers by its date says what the most time reaches, and moves the date to cover it all", async ({
+  test("a goal no daily time covers by its date finds what the most time reaches when asked, and moves the date to cover it all", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
@@ -641,11 +662,24 @@ test.describe("Journey", () => {
       const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
       await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
 
+      // Main's E2E runs without the API: Find finds no daily time covers it by his date, what the
+      // most time a day would reach, and a date a year later that his own time covers it all by.
+      const fittingDate = new Date(targetDate.getTime() + 365 * MS_PER_DAY);
+
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: {
+          fittingDate: fittingDate.toISOString().slice(0, 10),
+          maximum: { coveredShare: 0.37, dailyMinutes: 240 },
+          measure: "goal",
+          targetDate: targetDate.toISOString().slice(0, 10),
+        },
+      });
+
       await openJourney(page);
 
       // The plan he had no longer fits the month left, which the Plan's suggestion says first. The
-      // next one offers the date his time covers it all by, and says honestly what the most time
-      // a day would reach by his: no time to switch to.
+      // next one says exactly what his time covers, and works out the rest only when he asks.
       const suggestion = suggestionPanel(page);
       await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
       const slot = page.getByRole("group", { name: "Plan suggestion" });
@@ -659,23 +693,43 @@ test.describe("Journey", () => {
       const honest =
         /^Even at .+ a day, you'd study about \d+% of everything in depth by your date\.$/u;
 
+      await expect(suggestion.getByRole("heading")).toHaveText(
+        / a day (?:doesn't reach|studies) /u,
+      );
+
+      await expect(suggestion.getByText(honest)).toHaveCount(0);
+
+      // Find finds that no daily time covers it all: the date his own time covers it by is the
+      // offer, with what the most time a day would reach, and no time to switch to.
+      await suggestion
+        .getByRole("button", { name: "Find the time that covers everything" })
+        .click();
+
+      await expect(suggestion.getByRole("heading")).toHaveText(
+        /^Your time covers everything by /u,
+        { timeout: REPLAN_TIMEOUT_MS },
+      );
+
       await expect(suggestion.getByText(honest)).toBeVisible();
-      await expect(suggestion.getByRole("heading")).toHaveText(/^Your time covers everything by /u);
       await expect(suggestion.getByRole("button", { name: /^Switch to/u })).toHaveCount(0);
 
+      // The answer stays with the plan it was found for while he pages through the suggestions.
       await previous.focus();
       await previous.press("Enter");
       await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
       await expect(previous).toBeFocused();
+      await next.press("Enter");
+      await expect(suggestion.getByRole("heading")).toHaveText(/^Your time covers everything by /u);
 
       await adjustPlanButton(page).click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
 
-      // The most time a day is the one recommended, honestly, with what moving the date does.
+      // The editor has the same answer: the most time a day says what it covers, and moving the
+      // date is the one way to cover everything.
       await expect(
         editor
           .getByRole("radiogroup", { name: "Time a day" })
-          .getByRole("radio", { name: /^4 hr\s*recommended$/u }),
+          .getByRole("radio", { name: /^4 hr\s*About \d+%$/u }),
       ).toBeVisible();
 
       await expect(editor.getByText(honest)).toBeVisible();
@@ -1121,11 +1175,17 @@ test.describe("Journey", () => {
       await pager.getByRole("button", { name: "Next" }).click();
       await expect(pager).toHaveText(/2 of 2/u);
       await expect(pager.getByRole("button", { name: "Next" })).toBeFocused();
-      await expect(slot).toContainText(/a day covers (?:everything|about \d+%) in depth/u);
+
+      // The next one says what her own time covers, as the plan has it: no other time is searched
+      // for the page.
+      // Any character for the apostrophe: Playwright can't chain a locator named by a pattern
+      // that holds one.
+      const ownTime = /45\smin a day (?:doesn.t reach|studies) every topic/u;
+      await expect(slot).toContainText(ownTime);
 
       // The sheet holds the one suggestion it opened for: moving on happens under the line.
       await slot.getByRole("button", { exact: true, name: "View" }).click();
-      const sheet = page.getByRole("dialog", { name: /a day covers/u });
+      const sheet = page.getByRole("dialog", { name: ownTime });
       await expect(sheet).toBeVisible();
       await expect(sheet.getByRole("button", { exact: true, name: "Next" })).toHaveCount(0);
     });
@@ -1543,7 +1603,7 @@ test.describe("Journey without a plan yet", () => {
 });
 
 test.describe("Plan reveal", () => {
-  test("shows the plan's shape, what's on the exam and the path, says how much it covers, and switches to the time that covers it all in one tap", async ({
+  test("shows the plan's shape, what's on the exam and the path, and says exactly how much it covers", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -1593,22 +1653,13 @@ test.describe("Plan reveal", () => {
       await expect(phases.getByRole("button")).toHaveCount(0);
       await expect(phases.getByRole("link")).toHaveCount(0);
 
-      // One tap to the time plans recommend: everything in depth, or as much as a day can hold.
-      const switchTime = page.getByRole("button", { name: /^Use .+ a day$/u });
-      await switchTime.click();
+      // An exam's reveal offers no other time: the time step just offered Find, and Adjust holds
+      // the rest. Nothing on it was searched for the page.
+      await expect(page.getByRole("button", { name: /^Use .+ a day$/u })).toHaveCount(0);
 
       await expect(
-        page.getByText(
-          /^Done\. Your plan now covers your whole goal\.$|^.+ a day studies every topic of the exam, (?:the ones that come up most in more depth|some of them in less depth)\.$/u,
-        ),
-      ).toBeVisible();
-
-      await expect
-        .poll(async () => {
-          const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-          return saved.dailyMinutes;
-        })
-        .toBeGreaterThan(10);
+        page.getByRole("button", { name: "Move your date to cover everything" }),
+      ).toHaveCount(0);
 
       await expect(page.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/today");
     });

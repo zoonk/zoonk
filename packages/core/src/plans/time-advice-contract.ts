@@ -87,7 +87,7 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "For a goal that isn't an exam and doesn't cover everything by its date in its own week (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, planned as the change that moves it, to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
+          "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
       }),
     maximum: z
       .object({ coveredShare: z.number().min(0).max(1), dailyMinutes: z.int() })
@@ -137,29 +137,10 @@ export function getRecommendedTime({
 }
 
 /**
- * The daily time worth offering a learner whose plan doesn't cover their goal: the one plans
- * recommend (see `getRecommendedTime`), only when it's more than they give. Pedro's Plan offered
- * "10 min a day covers everything" beside his 15: less time, framed as covering more. Null when
- * no time is worth more; whether their own time covers everything is the plan's `timeCovers`.
- */
-export function getMoreTime({
-  dailyMinutes,
-  ...advice
-}: Pick<PlanTimeToCover, "maximum" | "recommendedMinutes"> & { dailyMinutes: number }): ReturnType<
-  typeof getRecommendedTime
-> {
-  const target = getRecommendedTime(advice);
-  return target && target.dailyMinutes > dailyMinutes ? target : null;
-}
-
-/**
  * The week the learner would study: the weekdays, Sunday first (0; the plan's own days when
  * absent), and the weekend's own time when it has one apart from the weekdays'.
  */
-export type PlanTimeToCoverInput = {
-  studyDays?: readonly number[];
-  weekendMinutes?: number;
-};
+export type PlanTimeToCoverInput = { studyDays?: readonly number[]; weekendMinutes?: number };
 
 /**
  * The week the learner would study (see `PlanTimeToCoverInput`), and the weekdays' time they're

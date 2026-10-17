@@ -7,10 +7,10 @@ import { useExtracted } from "next-intl";
 import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { type TimeToCoverState, usePlanScreen } from "./plan-context";
+import { usePlanScreen } from "./plan-context";
 
 /** Planning a big exam's goal at every daily time takes seconds; past this, offer Try again. */
-const FIND_TIMEOUT_MS = 45_000;
+const ASK_TIMEOUT_MS = 45_000;
 
 /**
  * What a find answer says about daily time: the fewest minutes whose plan covers everything in
@@ -37,48 +37,33 @@ export function readTimeToCover(
 }
 
 /**
- * Asks once for the time that covers the plan (see `PlanActions.findTimeToCover`), within a bound
- * wait: the answer, or null when it failed, timed out, or found the plan being built.
+ * Asks once for something the learner asked the app to work out (the time that covers a goal, a
+ * recommendation for its bases), within a bound wait: the answer, or null when it failed or timed
+ * out, so a stalled request never leaves a spinner for good.
  */
-export function useRequestTimeToCover(): () => Promise<PlanTimeToCover | null> {
-  const { actions } = usePlanScreen();
-
-  return async () => {
-    const { data } = await safeAsync(() =>
-      settleWithin({ ms: FIND_TIMEOUT_MS, request: () => actions.findTimeToCover() }),
-    );
-
-    return data?.status === "settled" ? data.value : null;
-  };
+export async function requestWithin<Answer>(
+  request: () => Promise<Answer | null>,
+): Promise<Answer | null> {
+  const { data } = await safeAsync(() => settleWithin({ ms: ASK_TIMEOUT_MS, request }));
+  return data?.status === "settled" ? data.value : null;
 }
 
 /**
  * "Find the time that covers everything" for the plan as it is now, shared by the Plan's coverage
- * card and its editor (see `TimeToCoverState`). `find` plans the goal at each daily time once and
- * resolves to the answer (null when it failed or found the plan being built); a late answer for a
- * plan that changed meanwhile shows nowhere. `answered` is this plan's answer, so another control
- * (Move your date) reuses it instead of searching again.
+ * card, its editor and Move your date (see `TimeToCoverState`). `find` plans the goal at each
+ * daily time once per plan revision, within a bound wait: asked again while it runs, it waits for
+ * that search, and once answered, it gives that answer; a late answer for a plan that changed
+ * meanwhile shows nowhere. `answered` is this plan's answer.
  */
 export function useTimeToCover() {
-  const { timeToCover } = usePlanScreen();
-  const requestTime = useRequestTimeToCover();
-  const { plan, set, state } = timeToCover;
+  const { actions, timeToCover } = usePlanScreen();
+  const { state } = timeToCover;
 
-  const find = async (): Promise<PlanTimeToCover | null> => {
-    const request = { plan, status: "pending" } as const;
-    set(request);
-
-    const time = await requestTime();
-
-    const next: TimeToCoverState = time?.ready
-      ? { plan, status: "answered", time }
-      : { plan, status: time ? "building" : "failed" };
-
-    set((current) => (current === request ? next : current));
-    return time?.ready ? time : null;
+  return {
+    answered: state.status === "answered" ? state.time : null,
+    find: () => timeToCover.find(() => requestWithin(() => actions.findTimeToCover())),
+    state,
   };
-
-  return { answered: state.status === "answered" ? state.time : null, find, state };
 }
 
 /**
@@ -100,9 +85,9 @@ export function useTimeToCoverTexts() {
       minutes,
       targetDate,
       targetDateNamedMonth,
-    }: {
-      minutes: number;
-    } & Pick<PlanTimeToCover, "targetDateNamedMonth"> & { targetDate: string }) =>
+    }: { minutes: number } & Pick<PlanTimeToCover, "targetDateNamedMonth"> & {
+        targetDate: string;
+      }) =>
       t("{time} a day covers everything in depth by {date}.", {
         date: formatGoalDate({
           isoDate: targetDate,
@@ -111,7 +96,7 @@ export function useTimeToCoverTexts() {
         }),
         time: formatDuration(minutes),
       }),
-    failed: t("We couldn't find the time."),
+    failed: t("We couldn't work out the time needed."),
     find: t("Find the time that covers everything"),
     finding: t("Finding the time…"),
     /** The date a goal's own time covers everything by. */
@@ -127,7 +112,7 @@ export function useTimeToCoverTexts() {
       }),
     noDate: t("We couldn't find a date that covers everything."),
     none: (minutes: number) =>
-      t("Even at {time} a day, your plan covers no more by your date.", {
+      t("Even at {time} a day, your plan wouldn't cover more by your date.", {
         time: formatDuration(minutes),
       }),
     /** A chip's note once Find answered: the time found, or the most time's exact share. */

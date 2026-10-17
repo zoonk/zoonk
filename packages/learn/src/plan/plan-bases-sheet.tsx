@@ -15,13 +15,14 @@ import {
 import { LayersIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { BasesAdvice } from "./plan-bases-advice";
 import { useBasesEffectLines } from "./plan-bases-effect";
 import { type BaseChoice, BaseGroup } from "./plan-bases-group";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
-import { useAdviceText, useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
+import { useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
@@ -32,10 +33,6 @@ const PREVIEW_DELAY_MS = 300;
 
 function toChoices(items: readonly PlanBaseView[]): Map<string, BaseChoice> {
   return new Map(items.map((item) => [item.skillId, item.choice]));
-}
-
-function followsRecommendation(bases: PlanBasesView, choices: Choices): boolean {
-  return bases.items.every((item) => choices.get(item.skillId) === bases.recommended);
 }
 
 /**
@@ -154,8 +151,6 @@ function BasesFooter({
  * prerequisite, with what they'd do before saving them.
  */
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
-  const t = useExtracted();
-  const adviceText = useAdviceText();
   const knownText = useKnownText();
   const { change, failed, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
@@ -192,20 +187,13 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   const choose = (skillIds: string[], choice: BaseChoice) =>
     setDraft(new Map([...draft, ...skillIds.map((skillId) => [skillId, choice] as const)]));
 
-  const recommend = () =>
-    setDraft(new Map(bases.items.map((item) => [item.skillId, bases.recommended])));
+  const recommend = (recommended: BaseChoice) =>
+    setDraft(new Map(bases.items.map((item) => [item.skillId, recommended])));
 
   return (
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
-        <div className="bg-muted/60 flex flex-col items-start gap-2 rounded-xl p-4 text-sm">
-          <p className="text-pretty">{adviceText(bases)}</p>
-          {!followsRecommendation(bases, draft) && (
-            <Button onClick={recommend} size="sm" variant="secondary">
-              {t("Use the recommendation")}
-            </Button>
-          )}
-        </div>
+        <BasesAdvice bases={bases} choices={draft} onUse={recommend} />
 
         <p className="text-muted-foreground text-sm text-pretty">{knownText(bases)}</p>
 
@@ -236,8 +224,8 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 /**
  * The prerequisites' sheet: the skills the goal's topics or final work build on, worth less to it
  * than what builds on them, each to learn first, study for its essentials or skip, with the time
- * each takes, what the app recommends, and what the choices do before they're saved. Each opening
- * starts from the plan's own choices.
+ * each takes, what the app recommends when the learner asks, and what the choices do before
+ * they're saved. Each opening starts from the plan's own choices.
  */
 export function PlanBasesSheet({
   bases,

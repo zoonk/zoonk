@@ -3,14 +3,15 @@ import { type BuildPlanInput, type BuiltPlan } from "../planner/build-plan";
 import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { type PlanBases } from "../planner/plan-bases";
+import { daysBetween } from "../planner/plan-calendar";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
 import { type PlanAnalysisPurpose, readPlanAnalysis } from "./read-plan-analysis";
 
 /**
  * Read advice stays synchronous to consumers; callbacks and mutation analysis stay local. A read
  * takes what the plan covers at the learner's own time from the cached analysis; what other daily
- * times would do stays a local, lazy search that no read asks for (reads advise with estimates, see
- * `estimatePlanAdvice`).
+ * times or dates would do stays a local, lazy search that no read asks for (the learner asks for
+ * it: see `findPlanTimeToCover`).
  */
 export async function loadPlanReadAdvice({
   advise,
@@ -45,7 +46,10 @@ export async function loadPlanReadAdvice({
     bases: () =>
       analysis
         ? {
-            ...analysis.bases,
+            bases: [...analysis.bases],
+            daysLeft: input.goal.targetDate
+              ? daysBetween(input.today, input.goal.targetDate)
+              : null,
             // Plans every base in depth: never read for a page (see `getPlanBasesAdvice`).
             get recommended() {
               return bases().recommended;
@@ -73,9 +77,6 @@ export async function loadPlanReadAdvice({
             },
             get recommendedMinutes() {
               return local().recommendedMinutes;
-            },
-            get timeCovers() {
-              return local().timeCovers;
             },
           }
         : local(),

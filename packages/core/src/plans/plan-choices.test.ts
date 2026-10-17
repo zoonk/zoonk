@@ -14,6 +14,7 @@ import { TOPICS, day, enemBiologyGoal, isoDay, setClock } from "./_test-utils/en
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
+import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { type PlanOperation } from "./plan-contract";
 import { previewPlanChange } from "./preview-plan-change";
@@ -36,6 +37,20 @@ async function readPlan(goalId: string) {
   }
 
   return result.plan;
+}
+
+/**
+ * What the app recommends for the plan's bases, when the learner asks ("Get a recommendation"): it
+ * plans the goal with every base in depth, so no read of the plan says it.
+ */
+async function readBasesAdvice(goalId: string) {
+  const result = await getPlanBasesAdvice(goalId);
+
+  if (result.status !== "ready") {
+    throw new Error(`Expected the bases advice, got ${result.status}`);
+  }
+
+  return result.advice;
 }
 
 async function change(goalId: string, operations: PlanOperation[]) {
@@ -80,6 +95,13 @@ describe("bases a learner chooses how to study", () => {
       daysLeft: 30,
       items: [{ choice: "quick", neededFor: ["Ecologia"], skillId: living.id }],
       knownCount: 0,
+    });
+
+    expect(viewed.bases).not.toHaveProperty("recommended");
+
+    await expect(readBasesAdvice(goal.id)).resolves.toStrictEqual({
+      daysLeft: 30,
+      ready: true,
       recommended: "quick",
     });
 
@@ -129,9 +151,10 @@ describe("bases a learner chooses how to study", () => {
     const viewed = await readPlan(goal.id);
     const livingItems = await lessonItems({ planId: plan.id, skillId: living.id });
 
-    expect(viewed.bases).toMatchObject({
+    expect(viewed.bases).toMatchObject({ daysLeft: 90, items: [{ choice: "essential" }] });
+
+    await expect(readBasesAdvice(goal.id)).resolves.toMatchObject({
       daysLeft: 90,
-      items: [{ choice: "essential" }],
       recommended: "essential",
     });
 
@@ -144,7 +167,8 @@ describe("bases a learner chooses how to study", () => {
     const livingItems = await lessonItems({ planId: plan.id, skillId: living.id });
     const lessons = livingItems.reduce((total, item) => total + (item.lessonId ? 1 : 0), 0);
 
-    expect(viewed.bases).toMatchObject({ items: [{ choice: "deep" }], recommended: "deep" });
+    expect(viewed.bases).toMatchObject({ items: [{ choice: "deep" }] });
+    await expect(readBasesAdvice(goal.id)).resolves.toMatchObject({ recommended: "deep" });
     expect(lessons).toBe(3);
     expect(viewed.feasibility?.fits).toBe(true);
   });
@@ -178,10 +202,8 @@ describe("bases a learner chooses how to study", () => {
 
     expect(livingItems.length).toBeGreaterThan(1);
 
-    expect(viewed.bases).toMatchObject({
-      items: [{ choice: "essential", skillId: living.id }],
-      recommended: "quick",
-    });
+    expect(viewed.bases).toMatchObject({ items: [{ choice: "essential", skillId: living.id }] });
+    await expect(readBasesAdvice(goal.id)).resolves.toMatchObject({ recommended: "quick" });
   });
 
   it("takes a skipped base out of the plan and says why its topic isn't in it", async () => {
@@ -352,7 +374,8 @@ describe("onboarding's last answer", () => {
     // Four hours a day cover everything by the exam: the bases are studied in depth.
     const viewed = await readPlan(goal.id);
 
-    expect(viewed.bases).toMatchObject({ items: [{ choice: "deep" }], recommended: "deep" });
+    expect(viewed.bases).toMatchObject({ items: [{ choice: "deep" }] });
+    await expect(readBasesAdvice(goal.id)).resolves.toMatchObject({ recommended: "deep" });
     expect(viewed.schedule.fullCourse).toBe(true);
   });
 
@@ -388,12 +411,13 @@ describe("studying everything", () => {
     const before = await readPlan(goal.id);
 
     expect(before.feasibility).toMatchObject({ fits: false });
-    const fullCourseEnd = new Date(before.feasibility?.fullCourseEndDate ?? 0);
-    expect(fullCourseEnd.getTime()).toBeGreaterThan(day(30).getTime());
+    // The plan doesn't work out when everything would end for a read: the switch says it.
+    expect(before.feasibility).not.toHaveProperty("fullCourseEndDate");
 
-    await expect(
-      change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]),
-    ).resolves.toMatchObject({ status: "applied" });
+    const switched = await change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]);
+    expect(switched).toMatchObject({ status: "applied" });
+    const endDate = switched.status === "applied" ? switched.change?.effect?.endDateAfter : null;
+    expect(new Date(endDate ?? 0).getTime()).toBeGreaterThan(day(30).getTime());
 
     const [viewed, after] = await Promise.all([
       readPlan(goal.id),
@@ -402,7 +426,7 @@ describe("studying everything", () => {
 
     expect(viewed.schedule).toMatchObject({ fullCourse: true, targetDate: isoDay(30) });
     expect(viewed.feasibility).toMatchObject({ fits: false });
-    expect(viewed.estimate.endDate).toBe(before.feasibility?.fullCourseEndDate);
+    expect(viewed.estimate.endDate).toBe(endDate);
     expect(viewed.phases.at(-1)).toMatchObject({ kind: "afterExam", startDate: isoDay(31) });
     // The rest of each subject's lessons comes after the exam: their time and days, and their
     // items once the Library outlines them; the weekly mocks go on there too, for the next sitting.
@@ -492,13 +516,16 @@ describe("studying everything", () => {
       change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]),
     ).resolves.toStrictEqual({ error: "notExam", status: "invalid" });
 
-    await change(goal.id, [{ kind: "setTargetDate", targetDate: null }]);
+    const dropped = await change(goal.id, [{ kind: "setTargetDate", targetDate: null }]);
+    const endDate = dropped.status === "applied" ? dropped.change?.effect?.endDateAfter : null;
 
     const open = await readPlan(goal.id);
 
     expect(open.schedule.targetDate).toBeNull();
     expect(open.feasibility?.deadline).toBeNull();
-    expect(open.estimate.endDate).toBe(dated.feasibility?.fullCourseEndDate);
+    // The change that drops the date says when everything ends: the plan's own end once it's off.
+    expect(endDate).toBeTruthy();
+    expect(open.estimate.endDate).toBe(endDate);
   });
 });
 

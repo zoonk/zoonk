@@ -37,8 +37,8 @@ const NAMED_TOPICS = 2;
 
 /**
  * "At 2 hr a day, your plan now covers 39% of the exam, down from 48%.": what the missed days did,
- * in one sentence. What each choice covers goes on the choice itself, so the card never reads
- * three percentages in a row.
+ * in one sentence, the card's only numbers: what more time or a later date would cover is worked
+ * out in the plan editor, when the learner asks.
  */
 function useBehindSentence() {
   const t = useExtracted();
@@ -67,19 +67,16 @@ function useBehindSentence() {
  * ("More time or a later date"), the one way left at the most time a day ("Move your date"). The
  * editor finds what covers everything when the learner asks. Null when there's nowhere to go.
  */
-function useAdjustTimeLabel() {
+function useAdjustTimeLabel(behind: Behind): string | null {
   const t = useExtracted();
   const { today } = useTodayScreen();
+  const moreTime = behind.currentMinutes < MAX_DAILY_MINUTES;
 
-  return (behind: Behind): string | null => {
-    const moreTime = behind.currentMinutes < MAX_DAILY_MINUTES;
+  if (today.goal.kind === "exam") {
+    return moreTime ? t("More time a day") : null;
+  }
 
-    if (today.goal.kind === "exam") {
-      return moreTime ? t("More time a day") : null;
-    }
-
-    return moreTime ? t("More time or a later date") : t("Move your date");
-  };
+  return moreTime ? t("More time or a later date") : t("Move your date");
 }
 
 /**
@@ -124,7 +121,7 @@ function BehindChoices({
   keep: () => void;
 }) {
   const t = useExtracted();
-  const adjustTimeLabel = useAdjustTimeLabel()(behind);
+  const adjustTimeLabel = useAdjustTimeLabel(behind);
   const { actions, today } = useTodayScreen();
 
   const { order, primary } = getOptionOrder({
@@ -203,11 +200,10 @@ function useSeeChange({
 /**
  * Falling behind put the goal's date at risk: Today says in one sentence what the missed days did
  * to what the plan covers, names a few of the topics that no longer fit, and lets the learner
- * choose (D1): more time a day (about what it covers; the plan editor then shows what the time
- * they pick really covers), where to focus, or keeping their time with less depth where it counts
- * least. When no time covers a goal that isn't an exam, the one way to cover it all is the plan
- * notice's: moving the date to about the day their time covers it by, chosen in the editor too.
- * Nothing changes until they choose.
+ * choose (D1): more time a day, or for a goal that isn't an exam a later date, in the plan editor's
+ * time a day, where Find works out exactly what covers everything and the time or date they pick
+ * shows what it really covers; where to focus; studying everything; or keeping their time with
+ * less depth where it counts least. Nothing changes until they choose.
  */
 export function FallingBehindNotice({
   behind,
@@ -238,10 +234,7 @@ export function FallingBehindNotice({
 
       setAnswer({ kept: true });
 
-      analytics.track({
-        name: "Plan Edited",
-        properties: { change_kind: "today:behind:keep" },
-      });
+      analytics.track({ name: "Plan Edited", properties: { change_kind: "today:behind:keep" } });
     });
   };
 

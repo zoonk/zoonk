@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
@@ -30,6 +31,8 @@ type LearnerSpec = {
   behind?: number;
   lessons?: number;
   phases?: string[];
+  /** The goal's date; none when absent. */
+  targetDate?: Date;
 };
 
 /** A learner with a built plan of Physics lessons, with each phase's lessons in its own skill. */
@@ -38,6 +41,7 @@ async function plannedLearner({
   behind = 0,
   lessons = 4,
   phases = ["Basics"],
+  targetDate,
 }: LearnerSpec = {}) {
   const user = await userFixture();
 
@@ -48,6 +52,7 @@ async function plannedLearner({
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes: 12,
+    targetDate,
     timezone: "UTC",
     userId: user.id,
   });
@@ -635,6 +640,61 @@ describe("the plan the buddy looks up", () => {
       await expect(
         lookUp(await answering({ goalId: goal.id, userId: user.id }), { what: "challenges" }),
       ).resolves.toStrictEqual({ status: "notFound", what: "challenges" });
+    });
+  });
+
+  // The buddy's context says what the learner's own time covers; the time that covers everything
+  // plans the goal at each daily time, so the buddy looks it up only for a question about time.
+  describe("timeToCover", () => {
+    it("finds the same exact time the Plan's Find answers, for the goal's own week", async () => {
+      const { goal, user } = await plannedLearner({
+        lessons: 12,
+        targetDate: new Date("2020-10-02T00:00:00Z"),
+      });
+
+      const asked = await answering({ goalId: goal.id, userId: user.id });
+      const found = await lookUp(asked, { what: "timeToCover" });
+      const time = await findPlanTimeToCover({ goalId: goal.id, input: {} });
+
+      if (time.status !== "ready" || !time.time.ready) {
+        throw new Error(`Expected the time that covers everything, got ${time.status}`);
+      }
+
+      const { coreMinutes, fittingDate, maximum, measure, recommendedMinutes } = time.time;
+
+      expect(found).toStrictEqual({
+        coreMinutes,
+        fittingDate,
+        maximum,
+        measure,
+        recommendedMinutes,
+        status: "found",
+        targetDate: "2020-10-02",
+        what: "timeToCover",
+      });
+
+      expect(recommendedMinutes ?? maximum?.dailyMinutes).toBeGreaterThan(0);
+    });
+
+    it("finds nothing for a goal without a date to cover by", async () => {
+      const { goal, user } = await plannedLearner();
+
+      await expect(
+        lookUp(await answering({ goalId: goal.id, userId: user.id }), { what: "timeToCover" }),
+      ).resolves.toStrictEqual({ status: "notFound", what: "timeToCover" });
+    });
+
+    it("finds nothing while the plan is still being built", async () => {
+      const user = await userFixture();
+
+      const { goal } = await unplannedGoalFixture({
+        targetDate: new Date("2020-10-02T00:00:00Z"),
+        userId: user.id,
+      });
+
+      await expect(
+        lookUp(await answering({ goalId: goal.id, userId: user.id }), { what: "timeToCover" }),
+      ).resolves.toStrictEqual({ status: "notFound", what: "timeToCover" });
     });
   });
 });

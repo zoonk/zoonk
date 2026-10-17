@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { getMoreTime } from "../time-advice-contract";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { getPlanFeasibility } from "./plan-feasibility";
@@ -100,11 +99,10 @@ describe("the daily time a plan recommends", () => {
 
   it("never takes a lower time that fits for the learner's own time covering everything", () => {
     // At 130 minutes a day the plan leaves topics out, though 95 covers them: their time isn't
-    // enough, and the Plan offers no time as covering more.
+    // enough, and the time that covers everything is the one that does, exactly as planned.
     const at130 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 130) });
 
     expect(at130).toMatchObject({ fits: false, recommendedMinutes: 95, timeCovers: false });
-    expect(getMoreTime({ ...at130, dailyMinutes: 130 })).toBeNull();
 
     const at105 = getPlanFeasibility({ input: withDailyMinutes(sundayExam(), 105) });
     expect(at105).toMatchObject({ fits: true, recommendedMinutes: 95, timeCovers: true });

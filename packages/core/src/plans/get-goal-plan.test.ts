@@ -45,7 +45,7 @@ describe("plan read projections", () => {
     vi.useRealTimers();
   });
 
-  it("keeps the exact public core recommendation while screens omit only that unused field", async () => {
+  it("reads the same exact plan for the API and the screens, with no searched time in either", async () => {
     const { goal, user } = await setup();
     vi.mocked(cacheTag).mockClear();
     const full = await getGoalPlan(goal.id);
@@ -61,13 +61,22 @@ describe("plan read projections", () => {
     }
 
     expect(full.plan.feasibility.coreFits).toBe(false);
-    expect(full.plan.feasibility.coreMinutes).toBeGreaterThan(5);
-    const { coreMinutes: _coreMinutes, ...feasibility } = full.plan.feasibility;
+    expect(screen.plan).toStrictEqual(full.plan);
 
-    expect(screen.plan).toStrictEqual({ ...full.plan, feasibility });
-    expect(screen.plan.feasibility).not.toHaveProperty("coreMinutes");
+    // The time that brings every topic in plans the goal at each daily time, so only the learner's
+    // own request works it out (see `findPlanTimeToCover`), and no read carries it.
+    for (const field of ["coreMinutes", "maximum", "recommendedMinutes", "fittingDate"]) {
+      expect(full.plan.feasibility).not.toHaveProperty(field);
+    }
+
+    // The read's own cache is tagged by the learner's goals and model; the plan analysis under it
+    // is keyed by its complete input instead, untagged, so a write that changes nothing it reads
+    // keeps it.
     expect(vi.mocked(cacheTag).mock.calls).toStrictEqual(fullTags);
-    expect(fullTags).toContainEqual([getGoalsCacheTag(user.id), getLearnerModelCacheTag(user.id)]);
+
+    expect(fullTags.flat()).toStrictEqual(
+      expect.arrayContaining([getGoalsCacheTag(user.id), getLearnerModelCacheTag(user.id)]),
+    );
   });
 
   it("uses the same missing and ownership outcomes for both projections", async () => {

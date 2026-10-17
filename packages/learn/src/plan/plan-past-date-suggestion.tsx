@@ -29,7 +29,7 @@ import {
   OfferPreview,
   getGoalDateMove,
   useApplyPreview,
-} from "./plan-coverage-suggestion";
+} from "./plan-offer-preview";
 import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
 import {
@@ -40,7 +40,7 @@ import {
   useSlotAnswer,
   useSlotAnswered,
 } from "./plan-suggestion-context";
-import { useRequestTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
+import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
 /** An exam's date is the exam's: its plan goes on after it, at the learner's pace. */
 const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
@@ -69,7 +69,7 @@ function OtherOptions({ item }: { item: SlotItem }) {
 }
 
 /** Where finding a goal's new date stands before its preview. */
-type DateSearch = "failed" | "finding" | "noDate" | null;
+type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
 
 /**
  * The plan's date came with lessons left (status `pastDate`): the plan doesn't end. The slot says
@@ -84,14 +84,16 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const t = useExtracted();
   const pastDateText = usePastDateText();
   const texts = useTimeToCoverTexts();
-  const requestTime = useRequestTimeToCover();
+  const finder = useTimeToCover();
   const { goal, plan } = usePlanScreen();
   const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
   const { apply, failed, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
   const [search, setSearch] = useState<DateSearch>(null);
-  // Whether the learner still waits for the date, so one they put off ("Not now") shows nothing.
-  const waiting = useRef(false);
+  // The search the learner still waits for (0 for none), so one they put off ("Not now"), or one an
+  // earlier tap started, shows nothing.
+  const waiting = useRef(0);
+  const asked = useRef(0);
   const answer = useSlotAnswer(item);
   const answered = useSlotAnswered(item);
   const isExam = goal.kind === "exam";
@@ -105,33 +107,46 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       return;
     }
 
-    waiting.current = true;
+    asked.current += 1;
+    const request = asked.current;
+    waiting.current = request;
     setSearch("finding");
-    const time = await requestTime();
+    const found = await finder.find();
 
-    if (!waiting.current) {
+    // Put off ("Not now"), or asked again since: this answer is no one's.
+    if (waiting.current !== request) {
       return;
     }
 
-    waiting.current = false;
+    waiting.current = 0;
 
-    if (!time?.fittingDate) {
-      setSearch(time ? "noDate" : "failed");
+    if (found.status !== "answered") {
+      // The plan changed while it searched: the card goes back to what it says, with Preview.
+      setSearch(found.status === "stale" ? null : found.status);
+      setOperations(null);
       return;
     }
 
-    const moved: LearnerPlanOperation[] = [{ kind: "setTargetDate", targetDate: time.fittingDate }];
+    const { fittingDate } = found.time;
+
+    if (!fittingDate) {
+      setSearch("noDate");
+      return;
+    }
+
+    const moved: LearnerPlanOperation[] = [{ kind: "setTargetDate", targetDate: fittingDate }];
     setSearch(null);
     setOperations(moved);
     void requestPreview(moved);
   };
 
   const stopWaiting = () => {
-    waiting.current = false;
+    waiting.current = 0;
     setSearch(null);
   };
 
   const undo = answer && <SlotUndo item={item} />;
+  const retry = search === "failed" || search === "building";
 
   const body = () => {
     if (preview.status !== "idle" && operations) {
@@ -155,7 +170,9 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
         <>
           <SuggestionDescription role="status">{texts.noDate}</SuggestionDescription>
           <SuggestionActions>
-            <SuggestionAction onClick={() => host.onEdit("date")}>{t("Adjust plan")}</SuggestionAction>
+            <SuggestionAction onClick={() => host.onEdit("date")}>
+              {t("Adjust plan")}
+            </SuggestionAction>
             <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
               {t("Not now")}
             </SuggestionAction>
@@ -164,18 +181,20 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       );
     }
 
+    const doesText = isExam
+      ? t("Every topic, even after the exam, at your own pace.")
+      : t("Move your date to the day your time covers what's left.");
+
+    const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
+
     return (
       <>
-        <SuggestionDescription role={search === "failed" ? "status" : undefined}>
-          {search === "failed"
-            ? t("We couldn't check what changes.")
-            : isExam
-              ? t("Every topic, even after the exam, at your own pace.")
-              : t("Your date moves to the day your time covers what's left.")}
+        <SuggestionDescription role={retry ? "status" : undefined}>
+          {retry ? retryText : doesText}
         </SuggestionDescription>
         <SuggestionActions>
           <SuggestionAction key="preview" onClick={() => void showChange()}>
-            {search === "failed" ? t("Try again") : t("Preview")}
+            {retry ? t("Try again") : t("Preview")}
           </SuggestionAction>
           <OtherOptions item={item} />
         </SuggestionActions>

@@ -9,9 +9,8 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanScreenView } from "@zoonk/core/plans/view-contract";
-import { createContext, use, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { isSamePreviewPlan } from "./plan-preview-state";
 
 /**
  * What a change did: applied (with the change, null while the plan isn't built yet), or for a focus
@@ -93,19 +92,33 @@ type PlanScreenValue = {
 /**
  * The learner's "Find the time that covers everything" for the plan as it is now: asked, waiting,
  * answered, failed, or found the plan being built again. It belongs to the plan it was found for
- * (`plan`, see `isSamePreviewPlan`): any change to the plan (its time, days, date, focus or bases)
- * leaves it behind, and Find shows again while the plan still falls short.
+ * (its `generation`, see `getTimeToCoverRevision`): any change to what it searched (the plan's
+ * time, days, date, focus, bases or exam choices) leaves it behind for good, and Find shows again
+ * while the plan still falls short.
  */
-export type TimeToCoverState =
+type TimeToCoverState =
   | { status: "idle" }
-  | { plan: object; status: "building" | "failed" | "pending" }
-  | { plan: object; status: "answered"; time: PlanTimeToCover };
+  | { generation: number; status: "building" | "failed" | "pending" }
+  | { generation: number; status: "answered"; time: PlanTimeToCover };
 
-/** The find answer the Plan's card and editor share, since they ask the same question. */
+/** The search still running for a revision: asking again waits for it instead of searching. */
+type TimeToCoverSearch = { generation: number; promise: Promise<PlanTimeToCover | null> };
+
+/**
+ * How a find ended for the one who asked: the answer, the plan being built, a failure, or a plan
+ * that changed while it searched (`stale`), whose answer is for a plan no longer shown.
+ */
+type FindOutcome =
+  | { status: "answered"; time: PlanTimeToCover }
+  | { status: "building" | "failed" | "stale" };
+
+/** The find answer the Plan's card, editor and moves share, since they ask the same question. */
 type TimeToCoverStore = {
-  /** The plan an answer is for: the same object while refreshes deliver it again unchanged. */
-  plan: object;
-  set: React.Dispatch<React.SetStateAction<TimeToCoverState>>;
+  /**
+   * Asks for the time that covers the plan as it is now (`request`), once per revision: asked
+   * again while it runs, it waits for that search; once answered, it gives that answer.
+   */
+  find: (request: () => Promise<PlanTimeToCover | null>) => Promise<FindOutcome>;
   state: TimeToCoverState;
 };
 
@@ -115,7 +128,19 @@ export const PLAN_TITLE_ID = "plan-title";
 /** Where focus should land if the control that saved is gone; null falls back to the plan's title. */
 type FocusTarget = () => HTMLElement | null;
 
+/**
+ * The plan's changes, whichever control saves them (each goes through `actions.change`): whether
+ * one is saving, and how many ever started. A change worked out before it saves (Move your date
+ * finds its date first) can tell another one started meanwhile, and leave the plan to it.
+ */
+type PlanChanges = {
+  saving: boolean;
+  /** How many changes started so far: read it in handlers, never while rendering. */
+  started: () => number;
+};
+
 type PlanScreenContextValue = PlanScreenValue & {
+  changes: PlanChanges;
   timeToCover: TimeToCoverStore;
   /**
    * Call as a save starts. If the save takes the focused control away (an answered change leaves,
@@ -170,19 +195,105 @@ function useKeepFocus(plan: PlanScreenView) {
 
 const IDLE: TimeToCoverState = { status: "idle" };
 
+/**
+ * What Find searched, as a key: the plan it's for (another goal's plan can look the same and need
+ * another time), its week, date and time, what it covers, where it focuses, its bases and its exam
+ * choices. Lessons being written, a session's progress or new changes in the list refresh the plan
+ * without changing that, so an answer (or a search still running) stays.
+ */
+function getTimeToCoverRevision(plan: PlanScreenView): string {
+  return JSON.stringify([
+    plan.planId,
+    plan.schedule,
+    plan.feasibility,
+    plan.steering,
+    plan.areas,
+    plan.bases,
+    plan.examChoices,
+  ]);
+}
+
 /** One find answer for the plan as it is now (see `TimeToCoverState`). */
 function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
-  const [base, setBase] = useState<object>(plan);
-  const [state, set] = useState<TimeToCoverState>(IDLE);
-  const changed = !isSamePreviewPlan({ current: plan, previous: base });
+  const revision = useMemo(() => getTimeToCoverRevision(plan), [plan]);
+  // Each change to what Find searched starts a generation: an answer never comes back with an
+  // Undo that restores the plan it was found for, and a search for one never fills another.
+  const [seen, setSeen] = useState({ generation: 0, revision });
+  const generation = seen.revision === revision ? seen.generation : seen.generation + 1;
+  const [stored, setStored] = useState<TimeToCoverState>(IDLE);
+  const latest = useRef(generation);
+  const search = useRef<TimeToCoverSearch | null>(null);
+  const state = stored.status !== "idle" && stored.generation === generation ? stored : IDLE;
 
-  if (changed) {
-    setBase(plan);
+  if (seen.revision !== revision) {
+    setSeen({ generation, revision });
   }
 
-  const current = changed ? plan : base;
+  useEffect(() => {
+    latest.current = generation;
+  }, [generation]);
 
-  return { plan: current, set, state: state.status !== "idle" && state.plan === current ? state : IDLE };
+  const settle = (promise: Promise<PlanTimeToCover | null>) =>
+    void promise.then((time) => {
+      if (search.current?.promise === promise) {
+        search.current = null;
+      }
+
+      const next: TimeToCoverState = time?.ready
+        ? { generation, status: "answered", time }
+        : { generation, status: time ? "building" : "failed" };
+
+      setStored((current) =>
+        current.status === "pending" && current.generation === generation ? next : current,
+      );
+    });
+
+  const find = async (request: () => Promise<PlanTimeToCover | null>): Promise<FindOutcome> => {
+    if (state.status === "answered") {
+      return { status: "answered", time: state.time };
+    }
+
+    const running = search.current?.generation === generation ? search.current.promise : null;
+    const promise = running ?? request();
+
+    if (!running) {
+      search.current = { generation, promise };
+      setStored({ generation, status: "pending" });
+      settle(promise);
+    }
+
+    const time = await promise;
+
+    if (latest.current !== generation) {
+      return { status: "stale" };
+    }
+
+    return time?.ready ? { status: "answered", time } : { status: time ? "building" : "failed" };
+  };
+
+  return { find, state };
+}
+
+/** Counts the host's changes as they start and answer (see `PlanChanges`). */
+function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
+  const count = useRef(0);
+  const [saving, setSaving] = useState(0);
+
+  const change = useCallback(
+    (operations: LearnerPlanOperation[]) => {
+      count.current += 1;
+      setSaving((current) => current + 1);
+      return actions.change(operations).finally(() => setSaving((current) => current - 1));
+    },
+    [actions],
+  );
+
+  const started = useCallback(() => count.current, []);
+
+  return {
+    actions: useMemo(() => ({ ...actions, change }), [actions, change]),
+    changes: useMemo(() => ({ saving: saving > 0, started }), [saving, started]),
+  };
 }
 
 export function PlanScreenProvider({
@@ -194,9 +305,12 @@ export function PlanScreenProvider({
 }) {
   const keepFocus = useKeepFocus(value.plan);
   const timeToCover = useTimeToCoverStore(value.plan);
+  const { actions, changes } = useCountedChanges(value.actions);
 
   return (
-    <PlanScreenContext value={{ ...value, keepFocus, timeToCover }}>{children}</PlanScreenContext>
+    <PlanScreenContext value={{ ...value, actions, changes, keepFocus, timeToCover }}>
+      {children}
+    </PlanScreenContext>
   );
 }
 

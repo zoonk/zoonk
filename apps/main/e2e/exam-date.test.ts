@@ -8,6 +8,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 /**
  * The exam's date is the learner's: the notice's day is offered with one tap wherever the date
@@ -351,27 +352,37 @@ test.describe("Exam date", () => {
       where: { id: goal.id },
     });
 
-    // Main's E2E runs without the API: its advice for a plan counting down to December 2099.
+    // Main's E2E runs without the API: what the time picked covers, for a plan counting down to
+    // December 2099, and the time Find finds when the learner asks.
     await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) =>
       route.fulfill({
         json: {
           coveredShare: null,
-          maximum: null,
           measure: "goal",
           numbers: null,
           ready: true,
-          recommendedMinutes: 60,
           targetDate: "2099-12-01",
           targetDateNamedMonth: true,
         },
       }),
     );
 
+    await routeTimeToCover(page, {
+      goalId: goal.id,
+      time: {
+        measure: "goal",
+        recommendedMinutes: 60,
+        targetDate: "2099-12-01",
+        targetDateNamedMonth: true,
+      },
+    });
+
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { name: "Start from zero" }).click();
+    await page.getByRole("button", { name: "Find the time that covers everything" }).click();
 
     await expect(
-      page.getByText("To study everything in depth by December 2099, we recommend 1 hr a day."),
+      page.getByText("1 hr a day covers everything in depth by December 2099."),
     ).toBeVisible();
   });
 });

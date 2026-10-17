@@ -85,7 +85,7 @@ export type PlanLookUpFound =
   | {
       /** When even every topic's core lessons don't fit by the date: the fewest minutes a day that bring every topic in. */
       coreMinutes: number | null;
-      /** A goal that isn't an exam, when no daily time covers it by its date: the earliest date their own time covers it all by. */
+      /** A goal that isn't an exam whose own time falls short by its date: the earliest date that time covers it all by, when one does. */
       fittingDate: string | null;
       /** When no daily time covers everything in depth: what the most minutes a day cover by the date (a share, see `measure`), when it's more than their time does. */
       maximum: { coveredShare: number; dailyMinutes: number } | null;
@@ -107,5 +107,5 @@ export const PLAN_LOOKUP_USES: Record<PlanLookUp, string> = {
   schedule:
     "the plan's study days ahead, up to 14 days from the day in `query` (YYYY-MM-DD; null for the day after the context's `today`, which the context already has): each day's lessons, reviews, challenges and mocks with their status, minutes for this week's days, and the challenges' and mocks' links. Ask again from the day after `to` for later days. For what comes on a day or in the next weeks.",
   timeToCover:
-    "the daily time that studies their whole goal in depth by its date (`recommendedMinutes`), found by planning the goal at each daily time: exact, so it takes a moment. When no daily time does, what the most time a day covers (`maximum`) and, for a goal that isn't an exam, the earliest date their own time covers everything by (`fittingDate`); when even the topics' cores don't fit, the time that brings every topic in (`coreMinutes`). Takes no `area` or `query`. Only when they ask about their daily time, what more time would cover or when they'd finish everything: never for anything else.",
+    "the daily time that studies their whole goal in depth by its date (`recommendedMinutes`), found by planning the goal at each daily time: exact, so it takes a moment. When no daily time does, what the most time a day covers (`maximum`). For a goal that isn't an exam whose own time falls short, the earliest date that time covers everything by (`fittingDate`); when even the topics' cores don't fit, the time that brings every topic in (`coreMinutes`). Takes no `area` or `query`. Only when they ask about their daily time, what more time would cover or when they'd finish everything: never for anything else.",
 };

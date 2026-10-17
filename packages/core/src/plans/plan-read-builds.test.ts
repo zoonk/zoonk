@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan, getGoalPlanScreen } from "./get-goal-plan";
-import { getPlanTimeAdvice } from "./get-time-advice";
+import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { type buildPlan } from "./planner/build-plan";
 
 /**
@@ -40,7 +42,7 @@ async function countBuilds<Result>(read: () => Promise<Result>) {
 }
 
 describe("plans laid out per read", () => {
-  it("reads Ana's exam plan and her time advice from her own plan, never searching other daily times", async () => {
+  it("reads Ana's exam plan, her time advice and a buddy turn from her own plan, never searching other daily times", async () => {
     const copyKey = randomUUID();
 
     const user = await seedV2PersonaCopy({
@@ -51,14 +53,15 @@ describe("plans laid out per read", () => {
 
     mockSession(user.userId);
 
-    // Her plan and the estimates read from it: the plan she studies and the one its graph sizes.
+    // Her plan and what her own time covers: the plan she studies, the one its graph sizes, and,
+    // when that one is whole, the plan her own time plans once switched to (`timeCovers`).
     const screen = await countBuilds(() => getGoalPlanScreen(user.goalId));
     expect(screen.result.status).toBe("ready");
-    expect.soft(screen.builds, "Plan screen").toBeLessThanOrEqual(2);
+    expect.soft(screen.builds, "Plan screen").toBeLessThanOrEqual(3);
 
     const full = await countBuilds(() => getGoalPlan(user.goalId));
     expect(full.result.status).toBe("ready");
-    expect.soft(full.builds, "the API's full plan").toBeLessThanOrEqual(2);
+    expect.soft(full.builds, "the API's full plan").toBeLessThanOrEqual(3);
 
     // The time step: her plan at her time, then what another time she looks at covers.
     const own = await countBuilds(() => getPlanTimeAdvice({ goalId: user.goalId, input: {} }));
@@ -71,5 +74,27 @@ describe("plans laid out per read", () => {
 
     expect(other.result.status).toBe("ready");
     expect.soft(other.builds, "time advice at another time").toBeLessThanOrEqual(3);
+
+    // A buddy turn that isn't about time reads her plan as the screens do: it builds the turn's
+    // context and runs no search (the time that covers everything is the buddy's `timeToCover`
+    // lookup, only for a question about time).
+    const turn = await countBuilds(() =>
+      createLessonQuestion({
+        input: { context: { kind: "plan" }, question: "What's next?", requestId: randomUUID() },
+        target: { goalId: user.goalId, kind: "plan" },
+      }),
+    );
+
+    expect(turn.result.status).toBe("created");
+    expect.soft(turn.builds, "a buddy turn not about time").toBeLessThanOrEqual(3);
+
+    // Where the searches went: only when she asks, each a POST of its own.
+    const found = await countBuilds(() => findPlanTimeToCover({ goalId: user.goalId, input: {} }));
+
+    expect(found.result.status).toBe("ready");
+    expect(found.builds, "Find searches other daily times").toBeGreaterThan(screen.builds);
+
+    const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
+    expect(advice.result.status).toBe("ready");
   });
 });

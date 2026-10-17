@@ -19,8 +19,10 @@ import { loadTodayPlanChange } from "./_utils/today-plan-change";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
+import { findPlanTimeToCover } from "./get-time-advice";
 import { parsePlanGraph } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
+import { getRecommendedTime } from "./time-advice-contract";
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -225,7 +227,15 @@ describe("a plan's numbers while the Library outlines it", () => {
     expect(before.feasibility).toMatchObject({ fits: false });
     expect(before.feasibility?.coveredShare).toBeGreaterThan(0);
     expect(before.feasibility?.coveredShare).toBeLessThan(1);
-    expect(before.feasibility?.recommendedMinutes).toBeGreaterThan(12);
+
+    // The time for everything is the learner's to ask for ("Find the time that covers everything").
+    const findTime = () => findPlanTimeToCover({ goalId: goal.id, input: {} });
+    const timeBefore = await findTime();
+    const found = timeBefore.status === "ready" ? timeBefore.time : null;
+
+    expect(found && getRecommendedTime(found)).toMatchObject({ kind: "inDepth" });
+    expect(found?.recommendedMinutes).toBeGreaterThan(12);
+    expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 
     // The Library outlines the stand-in as 18 lessons of 5 minutes, not 30 of 3.
     const standIn = library.skills[2];
@@ -255,6 +265,8 @@ describe("a plan's numbers while the Library outlines it", () => {
     // The plan now holds the outlined lessons, and the numbers the learner saw stay.
     expect(planned.some((item) => item.lessonId !== null)).toBe(true);
     await expect(readNumbers(goal.id)).resolves.toStrictEqual(before);
+    // So do the time for everything and the date the goal's own time covers everything by.
+    await expect(findTime()).resolves.toStrictEqual(timeBefore);
   });
 });
 

@@ -899,10 +899,6 @@ test.describe("Today after days away", () => {
           coveredAfter: 0.39,
           coveredBefore: 0.48,
           currentMinutes: 120,
-          dailyMinutes: 240,
-          fittingDate: null,
-          fullDepth: false,
-          maximumShare: 0.54,
           measure: "exam",
         },
         days: 30,
@@ -949,15 +945,16 @@ test.describe("Today after days away", () => {
     const [cardBox, noteBox] = await Promise.all([card.boundingBox(), note.boundingBox()]);
     expect(cardBox?.y ?? Infinity).toBeLessThan(noteBox?.y ?? 0);
 
-    // Each choice says what it buys, and more hours isn't the main action on the day she's back.
+    // Each choice says what it does, with no searched number (LEAD ruling A: more time opens the
+    // plan editor's time a day), and more hours isn't the main action on the day she's back.
     await expect(note.getByRole("link").or(note.getByRole("button"))).toHaveText([
       "Choose where to focus",
       "Keep my time",
-      "Study 4 hr a day · about 54%",
+      "More time a day",
       "Study everything",
     ]);
 
-    await expect(note.getByRole("button", { name: "Study 4 hr a day · about 54%" })).toHaveCSS(
+    await expect(note.getByRole("link", { name: "More time a day" })).toHaveCSS(
       "background-color",
       "rgba(0, 0, 0, 0)",
     );

@@ -167,27 +167,23 @@ function useGoalMenu(control: GoalStatusControl | null) {
 }
 
 /**
- * "Adjust plan", opened at one of its settings or from its top. An arrival opens it from its top
- * (`true`) or at the setting it names, as Today's "more time" opens it at the time a day.
+ * "Adjust plan", opened at one of its settings or from its top. Until the learner opens or closes
+ * it, an arrival says: from its top (`true`) or at the setting it names, as Today's "more time"
+ * opens it at the time a day.
  */
 function usePlanEditor(arrival: boolean | PlanEditorSection) {
-  const [editor, setEditor] = useState<{ open: boolean | null; section: PlanEditorSection | null }>(
-    { open: null, section: null },
-  );
+  const at = typeof arrival === "string" ? arrival : null;
+  const arrived = { open: arrival !== false, section: at };
+  const [editor, setEditor] = useState<typeof arrived | null>(null);
 
   // Activity preserves state when the page hides. A later arrival starts from its requested view,
   // while closing the editor still sticks for as long as the learner stays on the Plan.
-  useLayoutEffect(() => () => setEditor({ open: null, section: null }), []);
-
-  const { open, section } = editor;
+  useLayoutEffect(() => () => setEditor(null), []);
 
   return {
-    editor:
-      open === null
-        ? { open: arrival !== false, section: typeof arrival === "string" ? arrival : null }
-        : { open, section },
+    editor: editor ?? arrived,
     open: (section: PlanEditorSection | null = null) => setEditor({ open: true, section }),
-    setOpen: (open: boolean) => setEditor((current) => ({ ...current, open })),
+    setOpen: (open: boolean) => setEditor({ open, section: (editor ?? arrived).section }),
   };
 }
 

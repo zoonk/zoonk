@@ -7,7 +7,10 @@ import { parseQueryParams } from "@/lib/query-params";
 import { getPlanTimeAdvice } from "@zoonk/core/plans/time-advice";
 import { NextResponse } from "next/server";
 
-/** The daily time the goal's plan needs, in the week asked about, and what the time asked about covers. */
+/**
+ * What the daily time asked about covers by the goal's date, in the week asked about: that time's
+ * own plan only. The time that covers everything is the learner's POST (`time-to-cover`).
+ */
 async function readTimeAdvice(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/time-advice">,

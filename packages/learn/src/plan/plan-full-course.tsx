@@ -63,9 +63,13 @@ export function useFullCourseText() {
     /**
      * "At 3 h a day, you finish in March 2027, after the exam on November 8, 2026": the exam's
      * year is named beside the finish month's, so November 2027 never reads as the exam's month.
-     * Only with the plan's own end (see `useFullCourse`).
+     * Only with the plan's own end (see `useFullCourse`): null without it.
      */
-    finish: (course: FullCourse & { endDate: string }): string => {
+    finish: (course: FullCourse): string | null => {
+      if (!course.endDate) {
+        return null;
+      }
+
       const month = formatDate(course.endDate, "month");
 
       return course.isExam
@@ -120,6 +124,7 @@ export function FullCourseSwitch() {
           {t("Keep studying after the exam")}
         </label>
         <Switch
+          aria-busy={isPending || undefined}
           aria-describedby={descriptionId}
           checked={course.on}
           id={switchId}
@@ -129,11 +134,9 @@ export function FullCourseSwitch() {
       </div>
 
       <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-        {course.on && course.endDate
-          ? text.finish({ ...course, endDate: course.endDate })
-          : course.on
-            ? t("Every topic, even after the exam, at your own pace.")
-            : t("What doesn't fit by the exam is left out of your plan.")}
+        {course.on
+          ? (text.finish(course) ?? t("Every topic, even after the exam, at your own pace."))
+          : t("What doesn't fit by the exam is left out of your plan.")}
       </p>
 
       {failed && <PlanFailedMessage />}

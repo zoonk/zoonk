@@ -184,7 +184,7 @@ export async function buildPlanView({
   context: savedContext,
   now,
   screen = false,
-}: PlanViewInput & { screen?: boolean }): Promise<PlanScreenView | PlanView> {
+}: PlanViewInput & { screen?: boolean }): Promise<PlanScreenView> {
   const ready = savedContext.phases.length > 0;
 
   const {

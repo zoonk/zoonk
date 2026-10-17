@@ -10,6 +10,7 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 /** A day `days` from today, as the plan dates its items. */
 function inDays(days: number): Date {
@@ -301,8 +302,20 @@ test.describe("A plan whose lessons are all done", () => {
       const slot = page.getByRole("group", { name: "Plan suggestion" }).filter({ visible: true });
       const finished = slot.getByRole("region", { name: "You finished your plan" });
 
-      // First what his own time fits of the rest by his date, then the date his time covers it
-      // all by, and only then the next level.
+      // Main's E2E runs without the API: Find finds that 55 minutes a day cover everything.
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: {
+          measure: "goal",
+          recommendedMinutes: 55,
+          targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null,
+        },
+      });
+
+      // First what his own time fits of the rest by his date, then what his time covers, with the
+      // time that covers it all when he asks, and only then the next level.
       await expect(slot.getByText("1 of 3").filter({ visible: true })).toBeVisible();
 
       await expect(
@@ -311,6 +324,11 @@ test.describe("A plan whose lessons are all done", () => {
 
       await expect(finished).toHaveCount(0);
       await slot.getByRole("button", { exact: true, name: "Next" }).click();
+
+      await slot
+        .getByRole("button", { name: "Find the time that covers everything" })
+        .filter({ visible: true })
+        .click();
 
       await expect(slot.getByRole("heading").filter({ visible: true })).toHaveText(
         "55 min a day covers everything in depth",

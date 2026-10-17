@@ -10,6 +10,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { dayFromToday } from "./short-exam-fixtures";
 import { openAs } from "./study-day";
+import { routeBasesAdvice } from "./time-to-cover-routes";
 
 /**
  * When time is short, the learner chooses: how to study the prerequisites the plan builds on
@@ -108,18 +109,30 @@ test.describe("Plan choices", () => {
 
     const [cells, living] = bases;
 
+    // Main's E2E runs without the API, which works out the recommendation when she asks: it plans
+    // the goal with every prerequisite in depth.
+    const advised = await routeBasesAdvice(page, {
+      advice: { daysLeft: 30, ready: true, recommended: "quick" },
+      goalId: goal.id,
+    });
+
     await page.getByRole("button", { name: "Adjust plan" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
     await editor.getByRole("button", { name: "Choose prerequisites" }).click();
 
     const sheet = page.getByRole("dialog", { name: "Prerequisites" });
 
+    const advice =
+      "30 days left: we recommend a quick lesson for each prerequisite, so there's time for what comes up most.";
+
+    // Nothing is recommended until she asks: no page works it out.
+    await expect(sheet.getByText(advice)).toHaveCount(0);
+    expect(advised).toHaveLength(0);
+    await sheet.getByRole("button", { name: "Get a recommendation" }).click();
+
     // A month away with little time, the app recommends a quick lesson for each and says why.
-    await expect(
-      sheet.getByText(
-        "30 days left: we recommend a quick lesson for each prerequisite, so there's time for what comes up most.",
-      ),
-    ).toBeVisible();
+    await expect(sheet.getByText(advice)).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Use the recommendation" })).toBeFocused();
 
     // The subject is one choice for both, with the time each of the four ways takes; the plan
     // studies their essentials until the learner chooses.
@@ -182,16 +195,14 @@ test.describe("Plan choices", () => {
     await expect(editor).toBeHidden();
 
     // Studying everything keeps the exam's date: its sheet, one of the Plan suggestion's other
-    // options, says when everything ends, after the exam, before she chooses it.
+    // options, says what it does before she chooses it. When everything would end takes planning
+    // it, so the change says that once she chooses.
     const suggestion = page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
     await suggestion.getByRole("button", { name: "Other options" }).click();
     await page.getByRole("menuitem", { name: "Study everything after the exam" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
     await expect(everything).toContainText("Every topic, even after the exam, at your own pace.");
-
-    await expect(
-      everything.getByText(/^At 15\smin a day, you finish in .+, after the exam on .+\.$/u),
-    ).toBeVisible();
+    await expect(everything.getByText(/you finish in /u)).toHaveCount(0);
 
     await expectAccessibleScreen(page, "the study everything sheet");
 
@@ -231,7 +242,8 @@ test.describe("Plan choices", () => {
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
     const sheet = page.getByRole("dialog", { name: "Prerequisites" });
     const subject = sheet.getByRole("group", { exact: true, name: area });
-    const preview = sheet.locator('[aria-live="polite"]');
+    // The preview's live region: the recommendation's box, asked for, is one too.
+    const preview = sheet.locator('[aria-live="polite"][aria-busy]');
 
     /** Chooses for the subject, saves after reading the preview, and returns what it said. */
     const chooseAndSave = async (choice: "Essential" | "In depth") => {
@@ -271,7 +283,8 @@ test.describe("Plan choices", () => {
     await page.getByRole("menuitem", { exact: true, name: "Study everything" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
 
-    await expect(everything.getByText(/^At 15\smin a day, you finish in .+\.$/u)).toBeVisible();
+    // When she'd finish takes planning it: the change says it once she chooses.
+    await expect(everything.getByText(/you finish in /u)).toHaveCount(0);
     await expect(everything.getByText(/^Your deadline of .+ comes off your plan\./u)).toBeVisible();
 
     await everything.getByRole("button", { name: "Study everything" }).click();
@@ -279,6 +292,8 @@ test.describe("Plan choices", () => {
     await expect(everything.getByRole("status")).toContainText(
       "No deadline: you study everything at your own pace.",
     );
+
+    await expect(everything.getByRole("status")).toContainText(/You finish around .+\./u);
 
     await everything.getByRole("button", { name: "Done" }).click();
     await expect.poll(() => loadTargetDate(goal.id)).toBeNull();
@@ -297,7 +312,7 @@ test.describe("Plan choices", () => {
     await page.context().close();
   });
 
-  test("the plan reveal offers the time that covers everything and Adjust, with the other ways in the editor", async ({
+  test("an exam's plan reveal says what its time covers, with the topics and Adjust, and the other ways in the editor", async ({
     browser,
   }) => {
     const user = await createE2EUser(getBaseURL());
@@ -318,10 +333,10 @@ test.describe("Plan choices", () => {
     await page.goto(`/start/${goal.id}`);
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
-    // One honest sentence on what her time covers, with one tap to the time that covers more and
-    // the topics one tap away; Adjust holds the rest: never four buttons that read alike.
+    // One honest sentence on what her time covers, with the topics one tap away; the time step
+    // offered Find, and Adjust holds the rest: never four buttons that read alike.
     const coverage = page.locator('[data-slot="reveal-coverage"]');
-    await expect(coverage.getByRole("button")).toHaveText([/^Use .+ a day$/u, "See topics"]);
+    await expect(coverage.getByRole("button")).toHaveText(["See topics"]);
 
     await page.getByRole("button", { exact: true, name: "Adjust" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });

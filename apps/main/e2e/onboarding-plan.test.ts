@@ -14,6 +14,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 /**
  * The end of onboarding: placement while the plan is being made, then the plan. The goal is one
@@ -268,12 +269,13 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
 });
 
-test("while the learner changes the days, the time step recommends only the time those days need, asked right away", async ({
+test("while the learner changes the days, Find says only the time those days need, and drops an answer for days no longer shown", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
   const goal = await createMappedGoal(noProgressUser.id);
   const targetDate = inMinutes(60 * 24 * 90);
+  const isoDate = targetDate.toISOString().slice(0, "YYYY-MM-DD".length);
 
   await prisma.goal.update({
     data: {
@@ -283,9 +285,22 @@ test("while the learner changes the days, the time step recommends only the time
     where: { id: goal.id },
   });
 
-  // The API's answer for each number of study days, as Marcos's plan gave it: an hour on every
-  // day, 1 hr 10 min on six, 1 hr 25 min on five. Main's E2E runs without the API, so it's stood in for
-  // here; while `holding`, answers wait until released, as a big plan's took seconds.
+  await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) =>
+    route.fulfill({
+      json: {
+        coveredShare: null,
+        measure: "goal",
+        numbers: null,
+        ready: true,
+        targetDate: isoDate,
+        targetDateNamedMonth: false,
+      },
+    }),
+  );
+
+  // What Find finds for each number of study days, as Marcos's plan gave it: an hour on every
+  // day, 1 hr 10 min on six, 1 hr 25 min on five. Main's E2E runs without the API, so it's stood
+  // in for here; while `holding`, answers wait until released, as a big plan's search takes seconds.
   const minutesFor = new Map([
     [5, 85],
     [6, 70],
@@ -295,55 +310,76 @@ test("while the learner changes the days, the time step recommends only the time
   const held: (() => void)[] = [];
   let holding = false;
 
-  await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, async (route) => {
-    const studyDays = new URL(route.request().url()).searchParams.get("studyDays") ?? "";
+  await routeTimeToCover(page, {
+    goalId: goal.id,
+    time: async ({ studyDays = [] }) => {
+      if (holding) {
+        await new Promise<void>((release) => {
+          held.push(release);
+        });
+      }
 
-    if (holding) {
-      await new Promise<void>((release) => {
-        held.push(release);
-      });
-    }
-
-    await route.fulfill({
-      json: {
-        coveredShare: null,
-        maximum: null,
+      return {
         measure: "goal",
-        numbers: null,
-        ready: true,
-        recommendedMinutes: minutesFor.get(studyDays.split(",").length) ?? null,
-        targetDate: targetDate.toISOString().slice(0, "YYYY-MM-DD".length),
-        targetDateNamedMonth: false,
-      },
-    });
+        recommendedMinutes: minutesFor.get(studyDays.length) ?? null,
+        targetDate: isoDate,
+      };
+    },
   });
 
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { name: "Start from zero" }).click();
 
-  // The week starts Monday to Friday.
-  await expect(page.getByText(/we recommend 1\shr 25\smin a day\.$/u)).toBeVisible();
-  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+  const find = page.getByRole("button", { name: "Find the time that covers everything" });
+  const covers = page.getByText("Covers everything", { exact: true });
 
-  holding = true;
+  // The week starts Monday to Friday.
+  await find.click();
+
+  await expect(
+    page.getByText(/^1\shr 25\smin a day covers everything in depth by /u),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("radio", { name: /^1 hr 25 min\s*Covers everything$/u }),
+  ).toBeVisible();
+
+  // Five days' time isn't what six days need: the answer goes with the days it was found for.
   await page.getByRole("button", { name: /^Which days\?/u }).click();
   await page.getByRole("button", { name: "Saturday" }).click();
-
-  // Five days' time isn't what six days need: until the plan says, nothing is recommended.
   await expect(page.getByText(/^6 days · /u)).toBeVisible();
-  await expect(page.getByText("Working out the time your goal needs…")).toBeVisible();
-  await expect(page.getByText("Recommended", { exact: true })).toHaveCount(0);
+  await expect(covers).toHaveCount(0);
 
-  // Another change asks about the new days right away, without waiting for the old answer.
+  // Back to the five days it was found for, it stays gone: the days changed since.
+  await page.getByRole("button", { name: "Saturday" }).click();
+  await expect(page.getByText(/^5 days · /u)).toBeVisible();
+  await expect(find).toBeVisible();
+  await expect(covers).toHaveCount(0);
+  await page.getByRole("button", { name: "Saturday" }).click();
+  await expect(page.getByText(/^6 days · /u)).toBeVisible();
+
+  // A search for six days that's still running when the days change again shows nowhere.
+  holding = true;
+  await find.click();
+  await expect.poll(() => held.length).toBe(1);
   await page.getByRole("button", { name: "Sunday" }).click();
+  await expect(page.getByText(/^7 days · /u)).toBeVisible();
+  await find.click();
   await expect.poll(() => held.length).toBe(2);
 
   holding = false;
   held.forEach((release) => release());
 
-  await expect(page.getByText(/^7 days · /u)).toBeVisible();
-  await expect(page.getByText(/we recommend 1\shr a day\.$/u)).toBeVisible();
-  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+  await expect(page.getByText(/^1\shr a day covers everything in depth by /u)).toBeVisible();
+  await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
+  await expect(page.getByRole("radio", { name: /^1 hr\s*Covers everything$/u })).toBeVisible();
+
+  // Nor when the days go back to the six it was asked for: it ended after they changed.
+  await page.getByRole("button", { name: "Sunday" }).click();
+  await expect(page.getByText(/^6 days · /u)).toBeVisible();
+  await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
+  await expect(covers).toHaveCount(0);
+  await expect(find).toBeVisible();
 });
 
 /** A goal at its time question, with a date 180 days away. */
@@ -382,21 +418,26 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
     return route.fulfill({
       json: {
         coveredShare: studyDays === "0" && dailyMinutes === 90 ? 12 / 14 : 1,
-        maximum: null,
         measure: "exam",
         numbers: null,
         readingNotice: false,
         ready: true,
-        recommendedMinutes: studyDays === "0" ? 65 : 60,
         targetDate: isoDate,
         targetDateNamedMonth: false,
       },
     });
   });
 
+  await routeTimeToCover(page, {
+    goalId: goal.id,
+    time: ({ studyDays = [] }) => ({
+      recommendedMinutes: studyDays.join(",") === "0" ? 65 : 60,
+      targetDate: isoDate,
+    }),
+  });
+
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { name: "Start from zero" }).click();
-  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: /^Which days\?/u }).click();
 
   // From Monday to Friday to Sunday alone.
@@ -407,30 +448,34 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
   await page.getByRole("button", { exact: true, name: "Thursday" }).click();
   await page.getByRole("button", { exact: true, name: "Friday" }).click();
 
-  // The recommended time is marked, never picked for the learner: they pick it.
-  await expect(page.getByText(/we recommend 1\shr 5\smin a day\.$/u)).toBeVisible();
-  await expect(page.getByRole("radio", { name: "1 hr 5 min" })).not.toBeChecked();
+  // The time Find finds is marked, never picked for the learner: they pick it.
+  await page.getByRole("button", { name: "Find the time that covers everything" }).click();
+  await expect(page.getByText(/^1\shr 5\smin a day covers everything in depth by /u)).toBeVisible();
+  const found = page.getByRole("radio", { name: /^1 hr 5 min\s*Covers everything$/u });
+  await expect(found).not.toBeChecked();
 
   await page
     .getByRole("radiogroup", { name: "Minutes a day" })
     .getByText("1 hr 5 min", { exact: true })
     .click();
 
-  await expect(page.getByRole("radio", { name: "1 hr 5 min" })).toBeChecked();
+  // The answer already planned that time: the estimate says all of it without asking again.
+  await expect(found).toBeChecked();
   const estimate = page.getByRole("region", { name: "Estimate" });
   await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
+  expect(requests).not.toContainEqual({ dailyMinutes: 65, studyDays: "0" });
 
   await page
     .getByRole("radiogroup", { name: "Minutes a day" })
     .getByText("1 hr 30 min", { exact: true })
     .click();
 
-  // A known recommendation must not stop polling for this different pick.
+  // A found time must not stop asking about this different pick.
   await expect.poll(() => requests).toContainEqual({ dailyMinutes: 90, studyDays: "0" });
   await expect(estimate.getByText(/^~86% of the plan's exam topics/u)).toBeVisible();
   await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toHaveCount(0);
   await expect(page.getByRole("radio", { exact: true, name: "1 hr 30 min" })).toBeChecked();
-  await expect(page.getByText(/we recommend 1\shr 5\smin a day\.$/u)).toBeVisible();
+  await expect(page.getByText(/^1\shr 5\smin a day covers everything in depth by /u)).toBeVisible();
 
   await page
     .getByRole("radiogroup", { name: "Minutes a day" })
@@ -440,7 +485,7 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
   await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
 });
 
-test("the time step keeps asking while a slow plan is still being built, and recommends its time once it's ready", async ({
+test("the time step keeps asking while a slow plan is still being built, and finds its time once it's ready", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -456,39 +501,51 @@ test("the time step keeps asking while a slow plan is still being built, and rec
 
     return route.fulfill({
       json: {
-        coveredShare: null,
-        maximum: null,
+        coveredShare: built ? 0.6 : null,
         measure: "goal",
         numbers: null,
         ready: built,
-        recommendedMinutes: built ? 100 : null,
         targetDate: built ? isoDate : null,
         targetDateNamedMonth: false,
       },
     });
   });
 
+  await routeTimeToCover(page, {
+    goalId: goal.id,
+    time: { measure: "goal", recommendedMinutes: 100, targetDate: isoDate },
+  });
+
   await page.clock.install();
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { name: "Start from zero" }).click();
 
-  const working = page.getByText("Working out the time your goal needs…");
-  await expect(working).toBeVisible();
+  const building = page.getByText("Building your plan…");
+  const find = page.getByRole("button", { name: "Find the time that covers everything" });
+  await expect(building).toBeVisible();
+  await expect(find).toHaveCount(0);
 
-  // Past the few minutes a plan usually takes, it still asks, and still says it's working on it.
+  // Past the few minutes a plan usually takes, it still asks, and still says it's being built.
   const askedBefore = asked;
   await page.clock.setSystemTime(Date.now() + 4 * 60 * 1000);
   await expect.poll(() => asked).toBeGreaterThan(askedBefore);
-  await expect(working).toBeVisible();
+  await expect(building).toBeVisible();
   await expect(page.getByText("You can change this anytime.")).toHaveCount(0);
 
-  // The plan is built: the next ask recommends its time.
+  // The plan is built: Find comes, and finds its time when the learner asks.
   built = true;
-  await expect(page.getByText(/we recommend 1\shr 40\smin a day\.$/u)).toBeVisible();
-  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+  await find.click();
+
+  await expect(
+    page.getByText(/^1\shr 40\smin a day covers everything in depth by /u),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("radio", { name: /^1 hr 40 min\s*Covers everything$/u }),
+  ).toBeVisible();
 });
 
-test("when the plan's time can't be read, the time step says so and asks again on Try again", async ({
+test("when the time can't be worked out, the time step says so and asks again on Try again", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -500,10 +557,28 @@ test("when the plan's time can't be read, the time step says so and asks again o
       ? route.fulfill({ body: "", status: 500 })
       : route.fulfill({
           json: {
-            coveredShare: null,
-            maximum: null,
+            coveredShare: 0.6,
             measure: "goal",
             numbers: null,
+            ready: true,
+            targetDate: isoDate,
+            targetDateNamedMonth: false,
+          },
+        }),
+  );
+
+  let findFails = true;
+
+  await page.route(`**/v1/goals/${goal.id}/plan/time-to-cover`, (route) =>
+    findFails
+      ? route.fulfill({ body: "", status: 500 })
+      : route.fulfill({
+          json: {
+            coreMinutes: null,
+            fittingDate: null,
+            maximum: null,
+            measure: "goal",
+            readingNotice: false,
             ready: true,
             recommendedMinutes: 60,
             targetDate: isoDate,
@@ -515,20 +590,30 @@ test("when the plan's time can't be read, the time step says so and asks again o
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { name: "Start from zero" }).click();
 
-  // After three tries, three seconds apart, it says so: never a quiet fallback that reads as if
-  // there were nothing to recommend.
-  await expect(page.getByText("We couldn't work out the time your goal needs.")).toBeVisible({
+  // After three tries, three seconds apart, the estimate says so: never a quiet fallback that reads
+  // as if there were nothing to cover.
+  const estimate = page.getByRole("region", { name: "Estimate" });
+
+  await expect(estimate.getByText(/^We couldn't work out what .+ a day covers\./u)).toBeVisible({
     timeout: 15_000,
   });
 
   await expect(page.getByText("You can change this anytime.")).toHaveCount(0);
-  await expect(page.getByText("Recommended", { exact: true })).toHaveCount(0);
 
   failing = false;
-  await page.getByRole("button", { name: "Try again" }).click();
+  await estimate.getByRole("button", { name: "Try again" }).click();
+  await expect(estimate.getByText(/^~60% of your goal in depth by /u)).toBeVisible();
 
-  await expect(page.getByText(/we recommend 1\shr a day\.$/u)).toBeVisible();
-  await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+  // Find says when it couldn't find the time, with Try again in its own place.
+  const find = page.getByRole("button", { name: "Find the time that covers everything" });
+  await find.click();
+  await expect(page.getByText("We couldn't work out the time needed.")).toBeVisible();
+  const retry = page.getByRole("button", { exact: true, name: "Try again" });
+  await expect(retry).toBeFocused();
+
+  findFails = false;
+  await retry.click();
+  await expect(page.getByText(/^1\shr a day covers everything in depth by /u)).toBeVisible();
 
   // The learner can always go on with a time of their own.
   await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();

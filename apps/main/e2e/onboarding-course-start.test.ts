@@ -21,6 +21,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { mockCentralAuthTransport } from "./auth-transport";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
@@ -372,24 +373,29 @@ test.describe("Starting a course from its page", () => {
     await startCourseWithLevel(page);
     const goalId = await readGoalId(page);
 
-    // The plan would like four hours a day; the question marks it and leaves the pick alone.
+    // The plan needs four hours a day, which Find finds when she asks; the question marks it and
+    // leaves the pick alone.
+    const targetDate = new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+
     await page.route(`**/v1/goals/${goalId}/plan/time-advice**`, (route) =>
       route.fulfill({
         json: {
           coveredShare: 0.4,
-          maximum: null,
           measure: "goal",
           numbers: null,
           readingNotice: false,
           ready: true,
-          recommendedMinutes: 240,
-          targetDate: new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10),
+          targetDate,
           targetDateNamedMonth: false,
         },
       }),
     );
 
-    const targetDate = new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+    await routeTimeToCover(page, {
+      goalId,
+      time: { measure: "goal", recommendedMinutes: 240, targetDate },
+    });
+
     await page.getByLabel("Date", { exact: true }).fill(targetDate);
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
@@ -408,9 +414,15 @@ test.describe("Starting a course from its page", () => {
     await expect(fifteen).toBeChecked();
     await expect(page.getByText(/^5 days · /u)).toBeVisible();
 
-    await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
+    // No chip says what it covers until she asks.
+    await expect(page.getByText("Covers everything", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Find the time that covers everything" }).click();
+
+    // The time found is marked and takes focus, so Space picks it, but nothing is picked for her.
+    const found = page.getByRole("radio", { name: /^4 hr\s*Covers everything$/u });
+    await expect(found).toBeFocused();
     await expect(fifteen).toBeChecked();
-    await expect(page.getByRole("radio", { name: /^4 hr/u })).not.toBeChecked();
+    await expect(found).not.toBeChecked();
 
     // The learner moves it.
     await page

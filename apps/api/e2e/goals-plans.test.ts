@@ -3,7 +3,10 @@ import { request } from "@playwright/test";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planChangedSinceSchema } from "@zoonk/core/plans/changed-since-contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
-import { planTimeAdviceSchema, planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
+import {
+  planTimeAdviceSchema,
+  planTimeToCoverSchema,
+} from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -550,8 +553,9 @@ test.describe("Goals and plans API", () => {
     );
 
     // Reads say only what the learner's own time does: no other daily time is searched for them.
-    expect(await everyDay.json()).not.toHaveProperty("recommendedMinutes");
-    expect((await plan.json()).feasibility).not.toHaveProperty("recommendedMinutes");
+    const [everyDayBody, planBody] = await Promise.all([everyDay.json(), plan.json()]);
+    expect(everyDayBody).not.toHaveProperty("recommendedMinutes");
+    expect(planBody).not.toHaveProperty("feasibility.recommendedMinutes");
 
     const visiblePlan = await readBody({ response: plan, schema: planResponseSchema });
 
@@ -609,7 +613,9 @@ test.describe("Goals and plans API", () => {
 
     // What it found is exact: the plan at that time covers everything, and less time doesn't.
     const [atFound, atLeast, tooMuch] = await Promise.all([
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${time.recommendedMinutes}`),
+      apiContext.get(
+        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${time.recommendedMinutes}`,
+      ),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=5`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=999`),
     ]);

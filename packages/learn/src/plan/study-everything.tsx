@@ -15,6 +15,7 @@ import { useExtracted } from "next-intl";
 import { createContext, use, useState } from "react";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome } from "./plan-context";
+import { PendingLabel } from "./plan-coverage";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
@@ -27,6 +28,7 @@ import { usePlanChange } from "./use-plan-change";
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
   const text = useFullCourseText();
+  const finish = text.finish(course);
   const { change, failed, isPending } = usePlanChange();
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
 
@@ -48,17 +50,18 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
   return (
     <>
       <DrawerContent className="flex flex-col gap-3 pt-2">
-        {course.endDate && (
-          <p className="font-medium text-pretty">
-            {text.finish({ ...course, endDate: course.endDate })}
-          </p>
-        )}
+        {finish && <p className="font-medium text-pretty">{finish}</p>}
         <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
-        <Button disabled={isPending} focusableWhenDisabled onClick={() => void choose()}>
-          {t("Study everything")}
+        <Button
+          aria-busy={isPending || undefined}
+          disabled={isPending}
+          focusableWhenDisabled
+          onClick={() => void choose()}
+        >
+          <PendingLabel pending={isPending}>{t("Study everything")}</PendingLabel>
         </Button>
         <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>
         {failed && <PlanFailedMessage />}

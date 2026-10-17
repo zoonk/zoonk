@@ -532,7 +532,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     await expect(platform.readPlanAnalysis(analysis)).resolves.toStrictEqual(screen);
     expect(platform.fills).toHaveLength(3);
 
-    // The API's full plan reads the same analysis: its core time is an estimate, never a search.
+    // The API's full plan reads the same analysis: no core-time search on a read.
     await getGoalPlan(goal.id);
     expect(vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0]).toStrictEqual(analysis);
     expect(platform.coreSearches()).toBe(0);

@@ -160,6 +160,34 @@ describe(getPlanFeasibility, () => {
     expect(settled.coveredShare).toBeGreaterThan(fresh.coveredShare);
   });
 
+  it("counts lessons the plan set aside for time as left, and ones the Library held back as gone", () => {
+    const graph = {
+      phases: [{ milestone: null, name: "Everything" }],
+      skills: [skill("s1", { lessons: 40 }), skill("s2", { lessons: 40 })],
+    };
+
+    const lessons = lessonsFor("s1", 40);
+
+    const aside = Array.from({ length: 30 }, (_, index) => ({
+      ...plannedLesson(`s1-${index}`, "s1"),
+      status: "skipped" as const,
+    }));
+
+    const fresh = getPlanFeasibility({ input: planInput({ graph, lessons }) });
+
+    // A new day's settling set 30 lessons aside: a change brings them back, so they're still left.
+    const setAside = getPlanFeasibility({ input: planInput({ graph, items: aside, lessons }) });
+
+    // The Library couldn't write them: they left the plan's lessons, and nothing will teach them.
+    const heldBack = getPlanFeasibility({
+      input: planInput({ graph, items: aside, lessons: lessons.slice(30) }),
+    });
+
+    expect(setAside.coveredShare).toBe(fresh.coveredShare);
+    expect(setAside.fits).toBe(false);
+    expect(heldBack.coveredShare).toBeGreaterThan(fresh.coveredShare);
+  });
+
   it("weighs another daily time as switching plans it, from today, this week included", () => {
     // A test on Thursday, this week's lessons already planned: re-planning at more time fits all.
     const input = planInput({

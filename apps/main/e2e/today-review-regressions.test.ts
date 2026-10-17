@@ -19,7 +19,7 @@ import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
-/** Goal A needs a later date; B has different work and its own document request. */
+/** Goal A fell behind (an exam's plan); B has different work and its own document request. */
 async function switchingDay() {
   const day = await createStudyDay();
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: day.goal.id } });
@@ -32,10 +32,6 @@ async function switchingDay() {
         coveredAfter: 0.4,
         coveredBefore: 0.8,
         currentMinutes: day.goal.dailyMinutes,
-        dailyMinutes: null,
-        fittingDate: "2028-09-28",
-        fullDepth: false,
-        maximumShare: 0.5,
         measure: "exam",
       },
       days: 3,
@@ -78,9 +74,7 @@ test.describe("Today review regressions", () => {
 
     const notice = page.getByRole("region", { name: "Plan change" });
 
-    await expect(
-      notice.getByRole("button", { name: "Move your date to cover everything" }),
-    ).toBeVisible();
+    await expect(notice.getByRole("link", { name: "More time a day" })).toBeVisible();
 
     // Continue lands above the highlighted row, so the learner's goals wait with it.
     const palette = await openLearnerPalette(page);
@@ -195,7 +189,9 @@ test.describe("Today review regressions", () => {
     }
   });
 
-  test("a failed notice acknowledgement does not report a two-write choice as saved", async ({
+  // Today's falling-behind card no longer moves the date itself (LEAD ruling A/A′: one link to
+  // the plan editor's time a day), so its one write is the learner's answer: keeping their time.
+  test("a failed notice acknowledgement says so, and nothing reads as saved", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
@@ -211,10 +207,6 @@ test.describe("Today review regressions", () => {
             coveredAfter: 0.1,
             coveredBefore: 0.12,
             currentMinutes: 25,
-            dailyMinutes: 240,
-            fittingDate: "2028-09-28",
-            fullDepth: false,
-            maximumShare: 0.49,
             measure: "goal",
           },
           days: 3,
@@ -227,10 +219,10 @@ test.describe("Today review regressions", () => {
       await page.setViewportSize({ height: 900, width: 1280 });
       await page.goto("/today");
       const notice = page.getByRole("region", { name: "Plan change" });
-      const move = notice.getByRole("button", { name: "Move your date to cover everything" });
-      await expect(move).toBeVisible();
+      const keep = notice.getByRole("button", { name: "Keep my time" });
+      await expect(keep).toBeVisible();
 
-      // The date write succeeds; only acknowledgement fails, regardless of timezone-sync timing.
+      // Only the acknowledgement fails, regardless of timezone-sync timing.
       const actions: (string | null)[] = [];
       const acknowledgement = [user.goalId, { changeId: change.id, status: "seen" }];
       const acknowledgementBody = JSON.stringify(acknowledgement);
@@ -251,25 +243,19 @@ test.describe("Today review regressions", () => {
         await route.fallback();
       });
 
-      await move.click();
+      await keep.click();
       await expect(notice.getByRole("alert")).toHaveText("We couldn't save that. Try again.");
       await expect(notice.getByRole("status")).toHaveCount(0);
 
-      await expect
-        .poll(async () => {
-          const saved = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return (saved.targetDate?.getTime() ?? 0) > soon.getTime();
-        })
-        .toBe(true);
+      // The learner's answer wasn't saved: the change still waits for it.
+      const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: change.id } });
+      expect(saved.payload).not.toHaveProperty("seenAt", expect.any(String));
 
       expect(
         actions
           .filter((body) => body !== followBody)
           .map((body) => JSON.parse(body ?? "null") as unknown),
-      ).toStrictEqual([
-        [user.goalId, [{ kind: "setTargetDate", targetDate: expect.any(String) }]],
-        acknowledgement,
-      ]);
+      ).toStrictEqual([acknowledgement]);
     });
   });
 

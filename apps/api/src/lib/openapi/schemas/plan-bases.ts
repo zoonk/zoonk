@@ -13,9 +13,7 @@ export const planBasesSchema = z
     daysLeft: z
       .int()
       .nullable()
-      .meta({
-        description: "Days until the goal's date; null without one",
-      }),
+      .meta({ description: "Days until the goal's date; null without one" }),
     items: z.array(
       z
         .object({

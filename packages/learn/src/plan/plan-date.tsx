@@ -58,6 +58,29 @@ function useDateNote() {
  * to study everything at its own pace, and set one again; an exam keeps its date and can go on
  * after it instead (see `FullCourseSwitch`). Not for quick explanations, which have no plan days.
  */
+/**
+ * The date field's value: the plan's date, empty for a named month, following the plan when
+ * another control moves it (Move your date), and the learner's typing in between.
+ */
+function useFieldDate({
+  namedMonth,
+  targetDate,
+}: {
+  namedMonth: boolean;
+  targetDate: string | null;
+}): [string, (value: string) => void] {
+  const fromPlan = namedMonth ? "" : (targetDate ?? "");
+  const [value, setValue] = useState(fromPlan);
+  const [shownDate, setShownDate] = useState(targetDate);
+
+  if (shownDate !== targetDate) {
+    setShownDate(targetDate);
+    setValue(fromPlan);
+  }
+
+  return [value, setValue];
+}
+
 export function PlanDate() {
   const t = useExtracted();
   const inputId = useId();
@@ -69,14 +92,7 @@ export function PlanDate() {
   const namedMonth = targetDateNamedMonth && targetDate !== null;
   const noteFor = useDateNote();
   const course = useFullCourse();
-  const [value, setValue] = useState(namedMonth ? "" : (targetDate ?? ""));
-  const [shownDate, setShownDate] = useState(targetDate);
-
-  // Another control moved the date (Move your date): the field shows the plan's new one.
-  if (shownDate !== targetDate) {
-    setShownDate(targetDate);
-    setValue(namedMonth ? "" : (targetDate ?? ""));
-  }
+  const [value, setValue] = useFieldDate({ namedMonth, targetDate });
 
   if (goal.kind === "explain") {
     return null;

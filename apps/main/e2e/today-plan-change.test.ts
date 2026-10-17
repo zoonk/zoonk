@@ -29,6 +29,7 @@ import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { asPersona } from "./learn-personas";
 import { openAs, readDayNames } from "./study-day";
+import { routeTimeToCover } from "./time-to-cover-routes";
 
 /** What the plan-edit model said of the learner's words, stored with the change. */
 const PROPOSAL = "Twenty-five minutes a day keeps your plan on track for the exam.";
@@ -1469,15 +1470,7 @@ test.describe("Today's plan change", () => {
   // the plan now covers less of the exam.
   for (const behind of [
     null,
-    {
-      canFocus: true,
-      coveredAfter: 0.5,
-      coveredBefore: 0.6,
-      currentMinutes: 15,
-      dailyMinutes: 30,
-      fullDepth: true,
-      measure: "exam",
-    },
+    { canFocus: true, coveredAfter: 0.5, coveredBefore: 0.6, currentMinutes: 15, measure: "exam" },
   ]) {
     test(`names the topics missed days leave out of the plan (${behind ? "behind" : "keeping pace"})`, async ({
       browser,
@@ -1532,7 +1525,10 @@ test.describe("Today's plan change", () => {
     });
   }
 
-  test("offers the date that covers it all after days away when no time covers the goal, and moves it", async ({
+  // LEAD ruling (A)/(A′): Today's falling-behind card says only exact facts, and its "more time"
+  // and "move date" choices are one link into the plan editor's time a day, where Find and Move
+  // your date work out what covers everything when the learner asks.
+  test("links days away to the editor's time a day, where moving the date covers it all", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
@@ -1551,10 +1547,6 @@ test.describe("Today's plan change", () => {
             coveredAfter: 0.1,
             coveredBefore: 0.12,
             currentMinutes: 25,
-            dailyMinutes: 240,
-            fittingDate: "2028-09-28",
-            fullDepth: false,
-            maximumShare: 0.49,
             measure: "goal",
           },
           days: 3,
@@ -1563,6 +1555,18 @@ test.describe("Today's plan change", () => {
         planId: plan.id,
         reason: "Lessons earlier days left come first; the rest of the plan moved forward.",
         status: "applied",
+      });
+
+      // Main's E2E runs without the API: Find finds no daily time covers it by his date, and a
+      // date his own time covers it all by.
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: {
+          fittingDate: "2028-09-28",
+          maximum: { coveredShare: 0.49, dailyMinutes: 240 },
+          measure: "goal",
+          targetDate: soon.toISOString().slice(0, 10),
+        },
       });
 
       await page.goto("/today");
@@ -1574,32 +1578,37 @@ test.describe("Today's plan change", () => {
         }),
       ).toBeVisible();
 
-      await expect(
-        note.getByText(/^At 25\smin a day, your plan covers everything by .+\.$/u),
-      ).toBeVisible();
+      // Nothing searched on Today: no date or time to switch to, and no number in a choice.
+      await expect(note.getByText(/your plan covers everything by/u)).toHaveCount(0);
+      await expect(note.getByRole("button", { name: /\d/u })).toHaveCount(0);
+      await expect(note.getByRole("link", { name: /\d/u })).toHaveCount(0);
+      await expect(note.getByRole("link", { name: "Study everything" })).toBeVisible();
 
-      // One way to cover it all, as the plan's notice offers: no 4 hours a day to switch to.
-      await expect(note.getByRole("button", { name: /^Study .+ a day/u })).toHaveCount(0);
-      await expect(note.getByRole("link", { name: "Study everything" })).toHaveCount(0);
+      const adjust = note.getByRole("link", { name: "More time or a later date" });
+      await expect(adjust).toHaveAttribute("href", /\/plan\?focus=time$/u);
+      await adjust.click();
 
-      await note.getByRole("button", { name: "Move your date to cover everything" }).click();
+      // The editor opens at the time a day, the chips focused, with Move your date right below.
+      await expect(page).toHaveURL(/\/plan\?focus=time$/u);
+      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
+      await expect(minutes.locator(":focus")).toHaveCount(1);
+
+      await editor.getByRole("button", { name: "Move your date to cover everything" }).click();
 
       await expect
         .poll(async () => {
           const moved = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return (moved.targetDate?.getTime() ?? 0) > soon.getTime();
+          return moved.targetDate?.toISOString().slice(0, 10);
         })
-        .toBe(true);
-
-      await expect(note.getByRole("status")).toBeVisible();
+        .toBe("2028-09-28");
     });
   });
 
   // Rafaela's card said "about 54%" while her Plan said "about 55%": the plan moved after the
-  // morning's settle. Today offers the time the plan recommends now, the Plan's own number.
-  test("offers more time a day as the Journey recommends it now, whatever the missed days said", async ({
-    browser,
-  }) => {
+  // morning's settle. Today now says no searched time at all (LEAD ruling A), so the two never
+  // disagree, even for a change saved while the card still kept one.
+  test("says no searched time on Today, even for a change saved with one", async ({ browser }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
 
@@ -1625,27 +1634,12 @@ test.describe("Today's plan change", () => {
         status: "applied",
       });
 
-      // The time the plan recommends now: the editor's preset that covers everything in depth.
-      await page.goto("/plan");
-      await page.getByRole("button", { name: "Adjust plan" }).click();
-
-      const inDepth = page
-        .getByRole("dialog", { name: "Adjust your plan" })
-        .getByRole("radio", { name: /all in depth$/u });
-
-      await expect(inDepth).toHaveCount(1);
-
-      const time = /radio "(?<time>.+?)\s*all in depth"/u.exec(await inDepth.ariaSnapshot())?.groups
-        ?.time;
-
       await page.goto("/today");
       const note = page.getByRole("region", { name: "Plan change" });
 
-      await expect(
-        note.getByRole("button", { name: `Study ${time} a day · everything in depth` }),
-      ).toBeVisible();
-
-      await expect(note.getByRole("button", { name: /^Study 5 hr a day/u })).toHaveCount(0);
+      await expect(note.getByRole("link", { name: "More time or a later date" })).toBeVisible();
+      await expect(note.getByRole("button", { name: /^Study .+ a day/u })).toHaveCount(0);
+      await expect(note.getByText(/5\shr|everything in depth/u)).toHaveCount(0);
     });
   });
 

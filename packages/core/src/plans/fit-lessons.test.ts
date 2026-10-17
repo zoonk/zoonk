@@ -42,12 +42,13 @@ describe("lessons the learner's own time fits", () => {
     const { goal, plan } = await aheadPlanFixture({ dailyMinutes: 15, faster: true });
     const before = await readPlanScreen();
 
-    // Their time covers everything: no more time is worth offering, and no less.
-    expect(before?.feasibility).toMatchObject({ coreFits: false, fits: false });
-    expect(before?.feasibility?.recommendedMinutes).toBe(15);
+    // Their time covers everything once planned again: no other time is offered, and the offer's
+    // own change says it covers everything ("Your time covers everything by …").
+    expect(before?.feasibility).toMatchObject({ coreFits: false, fits: false, timeCovers: true });
 
     expect(before?.fitOffer).toMatchObject({
       effect: { topicsAdded: [{ area: "Stocks" }] },
+      fits: true,
       operations: [{ kind: "fitLessons" }],
     });
 

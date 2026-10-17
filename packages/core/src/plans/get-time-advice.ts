@@ -1,7 +1,6 @@
 import "server-only";
 import { loadGoalDateKind } from "../exams/_utils/goal-date-estimate";
 import { isPlanReady } from "./_utils/apply-plan-change";
-import { planLearnerChange } from "./_utils/learner-change";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
@@ -14,7 +13,6 @@ import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
-import { type PlannedItem } from "./planner/plan-items";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { MIN_DAILY_MINUTES, type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
@@ -100,6 +98,7 @@ async function loadAskedPlan(
   const { context } = owned;
 
   const owesPlacement = await isPlanSetupTaskOwed({ goalId, task: "placement" });
+
   const readingNotice =
     getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now: new Date() }) ===
     "reading";
@@ -111,19 +110,15 @@ async function loadAskedPlan(
   return { context, status: "ready" };
 }
 
-/** Lessons a plan keeps set aside: the ones a change didn't bring back (see `splitExistingItems`). */
-function countSetAside(items: readonly Pick<PlannedItem, "kind" | "status">[]): number {
-  return items.filter(
-    (item) => (item.kind === "lesson" || item.kind === "chapter") && item.status === "skipped",
-  ).length;
-}
-
 /**
- * The plan without its date, as a learner's change plans it: everything left comes back (but
- * lessons the Library couldn't write, which stay set aside), laid out at the learner's time.
+ * The learner's plan with its date moved (null for none), planned as the change that moves it plans
+ * it (work set aside for time comes back), read on the measure the plan shows (`PlanFeasibility`).
  */
-async function planWithoutDate(context: PlanContext) {
-  const operations: LearnerPlanOperation[] = [{ kind: "setTargetDate", targetDate: null }];
+async function planAtDate(context: PlanContext, targetDate: Date | null) {
+  const operations: LearnerPlanOperation[] = [
+    { kind: "setTargetDate", targetDate: targetDate && toIsoDate(targetDate) },
+  ];
+
   const result = await applyChangeOperations({ context, operations });
 
   if ("error" in result) {
@@ -139,36 +134,29 @@ async function planWithoutDate(context: PlanContext) {
 }
 
 /**
- * The earliest date a goal's own time covers everything left by, for a goal that isn't an exam
- * (an exam's date is the exam's): the day after the plan without a date ends (its lessons end
- * before its date), a day later at a time when a dated plan lays them out otherwise. Each try plans
- * the change itself, so the date is one `setTargetDate` applies as found, lessons a change keeps
- * set aside included. Null when none of the tries covers everything.
+ * The earliest date a goal's own time covers everything by, for a goal that isn't an exam (an
+ * exam's date is the exam's), on the one measure every reach number uses, the plan as its graph
+ * sizes it (see `findFittingDate`): from the day the plan without a date ends, a day at a time,
+ * the first date the plan covers everything by, as it then shows (`fits`). So Move applies a date
+ * whose plan says it covers everything, and outlining lessons never moves it. Null when none of the
+ * tries does.
  */
 async function findCoveringDate(context: PlanContext): Promise<string | null> {
-  const open = await planWithoutDate(context);
-  const end = open?.built.estimate.endDate;
+  const open = await planAtDate(context, null);
+  const end = open?.feasibility.endDate ?? null;
 
-  if (!open || !end) {
+  if (!end) {
     return null;
   }
 
-  const kept = countSetAside(open.built.items);
-
-  for (const days of Array.from({ length: FITTING_DATE_TRIES }, (_, index) => index + 1)) {
-    const targetDate = toIsoDate(addDays(end, days));
-    const operations: LearnerPlanOperation[] = [{ kind: "setTargetDate", targetDate }];
+  for (const days of Array.from({ length: FITTING_DATE_TRIES }, (_, index) => index)) {
+    const targetDate = addDays(end, days);
 
     // oxlint-disable-next-line no-await-in-loop -- the earliest date that fits wins, so each try waits for the one before it.
-    const change = await planLearnerChange({ context, operations, reuseReadBuild: true });
+    const planned = await planAtDate(context, targetDate);
 
-    if (
-      change &&
-      !change.unchanged &&
-      change.computed.built.droppedSkillIds.length === 0 &&
-      countSetAside(change.computed.built.items) <= kept
-    ) {
-      return targetDate;
+    if (planned?.feasibility.fits) {
+      return toIsoDate(targetDate);
     }
   }
 
@@ -244,8 +232,8 @@ export async function getPlanTimeAdvice({
  * `PlanTimeToCover`), in the week they'd study, found by planning the goal at each daily time from
  * the least: exact, and only when the learner asks ("Find the time that covers everything"), never
  * for a page or prefetch. When no daily time does, what the most time a day covers. For a goal that
- * isn't an exam and falls short in its own week, also the earliest date its own time covers
- * everything by, which "Move your date to cover everything" applies.
+ * isn't an exam and falls short in its own week, or whose date passed, also the earliest date its
+ * own time covers everything by, measured like the time, which "Move your date" applies.
  */
 export async function findPlanTimeToCover({
   goalId,
@@ -302,9 +290,11 @@ export async function findPlanTimeToCover({
   const { feasibility } = computed;
   const { maximum } = feasibility;
 
-  // The date is for the plan's own week: another week asked about isn't one a date move keeps.
+  // The date is for the plan's own week: another week asked about isn't one a date move keeps. A
+  // date that came with lessons left moves too, though nothing measures as left out by it then.
   const ownWeek = input.studyDays === undefined && input.weekendMinutes === undefined;
-  const movesDate = ownWeek && context.goal.kind !== "exam" && !feasibility.fits;
+  const pastDate = context.goal.targetDate !== null && context.goal.targetDate < context.today;
+  const movesDate = ownWeek && context.goal.kind !== "exam" && (pastDate || !feasibility.fits);
 
   return {
     status: "ready",

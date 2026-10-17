@@ -250,6 +250,7 @@ function TodayDay({
       level={data.language?.level ?? null}
       actions={{
         addExtraTime: taps.addExtraTime,
+        adjustTimeHref: "/plan?focus=time",
         answerInsight: (input) => withLearnerWrite(() => answerMemoryInsightAction(input)),
         answerSuggestedGoal,
         buddyHref: "/buddy",
@@ -270,7 +271,6 @@ function TodayDay({
 
           return outcome?.change ?? null;
         },
-        adjustTimeHref: "/plan?focus=time",
         chooseFocusHref: "/plan?focus=choose",
         continueHref: call ? `/checkpoint/${call.blockId}?session=${call.sessionId}` : null,
         continueSession: () => {

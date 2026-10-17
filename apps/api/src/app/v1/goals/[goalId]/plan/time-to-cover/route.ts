@@ -31,10 +31,7 @@ async function findTimeToCover(
 
   const result = await findPlanTimeToCover({
     goalId: path.data.goalId,
-    input: {
-      studyDays: body.data.studyDays,
-      weekendMinutes: body.data.weekendMinutes,
-    },
+    input: { studyDays: body.data.studyDays, weekendMinutes: body.data.weekendMinutes },
   });
 
   return result.status === "ready" ? NextResponse.json(result.time) : accessError(result.status);

@@ -37,6 +37,20 @@ const FOUND: GoalTutorLookUpResult = {
 };
 
 describe(createLookUpTool, () => {
+  it("looks up the time that covers everything as one more kind of the same tool, for every step", async () => {
+    const lookUp = vi.fn(() => Promise.resolve(FOUND));
+    const first = createLookUpTool({ links: TEST_TUTOR_LINKS, lookUp });
+    const next = createLookUpTool({ links: TEST_TUTOR_LINKS, lookUp });
+    const request = { area: null, query: null, what: "timeToCover" } as const;
+
+    // The tool reads the same on every step and for every learner, so it stays cached.
+    expect(first.description).toBe(next.description);
+    expect(first.description).toContain("- timeToCover: ");
+
+    await first.execute?.(request, { ...CALL, abortSignal: new AbortController().signal });
+    expect(lookUp).toHaveBeenCalledWith(request);
+  });
+
   it("answers without the lookup once its deadline passes, so the buddy still replies", async () => {
     await expect(
       runTool({ lookUp: neverEnds, signal: AbortSignal.timeout(10) }),

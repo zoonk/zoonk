@@ -1,9 +1,15 @@
 "use client";
 
+import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
 import { type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
+
+/** A recommendation the app worked out for the prerequisites (see `PlanBasesAdvice`). */
+export type RecommendedBases = Pick<PlanBasesAdvice, "daysLeft"> & {
+  recommended: NonNullable<PlanBasesAdvice["recommended"]>;
+};
 
 /** The plan's prerequisites to choose how to study; null when it has none to choose for. */
 export function usePlanBases(): PlanBasesView | null {
@@ -12,29 +18,30 @@ export function usePlanBases(): PlanBasesView | null {
 }
 
 /**
- * What the app recommends for the prerequisites, in one line: in depth when the time covers
- * everything; a quick lesson for each when the date is close and the time short, so it goes to
- * what comes up most (an exam's) or what matters most for the goal; their essentials otherwise.
+ * What the app recommends for the prerequisites, in one line, once the learner asked for it (see
+ * `PlanBasesAdvice`): in depth when the time covers everything with every prerequisite in depth; a
+ * quick lesson for each when the date is close and the time short, so it goes to what comes up
+ * most (an exam's) or what matters most for the goal; their essentials otherwise.
  */
 export function useAdviceText() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
   const isExam = goal.kind === "exam";
 
-  return (bases: PlanBasesView): string => {
-    if (bases.recommended === "deep") {
+  return ({ daysLeft, recommended }: RecommendedBases): string => {
+    if (recommended === "deep") {
       return t("Your time covers everything, so we recommend each prerequisite in depth.");
     }
 
-    if (bases.recommended === "quick" && bases.daysLeft !== null) {
+    if (recommended === "quick" && daysLeft !== null) {
       return isExam
         ? t(
             "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what comes up most.",
-            { days: bases.daysLeft },
+            { days: daysLeft },
           )
         : t(
             "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what matters most to your goal.",
-            { days: bases.daysLeft },
+            { days: daysLeft },
           );
     }
 

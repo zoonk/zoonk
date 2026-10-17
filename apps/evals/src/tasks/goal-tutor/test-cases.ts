@@ -104,7 +104,7 @@ const CONCURSO_PLAN = {
       { focused: false, name: "Língua Inglesa", skipped: false },
       { focused: false, name: "Reconhecimento de Fala e Transcrição", skipped: false },
     ],
-    coverage: { coveredShare: 1, fits: true, measure: "exam", recommendedMinutes: null },
+    coverage: { coveredShare: 1, fits: true, measure: "exam" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "intermediate",
@@ -167,7 +167,7 @@ const UX_PLAN = {
       { focused: false, name: "Prototipação no Figma", skipped: false },
       { focused: false, name: "Portfólio", skipped: false },
     ],
-    coverage: { coveredShare: 1, fits: true, measure: "goal", recommendedMinutes: null },
+    coverage: { coveredShare: 1, fits: true, measure: "goal" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "none",
@@ -250,6 +250,23 @@ const INTERVIEW_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
+/**
+ * What the `timeToCover` lookup finds for Lucas's ENEM plan: 95 minutes a day study everything in
+ * depth by the exam, found by planning it at each daily time (never in the context).
+ */
+const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
+  timeToCover: {
+    coreMinutes: null,
+    fittingDate: null,
+    maximum: null,
+    measure: "exam",
+    recommendedMinutes: 95,
+    status: "found",
+    targetDate: "2026-11-08",
+    what: "timeToCover",
+  },
+};
+
 const ENEM_WITH_SETUP = {
   ...ENEM_PLAN,
   setup: {
@@ -260,14 +277,7 @@ const ENEM_WITH_SETUP = {
       { focused: false, name: "Ciências Humanas", skipped: false },
       { focused: false, name: "Redação", skipped: false },
     ],
-    coverage: {
-      coreFits: true,
-      coreMinutes: null,
-      coveredShare: 0.7,
-      fits: false,
-      measure: "exam",
-      recommendedMinutes: 95,
-    },
+    coverage: { coreFits: true, coveredShare: 0.7, fits: false, measure: "exam" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "basic",
@@ -325,14 +335,7 @@ const OAB_PLAN = {
       { focused: false, name: "Direito Constitucional", skipped: false },
       { focused: false, name: "Direito Civil", skipped: false },
     ],
-    coverage: {
-      coreFits: true,
-      coreMinutes: null,
-      coveredShare: 0.52,
-      fits: false,
-      measure: "exam",
-      recommendedMinutes: 240,
-    },
+    coverage: { coreFits: true, coveredShare: 0.52, fits: false, measure: "exam" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "intermediate",
@@ -983,9 +986,9 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ENEM_WITH_SETUP,
-    expectations:
-      "A question about the plan's reach. Says plainly that at one hour a day the plan studies every topic of the exam, the ones it asks most in more depth, and that 95 minutes a day would cover everything in depth; never says topics are left out (coreFits is true), and never promises a score. proposedChange is null unless the learner asked to change their time.",
+    expectations: `${LOOKUP_EXPECTATIONS} A question about the plan's reach. Says plainly that at one hour a day the plan studies every topic of the exam, the ones it asks most in more depth; it may add, from the timeToCover lookup, that 95 minutes a day would cover everything in depth (a number not taken from the lookup is a major error, cap 5.0); never says topics are left out (coreFits is true), and never promises a score. proposedChange is null unless the learner asked to change their time.`,
     id: "pt-enem-coverage",
+    lookUps: ENEM_TIME_TO_COVER,
     question: "meu plano cobre a prova toda?",
   }),
   goalCase({
@@ -1278,9 +1281,9 @@ export const TEST_CASES: GoalTutorCase[] = [
   }),
   goalCase({
     context: ENEM_WITH_SETUP,
-    expectations:
-      "He lowers his daily time to 40 minutes, below the 95 that cover everything in depth by the exam (coverage.recommendedMinutes). proposedChange asks for 40 minutes a day. The answer says that 95 minutes a day would cover everything in depth by the date and that 40 still covers every topic, the ones asked most in more depth (coreFits is true). Not mentioning the 95 minutes is a major error (cap 6.5). No promise of a score.",
+    expectations: `${LOOKUP_EXPECTATIONS} He lowers his daily time to 40 minutes, below the 95 that cover everything in depth by the exam, which only the timeToCover lookup says (the context doesn't). proposedChange asks for 40 minutes a day, and lookUps has timeToCover. The answer says that 95 minutes a day would cover everything in depth by the date and that 40 still covers every topic, the ones asked most in more depth (coreFits is true). Not mentioning the 95 minutes is a major error (cap 6.5); a time not taken from the lookup is a major error (cap 5.0). No promise of a score.`,
     id: "pt-enem-less-time-recommended",
+    lookUps: ENEM_TIME_TO_COVER,
     planChange: {
       effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 14 },
     },

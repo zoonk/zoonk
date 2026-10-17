@@ -385,7 +385,10 @@ const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   panel: "flex flex-wrap items-center gap-2 pt-1",
   // The sheet's answers form its action bar: two side by side, the first (the main one) leading
   // and widest, in the order the panel has them; three or more stacked full width, the first on top.
-  sheet: "flex gap-2 pt-1 [&>*:first-child]:flex-1 has-[>:nth-child(3)]:flex-col",
+  // A long first label ("Find the time that covers everything", longer still translated) wraps
+  // onto a second line instead of running past a phone's edge.
+  sheet:
+    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
 };
 
 /** The answers, the main one first: small in the panel, the sheet's 44px action bar under it. */

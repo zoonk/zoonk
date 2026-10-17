@@ -72,15 +72,16 @@ describe(loadTodayPlanChange, () => {
   it("brings up lessons earlier days left only when falling behind puts the date at risk", async () => {
     const { goal, plan } = await setup();
 
-    const behind = {
+    const facts = {
       canFocus: false,
       coveredAfter: 0.8,
       coveredBefore: 1,
       currentMinutes: 30,
-      dailyMinutes: 45,
-      fullDepth: true,
       measure: "goal",
     };
+
+    // Saved before Today said only facts, the change also kept a searched time to offer.
+    const behind = { ...facts, dailyMinutes: 45, fullDepth: true };
 
     await planChangeFixture({
       createdAt: hoursAgo(2),
@@ -100,11 +101,10 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      behind,
-      id: atRisk.id,
-      kind: "missedDays",
-    });
+    const change = await loadTodayPlanChange({ goal, now: NOW });
+
+    expect(change).toMatchObject({ id: atRisk.id, kind: "missedDays" });
+    expect(change?.behind).toStrictEqual(facts);
   });
 
   // Lucas's Today, the day after his date: the settling that set aside what the date left said "11

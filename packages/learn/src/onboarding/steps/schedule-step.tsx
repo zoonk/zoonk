@@ -1,15 +1,17 @@
 "use client";
 
 import { type GoalView } from "@zoonk/core/goals/contract";
-import { type PlanTimeAdvice, getRecommendedTime } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
+import { type FindStatus, findTimeChip } from "../../plan/plan-coverage";
+import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cover";
 import { type Choice, ChoiceList } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { AdviceSentence } from "./advice-sentence";
@@ -31,8 +33,10 @@ import {
   getPickedShare,
   getWeekAdvice,
   hasEstimate,
+  toFindWeek,
   toStudyWeek,
   useTimeAdvice,
+  useWeekTimeToCover,
 } from "./use-time-advice";
 import { isRunStopped } from "./wait-run";
 
@@ -42,63 +46,88 @@ function withOption(options: number[], minutes: number): number[] {
 }
 
 /**
- * The time chips: the usual amounts, with the recommended time in place of the closest one when
- * it isn't one of them, so the row keeps its size; the learner's own pick always stays (a time
- * picked on a course's page may be none of them).
+ * The time chips: the usual amounts and the learner's own pick (a time picked on a course's page
+ * may be none of them). Once Find answers for the week shown, the time it found joins them as it
+ * is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything", or, when no time
+ * does, the most time a day says what it covers. None is picked for the learner.
  */
-function getMinuteOptions({
-  picked,
-  recommended,
-}: {
-  picked: number;
-  recommended: number | null;
-}): number[] {
-  if (recommended === null || MINUTE_OPTIONS.includes(recommended)) {
-    return withOption([...MINUTE_OPTIONS], picked);
-  }
-
-  const closest = MINUTE_OPTIONS.reduce((best, option) =>
-    Math.abs(option - recommended) < Math.abs(best - recommended) ? option : best,
-  );
-
-  const options =
-    closest === picked
-      ? [...MINUTE_OPTIONS, recommended]
-      : MINUTE_OPTIONS.map((option) => (option === closest ? recommended : option));
-
-  return withOption(
-    options.toSorted((a, b) => a - b),
-    picked,
-  );
-}
-
-function useMinuteChoices({
-  current,
-  picked,
-  recommended,
-}: {
-  /** The recommended time is the one for the days shown, not the last week's (see `ScheduleStep`). */
-  current: boolean;
-  picked: string;
-  recommended: number | null;
-}): Choice<string>[] {
-  const t = useExtracted();
+function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; picked: number }) {
+  const texts = useTimeToCoverTexts();
   const formatDuration = useFormatDuration();
-  const options = getMinuteOptions({ picked: Number(picked), recommended });
+  const answer = found && readTimeToCover(found);
+  const presets = withOption([...MINUTE_OPTIONS], picked);
+  const options = answer?.kind === "covers" ? withOption(presets, answer.minutes) : presets;
 
-  return options.map((value) => ({
-    description: current && value === recommended ? t("Recommended") : undefined,
-    label: formatDuration(value),
-    value: String(value),
-  }));
+  return {
+    choices: options.map((value) => ({
+      description: (answer && texts.note(answer, value)) ?? undefined,
+      label: formatDuration(value),
+      value: String(value),
+    })),
+    options,
+  };
 }
+
+/** The weekend's own time: the usual amounts and the times picked, never the time Find found. */
+function useWeekendChoices({
+  minutes,
+  weekend,
+}: {
+  minutes: number;
+  weekend: string | null;
+}): Choice<string>[] {
+  const formatDuration = useFormatDuration();
+  const picked = withOption([...MINUTE_OPTIONS], minutes);
+  const options = weekend === null ? picked : withOption(picked, Number(weekend));
+
+  return options.map((value) => ({ label: formatDuration(value), value: String(value) }));
+}
+
+/** The time chips and the line under them, where focus goes once Find answers. */
+const MINUTES_ID = "onboarding-minutes";
+const FIND_LINE_ID = "onboarding-find";
 
 /**
- * The time to recommend: the time that studies the whole goal in depth by its date, or, when no
- * daily time does, the most time a day.
+ * Once Find answers, focus moves to the chip it marks, so Space picks it: the time that covers
+ * everything, or the most time a day; when no time covers more, to the answer itself. Only when
+ * this step asked (`ask`), and a failed search keeps focus on Try again, in Find's own place.
  */
-function getRecommended(advice: PlanTimeAdvice | null): number | null {
-  return advice ? (getRecommendedTime(advice)?.dailyMinutes ?? null) : null;
+function useFocusFound({
+  found,
+  options,
+  status,
+}: {
+  found: PlanTimeToCover | null;
+  options: number[];
+  status: FindStatus;
+}) {
+  const asked = useRef(false);
+
+  useEffect(() => {
+    if (!asked.current || status === "pending") {
+      return;
+    }
+
+    asked.current = false;
+
+    if (!found) {
+      return;
+    }
+
+    const answer = readTimeToCover(found);
+    const minutes = document.querySelector<HTMLElement>(`#${MINUTES_ID}`);
+
+    const chip =
+      answer.kind === "none"
+        ? null
+        : findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
+
+    (chip ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
+  }, [found, options, status]);
+
+  return () => {
+    asked.current = true;
+  };
 }
 
 function MinutesReadout({ minutes }: { minutes: number }) {
@@ -115,20 +144,21 @@ function MinutesReadout({ minutes }: { minutes: number }) {
 
 /**
  * How much time a day and on which days. It comes after placement, once the plan knows what the
- * learner already knows, so it recommends the time the plan needs to study the whole goal in depth
- * by its date, in the week they pick (its days, and the weekend's own time, which counts too): the
- * same number the plan shows next. The goal's facts lead (as chips, in the page's aside beside it
- * from 72rem), then the time picked, large, the presets under it and the recommendation under
- * them, and the estimate: what the time picked covers by the date, which follows every pick at
- * once, so the learner decides with the number in front of them. The days and the weekend's time
- * stay one tap away. It opens on the goal's starting pick (the time a course's page had picked,
- * or one from the goal's size) and on weekdays, and only the learner moves the pick: the
- * recommended time is marked when the plan says it, never picked for them, so nothing changes
- * under them while they read. Without a date there's nothing to cover by, so there's no estimate.
+ * learner already knows. The goal's facts lead (as chips, in the page's aside beside it from
+ * 72rem), then the time picked, large, the presets under it, and the estimate: what the time
+ * picked covers by the date, exactly as the plan would have it, which follows every pick at once,
+ * so the learner decides with the number in front of them. Under the presets, "Find the time that
+ * covers everything" plans the goal at each daily time, in the week shown (its days, and the
+ * weekend's own time, which counts too), only when the learner asks: the time it finds is marked,
+ * never picked for them, so nothing changes under them while they read. The days and the weekend's
+ * time stay one tap away. It opens on the goal's starting pick (the time a course's page had
+ * picked, or one from the goal's size) and on weekdays. Without a date there's nothing to cover
+ * by, so there's no estimate and nothing to find.
  */
 export function ScheduleStep({
   dated,
   exam = false,
+  findTimeToCover,
   getTimeAdvice,
   goal,
   onAnswer,
@@ -140,10 +170,9 @@ export function ScheduleStep({
   dated: boolean;
   /** An exam: the learner can also choose to study everything, even after it. */
   exam?: boolean;
-  /**
-   * The goal's daily time from its plan in this week, and what the time picked covers; null when
-   * it couldn't be read.
-   */
+  /** The time that covers the goal by its date in this week, found when the learner asks. */
+  findTimeToCover: (week: StudyWeek) => Promise<PlanTimeToCover | null>;
+  /** What the time picked covers by the goal's date in this week; null when it couldn't be read. */
   getTimeAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
   /** The goal so far, which leads the screen. */
   goal: GoalView;
@@ -163,16 +192,29 @@ export function ScheduleStep({
   const [weekendMinutes, setWeekendMinutes] = useState<string | null>(null);
   const [days, setDays] = useState(() => getStartingDays(goal.studyDays));
   const [answer, setAnswer] = useState<AdviceAnswer | null>(null);
+  // Each time the plan is built again (an exam's notice reading landed), what Find found before is
+  // for the plan before it.
+  const [build, setBuild] = useState(0);
   const [fullCourse, setFullCourse] = useState(false);
-  // The time is only said to be recommended for the week it was asked for: Marcos saw 6 days'
-  // 1h 10min recommended with 5 days picked, which needed 1h 25min.
-  const recommended = getRecommended(answer?.advice.ready ? answer.advice : null);
   const studiesOnWeekends = days.some((day) => isWeekend(day));
   const weekend = studiesOnWeekends ? weekendMinutes : null;
   const week = toStudyWeek({ days, minutes, weekend });
   const advice = getWeekAdvice({ answer, week });
-  const choices = useMinuteChoices({ current: advice !== null, picked: minutes, recommended });
-  const pickedShare = getPickedShare({ advice, answer, minutes: Number(minutes) });
+
+  const findWeek = toFindWeek({ days, weekend });
+
+  const finder = useWeekTimeToCover({
+    findTimeToCover,
+    key: JSON.stringify({ build, findWeek }),
+    week: findWeek,
+  });
+
+  // While the plan is being built again, there's no answer to show.
+  const found = answer?.advice.ready === false ? null : finder.found;
+  const { choices, options } = useMinuteChoices({ found, picked: Number(minutes) });
+  const weekendChoices = useWeekendChoices({ minutes: Number(minutes), weekend: weekendMinutes });
+  const askFocus = useFocusFound({ found, options, status: finder.status });
+  const pickedShare = getPickedShare({ advice, answer, found, minutes: Number(minutes) });
 
   const asking = useTimeAdvice({
     answer,
@@ -180,12 +222,23 @@ export function ScheduleStep({
     getAdvice: getTimeAdvice,
     known: pickedShare.known,
     minutes: Number(minutes),
-    onAnswer: setAnswer,
+    onAnswer: (next) => {
+      if (answer?.advice.ready && !next.advice.ready) {
+        setBuild((count) => count + 1);
+      }
+
+      setAnswer(next);
+    },
     stopped: isRunStopped(run),
     week,
   });
 
   const estimate = getEstimate({ advice, answer, pickedShare, status: asking.status });
+  // Built once the plan said so for any week; once asking stopped while its run goes on, Find says
+  // what it finds.
+  const planReady =
+    answer?.advice.ready === true || (asking.status !== "polling" && !isRunStopped(run));
+
   const estimateProps = { ...estimate, minutes: Number(minutes), onRetry: asking.restart };
   const showsEstimate = dated && hasEstimate({ estimate, pickedShare, status: asking.status });
 
@@ -221,22 +274,30 @@ export function ScheduleStep({
       <div className="flex flex-col gap-4">
         <MinutesReadout minutes={Number(minutes)} />
 
-        <ChoiceList
-          choices={choices}
-          label={t("Minutes a day")}
-          onChange={setMinutes}
-          value={minutes}
-          variant="chips"
-        />
-
-        <p aria-live="polite" className="text-muted-foreground text-sm text-pretty">
-          <AdviceSentence
-            advice={advice}
-            onRetry={asking.restart}
-            readingNotice={answer?.advice.readingNotice ?? false}
-            status={asking.status}
+        <div id={MINUTES_ID}>
+          <ChoiceList
+            choices={choices}
+            label={t("Minutes a day")}
+            onChange={setMinutes}
+            value={minutes}
+            variant="chips"
           />
-        </p>
+        </div>
+
+        <div className="text-muted-foreground text-sm text-pretty">
+          <AdviceSentence
+            dated={dated}
+            find={finder.status}
+            found={found}
+            id={FIND_LINE_ID}
+            onFind={() => {
+              askFocus();
+              void finder.find();
+            }}
+            planReady={planReady}
+            readingNotice={answer?.advice.readingNotice ?? false}
+          />
+        </div>
       </div>
 
       {showsEstimate && <TimeEstimatePanel {...estimateProps} />}
@@ -251,7 +312,7 @@ export function ScheduleStep({
 
         {studiesOnWeekends && (
           <WeekendMinutes
-            choices={choices}
+            choices={weekendChoices}
             minutes={weekendMinutes}
             onChange={setWeekendMinutes}
             weekdayMinutes={minutes}

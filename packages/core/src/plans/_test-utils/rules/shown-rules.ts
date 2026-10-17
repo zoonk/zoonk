@@ -118,12 +118,13 @@ export function checkCoverageTrue(context: RuleContext): RuleViolation[] {
 }
 
 /**
- * R26. The recommended time covers the goal: at or above the daily time the plan recommends,
- * everything fits by the date, and the recommendation is never more than the most time a day.
+ * R26. The recommended time covers the goal: at or above the daily time Find recommends when the
+ * learner asks for it (`timeToCover`), everything fits by the date, and the recommendation is
+ * never more than the most time a day.
  */
 export function checkRecommendedTimeCovers(context: RuleContext): RuleViolation[] {
   const feasibility = context.view?.feasibility ?? null;
-  const recommended = feasibility?.recommendedMinutes ?? null;
+  const recommended = context.timeToCover?.recommendedMinutes ?? null;
 
   if (!context.view || !feasibility || recommended === null) {
     return [];

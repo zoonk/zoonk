@@ -17,6 +17,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
+import { findPlanTimeToCover } from "./get-time-advice";
 import { type LearnerPlanOperation } from "./plan-contract";
 
 /** A Monday in 2020, before the learning events other tests write, so nobody's pace moves it. */
@@ -97,7 +98,6 @@ async function readTruth(goalId: string) {
 
   return {
     coreFits: feasibility?.coreFits ?? null,
-    coreMinutes: feasibility?.coreMinutes ?? null,
     outForTime: topics
       .filter((topic) => topic.status === "notPlanned" && topic.notPlannedReason === "time")
       .map((topic) => topic.name),
@@ -147,12 +147,15 @@ describe("a plan's headline and its topics tell one truth", () => {
     const { goal } = await setup({ dailyMinutes: 7 });
 
     const short = await readTruth(goal.id);
+    // The time that brings every topic in is found when the learner asks, never on a read.
+    const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
+    const coreMinutes = found.status === "ready" ? found.time.coreMinutes : null;
 
     expect(short.outForTime.length).toBeGreaterThan(0);
     expect(short.coreFits).toBe(false);
-    expect(short.coreMinutes).not.toBeNull();
+    expect(coreMinutes).not.toBeNull();
 
-    await change(goal.id, [{ kind: "setDailyMinutes", minutes: short.coreMinutes ?? 0 }]);
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: coreMinutes ?? 0 }]);
 
     await expect(readTruth(goal.id)).resolves.toMatchObject({ coreFits: true, outForTime: [] });
   });

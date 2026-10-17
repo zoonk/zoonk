@@ -50,7 +50,8 @@ test.describe("Plan choices API", () => {
     });
 
     // Reading the plan never plans every base in depth to recommend a choice: the learner asks.
-    expect((await read.json()).bases).not.toHaveProperty("recommended");
+    const readJson = await read.json();
+    expect(readJson).not.toHaveProperty("bases.recommended");
 
     await expect(
       readBody({

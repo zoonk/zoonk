@@ -14494,7 +14494,7 @@
     },
     "/goals/{goalId}/plan": {
       "get": {
-        "description": "The plan at every zoom level: each phase with the current one chapter by chapter, this week day by day, the status (the learner's pace against the plan: keeping pace, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what fits in the learner's time and what more time would change, the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
+        "description": "The plan at every zoom level: each phase with the current one chapter by chapter, this week day by day, the status (the learner's pace against the plan: keeping pace, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what the learner's own time covers (the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`), the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
         "operationId": "getGoalPlan",
         "security": [
           {
@@ -15279,118 +15279,6 @@
         }
       }
     },
-    "/goals/{goalId}/plan/time-advice": {
-      "get": {
-        "description": "The daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), or, when no daily time does, what the most time a day covers. The time question recommends and picks it first, and the plan says the same number once the learner chooses. `ready` is false while the plan is being built: ask again in a few seconds.",
-        "operationId": "getPlanTimeAdvice",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Get the daily time a goal needs",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          },
-          {
-            "in": "query",
-            "name": "dailyMinutes",
-            "schema": {
-              "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent. It never changes the time recommended",
-              "type": "number"
-            },
-            "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent. It never changes the time recommended"
-          },
-          {
-            "in": "query",
-            "name": "studyDays",
-            "schema": {
-              "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent",
-              "type": "string",
-              "pattern": "^[0-6](?:,[0-6]){0,6}$"
-            },
-            "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent"
-          },
-          {
-            "in": "query",
-            "name": "weekendMinutes",
-            "schema": {
-              "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is, so the time recommended is the weekdays' time with it",
-              "type": "number"
-            },
-            "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is, so the time recommended is the weekdays' time with it"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The daily time the goal needs",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlanTimeAdvice"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/goals/{goalId}/plan/tool-choices": {
       "post": {
         "description": "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
@@ -15710,6 +15598,314 @@
           },
           "429": {
             "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/plan/bases-advice": {
+      "post": {
+        "description": "What the app recommends for the plan's bases (quick, essential or in depth), when the learner asks for it: it plans the goal with every base in depth to see whether their time covers everything then, so it's a request the learner makes, never part of reading the plan. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "operationId": "createPlanBasesAdvice",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a recommendation for a plan's bases",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "What the app recommends for the plan's bases",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanBasesAdvice"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/plan/time-advice": {
+      "get": {
+        "description": "What a daily time covers by the goal's date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is): the plan that time plans, as the plan shows it once the learner chooses it. Only that time: the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "operationId": "getPlanTimeAdvice",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get what a daily time covers",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "dailyMinutes",
+            "schema": {
+              "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent",
+              "type": "number"
+            },
+            "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent"
+          },
+          {
+            "in": "query",
+            "name": "studyDays",
+            "schema": {
+              "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent",
+              "type": "string",
+              "pattern": "^[0-6](?:,[0-6]){0,6}$"
+            },
+            "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent"
+          },
+          {
+            "in": "query",
+            "name": "weekendMinutes",
+            "schema": {
+              "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is",
+              "type": "number"
+            },
+            "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "What the daily time asked about covers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanTimeAdvice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/plan/time-to-cover": {
+      "post": {
+        "description": "Finds the daily time the goal needs, when the learner asks for it (\"Find the time that covers everything\"): the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything. When no daily time does, what the most time a day covers, and for a goal that isn't an exam the earliest date the learner's own time covers everything by. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "operationId": "findPlanTimeToCover",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Find the daily time that covers a goal",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanTimeToCoverInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The daily time that covers everything, or what the most time covers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanTimeToCover"
+                }
+              }
+            },
+            "headers": {
+              "Learner-Revision": {
+                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
+                "schema": {
+                  "pattern": "^[0-9]+$",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -26751,6 +26947,28 @@
         ],
         "additionalProperties": false
       },
+      "PlanTimeToCoverInput": {
+        "type": "object",
+        "properties": {
+          "studyDays": {
+            "description": "The weekdays the learner would study, Sunday first (0), such as [1, 2, 3, 4, 5] for Monday to Friday; the plan's own days when absent",
+            "minItems": 1,
+            "maxItems": 7,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "weekendMinutes": {
+            "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. The time found is the weekdays' time with it",
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 240
+          }
+        }
+      },
       "PlanWatch": {
         "type": "string",
         "enum": [
@@ -34139,7 +34357,7 @@
         "properties": {
           "behind": {
             "nullable": true,
-            "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it). Offer that daily time, keeping the time with less depth, or choosing where to focus. On Today, the choices (dailyMinutes, fullDepth, maximumShare, fittingDate, canFocus) are the plan's as it is now, the same the plan's feasibility says. Null when the date isn't at risk",
+            "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
             "type": "object",
             "properties": {
               "canFocus": {
@@ -34162,30 +34380,6 @@
                 "maximum": 9007199254740991,
                 "description": "The learner's daily time, which covers coveredAfter"
               },
-              "dailyMinutes": {
-                "nullable": true,
-                "description": "The daily time to offer: the one that covers the whole goal in depth again (fullDepth), else the most time a day; null when the learner already gives it",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "fittingDate": {
-                "nullable": true,
-                "description": "When no daily time covers a goal that isn't an exam: the date the learner's time covers it all by, offered instead of more time (setTargetDate)",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "fullDepth": {
-                "type": "boolean"
-              },
-              "maximumShare": {
-                "nullable": true,
-                "description": "When no daily time covers the goal (fullDepth false): the share dailyMinutes, the most time a day, covers by the date",
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
               "measure": {
                 "type": "string",
                 "enum": [
@@ -34200,10 +34394,6 @@
               "coveredAfter",
               "coveredBefore",
               "currentMinutes",
-              "dailyMinutes",
-              "fittingDate",
-              "fullDepth",
-              "maximumShare",
               "measure"
             ],
             "additionalProperties": false
@@ -66751,7 +66941,7 @@
               "lessons"
             ],
             "additionalProperties": false,
-            "description": "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the plan's `pastDateOffer` (GET /v1/goals/{goalId}/plan), which keeps it going"
+            "description": "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the change that keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)"
           }
         ],
         "type": "object"
@@ -69987,7 +70177,7 @@
           },
           "end": {
             "nullable": true,
-            "description": "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`, see `pastDateOffer`) and required challenges too (status `challengesLeft`)",
+            "description": "Every lesson of the plan is studied or tested out and every required phase challenge won: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Free language plans can finish with their Plus call challenges still locked; those challenges retain their pending state, with no won result. Non-exam reviews remain practice after finishing; exams also wait for their mocks and reviews still ahead. Null while something required is left, lessons set aside included (a plan whose date came with lessons left isn't over: status `pastDate`) and required challenges too (status `challengesLeft`)",
             "type": "object",
             "properties": {
               "kind": {
@@ -70065,39 +70255,9 @@
             "nullable": true,
             "type": "object",
             "properties": {
-              "alternative": {
-                "nullable": true,
-                "description": "Without a deadline: when the plan ends with more time a day",
-                "type": "object",
-                "properties": {
-                  "dailyMinutes": {
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991
-                  },
-                  "endDate": {
-                    "nullable": true,
-                    "type": "string",
-                    "format": "date",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                  }
-                },
-                "required": [
-                  "dailyMinutes",
-                  "endDate"
-                ],
-                "additionalProperties": false
-              },
               "coreFits": {
                 "type": "boolean",
                 "description": "Every topic (every skill's core) is in the plan, the ones worth more in more depth; false only when even the cores don't fit before the deadline"
-              },
-              "coreMinutes": {
-                "nullable": true,
-                "description": "When the cores don't all fit: the daily minutes that bring every topic in",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
               },
               "coveredShare": {
                 "type": "number",
@@ -70118,42 +70278,6 @@
               "fits": {
                 "type": "boolean"
               },
-              "fittingDate": {
-                "nullable": true,
-                "description": "When no daily time covers a goal that isn't an exam by its date: the earliest date the learner's time covers everything by, to move the date to with `setTargetDate`. Null otherwise",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "fullCourseEndDate": {
-                "nullable": true,
-                "description": "When the plan leaves something out by its date: the day the learner finishes everything at their time studying it all (an exam's going on after the exam with `setFullCourse`, any other goal's without a date with `setTargetDate` null). Null when it all fits",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "maximum": {
-                "nullable": true,
-                "description": "When no daily time covers everything: the share the most daily minutes cover, when it's more",
-                "type": "object",
-                "properties": {
-                  "coveredShare": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 1
-                  },
-                  "dailyMinutes": {
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "coveredShare",
-                  "dailyMinutes"
-                ],
-                "additionalProperties": false
-              },
               "measure": {
                 "type": "string",
                 "enum": [
@@ -70162,31 +70286,18 @@
                 ],
                 "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
               },
-              "recommendedMinutes": {
-                "nullable": true,
-                "description": "Daily minutes that would cover everything in depth",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
               "timeCovers": {
                 "type": "boolean",
-                "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): offer `fitOffer` at their time, never another daily time. Don't infer it from recommendedMinutes: more time a day can cover less (a weekly mock takes a study day). False without a deadline"
+                "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): offer `fitOffer` at their time, never another daily time. False without a deadline"
               }
             },
             "required": [
-              "alternative",
               "coreFits",
-              "coreMinutes",
               "coveredShare",
               "deadline",
               "deepensMostAsked",
               "fits",
-              "fittingDate",
-              "fullCourseEndDate",
-              "maximum",
               "measure",
-              "recommendedMinutes",
               "timeCovers"
             ],
             "additionalProperties": false
@@ -70199,6 +70310,10 @@
               "effect": {
                 "$ref": "#/components/schemas/PlanEffect"
               },
+              "fits": {
+                "type": "boolean",
+                "description": "The plan with the change covers everything in depth by its date, as the change plans it: say so (\"Your time covers everything by …\") only then"
+              },
               "operations": {
                 "minItems": 1,
                 "maxItems": 10,
@@ -70210,6 +70325,7 @@
             },
             "required": [
               "effect",
+              "fits",
               "operations"
             ],
             "additionalProperties": false
@@ -70332,29 +70448,6 @@
                 "$ref": "#/components/schemas/OwnLevel"
               }
             ]
-          },
-          "pastDateOffer": {
-            "nullable": true,
-            "description": "When the plan's date came with lessons left (status `pastDate`): the one change that keeps it going, with its effect, so Apply is one tap after its diff. Send `operations` to POST /v1/goals/{goalId}/plan/changes as they are. A goal's own date moves to the day the learner's time covers what's left by (`setTargetDate`); an exam's date stays and its plan goes on after it (`setFullCourse`). Null otherwise, and when no change brings the lessons back",
-            "type": "object",
-            "properties": {
-              "effect": {
-                "$ref": "#/components/schemas/PlanEffect"
-              },
-              "operations": {
-                "minItems": 1,
-                "maxItems": 10,
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PlanOperationOutput"
-                }
-              }
-            },
-            "required": [
-              "effect",
-              "operations"
-            ],
-            "additionalProperties": false
           },
           "phases": {
             "type": "array",
@@ -70652,7 +70745,6 @@
           "notice",
           "numbers",
           "ownLevel",
-          "pastDateOffer",
           "phases",
           "planId",
           "ready",
@@ -70671,7 +70763,7 @@
         "properties": {
           "daysLeft": {
             "nullable": true,
-            "description": "Days until the goal's date, for the recommendation's line; null without one",
+            "description": "Days until the goal's date; null without one",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -70687,22 +70779,12 @@
             "minimum": 0,
             "maximum": 9007199254740991,
             "description": "Bases placement or a test-out found the learner knows: they're out of the plan already. Say so"
-          },
-          "recommended": {
-            "type": "string",
-            "enum": [
-              "deep",
-              "essential",
-              "quick"
-            ],
-            "description": "deep: the learner's time covers everything with every base in depth; otherwise quick when the goal's date is close (60 days or less), so the time goes to what matters most (what an exam asks most), and essential further away. Recommend it in one line, preselected for each subject; never as a pass. A new plan starts on it"
           }
         },
         "required": [
           "daysLeft",
           "items",
-          "knownCount",
-          "recommended"
+          "knownCount"
         ],
         "additionalProperties": false
       },
@@ -71567,96 +71649,6 @@
         ],
         "additionalProperties": false
       },
-      "PlanTimeAdvice": {
-        "type": "object",
-        "properties": {
-          "coveredShare": {
-            "nullable": true,
-            "description": "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own): a share of the exam's questions and points or of the goal's skills by weight (see measure). The time question's live estimate. Null without a date, or while not ready",
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "maximum": {
-            "nullable": true,
-            "description": "When no daily time covers everything in depth: what the most time a day covers. Recommend that time, honestly, with the learner choosing where to focus",
-            "type": "object",
-            "properties": {
-              "coveredShare": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
-              "dailyMinutes": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "coveredShare",
-              "dailyMinutes"
-            ],
-            "additionalProperties": false
-          },
-          "measure": {
-            "type": "string",
-            "enum": [
-              "exam",
-              "goal"
-            ],
-            "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
-          },
-          "numbers": {
-            "nullable": true,
-            "description": "The prospective actual schedule for the selected dailyMinutes and study week. Its coverage equals coveredShare; null while not ready.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlanNumbers"
-              }
-            ]
-          },
-          "readingNotice": {
-            "default": false,
-            "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
-            "type": "boolean"
-          },
-          "ready": {
-            "type": "boolean",
-            "description": "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds"
-          },
-          "recommendedMinutes": {
-            "nullable": true,
-            "description": "The fewest daily minutes that study the whole goal in depth by its date. Null without a date, while the plan is being built, or when no daily time does (see maximum)",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "targetDate": {
-            "nullable": true,
-            "description": "The goal's date, which the recommended time covers everything by",
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-          },
-          "targetDateNamedMonth": {
-            "type": "boolean",
-            "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
-          }
-        },
-        "required": [
-          "coveredShare",
-          "maximum",
-          "measure",
-          "numbers",
-          "readingNotice",
-          "ready",
-          "recommendedMinutes",
-          "targetDate",
-          "targetDateNamedMonth"
-        ],
-        "additionalProperties": false
-      },
       "PlanLink": {
         "type": "object",
         "properties": {
@@ -71777,6 +71769,185 @@
         "required": [
           "outline",
           "owner"
+        ],
+        "additionalProperties": false
+      },
+      "PlanBasesAdvice": {
+        "type": "object",
+        "properties": {
+          "daysLeft": {
+            "nullable": true,
+            "description": "Days until the goal's date; null without one",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "ready": {
+            "type": "boolean",
+            "description": "False while the plan is being built: ask again in a few seconds"
+          },
+          "recommended": {
+            "nullable": true,
+            "description": "deep: every lesson of each base, since the learner's time covers everything with every base in depth; quick: a quick lesson for each, the date being close; essential: each base's core. Null while not ready",
+            "type": "string",
+            "enum": [
+              "deep",
+              "essential",
+              "quick"
+            ]
+          }
+        },
+        "required": [
+          "daysLeft",
+          "ready",
+          "recommended"
+        ],
+        "additionalProperties": false
+      },
+      "PlanTimeAdvice": {
+        "type": "object",
+        "properties": {
+          "coveredShare": {
+            "nullable": true,
+            "description": "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own): a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "measure": {
+            "type": "string",
+            "enum": [
+              "exam",
+              "goal"
+            ],
+            "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
+          },
+          "numbers": {
+            "nullable": true,
+            "description": "The prospective actual schedule for the selected dailyMinutes and study week. Its coverage equals coveredShare; null while not ready.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanNumbers"
+              }
+            ]
+          },
+          "readingNotice": {
+            "default": false,
+            "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
+            "type": "boolean"
+          },
+          "ready": {
+            "type": "boolean",
+            "description": "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds"
+          },
+          "targetDate": {
+            "nullable": true,
+            "description": "The goal's date",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "targetDateNamedMonth": {
+            "type": "boolean",
+            "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+          }
+        },
+        "required": [
+          "coveredShare",
+          "measure",
+          "numbers",
+          "readingNotice",
+          "ready",
+          "targetDate",
+          "targetDateNamedMonth"
+        ],
+        "additionalProperties": false
+      },
+      "PlanTimeToCover": {
+        "type": "object",
+        "properties": {
+          "coreMinutes": {
+            "nullable": true,
+            "description": "When even every topic's core lessons don't fit by the date: the fewest daily minutes that bring every topic in. Null when they all fit",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "fittingDate": {
+            "nullable": true,
+            "description": "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "maximum": {
+            "nullable": true,
+            "description": "When no daily time covers everything in depth: what the most time a day covers by the date, when it's more than the learner's time does. Recommend that time, honestly, with the learner choosing where to focus",
+            "type": "object",
+            "properties": {
+              "coveredShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "dailyMinutes": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "coveredShare",
+              "dailyMinutes"
+            ],
+            "additionalProperties": false
+          },
+          "measure": {
+            "type": "string",
+            "enum": [
+              "exam",
+              "goal"
+            ],
+            "description": "exam: a share of the exam's questions and points; goal: of the goal's skills by weight"
+          },
+          "readingNotice": {
+            "default": false,
+            "description": "True while the plan waits for the exam's official documents to be read, which can change the time it needs: ready stays false until the reading lands or the plan's wait for it ends",
+            "type": "boolean"
+          },
+          "ready": {
+            "type": "boolean",
+            "description": "False while the plan is being built, or while it waits for placement or its exam's notice reading, which change what it needs: ask again in a few seconds"
+          },
+          "recommendedMinutes": {
+            "nullable": true,
+            "description": "The fewest daily minutes that study the whole goal in depth by its date. Null without a date, while the plan is being built, or when no daily time does (see maximum)",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "targetDate": {
+            "nullable": true,
+            "description": "The goal's date, which the recommended time covers everything by",
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "targetDateNamedMonth": {
+            "type": "boolean",
+            "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+          }
+        },
+        "required": [
+          "coreMinutes",
+          "fittingDate",
+          "maximum",
+          "measure",
+          "readingNotice",
+          "ready",
+          "recommendedMinutes",
+          "targetDate",
+          "targetDateNamedMonth"
         ],
         "additionalProperties": false
       },
@@ -80110,7 +80281,7 @@
             "properties": {
               "behind": {
                 "nullable": true,
-                "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it). Offer that daily time, keeping the time with less depth, or choosing where to focus. On Today, the choices (dailyMinutes, fullDepth, maximumShare, fittingDate, canFocus) are the plan's as it is now, the same the plan's feasibility says. Null when the date isn't at risk",
+                "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
                 "type": "object",
                 "properties": {
                   "canFocus": {
@@ -80133,30 +80304,6 @@
                     "maximum": 9007199254740991,
                     "description": "The learner's daily time, which covers coveredAfter"
                   },
-                  "dailyMinutes": {
-                    "nullable": true,
-                    "description": "The daily time to offer: the one that covers the whole goal in depth again (fullDepth), else the most time a day; null when the learner already gives it",
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991
-                  },
-                  "fittingDate": {
-                    "nullable": true,
-                    "description": "When no daily time covers a goal that isn't an exam: the date the learner's time covers it all by, offered instead of more time (setTargetDate)",
-                    "type": "string",
-                    "format": "date",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                  },
-                  "fullDepth": {
-                    "type": "boolean"
-                  },
-                  "maximumShare": {
-                    "nullable": true,
-                    "description": "When no daily time covers the goal (fullDepth false): the share dailyMinutes, the most time a day, covers by the date",
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 1
-                  },
                   "measure": {
                     "type": "string",
                     "enum": [
@@ -80171,10 +80318,6 @@
                   "coveredAfter",
                   "coveredBefore",
                   "currentMinutes",
-                  "dailyMinutes",
-                  "fittingDate",
-                  "fullDepth",
-                  "maximumShare",
                   "measure"
                 ],
                 "additionalProperties": false

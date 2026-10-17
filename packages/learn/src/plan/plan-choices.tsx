@@ -17,11 +17,11 @@ import { PlanBasesSheet } from "./plan-bases-sheet";
 import { usePlanCoverage } from "./plan-coverage";
 import { useFullCourse } from "./plan-full-course";
 import { useStudyEverything } from "./study-everything";
-import { useAdviceText, usePlanBases, useSummaryText } from "./use-bases-texts";
+import { usePlanBases, useSummaryText } from "./use-bases-texts";
 
 /**
  * The choices a new plan comes with, on the plan's reveal, each a row opening its sheet: how its
- * prerequisites are studied (it starts on the recommendation, and says so), and studying
+ * prerequisites are studied (the sheet recommends how when the learner asks), and studying
  * everything at the learner's own pace, when the plan's notice doesn't already offer it (its time
  * covers the goal by its date). Nothing when there's nothing to choose.
  */
@@ -31,10 +31,10 @@ export function PlanChoices() {
   const bases = usePlanBases();
   const course = useFullCourse();
   const coverage = usePlanCoverage();
-  const adviceText = useAdviceText();
   const summaryText = useSummaryText();
   const studyEverything = useStudyEverything();
   const [basesOpen, setBasesOpen] = useState(false);
+
   const everything =
     course && !course.on && !coverage && course.endDate
       ? { ...course, endDate: course.endDate }
@@ -55,7 +55,7 @@ export function PlanChoices() {
           </ListRowLeading>
           <ListRowContent>
             <ListRowTitle>{summaryText(bases)}</ListRowTitle>
-            <ListRowDescription>{adviceText(bases)}</ListRowDescription>
+            <ListRowDescription>{t("Choose how to study each one.")}</ListRowDescription>
           </ListRowContent>
         </ListRowButton>
       )}

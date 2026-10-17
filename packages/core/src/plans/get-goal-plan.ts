@@ -29,7 +29,10 @@ export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
   return { plan: await buildPlanView(loaded), status: "ready" };
 }
 
-/** The same authenticated plan without the separate core-time search screens never display. */
+/**
+ * The same authenticated plan, as the screens read it: the same exact view the API gives, with no
+ * other daily time or date searched for it (the learner asks for those: see `findPlanTimeToCover`).
+ */
 export async function getGoalPlanScreen(goalId: string): Promise<GoalPlanScreenResult> {
   "use cache: private";
 

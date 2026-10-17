@@ -133,10 +133,15 @@ describe("a plan whose date came with lessons left", () => {
     const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
     const targetDate = found.status === "ready" ? found.time.fittingDate : null;
 
-    expect(targetDate && targetDate > "2020-10-20").toBe(true);
+    // The lessons the plan set aside are left, so the date isn't tomorrow: it's the one his time
+    // covers all of them by, as the plan measures it. That measure prices each lesson at the
+    // graph's 4 minutes, where these written ones take 3, so it lands after 11-04, the day his
+    // written lessons would fit by. Follow-up: sized vs written layout parity.
+    expect(targetDate).toBe("2020-11-09");
 
     const operations: PlanChangeInput["operations"] = [{ kind: "setTargetDate", targetDate }];
-    const effect = (await preview(goal.id, operations))?.effect;
+    const previewed = await preview(goal.id, operations);
+    const effect = previewed?.effect;
 
     expect(effect?.lessonsAdded).toBe(lessons);
     expect(effect?.endDateAfter && effect.endDateAfter < (targetDate ?? "")).toBe(true);
@@ -168,6 +173,31 @@ describe("a plan whose date came with lessons left", () => {
     expect(moved?.status?.kind).not.toBe("behind");
   });
 
+  it("doesn't say it covers everything while lessons it set aside are left", async () => {
+    const { goal, plan } = await pastDateGoal("learn");
+
+    await refreshGoalPlan({ goalId: goal.id });
+
+    // Lucas moves his date to tomorrow: his time lays out one lesson by then, the rest stays aside.
+    const applied = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setTargetDate", targetDate: "2020-10-21" }], timeZone: "UTC" },
+    });
+
+    expect(applied.status).toBe("applied");
+
+    const setAside = await prisma.planItem.count({
+      where: { kind: "lesson", planId: plan.id, status: "skipped" },
+    });
+
+    expect(setAside).toBeGreaterThan(0);
+
+    const view = await readPlan();
+
+    expect(view?.feasibility?.fits).toBe(false);
+    expect(view?.feasibility?.coveredShare).toBeLessThan(1);
+  });
+
   it("keeps an exam's date, which is the exam's: its plan goes on after it", async () => {
     // Whole milestones and banked mocks leave only one lesson at 5 minutes; this learner left work.
     const { goal, plan, plannedLessons } = await pastDateGoal("exam", 6);
@@ -185,9 +215,8 @@ describe("a plan whose date came with lessons left", () => {
     const operations: PlanChangeInput["operations"] = [{ fullCourse: true, kind: "setFullCourse" }];
 
     // Everything left comes back, and what the exam's time never fitted with it.
-    expect((await preview(goal.id, operations))?.effect?.lessonsAdded).toBeGreaterThanOrEqual(
-      lessons,
-    );
+    const previewed = await preview(goal.id, operations);
+    expect(previewed?.effect?.lessonsAdded).toBeGreaterThanOrEqual(lessons);
 
     // The time it finds names no date: an exam's date is the exam's.
     await expect(findPlanTimeToCover({ goalId: goal.id, input: {} })).resolves.toMatchObject({
