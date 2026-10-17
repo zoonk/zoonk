@@ -80239,7 +80239,7 @@
           },
           "mockFunding": {
             "nullable": true,
-            "description": "Exact saved contribution explaining a lighter study day; null on unrelated days, the mock's own day, and welcome-back sessions, which already explain the lighter day.",
+            "description": "Exact saved contribution explaining a lighter study day, welcome-back sessions included; null on unrelated days and the mock's own day.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/MockFunding"
