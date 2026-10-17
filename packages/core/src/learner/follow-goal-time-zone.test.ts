@@ -11,9 +11,14 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { sessionGoalFixture } from "../sessions/_test-utils/session-goal";
 import { getStudySession } from "../sessions/get-study-session";
-import { getTodayViewFollowingDevice } from "../view-models/today/get-today-view";
+import {
+  type TodayViewResult,
+  getTodayView,
+  getTodayViewFollowingDevice,
+} from "../view-models/today/get-today-view";
 import { getStartOfLocalDay } from "./_utils/local-time";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "./_utils/owned-goal";
@@ -54,6 +59,51 @@ async function setup({ timezone = SAO_PAULO }: { timezone?: string | null } = {}
 async function readZone(goalId: string) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
   return goal.timezone;
+}
+
+/** The goal a Today read is about, its day ready or still preparing. */
+function todayGoalId(result: TodayViewResult): string | null {
+  if (result.status === "ready") {
+    return result.today.goal.id;
+  }
+
+  return "goal" in result ? result.goal.id : null;
+}
+
+/** Ana's active goal in São Paulo with a plan, in a state where Today shows no day for it. */
+async function refusedTodayFixture(refusal: "explainOnly" | "guestOnboarding" | "planNotBuilt") {
+  const user = await userFixture();
+
+  // A course's plan is ready, but she's a guest who hasn't answered when her exam is yet.
+  if (refusal === "guestOnboarding") {
+    const { goal, plan } = await sessionGoalFixture({
+      goal: {
+        dailyMinutes: 30,
+        kind: "exam",
+        targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
+        timezone: SAO_PAULO,
+      },
+      lessons: 1,
+      userId: user.id,
+    });
+
+    const details = {
+      answered: ["level"],
+      courseStart: { chapterId: null, dailyMinutes: 30 },
+      level: "basic",
+    };
+
+    await prisma.goal.update({ data: { details }, where: { id: goal.id } });
+    mockGuestSession(user.id);
+    return { goal, plan, user };
+  }
+
+  // A quick explanation is her only goal, or her plan is still being built.
+  const kind = refusal === "explainOnly" ? "explain" : "learn";
+  const goal = await goalFixture({ kind, timezone: SAO_PAULO, userId: user.id });
+  const plan = await planFixture({ goalId: goal.id });
+  mockSession(user.id);
+  return { goal, plan, user };
 }
 
 /** The learner's revision and their goal plan's input version and pending reasons, as writers raise them. */
@@ -255,13 +305,14 @@ describe("following a learner who moves", () => {
 describe("Today following the device", () => {
   it("follows the goal Today reads when the request names none", async () => {
     const { goal: other, user } = await setup();
-    const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
+    const { goal: active } = await sessionGoalFixture({
+      goal: { timezone: SAO_PAULO },
+      userId: user.id,
+    });
     await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
     const zone = zoneOnAnotherDay();
 
-    await expect(getTodayViewFollowingDevice({ timeZone: zone })).resolves.toMatchObject({
-      goal: { id: active.id },
-    });
+    expect(todayGoalId(await getTodayViewFollowingDevice({ timeZone: zone }))).toBe(active.id);
 
     await expect(Promise.all([readZone(active.id), readZone(other.id)])).resolves.toStrictEqual([
       zone,
@@ -306,8 +357,38 @@ describe("Today following the device", () => {
     },
   );
 
+  it.each([
+    ["explainOnly", "noGoal"],
+    ["planNotBuilt", "preparing"],
+    ["guestOnboarding", "preparing"],
+  ] as const)(
+    "keeps the zone, revision and plan of a goal Today shows no day for (%s: %s)",
+    async (refusal, status) => {
+      const { goal, plan, user } = await refusedTodayFixture(refusal);
+      const timeZone = zoneOnAnotherDay();
+      const refused = await getTodayView({ goalId: goal.id, timeZone });
+      const before = await readVersions({ planId: plan.id, userId: user.id });
+
+      expect(refused).toMatchObject({ status });
+
+      const followed = await getTodayViewFollowingDevice({ goalId: goal.id, timeZone });
+      expect(followed).toStrictEqual(refused);
+
+      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
+
+      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(
+        before,
+      );
+    },
+  );
+
   it("returns the goal it moved when the learner switches goals while the move waits", async () => {
-    const { goal: moving, user } = await setup();
+    const user = await userFixture();
+    const { goal: moving } = await sessionGoalFixture({
+      goal: { timezone: SAO_PAULO },
+      userId: user.id,
+    });
+    mockSession(user.id);
     const next = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
     await learningProfileFixture({ activeGoalId: moving.id, userId: user.id });
     const device = zoneOnAnotherDay();
@@ -332,7 +413,7 @@ describe("Today following the device", () => {
 
     await writer.done;
 
-    await expect(today).resolves.toMatchObject({ goal: { id: moving.id } });
+    expect(todayGoalId(await today)).toBe(moving.id);
 
     await expect(Promise.all([readZone(moving.id), readZone(next.id)])).resolves.toStrictEqual([
       device,

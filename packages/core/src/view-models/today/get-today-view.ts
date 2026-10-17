@@ -1,16 +1,12 @@
 import "server-only";
-import { type Goal, type GoalKind, prisma } from "@zoonk/db";
+import { type Goal, type GoalKind } from "@zoonk/db";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
 import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
-import { findActiveGoalId } from "../../goals/_utils/goal-view";
-import { hasStudyGoal } from "../../goals/_utils/study-goal";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
-import { loadViewerStamp } from "../../learner/_utils/load-viewer-stamp";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { followOwnedGoalTimeZone } from "../../learner/follow-goal-time-zone";
 import {
   type LessonGenerationState,
@@ -29,11 +25,10 @@ import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-stud
 import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notice";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
-import { getSession } from "../../users/get-session";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
 import { type NoticedPattern } from "../language/language-view-contract";
-import { getOnboarding } from "../onboarding/get-onboarding";
 import { getLessonShare } from "../syllabus/lesson-share";
+import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
@@ -236,80 +231,19 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   return choices.find((choice) => !choice.subject) ?? null;
 }
 
-/**
- * A goal's plan is built in the background after onboarding. Until it has items there's no day to
- * build, and building one then would fix an empty day in place: the day is built once it's ready.
- */
-async function isPlanBuilt(goalId: string): Promise<boolean> {
-  const items = await prisma.planItem.count({ where: { plan: { goalId } } });
-  return items > 0;
-}
-
-/**
- * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
- * references until the learner opens it with a POST; prefetch never creates or settles a day.
- */
-export async function getTodayView(input: TodayStudySessionInput): Promise<TodayViewResult> {
-  "use cache: private";
-
-  const session = await getSession();
-
-  if (!session) {
-    return { status: "unauthorized" };
-  }
-
-  const userId = session.user.id;
-
-  const stamp = await loadViewerStamp(userId);
-
-  const goalId = input.goalId ?? (await findActiveGoalId(userId));
-
-  if (!goalId) {
-    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
-  }
-
-  // Whether the plan is built is read alongside the goal; it's only used once the goal is theirs.
-  const [owned, built] = await Promise.all([findOwnedGoal(goalId), isPlanBuilt(goalId)]);
-
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  // A paused, completed or archived goal has no day to plan: nothing is built for it.
-  if (owned.goal.status !== "active") {
-    return { ...stamp, status: "goalNotActive" };
-  }
-
-  // A quick explanation is a one-off: a learner with only explanations has no day to plan.
-  if (owned.goal.kind === "explain" && !(await hasStudyGoal(userId))) {
-    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
-  }
-
+/** The day Today shows for an admitted goal, with the read-only cards around it. */
+async function readAdmittedToday({
+  admission: { owned, stamp },
+  timeZone,
+}: {
+  admission: Extract<TodayAdmission, { status: "admitted" }>;
+  timeZone?: string;
+}): Promise<TodayViewResult> {
+  const { userId } = owned;
   const { id, kind, targetDate, title } = owned.goal;
 
-  if (!built) {
-    return { ...stamp, goal: { id, kind, title }, status: "preparing" };
-  }
-
-  if (session.user.isAnonymous) {
-    const onboarding = await getOnboarding({ goalId });
-
-    // A course's default plan can be ready before its guest has finished answering.
-    if (
-      onboarding.status === "ready" &&
-      onboarding.onboarding.steps.some((step) => step !== "plan")
-    ) {
-      return { ...stamp, goal: { id, kind, title }, status: "preparing" };
-    }
-  }
-
   // Select the in-memory day once before projecting its surrounding read-only cards.
-  const day = await readStudyDay({
-    goal: owned.goal,
-    now: new Date(),
-    timeZone: input.timeZone,
-    userId,
-  });
+  const day = await readStudyDay({ goal: owned.goal, now: new Date(), timeZone, userId });
 
   if (!day) {
     return { ...stamp, goal: { id, kind, title }, status: "preparing" };
@@ -331,11 +265,11 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
         owned,
         selection: day.selection,
         session: day.session,
-        timeZone: input.timeZone,
+        timeZone,
       }),
       getCurrentSuggestedGoal(),
       getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
-        loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
+        loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
       loadGoalDateKind(owned.goal, day.blueprint),
       loadOpenExamChoice(owned.goal),
       loadNoticedPattern({ goal: owned.goal, userId }),
@@ -379,30 +313,47 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
 }
 
 /**
+ * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
+ * references until the learner opens it with a POST; prefetch never creates or settles a day.
+ */
+export async function getTodayView(input: TodayStudySessionInput): Promise<TodayViewResult> {
+  "use cache: private";
+
+  const admission = await admitToday(input.goalId);
+
+  return admission.status === "admitted"
+    ? readAdmittedToday({ admission, timeZone: input.timeZone })
+    : admission;
+}
+
+/**
  * Today as an app on the learner's device reads it (the API's `GET /v1/today`): with `timeZone`,
  * the goal Today shows follows the device first (`followGoalTimeZone`: a goal without a zone
  * stores it, one whose learner moved takes it while nothing was done yet in its day), then its day
- * is read. The goal is resolved once, so the goal that moved is the goal returned, and only an
- * active goal moves: a goal Today refuses keeps its zone.
+ * is read. Today admits the goal once, so the goal that moved is the goal returned, and only a goal
+ * it shows a day for moves: a goal it refuses (paused, a quick explanation's, one whose plan or
+ * guest onboarding isn't ready) keeps its zone.
  */
 export async function getTodayViewFollowingDevice(
   input: TodayStudySessionInput,
 ): Promise<TodayViewResult> {
-  const session = await getSession();
+  const admission = await admitToday(input.goalId);
 
-  if (!session) {
-    return { status: "unauthorized" };
+  if (admission.status !== "admitted") {
+    return admission;
   }
 
-  const goalId = input.goalId ?? (await findActiveGoalId(session.user.id)) ?? undefined;
+  const follow = input.timeZone
+    ? await followOwnedGoalTimeZone({ owned: admission.owned, timeZone: input.timeZone })
+    : null;
 
-  if (goalId && input.timeZone) {
-    const owned = await findOwnedGoal(goalId);
+  // A move changed the goal's zone and the learner's revision, so Today admits that goal again.
+  const admitted =
+    follow?.status === "ready" && follow.moved
+      ? await admitToday(admission.owned.goal.id)
+      : admission;
 
-    if (owned.status === "ready" && owned.goal.status === "active") {
-      await followOwnedGoalTimeZone({ owned, timeZone: input.timeZone });
-    }
-  }
-
-  return getTodayView({ goalId, timeZone: input.timeZone });
+  return admitted.status === "admitted"
+    ? readAdmittedToday({ admission: admitted, timeZone: input.timeZone })
+    : admitted;
 }
