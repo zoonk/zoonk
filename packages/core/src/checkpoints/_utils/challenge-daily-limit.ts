@@ -1,7 +1,7 @@
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getWeeklyMockMinutes } from "../../exams/mocks/mock-plan";
 import { readCourseStart } from "../../goals/course-start-details";
-import { readMockMinutes } from "../../plans/_utils/planner-exam-facts";
 import { canHoldPhaseChallenge } from "../../plans/planner/phase-challenge-days";
 import { addDays, toIsoDate } from "../../plans/planner/plan-calendar";
 import { toExamWindows } from "../../plans/planner/plan-phases";
@@ -33,7 +33,9 @@ export async function readDailyLimitReachedToday(userId: string): Promise<boolea
 
 /**
  * The input tomorrow's run lays its days out from (see `createDays`), from what the challenge
- * loaded with its plan, as a run reads it (see `computePlan`): nothing more is read.
+ * loaded with its plan, as a run reads it (see `computePlan`): nothing more is read. Its goal isn't
+ * an exam (see `getNextStudyDay`), so its mock minutes are the ones a run gives such a goal (see
+ * `loadExamFacts`).
  */
 function getTomorrowRunInput({
   challenge,
@@ -47,9 +49,10 @@ function getTomorrowRunInput({
   return {
     courseStart: readCourseStart(isJsonObject(goal.details) ? goal.details : {}) !== null,
     examWindows: toExamWindows(parsePlanPhases(plan.phases)),
+    fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
     goal: { dailyMinutes: goal.dailyMinutes, kind: goal.kind, targetDate: goal.targetDate },
     items,
-    ...readMockMinutes({ blueprint: goal.examBlueprint, choices: settings.examChoices }),
+    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
     settings,
     today: addDays(today, 1),
   };
