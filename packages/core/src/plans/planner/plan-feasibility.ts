@@ -10,8 +10,6 @@ import {
 import { deepensMostAsked, hasEveryTopic } from "./feasibility-topics";
 import { findFittingDate } from "./fitting-date";
 import { fromIsoDate } from "./plan-calendar";
-import { getExamWindows } from "./plan-phases";
-import { isExamSchedule } from "./plan-queue";
 import { MAX_DAILY_MINUTES } from "./plan-state";
 import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
@@ -44,7 +42,10 @@ export type PlanFeasibility = {
    * learner showed they know don't count, since practice keeps them, not lessons.
    */
   deepensMostAsked: boolean;
-  /** The last day for new lessons: the exam's final stretch, or the target date. */
+  /**
+   * The day what the plan covers is counted up to (see `getSelectedCoverage`): an exam's final
+   * stretch as the plan lays it out, or the target date. Null without a date.
+   */
   deadline: Date | null;
   /** When the plan ends at the learner's time and pace: the one end date a plan without a date shows. */
   endDate: Date | null;
@@ -95,19 +96,6 @@ const PERCENT = 100;
 /** "At 1 hour a day": the next step up when there's no deadline. */
 const ALTERNATIVE_MINUTES = 60;
 const ALTERNATIVE_STEP = 30;
-
-function getDeadline(input: BuildPlanInput): Date | null {
-  const { targetDate } = input.goal;
-
-  if (!targetDate || !isExamSchedule(input.goal)) {
-    return targetDate;
-  }
-
-  const planStart = input.settings.startDate ? fromIsoDate(input.settings.startDate) : input.today;
-  const windows = getExamWindows({ planStart, targetDate });
-
-  return windows.find((window) => window.kind === "finalStretch")?.startDate ?? targetDate;
-}
 
 /** The plan studying everything: an exam's going on after the exam, any other goal's without a date. */
 function studyingEverything(input: BuildPlanInput): BuildPlanInput {
@@ -228,11 +216,11 @@ export function getPlanFeasibility({
   /** Evaluate advice candidates through the exact accepted schedule from the original state. */
   studyScheduleAt?: StudyScheduleAt;
 }): PlanFeasibility {
-  const deadline = getDeadline(input);
   // What the learner showed they know, as the syllabus says it: answered right only in practice,
   // a class test's nucleus counted as in while the syllabus showed it out for time.
   const known = input.knownSkillIds ?? new Set<string>();
   const coverage = getSelectedCoverage({ built: planned, examSubjects, input });
+  const deadline = coverage ? fromIsoDate(coverage.deadline) : null;
   const coreFits = hasEveryTopic({ built: planned, known, skills: input.graph.skills });
   const fits = coverage?.fits ?? coreFits;
   const coveredShare = coverage?.coveredShare ?? 1;

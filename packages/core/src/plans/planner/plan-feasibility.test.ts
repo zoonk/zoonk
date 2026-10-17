@@ -188,10 +188,11 @@ describe(getPlanFeasibility, () => {
     expect(settled.coveredShare).toBeGreaterThan(fresh.coveredShare);
   });
 
-  it("counts lessons the plan set aside for time as left, and ones the Library held back as not written", () => {
+  it("counts lessons the plan set aside for time as left, and ones the Library held back as gone", () => {
+    // The Library outlined s1's 40 lessons: what it holds back from them leaves the skill.
     const graph = {
       phases: [{ milestone: null, name: "Everything" }],
-      skills: [skill("s1", { lessons: 40 }), skill("s2", { lessons: 40 })],
+      skills: [skill("s1", { lessons: 40, outlined: true }), skill("s2", { lessons: 40 })],
     };
 
     const lessons = lessonsFor("s1", 40);
@@ -207,19 +208,14 @@ describe(getPlanFeasibility, () => {
     // covers none of them (a change brings them back).
     const setAside = getPlanFeasibility({ input: planInput({ graph, items: aside, lessons }) });
 
-    // The Library couldn't write them: they left the plan's lessons, so the plan counts what they'd
-    // teach as lessons not written yet, as if the Library had never written them.
+    // The Library couldn't write them: they left the plan's lessons, and nothing will teach them.
     const heldBack = getPlanFeasibility({
       input: planInput({ graph, items: aside, lessons: lessons.slice(30) }),
     });
 
-    const neverWritten = getPlanFeasibility({
-      input: planInput({ graph, lessons: lessons.slice(30) }),
-    });
-
     expect(setAside.coveredShare).toBeLessThanOrEqual(fresh.coveredShare);
     expect(setAside.fits).toBe(false);
-    expect(heldBack.coveredShare).toBe(neverWritten.coveredShare);
+    expect(heldBack.coveredShare).toBeGreaterThan(fresh.coveredShare);
   });
 
   it("weighs another daily time as switching plans it, from today, this week included", () => {

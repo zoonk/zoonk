@@ -24,6 +24,27 @@ export function toDayMinutes({ lessonMinutes, share }: { lessonMinutes: number; 
   return lessonMinutes / (share || 1);
 }
 
+/**
+ * A unit's time when a run lays it whole on one day: its lesson minutes at that day's share (see
+ * `toDayMinutes`), as the one portion what the plan covers counts it by.
+ */
+export function getOneDayStudy({
+  date,
+  lessonMinutes,
+  share,
+}: {
+  date: Date;
+  lessonMinutes: number;
+  share: number;
+}): { studyMinutes: number; studyPortions: StudyPortion[] } {
+  const minutes = toDayMinutes({ lessonMinutes, share });
+
+  return {
+    studyMinutes: minutes,
+    studyPortions: [{ date: toIsoDate(date), lessonMinutes, minutes }],
+  };
+}
+
 /** A day's part of a learning interval: the lesson minutes it gives it, and the day minutes they take. */
 export type IntervalPortion = { index: number; lessonMinutes: number; studyMinutes: number };
 

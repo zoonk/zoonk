@@ -1,5 +1,5 @@
 import { type PlanView } from "../plan-view-contract";
-import { toIsoDate } from "../planner/plan-calendar";
+import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
@@ -34,7 +34,7 @@ export function readShownFeasibility({
   return {
     coreFits: coverage.coreFits,
     coveredShare: coverage.coveredShare ?? 1,
-    deadline: feasibility.deadline,
+    deadline: fromIsoDate(coverage.deadline),
     deepensMostAsked: feasibility.deepensMostAsked,
     fits: coverage.fits,
     measure: coverage.measure,

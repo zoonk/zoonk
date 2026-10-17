@@ -1,3 +1,4 @@
+import { getOneDayStudy } from "./interval-study-minutes";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getLessonCapacity } from "./schedule-units";
 
@@ -101,7 +102,11 @@ export function takeFocusedToday({
       ...unit,
       date: first.date,
       phase: first.shape.phase ?? unit.phase,
-      studyMinutes: unit.minutes / (first.shape.share || 1),
+      ...getOneDayStudy({
+        date: first.date,
+        lessonMinutes: unit.minutes,
+        share: first.shape.share,
+      }),
     })),
   };
 }

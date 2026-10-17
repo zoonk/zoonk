@@ -8,6 +8,7 @@ import {
   sumByDay,
   sumMinutes,
 } from "./held-time";
+import { getOneDayStudy } from "./interval-study-minutes";
 import { isStandInItem } from "./kept-items";
 import { getBaseDays, getStandInDays } from "./landed-days";
 import { type LandedUnits } from "./landed-lessons";
@@ -62,7 +63,10 @@ type Layout = {
   usedOn: (date: Date) => number;
 };
 
-/** A landed unit on its day, among the run's units at `anchor`. */
+/**
+ * A landed unit on its day, among the run's units at `anchor`, with the time it takes there (see
+ * `getOneDayStudy`): what the plan covers counts it by that time.
+ */
 function toPlaced({
   anchor,
   date,
@@ -87,7 +91,7 @@ function toPlaced({
       ...unit,
       date,
       phase: shape?.phase ?? part?.phase ?? unit.phase,
-      studyMinutes: unit.minutes / (shape?.share || 1),
+      ...getOneDayStudy({ date, lessonMinutes: unit.minutes, share: shape?.share ?? 1 }),
     },
   };
 }

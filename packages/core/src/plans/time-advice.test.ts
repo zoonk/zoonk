@@ -340,21 +340,21 @@ describe(getPlanTimeAdvice, () => {
 
   // The time step recommended the same time a day with two hours on weekends as without them.
   it("counts the weekend's own time: the number the plan shows once the week is set", async () => {
-    // Enough written lessons that the weekdays' time a day shows the weekend's own time.
+    // Enough written lessons, and an hour on weekends, that the weekdays' time a day shows it.
     const { goal, library } = await setup(18);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const [everyDay, withWeekend] = await Promise.all([
       readAdvice(goal.id, EVERY_DAY),
-      readAdvice(goal.id, EVERY_DAY, { weekendMinutes: 30 }),
+      readAdvice(goal.id, EVERY_DAY, { weekendMinutes: 60 }),
     ]);
 
     expect(withWeekend.recommendedMinutes).toBeLessThan(everyDay.recommendedMinutes ?? 0);
 
-    // The week onboarding saves: 10 minutes on weekdays, the weekend's own 30.
+    // The week onboarding saves: 10 minutes on weekdays, the weekend's own hour.
     await change(goal.id, [
       { kind: "setDailyMinutes", minutes: 10 },
-      { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+      { kind: "setWeekdayMinutes", minutes: 60, weekdays: [0, 6] },
     ]);
 
     await expect(readPlanTime(goal.id)).resolves.toMatchObject({
@@ -369,9 +369,9 @@ describe(getPlanTimeAdvice, () => {
     const plan = await getGoalPlan(goal.id);
 
     expect(plan.status === "ready" && plan.plan.schedule.weekdayMinutes).toStrictEqual([
-      30,
+      60,
       ...WEEKDAYS.map(() => withWeekend.recommendedMinutes),
-      30,
+      60,
     ]);
 
     await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });

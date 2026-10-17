@@ -313,6 +313,10 @@ describe("shown-day membership", () => {
     ).toStrictEqual(written);
 
     expect(opened.items.find((item) => item.lessonId === "a1")?.scheduledFor).toStrictEqual(TODAY);
-    expect(totalMinutes(onToday(opened))).toBeLessThanOrEqual(totalMinutes(onToday(first)));
+
+    // The day's lessons take no more time than it held: the stand-in they replaced holds none.
+    const held = new Set(opened.items.map((item) => item.key));
+    const lessonsToday = onToday(opened).filter((entry) => held.has(entry.key));
+    expect(totalMinutes(lessonsToday)).toBeLessThanOrEqual(totalMinutes(onToday(first)));
   });
 });
