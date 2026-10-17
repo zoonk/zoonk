@@ -126,6 +126,22 @@ describe("lessons the learner's own time fits", () => {
     await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
     await expect(countLessonsLeft(plan.id)).resolves.toBe(applied);
   });
+
+  // The first case's plan at the pace it was made at: a session's refresh no longer saves his
+  // faster pace. The offer and the Plan read after Apply measure the same plan, so both say his
+  // time covers everything.
+  it("says after Apply what the offer said at the plan's own pace", async () => {
+    const { goal } = await aheadPlanFixture({ dailyMinutes: 15 });
+    const before = await readPlanScreen();
+
+    expect(before?.fitOffer).toMatchObject({ fits: true, operations: [{ kind: "fitLessons" }] });
+
+    await expect(
+      changeGoalPlan({ goalId: goal.id, input: { operations: [{ kind: "fitLessons" }] } }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    await expect(readPlanScreen()).resolves.toMatchObject({ feasibility: { fits: true } });
+  });
 });
 
 /*
