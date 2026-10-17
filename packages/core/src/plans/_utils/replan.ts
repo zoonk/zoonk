@@ -45,8 +45,7 @@ import { loadPlanReadAdvice } from "./plan-read-advice";
 import { savePlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
-import { type TodayBuildScope, readBuiltPlan } from "./read-built-plan";
-import { type PlanAnalysisPurpose } from "./read-plan-analysis";
+import { readBuiltPlan } from "./read-built-plan";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
 import { writePlan } from "./write-plan";
@@ -116,10 +115,8 @@ type ComputePlanRequest = {
   releasedPhases?: ReadonlySet<number>;
   /** Read-only consumers can share the same pure build; mutation preconditions stay fresh. */
   reuseReadBuild?: boolean;
-  /** Read freshness metadata is part of the existing pure build cache's argument key. */
-  readBuildScope?: TodayBuildScope;
-  /** Only the Plan read requests advice; Progress and effects retain their local lazy analysis. */
-  readAnalysis?: PlanAnalysisPurpose;
+  /** Only the Plan read requests advice; Today, Progress and effects keep their local lazy analysis. */
+  readAnalysis?: boolean;
   /**
    * A new day's settling: work earlier days left that no longer fits is set aside, never deleted
    * (see `setAsideLeftWork`).
@@ -161,7 +158,6 @@ export async function computePlan({
   pace: paceSource = "saved",
   releasedPhases,
   reuseReadBuild = false,
-  readBuildScope: scope,
   setAsideLeftWork = false,
   skipUnchangedInputs,
   state = context.state,
@@ -284,10 +280,10 @@ export async function computePlan({
   const builtInput = { ...input, ...landing };
 
   const built = reuseReadBuild
-    ? await readBuiltPlan({ input: builtInput, ...(scope && { scope }), userId })
+    ? await readBuiltPlan({ input: builtInput, userId })
     : buildPlan(builtInput);
 
-  // Measuring what fits builds the plan again as its graph sizes it: Progress never asks.
+  // Measuring what other times would fit builds the plan again at each: Progress never asks.
   const { bases, feasibility } = await loadPlanReadAdvice({
     advise,
     examSubjects,

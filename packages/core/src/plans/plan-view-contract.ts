@@ -467,6 +467,3 @@ export type PlanView = {
    */
   writtenPractice: WrittenPractice | null;
 };
-
-/** The plan as the screens read it: the same view the API gives (see `getGoalPlanScreen`). */
-export type PlanScreenView = PlanView;

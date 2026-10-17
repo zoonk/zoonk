@@ -18,7 +18,7 @@ import {
 } from "@zoonk/core/learner/placement/contract";
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
-import { getGoalPlanScreen } from "@zoonk/core/plans/get";
+import { getGoalPlan } from "@zoonk/core/plans/get";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { createOnboardingGoals } from "@zoonk/core/view-models/onboarding/create-goals";
@@ -221,10 +221,7 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     return { status: "failed" };
   }
 
-  const [result, syllabus] = await Promise.all([
-    getGoalPlanScreen(goalId),
-    getSyllabusView({ goalId }),
-  ]);
+  const [result, syllabus] = await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })]);
 
   if (result.status !== "ready") {
     return { status: "failed" };

@@ -1,17 +1,14 @@
 import "server-only";
 import { chooseBases } from "../planner/base-choices";
 import { type BuildPlanInput } from "../planner/build-plan";
-import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { getPlanFeasibility } from "../planner/plan-feasibility";
+import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { readBuiltPlan } from "./read-built-plan";
 
-/** Which read asks: the screens or the API's full plan. Both read the same analysis now. */
-export type PlanAnalysisPurpose = "screen" | "full";
-
 /**
- * What the plan covers at the learner's own time, read from its own build and the one its graph
- * sizes, and whether their time covers everything once planned again (`timeCovers`, one more build
- * only when the sized plan is whole): explicit fields, so serializing it never runs the searches of
+ * What the plan covers at the learner's own time, read from its own build, and whether their time
+ * covers everything once planned again (`timeCovers`, one more build only when the plan falls
+ * short): explicit fields, so serializing it never runs the searches of
  * other daily times or dates, which the learner asks for (see `findPlanTimeToCover`). Keyed by its
  * complete input and owner, so a write that changes nothing it reads leaves it cached.
  */

@@ -14,7 +14,7 @@ import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { savedPlanSummarySchema } from "./_utils/plan-summary";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 
 const START = new Date("2020-09-28T12:00:00Z");
 const RETURN = new Date("2020-10-01T12:00:00Z");
@@ -63,7 +63,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     const before = await saved(fixture.plan.id);
 
     const read = await countDatabaseStatements(async () => ({
-      plan: await getGoalPlanScreen(fixture.goal.id),
+      plan: await getGoalPlan(fixture.goal.id),
       today: await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
     }));
 
@@ -98,7 +98,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
 
   it("persists the same visible selected dates only on Open, retaining every lesson ID", async () => {
     const fixture = await daysAwayFixture();
-    const preview = await getGoalPlanScreen(fixture.goal.id);
+    const preview = await getGoalPlan(fixture.goal.id);
 
     if (preview.status !== "ready") {
       throw new Error("Expected the actual Plan preview");

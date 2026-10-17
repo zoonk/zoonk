@@ -226,14 +226,11 @@ export function useTimeAdvice({
   });
 }
 
-/**
- * Where "Find the time that covers everything" stands, for the week it was asked for: its
- * `generation`, which each change to the week (`key`) moves on from for good.
- */
+/** Where "Find the time that covers everything" stands, for the week it was asked for (`key`). */
 type WeekFindState =
   | { status: "idle" }
-  | { generation: number; status: "building" | "failed" | "pending" }
-  | { generation: number; status: "answered"; time: PlanTimeToCover };
+  | { key: string; status: "building" | "failed" | "pending" }
+  | { key: string; status: "answered"; time: PlanTimeToCover };
 
 const IDLE: WeekFindState = { status: "idle" };
 
@@ -242,9 +239,9 @@ const IDLE: WeekFindState = { status: "idle" };
  * weekend's own time): it plans the goal at each daily time from the least, only when the learner
  * asks. The answer belongs to what it was asked for (`key`: the days and the weekend's time as the
  * learner set them, and the plan's build): changing the days or the weekend's time, or the plan
- * being built again, leaves it behind for good, even when the week goes back to what it was (and a
- * late answer for a week no longer shown shows nowhere), while picking another time a day keeps it.
- * `found` is the answer for `key`.
+ * being built again, leaves it behind (a late answer for a week no longer shown shows nowhere), and
+ * it shows again once the week is back to what it asked for, while picking another time a day keeps
+ * it. `found` is the answer for `key`.
  */
 export function useWeekTimeToCover({
   findTimeToCover,
@@ -255,24 +252,18 @@ export function useWeekTimeToCover({
   key: string;
   week: StudyWeek;
 }): { find: () => Promise<void>; found: PlanTimeToCover | null; status: FindStatus } {
-  const [seen, setSeen] = useState({ generation: 0, key });
-  const generation = seen.key === key ? seen.generation : seen.generation + 1;
   const [state, setState] = useState<WeekFindState>(IDLE);
-  const current = state.status !== "idle" && state.generation === generation ? state : IDLE;
-
-  if (seen.key !== key) {
-    setSeen({ generation, key });
-  }
+  const current = state.status !== "idle" && state.key === key ? state : IDLE;
 
   const find = async () => {
-    const request = { generation, status: "pending" } as const;
+    const request = { key, status: "pending" } as const;
     setState(request);
 
     const time = await requestWithin(() => findTimeToCover(week));
 
     const next: WeekFindState = time?.ready
-      ? { generation, status: "answered", time }
-      : { generation, status: time ? "building" : "failed" };
+      ? { key, status: "answered", time }
+      : { key, status: time ? "building" : "failed" };
 
     setState((now) => (now === request ? next : now));
   };

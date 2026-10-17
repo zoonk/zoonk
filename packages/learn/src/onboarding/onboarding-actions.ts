@@ -9,7 +9,7 @@ import {
   type PlanTimeToCover,
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
-import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import {
   type OnboardingAnswerInput,
   type OnboardingDraftEdit,
@@ -169,7 +169,7 @@ export type PlacementMockOutcome = {
 };
 
 /** A plan ready to reveal, with the goal's structure (its notice's subjects, or its modules). */
-export type RevealedPlan = { plan: PlanScreenView; syllabus: SyllabusView | null };
+export type RevealedPlan = { plan: PlanView; syllabus: SyllabusView | null };
 
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };
 

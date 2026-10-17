@@ -7,6 +7,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { goalWithBasesFixture } from "@zoonk/testing/fixtures/plan-bases";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
 
 async function openBasesPlan(browser: Browser) {
@@ -71,8 +72,16 @@ test("coverage Apply requires a fresh preview after Adjust plan changes the sche
     .getByRole("group", { exact: true, name: "Plan suggestion" })
     .filter({ visible: true });
 
-  await suggestion.getByRole("button", { exact: true, name: "Preview" }).click();
-  await expect(suggestion.getByRole("button", { exact: true, name: "Apply" })).toBeVisible();
+  const find = suggestion.getByRole("button", {
+    exact: true,
+    name: "Find the time that covers everything",
+  });
+
+  const apply = suggestion.getByRole("button", { exact: true, name: "Apply" });
+
+  // Find previews the change it finds at once.
+  await find.click();
+  await expect(apply).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
   await page.getByRole("button", { name: "Adjust plan" }).click();
   const editor = page.getByRole("dialog", { name: "Adjust your plan" });
 
@@ -89,9 +98,12 @@ test("coverage Apply requires a fresh preview after Adjust plan changes the sche
 
   await expect(editor.getByRole("status")).toBeVisible();
   await editor.getByRole("button", { name: "Close" }).click();
-  await expect(suggestion.getByRole("button", { exact: true, name: "Apply" })).toHaveCount(0);
-  await suggestion.getByRole("button", { exact: true, name: "Preview" }).click();
-  await suggestion.getByRole("button", { exact: true, name: "Apply" }).click();
+
+  // The preview was for the plan before the change: it can't be applied, and Find previews again.
+  await expect(apply).toHaveCount(0);
+  await find.click();
+  await expect(apply).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
+  await apply.click();
   await expect(suggestion.getByText("Plan updated", { exact: true })).toBeVisible();
   await page.context().close();
 });

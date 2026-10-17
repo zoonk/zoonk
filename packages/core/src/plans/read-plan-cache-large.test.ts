@@ -8,7 +8,7 @@ import { planCacheKey } from "./_test-utils/plan-cache-platform";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { readBuiltPlan } from "./_utils/read-built-plan";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
 
 // Only the framework leaf is observed; the large input comes from the real persisted plan.
@@ -87,7 +87,7 @@ describe("large real planning cache inputs", () => {
     expect(funding.every((entry) => entry.minutes === 165)).toBe(true);
     vi.mocked(readBuiltPlan).mockClear();
 
-    const first = await getGoalPlanScreen(goal.id);
+    const first = await getGoalPlan(goal.id);
     const args = vi.mocked(readBuiltPlan).mock.calls.at(-1)?.[0];
 
     if (!args) {
@@ -99,7 +99,7 @@ describe("large real planning cache inputs", () => {
     expect(args.input.graph.skills.some((skill) => skill.lessons === 2000)).toBe(true);
     expect(args.input.settings.mockFunding).toStrictEqual(funding);
     const key = await planCacheKey(["large-owned-plan", [args], ""]);
-    await expect(getGoalPlanScreen(goal.id)).resolves.toStrictEqual(first);
+    await expect(getGoalPlan(goal.id)).resolves.toStrictEqual(first);
     const again = vi.mocked(readBuiltPlan).mock.calls.at(-1)?.[0];
     await expect(planCacheKey(["large-owned-plan", [again], ""])).resolves.toBe(key);
 

@@ -8,17 +8,8 @@ import {
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
-import { type PlanChangeView, type PlanScreenView } from "@zoonk/core/plans/view-contract";
-import {
-  createContext,
-  use,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
@@ -84,7 +75,7 @@ type PlanScreenValue = {
    * their own words go; hosts without the buddy's conversation leave it out.
    */
   tutor?: PlanTutor;
-  plan: PlanScreenView;
+  plan: PlanView;
   /**
    * The focus test's page on the host, where answers choose where the plan's depth goes; hosts
    * without it leave it out, and only choosing by hand is offered.
@@ -101,18 +92,18 @@ type PlanScreenValue = {
 
 /**
  * The learner's "Find the time that covers everything" for the plan as it is now: asked, waiting,
- * answered, failed, or found the plan being built again. It belongs to the plan it was found for
- * (its `generation`, see `getTimeToCoverRevision`): any change to what it searched (the plan's
- * time, days, date, focus, bases or exam choices) leaves it behind for good, and Find shows again
- * while the plan still falls short.
+ * answered, failed, or found the plan being built again. It belongs to what it searched (its
+ * `revision`, see `getTimeToCoverRevision`: the plan's time, days, date, focus, bases or exam
+ * choices): while those differ, Find shows again where the plan still falls short, and the answer
+ * shows again once they're back to what it searched.
  */
 type TimeToCoverState =
   | { status: "idle" }
-  | { generation: number; status: "building" | "failed" | "pending" }
-  | { generation: number; status: "answered"; time: PlanTimeToCover };
+  | { revision: string; status: "building" | "failed" | "pending" }
+  | { revision: string; status: "answered"; time: PlanTimeToCover };
 
 /** The search still running for a revision: asking again waits for it instead of searching. */
-type TimeToCoverSearch = { generation: number; promise: Promise<PlanTimeToCover | null> };
+type TimeToCoverSearch = { promise: Promise<PlanTimeToCover | null>; revision: string };
 
 /**
  * How a find ended for the one who asked: the answer, the plan being built, a failure, or a plan
@@ -140,18 +131,15 @@ type FocusTarget = () => HTMLElement | null;
 
 /**
  * The plan's changes, whichever control saves them (every save goes through `actions`): whether one
- * is saving, and how many ever started. A change worked out before it saves (Move your date finds
- * its date first) can tell another one started meanwhile, and leave the plan to it.
+ * is saving, and how many ever started, the plan leaving the screen included. A change worked out
+ * before it saves (Move your date finds its date first) can tell another one started meanwhile, or
+ * the plan is gone, and leave the plan to it. Read them in handlers, never while rendering.
  */
 type PlanChanges = {
-  /** Whether a change is saving right now, for handlers: current before the screen shows it. */
+  /** Whether a change is saving right now: current before the screen shows it. */
   isSaving: () => boolean;
-  /** Whether a change is saving, as the screen shows it. */
-  saving: boolean;
-  /** How many changes started so far: read it in handlers, never while rendering. */
+  /** How many changes started so far. */
   started: () => number;
-  /** Hears each change start and answer, for what waits on them outside a render. */
-  subscribe: (listener: () => void) => () => void;
 };
 
 type PlanScreenContextValue = PlanScreenValue & {
@@ -165,7 +153,7 @@ type PlanScreenContextValue = PlanScreenValue & {
   keepFocus: (target?: FocusTarget) => void;
 };
 
-type Saving = { control: Element | null; plan: PlanScreenView; target?: FocusTarget };
+type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
 
 const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
@@ -182,7 +170,7 @@ function findFallback(target?: FocusTarget): HTMLElement | null {
   return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
 
-function useKeepFocus(plan: PlanScreenView) {
+function useKeepFocus(plan: PlanView) {
   const saving = useRef<Saving | null>(null);
 
   // The saved plan arrives as a new view model, in the same render that removes the control.
@@ -211,24 +199,16 @@ function useKeepFocus(plan: PlanScreenView) {
 const IDLE: TimeToCoverState = { status: "idle" };
 
 /** One find answer for the plan as it is now (see `TimeToCoverState`). */
-function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
+function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
   const revision = useMemo(() => getTimeToCoverRevision(plan), [plan]);
-  // Each change to what Find searched starts a generation: an answer never comes back with an
-  // Undo that restores the plan it was found for, and a search for one never fills another.
-  const [seen, setSeen] = useState({ generation: 0, revision });
-  const generation = seen.revision === revision ? seen.generation : seen.generation + 1;
   const [stored, setStored] = useState<TimeToCoverState>(IDLE);
-  const latest = useRef(generation);
+  const latest = useRef(revision);
   const search = useRef<TimeToCoverSearch | null>(null);
-  const state = stored.status !== "idle" && stored.generation === generation ? stored : IDLE;
-
-  if (seen.revision !== revision) {
-    setSeen({ generation, revision });
-  }
+  const state = stored.status !== "idle" && stored.revision === revision ? stored : IDLE;
 
   useEffect(() => {
-    latest.current = generation;
-  }, [generation]);
+    latest.current = revision;
+  }, [revision]);
 
   const settle = (promise: Promise<PlanTimeToCover | null>) =>
     void promise.then((time) => {
@@ -237,11 +217,11 @@ function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
       }
 
       const next: TimeToCoverState = time?.ready
-        ? { generation, status: "answered", time }
-        : { generation, status: time ? "building" : "failed" };
+        ? { revision, status: "answered", time }
+        : { revision, status: time ? "building" : "failed" };
 
       setStored((current) =>
-        current.status === "pending" && current.generation === generation ? next : current,
+        current.status === "pending" && current.revision === revision ? next : current,
       );
     });
 
@@ -250,18 +230,18 @@ function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
       return { status: "answered", time: state.time };
     }
 
-    const running = search.current?.generation === generation ? search.current.promise : null;
+    const running = search.current?.revision === revision ? search.current.promise : null;
     const promise = running ?? request();
 
     if (!running) {
-      search.current = { generation, promise };
-      setStored({ generation, status: "pending" });
+      search.current = { promise, revision };
+      setStored({ revision, status: "pending" });
       settle(promise);
     }
 
     const time = await promise;
 
-    if (latest.current !== generation) {
+    if (latest.current !== revision) {
       return { status: "stale" };
     }
 
@@ -271,68 +251,34 @@ function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
   return { find, state };
 }
 
-/** The changes in flight, kept outside React's state (see `useCountedChanges`). */
-type ChangeCounter = Pick<PlanChanges, "isSaving" | "started" | "subscribe"> & {
-  /** Call as a change starts; call what it returns once it answered, saved or not. */
-  begin: () => () => void;
-};
-
-function createChangeCounter(): ChangeCounter {
-  let started = 0;
-  let saving = 0;
-  const listeners = new Set<() => void>();
-
-  const notify = () => {
-    for (const listener of listeners) {
-      listener();
-    }
-  };
-
-  return {
-    begin: () => {
-      started += 1;
-      saving += 1;
-      notify();
-      let ended = false;
-
-      return () => {
-        if (!ended) {
-          ended = true;
-          saving -= 1;
-          notify();
-        }
-      };
-    },
-    isSaving: () => saving > 0,
-    started: () => started,
-    subscribe: (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-  };
-}
-
-/**
- * The tab's plan changes: a page shows one plan, and a change saving anywhere on it is the one the
- * others wait for. The count only grows, and every change that starts ends, saved or not.
- */
-const changeCounter = createChangeCounter();
-
-function counted<Result>(save: () => Promise<Result>): Promise<Result> {
-  const end = changeCounter.begin();
-  return save().finally(end);
-}
-
 /**
  * Counts every action that changes the plan as it starts and answers (see `PlanChanges`): its own
- * changes, an Undo or an Apply, an exam's option, the tools. A store outside React's state, since a
- * save starts inside its transition, where a state update would only show once the save is done.
+ * changes, an Undo or an Apply, an exam's option, the tools. A ref, not state: a save starts inside
+ * its transition, where a state update would only show once the save is done. The plan leaving the
+ * screen counts as a change too, so a Move still finding its date saves nothing.
  */
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
-  const saving = useSyncExternalStore(changeCounter.subscribe, changeCounter.isSaving, () => false);
+  const counts = useRef({ saving: 0, started: 0 });
 
-  const countedActions = useMemo(
-    (): PlanActions => ({
+  useEffect(() => {
+    const current = counts.current;
+
+    return () => {
+      current.started += 1;
+    };
+  }, []);
+
+  const countedActions = useMemo((): PlanActions => {
+    const counted = <Result,>(save: () => Promise<Result>): Promise<Result> => {
+      counts.current.started += 1;
+      counts.current.saving += 1;
+
+      return save().finally(() => {
+        counts.current.saving -= 1;
+      });
+    };
+
+    return {
       ...actions,
       change: (operations) => counted(() => actions.change(operations)),
       chooseExamOption: (input) => counted(() => actions.chooseExamOption(input)),
@@ -341,22 +287,15 @@ function useCountedChanges(actions: PlanActions): { actions: PlanActions; change
         input.status === "applied" || input.status === "undone"
           ? counted(() => actions.decide(input))
           : actions.decide(input),
-    }),
-    [actions],
+    };
+  }, [actions]);
+
+  const changes = useMemo(
+    () => ({ isSaving: () => counts.current.saving > 0, started: () => counts.current.started }),
+    [],
   );
 
-  return {
-    actions: countedActions,
-    changes: useMemo(
-      () => ({
-        isSaving: changeCounter.isSaving,
-        saving,
-        started: changeCounter.started,
-        subscribe: changeCounter.subscribe,
-      }),
-      [saving],
-    ),
-  };
+  return { actions: countedActions, changes };
 }
 
 export function PlanScreenProvider({

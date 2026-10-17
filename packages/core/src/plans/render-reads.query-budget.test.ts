@@ -2,21 +2,21 @@ import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statem
 import { describe, expect, it } from "vitest";
 import { findCourseGoalStart } from "../goals/start-course-goal";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
-import { getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 
 describe("supporting plan render read budgets", () => {
-  it.each(["screen", "link", "course start"] as const)("reads %s", async (name) => {
+  it.each(["plan", "link", "course start"] as const)("reads %s", async (name) => {
     const { course, goal, plan } = await signedInCourseGoal();
 
     const readers = {
       "course start": () => findCourseGoalStart(course.id),
       link: () => getPlanLink(plan.id),
-      screen: () => getGoalPlanScreen(goal.id),
+      plan: () => getGoalPlan(goal.id),
     };
 
     const counts = await countDatabaseStatements<unknown>(readers[name]);
-    const budgets = { "course start": 10, link: 5, screen: 14 };
+    const budgets = { "course start": 10, link: 5, plan: 14 };
     assertReadBudget(counts, budgets[name]);
 
     expect(counts.result).toMatchObject(

@@ -4,7 +4,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
 import { getPlanBasesAdvice } from "./get-bases-advice";
-import { getGoalPlan, getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { type buildPlan } from "./planner/build-plan";
 
@@ -53,15 +53,11 @@ describe("plans laid out per read", () => {
 
     mockSession(user.userId);
 
-    // Her plan and what her own time covers: the plan she studies, the one its graph sizes, and,
-    // when that one is whole, the plan her own time plans once switched to (`timeCovers`).
-    const screen = await countBuilds(() => getGoalPlanScreen(user.goalId));
-    expect(screen.result.status).toBe("ready");
-    expect.soft(screen.builds, "Plan screen").toBeLessThanOrEqual(3);
-
-    const full = await countBuilds(() => getGoalPlan(user.goalId));
-    expect(full.result.status).toBe("ready");
-    expect.soft(full.builds, "the API's full plan").toBeLessThanOrEqual(3);
+    // Her plan and what her own time covers: the plan she studies and, when it falls short, the
+    // plan her own time plans once switched to (`timeCovers`).
+    const plan = await countBuilds(() => getGoalPlan(user.goalId));
+    expect(plan.result.status).toBe("ready");
+    expect.soft(plan.builds, "Plan").toBeLessThanOrEqual(3);
 
     // The time step: her plan at her time, then what another time she looks at covers.
     const own = await countBuilds(() => getPlanTimeAdvice({ goalId: user.goalId, input: {} }));

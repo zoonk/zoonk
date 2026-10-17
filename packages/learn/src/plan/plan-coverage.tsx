@@ -3,7 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useState } from "react";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { getEditorSectionId } from "./plan-editor-sections";
@@ -145,25 +145,6 @@ export function useMoveDate({
     setOutcome(next);
   };
 
-  // Another change starting while it searches is the learner's newer word: Move gives way at once,
-  // and the date it finds, for the plan before, moves nothing (see `move`). That change starts
-  // inside its own transition, so giving way waits a microtask to show now, not once it's saved.
-  const giveWay = useEffectEvent(() => {
-    if (finding) {
-      stop(null);
-    }
-  });
-
-  useEffect(() => {
-    const onChange = () => {
-      if (changes.isSaving()) {
-        queueMicrotask(() => giveWay());
-      }
-    };
-
-    return changes.subscribe(onChange);
-  }, [changes]);
-
   const move = async () => {
     // Another change saving (a date typed in, an Undo, a bases choice) is the learner's newer word.
     if (finding || isPending || changes.isSaving()) {
@@ -181,7 +162,8 @@ export function useMoveDate({
       return;
     }
 
-    // A change that started while it searched comes after: the date was for the plan before it.
+    // A change that started while it searched (or the plan leaving the screen) comes after: the
+    // date was for the plan before it, so it moves nothing.
     if (changes.started() !== started) {
       stop(null);
       return;
@@ -209,13 +191,7 @@ export function useMoveDate({
     keepFocus(() => findPickedChip(document.querySelector(`#${getEditorSectionId("time")}`)));
   };
 
-  return {
-    failed: failed || outcome === "failed",
-    move,
-    outcome,
-    pending: finding || isPending,
-    waits: changes.saving,
-  };
+  return { failed: failed || outcome === "failed", move, outcome, pending: finding || isPending };
 }
 
 /**
@@ -287,7 +263,7 @@ export function MoveDateSwitch({
       <Button
         aria-busy={move.pending || undefined}
         className="self-start"
-        disabled={move.pending || move.waits}
+        disabled={move.pending}
         focusableWhenDisabled
         id={id}
         onClick={() => void move.move()}

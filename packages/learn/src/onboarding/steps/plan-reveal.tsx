@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
@@ -123,7 +123,7 @@ export function PlanReveal({
   signUpHref: string;
   todayHref: string;
 }) {
-  const [plan, setPlan] = useState<PlanScreenView | null>(initialPlan?.plan ?? null);
+  const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
   const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
   // Without the page's read (the steps changed the plan since), nothing shows until a fresh one.
   const [read, setRead] = useState(initialPlan !== null);

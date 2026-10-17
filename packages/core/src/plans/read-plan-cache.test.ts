@@ -18,7 +18,7 @@ import { readBuiltPlan } from "./_utils/read-built-plan";
 import { readPlanAnalysis } from "./_utils/read-plan-analysis";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { getGoalResumePreview } from "./get-goal-resume-preview";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { previewPlanChange } from "./preview-plan-change";
@@ -142,7 +142,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
   it("keeps the full installed-RSC key stable across fresh loads and an unrelated real skill write", async () => {
     const { goal, library, plan } = await setup();
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const first = lastRead(goal.id);
     const saved = await savedPlan(plan.id);
 
@@ -168,7 +168,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
     const key = await encodedKey(first);
 
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     await expect(encodedKey(lastRead(goal.id))).resolves.toBe(key);
 
     await prisma.skill.update({
@@ -176,13 +176,13 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
       where: { id: library.skills[0]?.id },
     });
 
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     await expect(encodedKey(lastRead(goal.id))).resolves.toBe(key);
   });
 
   it("reads a changed real question bank without relying on the unchanged saved plan version", async () => {
     const { goal, library, plan } = await setup();
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const before = lastRead(goal.id);
     const firstKey = await encodedKey(before);
     const saved = await savedPlan(plan.id);
@@ -191,7 +191,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     expect(before.input.bossFacts?.bank.textCounts.get(skillId)).toBe(6);
 
     await itemFixture({ content: choiceItemContent(), skillId });
-    const result = await getGoalPlanScreen(goal.id);
+    const result = await getGoalPlan(goal.id);
     expect(result.status).toBe("ready");
     const after = lastRead(goal.id);
     expect(after.input.bossFacts?.bank.textCounts.get(skillId)).toBe(7);
@@ -209,7 +209,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
   it("namespaces actual owned reads by actor and refuses another learner before the leaf", async () => {
     const { goal, user } = await setup();
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const owned = lastRead(goal.id);
     expect(owned.userId).toBe(user.id);
 
@@ -221,7 +221,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
     vi.mocked(readBuiltPlan).mockClear();
     mockSession(other.id);
-    await expect(getGoalPlanScreen(goal.id)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(getGoalPlan(goal.id)).resolves.toStrictEqual({ status: "notFound" });
     expect(readBuiltPlan).not.toHaveBeenCalled();
   });
 
@@ -236,7 +236,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     const ordered = library.skills.toSorted((a, b) => a.id.localeCompare(b.id));
     await learnerSkillFixture({ skillId: ordered[1]?.id ?? "", userId: user.id });
     await learnerSkillFixture({ skillId: ordered[0]?.id ?? "", userId: user.id });
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
 
     expect([...lastRead(goal.id).input.readiness.keys()]).toStrictEqual(
       ordered.map((skill) => skill.id),
@@ -245,7 +245,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
   it("keys actual completion by its finished local day without requiring a plan version increment", async () => {
     const { goal, library, plan, user } = await setup();
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const before = lastRead(goal.id);
     const saved = await savedPlan(plan.id);
     const version = saved.version;
@@ -257,7 +257,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
       completeLessonPlanItems(tx, { lessonId, now: NOW, userId: user.id }),
     );
 
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const after = lastRead(goal.id);
 
     expect(after.input.items.find((entry) => entry.id === item?.id)).toMatchObject({
@@ -275,7 +275,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
 
   it("requests explicit screen analysis while Progress never warms advice", async () => {
     const { goal } = await setup();
-    const screen = await getGoalPlanScreen(goal.id);
+    const screen = await getGoalPlan(goal.id);
     expect(screen.status).toBe("ready");
     const args = vi.mocked(readPlanAnalysis).mock.calls.at(-1)?.[0];
     expect(args).toMatchObject({ input: { goalId: goal.id } });
@@ -305,7 +305,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
     const before = await savedPlan(plan.id);
     vi.mocked(readBuiltPlan).mockClear();
 
-    const result = await getGoalPlanScreen(goal.id);
+    const result = await getGoalPlan(goal.id);
 
     expect(result).toMatchObject({
       plan: {
@@ -361,7 +361,7 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
             args.input.goal.targetDate === null,
         ).length;
 
-    await expect(getGoalPlanScreen(goal.id)).resolves.toMatchObject({
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: { status: { kind: "pastDate" } },
       status: "ready",
     });
@@ -482,13 +482,13 @@ describe("fresh owned inputs at the shared planning cache boundary", () => {
       status: "created",
     });
 
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const before = lastRead(goal.id);
     expect(before.input.bossFacts?.bank.recordingSets).toHaveLength(0);
     const saved = await savedPlan(plan.id);
     const media = await mediaAssetFixture();
     await prisma.itemSet.update({ data: { mediaAssetId: media.id }, where: { id: recording.id } });
-    await getGoalPlanScreen(goal.id);
+    await getGoalPlan(goal.id);
     const after = lastRead(goal.id);
     expect(after.input.bossFacts?.bank.recordingSets).toHaveLength(1);
     await expect(encodedKey(after)).resolves.not.toBe(await encodedKey(before));

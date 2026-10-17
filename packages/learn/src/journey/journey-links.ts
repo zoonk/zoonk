@@ -1,4 +1,4 @@
-import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 
 /** Where the Plan's path leads: each chapter's page, a phase's challenge and the exam's page. */
 export type JourneyPathLinks = {
@@ -9,9 +9,7 @@ export type JourneyPathLinks = {
 };
 
 /** The Library course a plan picks some chapters of, when it has a public page to see all of it. */
-export function getPartialCourse(
-  plan: PlanScreenView,
-): { brandSlug: string; courseSlug: string } | null {
+export function getPartialCourse(plan: PlanView): { brandSlug: string; courseSlug: string } | null {
   const { course } = plan;
 
   if (!course?.brandSlug || course.planChapterCount === 0) {

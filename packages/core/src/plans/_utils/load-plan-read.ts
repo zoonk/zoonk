@@ -10,11 +10,9 @@ import { projectPlanForRead } from "./plan-read-projection";
 export async function loadPlanReadProjection({
   context,
   now,
-  screen,
 }: {
   context: PlanContext;
   now: Date;
-  screen: boolean;
 }) {
   if (context.phases.length === 0) {
     return { catchUp: null, computed: null, context };
@@ -23,7 +21,8 @@ export async function loadPlanReadProjection({
   const selection = await selectDayPlanFromContext({
     context,
     now,
-    readAnalysis: screen ? "screen" : "full",
+    readAnalysis: true,
+    reuseReadBuild: true,
   });
 
   return {

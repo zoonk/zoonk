@@ -9,7 +9,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { redirect } from "@/i18n/navigation";
-import { getGoalPlanScreen } from "@zoonk/core/plans/get";
+import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
@@ -96,7 +96,7 @@ async function StepsContent({ params }: Props) {
   // The reveal is only used on the plan screen. A planner failure must not block earlier answers.
   const [plan, syllabus] =
     (result.onboarding.steps[0] ?? "plan") === "plan"
-      ? await Promise.all([getGoalPlanScreen(goalId), getSyllabusView({ goalId })])
+      ? await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })])
       : [null, null];
 
   return (

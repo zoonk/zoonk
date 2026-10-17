@@ -2,9 +2,9 @@ import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallba
 import { getSubjectShare } from "../../exams/map/exam-map";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { followsNotice, matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
-import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
+import { type ExamSubjectShare } from "../planner/selected-coverage";
 
 /** At least half the subjects a plan teaches need a stated share before shares split its time. */
 const MIN_STATED_SHARE = 1 / 2;

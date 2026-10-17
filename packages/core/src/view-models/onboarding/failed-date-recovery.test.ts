@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession } from "../../_test-utils/mock-session";
-import { getGoalPlanScreen } from "../../plans/get-goal-plan";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { openStudyDay } from "../../sessions/open-study-day";
@@ -12,9 +12,7 @@ import { getOnboarding } from "./get-onboarding";
 /** The transient planner bug was repaired by its owner. Inject only its read failure; goal,
  * plan, answers, resume and session persistence use the real database. */
 vi.mock("../../plans/get-goal-plan", () => ({
-  getGoalPlanScreen: vi
-    .fn()
-    .mockRejectedValue(new Error("The plan's bosses didn't settle in 5 passes.")),
+  getGoalPlan: vi.fn().mockRejectedValue(new Error("The plan's bosses didn't settle in 5 passes.")),
 }));
 
 describe("recovering a guest's failed date screen", () => {
@@ -37,7 +35,7 @@ describe("recovering a guest's failed date screen", () => {
     mockGuestSession(user.id);
 
     // The old route read the planner alongside the unanswered date and showed its error boundary.
-    await expect(getGoalPlanScreen(goal.id)).rejects.toThrow(
+    await expect(getGoalPlan(goal.id)).rejects.toThrow(
       "The plan's bosses didn't settle in 5 passes.",
     );
 

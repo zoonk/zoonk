@@ -16,6 +16,7 @@ vi.mock("./_utils/read-built-plan", async (importOriginal) => {
 
 const START = new Date("2020-09-28T12:00:00Z");
 const RETURN = new Date("2020-10-01T12:00:00Z");
+const DAY_MS = 86_400_000;
 
 async function setup() {
   const [user, library] = await Promise.all([
@@ -49,7 +50,7 @@ function readArgs(goalId: string) {
   return args;
 }
 
-describe("Today shares only its pure build with complete fresh keys", () => {
+describe("Today shares only its pure build, keyed by its complete fresh input", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(START);
@@ -58,7 +59,7 @@ describe("Today shares only its pure build with complete fresh keys", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("keys the actual unopened Today build by its fresh plan and entitlement scope", async () => {
+  it("reads the unopened day from the build of its own input, free or Plus", async () => {
     const { goal, plan, user } = await setup();
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
@@ -73,24 +74,34 @@ describe("Today shares only its pure build with complete fresh keys", () => {
       today: { session: { status: "unstarted" } },
     });
 
-    expect(readArgs(goal.id)).toMatchObject({
-      scope: {
-        entitlement: "free",
-        inputVersion: before.inputVersion,
-        planId: plan.id,
-        planVersion: before.version,
-        timeZone: "UTC",
-      },
+    const first = readArgs(goal.id);
+    expect(first).toStrictEqual({
+      input: expect.objectContaining({ goalId: goal.id }),
       userId: user.id,
     });
 
+    // Plus changes what the learner may open, never the plan Today builds: the same input.
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
 
-    await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      status: "ready",
+      today: { session: { status: "unstarted" } },
+    });
 
-    expect(readArgs(goal.id)).toMatchObject({ scope: { entitlement: "plus" } });
+    expect(readArgs(goal.id)).toStrictEqual(first);
+
+    // The next day is another input, so it reads another build.
+    vi.setSystemTime(new Date(RETURN.getTime() + DAY_MS));
+    vi.mocked(readBuiltPlan).mockClear();
+
+    const nextDay = await countDatabaseStatements(() =>
+      getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+    );
+
+    expect(nextDay.writes).toBe(0);
+    expect(readArgs(goal.id).input.today).not.toStrictEqual(first.input.today);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
       before,

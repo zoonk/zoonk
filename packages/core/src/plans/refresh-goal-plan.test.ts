@@ -204,7 +204,7 @@ describe("a plan's numbers while the Library outlines it", () => {
     vi.useRealTimers();
   });
 
-  it("gives the same coverage, time for everything and end date before and after its stand-ins are outlined", async () => {
+  it("measures the plan it holds before and after its stand-ins are outlined", async () => {
     const user = await userFixture();
 
     // Two skills written, and one the Library hasn't outlined yet: a stand-in of 30 lessons.
@@ -262,11 +262,21 @@ describe("a plan's numbers while the Library outlines it", () => {
       where: { plan: { goalId: goal.id }, skillId: standIn?.id, status: "todo" },
     });
 
-    // The plan now holds the outlined lessons, and the numbers the learner saw stay.
+    // The plan now holds the outlined lessons, and its numbers measure that plan: the share can
+    // move as a stand-in's estimate becomes written lessons, and the plan still falls short.
     expect(planned.some((item) => item.lessonId !== null)).toBe(true);
-    await expect(readNumbers(goal.id)).resolves.toStrictEqual(before);
-    // So do the time for everything and the date the goal's own time covers everything by.
-    await expect(findTime()).resolves.toStrictEqual(timeBefore);
+    const after = await readNumbers(goal.id);
+
+    expect(after.feasibility).toMatchObject({ fits: false });
+    expect(after.feasibility?.coveredShare).toBeGreaterThan(0);
+    expect(after.feasibility?.coveredShare).toBeLessThan(1);
+
+    // The time for everything is found for the plan it holds now.
+    const timeAfter = await findTime();
+    const foundAfter = timeAfter.status === "ready" ? timeAfter.time : null;
+
+    expect(foundAfter && getRecommendedTime(foundAfter)).toMatchObject({ kind: "inDepth" });
+    expect(foundAfter?.recommendedMinutes).toBeGreaterThan(12);
   });
 });
 

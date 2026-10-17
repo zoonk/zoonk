@@ -186,20 +186,20 @@ test.describe("Find the time that covers everything", () => {
         editor.getByRole("status").filter({ hasText: "Daily time changed to 1 hr 35 min." }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
-      // Undo puts her time back, and the answer, found for the plan before, doesn't come back.
+      // Undo puts her time back to the plan Find answered for, so its answer shows again, not
+      // picked, with no second search.
       await editor.getByRole("button", { name: "Undo" }).click();
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(15);
 
-      // Find asks for the plan on screen: once the plan Undo gave back is there, not before.
       await expect(minutes.getByRole("radio", { name: /^15 min/u })).toBeChecked({
         timeout: REPLAN_TIMEOUT_MS,
       });
 
-      await expect(editor.getByRole("button", { name: FIND })).toBeVisible();
-
-      // A new answer goes with any change to the plan: a study day off clears it.
-      await editor.getByRole("button", { name: FIND }).click();
       await expect(chip).toBeVisible();
+      await expect(chip).not.toBeChecked();
+      expect(asked).toStrictEqual([{}]);
+
+      // Any other change to the plan leaves the answer behind: a study day off clears it.
       await editor.getByRole("button", { exact: true, name: "Saturday" }).click();
       await expect(chip).toHaveCount(0, { timeout: REPLAN_TIMEOUT_MS });
     });
@@ -253,7 +253,7 @@ test.describe("Find the time that covers everything", () => {
     });
   });
 
-  test("a date still saving keeps Move your date from starting on the plan before it", async ({
+  test("a date still saving keeps Move your date from moving the plan before it", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
@@ -265,10 +265,10 @@ test.describe("Find the time that covers everything", () => {
       await editor.getByRole("button", { name: "Save" }).click();
       await expect.poll(save.isHeld).toBe(true);
 
-      // Until her date is saved, the time says it's being worked out again, and Move waits: a date
-      // it found now would be for the plan before.
-      await expect(editor.getByText("Working out what your time covers…")).toBeVisible();
-      await expect(move).toBeDisabled();
+      // A tap on Move before her date is saved finds nothing: a date it found now would be for the
+      // plan before.
+      await move.click();
+      await expect(move).not.toHaveAttribute("aria-busy", "true");
       expect(asked).toStrictEqual([]);
 
       save.release();

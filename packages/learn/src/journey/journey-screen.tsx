@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type WeeklyStudyTime } from "@zoonk/core/progress/weekly-study-time-contract";
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
@@ -86,7 +86,7 @@ type JourneyAlphabet = { link: AlphabetLink; onSkip: () => Promise<boolean> };
  * The current phase still stands in for lessons on the way. Topics after the weeks the plan writes
  * ahead (`far`) aren't being written: nothing would change by reading them again.
  */
-function isPhaseBeingWritten(plan: PlanScreenView): boolean {
+function isPhaseBeingWritten(plan: PlanView): boolean {
   return plan.phases.some(
     (phase) =>
       phase.state === "current" &&
@@ -351,7 +351,7 @@ export function JourneyScreen({
   openFocus?: boolean;
   /** Opens "Study everything" on arrival, as Today's offer asks. */
   openFullCourse?: boolean;
-  plan: PlanScreenView;
+  plan: PlanView;
   refresh: () => unknown;
   shareHref: string;
   /** Null for a goal without a number to stand on yet. */

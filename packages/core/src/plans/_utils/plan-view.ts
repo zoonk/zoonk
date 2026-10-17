@@ -13,7 +13,7 @@ import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getNoticeWaitState } from "../notice-wait";
-import { type PlanScreenView, type PlanView } from "../plan-view-contract";
+import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { addDays, getPlanCalendar, getStartOfWeek, toIsoDate } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanSettings } from "../planner/plan-state";
@@ -178,20 +178,17 @@ async function loadPlanFitOffer({
   return loadFitOffer({ computed, context });
 }
 
-export function buildPlanView(input: PlanViewInput & { screen: true }): Promise<PlanScreenView>;
-export function buildPlanView(input: PlanViewInput & { screen?: false }): Promise<PlanView>;
 export async function buildPlanView({
   context: savedContext,
   now,
-  screen = false,
-}: PlanViewInput & { screen?: boolean }): Promise<PlanScreenView> {
+}: PlanViewInput): Promise<PlanView> {
   const ready = savedContext.phases.length > 0;
 
   const {
     catchUp: selectedCatchUp,
     computed,
     context,
-  } = await loadPlanReadProjection({ context: savedContext, now, screen });
+  } = await loadPlanReadProjection({ context: savedContext, now });
 
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });

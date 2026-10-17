@@ -1,11 +1,11 @@
 import { once } from "@zoonk/utils/once";
 import { type BuildPlanInput, type BuiltPlan } from "../planner/build-plan";
 import { type StudyScheduleAt } from "../planner/daily-time-plans";
-import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { type PlanBases } from "../planner/plan-bases";
 import { daysBetween } from "../planner/plan-calendar";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
-import { type PlanAnalysisPurpose, readPlanAnalysis } from "./read-plan-analysis";
+import { type ExamSubjectShare } from "../planner/selected-coverage";
+import { readPlanAnalysis } from "./read-plan-analysis";
 
 /**
  * Read advice stays synchronous to consumers; callbacks and mutation analysis stay local. A read
@@ -29,7 +29,7 @@ export async function loadPlanReadAdvice({
   input: BuildPlanInput;
   landing: Pick<BuildPlanInput, "heldSkillsLand" | "landedOnly">;
   planned: BuiltPlan;
-  readAnalysis?: PlanAnalysisPurpose;
+  readAnalysis?: boolean;
   reuseReadBuild: boolean;
   studyScheduleAt?: StudyScheduleAt;
   userId: string;

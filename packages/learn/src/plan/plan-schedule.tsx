@@ -53,8 +53,8 @@ function getMinuteChoices(current: number, found?: number | null): number[] {
  * goal at each daily time when the learner asks (never for the page), and the other ways: moving
  * a goal's date, choosing where to focus. Nothing for a plan without a date, which covers
  * everything at any pace. Studying everything is chosen with the date, above it (see `PlanDate`).
- * While a change saves, the old plan's coverage would describe a time no longer picked, so its
- * place says the new one is being worked out, keeping its height.
+ * While the schedule's change saves, the old plan's coverage would describe a time no longer
+ * picked, so its place says the new one is being worked out, keeping its height.
  */
 function DailyCoverage({
   canFind,
@@ -69,9 +69,8 @@ function DailyCoverage({
 }) {
   const t = useExtracted();
   const formatGoalDate = useFormatGoalDate();
-  const { changes, plan } = usePlanScreen();
-  // Any change saving (a date, an Undo, a bases choice) changes what the time covers too.
-  const pending = planChange.isPending || changes.saving;
+  const { plan } = usePlanScreen();
+  const pending = planChange.isPending;
   const coverage = usePlanCoverage();
   const canChooseFocus = useCanChooseFocus();
   const canMoveDate = useCanMoveDate();

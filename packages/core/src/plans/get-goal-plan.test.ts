@@ -6,7 +6,7 @@ import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
-import { getGoalPlan, getGoalPlanScreen } from "./get-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -29,7 +29,7 @@ async function setup() {
   return { goal, user };
 }
 
-describe("plan read projections", () => {
+describe("the plan read", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -45,23 +45,19 @@ describe("plan read projections", () => {
     vi.useRealTimers();
   });
 
-  it("reads the same exact plan for the API and the screens, with no searched time in either", async () => {
+  it("reads the exact plan the API and the screens show, with no searched time", async () => {
     const { goal, user } = await setup();
     vi.mocked(cacheTag).mockClear();
     const full = await getGoalPlan(goal.id);
     const fullTags = vi.mocked(cacheTag).mock.calls;
-    vi.mocked(cacheTag).mockClear();
-    const screen = await getGoalPlanScreen(goal.id);
 
     expect(full.status).toBe("ready");
-    expect(screen.status).toBe("ready");
 
-    if (full.status !== "ready" || screen.status !== "ready" || !full.plan.feasibility) {
-      throw new Error("Expected both plan projections with deadline feasibility");
+    if (full.status !== "ready" || !full.plan.feasibility) {
+      throw new Error("Expected the plan with deadline feasibility");
     }
 
     expect(full.plan.feasibility.coreFits).toBe(false);
-    expect(screen.plan).toStrictEqual(full.plan);
 
     // The time that brings every topic in plans the goal at each daily time, so only the learner's
     // own request works it out (see `findPlanTimeToCover`), and no read carries it.
@@ -72,28 +68,20 @@ describe("plan read projections", () => {
     // The read's own cache is tagged by the learner's goals and model; the plan analysis under it
     // is keyed by its complete input instead, untagged, so a write that changes nothing it reads
     // keeps it.
-    expect(vi.mocked(cacheTag).mock.calls).toStrictEqual(fullTags);
-
     expect(fullTags.flat()).toStrictEqual(
       expect.arrayContaining([getGoalsCacheTag(user.id), getLearnerModelCacheTag(user.id)]),
     );
   });
 
-  it("uses the same missing and ownership outcomes for both projections", async () => {
+  it("says what's missing and whose it is", async () => {
     const { goal } = await setup();
     const other = await userFixture();
     mockSession(other.id);
 
     await expect(getGoalPlan(goal.id)).resolves.toStrictEqual({ status: "notFound" });
-    await expect(getGoalPlanScreen(goal.id)).resolves.toStrictEqual({ status: "notFound" });
     await expect(getGoalPlan(crypto.randomUUID())).resolves.toStrictEqual({ status: "notFound" });
-
-    await expect(getGoalPlanScreen(crypto.randomUUID())).resolves.toStrictEqual({
-      status: "notFound",
-    });
 
     mockSession(null);
     await expect(getGoalPlan(goal.id)).resolves.toStrictEqual({ status: "unauthorized" });
-    await expect(getGoalPlanScreen(goal.id)).resolves.toStrictEqual({ status: "unauthorized" });
   });
 });

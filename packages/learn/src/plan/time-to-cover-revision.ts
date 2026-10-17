@@ -1,8 +1,8 @@
-import { type PlanScreenView } from "@zoonk/core/plans/view-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
 
 /** What of the plan Find searched (see `getTimeToCoverRevision`). */
 type SearchedPlan = Pick<
-  PlanScreenView,
+  PlanView,
   "areas" | "bases" | "examChoices" | "feasibility" | "planId" | "schedule" | "steering"
 >;
 

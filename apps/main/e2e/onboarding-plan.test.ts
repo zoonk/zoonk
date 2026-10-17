@@ -350,11 +350,15 @@ test("while the learner changes the days, Find says only the time those days nee
   await expect(page.getByText(/^6 days · /u)).toBeVisible();
   await expect(covers).toHaveCount(0);
 
-  // Back to the five days it was found for, it stays gone: the days changed since.
+  // Back to the five days it was found for, its answer shows again.
   await page.getByRole("button", { name: "Saturday" }).click();
   await expect(page.getByText(/^5 days · /u)).toBeVisible();
-  await expect(find).toBeVisible();
-  await expect(covers).toHaveCount(0);
+
+  await expect(
+    page.getByRole("radio", { name: /^1 hr 25 min\s*Covers everything$/u }),
+  ).toBeVisible();
+
+  await expect(find).toHaveCount(0);
   await page.getByRole("button", { name: "Saturday" }).click();
   await expect(page.getByText(/^6 days · /u)).toBeVisible();
 
@@ -374,7 +378,7 @@ test("while the learner changes the days, Find says only the time those days nee
   await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
   await expect(page.getByRole("radio", { name: /^1 hr\s*Covers everything$/u })).toBeVisible();
 
-  // Nor when the days go back to the six it was asked for: it ended after they changed.
+  // Nor when the days go back to the six it was asked for: the newer search replaced it.
   await page.getByRole("button", { name: "Sunday" }).click();
   await expect(page.getByText(/^6 days · /u)).toBeVisible();
   await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
@@ -382,7 +386,7 @@ test("while the learner changes the days, Find says only the time those days nee
   await expect(find).toBeVisible();
 
   // A search for six days that's still running while the days change and come back, with no other
-  // search, ends for the six days she left: it shows nowhere, and Find asks again.
+  // search, answers the six days she's back at.
   holding = true;
   await find.click();
   await expect.poll(() => held.length).toBe(3);
@@ -404,9 +408,15 @@ test("while the learner changes the days, Find says only the time those days nee
       }),
   );
 
-  await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
-  await expect(covers).toHaveCount(0);
-  await expect(find).toBeVisible();
+  await expect(
+    page.getByText(/^1\shr 10\smin a day covers everything in depth by /u),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("radio", { name: /^1 hr 10 min\s*Covers everything$/u }),
+  ).toBeVisible();
+
+  await expect(find).toHaveCount(0);
 });
 
 /** A goal at its time question, with a date 180 days away. */

@@ -1,6 +1,5 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
-import { findActiveSubscription } from "../../auth/subscription";
 import { type GoalPlanSource } from "../../learner/_utils/goal-skill-graph";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { hasOverduePlanWork, loadLeftWorkSelection } from "../../plans/_utils/left-work";
@@ -11,8 +10,6 @@ import {
 } from "../../plans/_utils/plan-refresh-admission";
 import { readFreshPlanSummary, savedPlanSummarySchema } from "../../plans/_utils/plan-summary";
 import { isPlanUnchanged } from "../../plans/_utils/plan-unchanged";
-import { type TodayBuildScope } from "../../plans/_utils/read-built-plan";
-import { type PlanAnalysisPurpose } from "../../plans/_utils/read-plan-analysis";
 import { type ComputedPlan, computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -148,31 +145,22 @@ export async function selectDayPlan({
     return null;
   }
 
-  const readBuildScope: TodayBuildScope | undefined = reuseReadBuild
-    ? {
-        entitlement: (await findActiveSubscription(goal.userId)) ? "plus" : "free",
-        inputVersion: context.plan.inputVersion,
-        planId: context.plan.id,
-        planVersion: context.plan.version,
-        timeZone: context.timeZone,
-      }
-    : undefined;
-
-  return selectDayPlanFromContext({ context, now, readBuildScope });
+  return selectDayPlanFromContext({ context, now, reuseReadBuild });
 }
 
 /** Plan and Today select from one authorized context, without reloading it or building twice. */
 export async function selectDayPlanFromContext({
   context,
   now,
-  readAnalysis,
-  readBuildScope,
+  readAnalysis = false,
+  reuseReadBuild = false,
 }: {
   context: PlanContext;
   now: Date;
   /** Plan retains its existing advisory response until the separately agreed R7 cutover. */
-  readAnalysis?: PlanAnalysisPurpose;
-  readBuildScope?: TodayBuildScope;
+  readAnalysis?: boolean;
+  /** Only GET delivery opts in; Open and other writers retain the fresh default. */
+  reuseReadBuild?: boolean;
 }): Promise<SelectedDayPlan> {
   const { goal, timeZone } = context;
 
@@ -205,8 +193,7 @@ export async function selectDayPlanFromContext({
     mode: left.length > 0 ? "forced" : "automatic",
     now,
     readAnalysis,
-    readBuildScope,
-    reuseReadBuild: [readBuildScope, readAnalysis].some((value) => value !== undefined),
+    reuseReadBuild,
     setAsideLeftWork: left.length > 0,
     todayShown: true,
   });

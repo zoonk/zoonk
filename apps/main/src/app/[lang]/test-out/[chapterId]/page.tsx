@@ -5,7 +5,7 @@ import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
-import { getGoalPlanScreen } from "@zoonk/core/plans/get";
+import { getGoalPlan } from "@zoonk/core/plans/get";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** The chapter as the plan shows it (its title and lessons left), since the test-out has none. */
 async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalId: string }) {
-  const result = await getGoalPlanScreen(goalId);
+  const result = await getGoalPlan(goalId);
 
   if (result.status !== "ready") {
     return null;
