@@ -150,6 +150,8 @@ type PlanChanges = {
   saving: boolean;
   /** How many changes started so far: read it in handlers, never while rendering. */
   started: () => number;
+  /** Hears each change start and answer, for what waits on them outside a render. */
+  subscribe: (listener: () => void) => () => void;
 };
 
 type PlanScreenContextValue = PlanScreenValue & {
@@ -270,10 +272,9 @@ function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
 }
 
 /** The changes in flight, kept outside React's state (see `useCountedChanges`). */
-type ChangeCounter = Pick<PlanChanges, "isSaving" | "started"> & {
+type ChangeCounter = Pick<PlanChanges, "isSaving" | "started" | "subscribe"> & {
   /** Call as a change starts; call what it returns once it answered, saved or not. */
   begin: () => () => void;
-  subscribe: (listener: () => void) => () => void;
 };
 
 function createChangeCounter(): ChangeCounter {
@@ -311,8 +312,14 @@ function createChangeCounter(): ChangeCounter {
   };
 }
 
-function counted<Result>(counter: ChangeCounter, save: () => Promise<Result>): Promise<Result> {
-  const end = counter.begin();
+/**
+ * The tab's plan changes: a page shows one plan, and a change saving anywhere on it is the one the
+ * others wait for. The count only grows, and every change that starts ends, saved or not.
+ */
+const changeCounter = createChangeCounter();
+
+function counted<Result>(save: () => Promise<Result>): Promise<Result> {
+  const end = changeCounter.begin();
   return save().finally(end);
 }
 
@@ -322,28 +329,32 @@ function counted<Result>(counter: ChangeCounter, save: () => Promise<Result>): P
  * save starts inside its transition, where a state update would only show once the save is done.
  */
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
-  const [counter] = useState(createChangeCounter);
-  const saving = useSyncExternalStore(counter.subscribe, counter.isSaving, () => false);
+  const saving = useSyncExternalStore(changeCounter.subscribe, changeCounter.isSaving, () => false);
 
   const countedActions = useMemo(
     (): PlanActions => ({
       ...actions,
-      change: (operations) => counted(counter, () => actions.change(operations)),
-      chooseExamOption: (input) => counted(counter, () => actions.chooseExamOption(input)),
-      chooseTools: (input) => counted(counter, () => actions.chooseTools(input)),
+      change: (operations) => counted(() => actions.change(operations)),
+      chooseExamOption: (input) => counted(() => actions.chooseExamOption(input)),
+      chooseTools: (input) => counted(() => actions.chooseTools(input)),
       decide: (input) =>
         input.status === "applied" || input.status === "undone"
-          ? counted(counter, () => actions.decide(input))
+          ? counted(() => actions.decide(input))
           : actions.decide(input),
     }),
-    [actions, counter],
+    [actions],
   );
 
   return {
     actions: countedActions,
     changes: useMemo(
-      () => ({ isSaving: counter.isSaving, saving, started: counter.started }),
-      [counter, saving],
+      () => ({
+        isSaving: changeCounter.isSaving,
+        saving,
+        started: changeCounter.started,
+        subscribe: changeCounter.subscribe,
+      }),
+      [saving],
     ),
   };
 }

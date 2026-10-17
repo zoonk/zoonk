@@ -145,16 +145,24 @@ export function useMoveDate({
     setOutcome(next);
   };
 
-  // Another change started while it searched: the learner's newer word wins at once, and the date
-  // it finds, for the plan before, moves nothing (see `move`).
-  const gaveWay = finding && changes.saving;
-  const giveWay = useEffectEvent(() => stop(null));
+  // Another change starting while it searches is the learner's newer word: Move gives way at once,
+  // and the date it finds, for the plan before, moves nothing (see `move`). That change starts
+  // inside its own transition, so giving way waits a microtask to show now, not once it's saved.
+  const giveWay = useEffectEvent(() => {
+    if (finding) {
+      stop(null);
+    }
+  });
 
   useEffect(() => {
-    if (gaveWay) {
-      giveWay();
-    }
-  }, [gaveWay]);
+    const onChange = () => {
+      if (changes.isSaving()) {
+        queueMicrotask(() => giveWay());
+      }
+    };
+
+    return changes.subscribe(onChange);
+  }, [changes]);
 
   const move = async () => {
     // Another change saving (a date typed in, an Undo, a bases choice) is the learner's newer word.

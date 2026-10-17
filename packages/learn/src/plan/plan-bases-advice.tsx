@@ -104,7 +104,7 @@ export function BasesAdvice({
 
   const applyRecommendation = (recommended: BaseChoice) => {
     onUse(recommended);
-    document.getElementById(BASES_SAVE_ID)?.focus();
+    document.querySelector<HTMLElement>(`#${BASES_SAVE_ID}`)?.focus();
   };
 
   return (

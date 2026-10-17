@@ -9623,11 +9623,6 @@ msgid "What you practice"
 msgstr "O que você pratica"
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "iSoork"
-msgid "Use the recommendation"
-msgstr "Usar a recomendação"
-
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
 msgctxt "ZBKOXO"
 msgid "Your plan is still being built. Try again in a moment."
@@ -9639,14 +9634,19 @@ msgid "We couldn't get a recommendation."
 msgstr "A gente não conseguiu fazer uma recomendação."
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Pedir uma recomendação"
-
-#: src/plan/plan-bases-advice.tsx
 msgctxt "lBDux5"
 msgid "Getting a recommendation…"
 msgstr "Preparando uma recomendação…"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "iSoork"
+msgid "Use the recommendation"
+msgstr "Usar a recomendação"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "IdA8la"
+msgid "Get a recommendation"
+msgstr "Pedir uma recomendação"
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "W3ruGP"
@@ -9881,6 +9881,7 @@ msgstr "Até você escolher, seu plano não inclui {group}."
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-schedule.tsx
 msgctxt "NSCA2O"
 msgid "Your time covers everything by {date}"
 msgstr "Com o seu tempo, dá para cobrir tudo até {date}"
@@ -10033,6 +10034,11 @@ msgstr "Estudar tudo depois da prova"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Estudar tudo"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "oNLSka"
+msgid "Move your date so your time covers what's left."
+msgstr "Mude a data para que o seu tempo cubra o que falta."
 
 #: src/plan/plan-properties.tsx
 msgctxt "1ooK0d"
@@ -12891,9 +12897,3 @@ msgstr "Próxima semana"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Respostas certas nesta habilidade em cada dia da semana"
-
-
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "oNLSka"
-msgid "Move your date so your time covers what's left."
-msgstr "Mude a data para que o seu tempo cubra o que falta."

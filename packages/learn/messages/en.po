@@ -9623,11 +9623,6 @@ msgid "What you practice"
 msgstr "What you practice"
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "iSoork"
-msgid "Use the recommendation"
-msgstr "Use the recommendation"
-
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
 msgctxt "ZBKOXO"
 msgid "Your plan is still being built. Try again in a moment."
@@ -9639,14 +9634,19 @@ msgid "We couldn't get a recommendation."
 msgstr "We couldn't get a recommendation."
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Get a recommendation"
-
-#: src/plan/plan-bases-advice.tsx
 msgctxt "lBDux5"
 msgid "Getting a recommendation…"
 msgstr "Getting a recommendation…"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "iSoork"
+msgid "Use the recommendation"
+msgstr "Use the recommendation"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "IdA8la"
+msgid "Get a recommendation"
+msgstr "Get a recommendation"
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "W3ruGP"
@@ -9881,6 +9881,7 @@ msgstr "Until you pick, your plan leaves {group} out."
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-schedule.tsx
 msgctxt "NSCA2O"
 msgid "Your time covers everything by {date}"
 msgstr "Your time covers everything by {date}"
@@ -10033,6 +10034,11 @@ msgstr "Study everything after the exam"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Study everything"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "oNLSka"
+msgid "Move your date so your time covers what's left."
+msgstr "Move your date so your time covers what's left."
 
 #: src/plan/plan-properties.tsx
 msgctxt "1ooK0d"
@@ -12891,9 +12897,3 @@ msgstr "Next week"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Right answers on this skill each day of the week"
-
-
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "oNLSka"
-msgid "Move your date so your time covers what's left."
-msgstr "Move your date so your time covers what's left."

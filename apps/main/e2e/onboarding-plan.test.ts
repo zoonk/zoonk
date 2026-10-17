@@ -397,7 +397,12 @@ test("while the learner changes the days, Find says only the time those days nee
   await answered;
 
   // Once the page took the answer in.
-  await page.evaluate(() => new Promise<void>((resolve) => requestIdleCallback(() => resolve())));
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestIdleCallback(() => resolve());
+      }),
+  );
 
   await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
   await expect(covers).toHaveCount(0);

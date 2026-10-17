@@ -9623,11 +9623,6 @@ msgid "What you practice"
 msgstr "Ce que tu pratiques"
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "iSoork"
-msgid "Use the recommendation"
-msgstr "Utiliser la recommandation"
-
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
 msgctxt "ZBKOXO"
 msgid "Your plan is still being built. Try again in a moment."
@@ -9639,14 +9634,19 @@ msgid "We couldn't get a recommendation."
 msgstr "On n’a pas réussi à te faire une recommandation."
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Obtenir une recommandation"
-
-#: src/plan/plan-bases-advice.tsx
 msgctxt "lBDux5"
 msgid "Getting a recommendation…"
 msgstr "Préparation d’une recommandation…"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "iSoork"
+msgid "Use the recommendation"
+msgstr "Utiliser la recommandation"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "IdA8la"
+msgid "Get a recommendation"
+msgstr "Obtenir une recommandation"
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "W3ruGP"
@@ -9881,6 +9881,7 @@ msgstr "Tant que tu n’as pas choisi, ton plan n’inclut pas {group}."
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-schedule.tsx
 msgctxt "NSCA2O"
 msgid "Your time covers everything by {date}"
 msgstr "Avec le temps dont tu disposes, tu peux tout couvrir d’ici le {date}"
@@ -10033,6 +10034,11 @@ msgstr "Tout étudier après l’examen"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Tout étudier"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "oNLSka"
+msgid "Move your date so your time covers what's left."
+msgstr "Change la date pour que ton temps couvre ce qu’il reste."
 
 #: src/plan/plan-properties.tsx
 msgctxt "1ooK0d"
@@ -12891,9 +12897,3 @@ msgstr "La semaine prochaine"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Bonnes réponses sur cette compétence, chaque jour de la semaine"
-
-
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "oNLSka"
-msgid "Move your date so your time covers what's left."
-msgstr "Change la date pour que ton temps couvre ce qu’il reste."

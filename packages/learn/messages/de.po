@@ -9623,11 +9623,6 @@ msgid "What you practice"
 msgstr "Was du übst"
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "iSoork"
-msgid "Use the recommendation"
-msgstr "Empfehlung übernehmen"
-
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
 msgctxt "ZBKOXO"
 msgid "Your plan is still being built. Try again in a moment."
@@ -9639,14 +9634,19 @@ msgid "We couldn't get a recommendation."
 msgstr "Wir konnten keine Empfehlung erstellen."
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Empfehlung anfordern"
-
-#: src/plan/plan-bases-advice.tsx
 msgctxt "lBDux5"
 msgid "Getting a recommendation…"
 msgstr "Empfehlung wird erstellt…"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "iSoork"
+msgid "Use the recommendation"
+msgstr "Empfehlung übernehmen"
+
+#: src/plan/plan-bases-advice.tsx
+msgctxt "IdA8la"
+msgid "Get a recommendation"
+msgstr "Empfehlung anfordern"
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "W3ruGP"
@@ -9881,6 +9881,7 @@ msgstr "Solange du nichts auswählst, ist {group} nicht Teil deines Plans."
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-schedule.tsx
 msgctxt "NSCA2O"
 msgid "Your time covers everything by {date}"
 msgstr "Mit deiner Lernzeit schaffst du alles bis zum {date}"
@@ -10033,6 +10034,11 @@ msgstr "Nach der Prüfung alles lernen"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Alles lernen"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "oNLSka"
+msgid "Move your date so your time covers what's left."
+msgstr "Verschiebe dein Zieldatum, damit deine Lernzeit den Rest abdeckt."
 
 #: src/plan/plan-properties.tsx
 msgctxt "1ooK0d"
@@ -12891,9 +12897,3 @@ msgstr "Nächste Woche"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Richtige Antworten zu dieser Fähigkeit an jedem Wochentag"
-
-
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "oNLSka"
-msgid "Move your date so your time covers what's left."
-msgstr "Verschiebe dein Zieldatum, damit deine Lernzeit den Rest abdeckt."
