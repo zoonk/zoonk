@@ -11,6 +11,7 @@ import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-sug
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { loadViewerStamp } from "../../learner/_utils/load-viewer-stamp";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { followOwnedGoalTimeZone } from "../../learner/follow-goal-time-zone";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
@@ -365,4 +366,33 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
       weeklyChallenge: around.challenge,
     },
   };
+}
+
+/**
+ * Today as an app on the learner's device reads it (the API's `GET /v1/today`): with `timeZone`,
+ * the goal Today shows follows the device first (`followGoalTimeZone`: a goal without a zone
+ * stores it, one whose learner moved takes it while nothing was done yet in its day), then its day
+ * is read. The goal is resolved once, so the goal that moved is the goal returned, and only an
+ * active goal moves: a goal Today refuses keeps its zone.
+ */
+export async function getTodayViewFollowingDevice(
+  input: TodayStudySessionInput,
+): Promise<TodayViewResult> {
+  const session = await getSession();
+
+  if (!session) {
+    return { status: "unauthorized" };
+  }
+
+  const goalId = input.goalId ?? (await findActiveGoalId(session.user.id)) ?? undefined;
+
+  if (goalId && input.timeZone) {
+    const owned = await findOwnedGoal(goalId);
+
+    if (owned.status === "ready" && owned.goal.status === "active") {
+      await followOwnedGoalTimeZone({ owned, timeZone: input.timeZone });
+    }
+  }
+
+  return getTodayView({ goalId, timeZone: input.timeZone });
 }

@@ -9,7 +9,10 @@ export const todayStudySessionInputSchema = z
       .uuid()
       .optional()
       .meta({ description: "The goal whose day to read; defaults to the active goal" }),
-    timeZone: answerTimeZoneSchema,
+    timeZone: answerTimeZoneSchema.meta({
+      description:
+        "The device's IANA timezone. An active goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone",
+    }),
   })
   .strict()
   .meta({ id: "TodayStudySessionQuery" });

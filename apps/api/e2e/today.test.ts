@@ -377,6 +377,28 @@ test.describe("Today API", () => {
     await Promise.all([studied.api.dispose(), fresh.api.dispose()]);
   });
 
+  test("refuses a paused goal's Today and keeps its zone", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "today-paused" });
+    const { goal } = await createExamGoal(userId);
+
+    await prisma.goal.update({
+      data: { status: "paused", timezone: SAO_PAULO },
+      where: { id: goal.id },
+    });
+
+    const response = await api.get(
+      `/v1/today?goalId=${goal.id}&timeZone=${zoneOnAnotherDay(SAO_PAULO)}`,
+    );
+
+    expect(response.status(), await response.text()).toBe(409);
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ select: { timezone: true }, where: { id: goal.id } }),
+    ).resolves.toStrictEqual({ timezone: SAO_PAULO });
+
+    await api.dispose();
+  });
+
   test("rejects an invalid timezone", async () => {
     const { api } = await createBearerLearner({ baseURL, prefix: "today-invalid" });
     const response = await api.get("/v1/today?timeZone=Not/AZone");

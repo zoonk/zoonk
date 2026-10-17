@@ -5,8 +5,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
-import { findActiveGoalId } from "../goals/_utils/goal-view";
-import { getSession } from "../users/get-session";
 import { canMoveGoalTimeZone } from "./_utils/goal-time-zone";
 import { getStartOfLocalDay } from "./_utils/local-time";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
@@ -189,29 +187,11 @@ export async function moveGoalTimeZoneInTransaction(
   return { kind: "moved", learnerRevision, planInputsChanged: true };
 }
 
-/** The goal a follow moves: the one named, else the one Today reads (the learner's active goal). */
-async function findFollowedGoal(goalId?: string): Promise<OwnedGoal> {
-  if (goalId) {
-    return findOwnedGoal(goalId);
-  }
-
-  const session = await getSession();
-
-  if (!session) {
-    return { status: "unauthorized" };
-  }
-
-  const activeGoalId = await findActiveGoalId(session.user.id);
-  return activeGoalId ? findOwnedGoal(activeGoalId) : { status: "notFound" };
-}
-
 /**
  * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
  * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
  * (see `moveGoalTimeZoneInTransaction`). A move returns the learner's revision, so the screen can
- * read itself again once; a goal that couldn't move says when it may (`retryAt`). A move that lost
- * a race to another writer, or to midnight, tries once more from a fresh read of the goal. Without
- * a `goalId`, it follows the goal Today reads, as the API's Today does with its `timeZone`.
+ * read itself again once; a goal that couldn't move says when it may (`retryAt`).
  */
 export async function followGoalTimeZone({
   attempt = 1,
@@ -219,15 +199,34 @@ export async function followGoalTimeZone({
   timeZone,
 }: {
   attempt?: number;
-  goalId?: string;
+  goalId: string;
   timeZone: string;
 }): Promise<FollowGoalTimeZoneResult> {
-  const owned = await findFollowedGoal(goalId);
+  const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;
   }
 
+  return followOwnedGoalTimeZone({ attempt, owned, timeZone });
+}
+
+/**
+ * `followGoalTimeZone` for a goal a public boundary already resolved from the session (Today, which
+ * admits the goal first). A move that lost a race to another writer, or to midnight, tries once
+ * more from a fresh read of the goal.
+ *
+ * @internal
+ */
+export async function followOwnedGoalTimeZone({
+  attempt = 1,
+  owned,
+  timeZone,
+}: {
+  attempt?: number;
+  owned: Extract<OwnedGoal, { status: "ready" }>;
+  timeZone: string;
+}): Promise<FollowGoalTimeZoneResult> {
   const { goal, userId } = owned;
 
   // Already the goal's zone: nothing can move, so no transaction is opened for it.

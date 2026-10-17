@@ -13,6 +13,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getStudySession } from "../sessions/get-study-session";
+import { getTodayViewFollowingDevice } from "../view-models/today/get-today-view";
 import { getStartOfLocalDay } from "./_utils/local-time";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "./_utils/owned-goal";
@@ -231,24 +232,6 @@ describe("following a learner who moves", () => {
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(before);
   });
 
-  // The API's Today may name no goal: it reads the learner's active goal, so that's the one to move.
-  it("follows the goal Today reads when the request names none", async () => {
-    const { goal: other, user } = await setup();
-    const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
-    await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
-    const zone = zoneOnAnotherDay();
-
-    await expect(followGoalTimeZone({ timeZone: zone })).resolves.toMatchObject({
-      moved: true,
-      status: "ready",
-    });
-
-    await expect(Promise.all([readZone(active.id), readZone(other.id)])).resolves.toStrictEqual([
-      zone,
-      SAO_PAULO,
-    ]);
-  });
-
   it("follows the goal a request names, even when another goal is the active one", async () => {
     const { goal: named, user } = await setup();
     const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
@@ -265,14 +248,96 @@ describe("following a learner who moves", () => {
       SAO_PAULO,
     ]);
   });
+});
+
+// The API's Today resolves its goal once and follows the device in it: the goal that moved is the
+// goal it returns, and a goal Today refuses keeps its zone.
+describe("Today following the device", () => {
+  it("follows the goal Today reads when the request names none", async () => {
+    const { goal: other, user } = await setup();
+    const active = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
+    await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
+    const zone = zoneOnAnotherDay();
+
+    await expect(getTodayViewFollowingDevice({ timeZone: zone })).resolves.toMatchObject({
+      goal: { id: active.id },
+    });
+
+    await expect(Promise.all([readZone(active.id), readZone(other.id)])).resolves.toStrictEqual([
+      zone,
+      SAO_PAULO,
+    ]);
+  });
 
   it("follows nothing for a learner without a goal", async () => {
     const user = await userFixture();
     mockSession(user.id);
 
-    await expect(followGoalTimeZone({ timeZone: "UTC" })).resolves.toStrictEqual({
-      status: "notFound",
+    await expect(getTodayViewFollowingDevice({ timeZone: "UTC" })).resolves.toMatchObject({
+      status: "noGoal",
     });
+  });
+
+  it.each(["named", "active"] as const)(
+    "keeps a paused goal's zone, revision and plan when Today refuses it (%s)",
+    async (selection) => {
+      const { goal, user } = await setup();
+      await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
+      const plan = await planFixture({ goalId: goal.id });
+
+      if (selection === "active") {
+        await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+      }
+
+      const before = await readVersions({ planId: plan.id, userId: user.id });
+
+      await expect(
+        getTodayViewFollowingDevice({
+          goalId: selection === "named" ? goal.id : undefined,
+          timeZone: zoneOnAnotherDay(),
+        }),
+      ).resolves.toMatchObject({ status: "goalNotActive" });
+
+      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
+
+      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(
+        before,
+      );
+    },
+  );
+
+  it("returns the goal it moved when the learner switches goals while the move waits", async () => {
+    const { goal: moving, user } = await setup();
+    const next = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
+    await learningProfileFixture({ activeGoalId: moving.id, userId: user.id });
+    const device = zoneOnAnotherDay();
+    const waitingBefore = new Set(await waitingOnRevision());
+
+    // Another writer holds the learner's lock: Today resolves its goal, then its move queues.
+    const writer = holdLearnerLock(user.id);
+    await writer.held;
+    const today = getTodayViewFollowingDevice({ timeZone: device });
+
+    try {
+      await untilQueued(waitingBefore);
+
+      // The learner switches to another goal before the move gets the lock.
+      await prisma.userLearningProfile.update({
+        data: { activeGoalId: next.id },
+        where: { userId: user.id },
+      });
+    } finally {
+      writer.release();
+    }
+
+    await writer.done;
+
+    await expect(today).resolves.toMatchObject({ goal: { id: moving.id } });
+
+    await expect(Promise.all([readZone(moving.id), readZone(next.id)])).resolves.toStrictEqual([
+      device,
+      SAO_PAULO,
+    ]);
   });
 });
 
