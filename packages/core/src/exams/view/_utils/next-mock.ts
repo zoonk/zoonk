@@ -7,7 +7,8 @@ import { type ExamNextMock } from "../exam-view-contract";
 
 /**
  * The plan's next mock exam, with the size its card says (see `loadMockCard`). Null when the
- * plan's next weekly checkpoint isn't a mock, or there's none left.
+ * plan's next weekly checkpoint isn't a mock, or there's none left. One dated before today (missed
+ * while the learner was away, until their next open settles the plan) is never the next one.
  */
 export async function loadNextMock({
   blueprint,
@@ -21,7 +22,12 @@ export async function loadNextMock({
 }): Promise<ExamNextMock | null> {
   const item = await prisma.planItem.findFirst({
     orderBy: { position: "asc" },
-    where: { kind: { in: [...WEEKLY_CHALLENGE_KINDS] }, plan: { goalId: goal.id }, status: "todo" },
+    where: {
+      OR: [{ scheduledFor: null }, { scheduledFor: { gte: today } }],
+      kind: { in: [...WEEKLY_CHALLENGE_KINDS] },
+      plan: { goalId: goal.id },
+      status: "todo",
+    },
   });
 
   if (item?.kind !== "mock") {

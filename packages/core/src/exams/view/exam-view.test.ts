@@ -5,7 +5,13 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import {
+  DAY_MS,
+  SESSION_NOW,
+  SESSION_TODAY,
+  checkpointItemFixture,
+  sessionGoalFixture,
+} from "../../sessions/_test-utils/session-goal";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { getExamView } from "./get-exam-view";
 
@@ -294,6 +300,31 @@ describe("exam screen", () => {
 
     await expect(getExamView({ goalId: notice.goal.id })).resolves.toMatchObject({
       exam: { examDocument: "notice" },
+    });
+  });
+
+  // Back after days away, the exam page named the mock the learner missed as their next one, while
+  // Today, which reads the plan as it is now, said another day.
+  it("never names a mock dated before today as the next one", async () => {
+    const { goal, plan } = await examSetup({ examDay: "2026-11-08" });
+
+    const [, upcoming] = await Promise.all([
+      checkpointItemFixture({
+        kind: "mock",
+        planId: plan.id,
+        position: 10,
+        scheduledFor: new Date(SESSION_TODAY.getTime() - 2 * DAY_MS),
+      }),
+      checkpointItemFixture({
+        kind: "mock",
+        planId: plan.id,
+        position: 11,
+        scheduledFor: new Date(SESSION_TODAY.getTime() + 5 * DAY_MS),
+      }),
+    ]);
+
+    await expect(getExamView({ goalId: goal.id })).resolves.toMatchObject({
+      exam: { nextMock: { date: "2026-10-05", planItemId: upcoming.id } },
     });
   });
 
