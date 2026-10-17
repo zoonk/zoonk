@@ -1,4 +1,7 @@
-import { generateCourseDetails } from "@zoonk/ai/tasks/v2/courses/details";
+import {
+  generateCourseDetails,
+  getCourseDetailsPromptVersion,
+} from "@zoonk/ai/tasks/v2/courses/details";
 import { generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
 import { uploadImage } from "@zoonk/core/images/upload";
 import { prisma } from "@zoonk/db";
@@ -45,9 +48,16 @@ describe(courseDetailsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(uploadImage).mockResolvedValue({ data: ICON_URL, error: null });
 
+    // Current copy, as a real run writes it: copy from an older prompt is what the daily sweep
+    // (run by other files on the same database) claims and clears.
     vi.mocked(generateCourseDetails).mockResolvedValue({
       data: details,
-      provenance: { ...imageProvenance, model: "openai/gpt-6-luna", runId: "test-details-run" },
+      provenance: {
+        ...imageProvenance,
+        model: "openai/gpt-6-luna",
+        promptVersion: getCourseDetailsPromptVersion(),
+        runId: "test-details-run",
+      },
     } as never);
 
     vi.mocked(generateCourseIcon).mockResolvedValue({
