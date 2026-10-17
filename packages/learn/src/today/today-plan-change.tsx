@@ -294,7 +294,11 @@ function PlanChangeNotice({
   const byDate = useTodayCountsByDate()(change);
   const proposal = change.status === "proposed";
   const title = changeTitle(change);
+  const summary = sentence(change);
   const result = answered ? answeredText(answered) : null;
+
+  // A change whose counts net to zero falls back to "Your plan changed.": the title says it already.
+  const repeatsTitle = title === t("Your plan changed") && summary === t("Your plan changed.");
 
   const after = answered && (
     <AfterAnswer answer={answer} isPending={isPending} onNext={onNext} state={answered} />
@@ -312,14 +316,14 @@ function PlanChangeNotice({
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <SuggestionSummary>{sentence(change)}</SuggestionSummary>
+          <SuggestionSummary>{summary}</SuggestionSummary>
         )}
         {result ? after : <SuggestionOpen />}
       </SuggestionLine>
 
       <SuggestionContent>
-        <SuggestionHeader>{title || sentence(change)}</SuggestionHeader>
-        {title && <SuggestionDescription>{sentence(change)}</SuggestionDescription>}
+        <SuggestionHeader>{title || summary}</SuggestionHeader>
+        {title && !repeatsTitle && <SuggestionDescription>{summary}</SuggestionDescription>}
         {change.kind === "testedOut" && <MovedTopicsLines change={change} />}
         <ListeningBasicsLine change={change} />
         {/* A closer estimate names the lessons that no longer fit, as a proposal does. */}

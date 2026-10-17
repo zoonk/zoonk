@@ -1,7 +1,10 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { PlusNotice } from "../../_components/plus-lock";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import { useGoalLimitMessage } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
 
@@ -13,7 +16,9 @@ export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
 /**
  * A goal limit Plus lifts, as the one Plus notice: up front where goals start (`upFront`, before
  * anything is typed, while quick questions still work), and the same notice when a goal is
- * refused, staying until the learner moves on. Nothing for a limit Plus doesn't lift.
+ * refused, staying until the learner moves on. The free plan's one goal offers the free way under
+ * Plus too, as the course wall does: their Plan, whose menu pauses the goal they're on. Nothing for
+ * a limit Plus doesn't lift.
  */
 export function GoalLimitNotice({
   reason,
@@ -24,6 +29,7 @@ export function GoalLimitNotice({
 }) {
   const t = useExtracted();
   const message = useGoalLimitMessage();
+  const routes = useLearnRoutes();
 
   if (!isPlusGoalLimit(reason)) {
     return null;
@@ -34,7 +40,17 @@ export function GoalLimitNotice({
   }
 
   return (
-    <PlusNotice title={t("More goals at once with Plus")}>
+    <PlusNotice
+      action={
+        <LearnLink
+          className={buttonVariants({ size: "sm", variant: "outline" })}
+          href={routes.journey}
+        >
+          {t("Go to your Plan")}
+        </LearnLink>
+      }
+      title={t("More goals at once with Plus")}
+    >
       {upFront
         ? t(
             "The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.",

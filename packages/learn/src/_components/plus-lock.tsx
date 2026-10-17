@@ -48,9 +48,11 @@ export function PlusMark({
  * `inset` drops its panel for use inside a card or a step that already has one; `cta={false}`
  * drops its link where the screen's main action already goes to Plus (a task's "See Plus").
  * `title` replaces "Available with Plus" where something the free plan had ends (a free exam
- * plan's first week).
+ * plan's first week). `action` is the free way, after "See Plus" (the free plan's one goal: their
+ * Plan, where they pause the goal they're on).
  */
 export function PlusNotice({
+  action,
   children,
   className,
   cta = true,
@@ -58,6 +60,7 @@ export function PlusNotice({
   inset = false,
   title,
 }: {
+  action?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
   cta?: boolean;
@@ -89,6 +92,7 @@ export function PlusNotice({
             >
               {t("See Plus")}
             </LearnLink>
+            {action}
           </NoticeCardActions>
         )}
       </NoticeCardContent>
