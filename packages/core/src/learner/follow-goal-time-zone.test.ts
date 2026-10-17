@@ -61,6 +61,11 @@ async function readZone(goalId: string) {
   return goal.timezone;
 }
 
+/** The local day a ready Today read shows; null when it shows none. */
+function todayLocalDate(result: TodayViewResult): Date | null {
+  return result.status === "ready" ? result.today.session.localDate : null;
+}
+
 /** The goal a Today read is about, its day ready or still preparing. */
 function todayGoalId(result: TodayViewResult): string | null {
   if (result.status === "ready") {
@@ -545,11 +550,21 @@ function holdLearnerLock(userId: string, write?: (tx: TransactionClient) => Prom
   return { done, held: held.promise, release: () => release.resolve(null) };
 }
 
+/** Backends waiting for a plan's lock, which a writer takes before the learner's. */
+async function waitingOnPlanLock(): Promise<number[]> {
+  const rows = await prisma.$queryRaw<{ pid: number }[]>`
+    SELECT pid FROM pg_stat_activity
+    WHERE wait_event_type = 'Lock' AND query ILIKE '%FOR UPDATE OF plan%'
+  `;
+
+  return rows.map((row) => row.pid);
+}
+
 /** Waits until a backend that wasn't waiting before queues behind a learner's revision lock. */
-async function untilQueued(waitingBefore: Set<number>) {
+async function untilQueued(waitingBefore: Set<number>, readWaiting = waitingOnRevision) {
   await expect
     .poll(async () => {
-      const waiting = await waitingOnRevision();
+      const waiting = await readWaiting();
       return waiting.some((pid) => !waitingBefore.has(pid));
     })
     .toBe(true);
@@ -615,6 +630,92 @@ describe("following a learner whose goal moves or whose day turns while the move
       inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 2n,
       pendingAdaptation: ["calendar"],
+    });
+  });
+});
+
+describe("Today following the device while another writer holds the learner's lock", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("answers two identical follows with the moved zone's day, and moves the goal once", async () => {
+    // 00:00:01 UTC: UTC's March 10 has begun while São Paulo's March 9 goes on.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-03-10T00:00:01.000Z"));
+    const user = await userFixture();
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { timezone: SAO_PAULO },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const before = await readVersions({ planId: plan.id, userId: user.id });
+    const [onRevision, onPlan] = await Promise.all([waitingOnRevision(), waitingOnPlanLock()]);
+    const other = holdLearnerLock(user.id);
+    await other.held;
+
+    // Both read São Paulo. The first then holds the plan's lock while it waits for hers.
+    const follows: Promise<TodayViewResult>[] = [];
+
+    try {
+      follows.push(getTodayViewFollowingDevice({ goalId: goal.id, timeZone: "UTC" }));
+      await untilQueued(new Set(onRevision));
+      follows.push(getTodayViewFollowingDevice({ goalId: goal.id, timeZone: "UTC" }));
+      await untilQueued(new Set(onPlan), waitingOnPlanLock);
+    } finally {
+      other.release();
+    }
+
+    await other.done;
+    const days = (await Promise.all(follows)).map((today) => todayLocalDate(today));
+    const march10 = new Date("2026-03-10T00:00:00.000Z");
+
+    expect(days).toStrictEqual([march10, march10]);
+
+    await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+      inputVersion: before.inputVersion + 1,
+      learnerRevision: before.learnerRevision + 2n,
+      pendingAdaptation: ["calendar"],
+    });
+  });
+
+  it("keeps the zone, revision and plan of a goal paused while Today's follow waits", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { timezone: SAO_PAULO },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const before = await readVersions({ planId: plan.id, userId: user.id });
+    const waitingBefore = new Set(await waitingOnRevision());
+
+    // She pauses it on another device while Today, which admitted it active, waits to move it.
+    const pause = holdLearnerLock(user.id, (tx) =>
+      tx.goal.update({ data: { status: "paused" }, where: { id: goal.id } }),
+    );
+
+    await pause.held;
+    const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone: zoneOnAnotherDay() });
+
+    try {
+      await untilQueued(waitingBefore);
+    } finally {
+      pause.release();
+    }
+
+    await pause.done;
+
+    await expect(today).resolves.toMatchObject({ status: "goalNotActive" });
+    await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
+
+    // Only the pause's own revision: the refused read wrote nothing.
+    await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+      ...before,
+      learnerRevision: before.learnerRevision + 1n,
     });
   });
 });

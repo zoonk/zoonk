@@ -345,7 +345,7 @@ export async function getTodayViewFollowingDevice(
     return readAdmittedToday({ admission, timeZone });
   }
 
-  await followOwnedGoalTimeZone({ owned: admission.owned, timeZone });
+  await followOwnedGoalTimeZone({ owned: admission.owned, requireActive: true, timeZone });
 
   // The follow may have moved the goal, or met another writer who just did: Today admits it again.
   const admitted = await admitToday(admission.owned.goal.id);
