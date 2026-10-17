@@ -99,7 +99,7 @@ describe(addRefreshPracticeBlock, () => {
     const first = await addRefreshPracticeBlock({ goalId: goal.id, input });
 
     expect(first).toMatchObject({
-      block: { extra: true, kind: "practice", status: "pending" },
+      block: { areaId: null, extra: true, kind: "practice", refresh: true, status: "pending" },
       status: "ready",
     });
 

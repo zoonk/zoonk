@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { type DayWork, getDayBlockScreen, resolveDayBlock, toDayBlockRef } from "./day-block";
+import {
+  type DayWork,
+  dayBlockRefSchema,
+  getDayBlockScreen,
+  resolveDayBlock,
+  toDayBlockRef,
+} from "./day-block";
 
 const LESSON = "766616a9-d57d-40b3-891f-067742f5837e";
 const OTHER_LESSON = "c2f261a8-b154-47f5-ac96-a832828857c7";
@@ -16,6 +22,7 @@ function lesson(fields: Partial<DayWork> = {}): DayWork {
     mistakesOnly: false,
     planItemKey: `lesson:${LESSON}`,
     position: 0,
+    refresh: false,
     reinforcement: false,
     weakest: false,
     ...fields,
@@ -68,6 +75,38 @@ describe("day work selected before a session exists", () => {
     expect(
       resolveDayBlock({ blocks: [lesson({ reinforcement: true }), lesson({ extra: true })], ref }),
     ).toStrictEqual({ status: "gone" });
+  });
+
+  it("opens a phase's practice and Content's review, never the other bonus practice", () => {
+    const practice = lesson({ extra: true, kind: "practice", lessonId: null, planItemKey: null });
+    const phase = { ...practice, areaId: "phase:0", position: 1 };
+    const review = { ...practice, position: 2, refresh: true };
+    const blocks = [practice, phase, review];
+
+    expect(
+      resolveDayBlock({ blocks, ref: dayBlockRefSchema.parse(toDayBlockRef(phase)) }),
+    ).toStrictEqual({ block: phase, status: "resolved" });
+
+    expect(
+      resolveDayBlock({ blocks, ref: dayBlockRefSchema.parse(toDayBlockRef(review)) }),
+    ).toStrictEqual({ block: review, status: "resolved" });
+  });
+
+  it("reads a tap without `refresh` as work other than Content's review", () => {
+    const ref = toDayBlockRef(lesson());
+
+    const sent = {
+      ...ref,
+      flags: {
+        extra: false,
+        fullReview: false,
+        mistakesOnly: false,
+        reinforcement: false,
+        weakest: false,
+      },
+    };
+
+    expect(dayBlockRefSchema.parse(sent)).toStrictEqual(ref);
   });
 
   it("refuses ambiguous repeated work instead of choosing the first row", () => {

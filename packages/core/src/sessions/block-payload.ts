@@ -90,6 +90,8 @@ const blockPayloadSchema = z.object({
    * when a re-plan removes its plan item while the lesson is on today's list.
    */
   planSkillId: z.string().nullable().default(null),
+  /** Content's "Review" of the goal's fading and due skills, so a second tap finds it. */
+  refresh: z.boolean().default(false),
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
   skillIds: z.array(z.string()).default([]),

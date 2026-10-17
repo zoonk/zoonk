@@ -55,6 +55,8 @@ export type StudyBlockView = Pick<
   planItemId: string | null;
   planItemKey: string | null;
   questions: number;
+  /** Content's "Review": bonus practice on the goal's skills that are fading or due today. */
+  refresh: boolean;
   reinforcement: boolean;
   /**
    * The goal's subject the block studies ("Portuguese Language"), by its short name: Today labels

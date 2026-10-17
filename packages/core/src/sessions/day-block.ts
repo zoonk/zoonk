@@ -4,6 +4,10 @@ import { type MockIdentity } from "../plans/planner/mock-identity";
 import { type DayView } from "./day-view";
 
 const MAX_PLAN_ITEM_KEY_LENGTH = 120;
+const MAX_AREA_ID_LENGTH = 100;
+
+/** An area of the goal's map: a chapter's id, or `phase:N` for skills not in a chapter yet. */
+export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH);
 
 /** Known nullable exam days differ from legacy blocks that never recorded an identity. */
 export const mockIdentitySchema: z.ZodType<MockIdentity> = z
@@ -13,7 +17,7 @@ export const mockIdentitySchema: z.ZodType<MockIdentity> = z
 /** A position is a delivery hint; matching uses the work's identity and flags. */
 export const dayBlockRefSchema = z
   .object({
-    areaId: z.uuid().nullable(),
+    areaId: areaIdSchema.nullable(),
     chapterId: z.uuid().nullable(),
     checkpoint: z
       .object({
@@ -30,6 +34,8 @@ export const dayBlockRefSchema = z
         extra: z.boolean(),
         fullReview: z.boolean(),
         mistakesOnly: z.boolean(),
+        /** Optional in a tap, so a client that doesn't send it yet keeps opening its work. */
+        refresh: z.boolean().default(false),
         reinforcement: z.boolean(),
         weakest: z.boolean(),
       })
@@ -88,6 +94,7 @@ export function toDayBlockRef(block: DayWork): DayBlockRef {
       extra: block.extra,
       fullReview: block.fullReview,
       mistakesOnly: block.mistakesOnly,
+      refresh: block.refresh,
       reinforcement: block.reinforcement,
       weakest: block.weakest,
     },
@@ -129,6 +136,7 @@ export function isSameDayWork(first: DayBlockRef, second: DayBlockRef): boolean 
     first.flags.extra === second.flags.extra &&
     first.flags.fullReview === second.flags.fullReview &&
     first.flags.mistakesOnly === second.flags.mistakesOnly &&
+    first.flags.refresh === second.flags.refresh &&
     first.flags.reinforcement === second.flags.reinforcement &&
     first.flags.weakest === second.flags.weakest
   );

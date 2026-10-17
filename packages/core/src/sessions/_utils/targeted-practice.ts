@@ -21,18 +21,17 @@ export type TargetedPracticeResult =
   | { reason: ExtraTimeReason; status: "unavailable" };
 
 /**
- * What a bonus block practices. `areaId` names it in the block, so a second tap finds the same
- * unfinished block. `reuseSessionBlock` first opens a block of today's session that already asks
- * about these skills (today's reviews of them), before adding anything. When nothing is left to
+ * What a bonus block practices: a chapter's area (`areaId`), or the goal's fading and due skills
+ * for Content's "Review" (`refresh`, no area). Either names the block, so a second tap finds the
+ * same unfinished block; a refresh first opens a block of today's session that already asks about
+ * these skills (today's reviews of them), before adding anything. When nothing is left to
  * practice, `planItemIds` are where its next lesson comes from (none: practice only).
  */
 export type PracticeTarget = {
-  areaId: string;
   planItemIds: string[] | null;
-  reuseSessionBlock?: boolean;
   skillIds: string[];
   title: string | null;
-};
+} & ({ areaId: string; refresh: false } | { areaId: null; refresh: true });
 
 function isUnfinished(block: StudySessionRow["blocks"][number]) {
   return block.status === "pending" || block.status === "active";
@@ -57,10 +56,22 @@ function findCoveringBlock({
 }
 
 /** A second tap opens the target's unfinished block instead of adding another. */
-function findUnfinishedBlock({ areaId, session }: { areaId: string; session: StudySessionRow }) {
+function findUnfinishedBlock({
+  session,
+  target,
+}: {
+  session: StudySessionRow;
+  target: PracticeTarget;
+}) {
   return session.blocks.find((block) => {
     const payload = readBlockPayload(block);
-    return isUnfinished(block) && payload.extra && payload.areaId === areaId;
+
+    return (
+      isUnfinished(block) &&
+      payload.extra &&
+      payload.areaId === target.areaId &&
+      payload.refresh === target.refresh
+    );
   });
 }
 
@@ -78,10 +89,8 @@ async function addToLockedSession({
   userId: string;
 }): Promise<TargetedPracticeResult> {
   const reused =
-    findUnfinishedBlock({ areaId: target.areaId, session }) ??
-    (target.reuseSessionBlock
-      ? findCoveringBlock({ session, skillIds: target.skillIds })
-      : undefined);
+    findUnfinishedBlock({ session, target }) ??
+    (target.refresh ? findCoveringBlock({ session, skillIds: target.skillIds }) : undefined);
 
   if (reused) {
     return {
@@ -104,13 +113,14 @@ async function addToLockedSession({
     return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
   }
 
-  const { areaId, planItemIds, skillIds, title } = target;
+  const { areaId, planItemIds, refresh, skillIds, title } = target;
 
   // Practice first; with nothing studied (or asked already today), the target's next lesson.
   const planned =
     (await buildExtraPractice({
       areaId,
       minutes: extraTime.minutes,
+      refresh,
       session,
       skillIds,
       title,

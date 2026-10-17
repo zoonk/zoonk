@@ -54,6 +54,7 @@ export async function isFreeWeekOver(session: ExtraDay): Promise<boolean> {
 export async function buildExtraPractice({
   areaId = null,
   minutes,
+  refresh = false,
   session,
   skillIds,
   title = null,
@@ -61,6 +62,8 @@ export async function buildExtraPractice({
 }: {
   areaId?: string | null;
   minutes: number;
+  /** Content's "Review" of the goal's fading and due skills. */
+  refresh?: boolean;
   session: ExtraDay;
   skillIds: string[];
   title?: string | null;
@@ -104,6 +107,7 @@ export async function buildExtraPractice({
       extra: true,
       itemIds: items.map((item) => item.itemId),
       netScored: isNetScored(structure),
+      refresh,
       skillIds: [...new Set(items.map((item) => item.skillId))],
       title,
     }),

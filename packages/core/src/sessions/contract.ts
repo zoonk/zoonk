@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
 import { type ListeningSetView } from "../library/listening/listening-set-view";
+import { areaIdSchema } from "./day-block";
 
 export const todayStudySessionInputSchema = z
   .object({
@@ -38,15 +39,11 @@ export const studyBlockStartInputSchema = z
 
 export type StudyBlockStartInput = z.infer<typeof studyBlockStartInputSchema>;
 
-const MAX_AREA_ID_LENGTH = 100;
-
 export const areaPracticeInputSchema = z
   .object({
-    areaId: z
-      .string()
-      .min(1)
-      .max(MAX_AREA_ID_LENGTH)
-      .meta({ description: "The area to practice, as the goal's preparation lists it" }),
+    areaId: areaIdSchema.meta({
+      description: "The area to practice, as the goal's preparation lists it",
+    }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

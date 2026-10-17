@@ -14,9 +14,6 @@ export type RefreshPracticeResult =
   | TargetedPracticeResult
   | { status: "goalNotActive" | "notFound" | "unauthorized" };
 
-/** Names the refresh block, so a second tap opens the same unfinished block. */
-const REFRESH_AREA_ID = "refresh";
-
 /** The learner's first moment of tomorrow, so "due today" means due before the day ends. */
 function getEndOfToday({ goal, timeZone }: { goal: Goal; timeZone?: string }): Date {
   const zone = getAnswerTimeZone({ goal, timeZone });
@@ -75,13 +72,7 @@ export async function addRefreshPracticeBlock({
 
   return addTargetedPracticeBlock({
     goal: owned.goal,
-    target: {
-      areaId: REFRESH_AREA_ID,
-      planItemIds: null,
-      reuseSessionBlock: true,
-      skillIds,
-      title: null,
-    },
+    target: { areaId: null, planItemIds: null, refresh: true, skillIds, title: null },
     timeZone: input.timeZone,
     userId: owned.userId,
   });

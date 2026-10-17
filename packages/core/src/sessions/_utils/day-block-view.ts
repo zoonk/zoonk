@@ -110,6 +110,7 @@ export function toDayBlockView({
     planItemKey: payload.planItemKey,
     position: block.position,
     questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
+    refresh: payload.refresh,
     reinforcement: payload.reinforcement,
     status: block.status,
     subject,

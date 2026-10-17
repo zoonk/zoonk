@@ -8,7 +8,10 @@ const idSchema = z.uuid();
 export const studyBlockSchema = z
   .object({
     answered: z.number().int().min(0),
-    areaId: idSchema.nullable(),
+    areaId: dayBlockRefSchema.shape.areaId.meta({
+      description:
+        "The area a chapter's \"Practice now\" practices: the chapter's id, or `phase:N` for skills not in a chapter yet. Null for every other block",
+    }),
     brainPower: z.number().int().min(0).meta({ description: "Brain Power the block earned" }),
     canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
     canTestOut: z
@@ -65,6 +68,12 @@ export const studyBlockSchema = z
     ),
     position: z.number().int().min(0),
     questions: z.number().int().min(0),
+    refresh: z
+      .boolean()
+      .meta({
+        description:
+          "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today",
+      }),
     reinforcement: z.boolean().meta({ description: "A short lesson before a boss rematch" }),
     status: z.enum(StudyBlockStatus),
     subject: z

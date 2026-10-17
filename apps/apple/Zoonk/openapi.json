@@ -21694,8 +21694,8 @@
                               "areaId": {
                                 "nullable": true,
                                 "type": "string",
-                                "format": "uuid",
-                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                "minLength": 1,
+                                "maxLength": 100
                               },
                               "chapterId": {
                                 "nullable": true,
@@ -21768,6 +21768,10 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "refresh": {
+                                    "default": false,
                                     "type": "boolean"
                                   },
                                   "reinforcement": {
@@ -21847,8 +21851,8 @@
                               "areaId": {
                                 "nullable": true,
                                 "type": "string",
-                                "format": "uuid",
-                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                "minLength": 1,
+                                "maxLength": 100
                               },
                               "chapterId": {
                                 "nullable": true,
@@ -21921,6 +21925,10 @@
                                     "type": "boolean"
                                   },
                                   "mistakesOnly": {
+                                    "type": "boolean"
+                                  },
+                                  "refresh": {
+                                    "default": false,
                                     "type": "boolean"
                                   },
                                   "reinforcement": {
@@ -66992,9 +67000,10 @@
           },
           "areaId": {
             "nullable": true,
+            "description": "The area a chapter's \"Practice now\" practices: the chapter's id, or `phase:N` for skills not in a chapter yet. Null for every other block",
             "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            "minLength": 1,
+            "maxLength": 100
           },
           "brainPower": {
             "type": "integer",
@@ -67144,6 +67153,10 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "refresh": {
+            "type": "boolean",
+            "description": "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today"
+          },
           "reinforcement": {
             "type": "boolean",
             "description": "A short lesson before a boss rematch"
@@ -67203,6 +67216,7 @@
           "planItemKey",
           "position",
           "questions",
+          "refresh",
           "reinforcement",
           "status",
           "subject",
@@ -81166,9 +81180,10 @@
                 },
                 "areaId": {
                   "nullable": true,
+                  "description": "The area a chapter's \"Practice now\" practices: the chapter's id, or `phase:N` for skills not in a chapter yet. Null for every other block",
                   "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  "minLength": 1,
+                  "maxLength": 100
                 },
                 "brainPower": {
                   "type": "integer",
@@ -81313,6 +81328,10 @@
                   "minimum": 0,
                   "maximum": 9007199254740991
                 },
+                "refresh": {
+                  "type": "boolean",
+                  "description": "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today"
+                },
                 "reinforcement": {
                   "type": "boolean",
                   "description": "A short lesson before a boss rematch"
@@ -81371,6 +81390,7 @@
                 "planItemKey",
                 "position",
                 "questions",
+                "refresh",
                 "reinforcement",
                 "status",
                 "subject",
@@ -81514,8 +81534,8 @@
                             "areaId": {
                               "nullable": true,
                               "type": "string",
-                              "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              "minLength": 1,
+                              "maxLength": 100
                             },
                             "chapterId": {
                               "nullable": true,
@@ -81590,6 +81610,10 @@
                                 "mistakesOnly": {
                                   "type": "boolean"
                                 },
+                                "refresh": {
+                                  "default": false,
+                                  "type": "boolean"
+                                },
                                 "reinforcement": {
                                   "type": "boolean"
                                 },
@@ -81601,6 +81625,7 @@
                                 "extra",
                                 "fullReview",
                                 "mistakesOnly",
+                                "refresh",
                                 "reinforcement",
                                 "weakest"
                               ],

@@ -48,7 +48,7 @@ export async function addAreaPracticeBlock({
 
   return addTargetedPracticeBlock({
     goal: owned.goal,
-    target: { areaId: input.areaId, planItemIds, skillIds: [...skillIds], title },
+    target: { areaId: input.areaId, planItemIds, refresh: false, skillIds: [...skillIds], title },
     timeZone: input.timeZone,
     userId: owned.userId,
   });
