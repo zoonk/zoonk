@@ -9,7 +9,10 @@ type TodayPatternResult =
   | Exclude<LanguageViewGoalResult, { status: "ready" }>
   | { pattern: Awaited<ReturnType<typeof loadTodayPattern>>; status: "ready" };
 
-/** The notebook's pattern prompt, with the same suppression as Today and no unrelated reads. */
+/**
+ * The notebook's pattern prompt, without unrelated reads. It steps aside as Today's card does, but
+ * only beside a SAVED day whose missions offer its drill, since it doesn't build an unopened day.
+ */
 export async function getTodayPattern(
   input: { goalId?: string } = {},
 ): Promise<TodayPatternResult> {
