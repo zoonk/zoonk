@@ -107,8 +107,7 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
       const onboarding = await getOnboarding({ goalId });
 
       return (
-        onboarding.status === "ready" &&
-        onboarding.onboarding.steps.some((step) => step !== "plan")
+        onboarding.status === "ready" && onboarding.onboarding.steps.some((step) => step !== "plan")
       );
     },
     studyGoal: () => hasStudyGoal(userId),
