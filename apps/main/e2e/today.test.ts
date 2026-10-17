@@ -444,12 +444,12 @@ test.describe("Today", () => {
     const item = await addWeeklyChallenge(goal.id);
     await page.reload();
 
-    // Under the days, by name: the challenge, its day and its size, opening its intro.
-    const challenge = week.getByRole("link", {
-      name: /^Weekly challenge\s*Sunday · 10 questions/u,
-    });
+    // Under the days, by name: the challenge and its day, opening its intro. Its plan item keeps no
+    // planned questions, so it names no size, as its intro doesn't.
+    const challenge = week.getByRole("link", { name: /^Weekly challenge\s*Sunday/u });
 
     await expect(challenge).toHaveAttribute("href", `/challenge/${item.id}`);
+    await expect(challenge).not.toContainText("questions");
 
     const sundayAhead = todayIndex < DAYS_PER_WEEK - 1;
 
