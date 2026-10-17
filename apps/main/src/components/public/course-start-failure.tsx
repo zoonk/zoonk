@@ -13,10 +13,12 @@ function FailureAction({
   className,
   failure,
   onRetry,
+  secondaryClassName,
 }: {
   className: string;
   failure: CourseStartFailure;
   onRetry: () => void;
+  secondaryClassName: string;
 }) {
   const t = useExtracted();
   const locale = useLocale();
@@ -30,11 +32,17 @@ function FailureAction({
     );
   }
 
+  // The free way goes under Plus: their Plan, whose "…" pauses the goal they're on.
   if (remedy === "upgrade") {
     return (
-      <Link className={className} href="/subscription" prefetch={false}>
-        {t("Get Plus")}
-      </Link>
+      <>
+        <Link className={className} href="/subscription" prefetch={false}>
+          {t("Get Plus")}
+        </Link>
+        <Link className={secondaryClassName} href="/plan" prefetch>
+          {t("Go to your Plan")}
+        </Link>
+      </>
     );
   }
 
@@ -51,7 +59,8 @@ function FailureAction({
 
 /**
  * Why a course didn't start, where the learner pressed start: a goal limit in onboarding's words
- * with what they can do about it, or a failure with another try.
+ * with what they can do about it (the free plan's one goal: Plus, and the free way under it), or a
+ * failure with another try.
  */
 export function CourseStartFailureNote({
   actionClassName,
@@ -59,6 +68,7 @@ export function CourseStartFailureNote({
   className,
   failure,
   onRetry,
+  secondaryActionClassName,
 }: {
   /** The action's look where the note sits; an outline button by default. */
   actionClassName?: string;
@@ -70,6 +80,8 @@ export function CourseStartFailureNote({
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
+  /** The quieter way's look, under the action where there is one; an outline button by default. */
+  secondaryActionClassName?: string;
 }) {
   const t = useExtracted();
   const limitMessage = useGoalLimitMessage();
@@ -94,6 +106,7 @@ export function CourseStartFailureNote({
         className={actionClassName ?? buttonVariants({ variant: "outline" })}
         failure={failure}
         onRetry={onRetry}
+        secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
       />
     </div>
   );

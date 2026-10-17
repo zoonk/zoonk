@@ -3911,6 +3911,11 @@ msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
 msgstr "{count, plural, =0 {# jour} one {# jour} other {# jours}}"
 
 #: src/components/public/course-start-failure.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "Aller à ton Plan"
+
+#: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"
 msgid "We couldn't start this course."
 msgstr "Impossible de démarrer ce cours."

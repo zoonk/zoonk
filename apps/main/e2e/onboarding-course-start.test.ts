@@ -5,7 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   courseBandsFixture,
   courseChapterFixture,
@@ -626,31 +626,42 @@ test.describe("Starting a course from its page", () => {
     await expect(page.getByRole("link", { name: "Get Plus" })).toHaveCount(0);
   });
 
-  test("a free learner following another goal is told up front, with Plus as the one action", async ({
+  // The wall said to pause the goal on the Plan, but its one button was "Get Plus": the free way
+  // had no button at all.
+  test("a free learner following another goal is told up front, with Plus first and the way to pause the goal they're on", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const [{ course, coursePath }] = await Promise.all([
+    const [{ course, coursePath }, goal] = await Promise.all([
       createOutlinedCourse(),
       goalFixture({ userId: noProgressUser.id }),
     ]);
 
+    await planFixture({ goalId: goal.id });
     await page.goto(coursePath);
     await startFromHero(page, { name: course.title });
     await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
 
-    // Nothing to answer that couldn't start: why, and Plus as the page's one action.
+    // Nothing to answer that couldn't start: why, Plus first, and the free way under it.
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
 
     await expect(
       page.getByRole("alert").filter({ hasText: "The free plan follows one goal at a time." }),
     ).toBeVisible();
 
+    const toPlan = page.getByRole("link", { name: "Go to your Plan" });
+
+    await expect(page.getByRole("link", { name: /^(?:Get Plus|Go to your Plan)$/u })).toHaveText([
+      "Get Plus",
+      "Go to your Plan",
+    ]);
+
     await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
       "href",
       "/subscription",
     );
 
+    await expect(toPlan).toHaveAttribute("href", "/plan");
     await expect(page.getByRole("radiogroup", { name: "Your level" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Build my plan" })).toHaveCount(0);
 
@@ -662,5 +673,13 @@ test.describe("Starting a course from its page", () => {
     await expect(
       prisma.goal.count({ where: { primaryCourseId: course.id, userId: noProgressUser.id } }),
     ).resolves.toBe(0);
+
+    await expectAccessibleScreen(page, "Course start after the free plan's one goal");
+
+    // The Plan's "…" is where the goal they're on pauses.
+    await toPlan.click();
+    await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
+    await page.getByRole("button", { name: "Plan options" }).click();
+    await expect(page.getByRole("menuitem", { name: "Pause this goal" })).toBeVisible();
   });
 });

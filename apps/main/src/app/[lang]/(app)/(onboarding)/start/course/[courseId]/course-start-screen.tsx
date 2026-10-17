@@ -158,7 +158,8 @@ function CourseStartForm({
   });
 
   const startHere = () => (level ? startWithLevel(toLevelAnswer(level)) : start());
-  // Only an account or Plus lets it go on: that's the page's one action, with nothing to answer.
+  // Only an account, Plus or a paused goal lets it go on: that's what the page offers, with
+  // nothing to answer.
   const blocked = isStartBlocked(failure);
 
   return (
@@ -209,6 +210,10 @@ function CourseStartForm({
           className="max-w-none items-stretch text-center"
           failure={failure}
           onRetry={startHere}
+          secondaryActionClassName={cn(
+            buttonVariants({ size: "lg", variant: "outline" }),
+            "w-full",
+          )}
         />
       </OnboardingFooter>
     </form>
@@ -246,7 +251,8 @@ function CourseLevelStart({
  * plan", "I want to learn this in depth"), a link or a visitor without JavaScript lands: the
  * learner's level, or for a chapter what the plan will follow, and one button. The button starts
  * the course from the tap (as a guest when there's no session). Opening or leaving the page
- * creates nothing. A goal limit only an account or Plus lifts is said up front, as its one action.
+ * creates nothing. A goal limit only an account, Plus or a paused goal lifts is said up front, with
+ * what lifts it in place of the button.
  */
 export function CourseStartScreen({
   chapter,
