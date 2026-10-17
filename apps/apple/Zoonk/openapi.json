@@ -7710,7 +7710,7 @@
     },
     "/library/lessons/{lessonId}/challenge-team": {
       "get": {
-        "description": "The colleagues in a challenge for the learner or guest: up to four names, kept with the plan the lesson is in (or the active goal's plan) so the same people show up across the course. The first time a plan's challenge is played, the team is picked from names in the lesson's language and stored. A challenge's `team` slots map to `members` in order, skipping the AI assistant, which goes by its role; replace `{{slotId}}` in the case's text with each slot's name.",
+        "description": "The colleagues in a challenge for the learner or guest: up to four names, kept with the plan the lesson is in (or the active goal's plan) so the same people show up across the course. Without a team saved with the plan, it's picked from the plan with names in the lesson's language, the same every time; reading it never saves anything. A challenge's `team` slots map to `members` in order, skipping the AI assistant, which goes by its role; replace `{{slotId}}` in the case's text with each slot's name.",
         "operationId": "getChallengeTeam",
         "security": [
           {

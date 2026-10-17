@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { challengeTeamSchema } from "@zoonk/core/library/challenges/team";
-import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -14,15 +13,21 @@ test.describe("GET /v1/library/lessons/{lessonId}/challenge-team", () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
   });
 
-  test("picks the plan's team once and returns the same people every time", async () => {
-    const [{ api, userId }, { lesson }] = await Promise.all([
+  test("gives every challenge of the plan the same people, every time", async () => {
+    const [{ api, userId }, { lesson }, { lesson: other }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "challenge-team" }),
+      playableLessonFixture({ lesson: { language: "pt" }, steps: ["challenge"] }),
       playableLessonFixture({ lesson: { language: "pt" }, steps: ["challenge"] }),
     ]);
 
     const goal = await goalFixture({ userId });
     const plan = await planFixture({ goalId: goal.id, settings: { focusAreas: ["Estatística"] } });
-    await planItemFixture({ lessonId: lesson.id, planId: plan.id });
+
+    await Promise.all(
+      [lesson, other].map((played, position) =>
+        planItemFixture({ lessonId: played.id, planId: plan.id, position }),
+      ),
+    );
 
     const first = await api.get(`/v1/library/lessons/${lesson.id}/challenge-team`);
     expect(first.status()).toBe(200);
@@ -31,11 +36,13 @@ test.describe("GET /v1/library/lessons/{lessonId}/challenge-team", () => {
     expect(team.language).toBe("pt");
     expect(team.members).toHaveLength(4);
 
-    const again = await api.get(`/v1/library/lessons/${lesson.id}/challenge-team`);
-    await expect(again.json()).resolves.toStrictEqual(team);
+    const [again, otherChallenge] = await Promise.all([
+      api.get(`/v1/library/lessons/${lesson.id}/challenge-team`),
+      api.get(`/v1/library/lessons/${other.id}/challenge-team`),
+    ]);
 
-    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect(stored.settings).toMatchObject({ focusAreas: ["Estatística"], team });
+    await expect(again.json()).resolves.toStrictEqual(team);
+    await expect(otherChallenge.json()).resolves.toStrictEqual(team);
 
     await api.dispose();
   });

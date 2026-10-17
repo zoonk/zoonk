@@ -6,8 +6,8 @@ import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { NextResponse } from "next/server";
 
 /**
- * The learner's colleagues for a lesson's challenge, kept with their plan. The first read for a
- * plan picks and stores the team, so every later challenge shows the same people.
+ * The learner's colleagues for a lesson's challenge, kept with their plan: picked from the plan,
+ * so every challenge shows the same people. Reading it never saves anything.
  */
 async function getLessonChallengeTeam(
   _request: Request,
