@@ -305,10 +305,12 @@ describe("following a learner who moves", () => {
 describe("Today following the device", () => {
   it("follows the goal Today reads when the request names none", async () => {
     const { goal: other, user } = await setup();
+
     const { goal: active } = await sessionGoalFixture({
       goal: { timezone: SAO_PAULO },
       userId: user.id,
     });
+
     await learningProfileFixture({ activeGoalId: active.id, userId: user.id });
     const zone = zoneOnAnotherDay();
 
@@ -384,10 +386,12 @@ describe("Today following the device", () => {
 
   it("returns the goal it moved when the learner switches goals while the move waits", async () => {
     const user = await userFixture();
+
     const { goal: moving } = await sessionGoalFixture({
       goal: { timezone: SAO_PAULO },
       userId: user.id,
     });
+
     mockSession(user.id);
     const next = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
     await learningProfileFixture({ activeGoalId: moving.id, userId: user.id });

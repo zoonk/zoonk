@@ -261,12 +261,7 @@ async function readAdmittedToday({
   const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
     await Promise.all([
       loadSessionDay({ day, goal: owned.goal, userId }),
-      loadAroundSession({
-        owned,
-        selection: day.selection,
-        session: day.session,
-        timeZone,
-      }),
+      loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
       getCurrentSuggestedGoal(),
       getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
         loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
