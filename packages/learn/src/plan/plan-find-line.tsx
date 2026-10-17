@@ -84,7 +84,12 @@ export function useFocusFindAnswer(choices: number[]) {
 
     const target = findFocusTarget({ answered, choices, isGoal: goal.kind !== "exam" });
     const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
-    (target ?? findPickedChip(section) ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
+
+    (
+      target ??
+      findPickedChip(section) ??
+      document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`)
+    )?.focus();
   }, [answered, choices, goal.kind, state.status]);
 
   return () => {

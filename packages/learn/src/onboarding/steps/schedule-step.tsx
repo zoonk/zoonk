@@ -122,7 +122,11 @@ function useFocusFound({
         ? null
         : findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
 
-    (chip ?? findPickedChip(minutes) ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
+    (
+      chip ??
+      findPickedChip(minutes) ??
+      document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`)
+    )?.focus();
   }, [found, options, status]);
 
   return () => {
