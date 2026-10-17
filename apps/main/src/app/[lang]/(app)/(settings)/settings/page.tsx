@@ -1,5 +1,4 @@
 import { UserAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getMenu } from "@/lib/menu";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { getLearningProfile } from "@zoonk/core/profile/get";
@@ -38,7 +37,6 @@ async function AccountRow() {
 
   return (
     <ListGroup>
-      <LearnerWitness />
       <ListRowLink href={getMenu("profile").url}>
         <span className="flex size-9 shrink-0 self-center overflow-hidden rounded-full">
           <UserAvatar image={session.user.image} name={session.user.name || session.user.email} />
@@ -65,7 +63,6 @@ async function SettingsHubContent() {
 
   return (
     <>
-      <LearnerWitness />
       <AccountRow />
       <SettingsHubLists
         {...shown}
@@ -103,13 +100,7 @@ function SettingsHubSkeleton() {
  */
 async function FirstSettingsPage() {
   const session = await getSession();
-
-  return (
-    <>
-      <LearnerWitness />
-      {session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />}
-    </>
-  );
+  return session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />;
 }
 
 /**

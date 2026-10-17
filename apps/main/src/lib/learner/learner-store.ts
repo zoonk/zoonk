@@ -1,5 +1,4 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
-import { checkIdentity, noteWitness, wakeLearnerTabs } from "./learner-identity";
 import {
   type LearnerRevisionNote,
   type LearnerSummarySeedValue,
@@ -84,15 +83,6 @@ export function ensureLearnerSummary(): void {
 export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
   install();
 
-  // The page's render drew its learner: a witness, even while a check runs.
-  if (seed.status === "ready") {
-    noteWitness(seed.tag);
-  }
-
-  if (!checkIdentity()) {
-    return;
-  }
-
   // Who holds the session is being checked: only a read settles it (asked again if it failed).
   if (store.verifying !== null) {
     if (store.inFlight === null) {
@@ -108,12 +98,12 @@ export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
   }
 
   if (seed.status === "visitor") {
-    accept({ readAt: 0, source: "server", summary: null, tag: null }, { fresh: false });
+    accept({ readAt: 0, source: "server", summary: null }, { fresh: false });
     return;
   }
 
   accept(
-    { readAt: seed.summary.readAt, source: "server", summary: seed.summary, tag: seed.tag },
+    { readAt: seed.summary.readAt, source: "server", summary: seed.summary },
     { fresh: false },
   );
 }
@@ -156,24 +146,15 @@ export function mergeLearnerSummary({
   generation: number;
   summary: LearnerSummary | null;
 }): void {
-  // The answer reaches the page only while it still belongs to the browser's learner.
-  if (!summary || !checkIdentity()) {
+  if (!summary) {
     return;
   }
 
   if (generation === store.generation) {
-    accept({ readAt: summary.readAt, source: "server", summary, tag: null }, { fresh: false });
+    accept({ readAt: summary.readAt, source: "server", summary }, { fresh: false });
   } else {
     void readLearnerSummary({ verify: true });
   }
-}
-
-/**
- * Tells the other tabs this browser is signing out (the session ends for all of them): each
- * compares the hint again, before this one leaves for the home page.
- */
-export function announceSignOut(): void {
-  wakeLearnerTabs();
 }
 
 export function getLearnerSummaryState(): LearnerSummaryState {

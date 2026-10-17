@@ -4,7 +4,7 @@ import {
   type PlanBasesAdvice,
   planBasesAdviceSchema,
 } from "@zoonk/core/plans/bases-advice-contract";
-import { postFromBrowser, readJsonForThisLearner } from "../api/browser-api";
+import { postFromBrowser } from "../api/browser-api";
 
 /**
  * What the app recommends for the plan's bases, when the learner taps "Get a recommendation" (see
@@ -19,5 +19,5 @@ export async function getGoalBasesAdvice(goalId: string): Promise<PlanBasesAdvic
     return null;
   }
 
-  return planBasesAdviceSchema.safeParse(await readJsonForThisLearner(response)).data ?? null;
+  return planBasesAdviceSchema.safeParse(await response.json().catch(() => null)).data ?? null;
 }

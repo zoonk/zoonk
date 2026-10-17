@@ -1,11 +1,5 @@
 import { type LearnerIdentity, type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import {
-  checkIdentity,
-  connectLearnerStore,
-  noteSessionAnswer,
-  onLearnerIdentityChange,
-} from "./learner-identity";
-import {
   type LearnerStore,
   type LearnerSummaryState,
   type Snapshot,
@@ -14,13 +8,19 @@ import {
   isSameIdentity,
 } from "./learner-snapshot";
 import { fetchLearnerSummary } from "./learner-summary-response";
-import { getSessionHint } from "./session-hint";
+import { getSessionHint, hasSessionHint } from "./session-hint";
 
 /**
  * The learner summary store's core (`learner-store.ts` is its public face): what the browser holds,
- * its reads and how a read or a page's seed is taken. The identity record (`learner-identity.ts`)
- * says first whether the page may still show what a read brings.
+ * its reads and how a read or a page's seed is taken. Another tab's sign-in or sign-out reloads the
+ * page (`lib/auth/auth-change.ts`).
  */
+
+/**
+ * Better Auth's own session read: one that finds no session drops the session hint with the session
+ * cookie (`@zoonk/auth/session-hint`), which the summary's read can't.
+ */
+const SESSION_READ_PATH = "/api/auth/get-session";
 
 /** A summary shown again after this long is read again (its own freshness, not who it is). */
 const STALE_ON_RETURN_MS = 2 * 60 * 1000;
@@ -98,7 +98,7 @@ function hold(snapshot: Snapshot) {
 
 /**
  * Another learner (or nobody) replaced the one held: the held summary is dropped with every read
- * still on its way for it. Whether the page may show them was decided before (`learner-identity`).
+ * still on its way for it.
  */
 function replaceIdentity(snapshot: Snapshot) {
   store.generation += 1;
@@ -180,13 +180,13 @@ export function readLearnerSummary({ verify = false }: { verify?: boolean } = {}
         }
 
         store.verifying = null;
+        accept(snapshot, { fresh: true });
 
-        // Whose session the read found is decided before it's held: another learner than the page
-        // was drawn for is never drawn.
-        noteSessionAnswer(snapshot.tag);
-
-        if (checkIdentity()) {
-          accept(snapshot, { fresh: true });
+        // A hint kept from a session that ended goes, so the next page isn't drawn as signed in.
+        if (!snapshot.summary && hasSessionHint()) {
+          void fetch(SESSION_READ_PATH)
+            .then((response) => response.text())
+            .catch(() => null);
         }
       },
       () => {
@@ -207,7 +207,7 @@ export function readLearnerSummary({ verify = false }: { verify?: boolean } = {}
 
 /** Without a session nobody needs reading: the browser's own guess, which any read replaces. */
 function guessVisitor() {
-  accept({ readAt: 0, source: "guess", summary: null, tag: null }, { fresh: false });
+  accept({ readAt: 0, source: "guess", summary: null }, { fresh: false });
 }
 
 /**
@@ -229,7 +229,7 @@ function isStale(summary: LearnerSummary, olderThanMs: number): boolean {
 
 /** A page shown again: a stale summary, or a failed read while the browser holds a session. */
 function onVisible() {
-  if (document.visibilityState !== "visible" || store.listeners.size === 0 || !checkIdentity()) {
+  if (document.visibilityState !== "visible" || store.listeners.size === 0) {
     return;
   }
 
@@ -250,16 +250,4 @@ export function install() {
 
   store.installed = true;
   document.addEventListener("visibilitychange", onVisible);
-
-  // A page held for nobody now shows someone's: the summary is read for them.
-  onLearnerIdentityChange(() => {
-    void readLearnerSummary({ verify: true });
-  });
 }
-
-// This tab's own auth change: every read and seed of before stops counting, and seeds wait until a
-// read sent since answers.
-connectLearnerStore(() => {
-  store.generation += 1;
-  store.verifying = store.generation;
-});

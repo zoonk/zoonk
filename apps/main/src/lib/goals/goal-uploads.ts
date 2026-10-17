@@ -7,7 +7,7 @@ import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getSourceUploadFolder } from "@zoonk/utils/user-blobs";
-import { postFromBrowser, readJsonForThisLearner } from "../api/browser-api";
+import { postFromBrowser } from "../api/browser-api";
 import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
 
 const HTTP_UNAUTHORIZED = 401;
@@ -18,7 +18,7 @@ const UPLOAD_ACCESS = "private";
 
 /** What the uploads route answered, as the paperclip says it. */
 async function toOutcome(response: Response): Promise<AttachOutcome> {
-  const body = await readJsonForThisLearner(response);
+  const body: unknown = await response.json().catch(() => null);
   const source = isJsonObject(body) ? body.source : null;
   const id = getString(source, "id");
 

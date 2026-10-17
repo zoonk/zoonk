@@ -3,7 +3,6 @@ import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view"
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { Link } from "@/i18n/navigation";
 import { type LearnerViewStamp } from "@/lib/learner/learner-view-copies";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
@@ -134,25 +133,21 @@ async function TodayFirstGoal() {
   const { canAttach, draft, goalLimit, needsAccount } = start;
 
   return (
-    <>
-      <LearnerWitness />
-
-      <LazyStartClient
-        canAttach={canAttach}
-        defaultGoal=""
-        embedded
-        goalLimit={goalLimit}
-        header={
-          <>
-            <TodayPageHeader date={context.date} title={t("Today")} />
-            {context.explanation && <ExplanationContinue explanation={context.explanation} />}
-          </>
-        }
-        initialDraft={draft}
-        needsAccount={needsAccount}
-        planId={null}
-      />
-    </>
+    <LazyStartClient
+      canAttach={canAttach}
+      defaultGoal=""
+      embedded
+      goalLimit={goalLimit}
+      header={
+        <>
+          <TodayPageHeader date={context.date} title={t("Today")} />
+          {context.explanation && <ExplanationContinue explanation={context.explanation} />}
+        </>
+      }
+      initialDraft={draft}
+      needsAccount={needsAccount}
+      planId={null}
+    />
   );
 }
 
@@ -185,7 +180,6 @@ async function TodayContent() {
   if (result.status === "noGoal") {
     return (
       <>
-        <LearnerWitness />
         <TodayStateSync stamp={toStamp(result)} state={result.status} />
         {result.suggestedGoal ? (
           <WelcomeBack suggestion={result.suggestedGoal} />
@@ -198,12 +192,7 @@ async function TodayContent() {
 
   // A cookie without a session behind it is a learner whose session ended, not someone new.
   if (result.status === "unauthorized" && hasSessionCookie(await cookies())) {
-    return (
-      <>
-        <LearnerWitness />
-        <TodaySessionEnded />
-      </>
-    );
+    return <TodaySessionEnded />;
   }
 
   // Someone without a session hasn't started anything here either: they start right away, or log
@@ -215,7 +204,6 @@ async function TodayContent() {
   if (result.status === "goalNotActive") {
     return (
       <>
-        <LearnerWitness />
         <TodayStateSync stamp={toStamp(result)} state={result.status} />
         <TodayGoalPaused revision={result.revision} />
       </>
@@ -225,7 +213,6 @@ async function TodayContent() {
   if (result.status === "preparing") {
     return (
       <>
-        <LearnerWitness />
         <TodayStateSync stamp={toStamp(result)} state={result.status} />
         <TodayPreparingState goal={result.goal} />
       </>
@@ -236,38 +223,22 @@ async function TodayContent() {
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound bar={null} />
       </NotFoundPage>
     );
   }
 
-  return (
-    <>
-      <LearnerWitness />
-      <TodayClient copy={result.copy} key={result.copy.day} />
-    </>
-  );
+  return <TodayClient copy={result.copy} key={result.copy.day} />;
 }
 
 /** A goal whose plan is being built, or one left halfway through its questions. */
 async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
   // A goal left halfway through its questions has no plan coming until they're answered.
   if (await isOnboardingLeft(goal.id)) {
-    return (
-      <>
-        <LearnerWitness />
-        <TodayOnboardingLeft goal={goal} />
-      </>
-    );
+    return <TodayOnboardingLeft goal={goal} />;
   }
 
-  return (
-    <>
-      <LearnerWitness />
-      <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />
-    </>
-  );
+  return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
 }
 
 /**

@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getProgressLearningTimeLabel } from "@/components/progress/progress-learning-time-label";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { type AppRoute, Link } from "@/i18n/navigation";
@@ -211,19 +210,13 @@ export async function StatsOverview() {
   );
 
   if (!(progress && (progress.activity.learningDays > 0 || progress.level))) {
-    return (
-      <>
-        <LearnerWitness />
-        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("stats").url} />
-      </>
-    );
+    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("stats").url} />;
   }
 
   const scorePatterns = patterns?.patterns ?? null;
 
   return (
     <div className="flex flex-col gap-8">
-      <LearnerWitness />
       <StatTiles className={TILES_CLASS}>
         {progress.level && <LevelTile level={progress.level} />}
         {energy && <EnergyTile energy={energy} started={energyStarted} />}

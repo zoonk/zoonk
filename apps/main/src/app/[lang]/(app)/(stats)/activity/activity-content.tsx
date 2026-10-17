@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getMenu } from "@/lib/menu";
 import { getLearningActivity } from "@zoonk/core/progress/get-learning-activity";
 import { getSession } from "@zoonk/core/users/session";
@@ -17,17 +16,11 @@ export async function ActivityContent() {
   const [activity, session] = await Promise.all([getLearningActivity(), getSession()]);
 
   if (!(activity && activity.learningDays > 0)) {
-    return (
-      <>
-        <LearnerWitness />
-        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("activity").url} />
-      </>
-    );
+    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("activity").url} />;
   }
 
   return (
     <ProgressContent>
-      <LearnerWitness />
       <ActivityTiles activity={activity} />
       <ActivityChart days={activity.days} />
     </ProgressContent>

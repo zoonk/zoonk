@@ -2,14 +2,12 @@ import { type LearnerIdentity, type LearnerSummary } from "@zoonk/core/learner/s
 
 /**
  * A read of the server's (`server`) or the browser's own guess that nobody is signed in (no
- * session hint): the learner's summary or nobody, when it was read, and the session hint's tag of
- * the learner it was read for (null for nobody).
+ * session hint): the learner's summary or nobody, and when it was read.
  */
 export type Snapshot = {
   readAt: number;
   source: "guess" | "server";
   summary: LearnerSummary | null;
-  tag: string | null;
 };
 
 /**
@@ -25,7 +23,7 @@ export type LearnerSummaryState =
 /** What a page's server render hands the store (`LearnerSummarySeed`). */
 export type LearnerSummarySeedValue =
   | { status: "failed" }
-  | { status: "ready"; summary: LearnerSummary; tag: string }
+  | { status: "ready"; summary: LearnerSummary }
   | { status: "visitor" };
 
 /** A timer longer than a day isn't needed: the summary changes at the learner's midnight. */

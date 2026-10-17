@@ -47,7 +47,7 @@ type LearnerViewsStore = {
   recovered: WeakMap<ViewRead["onResponse"], LearnerViewCopy<unknown>>;
 };
 
-export const NO_SIGNALS: ViewFreshness = {
+const NO_SIGNALS: ViewFreshness = {
   contentSeq: 0,
   daySeq: 0,
   deadlineSeq: 0,

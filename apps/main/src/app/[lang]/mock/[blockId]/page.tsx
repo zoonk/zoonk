@@ -2,7 +2,6 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
@@ -64,18 +63,12 @@ async function MockContent({ params, searchParams }: Props) {
   const [result, tutor] = await Promise.all([getMock(blockId), getTutorViewer()]);
 
   if (result.status === "unauthorized") {
-    return (
-      <>
-        <LearnerWitness />
-        <AuthGateScreen next={withQuery(`/mock/${blockId}`, query)} />
-      </>
-    );
+    return <AuthGateScreen next={withQuery(`/mock/${blockId}`, query)} />;
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -92,7 +85,6 @@ async function MockContent({ params, searchParams }: Props) {
     if (!mock.planItemId) {
       return (
         <NotFoundPage>
-          <LearnerWitness />
           <TaskNotFound />
         </NotFoundPage>
       );
@@ -115,7 +107,6 @@ async function MockContent({ params, searchParams }: Props) {
   // The buddy reads and changes the plan of the goal the mock was taken for, as core does.
   return (
     <MainLearnProvider>
-      <LearnerWitness />
       <MockClient
         againHref={againHref}
         continueHref={continueHref}

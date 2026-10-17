@@ -1,5 +1,4 @@
-import { beginLocalAuthChange } from "@/lib/learner/learner-identity";
-import { SESSION_HINT_HEADER } from "@zoonk/auth/session-hint";
+import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
@@ -30,30 +29,16 @@ async function startGuestSession(): Promise<boolean> {
     return true;
   }
 
-  // The tab makes the guest itself: the hint changing under its own sign-in raises no alarm, and
-  // the page goes on as the guest only if the browser still holds the guest's session when it
-  // answers (another tab may have signed in meanwhile).
-  const change = beginLocalAuthChange();
-  const answer = { tag: null as string | null };
+  const { error } = await authClient.signIn.anonymous();
 
-  try {
-    const { data: guest, error } = await authClient.signIn.anonymous({
-      fetchOptions: {
-        onResponse: ({ response }) => {
-          answer.tag = response.headers.get(SESSION_HINT_HEADER);
-        },
-      },
-    });
-
-    if (error) {
-      logError("[ensureGuestSession] Could not start a guest session:", error);
-      return false;
-    }
-
-    return change.complete({ actor: guest.user.id, tag: answer.tag });
-  } finally {
-    change.release();
+  if (error) {
+    logError("[ensureGuestSession] Could not start a guest session:", error);
+    return false;
   }
+
+  // The page goes on as the guest: the frame reads their summary (the session hint now says so).
+  ensureLearnerSummary();
+  return true;
 }
 
 /** The check or sign-in in flight, so callers at the same moment share one guest. */

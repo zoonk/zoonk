@@ -4,7 +4,7 @@ import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/materia
 import { type MaterialQuestionOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { isJsonObject } from "@zoonk/utils/json";
-import { postFromBrowser, readJsonForThisLearner } from "../api/browser-api";
+import { postFromBrowser } from "../api/browser-api";
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_FORBIDDEN = 403;
@@ -15,7 +15,7 @@ function isAnswer(body: unknown): body is MaterialQuestionAnswer {
 
 /** What the API answered, as the questions screen says it. */
 async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
-  const body = await readJsonForThisLearner(response);
+  const body: unknown = await response.json().catch(() => null);
 
   if (response.ok && isAnswer(body)) {
     return { answer: body, status: "answered" };

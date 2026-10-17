@@ -1,6 +1,6 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fakeCover, resetCall, stubPage, tagOf } from "./_test-utils/learner-page";
+import { stubPage } from "./_test-utils/learner-page";
 import { type LearnerSummaryResponse } from "./learner-summary-response";
 import { type LearnerViewCopy, type LearnerViewResponse } from "./learner-view-copies";
 import { stringifyLearnerView } from "./view-json";
@@ -109,16 +109,12 @@ async function settle() {
  */
 async function showToday({ revision, userId }: { revision: string; userId: string }) {
   vi.resetModules();
-  const browser = stubPage({ seeded: true });
+  stubPage({ seeded: true });
   const reads = stubViewReads();
   const store = await import("./learner-store");
   const views = await import("./learner-views");
 
-  store.mergeLearnerSummarySeed({
-    status: "ready",
-    summary: summaryOf(userId, revision),
-    tag: tagOf(userId),
-  });
+  store.mergeLearnerSummarySeed({ status: "ready", summary: summaryOf(userId, revision) });
 
   const page = copyOf(revision, userId);
   views.holdLearnerView("today", page);
@@ -130,13 +126,7 @@ async function showToday({ revision, userId }: { revision: string; userId: strin
 
   views.subscribeToLearnerViews(() => reconcile(false));
 
-  // Another tab signs the learner out: its answer leaves the hint at `0` and wakes this tab.
-  const signOutElsewhere = () => {
-    browser.setHint("0");
-    browser.wake();
-  };
-
-  return { reads, reconcile, shown, signOutElsewhere, store, views };
+  return { reads, reconcile, shown, store, views };
 }
 
 describe("learner views", () => {
@@ -217,7 +207,6 @@ describe("learner views", () => {
     reads.summaryReads[0]?.resolve({
       status: "ready",
       summary: summaryOf("learner", "8", "2026-10-16"),
-      tag: tagOf("learner"),
     });
 
     await settle();
@@ -401,18 +390,6 @@ describe("learner views", () => {
     expect(views.isForHeldLearner("first")).toBe(false);
   });
 
-  it("reloads, covered, once another tab signed the learner out", async () => {
-    const { reads, signOutElsewhere } = await showToday({ revision: "7", userId: "learner" });
-    const cover = fakeCover();
-    const identity = await import("./learner-identity");
-    identity.registerIdentityCover({ cover, handoff: { seen: undefined, witnesses: [] } });
-
-    signOutElsewhere();
-
-    expect(cover.calls).toStrictEqual(["uncover", resetCall({ from: tagOf("learner"), to: null })]);
-    expect(reads).toHaveLength(0);
-  });
-
   it("drops a read's answer for someone else, and reads nothing for a copy of someone else", async () => {
     const { reads, store, views } = await showToday({ revision: "7", userId: "learner" });
 
@@ -450,23 +427,5 @@ describe("learner views", () => {
     ).resolves.toStrictEqual({ status: "applied" });
 
     expect(reads).toHaveLength(1);
-  });
-
-  it("delivers and notes nothing for a write the browser's learner changed during", async () => {
-    const { reads, signOutElsewhere, views } = await showToday({
-      revision: "7",
-      userId: "learner",
-    });
-
-    const write = Promise.withResolvers<{ id: string }>();
-    const written = views.withLearnerWrite(() => write.promise);
-
-    // Another tab signed out while the write was out: its answer, for the learner before, never
-    // reaches the page.
-    signOutElsewhere();
-    write.resolve({ id: "change" });
-
-    await expect(written).rejects.toThrow();
-    expect(reads).toHaveLength(0);
   });
 });

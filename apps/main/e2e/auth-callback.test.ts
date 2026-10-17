@@ -179,7 +179,7 @@ test.describe("Auth Callback", () => {
     await ctx.close();
   });
 
-  test("leaves the learner's session hint beside the session it signs in, for as long", async ({
+  test("leaves the session hint beside the session it signs in, and tells the page it lands on", async ({
     browser,
   }) => {
     const baseURL = getBaseURL();
@@ -187,9 +187,6 @@ test.describe("Auth Callback", () => {
     const token = await generateOneTimeToken(baseURL, user);
 
     const ctx = guest.context;
-    const guestCookies = await ctx.cookies(baseURL);
-    const guestHint = guestCookies.find((cookie) => cookie.name === "zoonk-signed-in");
-    const userHint = user.storageState.cookies.find((cookie) => cookie.name === "zoonk-signed-in");
     const state = await createLoginState({ baseURL, context: ctx });
 
     // The browser still holds the guest's session when the token signs the learner in.
@@ -204,10 +201,11 @@ test.describe("Auth Callback", () => {
     const hint = cookies.find((cookie) => cookie.name === "zoonk-signed-in");
     const session = cookies.find((cookie) => cookie.name.endsWith("session_token"));
 
-    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: userHint?.value });
-    expect(hint?.value).toMatch(/^t1\.[\w-]{22}$/u);
-    expect(hint?.value).not.toBe(guestHint?.value);
+    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: "1" });
     expect(Math.abs((hint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
+
+    // The page the sign-in lands on tells the browser's other tabs to reload.
+    expect(cookies.find((cookie) => cookie.name === "zoonk-signed-in-now")?.value).toBe("1");
 
     await ctx.close();
   });

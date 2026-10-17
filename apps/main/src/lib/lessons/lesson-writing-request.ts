@@ -1,6 +1,6 @@
 "use client";
 
-import { postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
+import { postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
@@ -77,6 +77,6 @@ export async function askToWriteLesson(lessonId: string): Promise<LessonWritingA
     return { status: "failed" };
   }
 
-  const body = await readJsonForThisLearner(response);
+  const body: unknown = await response.json().catch(() => null);
   return readAnswer({ body, response });
 }

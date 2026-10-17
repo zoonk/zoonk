@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { BILLING_PERIOD_PARAM, readBillingPeriod } from "@/components/pricing/plus-plan";
 import { PlusPricing } from "@/components/pricing/plus-pricing";
 import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
@@ -47,7 +46,6 @@ export async function SubscriptionPlans({
   if (subscription) {
     return (
       <>
-        <LearnerWitness />
         <StripeCheckoutReturn stripeCheckoutCompleted={stripeCheckoutCompleted} />
         <CurrentPlan subscription={subscription} />
       </>
@@ -59,17 +57,11 @@ export async function SubscriptionPlans({
 
   // Back from Stripe before its webhook saved the subscription: never the offer they just paid for.
   if (stripeCheckoutCompleted && hasAccount) {
-    return (
-      <>
-        <LearnerWitness />
-        <StripeCheckoutConfirming />
-      </>
-    );
+    return <StripeCheckoutConfirming />;
   }
 
   return (
     <Page>
-      <LearnerWitness />
       <PageHeader>
         <PageHeaderContent>
           {/* Under the section's title from a tablet up, the offer's name is a step smaller. */}

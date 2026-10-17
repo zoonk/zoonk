@@ -197,3 +197,24 @@ export async function deleteCurrentUser({
     throw error;
   }
 }
+
+/**
+ * Deletes the signed-in account from a page that showed `shownUserId`, only while that's still the
+ * session's account: a confirmation left open after another account signed in (in another tab)
+ * deletes nothing (`otherAccount`). It confirms the account, never chooses it: the session's user
+ * is still the one deleted (`deleteCurrentUser`).
+ */
+export async function deleteShownAccount({
+  shownUserId,
+}: {
+  shownUserId: string;
+}): Promise<"deleted" | "otherAccount"> {
+  const session = await getSession();
+
+  if (session?.user.id !== shownUserId) {
+    return "otherAccount";
+  }
+
+  await deleteCurrentUser({});
+  return "deleted";
+}

@@ -1,19 +1,15 @@
 "use client";
 
 import { ensureLearnerSummary } from "@/lib/learner/learner-store";
-import { useRefreshOnLearnerChange } from "@/lib/learner/use-learner-summary";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 /**
  * Keeps the learner summary current as the learner moves: each page shown reads it when it isn't
- * there yet, failed before, or changed on its own since, and the page reads itself again once its
- * learner signed out or another took the session (in another tab).
+ * there yet, failed before, or changed on its own since.
  */
 export function LearnerSummarySync() {
   const pathname = usePathname();
-
-  useRefreshOnLearnerChange();
 
   useEffect(() => {
     ensureLearnerSummary();

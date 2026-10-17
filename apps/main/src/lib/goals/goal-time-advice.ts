@@ -8,7 +8,7 @@ import {
   planTimeAdviceSchema,
   planTimeToCoverSchema,
 } from "@zoonk/core/plans/time-advice-contract";
-import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "../api/browser-api";
+import { getFromBrowser, postFromBrowser } from "../api/browser-api";
 
 /**
  * What the time a day picked covers by the goal's date, in the week onboarding's time question
@@ -35,7 +35,7 @@ export async function getGoalTimeAdvice({
     return null;
   }
 
-  return planTimeAdviceSchema.safeParse(await readJsonForThisLearner(response)).data ?? null;
+  return planTimeAdviceSchema.safeParse(await response.json().catch(() => null)).data ?? null;
 }
 
 /**
@@ -59,5 +59,5 @@ export async function findGoalTimeToCover({
     return null;
   }
 
-  return planTimeToCoverSchema.safeParse(await readJsonForThisLearner(response)).data ?? null;
+  return planTimeToCoverSchema.safeParse(await response.json().catch(() => null)).data ?? null;
 }

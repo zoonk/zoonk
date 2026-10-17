@@ -5,13 +5,6 @@ import { type BetterAuthOptions } from "better-auth/types";
 export const BETTER_AUTH_BASE_PATH = process.env.NEXT_PUBLIC_AUTH_BASE_PATH || "/api/auth";
 
 export const SESSION_EXPIRES_IN_DAYS = 30;
-
-/**
- * How long a browser reads its signed copy of the session (Better Auth's cookie cache) instead of
- * the database, and so how long a session ended on the server can still read as signed in there.
- * A render can't set cookies, so a page in use asks for a new copy before it runs out
- * (`session-refresh.ts`).
- */
 export const COOKIE_CACHE_MINUTES = 60;
 export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !== "false";
 

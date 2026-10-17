@@ -1,4 +1,6 @@
 import { getPathname } from "@/i18n/navigation";
+import { SIGNED_IN_COOKIE } from "@/lib/auth/auth-change";
+import { SESSION_HINT, SESSION_HINT_COOKIE } from "@zoonk/auth/session-hint";
 import { verifyOneTimeTokenCallback } from "@zoonk/core/auth/ott/callback";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
@@ -21,9 +23,20 @@ function escapeHtml(value: string): string {
 export async function GET(request: NextRequest) {
   const response = await verifyOneTimeTokenCallback(request);
 
-  // A finished sign-in's response already holds main's session hint beside its session cookie,
-  // naming the learner the token signed in (`@zoonk/auth/session-hint`).
+  // A finished sign-in's response holds main's session hint beside its session cookie
+  // (`@zoonk/auth/session-hint`); the page it lands on also tells the other tabs (`auth-change.ts`).
   if (response.status !== AUTH_FAILED_STATUS) {
+    if (
+      response.headers
+        .getSetCookie()
+        .some((cookie) => cookie.startsWith(`${SESSION_HINT_COOKIE}=${SESSION_HINT};`))
+    ) {
+      response.headers.append(
+        "set-cookie",
+        `${SIGNED_IN_COOKIE}=1; Path=/; Max-Age=60; SameSite=Lax`,
+      );
+    }
+
     return response;
   }
 

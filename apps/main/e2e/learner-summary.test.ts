@@ -175,7 +175,7 @@ test.describe("learner summary", () => {
     await Promise.all([visitorContext.close(), guest.context.close(), learnerContext.close()]);
   });
 
-  test("drops one learner's frame when another takes the session", async ({ browser }) => {
+  test("reloads one learner's page when another signs in in another tab", async ({ browser }) => {
     const [first, second] = await Promise.all([createGoalLearner(), createE2EUser(getBaseURL())]);
     const secondName = await getUserName(second);
     const context = await browser.newContext({ storageState: first.user.storageState });
@@ -183,9 +183,9 @@ test.describe("learner summary", () => {
 
     await expect(accountRow(page, first.name)).toBeVisible();
 
-    await signInAs({ context, user: second });
-    const other = await openAs(context, "/today");
-    await expect(accountRow(other, secondName)).toBeVisible();
+    const reloaded = page.waitForEvent("load");
+    await signInInAnotherTab({ context, user: second });
+    await reloaded;
 
     await expect(accountRow(page, secondName)).toBeVisible();
     await expect(page.getByText(first.name)).toHaveCount(0);
@@ -197,7 +197,7 @@ test.describe("learner summary", () => {
   test("never writes the session hint, for a session or one that ended", async ({ browser }) => {
     const { user } = await createGoalLearner();
     const context = await browser.newContext({ storageState: user.storageState });
-    const tag = await getSessionHint(context);
+    const hint = await getSessionHint(context);
 
     const ready = await context.request.get("/api/learner/summary");
 
@@ -216,8 +216,8 @@ test.describe("learner summary", () => {
       );
     }
 
-    expect(tag).toMatch(/^t1\.[\w-]{22}$/u);
-    expect(await getSessionHint(context)).toBe(tag);
+    expect(hint).toBe("1");
+    expect(await getSessionHint(context)).toBe("1");
 
     // Asking auth itself finds the session gone: its response deletes the session cookie and
     // says "none" with it.
@@ -227,7 +227,6 @@ test.describe("learner summary", () => {
 
     const cookies = checked.headers()["set-cookie"] ?? "";
 
-    expect(checked.headers()["x-zoonk-session-hint"]).toBe("0");
     expect(cookies).toMatch(/session_token=;/u);
     expect(cookies).toContain(`${SESSION_HINT_COOKIE}=0`);
     expect(await getSessionHint(context)).toBe("0");
@@ -288,8 +287,8 @@ test.describe("learner summary", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
-    // The guest's own sign-in response names them in the hint.
-    await expect.poll(() => getSessionHint(context)).toMatch(/^t1\.[\w-]{22}$/u);
+    // The guest's own sign-in response leaves the hint.
+    await expect.poll(() => getSessionHint(context)).toBe("1");
 
     await expect
       .poll(() => context.request.get("/api/learner/summary").then((response) => response.json()))
@@ -312,8 +311,8 @@ test.describe("learner summary", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
-    // The tab's own guest: its sign-in names them in the hint, and the page simply goes on.
-    await expect.poll(() => getSessionHint(context)).toMatch(/^t1\.[\w-]{22}$/u);
+    // The tab's own guest: its sign-in leaves the hint, and the page simply goes on.
+    await expect.poll(() => getSessionHint(context)).toBe("1");
 
     await expect
       .poll(() => context.request.get("/api/learner/summary").then((response) => response.json()))
@@ -322,36 +321,6 @@ test.describe("learner summary", () => {
     await settle(page);
 
     expect(loads.count).toBe(1);
-    await expect(page.getByText("This page is out of date")).toHaveCount(0);
-
-    await context.close();
-  });
-
-  test("leaves a learner's page on its return once the server ended their session", async ({
-    browser,
-  }) => {
-    const { name, user } = await createGoalLearner();
-    const context = await browser.newContext({ storageState: user.storageState });
-    const page = await openAs(context, "/plan");
-
-    await expect(accountRow(page, name)).toBeVisible();
-    await expect(planGoal(page)).toBeVisible();
-
-    // The session ends on the server; the browser keeps its cookies and hint (no cached copy).
-    await prisma.session.deleteMany({ where: { userId: user.id } });
-    await context.clearCookies({ name: /session_data/u });
-
-    // The learner comes back to the tab: one session read, and its answer ends the page.
-    await page.evaluate(() => {
-      ["hidden", "visible"].forEach((state) => {
-        Object.defineProperty(document, "visibilityState", { configurable: true, value: state });
-        document.dispatchEvent(new Event("visibilitychange"));
-      });
-    });
-
-    await expect.poll(() => getSessionHint(context)).toBe("0");
-    await expect(loginGate(page)).toBeVisible();
-    await expect(planGoal(page)).toBeHidden();
 
     await context.close();
   });
@@ -399,7 +368,7 @@ test.describe("learner summary", () => {
     await learner.close();
   });
 
-  test("never lets a read sent before another learner took the session win", async ({
+  test("never lets a read sent before another learner signed in elsewhere land: the tab reloads", async ({
     browser,
   }) => {
     const [first, second] = await Promise.all([createGoalLearner(), createE2EUser(getBaseURL())]);
@@ -416,10 +385,11 @@ test.describe("learner summary", () => {
       reads.count += 1;
 
       if (reads.count === 1) {
-        // The server answers it now, for the first learner; the browser only gets it later.
+        // The server answers it now, for the first learner; the browser only gets it later, or
+        // never once the page reloaded for the second learner.
         const response = await route.fetch();
         await held.promise;
-        await route.fulfill({ response });
+        await route.fulfill({ response }).catch(() => null);
         return;
       }
 
@@ -429,10 +399,10 @@ test.describe("learner summary", () => {
     await page.goto("/courses");
     await expect.poll(() => reads.count).toBe(1);
 
-    // Another tab signs in as someone else before that read answers.
-    await signInAs({ context, user: second });
-    const other = await openAs(context, "/today");
-    await expect(accountRow(other, secondName)).toBeVisible();
+    // Another tab signs in as someone else before that read answers: this one reloads.
+    const reloaded = page.waitForEvent("load");
+    await signInInAnotherTab({ context, user: second });
+    await reloaded;
 
     held.resolve(true);
 
@@ -587,7 +557,7 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("gives a page back to the learner who signs in again in another tab", async ({
+  test("reloads a page for the learner who logs out and signs in again in another tab", async ({
     browser,
   }) => {
     const { name, user } = await createGoalLearner();
@@ -598,12 +568,16 @@ test.describe("learner summary", () => {
     await expect(accountRow(page, name)).toBeVisible();
     await expect(gate).toHaveCount(0);
 
-    // Logged out in another tab, the Plan asks the visitor to log in...
+    // Logged out in another tab, the Plan reloads and asks the visitor to log in...
+    const loggedOut = page.waitForEvent("load");
     await logOutInAnotherTab(context);
+    await loggedOut;
     await expect(gate).toBeVisible();
 
-    // ...until the learner signs in again there: the Plan is theirs again, not only the frame.
+    // ...until the learner signs in again there: the Plan reloads as theirs again.
+    const signedIn = page.waitForEvent("load");
     await signInInAnotherTab({ context, user });
+    await signedIn;
     await expect(accountRow(page, name)).toBeVisible();
     await expect(gate).toBeHidden();
     await expect(planGoal(page)).toBeVisible();
@@ -611,7 +585,7 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("gives a page opened signed out to the learner who signs in in another tab", async ({
+  test("reloads a page opened signed out for the learner who signs in in another tab", async ({
     browser,
   }) => {
     const { name, user } = await createGoalLearner();
@@ -621,7 +595,9 @@ test.describe("learner summary", () => {
 
     await expect(gate).toBeVisible();
 
+    const reloaded = page.waitForEvent("load");
     await signInInAnotherTab({ context, user });
+    await reloaded;
     await expect(accountRow(page, name)).toBeVisible();
     await expect(gate).toBeHidden();
     await expect(planGoal(page)).toBeVisible();

@@ -1,7 +1,6 @@
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { getLanguageUnitView } from "@zoonk/core/view-models/language/unit";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
@@ -32,37 +31,28 @@ async function UnitBody({ params }: Props) {
     const t = await getExtracted();
 
     return (
-      <>
-        <LearnerWitness />
-
-        <AuthGatePage
-          description={t("A unit of your language plan, with its lessons and how far you are.")}
-          next={`/content/units/${chapterId}`}
-          title={t("Unit")}
-        />
-      </>
+      <AuthGatePage
+        description={t("A unit of your language plan, with its lessons and how far you are.")}
+        next={`/content/units/${chapterId}`}
+        title={t("Unit")}
+      />
     );
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
   }
 
   return (
-    <>
-      <LearnerWitness />
-
-      <UnitScreenClient
-        tutor={tutor}
-        unit={result.unit}
-        upNext={isCurrentUnit({ chapterId, plan })}
-      />
-    </>
+    <UnitScreenClient
+      tutor={tutor}
+      unit={result.unit}
+      upNext={isCurrentUnit({ chapterId, plan })}
+    />
   );
 }
 

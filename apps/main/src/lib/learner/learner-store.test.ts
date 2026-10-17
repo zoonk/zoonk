@@ -1,16 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   answerFor,
-  fakeCover,
-  loadPage,
   loadStore,
-  resetCall,
   seedFor,
   settle,
   stubPage,
   stubSummaryReads,
   summaryOf,
-  tagOf,
 } from "./_test-utils/learner-page";
 
 /** How long the store waits for a page's seed before reading the summary itself. */
@@ -50,12 +46,10 @@ describe("learner store identity", () => {
     });
   });
 
-  it("leaves, covered, when a late seed was rendered for another learner than its read finds", async () => {
+  it("holds the learner its read finds, not a late seed rendered for another", async () => {
     stubPage({ seeded: true });
     const reads = stubSummaryReads();
-    const { identity, store } = await loadPage();
-    const cover = fakeCover();
-    identity.registerIdentityCover({ cover, handoff: { seen: undefined, witnesses: [] } });
+    const store = await loadStore();
 
     // The page's seed is on its way: nothing is read until it's late.
     store.ensureLearnerSummary();
@@ -70,11 +64,7 @@ describe("learner store identity", () => {
     reads[0]?.resolve(answerFor(summaryOf("second")));
     await settle();
 
-    expect(cover.calls.at(-1)).toBe(
-      resetCall({ contaminated: true, from: tagOf("first"), to: null }),
-    );
-
-    expect(store.getHeldLearnerId()).toBeUndefined();
+    expect(store.getHeldLearnerId()).toBe("second");
   });
 
   it("never lets a read sent before a late seed's check win after that check answered", async () => {

@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
@@ -37,57 +36,49 @@ export async function TodayGoalPaused({ revision }: { revision: string }) {
 
   if (goal?.status === "completed") {
     return (
-      <>
-        <LearnerWitness />
-
-        <TodayAtRest
-          actions={
-            <Link className={buttonVariants({ size: "lg" })} href="/start">
-              {t("Start a new goal")}
-            </Link>
-          }
-          clause={t("Start a new goal, or pick another one above.")}
-          date={date}
-          icon={<FlagIcon />}
-          sentence={t("You finished {goal}.", { goal: goal.title })}
-          state={t("Finished")}
-          title={t("Today")}
-        />
-      </>
+      <TodayAtRest
+        actions={
+          <Link className={buttonVariants({ size: "lg" })} href="/start">
+            {t("Start a new goal")}
+          </Link>
+        }
+        clause={t("Start a new goal, or pick another one above.")}
+        date={date}
+        icon={<FlagIcon />}
+        sentence={t("You finished {goal}.", { goal: goal.title })}
+        state={t("Finished")}
+        title={t("Today")}
+      />
     );
   }
 
   return (
-    <>
-      <LearnerWitness />
-
-      <TodayAtRest
-        actions={
-          <>
-            {/* A newer paused state (paused again elsewhere) gets a fresh Resume, not a busy one. */}
-            {goal && (
-              <ResumeGoalButton
-                goalId={goal.id}
-                goalTitle={goal.title}
-                key={`${goal.id}:${revision}`}
-              />
-            )}
-            <Link
-              className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
-              href="/start"
-            >
-              {t("New goal")}
-            </Link>
-          </>
-        }
-        clause={t("Nothing is planned until you resume it.")}
-        date={date}
-        detail={<ResumeEffect preview={resume} />}
-        icon={<PauseIcon />}
-        sentence={goal ? t("{goal} is paused.", { goal: goal.title }) : t("This goal is paused.")}
-        state={t("Paused")}
-        title={t("Today")}
-      />
-    </>
+    <TodayAtRest
+      actions={
+        <>
+          {/* A newer paused state (paused again elsewhere) gets a fresh Resume, not a busy one. */}
+          {goal && (
+            <ResumeGoalButton
+              goalId={goal.id}
+              goalTitle={goal.title}
+              key={`${goal.id}:${revision}`}
+            />
+          )}
+          <Link
+            className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
+            href="/start"
+          >
+            {t("New goal")}
+          </Link>
+        </>
+      }
+      clause={t("Nothing is planned until you resume it.")}
+      date={date}
+      detail={<ResumeEffect preview={resume} />}
+      icon={<PauseIcon />}
+      sentence={goal ? t("{goal} is paused.", { goal: goal.title }) : t("This goal is paused.")}
+      state={t("Paused")}
+      title={t("Today")}
+    />
   );
 }

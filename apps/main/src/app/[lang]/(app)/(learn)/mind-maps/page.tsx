@@ -1,6 +1,5 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getReachedCap } from "@zoonk/core/entitlements/contract";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
@@ -27,16 +26,12 @@ async function MindMapsBody() {
     const t = await getExtracted();
 
     return (
-      <>
-        <LearnerWitness />
-
-        <LearnNoGoal
-          bar={<JourneyPageBar root />}
-          description={t("Each chapter's ideas on one map, to review how they connect.")}
-          next="/mind-maps"
-          title={t("Mind maps")}
-        />
-      </>
+      <LearnNoGoal
+        bar={<JourneyPageBar root />}
+        description={t("Each chapter's ideas on one map, to review how they connect.")}
+        next="/mind-maps"
+        title={t("Mind maps")}
+      />
     );
   }
 
@@ -48,7 +43,6 @@ async function MindMapsBody() {
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
@@ -57,16 +51,12 @@ async function MindMapsBody() {
   const next = result.mindMaps.chapters.length === 0 ? result.mindMaps.nextChapter : null;
 
   return (
-    <>
-      <LearnerWitness />
-
-      <MindMapsClient
-        cap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
-        goalId={goal.id}
-        mindMaps={result.mindMaps}
-        next={next}
-      />
-    </>
+    <MindMapsClient
+      cap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
+      goalId={goal.id}
+      mindMaps={result.mindMaps}
+      next={next}
+    />
   );
 }
 

@@ -1,16 +1,9 @@
-import { checkIdentity } from "@/lib/learner/learner-identity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 
 /** The open is a request to the server: each test answers it as the server would. */
 vi.mock("./day-open-action", () => ({ openStudyDayAction: vi.fn() }));
-
-// Whether the page still belongs to the learner the browser holds; the store decides it.
-vi.mock("@/lib/learner/learner-identity", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  checkIdentity: vi.fn(() => true),
-}));
 
 const INPUT = {
   goalId: "8f5c7f31-35c4-4c35-b31c-2f2ae45d6e3a",
@@ -49,15 +42,6 @@ describe(sendDayOpen, () => {
 
     expect(openStudyDayAction).toHaveBeenCalledTimes(2);
     expect(toTapResult(outcome)).toStrictEqual({ kind: "failed" });
-  });
-
-  it("doesn't try again once the page no longer belongs to the browser's learner", async () => {
-    vi.mocked(openStudyDayAction).mockResolvedValue(RETRYABLE);
-    vi.mocked(checkIdentity).mockReturnValueOnce(false);
-
-    await expect(sendDayOpen({ input: INPUT, stillHere: () => true })).resolves.toBe(RETRYABLE);
-
-    expect(openStudyDayAction).toHaveBeenCalledOnce();
   });
 
   it("doesn't try again once the learner left the screen the tap was made on", async () => {

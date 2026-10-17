@@ -2,7 +2,6 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { withQuery } from "@/lib/with-query";
@@ -56,18 +55,12 @@ async function ChallengeContent({ params, searchParams }: Props) {
   const result = await getChallenge({ input: {}, planItemId });
 
   if (result.status === "unauthorized") {
-    return (
-      <>
-        <LearnerWitness />
-        <AuthGateScreen next={withQuery(`/challenge/${planItemId}`, query)} />
-      </>
-    );
+    return <AuthGateScreen next={withQuery(`/challenge/${planItemId}`, query)} />;
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -88,7 +81,6 @@ async function ChallengeContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
-      <LearnerWitness />
       <ChallengeClient
         challenge={challenge}
         movedBy={readParam(query, MOVED_PARAM)}

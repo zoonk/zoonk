@@ -1,9 +1,8 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { getFromBrowser, postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
+import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { type MindMapStatus } from "@zoonk/core/mind-maps/contract";
 import { type MindMapActions, type MindMapRequestOutcome } from "@zoonk/learn/mind-maps";
 import { getString } from "@zoonk/utils/json";
@@ -36,7 +35,7 @@ async function requestMindMap({
     return { status: "failed" };
   }
 
-  const body = await readJsonForThisLearner(response);
+  const body: unknown = await response.json().catch(() => null);
   const limit = readRefusedLimit({ body, status: response.status });
 
   if (limit) {
@@ -47,9 +46,7 @@ async function requestMindMap({
     return { status: "unavailable" };
   }
 
-  // No body is no answer: the route always says the status, and a body read once the page
-  // belonged to someone else is dropped.
-  if (!response.ok || body === null) {
+  if (!response.ok) {
     return { status: "failed" };
   }
 
@@ -64,19 +61,14 @@ async function readMindMapStatus({
   chapterId: string;
   goalId: string;
 }): Promise<MindMapStatus | null> {
-  const generation = getLearnerGeneration();
-
-  const response = await getFromBrowser(
-    `${chapterPath({ chapterId, goalId })}/status`,
-    () => generation === getLearnerGeneration(),
-  );
+  const response = await getFromBrowser(`${chapterPath({ chapterId, goalId })}/status`);
 
   if (!response?.ok) {
     return null;
   }
 
-  const status = getString(await readJsonForThisLearner(response), "status");
-  return generation === getLearnerGeneration() && isMindMapStatus(status) ? status : null;
+  const status = getString(await response.json().catch(() => null), "status");
+  return isMindMapStatus(status) ? status : null;
 }
 
 /**

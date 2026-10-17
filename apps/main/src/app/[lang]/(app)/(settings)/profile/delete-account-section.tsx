@@ -3,7 +3,6 @@
 import { rememberAccountDeleted } from "@/app/[lang]/account-deleted-toast";
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { forgetDeletedSession } from "@/lib/forget-deleted-session";
-import { beginLocalAuthChange } from "@/lib/learner/learner-identity";
 import { ListGroup } from "@zoonk/learn/list";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { SettingRow } from "@zoonk/learn/setting-rows";
@@ -71,33 +70,32 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
 /**
  * Deleting the account as one row: what it removes for good as its description, and a small red
  * "Delete…" that asks once more before doing it. Afterwards the learner is signed out and back on
- * the home page, which confirms the account was deleted.
+ * the home page, which confirms the account was deleted. It deletes only the account the page
+ * shows (`userId`).
  */
-export function DeleteAccountSection() {
+export function DeleteAccountSection({ userId }: { userId: string }) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<DeleteAccountResult | null>(null);
 
   const deleteAccount = () => {
     startTransition(async () => {
-      // The tab ends its own session: a deletion that's refused or fails leaves the page as it was.
-      const change = beginLocalAuthChange();
+      const { data } = await safeAsync(() => deleteAccountAction(userId));
+      const outcome = data ?? "failed";
 
-      try {
-        const { data } = await safeAsync(deleteAccountAction);
-        const outcome = data ?? "failed";
-
-        if (outcome === "deleted") {
-          // The account is gone: the page is covered and the other tabs hear it before any cleanup.
-          change.complete({ actor: null, tag: null });
-          await leaveDeletedAccount();
-          return;
-        }
-
-        setResult(outcome);
-      } finally {
-        change.release();
+      if (outcome === "deleted") {
+        await leaveDeletedAccount();
+        return;
       }
+
+      // Another account signed in since the page showed this one (in another tab): nothing was
+      // deleted, and the page reloads for whoever is signed in now.
+      if (outcome === "otherAccount") {
+        globalThis.location.reload();
+        return;
+      }
+
+      setResult(outcome);
     });
   };
 

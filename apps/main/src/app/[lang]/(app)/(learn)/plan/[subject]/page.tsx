@@ -1,7 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
@@ -67,23 +66,18 @@ async function SubjectBody({ params }: Props) {
     const t = await getExtracted();
 
     return (
-      <>
-        <LearnerWitness />
-
-        <LearnNoGoal
-          bar={<JourneyPageBar />}
-          description={t("What you'll study each day until your goal, and what it covers.")}
-          next={`/plan/${key}`}
-          title={t("Plan")}
-        />
-      </>
+      <LearnNoGoal
+        bar={<JourneyPageBar />}
+        description={t("What you'll study each day until your goal, and what it covers.")}
+        next={`/plan/${key}`}
+        title={t("Plan")}
+      />
     );
   }
 
   if (result.status !== "ready" || !subject) {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
@@ -92,7 +86,6 @@ async function SubjectBody({ params }: Props) {
   // "Ask" opens the buddy's conversation with the player's components.
   return (
     <ClientMessagesProvider scope="player">
-      <LearnerWitness />
       <SubjectScreenClient
         goalId={result.syllabus.goal.id}
         hasMindMaps={hasSubjectMindMaps({ mindMaps, subject })}

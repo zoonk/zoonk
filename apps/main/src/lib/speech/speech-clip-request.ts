@@ -1,6 +1,6 @@
 "use client";
 
-import { postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
+import { postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { type SpeechClip } from "@zoonk/core/audio/speech-clip-contract";
 import { type SpeechClipOutcome } from "@zoonk/learn/speech/provider";
@@ -8,9 +8,13 @@ import { toWebOwnFileUrl } from "@zoonk/utils/user-blobs";
 
 const FAILED: SpeechClipOutcome = { limit: null, status: "failed" };
 
+async function readBody(response: Response): Promise<unknown> {
+  return response.json().catch(() => null);
+}
+
 /** What `POST /v1/speech-clips` answered, as a play button shows it. */
 async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcome> {
-  const body = await readJsonForThisLearner(response);
+  const body = await readBody(response);
 
   if (response.ok) {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The API validates successful responses with speechClipResponseSchema.

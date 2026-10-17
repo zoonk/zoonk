@@ -1,6 +1,6 @@
 "use client";
 
-import { postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
+import { postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
@@ -8,13 +8,17 @@ import { type SpokenAnswerOutcome } from "@zoonk/player/lesson/types";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 
+async function readBody(response: Response): Promise<unknown> {
+  return response.json().catch(() => null);
+}
+
 /**
  * What `POST /v1/steps/{stepId}/spoken-answers` answered, as the speaking screen shows it: the
  * grade, nothing heard, a slow-down or today's help used up; anything else is a failure the
  * screen offers to try again.
  */
 async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOutcome> {
-  const body = await readJsonForThisLearner(response);
+  const body = await readBody(response);
 
   if (response.ok) {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The API validates successful responses with spokenAnswerGradeSchema.

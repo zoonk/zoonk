@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getMenu } from "@/lib/menu";
 import { getEnergyData } from "@zoonk/core/progress/get-energy-data";
@@ -41,26 +40,15 @@ export async function EnergyContent() {
   ]);
 
   if (!(data && session)) {
-    return (
-      <>
-        <LearnerWitness />
-        <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("energy").url} />
-      </>
-    );
+    return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("energy").url} />;
   }
 
   if (!started) {
-    return (
-      <>
-        <LearnerWitness />
-        <EnergyStartsState />
-      </>
-    );
+    return <EnergyStartsState />;
   }
 
   return (
     <ProgressContent>
-      <LearnerWitness />
       <EnergyTiles currentEnergy={data.currentEnergy} insights={data.insights} />
       <EnergyChart days={data.days} />
       <EnergyLine />

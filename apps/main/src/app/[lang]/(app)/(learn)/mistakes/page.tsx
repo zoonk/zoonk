@@ -1,6 +1,5 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getTodayPattern } from "@zoonk/core/language/patterns/today";
 import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
@@ -54,18 +53,12 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
     const t = await getExtracted();
 
     return (
-      <>
-        <LearnerWitness />
-
-        <LearnNoGoal
-          bar={<NotebookBar />}
-          description={t(
-            "The questions you got wrong, why, and practice until you get them right.",
-          )}
-          next="/mistakes"
-          title={t("Mistakes notebook")}
-        />
-      </>
+      <LearnNoGoal
+        bar={<NotebookBar />}
+        description={t("The questions you got wrong, why, and practice until you get them right.")}
+        next="/mistakes"
+        title={t("Mistakes notebook")}
+      />
     );
   }
 
@@ -80,33 +73,28 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
   }
 
   return (
-    <>
-      <LearnerWitness />
-
-      <MistakesNotebook
-        filters={{
-          nextOffset: result.hasMore ? input.offset + input.limit : null,
-          status: input.status ?? "open",
-        }}
-        goalTitle={goal.title}
-        hrefs={{
-          back: "/today",
-          lesson: "/learn",
-          notebook: "/mistakes",
-          pattern: "/pattern",
-          practice: "/mistakes/practice",
-        }}
-        notebook={result}
-        pattern={language.status === "ready" ? language.pattern : null}
-      />
-    </>
+    <MistakesNotebook
+      filters={{
+        nextOffset: result.hasMore ? input.offset + input.limit : null,
+        status: input.status ?? "open",
+      }}
+      goalTitle={goal.title}
+      hrefs={{
+        back: "/today",
+        lesson: "/learn",
+        notebook: "/mistakes",
+        pattern: "/pattern",
+        practice: "/mistakes/practice",
+      }}
+      notebook={result}
+      pattern={language.status === "ready" ? language.pattern : null}
+    />
   );
 }
 

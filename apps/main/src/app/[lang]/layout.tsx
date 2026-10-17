@@ -12,12 +12,10 @@ import { Suspense } from "react";
 import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
-import { IdentityCoverBridge } from "./identity-cover-bridge";
-import { IdentityCoverScript } from "./identity-cover-script";
+import { AuthChangeReload } from "./auth-change-reload";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
-import { SessionRefresh } from "./session-refresh";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import "../globals.css";
 
@@ -61,7 +59,6 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     >
       <head>
         <SignedInHintScript />
-        <IdentityCoverScript />
         <KeepTypingScript />
       </head>
       <body className="font-sans antialiased">
@@ -77,12 +74,11 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
             </MainFeedbackProvider>
           </ClientMessagesProvider>
         </NuqsAdapter>
-        <IdentityCoverBridge />
+        <AuthChangeReload />
         <Suspense fallback={null}>
           <LearnerSummarySync />
         </Suspense>
         <AppAnalytics locale={locale} />
-        <SessionRefresh />
       </body>
     </html>
   );

@@ -11,14 +11,12 @@ function stubTab() {
   const announced: unknown[] = [];
   const reported: unknown[] = [];
 
-  vi.stubGlobal("document", { addEventListener: vi.fn(), cookie: "zoonk-signed-in=1" });
-  vi.stubGlobal("addEventListener", vi.fn());
   vi.stubGlobal("reportError", (error: unknown) => reported.push(error));
 
   vi.stubGlobal(
     "BroadcastChannel",
     class {
-      addEventListener = vi.fn();
+      close = vi.fn();
       postMessage = vi.fn((data: unknown) => announced.push(data));
     },
   );
@@ -26,7 +24,7 @@ function stubTab() {
   return { announced, reported };
 }
 
-/** A fresh helper: the learner store it tells lives in its module, once per page. */
+/** A fresh helper, with the tab's stubs in place as it loads. */
 async function loadHelper() {
   vi.resetModules();
 
@@ -50,7 +48,7 @@ describe("endLearnerSession", () => {
     await endLearnerSession(endSession);
 
     expect(endSession).toHaveBeenCalledOnce();
-    expect(tab.announced).toStrictEqual([{ check: true }]);
+    expect(tab.announced).toStrictEqual([null]);
     expect(tab.reported).toStrictEqual([analyticsFailure]);
   });
 
@@ -65,7 +63,7 @@ describe("endLearnerSession", () => {
       }),
     ).rejects.toBe(signOutFailure);
 
-    expect(tab.announced).toStrictEqual([{ check: true }]);
+    expect(tab.announced).toStrictEqual([null]);
     expect(tab.reported).toStrictEqual([]);
   });
 });

@@ -1,5 +1,4 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getFocusTest } from "@zoonk/core/plans/focus-test/get";
@@ -46,21 +45,17 @@ async function FocusTestBody({ searchParams }: Props) {
   }
 
   return (
-    <>
-      <LearnerWitness />
-
-      <FocusTestClient
-        generationId={readParam(query[FOCUS_TEST_RUN_PARAM])}
-        page={{
-          closeHref: goalParam ? `/start/${goalId}` : "/plan",
-          doneHref: "/plan",
-          goalId,
-          goalParam: goalParam && isUuid(goalParam) ? goalParam : null,
-        }}
-        started={readParam(query[FOCUS_TEST_STARTED_PARAM]) !== null}
-        test={result.focusTest}
-      />
-    </>
+    <FocusTestClient
+      generationId={readParam(query[FOCUS_TEST_RUN_PARAM])}
+      page={{
+        closeHref: goalParam ? `/start/${goalId}` : "/plan",
+        doneHref: "/plan",
+        goalId,
+        goalParam: goalParam && isUuid(goalParam) ? goalParam : null,
+      }}
+      started={readParam(query[FOCUS_TEST_STARTED_PARAM]) !== null}
+      test={result.focusTest}
+    />
   );
 }
 

@@ -41,10 +41,7 @@ test.describe("Signed-in hint", () => {
       [null, false],
       ["0", false],
       ["yes", false],
-      ["t1.short", false],
-      ["t2.AbCdEfGhIjKlMnOpQrSt-_", false],
       ["1", true],
-      ["t1.AbCdEfGhIjKlMnOpQrSt-_", true],
     ] as const) {
       // oxlint-disable-next-line no-await-in-loop -- One browser at a time keeps failures readable.
       const context = await browser.newContext();
@@ -79,38 +76,28 @@ test.describe("Signed-in hint", () => {
     }
   });
 
-  test("a sign-in leaves the learner's own tag beside their session, the same on every sign-in", async ({
+  test("a sign-in leaves the hint beside the session, for as long, on every sign-in", async ({
     browser,
   }) => {
-    const [first, second] = await Promise.all([
-      createE2EUser(getBaseURL()),
-      createE2EUser(getBaseURL()),
-    ]);
+    const user = await createE2EUser(getBaseURL());
+    const hint = user.storageState.cookies.find((cookie) => cookie.name === SESSION_HINT_COOKIE);
 
-    const [firstHint, secondHint] = [first, second].map((user) =>
-      user.storageState.cookies.find((cookie) => cookie.name === SESSION_HINT_COOKIE),
-    );
-
-    const session = first.storageState.cookies.find((cookie) =>
+    const session = user.storageState.cookies.find((cookie) =>
       cookie.name.endsWith("session_token"),
     );
 
-    expect(firstHint).toMatchObject({ httpOnly: false, sameSite: "Lax" });
-    expect(firstHint?.value).toMatch(/^t1\.[\w-]{22}$/u);
-    expect(firstHint?.value).not.toContain(first.id);
-    expect(Math.abs((firstHint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
-    expect(secondHint?.value).toMatch(/^t1\.[\w-]{22}$/u);
-    expect(secondHint?.value).not.toBe(firstHint?.value);
+    expect(hint).toMatchObject({ httpOnly: false, sameSite: "Lax", value: "1" });
+    expect(Math.abs((hint?.expires ?? 0) - (session?.expires ?? 0))).toBeLessThan(60);
 
-    // Signing in again starts another session for the same learner, under the same tag.
+    // Signing in again starts another session, with the hint beside it again.
     const context = await browser.newContext();
 
     const response = await context.request.post("/api/auth/sign-in/email", {
-      data: { email: first.email, password: first.password },
+      data: { email: user.email, password: user.password },
     });
 
     expect(response.ok()).toBe(true);
-    expect(await getSessionHint(context)).toBe(firstHint?.value);
+    expect(await getSessionHint(context)).toBe("1");
 
     await context.close();
   });
@@ -186,11 +173,13 @@ test.describe("Signed-in hint", () => {
     await context.clearCookies({ name: /session_data/u });
 
     // The page finds nobody and asks Better Auth's own session read, whose answer drops the dead
-    // session cookie and the hint together; the page then reloads itself signed out.
+    // session cookie and the hint together; the page shows the visitor's way in.
     await page.reload();
     await expect.poll(() => getSessionHint(context)).toBe("0");
-    await expect.poll(() => isMarkedSignedIn(page)).toBe(false);
     await expect(page.getByRole("banner").getByRole("link", { name: "Log in" })).toBeVisible();
+
+    await page.goto("/pricing");
+    expect(await isMarkedSignedIn(page)).toBe(false);
 
     await context.close();
   });

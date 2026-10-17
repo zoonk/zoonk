@@ -1,5 +1,4 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { Page } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -24,7 +23,6 @@ async function MemoryContent() {
 
   return (
     <ProtectedSection allowGuests next="/settings/memory">
-      <LearnerWitness />
       {memory && <MemorySettings memory={memory} />}
     </ProtectedSection>
   );

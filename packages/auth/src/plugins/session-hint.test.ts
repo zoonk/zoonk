@@ -1,48 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { type BetterAuthPlugin } from "better-auth";
-import { createAuthEndpoint, getSessionFromCtx } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it } from "vitest";
 import { BETTER_AUTH_BASE_PATH, SESSION_EXPIRES_IN_DAYS } from "../config";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins } from "../server";
-import { SESSION_HINT_COOKIE, SESSION_HINT_HEADER } from "../session-hint";
-import { encodeSessionHintTag } from "../session-hint-tag";
+import { SESSION_HINT_COOKIE } from "../session-hint";
 
 const ORIGIN = "http://localhost:3000";
 const SECRET = "session-hint-plugin-test-secret-with-enough-entropy";
 const SESSION_COOKIE = "better-auth.session_token";
 const SESSION_MAX_AGE = String(60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS);
 const PASSWORD = "session-hint-password";
-
-/**
- * Writes a session cookie for a token no session of this request belongs to, after reading the
- * request's own session: the shape of a library path that writes the cookie without saying whose
- * session it is.
- */
-function rawSessionCookiePlugin() {
-  return {
-    endpoints: {
-      writeRawSessionCookie: createAuthEndpoint(
-        "/test/raw-session-cookie",
-        { method: "POST" },
-        async (ctx) => {
-          await getSessionFromCtx(ctx);
-
-          await ctx.setSignedCookie(
-            ctx.context.authCookies.sessionToken.name,
-            randomUUID(),
-            ctx.context.secret,
-            ctx.context.authCookies.sessionToken.attributes,
-          );
-
-          return ctx.json({ ok: true });
-        },
-      ),
-    },
-    id: "raw-session-cookie",
-  } satisfies BetterAuthPlugin;
-}
 
 /** Production's plugins in production's order, with email and password to sign learners in. */
 const auth = betterAuth({
@@ -55,7 +23,7 @@ const auth = betterAuth({
       verify: async ({ hash, password }) => hash === password,
     },
   },
-  plugins: [...baseAuthPlugins, rawSessionCookiePlugin(), ...fullPlugins],
+  plugins: [...baseAuthPlugins, ...fullPlugins],
   rateLimit: { enabled: false },
   secret: SECRET,
 });
@@ -126,41 +94,36 @@ async function signUp() {
   return { cookie: toCookieHeader(response), email, response, userId: String(user.id) };
 }
 
-function tagFor(userId: string): string {
-  return encodeSessionHintTag({ secret: SECRET, userId });
-}
-
 function getHint(response: Response): SetCookie | undefined {
   return readSetCookies(response).get(SESSION_HINT_COOKIE);
 }
 
-/** The hint names the learner, beside a session cookie it shares its lifetime and scope with. */
-function expectTagBesideSession({ response, userId }: { response: Response; userId: string }) {
+/** The hint says `1` beside a session cookie it shares its lifetime and scope with. */
+function expectHintBesideSession(response: Response) {
   const cookies = readSetCookies(response);
   const session = cookies.get(SESSION_COOKIE);
   const hint = cookies.get(SESSION_HINT_COOKIE);
 
   expect(session?.value).toBeTruthy();
-  expect(hint?.value).toBe(tagFor(userId));
+  expect(hint?.value).toBe("1");
   expect(hint?.attributes.get("max-age")).toBe(session?.attributes.get("max-age"));
   expect(hint?.attributes.get("path")).toBe("/");
   expect(hint?.attributes.get("samesite")?.toLowerCase()).toBe("lax");
   expect(hint?.attributes.has("httponly")).toBe(false);
-  expect(response.headers.get(SESSION_HINT_HEADER)).toBe(tagFor(userId));
 }
 
 describe("session hint", () => {
-  it("names the learner who signs in, for as long as their session, and the same on every sign-in", async () => {
-    const { email, response, userId } = await signUp();
+  it("says 1 for a learner who signs in, for as long as their session, on every sign-in", async () => {
+    const { email, response } = await signUp();
 
-    expectTagBesideSession({ response, userId });
+    expectHintBesideSession(response);
 
     expect(readSetCookies(response).get(SESSION_COOKIE)?.attributes.get("max-age")).toBe(
       SESSION_MAX_AGE,
     );
 
     const again = await request({ body: { email, password: PASSWORD }, path: "/sign-in/email" });
-    expectTagBesideSession({ response: again, userId });
+    expectHintBesideSession(again);
 
     // A session that ends with the browser leaves a hint that ends with it.
     const brief = await request({
@@ -168,7 +131,7 @@ describe("session hint", () => {
       path: "/sign-in/email",
     });
 
-    expectTagBesideSession({ response: brief, userId });
+    expectHintBesideSession(brief);
     expect(getHint(brief)?.attributes.has("max-age")).toBe(false);
   });
 
@@ -181,22 +144,18 @@ describe("session hint", () => {
     expect(cookies.get(SESSION_COOKIE)?.attributes.get("max-age")).toBe("0");
     expect(cookies.get(SESSION_HINT_COOKIE)?.value).toBe("0");
     expect(cookies.get(SESSION_HINT_COOKIE)?.attributes.has("max-age")).toBe(false);
-    expect(response.headers.get(SESSION_HINT_HEADER)).toBe("0");
   });
 
-  it("names a new guest in the response that makes them", async () => {
+  it("says 1 in the response that makes a guest", async () => {
     const response = await request({ path: "/sign-in/anonymous" });
     const { user } = await response.clone().json();
 
     expect(user.isAnonymous).toBe(true);
-    expectTagBesideSession({ response, userId: String(user.id) });
+    expectHintBesideSession(response);
   });
 
-  it("names the learner a sign-in token verifies, never the session the request still carried", async () => {
-    const [guestResponse, learner] = await Promise.all([
-      request({ path: "/sign-in/anonymous" }),
-      signUp(),
-    ]);
+  it("says 1 when a sign-in token signs a learner in", async () => {
+    const learner = await signUp();
 
     const generated = await request({
       cookie: learner.cookie,
@@ -205,20 +164,13 @@ describe("session hint", () => {
     });
 
     const { token } = await generated.json();
-    const guestCookie = toCookieHeader(guestResponse);
-    const { user: guest } = await guestResponse.json();
+    const response = await request({ body: { token }, path: "/one-time-token/verify" });
 
-    const response = await request({
-      body: { token },
-      cookie: guestCookie,
-      path: "/one-time-token/verify",
-    });
-
-    expectTagBesideSession({ response, userId: learner.userId });
-    expect(getHint(response)?.value).not.toBe(tagFor(String(guest.id)));
+    expect(response.status).toBe(200);
+    expectHintBesideSession(response);
   });
 
-  it("names the learner again when a session read renews their session cookie", async () => {
+  it("says 1 again when a session read renews the session cookie", async () => {
     const { response: signedUp, userId } = await signUp();
     const session = readSetCookies(signedUp).get(SESSION_COOKIE);
 
@@ -235,25 +187,25 @@ describe("session hint", () => {
     });
 
     await expect(response.clone().json()).resolves.toMatchObject({ user: { id: userId } });
-    expectTagBesideSession({ response, userId });
+    expectHintBesideSession(response);
   });
 
-  it("writes nothing on a session read that keeps the session, and still says whose it is", async () => {
-    const { cookie, userId } = await signUp();
+  it("writes nothing on a session read that keeps the session, or finds none without a hint", async () => {
+    const { cookie } = await signUp();
 
-    const learner = await request({
-      cookie,
-      method: "GET",
-      path: "/get-session?disableCookieCache=true&disableRefresh=true",
-    });
+    const responses = await Promise.all([
+      request({
+        cookie,
+        method: "GET",
+        path: "/get-session?disableCookieCache=true&disableRefresh=true",
+      }),
+      request({ method: "GET", path: "/get-session" }),
+      request({ cookie: `${SESSION_HINT_COOKIE}=0`, method: "GET", path: "/get-session" }),
+    ]);
 
-    expect(learner.headers.getSetCookie()).toStrictEqual([]);
-    expect(learner.headers.get(SESSION_HINT_HEADER)).toBe(tagFor(userId));
-
-    const visitor = await request({ method: "GET", path: "/get-session" });
-
-    expect(visitor.headers.getSetCookie()).toStrictEqual([]);
-    expect(visitor.headers.get(SESSION_HINT_HEADER)).toBe("0");
+    for (const response of responses) {
+      expect(response.headers.getSetCookie()).toStrictEqual([]);
+    }
   });
 
   it("says nobody when a session read finds the session gone and deletes its cookie", async () => {
@@ -270,12 +222,10 @@ describe("session hint", () => {
 
     expect(cookies.get(SESSION_COOKIE)?.attributes.get("max-age")).toBe("0");
     expect(cookies.get(SESSION_HINT_COOKIE)?.value).toBe("0");
-    expect(response.headers.get(SESSION_HINT_HEADER)).toBe("0");
   });
 
   it.each([
-    ["a learner's tag", tagFor(randomUUID())],
-    ["a hint from before tags", "1"],
+    ["a hint saying a session", "1"],
     ["an unreadable hint", "junk"],
   ])(
     "drops %s kept without a session when a session read finds none, never saying nobody",
@@ -289,23 +239,8 @@ describe("session hint", () => {
       expect(readSetCookies(response).has(SESSION_COOKIE)).toBe(false);
       expect(getHint(response)).toMatchObject({ value: "" });
       expect(getHint(response)?.attributes.get("max-age")).toBe("0");
-      expect(response.headers.get(SESSION_HINT_HEADER)).toBe("0");
     },
   );
-
-  it("writes nothing from a session read for a hint saying nobody or a live session's hint", async () => {
-    const { cookie } = await signUp();
-    const legacy = cookie.replace(/zoonk-signed-in=[^;]*/u, `${SESSION_HINT_COOKIE}=1`);
-
-    const responses = await Promise.all([
-      request({ cookie: `${SESSION_HINT_COOKIE}=0`, method: "GET", path: "/get-session" }),
-      request({ cookie: legacy, method: "GET", path: "/get-session?disableRefresh=true" }),
-    ]);
-
-    for (const response of responses) {
-      expect(response.headers.getSetCookie()).toStrictEqual([]);
-    }
-  });
 
   it("leaves the hint alone when a response doesn't touch the session cookie", async () => {
     const { cookie, email } = await signUp();
@@ -319,19 +254,6 @@ describe("session hint", () => {
 
     for (const response of [failed, unrelated]) {
       expect(getHint(response)).toBeUndefined();
-      expect(response.headers.get(SESSION_HINT_HEADER)).toBeNull();
     }
-  });
-
-  it("drops the hint instead of naming the request's learner for a session cookie it can't place", async () => {
-    const { cookie } = await signUp();
-
-    const response = await request({ cookie, path: "/test/raw-session-cookie" });
-    const hint = getHint(response);
-
-    expect(readSetCookies(response).get(SESSION_COOKIE)?.value).toBeTruthy();
-    expect(hint?.value).toBe("");
-    expect(hint?.attributes.get("max-age")).toBe("0");
-    expect(response.headers.get(SESSION_HINT_HEADER)).toBeNull();
   });
 });

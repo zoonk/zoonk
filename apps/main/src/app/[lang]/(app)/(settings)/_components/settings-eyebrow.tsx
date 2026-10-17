@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getSession } from "@zoonk/core/users/session";
 import { getExtracted } from "next-intl/server";
@@ -15,10 +14,5 @@ export async function SettingsEyebrow() {
     return null;
   }
 
-  return (
-    <>
-      <LearnerWitness />
-      {subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email}
-    </>
-  );
+  return subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email;
 }

@@ -1,4 +1,3 @@
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { LessonWaiting } from "./lesson-waiting";
@@ -30,16 +29,12 @@ export async function LessonWaitingView({
       : initialRequest;
 
   return (
-    <>
-      <LearnerWitness />
-
-      <LessonWaiting
-        alternative={waiting.status === "ready" ? waiting.state.alternative : null}
-        exitHref={inSession ? "/today" : (origin ?? "/")}
-        initialRequest={request}
-        key={request.status === "writing" ? request.generationId : request.status}
-        lesson={lesson}
-      />
-    </>
+    <LessonWaiting
+      alternative={waiting.status === "ready" ? waiting.state.alternative : null}
+      exitHref={inSession ? "/today" : (origin ?? "/")}
+      initialRequest={request}
+      key={request.status === "writing" ? request.generationId : request.status}
+      lesson={lesson}
+    />
   );
 }

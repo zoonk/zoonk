@@ -1,12 +1,10 @@
-import { onLearnerIdentityChange } from "@/lib/learner/learner-identity";
 import { type DayEntry, getEntryExpiry } from "./day-entry";
 
-const registry: {
-  entry: DayEntry | null;
-  installed: boolean;
-  listeners: Set<() => void>;
-  nextId: number;
-} = { entry: null, installed: false, listeners: new Set(), nextId: 1 };
+const registry: { entry: DayEntry | null; listeners: Set<() => void>; nextId: number } = {
+  entry: null,
+  listeners: new Set(),
+  nextId: 1,
+};
 
 function notify() {
   registry.listeners.forEach((listener) => listener());
@@ -55,17 +53,11 @@ function expireAt(id: number, expiry: number, { unlessApplied }: { unlessApplied
 
 /**
  * Starts the tab's one entry for a tap, replacing any earlier one. It lets go on its own once the
- * day it showed ends, or a minute after its result if nothing applied it; another learner (or
- * nobody) taking the session ends it.
+ * day it showed ends, or a minute after its result if nothing applied it.
  */
 export function beginDayEntry(
   input: Omit<DayEntry, "applied" | "expired" | "id" | "result">,
 ): DayEntry {
-  if (!registry.installed) {
-    registry.installed = true;
-    onLearnerIdentityChange(() => endDayEntry());
-  }
-
   const entry: DayEntry = {
     ...input,
     applied: false,

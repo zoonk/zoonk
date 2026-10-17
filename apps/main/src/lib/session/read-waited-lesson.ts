@@ -1,7 +1,6 @@
 "use client";
 
-import { getFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { getFromBrowser } from "@/lib/api/browser-api";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { getString } from "@zoonk/utils/json";
 
@@ -20,21 +19,16 @@ const WAITED_LESSON = new Map<string, NextStopLesson>([
 export async function readWaitedLesson(
   lessonId: string,
 ): Promise<{ generationId: string | null; lesson: NextStopLesson } | null> {
-  const generation = getLearnerGeneration();
-
   const response = await getFromBrowser(
     `/v1/library/lessons/${encodeURIComponent(lessonId)}/readiness`,
-    () => generation === getLearnerGeneration(),
   );
 
   if (!response?.ok) {
     return null;
   }
 
-  const body = await readJsonForThisLearner(response);
+  const body: unknown = await response.json().catch(() => null);
   const lesson = WAITED_LESSON.get(getString(body, "status") ?? "");
 
-  return generation === getLearnerGeneration() && lesson
-    ? { generationId: getString(body, "generationId"), lesson }
-    : null;
+  return lesson ? { generationId: getString(body, "generationId"), lesson } : null;
 }

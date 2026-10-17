@@ -6,7 +6,6 @@ import {
 } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
 import { useRouter } from "@/i18n/navigation";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
-import { checkIdentity } from "@/lib/learner/learner-identity";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
@@ -53,9 +52,7 @@ export function useCourseStart({
       }
 
       const { data } = await safeAsync(async () =>
-        // The guest is made first; the course starts only while the page still belongs to the
-        // browser's learner.
-        (await ensureGuestSession()) && checkIdentity()
+        (await ensureGuestSession())
           ? startCourseAction({
               chapterId,
               courseId,

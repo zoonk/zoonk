@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { deleteCurrentUser } from "./delete-current-user";
+import { deleteCurrentUser, deleteShownAccount } from "./delete-current-user";
 
 const mocks = vi.hoisted(() => ({
   captureDeletionCleanup: vi.fn(),
@@ -207,5 +207,19 @@ describe(deleteCurrentUser, () => {
     await expect(
       prisma.session.findUnique({ where: { token: temporarySessionToken } }),
     ).resolves.toBeNull();
+  });
+
+  describe(deleteShownAccount, () => {
+    it("deletes the account the page showed while it holds the session", async () => {
+      await expect(deleteShownAccount({ shownUserId: currentUserId })).resolves.toBe("deleted");
+
+      expect(mocks.deleteUser).toHaveBeenCalledOnce();
+    });
+
+    it("deletes nothing once another account holds the session than the one the page showed", async () => {
+      await expect(deleteShownAccount({ shownUserId: randomUUID() })).resolves.toBe("otherAccount");
+
+      expect(mocks.deleteUser).not.toHaveBeenCalled();
+    });
   });
 });

@@ -1,6 +1,5 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
@@ -61,18 +60,12 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
   });
 
   if (result.status === "unauthorized") {
-    return (
-      <>
-        <LearnerWitness />
-        <AuthGateScreen next="/buddy/earlier-questions" />
-      </>
-    );
+    return <AuthGateScreen next="/buddy/earlier-questions" />;
   }
 
   if (result.status === "invalidCursor") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <LearnNotFound />
       </NotFoundPage>
     );
@@ -82,7 +75,6 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
 
   return (
     <>
-      <LearnerWitness />
       <LearnPageBar back={{ href: "/buddy" }} title={t("Earlier questions")} />
 
       <Page>

@@ -2,7 +2,6 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { redirect } from "@/i18n/navigation";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
@@ -72,7 +71,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
   if (call.status === "notStarted") {
     return (
       <MainLearnProvider>
-        <LearnerWitness />
         <CheckpointCallPreviewClient
           blockId={blockId}
           dailyLimitReached={call.dailyLimitReached}
@@ -85,7 +83,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
   if (call.status === "preparing") {
     return (
       <MainLearnProvider>
-        <LearnerWitness />
         <CheckpointCallClient blockId={blockId} unitTitle={call.unitTitle} />
       </MainLearnProvider>
     );
@@ -96,18 +93,12 @@ async function CheckpointContent({ params, searchParams }: Props) {
   const result = await getCheckpoint(blockId);
 
   if (result.status === "unauthorized") {
-    return (
-      <>
-        <LearnerWitness />
-        <AuthGateScreen next={withQuery(`/checkpoint/${blockId}`, query)} />
-      </>
-    );
+    return <AuthGateScreen next={withQuery(`/checkpoint/${blockId}`, query)} />;
   }
 
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <TaskNotFound />
       </NotFoundPage>
     );
@@ -127,7 +118,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
     if (!checkpoint.planItemId) {
       return (
         <NotFoundPage>
-          <LearnerWitness />
           <TaskNotFound />
         </NotFoundPage>
       );
@@ -143,7 +133,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
-      <LearnerWitness />
       <CheckpointClient checkpoint={checkpoint} continueHref={sessionReturn.continueHref} />
     </MainLearnProvider>
   );

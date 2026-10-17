@@ -1,5 +1,4 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { LearnerWitness } from "@/components/learner/learner-witness";
 import { LoginBarLink } from "@/components/login-bar-link";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { NoAccountNote } from "@/components/public/no-account-note";
@@ -138,15 +137,8 @@ async function FreshCourseStart({ locale, ...view }: CourseStartViewProps & { lo
     redirect({ href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today", locale });
   }
 
-  // Revealed after the page around it, so it says whose page it is too.
   return (
-    <>
-      <LearnerWitness />
-      <CourseStartView
-        {...view}
-        screen={{ ...view.screen, initialFailure: toLimitFailure(limit) }}
-      />
-    </>
+    <CourseStartView {...view} screen={{ ...view.screen, initialFailure: toLimitFailure(limit) }} />
   );
 }
 
@@ -158,7 +150,6 @@ async function CourseStartContent({ params, searchParams }: Props) {
   if (!course) {
     return (
       <NotFoundPage>
-        <LearnerWitness />
         <OnboardingNotFound />
       </NotFoundPage>
     );
@@ -198,17 +189,12 @@ async function CourseStartContent({ params, searchParams }: Props) {
 
   const cached = <CourseStartView hasSession={hasSession} screen={screen} />;
 
-  return (
-    <>
-      <LearnerWitness />
-      {isStartBlocked(screen.initialFailure) ? (
-        <Suspense fallback={cached}>
-          <FreshCourseStart hasSession={hasSession} locale={lang} screen={screen} />
-        </Suspense>
-      ) : (
-        cached
-      )}
-    </>
+  return isStartBlocked(screen.initialFailure) ? (
+    <Suspense fallback={cached}>
+      <FreshCourseStart hasSession={hasSession} locale={lang} screen={screen} />
+    </Suspense>
+  ) : (
+    cached
   );
 }
 

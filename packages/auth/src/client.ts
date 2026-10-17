@@ -22,23 +22,10 @@ export function signOutAppHost() {
   return authClient.signOut();
 }
 
-/**
- * Clear both hosts' cookies: the app and central auth can share a database session. The moment
- * the app host's session has ended (`onAppSignedOut`), before central auth answers or the page
- * leaves, the app can tell its pages and other tabs.
- */
-export async function logout({ onAppSignedOut }: { onAppSignedOut?: () => void } = {}) {
+/** Clear both hosts' cookies: the app and central auth can share a database session. */
+export async function logout() {
   const { data } = await safeAsync(() =>
-    Promise.all([
-      signOutAppHost().then((response) => {
-        if (!response.error) {
-          onAppSignedOut?.();
-        }
-
-        return response;
-      }),
-      centralAuthClient.signOut(),
-    ]),
+    Promise.all([signOutAppHost(), centralAuthClient.signOut()]),
   );
 
   if (data?.every((response) => !response.error)) {

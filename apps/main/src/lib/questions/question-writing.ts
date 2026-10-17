@@ -1,4 +1,4 @@
-import { postFromBrowser, readJsonForThisLearner } from "@/lib/api/browser-api";
+import { postFromBrowser } from "@/lib/api/browser-api";
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
@@ -26,10 +26,9 @@ export async function requestQuestionWriting(
     return { status: "failed" };
   }
 
-  const answer = await readJsonForThisLearner(response);
+  const answer: unknown = await response.json().catch(() => null);
 
-  // The route always answers JSON: no body (or one read once the page belonged to someone else)
-  // is no answer.
+  // The route always answers JSON: no body is no answer.
   if (answer === null) {
     return { status: "failed" };
   }
