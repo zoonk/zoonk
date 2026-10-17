@@ -8,7 +8,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getLanguageTodayView } from "../../view-models/language/get-language-today-view";
+import { getTodayView } from "../../view-models/today/get-today-view";
 import { getTodayPattern } from "./get-today-pattern";
 
 function createPattern({ goalId, userId }: { goalId: string; userId: string }) {
@@ -62,16 +62,25 @@ describe("the notebook's pattern read", () => {
       freezeClock();
 
       const { goal, user } = await languageGoalFixture();
+      const timeZone = goal.timezone ?? "UTC";
 
       const pattern = await createPattern({ goalId: goal.id, userId: user.id });
       mockSession(user.id);
 
+      // The day's one mission is the pattern's drill, as Open writes it.
       if (covered) {
         await studySessionFixture({
           goalId: goal.id,
-          localDate: getDateInTimeZone({ date: new Date(), timeZone: goal.timezone ?? "UTC" }),
+          localDate: getDateInTimeZone({ date: new Date(), timeZone }),
           missions: {
-            picks: [{ anchor: { patternId: pattern.id }, kind: "pattern", total: 1 }],
+            picks: [
+              {
+                anchor: { patternId: pattern.id },
+                kind: "pattern",
+                opens: { kind: "pattern", patternId: pattern.id },
+                total: 1,
+              },
+            ],
             version: 1,
           },
           startedAt: new Date(),
@@ -79,7 +88,7 @@ describe("the notebook's pattern read", () => {
         });
       }
 
-      const full = await countDatabaseStatements(() => getLanguageTodayView({ goalId: goal.id }));
+      const full = await countDatabaseStatements(() => getTodayView({ goalId: goal.id, timeZone }));
 
       const narrow = await countDatabaseStatements(() => getTodayPattern({ goalId: goal.id }));
 
