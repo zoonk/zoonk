@@ -3055,14 +3055,19 @@ msgid "I want to learn this in depth"
 msgstr "Quero aprender isso a fundo"
 
 #: src/explain/explain-waiting.tsx
-msgctxt "aSCeTx"
-msgid "No plan to set up."
-msgstr "Você não precisa configurar um plano."
+msgctxt "10s3bk"
+msgid "Still writing your explanation. It shows up here as soon as it's ready."
+msgstr "A gente ainda está criando sua explicação. Ela vai aparecer aqui assim que ficar pronta."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Isso está demorando mais que o normal."
+
+#: src/explain/explain-waiting.tsx
+msgctxt "aSCeTx"
+msgid "No plan to set up."
+msgstr "Você não precisa configurar um plano."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "SHh7sC"

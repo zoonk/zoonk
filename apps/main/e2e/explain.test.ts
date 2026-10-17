@@ -9,7 +9,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
-import { followRun } from "./generation-run";
+import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
 import {
   AT_ONCE_MS,
@@ -193,6 +193,125 @@ test.describe("Quick explanations", () => {
 
     await page.getByRole("button", { name: "See explanation" }).click();
     await expect(page.getByText("A cloud, not a little ball").first()).toBeVisible();
+  });
+
+  // "This is taking longer than usual" stayed after Try again: the retry joins the run already
+  // writing it, so nothing on screen changed when the learner tapped.
+  test("Try again on a slow wait says at once that it's still being written, and a run that then fails offers its own retry", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const runId = `e2e-explain-${randomUUID()}`;
+
+    const goal = await goalFixture({
+      details: { question: "how does a microwave work?" },
+      generationRunId: runId,
+      kind: "explain",
+      prompt: `how does a microwave work? ${runId}`,
+      title: "How a microwave works",
+      userId: noProgressUser.id,
+    });
+
+    await planFixture({ goalId: goal.id });
+
+    const events: StreamEvent[] = [
+      { entityId: goal.id, status: "started", step: "classifyQuestion" },
+      { entityId: goal.id, status: "completed", step: "classifyQuestion" },
+      { entityId: goal.id, status: "started", step: "findExplanation" },
+      { entityId: goal.id, status: "started", step: "writeExplanation" },
+    ];
+
+    // Every run the page follows streams these steps with the status this test sets: the retry
+    // reaches the API, which can start a run and save its id for the page's next read, so the run
+    // on screen never depends on a real workflow's timing.
+    let runStatus = "running";
+
+    await page.route("**/v1/generations/*/events**", (route) =>
+      route.fulfill({
+        body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""),
+        contentType: "text/event-stream",
+        status: 200,
+      }),
+    );
+
+    await page.route(/\/v1\/generations\/[^/]+$/u, (route) =>
+      route.fulfill({ json: { id: runId, status: runStatus }, status: 200 }),
+    );
+
+    // The first retry never reaches the server; the second is held, so what the tap says before
+    // the server answers can be read.
+    const { promise: retryHeld, resolve: releaseRetry } = Promise.withResolvers<null>();
+    let retries = 0;
+
+    await page.route(`**/explain/${goal.id}`, async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.fallback();
+        return;
+      }
+
+      retries += 1;
+
+      if (retries === 1) {
+        await route.abort("internetdisconnected");
+        return;
+      }
+
+      await retryHeld;
+      await route.fallback();
+    });
+
+    await page.clock.install({ time: Date.now() });
+    await page.goto(`/explain/${goal.id}`);
+
+    await expect(
+      page
+        .getByRole("list", { name: "Writing your explanation" })
+        .getByRole("listitem")
+        .filter({ hasText: "Writing about 5 short screens" }),
+    ).toHaveAttribute("aria-current", "step");
+
+    // Past the time the first screen usually takes, it says so and offers another try.
+    await page.clock.fastForward(46_000);
+
+    const slow = page.getByText("This is taking longer than usual.");
+    const tryAgain = page.getByRole("button", { name: "Try again" });
+
+    const stillWriting = page.getByText(
+      "Still writing your explanation. It shows up here as soon as it's ready.",
+    );
+
+    await expect(slow).toBeVisible();
+
+    // A retry the server never got offers another try.
+    await tryAgain.click();
+    await expect.poll(() => retries).toBe(1);
+    await expect(slow).toBeVisible();
+    await expect(tryAgain).toBeEnabled();
+
+    // From the keyboard, at once while the server answers: it's still being written, and the
+    // button waits, keeping the focus.
+    await tryAgain.focus();
+    await page.keyboard.press("Enter");
+    await expect(stillWriting).toBeVisible();
+    await expect(slow).toHaveCount(0);
+    await expect(tryAgain).toBeDisabled();
+    await expect(tryAgain).toBeFocused();
+
+    // The server took it, joining the run already on screen: nothing more to tap, the focus moves
+    // to the line, and no clock started over.
+    releaseRetry(null);
+    await expect(tryAgain).toHaveCount(0);
+    await expect(stillWriting).toBeFocused();
+
+    // The run then stops: its own notice and retry take the line's place.
+    runStatus = "failed";
+    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+
+    await expect(failed).toContainText("Something went wrong on our side.");
+    await expect(failed.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect(stillWriting).toHaveCount(0);
+    await expect(slow).toHaveCount(0);
+    await expect(tryAgain).toHaveCount(1);
   });
 
   // Sam left "How much do you already know?" and still had a plan with lessons being written: now

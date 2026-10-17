@@ -3,10 +3,12 @@
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { CircleHelpIcon, GraduationCapIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import {
   ListGroup,
   ListRowContent,
@@ -107,20 +109,77 @@ function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: ()
   return null;
 }
 
-/** Whether the wait has gone on longer than the first screen usually takes. */
-function useTakingLong(waiting: boolean): boolean {
+/** Whether this wait has gone on longer than the first screen usually takes. */
+function useTakingLong(): boolean {
   const [slow, setSlow] = useState(false);
 
   useEffect(() => {
-    if (!waiting) {
-      return;
-    }
-
     const timer = setTimeout(() => setSlow(true), SLOW_MS);
     return () => clearTimeout(timer);
-  }, [waiting]);
+  }, []);
 
-  return waiting && slow;
+  return slow;
+}
+
+/**
+ * A run's wait past the time the first screen usually takes says so, with "Try again". A retry
+ * joins the run already writing it, so the wait on screen goes on as it was: the tap says at once
+ * that it's still being written, and once the server takes the retry there's nothing more to tap
+ * (the focus the button had moves to the line). A retry the server refused or never got goes back
+ * to "Try again". A run that stops shows its own way to start again instead, and the run that
+ * starts then gets its own time.
+ */
+function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
+  const t = useExtracted();
+  const isSlow = useTakingLong();
+  const [isRetrying, startRetry] = useTransition();
+  const [joined, setJoined] = useState(false);
+  const lineRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (joined && document.activeElement === document.body) {
+      lineRef.current?.focus();
+    }
+  }, [joined]);
+
+  if (!isSlow) {
+    return null;
+  }
+
+  const retry = () => {
+    startRetry(async () => {
+      const { data } = await safeAsync(onRetry);
+      setJoined(data === true);
+    });
+  };
+
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <p
+        className="text-muted-foreground text-sm outline-none"
+        ref={lineRef}
+        role="status"
+        tabIndex={-1}
+      >
+        {joined || isRetrying
+          ? t("Still writing your explanation. It shows up here as soon as it's ready.")
+          : t("This is taking longer than usual.")}
+      </p>
+
+      {!joined && (
+        <Button
+          disabled={isRetrying}
+          focusableWhenDisabled
+          onClick={retry}
+          size="sm"
+          variant="outline"
+        >
+          {t("Try again")}
+          {isRetrying && <Spinner aria-hidden="true" />}
+        </Button>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -148,7 +207,8 @@ export function ExplainWaiting({
   deeper: ReactNode;
   explanation: Pick<ExplanationView, "lesson" | "outline" | "title">;
   onCheck: () => void;
-  onRetry: () => Promise<void>;
+  /** Asks again for a slow explanation: whether it's being written now (see `SlowWait`). */
+  onRetry: () => Promise<boolean>;
   onStart: () => void;
   /** The run writing it, when the host follows it live. */
   progress: GenerationRun | null;
@@ -156,7 +216,8 @@ export function ExplainWaiting({
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
   const ready = Boolean(explanation.lesson);
-  const isSlow = useTakingLong(!ready);
+  // A run that stopped says so in the wait, with its own way to start again.
+  const failed = progress?.status === "failed";
 
   return (
     <OnboardingFrame
@@ -186,16 +247,7 @@ export function ExplainWaiting({
 
         {deeper}
 
-        {isSlow && !ready && (
-          <div className="flex flex-col items-start gap-3">
-            <p className="text-muted-foreground text-sm">
-              {t("This is taking longer than usual.")}
-            </p>
-            <Button onClick={onRetry} size="sm" variant="outline">
-              {t("Try again")}
-            </Button>
-          </div>
-        )}
+        {!ready && !failed && <SlowWait onRetry={onRetry} />}
 
         {ready && (
           <OnboardingFooter>
