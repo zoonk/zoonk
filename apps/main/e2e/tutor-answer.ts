@@ -1,6 +1,8 @@
 import { type Route } from "@playwright/test";
 import { anyPlanOperationSchema } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { z } from "zod";
 
 function uiMessageEvent(event: object) {
@@ -64,4 +66,31 @@ export function toProposal(change: {
     status: "proposed",
     todaySession: null,
   };
+}
+
+/** How many days after UTC's today the rest day is: no time zone's date is more than a day off. */
+const REST_DAY_DAYS_AHEAD = 2;
+
+/**
+ * A proposal to rest on a weekday that's still ahead for the learner whatever day the test runs:
+ * two days after today in UTC, which no time zone has reached yet. A future rest day leaves today's
+ * session as it was. `name` is the weekday as the card says it.
+ */
+export async function proposeFutureRestDay(planId: string) {
+  const day = new Date(toUTCMidnight(new Date()).getTime() + REST_DAY_DAYS_AHEAD * MS_PER_DAY);
+  const name = day.toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long" });
+  const weekday = day.getUTCDay();
+
+  const change = await planChangeFixture({
+    kind: "edited",
+    payload: {
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [weekday] }],
+      source: "planEdit",
+    },
+    planId,
+    reason: `${name}s are off.`,
+    status: "proposed",
+  });
+
+  return { change, name, weekday };
 }

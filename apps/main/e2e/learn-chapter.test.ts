@@ -1,11 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
-import { toProposal } from "./tutor-answer";
+import { proposeFutureRestDay, toProposal } from "./tutor-answer";
 
 /**
  * A chapter of Maya's plan (quantum physics from scratch): she's in "Exponents and scientific
@@ -14,8 +13,6 @@ import { toProposal } from "./tutor-answer";
 const CHAPTER = "Exponents and scientific notation";
 
 const EXTRA = { equals: true, path: ["extra"] };
-
-const SATURDAY = 6;
 
 function readChangeStatus(changeId: string) {
   return prisma.planChange
@@ -235,16 +232,7 @@ test.describe("Chapter page", () => {
         prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),
       ]);
 
-      const change = await planChangeFixture({
-        kind: "edited",
-        payload: {
-          operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [SATURDAY] }],
-          source: "planEdit",
-        },
-        planId: plan.id,
-        reason: "Saturdays are off.",
-        status: "proposed",
-      });
+      const { change, name: day } = await proposeFutureRestDay(plan.id);
 
       await stubScreenTutor(page, { planChange: toProposal(change) });
       await page.goto(`/content/chapters/${chapterId}`);
@@ -258,11 +246,12 @@ test.describe("Chapter page", () => {
 
       // The card comes with the answer, as in the buddy's own conversation; nothing changes yet.
       const card = tutor.getByRole("region", { name: "Change to your plan" });
-      await expect(card).toContainText("Saturday: rest day.");
+      await expect(card).toContainText(`${day}: rest day.`);
       expect(await readChangeStatus(change.id)).toBe("proposed");
 
       await card.getByRole("button", { name: "Apply" }).click();
 
+      // A future rest day leaves today's session as it was.
       await expect(card.getByRole("status")).toHaveText("Your plan follows it from now on.");
 
       await expect.poll(() => readChangeStatus(change.id)).toBe("applied");

@@ -26,7 +26,7 @@ import { asPersona } from "./learn-personas";
 import { captureMissionEnding } from "./mission-ending-captures";
 import { expectHydrated, holdCodeWith, isHydrated } from "./on-demand-code";
 import { createStudyDay, openAs, saveMissions } from "./study-day";
-import { fulfillTutorAnswer, toProposal } from "./tutor-answer";
+import { fulfillTutorAnswer, proposeFutureRestDay, toProposal } from "./tutor-answer";
 
 const STUDY_SECONDS = 600;
 const FULL_MEAL_DAYS = [1, 2];
@@ -1321,23 +1321,13 @@ test.describe("Buddy tab", () => {
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-
-      const change = await planChangeFixture({
-        kind: "edited",
-        payload: {
-          operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [SATURDAY] }],
-          source: "planEdit",
-        },
-        planId: plan.id,
-        reason: "Saturdays are off.",
-        status: "proposed",
-      });
+      const { change, name: day, weekday } = await proposeFutureRestDay(plan.id);
 
       const asked = await stubBuddy({
         answers: [
           { answer: "**Superposition** means a particle is in many states until it's measured." },
           {
-            answer: "Done: I prepared it. Tap Apply to free your Saturdays.",
+            answer: `Done: I prepared it. Tap Apply to free your ${day}s.`,
             planChange: toProposal(change),
           },
         ],
@@ -1360,13 +1350,13 @@ test.describe("Buddy tab", () => {
 
       // A plan change in the learner's own words comes back as a card; nothing changes yet.
       const composer = conversation.getByRole("textbox", { name: "Message Otto" });
-      await composer.fill("No studying on Saturdays");
+      await composer.fill(`No studying on ${day}s`);
       await composer.press("Enter");
 
       const card = conversation.getByRole("region", { name: "Change to your plan" });
-      await expect(card).toContainText("Saturday: rest day.");
+      await expect(card).toContainText(`${day}: rest day.`);
       await expect(composer).toHaveValue("");
-      expect(asked[1]).toStrictEqual({ question: "No studying on Saturdays" });
+      expect(asked[1]).toStrictEqual({ question: `No studying on ${day}s` });
       expect(await readChangeStatus(change.id)).toBe("proposed");
       await expectAccessibleScreen(page, "the buddy's conversation");
 
@@ -1405,7 +1395,7 @@ test.describe("Buddy tab", () => {
       await expect
         .poll(async () => {
           const settings = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-          return (settings.settings as { weekdayMinutes?: number[] }).weekdayMinutes?.[SATURDAY];
+          return (settings.settings as { weekdayMinutes?: number[] }).weekdayMinutes?.[weekday];
         })
         .toBe(0);
 
