@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { get } from "@vercel/blob";
+import { prisma } from "@zoonk/db";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -147,6 +149,42 @@ describe(readOwnFile, () => {
     await expect(readOwnFile({ ifNoneMatch: null, pathname })).resolves.toMatchObject({
       status: "ready",
     });
+  });
+
+  it("serves an account the mind map of the private chapter it brought from its guest", async () => {
+    const [account, other] = await Promise.all([userFixture(), userFixture()]);
+    const guestFolder = `images/${randomUUID()}`;
+    const image = `${guestFolder}/map-${randomUUID()}.webp`;
+    const thumbnail = `${guestFolder}/map-${randomUUID()}.webp`;
+    const chapter = await libraryChapterFixture({ ownerId: account.id, visibility: "private" });
+
+    await prisma.chapterMindMap.create({
+      data: {
+        chapterId: chapter.id,
+        imageUrl: `https://store.private.blob.vercel-storage.com/${image}`,
+        language: "en",
+        status: "completed",
+        thumbnailUrl: `https://store.private.blob.vercel-storage.com/${thumbnail}`,
+      },
+    });
+
+    vi.mocked(get).mockImplementation(async (pathname) => storedFile({ bytes: "map", pathname }));
+
+    mockSession(other.id);
+
+    await expect(
+      Promise.all(
+        [image, thumbnail].map((pathname) => readOwnFile({ ifNoneMatch: null, pathname })),
+      ),
+    ).resolves.toStrictEqual([{ status: "notFound" }, { status: "notFound" }]);
+
+    mockSession(account.id);
+
+    await expect(
+      Promise.all(
+        [image, thumbnail].map((pathname) => readOwnFile({ ifNoneMatch: null, pathname })),
+      ),
+    ).resolves.toMatchObject([{ status: "ready" }, { status: "ready" }]);
   });
 
   it("tells the browser its copy is current without downloading the file again", async () => {

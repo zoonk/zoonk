@@ -32,8 +32,24 @@ async function ownsMovedPicture({ pathname, userId }: { pathname: string; userId
   return picture !== null;
 }
 
+/** A guest's private chapter moves the same way, with its map's picture and small copy. */
+async function ownsMovedMindMap({ pathname, userId }: { pathname: string; userId: string }) {
+  const url = { endsWith: `/${pathname}` };
+
+  const map = await prisma.chapterMindMap.findFirst({
+    select: { id: true },
+    where: { OR: [{ imageUrl: url }, { thumbnailUrl: url }], chapter: { ownerId: userId } },
+  });
+
+  return map !== null;
+}
+
 async function canReadFile({ pathname, userId }: { pathname: string; userId: string }) {
-  return isOwnPrivateFile({ pathname, userId }) || ownsMovedPicture({ pathname, userId });
+  return (
+    isOwnPrivateFile({ pathname, userId }) ||
+    (await ownsMovedPicture({ pathname, userId })) ||
+    ownsMovedMindMap({ pathname, userId })
+  );
 }
 
 /**
