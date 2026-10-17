@@ -1,6 +1,5 @@
 import "server-only";
 import { awardMilestones } from "../../milestones/award-milestones";
-import { type BrainPowerReward } from "../../milestones/milestone-reward";
 import { getTrapHunterBadge } from "../../milestones/milestone-rules";
 import { type BlockPayload } from "../block-payload";
 import { type StudyBlockCompletion } from "../completion-contract";
@@ -21,26 +20,6 @@ type BlockResult = Pick<
   | "topHyperdrive"
   | "total"
 >;
-
-/** Replays only the award stage, using evidence kept atomically with each paid reward. */
-export function completeBlockMilestones({
-  fullMealReward,
-  payload,
-  reward,
-  userId,
-}: {
-  fullMealReward: BrainPowerReward | null;
-  payload: BlockPayload;
-  reward: BlockPayload["milestoneReward"];
-  userId: string;
-}) {
-  return awardMilestones({
-    badges: reward?.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
-    brainPower: reward?.brainPower ?? null,
-    brainPowerRewards: fullMealReward ? [fullMealReward] : [],
-    userId,
-  });
-}
 
 /**
  * Settles the day after a block finished (full meal, session completion), awards milestones from
@@ -74,13 +53,16 @@ export async function completeBlockMoment({
   const bossWon =
     result.checkpoint && result.checkpoint.kind !== "weekly" && result.checkpoint.passed;
 
-  const milestones = await completeBlockMilestones({
-    fullMealReward: settled.fullMealReward,
-    payload,
-    reward: payload.milestoneReward ?? {
-      bossWon: Boolean(bossWon),
-      brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
-    },
+  // A settled block keeps the reward it paid, so a retry awards from the same evidence.
+  const reward = payload.milestoneReward ?? {
+    bossWon: Boolean(bossWon),
+    brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
+  };
+
+  const milestones = await awardMilestones({
+    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
+    brainPower: reward.brainPower,
+    brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
     userId,
   });
 

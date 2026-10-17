@@ -71,6 +71,10 @@ async function loadExtraEarnedToday(
     .reduce((sum, block) => sum + block.brainPower, 0);
 }
 
+type ReadSettledQuestionBlockResult =
+  | { settlement: Omit<QuestionBlockSettlement, "seconds">; status: "ready" }
+  | { status: "blockFinished" };
+
 type PreparedBlock = {
   checkpoint: CheckpointOutcome | null;
   correct: number;
@@ -154,6 +158,13 @@ async function prepareBlock({
   };
 }
 
+/** The capsules the block's answers opened. */
+function countOpenedCapsules({ own, payload }: Pick<PreparedBlock, "own" | "payload">): number {
+  return payload.capsules.filter((capsule) =>
+    own.some((answer) => answer.itemId && capsule.itemIds.includes(answer.itemId)),
+  ).length;
+}
+
 /**
  * Brain Power for the block with its bonuses. Mastery bonuses read the session's snapshot inside
  * the lock, so a skill's Solid or Mastered bonus is paid once even if two blocks finish together.
@@ -166,7 +177,7 @@ async function getBlockBrainPower(
     userId,
   }: { prepared: PreparedBlock; session: StudySessionRow; userId: string },
 ) {
-  const { payload, own, checkpoint } = prepared;
+  const { payload, checkpoint } = prepared;
 
   const row = await tx.studySession.findUniqueOrThrow({
     select: { startSnapshot: true },
@@ -180,9 +191,7 @@ async function getBlockBrainPower(
     : { mastered: [], solid: [] };
 
   const outcome: BlockOutcome = {
-    capsulesOpened: payload.capsules.filter((capsule) =>
-      own.some((answer) => answer.itemId && capsule.itemIds.includes(answer.itemId)),
-    ).length,
+    capsulesOpened: countOpenedCapsules(prepared),
     checkpoint: checkpoint ? { kind: checkpoint.kind, passed: checkpoint.passed } : null,
     firstLessonCompletion: false,
     skillsMastered: masteryRewards.mastered.length,
@@ -352,4 +361,33 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
   }
 
   return result;
+}
+
+/**
+ * A block settled before, read back for a retry whose first response was lost: its answers scored
+ * the same way and the Brain Power its settlement paid and kept. Nothing is written or paid again.
+ */
+export async function readSettledQuestionBlock(
+  input: SettleInput,
+): Promise<ReadSettledQuestionBlockResult> {
+  const prepared = await prepareBlock(input);
+  const reward = readBlockPayload(input.block).milestoneReward;
+
+  if (typeof prepared === "string" || !reward) {
+    return { status: "blockFinished" };
+  }
+
+  return {
+    settlement: {
+      answers: prepared.own,
+      brainPower: input.block.brainPower,
+      brainPowerBefore: reward.brainPower.before,
+      capsulesOpened: countOpenedCapsules(prepared),
+      checkpoint: prepared.checkpoint,
+      correct: prepared.correct,
+      topHyperdrive: prepared.scored.topLevel,
+      total: prepared.own.length,
+    },
+    status: "ready",
+  };
 }

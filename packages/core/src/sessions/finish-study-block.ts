@@ -2,7 +2,7 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { completeBlockMilestones, completeBlockMoment } from "./_utils/block-completion";
+import { completeBlockMoment } from "./_utils/block-completion";
 import { finishEmptyCheckpoint } from "./_utils/finish-empty-checkpoint";
 import {
   findLessonFinish,
@@ -13,8 +13,7 @@ import {
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
-import { settleQuestionBlock } from "./_utils/settle-question-block";
-import { settleSessionDay } from "./_utils/settle-session-day";
+import { readSettledQuestionBlock, settleQuestionBlock } from "./_utils/settle-question-block";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
@@ -109,10 +108,18 @@ async function toCheckpointResult({
   return { ...checkpoint, answers };
 }
 
+/**
+ * Scores and settles the block, then builds its moment. A block settled before (a retry after the
+ * response was lost, or after a later stage failed) is read back instead: the same moment, with the
+ * day's settlement and milestone writes resumed and nothing paid twice.
+ */
 async function finishQuestionBlock(
   owned: OwnedBlock & { source?: MissionCompletionSource },
 ): Promise<FinishStudyBlockResult> {
-  const settled = await settleQuestionBlock(owned);
+  const settled =
+    owned.block.status === "completed"
+      ? await readSettledQuestionBlock(owned)
+      : await settleQuestionBlock(owned);
 
   if (settled.status === "emptyCheckpoint") {
     return finishEmptyCheckpoint(owned);
@@ -263,21 +270,6 @@ export async function finishStudyBlock({
   }
 
   const source = await findMissionSource(owned.block);
-
-  if (owned.block.status === "completed") {
-    /** Rewards commit before milestone writes; a retry resumes both remaining stages. */
-    const settled = await settleSessionDay({ sessionId, source, timeZone, userId: owned.userId });
-    const payload = readBlockPayload(owned.block);
-
-    await completeBlockMilestones({
-      fullMealReward: settled.fullMealReward,
-      payload,
-      reward: payload.milestoneReward,
-      userId: owned.userId,
-    });
-
-    return { status: "blockFinished" };
-  }
 
   if (owned.block.status === "skipped") {
     if (readBlockPayload(owned.block).checkpointAbandoned) {

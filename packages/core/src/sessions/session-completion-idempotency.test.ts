@@ -83,7 +83,10 @@ describe("only the session completion transition changes plan inputs", () => {
     const deferred = scheduled.mock.calls.length;
     expect(deferred).toBeGreaterThan(0);
 
-    await expect(finish(day)).resolves.toMatchObject({ status: "blockFinished" });
+    await expect(finish(day)).resolves.toMatchObject({
+      completion: { blockId: day.block.id, sessionCompleted: true },
+      status: "ready",
+    });
 
     await expect(readVersions(day)).resolves.toStrictEqual(beforeRetry);
     expect(scheduled).toHaveBeenCalledTimes(deferred);

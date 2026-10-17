@@ -225,8 +225,27 @@ describe("session day settlement during guest linking", () => {
     ).resolves.toMatchObject({ brainPower: 0, endedAt: null, userId: account.userId });
 
     mockSession(account.userId);
-    await expect(finish()).resolves.toStrictEqual({ status: "blockFinished" });
-    await expect(finish()).resolves.toStrictEqual({ status: "blockFinished" });
+
+    // Try again on the linked account gets the block's moment with the full meal it now pays, once.
+    await expect(finish()).resolves.toMatchObject({
+      completion: {
+        blockId: block.id,
+        brainPower: paidBlock.brainPower + BRAIN_POWER_BONUS.fullMeal,
+        fullMeal: { paid: true },
+        sessionCompleted: true,
+      },
+      status: "ready",
+    });
+
+    await expect(finish()).resolves.toMatchObject({
+      completion: {
+        blockId: block.id,
+        brainPower: paidBlock.brainPower,
+        fullMeal: { paid: false },
+        milestones: [],
+      },
+      status: "ready",
+    });
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
@@ -315,9 +334,9 @@ describe("session day settlement during guest linking", () => {
         where: { userId: guest.guestId },
       });
 
-      await expect(finish()).resolves.toStrictEqual({ status: "blockFinished" });
-      await expect(finish()).resolves.toStrictEqual({ status: "blockFinished" });
-
+      // Try again gets the block's moment with the milestones the interrupted write owed it, once.
+      const retried = await finish();
+      const again = await finish();
       const milestones = await prisma.milestone.findMany({ where: { userId: guest.guestId } });
 
       const expected =
@@ -328,6 +347,19 @@ describe("session day settlement during guest linking", () => {
       expect(milestones.map((row) => `${row.kind}:${row.key}`).toSorted()).toStrictEqual(
         expected.toSorted(),
       );
+
+      expect(retried).toMatchObject({
+        completion: { blockId: block.id, brainPower: paidBlock.brainPower },
+        status: "ready",
+      });
+
+      expect(
+        retried.status === "ready"
+          ? retried.completion.milestones.map((row) => `${row.kind}:${row.key}`).toSorted()
+          : [],
+      ).toStrictEqual(expected.toSorted());
+
+      expect(again).toMatchObject({ completion: { milestones: [] }, status: "ready" });
 
       await expect(
         prisma.userProgress.findUniqueOrThrow({ where: { userId: guest.guestId } }),

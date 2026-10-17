@@ -149,7 +149,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/completions": {
     post: {
       description:
-        "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player.",
+        "Finishes a block and returns its completion moment: Brain Power (with the full 50-point bonus for finishing every offered mission when it just paid), the session bar, achievable missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. One, two or three offered missions earn the same completion bonus; zero missions earn none. Learn blocks finish once their lesson was finished in the lesson player. Finishing a finished block again (a retry after a lost response) returns its moment again, paying nothing twice.",
       operationId: "createStudyBlockCompletion",
       requestBody: timeZoneBody,
       requestParams: { path: studyBlockPathParamsSchema },
@@ -158,7 +158,7 @@ export const studySessionPaths = {
         ...readErrors,
         "409": {
           ...conflictResponse,
-          description: `Already finished, or the lesson isn't finished yet. Error codes: ${studySessionErrorCodes.blockFinished}, ${studySessionErrorCodes.lessonNotFinished}.`,
+          description: `Skipped, or finished by another request at the same moment, or the lesson isn't finished yet. Error codes: ${studySessionErrorCodes.blockFinished}, ${studySessionErrorCodes.lessonNotFinished}.`,
         },
         "422": {
           ...unprocessableEntityResponse,
