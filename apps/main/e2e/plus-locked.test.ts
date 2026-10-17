@@ -19,11 +19,18 @@ const FIRST_MOCK_WEEK_DAY = 8;
 
 /**
  * A private copy of the exam persona (Ana, ENEM, mocks in her plan) in the week of her first mock,
- * on the plan the test asks for: Plus as seeded, the free plan without her subscription, or a
- * guest without an account.
+ * or on her own day with `ownDay`, on the plan the test asks for: Plus as seeded, the free plan
+ * without her subscription, or a guest without an account.
  */
-async function openExamLearner(browser: Browser, plan: Plan) {
-  const user = await createE2EPersona(getBaseURL(), { day: FIRST_MOCK_WEEK_DAY, persona: "exam" });
+async function openExamLearner(
+  browser: Browser,
+  plan: Plan,
+  { ownDay = false }: { ownDay?: boolean } = {},
+) {
+  const user = await createE2EPersona(getBaseURL(), {
+    day: ownDay ? undefined : FIRST_MOCK_WEEK_DAY,
+    persona: "exam",
+  });
 
   if (plan === "plus") {
     return { ...(await openPersona(browser, user)), user };
@@ -62,6 +69,35 @@ async function expectLockedMocksOnToday(page: Page) {
 }
 
 /**
+ * A free learner's next mock on the Plan, which the plan already saves time for, opens its own
+ * intro, marked Plus. Read on Ana's own day, whose next mock is weeks away and funded from today
+ * on any weekday. A copy in the week of her first mock has it on that week's Sunday, and the
+ * copy's earlier days are written as history, so none of them set time aside for it: on a weekend
+ * it has none yet, and its row opens the exam page instead (a real learner's plan saved that time
+ * over the week).
+ */
+async function expectNextMockOpensItsIntro(browser: Browser) {
+  const { context, page, user } = await openExamLearner(browser, "free", { ownDay: true });
+
+  await page.goto("/plan");
+
+  const nextMock = page
+    .getByRole("region", { name: "Next on your path" })
+    .getByRole("link", { name: /^Mock exam.*Available with Plus/u });
+
+  await expect(nextMock).toHaveAttribute("href", CHALLENGE_PATH);
+  const planItemId = CHALLENGE_PATH.exec((await nextMock.getAttribute("href")) ?? "")?.groups?.id;
+
+  await expect(
+    prisma.planItem.count({
+      where: { id: planItemId ?? "", kind: "mock", plan: { goalId: user.goalId }, status: "todo" },
+    }),
+  ).resolves.toBe(1);
+
+  await context.close();
+}
+
+/**
  * The exam page shows its main action (a mock to take now) and the next mock as Plus learners see
  * them, marked Plus, with one notice of what Plus unlocks and its one way there.
  */
@@ -96,33 +132,17 @@ test.describe("Plus features are never hidden", () => {
   test("a free learner sees the exam's mocks locked on Today, the Plan and the exam page, each opening what Plus unlocks", async ({
     browser,
   }) => {
-    const { context, page, user } = await openExamLearner(browser, "free");
+    const { context, page } = await openExamLearner(browser, "free");
 
     await expectLockedMocksOnToday(page);
     await expectAccessibleScreen(page, "Today with locked mocks");
-    await page.setViewportSize({ height: 900, width: 1440 });
 
     // The Plan keeps her mocks, marked Plus: her next one, which the plan already saves time for,
     // opens its own intro, and a phase ahead counts its own.
+    await expectNextMockOpensItsIntro(browser);
+
+    await page.setViewportSize({ height: 900, width: 1440 });
     await page.goto("/plan");
-
-    const nextMock = page
-      .getByRole("region", { name: "Next on your path" })
-      .getByRole("link", { name: /^Mock exam.*Available with Plus/u });
-
-    await expect(nextMock).toHaveAttribute("href", CHALLENGE_PATH);
-    const planItemId = CHALLENGE_PATH.exec((await nextMock.getAttribute("href")) ?? "")?.groups?.id;
-
-    await expect(
-      prisma.planItem.count({
-        where: {
-          id: planItemId ?? "",
-          kind: "mock",
-          plan: { goalId: user.goalId },
-          status: "todo",
-        },
-      }),
-    ).resolves.toBe(1);
 
     await page
       .getByRole("region", { exact: true, name: "Phases" })
