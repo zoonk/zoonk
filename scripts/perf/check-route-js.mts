@@ -299,10 +299,11 @@ async function routeArtifacts({
 }
 
 async function checkStatic(): Promise<void> {
-  const [manifest, required, isPlaceholder] = await Promise.all([
+  const isPlaceholder = getCatalogPlaceholderMatcher(values.app);
+
+  const [manifest, required] = await Promise.all([
     json<PrerenderManifest>(resolve(dist, "prerender-manifest.json")),
     getNavigationRoutes(values.app),
-    getCatalogPlaceholderMatcher(values.app),
   ]);
 
   if (!manifest.routes || !manifest.dynamicRoutes) {
