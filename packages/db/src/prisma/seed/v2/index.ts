@@ -71,9 +71,10 @@ export async function writeSeedV2(prisma: PrismaClient) {
 
 /**
  * Writes an independent copy of one persona under its own key and email, so a test can change the
- * learner's plan, answers or profile without touching the shared personas other tests read. Run
- * `writeSeedV2` first: the copy points at its Library content. As with `writeSeedV2`, the planner
- * lays out the rest of its plan: copy through `seedV2PersonaCopy` in `@zoonk/core/seed/v2`.
+ * learner's plan, answers or profile without touching the shared personas other tests read. The
+ * copy has the persona's history whatever its key: it studied on the same days. Run `writeSeedV2`
+ * first: the copy points at its Library content. As with `writeSeedV2`, the planner lays out the
+ * rest of its plan: copy through `seedV2PersonaCopy` in `@zoonk/core/seed/v2`.
  *
  * The copy can be on another day of its plan (`day`, day 1 being the day the plan was made), back
  * after days without studying (`awayDays`), and have another plan, time zone or language. The
@@ -118,6 +119,7 @@ export async function writeSeedV2PersonaCopy(
     learner: {
       ...learner,
       email,
+      historyKey: learner.historyKey ?? learner.key,
       key: `${learner.key}:copy:${copyKey}`,
       language: copyLanguage,
       plus: plus ?? learner.plus,

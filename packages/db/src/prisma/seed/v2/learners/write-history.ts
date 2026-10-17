@@ -65,9 +65,13 @@ type SeedHistoryEvent = NonNullable<SeedLearner["history"]["checkpoints"]>[numbe
 
 const SEED_HEX_DIGITS = 6;
 
-/** A stable number per learner and day, so each learner's calendar has its own rhythm. */
+/**
+ * A stable number per learner and day, so each learner's calendar has its own rhythm. A persona's
+ * copies roll from the persona's key (`historyKey`), so they have its history.
+ */
 function seedFor(learner: SeedLearner, day: number): number {
-  return Number.parseInt(seedId(learner.key).slice(0, SEED_HEX_DIGITS), 16) + day;
+  const key = learner.historyKey ?? learner.key;
+  return Number.parseInt(seedId(key).slice(0, SEED_HEX_DIGITS), 16) + day;
 }
 
 /** Plain content ids for a lesson row, as the player writes them, so the row outlives the content. */

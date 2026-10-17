@@ -167,6 +167,11 @@ export type SeedLanguageHistory = {
 
 export type SeedLearner = {
   key: string;
+  /**
+   * The key the history's rolls come from (the days skipped, each day's minutes and questions),
+   * `key` when absent. A persona's copy keeps its persona's, so it studied on the same days.
+   */
+  historyKey?: string;
   email: string;
   name: string;
   username: string | null;
