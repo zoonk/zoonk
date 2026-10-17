@@ -1,46 +1,41 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
-import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { canMoveGoalTimeZone } from "./_utils/goal-time-zone";
-import { getStartOfLocalDay } from "./_utils/local-time";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
-import { type OwnedGoal, findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
 
 /** A follow that lost a race tries once more from a fresh read; a second loss says no move. */
 const MAX_FOLLOW_ATTEMPTS = 2;
 
 export type FollowGoalTimeZoneResult =
   | { learnerRevision: string; moved: true; status: "ready" }
-  | { moved: false; retryAt: number; status: "ready" }
+  | { moved: false; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
 /**
- * A goal's zone move once written, or why nothing was: `unchanged` when the goal can't move (the
- * learner studied today, the zone isn't one, or it's already the goal's), before anything is, and
- * when it may be worth asking again (`retryAt`, server time: the start of the day after the one the
- * learner studied on, else the moment it checked).
+ * A goal's zone move once written, or `unchanged` when the goal can't move (the learner studied
+ * today, the zone isn't one, or it's already the goal's), before anything is written.
  *
  * @internal
  */
 export type GoalTimeZoneMove =
   | { kind: "moved"; learnerRevision: bigint; planInputsChanged: boolean }
-  | { kind: "unchanged"; retryAt: number };
+  | { kind: "unchanged" };
 
 /**
  * Why a move found nothing to do once it held the learner's lock: the learner studied while it
  * waited (`studied`, the day stays theirs until the next one), another writer moved the zone
- * first (`zoneChanged`), a midnight passed that changes whether the plan's days move
- * (`dayChanged`), or the follow's caller no longer admits the goal (`refused`: Today no longer
- * shows it a day). Only `zoneChanged` and `dayChanged` are worth trying again from a fresh read.
+ * first (`zoneChanged`), or a midnight passed that changes whether the plan's days move
+ * (`dayChanged`). The last two are worth trying again from a fresh read of the goal.
  *
  * @internal
  */
-export type TimeZoneUnchangedReason = "dayChanged" | "refused" | "studied" | "zoneChanged";
+export type TimeZoneUnchangedReason = "dayChanged" | "studied" | "zoneChanged";
 
 /**
  * The move can't happen after all, found once it held the learner's lock: thrown so the caller's
@@ -55,13 +50,9 @@ export class TimeZoneUnchangedError extends Error {
 
   readonly reason: TimeZoneUnchangedReason;
 
-  /** When it may be worth asking again (server time), as `GoalTimeZoneMove`'s `unchanged` says. */
-  readonly retryAt: number;
-
-  constructor(reason: TimeZoneUnchangedReason, retryAt: number) {
+  constructor(reason: TimeZoneUnchangedReason) {
     super(`The goal's zone didn't move: ${reason}`);
     this.reason = reason;
-    this.retryAt = retryAt;
   }
 }
 
@@ -88,17 +79,6 @@ function movesTheDate({
   return getDateInTimeZone({ date: now, timeZone: toZone }).getTime() !== today.getTime();
 }
 
-/** When a goal whose day was studied may move: the start of the day after the one at `checkedAt`. */
-function getNextDayStart(goal: { timezone: string | null }, checkedAt: Date): number {
-  const timeZone = getAnswerTimeZone({ goal });
-  const today = getDateInTimeZone({ date: checkedAt, timeZone });
-
-  return getStartOfLocalDay({
-    localDate: new Date(today.getTime() + MS_PER_DAY),
-    timeZone,
-  }).getTime();
-}
-
 /** The goal's stored zone as the writer's transaction reads it now; undefined once it's gone. */
 async function readGoalZone(
   tx: TransactionClient,
@@ -118,10 +98,9 @@ async function readGoalZone(
  * first (a zone is an input even while its local date stays the same), then the same checks at the
  * moment it holds the learner's lock (the goal may have moved, an answer or a block start may have
  * committed, or a midnight passed, while it waited), then the zone, set only while it's still
- * `fromZone`. `unchanged` when the goal can't move, having written nothing; when the goal moved
- * since the caller read it, or that's only found under the lock, it throws `TimeZoneUnchangedError`
- * instead, so the caller's transaction rolls back (with its early revision). It expires no cache:
- * the caller does, once committed.
+ * `fromZone`. `unchanged` when the goal can't move, having written nothing; when that's only found
+ * under the lock, it throws `TimeZoneUnchangedError` instead, so the caller's transaction rolls
+ * back (with its early revision). It expires no cache: the caller does, once committed.
  *
  * @internal Core's writers that move a goal's zone (the follow here, the planner's study-day POST).
  */
@@ -139,17 +118,7 @@ export async function moveGoalTimeZoneInTransaction(
 
   // Read through the caller's transaction: it already holds a connection, and the pool may have no other.
   if (!(await canMoveGoalTimeZone({ client: tx, goal, now: readAt, timeZone: toZone }))) {
-    // Refused only for the learner's day (a valid, different zone): retry on their next one, unless
-    // another writer moved the goal since the caller read it, whose day that wasn't.
-    if (toZone === fromZone || !isValidTimeZone(toZone)) {
-      return { kind: "unchanged", retryAt: readAt.getTime() };
-    }
-
-    if ((await readGoalZone(tx, { goalId, userId })) !== fromZone) {
-      throw new TimeZoneUnchangedError("zoneChanged", readAt.getTime());
-    }
-
-    return { kind: "unchanged", retryAt: getNextDayStart(goal, readAt) };
+    return { kind: "unchanged" };
   }
 
   const dateChanges = movesTheDate({ goal, now: readAt, toZone });
@@ -165,15 +134,15 @@ export async function moveGoalTimeZoneInTransaction(
 
   // Another writer moved the goal while this waited: its day is no longer the one checked.
   if ((await readGoalZone(tx, { goalId, userId })) !== fromZone) {
-    throw new TimeZoneUnchangedError("zoneChanged", lockedAt.getTime());
+    throw new TimeZoneUnchangedError("zoneChanged");
   }
 
   if (movesTheDate({ goal, now: lockedAt, toZone }) !== dateChanges) {
-    throw new TimeZoneUnchangedError("dayChanged", lockedAt.getTime());
+    throw new TimeZoneUnchangedError("dayChanged");
   }
 
   if (!(await canMoveGoalTimeZone({ client: tx, goal, now: lockedAt, timeZone: toZone }))) {
-    throw new TimeZoneUnchangedError("studied", getNextDayStart(goal, lockedAt));
+    throw new TimeZoneUnchangedError("studied");
   }
 
   const { count } = await tx.goal.updateMany({
@@ -182,28 +151,24 @@ export async function moveGoalTimeZoneInTransaction(
   });
 
   if (count === 0) {
-    throw new TimeZoneUnchangedError("zoneChanged", lockedAt.getTime());
+    throw new TimeZoneUnchangedError("zoneChanged");
   }
 
   return { kind: "moved", learnerRevision, planInputsChanged: true };
 }
 
-/** A caller's check that it still wants the move, read through the move's transaction. */
-type FollowAdmits = (tx: TransactionClient) => Promise<boolean>;
-
 /**
  * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
  * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
- * (see `moveGoalTimeZoneInTransaction`). A move returns the learner's revision, so the screen can
- * read itself again once; a goal that couldn't move says when it may (`retryAt`).
+ * (see `moveGoalTimeZoneInTransaction`). A move that lost a race to another writer, or to
+ * midnight, tries once more from a fresh read of the goal. A move returns the learner's revision,
+ * so the screen can read itself again once.
  */
 export async function followGoalTimeZone({
-  admits,
   attempt = 1,
   goalId,
   timeZone,
 }: {
-  admits?: FollowAdmits;
   attempt?: number;
   goalId: string;
   timeZone: string;
@@ -214,52 +179,22 @@ export async function followGoalTimeZone({
     return owned;
   }
 
-  return followOwnedGoalTimeZone({ admits, attempt, owned, timeZone });
-}
-
-/**
- * `followGoalTimeZone` for a goal a public boundary already resolved from the session (Today, which
- * admits the goal first). A move that lost a race to another writer, or to midnight, tries once
- * more from a fresh read of the goal. With `admits` (Today's GET: `stillAdmitted`), the move
- * commits only while its caller still admits the goal, checked under the locks the move holds: a
- * writer that changed what Today shows while the move waited rolls it back.
- *
- * @internal
- */
-export async function followOwnedGoalTimeZone({
-  admits,
-  attempt = 1,
-  owned,
-  timeZone,
-}: {
-  admits?: FollowAdmits;
-  attempt?: number;
-  owned: Extract<OwnedGoal, { status: "ready" }>;
-  timeZone: string;
-}): Promise<FollowGoalTimeZoneResult> {
   const { goal, userId } = owned;
 
   // Already the goal's zone: nothing can move, so no transaction is opened for it.
   if (timeZone === goal.timezone) {
-    return { moved: false, retryAt: Date.now(), status: "ready" };
+    return { moved: false, status: "ready" };
   }
 
   const { data: move, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      const result = await moveGoalTimeZoneInTransaction(tx, {
+    prisma.$transaction((tx) =>
+      moveGoalTimeZoneInTransaction(tx, {
         fromZone: goal.timezone,
         goalId: goal.id,
         toZone: timeZone,
         userId,
-      });
-
-      // A writer that committed while the move waited for its locks reads here: undo the move then.
-      if (admits && result.kind === "moved" && !(await admits(tx))) {
-        throw new TimeZoneUnchangedError("refused", Date.now());
-      }
-
-      return result;
-    }),
+      }),
+    ),
   );
 
   if (error) {
@@ -267,17 +202,15 @@ export async function followOwnedGoalTimeZone({
       throw error;
     }
 
-    const raced = error.reason === "zoneChanged" || error.reason === "dayChanged";
-
-    if (raced && attempt < MAX_FOLLOW_ATTEMPTS) {
-      return followGoalTimeZone({ admits, attempt: attempt + 1, goalId: goal.id, timeZone });
+    if (error.reason !== "studied" && attempt < MAX_FOLLOW_ATTEMPTS) {
+      return followGoalTimeZone({ attempt: attempt + 1, goalId: goal.id, timeZone });
     }
 
-    return { moved: false, retryAt: error.retryAt, status: "ready" };
+    return { moved: false, status: "ready" };
   }
 
   if (move.kind !== "moved") {
-    return { moved: false, retryAt: move.retryAt, status: "ready" };
+    return { moved: false, status: "ready" };
   }
 
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);

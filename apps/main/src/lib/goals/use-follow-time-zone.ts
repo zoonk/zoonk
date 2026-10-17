@@ -5,53 +5,47 @@ import { noteLearnerRevision } from "@/lib/learner/learner-views";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useEffect } from "react";
-import {
-  type SentTimeZoneFollow,
-  createTimeZoneFollows,
-  requestTimeZoneFollow,
-} from "./follow-time-zone";
+import { requestTimeZoneFollow } from "./follow-time-zone";
 
-/** This page's follows: one ask per goal and device zone until the summary catches up. */
-const timeZoneFollows = createTimeZoneFollows();
+/** The goals and device zones this page load already asked to follow (`goalId:zone`). */
+const askedFollows = new Set<string>();
 
 /**
  * Follows the learner to their device's zone when a goal's Today opens: a goal without a zone
  * stores it, and a learner who moved takes it before their day starts. It asks only once the
  * learner summary says this goal's saved zone isn't the device's, so opening Today writes nothing
- * otherwise (nor for a goal the learner just switched away from), and once per move. When that
- * moves the day, the move's revision tells the learner's views (Today) and summary to read
- * themselves again, once, so the screen and its actions read the same day, without rendering the
- * page again.
+ * otherwise (nor for a goal the learner just switched away from), and once per goal and zone on a
+ * page load. When that moves the day, the move's revision tells the learner's views (Today) and
+ * summary to read themselves again, once, so the screen and its actions read the same day, without
+ * rendering the page again.
  */
 export function useFollowTimeZone({ goalId, userId }: { goalId: string; userId: string }) {
   const learner = useLearnerSummary();
 
-  const summary =
-    learner.status === "ready" && learner.summary.activeGoalId === goalId ? learner.summary : null;
-
-  useEffect(() => {
-    const request = summary
-      ? timeZoneFollows.begin({ deviceZone: getLocalTimeZone(), goalId, summary })
+  // Undefined until the summary is this goal's; null for a goal without a zone.
+  const savedZone =
+    learner.status === "ready" && learner.summary.activeGoalId === goalId
+      ? learner.summary.timeZone
       : undefined;
 
-    if (!request) {
+  useEffect(() => {
+    const deviceZone = getLocalTimeZone();
+    const key = `${goalId}:${deviceZone}`;
+
+    if (savedZone === undefined || savedZone === deviceZone || askedFollows.has(key)) {
       return;
     }
 
-    async function follow(sent: SentTimeZoneFollow) {
-      const generation = getLearnerGeneration();
+    askedFollows.add(key);
+    const generation = getLearnerGeneration();
 
-      const result = await requestTimeZoneFollow({ goalId, timeZone: sent.timeZone }).catch(
-        () => null,
-      );
-
-      timeZoneFollows.settle({ goalId, request: sent, result });
-
-      if (result?.moved) {
-        noteLearnerRevision({ generation, revision: result.learnerRevision, userId });
-      }
-    }
-
-    void follow(request);
-  }, [goalId, summary, userId]);
+    void requestTimeZoneFollow({ goalId, timeZone: deviceZone }).then(
+      (result) => {
+        if (result.moved) {
+          noteLearnerRevision({ generation, revision: result.learnerRevision, userId });
+        }
+      },
+      () => null,
+    );
+  }, [goalId, savedZone, userId]);
 }

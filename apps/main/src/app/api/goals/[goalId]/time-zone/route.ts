@@ -13,7 +13,7 @@ const followInputSchema = z.object({ timeZone: z.string().refine(isValidTimeZone
  * same with its `timeZone`). A plain request rather than a Server Action: an action's expired tags
  * would drop every page the browser prefetched, and an ordinary write never does. Same-origin only,
  * since it reads the session cookie. Answers whether the learner's day moved, with the learner's
- * revision when it did, so Today reads itself again once, or when it may move (`retryAt`).
+ * revision when it did, so Today reads itself again once.
  */
 export async function POST(
   request: Request,
@@ -55,8 +55,6 @@ export async function POST(
   }
 
   return Response.json(
-    result.moved
-      ? { learnerRevision: result.learnerRevision, moved: true }
-      : { moved: false, retryAt: result.retryAt },
+    result.moved ? { learnerRevision: result.learnerRevision, moved: true } : { moved: false },
   );
 }

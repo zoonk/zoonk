@@ -5,9 +5,10 @@ import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
 import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
+import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
-import { followOwnedGoalTimeZone } from "../../learner/follow-goal-time-zone";
+import { followGoalTimeZone } from "../../learner/follow-goal-time-zone";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
@@ -25,10 +26,11 @@ import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-stud
 import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notice";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
+import { getSession } from "../../users/get-session";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
 import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
-import { type TodayAdmission, admitToday, stillAdmitted } from "./_utils/admit-today";
+import { type TodayAdmission, admitToday } from "./_utils/admit-today";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
@@ -305,18 +307,6 @@ async function readAdmittedToday({
 }
 
 /**
- * `readAdmittedToday` in its own private cache scope, for the API's follow, which can't run in one
- * (it writes): the day's readers tag what they read (`cacheTag`), which only works inside a scope.
- */
-async function readAdmittedTodayInScope(
-  input: Parameters<typeof readAdmittedToday>[0],
-): Promise<TodayViewResult> {
-  "use cache: private";
-
-  return readAdmittedToday(input);
-}
-
-/**
  * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
  * references until the learner opens it with a POST; prefetch never creates or settles a day.
  */
@@ -332,39 +322,23 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
 
 /**
  * Today as an app on the learner's device reads it (the API's `GET /v1/today`): with `timeZone`,
- * the goal Today shows follows the device first (`followGoalTimeZone`: a goal without a zone
- * stores it, one whose learner moved takes it while nothing was done yet in its day), then its day
- * is read. The goal is resolved once, so the goal that moved is the goal returned, and admitted
- * again only after a follow that could have changed it. Only a goal Today shows a day for moves: a
- * goal it refuses (paused, a quick explanation's, one whose plan or guest onboarding isn't ready)
- * keeps its zone.
+ * the goal Today reads (the requested one, else the active one) follows the device first
+ * (`followGoalTimeZone`: a goal without a zone stores it, one whose learner moved takes it while
+ * nothing was done yet in its day), then Today is read.
  */
 export async function getTodayViewFollowingDevice(
   input: TodayStudySessionInput,
 ): Promise<TodayViewResult> {
   const { timeZone } = input;
-  const admission = await admitToday(input.goalId);
 
-  if (admission.status !== "admitted") {
-    return admission;
+  if (timeZone) {
+    const session = await getSession();
+    const goalId = input.goalId ?? (session ? await findActiveGoalId(session.user.id) : null);
+
+    if (goalId) {
+      await followGoalTimeZone({ goalId, timeZone });
+    }
   }
 
-  // Already the goal's zone, or none sent: nothing moves, so the day is read from this admission.
-  if (!timeZone || timeZone === admission.owned.goal.timezone) {
-    return readAdmittedTodayInScope({ admission, timeZone });
-  }
-
-  // The move commits only while Today still shows the goal a day, as read under its locks.
-  await followOwnedGoalTimeZone({
-    admits: (tx) => stillAdmitted(tx, admission),
-    owned: admission.owned,
-    timeZone,
-  });
-
-  // The follow may have moved the goal, or met another writer who just did: Today admits it again.
-  const admitted = await admitToday(admission.owned.goal.id);
-
-  return admitted.status === "admitted"
-    ? readAdmittedTodayInScope({ admission: admitted, timeZone })
-    : admitted;
+  return getTodayView(input);
 }

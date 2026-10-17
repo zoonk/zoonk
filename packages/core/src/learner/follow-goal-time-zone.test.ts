@@ -8,18 +8,15 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { mockSession } from "../_test-utils/mock-session";
 import { sessionGoalFixture } from "../sessions/_test-utils/session-goal";
 import { getStudySession } from "../sessions/get-study-session";
 import {
   type TodayViewResult,
-  getTodayView,
   getTodayViewFollowingDevice,
 } from "../view-models/today/get-today-view";
-import { getStartOfLocalDay } from "./_utils/local-time";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "./_utils/owned-goal";
 import {
@@ -61,11 +58,6 @@ async function readZone(goalId: string) {
   return goal.timezone;
 }
 
-/** The local day a ready Today read shows; null when it shows none. */
-function todayLocalDate(result: TodayViewResult): Date | null {
-  return result.status === "ready" ? result.today.session.localDate : null;
-}
-
 /** The goal a Today read is about, its day ready or still preparing. */
 function todayGoalId(result: TodayViewResult): string | null {
   if (result.status === "ready") {
@@ -73,92 +65,6 @@ function todayGoalId(result: TodayViewResult): string | null {
   }
 
   return "goal" in result ? result.goal.id : null;
-}
-
-/** Ana's active goal in São Paulo with a plan, in a state where Today shows no day for it. */
-async function refusedTodayFixture(refusal: "explainOnly" | "guestOnboarding" | "planNotBuilt") {
-  const user = await userFixture();
-
-  // A course's plan is ready, but she's a guest who hasn't answered when her exam is yet.
-  if (refusal === "guestOnboarding") {
-    const { goal, plan } = await sessionGoalFixture({
-      goal: {
-        dailyMinutes: 30,
-        kind: "exam",
-        targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
-        timezone: SAO_PAULO,
-      },
-      lessons: 1,
-      userId: user.id,
-    });
-
-    const details = {
-      answered: ["level"],
-      courseStart: { chapterId: null, dailyMinutes: 30 },
-      level: "basic",
-    };
-
-    await prisma.goal.update({ data: { details }, where: { id: goal.id } });
-    mockGuestSession(user.id);
-    return { goal, plan, user };
-  }
-
-  // A quick explanation is her only goal, or her plan is still being built.
-  const kind = refusal === "explainOnly" ? "explain" : "learn";
-  const goal = await goalFixture({ kind, timezone: SAO_PAULO, userId: user.id });
-  const plan = await planFixture({ goalId: goal.id });
-  mockSession(user.id);
-  return { goal, plan, user };
-}
-
-/**
- * Ana's goal in São Paulo, which Today shows a day for, and what her other device commits while
- * Today's follow waits: archiving her last study goal (her quick explanation then has no day), or
- * clearing a guest's onboarding answers (her goal then waits for them again).
- */
-async function admittedTodayFixture(change: "lastStudyGoalArchived" | "onboardingCleared") {
-  const user = await userFixture();
-
-  if (change === "lastStudyGoalArchived") {
-    const study = await goalFixture({ userId: user.id });
-
-    const { goal, plan } = await sessionGoalFixture({
-      goal: { kind: "explain", timezone: SAO_PAULO },
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-
-    const write = (tx: TransactionClient) =>
-      tx.goal.update({ data: { status: "archived" }, where: { id: study.id } });
-
-    return { goal, plan, user, write };
-  }
-
-  const { goal, plan } = await sessionGoalFixture({
-    goal: {
-      dailyMinutes: 30,
-      kind: "exam",
-      targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
-      timezone: SAO_PAULO,
-    },
-    lessons: 1,
-    userId: user.id,
-  });
-
-  const details = {
-    answered: ["level", "targetDate", "buddy", "placement", "schedule"],
-    courseStart: { chapterId: null, dailyMinutes: 30 },
-    level: "basic",
-  };
-
-  await prisma.goal.update({ data: { details }, where: { id: goal.id } });
-  mockGuestSession(user.id);
-
-  const write = (tx: TransactionClient) =>
-    tx.goal.update({ data: { details: {} }, where: { id: goal.id } });
-
-  return { goal, plan, user, write };
 }
 
 /** The learner's revision and their goal plan's input version and pending reasons, as writers raise them. */
@@ -264,16 +170,10 @@ describe("following a learner who moves", () => {
     const plan = await planFixture({ goalId: goal.id });
     await attemptFixture({ localDate: localDay(SAO_PAULO), userId: user.id });
     const before = await readVersions({ planId: plan.id, userId: user.id });
-    const tomorrow = new Date(localDay(SAO_PAULO).getTime() + MS_PER_DAY);
 
-    // It may move at her next São Paulo midnight.
     await expect(
       followGoalTimeZone({ goalId: goal.id, timeZone: zoneOnAnotherDay() }),
-    ).resolves.toStrictEqual({
-      moved: false,
-      retryAt: getStartOfLocalDay({ localDate: tomorrow, timeZone: SAO_PAULO }).getTime(),
-      status: "ready",
-    });
+    ).resolves.toStrictEqual({ moved: false, status: "ready" });
 
     await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(before);
@@ -329,7 +229,7 @@ describe("following a learner who moves", () => {
     );
 
     expect(counted).toStrictEqual({
-      result: { moved: false, retryAt: expect.any(Number), status: "ready" },
+      result: { moved: false, status: "ready" },
       statements: 1,
       writes: 0,
     });
@@ -355,8 +255,7 @@ describe("following a learner who moves", () => {
   });
 });
 
-// The API's Today resolves its goal once and follows the device in it: the goal that moved is the
-// goal it returns, and a goal Today refuses keeps its zone.
+// The API's Today follows the device in the goal it reads, then reads Today.
 describe("Today following the device", () => {
   it("follows the goal Today reads when the request names none", async () => {
     const { goal: other, user } = await setup();
@@ -384,131 +283,6 @@ describe("Today following the device", () => {
     await expect(getTodayViewFollowingDevice({ timeZone: "UTC" })).resolves.toMatchObject({
       status: "noGoal",
     });
-  });
-
-  it.each(["named", "active"] as const)(
-    "keeps a paused goal's zone, revision and plan when Today refuses it (%s)",
-    async (selection) => {
-      const { goal, user } = await setup();
-      await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
-      const plan = await planFixture({ goalId: goal.id });
-
-      if (selection === "active") {
-        await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
-      }
-
-      const before = await readVersions({ planId: plan.id, userId: user.id });
-
-      await expect(
-        getTodayViewFollowingDevice({
-          goalId: selection === "named" ? goal.id : undefined,
-          timeZone: zoneOnAnotherDay(),
-        }),
-      ).resolves.toMatchObject({ status: "goalNotActive" });
-
-      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
-
-      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(
-        before,
-      );
-    },
-  );
-
-  it.each([
-    ["explainOnly", "noGoal"],
-    ["planNotBuilt", "preparing"],
-    ["guestOnboarding", "preparing"],
-  ] as const)(
-    "keeps the zone, revision and plan of a goal Today shows no day for (%s: %s)",
-    async (refusal, status) => {
-      const { goal, plan, user } = await refusedTodayFixture(refusal);
-      const timeZone = zoneOnAnotherDay();
-      const refused = await getTodayView({ goalId: goal.id, timeZone });
-      const before = await readVersions({ planId: plan.id, userId: user.id });
-
-      expect(refused).toMatchObject({ status });
-
-      const followed = await getTodayViewFollowingDevice({ goalId: goal.id, timeZone });
-      expect(followed).toStrictEqual(refused);
-
-      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
-
-      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual(
-        before,
-      );
-    },
-  );
-
-  it("returns the goal it moved when the learner switches goals while the move waits", async () => {
-    const user = await userFixture();
-
-    const { goal: moving } = await sessionGoalFixture({
-      goal: { timezone: SAO_PAULO },
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-    const next = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
-    await learningProfileFixture({ activeGoalId: moving.id, userId: user.id });
-    const device = zoneOnAnotherDay();
-    const waitingBefore = new Set(await waitingOnRevision());
-
-    // Another writer holds the learner's lock: Today resolves its goal, then its move queues.
-    const writer = holdLearnerLock(user.id);
-    await writer.held;
-    const today = getTodayViewFollowingDevice({ timeZone: device });
-
-    try {
-      await untilQueued(waitingBefore);
-
-      // The learner switches to another goal before the move gets the lock.
-      await prisma.userLearningProfile.update({
-        data: { activeGoalId: next.id },
-        where: { userId: user.id },
-      });
-    } finally {
-      writer.release();
-    }
-
-    await writer.done;
-
-    expect(todayGoalId(await today)).toBe(moving.id);
-
-    await expect(Promise.all([readZone(moving.id), readZone(next.id)])).resolves.toStrictEqual([
-      device,
-      SAO_PAULO,
-    ]);
-  });
-
-  it("reads the day where another writer just moved the goal, though its own follow moved nothing", async () => {
-    const user = await userFixture();
-
-    const { goal } = await sessionGoalFixture({ goal: { timezone: SAO_PAULO }, userId: user.id });
-
-    mockSession(user.id);
-    const device = zoneOnAnotherDay();
-    const waitingBefore = new Set(await waitingOnRevision());
-
-    // Her other device moves the goal to this zone while Today, which read São Paulo, waits to.
-    const other = holdLearnerLock(user.id, (tx) =>
-      tx.goal.update({ data: { timezone: device }, where: { id: goal.id } }),
-    );
-
-    await other.held;
-    const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone: device });
-
-    try {
-      await untilQueued(waitingBefore);
-    } finally {
-      other.release();
-    }
-
-    await other.done;
-    const result = await today;
-
-    expect(result.status === "ready" && result.today.session.localDate).toStrictEqual(
-      localDay(device),
-    );
   });
 });
 
@@ -597,21 +371,11 @@ function holdLearnerLock(userId: string, write?: (tx: TransactionClient) => Prom
   return { done, held: held.promise, release: () => release.resolve(null) };
 }
 
-/** Backends waiting for a plan's lock, which a writer takes before the learner's. */
-async function waitingOnPlanLock(): Promise<number[]> {
-  const rows = await prisma.$queryRaw<{ pid: number }[]>`
-    SELECT pid FROM pg_stat_activity
-    WHERE wait_event_type = 'Lock' AND query ILIKE '%FOR UPDATE OF plan%'
-  `;
-
-  return rows.map((row) => row.pid);
-}
-
 /** Waits until a backend that wasn't waiting before queues behind a learner's revision lock. */
-async function untilQueued(waitingBefore: Set<number>, readWaiting = waitingOnRevision) {
+async function untilQueued(waitingBefore: Set<number>) {
   await expect
     .poll(async () => {
-      const waiting = await readWaiting();
+      const waiting = await waitingOnRevision();
       return waiting.some((pid) => !waitingBefore.has(pid));
     })
     .toBe(true);
@@ -677,226 +441,6 @@ describe("following a learner whose goal moves or whose day turns while the move
       inputVersion: before.inputVersion + 1,
       learnerRevision: before.learnerRevision + 2n,
       pendingAdaptation: ["calendar"],
-    });
-  });
-});
-
-describe("Today following the device while another writer holds the learner's lock", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("answers two identical follows with the moved zone's day, and moves the goal once", async () => {
-    // 00:00:01 UTC: UTC's March 10 has begun while São Paulo's March 9 goes on.
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-10T00:00:01.000Z"));
-    const user = await userFixture();
-
-    const { goal, plan } = await sessionGoalFixture({
-      goal: { timezone: SAO_PAULO },
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-    const before = await readVersions({ planId: plan.id, userId: user.id });
-    const [onRevision, onPlan] = await Promise.all([waitingOnRevision(), waitingOnPlanLock()]);
-    const other = holdLearnerLock(user.id);
-    await other.held;
-
-    // Both read São Paulo. The first then holds the plan's lock while it waits for hers.
-    const follows: Promise<TodayViewResult>[] = [];
-
-    try {
-      follows.push(getTodayViewFollowingDevice({ goalId: goal.id, timeZone: "UTC" }));
-      await untilQueued(new Set(onRevision));
-      follows.push(getTodayViewFollowingDevice({ goalId: goal.id, timeZone: "UTC" }));
-      await untilQueued(new Set(onPlan), waitingOnPlanLock);
-    } finally {
-      other.release();
-    }
-
-    await other.done;
-    const results = await Promise.all(follows);
-    const days = results.map((today) => todayLocalDate(today));
-    const march10 = new Date("2026-03-10T00:00:00.000Z");
-
-    expect(days).toStrictEqual([march10, march10]);
-
-    await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 2n,
-      pendingAdaptation: ["calendar"],
-    });
-  });
-
-  it("keeps the zone, revision and plan of a goal paused while Today's follow waits", async () => {
-    const user = await userFixture();
-
-    const { goal, plan } = await sessionGoalFixture({
-      goal: { timezone: SAO_PAULO },
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-    const before = await readVersions({ planId: plan.id, userId: user.id });
-    const waitingBefore = new Set(await waitingOnRevision());
-
-    // She pauses it on another device while Today, which admitted it active, waits to move it.
-    const pause = holdLearnerLock(user.id, (tx) =>
-      tx.goal.update({ data: { status: "paused" }, where: { id: goal.id } }),
-    );
-
-    await pause.held;
-    const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone: zoneOnAnotherDay() });
-
-    try {
-      await untilQueued(waitingBefore);
-    } finally {
-      pause.release();
-    }
-
-    await pause.done;
-
-    await expect(today).resolves.toMatchObject({ status: "goalNotActive" });
-    await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
-
-    // Only the pause's own revision: the refused read wrote nothing.
-    await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
-      ...before,
-      learnerRevision: before.learnerRevision + 1n,
-    });
-  });
-
-  it.each([
-    ["lastStudyGoalArchived", "noGoal"],
-    ["onboardingCleared", "preparing"],
-  ] as const)(
-    "keeps the zone, revision and plan of a goal Today stops showing while its follow waits (%s: %s)",
-    async (change, status) => {
-      const { goal, plan, user, write } = await admittedTodayFixture(change);
-      const timeZone = zoneOnAnotherDay();
-
-      await expect(getTodayView({ goalId: goal.id, timeZone })).resolves.toMatchObject({
-        status: "ready",
-      });
-
-      const before = await readVersions({ planId: plan.id, userId: user.id });
-      const waitingBefore = new Set(await waitingOnRevision());
-      const other = holdLearnerLock(user.id, write);
-      await other.held;
-      const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone });
-
-      try {
-        await untilQueued(waitingBefore);
-      } finally {
-        other.release();
-      }
-
-      await other.done;
-      const followed = await today;
-      const refused = await getTodayView({ goalId: goal.id, timeZone });
-
-      expect(refused).toMatchObject({ status });
-      expect(followed).toStrictEqual(refused);
-      await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
-
-      // Only the other writer's own revision: the refused read wrote nothing.
-      await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
-        ...before,
-        learnerRevision: before.learnerRevision + 1n,
-      });
-    },
-  );
-});
-
-describe("the moment a follow that couldn't move may ask again", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("is the next day where the goal is now, after another writer moved it and she studied", async () => {
-    // 13:00 UTC: March 9 in São Paulo, in Tokyo and in UTC alike.
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-09T13:00:00.000Z"));
-
-    const { goal, user } = await setup();
-    const waitingBefore = new Set(await waitingOnRevision());
-
-    // Another writer moves the goal to Tokyo and records an answer, while this follow waits.
-    const tokyo = holdLearnerLock(user.id, async (tx) => {
-      await tx.goal.update({ data: { timezone: "Asia/Tokyo" }, where: { id: goal.id } });
-
-      await tx.attempt.create({
-        data: {
-          answer: { selectedIndex: 0 },
-          answeredAt: new Date(),
-          durationMs: 1000,
-          hour: 13,
-          isCorrect: true,
-          localDate: new Date("2026-03-09T00:00:00.000Z"),
-          userId: user.id,
-          weekday: 1,
-        },
-      });
-    });
-
-    await tokyo.held;
-    const follow = followGoalTimeZone({ goalId: goal.id, timeZone: "UTC" });
-
-    try {
-      await untilQueued(waitingBefore);
-    } finally {
-      tokyo.release();
-    }
-
-    await tokyo.done;
-
-    // Tokyo's next day, not São Paulo's: March 10 begins there at 15:00 UTC.
-    await expect(follow).resolves.toStrictEqual({
-      moved: false,
-      retryAt: new Date("2026-03-09T15:00:00.000Z").getTime(),
-      status: "ready",
-    });
-  });
-
-  it("never answers the old zone's next day once another writer moved the goal and she studied", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-09T13:00:00.000Z"));
-
-    const { goal, user } = await setup();
-
-    // Between this follow's read of São Paulo and its first look at her day: Tokyo, and an answer.
-    await prisma.goal.update({ data: { timezone: "Asia/Tokyo" }, where: { id: goal.id } });
-    await attemptFixture({ localDate: new Date("2026-03-09T00:00:00.000Z"), userId: user.id });
-
-    const refused = await prisma
-      .$transaction((tx) =>
-        moveGoalTimeZoneInTransaction(tx, {
-          fromZone: SAO_PAULO,
-          goalId: goal.id,
-          toZone: "UTC",
-          userId: user.id,
-        }),
-      )
-      .catch((error: unknown) => error);
-
-    expect(isTimeZoneUnchanged(refused) && refused.reason).toBe("zoneChanged");
-  });
-
-  it("is the day after the one it checked, however late the answer comes back", async () => {
-    // 23:59:59 UTC on March 9, on a UTC goal she studied that day.
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-09T23:59:59.000Z"));
-
-    const { goal, user } = await setup({ timezone: "UTC" });
-    await attemptFixture({ localDate: new Date("2026-03-09T00:00:00.000Z"), userId: user.id });
-
-    await expect(
-      followGoalTimeZone({ goalId: goal.id, timeZone: "Asia/Tokyo" }),
-    ).resolves.toStrictEqual({
-      moved: false,
-      retryAt: new Date("2026-03-10T00:00:00.000Z").getTime(),
-      status: "ready",
     });
   });
 });

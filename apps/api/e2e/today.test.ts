@@ -418,7 +418,7 @@ test.describe("Today API", () => {
     await Promise.all([studied.api.dispose(), fresh.api.dispose()]);
   });
 
-  test("refuses a paused goal's Today and keeps its zone", async () => {
+  test("refuses a paused goal's Today", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "today-paused" });
     const { goal } = await createExamGoal(userId);
 
@@ -432,11 +432,6 @@ test.describe("Today API", () => {
     );
 
     expect(response.status(), await response.text()).toBe(409);
-
-    await expect(
-      prisma.goal.findUniqueOrThrow({ select: { timezone: true }, where: { id: goal.id } }),
-    ).resolves.toStrictEqual({ timezone: SAO_PAULO });
-
     await api.dispose();
   });
 
