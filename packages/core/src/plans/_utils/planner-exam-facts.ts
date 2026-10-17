@@ -10,9 +10,9 @@ import {
 } from "../../library/exams/blueprint-contract";
 import { listAnnouncedQuestions } from "../../library/exams/material-formats";
 import { type TopicLevel, listTopicLevels } from "../../library/exams/topic-frequency";
+import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { type MockClock } from "../planner/mock-identity";
 import { type PlanGraph } from "../planner/plan-state";
-import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { getAreaShares, getExamSubjectShares } from "./exam-subject-shares";
 
 type ExamFacts = {

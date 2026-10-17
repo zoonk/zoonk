@@ -75,6 +75,7 @@ describe("Today shares only its pure build, keyed by its complete fresh input", 
     });
 
     const first = readArgs(goal.id);
+
     expect(first).toStrictEqual({
       input: expect.objectContaining({ goalId: goal.id }),
       userId: user.id,

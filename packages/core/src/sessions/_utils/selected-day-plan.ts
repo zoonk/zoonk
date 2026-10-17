@@ -152,8 +152,8 @@ export async function selectDayPlan({
 export async function selectDayPlanFromContext({
   context,
   now,
-  readAnalysis = false,
-  reuseReadBuild = false,
+  readAnalysis,
+  reuseReadBuild,
 }: {
   context: PlanContext;
   now: Date;

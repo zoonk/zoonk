@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { getCoverage } from "./feasibility-coverage";
 import { fromIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { parsePlanSettings } from "./plan-state";
+import { toSizedPlanInput } from "./sized-plan";
 
 function sharedLessonInput({
   lessonMinutes = [3],
@@ -44,9 +46,12 @@ function sharedLessonInput({
 describe("outlined shared lesson feasibility", () => {
   it("covers no skill when the one lesson teaching all three misses the deadline", () => {
     const input = sharedLessonInput();
-    const coverage = getPlanFeasibility({ input });
+    const sized = toSizedPlanInput(input);
+    const built = buildPlan(sized.input);
+    const coverage = getCoverage({ built, examSubjects: null, sized });
 
-    expect(buildPlan(input).skillMinutes.every((skill) => !skill.standIn)).toBe(true);
+    expect(built.items.filter((item) => item.kind === "lesson")).toHaveLength(0);
+    expect(built.skillMinutes.every((skill) => !skill.standIn)).toBe(true);
 
     expect(coverage.skillFits).toStrictEqual(
       new Map([
@@ -57,6 +62,7 @@ describe("outlined shared lesson feasibility", () => {
     );
 
     expect(coverage.coveredShare).toBe(0);
+    expect(getPlanFeasibility({ input }).coveredShare).toBe(0);
   });
 
   it("measures partial shared coverage by written learning minutes instead of assignment ownership", () => {
@@ -65,8 +71,9 @@ describe("outlined shared lesson feasibility", () => {
       weekdayMinutes: [0, 5, 0, 0, 0, 0, 0],
     });
 
-    const built = buildPlan(input);
-    const coverage = getPlanFeasibility({ input, planned: built });
+    const sized = toSizedPlanInput(input);
+    const built = buildPlan(sized.input);
+    const coverage = getCoverage({ built, examSubjects: null, sized });
 
     expect(
       built.items.filter((item) => item.kind === "lesson").map((item) => item.lessonId),
@@ -79,8 +86,9 @@ describe("outlined shared lesson feasibility", () => {
 
   it("covers all three skills while scheduling their shared lesson only once", () => {
     const input = sharedLessonInput({ weekdayMinutes: [0, 60, 0, 0, 0, 0, 0] });
-    const built = buildPlan(input);
-    const coverage = getPlanFeasibility({ input, planned: built });
+    const sized = toSizedPlanInput(input);
+    const built = buildPlan(sized.input);
+    const coverage = getCoverage({ built, examSubjects: null, sized });
 
     expect(built.items.filter((item) => item.kind === "lesson")).toHaveLength(1);
     expect(built.skillMinutes.every((skill) => !skill.standIn)).toBe(true);
@@ -110,7 +118,9 @@ describe("outlined shared lesson feasibility", () => {
       ],
     };
 
-    const coverage = getPlanFeasibility({ input: withTestOut });
+    const sized = toSizedPlanInput(withTestOut);
+    const built = buildPlan(sized.input);
+    const coverage = getCoverage({ built, examSubjects: null, sized });
 
     expect(coverage.skillFits).toStrictEqual(
       new Map([

@@ -63,23 +63,37 @@ export function planAtMinutes(
 }
 
 /**
- * The fewest daily minutes, in steps of 5, at which the plan at that time (see `planAtMinutes`)
- * `fits`: it covers everything, or holds every topic. The search starts above the learner's time
- * (`above`), or from the least time a day when what's asked is the time the goal needs whatever the
- * learner gives now. Every time is tried in order: more time can hold less (a weekly mock that
- * comes with it takes a study day).
+ * The fewest daily minutes, in steps of 5, at which the plan `fits`: nothing left out
+ * (`isWhole`), or every topic in (`hasEveryTopic`), and anything else asked of that time
+ * (`holds`). The search starts above the learner's time (`above`), or from the least time a day
+ * when what's asked is the time the goal needs whatever the learner gives now. Every time is
+ * tried in order: more time can hold less (a weekly mock that comes with it takes a study day).
  */
 export function findFittingMinutes({
   above,
-  fits,
+  fits: fitsPlan,
+  holds,
+  mayFit,
+  planAt,
 }: {
   above: number;
-  fits: (dailyMinutes: number) => boolean;
+  fits: (built: BuiltPlan) => boolean;
+  /** What else that time must do, tried only once the plan fits, since each try plans again. */
+  holds?: (dailyMinutes: number) => boolean;
+  /** An optional necessary bound; true still requires evaluating the actual plan. */
+  mayFit?: (dailyMinutes: number) => boolean;
+  /** The plan at a daily time (see `planAtMinutes`). */
+  planAt: (dailyMinutes: number) => BuiltPlan;
 }): number | null {
   const first = Math.ceil((above + 1) / MINUTES_STEP) * MINUTES_STEP;
   const steps = Math.floor((MAX_DAILY_MINUTES - first) / MINUTES_STEP) + 1;
   const candidates = Array.from({ length: Math.max(0, steps) }, (_, i) => first + i * MINUTES_STEP);
 
   /** More time can add a mock that takes a lesson day, even when every daily budget increases. */
-  return candidates.find((minutes) => fits(minutes)) ?? null;
+  return (
+    candidates.find(
+      (minutes) =>
+        (mayFit?.(minutes) ?? true) && fitsPlan(planAt(minutes)) && (holds?.(minutes) ?? true),
+    ) ?? null
+  );
 }

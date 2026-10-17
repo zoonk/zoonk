@@ -1,12 +1,13 @@
 import { createHash } from "node:crypto";
-import { type SelectedCoverage, type SelectedSummary } from "../_utils/selected-summary-contract";
+import { type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices } from "./chosen-bases";
 import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
+import { type ExamSubjectShare } from "./feasibility-coverage";
 import { mayCostToKeepPhaseDates } from "./phase-dates-move";
 import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
-import { type ExamSubjectShare, getCoverage } from "./selected-coverage";
+import { getCoverage } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
 
 /**
@@ -22,36 +23,6 @@ function getDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput
 
   const finalStretch = built.phases.find((phase) => phase.kind === "finalStretch");
   return finalStretch?.startDate ?? toIsoDate(targetDate);
-}
-
-/**
- * What a build covers of the chosen requirement by its deadline (see `getCoverage`): the plan's one
- * coverage measure, which it saves (`Plan.coveredShare`) and every read of what fits says, so the
- * Plan, its suggestions and Find agree. Null without a date.
- */
-export function getSelectedCoverage({
-  built,
-  examSubjects,
-  input,
-}: {
-  built: BuiltPlan;
-  examSubjects: readonly ExamSubjectShare[] | null;
-  input: BuildPlanInput;
-}): SelectedCoverage | null {
-  const deadline = getDeadline({ built, input });
-  const { targetDate } = input.goal;
-
-  return deadline && targetDate
-    ? getCoverage({
-        built,
-        deadline,
-        examSubjects,
-        input,
-        requirement: readRequirement(input),
-        settled: listSettled(input),
-        targetDate: toIsoDate(targetDate),
-      })
-    : null;
 }
 
 /** The plan's bases with the choice this build studied each with (see `SelectedSummary.bases`). */
@@ -193,9 +164,22 @@ export function summarizeSelectedPlan({
   const settled = listSettled(input);
   const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
 
+  const { targetDate } = input.goal;
+
   return {
     bases: summarizeBases(input),
-    coverage: getSelectedCoverage({ built, examSubjects, input }),
+    coverage:
+      deadline && targetDate
+        ? getCoverage({
+            built,
+            deadline,
+            examSubjects,
+            input,
+            requirement: requirementBySkill,
+            settled,
+            targetDate: toIsoDate(targetDate),
+          })
+        : null,
     endDate: getEndDate(built),
     forecast: {
       basis: "estimated",

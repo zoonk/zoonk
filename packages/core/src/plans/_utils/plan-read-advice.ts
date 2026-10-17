@@ -4,7 +4,7 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { type PlanBases } from "../planner/plan-bases";
 import { daysBetween } from "../planner/plan-calendar";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
-import { type ExamSubjectShare } from "../planner/selected-coverage";
+import { type ExamSubjectShare } from "../planner/feasibility-coverage";
 import { readPlanAnalysis } from "./read-plan-analysis";
 
 /**
