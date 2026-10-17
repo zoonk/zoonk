@@ -1,13 +1,13 @@
 import { type ItemFormat, type StudySessionBlock } from "@zoonk/db";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
-import { type LearnerAnswer, recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { type LearnerAnswer } from "../../learner/record-learner-answer";
 import { type applyDrillRules } from "../../mistakes/drill-answer";
 import { scheduleMistakeCause } from "../../mistakes/resolve-mistake-cause";
 import { bringBackMissedLessons } from "../../plans/bring-back-missed-lessons";
 import { type BlockDrill } from "../block-payload";
 import { type StudyAnswerInput } from "../contract";
-import { recordCheckpointAttempt } from "./record-checkpoint-attempt";
+import { recordSessionAttempt } from "./record-session-attempt";
 import { refreshAfterPlacementAnswer } from "./refresh-plan";
 import { type GradedSessionAnswer, type SessionItem } from "./session-items";
 import { type StudySessionRow } from "./study-session-access";
@@ -73,20 +73,17 @@ export async function recordStudyAnswer({
     userId,
   } satisfies LearnerAnswer;
 
-  const claimed =
-    block.kind === "checkpoint"
-      ? await recordCheckpointAttempt({ blockId: block.id, input: learnerAnswer })
-      : null;
+  const claimed = await recordSessionAttempt({ blockId: block.id, input: learnerAnswer });
 
-  if (claimed && claimed.status !== "ready") {
+  if (claimed.status !== "ready") {
     return claimed;
   }
 
-  if (claimed?.created === false) {
+  if (!claimed.created) {
     return { recorded: claimed.recorded, status: "ready" as const };
   }
 
-  const recorded = claimed ? claimed.recorded : await recordLearnerAnswer(learnerAnswer);
+  const { recorded } = claimed;
 
   scheduleMistakeCause(recorded.causeRequest);
 

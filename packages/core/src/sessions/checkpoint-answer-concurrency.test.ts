@@ -241,10 +241,14 @@ describe("checkpoint answer recording", () => {
     expect(mistake.cause).toBe("trap");
   });
 
-  it.each([false, true])(
-    "records parallel submissions once, with overlapping blocks: %s",
-    async (overlappingBlocks) => {
-      const { block, item, session, skill, submit, user } = await setup();
+  it.each([
+    { kind: "checkpoint", overlappingBlocks: false },
+    { kind: "checkpoint", overlappingBlocks: true },
+    { kind: "practice", overlappingBlocks: false },
+  ] as const)(
+    "records parallel submissions once: $kind, overlapping blocks: $overlappingBlocks",
+    async ({ kind, overlappingBlocks }) => {
+      const { block, item, session, skill, submit, user } = await setup(kind);
 
       const otherBlock = overlappingBlocks
         ? await studySessionBlockFixture({
@@ -343,16 +347,19 @@ describe("checkpoint answer recording", () => {
 
       expect(attempts).toHaveLength(1);
 
-      await expect(submissions).resolves.toMatchObject([
-        {
-          status: "fulfilled",
-          value: { feedback: { isCorrect: attempts[0]?.isCorrect }, status: "ready" },
-        },
-        {
-          status: "fulfilled",
-          value: { feedback: { isCorrect: attempts[0]?.isCorrect }, status: "ready" },
-        },
-      ]);
+      const answered = { feedback: { isCorrect: attempts[0]?.isCorrect }, status: "ready" };
+
+      const settled = await submissions;
+
+      const outcomes = settled
+        .flatMap((result) => (result.status === "fulfilled" ? [result.value] : []))
+        .toSorted((first, second) => first.status.localeCompare(second.status));
+
+      // A checkpoint acknowledges the later submission with the stored verdict; any other block
+      // says it was answered already, whichever tab got there first.
+      expect(outcomes).toMatchObject(
+        kind === "checkpoint" ? [answered, answered] : [{ status: "alreadyAnswered" }, answered],
+      );
 
       const memory = await prisma.learnerSkill.findUniqueOrThrow({
         where: { userSkill: { skillId: skill.id, userId: user.id } },
