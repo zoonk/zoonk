@@ -119,6 +119,32 @@ function currentDocument(frames: Frame[]) {
   return frames.at(-1)?.document;
 }
 
+/**
+ * Holds the page's next load of `path` until the returned release, so the document it leaves stays
+ * up until its cover was seen and a quick reload can't skip it. Nothing may ask the page while it
+ * waits (that would wait for the load too): its frames say what it painted.
+ */
+async function holdReload(page: Page, path: string) {
+  const reload = Promise.withResolvers<null>();
+
+  await page.route(`**${path}`, async (route) => {
+    if (route.request().isNavigationRequest()) {
+      await reload.promise;
+    }
+
+    await route.continue();
+  });
+
+  return () => reload.resolve(null);
+}
+
+/** When `document` first painted with its cover up (page time); the test fails if it never did. */
+async function coveredAt({ document, frames }: { document: number | undefined; frames: Frame[] }) {
+  const at = () => frames.find((frame) => frame.document === document && frame.covered)?.at;
+  await expect.poll(at).toBeDefined();
+  return at() ?? 0;
+}
+
 test.describe("identity cover", () => {
   test("never shows a Plan the router kept for one learner after another signs in elsewhere", async ({
     browser,
@@ -169,13 +195,17 @@ test.describe("identity cover", () => {
     const { frames, page } = await openPage(context, `/start/${first.goal.id}`);
     await expect(page.getByText(FIRST_GOAL).first()).toBeVisible();
     const before = currentDocument(frames);
+    const releaseReload = await holdReload(page, `/start/${first.goal.id}`);
 
     await signInInAnotherTab({ context, user: second.user });
-    await page.bringToFront();
-    const since = await pageTime(page);
 
-    // The page reloads for the learner who holds the session now, who can't see that goal.
+    // The page covers itself as soon as the other learner signs in, then reloads for them, who
+    // can't see that goal.
+    const since = await coveredAt({ document: before, frames });
+    releaseReload();
     await expect.poll(() => currentDocument(frames)).not.toBe(before);
+    await page.bringToFront();
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
     await expect(page.getByText(FIRST_GOAL)).toHaveCount(0);
 
     expect(shownUncovered({ frames, since, title: FIRST_GOAL })).toStrictEqual([]);
@@ -198,29 +228,14 @@ test.describe("identity cover", () => {
     const { frames, page } = await openPage(context, `/start/course/${course.id}`);
     await expect(mainText(page, FIRST_COURSE)).toBeVisible();
     const before = currentDocument(frames);
-
-    // The page's reload waits until its cover was seen, so a quick reload can't skip it. Nothing
-    // asks the page while it waits (that would wait for the reload too): its frames say what it
-    // painted.
-    const reload = Promise.withResolvers<null>();
-
-    await page.route(`**/start/course/${course.id}`, async (route) => {
-      if (route.request().isNavigationRequest()) {
-        await reload.promise;
-      }
-
-      await route.continue();
-    });
+    const releaseReload = await holdReload(page, `/start/course/${course.id}`);
 
     await signInInAnotherTab({ context, user: second.user });
 
     // The first learner's page covers itself as soon as the other learner signs in, then reloads
     // for them, and they can't see that course.
-    const coveredAt = () => frames.find((frame) => frame.document === before && frame.covered)?.at;
-    await expect.poll(coveredAt).toBeDefined();
-    const since = coveredAt() ?? 0;
-
-    reload.resolve(null);
+    const since = await coveredAt({ document: before, frames });
+    releaseReload();
     await expect.poll(() => currentDocument(frames)).not.toBe(before);
     await page.bringToFront();
     await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
