@@ -189,7 +189,7 @@ async function runStep(runner: Runner, step: SimLifeStep, index: number): Promis
     case "refresh":
       await openToday(runner, index);
 
-      // A full system run (a landing for other goals, the lookahead), as the database tier's is.
+      // A full system run (a landing for other goals, the lookahead).
       refresh(runner, { event: { kind: "refresh" }, label: "refresh", pace: "saved", step: index });
 
       return;

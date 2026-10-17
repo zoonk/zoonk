@@ -11,7 +11,7 @@ import { type SimWorld } from "./sim-world";
  * leaving out areas already past them. The plan's skills are the graph's, their bands the
  * Library's, the misses the learner's test answers (the pure tier has no others), and the areas
  * whose start the learner chose those of their applied `setAreaStart` changes. Nothing checks this
- * copy against it in the normal run: confirm a finding through the database tier.
+ * copy against it in the normal run: confirm a finding through the real capabilities.
  */
 export function listSimPlacementListeningAreas({
   known,

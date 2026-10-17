@@ -7,7 +7,7 @@ import { type SimPlan, type SimWorld, getSimGoal } from "./sim-world";
 /**
  * The pure tier's copy of the plan onboarding leaves: `createGoalPlan` makes it, and
  * `settleNewPlan` settles it at onboarding's last answer. Nothing checks it against them in the
- * normal run: confirm a finding through the database tier.
+ * normal run: confirm a finding through the real capabilities.
  */
 
 /** `planOnRecommendedBases`: planned again on the app's recommendation for its bases. */

@@ -77,7 +77,7 @@ function listUndoneEvents(world: Pick<SimWorld, "changes" | "inputs" | "plan">):
 /**
  * The skills the learner passed over by choice (`loadPassedOverClaims`), each a claim from the
  * applied change that made the choice, or from the plan's first day for one made while setting it
- * up: before anything else that day, as the database tier makes the plan first.
+ * up: before anything else that day.
  */
 function listPassedOverEvents(world: Pick<SimWorld, "changes" | "inputs" | "plan">): ClaimEvent[] {
   const { graph, settings } = world.plan.state;
@@ -102,8 +102,7 @@ function listPassedOverEvents(world: Pick<SimWorld, "changes" | "inputs" | "plan
 /**
  * Everything the learner model reads of the plan's skills (`loadClaimEvents`). The pure tier dates
  * a day's test-outs, their undo, the learner's changes and the lessons they finished at its noon,
- * so they're listed in the order a day's steps come, and claims read them in that order, as the
- * database tier's clock has them.
+ * so they're listed in the order a day's steps come, and claims read them in that order.
  */
 function listSimClaimEvents(
   world: Pick<SimWorld, "changes" | "inputs" | "learner" | "pendingSkills" | "plan">,

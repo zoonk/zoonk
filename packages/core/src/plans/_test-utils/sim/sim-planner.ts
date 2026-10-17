@@ -39,9 +39,8 @@ import { type SimPlan, type SimWorld, getSimGoal, getSimPlanCarryOver } from "./
 /**
  * The pure simulator's copy of the few lines that compose the planner in `computePlan` around
  * its database reads (and in `computeChange` and `refreshGoalPlan`, see `sim-change.ts` and
- * `sim-refresh.ts`): everything else is the real planner. The database tier runs the real
- * functions on the same library: confirm a finding there, since nothing checks this copy in the
- * normal run.
+ * `sim-refresh.ts`): everything else is the real planner. Confirm a finding through the real
+ * capabilities, since nothing checks this copy in the normal run.
  */
 
 export type SimPlanRequest = Pick<BuildPlanInput, "bringBackSetAside" | "keepSelection"> & {

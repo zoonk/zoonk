@@ -9,8 +9,7 @@ import { type Runner, record, refresh } from "./sim-runner";
 import { buildSimSession, followSimPlan, listStandInSkills, shortHash } from "./sim-session";
 
 /**
- * The pure tier's Today: the day's first look, what lands for it, and the learner's answers there
- * (see `sim-db-today.ts` for the database tier's).
+ * The simulator's Today: the day's first look, what lands for it, and the learner's answers there.
  */
 
 /**

@@ -17,7 +17,7 @@ import { type SimInputs } from "./sim-inputs";
 
 const NOON_MS = 43_200_000;
 
-/** The moment a step happens: the learner studies at noon, as the database tier's clock says. */
+/** The moment a step happens: the learner studies at noon. */
 export function atNoon(day: Date): Date {
   return new Date(day.getTime() + NOON_MS);
 }

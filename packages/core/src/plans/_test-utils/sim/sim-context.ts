@@ -9,8 +9,6 @@ import {
   type RuleContext,
   type RuleEvent,
   type RulePlan,
-  type RuleSyllabus,
-  type RuleView,
   type RuleViolation,
 } from "../rules/rule-context";
 import { type SimInputs } from "./sim-inputs";
@@ -91,7 +89,7 @@ export function toRulePlan({
   };
 }
 
-/** A change the pure tier recorded, as clients read it (the database tier reads the real view). */
+/** A change the simulator recorded, as clients read it. */
 export function toSimChangeView({
   change,
   goal,
@@ -158,17 +156,12 @@ export function toRuleContext({
   changes,
   declined,
   event,
-  finishedLessons,
   inputs,
   kind,
   learner,
   learnerChanges,
-  preparation,
-  sessions,
-  syllabus,
   today,
   todayShown,
-  view,
   waiting,
 }: {
   after: SimPlan;
@@ -177,22 +170,12 @@ export function toRuleContext({
   /** The proposals the learner declined so far, as clients read them. */
   declined: readonly PlanChangeView[];
   event: RuleEvent;
-  /** Every lesson the learner finished so far (the database tier, with questions). */
-  finishedLessons?: RuleContext["finishedLessons"];
   inputs: Pick<SimInputs, "prerequisites" | "taughtBy" | "topicLevels">;
   kind: GoalKind;
   learner: SimLearnerFacts;
   learnerChanges: ReturnType<typeof listLearnerChanges>;
-  /** The goal's preparation as clients read it after the step (the database tier, with questions). */
-  preparation?: RuleContext["preparation"];
-  /** Every study session so far and what its questions asked (the database tier, with questions). */
-  sessions?: RuleContext["sessions"];
-  /** The goal's syllabus as clients read it after the step (the database tier). */
-  syllabus?: RuleSyllabus;
   today: Date;
   todayShown: boolean;
-  /** The plan as clients read it after the step (the database tier). */
-  view?: RuleView;
   /** The proposals still waiting for the learner's answer after the step, as clients read them. */
   waiting: readonly PlanChangeView[];
 }): RuleContext {
@@ -203,7 +186,6 @@ export function toRuleContext({
     changes,
     declined,
     event,
-    finishedLessons,
     learner: {
       announcedSkillIds: learner.announcedSkillIds,
       gapAreas: learner.gapAreas,
@@ -213,12 +195,8 @@ export function toRuleContext({
       plus: learner.plus,
     },
     learnerChanges,
-    preparation,
-    sessions,
-    syllabus,
     today,
     todayShown,
-    view,
     waiting,
   };
 }
