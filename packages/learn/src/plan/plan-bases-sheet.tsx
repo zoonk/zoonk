@@ -15,7 +15,7 @@ import {
 import { LayersIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { BasesAdvice } from "./plan-bases-advice";
+import { BASES_SAVE_ID, BasesAdvice } from "./plan-bases-advice";
 import { useBasesEffectLines } from "./plan-bases-effect";
 import { type BaseChoice, BaseGroup } from "./plan-bases-group";
 import { PlanChangeApplied } from "./plan-change-applied";
@@ -135,6 +135,7 @@ function BasesFooter({
       <Button
         disabled={isPending || changed.length === 0 || preview.status !== "ready"}
         focusableWhenDisabled
+        id={BASES_SAVE_ID}
         onClick={onSave}
         ref={saveButton}
       >

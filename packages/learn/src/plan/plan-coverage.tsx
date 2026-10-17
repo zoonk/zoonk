@@ -3,9 +3,10 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
+import { getEditorSectionId } from "./plan-editor-sections";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
@@ -133,7 +134,7 @@ export function useMoveDate({
 } = {}) {
   const own = usePlanChange();
   const { change, failed, isPending } = planChange ?? own;
-  const { changes } = usePlanScreen();
+  const { changes, keepFocus } = usePlanScreen();
   const { find } = useTimeToCover();
   const [finding, setFinding] = useState(false);
   const [outcome, setOutcome] = useState<MoveOutcome>(null);
@@ -144,9 +145,20 @@ export function useMoveDate({
     setOutcome(next);
   };
 
+  // Another change started while it searched: the learner's newer word wins at once, and the date
+  // it finds, for the plan before, moves nothing (see `move`).
+  const gaveWay = finding && changes.saving;
+  const giveWay = useEffectEvent(() => stop(null));
+
+  useEffect(() => {
+    if (gaveWay) {
+      giveWay();
+    }
+  }, [gaveWay]);
+
   const move = async () => {
-    // Another change saving (a date typed in, a bases choice) is the learner's newer word.
-    if (finding || isPending || changes.saving) {
+    // Another change saving (a date typed in, an Undo, a bases choice) is the learner's newer word.
+    if (finding || isPending || changes.isSaving()) {
       return;
     }
 
@@ -183,6 +195,10 @@ export function useMoveDate({
         onMoved?.();
       }
     });
+
+    // Move gives way once the plan covers everything: in the editor, the keyboard waits on the
+    // time picked, not on the page behind it.
+    keepFocus(() => findPickedChip(document.querySelector(`#${getEditorSectionId("time")}`)));
   };
 
   return {
@@ -194,8 +210,17 @@ export function useMoveDate({
   };
 }
 
-/** Why moving the date didn't work, where the plan's failed message would be. */
-export function MoveDateFailure({ move }: { move: ReturnType<typeof useMoveDate> }) {
+/**
+ * Why moving the date didn't work, where the plan's failed message would be. Inside a block that's
+ * a live region already (the editor's time), it isn't an alert of its own (`live`), so it's said once.
+ */
+export function MoveDateFailure({
+  live = true,
+  move,
+}: {
+  live?: boolean;
+  move: ReturnType<typeof useMoveDate>;
+}) {
   const texts = useTimeToCoverTexts();
 
   if (move.failed) {
@@ -204,7 +229,7 @@ export function MoveDateFailure({ move }: { move: ReturnType<typeof useMoveDate>
 
   if (move.outcome === "building" || move.outcome === "noDate") {
     return (
-      <p className="text-destructive-text text-sm" role="alert">
+      <p className="text-destructive-text text-sm" role={live ? "alert" : undefined}>
         {move.outcome === "building" ? texts.building : texts.noDate}
       </p>
     );
@@ -265,7 +290,7 @@ export function MoveDateSwitch({
           {t("Move your date to cover everything")}
         </PendingLabel>
       </Button>
-      <MoveDateFailure move={move} />
+      <MoveDateFailure live={false} move={move} />
     </>
   );
 }
@@ -337,6 +362,14 @@ export function FindTimeLine({
       {pending && <span className="sr-only">{texts.finding}</span>}
     </div>
   );
+}
+
+/**
+ * The picked chip of a list of time chips (`container`): where the keyboard waits when Find's answer
+ * has nothing to take focus, since the answer itself is read by the block it's in.
+ */
+export function findPickedChip(container: ParentNode | null): HTMLElement | null {
+  return container?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]') ?? null;
 }
 
 /**

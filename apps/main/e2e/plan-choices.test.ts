@@ -149,8 +149,10 @@ test.describe("Plan choices", () => {
     await expect(subject.getByRole("button")).toHaveCount(4);
     await expectAccessibleScreen(page, "the prerequisites sheet");
 
-    // The recommendation is one tap, and its effect shows before anything is saved.
+    // The recommendation is one tap, and its effect shows before anything is saved. The keyboard
+    // moves on to Save choices, which opens once the check is done.
     await sheet.getByRole("button", { name: "Use the recommendation" }).click();
+    await expect(sheet.getByRole("button", { name: "Save choices" })).toBeFocused();
 
     await expect(choiceButton({ choice: "Quick lesson", group: subject })).toHaveAttribute(
       "aria-pressed",

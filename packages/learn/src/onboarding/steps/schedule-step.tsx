@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
-import { type FindStatus, findTimeChip } from "../../plan/plan-coverage";
+import { type FindStatus, findPickedChip, findTimeChip } from "../../plan/plan-coverage";
 import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cover";
 import { type Choice, ChoiceList } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
@@ -122,7 +122,7 @@ function useFocusFound({
         ? null
         : findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
 
-    (chip ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
+    (chip ?? findPickedChip(minutes) ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
   }, [found, options, status]);
 
   return () => {

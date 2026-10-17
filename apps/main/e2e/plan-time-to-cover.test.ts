@@ -35,6 +35,62 @@ function readTargetDate(goalId: string) {
 }
 
 /**
+ * Holds the page's next Server Action (a save: a change, an Undo) until `release`, as a slow save
+ * would. Main's plan changes post to the page.
+ */
+async function holdNextSave(page: Page) {
+  const released = Promise.withResolvers<null>();
+  let held = false;
+
+  await page.route("**/*", async (route) => {
+    const request = route.request();
+
+    if (!held && request.method() === "POST" && request.headers()["next-action"] !== undefined) {
+      held = true;
+      await released.promise;
+    }
+
+    await route.fallback();
+  });
+
+  return { isHeld: () => held, release: () => released.resolve(null) };
+}
+
+/**
+ * Marcos's move came forward to a month away, so his own time falls short by then. The plan editor
+ * is open. Main's E2E runs without the API: Find answers once `found` resolves (at once without
+ * it), with a date a year later that his time covers it all by.
+ */
+async function moveDateEditor(page: Page, goalId: string, found?: Promise<unknown>) {
+  const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
+  const fittingDate = toIsoDay(new Date(targetDate.getTime() + 365 * MS_PER_DAY));
+  await prisma.goal.update({ data: { targetDate }, where: { id: goalId } });
+
+  const asked = await routeTimeToCover(page, {
+    goalId,
+    time: async () => {
+      await found;
+
+      return {
+        fittingDate,
+        maximum: { coveredShare: 0.37, dailyMinutes: 240 },
+        measure: "goal",
+        targetDate: toIsoDay(targetDate),
+      };
+    },
+  });
+
+  await page.goto("/plan");
+  await page.locator('[data-slot="journey"]').getByRole("button", { name: "Adjust plan" }).click();
+
+  const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+  const move = editor.getByRole("button", { name: "Move your date to cover everything" });
+  await expect(move).toBeVisible();
+
+  return { asked, editor, fittingDate, move, targetDate };
+}
+
+/**
  * Ana's exam two months away at 15 minutes a day, set in the plan editor as she would (a time
  * written straight to the database would leave her saved plan in place): her time falls short.
  * Returns the editor, still open, and the exam's day.
@@ -153,38 +209,10 @@ test.describe("Find the time that covers everything", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      // Marcos's move came forward to a month away: his own time falls short by then.
-      const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
-      const later = new Date(targetDate.getTime() + 365 * MS_PER_DAY);
-      const fittingDate = later.toISOString().slice(0, 10);
-      await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
       const before = await readDailyMinutes(user.goalId);
       const held = Promise.withResolvers<null>();
-
-      // Main's E2E runs without the API: the search takes as long as this test holds it.
-      await routeTimeToCover(page, {
-        goalId: user.goalId,
-        time: async () => {
-          await held.promise;
-
-          return {
-            fittingDate,
-            maximum: { coveredShare: 0.37, dailyMinutes: 240 },
-            measure: "goal",
-            targetDate: targetDate.toISOString().slice(0, 10),
-          };
-        },
-      });
-
-      await page.goto("/plan");
-
-      await page
-        .locator('[data-slot="journey"]')
-        .getByRole("button", { name: "Adjust plan" })
-        .click();
-
-      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const move = editor.getByRole("button", { name: "Move your date to cover everything" });
+      // The search takes as long as this test holds it.
+      const { editor, fittingDate, move } = await moveDateEditor(page, user.goalId, held.promise);
       await move.click();
       await expect(move).toHaveAttribute("aria-busy", "true");
 
@@ -194,13 +222,7 @@ test.describe("Find the time that covers everything", () => {
 
       held.resolve(null);
 
-      await expect
-        .poll(async () => {
-          const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return goal.targetDate?.toISOString().slice(0, 10);
-        })
-        .toBe(fittingDate);
-
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(fittingDate);
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(before);
     });
   });
@@ -209,46 +231,79 @@ test.describe("Find the time that covers everything", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
+      const found = Promise.withResolvers<null>();
+      const { editor, move, targetDate } = await moveDateEditor(page, user.goalId, found.promise);
       const ownDate = toIsoDay(new Date(targetDate.getTime() + 90 * MS_PER_DAY));
-      const fittingDate = toIsoDay(new Date(targetDate.getTime() + 365 * MS_PER_DAY));
-      await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
-      const held = Promise.withResolvers<null>();
 
-      await routeTimeToCover(page, {
-        goalId: user.goalId,
-        time: async () => {
-          await held.promise;
-
-          return {
-            fittingDate,
-            maximum: { coveredShare: 0.37, dailyMinutes: 240 },
-            measure: "goal",
-            targetDate: toIsoDay(targetDate),
-          };
-        },
-      });
-
-      await page.goto("/plan");
-
-      await page
-        .locator('[data-slot="journey"]')
-        .getByRole("button", { name: "Adjust plan" })
-        .click();
-
-      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-      const move = editor.getByRole("button", { name: "Move your date to cover everything" });
       await move.click();
       await expect(move).toHaveAttribute("aria-busy", "true");
 
-      // Her own date, saved while it searches, is her newer word: the date found comes too late.
+      // Her own date, saved while it searches, is her newer word: the date found, which answers
+      // while her save is still on its way, moves nothing.
+      const save = await holdNextSave(page);
       await editor.getByLabel("Deadline").fill(ownDate);
       await editor.getByRole("button", { name: "Save" }).click();
-      held.resolve(null);
+      await expect.poll(save.isHeld).toBe(true);
+      found.resolve(null);
 
-      await expect(move).not.toHaveAttribute("aria-busy", "true", { timeout: REPLAN_TIMEOUT_MS });
+      await expect(move).not.toHaveAttribute("aria-busy", "true");
+      save.release();
       await expect.poll(() => readTargetDate(user.goalId)).toBe(ownDate);
       await expect(editor.getByLabel("Deadline")).toHaveValue(ownDate);
+    });
+  });
+
+  test("a date still saving keeps Move your date from starting on the plan before it", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const { asked, editor, move, targetDate } = await moveDateEditor(page, user.goalId);
+      const ownDate = toIsoDay(new Date(targetDate.getTime() + 90 * MS_PER_DAY));
+
+      const save = await holdNextSave(page);
+      await editor.getByLabel("Deadline").fill(ownDate);
+      await editor.getByRole("button", { name: "Save" }).click();
+      await expect.poll(save.isHeld).toBe(true);
+
+      // Until her date is saved, the time says it's being worked out again, and Move waits: a date
+      // it found now would be for the plan before.
+      await expect(editor.getByText("Working out what your time covers…")).toBeVisible();
+      await expect(move).toBeDisabled();
+      expect(asked).toStrictEqual([]);
+
+      save.release();
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(ownDate);
+      expect(asked).toStrictEqual([]);
+    });
+  });
+
+  test("an Undo while Move your date searches wins: the move leaves the plan to it", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const found = Promise.withResolvers<null>();
+      const { editor, move, targetDate } = await moveDateEditor(page, user.goalId, found.promise);
+      const tighter = toIsoDay(new Date(targetDate.getTime() - 10 * MS_PER_DAY));
+
+      await editor.getByLabel("Deadline").fill(tighter);
+      await editor.getByRole("button", { name: "Save" }).click();
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(tighter);
+      const undo = editor.getByRole("button", { name: "Undo" });
+      await expect(undo).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
+
+      await move.click();
+      await expect(move).toHaveAttribute("aria-busy", "true");
+
+      // She undoes the tighter date while Move searches: her Undo, still on its way when the date is
+      // found, comes after, and the date found moves nothing.
+      const save = await holdNextSave(page);
+      await undo.click();
+      await expect.poll(save.isHeld).toBe(true);
+      found.resolve(null);
+
+      await expect(move).not.toHaveAttribute("aria-busy", "true");
+      save.release();
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(toIsoDay(targetDate));
     });
   });
 

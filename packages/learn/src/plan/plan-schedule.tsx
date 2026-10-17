@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
+import { useFormatGoalDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChoiceList } from "../onboarding/choice-list";
 import { MINUTE_OPTIONS } from "../onboarding/steps/daily-minutes";
@@ -66,9 +67,11 @@ function DailyCoverage({
   onMoving: (moving: boolean) => void;
   planChange: PlanChange;
 }) {
-  const pending = planChange.isPending;
   const t = useExtracted();
-  const { plan } = usePlanScreen();
+  const formatGoalDate = useFormatGoalDate();
+  const { changes, plan } = usePlanScreen();
+  // Any change saving (a date, an Undo, a bases choice) changes what the time covers too.
+  const pending = planChange.isPending || changes.saving;
   const coverage = usePlanCoverage();
   const canChooseFocus = useCanChooseFocus();
   const canMoveDate = useCanMoveDate();
@@ -89,12 +92,26 @@ function DailyCoverage({
         {coverage ? (
           <>
             <div className="text-muted-foreground">
-              <CoveredSentence
-                coreFits={coverage.coreFits}
-                coveredShare={coverage.coveredShare}
-                deepensMostAsked={coverage.deepensMostAsked}
-                measure={coverage.measure}
-              />
+              {/* Her own time covers it all once planned again (lessons set aside come back): say so,
+                  as the Plan's suggestion does, rather than what the plan as it stands leaves out. */}
+              {plan.fitOffer?.fits && plan.schedule.targetDate ? (
+                <p>
+                  {t("Your time covers everything by {date}", {
+                    date: formatGoalDate({
+                      isoDate: plan.schedule.targetDate,
+                      namedMonth: plan.schedule.targetDateNamedMonth,
+                      style: "long",
+                    }),
+                  })}
+                </p>
+              ) : (
+                <CoveredSentence
+                  coreFits={coverage.coreFits}
+                  coveredShare={coverage.coveredShare}
+                  deepensMostAsked={coverage.deepensMostAsked}
+                  measure={coverage.measure}
+                />
+              )}
             </div>
             <FindLine canFind={canFind} onAsk={onAsk} />
             <div className="flex flex-wrap items-center gap-2 empty:hidden" id={FIND_ACTIONS_ID}>

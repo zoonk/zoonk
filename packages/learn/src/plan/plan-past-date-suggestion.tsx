@@ -183,7 +183,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
 
     const doesText = isExam
       ? t("Every topic, even after the exam, at your own pace.")
-      : t("Move your date to the day your time covers what's left.");
+      : t("Move your date so your time covers what's left.");
 
     const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
 

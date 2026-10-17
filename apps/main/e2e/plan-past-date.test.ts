@@ -101,7 +101,7 @@ test.describe("A plan whose date came with lessons left", () => {
       // What the change does is said before he asks, and the new date is found once he taps
       // Preview, since the page searches nothing: then its diff, leading with the lessons back.
       await expect(
-        slot.getByText("Move your date to the day your time covers what's left."),
+        slot.getByText("Move your date so your time covers what's left."),
       ).toBeVisible();
 
       await expect(slot.locator('[data-slot="diff-lines"]')).toHaveCount(0);

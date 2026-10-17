@@ -9,8 +9,18 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanScreenView } from "@zoonk/core/plans/view-contract";
-import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
 /**
  * What a change did: applied (with the change, null while the plan isn't built yet), or for a focus
@@ -129,11 +139,14 @@ export const PLAN_TITLE_ID = "plan-title";
 type FocusTarget = () => HTMLElement | null;
 
 /**
- * The plan's changes, whichever control saves them (each goes through `actions.change`): whether
- * one is saving, and how many ever started. A change worked out before it saves (Move your date
- * finds its date first) can tell another one started meanwhile, and leave the plan to it.
+ * The plan's changes, whichever control saves them (every save goes through `actions`): whether one
+ * is saving, and how many ever started. A change worked out before it saves (Move your date finds
+ * its date first) can tell another one started meanwhile, and leave the plan to it.
  */
 type PlanChanges = {
+  /** Whether a change is saving right now, for handlers: current before the screen shows it. */
+  isSaving: () => boolean;
+  /** Whether a change is saving, as the screen shows it. */
   saving: boolean;
   /** How many changes started so far: read it in handlers, never while rendering. */
   started: () => number;
@@ -194,24 +207,6 @@ function useKeepFocus(plan: PlanScreenView) {
 }
 
 const IDLE: TimeToCoverState = { status: "idle" };
-
-/**
- * What Find searched, as a key: the plan it's for (another goal's plan can look the same and need
- * another time), its week, date and time, what it covers, where it focuses, its bases and its exam
- * choices. Lessons being written, a session's progress or new changes in the list refresh the plan
- * without changing that, so an answer (or a search still running) stays.
- */
-function getTimeToCoverRevision(plan: PlanScreenView): string {
-  return JSON.stringify([
-    plan.planId,
-    plan.schedule,
-    plan.feasibility,
-    plan.steering,
-    plan.areas,
-    plan.bases,
-    plan.examChoices,
-  ]);
-}
 
 /** One find answer for the plan as it is now (see `TimeToCoverState`). */
 function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
@@ -274,25 +269,82 @@ function useTimeToCoverStore(plan: PlanScreenView): TimeToCoverStore {
   return { find, state };
 }
 
-/** Counts the host's changes as they start and answer (see `PlanChanges`). */
-function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
-  const count = useRef(0);
-  const [saving, setSaving] = useState(0);
+/** The changes in flight, kept outside React's state (see `useCountedChanges`). */
+type ChangeCounter = Pick<PlanChanges, "isSaving" | "started"> & {
+  /** Call as a change starts; call what it returns once it answered, saved or not. */
+  begin: () => () => void;
+  subscribe: (listener: () => void) => () => void;
+};
 
-  const change = useCallback(
-    (operations: LearnerPlanOperation[]) => {
-      count.current += 1;
-      setSaving((current) => current + 1);
-      return actions.change(operations).finally(() => setSaving((current) => current - 1));
-    },
-    [actions],
-  );
+function createChangeCounter(): ChangeCounter {
+  let started = 0;
+  let saving = 0;
+  const listeners = new Set<() => void>();
 
-  const started = useCallback(() => count.current, []);
+  const notify = () => {
+    for (const listener of listeners) {
+      listener();
+    }
+  };
 
   return {
-    actions: useMemo(() => ({ ...actions, change }), [actions, change]),
-    changes: useMemo(() => ({ saving: saving > 0, started }), [saving, started]),
+    begin: () => {
+      started += 1;
+      saving += 1;
+      notify();
+      let ended = false;
+
+      return () => {
+        if (!ended) {
+          ended = true;
+          saving -= 1;
+          notify();
+        }
+      };
+    },
+    isSaving: () => saving > 0,
+    started: () => started,
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
+function counted<Result>(counter: ChangeCounter, save: () => Promise<Result>): Promise<Result> {
+  const end = counter.begin();
+  return save().finally(end);
+}
+
+/**
+ * Counts every action that changes the plan as it starts and answers (see `PlanChanges`): its own
+ * changes, an Undo or an Apply, an exam's option, the tools. A store outside React's state, since a
+ * save starts inside its transition, where a state update would only show once the save is done.
+ */
+function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
+  const [counter] = useState(createChangeCounter);
+  const saving = useSyncExternalStore(counter.subscribe, counter.isSaving, () => false);
+
+  const countedActions = useMemo(
+    (): PlanActions => ({
+      ...actions,
+      change: (operations) => counted(counter, () => actions.change(operations)),
+      chooseExamOption: (input) => counted(counter, () => actions.chooseExamOption(input)),
+      chooseTools: (input) => counted(counter, () => actions.chooseTools(input)),
+      decide: (input) =>
+        input.status === "applied" || input.status === "undone"
+          ? counted(counter, () => actions.decide(input))
+          : actions.decide(input),
+    }),
+    [actions, counter],
+  );
+
+  return {
+    actions: countedActions,
+    changes: useMemo(
+      () => ({ isSaving: counter.isSaving, saving, started: counter.started }),
+      [counter, saving],
+    ),
   };
 }
 

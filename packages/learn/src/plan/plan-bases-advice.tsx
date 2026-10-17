@@ -3,7 +3,7 @@
 import { type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { type BaseChoice } from "./plan-bases-group";
 import { usePlanScreen } from "./plan-context";
 import { PendingLabel } from "./plan-coverage";
@@ -58,12 +58,16 @@ function useBasesAdvice() {
   return { ask, state };
 }
 
+/** Save choices, where the keyboard goes once the recommendation fills the choices in. */
+export const BASES_SAVE_ID = "bases-save-choices";
+
 /**
- * The box at the top of the sheet, a polite live region: "Get a recommendation" until the learner
- * asks, its spinner while the app works it out, then what it recommends, with "Use the
- * recommendation" while the choices differ from it, which fills them in (their preview then runs as
- * for any choice). Once it answers, focus moves to that button, or to the box, since the button
- * that had it is gone. When it couldn't be worked out, Try again takes the button's place, so
+ * The box at the top of the sheet: "Get a recommendation" until the learner asks, its spinner while
+ * the app works it out, then what it recommends, with "Use the recommendation" while the choices
+ * differ from it, which fills them in (their preview then runs as for any choice) and moves the
+ * keyboard on to Save choices. Once it answers, focus moves to that button, read with the advice,
+ * or to the advice itself, since the button that had it is gone; waiting and failing are said once,
+ * in their own status line. When it couldn't be worked out, Try again takes the button's place, so
  * focus stays on it.
  */
 export function BasesAdvice({
@@ -78,33 +82,53 @@ export function BasesAdvice({
   const t = useExtracted();
   const adviceText = useAdviceText();
   const { ask, state } = useBasesAdvice();
-  const box = useRef<HTMLDivElement>(null);
+  const answerId = useId();
+  const answer = useRef<HTMLParagraphElement>(null);
   const use = useRef<HTMLButtonElement>(null);
   const pending = state.status === "pending";
   const retry = state.status === "failed" || state.status === "building";
   const answered = state.status === "answered";
 
+  const retryText =
+    state.status === "building"
+      ? t("Your plan is still being built. Try again in a moment.")
+      : t("We couldn't get a recommendation.");
+
   // Before the browser moves on: the button that asked gives way to the answer, and the sheet takes
   // focus back from the page on its own, again a frame later, over a focus moved after paint.
   useLayoutEffect(() => {
     if (answered) {
-      (use.current ?? box.current)?.focus();
+      (use.current ?? answer.current)?.focus();
     }
   }, [answered]);
 
+  const applyRecommendation = (recommended: BaseChoice) => {
+    onUse(recommended);
+    document.getElementById(BASES_SAVE_ID)?.focus();
+  };
+
   return (
-    <div
-      aria-live="polite"
-      className="bg-muted/60 flex flex-col items-start gap-2 rounded-xl p-4 text-sm focus-visible:outline-none"
-      ref={box}
-      tabIndex={-1}
-    >
+    <div className="bg-muted/60 flex flex-col items-start gap-2 rounded-xl p-4 text-sm">
+      <p aria-live="polite" className="sr-only">
+        {pending && t("Getting a recommendation…")}
+        {retry && retryText}
+      </p>
+
       {state.status === "answered" && (
         <>
-          <p className="text-pretty">{adviceText(state.advice)}</p>
+          <p
+            className="text-pretty focus-visible:outline-none"
+            id={answerId}
+            ref={answer}
+            tabIndex={-1}
+          >
+            {adviceText(state.advice)}
+          </p>
+
           {!followsRecommendation({ bases, choices, recommended: state.advice.recommended }) && (
             <Button
-              onClick={() => onUse(state.advice.recommended)}
+              aria-describedby={answerId}
+              onClick={() => applyRecommendation(state.advice.recommended)}
               ref={use}
               size="sm"
               variant="secondary"
@@ -116,10 +140,8 @@ export function BasesAdvice({
       )}
 
       {retry && (
-        <p className="text-pretty">
-          {state.status === "building"
-            ? t("Your plan is still being built. Try again in a moment.")
-            : t("We couldn't get a recommendation.")}
+        <p aria-hidden="true" className="text-pretty">
+          {retryText}
         </p>
       )}
 
@@ -138,8 +160,6 @@ export function BasesAdvice({
           </PendingLabel>
         </Button>
       )}
-
-      {pending && <span className="sr-only">{t("Getting a recommendation…")}</span>}
     </div>
   );
 }

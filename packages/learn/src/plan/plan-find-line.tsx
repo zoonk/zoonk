@@ -3,7 +3,7 @@
 import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useLayoutEffect, useRef } from "react";
 import { usePlanScreen } from "./plan-context";
-import { FindTimeLine, findTimeChip } from "./plan-coverage";
+import { FindTimeLine, findPickedChip, findTimeChip } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
 import {
   type TimeToCoverAnswer,
@@ -83,7 +83,8 @@ export function useFocusFindAnswer(choices: number[]) {
     }
 
     const target = findFocusTarget({ answered, choices, isGoal: goal.kind !== "exam" });
-    (target ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
+    const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
+    (target ?? findPickedChip(section) ?? document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`))?.focus();
   }, [answered, choices, goal.kind, state.status]);
 
   return () => {

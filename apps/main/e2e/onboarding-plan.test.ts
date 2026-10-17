@@ -380,6 +380,28 @@ test("while the learner changes the days, Find says only the time those days nee
   await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
   await expect(covers).toHaveCount(0);
   await expect(find).toBeVisible();
+
+  // A search for six days that's still running while the days change and come back, with no other
+  // search, ends for the six days she left: it shows nowhere, and Find asks again.
+  holding = true;
+  await find.click();
+  await expect.poll(() => held.length).toBe(3);
+  await page.getByRole("button", { name: "Sunday" }).click();
+  await expect(page.getByText(/^7 days · /u)).toBeVisible();
+  await page.getByRole("button", { name: "Sunday" }).click();
+  await expect(page.getByText(/^6 days · /u)).toBeVisible();
+
+  const answered = page.waitForResponse((reply) => reply.url().includes("/plan/time-to-cover"));
+  holding = false;
+  held.at(-1)?.();
+  await answered;
+
+  // Once the page took the answer in.
+  await page.evaluate(() => new Promise<void>((resolve) => requestIdleCallback(() => resolve())));
+
+  await expect(page.getByText(/^1\shr 10\smin a day covers/u)).toHaveCount(0);
+  await expect(covers).toHaveCount(0);
+  await expect(find).toBeVisible();
 });
 
 /** A goal at its time question, with a date 180 days away. */

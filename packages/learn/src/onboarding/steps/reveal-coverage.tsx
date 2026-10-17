@@ -107,7 +107,7 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
             {/* aria-disabled, not disabled: the action keeps focus through a search of seconds. */}
             <button
               aria-busy={move.pending || undefined}
-              aria-disabled={move.pending || undefined}
+              aria-disabled={move.pending || move.waits || undefined}
               className={INLINE_ACTION_CLASS}
               onClick={() => void move.move()}
               type="button"

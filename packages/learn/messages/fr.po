@@ -10034,11 +10034,6 @@ msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Tout étudier"
 
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "DFifcJ"
-msgid "Move your date to the day your time covers what's left."
-msgstr "Change la date pour le jour où ton temps couvre ce qu’il reste."
-
 #: src/plan/plan-properties.tsx
 msgctxt "1ooK0d"
 msgid "Every day"
@@ -12896,3 +12891,9 @@ msgstr "La semaine prochaine"
 msgctxt "tnsNdR"
 msgid "Right answers on this skill each day of the week"
 msgstr "Bonnes réponses sur cette compétence, chaque jour de la semaine"
+
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "oNLSka"
+msgid "Move your date so your time covers what's left."
+msgstr "Change la date pour que ton temps couvre ce qu’il reste."
