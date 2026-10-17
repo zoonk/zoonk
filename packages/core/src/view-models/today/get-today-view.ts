@@ -325,30 +325,32 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
  * Today as an app on the learner's device reads it (the API's `GET /v1/today`): with `timeZone`,
  * the goal Today shows follows the device first (`followGoalTimeZone`: a goal without a zone
  * stores it, one whose learner moved takes it while nothing was done yet in its day), then its day
- * is read. Today admits the goal once, so the goal that moved is the goal returned, and only a goal
- * it shows a day for moves: a goal it refuses (paused, a quick explanation's, one whose plan or
- * guest onboarding isn't ready) keeps its zone.
+ * is read. The goal is resolved once, so the goal that moved is the goal returned, and admitted
+ * again only after a follow that could have changed it. Only a goal Today shows a day for moves: a
+ * goal it refuses (paused, a quick explanation's, one whose plan or guest onboarding isn't ready)
+ * keeps its zone.
  */
 export async function getTodayViewFollowingDevice(
   input: TodayStudySessionInput,
 ): Promise<TodayViewResult> {
+  const { timeZone } = input;
   const admission = await admitToday(input.goalId);
 
   if (admission.status !== "admitted") {
     return admission;
   }
 
-  const follow = input.timeZone
-    ? await followOwnedGoalTimeZone({ owned: admission.owned, timeZone: input.timeZone })
-    : null;
+  // Already the goal's zone, or none sent: nothing moves, so the day is read from this admission.
+  if (!timeZone || timeZone === admission.owned.goal.timezone) {
+    return readAdmittedToday({ admission, timeZone });
+  }
 
-  // A move changed the goal's zone and the learner's revision, so Today admits that goal again.
-  const admitted =
-    follow?.status === "ready" && follow.moved
-      ? await admitToday(admission.owned.goal.id)
-      : admission;
+  await followOwnedGoalTimeZone({ owned: admission.owned, timeZone });
+
+  // The follow may have moved the goal, or met another writer who just did: Today admits it again.
+  const admitted = await admitToday(admission.owned.goal.id);
 
   return admitted.status === "admitted"
-    ? readAdmittedToday({ admission: admitted, timeZone: input.timeZone })
+    ? readAdmittedToday({ admission: admitted, timeZone })
     : admitted;
 }

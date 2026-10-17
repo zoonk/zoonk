@@ -424,6 +424,40 @@ describe("Today following the device", () => {
       SAO_PAULO,
     ]);
   });
+
+  it("reads the day where another writer just moved the goal, though its own follow moved nothing", async () => {
+    const user = await userFixture();
+
+    const { goal } = await sessionGoalFixture({
+      goal: { timezone: SAO_PAULO },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const device = zoneOnAnotherDay();
+    const waitingBefore = new Set(await waitingOnRevision());
+
+    // Her other device moves the goal to this zone while Today, which read São Paulo, waits to.
+    const other = holdLearnerLock(user.id, (tx) =>
+      tx.goal.update({ data: { timezone: device }, where: { id: goal.id } }),
+    );
+
+    await other.held;
+    const today = getTodayViewFollowingDevice({ goalId: goal.id, timeZone: device });
+
+    try {
+      await untilQueued(waitingBefore);
+    } finally {
+      other.release();
+    }
+
+    await other.done;
+    const result = await today;
+
+    expect(result.status === "ready" && result.today.session.localDate).toStrictEqual(
+      localDay(device),
+    );
+  });
 });
 
 /** Backends waiting for a learner's revision lock right now (a writer queued behind another). */
