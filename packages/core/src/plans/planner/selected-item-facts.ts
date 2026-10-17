@@ -1,5 +1,6 @@
 import { getBossQuestionSkills } from "../../checkpoints/checkpoint-minutes";
 import { getBossSkillIds } from "../../checkpoints/checkpoint-rules";
+import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { toBossPlan } from "./boss-plan";
 import { type BossSizes } from "./boss-sizes";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
@@ -145,6 +146,11 @@ export function listSelectedItemFacts({
 
   const placed = placeExamBosses({ built, input, rows: facts?.rows, survivors: facts?.survivors });
 
+  // A finished challenge keeps what it tested: no run places it again (see `placeExamBosses`).
+  const listTested = (boss: (typeof plan.items)[number]) =>
+    placed.get(boss.key)?.tested ??
+    (boss.status === "todo" ? [] : (readSelectedItemFacts(boss.facts)?.boss?.testedKeys ?? []));
+
   const toBoss = (boss: (typeof plan.items)[number]): SelectedItemFacts["boss"] => {
     const sized = built.bossSizes.get(boss.key);
     const testedSkillIds = sized?.skillIds ?? getBossSkillIds({ ...plan, boss });
@@ -157,7 +163,7 @@ export function listSelectedItemFacts({
       }),
       minutes: boss.minutes,
       questions: sized?.size?.questions ?? null,
-      testedKeys: [...(placed.get(boss.key)?.tested ?? [])],
+      testedKeys: [...listTested(boss)],
       testedSkillIds,
       waiting: sized !== undefined && sized.size === null,
     };

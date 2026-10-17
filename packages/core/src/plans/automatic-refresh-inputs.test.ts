@@ -7,6 +7,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { keepPaceOwn } from "./_test-utils/sim/sim-db-pace";
+import { readSelectedItemFacts } from "./_utils/selected-item-contract";
 import { createGoalPlan } from "./create-goal-plan";
 import * as producer from "./planner/build-plan";
 import { toIsoDate } from "./planner/plan-calendar";
@@ -97,9 +98,25 @@ async function setupMissedMock() {
     });
   });
 
+  const finished = await readTested(plan.id);
+
   vi.setSystemTime(new Date("2026-10-24T12:00:00Z"));
   await refreshGoalPlan({ goalId: goal.id });
-  return { goal, plan };
+  return { finished, goal, plan };
+}
+
+/** What each of the plan's challenges tests, as its saved facts keep it. */
+async function readTested(planId: string) {
+  const bosses = await prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    select: { facts: true, id: true },
+    where: { kind: "boss", planId },
+  });
+
+  return bosses.map((boss) => ({
+    id: boss.id,
+    testedKeys: readSelectedItemFacts(boss.facts)?.boss?.testedKeys,
+  }));
 }
 
 describe("automatic refresh admits fresh inputs before running the producer", () => {
@@ -246,6 +263,20 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
       expect(after.filter((item) => item.status === "done")).toStrictEqual(
         before.filter((item) => item.status === "done"),
       );
+    }));
+
+  it("keeps what each finished challenge tested when it plans again", () =>
+    runBody(async () => {
+      vi.setSystemTime(new Date("2026-10-12T12:00:00Z"));
+      const { finished, goal, plan } = await setupMissedMock();
+
+      expect(finished).not.toHaveLength(0);
+      expect(finished.every((boss) => (boss.testedKeys?.length ?? 0) > 0)).toBe(true);
+      await expect(readTested(plan.id)).resolves.toStrictEqual(finished);
+
+      vi.setSystemTime(new Date("2026-10-26T12:00:00Z"));
+      await refreshGoalPlan({ goalId: goal.id });
+      await expect(readTested(plan.id)).resolves.toStrictEqual(finished);
     }));
 
   it.each(["minutes", "date", "progress"] as const)(
