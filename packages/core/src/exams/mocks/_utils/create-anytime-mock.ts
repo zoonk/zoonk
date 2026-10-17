@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, sql } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import { type UsagePeriod } from "../../../entitlements/contract";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -21,9 +21,6 @@ import {
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
-
-/** Namespaces the per-goal start lock so it never collides with other advisory locks. */
-const START_LOCK_NAMESPACE = 51_882;
 
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
@@ -199,10 +196,6 @@ export async function createAnytimeMock({
     isMockShort({ option: pick.option, planned });
 
   return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
-    await tx.$queryRaw(
-      sql`SELECT pg_advisory_xact_lock(${START_LOCK_NAMESPACE}::int, hashtext(${goal.id}))::text`,
-    );
-
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
 
     if (running) {

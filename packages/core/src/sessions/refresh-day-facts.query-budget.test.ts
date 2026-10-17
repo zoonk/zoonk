@@ -87,7 +87,7 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
   });
 
   it.each([0, 10])(
-    "rebuilds one unstarted day with %i minutes already used, then replays without a mark",
+    "rebuilds one unstarted day with %i minutes already used, then replays with conservative freshness",
     (spent) =>
       runBody(async () => {
         const { goal, plan, readDay, user } = await setup(spent);
@@ -183,7 +183,7 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
 
         await expect(
           prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-        ).resolves.toStrictEqual(revision);
+        ).resolves.toStrictEqual({ ...revision, learnerRevision: revision.learnerRevision + 1n });
 
         if (measured.result.status !== "applied" || !measured.result.change) {
           throw new Error("Expected an applied change with an Undo snapshot");
@@ -258,6 +258,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
 
       await expect(
         prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-      ).resolves.toStrictEqual(revision);
+      ).resolves.toStrictEqual({ ...revision, learnerRevision: revision.learnerRevision + 1n });
     }));
 });

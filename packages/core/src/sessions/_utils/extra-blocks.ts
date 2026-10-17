@@ -1,5 +1,4 @@
 import "server-only";
-import { isDeepStrictEqual } from "node:util";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
@@ -18,7 +17,7 @@ import { loadExamPrepAccess } from "./plus-only-lessons";
 import { takePracticeQuestions } from "./practice-sets";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
-import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
+import { type StudySessionRow } from "./study-session-access";
 
 type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
   blocks: readonly DayBlockInput[];
@@ -244,47 +243,21 @@ export async function withSessionAppendLock<TResult>({
   run: (locked: { session: StudySessionRow; transaction: TransactionClient }) => Promise<TResult>;
   session: StudySessionRow;
 }): Promise<TResult> {
-  class QueueUnchangedError extends Error {
-    override name = "QueueUnchangedError";
-  }
-
-  const unchanged: { value: { result: TResult } | null } = { value: null };
-
-  try {
-    return await prisma.$transaction(async (transaction) => {
-      if (planId) {
-        await markPlansChanged(transaction, { planIds: [planId] });
-      } else {
-        await markLearnerChanged(transaction, { userId: session.userId });
-      }
-
-      const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });
-
-      if (!locked) {
-        throw new Error("The study session no longer exists.");
-      }
-
-      const result = await run({ session: locked, transaction });
-
-      const current = await transaction.studySession.findUnique({
-        include: STUDY_SESSION_INCLUDE,
-        where: { id: session.id },
-      });
-
-      if (isDeepStrictEqual(locked, current)) {
-        unchanged.value = { result };
-        throw new QueueUnchangedError();
-      }
-
-      return result;
-    });
-  } catch (error) {
-    if (error instanceof QueueUnchangedError && unchanged.value) {
-      return unchanged.value.result;
+  return prisma.$transaction(async (transaction) => {
+    if (planId) {
+      await markPlansChanged(transaction, { planIds: [planId] });
+    } else {
+      await markLearnerChanged(transaction, { userId: session.userId });
     }
 
-    throw error;
-  }
+    const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });
+
+    if (!locked) {
+      throw new Error("The study session no longer exists.");
+    }
+
+    return run({ session: locked, transaction });
+  });
 }
 
 /** Adds a bonus block at the end of the session. Call it inside `withSessionAppendLock`. */

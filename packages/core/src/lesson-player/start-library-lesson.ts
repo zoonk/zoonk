@@ -24,7 +24,6 @@ import {
   getRunStudySessionId,
   loadProgressAnswers,
   loadProgressRuns,
-  lockLessonRuns,
 } from "./_utils/lesson-runs";
 import { loadLessonSupport } from "./_utils/lesson-support";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
@@ -76,7 +75,6 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
   const claimed = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, { planInputs: true, userId });
-      await lockLessonRuns(tx, { lessonId: lesson.id, userId });
 
       const now = new Date();
       const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });

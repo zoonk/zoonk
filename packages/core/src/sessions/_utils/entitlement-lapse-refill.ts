@@ -119,7 +119,7 @@ export async function planEntitlementLapseRefill({
   };
 }
 
-/** Only the learner's POST appends the previewed free work; a race or replay rolls its mark back. */
+/** Only the learner's POST appends the previewed free work, once even when Opens race. */
 export async function persistEntitlementLapseRefill({
   goal,
   session,

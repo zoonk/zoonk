@@ -226,7 +226,7 @@ describe("background goal revision markers", () => {
     });
   });
 
-  it("marks today's kept-session stamp once, preserving other change fields", async () => {
+  it("marks today's kept-session stamp once while queue attempts mark freshness", async () => {
     const { goal, plan, user } = await setup();
     const context = await loadPlanContext({ goal, timeZone: "UTC" });
 
@@ -265,7 +265,7 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       ...before,
-      revision: before.revision + 1n,
+      revision: before.revision + 2n,
     });
 
     await followPlanToday({ changeId: change.id, context });
@@ -279,7 +279,7 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       ...before,
-      revision: before.revision + 1n,
+      revision: before.revision + 3n,
     });
 
     await expect(

@@ -45,7 +45,7 @@ async function revision(userId: string) {
   return user.learnerRevision;
 }
 
-describe("queue writers own a single learner revision", () => {
+describe("queue attempts mark freshness while preserving the queue", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
@@ -53,7 +53,7 @@ describe("queue writers own a single learner revision", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("one of two taps adds the area's practice and the replay raises no revision", async () => {
+  it("two taps and a replay reuse the same practice block and mark each attempt", async () => {
     const day = await setup();
     const before = await revision(day.user.id);
 
@@ -67,17 +67,17 @@ describe("queue writers own a single learner revision", () => {
 
     expect(blocks).toHaveLength(2);
     expect(blocks[0]?.id).toBe(blocks[1]?.id);
-    await expect(revision(day.user.id)).resolves.toBe(before + 1n);
+    await expect(revision(day.user.id)).resolves.toBe(before + 2n);
 
     await expect(addAreaPracticeBlock(input)).resolves.toMatchObject({
       block: { id: blocks[0]?.id },
       status: "ready",
     });
 
-    await expect(revision(day.user.id)).resolves.toBe(before + 1n);
+    await expect(revision(day.user.id)).resolves.toBe(before + 3n);
   });
 
-  it("a refused third bonus leaves the revision and queue unchanged", async () => {
+  it("a refused third bonus marks freshness and leaves the queue unchanged", async () => {
     const day = await setup();
 
     await Promise.all(
@@ -119,7 +119,7 @@ describe("queue writers own a single learner revision", () => {
       addAreaPracticeBlock({ goalId: day.goal.id, input: { areaId: chapter.id, timeZone: "UTC" } }),
     ).resolves.toMatchObject({ status: "unavailable" });
 
-    await expect(revision(day.user.id)).resolves.toBe(before);
+    await expect(revision(day.user.id)).resolves.toBe(before + 1n);
 
     await expect(prisma.studySessionBlock.count({ where: { sessionId: first.id } })).resolves.toBe(
       first.blocks.length,

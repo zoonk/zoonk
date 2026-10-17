@@ -132,7 +132,7 @@ describe("mock learner revisions", () => {
     ).resolves.toMatchObject({ blockId: null });
   });
 
-  it("marks anytime creation before its advisory lock, with running retries unchanged", async () => {
+  it("serializes anytime starts at the learner row, with running retries unchanged", async () => {
     const { goal, user } = await scheduledMockSetup();
     const setup = await loadAnytimeMockSetup(goal);
 
@@ -148,11 +148,7 @@ describe("mock learner revisions", () => {
     const input = { acceptFewer: true, goal, pick, setup, userId: user.id, writesCap: null };
     const before = await readLearnerRevision(user.id);
 
-    const held = holdLearnerRevision({
-      beforeCommit: (tx) =>
-        tx.$queryRaw`SELECT pg_advisory_xact_lock(51882::int, hashtext(${goal.id}))::text`,
-      userId: user.id,
-    });
+    const held = holdLearnerRevision({ userId: user.id });
 
     const pid = await held.pid;
     const requests = Promise.all([createAnytimeMock(input), createAnytimeMock(input)]);

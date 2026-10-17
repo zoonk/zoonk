@@ -1,5 +1,5 @@
 import "server-only";
-import { type LearningEvent, type TransactionClient, prisma, sql } from "@zoonk/db";
+import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getString } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
@@ -10,9 +10,6 @@ import { type LibraryLessonRun } from "../contract";
  * opens a new run instead of resuming it.
  */
 const RUN_RESUME_WINDOW_MS = 1_800_000;
-
-/** Namespaces the per-learner, per-lesson advisory lock so it never collides with other locks. */
-const RUN_LOCK_NAMESPACE = 51_874;
 
 /** The ledger kinds a lesson run is stored as: a first completion or a replay. */
 const LESSON_RUN_KINDS = ["lesson", "review"] as const satisfies LearningEvent["kind"][];
@@ -42,19 +39,6 @@ export async function findLessonRun({
   });
 
   return run && getRunLessonId(run) === lessonId ? run : null;
-}
-
-/**
- * Serializes starts of one lesson by one learner, so a double mount or a retried request resumes
- * the same run instead of opening two.
- */
-export async function lockLessonRuns(
-  tx: TransactionClient,
-  { lessonId, userId }: { lessonId: string; userId: string },
-): Promise<void> {
-  await tx.$queryRaw(
-    sql`SELECT pg_advisory_xact_lock(${RUN_LOCK_NAMESPACE}::int, hashtext(${`${userId}:${lessonId}`}))::text`,
-  );
 }
 
 /**
