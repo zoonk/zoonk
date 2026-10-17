@@ -2,22 +2,15 @@
 
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
-import { answerStudyQuestion } from "@zoonk/core/sessions/answer";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
-import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
 import { finishStudyBlock } from "@zoonk/core/sessions/finish-block";
 import { openStudySession } from "@zoonk/core/sessions/open";
 import { getSessionPageView } from "@zoonk/core/sessions/page";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
-import {
-  type StudyAnswerOutcome,
-  type StudyBlock,
-  type StudyFinishOutcome,
-  type StudyQuestionAnswer,
-} from "@zoonk/learn/session/types";
+import { type StudyBlock, type StudyFinishOutcome } from "@zoonk/learn/session/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
@@ -239,47 +232,6 @@ export async function openWrittenLessonAction(input: BlockInput): Promise<StudyD
   }
 
   return result;
-}
-
-/** One answer to a session question: the same core capability as `POST .../answers`. */
-export async function answerStudyQuestionAction(
-  input: BlockInput & { answer: StudyQuestionAnswer; durationMs: number; itemId: string },
-): Promise<StudyAnswerOutcome> {
-  const block = blockInputSchema.safeParse(input);
-
-  const answer = studyAnswerInputSchema.safeParse({
-    answer: input.answer,
-    durationMs: input.durationMs,
-    itemId: input.itemId,
-    timeZone: input.timeZone,
-  });
-
-  if (!block.success || !answer.success) {
-    return { status: "failed" };
-  }
-
-  const { data: result, error } = await safeAsync(() =>
-    answerStudyQuestion({
-      blockId: block.data.blockId,
-      input: answer.data,
-      sessionId: block.data.sessionId,
-    }),
-  );
-
-  if (error) {
-    logError("[answerStudyQuestionAction] Failed to answer a question:", error);
-    return { status: "failed" };
-  }
-
-  if (result.status === "ready") {
-    return { feedback: result.feedback, status: "answered" };
-  }
-
-  if (result.status === "alreadyAnswered") {
-    return result;
-  }
-
-  return { status: "failed" };
 }
 
 /** Finishes a question block and returns its moment: the same capability as `POST .../completions`. */

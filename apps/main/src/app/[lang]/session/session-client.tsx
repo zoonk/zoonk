@@ -4,6 +4,7 @@ import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
+import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
@@ -15,10 +16,8 @@ import {
   moveDayEntry,
 } from "@/lib/session/day-entry-registry";
 import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
-import {
-  answerStudyQuestionAction,
-  finishStudyBlockAction,
-} from "@/lib/session/study-session-actions";
+import { sendStudyAnswer } from "@/lib/session/study-answer-request";
+import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-study-navigation";
@@ -63,6 +62,7 @@ export function SessionBlockClient({
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
   const ids = { blockId: detail.block.id, sessionId: session.id };
+  useRefreshAfterAppWrites();
 
   // The question block a tap opened is on screen: the tap is done.
   useEffect(() => {
@@ -72,8 +72,7 @@ export function SessionBlockClient({
   return (
     <QuestionBlock
       actions={{
-        answer: (input) =>
-          answerStudyQuestionAction({ ...ids, ...input, timeZone: getLocalTimeZone() }),
+        answer: (input) => sendStudyAnswer({ ...ids, ...input }),
         continueSession: navigation.continueSession,
         finish: () => finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() }),
         refresh: () => router.refresh(),
