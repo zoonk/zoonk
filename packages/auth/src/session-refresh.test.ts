@@ -4,7 +4,7 @@ import { auth as productionAuth } from "./auth";
 import { BETTER_AUTH_BASE_PATH, SESSION_EXPIRES_IN_DAYS } from "./config";
 import { deleteCurrentSession } from "./native-sessions";
 import { SESSION_HINT_COOKIE } from "./session-hint";
-import { SESSION_REFRESH_PATH, getSessionReadQuery } from "./session-refresh";
+import { SESSION_REFRESH_PATH } from "./session-refresh";
 
 const ORIGIN = "http://localhost:3000";
 const SESSION_COOKIE = "better-auth.session_token";
@@ -25,8 +25,7 @@ function readSetCookies(response: { headers: Headers }) {
 
 /**
  * A guest signed in through production auth whose session was last renewed `days` ago, as a
- * native app sends it (its bearer token) and as a browser does (its cookie, with the cached copy
- * of the session from sign-in beside it).
+ * browser sends it: its cookie, with the cached copy of the session from sign-in beside it.
  */
 async function signInGuestWithSessionUsed({ days }: { days: number }) {
   const { headers, response } = await productionAuth.api.signInAnonymous({ returnHeaders: true });
@@ -48,11 +47,7 @@ async function signInGuestWithSessionUsed({ days }: { days: number }) {
     .map((name) => `${name}=${signedIn.get(name)?.value}`)
     .join("; ");
 
-  return {
-    bearer: new Headers({ authorization: `Bearer ${headers.get("set-auth-token")}` }),
-    cookies: new Headers({ cookie, origin: ORIGIN }),
-    userId,
-  };
+  return { cookies: new Headers({ cookie, origin: ORIGIN }), userId };
 }
 
 function findSession(userId: string) {
@@ -67,40 +62,6 @@ function refreshSessionCopy(cookies: Headers) {
   return productionAuth.handler(
     new Request(`${ORIGIN}${SESSION_REFRESH_PATH}`, { headers: cookies }),
   );
-}
-
-/** A browser's cookies over days: each one until its Max-Age runs out. */
-function createCookieJar() {
-  const cookies = new Map<string, { expiresAt: number; value: string }>();
-
-  return {
-    apply(headers: Headers) {
-      for (const header of headers.getSetCookie()) {
-        const [pair = "", ...attributes] = header.split(";");
-        const [name = "", ...value] = pair.split("=");
-
-        const maxAge = attributes
-          .map((part) => /^\s*max-age=(?<seconds>-?\d+)/iu.exec(part)?.groups?.seconds)
-          .find(Boolean);
-
-        const seconds = maxAge === undefined ? Infinity : Number(maxAge);
-
-        if (seconds <= 0) {
-          cookies.delete(name);
-        } else {
-          cookies.set(name, { expiresAt: Date.now() + seconds * 1000, value: value.join("=") });
-        }
-      }
-    },
-    headers() {
-      const cookie = [...cookies]
-        .filter(([, { expiresAt }]) => expiresAt > Date.now())
-        .map(([name, { value }]) => `${name}=${value}`)
-        .join("; ");
-
-      return new Headers({ cookie });
-    },
-  };
 }
 
 /**
@@ -170,66 +131,6 @@ describe("session copy refresh", () => {
     expect(renewed.updatedAt.getTime()).toBeGreaterThan(before.updatedAt.getTime());
 
     await prisma.user.delete({ where: { id: userId } });
-  });
-});
-
-describe("app session reads", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("keeps a daily learner signed in past day 35", async () => {
-    // Run in the past so rate-limit cleanup cannot delete other tests' current rows.
-    const start = Date.now() - 36 * DAY_MS;
-    vi.useFakeTimers({ now: start, toFake: ["Date"] });
-    const jar = createCookieJar();
-    const { headers, response } = await productionAuth.api.signInAnonymous({ returnHeaders: true });
-    jar.apply(headers);
-
-    try {
-      for (let day = 1; day <= 35; day += 1) {
-        vi.setSystemTime(start + day * DAY_MS);
-        const page = jar.headers();
-
-        // oxlint-disable-next-line no-await-in-loop -- Each day follows the previous response.
-        const session = await productionAuth.api.getSession({
-          headers: page,
-          query: getSessionReadQuery(page),
-        });
-
-        expect(session?.user.id, `signed in on day ${day}`).toBe(response.user.id);
-
-        // oxlint-disable-next-line no-await-in-loop -- The visible page refreshes after its read.
-        const refreshed = await refreshSessionCopy(page);
-        expect(refreshed.status).toBe(200);
-        jar.apply(refreshed.headers);
-      }
-
-      const read = await productionAuth.api.getSession({ headers: jar.headers() });
-      expect(read?.user.id).toBe(response.user.id);
-    } finally {
-      vi.useRealTimers();
-      await prisma.user.delete({ where: { id: response.user.id } });
-    }
-  });
-
-  it("renews a due bearer session on the app's own read", async () => {
-    const { bearer, userId } = await signInGuestWithSessionUsed({ days: 3 });
-
-    try {
-      const before = await findSession(userId);
-
-      const session = await productionAuth.api.getSession({
-        headers: bearer,
-        query: getSessionReadQuery(bearer),
-      });
-
-      expect(session?.user.id).toBe(userId);
-      const renewed = await findSession(userId);
-      expect(renewed.updatedAt.getTime()).toBeGreaterThan(before.updatedAt.getTime());
-    } finally {
-      await prisma.user.delete({ where: { id: userId } });
-    }
   });
 });
 

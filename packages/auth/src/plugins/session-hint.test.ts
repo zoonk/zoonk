@@ -198,10 +198,13 @@ describe("session hint", () => {
       signUp(),
     ]);
 
-    const { token } = await auth.api.generateOneTimeToken({
-      headers: new Headers({ cookie: learner.cookie }),
+    const generated = await request({
+      cookie: learner.cookie,
+      method: "GET",
+      path: "/one-time-token/generate",
     });
 
+    const { token } = await generated.json();
     const guestCookie = toCookieHeader(guestResponse);
     const { user: guest } = await guestResponse.json();
 

@@ -109,7 +109,7 @@ export const baseAuthPlugins = [
 export const fullPlugins = [
   botCheckPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
-  oneTimeToken({ disableClientRequest: true, storeToken: "hashed" }),
+  oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
