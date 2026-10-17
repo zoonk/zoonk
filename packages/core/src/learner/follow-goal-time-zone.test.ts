@@ -433,10 +433,7 @@ describe("Today following the device", () => {
   it("reads the day where another writer just moved the goal, though its own follow moved nothing", async () => {
     const user = await userFixture();
 
-    const { goal } = await sessionGoalFixture({
-      goal: { timezone: SAO_PAULO },
-      userId: user.id,
-    });
+    const { goal } = await sessionGoalFixture({ goal: { timezone: SAO_PAULO }, userId: user.id });
 
     mockSession(user.id);
     const device = zoneOnAnotherDay();
@@ -669,7 +666,8 @@ describe("Today following the device while another writer holds the learner's lo
     }
 
     await other.done;
-    const days = (await Promise.all(follows)).map((today) => todayLocalDate(today));
+    const results = await Promise.all(follows);
+    const days = results.map((today) => todayLocalDate(today));
     const march10 = new Date("2026-03-10T00:00:00.000Z");
 
     expect(days).toStrictEqual([march10, march10]);
