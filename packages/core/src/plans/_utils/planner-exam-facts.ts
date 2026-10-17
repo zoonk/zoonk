@@ -64,26 +64,30 @@ function readNoticeStructure({
   return { ownerId, parsed, structure };
 }
 
-/** How long the weekly mock takes: half the exam's first day, all of it in the final stretch. */
-function getMockMinutes(structure: ExamStructure | null) {
+/**
+ * How the plan's mocks run: the weekly mock takes half the exam's first day, all of it in the final
+ * stretch, and each exam day's mock its own clock (see `listMockClocks`).
+ */
+function getMockFacts(structure: ExamStructure | null) {
   return {
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
+    mockClocks: listMockClocks(structure),
     mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
   };
 }
 
 /**
- * How long a goal's mocks take in its plan's runs (see `loadNoticeFacts`), from its exam's
- * blueprint as already loaded: the challenge screen lays out the next run's days with them.
+ * How a goal's mocks run in its plan's runs (see `loadNoticeFacts`), from its exam's blueprint as
+ * already loaded: the challenge screen lays out the next run's days and funds their mocks with it.
  */
-export function readMockMinutes({
+export function readMockFacts({
   blueprint,
   choices,
 }: {
   blueprint: NoticeBlueprint | null;
   choices: readonly ExamChoice[];
 }) {
-  return getMockMinutes(readNoticeStructure({ blueprint, choices }).structure);
+  return getMockFacts(readNoticeStructure({ blueprint, choices }).structure);
 }
 
 /**
@@ -120,8 +124,7 @@ async function loadNoticeFacts({
     announcements: ownerId ? listAnnouncedQuestions(parsed?.formats ?? []) : [],
     areaShares: parsed ? getAreaShares({ graph, structure: parsed }) : null,
     examSubjects: parsed ? getExamSubjectShares({ graph, structure: parsed }) : null,
-    ...getMockMinutes(structure),
-    mockClocks: listMockClocks(structure),
+    ...getMockFacts(structure),
     shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
     topicLevels: parsed ? listTopicLevels({ structure: parsed, topicFrequency }) : [],
   };
@@ -149,8 +152,7 @@ export function loadExamFacts({
     announcements: [],
     areaShares: null,
     examSubjects: null,
-    ...getMockMinutes(null),
-    mockClocks: listMockClocks(null),
+    ...getMockFacts(null),
     shortMockMinutes: null,
     topicLevels: [],
   };
