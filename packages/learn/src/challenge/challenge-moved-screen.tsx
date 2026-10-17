@@ -15,9 +15,9 @@ function renderMono(chunks: React.ReactNode) {
 }
 
 /**
- * Right after "Move to Monday" on the week's challenge or mock: its new day and that nothing is
- * lost, like any result, with Back to Today as the way on and Undo beside it while the plan is as
- * the move left it.
+ * Right after "Move to Monday" on the week's challenge or mock: its new day, that the lessons it
+ * displaced moved too and nothing is lost, like any result, with Back to Today as the way on and
+ * Undo beside it while the plan is as the move left it.
  */
 export function ChallengeMovedScreen({ changeId }: { changeId: string }) {
   const t = useExtracted();
@@ -55,7 +55,11 @@ export function ChallengeMovedScreen({ changeId }: { changeId: string }) {
               mono: renderMono,
             })}
           </StepTitle>
-          <StepDetail>{t("Your plan made room for it. Nothing is lost.")}</StepDetail>
+          <StepDetail>
+            {t(
+              "Your plan made room for it and moved any lessons that didn't fit. Nothing is lost.",
+            )}
+          </StepDetail>
         </StepHeader>
       </StepCard>
     </TaskFrame>

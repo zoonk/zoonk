@@ -773,9 +773,11 @@ async function blockStatus(blockId: string) {
 
 test.describe("Move to Monday", () => {
   test("the week's challenge moves to Monday through the plan, with undo", async ({ browser }) => {
+    // A learn goal's week ends in its own checkpoint, which the plan moves without saving time.
     const { block, boss, plan, user } = await createCheckpointLearner({
       kind: "weekly",
       planned: true,
+      weeklyKind: "checkpoint",
     });
 
     const page = await openAs(browser, user);
@@ -789,7 +791,12 @@ test.describe("Move to Monday", () => {
     await move.click();
 
     await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
-    await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "Your plan made room for it and moved any lessons that didn't fit. Nothing is lost.",
+      ),
+    ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
       "href",

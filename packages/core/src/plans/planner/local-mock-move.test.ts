@@ -647,12 +647,19 @@ function reviewInput(grows = true) {
   } satisfies BuildPlanInput;
 }
 
-type CheckpointCapacity = "review" | "interval" | "intervalReview" | "unavailable";
+type CheckpointCapacity = "review" | "interval" | "intervalReview" | "forward" | "noRoom";
 
+/**
+ * A checkpoint moved from a Sunday onto a Monday whose lesson it doesn't leave room for. Where the
+ * Sunday rests (`forward`, `noRoom`), the lesson goes on to the earliest later day with room, as
+ * the learner asked the move (LEAD ruling A, rule 1); it's refused only when no day before the
+ * goal's date has room (`noRoom`, rule 2).
+ */
 function checkpointMoveFixture(capacity: CheckpointCapacity) {
   const saved = reviewInput(false);
   const usesReview = capacity === "review";
-  const fits = capacity !== "unavailable";
+  const restsSunday = capacity === "forward" || capacity === "noRoom";
+  const fits = capacity !== "noRoom";
 
   const sourceReview =
     capacity === "intervalReview" ? [savedReviewRow("2020-10-11", "review", 45)] : [];
@@ -675,7 +682,11 @@ function checkpointMoveFixture(capacity: CheckpointCapacity) {
 
   const input: BuildPlanInput = {
     ...saved,
-    goal: { ...saved.goal, kind: "learn" },
+    goal: {
+      ...saved.goal,
+      kind: "learn",
+      targetDate: fits ? saved.goal.targetDate : fromIsoDate("2020-10-13"),
+    },
     items: [
       savedReviewRow("2020-10-11", "checkpoint", WEEKLY_CHECKPOINT_MINUTES),
       ...sourceReview,
@@ -686,15 +697,18 @@ function checkpointMoveFixture(capacity: CheckpointCapacity) {
       ...saved.settings,
       mockFunding: [],
       movedEvents: [
-        ...(fits ? [] : [{ from: "2020-10-09", to: "2020-10-11" }]),
+        ...(restsSunday ? [{ from: "2020-10-09", to: "2020-10-11" }] : []),
         { from: "2020-10-11", to: "2020-10-12" },
       ],
-      weekdayMinutes: fits ? null : [0, 60, 60, 60, 60, 60, 0],
+      weekdayMinutes: restsSunday ? [0, 60, 60, 60, 60, 60, 0] : null,
     },
   };
 
-  return { fits, input, lesson, review, sourceReview, usesReview };
+  return { fits, input, lesson, restsSunday, review, sourceReview, usesReview };
 }
+
+/** A lesson's time by day, as its saved facts and the plan's day minutes say it. */
+type LessonDays = readonly (readonly [string, number])[];
 
 function expectCheckpointAllocations({
   built,
@@ -707,7 +721,13 @@ function expectCheckpointAllocations({
 }) {
   const { input, lesson, review, sourceReview, usesReview } = fixture;
   const lessonDate = usesReview ? "2020-10-14" : "2020-10-12";
-  const fittedDate = capacity === "interval" ? "2020-10-11" : lessonDate;
+
+  const movedTo: Partial<Record<CheckpointCapacity, string>> = {
+    forward: "2020-10-13",
+    interval: "2020-10-11",
+  };
+
+  const fittedDate = movedTo[capacity] ?? lessonDate;
 
   expect(built.items.find((item) => item.id === review.id)?.minutes).toBe(
     usesReview ? 60 - WEEKLY_CHECKPOINT_MINUTES : 0,
@@ -757,28 +777,40 @@ function expectCheckpointAllocations({
 
   expect(built.mocks.practiceFunding ?? []).toStrictEqual([]);
 
-  expect(built.mocks.selectionShifts ?? []).toStrictEqual(
-    capacity === "interval" || capacity === "intervalReview"
-      ? [{ from: "2020-10-11", itemKeys: [getItemKey(lesson)], lessons: 1, to: "2020-10-12" }]
-      : [],
-  );
+  const shift = (from: string, to: string) => [
+    { from, itemKeys: [getItemKey(lesson)], lessons: 1, to },
+  ];
+
+  const shifts: Record<CheckpointCapacity, ReturnType<typeof shift>> = {
+    // Sunday rests, so what Monday can't hold beside the checkpoint goes on to Tuesday.
+    forward: shift("2020-10-12", "2020-10-13"),
+    interval: shift("2020-10-11", "2020-10-12"),
+    intervalReview: shift("2020-10-11", "2020-10-12"),
+    noRoom: [],
+    review: [],
+  };
+
+  expect(built.mocks.selectionShifts ?? []).toStrictEqual(shifts[capacity]);
+
+  const splits: Partial<Record<CheckpointCapacity, LessonDays>> = {
+    forward: [
+      ["2020-10-12", 60 - WEEKLY_CHECKPOINT_MINUTES],
+      ["2020-10-13", WEEKLY_CHECKPOINT_MINUTES],
+    ],
+    intervalReview: [
+      ["2020-10-11", WEEKLY_CHECKPOINT_MINUTES],
+      ["2020-10-12", 60 - WEEKLY_CHECKPOINT_MINUTES],
+    ],
+  };
+
+  const days = splits[capacity];
 
   expect(listSelectedItemFacts({ built, input }).get(getItemKey(lesson))?.days).toStrictEqual(
-    capacity === "intervalReview"
-      ? [
-          ["2020-10-11", WEEKLY_CHECKPOINT_MINUTES, WEEKLY_CHECKPOINT_MINUTES],
-          ["2020-10-12", 60 - WEEKLY_CHECKPOINT_MINUTES, 60 - WEEKLY_CHECKPOINT_MINUTES],
-        ]
-      : undefined,
+    days ? days.map(([date, minutes]) => [date, minutes, minutes]) : undefined,
   );
 
   expect([...(built.lessonDayMinutes.get(getItemKey(lesson)) ?? [])]).toStrictEqual(
-    capacity === "intervalReview"
-      ? [
-          ["2020-10-11", 15],
-          ["2020-10-12", 45],
-        ]
-      : [[fittedDate, 60]],
+    days ? days.map(([date, minutes]) => [date, minutes]) : [[fittedDate, 60]],
   );
 
   expect([...(built.lessonRawMinutes.get(getItemKey(lesson)) ?? [])]).toStrictEqual([
@@ -787,11 +819,11 @@ function expectCheckpointAllocations({
 }
 
 describe("saved review practice on local moves", () => {
-  it.each(["review", "interval", "intervalReview", "unavailable"] as const)(
+  it.each(["review", "interval", "intervalReview", "forward", "noRoom"] as const)(
     "fits a moved checkpoint using the available %s capacity",
     (capacity) => {
       const fixture = checkpointMoveFixture(capacity);
-      const { fits, input, lesson, review } = fixture;
+      const { fits, input, lesson, restsSunday, review } = fixture;
 
       const before = structuredClone(input);
       const built = buildPlan(input);
@@ -810,7 +842,7 @@ describe("saved review practice on local moves", () => {
 
       expect(
         built.planDays.find((day) => toIsoDate(day.date) === "2020-10-11")?.shape.minutes,
-      ).toBe(fits ? 60 : 0);
+      ).toBe(restsSunday ? 0 : 60);
 
       expect(destination.filter((item) => item.kind === "checkpoint")).toHaveLength(fits ? 1 : 0);
 

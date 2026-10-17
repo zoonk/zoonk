@@ -36,6 +36,15 @@ export async function createGoalLearner() {
 
 type CheckpointKind = "boss" | "weekly";
 
+/** The week's challenge: an exam's mock, or a learn goal's own mixed checkpoint. */
+type WeeklyKind = "checkpoint" | "mock";
+
+const TITLES = {
+  boss: "Basics boss",
+  checkpoint: "Weekly challenge",
+  mock: "Mock exam 1",
+} as const;
+
 const DAYS_PER_WEEK = 7;
 const STUDY_MINUTES = 30;
 
@@ -98,12 +107,14 @@ const WRITTEN_PER_SKILL = 4;
 function toPayload({
   bossId,
   itemIds,
+  itemKind,
   kind,
   passMark,
   skillIds,
 }: {
   bossId: string;
   itemIds: string[];
+  itemKind: keyof typeof TITLES;
   kind: CheckpointKind;
   passMark: number;
   skillIds: string[];
@@ -111,16 +122,16 @@ function toPayload({
   return {
     checkpoint: {
       kind,
-      mock: kind === "weekly",
+      mock: itemKind === "mock",
       passMark,
       phase: 0,
       rematch: false,
-      timeLimitMinutes: kind === "weekly" ? MOCK_MINUTES : null,
+      timeLimitMinutes: itemKind === "mock" ? MOCK_MINUTES : null,
     },
     itemIds,
     planItemId: bossId,
     skillIds,
-    title: kind === "weekly" ? "Mock exam 1" : "Basics boss",
+    title: TITLES[itemKind],
   };
 }
 
@@ -135,6 +146,7 @@ export async function createCheckpointLearner({
   planned = false,
   reinforcementLessons = 0,
   thin = false,
+  weeklyKind = "mock",
 }: {
   kind?: CheckpointKind;
   /** The planner owns the plan and today holds the week's challenge, so it can move. */
@@ -142,6 +154,11 @@ export async function createCheckpointLearner({
   /** Available lessons for a loss; two also interleave the missed skills. */
   reinforcementLessons?: number;
   thin?: boolean;
+  /**
+   * What the week's challenge is. A mock needs the time the plan saved for it, which this plan
+   * has none of, so a move to Monday needs a learn goal's own checkpoint.
+   */
+  weeklyKind?: WeeklyKind;
 } = {}) {
   const [{ goal, user }, skills] = await Promise.all([
     createGoalLearner(),
@@ -155,6 +172,7 @@ export async function createCheckpointLearner({
   });
 
   const perSkill = thin ? THIN_QUESTIONS_PER_SKILL : QUESTIONS_PER_SKILL;
+  const itemKind = kind === "weekly" ? weeklyKind : "boss";
 
   const [items, boss, session] = await Promise.all([
     Promise.all(
@@ -168,7 +186,7 @@ export async function createCheckpointLearner({
       ),
     ),
     planItemFixture({
-      kind: kind === "weekly" ? "mock" : "boss",
+      kind: itemKind,
       phase: 0,
       planId: plan.id,
       position: 0,
@@ -196,6 +214,7 @@ export async function createCheckpointLearner({
     payload: toPayload({
       bossId: boss.id,
       itemIds: orderedItems.map((item) => item.id),
+      itemKind,
       kind,
       passMark: thin ? THIN_CHECKPOINT.passMark : CHECKPOINT_PASS_MARK,
       skillIds: skills.map((skill) => skill.id),

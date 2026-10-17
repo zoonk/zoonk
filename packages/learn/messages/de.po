@@ -1521,9 +1521,9 @@ msgid "Moved to <mono>{date}</mono>"
 msgstr "Auf <mono>{date}</mono> verschoben"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "t37RjQ"
-msgid "Your plan made room for it. Nothing is lost."
-msgstr "Dein Plan hat dafür Platz geschaffen. Es geht nichts verloren."
+msgctxt "Mlb61X"
+msgid "Your plan made room for it and moved any lessons that didn't fit. Nothing is lost."
+msgstr "Dein Plan hat dafür Platz geschaffen und Lektionen verschoben, die nicht mehr gepasst haben. Es geht nichts verloren."
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "Q3_ibn"

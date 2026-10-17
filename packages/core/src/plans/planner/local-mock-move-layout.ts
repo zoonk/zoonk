@@ -1,6 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { type PracticeFunding } from "./committed-mock-funding";
 import { type StudyPortion } from "./interval-study-minutes";
+import { type TeachingOrder, getBounds, getMoveCap, getTeachingOrder } from "./local-move-bounds";
 import { EPSILON } from "./mock-day";
 import {
   fixedPortions,
@@ -15,79 +16,13 @@ import {
 } from "./pinned-study-portions";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { fitCheckpointPractice } from "./plan-events";
-import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
+import { type PlannedItem, getItemKey } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
+import { breaksPrerequisitesFirst } from "./prerequisites-first";
 import { type PlanDay } from "./schedule-units";
 import { listIntervalTeaching } from "./this-week-items";
 
 type Portions = Map<string, StudyPortion[]>;
-
-function endOf({
-  input,
-  item,
-  placed,
-  portions,
-}: {
-  input: BuildPlanInput;
-  item: ExistingPlanItem;
-  placed: ReadonlyMap<string, readonly StudyPortion[]>;
-  portions: ReadonlyMap<string, readonly StudyPortion[]>;
-}): number {
-  if (item.status !== "todo") {
-    return (input.finishedOn?.get(item.id) ?? input.today).getTime();
-  }
-
-  const own = placed.get(getItemKey(item)) ?? portions.get(getItemKey(item));
-  const last = own?.at(-1);
-  return last ? fromIsoDate(last.date).getTime() : (item.scheduledFor?.getTime() ?? 0);
-}
-
-function getBounds({
-  displaced,
-  input,
-  item,
-  placed,
-  portions,
-}: {
-  displaced: ReadonlyMap<string, readonly StudyPortion[]>;
-  input: BuildPlanInput;
-  item: ExistingPlanItem;
-  placed: ReadonlyMap<string, readonly StudyPortion[]>;
-  portions: ReadonlyMap<string, readonly StudyPortion[]>;
-}) {
-  const teaching = input.items.filter((entry) => isTeaching(entry));
-  const index = teaching.indexOf(item);
-
-  const previous = teaching
-    .slice(0, index)
-    .findLast((other) => !displaced.has(getItemKey(other)) || placed.has(getItemKey(other)));
-
-  const next = teaching
-    .slice(index + 1)
-    .find((other) => other.status === "todo" && !displaced.has(getItemKey(other)));
-
-  const boss = input.items.find(
-    (other) => other.kind === "boss" && other.phase === item.phase && other.status === "todo",
-  );
-
-  const removed = displaced.get(getItemKey(item)) ?? [];
-  const own = fixedPortions({ displaced, key: getItemKey(item), portions });
-  const ownBefore = own.findLast((part) => part.date < (removed[0]?.date ?? ""));
-  const ownAfter = own.find((part) => part.date > (removed.at(-1)?.date ?? ""));
-
-  return {
-    from: Math.max(
-      input.today.getTime(),
-      ownBefore ? fromIsoDate(ownBefore.date).getTime() : 0,
-      previous ? endOf({ input, item: previous, placed, portions }) : 0,
-    ),
-    until: Math.min(
-      ownAfter ? fromIsoDate(ownAfter.date).getTime() : Infinity,
-      next?.scheduledFor?.getTime() ?? Infinity,
-      boss?.scheduledFor?.getTime() ?? Infinity,
-    ),
-  };
-}
 
 function placeDisplaced({
   available,
@@ -139,17 +74,25 @@ export type SelectionShift = {
 };
 type Interval = { from: string; to: string };
 
-function tryInterval({
-  days,
-  input,
-  interval,
-  portions,
-}: {
+/** What every interval a move tries shares: its days, its input, the lanes and rule 2's cap. */
+type MoveScope = {
+  cap: number;
   days: readonly PlanDay[];
   input: BuildPlanInput;
+  order: TeachingOrder;
+};
+
+function tryInterval({
+  interval,
+  portions,
+  scope,
+}: {
   interval: Interval;
   portions: Portions;
+  scope: MoveScope;
 }): Portions | null {
+  const { cap, days, input, order } = scope;
+
   const released = listIntervalTeaching({
     interval,
     items: input.items.filter((item) => isTeaching(item)),
@@ -166,15 +109,16 @@ function tryInterval({
   }
 
   const placed: Portions = new Map();
+  const fitted = new Map<string, string>();
 
   const fits = input.items
     .filter((item) => released.has(getItemKey(item)))
     .every((item) => {
       const key = getItemKey(item);
       const removed = released.get(key) ?? [];
-      const bounds = getBounds({ displaced: released, input, item, placed, portions });
+      const bounds = getBounds({ cap, displaced: released, fitted, input, item, order, portions });
 
-      const fitted = placeDisplaced({
+      const parts = placeDisplaced({
         available,
         days,
         from: Math.max(bounds.from, fromIsoDate(interval.from).getTime()),
@@ -183,21 +127,22 @@ function tryInterval({
         until: Math.min(bounds.until, fromIsoDate(interval.to).getTime()),
       });
 
-      if (!fitted) {
+      if (!parts) {
         return false;
       }
 
-      fitted.forEach((part) =>
+      parts.forEach((part) =>
         available.set(part.date, (available.get(part.date) ?? 0) - part.minutes),
       );
 
       placed.set(
         key,
-        [...fixedPortions({ displaced: released, key, portions }), ...fitted].toSorted((a, b) =>
+        [...fixedPortions({ displaced: released, key, portions }), ...parts].toSorted((a, b) =>
           a.date.localeCompare(b.date),
         ),
       );
 
+      fitted.set(key, parts.at(-1)?.date ?? interval.from);
       return true;
     });
 
@@ -205,27 +150,28 @@ function tryInterval({
 }
 
 function smallestInterval({
-  days,
-  input,
+  accepts,
   interval,
   latest,
   portions,
+  scope,
 }: {
-  days: readonly PlanDay[];
-  input: BuildPlanInput;
+  /** Whether the plan a layout gives keeps what a skill builds on first. */
+  accepts: (portions: Portions) => boolean;
   interval: Interval;
   latest: string;
   portions: Portions;
+  scope: MoveScope;
 }): { interval: Interval; portions: Portions } | null {
-  const starts = days
+  const starts = scope.days
     .filter((day) => toIsoDate(day.date) >= interval.from && toIsoDate(day.date) <= latest)
     .toReversed();
 
   for (const day of starts) {
     const candidate = { from: toIsoDate(day.date), to: interval.to };
-    const fitted = tryInterval({ days, input, interval: candidate, portions });
+    const fitted = tryInterval({ interval: candidate, portions, scope });
 
-    if (fitted) {
+    if (fitted && accepts(fitted)) {
       return { interval: candidate, portions: fitted };
     }
   }
@@ -233,7 +179,35 @@ function smallestInterval({
   return null;
 }
 
-/** A move changes the smallest fitting selected interval; no work outside it is recruited or moved. */
+/**
+ * The learner asked for the move (LEAD rule 1), so the work its day can't hold goes on, in order,
+ * to the earliest later days with room: the interval grows one plan day at a time before `cap`.
+ */
+function growForward(request: Parameters<typeof smallestInterval>[0]) {
+  const { interval, scope } = request;
+
+  const later = scope.days.filter(
+    (day) => toIsoDate(day.date) > interval.to && day.date.getTime() < scope.cap,
+  );
+
+  for (const day of later) {
+    const grown = smallestInterval({
+      ...request,
+      interval: { from: interval.from, to: toIsoDate(day.date) },
+    });
+
+    if (grown) {
+      return grown;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * A move changes the smallest selected interval that fits, grown forward when the move's own days
+ * can't hold its work (see `growForward`); no work outside it is recruited or moved.
+ */
 export function layOutLocalMockMove({
   days: givenDays,
   input,
@@ -259,6 +233,16 @@ export function layOutLocalMockMove({
     portions,
   });
 
+  const order = getTeachingOrder(input);
+
+  const accepts = (fitted: Portions) =>
+    !breaksPrerequisitesFirst({
+      after: projectStudyItems({ items, portions: fitted, saved }),
+      before: items,
+      lessons: input.lessons,
+      prerequisites: input.prerequisites,
+    });
+
   const result = getLocalMoveIntervals(input).reduce<{
     portions: Portions;
     shifts: SelectionShift[];
@@ -279,7 +263,9 @@ export function layOutLocalMockMove({
         return state;
       }
 
-      const fitted = smallestInterval({ days, input, interval, latest, portions: state.portions });
+      const scope = { cap: getMoveCap({ days, input, to: interval.to }), days, input, order };
+      const request = { accepts, interval, latest, portions: state.portions, scope };
+      const fitted = smallestInterval(request) ?? growForward(request);
 
       if (!fitted) {
         return { portions: state.portions, shifts: state.shifts, valid: false };
