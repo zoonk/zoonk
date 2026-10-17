@@ -9,7 +9,7 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { normalizeString } from "@zoonk/utils/string";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { type Page, expect, test } from "./fixtures";
 
 const SEARCH_CONTROL_NAME = /search|buscar|pesquisar/iu;
@@ -271,7 +271,8 @@ test.describe("Command Palette - Authenticated", () => {
     userWithoutProgress: page,
   }) => {
     await page.goto("/courses");
-    await openCommandPalette(page);
+    // Their account pages land above the row a query highlights first: they wait for the learner.
+    await openLearnerPalette(page, SEARCH_CONTROL_NAME);
 
     const dialog = page.getByRole("dialog");
     const input = dialog.getByRole("combobox", { name: SEARCH_CONTROL_NAME });
@@ -300,7 +301,7 @@ test.describe("Command Palette - Authenticated", () => {
     await expect(page.getByRole("combobox", { name: "App language" })).toBeVisible();
 
     await page.goto("/courses");
-    await openCommandPalette(page);
+    await openLearnerPalette(page, SEARCH_CONTROL_NAME);
     await input.fill("subscription");
     await dialog.getByRole("option", { name: /^Subscription/u }).click();
 
@@ -315,7 +316,7 @@ test.describe("Command Palette - Authenticated", () => {
     await logoutPage.goto("/courses");
 
     // Verify authenticated state by checking command palette finds the Logout option
-    await openCommandPalette(logoutPage);
+    await openLearnerPalette(logoutPage, SEARCH_CONTROL_NAME);
 
     await logoutPage
       .getByRole("dialog")

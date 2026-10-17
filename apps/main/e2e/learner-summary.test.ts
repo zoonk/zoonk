@@ -8,7 +8,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { mockCentralSignOut } from "./auth-transport";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
 import { createMistakeLearner } from "./mistake-drill-days";
@@ -167,7 +167,8 @@ test.describe("learner summary", () => {
     const { user } = await createGoalLearner();
     const learnerContext = await browser.newContext({ storageState: user.storageState });
     const learner = await openAs(learnerContext, "/courses");
-    const palette = await openPaletteWithKeyboard(learner);
+    // Asking the buddy lands above the highlighted row, so the learner's goals wait with it.
+    const palette = await openLearnerPalette(learner);
 
     await expect(palette.getByRole("option", { name: "Switch to Learn to cook" })).toBeVisible();
 

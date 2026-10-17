@@ -14,7 +14,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette } from "./command-palette";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
@@ -82,7 +82,8 @@ test.describe("Today review regressions", () => {
       notice.getByRole("button", { name: "Move your date to cover everything" }),
     ).toBeVisible();
 
-    const palette = await openPaletteWithKeyboard(page);
+    // Continue lands above the highlighted row, so the learner's goals wait with it.
+    const palette = await openLearnerPalette(page);
     await palette.getByRole("option", { name: `Switch to ${otherGoal.title}` }).click();
 
     await expect(page.getByRole("region", { name: "Today's session" })).toContainText(
@@ -140,7 +141,8 @@ test.describe("Today review regressions", () => {
     });
 
     try {
-      const palette = await openPaletteWithKeyboard(page);
+      // Continue lands above the highlighted row, so the learner's goals wait with it.
+      const palette = await openLearnerPalette(page);
       await palette.getByRole("option", { name: `Switch to ${otherGoal.title}` }).click();
       await held.promise;
       await expect(page.getByRole("main")).toHaveAttribute("inert", "");

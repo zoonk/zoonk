@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
@@ -50,7 +50,8 @@ async function findExplanation(page: Page, from: "goal switcher" | "search") {
     return page.getByRole("menuitem", { name });
   }
 
-  const palette = await openPaletteWithKeyboard(page);
+  // The explanation lands above the row a query highlights first: it waits for the learner.
+  const palette = await openLearnerPalette(page);
   await palette.getByRole("combobox", { name: "Search" }).fill("market");
 
   return palette.getByRole("group", { name: "Quick explanations" }).getByRole("option", { name });

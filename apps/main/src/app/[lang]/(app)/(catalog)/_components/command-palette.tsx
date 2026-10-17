@@ -25,6 +25,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { listenForCommandPaletteOpen } from "./command-palette-event";
 import { usePaletteGroups } from "./command-palette-groups";
+import { keepsRowsThrough } from "./command-palette-highlight";
 import { type PaletteItem, getPaletteItemSearchValue } from "./command-palette-items";
 import { type LearnerPalette, UNREAD_LEARNER_PALETTE } from "./command-palette-learner-groups";
 import { PaletteResultGroup } from "./command-palette-options";
@@ -70,30 +71,46 @@ function useContinueFromPalette() {
 type CommandPaletteProps = { isLoggedIn: boolean; learner?: LearnerPalette };
 
 /**
- * Who the palette is for while it's open. One opened before the learner was read keeps the places
- * every learner has until they type or open it again: the rows their summary adds above (the next
- * block, a question for the buddy) would move the highlighted row from under their Enter. Anyone
- * else's palette (a visitor's, another learner's) shows at once.
+ * Who the palette is for while it's open, and its rows. One opened before the learner was read
+ * lists the places every learner has. When the learner arrives, their rows show at once if they
+ * all land below the highlighted row (`highlighted`, its index in the whole list), such as their
+ * account pages under Settings. The palette keeps its highlight by index, so rows their summary
+ * adds at or above it (the next block, a question for the buddy) would move it from under their
+ * Enter: those wait until they type or open it again. Anyone else's palette (a visitor's, another
+ * learner's) shows at once.
  */
-function useShownLearner({
+function useShownPalette({
+  highlighted,
   isLoggedIn,
   isOpen,
   learner,
   query,
-}: CommandPaletteProps & { isOpen: boolean; query: string }): CommandPaletteProps {
+  results,
+}: CommandPaletteProps & {
+  highlighted: number;
+  isOpen: boolean;
+  query: string;
+  results: PaletteSearchResults;
+}) {
   const [shown, setShown] = useState({ learner, query });
+  const unread = { isLoggedIn: false, learner: UNREAD_LEARNER_PALETTE };
+  const unreadGroups = usePaletteGroups({ ...unread, query, results });
+  const learnerGroups = usePaletteGroups({ isLoggedIn, learner, query, results });
 
   const waits =
     isOpen &&
     query === shown.query &&
     shown.learner === UNREAD_LEARNER_PALETTE &&
-    learner !== undefined;
+    learner !== undefined &&
+    !keepsRowsThrough({ highlighted, next: learnerGroups, shown: unreadGroups });
 
   if (!waits && (shown.learner !== learner || shown.query !== query)) {
     setShown({ learner, query });
   }
 
-  return waits ? { isLoggedIn: false, learner: UNREAD_LEARNER_PALETTE } : { isLoggedIn, learner };
+  return waits
+    ? { groups: unreadGroups, learner: unread.learner }
+    : { groups: learnerGroups, learner };
 }
 
 export function CommandPalette(props: CommandPaletteProps) {
@@ -126,7 +143,9 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   /** The search fields and the account menu's "Search" open this palette too. */
   useEffect(() => listenForCommandPaletteOpen(open), [open]);
 
-  const shown = useShownLearner({ isLoggedIn, isOpen, learner, query });
+  const [highlighted, setHighlighted] = useState(-1);
+
+  const shown = useShownPalette({ highlighted, isLoggedIn, isOpen, learner, query, results });
 
   function runPaletteItem(item: PaletteItem) {
     if (item.kind === "logout") {
@@ -161,8 +180,6 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
     runPaletteItem(item);
   }
 
-  const paletteGroups = usePaletteGroups({ ...shown, query, results });
-
   /**
    * The dialog may close from Escape, Cancel or an outside press. The search hook owns
    * query/result reset, so close events should go through that single path.
@@ -183,9 +200,10 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
         autoHighlight="always"
         inline
         itemToStringValue={getPaletteItemSearchValue}
-        items={paletteGroups}
+        items={shown.groups}
         keepHighlight
         mode="none"
+        onItemHighlighted={(_item, { index }) => setHighlighted(index)}
         onValueChange={setQuery}
         open
         value={query}
@@ -196,7 +214,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
           placeholder={t("Search or ask…")}
         />
         <CommandList>
-          {paletteGroups.map((group) => (
+          {shown.groups.map((group) => (
             <PaletteResultGroup
               group={group}
               key={group.id}

@@ -1,5 +1,5 @@
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
@@ -83,7 +83,8 @@ test.describe("Learning tabs command palette", () => {
 
     await page.goto("/today");
 
-    const palette = await openPaletteWithKeyboard(page);
+    // Asking the buddy lands above the highlighted row, the list's first: it waits for the learner.
+    const palette = await openLearnerPalette(page);
     await palette.getByRole("combobox", { name: "Search" }).fill(question);
 
     // Whatever the learner types ends with asking the buddy, then starting a goal: no dead end.

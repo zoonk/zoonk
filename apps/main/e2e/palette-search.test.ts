@@ -12,7 +12,7 @@ import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
-import { openPaletteWithKeyboard } from "./command-palette";
+import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
@@ -145,7 +145,8 @@ test.describe("Palette search", () => {
 
     try {
       await page.goto("/today");
-      const palette = await openPaletteWithKeyboard(page);
+      // Continue lands above the highlighted row: it waits for the learner.
+      const palette = await openLearnerPalette(page);
       await palette.getByRole("combobox", { name: /Search/iu }).fill("percent");
 
       const next = palette
@@ -166,7 +167,8 @@ test.describe("Palette search", () => {
   test("mock finds completed results as well as the next mock action", async ({ browser }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await page.goto("/today");
-      const palette = await openPaletteWithKeyboard(page);
+      // The mock exam action lands above the highlighted row: it waits for the learner.
+      const palette = await openLearnerPalette(page);
       await palette.getByRole("combobox", { name: /Search/iu }).fill("mock");
       await expect(palette.getByRole("option", { name: /^Take a mock exam/u })).toBeVisible();
 

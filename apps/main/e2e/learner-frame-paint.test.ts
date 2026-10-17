@@ -201,6 +201,54 @@ test.describe("Learner frame before the summary", () => {
     await context.close();
   });
 
+  test("takes in a learner's rows typed for before their summary when they land below the highlight", async ({
+    browser,
+  }) => {
+    const user = await createGoalLearner();
+    const context = await browser.newContext({ storageState: user.storageState });
+    const page = await openCatalog(context);
+    const read = await holdSummaryRead(page);
+
+    await page.goto("/courses");
+    await read.sent;
+
+    // Typed before the learner is read: the settings every learner has, the first highlighted.
+    const palette = await openPaletteWithKeyboard(page);
+    const input = palette.getByRole("combobox", { name: "Search" });
+    await input.fill("settings");
+
+    const destinations = palette.getByRole("group", { name: "Go to" });
+    const settings = destinations.getByRole("option", { name: /^Settings/u });
+
+    const accountPages = ["Profile", "Memory", "Subscription"].map((name) =>
+      destinations.getByRole("option", { name: new RegExp(`^${name}`, "u") }),
+    );
+
+    await expect(settings).toBeVisible();
+
+    await expect(input).toHaveAttribute(
+      "aria-activedescendant",
+      (await settings.getAttribute("id"))!,
+    );
+
+    await Promise.all(accountPages.map((option) => expect(option).toHaveCount(0)));
+
+    // The summary arrives with their account pages, all under Settings: they show at once, with
+    // nothing typed again, and Enter still opens the row in sight.
+    await read.release();
+    await Promise.all(accountPages.map((option) => expect(option).toBeVisible()));
+
+    await expect(input).toHaveAttribute(
+      "aria-activedescendant",
+      (await settings.getAttribute("id"))!,
+    );
+
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/settings$/u);
+
+    await context.close();
+  });
+
   test("keeps a learner's phone bars free of a visitor's way in while their summary is read", async ({
     browser,
   }) => {
