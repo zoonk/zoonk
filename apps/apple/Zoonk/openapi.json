@@ -4523,7 +4523,7 @@
         "tags": [
           "Language"
         ],
-        "description": "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), a pattern noticed in recent mistakes, and the mispronounced words due to be said again.",
+        "description": "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the exam-style speaking tasks to practice any time. The pattern noticed in recent mistakes comes with the day, in GET /v1/today.",
         "operationId": "getLanguageToday",
         "summary": "Get Today's language cards",
         "parameters": [
@@ -23335,7 +23335,7 @@
     },
     "/today": {
       "get": {
-        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint and at most one insight. With `timeZone`, the goal follows the device first, as the apps' Today does: a goal without a zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. Nothing else is written: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
+        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, an active goal follows the device first, as the apps' Today does: a goal without a zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. A goal Today refuses keeps its zone. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
         "operationId": "getToday",
         "security": [
           {
@@ -23365,10 +23365,10 @@
             "in": "query",
             "name": "timeZone",
             "schema": {
-              "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+              "description": "The device's IANA timezone. An active goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone",
               "type": "string"
             },
-            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC"
+            "description": "The device's IANA timezone. An active goal follows it first: a goal without a timezone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. The day is then read in the goal's timezone"
           }
         ],
         "responses": {
@@ -35286,34 +35286,6 @@
             ],
             "additionalProperties": false
           },
-          "pattern": {
-            "nullable": true,
-            "description": "A pattern noticed in recent mistakes, not yet practiced",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "pattern",
-                  "typos"
-                ]
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "kind",
-              "title"
-            ],
-            "additionalProperties": false
-          },
           "pronunciation": {
             "nullable": true,
             "description": "Mispronounced words due to be said again today",
@@ -35365,7 +35337,6 @@
         },
         "required": [
           "level",
-          "pattern",
           "pronunciation",
           "speaking"
         ],
@@ -80104,6 +80075,34 @@
               }
             ]
           },
+          "pattern": {
+            "nullable": true,
+            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pattern",
+                  "typos"
+                ]
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "title"
+            ],
+            "additionalProperties": false
+          },
           "planChange": {
             "nullable": true,
             "description": "The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic change of the last day (a rebalance, missed days, a test-out, an estimateUpdated whose net lesson count changed by more than one as the plan adapted to pace data or written lessons) until it's marked seen. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
@@ -80748,6 +80747,7 @@
           "insight",
           "lessonStatus",
           "mockFunding",
+          "pattern",
           "planChange",
           "progress",
           "revision",
