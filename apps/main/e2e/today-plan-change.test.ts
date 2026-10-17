@@ -1924,4 +1924,63 @@ test.describe("Today's plan change", () => {
     await expect(page.getByRole("region", { name: "Plan change" })).toHaveCount(0);
     await page.context().close();
   });
+
+  // Every lesson a change sets aside is named on Today, also when another lesson of its skill takes
+  // its place and the count stays: the swap said only "Your plan changed".
+  for (const { added, name, removed, text } of [
+    {
+      added: 0,
+      name: "a one-lesson drop",
+      removed: 1,
+      text: "Leaves out 1 lesson: Diversification.",
+    },
+    {
+      added: 0,
+      name: "a same-skill swap",
+      removed: 0,
+      text: "Leaves out 1 lesson: Diversification.",
+    },
+    {
+      added: 1,
+      name: "a cross-skill swap",
+      removed: 1,
+      text: "Adds 1 lesson and leaves out 1: Diversification.",
+    },
+  ]) {
+    test(`names the lesson ${name} sets aside on Today`, async ({ browser }) => {
+      const { plan, user } = await createProposalPlan({
+        exam: true,
+        specs: [
+          {
+            area: "Stocks",
+            lessons: 2,
+            name: "Financial basics",
+            written: ["Compound interest", "Diversification"],
+          },
+        ],
+      });
+
+      await planChangeFixture({
+        kind: "estimateUpdated",
+        payload: {
+          effect: {
+            endDateAfter: null,
+            endDateBefore: null,
+            lessonsAdded: added,
+            lessonsLeftOut: ["Diversification"],
+            lessonsRemoved: removed,
+          },
+          source: "system",
+        },
+        planId: plan.id,
+        status: "applied",
+      });
+
+      const page = await openAs(browser, user);
+      await page.goto("/today");
+
+      await expect(page.getByRole("region", { name: "Plan change" })).toContainText(text);
+      await page.context().close();
+    });
+  }
 });

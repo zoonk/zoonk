@@ -221,10 +221,24 @@ export function useLessonsEffectText() {
       return null;
     }
 
-    return sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {
+    const counts = sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {
       ...counted,
       ...added,
     });
+
+    // The counts go skill by skill, so a lesson swapped for another of its skill nets away: its name
+    // still says it, as every lesson a change sets aside is named. "Leaves out" with a date or
+    // without: the goal keeps as many lessons, so "fewer" would be untrue.
+    const netted =
+      removed === 0 && leftOut.length > 0
+        ? removedText({
+            names: shortList(leftOut, "lessons"),
+            removed: leftOut.length,
+            someOf: false,
+          })
+        : null;
+
+    return [counts, netted].filter(Boolean).join(" ") || null;
   };
 }
 
