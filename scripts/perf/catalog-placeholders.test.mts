@@ -110,22 +110,6 @@ describe("declared catalog placeholders", () => {
     }
   });
 
-  it.each([
-    '// const UNLISTED_ROUTE = { courseSlug: "-" };',
-    `const example = 'const UNLISTED_ROUTE = { courseSlug: "-" };';`,
-    "const UNLISTED_ROUTE = { ...other };",
-    'let UNLISTED_ROUTE = { courseSlug: "-" };',
-  ])("fails closed when the source declaration cannot be read: %s", async (source) => {
-    const data = await fixture();
-
-    try {
-      await writeFile(join(data.root, "data/catalog/catalog-static-params.ts"), source);
-      await assert.rejects(check(data, "static"), { code: 1, stderr: /UNLISTED_ROUTE/u });
-    } finally {
-      await rm(data.root, { recursive: true });
-    }
-  });
-
   it("rejects postponed work even on a successful content page", async () => {
     const data = await fixture();
 

@@ -1,6 +1,7 @@
 import "server-only";
 import { listCourses } from "@zoonk/core/courses/list";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
+import UNLISTED_ROUTE from "./catalog-placeholder.json";
 
 /**
  * How many of a language's most popular listed courses the build writes ahead, each with its first
@@ -9,13 +10,6 @@ import { getLibraryCourse } from "@zoonk/core/library/courses/get";
  * from then on, so the build stays short however large the catalog grows.
  */
 const PRERENDERED_COURSES = 12;
-
-/**
- * An address the catalog never links, whose page is the catalog's not-found page. Next.js checks
- * each page is static on one written address per language at least, and a language without
- * listed courses (or without a written lesson yet) has no real one to offer.
- */
-const UNLISTED_ROUTE = { brandSlug: "-", chapterSlug: "-", courseSlug: "-", lessonSlug: "-" };
 
 /** A language's most popular listed courses, by the route segments their pages live at. */
 async function getPrerenderedCourses(lang: string) {

@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
+import UNLISTED_ROUTE from "../../apps/main/src/data/catalog/catalog-placeholder.json" with { type: "json" };
 
 const run = promisify(execFile);
 const script = resolve(import.meta.dirname, "check-route-js.mts");
@@ -18,7 +19,6 @@ export async function fixture() {
     mkdir(join(dist, "static/chunks"), { recursive: true }),
     mkdir(join(dist, "server/app/en"), { recursive: true }),
     mkdir(join(app, "[lang]/(public)"), { recursive: true }),
-    mkdir(join(root, "data/catalog"), { recursive: true }),
   ]);
 
   await Promise.all([
@@ -39,10 +39,6 @@ export async function fixture() {
       ]),
     ),
     writeFile(budgets, JSON.stringify({ routes: { "/[lang]": 100 }, version: 1 })),
-    writeFile(
-      join(root, "data/catalog/catalog-static-params.ts"),
-      'const UNLISTED_ROUTE = { brandSlug: "-", chapterSlug: "-", courseSlug: "-", lessonSlug: "-" };',
-    ),
     writeFile(join(app, "[lang]/(public)/page.tsx"), "export const ensureStatic = 'navigation';"),
     writeFile(join(dist, "server/app/en.html"), "<h1>Title</h1>"),
     writeFile(join(dist, "server/app/en.meta"), JSON.stringify({ headers: {}, status: 200 })),
@@ -119,7 +115,12 @@ export async function catalogFixture(suffix = "") {
   const data = await fixture();
   const directory = `[lang]/(catalog)/b/[brandSlug]/c/[courseSlug]${suffix}`;
   const source = `/${directory.replace("(catalog)/", "")}`;
-  const path = source.replace("[lang]", "en").replaceAll(/\[\w+\]/gu, "-");
+  const values = new Map(Object.entries(UNLISTED_ROUTE));
+
+  const path = source
+    .replace("[lang]", "en")
+    .replaceAll(/\[(?<name>\w+)\]/gu, (_segment, name: string) => values.get(name) ?? "");
+
   const artifact = join(data.dist, "server/app", path.slice(1));
   await mkdir(join(data.app, directory), { recursive: true });
   await mkdir(join(artifact, ".."), { recursive: true });
