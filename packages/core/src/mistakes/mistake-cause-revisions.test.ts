@@ -59,8 +59,12 @@ describe("mistake cause revisions", () => {
     await classify({ mistakeId: open.id, userId: user.id });
 
     await expect(
-      prisma.mistake.findMany({ orderBy: { createdAt: "asc" }, where: { userId: user.id } }),
-    ).resolves.toMatchObject([{ cause: "time" }, { cause: null }]);
+      prisma.mistake.findUniqueOrThrow({ where: { id: settled.id } }),
+    ).resolves.toMatchObject({ cause: "time" });
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: open.id } }),
+    ).resolves.toMatchObject({ cause: null });
 
     await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });

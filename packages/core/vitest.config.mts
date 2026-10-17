@@ -36,8 +36,9 @@ const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).fil
 /** These files change a global policy or use a different clock for live-call health. */
 const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-call-lifecycle.test.ts";
 const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
-/** Its table-wide lock must run after parallel files and apart from the other ordered test. */
+/** Table-wide locks must run after parallel files and apart from one another. */
 const REQUEST_INSTANT_TEST = "src/learner/facts/request-instant.test.ts";
+const OPEN_GOAL_INPUT_RACE_TEST = "src/sessions/open-goal-input-race.test.ts";
 const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
 /** Recovery holds one database-wide advisory lock; unrelated merges intentionally refuse it. */
 const SKILL_RECOVERY_TESTS = [
@@ -46,7 +47,13 @@ const SKILL_RECOVERY_TESTS = [
   "src/mistakes/backfill-lesson-mistakes.test.ts",
 ];
 
-const ORDERED_TESTS = [...ORDERED_CALL_TESTS, REQUEST_INSTANT_TEST, ...SKILL_RECOVERY_TESTS];
+const ORDERED_TESTS = [
+  ...ORDERED_CALL_TESTS,
+  REQUEST_INSTANT_TEST,
+  OPEN_GOAL_INPUT_RACE_TEST,
+  ...SKILL_RECOVERY_TESTS,
+];
+
 const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_TESTS.includes(file));
 const MISSION_TEST_GROUP = 1;
 const LIVE_CALL_POLICY_TEST_GROUP = 2;
@@ -79,7 +86,7 @@ export default defineConfig({
         extends: true,
         test: {
           fileParallelism: false,
-          include: [MISSION_COMPLETION_TEST, REQUEST_INSTANT_TEST],
+          include: [MISSION_COMPLETION_TEST, REQUEST_INSTANT_TEST, OPEN_GOAL_INPUT_RACE_TEST],
           name: "mission-completion",
           sequence: { groupOrder: MISSION_TEST_GROUP },
         },

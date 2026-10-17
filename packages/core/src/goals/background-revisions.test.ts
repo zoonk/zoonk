@@ -293,44 +293,59 @@ describe("background goal revision markers", () => {
     const release = Promise.withResolvers<null>();
 
     const holder = prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SET LOCAL lock_timeout = '1s'`;
       await tx.$queryRaw`SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE`;
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
       ready.resolve(backend?.pid ?? 0);
       await release.promise;
     });
 
-    const holderPid = await ready.promise;
-    const writing = recordGoalGeneration({ generationId: randomUUID(), goalId: goal.id });
+    const held = Promise.allSettled([holder]);
+    void holder.catch(ready.reject);
 
     try {
-      await vi.waitFor(async () => {
-        const [waiting] = await prisma.$queryRaw<{ blocked: boolean }[]>`
-          SELECT EXISTS (
-            SELECT 1 FROM pg_stat_activity
-            WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
-          ) AS blocked
-        `;
+      const holderPid = await ready.promise;
 
-        expect(waiting?.blocked).toBe(true);
-      });
+      const writing = Promise.allSettled([
+        recordGoalGeneration({ generationId: randomUUID(), goalId: goal.id }),
+      ]);
 
-      const probe = await safeAsync(() =>
-        prisma.$transaction(
-          (tx) => tx.$queryRaw`
-        SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE NOWAIT
-      `,
-        ),
-      );
+      try {
+        await vi.waitFor(async () => {
+          const [waiting] = await prisma.$queryRaw<{ blocked: boolean }[]>`
+            SELECT EXISTS (
+              SELECT 1 FROM pg_stat_activity
+              WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
+            ) AS blocked
+          `;
 
-      expect(probe.error).toMatchObject({
-        code: "P2010",
-        meta: { driverAdapterError: { cause: { code: "55P03" } } },
-      });
+          expect(waiting?.blocked).toBe(true);
+        });
+
+        const probe = await safeAsync(() =>
+          prisma.$transaction(
+            (tx) => tx.$queryRaw`
+          SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE NOWAIT
+        `,
+          ),
+        );
+
+        expect(probe.error).toMatchObject({
+          code: "P2010",
+          meta: { driverAdapterError: { cause: { code: "55P03" } } },
+        });
+      } finally {
+        release.resolve(null);
+        await writing;
+      }
+
+      await expect(writing).resolves.toMatchObject([{ status: "fulfilled" }]);
     } finally {
       release.resolve(null);
-      await holder;
-      await writing;
+      await held;
     }
+
+    await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: plan.inputVersion,
