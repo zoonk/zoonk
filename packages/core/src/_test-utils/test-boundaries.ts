@@ -49,11 +49,12 @@ async function gradeForReal(params: GradeTypedAnswerParams) {
 
 /**
  * The other edges, by module, each keeping its other exports: model calls (each AI task a test
- * reaches, which says what the model answers), Vercel Blob, PostHog, email, error reports and
- * Vercel's credentials. Two run for real unless a test says otherwise, and a reset puts the real one
- * back: randomness, and the typed-answer grader, whose code settles accepted answers before any
- * model. The logger stays silent, as it is in tests, and a test can read what was logged. A new
- * edge a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
+ * reaches, which says what the model answers), Vercel Blob, PostHog, email, error reports,
+ * Vercel's credentials and the web pages research fetches (undici's fetch). Two run for real
+ * unless a test says otherwise, and a reset puts the real one back: randomness, and the
+ * typed-answer grader, whose code settles accepted answers before any model. The logger stays
+ * silent, as it is in tests, and a test can read what was logged. A new edge a test reaches goes
+ * here: a file's own `vi.mock` gives it a worker of its own.
  */
 export const boundaries = {
   "@sentry/nextjs": { captureMessage: vi.fn() },
@@ -131,6 +132,7 @@ export const boundaries = {
   "@zoonk/utils/logger": { logError: vi.fn(), logInfo: vi.fn() },
   "@zoonk/utils/shuffle": { shuffle: vi.fn(realShuffle) },
   "posthog-node": { PostHog: vi.fn() },
+  undici: { fetch: vi.fn() },
 };
 
 /** Puts every boundary back as a fresh worker has it, before a test file runs. */

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { get } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
@@ -40,11 +41,8 @@ function mockStoredFile({
 }
 
 /** The web is external: each test serves the page it needs from memory. */
-function servePage(response: Response) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(async () => response),
-  );
+function servePage(response: PageResponse) {
+  vi.mocked(fetch).mockResolvedValue(response);
 }
 
 async function signedIn() {
@@ -71,7 +69,6 @@ describe("uploads that can't be read", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
-    vi.unstubAllGlobals();
   });
 
   it("refuses pasted text that's only whitespace", async () => {
@@ -134,7 +131,7 @@ describe("uploads that can't be read", () => {
 
   it("says a link is missing when the page can't be fetched", async () => {
     const { user } = await signedIn();
-    servePage(new Response("Gone", { status: 404 }));
+    servePage(new PageResponse("Gone", { status: 404 }));
 
     await expect(
       registerSourceUpload({ kind: "link", language: "pt", url: "https://example.com/gone" }),
@@ -147,14 +144,14 @@ describe("uploads that can't be read", () => {
     const { user } = await signedIn();
 
     servePage(
-      new Response(new Uint8Array([1, 2, 3]), { headers: { "content-type": "image/png" } }),
+      new PageResponse(new Uint8Array([1, 2, 3]), { headers: { "content-type": "image/png" } }),
     );
 
     await expect(
       registerSourceUpload({ kind: "link", language: "pt", url: "https://example.com/chart.png" }),
     ).resolves.toStrictEqual({ status: "unsupported" });
 
-    servePage(new Response("<div></div>", { headers: { "content-type": "text/html" } }));
+    servePage(new PageResponse("<div></div>", { headers: { "content-type": "text/html" } }));
 
     await expect(
       registerSourceUpload({ kind: "link", language: "pt", url: "https://example.com/empty" }),

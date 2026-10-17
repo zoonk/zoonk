@@ -2,7 +2,8 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Response as PageResponse, fetch } from "undici";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getCandidateIds,
   mockDecision,
@@ -18,13 +19,9 @@ import {
 
 // The web is an external boundary: each test serves its own pages from memory.
 function servePage(html: string) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(() =>
-      Promise.resolve(
-        new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } }),
-      ),
-    ),
+  // Each request gets its own response, since a body is read once.
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(html, { headers: { "content-type": "text/html; charset=utf-8" } }),
   );
 }
 
@@ -154,10 +151,6 @@ describe(listReadableSourceIds, () => {
 });
 
 describe(storeWebSource, () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it("stores a page once per canonical address with its text, validity and the board's reuse policy", async () => {
     const url = `https://www.cebraspe.org.br/concursos/${randomUUID()}/`;
     servePage(noticePage({ questions: 50, token: "a" }));
@@ -202,10 +195,6 @@ describe(storeWebSource, () => {
 });
 
 describe(refreshWebSource, () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it("reports unchanged when only the page's markup changed", async () => {
     const url = `https://example.gov.br/${randomUUID()}`;
     servePage(noticePage({ questions: 50, token: "a" }));

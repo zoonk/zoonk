@@ -588,6 +588,7 @@
     "quickjs-wasi": "3.6.2",
     "sql.js": "1.14.2",
     "ts-fsrs": "5.4.2",
+    "undici": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

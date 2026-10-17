@@ -3,6 +3,8 @@ import { type RequestOptions, get as httpsGet } from "node:https";
 import { type LookupFunction } from "node:net";
 import { Writable } from "node:stream";
 import { pipeline } from "node:stream/promises";
+import { Headers, Response } from "undici";
+import { publicLookup } from "./public-url";
 
 /** The statuses a Response can be built with. */
 const MIN_STATUS = 200;
@@ -14,7 +16,10 @@ type NodeRequest = {
   /** Replaces Node's default certificate authorities for this request. */
   ca?: string[];
   headers: Record<string, string>;
-  /** Resolves host names; tests point public names at a local server. */
+  /**
+   * Resolves host names, refusing private addresses (see `publicLookup`); tests point public names
+   * at a local server.
+   */
   lookup?: LookupFunction;
   signal: AbortSignal;
   url: string;
@@ -41,7 +46,7 @@ function toBody(message: IncomingMessage): ReadableStream<Uint8Array> {
   return readable;
 }
 
-function receiveResponse({ ca, headers, lookup, signal, url }: NodeRequest) {
+function receiveResponse({ ca, headers, lookup = publicLookup, signal, url }: NodeRequest) {
   const options: RequestOptions = {
     agent: false,
     ca,
@@ -65,8 +70,8 @@ function receiveResponse({ ca, headers, lookup, signal, url }: NodeRequest) {
 }
 
 /**
- * The global fetch can't trust an extra certificate authority for one request, so a request that
- * needs one goes through Node's own client and comes back as a fetch Response, read the same way.
+ * Undici's fetch can't trust an extra certificate authority for one request, so a request that
+ * needs one goes through Node's own client and comes back as undici's Response, read the same way.
  * Like fetch with `redirect: "manual"`, it never follows a redirect. It asks for an uncompressed
  * body since, unlike fetch, it doesn't decompress one.
  */

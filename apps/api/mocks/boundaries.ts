@@ -3,7 +3,8 @@ import { vi } from "vitest";
 /**
  * What every API test replaces at the edge of the code under test, by module, declared once in
  * `setup-tests.ts`: model calls (each AI task a test reaches, which tests replay recorded outputs
- * through), PostHog, Vercel Blob and Next.js' request headers, which only exist inside a request.
+ * through), PostHog, Vercel Blob, the web pages research fetches (undici's fetch) and Next.js'
+ * request headers, which only exist inside a request.
  * A module keeps its other exports. Test files share workers, so a worker keeps one set of these
  * functions for every file it runs, and each file starts with them reset (`resetBoundaries`). A
  * new model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
@@ -71,6 +72,7 @@ export const boundaries = {
   "@zoonk/core/analytics/server": { trackServerEvent: vi.fn(), trackSystemEvent: vi.fn() },
   "@zoonk/core/images/upload": { uploadImage: vi.fn() },
   "next/headers": { headers: vi.fn(async () => new Headers()) },
+  undici: { fetch: vi.fn() },
 };
 
 /** Puts every boundary back as a fresh worker has it, before a test file runs. */

@@ -1,3 +1,5 @@
+import { type Response } from "undici";
+
 async function readChunks({
   chunks,
   maxBytes,

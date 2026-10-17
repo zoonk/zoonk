@@ -1,8 +1,9 @@
 import "server-only";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeContentType } from "@zoonk/utils/upload";
+import { type Response, fetch } from "undici";
 import { fetchCompletingChain, isMissingIssuerError } from "./_utils/issuer-certificates";
-import { isPublicUrl } from "./_utils/public-url";
+import { isPublicUrl, publicAgent } from "./_utils/public-url";
 import { readLimitedBody } from "./_utils/read-limited-body";
 import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
 
@@ -45,7 +46,7 @@ async function requestPage(url: string): Promise<Response> {
   const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
 
   const { data: response, error } = await safeAsync(() =>
-    fetch(url, { headers, redirect: "manual", signal }),
+    fetch(url, { dispatcher: publicAgent, headers, redirect: "manual", signal }),
   );
 
   if (!error) {

@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
@@ -124,11 +125,8 @@ describe(registerSourceUpload, () => {
     const text = uniqueText();
 
     // The web is external: the page is served from memory.
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(
-        async () => new Response(`<p>${text}</p>`, { headers: { "content-type": "text/html" } }),
-      ),
+    vi.mocked(fetch).mockResolvedValue(
+      new PageResponse(`<p>${text}</p>`, { headers: { "content-type": "text/html" } }),
     );
 
     const result = await registerSourceUpload({
@@ -136,8 +134,6 @@ describe(registerSourceUpload, () => {
       language: "pt",
       url: "https://www.example.com/aulas/glic%C3%B3lise#topo",
     });
-
-    vi.unstubAllGlobals();
 
     expect(result).toMatchObject({ checkVisibility: true, status: "ready" });
 

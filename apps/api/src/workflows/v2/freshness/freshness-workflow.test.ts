@@ -20,7 +20,8 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Response as PageResponse, fetch } from "undici";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freshnessWorkflow } from "./freshness-workflow";
 import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
 
@@ -82,11 +83,8 @@ async function readRecordedExtraction(): Promise<BlueprintExtraction> {
 
 /** The board's site, served from memory: the recorded notice, with the exam day as the test wants it. */
 function serveNotice(notice: string) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(() =>
-      Promise.resolve(new Response(notice, { headers: { "content-type": "text/plain" } })),
-    ),
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(notice, { headers: { "content-type": "text/plain" } }),
   );
 }
 
@@ -228,10 +226,6 @@ describe(freshnessWorkflow, () => {
       usage: {} as never,
       userPrompt: "",
     }));
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   it("updates only what a corrected notice changed and records the learner notice", async () => {

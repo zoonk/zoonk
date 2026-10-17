@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { Response as PageResponse, fetch } from "undici";
+import { describe, expect, it, vi } from "vitest";
 import { fetchDocument, toSourceUrl } from "./fetch-document";
 
 describe(toSourceUrl, () => {
@@ -11,29 +12,22 @@ describe(toSourceUrl, () => {
   it("refuses anything that isn't a public web page", () => {
     expect(toSourceUrl("ftp://example.com/file.pdf")).toBeNull();
     expect(toSourceUrl("http://localhost:3000/edital")).toBeNull();
+    expect(toSourceUrl("http://localhost.:3000/edital")).toBeNull();
     expect(toSourceUrl("http://169.254.169.254/latest/meta-data")).toBeNull();
     expect(toSourceUrl("http://[::1]/edital")).toBeNull();
     expect(toSourceUrl("https://printer.local/scan.pdf")).toBeNull();
+    expect(toSourceUrl("https://printer.local./scan.pdf")).toBeNull();
     expect(toSourceUrl("https://user:secret@example.com/edital")).toBeNull();
     expect(toSourceUrl("not a url")).toBeNull();
   });
 });
 
 describe(fetchDocument, () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it("returns the bytes and the bare content type", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response("<p>Edital</p>", {
-            headers: { "content-type": "text/html; charset=utf-8" },
-          }),
-        ),
+    vi.mocked(fetch).mockResolvedValue(
+      new PageResponse("<p>Edital</p>", {
+        headers: { "content-type": "text/html; charset=utf-8" },
+      }),
     );
 
     const document = await fetchDocument("https://www.gov.br/inep/edital#top");
@@ -45,13 +39,8 @@ describe(fetchDocument, () => {
 
   // A public page could otherwise redirect the fetch to an internal address.
   it("refuses a redirect to a private address", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(null, { headers: { location: "http://127.0.0.1/admin" }, status: 302 }),
-        ),
+    vi.mocked(fetch).mockResolvedValue(
+      new PageResponse(null, { headers: { location: "http://127.0.0.1/admin" }, status: 302 }),
     );
 
     await expect(fetchDocument("https://example.com/edital")).rejects.toThrow(
@@ -60,25 +49,22 @@ describe(fetchDocument, () => {
   });
 
   it("follows public redirects", async () => {
-    const fetchMock = vi
-      .fn()
+    vi.mocked(fetch)
       .mockResolvedValueOnce(
-        new Response(null, { headers: { location: "/novo-edital.pdf" }, status: 301 }),
+        new PageResponse(null, { headers: { location: "/novo-edital.pdf" }, status: 301 }),
       )
       .mockResolvedValueOnce(
-        new Response("%PDF", { headers: { "content-type": "application/pdf" } }),
+        new PageResponse("%PDF", { headers: { "content-type": "application/pdf" } }),
       );
-
-    vi.stubGlobal("fetch", fetchMock);
 
     const document = await fetchDocument("https://example.com/edital");
 
     expect(document.url).toBe("https://example.com/novo-edital.pdf");
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it("fails on an error status so the step can retry", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
+    vi.mocked(fetch).mockResolvedValue(new PageResponse("", { status: 503 }));
 
     await expect(fetchDocument("https://example.com/edital")).rejects.toThrow("status 503");
   });
@@ -89,11 +75,9 @@ describe(fetchDocument, () => {
       cause: Object.assign(new Error("socket hang up"), { code: "ECONNRESET" }),
     });
 
-    const fetchMock = vi.fn().mockRejectedValue(failure);
-
-    vi.stubGlobal("fetch", fetchMock);
+    vi.mocked(fetch).mockRejectedValue(failure);
 
     await expect(fetchDocument("https://example.com/edital")).rejects.toBe(failure);
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetch).toHaveBeenCalledOnce();
   });
 });

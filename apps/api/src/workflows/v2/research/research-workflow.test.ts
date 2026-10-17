@@ -34,7 +34,8 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Response as PageResponse, fetch } from "undici";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
@@ -81,6 +82,15 @@ const TASK_RESULT = {
 const READING_RESULT = { ...TASK_RESULT, formatsProvenance: null };
 
 type RecordedSearch = Awaited<ReturnType<typeof findOfficialSources>>["data"];
+
+/** The address a page was fetched from: research asks with a string, undici takes any request. */
+function requestedUrl(input: Parameters<typeof fetch>[0]): string {
+  if (typeof input === "string") {
+    return input;
+  }
+
+  return "href" in input ? input.href : input.url;
+}
 
 async function readFixture(name: string) {
   return readFile(new URL(`_test-fixtures/${name}`, import.meta.url), "utf8");
@@ -143,16 +153,13 @@ async function replayTcdfResearch() {
 
   // The notice PDF is served as its recorded text; the other pages as pages built with
   // JavaScript, which store no more than a line.
-  vi.stubGlobal(
-    "fetch",
-    vi.fn((url: string) =>
-      Promise.resolve(
-        url.includes("132841120D")
-          ? new Response(notice, { headers: { "content-type": "text/plain" } })
-          : new Response(`<p>${url}</p>`, { headers: { "content-type": "text/html" } }),
-      ),
-    ),
-  );
+  vi.mocked(fetch).mockImplementation(async (input) => {
+    const url = requestedUrl(input);
+
+    return url.includes("132841120D")
+      ? new PageResponse(notice, { headers: { "content-type": "text/plain" } })
+      : new PageResponse(`<p>${url}</p>`, { headers: { "content-type": "text/html" } });
+  });
 
   return { extraction, plan: uniquePlan };
 }
@@ -243,10 +250,6 @@ describe(researchWorkflow, () => {
         status: "unknown",
       },
     });
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   it("does nothing for a goal that doesn't depend on changing facts", async () => {
@@ -641,19 +644,16 @@ describe(researchWorkflow, () => {
       },
     });
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn((url: string) =>
-        Promise.resolve(
-          url.includes("132841120D")
-            ? new Response(noticeText, { headers: { "content-type": "text/plain" } })
-            : new Response(
-                `<main>${`<p>${url} states the section's time and questions.</p>`.repeat(4)}</main>`,
-                { headers: { "content-type": "text/html" } },
-              ),
-        ),
-      ),
-    );
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      const url = requestedUrl(input);
+
+      return url.includes("132841120D")
+        ? new PageResponse(noticeText, { headers: { "content-type": "text/plain" } })
+        : new PageResponse(
+            `<main>${`<p>${url} states the section's time and questions.</p>`.repeat(4)}</main>`,
+            { headers: { "content-type": "text/html" } },
+          );
+    });
 
     await researchWorkflow({ goalId: goal.id });
 
@@ -718,21 +718,19 @@ describe(researchWorkflow, () => {
       },
     }));
 
-    const fetchMock = vi.fn((url: string) => {
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      const url = requestedUrl(input);
+
       if (url.includes("cebraspe.org.br")) {
-        return Promise.resolve(new Response("Access Denied", { status: 403 }));
+        return new PageResponse("Access Denied", { status: 403 });
       }
 
-      return Promise.resolve(
-        url.includes("examsite.com.br")
-          ? new Response(noticeText, { headers: { "content-type": "text/plain" } })
-          : new Response(`<main>${`<p>${url} announces the notice.</p>`.repeat(4)}</main>`, {
-              headers: { "content-type": "text/html" },
-            }),
-      );
+      return url.includes("examsite.com.br")
+        ? new PageResponse(noticeText, { headers: { "content-type": "text/plain" } })
+        : new PageResponse(`<main>${`<p>${url} announces the notice.</p>`.repeat(4)}</main>`, {
+            headers: { "content-type": "text/html" },
+          });
     });
-
-    vi.stubGlobal("fetch", fetchMock);
 
     const result = await researchWorkflow({ goalId: goal.id });
 
@@ -745,7 +743,9 @@ describe(researchWorkflow, () => {
     expect(searches[1]?.unreadable).toContain(notice.url);
     expect(searches[1]?.analytics).toMatchObject({ contentScope: "shared" });
 
-    expect(fetchMock.mock.calls.some(([url]) => url.includes("arquivos.cdn"))).toBe(false);
+    expect(
+      vi.mocked(fetch).mock.calls.some(([input]) => requestedUrl(input).includes("arquivos.cdn")),
+    ).toBe(false);
 
     // The court's page is read first, as the official document, and the notice's copy after it.
     const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
@@ -776,10 +776,7 @@ describe(researchWorkflow, () => {
       throw new Error("The recorded search has no notice.");
     }
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() => Promise.reject(timedOut)),
-    );
+    vi.mocked(fetch).mockRejectedValue(timedOut);
 
     await expect(storeSourceStep({ document: notice, language: "pt", topic: "exam" })).rejects.toBe(
       timedOut,
@@ -1576,21 +1573,13 @@ describe("research for goals that aren't exams", () => {
         }) as never,
     );
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn((url: string) =>
-        Promise.resolve(
-          new Response(
-            `<h1>Syllabus</h1><p>${url}</p><ol><li>Wave functions and the Schrödinger equation</li><li>Operators, observables and measurement</li><li>The harmonic oscillator</li><li>Angular momentum and spin</li><li>The hydrogen atom</li></ol>`,
-            { headers: { "content-type": "text/html" } },
-          ),
+    vi.mocked(fetch).mockImplementation(
+      async (input) =>
+        new PageResponse(
+          `<h1>Syllabus</h1><p>${requestedUrl(input)}</p><ol><li>Wave functions and the Schrödinger equation</li><li>Operators, observables and measurement</li><li>The harmonic oscillator</li><li>Angular momentum and spin</li><li>The hydrogen atom</li></ol>`,
+          { headers: { "content-type": "text/html" } },
         ),
-      ),
     );
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   it("reads a deep learn goal's reference syllabi and links them without freshness checks", async () => {

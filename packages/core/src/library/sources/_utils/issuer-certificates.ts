@@ -1,8 +1,9 @@
 import { X509Certificate } from "node:crypto";
 import { type LookupFunction } from "node:net";
 import { connect, getCACertificates } from "node:tls";
+import { type Response } from "undici";
 import { requestWithNode } from "./node-request";
-import { isPublicUrl } from "./public-url";
+import { isPublicUrl, publicLookup } from "./public-url";
 import { readLimitedBody } from "./read-limited-body";
 
 /** What Node reports when a server's certificate arrives without the one that issued it. */
@@ -21,7 +22,10 @@ const issuersByUrl = new Map<string, X509Certificate>();
 
 type ChainRequest = {
   headers: Record<string, string>;
-  /** Resolves host names; tests point public names at a local server. */
+  /**
+   * Resolves host names, refusing private addresses (see `publicLookup`); tests point public names
+   * at a local server.
+   */
   lookup?: LookupFunction;
   signal: AbortSignal;
   url: string;
@@ -48,7 +52,7 @@ export function isMissingIssuerError(error: unknown): boolean {
  * since nothing about the server was verified.
  */
 function readServerCertificate({
-  lookup,
+  lookup = publicLookup,
   url,
 }: {
   lookup?: LookupFunction;

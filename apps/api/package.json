@@ -59,6 +59,7 @@
     "raw-loader": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
+    "undici": "catalog:",
     "vitest": "catalog:",
     "zod-openapi": "6.0.2"
   }

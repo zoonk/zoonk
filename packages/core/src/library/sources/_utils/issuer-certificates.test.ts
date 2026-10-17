@@ -17,8 +17,12 @@ import {
   setDefaultCACertificates,
 } from "node:tls";
 import { safeAsync } from "@zoonk/utils/error";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { type fetch } from "undici";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { fetchCompletingChain, isMissingIssuerError } from "./issuer-certificates";
+
+/** Undici's real fetch, which research's requests go through (other tests replace it). */
+const { fetch: realFetch } = await vi.importActual<{ fetch: typeof fetch }>("undici");
 
 /*
  * Certificates are built here with node:crypto instead of committed fixtures, so each leaf can
@@ -272,7 +276,7 @@ describe(fetchCompletingChain, () => {
   });
 
   it("recognizes the error fetch reports for a server that sends only its own certificate", async () => {
-    const { error } = await safeAsync(() => fetch(`https://127.0.0.1:${documentPort}/edital`));
+    const { error } = await safeAsync(() => realFetch(`https://127.0.0.1:${documentPort}/edital`));
 
     const otherFailure = new TypeError("fetch failed", { cause: new Error("ECONNRESET") });
 
@@ -337,6 +341,14 @@ describe(fetchCompletingChain, () => {
     const url = serveLeaf({ host: "no-issuer.example.com", leaf });
 
     await expect(fetchLeafOnly(url)).rejects.toThrow("doesn't say where its issuer is published");
+  });
+
+  it("refuses a server whose name resolves to a private address before reading its certificate", async () => {
+    const url = `https://localhost:${documentPort}/edital`;
+
+    await expect(
+      fetchCompletingChain({ headers, signal: AbortSignal.timeout(5000), url }),
+    ).rejects.toThrow("Refusing to connect to localhost");
   });
 
   it("refuses an issuer at a private address", async () => {

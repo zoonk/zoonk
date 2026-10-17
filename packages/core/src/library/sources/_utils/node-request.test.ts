@@ -1,6 +1,6 @@
 import { type Server, createServer } from "node:http";
 import { type AddressInfo } from "node:net";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { requestWithNode } from "./node-request";
 
 describe(requestWithNode, () => {
@@ -35,5 +35,21 @@ describe(requestWithNode, () => {
 
     // A step that throws an AbortError is taken for a cancellation and never retried.
     expect(failure).toMatchObject({ name: "TimeoutError" });
+  });
+
+  // A public-looking name can point at a private network; this one is the server's own machine.
+  it("refuses a name that resolves to a private address without connecting to it", async () => {
+    const connected = vi.fn();
+    server.on("connection", connected);
+
+    const request = requestWithNode({
+      headers: {},
+      signal: AbortSignal.timeout(2000),
+      url: url.replace("127.0.0.1", "localhost"),
+    });
+
+    await expect(request).rejects.toThrow("Refusing to connect to localhost");
+    expect(connected).not.toHaveBeenCalled();
+    server.off("connection", connected);
   });
 });

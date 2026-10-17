@@ -7,7 +7,8 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { Response as PageResponse, fetch } from "undici";
+import { describe, expect, it, vi } from "vitest";
 import { storeWebSource } from "../sources/web-sources";
 import { checkFreshness } from "./check-freshness";
 
@@ -16,11 +17,9 @@ const DAY_MS = 86_400_000;
 
 // The board's site is an external boundary: each test serves its notice from memory.
 function servePage(text: string) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(() =>
-      Promise.resolve(new Response(`<p>${text}</p>`, { headers: { "content-type": "text/html" } })),
-    ),
+  // Each request gets its own response, since a body is read once.
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(`<p>${text}</p>`, { headers: { "content-type": "text/html" } }),
   );
 }
 
@@ -71,10 +70,6 @@ async function examWithLearner({
 }
 
 describe(checkFreshness, () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it("checks tomorrow while registration is open, without a model when nothing changed", async () => {
     const { blueprint } = await examWithLearner({
       examDate: daysFromNow(60),
@@ -117,10 +112,7 @@ describe(checkFreshness, () => {
   it("keeps the loop and checks tomorrow when the board's site is down", async () => {
     const { blueprint } = await examWithLearner({ examDate: daysFromNow(90) });
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() => Promise.reject(new Error("ECONNRESET"))),
-    );
+    vi.mocked(fetch).mockRejectedValue(new Error("ECONNRESET"));
 
     const check = await checkFreshness({
       now: NOW,
