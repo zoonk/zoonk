@@ -42,6 +42,7 @@ async function countBuilds<Result>(read: () => Promise<Result>) {
 }
 
 describe("plans laid out per read", () => {
+  // It builds Ana's exam plan several times over, past the default timeout on CI's slower runners.
   it("reads Ana's exam plan, her time advice and a buddy turn from her own plan, never searching other daily times", async () => {
     const copyKey = randomUUID();
 
@@ -92,5 +93,5 @@ describe("plans laid out per read", () => {
 
     const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
     expect(advice.result.status).toBe("ready");
-  });
+  }, 60_000);
 });

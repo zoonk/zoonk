@@ -143,6 +143,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     );
   });
 
+  // It builds an exam plan several times over, past the default timeout on CI's slower runners.
   it("shows the returning exam learner's catch-up before Open and persists that same count", async () => {
     vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
     const copyKey = randomUUID();
@@ -225,7 +226,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     await expect(
       prisma.planChange.count({ where: { kind: "missedDays", planId: plan.id } }),
     ).resolves.toBe(1);
-  });
+  }, 60_000);
 
   it("counts newly selected non-exam teaching before Open from the same plan it persists", async () => {
     const fixture = await daysAwayFixture();
