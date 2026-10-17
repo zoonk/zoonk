@@ -1500,6 +1500,11 @@ msgid "That day already has a mock exam, so this one stays where it is."
 msgstr "That day already has a mock exam, so this one stays where it is."
 
 #: src/challenge/challenge-move-failed.tsx
+msgctxt "sAYOjY"
+msgid "Your plan can't make room for this challenge on Monday. It stays where it is."
+msgstr "Your plan can't make room for this challenge on Monday. It stays where it is."
+
+#: src/challenge/challenge-move-failed.tsx
 msgctxt "Qyqwxr"
 msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
 msgstr "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
@@ -8033,6 +8038,11 @@ msgid "How does inflation work?"
 msgstr "How does inflation work?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "Go to your Plan"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "More goals at once with Plus"
@@ -10554,6 +10564,7 @@ msgstr "Your plan studies {subject} for {group}."
 
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-coverage-sentence.ts
+#: src/today/today-plan-change.tsx
 msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Your plan changed."

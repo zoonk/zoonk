@@ -1500,6 +1500,11 @@ msgid "That day already has a mock exam, so this one stays where it is."
 msgstr "Esse dia já tem um simulado, então este fica onde está."
 
 #: src/challenge/challenge-move-failed.tsx
+msgctxt "sAYOjY"
+msgid "Your plan can't make room for this challenge on Monday. It stays where it is."
+msgstr "Seu plano não tem espaço na segunda-feira para este desafio. Ele fica onde está."
+
+#: src/challenge/challenge-move-failed.tsx
 msgctxt "Qyqwxr"
 msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
 msgstr "Seu plano não tem espaço em {date} para este simulado de {duration}. Ele fica onde está."
@@ -3220,7 +3225,7 @@ msgstr "Não foi possível enviar sua mensagem. Tente de novo ou mande um email 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
 msgid "Writing your call"
-msgstr "Montando sua conversa"
+msgstr "Criando sua conversa"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "A_Bcs6"
@@ -3235,7 +3240,7 @@ msgstr "Escolhendo com quem você vai conversar…"
 #: src/generation/call-generation-copy.ts
 msgctxt "hOnJKl"
 msgid "Writing what they say first…"
-msgstr "Definindo a primeira fala da outra pessoa…"
+msgstr "Criando a primeira fala da outra pessoa…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "wI0IpP"
@@ -3255,7 +3260,7 @@ msgstr "Criando seu simulado"
 #: src/generation/call-generation-copy.ts
 msgctxt "Z7TnLw"
 msgid "Writing the examiner's script"
-msgstr "Escrevendo o roteiro do examinador"
+msgstr "Criando o roteiro do examinador"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "ty-MNI"
@@ -3265,7 +3270,7 @@ msgstr "Escolhendo seu examinador…"
 #: src/generation/call-generation-copy.ts
 msgctxt "Yl_3vP"
 msgid "Writing the examiner's questions…"
-msgstr "Escrevendo as perguntas do examinador…"
+msgstr "Criando as perguntas do examinador…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "bTJras"
@@ -3290,7 +3295,7 @@ msgstr "Escolhendo um novo tópico…"
 #: src/generation/call-generation-copy.ts
 msgctxt "ji6cNd"
 msgid "Writing the card's instructions…"
-msgstr "Escrevendo as instruções do cartão…"
+msgstr "Criando as instruções do cartão…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "tGWu02"
@@ -3356,7 +3361,7 @@ msgstr "Não foi possível iniciar"
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
-msgstr "Escrevendo a pergunta {number}…"
+msgstr "Criando a pergunta {number}…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "phPNe2"
@@ -3479,7 +3484,7 @@ msgstr "Preparando suas perguntas"
 #: src/generation/use-generation-copy.ts
 msgctxt "dw8Odu"
 msgid "Writing your questions"
-msgstr "Escrevendo suas perguntas"
+msgstr "Criando suas perguntas"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "gLVFz1"
@@ -3565,7 +3570,7 @@ msgstr "Conferindo se cada pergunta tem uma única resposta certa…"
 #: src/generation/use-generation-copy.ts
 msgctxt "nxd0Qw"
 msgid "Writing your explanation"
-msgstr "Escrevendo sua explicação"
+msgstr "Criando sua explicação"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "lg0fnX"
@@ -3590,7 +3595,7 @@ msgstr "Lendo sua pergunta…"
 #: src/generation/use-generation-copy.ts
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
-msgstr "Escrevendo cerca de 5 telas curtas"
+msgstr "Criando cerca de 5 telas curtas"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "gGJukf"
@@ -3625,7 +3630,7 @@ msgstr "Criando seu desafio"
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"
 msgid "Writing questions on what you studied"
-msgstr "Escrevendo perguntas sobre o que você estudou"
+msgstr "Criando perguntas sobre o que você estudou"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "HxlS5i"
@@ -3640,7 +3645,7 @@ msgstr "Criando perguntas no estilo da prova"
 #: src/generation/use-generation-copy.ts
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
-msgstr "Escrevendo sua aula"
+msgstr "Criando sua aula"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "qE4faw"
@@ -3660,7 +3665,7 @@ msgstr "Escolhendo a melhor forma de explicar…"
 #: src/generation/use-generation-copy.ts
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
-msgstr "Escrevendo a aula"
+msgstr "Criando a aula"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -8033,6 +8038,11 @@ msgid "How does inflation work?"
 msgstr "Como funciona a inflação?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "Ir para seu Plano"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "Mais metas ao mesmo tempo com o Plus"
@@ -10554,6 +10564,7 @@ msgstr "Seu plano inclui o estudo de {subject} para {group}."
 
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-coverage-sentence.ts
+#: src/today/today-plan-change.tsx
 msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Seu plano mudou."

@@ -1500,6 +1500,11 @@ msgid "That day already has a mock exam, so this one stays where it is."
 msgstr "Il y a déjà un examen blanc ce jour-là, donc celui-ci reste où il est."
 
 #: src/challenge/challenge-move-failed.tsx
+msgctxt "sAYOjY"
+msgid "Your plan can't make room for this challenge on Monday. It stays where it is."
+msgstr "Ton plan ne peut pas faire de place lundi pour ce défi. Il reste où il est."
+
+#: src/challenge/challenge-move-failed.tsx
 msgctxt "Qyqwxr"
 msgid "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
 msgstr "Ton plan ne peut pas faire de place le {date} pour cet examen blanc de {duration}. Il reste où il est."
@@ -3225,7 +3230,7 @@ msgstr "Préparation de ton appel"
 #: src/generation/call-generation-copy.ts
 msgctxt "A_Bcs6"
 msgid "Writing the call for your level"
-msgstr "Rédaction de l’appel adapté à ton niveau"
+msgstr "Préparation de l’appel adapté à ton niveau"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "Pk85L5"
@@ -3235,7 +3240,7 @@ msgstr "Choisir la personne que tu vas appeler…"
 #: src/generation/call-generation-copy.ts
 msgctxt "hOnJKl"
 msgid "Writing what they say first…"
-msgstr "Écrire sa première réplique…"
+msgstr "Préparation de sa première réplique…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "wI0IpP"
@@ -3250,7 +3255,7 @@ msgstr "Ajouter des phrases sur lesquelles t'appuyer…"
 #: src/generation/call-generation-copy.ts
 msgctxt "GClzSd"
 msgid "Writing your mock"
-msgstr "Création de ton examen blanc"
+msgstr "Préparation de ton examen blanc"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "Z7TnLw"
@@ -3265,7 +3270,7 @@ msgstr "Choix de ton examinateur…"
 #: src/generation/call-generation-copy.ts
 msgctxt "Yl_3vP"
 msgid "Writing the examiner's questions…"
-msgstr "Rédaction des questions de l'examinateur…"
+msgstr "Préparation des questions de l'examinateur…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "bTJras"
@@ -3275,12 +3280,12 @@ msgstr "Ajustement des différentes parties pour durer environ cinq minutes…"
 #: src/generation/call-generation-copy.ts
 msgctxt "bI13IC"
 msgid "Writing your task"
-msgstr "Rédaction de ta tâche"
+msgstr "Préparation de ta tâche"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "Tuhk7d"
 msgid "Writing a card like the exam's"
-msgstr "Rédaction d’une fiche comme celle de l’examen"
+msgstr "Préparation d’une fiche comme celle de l’examen"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "WqHFBJ"
@@ -3290,7 +3295,7 @@ msgstr "Choix d’un nouveau sujet…"
 #: src/generation/call-generation-copy.ts
 msgctxt "ji6cNd"
 msgid "Writing the card's instructions…"
-msgstr "Rédaction des consignes de la fiche…"
+msgstr "Préparation des consignes de la fiche…"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "tGWu02"
@@ -3356,7 +3361,7 @@ msgstr "La génération n’a pas démarré"
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
-msgstr "Rédaction de la question {number}…"
+msgstr "Préparation de la question {number}…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "phPNe2"
@@ -3479,7 +3484,7 @@ msgstr "Préparation de tes questions"
 #: src/generation/use-generation-copy.ts
 msgctxt "dw8Odu"
 msgid "Writing your questions"
-msgstr "Rédaction de tes questions"
+msgstr "Préparation de tes questions"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "gLVFz1"
@@ -3540,7 +3545,7 @@ msgstr "Préparation de ton test de niveau"
 #: src/generation/use-generation-copy.ts
 msgctxt "ebo_zh"
 msgid "Writing the level test questions"
-msgstr "Rédaction des questions du test de niveau"
+msgstr "Préparation des questions du test de niveau"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "CUwgbT"
@@ -3550,12 +3555,12 @@ msgstr "Sélection de textes, du niveau débutant au niveau avancé…"
 #: src/generation/use-generation-copy.ts
 msgctxt "1bbmPn"
 msgid "Writing the reading questions…"
-msgstr "Rédaction des questions de compréhension écrite…"
+msgstr "Préparation des questions de compréhension écrite…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "3D6GEl"
 msgid "Writing the listening questions…"
-msgstr "Rédaction des questions de compréhension orale…"
+msgstr "Préparation des questions de compréhension orale…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "Qncy9S"
@@ -3565,7 +3570,7 @@ msgstr "Vérification qu’il n’y a qu’une bonne réponse par question…"
 #: src/generation/use-generation-copy.ts
 msgctxt "nxd0Qw"
 msgid "Writing your explanation"
-msgstr "Rédaction de ton explication"
+msgstr "Préparation de ton explication"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "lg0fnX"
@@ -3590,12 +3595,12 @@ msgstr "Lecture de ta question…"
 #: src/generation/use-generation-copy.ts
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
-msgstr "Rédaction d'environ 5 courts écrans"
+msgstr "Préparation d'environ 5 courts écrans"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "gGJukf"
 msgid "Writing screen {number}…"
-msgstr "Rédaction de l’écran {number}…"
+msgstr "Préparation de l’écran {number}…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
@@ -3605,12 +3610,12 @@ msgstr "Vérification des faits…"
 #: src/generation/use-generation-copy.ts
 msgctxt "84wriC"
 msgid "Writing questions on this chapter"
-msgstr "Rédaction de questions sur ce chapitre"
+msgstr "Préparation de questions sur ce chapitre"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "My88im"
 msgid "Writing questions on each subject"
-msgstr "Rédaction de questions sur chaque sujet"
+msgstr "Préparation de questions sur chaque sujet"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "bLGs-q"
@@ -3620,27 +3625,27 @@ msgstr "Choix des questions pour chaque sujet…"
 #: src/generation/use-generation-copy.ts
 msgctxt "VLjmPG"
 msgid "Writing your challenge"
-msgstr "Rédaction de ton défi"
+msgstr "Préparation de ton défi"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"
 msgid "Writing questions on what you studied"
-msgstr "Rédaction de questions sur ce que tu as étudié"
+msgstr "Préparation de questions sur ce que tu as étudié"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "HxlS5i"
 msgid "Writing your mock exam"
-msgstr "Création de ton examen blanc"
+msgstr "Préparation de ton examen blanc"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "M1AYoH"
 msgid "Writing questions like the exam's"
-msgstr "Création de questions comme celles de l’examen"
+msgstr "Préparation de questions comme celles de l’examen"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
-msgstr "Rédaction de ta leçon"
+msgstr "Préparation de ta leçon"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "qE4faw"
@@ -3660,7 +3665,7 @@ msgstr "Choix de la meilleure façon de l’expliquer…"
 #: src/generation/use-generation-copy.ts
 msgctxt "Dwuk2D"
 msgid "Writing the lesson"
-msgstr "Rédaction de la leçon"
+msgstr "Préparation de la leçon"
 
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
@@ -8033,6 +8038,11 @@ msgid "How does inflation work?"
 msgstr "Comment fonctionne l'inflation ?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "MO6156"
+msgid "Go to your Plan"
+msgstr "Aller à ton Plan"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "p9LATe"
 msgid "More goals at once with Plus"
 msgstr "Plus d’objectifs à la fois avec Plus"
@@ -10554,6 +10564,7 @@ msgstr "Ton plan prévoit l’étude de {subject} pour {group}."
 
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-coverage-sentence.ts
+#: src/today/today-plan-change.tsx
 msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Ton plan a changé."
