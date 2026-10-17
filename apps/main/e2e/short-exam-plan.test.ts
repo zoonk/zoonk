@@ -189,7 +189,6 @@ test.describe("A class test days away", () => {
 
     const page = await openAs(browser, user);
 
-    // The plan is built when Today first opens.
     await page.goto("/today");
     const session = page.getByRole("region", { name: "Today's session" });
     await expect(session.getByText("Day 1 of 3", { exact: true })).toBeVisible();
@@ -256,7 +255,6 @@ test.describe("A class test days away", () => {
     const { user } = await createClassTestDays({ days: 1 });
     const page = await openAs(browser, user);
 
-    // The plan is built when Today first opens.
     await page.goto("/today");
 
     await expect(

@@ -12,6 +12,7 @@ import {
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { runCoreSeedScript } from "./core-seed-script";
 
 export const DAYS_TO_TEST = 3;
 const LESSONS_PER_SKILL = 3;
@@ -87,11 +88,12 @@ function toHeadingsStructure() {
 /**
  * Bia's biochemistry test days away (three by default), read from her slides (a private blueprint), with the
  * skill graph the goal-driven workflow writes. Placement settled glycolysis, so the plan starts
- * with what she doesn't know yet. The plan itself is built by the real planner the first time
- * Today opens. She has Plus, so the short mock is part of her plan, unless `plus` is false. With
- * `headings`, her slides list the test's headings (one subject each, no topics), and her plan's
- * areas follow them. `startedDaysAgo` starts the plan that many days ago, so today is a later
- * day of it. `details` adds to what onboarding stored on the goal.
+ * with what she doesn't know yet. Core's planner then builds and saves her plan from that graph,
+ * as the workflow does before she sees it: pages only read it. She has Plus, so the short mock is
+ * part of her plan, unless `plus` is false. With `headings`, her slides list the test's headings
+ * (one subject each, no topics), and her plan's areas follow them. `startedDaysAgo` starts the
+ * plan that many days ago, so today is a later day of it. `details` adds to what onboarding stored
+ * on the goal.
  */
 export async function createClassTestDays({
   days = DAYS_TO_TEST,
@@ -156,6 +158,8 @@ export async function createClassTestDays({
     }),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
+
+  await runCoreSeedScript("e2e-goal-plan.ts", ["--goal", goal.id]);
 
   return { goal, user };
 }

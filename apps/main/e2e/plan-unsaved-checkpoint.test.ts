@@ -1,12 +1,9 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { unplannedCheckpointFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { runCoreSeedScript } from "./core-seed-script";
 import { expect, test } from "./fixtures";
-
-const execFileAsync = promisify(execFile);
 
 /**
  * A learner whose plan selected its phase's challenge but saved no row for it yet (as a plan saved
@@ -17,26 +14,14 @@ async function createUnsavedCheckpoint() {
   const user = await createE2EUser(getBaseURL());
   const day = await unplannedCheckpointFixture({ userId: user.id });
 
-  await execFileAsync(
-    "pnpm",
-    [
-      "--filter",
-      "@zoonk/core",
-      "--silent",
-      "exec",
-      "tsx",
-      "--conditions=react-server",
-      "--import=./scripts/seed/node-runtime.mjs",
-      "scripts/seed/e2e-unsaved-checkpoint.ts",
-      "--goal",
-      day.goal.id,
-      "--plan",
-      day.plan.id,
-      "--graph",
-      JSON.stringify(day.graph),
-    ],
-    { env: { ...process.env, NEXT_PUBLIC_APP_DOMAIN: "localhost:3000" } },
-  );
+  await runCoreSeedScript("e2e-unsaved-checkpoint.ts", [
+    "--goal",
+    day.goal.id,
+    "--plan",
+    day.plan.id,
+    "--graph",
+    JSON.stringify(day.graph),
+  ]);
 
   return { day, user };
 }
