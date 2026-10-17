@@ -510,6 +510,56 @@ test("a checkpoint Start asks for the microphone in the tap, and its call keeps 
   }
 });
 
+test("a checkpoint Start refused while its call's screen loads says so at once and lets go of the microphone", async ({
+  browser,
+}) => {
+  const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+  const page = await openAs(browser, user);
+  await watchMicrophone(page);
+
+  // The call's screen isn't part of the intro's first load: it stays on its way here.
+  const screen = { held: Promise.withResolvers<null>(), release: Promise.withResolvers<null>() };
+
+  await page.route("**/_next/static/chunks/**", async (route) => {
+    const response = await route.fetch();
+    const code = await response.text();
+
+    if (code.includes("connectConversationAction")) {
+      screen.held.resolve(null);
+      await screen.release.promise;
+    }
+
+    await route.fulfill({ response });
+  });
+
+  try {
+    await page.goto(`/checkpoint/${block.id}`);
+    await screen.held.promise;
+
+    await prisma.subscription.updateMany({
+      data: { status: "canceled" },
+      where: { referenceId: user.id },
+    });
+
+    await page.getByRole("button", { name: "Start the call" }).click();
+
+    // Plus lapsed meanwhile: the refusal shows without waiting for a screen it won't open.
+    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+
+    await expect
+      .poll(() => microphoneRequests(page))
+      .toStrictEqual([{ active: true, tracks: ["ended"] }]);
+
+    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
+      0,
+    );
+  } finally {
+    screen.release.resolve(null);
+    await page.unrouteAll({ behavior: "ignoreErrors" });
+    await page.context().close();
+  }
+});
+
 /**
  * The call's intro doesn't read its plan's days, so it names no day: the call is back in the
  * learner's next session, whichever day that is.

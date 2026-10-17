@@ -15,8 +15,8 @@ import { startCheckpointCallAction } from "./checkpoint-call-actions";
 
 /**
  * The call's own screen (the live call, its result, and the contract its turns are checked
- * against) isn't part of the intro's first load: it loads once the intro is idle, and Start's tap
- * waits for it alongside the call's creation. A load that failed is null.
+ * against) isn't part of the intro's first load: it loads once the intro is idle, and again with
+ * Start's tap, alongside the call's creation. A load that failed is null.
  */
 function loadConversationClient() {
   return import("../../conversation/[conversationId]/conversation-client")
@@ -90,12 +90,15 @@ export function CheckpointCallPreviewClient({
         const mine = generation.current;
         const learnerGeneration = getLearnerGeneration();
 
-        const [started, Client] = await Promise.all([
-          startCheckpointCallAction(blockId),
-          loadConversationClient(),
-        ]);
+        const isCurrent = () =>
+          mine === generation.current && learnerGeneration === getLearnerGeneration();
 
-        if (mine !== generation.current || learnerGeneration !== getLearnerGeneration()) {
+        // The call's screen loads alongside its creation, but only a call that's ready waits for
+        // it: a refusal shows (and lets go of the microphone) at once.
+        const client = loadConversationClient();
+        const started = await startCheckpointCallAction(blockId);
+
+        if (!isCurrent()) {
           return "cancelled";
         }
 
@@ -108,6 +111,12 @@ export function CheckpointCallPreviewClient({
 
         if (started.status !== "ready") {
           return started.status;
+        }
+
+        const Client = await client;
+
+        if (!isCurrent()) {
+          return "cancelled";
         }
 
         // Its screen didn't load (offline for a moment): Start tries again, and opens the same call.
