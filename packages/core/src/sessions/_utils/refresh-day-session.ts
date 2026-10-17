@@ -127,7 +127,14 @@ async function planRestOfDayWithPlan({
 
   /** Share the queue's plan with its missions without a second read or a loading waterfall. */
   const dayPlan = loadDayPlan(context);
-  const input = await loadSessionBuildInput({ ...context, dayPlan, keepsBlocks: kept.length > 0 });
+  const keptLessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
+
+  const input = await loadSessionBuildInput({
+    ...context,
+    dayPlan,
+    keepsBlocks: kept.length > 0,
+    keptLessonIds,
+  });
 
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
   const { blocks } = buildSessionBlocks(

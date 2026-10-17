@@ -4,6 +4,7 @@ import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract
 import { getItemKey } from "../../plans/planner/plan-items";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlannedLesson } from "../session-builder";
+import { getLessonLookahead } from "./day-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 
 type LessonWithSkills = Lesson & { skills: { skillId: string }[] };
@@ -181,4 +182,25 @@ export async function loadLessonsForSkills({
   );
 
   return unique.slice(0, limit).map((lesson) => toPlannedLesson({ item: null, lesson }));
+}
+
+/**
+ * The upcoming lessons the builder chooses from (see `getLessonLookahead`), after the lessons the
+ * day keeps: those would take the places of the ones that come next.
+ */
+export function loadUpcomingLessons({
+  dayMinutes,
+  items,
+  keptLessonIds,
+  userId,
+}: Parameters<typeof loadPlanLessons>[0] & {
+  dayMinutes: number;
+  keptLessonIds?: ReadonlySet<string>;
+}) {
+  return loadPlanLessons({
+    items: items
+      .filter((item) => !item.lessonId || !keptLessonIds?.has(item.lessonId))
+      .slice(0, getLessonLookahead(dayMinutes)),
+    userId,
+  });
 }

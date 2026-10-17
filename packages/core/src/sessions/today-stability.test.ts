@@ -40,13 +40,19 @@ async function readToday(goalId: string) {
  */
 async function setupDayWithStandIn({
   dailyMinutes = 45,
+  firstLessons = 2,
   outlineStatus = "running",
   standInSize = LANDING,
-}: { dailyMinutes?: number; outlineStatus?: GenerationStatus; standInSize?: number } = {}) {
+}: {
+  dailyMinutes?: number;
+  firstLessons?: number;
+  outlineStatus?: GenerationStatus;
+  standInSize?: number;
+} = {}) {
   const [user, course] = await Promise.all([userFixture(), courseFixture({ outlineStatus })]);
 
   const library = await planLibraryFixture({
-    skills: [{ lessons: 2 }, { lessons: 0, size: standInSize }, { lessons: 8 }],
+    skills: [{ lessons: firstLessons }, { lessons: 0, size: standInSize }, { lessons: 8 }],
   });
 
   const { goal } = await unplannedGoalFixture({
@@ -177,6 +183,26 @@ describe("today's session the learner was shown", () => {
     );
 
     // The landed lessons take the time the day held for them, then the day fills as usual.
+    const added = after.blocks.slice(before.blocks.length, before.blocks.length + landed.length);
+
+    expect(added.map((block) => block.lessonId)).toStrictEqual(landed);
+  });
+
+  // An hour of short lessons already filled the lessons a day looks ahead to, so the ones that
+  // landed found no place among them and the day stayed short for good.
+  it("gives the held time to the lessons that land, however many lessons the day already holds", async () => {
+    const { course, goal, library } = await setupDayWithStandIn({
+      dailyMinutes: 60,
+      firstLessons: 15,
+    });
+
+    const before = await readToday(goal.id);
+
+    expect(before.lessonsComing).toBe(true);
+
+    vi.setSystemTime(A_MINUTE_LATER);
+    const landed = await landWaitingLessons({ courseId: course.id, library });
+    const after = await readToday(goal.id);
     const added = after.blocks.slice(before.blocks.length, before.blocks.length + landed.length);
 
     expect(added.map((block) => block.lessonId)).toStrictEqual(landed);

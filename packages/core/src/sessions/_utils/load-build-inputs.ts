@@ -15,13 +15,13 @@ import { getPracticeShare } from "../practice-share";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { loadDayCapsules } from "./day-capsules";
 import { listDayCheckpoints, loadDayBosses } from "./day-checkpoints";
-import { LEARN_KINDS, getLessonLookahead, pickDayLessons } from "./day-lessons";
+import { LEARN_KINDS, pickDayLessons } from "./day-lessons";
 import { loadDayPlan } from "./day-plan";
 import { findPlannedReview } from "./day-review";
 import { getExamPrepAccess } from "./exam-access";
 import { markLessonsAroundChallenges } from "./lessons-before-challenges";
 import { loadMistakeDrills } from "./load-mistake-drills";
-import { loadPlanLessons } from "./load-plan-lessons";
+import { loadUpcomingLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
@@ -182,11 +182,13 @@ export async function loadSessionBuildInput(
      * review of the weakest topics (`withWeakestReview`).
      */
     keepsBlocks?: boolean;
+    /** The lessons of the blocks the day keeps: the next lessons it may add start after them. */
+    keptLessonIds?: ReadonlySet<string>;
     selection?: SelectedDayPlan;
     dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
   },
 ): Promise<SessionBuildInput> {
-  const { goal, keepsBlocks = false, localDate, now, timeZone, userId } = context;
+  const { goal, keepsBlocks = false, keptLessonIds, localDate, now, timeZone, userId } = context;
 
   const [plan, awaitingOutlines] = await Promise.all([
     context.dayPlan ?? loadDayPlan(context),
@@ -222,7 +224,7 @@ export async function loadSessionBuildInput(
     weekly,
     produce,
   ] = await Promise.all([
-    loadPlanLessons({ items: learnItems.slice(0, getLessonLookahead(dayMinutes)), userId }),
+    loadUpcomingLessons({ dayMinutes, items: learnItems, keptLessonIds, userId }),
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
