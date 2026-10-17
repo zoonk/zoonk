@@ -81,31 +81,28 @@ describe("finishing a block that already finished", () => {
   it.each([
     { checkpoint: null, name: "practice block" },
     { checkpoint: BOSS, name: "boss duel" },
-  ])(
-    "returns the $name's moment again, paying nothing twice",
-    async ({ checkpoint }) => {
-      const day = await setup(checkpoint);
-      const first = await day.finish();
+  ])("returns the $name's moment again, paying nothing twice", async ({ checkpoint }) => {
+    const day = await setup(checkpoint);
+    const first = await day.finish();
 
-      expect(first).toMatchObject({
-        completion: { brainPower: expect.any(Number), sessionCompleted: false },
-        status: "ready",
-      });
+    expect(first).toMatchObject({
+      completion: { brainPower: expect.any(Number), sessionCompleted: false },
+      status: "ready",
+    });
 
-      const paid = await readPaid(day);
-      expect(paid.blockBrainPower).toBeGreaterThan(0);
+    const paid = await readPaid(day);
+    expect(paid.blockBrainPower).toBeGreaterThan(0);
 
-      // A retry after the first response was lost: the same moment, whose milestones were recorded
-      // the first time (the day's summary shows any the learner didn't see).
-      const retried = await day.finish();
+    // A retry after the first response was lost: the same moment, whose milestones were recorded
+    // the first time (the day's summary shows any the learner didn't see).
+    const retried = await day.finish();
 
-      expect(retried).toStrictEqual(
-        first.status === "ready"
-          ? { ...first, completion: { ...first.completion, milestones: [] } }
-          : first,
-      );
+    expect(retried).toStrictEqual(
+      first.status === "ready"
+        ? { ...first, completion: { ...first.completion, milestones: [] } }
+        : first,
+    );
 
-      await expect(readPaid(day)).resolves.toStrictEqual(paid);
-    },
-  );
+    await expect(readPaid(day)).resolves.toStrictEqual(paid);
+  });
 });

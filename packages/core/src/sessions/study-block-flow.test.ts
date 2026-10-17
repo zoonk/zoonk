@@ -201,9 +201,10 @@ describe("study session blocks", () => {
     ]);
 
     // The later finish lost the race to settle it, or read it settled and got its moment again.
-    expect([["blockFinished", "ready"], ["ready", "ready"]]).toContainEqual(
-      [once.status, twice.status].toSorted(),
-    );
+    expect([
+      ["blockFinished", "ready"],
+      ["ready", "ready"],
+    ]).toContainEqual([once.status, twice.status].toSorted());
 
     await expect(
       prisma.learningEvent.count({

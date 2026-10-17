@@ -36,7 +36,7 @@ class QuestionBlockUnchangedError extends Error {
   override name = "QuestionBlockUnchangedError";
 }
 
-type QuestionBlockSettlement = {
+export type QuestionBlockSettlement = {
   answers: SessionAnswer[];
   brainPower: number;
   brainPowerBefore: number;
@@ -71,10 +71,6 @@ async function loadExtraEarnedToday(
     .reduce((sum, block) => sum + block.brainPower, 0);
 }
 
-type ReadSettledQuestionBlockResult =
-  | { settlement: Omit<QuestionBlockSettlement, "seconds">; status: "ready" }
-  | { status: "blockFinished" };
-
 type PreparedBlock = {
   checkpoint: CheckpointOutcome | null;
   correct: number;
@@ -92,7 +88,7 @@ type SettleInput = {
 };
 
 /** Reads and scores the block's answers, continuing Hyperdrive from the session's earlier blocks. */
-async function prepareBlock({
+export async function prepareQuestionBlock({
   block,
   session,
   userId,
@@ -159,7 +155,10 @@ async function prepareBlock({
 }
 
 /** The capsules the block's answers opened. */
-function countOpenedCapsules({ own, payload }: Pick<PreparedBlock, "own" | "payload">): number {
+export function countOpenedCapsules({
+  own,
+  payload,
+}: Pick<PreparedBlock, "own" | "payload">): number {
   return payload.capsules.filter((capsule) =>
     own.some((answer) => answer.itemId && capsule.itemIds.includes(answer.itemId)),
   ).length;
@@ -225,7 +224,7 @@ async function getBlockBrainPower(
  * then sends "Block Completed".
  */
 export async function settleQuestionBlock(input: SettleInput): Promise<SettleQuestionBlockResult> {
-  const prepared = await prepareBlock(input);
+  const prepared = await prepareQuestionBlock(input);
 
   if (prepared === "emptyCheckpoint" || prepared === "noAnswers" || prepared === "unanswered") {
     return { status: prepared };
@@ -361,33 +360,4 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
   }
 
   return result;
-}
-
-/**
- * A block settled before, read back for a retry whose first response was lost: its answers scored
- * the same way and the Brain Power its settlement paid and kept. Nothing is written or paid again.
- */
-export async function readSettledQuestionBlock(
-  input: SettleInput,
-): Promise<ReadSettledQuestionBlockResult> {
-  const prepared = await prepareBlock(input);
-  const reward = readBlockPayload(input.block).milestoneReward;
-
-  if (typeof prepared === "string" || !reward) {
-    return { status: "blockFinished" };
-  }
-
-  return {
-    settlement: {
-      answers: prepared.own,
-      brainPower: input.block.brainPower,
-      brainPowerBefore: reward.brainPower.before,
-      capsulesOpened: countOpenedCapsules(prepared),
-      checkpoint: prepared.checkpoint,
-      correct: prepared.correct,
-      topHyperdrive: prepared.scored.topLevel,
-      total: prepared.own.length,
-    },
-    status: "ready",
-  };
 }

@@ -13,7 +13,12 @@ import {
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
-import { readSettledQuestionBlock, settleQuestionBlock } from "./_utils/settle-question-block";
+import {
+  type QuestionBlockSettlement,
+  countOpenedCapsules,
+  prepareQuestionBlock,
+  settleQuestionBlock,
+} from "./_utils/settle-question-block";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
@@ -36,6 +41,10 @@ type OwnedBlock = {
   timeZone: string;
   userId: string;
 };
+
+type SettledQuestionBlock =
+  | { settlement: Omit<QuestionBlockSettlement, "seconds">; status: "ready" }
+  | { status: "blockFinished" };
 
 /**
  * A mock's block is finished by its mock, so what finishing it does to the day's missions (the
@@ -106,6 +115,33 @@ async function toCheckpointResult({
   });
 
   return { ...checkpoint, answers };
+}
+
+/**
+ * A block settled before, read back for a retry whose first response was lost: its answers scored
+ * the same way and the Brain Power its settlement paid and kept. Nothing is written or paid again.
+ */
+async function readSettledQuestionBlock(owned: OwnedBlock): Promise<SettledQuestionBlock> {
+  const prepared = await prepareQuestionBlock(owned);
+  const reward = readBlockPayload(owned.block).milestoneReward;
+
+  if (typeof prepared === "string" || !reward) {
+    return { status: "blockFinished" };
+  }
+
+  return {
+    settlement: {
+      answers: prepared.own,
+      brainPower: owned.block.brainPower,
+      brainPowerBefore: reward.brainPower.before,
+      capsulesOpened: countOpenedCapsules(prepared),
+      checkpoint: prepared.checkpoint,
+      correct: prepared.correct,
+      topHyperdrive: prepared.scored.topLevel,
+      total: prepared.own.length,
+    },
+    status: "ready",
+  };
 }
 
 /**
