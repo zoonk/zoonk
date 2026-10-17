@@ -76,14 +76,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** the owner chose option A (8 Oct): shown phase end dates stay fixed through system refreshes, the difference is absorbed inside the phase, and a goal date at risk becomes a Today proposal.
 - **Check:** across a `refresh`, `outlinesLanded`, `session` or a `newDay` the learner studied, each phase still ahead keeps its end date. A learn plan's last phase with dates, before or after the step (its end is the plan's finish; phases a date cuts short have none; a phase the learner finished shows the days it was finished on, R39, so the last one before it with work is the finish: language seed 2011), and an after-exam phase are left out. So a phase that becomes the last because the phases after it left for time may end on the new finish. A phase that lost its dates with nothing left to do left the plan for time: R5 judges whether the change names its topics. One that lost its dates with a lesson still to do is flagged. A phase the learner finished (nothing of it left to do) is left out: it shows the days it was finished on, as R39 allows, not a date still ahead of them (language seed 1083: lessons of two later phases finished ahead). A learner's change, a missed day and a test-out may move them.
 - **Reads:** `before.phases`, `after.phases`, `after.items`, `event`, `today`.
-- **Code:** `checkPhaseEndsKept`.
 
 ### R7. Today's session doesn't change under the learner
 
 - **Owner's words:** pass 7 R1 "Today must never change under the learner"; round 9 R9-TODAY "system refreshes never remove/reorder blocks (append landed lessons at end within time)".
 - **Check:** once today's session was shown, a `refresh` or `outlinesLanded` keeps every lesson of today still to do, in the same order (a stand-in's landed lessons take its place), and puts new ones after them.
 - **Reads:** `todayShown`, `today`, `before.items`, `after.items`.
-- **Code:** `checkTodayKept`.
 
 ### R8. Work carries over
 
@@ -185,7 +183,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "a miss in practice brings the lessons back" (8 Oct); the lead (RULES 4): for basics passed over by choice, "a miss brings their lessons back with a change that names them".
 - **Check:** after a step whose own answers include a wrong one on a skill whose lessons were all tested out (even after practice answered it right: a tested-out topic was never studied, so a miss means the test-out didn't hold, unlike forgetting a studied one), or one passed over by choice and still to confirm, the plan has lessons still to do on it, and a change the step recorded names it among `effect.topicsAdded` (by a notice topic of it, or its name when it has none, as `bringBackMissedLessons` names it). A miss on a skill of an area the learner took out brings nothing back: the learner's explicit choice stands (sessions don't ask those skills; IELTS seed 1012).
 - **Reads:** `event.answers`, `before`, `after.items`, `changes`.
-- **Code:** `checkMissBringsLessonsBack`.
 
 ### R37. A listening skill is asked only with recordings
 
@@ -267,19 +264,16 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "by default recommend the daily minutes that cover 100% of the goal by its date" (7 Oct).
 - **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits; the recommendation is never more than 240 minutes.
 - **Reads:** `timeToCover`, `view.feasibility`, `view.schedule.dailyMinutes`.
-- **Code:** `checkRecommendedTimeCovers`.
 
 ### R27. No em dashes
 
 - **Owner's words:** user-facing copy has "no em dashes"; a quoted source keeps its own punctuation (orchestrator, round 11).
 - **Check:** no shown text that isn't `quoted` contains an em dash (U+2014).
-- **Code:** `checkNoEmDashes`.
 
 ### R28. Never promise a pass, score or job
 
 - **Owner's words:** "Never promise a pass, score or job" (redesign decisions).
 - **Check:** no shown text that isn't `quoted` matches the plain promise wordings in Portuguese and English ("you'll pass", "guaranteed approval", "guaranteed … job"). A heuristic, not a proof.
-- **Code:** `checkNoPromises`.
 
 ## G. Shared content
 
@@ -292,13 +286,11 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 
 - **Owner's words:** "just don't pass personal data to shared lessons prompts, only to personalized ones. this is probably valid for all shared content" (8 Oct).
 - **Check:** no input of a `shared` generation contains one of `learner.personalTexts` of 4 characters or more (case and accents ignored). The caller picks the texts (the goal as typed, the name, the city, a free answer).
-- **Code:** `checkSharedPromptsImpersonal`.
 
 ### R31. A prompt change never rewrites shared content
 
 - **Owner's words:** "i don't think we should rewrite existing content on prompt changes at all. that's unnecessary costs. if we do decide to reset existing content we can do it manually" (9 Oct).
 - **Check:** in a `promptChanged` step (a learner whose content the Library holds, replayed on a new prompt version), every shared row keeps its version and no shared generation starts.
-- **Code:** `checkNoRegeneration`.
 
 ## H. Readiness
 
@@ -313,14 +305,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** as R34; "Solid", never "ready", and not before a test in real conditions (round 7 readiness rule).
 - **Check:** preparation's value is never above its coverage, and reaches Solid (0.75) only after a test in real conditions (a mock, a full review, a weekly challenge).
 - **Reads:** `preparation.value`, `.components`.
-- **Code:** `checkReadinessHonest`.
 
 ### R36. An estimated score needs enough mocks
 
 - **Owner's words:** "estimated score only as a range after a mock exam" (redesign decisions); pass 9: one 8-question ethics mock read as "68% to 100%".
 - **Check:** an estimated score shows only as a range (low below high), when the latest three mocks hold at least 30 questions between them and not every one of them sat a single subject.
 - **Reads:** `preparation.estimatedScore`, `preparation.mocks`.
-- **Code:** `checkScoreEstimateEarned`.
 
 ## Decided and still open
 
