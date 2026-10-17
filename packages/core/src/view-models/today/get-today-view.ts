@@ -30,6 +30,8 @@ import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notic
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
 import { getSession } from "../../users/get-session";
+import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
+import { type NoticedPattern } from "../language/language-view-contract";
 import { getOnboarding } from "../onboarding/get-onboarding";
 import { getLessonShare } from "../syllabus/lesson-share";
 import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
@@ -102,6 +104,11 @@ export type TodayView = {
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   /** Exact saved contribution explaining a lighter day; null without funding or on welcome back. */
   mockFunding: MockFundingView | null;
+  /**
+   * A language goal's pattern noticed in recent mistakes, offered beside the day; null when one of
+   * the day's missions is already its drill (`selectDayPattern`), and for any other goal.
+   */
+  pattern: NoticedPattern | null;
   /**
    * The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic
    * change of the last day (a rebalance, missed days, a test-out) until the learner says "Got it".
@@ -317,20 +324,22 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
           selectedSettings: day.selection?.state.settings,
         });
 
-  const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice] = await Promise.all([
-    loadSessionDay({ day, goal: owned.goal, userId }),
-    loadAroundSession({
-      owned,
-      selection: day.selection,
-      session: day.session,
-      timeZone: input.timeZone,
-    }),
-    getCurrentSuggestedGoal(),
-    getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
-      loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
-    loadGoalDateKind(owned.goal, day.blueprint),
-    loadOpenExamChoice(owned.goal),
-  ]);
+  const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
+    await Promise.all([
+      loadSessionDay({ day, goal: owned.goal, userId }),
+      loadAroundSession({
+        owned,
+        selection: day.selection,
+        session: day.session,
+        timeZone: input.timeZone,
+      }),
+      getCurrentSuggestedGoal(),
+      getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
+        loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone: input.timeZone }),
+      loadGoalDateKind(owned.goal, day.blueprint),
+      loadOpenExamChoice(owned.goal),
+      loadNoticedPattern({ goal: owned.goal, userId }),
+    ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
 
@@ -357,6 +366,7 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
+      pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
       planChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,

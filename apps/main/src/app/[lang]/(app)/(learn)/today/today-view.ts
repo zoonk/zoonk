@@ -15,10 +15,7 @@ import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user"
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { type DayBlockRef, getDayBlockScreen, toDayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
-import {
-  getLanguageTodayView,
-  hidePatternCoveredByDay,
-} from "@zoonk/core/view-models/language/today";
+import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
@@ -193,8 +190,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       view: {
         brainPower: belt?.totalBrainPower ?? 0,
         buddy,
-        // The day's missions may already offer the pattern's drill: Today shows it once.
-        language: language && hidePatternCoveredByDay({ day: today.session, language }),
+        language,
         mistakes,
         mocks,
         notices,

@@ -75,7 +75,7 @@ export const languageGoalPaths = {
     get: {
       ...common,
       description:
-        "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), a pattern noticed in recent mistakes, and the mispronounced words due to be said again.",
+        "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), the mispronounced words due to be said again, and the exam-style speaking tasks to practice any time. The pattern noticed in recent mistakes comes with the day, in GET /v1/today.",
       operationId: "getLanguageToday",
       requestParams: { path: goalPathParamsSchema },
       responses: {

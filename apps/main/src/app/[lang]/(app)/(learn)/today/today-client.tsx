@@ -142,8 +142,8 @@ function toHostNotices({
   goalId: string;
   onUploadAnswered: (request: GoalUploadRequest) => void;
 }): TodayHostNotices {
-  const { language, notices } = data;
-  const hasPractice = Boolean(language?.pattern ?? language?.pronunciation);
+  const { language, notices, today } = data;
+  const hasPractice = Boolean(today.pattern ?? language?.pronunciation);
   const upload = answeredUpload ?? notices.upload;
 
   return {
@@ -151,10 +151,10 @@ function toHostNotices({
       language && hasPractice ? (
         <LanguagePracticeRow
           hrefs={{
-            pattern: language.pattern ? `/pattern/${language.pattern.id}` : null,
+            pattern: today.pattern ? `/pattern/${today.pattern.id}` : null,
             pronunciation: `/pronunciation?goal=${goalId}`,
           }}
-          today={language}
+          today={{ pattern: today.pattern, pronunciation: language.pronunciation }}
         />
       ) : null,
     sourceChange: notices.change ? <TodayChangeNotice message={notices.change} /> : null,

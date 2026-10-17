@@ -79,11 +79,13 @@ const unitMistakeSchema = z.object({
 });
 
 /** A pattern noticed in the learner's mistakes; its page explains it and has a short drill. */
-const noticedPatternSchema = z.object({
+export const noticedPatternSchema = z.object({
   id: z.uuid(),
   kind: z.enum(["pattern", "typos"]),
   title: z.string(),
 });
+
+export type NoticedPattern = z.infer<typeof noticedPatternSchema>;
 
 /** Mispronounced words due to be said again today, named by the first few. */
 const duePronunciationSchema = z.object({
@@ -199,9 +201,6 @@ export const languageTodayViewSchema = z
         description:
           "The level across skills (their average, rounded down to a half step), shown instead of preparation",
       }),
-    pattern: noticedPatternSchema
-      .nullable()
-      .meta({ description: "A pattern noticed in recent mistakes, not yet practiced" }),
     pronunciation: duePronunciationSchema
       .nullable()
       .meta({ description: "Mispronounced words due to be said again today" }),

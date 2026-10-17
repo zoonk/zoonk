@@ -123,7 +123,6 @@ test.describe("Language goal API", () => {
 
     expect(await today.json()).toStrictEqual({
       level: { label: "A2", target: "B1+" },
-      pattern: null,
       pronunciation: null,
       // No exam named: English's paper at the B1+ target, locked on the free plan.
       speaking: { access: "plusRequired", title: "B1 Preliminary" },
@@ -694,7 +693,9 @@ test.describe("Language goal API", () => {
     const dismissed = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/dismissals`);
     expect(dismissed.status()).toBe(204);
 
-    const todayResponse = await apiContext.get(`/v1/goals/${goal.id}/language-today`);
+    // A dismissed pattern is no longer offered beside the day.
+    const todayResponse = await apiContext.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
+    expect(todayResponse.status(), await todayResponse.text()).toBe(200);
     const today = await todayResponse.json();
     expect(today.pattern).toBeNull();
 

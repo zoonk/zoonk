@@ -375,12 +375,14 @@ describe("language view models", () => {
     ]);
   });
 
-  it("adds the level across skills and a noticed pattern to Today", async () => {
+  // The noticed pattern is Today's own card (`TodayView.pattern`), which steps aside for the day's
+  // missions: the language cards leave it out.
+  it("adds the level across skills to Today, and leaves the noticed pattern to Today's own read", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
 
-    const [pattern] = await Promise.all([
+    await Promise.all([
       prisma.mistakePattern.create({
         data: {
           content: { contrast: [], drill: [], examples: [], rule: "Use for com durações." },
@@ -406,7 +408,6 @@ describe("language view models", () => {
       status: "ready",
       today: {
         level: { label: "A2", target: "B1+" },
-        pattern: { id: pattern.id, kind: "pattern", title: "since e for" },
         pronunciation: null,
         // The goal names no exam: it practices English's certificate at its B1+ target.
         speaking: { access: "plusRequired", title: "B1 Preliminary" },

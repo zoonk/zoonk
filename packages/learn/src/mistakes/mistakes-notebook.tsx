@@ -1,7 +1,7 @@
 "use client";
 
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
-import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
+import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
@@ -56,9 +56,6 @@ type MistakesHrefs = {
 
 /** The notebook's page, read from the query by the host. */
 type MistakesFilters = { nextOffset: number | null; status: "fixed" | "open" };
-
-/** A language goal's pattern noticed in recent mistakes, not practiced yet. */
-type NoticedPattern = NonNullable<LanguageTodayView["pattern"]>;
 
 function buildNotebookHref({
   notebook,

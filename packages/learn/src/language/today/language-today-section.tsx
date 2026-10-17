@@ -1,6 +1,9 @@
 "use client";
 
-import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
+import {
+  type LanguageTodayView,
+  type NoticedPattern,
+} from "@zoonk/core/view-models/language/contract";
 import { KeyboardIcon, MicIcon, SparklesIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
@@ -22,11 +25,10 @@ import {
   SuggestionSummary,
 } from "../../_components/suggestion";
 
-type Pattern = NonNullable<LanguageTodayView["pattern"]>;
 type Pronunciation = NonNullable<LanguageTodayView["pronunciation"]>;
 
 /** A pattern noticed in recent mistakes (or that they were only typos), as a row of a list. */
-export function PatternRow({ href, pattern }: { href: string; pattern: Pattern }) {
+export function PatternRow({ href, pattern }: { href: string; pattern: NoticedPattern }) {
   const t = useExtracted();
   const isTypos = pattern.kind === "typos";
 
@@ -128,7 +130,7 @@ export function LanguagePracticeRow({
   today,
 }: {
   hrefs: { pattern: string | null; pronunciation: string };
-  today: Pick<LanguageTodayView, "pattern" | "pronunciation">;
+  today: { pattern: NoticedPattern | null; pronunciation: LanguageTodayView["pronunciation"] };
 }) {
   const t = useExtracted();
   const format = useFormatter();
