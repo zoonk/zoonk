@@ -16,7 +16,17 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import {
   holdLearnerRevision,
@@ -163,6 +173,57 @@ function stuckConnection({ conversation, user }: Awaited<ReturnType<typeof liveC
     state: "closing",
     userId: user.id,
   });
+}
+
+/** Holds only the new request's insert, so the old ticket's committed refund can be inspected. */
+async function holdLiveCallReservation() {
+  const requestId = randomUUID();
+  const suffix = requestId.replaceAll("-", "");
+  const routine = `live_call_barrier_fn_${suffix}`;
+  const trigger = `live_call_barrier_trigger_${suffix}`;
+  const held = Promise.withResolvers<number>();
+  const released = Promise.withResolvers<null>();
+
+  async function restore(): Promise<void> {
+    await prisma.$executeRawUnsafe(`DROP TRIGGER IF EXISTS ${trigger} ON live_call_connections`);
+    await prisma.$executeRawUnsafe(`DROP FUNCTION IF EXISTS ${routine}()`);
+  }
+
+  onTestFinished(restore);
+
+  /** The identifiers and request literal contain only the UUID generated above. No step is mocked. */
+  await prisma.$executeRawUnsafe(`CREATE FUNCTION ${routine}() RETURNS trigger LANGUAGE plpgsql AS $barrier$
+    BEGIN
+      PERFORM pg_advisory_xact_lock(51874, hashtext('${requestId}'));
+      RETURN NEW;
+    END
+  $barrier$`);
+
+  await prisma.$executeRawUnsafe(`CREATE TRIGGER ${trigger} BEFORE INSERT ON live_call_connections
+    FOR EACH ROW WHEN (NEW.request_id = '${requestId}'::uuid) EXECUTE FUNCTION ${routine}()`);
+
+  const done = prisma.$transaction(
+    async (transaction) => {
+      await transaction.$queryRaw`SELECT pg_advisory_xact_lock(51874, hashtext(${requestId}))::text`;
+
+      const [backend] = await transaction.$queryRaw<
+        { pid: number }[]
+      >`SELECT pg_backend_pid() AS pid`;
+
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    },
+    { timeout: 15_000 },
+  );
+
+  done.catch((error: unknown) => held.reject(error));
+
+  onTestFinished(async () => {
+    released.resolve(null);
+    await Promise.allSettled([done]);
+  });
+
+  return { done, pid: held.promise, release: () => released.resolve(null), requestId };
 }
 
 /** Sessions of this run's database blocked on a row or advisory lock. */
@@ -924,11 +985,14 @@ describe("server-owned live-call reservation and cleanup", () => {
     );
   });
 
-  it("reserves one slot, minute claim and money claim when two tabs start the same call", async () => {
+  it("reserves one slot, minute claim and money claim when both tabs check before either reserves", async () => {
     const { conversation, user } = await liveCallFixture();
     mockSession(user.id);
+    const day = new Date(new Date().toISOString().slice(0, 10));
+    const holder = holdLearnerRevision({ userId: user.id });
+    const pid = await holder.pid;
 
-    const results = await Promise.all([
+    const connecting = [
       connectLanguageConversation({
         conversationId: conversation.id,
         scheduleDeadline: deadlineScheduler(),
@@ -937,8 +1001,31 @@ describe("server-owned live-call reservation and cleanup", () => {
         conversationId: conversation.id,
         scheduleDeadline: deadlineScheduler(),
       }),
-    ]);
+    ];
 
+    const drained = Promise.allSettled([holder.done, ...connecting]);
+
+    try {
+      /** Both passed their previous-call lookup and reached reservation's learner-row mark. */
+      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+
+      await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(
+        0,
+      );
+
+      await expect(
+        prisma.liveCallSlot.findUnique({ where: { userId: user.id } }),
+      ).resolves.toBeNull();
+
+      await expect(usage({ conversationId: conversation.id, userId: user.id })).resolves.toBeNull();
+      await expect(prisma.freeCallSpendDay.findUnique({ where: { day } })).resolves.toBeNull();
+    } finally {
+      holder.release();
+      await drained;
+    }
+
+    const results = await Promise.all(connecting);
+    await holder.done;
     expect(results.filter(({ status }) => status === "ready")).toHaveLength(1);
     expect(results.filter(({ status }) => status === "previousConnectionClosing")).toHaveLength(1);
     const rows = await prisma.liveCallConnection.findMany({ where: { userId: user.id } });
@@ -947,6 +1034,7 @@ describe("server-owned live-call reservation and cleanup", () => {
     expect(rows[0]).toMatchObject({
       heldSeconds: 120,
       liabilityMicros: 135_000,
+      priorUsageSeconds: 0,
       reservedMicros: 135_000,
       state: "pending",
     });
@@ -955,9 +1043,144 @@ describe("server-owned live-call reservation and cleanup", () => {
       usage({ conversationId: conversation.id, userId: user.id }),
     ).resolves.toMatchObject({ seconds: 120 });
 
+    await expect(prisma.freeCallSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+      spentMicros: 135_000,
+    });
+
     await expect(
-      prisma.liveCallSlot.findUnique({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ connectionId: rows[0]?.id });
+      prisma.liveCallSlot.findMany({ where: { userId: user.id } }),
+    ).resolves.toMatchObject([{ connectionId: rows[0]?.id }]);
+
+    expect(createLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("keeps one slot, minute claim and money claim when a later tab replaces a pending ticket", async () => {
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+
+    const firstResult = await connectLanguageConversation({
+      conversationId: conversation.id,
+      scheduleDeadline: deadlineScheduler(),
+    });
+
+    if (firstResult.status !== "ready") {
+      throw new Error(`First reservation refused: ${firstResult.status}`);
+    }
+
+    const first = firstResult.setup;
+    const firstRow = await connection(first.connectionId);
+    const day = firstRow.freeSpendDay!;
+
+    expect(firstRow).toMatchObject({
+      heldSeconds: 120,
+      liabilityMicros: 135_000,
+      priorUsageSeconds: 0,
+      reservedMicros: 135_000,
+      state: "pending",
+    });
+
+    await expect(
+      usage({ conversationId: conversation.id, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: 120 });
+
+    await expect(prisma.freeCallSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+      spentMicros: 135_000,
+    });
+
+    await expect(
+      prisma.liveCallSlot.findMany({ where: { userId: user.id } }),
+    ).resolves.toMatchObject([{ connectionId: first.connectionId, generation: first.generation }]);
+
+    const barrier = await holdLiveCallReservation();
+    const pid = await barrier.pid;
+
+    const replacing = connectLanguageConversation({
+      conversationId: conversation.id,
+      input: { requestId: barrier.requestId },
+      scheduleDeadline: deadlineScheduler(),
+    });
+
+    const drained = Promise.allSettled([barrier.done, replacing]);
+
+    try {
+      /** B has closed A, but its own reservation cannot commit while its insert is held. */
+      await waitForBlockedStatement(pid, /INSERT INTO .*live_call_connections/u);
+
+      await expect(connection(first.connectionId)).resolves.toMatchObject({
+        endReason: "reconnect",
+        liabilityMicros: 0,
+        settledMicros: 0,
+        state: "closed",
+      });
+
+      await expect(
+        prisma.liveCallConnection.findMany({
+          where: { state: { not: "closed" }, userId: user.id },
+        }),
+      ).resolves.toStrictEqual([]);
+
+      await expect(
+        prisma.liveCallSlot.findMany({ where: { userId: user.id } }),
+      ).resolves.toMatchObject([{ connectionId: null, generation: first.generation }]);
+
+      await expect(
+        usage({ conversationId: conversation.id, userId: user.id }),
+      ).resolves.toMatchObject({ seconds: firstRow.priorUsageSeconds });
+
+      await expect(prisma.freeCallSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+        spentMicros: 0,
+      });
+    } finally {
+      barrier.release();
+      await drained;
+    }
+
+    const [, second] = await Promise.all([barrier.done, replacing]);
+    expect([firstResult.status, second.status]).toStrictEqual(["ready", "ready"]);
+
+    if (second.status !== "ready") {
+      throw new Error(`Replacement refused: ${second.status}`);
+    }
+
+    const rows = await prisma.liveCallConnection.findMany({ where: { userId: user.id } });
+    expect(rows).toHaveLength(2);
+
+    expect(rows.find(({ id }) => id === first.connectionId)).toMatchObject({
+      endReason: "reconnect",
+      liabilityMicros: 0,
+      settledMicros: 0,
+      state: "closed",
+    });
+
+    expect(rows.find(({ id }) => id === second.setup.connectionId)).toMatchObject({
+      generation: first.generation + 1,
+      heldSeconds: 120,
+      liabilityMicros: 135_000,
+      priorUsageSeconds: firstRow.priorUsageSeconds,
+      reservedMicros: 135_000,
+      state: "pending",
+    });
+
+    expect(rows.filter(({ state }) => state !== "closed")).toHaveLength(1);
+    expect(rows.reduce((total, row) => total + row.liabilityMicros, 0)).toBe(135_000);
+
+    await expect(
+      prisma.liveCallSlot.findMany({ where: { userId: user.id } }),
+    ).resolves.toMatchObject([
+      { connectionId: second.setup.connectionId, generation: second.setup.generation },
+    ]);
+
+    await expect(
+      usage({ conversationId: conversation.id, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: firstRow.priorUsageSeconds + 120 });
+
+    await expect(prisma.freeCallSpendDay.findUnique({ where: { day } })).resolves.toMatchObject({
+      spentMicros: 135_000,
+    });
+
+    await expect(
+      redeem({ connectionId: first.connectionId, conversationId: conversation.id }),
+    ).resolves.toStrictEqual({ status: "connectionUsed" });
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
