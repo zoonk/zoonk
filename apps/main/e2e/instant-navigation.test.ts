@@ -59,15 +59,16 @@ async function pagePrefetched(page: Page, path: string) {
 
 /**
  * Like `pagePrefetched`, for a page with the learner's own facts (their goal limit): those come
- * with the link's runtime prefetch, which can land after the page's static part. The server renders
- * that prefetch whole before it answers, so its answer coming in is the signal. Playwright never
- * sees these streamed answers finish, so waiting for `finished()` would hang.
+ * with the link's runtime prefetch, which can land after the page's static part. The router keeps
+ * that prefetch only once its whole body is in, so the signal is its request finishing, not its
+ * answer starting: under load, a tap between the two painted the page's skeletons. `finished()`
+ * on an answer whose request failed never resolves, so this waits for the first one that finishes.
  */
 async function pageAndOwnFactsPrefetched(page: Page, path: string) {
-  const ownFacts = page.waitForResponse(
-    (response) =>
-      new URL(response.url()).pathname === path &&
-      response.request().headers()["next-router-prefetch"] === "2",
+  const ownFacts = page.waitForEvent(
+    "requestfinished",
+    (request) =>
+      new URL(request.url()).pathname === path && request.headers()["next-router-prefetch"] === "2",
   );
 
   await pagePrefetched(page, path);
