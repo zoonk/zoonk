@@ -38,8 +38,10 @@ const HOUR_MS = 3_600_000;
 
 /**
  * A goal whose plan has its skill graph (what the goal-driven workflow writes) and a Library chapter
- * with twelve 3-minute lessons for its one skill, for a public course, planned four a day from today
- * as the planner lays them out at 12 minutes a day.
+ * with twelve 3-minute lessons for its one skill, for a public course, saved as a plan the learner
+ * saw laid out: four lessons a day from today at 12 minutes a day, its phase dated and closed by its
+ * challenge on its last day. A fixed layout, not the planner's own (its days and minutes can differ):
+ * reads keep a layout the learner saw while its inputs stay the same.
  */
 async function createPlannedGoal(userId: string) {
   const [course, chapter, skill] = await Promise.all([
@@ -69,6 +71,8 @@ async function createPlannedGoal(userId: string) {
   );
 
   const goal = await goalFixture({ dailyMinutes: 12, primaryCourseId: course.id, userId });
+  const today = Math.floor(Date.now() / DAY_MS) * DAY_MS;
+  const lastDay = new Date(today + (LESSONS / LESSONS_PER_DAY - 1) * DAY_MS);
 
   const plan = await planFixture({
     goalId: goal.id,
@@ -86,14 +90,19 @@ async function createPlannedGoal(userId: string) {
       ],
     },
     phases: [
-      { kind: "learn", milestone: "Read the market's news", minutes: 0, name: "The basics" },
+      {
+        endDate: lastDay.toISOString().slice(0, 10),
+        kind: "learn",
+        milestone: "Read the market's news",
+        minutes: 0,
+        name: "The basics",
+        startDate: new Date(today).toISOString().slice(0, 10),
+      },
     ],
   });
 
-  const today = Math.floor(Date.now() / DAY_MS) * DAY_MS;
-
-  await Promise.all(
-    lessons.map((lesson, position) =>
+  await Promise.all([
+    ...lessons.map((lesson, position) =>
       planItemFixture({
         lessonId: lesson.id,
         planId: plan.id,
@@ -103,7 +112,14 @@ async function createPlannedGoal(userId: string) {
         titleSnapshot: lesson.title,
       }),
     ),
-  );
+    planItemFixture({
+      kind: "boss",
+      planId: plan.id,
+      position: LESSONS,
+      scheduledFor: lastDay,
+      titleSnapshot: "The basics",
+    }),
+  ]);
 
   return { chapter, course, goal, plan, skill };
 }
@@ -241,17 +257,36 @@ test.describe("Goals and plans API", () => {
 
     const { goal, plan } = await createPlannedGoal(user.id);
 
+    const read = async () => {
+      const [planResponse, preparationResponse] = await Promise.all([
+        apiContext.get(`/v1/goals/${goal.id}/plan`),
+        apiContext.get(`/v1/goals/${goal.id}/preparation`),
+      ]);
+
+      return Promise.all([
+        readBody({ response: planResponse, schema: planResponseSchema }),
+        readBody({ response: preparationResponse, schema: goalPreparationResponseSchema }),
+      ]);
+    };
+
+    // Every lesson studied, the phase's challenge still to win: the plan isn't finished yet.
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    const [challengeLeft, challengePreparation] = await read();
+
+    expect(challengeLeft).toMatchObject({
+      end: null,
+      status: { challenges: 1, kind: "challengesLeft" },
+    });
+
+    expect(challengePreparation.status).toStrictEqual({ challenges: 1, kind: "challengesLeft" });
+
     await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
 
-    const [planResponse, preparationResponse] = await Promise.all([
-      apiContext.get(`/v1/goals/${goal.id}/plan`),
-      apiContext.get(`/v1/goals/${goal.id}/preparation`),
-    ]);
-
-    const [planView, preparation] = await Promise.all([
-      readBody({ response: planResponse, schema: planResponseSchema }),
-      readBody({ response: preparationResponse, schema: goalPreparationResponseSchema }),
-    ]);
+    const [planView, preparation] = await read();
 
     expect(planView).toMatchObject({
       end: { kind: "finished" },

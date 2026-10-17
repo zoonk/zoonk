@@ -1,4 +1,4 @@
-import { type Browser, type Locator } from "@playwright/test";
+import { type Browser, type Locator, type Page } from "@playwright/test";
 import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
@@ -46,7 +46,23 @@ async function loadTargetDate(goalId: string) {
   return goal.targetDate?.toISOString().slice(0, 10) ?? null;
 }
 
-/** A learner whose plan builds on bases, with it as their active goal; Today builds the plan. */
+/**
+ * Starting the day Today shows (a POST) lays out the plan the goal's run handed over. The tap moves
+ * to the session before its POST answers; the day's session commits with the plan, so it's there
+ * once the plan is.
+ */
+async function startTodaysDay({ goalId, page }: { goalId: string; page: Page }) {
+  await page.goto("/today");
+
+  await page
+    .getByRole("region", { name: "Today's session" })
+    .getByRole("button", { name: /^Start/u })
+    .click();
+
+  await expect.poll(() => prisma.studySession.count({ where: { goalId } })).toBe(1);
+}
+
+/** A learner whose plan builds on bases, with it as their active goal, who started their day. */
 async function openLearnerWithBases(
   browser: Browser,
   { days, kind }: { days: number; kind: "exam" | "learn" },
@@ -64,8 +80,7 @@ async function openLearnerWithBases(
 
   const page = await openAs(browser, user);
 
-  await page.goto("/today");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await startTodaysDay({ goalId: fixture.goal.id, page });
   await page.goto("/plan");
   await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
 
@@ -298,9 +313,8 @@ test.describe("Plan choices", () => {
 
     const page = await openAs(browser, user);
 
-    // Today builds the plan the reveal shows.
-    await page.goto("/today");
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    // Starting the day lays out the plan the reveal shows.
+    await startTodaysDay({ goalId: goal.id, page });
     await page.goto(`/start/${goal.id}`);
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 

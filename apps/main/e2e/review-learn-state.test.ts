@@ -22,7 +22,18 @@ async function openBasesPlan(browser: Browser) {
   await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
   const page = await openAs(browser, user);
   await page.goto("/today");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+  // Starting the day Today shows (a POST) lays out the plan the goal's run handed over. The tap
+  // moves to the session before its POST answers; the day's session commits with the plan.
+  await page
+    .getByRole("region", { name: "Today's session" })
+    .getByRole("button", { name: /^Start/u })
+    .click();
+
+  await expect
+    .poll(() => prisma.studySession.count({ where: { goalId: fixture.goal.id } }))
+    .toBe(1);
+
   await page.goto("/plan");
   await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
   return { ...fixture, page };

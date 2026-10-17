@@ -21,8 +21,8 @@ const TOPICS = [
 ] as const;
 
 /**
- * A skill placement settled, so the plan has an item when it's handed over and its first read
- * (Today's, the API's) builds it, as after onboarding.
+ * A skill placement settled, so the plan has an item when it's handed over and the learner's first
+ * POST (opening their day on Today, a plan change or an onboarding answer) lays it out. Reads don't.
  */
 const SETTLED = "Scientific method";
 

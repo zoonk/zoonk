@@ -1,4 +1,3 @@
-import { type APIRequestContext } from "@playwright/test";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -6,19 +5,8 @@ import { goalWithBasesFixture } from "@zoonk/testing/fixtures/plan-bases";
 import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import { planChangeResultSchema, planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
-
-/** Today's first read builds the plan the goal's run handed over, as after onboarding. */
-async function openToday({
-  apiContext,
-  goalId,
-}: {
-  apiContext: APIRequestContext;
-  goalId: string;
-}) {
-  const today = await apiContext.get(`/v1/today?timeZone=UTC&goalId=${goalId}`);
-  expect(today.status(), await today.text()).toBe(200);
-}
 
 /**
  * The learner's choices when time is short, through the API as the apps make them: how to study
@@ -45,7 +33,8 @@ test.describe("Plan choices API", () => {
     const [cells, living] = bases;
     const plan = `/v1/goals/${goal.id}/plan`;
 
-    await openToday({ apiContext, goalId: goal.id });
+    // Opening the day the learner sees on Today (a POST) lays out the plan the run handed over.
+    await openStudyDay({ api: apiContext, goalId: goal.id });
 
     const before = await readBody({
       response: await apiContext.get(plan),
@@ -169,7 +158,8 @@ test.describe("Plan choices API", () => {
     const { goal } = await goalWithBasesFixture({ days: 20, kind: "learn", userId: user.id });
     const plan = `/v1/goals/${goal.id}/plan`;
 
-    await openToday({ apiContext, goalId: goal.id });
+    // Opening the day the learner sees on Today (a POST) lays out the plan the run handed over.
+    await openStudyDay({ api: apiContext, goalId: goal.id });
 
     const notExam = await apiContext.post(`${plan}/changes`, {
       data: { operations: [{ fullCourse: true, kind: "setFullCourse" }] },
