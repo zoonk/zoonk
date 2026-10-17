@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { thirdsMath, thirdsQuestion } from "../library/items/_test-utils/math-problems";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
+import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
@@ -24,6 +25,7 @@ import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
 import { getStudyBlock } from "../sessions/get-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { findLastCheckpointResult } from "./_utils/checkpoint-results";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
@@ -823,6 +825,54 @@ describe(getWeeklyChallenge, () => {
       challenge: { conditions: { leftOut: [] }, kind: "mock" },
       status: "ready",
     });
+  });
+
+  // Today's week row said "10 questions" for a mixed challenge whose intro said 7, or no size.
+  it("says the size its intro says for a mixed challenge, and none while that's unknown", async () => {
+    const user = await userFixture();
+    const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
+
+    const weekly = await checkpointItemFixture({
+      kind: "checkpoint",
+      planId: plan.id,
+      position: 10,
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 3 * DAY_MS),
+    });
+
+    mockSession(user.id);
+
+    const readSizes = async () => {
+      const challenge = await getWeeklyChallenge({ goalId: goal.id });
+      const today = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+      return [
+        challenge.status === "ready" ? challenge.challenge?.questions : null,
+        today.status === "ready" ? today.today.weeklyChallenge?.questions : null,
+      ];
+    };
+
+    await expect(readSizes()).resolves.toStrictEqual([0, 0]);
+
+    const skillIds = skills.map((skill) => skill.id);
+
+    const facts: SavedItemFacts = {
+      boss: {
+        kind: "text",
+        minutes: 7,
+        questions: 7,
+        testedKeys: [],
+        testedSkillIds: skillIds,
+        waiting: false,
+      },
+      minutes: 7,
+      parts: { checkpoint: 7, practice: 0, unwritten: 0, written: 0 },
+      schemaVersion: 1,
+      skillIds,
+    };
+
+    await prisma.planItem.update({ data: { facts }, where: { id: weekly.id } });
+
+    await expect(readSizes()).resolves.toStrictEqual([7, 7]);
   });
 
   it("has nothing to show without a weekly checkpoint in the plan", async () => {

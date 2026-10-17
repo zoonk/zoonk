@@ -2,13 +2,11 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findNextWeeklyItem } from "../../../checkpoints/_utils/load-weekly-challenge";
 import { loadMockCard } from "../../../checkpoints/_utils/mock-card";
-import {
-  CHECKPOINT_QUESTIONS,
-  MIN_CHECKPOINT_QUESTIONS,
-} from "../../../checkpoints/checkpoint-rules";
+import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
 import {
   type WeeklyChallengeResult,
   getWeeklyChallenge,
+  getWeeklyQuestions,
 } from "../../../checkpoints/get-weekly-challenge";
 import { readExamBlueprint } from "../../../learner/facts/exam-blueprint";
 import { type SelectedDayPlan } from "../../../sessions/_utils/selected-day-plan";
@@ -66,7 +64,7 @@ async function readSelectedCard({
     date: item.scheduledFor,
     kind: isMock ? "mock" : "mixed",
     planItemId: item.id,
-    questions: card?.conditions.questions ?? CHECKPOINT_QUESTIONS,
+    questions: getWeeklyQuestions({ conditions: card?.conditions, item }),
     timeLimitMinutes: card?.conditions.timeLimitMinutes ?? null,
     title: item.titleSnapshot,
   };
