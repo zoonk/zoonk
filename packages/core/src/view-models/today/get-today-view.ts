@@ -308,6 +308,18 @@ async function readAdmittedToday({
 }
 
 /**
+ * `readAdmittedToday` in its own private cache scope, for the API's follow, which can't run in one
+ * (it writes): the day's readers tag what they read (`cacheTag`), which only works inside a scope.
+ */
+async function readAdmittedTodayInScope(
+  input: Parameters<typeof readAdmittedToday>[0],
+): Promise<TodayViewResult> {
+  "use cache: private";
+
+  return readAdmittedToday(input);
+}
+
+/**
  * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
  * references until the learner opens it with a POST; prefetch never creates or settles a day.
  */
@@ -342,7 +354,7 @@ export async function getTodayViewFollowingDevice(
 
   // Already the goal's zone, or none sent: nothing moves, so the day is read from this admission.
   if (!timeZone || timeZone === admission.owned.goal.timezone) {
-    return readAdmittedToday({ admission, timeZone });
+    return readAdmittedTodayInScope({ admission, timeZone });
   }
 
   // The move commits only while Today still shows the goal a day, as read under its locks.
@@ -356,6 +368,6 @@ export async function getTodayViewFollowingDevice(
   const admitted = await admitToday(admission.owned.goal.id);
 
   return admitted.status === "admitted"
-    ? readAdmittedToday({ admission: admitted, timeZone })
+    ? readAdmittedTodayInScope({ admission: admitted, timeZone })
     : admitted;
 }
