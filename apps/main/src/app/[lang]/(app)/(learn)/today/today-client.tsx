@@ -46,80 +46,27 @@ import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
 
 /**
- * How long Today trusts its prefetch of the session screen's frame while the router doesn't say
- * it dropped it: long enough to cover Today mounting anew after a refresh, short enough that a
- * prefetch that failed or expired is asked again soon.
- */
-const SESSION_FRAME_TRUST_MS = 30_000;
-
-/**
- * The session screen's frame Today prefetched for the whole tab: its address, until when that
- * prefetch is trusted (`until`), and the prefetch of the Today on screen, which fetches it again
- * once the router drops it.
- */
-const sessionFrame: { href: string; refetch: (() => void) | null; until: number } = {
-  href: "",
-  refetch: null,
-  until: 0,
-};
-
-/**
  * Prefetches the session screen's frame for this day's taps, so a step that plays there opens at
- * once: once while that prefetch is trusted, once more, while Today is on screen, when the router
- * drops it (`onInvalidate`: a page refresh, a write that expired the page), and again whenever the
- * trust runs out while Today is shown (a prefetch that failed or expired; the router fetches
- * nothing for a copy it still holds fresh). Today mounting anew (a new day after a refresh) reuses
- * it, so a refresh fetches the frame once, not twice.
+ * once, and again each time the router drops that prefetch (a write that expired the page, or the
+ * copy grown stale). Today mounting anew asks again; the router fetches nothing for a copy it
+ * still holds fresh.
  */
 function usePrefetchSessionFrame(href: string) {
   const router = useRouter();
 
   useEffect(() => {
-    let recheck: ReturnType<typeof setTimeout> | undefined;
+    let active = true;
 
     const prefetch = () => {
-      if (sessionFrame.href === href && Date.now() < sessionFrame.until) {
-        return;
+      if (active) {
+        router.prefetch(href, { onInvalidate: prefetch });
       }
-
-      sessionFrame.href = href;
-      sessionFrame.until = Date.now() + SESSION_FRAME_TRUST_MS;
-
-      router.prefetch(href, {
-        onInvalidate: () => {
-          if (sessionFrame.href === href) {
-            sessionFrame.until = 0;
-            sessionFrame.refetch?.();
-          }
-        },
-      });
     };
 
-    // Checks again when the trust runs out, only while Today is shown: a hidden tab checks on return.
-    const check = () => {
-      clearTimeout(recheck);
-
-      if (document.visibilityState !== "visible") {
-        return;
-      }
-
-      prefetch();
-      recheck = setTimeout(check, Math.max(sessionFrame.until - Date.now(), 0) + 1);
-    };
-
-    sessionFrame.refetch = check;
-    check();
-    document.addEventListener("visibilitychange", check);
-    globalThis.addEventListener("pageshow", check);
+    prefetch();
 
     return () => {
-      clearTimeout(recheck);
-      document.removeEventListener("visibilitychange", check);
-      globalThis.removeEventListener("pageshow", check);
-
-      if (sessionFrame.refetch === check) {
-        sessionFrame.refetch = null;
-      }
+      active = false;
     };
   }, [href, router]);
 }
