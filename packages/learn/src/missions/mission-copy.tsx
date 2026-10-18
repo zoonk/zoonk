@@ -4,6 +4,8 @@ import { type Mission } from "@zoonk/core/sessions/missions";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
+import { type DayStep } from "../session/session-types";
+import { useBlockTitle } from "../session/use-block-copy";
 import { useReviewTitle } from "../session/use-review-title";
 import { type MissionView } from "./mission-links";
 import { ProgressCount } from "./mission-list";
@@ -258,8 +260,9 @@ function useMissionStep() {
   const outsideStep = useOutsideStep();
   const chapterStep = useChapterStep();
   const reviewTitle = useReviewTitle();
+  const blockTitle = useBlockTitle();
 
-  return function missionStep(mission: MissionView): string | null {
+  return function missionStep(mission: MissionView, block?: DayStep): string | null {
     const { detail, kind, waitReason } = mission;
 
     if (waitReason) {
@@ -276,6 +279,10 @@ function useMissionStep() {
 
     if (detail?.title) {
       return detail.title;
+    }
+
+    if (block) {
+      return blockTitle(block);
     }
 
     if (kind === "review") {
@@ -306,10 +313,11 @@ function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number
  * What a mission still asks, under its name: how far a multi-step one is ("1/3"), the block it
  * opens (a chapter's next lesson, and how many after it) or where it's done, and about how long it
  * takes. A challenge that has to wait says what for. The minutes stay with the line's last word,
- * so a narrow column never leaves them alone on a line.
+ * so a narrow column never leaves them alone on a line. On Today, the block it opens (`block`) is
+ * named as the day's queue names it: "Practice mistakes" there was a bare "Practice" here.
  */
-export function MissionStepLine({ mission }: { mission: MissionView }) {
-  const step = useMissionStep()(mission);
+export function MissionStepLine({ block, mission }: { block?: DayStep; mission: MissionView }) {
+  const step = useMissionStep()(mission, block);
   const minutes = mission.minutes ?? 0;
   const count = mission.total > 1 && <ProgressCount done={mission.done} total={mission.total} />;
 

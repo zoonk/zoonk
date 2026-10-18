@@ -7,6 +7,8 @@ import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { DoneMark } from "../_components/status-mark";
 import { type BuddyMission } from "../buddies/buddy-status-view";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
+import { BlockMark } from "../session/block-mark";
+import { type DayStep } from "../session/session-types";
 
 type MissionKind = BuddyMission["kind"];
 
@@ -56,13 +58,17 @@ export function BuddyFace({ buddy, className }: { buddy: LearnBuddy | null; clas
 /**
  * A mission's mark, the same in the missions card (on Today and in the buddy's day) and among the
  * first steps: its kind's icon (or its character's face) while it's to do, and the done mark every
- * list shares once done. Decorative: the words beside it name the mission and its state.
+ * list shares once done. On Today, a mission that opens one of the day's blocks wears that block's
+ * mark (`block`), so practice that only fixes mistakes looks the same in both lists. Decorative:
+ * the words beside it name the mission and its state.
  */
 export function MissionMark({
+  block,
   buddy,
   done,
   kind,
 }: {
+  block?: DayStep;
   /** The learner's buddy, whose face marks a question to it. */
   buddy: LearnBuddy | null;
   done: boolean;
@@ -72,6 +78,10 @@ export function MissionMark({
 
   if (done) {
     return <DoneMark className={FACE_SIZES.done} />;
+  }
+
+  if (block) {
+    return <BlockMark block={block} />;
   }
 
   if (mark === "trickster") {

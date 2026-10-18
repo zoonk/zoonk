@@ -193,6 +193,9 @@ test.describe("Today", () => {
     const reviewMission = missions.getByRole("button", { name: /^Review\b/u });
     await expect(reviewMission).toBeEnabled();
 
+    // Its mission names the block as the day's list does: "Quick review" there was a second name.
+    await expect(reviewMission).toHaveAccessibleDescription(/^What you already know\s·\s2\smin$/u);
+
     await reviewMission.click();
 
     await expect(

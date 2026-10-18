@@ -11,6 +11,7 @@ import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type DayStep } from "../session/session-types";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
@@ -54,10 +55,12 @@ function MissionsStatus({
  * what for and opens nothing yet.
  */
 function MissionRow({
+  block,
   buddy,
   links,
   mission,
 }: {
+  block?: DayStep;
   buddy: LearnBuddy | null;
   links: MissionLinks;
   mission: MissionView;
@@ -70,8 +73,8 @@ function MissionRow({
 
   return (
     <MissionListRow
-      detail={done ? null : <MissionStepLine mission={mission} />}
-      mark={<MissionMark buddy={buddy} done={done} kind={mission.kind} />}
+      detail={done ? null : <MissionStepLine block={block} mission={mission} />}
+      mark={<MissionMark block={block} buddy={buddy} done={done} kind={mission.kind} />}
       muted={done || Boolean(mission.waitReason)}
       name={missionName(mission)}
       stateLabel={stateLabel({
@@ -119,9 +122,11 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
  * stake. A day without missions shows nothing; before today's session exists the buddy's day says
  * when they start. `rowsInQueue`: where the card follows Today's queue (under 72rem) and every
  * mission only opens one of its blocks, it keeps its header and track and leaves the rows to the
- * queue, whose violet marks name those blocks: Ana's phone listed her two blocks twice.
+ * queue, whose violet marks name those blocks: Ana's phone listed her two blocks twice. `blockOf`:
+ * on Today, the day's block a mission opens, which its row then marks and names as the queue does.
  */
 export function MissionsCard({
+  blockOf,
   brainPower,
   buddy,
   className,
@@ -131,6 +136,7 @@ export function MissionsCard({
   rowsInQueue = false,
   today,
 }: {
+  blockOf?: (mission: MissionView) => DayStep | undefined;
   brainPower: number | null;
   buddy: LearnBuddy | null;
   className?: string;
@@ -226,7 +232,12 @@ export function MissionsCard({
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>
-              <MissionRow buddy={buddy} links={links} mission={mission} />
+              <MissionRow
+                block={blockOf?.(mission)}
+                buddy={buddy}
+                links={links}
+                mission={mission}
+              />
             </li>
           ))}
         </ul>

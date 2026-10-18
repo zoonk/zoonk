@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { type DayStep } from "../session/session-types";
-import { BlockRow, PlusLessonRow, type RowFold } from "./today-block-row";
+import { BlockRow, PlusLessonRow, type RowFold, useCountsTowardMission } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
 import { DayMeta, DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
@@ -42,9 +42,20 @@ function sumMinutes(blocks: readonly DayStep[]): number {
   return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
 }
 
+/** Upcoming rows in sight before the "+N more" fold, on a phone and from `sm`. */
+type UpcomingRows = { phone: number; wide: number };
+
 /** Whether an upcoming row hides behind the "+N more" fold, on a phone and from `sm`. */
-function getUpcomingFold({ index, open }: { index: number; open: boolean }): RowFold {
-  return { hidden: !open, phone: index >= PHONE_UPCOMING_ROWS, wide: index >= WIDE_UPCOMING_ROWS };
+function getUpcomingFold({
+  index,
+  open,
+  rows,
+}: {
+  index: number;
+  open: boolean;
+  rows: UpcomingRows;
+}): RowFold {
+  return { hidden: !open, phone: index >= rows.phone, wide: index >= rows.wide };
 }
 
 /**
@@ -52,7 +63,8 @@ function getUpcomingFold({ index, open }: { index: number; open: boolean }): Row
  * lessons for today that the learner's plan holds for Plus (`PlusLessonRow`). A phone keeps the
  * day on its first screen: more than two blocks done fold into one row, and past six after the
  * next one the rest fold into "+3 more". From `sm` the whole day shows (a day longer than 12 after
- * the next block folds the rest the same way).
+ * the next block folds the rest the same way). The fold never hides a block a mission opens: where
+ * the missions card leaves its rows to the queue, that block is the mission's one place.
  */
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
@@ -61,11 +73,19 @@ function SessionQueue({ next }: { next: DayStep }) {
   const daySoFar = useDaySoFar(blocks);
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const countsTowardMission = useCountsTowardMission();
   const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
   const foldsDone = done.length > PHONE_DONE_ROWS;
+  const marked = after.findLastIndex((block) => countsTowardMission(block)) + 1;
+
+  const rows = {
+    phone: Math.max(PHONE_UPCOMING_ROWS, marked),
+    wide: Math.max(WIDE_UPCOMING_ROWS, marked),
+  };
+
   const upcoming = after.length + plusLessons.length;
-  const phoneMore = Math.max(0, upcoming - PHONE_UPCOMING_ROWS);
-  const wideMore = Math.max(0, upcoming - WIDE_UPCOMING_ROWS);
+  const phoneMore = Math.max(0, upcoming - rows.phone);
+  const wideMore = Math.max(0, upcoming - rows.wide);
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">
@@ -98,7 +118,7 @@ function SessionQueue({ next }: { next: DayStep }) {
         {after.map((block, index) => (
           <BlockRow
             block={block}
-            fold={getUpcomingFold({ index, open: moreOpen })}
+            fold={getUpcomingFold({ index, open: moreOpen, rows })}
             isNext={false}
             key={block.position}
           />
@@ -106,7 +126,7 @@ function SessionQueue({ next }: { next: DayStep }) {
 
         {plusLessons.map((lesson, index) => (
           <PlusLessonRow
-            fold={getUpcomingFold({ index: after.length + index, open: moreOpen })}
+            fold={getUpcomingFold({ index: after.length + index, open: moreOpen, rows })}
             // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
             key={index}
             title={lesson.title}
@@ -119,7 +139,7 @@ function SessionQueue({ next }: { next: DayStep }) {
           className="sm:hidden"
           done={false}
           label={t("+{count, number} more", { count: phoneMore })}
-          minutes={sumMinutes(after.slice(PHONE_UPCOMING_ROWS))}
+          minutes={sumMinutes(after.slice(rows.phone))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />
@@ -130,7 +150,7 @@ function SessionQueue({ next }: { next: DayStep }) {
           className="max-sm:hidden"
           done={false}
           label={t("+{count, number} more", { count: wideMore })}
-          minutes={sumMinutes(after.slice(WIDE_UPCOMING_ROWS))}
+          minutes={sumMinutes(after.slice(rows.wide))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />

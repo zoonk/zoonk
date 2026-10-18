@@ -1,10 +1,19 @@
+import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
-import { createMistakeLearner } from "./mistake-drill-days";
-import { LESSON_TITLE, createStudyDay, openAs } from "./study-day";
+import { createDrillSession, createMistakeLearner } from "./mistake-drill-days";
+import { LESSON_TITLE, createStudyDay, openAs, saveMissions } from "./study-day";
 
 const LAPTOP = { height: 900, width: 1440 };
 const PHONE = { height: 844, width: 390 };
+
+/** The icon a row's kind mark draws ("lucide-dumbbell"), to tell two marks apart. */
+async function getKindIcon(row: Locator) {
+  const classes = await row.locator("[data-slot=kind-icon]").getAttribute("class");
+  return classes?.match(/lucide-[a-z-]+/u)?.[0];
+}
 
 test.describe("Today's missions card", () => {
   test("shows missions on the first Today load and one page heading across Today and Plan", async ({
@@ -160,6 +169,98 @@ test.describe("Today's missions card", () => {
       missions.getByRole("button", { name: "Review, go to today's review" }),
     ).toHaveAccessibleDescription(/^Quick review\s·\s2\smin$/u);
 
+    await page.context().close();
+  });
+
+  // A long phone day folds its later blocks under "+N more", but the card leaves the mission's row
+  // to the queue: the block the mission opens stays in sight, and only the rest fold.
+  test("on a long phone day, the block a mission opens stays above the fold", async ({
+    browser,
+  }) => {
+    const { session, user } = await createStudyDay();
+
+    const practice = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "practice", sessionId: session.id },
+    });
+
+    // The new lesson comes eighth after the review, behind seven practice blocks, with two after it.
+    await prisma.studySessionBlock.updateMany({
+      data: { position: 9 },
+      where: { kind: "learn", sessionId: session.id },
+    });
+
+    await Promise.all(
+      [3, 4, 5, 6, 7, 8, 10, 11].map((position) =>
+        studySessionBlockFixture({
+          estimatedMinutes: 1,
+          kind: "practice",
+          payload: isJsonObject(practice.payload) ? practice.payload : {},
+          position,
+          sessionId: session.id,
+        }),
+      ),
+    );
+
+    await saveMissions(session.id, [
+      { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+      { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize(PHONE);
+    await page.goto("/today");
+
+    const missions = page.getByRole("region", { name: "Today's missions" });
+    await expect(missions).toContainText(/2 missions/u);
+    await expect(missions.getByRole("listitem")).toHaveCount(0);
+
+    const queue = page.getByRole("region", { name: "Today's session" });
+
+    await page.screenshot({
+      fullPage: true,
+      path: test.info().outputPath("today-long-phone-day.png"),
+    });
+
+    await expect(
+      queue.getByRole("button", { exact: true, name: `${LESSON_TITLE}, counts toward a mission` }),
+    ).toBeVisible();
+
+    await expect(queue.getByRole("button", { name: /^\+2 more/u })).toBeVisible();
+    await page.context().close();
+  });
+
+  // Ana's mistakes block was "Practice mistakes" in the queue but a bare "Practice" with another
+  // mark among the missions: beside the queue, a mission's row names and marks its block the same.
+  test("beside the queue, a mission's row names and marks the block it opens as the queue does", async ({
+    browser,
+  }) => {
+    const { session, user } = await createDrillSession({ causes: ["misread"] });
+
+    await saveMissions(session.id, [
+      { anchor: { blockKind: "practice" }, kind: "practice", total: 1 },
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize(LAPTOP);
+    await page.goto("/today");
+
+    const mission = page.getByRole("region", { name: "Today's missions" }).getByRole("listitem");
+
+    const block = page
+      .getByRole("region", { name: "Today's session" })
+      .getByRole("listitem")
+      .filter({ hasText: "Practice mistakes" });
+
+    await expect(block).toBeVisible();
+    await page.screenshot({ path: test.info().outputPath("today-mission-row-laptop.png") });
+
+    await expect(
+      mission.getByRole("button", { name: "Practice, go to today's practice" }),
+    ).toHaveAccessibleDescription(/^Practice mistakes\s·\s4\smin$/u);
+
+    const blockIcon = await getKindIcon(block);
+    expect(blockIcon).toMatch(/^lucide-/u);
+    expect(await getKindIcon(mission)).toBe(blockIcon);
     await page.context().close();
   });
 });

@@ -210,7 +210,7 @@ function RowLines({
 }
 
 /** Whether a mission opens this step: by its id on a saved day, by its place on a day not opened yet. */
-function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
+export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
   if (opens?.kind !== "block") {
     return false;
   }
@@ -221,22 +221,23 @@ function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
 }
 
 /**
- * The block a mission still to do opens, marked in Brain Power's violet beside its minutes: doing
- * it moves the day's missions. Only the block a tap on the mission would open, so a day's queue
- * carries at most one mark per mission, and none once the mission is done, while it waits, or
- * once today's bonus is earned.
+ * Whether a block is one a mission still to do opens, marked in Brain Power's violet beside its
+ * minutes: doing it moves the day's missions. Only the block a tap on the mission would open, so a
+ * day's queue carries at most one mark per mission, and none once the mission is done, while it
+ * waits, or once today's bonus is earned.
  */
-function useCountsTowardMission(step: DayStep) {
+export function useCountsTowardMission() {
   const { missions } = useTodayScreen();
 
   // Once today's bonus is earned (here or by another goal), nothing is at stake: no marks.
-  return Boolean(
-    !missions?.fullMeal.earned &&
-    missions?.missions.some(
-      (mission) =>
-        mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
-    ),
-  );
+  return (step: DayStep): boolean =>
+    Boolean(
+      !missions?.fullMeal.earned &&
+      missions?.missions.some(
+        (mission) =>
+          mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
+      ),
+    );
 }
 
 /**
@@ -264,7 +265,7 @@ export function BlockRow({
 }) {
   const formatDuration = useFormatDuration();
   const finished = isFinished(block);
-  const countsTowardMission = useCountsTowardMission(block);
+  const countsTowardMission = useCountsTowardMission()(block);
   const wait = block.waitReason;
   const name = <RowName block={block} isNext={isNext} />;
 
