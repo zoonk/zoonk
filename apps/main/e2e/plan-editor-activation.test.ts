@@ -52,7 +52,7 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
       .toBe(15);
 
     await expect(
-      editor.getByText("Your plan follows it from now on.", { exact: true }),
+      editor.getByText("It's in your plan, and today's session follows it.", { exact: true }),
     ).toBeVisible();
 
     expect(saves).toHaveLength(1);
