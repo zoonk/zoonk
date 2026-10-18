@@ -966,9 +966,22 @@ describe(goalContentWorkflow, () => {
           where: { kind: "lesson", plan: { goalId: goal.id } },
         });
 
-        await prisma.planItem.updateMany({
-          data: { status: "testedOut" },
-          where: { id: { in: opening.map((item) => item.id) } },
+        /**
+         * Placement settles whole skills. A partial skill left todo can differ from the
+         * computed start when another Library write wins the refresh's save.
+         */
+        await prisma.$transaction(async (tx) => {
+          await markPlanInputsChanged(tx, { userIds: [user.id] });
+
+          await tx.planItem.updateMany({
+            data: { completedAt: new Date(), status: "testedOut" },
+            where: {
+              kind: "lesson",
+              plan: { goalId: goal.id },
+              skillId: { in: opening.flatMap((item) => item.skillId ?? []) },
+              status: "todo",
+            },
+          });
         });
       });
 
