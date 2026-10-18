@@ -65,6 +65,9 @@ async function setup(timeZone: string) {
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 10,
     details: {
+      // The learner answered the start's questions: a course start whose questions are left is
+      // still setting up, and Today leads back to them (see `isCourseSetupLeft`).
+      answered: ["targetDate", "schedule"],
       courseStart: { chapterId: library.chapters[0]?.id ?? null },
       placementDeclined: true,
     },

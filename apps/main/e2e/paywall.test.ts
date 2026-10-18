@@ -217,7 +217,8 @@ test.describe("Paywall", () => {
   });
 
   // Pedro learned about the limit only after typing a goal and an AI read, as red text that went
-  // away with no way on: now it's said before he types, and again where a goal is refused.
+  // away with no way on: now it's said before he types. A goal typed anyway kept "Looks right" as
+  // the big button, which only said the limit again: the read goal has Plus and his Plan instead.
   test("a second goal on the free plan says the one-goal limit up front, with Plus and quick questions open", async ({
     browser,
   }) => {
@@ -259,18 +260,34 @@ test.describe("Paywall", () => {
     // The box stays open for quick questions, so a goal can still be typed and read.
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
-    await page.getByRole("button", { name: "Looks right" }).click();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
 
-    // A goal that can't start says so as the same notice, with Plus, never as a passing error.
-    const refused = page.getByRole("alert").locator('[data-slot="plus-notice"]');
-
+    // A goal that can't start says why where its buttons were, as a course's start page does:
+    // Plus first, and the free way under it. Nothing to confirm that would only be refused.
     await expect(
-      refused.getByText(
-        "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
-      ),
+      page
+        .getByRole("alert")
+        .getByText(
+          "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
+        ),
     ).toBeVisible();
 
-    await expect(refused.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Fix something" })).toHaveCount(0);
+
+    await expect(
+      page.getByRole("main").getByRole("link", { name: /^(?:See Plus|Go to your Plan)$/u }),
+    ).toHaveText(["See Plus", "Go to your Plan"]);
+
+    await expect(page.getByRole("main").getByRole("link", { name: "See Plus" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(
+      page.getByRole("main").getByRole("link", { name: "Go to your Plan" }),
+    ).toHaveAttribute("href", "/plan");
+
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(1);
     await page.context().close();
   });

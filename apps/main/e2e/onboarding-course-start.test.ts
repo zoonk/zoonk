@@ -254,6 +254,22 @@ test.describe("Starting a course from its page", () => {
     const resume = page.getByRole("link", { name: "Continue setting up" });
     await expect(resume).toHaveAttribute("href", `/start/${goalId}`);
     await expect(prisma.studySession.count({ where: { goalId } })).resolves.toBe(0);
+
+    // The Plan says the same: no pace or catch-up for a plan built on answers not given yet.
+    await page.getByRole("link", { exact: true, name: "Plan" }).filter({ visible: true }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Your plan comes after a few questions" }),
+    ).toBeVisible();
+
+    await expect(page.getByText("Pace", { exact: true })).toHaveCount(0);
+
+    await expect(page.getByRole("link", { exact: true, name: "Continue" })).toHaveAttribute(
+      "href",
+      `/start/${goalId}`,
+    );
+
+    await page.getByRole("link", { exact: true, name: "Today" }).filter({ visible: true }).click();
     await resume.click();
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
 
@@ -623,11 +639,11 @@ test.describe("Starting a course from its page", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("radiogroup", { name: "Your level" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(0);
   });
 
   // The wall said to pause the goal on the Plan, but its one button was "Get Plus": the free way
-  // had no button at all.
+  // had no button at all. Its Plus button says "See Plus", as everywhere else in the app.
   test("a free learner following another goal is told up front, with Plus first and the way to pause the goal they're on", async ({
     noProgressUser,
     userWithoutProgress: page,
@@ -651,12 +667,12 @@ test.describe("Starting a course from its page", () => {
 
     const toPlan = page.getByRole("link", { name: "Go to your Plan" });
 
-    await expect(page.getByRole("link", { name: /^(?:Get Plus|Go to your Plan)$/u })).toHaveText([
-      "Get Plus",
+    await expect(page.getByRole("link", { name: /^(?:See Plus|Go to your Plan)$/u })).toHaveText([
+      "See Plus",
       "Go to your Plan",
     ]);
 
-    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
       "href",
       "/subscription",
     );

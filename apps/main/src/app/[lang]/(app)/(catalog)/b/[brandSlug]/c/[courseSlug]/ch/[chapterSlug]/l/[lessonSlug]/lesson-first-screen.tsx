@@ -3,6 +3,7 @@ import {
   FirstQuestion,
   StartNote,
 } from "@/components/catalog/first-question";
+import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartBlock, StartLink } from "@/components/public/public-start";
 import { StartLessonButton } from "@/components/public/start-lesson-button";
 import { withCatalogOrigin } from "@/lib/public/public-hrefs";
@@ -65,6 +66,13 @@ export async function LessonFirstScreen({
   const t = await getExtracted();
   const startHref = withCatalogOrigin(playerPath, origin);
 
+  const note = (
+    <>
+      {t("{minutes, plural, one {# minute} other {# minutes}}.", { minutes })}{" "}
+      <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
+    </>
+  );
+
   if (screen?.kind === "choice") {
     return (
       <ChoiceScreen
@@ -86,18 +94,10 @@ export async function LessonFirstScreen({
           {t("Start the lesson")}
         </StartLink>
 
-        <StartNote>
-          {t("{minutes, plural, one {# minute} other {# minutes}}. No sign-up needed.", {
-            minutes,
-          })}
-        </StartNote>
+        <StartNote>{note}</StartNote>
       </FirstScreenSection>
     );
   }
-
-  const note = t("{minutes, plural, one {# minute} other {# minutes}}. No sign-up needed.", {
-    minutes,
-  });
 
   if (screen) {
     return (

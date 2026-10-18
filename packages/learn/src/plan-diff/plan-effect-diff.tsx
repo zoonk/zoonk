@@ -91,17 +91,25 @@ function useLessonLines() {
   };
 
   return (effect: PlanEffect, byDate: boolean): DiffLine[] => {
-    const added = addedText(effect, byDate);
-    const removed = removedText(effect, byDate);
+    // Without a date only the net count changes: one line with the number its sentence says ("7
+    // fewer lessons"), never "8 fewer" beside "1 more".
+    const net = effect.lessonsAdded - effect.lessonsRemoved;
+
+    const counts = byDate
+      ? effect
+      : { ...effect, lessonsAdded: Math.max(net, 0), lessonsRemoved: Math.max(-net, 0) };
+
+    const added = addedText(counts, byDate);
+    const removed = removedText(counts, byDate);
 
     return [
-      effect.lessonsRemoved > 0 && {
+      counts.lessonsRemoved > 0 && {
         kind: "removed" as const,
         label: null,
         text: asLine(removed),
         tone: getLessonLineTone({ byDate, kind: "removed" }),
       },
-      effect.lessonsAdded > 0 && {
+      counts.lessonsAdded > 0 && {
         kind: "added" as const,
         label: null,
         text: asLine(added),

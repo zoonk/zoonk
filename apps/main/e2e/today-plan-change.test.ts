@@ -1130,6 +1130,34 @@ test.describe("Today's plan change", () => {
     await page.context().close();
   });
 
+  // "Your goal takes 7 fewer lessons" sat over "− 8 fewer lessons" and "+ 1 more lesson": without a
+  // date the plan keeps every lesson, so its one count is said once, as the sentence says it.
+  test("says one lesson count for a change without a date, the sentence's", async ({ browser }) => {
+    const { plan, user } = await createLessonDayPlan();
+
+    await planChangeFixture({
+      kind: "estimateUpdated",
+      payload: {
+        effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 1, lessonsRemoved: 8 },
+        source: "system",
+      },
+      planId: plan.id,
+      status: "applied",
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const note = page.getByRole("region", { name: "Plan change" });
+    await expect(note).toContainText("Your goal takes 7 fewer lessons.");
+
+    await expect(note.locator("[data-slot=diff-lines]").getByRole("listitem")).toHaveText([
+      /^\S?\s*7 fewer lessons$/u,
+    ]);
+
+    await page.context().close();
+  });
+
   test("names the lessons that no longer fit when the plan gives lessons more time", async ({
     browser,
   }) => {

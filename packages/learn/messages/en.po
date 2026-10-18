@@ -199,6 +199,7 @@ msgstr "Your free week of exam prep is over"
 #: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/mock/mock-chooser-page.tsx
+#: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/questions/test-out-preparing.tsx
 #: src/today/today-exam-access.tsx

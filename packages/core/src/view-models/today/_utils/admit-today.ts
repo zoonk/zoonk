@@ -5,7 +5,7 @@ import { getCurrentSuggestedGoal } from "../../../goals/suggestions/get-current-
 import { loadViewerStamp } from "../../../learner/_utils/load-viewer-stamp";
 import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { getSession } from "../../../users/get-session";
-import { getOnboarding } from "../../onboarding/get-onboarding";
+import { isCourseSetupLeft } from "../../onboarding/onboarding-steps";
 import { type TodayViewResult } from "../get-today-view";
 
 /**
@@ -28,8 +28,8 @@ export type TodayAdmission =
 
 /**
  * Whether Today shows a day for the requested goal (the active one by default): the learner's own
- * active goal once its plan is built, and a guest's once onboarding is answered. It writes nothing,
- * so a refused goal stays as it was.
+ * active goal once its plan is built and, for a course start, its questions answered. It writes
+ * nothing, so a refused goal stays as it was.
  */
 export async function admitToday(requestedGoalId?: string): Promise<TodayAdmission> {
   const session = await getSession();
@@ -67,20 +67,9 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
 
   const { id, kind, title } = owned.goal;
 
-  if (!built) {
+  // A course's default plan is ready before its questions are answered (see `isCourseSetupLeft`).
+  if (!built || isCourseSetupLeft(owned.goal)) {
     return { ...stamp, goal: { id, kind, title }, status: "preparing" };
-  }
-
-  if (session.user.isAnonymous) {
-    const onboarding = await getOnboarding({ goalId });
-
-    // A course's default plan can be ready before its guest has finished answering.
-    if (
-      onboarding.status === "ready" &&
-      onboarding.onboarding.steps.some((step) => step !== "plan")
-    ) {
-      return { ...stamp, goal: { id, kind, title }, status: "preparing" };
-    }
   }
 
   return { owned, stamp, status: "admitted" };

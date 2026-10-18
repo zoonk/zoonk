@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PlusNotice } from "../../_components/plus-lock";
 import { useLearnRoutes } from "../../learn-context";
@@ -57,5 +58,42 @@ export function GoalLimitNotice({
           )
         : message(reason)}
     </PlusNotice>
+  );
+}
+
+/**
+ * A goal Plus would let start, in place of the buttons that would only be refused again, as a
+ * course's start page says it: why, "See Plus" first and, for the free plan's one goal, the free
+ * way under it (their Plan, whose menu pauses the goal they're on). Nothing for a limit Plus
+ * doesn't lift.
+ */
+export function GoalLimitWall({ reason }: { reason: GoalLimitReason }) {
+  const t = useExtracted();
+  const message = useGoalLimitMessage();
+  const routes = useLearnRoutes();
+
+  if (!isPlusGoalLimit(reason)) {
+    return null;
+  }
+
+  return (
+    <>
+      <p className="text-muted-foreground text-center text-sm text-pretty" role="alert">
+        {message(reason)}
+      </p>
+
+      <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={routes.upgrade}>
+        {t("See Plus")}
+      </LearnLink>
+
+      {reason === "oneActiveGoal" && (
+        <LearnLink
+          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
+          href={routes.journey}
+        >
+          {t("Go to your Plan")}
+        </LearnLink>
+      )}
+    </>
   );
 }

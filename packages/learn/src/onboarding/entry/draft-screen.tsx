@@ -11,6 +11,7 @@ import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
   type CreateGoalsOutcome,
+  type GoalLimitReason,
   type OnboardingActions,
   type OnboardingRoutes,
   type WaitlistOutcome,
@@ -79,6 +80,7 @@ function ReadDraft({
   creation,
   draft,
   draftActions,
+  goalLimit,
   intent,
   onBack,
   onRewrite,
@@ -90,6 +92,8 @@ function ReadDraft({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
+  /** A goal limit the learner already reached, said before they typed. */
+  goalLimit: GoalLimitReason | null;
   intent: MaterialIntent | null;
   onBack: () => void;
   onRewrite: (words: string) => void;
@@ -103,6 +107,7 @@ function ReadDraft({
           draft={toUnderstandingDraft(understanding)}
           error={creation.error}
           goal={draft.prompt}
+          goalLimit={goalLimit}
           isCreating={creation.isCreating}
           material={attached}
           onConfirm={() =>
@@ -166,6 +171,8 @@ export function DraftScreen({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
+  /** A goal limit the learner already reached, said before they typed. */
+  goalLimit: GoalLimitReason | null;
   intent: MaterialIntent | null;
   onBack: () => void;
   onRewrite: (words: string) => void;

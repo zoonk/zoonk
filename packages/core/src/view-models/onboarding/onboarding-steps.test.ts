@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOnboardingSteps } from "./onboarding-steps";
+import { getOnboardingSteps, isCourseSetupLeft } from "./onboarding-steps";
 
 const NEW_PROFILE = { hasBuddy: false, hasEarlierGoals: false };
 
@@ -316,5 +316,43 @@ describe(getOnboardingSteps, () => {
         profile: NEW_PROFILE,
       }),
     ).toStrictEqual([]);
+  });
+});
+
+describe(isCourseSetupLeft, () => {
+  const courseStart = { chapterId: null };
+
+  it("holds a course start's default plan back while its questions are left", () => {
+    expect(
+      isCourseSetupLeft({
+        details: { answered: ["level"], courseStart, level: "basic" },
+        kind: "learn",
+        targetDate: null,
+      }),
+    ).toBe(true);
+  });
+
+  it("lets the plan go once its questions are answered, buddy or not", () => {
+    expect(
+      isCourseSetupLeft({
+        details: { answered: ["level", "targetDate", "placement", "schedule"], courseStart },
+        kind: "learn",
+        targetDate: null,
+      }),
+    ).toBe(false);
+  });
+
+  it("never holds back a goal its words started, or the next level of a finished course", () => {
+    expect(
+      isCourseSetupLeft({ details: { purpose: "overview" }, kind: "learn", targetDate: null }),
+    ).toBe(false);
+
+    expect(
+      isCourseSetupLeft({
+        details: { continuesFromGoalId: "finished-goal", courseStart },
+        kind: "learn",
+        targetDate: null,
+      }),
+    ).toBe(false);
   });
 });

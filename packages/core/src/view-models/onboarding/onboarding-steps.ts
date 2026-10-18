@@ -1,6 +1,8 @@
+import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type CourseStart, readCourseStart } from "../../goals/course-start-details";
 import { isPlacementSkipped } from "../../learner/placement/placement-contract";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingQuestion,
@@ -233,4 +235,30 @@ export function getOnboardingSteps({
     ...questions.filter((question) => question === "schedule"),
     "plan",
   ];
+}
+
+/**
+ * Whether a course start still has questions before its plan. A course's start builds its default
+ * plan right away, so a learner who left the questions halfway has a plan on defaults they never
+ * chose (10 minutes a day, every day): Today and the Plan lead back to the questions instead, for a
+ * guest and for the account they sign up for. Read from the goal alone: the buddy and an exam choice
+ * a later notice adds don't hold back a plan the learner already set up.
+ */
+export function isCourseSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  if (!readCourseStart(details)) {
+    return false;
+  }
+
+  const steps = getOnboardingSteps({
+    goal: {
+      details,
+      kind: goal.kind,
+      targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+    },
+    profile: { hasBuddy: true, hasEarlierGoals: true },
+  });
+
+  return steps.some((step) => step !== "plan");
 }

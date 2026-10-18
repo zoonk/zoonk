@@ -8,6 +8,7 @@ import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { type WeeklyStudyTime } from "../../progress/weekly-study-time-contract";
 import { getSession } from "../../users/get-session";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
+import { isCourseSetupLeft } from "../onboarding/onboarding-steps";
 
 type PlanTabView = {
   goal: { id: string; kind: GoalKind; title: string };
@@ -16,12 +17,13 @@ type PlanTabView = {
 };
 
 export type PlanTabViewResult =
-  | { status: "noGoal" | "notFound" | "unauthorized" }
+  | { status: "noGoal" | "notFound" | "preparing" | "unauthorized" }
   | { status: "ready"; view: PlanTabView };
 
 /**
  * The Plan tab for a goal (the active goal by default): the goal's header and its plan at every
- * zoom level. One cached read, so the tab prefetches whole.
+ * zoom level. One cached read, so the tab prefetches whole. A course start whose questions are left
+ * is `preparing`, as on Today: its default plan isn't the learner's yet (see `isCourseSetupLeft`).
  */
 export async function getPlanTabView(input: { goalId?: string } = {}): Promise<PlanTabViewResult> {
   "use cache: private";
@@ -37,6 +39,10 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
   }
 
   const { goal } = resolved;
+
+  if (isCourseSetupLeft(goal)) {
+    return { status: "preparing" };
+  }
 
   const [result, week] = await Promise.all([
     getGoalPlan(goal.id),

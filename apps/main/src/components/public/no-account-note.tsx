@@ -20,18 +20,35 @@ export function NoAccountNote({ children }: { children: ReactNode }) {
 }
 
 /**
- * A start's line for people without an account yet ("Start free, no account needed."), in the
- * room it keeps for everyone so nothing under it moves when the learner summary arrives. A page the
- * session hint marks signed in (`signed-in:`) waits with it hidden until the summary says whether
- * the session has an account (a guest's hasn't); an account keeps it hidden, its line still held.
+ * A start's line for a visitor ("Start free, no account needed."), in the room it keeps for
+ * everyone so nothing under it moves when the learner summary arrives. A guest, like an account,
+ * never reads it: a guest's one goal can be taken, and the start then asks for an account. A page
+ * the session hint marks signed in (`signed-in:`) waits with it hidden until the summary arrives;
+ * any session keeps it hidden, its line still held.
  */
 export function NoAccountStartNote({ children }: { children: ReactNode }) {
   const learner = useLearnerSummary();
   const known = learner.status === "ready" || learner.status === "visitor";
 
   return (
-    <span className={cn(hasAccount(learner) && "invisible", !known && "signed-in:invisible")}>
+    <span
+      className={cn(learner.status === "ready" && "invisible", !known && "signed-in:invisible")}
+    >
       {children}
     </span>
+  );
+}
+
+/**
+ * A lesson's "No sign-up needed.", only for a visitor: a guest's free lessons run out, and their
+ * next lesson then asks for an account, so a guest, like an account, never reads it. Hidden from
+ * the first paint on a page the session hint marks signed in, and once the learner summary finds a
+ * session.
+ */
+export function NoSessionNote({ children }: { children: ReactNode }) {
+  const learner = useLearnerSummary();
+
+  return (
+    <span className={learner.status === "ready" ? "hidden" : "signed-in:hidden"}>{children}</span>
   );
 }

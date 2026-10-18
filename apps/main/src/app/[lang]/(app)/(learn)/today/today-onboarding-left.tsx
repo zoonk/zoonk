@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { getOnboardingResume } from "@zoonk/core/view-models/onboarding/resume";
+import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ListChecksIcon } from "lucide-react";
@@ -7,14 +7,12 @@ import { getExtracted } from "next-intl/server";
 
 /**
  * Whether the goal the tabs show still has onboarding questions before its plan: the learner left
- * them for another page of the app, whose tabs stay in reach while they answer.
+ * them for another page of the app, whose tabs stay in reach while they answer. Read as the Plan
+ * reads it, so both say the same.
  */
 export async function isOnboardingLeft(goalId: string): Promise<boolean> {
-  const result = await getOnboardingResume();
-
-  return (
-    result.status === "ready" && result.resume?.kind === "goal" && result.resume.goalId === goalId
-  );
+  const result = await getOnboarding({ goalId });
+  return result.status === "ready" && result.onboarding.steps.some((step) => step !== "plan");
 }
 
 /**

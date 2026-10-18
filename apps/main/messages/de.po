@@ -418,14 +418,20 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# Lektion} other {# Lektionen}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+msgctxt "QNnsRX"
+msgid "{minutes, plural, one {# minute} other {# minutes}}."
+msgstr "{minutes, plural, one {# Minute} other {# Minuten}}."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
+#: src/components/catalog/first-question.tsx
+msgctxt "xIVf67"
+msgid "No sign-up needed."
+msgstr "Keine Anmeldung nötig."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "4NMpnC"
 msgid "Start the lesson"
 msgstr "Lektion starten"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-msgctxt "fO2QC0"
-msgid "{minutes, plural, one {# minute} other {# minutes}}. No sign-up needed."
-msgstr "{minutes, plural, one {# Minute} other {# Minuten}}. Keine Anmeldung nötig."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
@@ -3481,14 +3487,14 @@ msgid "Quick question"
 msgstr "Kurze Frage"
 
 #: src/components/catalog/first-question.tsx
-msgctxt "J-30Af"
-msgid "Your answer starts the {minutes}-minute lesson. No sign-up needed."
-msgstr "Mit deiner Antwort beginnt die {minutes}-minütige Lektion. Keine Anmeldung nötig."
+msgctxt "Ekbc8q"
+msgid "Your answer starts the {minutes}-minute lesson."
+msgstr "Mit deiner Antwort beginnt die {minutes}-minütige Lektion."
 
 #: src/components/catalog/first-question.tsx
-msgctxt "NqeF9O"
-msgid "Your choice opens the {minutes}-minute lesson. Check your answer there. No sign-up needed."
-msgstr "Mit deiner Auswahl öffnest du die {minutes}-minütige Lektion. Dort kannst du deine Antwort prüfen. Ohne Anmeldung."
+msgctxt "E07b8i"
+msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
+msgstr "Mit deiner Auswahl öffnest du die {minutes}-minütige Lektion. Dort kannst du deine Antwort prüfen."
 
 #: src/components/catalog/first-question.tsx
 msgctxt "KUHspv"
@@ -3648,7 +3654,6 @@ msgid "Every goal · every lesson"
 msgstr "Jedes Ziel · jede Lektion"
 
 #: src/components/pricing/plus-plan.tsx
-#: src/components/public/course-start-failure.tsx
 msgctxt "0I_Rwu"
 msgid "Get Plus"
 msgstr "Hol dir Plus"
@@ -3888,6 +3893,11 @@ msgstr "Der Bezahlvorgang konnte nicht gestartet werden. Kontaktiere uns unter h
 msgctxt "r9koty"
 msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
 msgstr "{count, plural, =0 {0 Tage} one {# Tag} other {# Tage}}"
+
+#: src/components/public/course-start-failure.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus ansehen"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "MO6156"

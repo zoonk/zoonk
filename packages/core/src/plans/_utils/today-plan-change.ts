@@ -17,7 +17,7 @@ import { loadPlanContext } from "./plan-context";
 import { isDateReached } from "./plan-end";
 
 /** An automatic change is news for a day; after that it's simply how the plan is. */
-const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
+export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
 
 /**
  * The newest proposals Today weighs, one after another, for one that still changes something:

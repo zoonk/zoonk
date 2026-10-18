@@ -72,7 +72,8 @@ function getBack({
  * the waitlist with musicianship offered, and an unsafe goal is declined kindly. Confirming
  * creates the goals and continues on the goal's own onboarding screens. A guest whose one goal is
  * taken is asked to create an account instead, before typing anything; a learner whose plan can't
- * start another goal (`goalLimit`) is told up front, with the box open for quick questions. Until
+ * start another goal (`goalLimit`) is told up front, with the box open for quick questions, and a
+ * goal they type anyway has Plus and the free way in place of "Looks right". Until
  * the goal is confirmed there's no plan to show in the page's aside from 72rem: how it works
  * instead.
  */
@@ -274,6 +275,7 @@ function GoalStartFlow({
             }}
             draft={state.draft}
             draftActions={draftActions}
+            goalLimit={goalLimit}
             intent={intent}
             onBack={() => backToEntry(state.draft.prompt)}
             onRewrite={(goal) => void submission.send(goal)}

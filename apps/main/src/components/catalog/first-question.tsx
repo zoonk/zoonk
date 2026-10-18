@@ -1,3 +1,4 @@
+import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { withCatalogOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
@@ -90,13 +91,11 @@ async function QuestionScreen({
 
       <StartNote>
         {screen.guess
-          ? t("Your answer starts the {minutes}-minute lesson. No sign-up needed.", {
+          ? t("Your answer starts the {minutes}-minute lesson.", { minutes: String(minutes) })
+          : t("Your choice opens the {minutes}-minute lesson. Check your answer there.", {
               minutes: String(minutes),
-            })
-          : t(
-              "Your choice opens the {minutes}-minute lesson. Check your answer there. No sign-up needed.",
-              { minutes: String(minutes) },
-            )}
+            })}{" "}
+        <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
       </StartNote>
     </>
   );

@@ -6,11 +6,14 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { GoalLimitWall, isPlusGoalLimit } from "../entry/goal-limit-notice";
 import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
+import { type GoalLimitReason } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
+  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -121,12 +124,14 @@ function GoalCard({
  * "Here's what I understood": every fact the typed goal already gave, one flat row each, with its
  * source when it's official. Confirming is one tap. One wrong fact is fixed in place (any full date
  * for the exam, or the notice's day with one tap); "Fix something" changes the words themselves,
- * which are read again from scratch.
+ * which are read again from scratch. A goal Plus would let start (the free plan's one goal, said
+ * before they typed, or refused on confirming) has Plus and the free way in their place.
  */
 export function UnderstoodScreen({
   draft,
   error,
   goal,
+  goalLimit = null,
   isCreating,
   material,
   onConfirm,
@@ -139,6 +144,8 @@ export function UnderstoodScreen({
   error: GoalError | null;
   /** What the learner typed, shown as they typed it. */
   goal: string;
+  /** A goal limit the learner already reached, said before they typed. */
+  goalLimit?: GoalLimitReason | null;
   isCreating: boolean;
   /** What the learner attached with the paperclip; the first goal is built from it. */
   material: readonly { title: string }[];
@@ -158,6 +165,7 @@ export function UnderstoodScreen({
   const fixButtonRef = useRef<HTMLButtonElement>(null);
   const schedule = scheduleRow(draft.schedule, draft.minutesSaid);
   const firstGoalRows = [materialRow(material), schedule].filter((row) => row !== null);
+  const plusLimit = [error?.limit, goalLimit].find((reason) => reason && isPlusGoalLimit(reason));
 
   const edit = (next: FieldEdit | null) => {
     setEdited(next ? null : editing);
@@ -200,18 +208,24 @@ export function UnderstoodScreen({
         />
       ))}
 
-      <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
-          {isCreating ? t("Saving your goal…") : t("Looks right")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          disabled={isCreating || rewriting}
-          onClick={() => setRewriting(true)}
-          ref={fixButtonRef}
-        >
-          {t("Fix something")}
-        </OnboardingSecondaryButton>
-      </GoalFooter>
+      {plusLimit ? (
+        <OnboardingFooter className="gap-3">
+          <GoalLimitWall reason={plusLimit} />
+        </OnboardingFooter>
+      ) : (
+        <GoalFooter error={error} signUpHref={signUpHref}>
+          <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
+            {isCreating ? t("Saving your goal…") : t("Looks right")}
+          </OnboardingPrimaryButton>
+          <OnboardingSecondaryButton
+            disabled={isCreating || rewriting}
+            onClick={() => setRewriting(true)}
+            ref={fixButtonRef}
+          >
+            {t("Fix something")}
+          </OnboardingSecondaryButton>
+        </GoalFooter>
+      )}
     </OnboardingColumn>
   );
 }

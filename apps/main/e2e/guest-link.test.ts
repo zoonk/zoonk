@@ -200,6 +200,18 @@ test.describe("A visitor from a public lesson page", () => {
       .toBeGreaterThan(0);
 
     await expect.poll(() => prisma.user.findUnique({ where: { id: guest.userId } })).toBeNull();
+
+    // The account picks up the questions the guest left, instead of a plan on defaults they never
+    // chose (10 minutes a day, every day).
+    await page.goto("/today");
+    await expect(page.getByText("Setting up", { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Continue setting up" })).toHaveAttribute(
+      "href",
+      `/start/${goalId}`,
+    );
+
+    await expect(prisma.studySession.count({ where: { goalId } })).resolves.toBe(0);
   });
 
   test("counts the lesson finished as a guest in the plan built from it: Today goes on to the next one", async ({

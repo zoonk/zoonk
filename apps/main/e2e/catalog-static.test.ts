@@ -354,7 +354,7 @@ test.describe("catalog pages and the learner's own bits", () => {
     try {
       const { release } = await holdReads(page, PROGRESS_PATH);
       await page.goto(lessonPath);
-      await expect(page.getByText("No sign-up needed.", { exact: false })).toBeVisible();
+      await expect(page.getByText(/-minute lesson\./u)).toBeVisible();
 
       const article = page.getByRole("article", { name: lesson.title });
       const before = await article.boundingBox();
@@ -384,7 +384,9 @@ test.describe("catalog pages and the learner's own bits", () => {
     }
   });
 
-  test("a guest gets the no-account note once the summary says so, in the line it kept", async ({
+  // A guest whose one goal was taken read "Start free, no account needed." over a start that then
+  // asked for an account: like an account, a guest never reads it, and its line stays.
+  test("a guest never gets the no-account note, and its line stays so the hero doesn't move", async ({
     browser,
   }) => {
     const { course, coursePath } = await createStaticCourse();
@@ -394,14 +396,14 @@ test.describe("catalog pages and the learner's own bits", () => {
       const { known, painted } = await measureHero({ coursePath, page, title: course.title });
 
       expect(painted.note).toBe(false);
-      expect(known.note).toBe(true);
+      expect(known.note).toBe(false);
       expect(known.box).toStrictEqual(painted.box);
     } finally {
       await context.close();
     }
   });
 
-  test("a guest keeps the no-account note and the visitor's ways in", async ({ browser }) => {
+  test("a guest keeps the visitor's ways in", async ({ browser }) => {
     const { coursePath } = await createStaticCourse();
     const { context, page } = await openAsGuest(browser);
 
@@ -410,7 +412,26 @@ test.describe("catalog pages and the learner's own bits", () => {
       await page.waitForLoadState("networkidle");
 
       await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
-      await expect(page.getByText(NO_ACCOUNT_NOTE).first()).toBeVisible();
+    } finally {
+      await context.close();
+    }
+  });
+
+  // A guest whose free lessons ran out read "No sign-up needed." on a lesson's page, and the lesson
+  // then asked for an account: only a visitor, who has them all ahead, reads it.
+  test("only a visitor reads that a lesson needs no sign-up", async ({ browser, page }) => {
+    const { lessonPath } = await createStaticCourse();
+
+    await page.goto(lessonPath);
+    await expect(page.getByText("No sign-up needed.")).toBeVisible();
+
+    const { context, page: guestPage } = await openAsGuest(browser);
+
+    try {
+      await guestPage.goto(lessonPath);
+      await expect(guestPage.getByText(/-minute lesson\./u)).toBeVisible();
+      await expect(guestPage.getByText("No sign-up needed.")).toHaveCount(1);
+      await expect(guestPage.getByText("No sign-up needed.")).toBeHidden();
     } finally {
       await context.close();
     }
