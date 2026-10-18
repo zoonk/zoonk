@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { toIsoDate } from "../planner/plan-calendar";
+import { getSkillValue } from "../planner/selected-coverage";
 import { type PlanContext } from "./plan-context";
 import {
   type SelectedCoverage,
@@ -102,15 +103,6 @@ export type SummaryReduction =
   | { coveredShare: number | null; kind: "reduced"; summary: PlanSummary };
 
 type CompletedItem = { lessonId: string | null };
-
-/** How much of a skill counts as covered: all of a settled one, none of an unknown one. */
-function getSkillValue(skill: SelectedCoverage["skills"][number]): number {
-  if (skill.state === "settled") {
-    return 1;
-  }
-
-  return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
-}
 
 /**
  * The coverage with these short lessons counted whole: each adds what it lacked to every skill it

@@ -275,9 +275,9 @@ export function getCoverage({
   const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
   const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
 
-  // Every topic is in by the deadline (see `hasEveryTopic`): a lesson still to do brings its topic
-  // in only with time before it, so one a plan that studies everything teaches after the exam, or
-  // one dated without time, leaves its topic out by then.
+  // A topic is in with completed or tested-out teaching, never lessons set aside (`hasEveryTopic`).
+  // A lesson still to do brings its topic in only with time before the deadline, so one taught
+  // after the exam, or dated without time, leaves its topic out by then.
   const coreFits = hasEveryTopic({
     built: {
       ...built,

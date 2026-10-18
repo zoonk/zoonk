@@ -4,17 +4,21 @@ import { type PlanGraphSkill } from "./plan-state";
 import { findFrequentSkillIds } from "./topic-weights";
 
 /**
- * No topic waits: every skill the plan teaches has a lesson in it, done, kept or scheduled, or
+ * No topic waits: every skill the plan teaches has a lesson completed, tested out or scheduled, or
  * teaches only topics another skill with lessons teaches too, so its topics are in, as the subject
  * pages and the topics sheet say (one of the organelles' two skills cut, "Organelles" still in).
  * Skills it doesn't teach (an area taken out, ones the learner showed they know or starts past)
  * don't count: one right answer frees a topic from its lessons, never from practice.
  */
-/** The skills the plan has a lesson on, done, kept or scheduled. */
+/** Skills with completed, tested-out or scheduled teaching; lessons set aside earn no credit. */
 function listPlannedSkillIds(built: BuiltPlan): Set<string> {
   return new Set(
     built.items.flatMap((item) =>
-      (item.kind === "lesson" || item.kind === "chapter") && item.skillId ? [item.skillId] : [],
+      item.status !== "skipped" &&
+      (item.kind === "lesson" || item.kind === "chapter") &&
+      item.skillId
+        ? [item.skillId]
+        : [],
     ),
   );
 }
