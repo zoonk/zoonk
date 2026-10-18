@@ -93,7 +93,14 @@ export const studySessionResponseSchema = z
           description: `The allocated daily study budget in exact minutes, which may be fractional. Format for display, for example ${formatDuration({ locale: "en", totalSeconds: EXAMPLE_FUNDED_DAILY_MINUTES * 60 })}.`,
           examples: [EXAMPLE_DAILY_MINUTES],
         }),
-      done: z.number().int().min(0),
+      done: z
+        .number()
+        .int()
+        .min(0)
+        .meta({
+          description:
+            "The planned minutes of the blocks finished, from each block's estimate: how far the learner is through the day's plan, never the time studied. The time studied today is today's `week.days[].minutes`, as the session summary counts it, and the week's is `week.time.studiedMinutes`",
+        }),
       planned: z.number().int().min(0),
     }),
     missions: z
