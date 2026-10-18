@@ -256,11 +256,13 @@ for (const returnBeforeResponse of [true, false]) {
       const answer = await heldStart.response();
       expect(answer, "the held start's answer reached the page").not.toBeNull();
       await answer?.body().catch(() => null);
+
       await expect(page).toHaveURL(
         returnBeforeResponse ? new RegExp(`/checkpoint/${block.id}$`, "u") : /\/today$/u,
       );
 
       await expect(page.getByRole("log", { name: "Conversation" })).toBeHidden();
+
       await expect(microphoneRequests(page)).resolves.toStrictEqual([
         { active: true, tracks: ["ended"] },
       ]);

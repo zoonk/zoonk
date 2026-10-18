@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { readDayNames } from "./study-day";
 
 /** What the plan-edit model said of the learner's words, stored with the change. */
@@ -68,6 +69,7 @@ test.describe("Undoing a plan change on Today", () => {
 
       await expect(note.getByRole("status")).toHaveText(
         "It's in your plan, and today's session follows it.",
+        { timeout: REPLAN_TIMEOUT_MS },
       );
 
       await expect.poll(() => readDayNames(day)).not.toStrictEqual(names);
