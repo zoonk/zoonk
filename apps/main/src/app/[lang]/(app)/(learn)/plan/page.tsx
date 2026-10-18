@@ -1,7 +1,7 @@
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
-import { getReadAt } from "@/lib/learn/read-at";
+import { getReadStamp } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
@@ -96,10 +96,13 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
 }
 
 async function JourneyContent() {
+  // The learner revision comes first, so it never claims more than the reads after it show.
+  const stamp = await getReadStamp();
+
   // Independent cached reads start together, so the tab prefetches in one pass. They all read the
   // active goal. The locale comes from the root param: a prefetch warms its caches with `params`
   // still pending, so reads after `await params` would miss the cache.
-  const [result, progress, language, units, syllabus, mindMaps, buddy, locale, goals, readAt] =
+  const [result, progress, language, units, syllabus, mindMaps, buddy, locale, goals] =
     await Promise.all([
       getPlanTabView(),
       getProgressView(),
@@ -110,7 +113,6 @@ async function JourneyContent() {
       getLearnerBuddy(),
       lang(),
       listCurrentUserGoals(),
-      getReadAt(),
     ]);
 
   const activeGoal = findActiveGoal(goals);
@@ -173,8 +175,9 @@ async function JourneyContent() {
       language={language.status === "ready" ? language.progress : null}
       next={next && { onContinue: continueNextLevelAction.bind(null, goal.id), view: next }}
       plan={plan}
-      readAt={readAt}
+      readAt={stamp.readAt}
       resume={resume}
+      revision={stamp.revision}
       preparation={
         standing?.preparation
           ? {

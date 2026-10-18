@@ -1,4 +1,5 @@
 import "server-only";
+import { getLearnerRevision } from "@zoonk/core/learner/revision";
 import { cacheLife } from "next/cache";
 
 /**
@@ -10,4 +11,22 @@ export async function getReadAt(): Promise<number> {
   "use cache: private";
   cacheLife({ stale: Infinity });
   return Date.now();
+}
+
+/** When a page's private reads ran, and the learner revision read before them. */
+export type ReadStamp = { readAt: number; revision: string | null };
+
+/**
+ * When the page's private reads ran and the learner's revision, kept in the same private cache as
+ * the page's data, so a prefetched copy keeps both: shown later, the page asks whether the learner
+ * changed anything since, here or on another device, or what it shows changed
+ * (`useRefreshWhenOld`). Read it before the page's other reads, so the revision never claims more
+ * than they show.
+ */
+export async function getReadStamp(): Promise<ReadStamp> {
+  "use cache: private";
+  cacheLife({ stale: Infinity });
+
+  const learner = await getLearnerRevision();
+  return { readAt: Date.now(), revision: learner?.revision ?? null };
 }

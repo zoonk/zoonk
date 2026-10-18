@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -74,6 +75,11 @@ async function createPlanBeingWritten(goalId: string) {
   return { chapter, landOutline };
 }
 
+/** A Server Action posts to the page that sends it: the Plan's asks go to /plan. */
+function isPlanAsk(request: Request) {
+  return new URL(request.url()).pathname === "/plan" && Boolean(request.headers()["next-action"]);
+}
+
 // The Plan opened from a copy older than a few seconds (a link's prefetch, a visit a while ago) read
 // itself whole again each time, a second render that also dropped every page the browser had
 // prefetched: it asks whether its plan changed, and reads itself again only when it did.
@@ -98,7 +104,7 @@ test("an old copy of the Plan asks whether it changed instead of reading itself 
   page.on("request", (request) => {
     const headers = request.headers();
 
-    if (headers["next-action"]) {
+    if (isPlanAsk(request)) {
       requests.asked += 1;
     } else if (
       headers.rsc &&
@@ -109,6 +115,8 @@ test("an old copy of the Plan asks whether it changed instead of reading itself 
     }
   });
 
+  const askedOnShow = page.waitForResponse((response) => isPlanAsk(response.request()));
+
   await page
     .locator('[data-slot="learn-side-navigation"]')
     .getByRole("link", { name: /^Plan/u })
@@ -116,7 +124,51 @@ test("an old copy of the Plan asks whether it changed instead of reading itself 
 
   await expect(page.getByRole("list", { name: "Your path" }).getByText(WRITING_LINE)).toBeVisible();
   await expect.poll(() => requests.asked).toBeGreaterThan(0);
+  const answer = await askedOnShow;
+  await answer.finished();
+
+  // With that answer in, the clock moves on to the next ask: a read the answer led to went out first.
+  await expect(async () => {
+    await page.clock.fastForward(WRITING_REFRESH_MS);
+    expect(requests.asked).toBeGreaterThanOrEqual(2);
+  }).toPass();
+
   expect(requests.reads).toBe(0);
+  await page.context().close();
+});
+
+// Another device can change what the Plan shows without touching its plan (another goal chosen,
+// the buddy renamed): an old copy reads itself again once the learner's revision has moved on.
+test("an old copy of the Plan reads itself again once the learner changed something elsewhere", async ({
+  browser,
+}) => {
+  const { goal, user } = await createPlanLearner();
+  await createPlanBeingWritten(goal.id);
+
+  const page = await openAs(browser, user);
+  await page.clock.install();
+
+  const prefetched = runtimePrefetchRead(page, "/plan");
+  await page.goto("/stats");
+  await prefetched;
+
+  // Another device saves a change of the learner's, then the prefetched copy has grown old.
+  await prisma.user.update({ data: { learnerRevision: { increment: 1 } }, where: { id: user.id } });
+  await page.clock.fastForward(5000);
+
+  const read = page.waitForRequest(
+    (request) =>
+      new URL(request.url()).pathname === "/plan" &&
+      Boolean(request.headers().rsc) &&
+      !request.headers()["next-router-prefetch"],
+  );
+
+  await page
+    .locator('[data-slot="learn-side-navigation"]')
+    .getByRole("link", { name: /^Plan/u })
+    .click();
+
+  await read;
   await page.context().close();
 });
 

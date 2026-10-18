@@ -137,8 +137,9 @@ type JourneyClientProps = Omit<
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
-  /** When the page read the Plan (`getReadAt`). */
+  /** When the page read the Plan, and the learner revision it read (`getReadStamp`). */
   readAt: number;
+  revision: string | null;
   /** What resuming the paused goal would do to its plan (`getGoalResumePreview`). */
   resume: GoalStatusControl["resume"];
 };
@@ -191,10 +192,11 @@ export function JourneyClient({
   preparation,
   readAt,
   resume,
+  revision,
   ...props
 }: JourneyClientProps & { buddy: PlanTutor["buddy"] }) {
   const router = useRouter();
-  const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, watch: "plan" });
+  const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, revision, watch: "plan" });
   useRefreshWhenOld(readAt, refreshOnPlanChange);
   const languageStanding = useLanguageStanding(language);
   const status = useGoalStatus({ goalId, resume, status: goalStatus });

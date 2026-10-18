@@ -15,17 +15,20 @@ export function useRefreshOnPlanChange({
   goalId,
   readAt,
   refresh,
+  revision,
   watch,
 }: {
   goalId: string;
   readAt: number;
   refresh?: () => void;
+  /** The learner revision the page read (`getReadStamp`): any other change of theirs counts too. */
+  revision?: string | null;
   watch: PlanWatch;
 }) {
   const router = useRouter();
 
   return async () => {
-    if (await hasPlanChangedAction({ goalId, since: readAt, watch })) {
+    if (await hasPlanChangedAction({ goalId, revision, since: readAt, watch })) {
       if (refresh) {
         refresh();
       } else {

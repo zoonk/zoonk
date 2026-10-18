@@ -86,6 +86,7 @@ export function BuddyPageClient({
   initialThread,
   memoryCount,
   readAt,
+  revision,
   situation,
   status,
   viewerId,
@@ -98,8 +99,9 @@ export function BuddyPageClient({
   /** The conversation as the page read it, shown at once and read again in the background. */
   initialThread: ThreadPage | null;
   memoryCount: number;
-  /** When the page read the buddy's day (`getReadAt`), to read it again from an old copy. */
+  /** When the page read the buddy's day, and the learner revision it read (`getReadStamp`). */
   readAt: number;
+  revision: string | null;
   situation: TutorSituation;
   status: BuddyStatusView;
   /** The learner the page read the buddy's day for, whose missions the tab may show. */
@@ -109,7 +111,7 @@ export function BuddyPageClient({
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId);
   // The buddy's day (its missions, the energy they spent) moves with the goal's sessions.
-  const refreshIfChanged = useRefreshOnPlanChange({ goalId, readAt, watch: "today" });
+  const refreshIfChanged = useRefreshOnPlanChange({ goalId, readAt, revision, watch: "today" });
   useRefreshWhenOld(readAt, refreshIfChanged);
 
   useReportTabMissions({
