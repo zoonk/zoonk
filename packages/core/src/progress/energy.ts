@@ -12,7 +12,7 @@ export type EnergyCursor = { date: Date; energyAtEnd: number };
 
 export type EnergyDay = { date: Date; energy: number | null };
 
-export type EnergyInsightsData = { averageEnergy: number; fullEnergyDays: number };
+type EnergyInsightsData = { averageEnergy: number; fullEnergyDays: number };
 
 export type EnergyData = {
   currentEnergy: number;

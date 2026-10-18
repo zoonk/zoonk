@@ -1,233 +1,157 @@
-import { randomUUID } from "node:crypto";
-import { request } from "@playwright/test";
-import { prisma } from "@zoonk/db";
+import { type APIRequestContext, request } from "@playwright/test";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import { createAuthenticatedApiContext } from "./helpers/auth";
+
+const baseURL = process.env.E2E_BASE_URL ?? "";
+
+function newApiContext(): Promise<APIRequestContext> {
+  return request.newContext({ baseURL });
+}
 
 test.describe("Next Lesson API", () => {
-  let baseURL: string;
-  let brandOrgId: string;
-  let brandOrgSlug: string;
-
-  test.beforeAll(async () => {
-    baseURL = process.env.E2E_BASE_URL ?? "";
-
-    const org = await prisma.organization.create({
-      data: {
-        id: randomUUID(),
-        kind: "brand",
-        name: "E2E Next Lesson Org",
-        slug: `e2e-next-lesson-${randomUUID()}`,
-      },
+  test("starts a visitor at the course's first lesson", async () => {
+    const { chapters, course, lessons, organization } = await catalogCourseFixture({
+      lessonCounts: [2],
     });
 
-    brandOrgId = org.id;
-    brandOrgSlug = org.slug;
-  });
-
-  test("returns first lesson for unauthenticated user (course scope)", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "E2E test course",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e next lesson ${uniqueId}`,
-        organizationId: brandOrgId,
-        slug: `e2e-na-${uniqueId}`,
-        title: `E2E Next Lesson ${uniqueId}`,
-      },
-    });
-
-    const chapter = await prisma.chapter.create({
-      data: {
-        courseId: course.id,
-        description: "E2E test chapter",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e chapter ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-ch-${uniqueId}`,
-        title: `E2E Chapter ${uniqueId}`,
-      },
-    });
-
-    const lesson = await prisma.lesson.create({
-      data: {
-        chapterId: chapter.id,
-        description: "E2E test lesson",
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "explanation",
-        language: "en",
-        normalizedTitle: `e2e lesson ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-l-${uniqueId}`,
-        title: `E2E Lesson ${uniqueId}`,
-      },
-    });
-
-    const apiContext = await request.newContext({ baseURL });
+    const apiContext = await newApiContext();
     const response = await apiContext.get(`/v1/courses/${course.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
-    const body = await response.json();
-    expect(body.hasStarted).toBe(false);
-    expect(body.completed).toBe(false);
-    expect(body.courseSlug).toBe(course.slug);
-    expect(body.chapterSlug).toBe(chapter.slug);
-    expect(body.lessonSlug).toBe(lesson.slug);
-    expect(body.lessonPosition).toBe(0);
-    expect(body.organizationSlug).toBe(brandOrgSlug);
-    expect(body.type).toBe("lesson");
-    expect(body).not.toHaveProperty("brandSlug");
+    await expect(response.json()).resolves.toEqual({
+      canPrefetch: true,
+      chapterId: chapters[0]!.id,
+      chapterSlug: chapters[0]!.slug,
+      completed: false,
+      courseId: course.id,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonId: lessons[0]![0]!.id,
+      lessonPosition: 0,
+      lessonSlug: lessons[0]![0]!.slug,
+      organizationSlug: organization.slug,
+      type: "lesson",
+    });
 
     await apiContext.dispose();
   });
 
-  test("returns 200 with slug fields for chapter scope", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
+  test("continues after the lessons the learner finished", async () => {
+    const [{ apiContext, user }, { chapters, course, lessons }] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "next-lesson" }),
+      catalogCourseFixture({ lessonCounts: [2, 1] }),
+    ]);
 
-    const course = await prisma.course.create({
-      data: {
-        description: "E2E test course",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e ch scope ${uniqueId}`,
-        organizationId: brandOrgId,
-        slug: `e2e-chs-${uniqueId}`,
-        title: `E2E Ch Scope ${uniqueId}`,
-      },
+    await learningEventFixture({ contentIds: { lessonId: lessons[0]![0]!.id }, userId: user.id });
+
+    const [courseResponse, chapterResponse] = await Promise.all([
+      apiContext.get(`/v1/courses/${course.id}/next-lesson`),
+      apiContext.get(`/v1/chapters/${chapters[1]!.id}/next-lesson`),
+    ]);
+
+    await expect(courseResponse.json()).resolves.toMatchObject({
+      completed: false,
+      hasStarted: true,
+      lessonId: lessons[0]![1]!.id,
+      lessonPosition: 1,
+      type: "lesson",
     });
 
-    const chapter = await prisma.chapter.create({
-      data: {
-        courseId: course.id,
-        description: "E2E test chapter",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e chapter ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-chs-ch-${uniqueId}`,
-        title: `E2E Chapter ${uniqueId}`,
-      },
+    await expect(chapterResponse.json()).resolves.toMatchObject({
+      chapterId: chapters[1]!.id,
+      hasStarted: false,
+      lessonId: lessons[1]![0]!.id,
+      type: "lesson",
     });
-
-    const lesson = await prisma.lesson.create({
-      data: {
-        chapterId: chapter.id,
-        description: "E2E test lesson",
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "explanation",
-        language: "en",
-        normalizedTitle: `e2e lesson ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-chs-l-${uniqueId}`,
-        title: `E2E Lesson ${uniqueId}`,
-      },
-    });
-
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/chapters/${chapter.id}/next-lesson`);
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-    expect(body.chapterSlug).toBe(chapter.slug);
-    expect(body.lessonSlug).toBe(lesson.slug);
-    expect(body.type).toBe("lesson");
 
     await apiContext.dispose();
   });
 
-  test("returns no structural successor for the final lesson", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
+  test("points at the next chapter while its lessons aren't written", async () => {
+    const [{ apiContext, user }, { course, lessons }] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "next-chapter" }),
+      catalogCourseFixture({ lessonCounts: [1] }),
+    ]);
 
-    const course = await prisma.course.create({
-      data: {
-        description: "E2E test course",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e ls scope ${uniqueId}`,
-        organizationId: brandOrgId,
-        slug: `e2e-ls-${uniqueId}`,
-        title: `E2E Ls Scope ${uniqueId}`,
-      },
+    const pending = await libraryChapterFixture({ homeCourseId: course.id });
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: pending.id, courseId: course.id, position: 1 }),
+      learningEventFixture({ contentIds: { lessonId: lessons[0]![0]!.id }, userId: user.id }),
+    ]);
+
+    const [courseResponse, chapterResponse] = await Promise.all([
+      apiContext.get(`/v1/courses/${course.id}/next-lesson`),
+      apiContext.get(`/v1/chapters/${pending.id}/next-lesson`),
+    ]);
+
+    await expect(courseResponse.json()).resolves.toMatchObject({
+      canPrefetch: false,
+      chapterId: pending.id,
+      chapterSlug: pending.slug,
+      completed: false,
+      hasStarted: true,
+      type: "chapter",
     });
 
-    const chapter = await prisma.chapter.create({
-      data: {
-        courseId: course.id,
-        description: "E2E test chapter",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e chapter ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-ls-ch-${uniqueId}`,
-        title: `E2E Chapter ${uniqueId}`,
-      },
+    await expect(chapterResponse.json()).resolves.toEqual({
+      completed: false,
+      hasStarted: false,
+      type: "empty",
     });
-
-    const lesson = await prisma.lesson.create({
-      data: {
-        chapterId: chapter.id,
-        description: "E2E test lesson",
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "explanation",
-        language: "en",
-        normalizedTitle: `e2e lesson ${uniqueId}`,
-        organizationId: brandOrgId,
-        position: 0,
-        slug: `e2e-ls-l-${uniqueId}`,
-        title: `E2E Lesson ${uniqueId}`,
-      },
-    });
-
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get(`/v1/lessons/${lesson.id}/next-lesson`);
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-    expect(body.lesson).toBeNull();
 
     await apiContext.dispose();
   });
 
-  test("returns no slug fields when no published lessons exist", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
+  test("reads a shared chapter's next lesson in the course named by courseId", async () => {
+    const [home, other, unrelated] = await Promise.all([
+      catalogCourseFixture({ lessonCounts: [1] }),
+      catalogCourseFixture({ lessonCounts: [] }),
+      catalogCourseFixture({ lessonCounts: [] }),
+    ]);
 
-    const course = await prisma.course.create({
-      data: {
-        description: "E2E test course",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `e2e no lessons ${uniqueId}`,
-        organizationId: brandOrgId,
-        slug: `e2e-noact-${uniqueId}`,
-        title: `E2E No Lessons ${uniqueId}`,
-      },
+    const chapter = home.chapters[0]!;
+
+    await courseChapterFixture({ chapterId: chapter.id, courseId: other.course.id });
+
+    const apiContext = await newApiContext();
+
+    const [inOther, inUnrelated] = await Promise.all([
+      apiContext.get(`/v1/chapters/${chapter.id}/next-lesson?courseId=${other.course.id}`),
+      apiContext.get(`/v1/chapters/${chapter.id}/next-lesson?courseId=${unrelated.course.id}`),
+    ]);
+
+    await expect(inOther.json()).resolves.toMatchObject({
+      courseId: other.course.id,
+      courseSlug: other.course.slug,
+      lessonId: home.lessons[0]![0]!.id,
+      organizationSlug: other.organization.slug,
     });
 
-    const apiContext = await request.newContext({ baseURL });
+    expect(inUnrelated.status()).toBe(404);
+
+    await apiContext.dispose();
+  });
+
+  test("returns an empty target for a course without chapters", async () => {
+    const { course } = await catalogCourseFixture({ lessonCounts: [] });
+    const apiContext = await newApiContext();
     const response = await apiContext.get(`/v1/courses/${course.id}/next-lesson`);
 
     expect(response.status()).toBe(200);
 
-    const body = await response.json();
-    expect(body.hasStarted).toBe(false);
-    expect(body.completed).toBe(false);
-    expect(body.type).toBe("empty");
-    expect(body.organizationSlug).toBeUndefined();
-    expect(body.courseSlug).toBeUndefined();
+    await expect(response.json()).resolves.toEqual({
+      completed: false,
+      hasStarted: false,
+      type: "empty",
+    });
 
     await apiContext.dispose();
   });

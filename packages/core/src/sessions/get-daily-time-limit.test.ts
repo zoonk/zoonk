@@ -1,0 +1,72 @@
+import { prisma } from "@zoonk/db";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { toUTCMidnight } from "@zoonk/utils/date";
+import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
+import { mockSession } from "../_test-utils/mock-session";
+import { updateLearningProfile } from "../profile/update-learning-profile";
+import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
+
+const TWENTY_MINUTES_IN_SECONDS = 1200;
+
+async function studiedToday(userId: string) {
+  await prisma.dailyProgress.create({
+    data: {
+      date: toUTCMidnight(new Date()),
+      dayOfWeek: 0,
+      timeSpentSeconds: TWENTY_MINUTES_IN_SECONDS,
+      userId,
+    },
+  });
+}
+
+describe(getDailyTimeLimitStatus, () => {
+  it("counts the day against the learner's own limit", async () => {
+    freezeClock();
+
+    const learner = await userFixture();
+    mockSession(learner.id);
+
+    await expect(updateLearningProfile({ dailyLimitMinutes: 30 })).resolves.toMatchObject({
+      profile: { dailyLimitMinutes: 30 },
+      status: "updated",
+    });
+
+    await studiedToday(learner.id);
+
+    await expect(getDailyTimeLimitStatus()).resolves.toStrictEqual({
+      limitMinutes: 30,
+      reached: false,
+      remainingMinutes: 10,
+      usedMinutes: 20,
+    });
+
+    await updateLearningProfile({ dailyLimitMinutes: null });
+
+    await expect(getDailyTimeLimitStatus()).resolves.toMatchObject({
+      limitMinutes: null,
+      reached: false,
+    });
+  });
+
+  it("says the limit is reached once the day's study meets it", async () => {
+    freezeClock();
+
+    const learner = await userFixture();
+
+    await Promise.all([
+      learningProfileFixture({ dailyLimitMinutes: 15, userId: learner.id }),
+      studiedToday(learner.id),
+    ]);
+
+    mockSession(learner.id);
+
+    await expect(getDailyTimeLimitStatus()).resolves.toStrictEqual({
+      limitMinutes: 15,
+      reached: true,
+      remainingMinutes: 0,
+      usedMinutes: 20,
+    });
+  });
+});

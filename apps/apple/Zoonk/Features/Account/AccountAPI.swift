@@ -5,6 +5,7 @@ enum AccountAPIError: Error, Equatable {
   case accountDisabled
   case accountMismatch
   case appleCredentialMismatch
+  case botDetected
   case disposableEmail
   case invalidCode
   case invalidEmail
@@ -25,7 +26,7 @@ protocol AccountAPIClient {
     emailCredentials: EmailReauthenticationCredentials?
   ) async throws -> AccountDeletionResponse
   func getCurrentAccount(token: String) async throws -> CurrentAccount
-  func sendEmailCode(email: String) async throws
+  func sendEmailCode(email: String, token: String?) async throws
   func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String
   func signInWithEmailCode(email: String, code: String) async throws -> String
   func signInWithGoogle(idToken: String) async throws -> String
@@ -38,6 +39,10 @@ protocol AccountAPIClient {
 }
 
 extension AccountAPIClient {
+  func sendEmailCode(email: String) async throws {
+    try await sendEmailCode(email: email, token: nil)
+  }
+
   func deleteAccount(token: String) async throws -> AccountDeletionResponse {
     try await deleteAccount(token: token, appleCredentials: nil, emailCredentials: nil)
   }
@@ -86,8 +91,8 @@ struct AccountAPI {
   }
 
   /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application.
-  func sendEmailCode(email: String) async throws {
-    let output = try await perform { client in
+  func sendEmailCode(email: String, token: String?) async throws {
+    let output = try await perform(token: token) { client in
       try await client.createEmailSignInCode(
         .init(body: .json(.init(email: email))))
     }
@@ -337,6 +342,10 @@ struct AccountAPI {
       "EMAIL_SIGN_IN_CODE_LOCKED",
     ].contains(code) {
       return .invalidCode
+    }
+
+    if code == "BOT_DETECTED" {
+      return .botDetected
     }
 
     if statusCode == 401 {

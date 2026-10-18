@@ -1,0 +1,466 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5:none",
+  "results": [
+    {
+      "classification": { "expected": "trap", "predicted": "trap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "trap" },
+        "id": "en-trap-raise-then-discount-1",
+        "userInput": {
+          "correctAnswer": "$99",
+          "language": "en",
+          "learnerAnswer": "$100",
+          "misconception": "Assumes a 10% raise followed by a 10% discount cancel out",
+          "question": "A $100 jacket goes up 10%, then goes on sale for 10% off. What does it cost now?",
+          "recentAccuracy": "4 of 5 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "en-gap-percent-of-wrong-base-1",
+        "userInput": {
+          "correctAnswer": "25%",
+          "language": "en",
+          "learnerAnswer": "20%",
+          "misconception": "Computes the change relative to the new value instead of the original",
+          "question": "A price goes from $80 to $100. By what percentage did it increase?",
+          "recentAccuracy": "2 of 5 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "en-misread-not-question-1",
+        "userInput": {
+          "correctAnswer": "Mercury",
+          "language": "en",
+          "learnerAnswer": "Mars",
+          "misconception": "",
+          "question": "Which of these planets does NOT have a moon? Mars, Mercury, Earth, Jupiter",
+          "recentAccuracy": "4 of 5 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "en-gap-photosynthesis-inputs-1",
+        "userInput": {
+          "correctAnswer": "Carbon dioxide and water",
+          "language": "en",
+          "learnerAnswer": "Oxygen and glucose",
+          "misconception": "Confuses the inputs of photosynthesis with its outputs",
+          "question": "What does a plant take in to make its food through photosynthesis?",
+          "recentAccuracy": "2 of 4 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "en-misread-units-1",
+        "userInput": {
+          "correctAnswer": "1.5 hours",
+          "language": "en",
+          "learnerAnswer": "90 hours",
+          "misconception": "",
+          "question": "A 90-minute movie starts at 7 pm. How long is the movie, in hours?",
+          "recentAccuracy": "5 of 6 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "trap", "predicted": "trap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "trap" },
+        "id": "en-trap-partial-step-1",
+        "userInput": {
+          "correctAnswer": "x = 4",
+          "language": "en",
+          "learnerAnswer": "2x = 8",
+          "misconception": "Stops at an intermediate step and takes it as the final answer",
+          "question": "Solve for x: 2x + 3 = 11",
+          "recentAccuracy": "4 of 5 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "en-gap-affect-effect-1",
+        "userInput": {
+          "correctAnswer": "affect",
+          "language": "en",
+          "learnerAnswer": "effect",
+          "misconception": "Uses the noun where the verb is needed",
+          "question": "Choose the word that fits: 'Lack of sleep can ___ your memory.'",
+          "recentAccuracy": "1 of 3 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "trap", "predicted": "trap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "trap" },
+        "id": "en-trap-median-vs-mean-1",
+        "userInput": {
+          "correctAnswer": "4",
+          "language": "en",
+          "learnerAnswer": "5",
+          "misconception": "Gives the mean when the question asks for the median",
+          "question": "What is the median of 1, 3, 4, 7, 10?",
+          "recentAccuracy": "3 of 4 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "trap", "predicted": "trap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "trap" },
+        "id": "pt-trap-desconto-sobre-desconto-1",
+        "userInput": {
+          "correctAnswer": "R$ 72",
+          "language": "pt",
+          "learnerAnswer": "R$ 70",
+          "misconception": "Soma os descontos sucessivos em vez de aplicá-los um sobre o outro",
+          "question": "Uma camiseta de R$ 100 tem 20% de desconto e, no caixa, mais 10% sobre o novo preço. Quanto ela custa?",
+          "recentAccuracy": "4 de 5 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-gap-regra-de-tres-inversa-1",
+        "userInput": {
+          "correctAnswer": "3 dias",
+          "language": "pt",
+          "learnerAnswer": "12 dias",
+          "misconception": "Usa proporção direta quando as grandezas são inversamente proporcionais",
+          "question": "4 pedreiros constroem um muro em 6 dias. Em quantos dias 8 pedreiros constroem o mesmo muro?",
+          "recentAccuracy": "2 de 5 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "pt-misread-exceto-1",
+        "userInput": {
+          "correctAnswer": "Fotossíntese",
+          "language": "pt",
+          "learnerAnswer": "Respiração celular",
+          "misconception": "",
+          "question": "Todos os processos abaixo liberam energia para a célula, EXCETO: respiração celular, fermentação, fotossíntese, glicólise.",
+          "recentAccuracy": "5 de 6 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-gap-crase-1",
+        "userInput": {
+          "correctAnswer": "Vou à escola",
+          "language": "pt",
+          "learnerAnswer": "Vou a escola",
+          "misconception": "Não reconhece a fusão da preposição com o artigo feminino",
+          "question": "Qual frase está correta quanto ao uso da crase?",
+          "recentAccuracy": "1 de 3 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "trap", "predicted": "trap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "trap" },
+        "id": "pt-trap-porcentagem-de-porcentagem-1",
+        "userInput": {
+          "correctAnswer": "Aumentou 21%",
+          "language": "pt",
+          "learnerAnswer": "Aumentou 20%",
+          "misconception": "Soma dois aumentos sucessivos de 10% como se fossem 20%",
+          "question": "Um preço aumentou 10% em janeiro e mais 10% em fevereiro. Qual foi o aumento total?",
+          "recentAccuracy": "3 de 4 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "pt-misread-unidade-pedida-1",
+        "userInput": {
+          "correctAnswer": "2,5 km",
+          "language": "pt",
+          "learnerAnswer": "2.500 km",
+          "misconception": "",
+          "question": "Ana caminhou 2.500 metros. Quantos quilômetros ela caminhou?",
+          "recentAccuracy": "4 de 5 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-gap-mitose-meiose-1",
+        "userInput": {
+          "correctAnswer": "Meiose",
+          "language": "pt",
+          "learnerAnswer": "Mitose",
+          "misconception": "Confunde a divisão que forma gametas com a que forma células iguais",
+          "question": "Qual divisão celular forma os gametas, com metade dos cromossomos?",
+          "recentAccuracy": "2 de 4 certas"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "en-misread-least-likely-1",
+        "userInput": {
+          "correctAnswer": "Rolling a 7 with one die",
+          "language": "en",
+          "learnerAnswer": "Flipping heads with a coin",
+          "misconception": "",
+          "question": "Which event is LEAST likely? Flipping heads with a coin, rolling an even number with one die, rolling a 7 with one die.",
+          "recentAccuracy": "5 of 6 right"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "en-persona-maya-negative-power-1",
+        "userInput": {
+          "correctAnswer": "0.001",
+          "learnerAnswer": "−1,000",
+          "misconception": "Thinks a negative power makes a negative number",
+          "question": "What is 10⁻³?",
+          "recentAccuracy": "0 of 1 right",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "en-persona-guest-cloud-spins-fast-1",
+        "userInput": {
+          "correctAnswer": "It's already in the lowest energy state there is",
+          "learnerAnswer": "It spins too fast to be caught",
+          "misconception": "Holds the planet picture of the atom",
+          "question": "Why can't the electron in a hydrogen atom lose more energy and fall into the nucleus?",
+          "recentAccuracy": "0 of 1 right",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-persona-ana-circuit-one-resistor-1",
+        "userInput": {
+          "correctAnswer": "1,0 A",
+          "learnerAnswer": "3,0 A",
+          "misconception": "Usou só o resistor de 2 Ω",
+          "question": "Uma lanterna usa uma bateria de 6 V ligada a dois resistores em série, de 2 Ω e 4 Ω. Qual é a corrente elétrica no circuito?",
+          "recentAccuracy": "0 of 2 right",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-persona-lucas-brighter-photons-1",
+        "userInput": {
+          "correctAnswer": "Falso",
+          "learnerAnswer": "Verdadeiro",
+          "misconception": "Acha que o brilho define a energia do fóton",
+          "question": "Uma luz vermelha mais forte é feita de fótons com mais energia cada um.",
+          "recentAccuracy": "0 of 1 right",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-persona-pedro-bankruptcy-order-1",
+        "userInput": {
+          "correctAnswer": "Eles são os últimos da fila e muitas vezes não recebem nada",
+          "learnerAnswer": "Eles são pagos primeiro",
+          "misconception": "",
+          "question": "A rede de padarias vai à falência. O que acontece com os acionistas?",
+          "recentAccuracy": "1 of 2 right",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "gap", "predicted": "gap" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "gap" },
+        "id": "pt-persona-marcos-how-many-deposit-1",
+        "userInput": {
+          "correctAnswer": "How much is the deposit?",
+          "learnerAnswer": "How many is the deposit?",
+          "misconception": "Usou how many para preço",
+          "question": "How [BLANK] is the deposit?",
+          "recentAccuracy": "1 of 2 right",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "misread", "predicted": "misread" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "cause": "misread" },
+        "id": "pt-persona-marcos-first-last-rent-1",
+        "userInput": {
+          "correctAnswer": "O primeiro e o último mês de aluguel, pagos adiantado",
+          "learnerAnswer": "Só o aluguel do primeiro mês",
+          "misconception": "Ignorou o “last month's rent”",
+          "question": "The landlord asked for first and last month's rent. O que o proprietário pediu?",
+          "recentAccuracy": "1 of 2 right",
+          "language": "pt"
+        }
+      }
+    }
+  ],
+  "taskId": "mistake-cause"
+}

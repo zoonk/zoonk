@@ -1,4 +1,5 @@
 import { formatDuration } from "@/lib/format-duration";
+import { getAdminLessonKindLabel } from "@/lib/lesson-label";
 import {
   Table,
   TableBody,
@@ -7,21 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-
-const lessonKindLabels: Record<string, string> = {
-  alphabet: "Alphabet",
-  custom: "Custom",
-  explanation: "Explanation",
-  grammar: "Grammar",
-  listening: "Listening",
-  practice: "Practice",
-  quiz: "Quiz",
-  reading: "Reading",
-  review: "Review",
-  translation: "Translation",
-  tutorial: "Tutorial",
-  vocabulary: "Vocabulary",
-};
 
 type LessonBreakdownData = {
   kind: string;
@@ -59,7 +45,7 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) 
 function LessonBreakdownRow({ row }: { row: LessonBreakdownData }) {
   return (
     <TableRow>
-      <TableCell className="font-medium">{lessonKindLabels[row.kind] ?? row.kind}</TableCell>
+      <TableCell className="font-medium">{getAdminLessonKindLabel(row.kind)}</TableCell>
       <TableCell className="tabular-nums">{formatDuration(row.avgDuration)}</TableCell>
       <TableCell>
         <CompletionBar rate={row.completionRate} />

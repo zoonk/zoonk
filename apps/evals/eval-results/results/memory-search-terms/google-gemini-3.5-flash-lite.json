@@ -1,0 +1,222 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Likes football examples", "Studies after 8 pm", "Wants Law"],
+          "relevant": ["Mixes up simple and compound interest", "Struggles with percentages"]
+        },
+        "id": "en-explain-interest-1",
+        "userInput": {
+          "language": "en",
+          "need": "Explain why the learner's answer on a compound interest question was wrong"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Likes football examples", "Wants Law at a public university"],
+          "relevant": [
+            "Can't study on Saturdays",
+            "Studies after 8 pm on weekdays",
+            "Works night shifts"
+          ]
+        },
+        "id": "en-plan-week-1",
+        "userInput": { "language": "en", "need": "Plan this learner's study schedule for the week" }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Can't study on Saturdays", "Has the ENEM on November 8"],
+          "relevant": ["Likes football examples", "Works at a clothing store"]
+        },
+        "id": "en-example-discounts-1",
+        "userInput": {
+          "language": "en",
+          "need": "Write a personal example for a lesson on shop discounts"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, goal, score, wants, needs, deadline, test, study, prioritize.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, goal, score, wants, needs, deadline, test, study, prioritize.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Missed Has the ENEM on November 8 with: exam, goal, score, wants, needs, deadline, test, study, prioritize.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Likes football examples", "Studies on the bus"],
+          "relevant": [
+            "Has the ENEM on November 8",
+            "Needs 700+ in the essay",
+            "Wants Law at a public university"
+          ]
+        },
+        "id": "en-exam-priorities-1",
+        "userInput": {
+          "language": "en",
+          "need": "Decide which topics to prioritize before the learner's exam"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Can't study on Saturdays", "Wants Law"],
+          "relevant": ["Works as a nurse", "Likes basketball examples"]
+        },
+        "id": "en-example-statistics-1",
+        "userInput": {
+          "language": "en",
+          "need": "Write a personal example for a statistics lesson on averages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Gosta de exemplos de futebol", "Estuda à noite"],
+          "relevant": ["Confunde grandezas diretas e inversas", "Tem dificuldade com proporção"]
+        },
+        "id": "pt-explain-proportion-1",
+        "userInput": {
+          "language": "pt",
+          "need": "Explicar o erro do aluno em uma questão de regra de três"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Gosta de exemplos de futebol", "Quer Direito na USP"],
+          "relevant": ["Não estuda aos sábados", "Estuda depois das 20h", "Trabalha de dia"]
+        },
+        "id": "pt-plan-week-1",
+        "userInput": { "language": "pt", "need": "Planejar a semana de estudos do aluno" }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Missed É dono de uma padaria with: gosta, trabalha, vive, negocio, loja, salario, exemplo, juros, financas, dinheiro.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Missed É dono de uma padaria with: gosta, trabalha, vive, negocio, loja, salario, exemplo, juros, financas, dinheiro.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Missed É dono de uma padaria with: gosta, trabalha, vive, negocio, loja, salario, exemplo, juros, financas, dinheiro.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Estuda no ônibus", "Tem a prova em novembro"],
+          "relevant": ["É dono de uma padaria", "Gosta de exemplos de futebol"]
+        },
+        "id": "pt-example-interest-1",
+        "userInput": {
+          "language": "pt",
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Gosta de exemplos de futebol", "Estuda no ônibus"],
+          "relevant": ["Tem o ENEM em 8 de novembro", "Precisa de 700 na redação"]
+        },
+        "id": "pt-exam-priorities-1",
+        "userInput": {
+          "language": "pt",
+          "need": "Decidir quais temas priorizar antes da prova do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "all", "predicted": "all" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "irrelevant": ["Mora em Recife", "Estuda à noite"],
+          "relevant": ["Prefere explicações curtas", "Prefere um tom direto"]
+        },
+        "id": "pt-tutor-tone-1",
+        "userInput": {
+          "language": "pt",
+          "need": "Escolher o tamanho e o tom das respostas do tutor"
+        }
+      }
+    }
+  ],
+  "taskId": "memory-search-terms"
+}

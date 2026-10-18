@@ -41,28 +41,24 @@ final class CourseCatalogSearchTests: XCTestCase {
     XCTAssertEqual(matches.map(\.id), ["first"])
   }
 
-  func testBlankLessonContentUsesSearchableLocalizedKindFallbacks() {
+  func testBlankLessonContentFallsBackToAPlainLessonTitle() {
     let lesson = CourseLesson(
       chapterID: "chapter",
       courseID: "course",
       description: " \n",
-      id: "listening",
-      imageURL: nil,
-      kind: .listening,
+      id: "untitled",
       language: "en",
       position: 0,
-      slug: "listening",
+      slug: "untitled",
       title: " ")
-    let fallbackTitle = String(localized: LessonKind.listening.localizedTitle)
-    let fallbackDescription = String(localized: LessonKind.listening.localizedDescription)
 
-    XCTAssertEqual(lesson.displayTitle(), fallbackTitle)
-    XCTAssertEqual(lesson.displayDescription(), fallbackDescription)
+    XCTAssertEqual(lesson.displayTitle(), String(localized: "Lesson", table: "Courses"))
+    XCTAssertNil(lesson.displayDescription())
 
     let matches = filterCourseLessons(
       CatalogSearchRequest(
         items: [lesson],
-        query: fallbackTitle,
+        query: lesson.displayTitle(),
         locale: Locale(identifier: "en_US")))
 
     XCTAssertEqual(matches.map(\.id), [lesson.id])
@@ -77,10 +73,11 @@ final class CourseCatalogSearchTests: XCTestCase {
     CourseChapter(
       courseID: "course",
       description: description,
+      generationStatus: .completed,
       id: id,
-      imageURL: nil,
       language: "en",
       lessonCount: 2,
+      level: .beginner,
       position: position,
       slug: id,
       title: title)
@@ -96,8 +93,6 @@ final class CourseCatalogSearchTests: XCTestCase {
       courseID: "course",
       description: description,
       id: id,
-      imageURL: nil,
-      kind: .listening,
       language: "en",
       position: position,
       slug: id,

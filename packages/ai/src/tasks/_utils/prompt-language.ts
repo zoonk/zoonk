@@ -3,7 +3,7 @@ import { getLanguageName } from "@zoonk/utils/languages";
 const PROMPT_LANGUAGE_NAMES: Record<string, string> = {
   de: "Deutsch",
   en: "US English",
-  es: "Español Latinoamericano",
+  es: "Español de España",
   fr: "Français",
   pt: "Português Brasileiro",
 };

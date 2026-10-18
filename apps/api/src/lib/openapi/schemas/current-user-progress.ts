@@ -83,7 +83,22 @@ export const currentUserActivityResponseSchema = z
   .object({
     activity: learningActivityTotalsSchema.extend({
       days: z.array(
-        z.object({ date: logicalDateSchema, lessonCompletions: z.number().int().min(0) }),
+        z.object({
+          activitiesCompleted: z
+            .number()
+            .int()
+            .min(0)
+            .meta({
+              description:
+                "Lessons, reviews and practice finished that day; above zero exactly on a learning day",
+            }),
+          date: logicalDateSchema,
+          lessonCompletions: z
+            .number()
+            .int()
+            .min(0)
+            .meta({ description: "Lessons finished for the first time that day" }),
+        }),
       ),
     }),
   })
@@ -134,33 +149,3 @@ export const currentUserScorePatternsResponseSchema = z
       .nullable(),
   })
   .meta({ id: "CurrentUserScorePatternsResponse" });
-
-const playerProgressSnapshotSchema = z.object({
-  bestDayScores: z
-    .array(
-      z.object({
-        correctAnswers: z.number().int().min(0),
-        dayOfWeek: weekdaySchema,
-        incorrectAnswers: z.number().int().min(0),
-      }),
-    )
-    .nullable(),
-  currentEnergy: z.number().min(0).max(100),
-  fullEnergyDays: z.number().int().min(0),
-  highestPreviousDailyBrainPower: z.number().int().min(0),
-  learningDays: z.number().int().min(0),
-  todayBrainPower: z.number().int().min(0),
-  todayCompletedLessons: z.number().int().min(0),
-  todayEnergyAtEnd: z.number().min(0).max(100).nullable(),
-  todayInteractiveLessons: z.number().int().min(0),
-  totalLearningSeconds: z.number().int().min(0),
-});
-
-export const currentUserProgressSnapshotResponseSchema = z
-  .object({
-    snapshot: z.object({
-      progressSnapshot: playerProgressSnapshotSchema,
-      totalBrainPower: z.number().int().min(0),
-    }),
-  })
-  .meta({ id: "CurrentUserProgressSnapshotResponse" });

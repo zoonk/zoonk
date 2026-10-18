@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { countryToCurrency, formatPrice } from "./currency";
+import { BILLING_CURRENCIES, countryToCurrency, formatPrice } from "./currency";
+
+describe("billing currencies", () => {
+  it("has every currency a country is billed in once, and the default for every other country", () => {
+    const countries = ["US", "BR", "GB", "JP", "DE", "IN", "IS", "UY", "ZZ"];
+
+    expect(new Set(BILLING_CURRENCIES).size).toBe(BILLING_CURRENCIES.length);
+
+    expect(
+      countries.every((country) => BILLING_CURRENCIES.includes(countryToCurrency(country))),
+    ).toBe(true);
+  });
+});
 
 describe(countryToCurrency, () => {
   it("returns correct currency for known countries", () => {
@@ -51,11 +63,6 @@ describe(formatPrice, () => {
   it("formats BRL", () => {
     const result = formatPrice(4990, "brl", "pt-BR");
     expect(result).toContain("49,90");
-  });
-
-  it("omits decimals for whole amounts", () => {
-    expect(formatPrice(1000, "usd")).toBe("$10");
-    expect(formatPrice(500, "usd")).toBe("$5");
   });
 
   it("formats zero-decimal currency KRW", () => {

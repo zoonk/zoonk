@@ -8,12 +8,14 @@ struct ZoonkApp: App {
   @State private var session: SessionStore
   @State private var subscriptions: AppStoreSubscriptionStore
   private let initiallyPresentsAccount: Bool
+  private let privateImages: PrivateImageLoader
 
   init() {
     #if DEBUG
       if let configuration = UITestConfiguration.current {
         _courseCatalog = State(initialValue: configuration.courseCatalog)
         _myCourses = State(initialValue: configuration.myCourses)
+        privateImages = .live()
         _progress = State(initialValue: configuration.progress)
         _session = State(initialValue: configuration.session)
         _subscriptions = State(initialValue: .live())
@@ -25,6 +27,7 @@ struct ZoonkApp: App {
     let dependencies = AppDependencies.live()
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _myCourses = State(initialValue: dependencies.myCoursesStore)
+    privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
     _session = State(initialValue: dependencies.sessionStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
@@ -39,6 +42,7 @@ struct ZoonkApp: App {
         .environment(progress)
         .environment(session)
         .environment(subscriptions)
+        .environment(\.privateImageLoader, privateImages)
         .onOpenURL { url in
           session.handleGoogleSignInURL(url)
         }

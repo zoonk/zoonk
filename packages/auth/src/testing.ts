@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth/minimal";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 
-/** @public */
 export const auth = betterAuth({
   ...baseAuthConfig,
   emailAndPassword: {
@@ -16,7 +15,7 @@ export const auth = betterAuth({
   plugins: [...baseAuthPlugins],
 });
 
-/** @public Vitest aliases the package root to this module, so it must preserve the production entrypoint's deletion capability without requiring Next's cookie context. */
+/** Vitest aliases the package root to this module, so it must preserve the production entrypoint's deletion capability without requiring Next's cookie context. */
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: false },
   storeOTP: "hashed",

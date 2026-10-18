@@ -3,6 +3,11 @@ import { Fragment, type ReactNode, createElement } from "react";
 type MessageValue = number | string;
 type RichMessageValue = MessageValue | ((children: ReactNode) => ReactNode);
 
+/** ICU formats `#` and `{value, number}` with the locale's number format. */
+function formatNumber(value: number) {
+  return new Intl.NumberFormat("en").format(value);
+}
+
 /**
  * Shared player browser tests assert the package's visible behavior, not
  * next-intl's runtime. Formatting the ICU subset used by player messages keeps
@@ -16,15 +21,23 @@ function formatPluralBlocks({
   values: Record<string, number | string>;
 }) {
   return value.replaceAll(
-    /\{(?<key>\w+),\s*plural,\s*one\s*\{(?<one>[^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{(?<other>[^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
-    (token, key: string, one: string, other: string) => {
+    /\{(?<key>\w+),\s*plural,\s*(?<exact>(?:=\d+\s*\{[^{}]*\}\s*)*)one\s*\{(?<one>[^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{(?<other>[^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
+    (token, key: string, exact: string, one: string, other: string) => {
       const count = Number(values[key]);
 
       if (!Number.isFinite(count)) {
         return token;
       }
 
-      return (count === 1 ? one : other).replaceAll("#", String(count));
+      /* An exact case such as `=0 {…}` wins over the plural category, as in ICU. */
+      const exactMatch = [...exact.matchAll(/[=](?<number>\d+)\s*\{(?<label>[^{}]*)\}/gu)].find(
+        (match) => Number(match.groups?.number) === count,
+      );
+
+      return (exactMatch?.groups?.label ?? (count === 1 ? one : other)).replaceAll(
+        "#",
+        formatNumber(count),
+      );
     },
   );
 }
@@ -63,8 +76,17 @@ function formatExtractedMessage({
   const withSelectBlocks = formatSelectBlocks({ value, values });
   const withPluralBlocks = formatPluralBlocks({ value: withSelectBlocks, values });
 
-  return withPluralBlocks.replaceAll(/\{(?<key>\w+)\}/gu, (token, key: string) =>
-    String(values[key] ?? token),
+  return withPluralBlocks.replaceAll(
+    /\{(?<key>\w+)(?<number>,\s*number)?\}/gu,
+    (token, key: string, number?: string) => {
+      const argument = values[key];
+
+      if (argument === undefined) {
+        return token;
+      }
+
+      return number && typeof argument === "number" ? formatNumber(argument) : String(argument);
+    },
   );
 }
 
@@ -147,6 +169,8 @@ export function useFormatter() {
   const locale = useLocale();
 
   return {
+    dateTime: (value: Date | number, options?: Intl.DateTimeFormatOptions) =>
+      new Intl.DateTimeFormat(locale, options).format(value),
     number: (value: number | bigint, options?: Intl.NumberFormatOptions) =>
       new Intl.NumberFormat(locale, options).format(value),
   };

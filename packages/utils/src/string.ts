@@ -25,32 +25,6 @@ export function toSlug(str: string): string {
     .replaceAll(/^-|-$/gu, "");
 }
 
-function nextAvailableSlug(base: string, taken: Set<string>): string {
-  let counter = 1;
-
-  while (taken.has(`${base}-${counter}`)) {
-    counter += 1;
-  }
-
-  return `${base}-${counter}`;
-}
-
-export function deduplicateSlugs<T extends { slug: string }>(items: T[]): T[] {
-  const taken = new Set<string>(items.map((item) => item.slug));
-  const seen = new Set<string>();
-
-  return items.map((item) => {
-    if (!seen.has(item.slug)) {
-      seen.add(item.slug);
-      return item;
-    }
-
-    const candidate = nextAvailableSlug(item.slug, taken);
-    taken.add(candidate);
-    return { ...item, slug: candidate };
-  });
-}
-
 /**
  * Different parts of the app can send the same text with tiny formatting differences,
  * such as extra spaces, accents, or a space before punctuation.
@@ -69,14 +43,6 @@ export function deduplicateNormalizedTexts(texts: string[]): string[] {
   ];
 }
 
-/**
- * Converts optional free-text fields into the database representation for missing text.
- * This keeps blank generated fields from being saved as meaningful strings.
- */
-export function emptyToNull(value?: string | null): string | null {
-  return value?.trim() || null;
-}
-
 export function ensureLocaleSuffix(value: string, language: string): string {
   if (language === "en") {
     return value;
@@ -93,6 +59,57 @@ export function ensureLocaleSuffix(value: string, language: string): string {
 
 export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
+}
+
+/**
+ * Takes em dashes out of generated copy, which the app never shows: one that opens a line (a
+ * dialogue or list mark) or closes a clause before punctuation goes away, any other becomes a
+ * comma ("statement of defense — the written defense" reads "statement of defense, the written defense"). En dashes
+ * stay: they join ranges ("B1–B2").
+ */
+export function replaceEmDashes(text: string): string {
+  if (!text.includes("—")) {
+    return text;
+  }
+
+  return text
+    .replaceAll(/^[ \t]*—[ \t]*/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*(?=[,.;:!?)]|$)/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
+}
+
+/** What a dash still waiting for the text after it could change: trailing spaces, tabs and dashes. */
+const OPEN_DASH_TAIL = /[ \t—]*$/u;
+
+/**
+ * `replaceEmDashes` for text that arrives in pieces, such as a streamed answer: `push` returns a
+ * piece's text as soon as nothing after it can change it, holding back a trailing dash and the
+ * spaces around it until the next piece says what follows, and `end` returns what's left. Joined,
+ * the returned pieces read as `replaceEmDashes` reads the whole text.
+ */
+export function createEmDashReplacer(): { end: () => string; push: (piece: string) => string } {
+  let held = "";
+  let atLineStart = true;
+
+  // A piece that continues a line doesn't open one: a mark in front keeps a dash there mid-line.
+  const replace = (text: string) => {
+    const replaced = atLineStart ? replaceEmDashes(text) : replaceEmDashes(`x${text}`).slice(1);
+    atLineStart = text ? text.endsWith("\n") : atLineStart;
+    return replaced;
+  };
+
+  return {
+    end: () => {
+      const rest = replace(held);
+      held = "";
+      return rest;
+    },
+    push: (piece) => {
+      const text = held + piece;
+      held = OPEN_DASH_TAIL.exec(text)?.[0] ?? "";
+      return replace(text.slice(0, text.length - held.length));
+    },
+  };
 }
 
 export function stripPunctuation(text: string): string {
@@ -154,15 +171,15 @@ export function segmentWords(text: string): string[] {
   return segmentNonSpaceText(normalizedText);
 }
 
-export function extractUniqueSentenceWords(sentences: string[]): string[] {
-  const words = sentences.flatMap((sentence) =>
-    segmentWords(sentence).flatMap((token) => {
-      const stripped = stripPunctuation(token).toLowerCase();
-      return stripped.length > 0 ? [stripped] : [];
-    }),
-  );
+/**
+ * The first sentence of a text, whole: a summary that never stops mid-thought the way a line clamp
+ * does. Sentence breaks follow the text's language (`Intl.Segmenter`), so languages without spaces
+ * work too. Text without a sentence end comes back trimmed.
+ */
+export function getFirstSentence(text: string, locale: string): string {
+  const [first] = new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim());
 
-  return [...new Set(words)];
+  return first?.segment.trim() ?? "";
 }
 
 /**
@@ -197,4 +214,25 @@ export function replaceNamePlaceholder(text: string, name: string | null): strin
     .trim();
 
   return capitalizeFirst(stripped);
+}
+
+/** Repeated titles get the first free numbered suffix inside their owner, course or chapter. */
+export function pickAvailableSlug({
+  base,
+  taken,
+}: {
+  base: string;
+  taken: readonly string[];
+}): string {
+  const takenSlugs = new Set(taken);
+
+  if (!takenSlugs.has(base)) {
+    return base;
+  }
+
+  const suffix = Array.from({ length: takenSlugs.size + 1 }, (_, index) => index + 2).find(
+    (candidate) => !takenSlugs.has(`${base}-${candidate}`),
+  );
+
+  return `${base}-${suffix}`;
 }

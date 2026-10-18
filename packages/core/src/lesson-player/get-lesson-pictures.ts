@@ -1,0 +1,82 @@
+import "server-only";
+import { prisma } from "@zoonk/db";
+import { isUuid } from "@zoonk/utils/uuid";
+import { canViewLibraryRow } from "../library/_utils/library-visibility";
+import { safeParseStepContent } from "../library/steps/contract/step-contract";
+import { getSession } from "../users/get-session";
+import { getOptionPictures, getStepImage } from "./_utils/screen-pictures";
+import { type LessonPicture } from "./contract";
+
+/**
+ * The pictures a lesson's screens and their picture options have so far, read fresh from the
+ * database: they're drawn by a
+ * workflow in another app right after the lesson opens, so a cached lesson in this app doesn't
+ * have them yet. The player asks for them while a screen's picture is pending
+ * (`imagePending`), for the lesson it already plays, naming the screens still waiting
+ * (`stepIds`), so each ask carries only the pictures it's missing. Like the lesson's screens,
+ * they go only to someone with a session (a guest's included) who can see the lesson. Empty
+ * otherwise.
+ */
+export async function getLessonPictures({
+  lessonId,
+  stepIds,
+}: {
+  lessonId: string;
+  stepIds?: readonly string[];
+}): Promise<LessonPicture[]> {
+  if (!isUuid(lessonId)) {
+    return [];
+  }
+
+  const [session, lesson] = await Promise.all([
+    getSession(),
+    prisma.lesson.findUnique({
+      select: {
+        ownerId: true,
+        steps: {
+          include: { mediaAsset: true, optionPictures: { include: { mediaAsset: true } } },
+          orderBy: { position: "asc" },
+          where: {
+            OR: [{ mediaAssetId: { not: null } }, { optionPictures: { some: {} } }],
+            ...(stepIds ? { id: { in: [...stepIds] } } : {}),
+          },
+        },
+        visibility: true,
+      },
+      where: { id: lessonId },
+    }),
+  ]);
+
+  if (!session || !lesson || !(await canViewLibraryRow(lesson))) {
+    return [];
+  }
+
+  return lesson.steps.flatMap((step) => {
+    const parsed = safeParseStepContent(step.kind, step.content);
+
+    if (!parsed.success) {
+      return [];
+    }
+
+    const image = getStepImage({
+      content: parsed.data,
+      kind: step.kind,
+      mediaAsset: step.mediaAsset,
+    });
+
+    const options = getOptionPictures({
+      content: parsed.data,
+      kind: step.kind,
+      pictures: step.optionPictures,
+    });
+
+    return [
+      ...(image ? [{ image, stepId: step.id }] : []),
+      ...Object.entries(options).map(([optionId, picture]) => ({
+        image: picture,
+        optionId,
+        stepId: step.id,
+      })),
+    ];
+  });
+}

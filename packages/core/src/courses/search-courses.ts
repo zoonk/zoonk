@@ -1,10 +1,5 @@
 import "server-only";
-import {
-  type CourseGetPayload,
-  type Organization,
-  getPublishedCourseWhere,
-  prisma,
-} from "@zoonk/db";
+import { type CourseGetPayload, type Organization, getListedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
@@ -16,7 +11,7 @@ type CourseWithOrganization = Omit<CourseSearchRow, "organization"> & {
   organization: Organization;
 };
 
-type CourseSearchWhere = ReturnType<typeof getPublishedCourseWhere>;
+type CourseSearchWhere = ReturnType<typeof getListedCourseWhere>;
 
 type SearchCoursesParams = {
   filterByLanguage?: boolean;
@@ -190,10 +185,7 @@ async function searchCourseRows({
   normalizedSearch: string;
   offset: number;
 }): Promise<CourseWithOrganization[]> {
-  const baseWhere = getPublishedCourseWhere({
-    organization: { kind: "brand" } as const,
-    ...getSearchLanguageFilter({ filterByLanguage, language }),
-  });
+  const baseWhere = getListedCourseWhere(getSearchLanguageFilter({ filterByLanguage, language }));
 
   const buckets = getCourseSearchBuckets({
     baseWhere,
@@ -225,8 +217,8 @@ async function searchCourseRows({
 }
 
 /**
- * Searches the public course catalog with a bounded result count for internal
- * consumers such as the command palette.
+ * Searches the listed course catalog (`getListedCourseWhere`) with a bounded result count for
+ * consumers such as the command palette and onboarding's course match.
  */
 export async function searchCourses(
   params: SearchCoursesParams,

@@ -1,12 +1,24 @@
 import { MAX_LESSON_QUESTION_THREAD_TURNS } from "@zoonk/core/lesson-questions/contract";
+import { type z } from "zod";
 import {
   createLessonQuestionRequestSchema,
+  createdLessonQuestionResponseSchema,
+  earlierQuestionsQuerySchema,
+  earlierQuestionsResponseSchema,
   lessonQuestionAnswerStreamSchema,
   lessonQuestionResponseSchema,
   lessonQuestionThreadQuerySchema,
   lessonQuestionThreadResponseSchema,
 } from "../schemas/lesson-questions";
-import { lessonPathParamsSchema, lessonQuestionPathParamsSchema } from "../schemas/paths";
+import {
+  chapterPathParamsSchema,
+  goalPathParamsSchema,
+  goalSubjectPathParamsSchema,
+  itemPathParamsSchema,
+  lessonPathParamsSchema,
+  lessonQuestionPathParamsSchema,
+  mockPathParamsSchema,
+} from "../schemas/paths";
 import {
   badRequestResponse,
   conflictResponse,
@@ -20,50 +32,138 @@ import {
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
 
-export const lessonQuestionPaths = {
-  "/lessons/{lessonId}/questions": {
+/**
+ * Every tutor thread has the same two routes: the learner's thread and a new question. Only what
+ * the thread is about changes: a lesson, a chapter, a goal's plan or subject, a session's or
+ * practice's question, or a finished mock.
+ */
+function tutorQuestionPaths<TPath extends z.ZodObject>({
+  about,
+  context,
+  operation,
+  pathSchema,
+  tag,
+}: {
+  about: string;
+  context: string;
+  operation: string;
+  pathSchema: TPath;
+  tag: string;
+}) {
+  return {
     get: {
-      operationId: "getLessonQuestionThread",
-      requestParams: { path: lessonPathParamsSchema, query: lessonQuestionThreadQuerySchema },
+      description: `The current learner's private questions about ${about}.`,
+      operationId: `get${operation}QuestionThread`,
+      requestParams: { path: pathSchema, query: lessonQuestionThreadQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: lessonQuestionThreadResponseSchema } },
-          description: `Up to ${MAX_LESSON_QUESTION_THREAD_TURNS} lesson questions ordered chronologically within the page; omitting the cursor returns the newest page, or null before the first question`,
+          description: `Up to ${MAX_LESSON_QUESTION_THREAD_TURNS} questions ordered chronologically within the page; omitting the cursor returns the newest page, or null before the first question`,
         },
         "400": badRequestResponse,
         "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
         "404": notFoundResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Get the current learner's lesson question thread",
-      tags: ["Lessons"],
+      summary: `Get the current learner's question thread about ${about}`,
+      tags: [tag],
     },
     post: {
-      operationId: "createLessonQuestion",
+      description: `Asks the tutor about ${about}. ${context} Answer it with \`POST /v1/questions/{questionId}/answers\`.`,
+      operationId: `create${operation}Question`,
       requestBody: {
         content: { "application/json": { schema: createLessonQuestionRequestSchema } },
         required: true,
       },
-      requestParams: { path: lessonPathParamsSchema },
+      requestParams: { path: pathSchema },
       responses: {
         "201": {
-          content: { "application/json": { schema: lessonQuestionResponseSchema } },
-          description: "Durable pending lesson question",
+          content: { "application/json": { schema: createdLessonQuestionResponseSchema } },
+          description: "Durable pending question, with the day's missions it completed",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
         "409": conflictResponse,
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Create a lesson question",
+      summary: `Ask a question about ${about}`,
+      tags: [tag],
+    },
+  };
+}
+
+export const lessonQuestionPaths = {
+  "/chapters/{chapterId}/questions": tutorQuestionPaths({
+    about: "a Library chapter",
+    context:
+      '`context` is `{ kind: "chapter" }`: the tutor sees the chapter\'s objectives and its lessons, with the ones the learner finished.',
+    operation: "Chapter",
+    pathSchema: chapterPathParamsSchema,
+    tag: "Chapters",
+  }),
+  "/goals/{goalId}/plan/questions": tutorQuestionPaths({
+    about:
+      "one of the learner's goals: the conversation with their buddy, their tutor for the goal",
+    context:
+      '`context` is `{ kind: "plan" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan ("Why am I studying this today?"), seeing the plan\'s status, current phase, today\'s items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan ("1 hour a day", "no studying on Saturdays", "the exam moved"), the answer proposes the change: the question\'s `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet.',
+    operation: "Plan",
+    pathSchema: goalPathParamsSchema,
+    tag: "Plans",
+  }),
+  "/goals/{goalId}/subjects/{subjectKey}/questions": tutorQuestionPaths({
+    about: "a subject of one of the learner's goals (a subject of the exam's notice, or a module)",
+    context:
+      "`context` is `{ kind: \"subject\" }`: the buddy sees the subject as the syllabus shows it (its topics with their status, its chapters with their progress and next day, the lessons studied, skipped because known, and in all) beside the goal's plan, which it can propose changes to as in the plan's conversation. A key the goal's syllabus doesn't have is 404.",
+    operation: "Subject",
+    pathSchema: goalSubjectPathParamsSchema,
+    tag: "Plans",
+  }),
+  "/items/{itemId}/questions": tutorQuestionPaths({
+    about: "a question of the learner's study session or mistakes practice",
+    context:
+      "`context` is `{ kind: \"item\", answered, blockId? }`: the buddy sees the question as it was asked (with the numbers its session block served, `blockId`, absent in mistakes practice) beside the goal's plan. Before the check (`answered: false`) it never sees the answer and gives hints; after it (`answered: true`) it also sees the learner's latest answer to the question from their own record, the right one and why. Another owner's private item or a question on a mock the learner is still sitting is 404. A block that isn't theirs or doesn't ask it is 422. Without a block, the learner must have their own recorded attempt at the item or a saved mistake on its skill; otherwise the context is 422.",
+    operation: "Item",
+    pathSchema: itemPathParamsSchema,
+    tag: "Study sessions",
+  }),
+  "/lessons/{lessonId}/questions": tutorQuestionPaths({
+    about: "a Library lesson",
+    context:
+      "`context` is the whole lesson (`lesson`, with the step ids in the order the learner saw them), one screen (`step`) or an answer given on a screen (`answer`). When the learner taps one of the tutor's suggestions, send its `suggestion`: the server words the question itself, and a screen's first suggestion that someone already tapped there is answered with the shared answer. Anything the learner types is answered for them alone.",
+    operation: "Lesson",
+    pathSchema: lessonPathParamsSchema,
+    tag: "Lessons",
+  }),
+  "/me/earlier-questions": {
+    get: {
+      description:
+        "The learner's questions about lessons from an earlier version of their courses (before every course was rewritten), newest first, a page at a time (`nextCursor`), with the answers they got and the course and lesson titles they saw then. The lessons are gone, so these are read-only history with nothing to open. Empty for a learner who has none.",
+      operationId: "listEarlierQuestions",
+      requestParams: { query: earlierQuestionsQuerySchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: earlierQuestionsResponseSchema } },
+          description: "A page of the learner's earlier questions, newest first",
+        },
+        "400": badRequestResponse,
+        "401": unauthorizedResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "List the learner's questions from an earlier version of their courses",
       tags: ["Lessons"],
     },
   },
+  "/mocks/{blockId}/questions": tutorQuestionPaths({
+    about: "one of the learner's mock exams",
+    context:
+      '`context` is `{ kind: "mock" }`: the tutor sees the mock\'s result, areas and the questions missed with their skills. Only finished mocks can be asked about; a running mock is 404.',
+    operation: "Mock",
+    pathSchema: mockPathParamsSchema,
+    tag: "Exams",
+  }),
   "/questions/{questionId}": {
     get: {
       operationId: "getLessonQuestion",
@@ -75,7 +175,6 @@ export const lessonQuestionPaths = {
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
-        "402": paymentRequiredResponse,
         "404": notFoundResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -86,7 +185,7 @@ export const lessonQuestionPaths = {
   "/questions/{questionId}/answers": {
     post: {
       description:
-        "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream.",
+        "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance (403 asks a guest to sign up, 402 a free learner to upgrade, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), to show and undo with `POST /v1/me/memory/change-reversals`. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses; render links from the streamed text as plain words.",
       operationId: "createLessonQuestionAnswer",
       requestParams: { path: lessonQuestionPathParamsSchema },
       responses: {
@@ -102,7 +201,8 @@ export const lessonQuestionPaths = {
         "409": conflictResponse,
         "429": {
           ...tooManyRequestsResponse,
-          description: "Lesson question generation quota reached",
+          description:
+            "The tutor allowance asks the learner to slow down or come back after the limit resets",
         },
       },
       security: AUTHENTICATED_SECURITY,

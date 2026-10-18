@@ -1,7 +1,6 @@
 "use client";
 
-import { safeAsync } from "@zoonk/utils/error";
-import { type Dispatch, useEffect, useRef } from "react";
+import { type Dispatch, useEffect } from "react";
 import { type LessonQuestionConnection, getLessonQuestionRequest } from "./lesson-question-api";
 import {
   getLessonQuestionPollDelay,
@@ -12,8 +11,6 @@ import {
   isLessonQuestionAnswerInProgress,
   isRetryableLessonQuestionStatusError,
 } from "./lesson-question-status";
-
-const MAX_TIMER_DELAY_MILLISECONDS = 2_147_000_000;
 
 function waitForPollDelay({ delay, signal }: { delay: number; signal: AbortSignal }) {
   if (signal.aborted) {
@@ -68,78 +65,37 @@ function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
   return questions.find((question) => question.status === "running")?.id ?? null;
 }
 
-function getAnswerLimit(answerError: LessonQuestionState["answerError"]) {
-  if (answerError?.reason.kind !== "limit") {
-    return null;
-  }
-
-  return { questionId: answerError.questionId, retryAt: answerError.reason.retryAt };
-}
-
+/**
+ * While the conversation is on screen (`isShown`: an open sheet, or a page), a question waiting
+ * for its answer or being written elsewhere is followed with read-only status requests. A pending
+ * answer never starts from this effect; the learner can ask for it with Get answer.
+ */
 export function useLessonQuestionRecovery({
   connection,
   canAskQuestions,
   dispatch,
+  isShown,
   state,
-  streamAnswer,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
+  isShown: boolean;
   state: LessonQuestionState;
-  streamAnswer: (questionId: string) => Promise<void>;
 }) {
-  const resumedPendingQuestionIds = useRef(new Set<string>());
   const pendingQuestionId = getPendingQuestionId(state.questions);
   const runningQuestionId = getRunningQuestionId(state.questions);
-  const hasRunningQuestion = runningQuestionId !== null;
+
+  const remoteQuestionId =
+    state.activeQuestionId === null ? (runningQuestionId ?? pendingQuestionId) : null;
 
   useEffect(() => {
-    if (
-      !canAskQuestions ||
-      !state.isOpen ||
-      !pendingQuestionId ||
-      state.activeQuestionId ||
-      state.isCreating ||
-      hasRunningQuestion ||
-      resumedPendingQuestionIds.current.has(pendingQuestionId)
-    ) {
-      return;
-    }
-
-    const questionId = pendingQuestionId;
-    resumedPendingQuestionIds.current.add(questionId);
-
-    async function resumePendingQuestion() {
-      const { error } = await safeAsync(() => streamAnswer(questionId));
-      resumedPendingQuestionIds.current.delete(questionId);
-
-      if (error) {
-        dispatch({ questionId, reason: { kind: "unknown" }, type: "answerFailed" });
-      }
-    }
-
-    void resumePendingQuestion();
-  }, [
-    dispatch,
-    hasRunningQuestion,
-    canAskQuestions,
-    pendingQuestionId,
-    state.activeQuestionId,
-    state.isCreating,
-    state.isOpen,
-    streamAnswer,
-  ]);
-
-  const remoteRunningQuestionId = state.activeQuestionId === null ? runningQuestionId : null;
-
-  useEffect(() => {
-    if (!canAskQuestions || !state.isOpen || !remoteRunningQuestionId) {
+    if (!canAskQuestions || !isShown || !remoteQuestionId) {
       return;
     }
 
     const abortController = new AbortController();
-    const questionId = remoteRunningQuestionId;
+    const questionId = remoteQuestionId;
     const startedAt = Date.now();
 
     async function pollAnswerStatus(attempt: number) {
@@ -195,47 +151,5 @@ export function useLessonQuestionRecovery({
     return () => {
       abortController.abort();
     };
-  }, [connection, canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
-
-  const limitError = getAnswerLimit(state.answerError);
-
-  useEffect(() => {
-    if (!limitError) {
-      return;
-    }
-
-    const retryAt = Date.parse(limitError.retryAt);
-    const questionId = limitError.questionId;
-
-    if (!Number.isFinite(retryAt)) {
-      return;
-    }
-
-    const timeoutIds = new Set<ReturnType<typeof globalThis.setTimeout>>();
-
-    function scheduleLimitReset() {
-      const remainingMilliseconds = retryAt - Date.now();
-
-      if (remainingMilliseconds <= 0) {
-        dispatch({ questionId, type: "answerLimitExpired" });
-        return;
-      }
-
-      const timeoutId = globalThis.setTimeout(
-        () => {
-          timeoutIds.delete(timeoutId);
-          scheduleLimitReset();
-        },
-        Math.min(remainingMilliseconds, MAX_TIMER_DELAY_MILLISECONDS),
-      );
-
-      timeoutIds.add(timeoutId);
-    }
-
-    scheduleLimitReset();
-
-    return () => {
-      timeoutIds.forEach((timeoutId) => globalThis.clearTimeout(timeoutId));
-    };
-  }, [dispatch, limitError]);
+  }, [connection, canAskQuestions, dispatch, isShown, remoteQuestionId]);
 }

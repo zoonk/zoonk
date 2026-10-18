@@ -1,5 +1,6 @@
-import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
-import { parseGeneratedLessonFilter } from "@/lib/generated-lesson-status";
+import { AdminSearchSkeleton } from "@/components/admin-search";
+import { parseLibraryLessonStatus, parseProvenanceFilter } from "@/lib/library-lesson-filters";
+import { parseSearchParams } from "@/lib/parse-search-params";
 import {
   Container,
   ContainerBody,
@@ -8,75 +9,65 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { GeneratedLessonList, GeneratedLessonListSkeleton } from "./generated-lesson-list";
-import { GeneratedLessonStatusFilter } from "./generated-lesson-status-filter";
+import { LibraryLessonFilters } from "./library-lesson-filters";
+import { LibraryLessonList, LibraryLessonListSkeleton } from "./library-lesson-list";
 
-export const metadata: Metadata = { title: "Generated Lessons" };
+export const metadata: Metadata = { title: "Lessons" };
 
-/**
- * This page gives admins a terminal-state log for lesson generation so they can
- * see failed generations first and switch to completed output when auditing.
- */
-export default function GeneratedLessonsPage({ searchParams }: PageProps<"/lessons">) {
+/** Library lessons with their writing status and the model and prompt version that wrote them. */
+export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <ContainerTitle>Generated Lessons</ContainerTitle>
+          <ContainerTitle>Lessons</ContainerTitle>
           <ContainerDescription>
-            Review failed generation, missing audio, and completed lesson output.
+            Library lessons, how far their writing got, and which model and prompt version wrote
+            them.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<GeneratedLessonFiltersSkeleton />}>
-          <GeneratedLessonFilters searchParams={searchParams} />
-        </Suspense>
-
-        <Suspense fallback={<GeneratedLessonListSkeleton />}>
-          <GeneratedLessonList searchParams={searchParams} />
+        <Suspense fallback={<LessonsSkeleton />}>
+          <LessonsContent searchParams={searchParams} />
         </Suspense>
       </ContainerBody>
     </Container>
   );
 }
 
-/**
- * The selected generation status is request URL state, so only the filter
- * controls need to wait while the page heading remains in the static shell.
- */
-async function GeneratedLessonFilters({
-  searchParams,
-}: Pick<PageProps<"/lessons">, "searchParams">) {
+/** The filters and page all live in the URL, so they resolve together. */
+async function LessonsContent({ searchParams }: Pick<PageProps<"/lessons">, "searchParams">) {
   const params = await searchParams;
-  const status = parseGeneratedLessonFilter(params.status);
-  const search = Array.isArray(params.search) ? params.search[0] : params.search;
+  const { limit, offset, page, search } = parseSearchParams(params);
+
+  const filters = {
+    model: parseProvenanceFilter(params.model),
+    promptVersion: parseProvenanceFilter(params.promptVersion),
+    search,
+    status: parseLibraryLessonStatus(params.status),
+  };
 
   return (
-    <div className="flex flex-col gap-3">
-      <AdminSearch placeholder="Search by lesson, chapter, or course..." />
-      <GeneratedLessonStatusFilter search={search} status={status} />
-    </div>
+    <>
+      <Suspense fallback={<AdminSearchSkeleton />}>
+        <LibraryLessonFilters {...filters} />
+      </Suspense>
+      <Suspense fallback={<LibraryLessonListSkeleton />}>
+        <LibraryLessonList limit={limit} offset={offset} page={page} {...filters} />
+      </Suspense>
+    </>
   );
 }
 
-/**
- * Both filter rows depend on the same URL state, so their placeholder preserves
- * the complete control footprint until that state is available.
- */
-function GeneratedLessonFiltersSkeleton() {
+function LessonsSkeleton() {
   return (
     <div className="flex flex-col gap-3">
       <AdminSearchSkeleton />
-      <div className="flex gap-1">
-        <Skeleton className="h-8 w-24 rounded-4xl" />
-        <Skeleton className="h-8 w-28 rounded-4xl" />
-        <Skeleton className="h-8 w-24 rounded-4xl" />
-      </div>
+      <LibraryLessonListSkeleton />
     </div>
   );
 }

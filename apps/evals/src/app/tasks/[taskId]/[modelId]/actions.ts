@@ -1,7 +1,7 @@
 "use server";
 
 import { deleteModelResults, runEval } from "@/lib/eval-runner";
-import { getModelById, getModelEvaluationId, parseReasoning } from "@/lib/models";
+import { DEFAULT_REASONING, getModelById, getModelVariantId, parseReasoning } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
 import { deleteModelOutputs } from "@/lib/output-loader";
 import { TASKS } from "@/tasks";
@@ -66,7 +66,9 @@ export async function generateOutputsAction(formData: FormData) {
     throw new Error("Model ID is required");
   }
 
-  if (!getModelById(modelId)) {
+  const model = getModelById(modelId);
+
+  if (!model) {
     throw new Error("Model not found");
   }
 
@@ -74,18 +76,22 @@ export async function generateOutputsAction(formData: FormData) {
     throw new Error("Reasoning level is required");
   }
 
-  const evaluationModelId = getModelEvaluationId({ modelId, reasoning });
+  // Evaluation adapters and image models run without reasoning, so they have no reasoning variants.
+  const variantId = getModelVariantId({
+    modelId,
+    reasoning: model.kind === "generation" ? reasoning : DEFAULT_REASONING,
+  });
 
   try {
-    await generateOutputs(task, evaluationModelId);
+    await generateOutputs(task, variantId);
   } catch (error) {
     logError("Error generating outputs:", error);
     return;
   }
 
-  revalidatePath(`/tasks/${taskId}/${encodeURIComponent(evaluationModelId)}`);
+  revalidatePath(`/tasks/${taskId}/${encodeURIComponent(variantId)}`);
   revalidatePath(`/tasks/${taskId}`);
-  redirect(`/tasks/${taskId}/${encodeURIComponent(evaluationModelId)}`);
+  redirect(`/tasks/${taskId}/${encodeURIComponent(variantId)}`);
 }
 
 export async function runEvalAction(formData: FormData) {

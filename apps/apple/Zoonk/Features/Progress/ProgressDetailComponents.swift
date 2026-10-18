@@ -106,7 +106,9 @@ struct ProgressDetailSection<Content: View>: View {
       content
     }
     .padding(18)
-    .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .background(
+      Color(uiColor: .secondarySystemGroupedBackground),
+      in: RoundedRectangle(cornerRadius: 18, style: .continuous))
   }
 }
 
@@ -153,7 +155,10 @@ struct ProgressDetailMetric: View {
     }
     .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .background(
+      Color(uiColor: .secondarySystemGroupedBackground),
+      in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+    )
     .accessibilityElement(children: .combine)
   }
 }

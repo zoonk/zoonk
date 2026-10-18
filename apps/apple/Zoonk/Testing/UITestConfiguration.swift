@@ -194,7 +194,7 @@
     }
 
     func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
-      let matchingCourses = snapshot.courses.filter { course in
+      let matchingCourses = publicCourses.filter { course in
         course.language == query.language
           && query.category.map(course.categories.contains) != false
       }
@@ -202,7 +202,7 @@
       let startIndex = min(max(requestedStartIndex, 0), matchingCourses.count)
       let pageSize = max(query.limit ?? 20, 0)
       let endIndex = min(startIndex + pageSize, matchingCourses.count)
-      let courses = matchingCourses[startIndex..<endIndex].map(makeCourseSummary)
+      let courses = matchingCourses[startIndex..<endIndex].compactMap(makeCourseSummary)
       let hasMore = endIndex < matchingCourses.count
 
       return CourseCatalogPage(
@@ -211,28 +211,27 @@
         nextCursor: hasMore ? String(endIndex) : nil)
     }
 
-    func getCourse(id: String) async throws -> Course {
-      guard let course = snapshot.courses.first(where: { $0.id == id }) else {
-        throw CourseCatalogFailure.notFound
-      }
-
-      return course
+    func getCourse(id: String, token: String?) async throws -> Course {
+      try readableCourse(id: id, token: token)
     }
 
-    func getChapter(id: String) async throws -> CourseChapter {
-      guard let chapter = snapshot.chapters.first(where: { $0.id == id }) else {
-        throw CourseCatalogFailure.notFound
-      }
-
-      return chapter
+    /// Like the API, a course that doesn't place the chapter doesn't find it.
+    func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
+      _ = try readableCourse(id: key.courseID, token: token)
+      return try placedChapter(key)
     }
 
-    func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
-      snapshot.chapters.filter { $0.courseID == courseID }
+    func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
+      _ = try readableCourse(id: courseID, token: token)
+      return snapshot.chapters.filter { $0.courseID == courseID }
     }
 
-    func listChapterLessons(chapterID: String) async throws -> [CourseLesson] {
-      snapshot.lessons.filter { $0.chapterID == chapterID }
+    func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws
+      -> [CourseLesson]
+    {
+      _ = try readableCourse(id: key.courseID, token: token)
+      _ = try placedChapter(key)
+      return snapshot.lessons.filter { $0.chapterID == key.chapterID }
     }
 
     func getCourseNextLesson(courseID: String, token: String?) async throws
@@ -257,14 +256,15 @@
         ))
     }
 
-    func getChapterNextLesson(chapterID: String, token: String?) async throws
+    func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
       -> CatalogContinuationTarget
     {
+      let chapter = try placedChapter(key)
+
       guard
-        let chapter = snapshot.chapters.first(where: { $0.id == chapterID }),
         let course = snapshot.courses.first(where: { $0.id == chapter.courseID }),
         let target = continuationTarget(
-          (lessons: lessons(inChapter: chapterID), token: token))
+          (lessons: lessons(inChapter: key.chapterID), token: token))
       else {
         return .empty(CatalogEmptyContinuation(completed: false, hasStarted: false))
       }
@@ -324,23 +324,54 @@
               (query: query.query, title: $0.title, description: $0.description))
           }
           .compactMap(makeChapterSearchResult),
-        courses: snapshot.courses
+        courses:
+          publicCourses
           .filter {
             matchesSearch(
               (query: query.query, title: $0.title, description: $0.description))
           }
-          .map(makeCourseSearchResult))
+          .compactMap(makeCourseSearchResult))
     }
 
-    private func makeCourseSummary(_ course: Course) -> CourseSummary {
-      CourseSummary(
-        description: course.description,
-        id: course.id,
-        imageURL: course.imageURL,
-        language: course.language,
-        organization: course.organization,
-        slug: course.slug,
-        title: course.title)
+    private func makeCourseSummary(_ course: Course) -> CourseSummary? {
+      course.organization.map { organization in
+        CourseSummary(
+          description: course.description,
+          id: course.id,
+          imageURL: course.imageURL,
+          language: course.language,
+          organization: organization,
+          slug: course.slug,
+          title: course.title)
+      }
+    }
+
+    /// Private courses have no organization and are only listed or found with the owner's session.
+    private var publicCourses: [Course] {
+      snapshot.courses.filter { $0.organization != nil }
+    }
+
+    private func readableCourse(id: String, token: String?) throws -> Course {
+      guard
+        let course = snapshot.courses.first(where: { $0.id == id }),
+        course.organization != nil || token != nil
+      else {
+        throw CourseCatalogFailure.notFound
+      }
+
+      return course
+    }
+
+    private func placedChapter(_ key: CatalogChapterKey) throws -> CourseChapter {
+      guard
+        let chapter = snapshot.chapters.first(where: {
+          $0.id == key.chapterID && $0.courseID == key.courseID
+        })
+      else {
+        throw CourseCatalogFailure.notFound
+      }
+
+      return chapter
     }
 
     private func completedLessonIDs(token: String?) -> Set<String> {
@@ -437,7 +468,7 @@
           lessonID: source.lesson.id,
           lessonPosition: source.lesson.position,
           lessonSlug: source.lesson.slug,
-          organizationSlug: source.course.organization.slug))
+          organizationSlug: source.course.organization?.slug))
     }
 
     private func matchesSearch(
@@ -447,13 +478,17 @@
         || source.description?.localizedCaseInsensitiveContains(source.query) == true
     }
 
-    private func makeCourseSearchResult(_ course: Course) -> CatalogCourseSearchResult {
-      CatalogCourseSearchResult(
+    private func makeCourseSearchResult(_ course: Course) -> CatalogCourseSearchResult? {
+      guard let organization = course.organization else {
+        return nil
+      }
+
+      return CatalogCourseSearchResult(
         description: course.description,
         id: course.id,
         imageURL: course.imageURL,
         language: course.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: organization.slug,
         slug: course.slug,
         title: course.title)
     }
@@ -461,7 +496,10 @@
     private func makeChapterSearchResult(
       _ chapter: CourseChapter
     ) -> CatalogChapterSearchResult? {
-      guard let course = snapshot.courses.first(where: { $0.id == chapter.courseID }) else {
+      guard
+        let course = publicCourses.first(where: { $0.id == chapter.courseID }),
+        let organization = course.organization
+      else {
         return nil
       }
 
@@ -471,9 +509,8 @@
         courseTitle: course.title,
         description: chapter.description,
         id: chapter.id,
-        imageURL: chapter.imageURL,
         language: chapter.language,
-        organizationSlug: course.organization.slug,
+        organizationSlug: organization.slug,
         slug: chapter.slug,
         title: chapter.title)
     }

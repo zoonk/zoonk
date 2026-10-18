@@ -1,0 +1,226 @@
+"use client";
+
+import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
+import { useState } from "react";
+import { type DayStep } from "../session/session-types";
+import { BlockRow, PlusLessonRow, type RowFold, useCountsTowardMission } from "./today-block-row";
+import { useTodayScreen } from "./today-context";
+import { DayMeta, DayProgress } from "./today-day-progress";
+import { TodayDayStatus } from "./today-day-status";
+import { FoldRow } from "./today-fold-row";
+import { TodayFreshStart } from "./today-fresh-start";
+import { SESSION_LIST_ID } from "./today-ids";
+import { splitTodayQueue } from "./today-queue";
+
+/** Done blocks a phone shows before folding them into one row ("✓ 3 done · 14 min"). */
+const PHONE_DONE_ROWS = 2;
+
+/** Blocks after the next one a phone shows before folding the rest ("+3 more · 14 min"). */
+const PHONE_UPCOMING_ROWS = 6;
+
+/** From `sm` the whole day shows, unless it's longer than this after the next block. */
+const WIDE_UPCOMING_ROWS = 12;
+
+/**
+ * How many parts the day holds so far, while its lessons are still being outlined: each block the
+ * learner opens prepares the next ones. "More on the way" read as a delivery already running, and
+ * an IELTS learner waited 40 minutes on a 45-minute day that showed 15.
+ */
+function useDaySoFar(blocks: readonly DayStep[]): string {
+  const t = useExtracted();
+  const count = blocks.length;
+
+  return blocks.every((block) => block.kind === "learn")
+    ? t("{count, plural, one {# lesson} other {# lessons}} so far · more as you go", { count })
+    : t("{count, plural, one {# activity} other {# activities}} so far · more as you go", {
+        count,
+      });
+}
+
+function sumMinutes(blocks: readonly DayStep[]): number {
+  return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
+}
+
+/** Upcoming rows in sight before the "+N more" fold, on a phone and from `sm`. */
+type UpcomingRows = { phone: number; wide: number };
+
+/** Whether an upcoming row hides behind the "+N more" fold, on a phone and from `sm`. */
+function getUpcomingFold({
+  index,
+  open,
+  rows,
+}: {
+  index: number;
+  open: boolean;
+  rows: UpcomingRows;
+}): RowFold {
+  return { hidden: !open, phone: index >= rows.phone, wide: index >= rows.wide };
+}
+
+/**
+ * The day as a queue, flat on the page: every block, the next one highlighted, then the plan's
+ * lessons for today that the learner's plan holds for Plus (`PlusLessonRow`). A phone keeps the
+ * day on its first screen: more than two blocks done fold into one row, and past six after the
+ * next one the rest fold into "+3 more". From `sm` the whole day shows (a day longer than 12 after
+ * the next block folds the rest the same way). The fold never hides a block a mission opens: where
+ * the missions card leaves its rows to the queue, that block is the mission's one place.
+ */
+function SessionQueue({ next }: { next: DayStep }) {
+  const t = useExtracted();
+  const { today } = useTodayScreen();
+  const { blocks, lessonsComing, plusLessons } = today.session;
+  const daySoFar = useDaySoFar(blocks);
+  const [doneOpen, setDoneOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const countsTowardMission = useCountsTowardMission();
+  const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
+  const foldsDone = done.length > PHONE_DONE_ROWS;
+  const marked = after.findLastIndex((block) => countsTowardMission(block)) + 1;
+
+  const rows = {
+    phone: Math.max(PHONE_UPCOMING_ROWS, marked),
+    wide: Math.max(WIDE_UPCOMING_ROWS, marked),
+  };
+
+  const upcoming = after.length + plusLessons.length;
+  const phoneMore = Math.max(0, upcoming - rows.phone);
+  const wideMore = Math.max(0, upcoming - rows.wide);
+
+  return (
+    <div className="flex flex-col" data-slot="today-session-list">
+      {foldsDone && (
+        <FoldRow
+          className="sm:hidden"
+          done
+          label={t("{count, plural, one {# done} other {# done}}", { count: done.length })}
+          onToggle={() => setDoneOpen((open) => !open)}
+          open={doneOpen}
+        />
+      )}
+
+      <ol className="flex flex-col" id={SESSION_LIST_ID}>
+        {done.map((block) => (
+          <BlockRow
+            block={block}
+            fold={{ hidden: foldsDone && !doneOpen, phone: true, wide: false }}
+            isNext={false}
+            key={block.position}
+          />
+        ))}
+
+        {before.map((block) => (
+          <BlockRow block={block} isNext={false} key={block.position} />
+        ))}
+
+        <BlockRow block={next} isNext />
+
+        {after.map((block, index) => (
+          <BlockRow
+            block={block}
+            fold={getUpcomingFold({ index, open: moreOpen, rows })}
+            isNext={false}
+            key={block.position}
+          />
+        ))}
+
+        {plusLessons.map((lesson, index) => (
+          <PlusLessonRow
+            fold={getUpcomingFold({ index: after.length + index, open: moreOpen, rows })}
+            // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
+            key={index}
+            title={lesson.title}
+          />
+        ))}
+      </ol>
+
+      {phoneMore > 0 && (
+        <FoldRow
+          className="sm:hidden"
+          done={false}
+          label={t("+{count, number} more", { count: phoneMore })}
+          minutes={sumMinutes(after.slice(rows.phone))}
+          onToggle={() => setMoreOpen((open) => !open)}
+          open={moreOpen}
+        />
+      )}
+
+      {wideMore > 0 && (
+        <FoldRow
+          className="max-sm:hidden"
+          done={false}
+          label={t("+{count, number} more", { count: wideMore })}
+          minutes={sumMinutes(after.slice(rows.wide))}
+          onToggle={() => setMoreOpen((open) => !open)}
+          open={moreOpen}
+        />
+      )}
+
+      {lessonsComing && (
+        <p className="text-muted-foreground pt-2 font-mono text-xs tabular-nums">{daySoFar}</p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The day's queue once there's nothing to start (it's done, today's study time ran out, or a free
+ * plan has nothing to review): every block, the done ones with their check, so the learner sees
+ * what they did, then the plan's lessons for today held for Plus. No block opens from it.
+ */
+function DayQueue() {
+  const { today } = useTodayScreen();
+  const { blocks, plusLessons } = today.session;
+
+  if (blocks.length === 0 && plusLessons.length === 0) {
+    return null;
+  }
+
+  return (
+    <ol className="flex flex-col" data-slot="today-session-list">
+      {blocks.map((block) => (
+        <BlockRow block={block} isNext={false} key={block.position} opens={false} />
+      ))}
+
+      {plusLessons.map((lesson, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
+        <PlusLessonRow key={index} title={lesson.title} />
+      ))}
+    </ol>
+  );
+}
+
+/** The step to go on with; null once the day's blocks are done. */
+function useNextBlock(): DayStep | null {
+  const { today } = useTodayScreen();
+  const { blocks, nextPosition } = today.session;
+
+  return blocks.find((block) => block.position === nextPosition) ?? null;
+}
+
+/**
+ * Today's session, flat on the page under Today's title: why the day is lighter (once), the day's
+ * segments with how far along it is, its blocks as a queue with the next one highlighted, and
+ * one line on what the day is when there's nothing to start (done, a rest day, the study time used
+ * up, nothing new, or lessons still being prepared). The day's main action sits beside the title
+ * from `sm` and under the queue on a phone (`TodayAction`).
+ */
+export function TodaySession({ className }: { className?: string }) {
+  const next = useNextBlock();
+  const { today } = useTodayScreen();
+  const limitReached = today.session.dailyLimit?.reached === true;
+
+  return (
+    <div className={cn("flex min-w-0 flex-col", className)} data-slot="today-session">
+      <TodayFreshStart className="mb-4" />
+      <DayProgress />
+      <DayMeta className="mt-2" />
+
+      <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
+        {next && !limitReached ? <SessionQueue next={next} /> : <DayQueue />}
+      </div>
+
+      <TodayDayStatus className="mt-3 first:mt-0" />
+    </div>
+  );
+}

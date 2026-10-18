@@ -1,5 +1,6 @@
 import { sendEmail } from "@zoonk/mailer";
-import { LOCALE_COOKIE, getLocaleFromRequest } from "@zoonk/utils/locale";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { getLocaleFromRequest } from "@zoonk/utils/locale-request";
 import { type EmailOTPOptions } from "better-auth/plugins";
 import { cookies, headers } from "next/headers";
 import { after } from "next/server";

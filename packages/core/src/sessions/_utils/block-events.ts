@@ -1,0 +1,186 @@
+import { type LearningEventKind, type StudySessionBlock } from "@zoonk/db";
+import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
+import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
+import { type BlockPayload } from "../block-payload";
+import { BRAIN_POWER_BONUS, getAnswersEnergyDelta } from "../brain-power";
+import { type SessionAnswer } from "./session-answers";
+
+/**
+ * A full review's ledger kind: practice on every skill of the goal, on a day whose mock the
+ * learner's plan doesn't include. Preparation counts it as their test in real conditions.
+ */
+export const FULL_REVIEW_LEDGER_KIND = "fullReview";
+
+/** One ledger row a finished block writes, before the shared fields are added. */
+export type BlockEvent = {
+  brainPower: number;
+  contentIds: Record<string, string>;
+  correctAnswers: number;
+  energyDelta: number;
+  incorrectAnswers: number;
+  kind: LearningEventKind;
+  lessonKind: string;
+  seconds: number;
+  titleSnapshot: string | null;
+};
+
+export type BlockEventContext = {
+  answers: readonly SessionAnswer[];
+  /** Each answer's Brain Power, in the same order as `answers`. */
+  points: readonly number[];
+  /** The block's whole Brain Power; what the per-capsule split leaves goes to the last row. */
+  brainPower: number;
+  block: StudySessionBlock;
+  payload: BlockPayload;
+  seconds: number;
+};
+
+/** Right and wrong answers, and the Energy they give by today's rules. */
+function countAnswers(answers: readonly SessionAnswer[]) {
+  const correctAnswers = answers.filter((answer) => answer.isCorrect).length;
+  const incorrectAnswers = answers.length - correctAnswers;
+
+  return {
+    correctAnswers,
+    energyDelta: getAnswersEnergyDelta({ correct: correctAnswers, incorrect: incorrectAnswers }),
+    incorrectAnswers,
+  };
+}
+
+function getIds({ block, payload }: Pick<BlockEventContext, "block" | "payload">) {
+  return {
+    studySessionBlockId: block.id,
+    studySessionId: block.sessionId,
+    ...(payload.planItemId ? { planItemId: payload.planItemId } : {}),
+  };
+}
+
+/** A placement answer's ledger kind: the first week's sessions open with a few of them. */
+const PLACEMENT_LEDGER_KIND = "placement";
+
+/** A review row's answers: their points, counts and whole seconds of the block's time. */
+function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[]) {
+  const { answers, points } = context;
+
+  return {
+    brainPower: answers.reduce(
+      (sum, answer, index) => (own.includes(answer) ? sum + (points[index] ?? 0) : sum),
+      0,
+    ),
+    ...countAnswers(own),
+    kind: "review" as const,
+    seconds: Math.floor((context.seconds * own.length) / Math.max(1, answers.length)),
+  };
+}
+
+/**
+ * Opened capsules each get a `review` row, so the ledger counts capsules (Retro glasses) and
+ * reviews without reading content, and the block's placement answers get one, so their time counts
+ * as studied. Each row carries its answers' points and a capsule its bonus; whatever the block
+ * earned beyond that (mastery, caps) lands on the last row, as do the seconds the rows' shares
+ * leave, so the rows add up to the block's time (59.5 + 59.5 rounded each read 120 of 119).
+ */
+function getReviewEvents(context: BlockEventContext): BlockEvent[] {
+  const { answers, block, payload } = context;
+
+  const capsules = payload.capsules.flatMap((capsule) => {
+    const own = answers.filter(
+      (answer) => answer.itemId && capsule.itemIds.includes(answer.itemId),
+    );
+
+    if (own.length === 0) {
+      return [];
+    }
+
+    const row = getReviewRow(context, own);
+
+    return [
+      {
+        ...row,
+        brainPower: row.brainPower + BRAIN_POWER_BONUS.capsuleOpened,
+        contentIds: {
+          ...getIds({ block, payload }),
+          ...(capsule.lessonId ? { lessonId: capsule.lessonId } : {}),
+        },
+        lessonKind: CAPSULE_LEDGER_KIND,
+        titleSnapshot: capsule.title,
+      },
+    ];
+  });
+
+  const placement = answers.filter(
+    (answer) => answer.itemId && payload.placementItemIds.includes(answer.itemId),
+  );
+
+  const opened =
+    placement.length === 0
+      ? capsules
+      : [
+          ...capsules,
+          {
+            ...getReviewRow(context, placement),
+            contentIds: getIds({ block, payload }),
+            lessonKind: PLACEMENT_LEDGER_KIND,
+            titleSnapshot: payload.title,
+          },
+        ];
+
+  const rest = context.brainPower - opened.reduce((sum, event) => sum + event.brainPower, 0);
+  const restSeconds = context.seconds - opened.reduce((sum, event) => sum + event.seconds, 0);
+
+  return opened.map((event, index) =>
+    index === opened.length - 1
+      ? { ...event, brainPower: event.brainPower + rest, seconds: event.seconds + restSeconds }
+      : event,
+  );
+}
+
+function getCheckpointEvent(context: BlockEventContext): BlockEvent {
+  const { answers, block, payload } = context;
+  const checkpoint = payload.checkpoint;
+
+  return {
+    brainPower: context.brainPower,
+    contentIds: getIds({ block, payload }),
+    ...countAnswers(answers),
+    kind: checkpoint?.mock ? "mock" : "checkpoint",
+    lessonKind: CHECKPOINT_LEDGER_KINDS[checkpoint?.kind ?? "weekly"],
+    seconds: context.seconds,
+    titleSnapshot: payload.title,
+  };
+}
+
+/**
+ * What a practice block was, as the ledger keeps it: bonus practice, a full review (which counts
+ * as the test in real conditions for a learner whose plan has no mocks), or mixed practice.
+ */
+function getPracticeKind(payload: BlockEventContext["payload"]): string {
+  if (payload.extra) {
+    return "extraPractice";
+  }
+
+  return payload.fullReview ? FULL_REVIEW_LEDGER_KIND : "practice";
+}
+
+/** The ledger rows for a finished question block: a review, practice or a checkpoint. */
+export function getBlockEvents(context: BlockEventContext): BlockEvent[] {
+  if (context.block.kind === "review") {
+    return getReviewEvents(context);
+  }
+
+  if (context.block.kind === "checkpoint") {
+    return [getCheckpointEvent(context)];
+  }
+
+  return [
+    {
+      brainPower: context.brainPower,
+      contentIds: getIds(context),
+      ...countAnswers(context.answers),
+      kind: "questions",
+      lessonKind: getPracticeKind(context.payload),
+      seconds: context.seconds,
+      titleSnapshot: context.payload.title,
+    },
+  ];
+}

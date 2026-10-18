@@ -1,25 +1,26 @@
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
-import { countSitemapChapters, listSitemapChapters } from "./chapters";
-import { SITEMAP_BATCH_SIZE, countSitemapCourses, listSitemapCourses } from "./courses";
-import { countSitemapLessons, listSitemapLessons } from "./lessons";
+import { listSitemapCourses } from "./courses";
+import { listSitemapLibraryChapters } from "./library-chapters";
+import { listSitemapLibraryLessons } from "./library-lessons";
+import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
 
 /**
  * Read every sitemap page so excluded fixtures cannot appear to pass simply
  * because their IDs sort outside the final page in a shared test database.
  */
 async function listSitemapPages<T>({
-  count,
   list,
+  resource,
 }: {
-  count: () => Promise<number>;
   list: (page: number) => Promise<T[]>;
+  resource: SitemapResource;
 }): Promise<T[]> {
-  const pages = Math.max(Math.ceil((await count()) / SITEMAP_BATCH_SIZE), 1);
-  const rows = await Promise.all(Array.from({ length: pages }, (_, page) => list(page)));
+  const pages = getSitemapPageIds(resource);
+  const rows = await Promise.all(pages.map((page) => list(page)));
   return rows.flat();
 }
 
@@ -32,17 +33,8 @@ async function createLocalizedCatalog(language: string) {
     organizationId: organization.id,
   });
 
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: organization.id,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    isPublished: true,
-    organizationId: organization.id,
-  });
+  const chapter = await libraryChapterFixture({ homeCourseId: course.id, language });
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id, language });
 
   return { chapter, course, lesson };
 }
@@ -56,9 +48,9 @@ describe("sitemap content languages", () => {
     ]);
 
     const [courses, chapters, lessons] = await Promise.all([
-      listSitemapPages({ count: countSitemapCourses, list: listSitemapCourses }),
-      listSitemapPages({ count: countSitemapChapters, list: listSitemapChapters }),
-      listSitemapPages({ count: countSitemapLessons, list: listSitemapLessons }),
+      listSitemapPages({ list: listSitemapCourses, resource: "courses" }),
+      listSitemapPages({ list: listSitemapLibraryChapters, resource: "library-chapters" }),
+      listSitemapPages({ list: listSitemapLibraryLessons, resource: "library-lessons" }),
     ]);
 
     const courseSlugs = courses.map((course) => course.courseSlug);

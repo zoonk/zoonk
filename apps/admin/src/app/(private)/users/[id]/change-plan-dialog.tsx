@@ -54,7 +54,7 @@ export function ChangePlanDialog({ userId, currentPlan }: { userId: string; curr
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>Change Plan</DialogTrigger>
 
-      <DialogContent>
+      <DialogContent closeLabel="Close">
         <DialogHeader>
           <DialogTitle>Change subscription plan</DialogTitle>
           <DialogDescription>Manually change this user&apos;s subscription plan.</DialogDescription>

@@ -1,0 +1,6 @@
+## typed and spoken
+
+- `question`: asks for a short answer or an explanation in the learner's own words. Spoken questions can be answered aloud in 15 to 60 seconds.
+- `keyPoints`: 1 to 5 ideas a full answer must state, each one idea that a grader can check on its own. They are the ideas the question asks for, written so an answer in the learner's own words meets them: a key point never asks for a term's name ("é transporte ativo", "difusão facilitada") unless the question asks the learner to name it, and states the idea instead ("a saída gasta ATP e vai contra o gradiente"). A question that asks to predict and explain asks for the effect and its reason, not for the process's classification or a detail the reason doesn't need. A question that asks what to do (a check, a strategy, a way to decide) takes any sound answer: each key point says what every sound answer does ("checks only what decides between the two options, briefly, instead of redoing everything"), never one technique among several ("compares the procedures from the step where they diverge", "eliminates the options that contradict the text") that a sound answer may replace with another.
+- `acceptedAnswers`: for short answers of up to five words, every correct wording worth accepting (synonyms, common forms). Empty for explanations.
+- `sampleAnswer`: a model answer that meets every key point.

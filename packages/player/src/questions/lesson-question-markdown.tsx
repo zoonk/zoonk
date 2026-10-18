@@ -1,107 +1,32 @@
 "use client";
 
-import { math } from "@streamdown/math";
-import { mermaid } from "@streamdown/mermaid";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@zoonk/ui/components/alert-dialog";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ExternalLinkIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { type LinkSafetyModalProps, Streamdown } from "streamdown";
-import { getSafeLessonQuestionUrl } from "./lesson-question-url";
+// KaTeX's styles load with the tutor's answers, the only place math renders as HTML, not on every page.
+import "katex/dist/katex.min.css";
+import { type ComponentProps } from "react";
+import { type TutorMarkdown } from "./tutor-markdown";
+import { tutorMarkdownRenderer } from "./tutor-markdown-preload";
 
-const DISALLOWED_ANSWER_ELEMENTS = ["img"] as const;
-const LESSON_QUESTION_PLUGINS = { math, mermaid };
+/** An answer as plain text: until its renderer arrives, or where it couldn't load at all. */
+function PlainAnswer({ answer }: { answer: string }) {
+  return <p className="min-w-0 wrap-anywhere whitespace-pre-wrap">{answer}</p>;
+}
 
 /**
- * Uses the app's accessible dialog primitive for external links because
- * Streamdown's default confirmation surface does not manage dialog focus.
+ * A tutor's answer drawn from its Markdown. The renderer (Streamdown and its Markdown parser) is
+ * its own chunk, so a screen downloads it only once it shows an answer, or is about to
+ * (`preloadTutorMarkdown`); once here, answers draw at once. Server rendering and hydration wait
+ * for it (the page's HTML is the answer as drawn), and so does a thread's first look under its
+ * skeleton. Anywhere else, an answer arriving before the renderer shows as plain text for that
+ * moment rather than hiding the screen it's on.
  */
-function ExternalLinkConfirmation({ isOpen, onClose, onConfirm, url }: LinkSafetyModalProps) {
-  const t = useExtracted();
+export function LessonQuestionMarkdown(props: ComponentProps<typeof TutorMarkdown>) {
+  const renderer = tutorMarkdownRenderer.useModule();
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      onClose();
-    }
-  };
+  if (!renderer) {
+    return <PlainAnswer answer={props.answer} />;
+  }
 
-  const openLink = () => {
-    onConfirm();
-    onClose();
-  };
+  const Renderer = renderer.TutorMarkdown;
 
-  return (
-    <AlertDialog onOpenChange={handleOpenChange} open={isOpen}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{t("Open this link?")}</AlertDialogTitle>
-          <AlertDialogDescription className="flex min-w-0 flex-col gap-3">
-            <span>{t("This link opens a website outside Zoonk.")}</span>
-            <span className="bg-muted max-h-24 overflow-y-auto rounded-lg p-3 font-mono text-xs break-all">
-              {url}
-            </span>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
-          <a
-            className={buttonVariants()}
-            href={url}
-            onClick={(event) => {
-              event.preventDefault();
-              openLink();
-            }}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <ExternalLinkIcon aria-hidden="true" />
-            {t("Open link")}
-          </a>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-function renderExternalLinkConfirmation(props: LinkSafetyModalProps) {
-  return <ExternalLinkConfirmation {...props} />;
-}
-
-const LESSON_QUESTION_LINK_SAFETY = {
-  enabled: true,
-  renderModal: renderExternalLinkConfirmation,
-} as const;
-
-export function LessonQuestionMarkdown({
-  answer,
-  isAnimating,
-  isStreaming,
-}: {
-  answer: string;
-  isAnimating: boolean;
-  isStreaming: boolean;
-}) {
-  return (
-    <Streamdown
-      animated={isAnimating}
-      className="min-w-0 wrap-anywhere [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_a]:underline [&_a]:underline-offset-4"
-      controls={false}
-      disallowedElements={DISALLOWED_ANSWER_ELEMENTS}
-      isAnimating={isAnimating}
-      linkSafety={LESSON_QUESTION_LINK_SAFETY}
-      mode={isStreaming ? "streaming" : "static"}
-      plugins={LESSON_QUESTION_PLUGINS}
-      urlTransform={getSafeLessonQuestionUrl}
-    >
-      {answer}
-    </Streamdown>
-  );
+  return <Renderer {...props} />;
 }

@@ -8,11 +8,11 @@ import { MinusIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
  */
 function getAnalysisChangeAppearance(percentageChange: number) {
   if (percentageChange > 0) {
-    return { Icon: TrendingUpIcon, className: "text-success" };
+    return { Icon: TrendingUpIcon, className: "text-success-text" };
   }
 
   if (percentageChange < 0) {
-    return { Icon: TrendingDownIcon, className: "text-destructive" };
+    return { Icon: TrendingDownIcon, className: "text-destructive-text" };
   }
 
   return { Icon: MinusIcon, className: "text-muted-foreground" };

@@ -1,0 +1,99 @@
+name: Vitest
+
+# Every Vitest suite (`pnpm test`): unit tests, database integration tests against a fresh Postgres
+# migrated from scratch, and the player's browser tests. On every PR, and again on `main` before
+# staging, where `ci.yml` calls this workflow.
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vitest-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  suites:
+    name: vitest (${{ matrix.part }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Three runners of about the same length: core's and the API's files split in half across two,
+    # and the player's browser tests, which leave a runner's CPU a third idle, with the small suites
+    # on the third. Each runner has 4 vCPUs, which two suites at once keep busy; more at once only
+    # slowed every test down.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - part: core and api 1 of 2
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=1/2"
+          - part: core and api 2 of 2
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=2/2"
+          - part: player and the rest
+            filter: "--filter=!@zoonk/core --filter=!api"
+            args: ""
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+    steps:
+      # Postgres pulls and starts while the code checks out and installs; as a service container it
+      # held the job ~13 s before its first step. A throwaway database: it lives in memory and skips
+      # flushing its files. Suites share it at the same time, each worker with up to 10 connections.
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_test
+          --env POSTGRES_INITDB_ARGS=--no-sync
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      # Every job saved its own copy of the store (533 MB, 7-10 s), filling the repository's cache:
+      # runs on `main` save it, and pull requests restore that one.
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+        with:
+          runtime: node@24
+          cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
+
+      # Over TCP: while the image sets up its database, Postgres only listens on its socket.
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
+
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      # Migrates the test database first (`db:setup:test`), then runs the part's suites.
+      - name: Run Vitest
+        run: pnpm turbo run test ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+
+  # The one check branch protection requires: it passes only when every part passed.
+  vitest:
+    if: always()
+    needs: suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every part passed
+        run: test "${{ needs.suites.result }}" = success

@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { toCurrentUserCourse } from "@/lib/current-learning-responses";
+import { toCourseSummary } from "@/lib/catalog-responses";
 import { currentUserCoursesQuerySchema } from "@/lib/openapi/schemas/current-learning";
 import { createPaginatedResponse, decodeCursor } from "@/lib/pagination";
 import { parseQueryParams } from "@/lib/query-params";
@@ -37,7 +37,7 @@ async function listCurrentUserCourses(request: Request) {
   return NextResponse.json(
     createPaginatedResponse({
       hasMore: page.hasMore,
-      items: page.courses.map((course) => toCurrentUserCourse(course)),
+      items: page.courses.map((course) => toCourseSummary(course)),
       offset,
     }),
   );

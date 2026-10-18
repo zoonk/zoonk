@@ -2,9 +2,13 @@ type ResponseHeader = { key: string; value: string };
 
 type RouteHeaders = { headers: ResponseHeader[]; source: string };
 
+/**
+ * Spoken answers and live language calls record from our own pages, so the microphone is the one
+ * device feature allowed, and only for our origin.
+ */
 const PUBLIC_APP_PERMISSIONS_POLICY = [
   "camera=()",
-  "microphone=()",
+  "microphone=(self)",
   "geolocation=()",
   "payment=()",
   "usb=()",

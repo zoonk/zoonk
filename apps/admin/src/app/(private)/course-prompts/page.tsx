@@ -14,9 +14,8 @@ import { CoursePromptList, CoursePromptListSkeleton } from "./course-prompt-list
 export const metadata: Metadata = { title: "Course Prompts" };
 
 /**
- * Shows the durable routing decisions created by course-start entry points.
- * Admins can see raw prompts, assigned intent and format, canonical title, and generation
- * state without relying on the removed course-suggestion tables.
+ * A read-only log of the prompts learners submitted to start a course before goals replaced that
+ * flow: raw prompts, assigned intent and format, canonical title, and generation state.
  */
 export default function CoursePromptsPage({ searchParams }: PageProps<"/course-prompts">) {
   return (

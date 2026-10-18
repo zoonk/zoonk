@@ -1,0 +1,19 @@
+/*
+ * Anything people tap or click can be pressed across at least 44 px each way, even when it looks
+ * smaller: a `::before` centered on the element grows the hit area. The element must be
+ * positioned (`relative`, or already `absolute`/`fixed`) and must not clip its overflow, or the
+ * area is cut back to what shows. The E2E accessibility scans check every target for it.
+ */
+@utility hit-area {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    min-width: calc(var(--spacing) * 11);
+    min-height: calc(var(--spacing) * 11);
+    translate: -50% -50%;
+  }
+}

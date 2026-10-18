@@ -1,46 +1,59 @@
 "use client";
 
-import { CircleCheck, CircleX } from "lucide-react";
+import { type FeedbackTone, FeedbackVerdict } from "@zoonk/learn/feedback-panel";
+import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type Verdict = "correct" | "incorrect";
+/**
+ * "guess" and "guessRight" are a hook screen's guess, which never counts as wrong. "typo" is a
+ * right answer with a spelling slip: it counts as right and shows the spelling. "unchecked" is a
+ * written answer nothing checked, shown next to the sample answer and counted neither way.
+ */
+export type Verdict =
+  | "almost"
+  | "correct"
+  | "guess"
+  | "guessRight"
+  | "incorrect"
+  | "typo"
+  | "unchecked";
 
-const VERDICT_CONFIG: Record<Verdict, { colorClass: string; icon: typeof CircleCheck }> = {
-  correct: { colorClass: "text-success", icon: CircleCheck },
-  incorrect: { colorClass: "text-destructive", icon: CircleX },
+const VERDICT_TONE: Record<Verdict, FeedbackTone> = {
+  almost: "almost",
+  correct: "right",
+  guess: "neutral",
+  guessRight: "right",
+  incorrect: "wrong",
+  typo: "right",
+  unchecked: "neutral",
 };
 
 /**
- * Returns the user-facing label for a verdict.
- *
- * Centralizes verdict text so it can be reused across
- * components that display feedback results.
+ * The verdict line of every answer's feedback, the title of the feedback panel: a plain ✓ or ✕ in
+ * its color and a few words, the same on lesson screens and activities. A guess that missed keeps
+ * its sparkle, since a guess is never wrong. `end` holds a quiet aside on the right, such as
+ * Hyperdrive's "3 right in a row".
  */
-function useVerdictText(verdict: Verdict): string {
+export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict: Verdict }) {
   const t = useExtracted();
 
-  if (verdict === "correct") {
-    return t("Correct!");
-  }
-
-  return t("Not quite");
-}
-
-/**
- * Displays a verdict icon + label for answer feedback.
- *
- * Used across feedback screens to show whether the learner's answer was
- * correct or incorrect. Keeps the icon, color, and label consistent wherever
- * feedback is shown.
- */
-export function VerdictLabel({ verdict }: { verdict: Verdict }) {
-  const { colorClass, icon: Icon } = VERDICT_CONFIG[verdict];
-  const text = useVerdictText(verdict);
+  const labels: Record<Verdict, string> = {
+    almost: t("Almost there"),
+    correct: t("Correct!"),
+    guess: t("Here's the answer"),
+    guessRight: t("Good guess!"),
+    incorrect: t("Not quite"),
+    typo: t("Right, watch the spelling"),
+    unchecked: t("Not checked this time"),
+  };
 
   return (
-    <div className="flex items-center gap-1.5 text-sm font-medium">
-      <Icon aria-hidden="true" className={`${colorClass} size-4`} />
-      <span className={colorClass}>{text}</span>
-    </div>
+    <FeedbackVerdict
+      end={end}
+      icon={verdict === "guess" ? <SparklesIcon aria-hidden="true" /> : undefined}
+      tone={VERDICT_TONE[verdict]}
+    >
+      {labels[verdict]}
+    </FeedbackVerdict>
   );
 }

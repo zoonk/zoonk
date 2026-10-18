@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
 import { isUsernameSyntaxValid, normalizeUsername } from "@zoonk/auth/username-rules";
 import { safeAsync } from "@zoonk/utils/error";
 import { useCallback, useEffect, useState } from "react";
@@ -58,9 +57,15 @@ export function useUsernameAvailability(currentUsername?: string | null) {
     const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
-      const { data: response, error } = await safeAsync(() =>
-        authClient.isUsernameAvailable({ fetchOptions: { signal: controller.signal }, username }),
-      );
+      // The auth client loads with the first check, so username fields don't ship it up front.
+      const { data: response, error } = await safeAsync(async () => {
+        const { authClient } = await import("@zoonk/auth/client");
+
+        return authClient.isUsernameAvailable({
+          fetchOptions: { signal: controller.signal },
+          username,
+        });
+      });
 
       if (controller.signal.aborted) {
         return;

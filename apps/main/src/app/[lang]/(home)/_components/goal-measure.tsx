@@ -1,0 +1,128 @@
+import { LevelLadder } from "@zoonk/learn/level-ladder";
+import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { LessonCells } from "@zoonk/learn/progress-cells";
+import { getExtracted, getFormatter } from "next-intl/server";
+import { type ExampleGoal, getExampleSet } from "./landing-examples";
+import { type DayState } from "./tomorrow-steps";
+
+/**
+ * The job goal's example lessons, the morning after a missed day: known from Day 1, studied in
+ * its seven weeks of about one a day, and the plan's total to its date, at the same pace.
+ */
+const JOB_PROGRESS = { known: 10, studied: 33, total: 220 };
+
+/** The job's lessons on tomorrow's Today: yesterday's comes first after a missed day. */
+const JOB_TODAY: Record<DayState, number> = { missed: 2, studied: 1 };
+
+/**
+ * The subjects yesterday's lessons were in (the hero's Today: the ENEM's humanities, math and
+ * essay, the SAT's two), each a point higher after a day studied.
+ */
+const STUDIED_YESTERDAY = new Set(["essay", "human", "math", "reading"]);
+const STUDIED_POINT = 0.01;
+
+/** The move goal's example level, where the learner is and where the plan takes them. */
+const MOVE_LEVELS = "A2 → B1";
+
+/**
+ * The goal's measure beside its day, as Today's aside draws it in the goal's own units: an exam's
+ * preparation over its subjects, a language's level on the CEFR ladder, another goal's lessons as
+ * cells. From 1100px, where the window has room for it. A studied yesterday counts in it: one
+ * lesson more, and a point more in each subject yesterday's lessons were in.
+ */
+export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleGoal }) {
+  const t = await getExtracted();
+  const format = await getFormatter();
+  const set = await getExampleSet();
+  const percent = (share: number) => format.number(share, { style: "percent" });
+
+  if (goal === "move") {
+    return (
+      <>
+        <p className="text-label">{t("Level")}</p>
+        <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
+          {MOVE_LEVELS}
+        </p>
+        <LevelLadder label="A2" target="B1" />
+        <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
+          {t("Next: renting, banking, the first week at work")}
+        </p>
+      </>
+    );
+  }
+
+  if (goal === "job") {
+    const studied = JOB_PROGRESS.studied + (day === "studied" ? 1 : 0);
+    const done = JOB_PROGRESS.known + studied;
+
+    return (
+      <>
+        <p className="text-label">{t("Progress")}</p>
+        <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
+          {percent(done / JOB_PROGRESS.total)}
+        </p>
+        <LessonCells
+          known={JOB_PROGRESS.known}
+          studied={studied}
+          today={JOB_TODAY[day]}
+          total={JOB_PROGRESS.total}
+        />
+        <p className="text-muted-foreground text-[0.8125rem]">
+          {t("{count, number} of {total, number} lessons", {
+            count: done,
+            total: JOB_PROGRESS.total,
+          })}
+        </p>
+      </>
+    );
+  }
+
+  const examSubjects =
+    set.exam === "enem"
+      ? [
+          { id: "languages", name: t("Languages and Codes"), share: 0.31 },
+          { id: "human", name: t("Human Sciences"), share: 0.38 },
+          { id: "natural", name: t("Natural Sciences"), share: 0.27 },
+          { id: "math", name: t("Mathematics"), share: 0.41 },
+          { id: "essay", name: t("Essay"), share: 0.33 },
+        ]
+      : [
+          { id: "reading", name: t("Reading and Writing"), share: 0.38 },
+          { id: "math", name: t("Math"), share: 0.3 },
+        ];
+
+  const subjects = examSubjects.map((subject) => ({
+    ...subject,
+    share:
+      day === "studied" && STUDIED_YESTERDAY.has(subject.id)
+        ? subject.share + STUDIED_POINT
+        : subject.share,
+  }));
+
+  const preparation = subjects.reduce((sum, subject) => sum + subject.share, 0) / subjects.length;
+
+  return (
+    <>
+      <p className="text-label">{t("Preparation")}</p>
+      <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
+        {percent(preparation)}
+      </p>
+      <ul className="flex flex-col gap-2.5 pt-1">
+        {subjects.map((subject) => (
+          <li
+            className="grid grid-cols-[minmax(0,1fr)_4.5rem_2.5rem] items-center gap-2.5 text-[0.8125rem]"
+            key={subject.id}
+          >
+            <span className="min-w-0 truncate">{subject.name}</span>
+            <Meter className="h-1">
+              <MeterFill className="bg-success" share={subject.share} />
+            </Meter>
+            <span className="text-muted-foreground text-right font-mono text-xs tabular-nums">
+              {percent(subject.share)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}

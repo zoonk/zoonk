@@ -1,0 +1,189 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [{ "general": ["organela"], "personal": ["Ana", "Profa", "sexta"] }]
+        },
+        "id": "pt-class-test-teacher-1",
+        "userInput": {
+          "language": "pt",
+          "topics": [
+            {
+              "description": "A tabela que a Profa. Ana pediu para a prova de sexta.",
+              "name": "Completar a tabela das organelas para a prova da Profa. Ana",
+              "subject": "Biologia Celular"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            {
+              "general": ["estudo de caso", "portfolio"],
+              "personal": ["Pedro II", "Escola Estadual", "dou aula", "historia"]
+            }
+          ]
+        },
+        "id": "pt-career-own-school-1",
+        "userInput": {
+          "language": "pt",
+          "topics": [
+            {
+              "description": "Um projeto de portfólio sobre a Escola Estadual Pedro II, onde dou aula de história.",
+              "name": "Conduzir um estudo de caso de UX na Escola Estadual Pedro II, onde dou aula",
+              "subject": "Portfólio de UX"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "topics": [{ "general": ["SQL"], "personal": ["Nubank"] }] },
+        "id": "pt-interview-company-1",
+        "userInput": {
+          "language": "pt",
+          "topics": [
+            {
+              "description": "Explicar em inglês as consultas que faço no Nubank, para a entrevista.",
+              "name": "Explicar consultas SQL em inglês na entrevista do Nubank",
+              "subject": "Inglês para entrevistas"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            {
+              "general": ["mobilidade urbana", "redacao"],
+              "personal": ["Anglo", "cursinho", "semana passada"]
+            }
+          ]
+        },
+        "id": "pt-prep-course-essay-1",
+        "userInput": {
+          "language": "pt",
+          "topics": [
+            {
+              "description": "O tema que o cursinho Anglo deu na semana passada: mobilidade urbana.",
+              "name": "Redação do cursinho Anglo sobre mobilidade urbana",
+              "subject": "Redação"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "topics": [{ "general": ["juros compostos"], "personal": [] }] },
+        "id": "pt-already-generic-1",
+        "userInput": {
+          "language": "pt",
+          "topics": [
+            {
+              "description": "Calcular montantes com juros compostos em questões de prova.",
+              "name": "Resolver questões de juros compostos",
+              "subject": "Matemática"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            { "general": ["SQL"], "personal": ["Acme", "Monday"] },
+            { "general": ["dashboard"], "personal": ["Jenny"] },
+            { "general": ["update", "stakeholder", "status"], "personal": ["Tom"] }
+          ]
+        },
+        "id": "en-field-topics-manager-1",
+        "userInput": {
+          "language": "en",
+          "topics": [
+            {
+              "description": "Write the SQL queries my team at Acme runs every Monday.",
+              "name": "Write SQL queries for Acme's Monday report",
+              "subject": "English for data work"
+            },
+            {
+              "description": "Build the dashboards Jenny reviews in our weekly sales meeting.",
+              "name": "Build dashboards for Jenny's weekly sales review",
+              "subject": "English for data work"
+            },
+            {
+              "description": "Give status updates to my manager Tom without freezing.",
+              "name": "Give stakeholder updates to my manager Tom",
+              "subject": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            { "general": ["eigenvalue"], "personal": ["Kim", "MATH 221", "UBC", "Oct 14"] }
+          ]
+        },
+        "id": "en-university-course-code-1",
+        "userInput": {
+          "language": "en",
+          "topics": [
+            {
+              "description": "The eigenvalue problems from Prof. Kim's MATH 221 problem set due Oct 14.",
+              "name": "Solve the eigenvalue problems for MATH 221 at UBC",
+              "subject": "Linear algebra"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "topic-skill-names"
+}

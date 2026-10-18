@@ -3,6 +3,7 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
@@ -31,6 +32,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
 }
 
 function AlertDialogContent({
+  children,
   className,
   size = "default",
   ...props
@@ -40,13 +42,15 @@ function AlertDialogContent({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         className={cn(
-          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 group/alert-dialog-content bg-background ring-foreground/5 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-4xl p-6 ring-1 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-md",
+          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 group/alert-dialog-content bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl p-6 ring-1 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-md",
           className,
         )}
         data-size={size}
         data-slot="alert-dialog-content"
         {...props}
-      />
+      >
+        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+      </AlertDialogPrimitive.Popup>
     </AlertDialogPortal>
   );
 }

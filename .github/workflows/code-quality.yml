@@ -42,16 +42,18 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
+
+      # The OpenAPI schemas import Prisma enums, so the client must exist first.
+      - name: Generate Prisma client
+        run: pnpm db:generate
 
       - name: Check generated OpenAPI artifact
         run: pnpm openapi:check
-
-      - name: Generate Prisma client
-        run: pnpm db:generate
 
       - name: Check for i18n errors
         run: pnpm i18n:lint

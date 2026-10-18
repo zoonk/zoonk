@@ -1,17 +1,22 @@
-import { AdminTableSkeleton, AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import {
+  type AdminTableColumn,
+  AdminTableColumns,
+  AdminTableColumnsSkeleton,
+} from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
+import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { listLessonQuestions } from "@/data/questions/list-lesson-questions";
 import { parseSearchParams } from "@/lib/parse-search-params";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
 import { QuestionRow } from "./question-row";
+
+const QUESTION_COLUMNS: AdminTableColumn[] = [
+  { label: "Question" },
+  { label: "Answer" },
+  { label: "User" },
+  { label: "Course / lesson" },
+  { label: "Votes" },
+  { label: "Status / asked" },
+];
 
 export async function QuestionList({
   searchParams,
@@ -40,24 +45,26 @@ async function CachedQuestionList({
   const { questions, total } = await listLessonQuestions({ limit, offset, search });
   const totalPages = Math.ceil(total / limit);
 
+  const votes = await getVoteTotals({
+    contentIds: questions.map((question) => question.id),
+    contentKind: "lessonQuestion",
+  });
+
   return (
     <>
-      <div className="rounded-lg border">
-        <Table>
-          <QuestionTableHeader />
-          <TableBody>
-            {questions.length > 0 ? (
-              questions.map((question) => <QuestionRow key={question.id} question={question} />)
-            ) : (
-              <TableRow>
-                <TableCell className="text-muted-foreground" colSpan={5}>
-                  No questions found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <AdminTableColumns
+        columns={QUESTION_COLUMNS}
+        emptyLabel="No questions found."
+        isEmpty={questions.length === 0}
+      >
+        {questions.map((question) => (
+          <QuestionRow
+            key={question.id}
+            question={question}
+            votes={readVoteTotals(votes, question.id)}
+          />
+        ))}
+      </AdminTableColumns>
 
       <AdminPagination
         basePath="/questions"
@@ -70,57 +77,6 @@ async function CachedQuestionList({
   );
 }
 
-function QuestionTableHeader() {
-  return (
-    <TableHeader>
-      <TableRow>
-        <TableHead>Question</TableHead>
-        <TableHead>Answer</TableHead>
-        <TableHead>User</TableHead>
-        <TableHead>Course / lesson</TableHead>
-        <TableHead>Status / asked</TableHead>
-      </TableRow>
-    </TableHeader>
-  );
-}
-
 export function QuestionListSkeleton() {
-  return (
-    <AdminTableSkeleton className="overflow-x-auto">
-      <Table>
-        <QuestionTableHeader />
-        <AdminTableSkeletonRows>
-          <QuestionSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </AdminTableSkeleton>
-  );
-}
-
-function QuestionSkeletonRow() {
-  return (
-    <TableRow>
-      <TableCell>
-        <Skeleton className="h-4 w-48" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-56" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-32" />
-      </TableCell>
-      <TableCell>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-3 w-28" />
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="h-5 w-16" />
-        </div>
-      </TableCell>
-    </TableRow>
-  );
+  return <AdminTableColumnsSkeleton columns={QUESTION_COLUMNS} />;
 }

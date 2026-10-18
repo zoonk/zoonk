@@ -1,7 +1,7 @@
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
-import { getString } from "@zoonk/utils/json";
-import { callNativeAuthHandler } from "./native-auth-handler";
+import { getString, isJsonObject } from "@zoonk/utils/json";
+import { callNativeAuthHandler, sendNativeAuthRequest } from "./native-auth-handler";
 
 function getSessionToken(response: unknown) {
   const token = getString(response, "token");
@@ -53,6 +53,28 @@ export async function createEmailCodeSession({
   return getSessionToken(response);
 }
 
+/**
+ * Creates a guest session for a client that keeps a bearer token. BotID and Better Auth's rate
+ * limit run first, like guest sign-in on the web.
+ */
+export async function createGuestSession({
+  headers,
+  requestURL,
+}: {
+  headers: Headers;
+  requestURL: string;
+}) {
+  const response = await callNativeAuthHandler({
+    body: {},
+    handler: auth.handler,
+    headers,
+    path: "/sign-in/anonymous",
+    requestURL,
+  });
+
+  return getSessionToken(response);
+}
+
 export async function createGoogleSession({
   headers,
   idToken,
@@ -76,18 +98,39 @@ export async function createGoogleSession({
 /**
  * Deletes the authoritative server session before clearing its cookie. Better
  * Auth's sign-out endpoint deliberately swallows persistence failures, which
- * is unsafe for native clients that clear Keychain only after this succeeds.
+ * is unsafe for native clients that clear Keychain only after this succeeds,
+ * so a failed read or sign-out throws instead of answering signed out.
+ * Both calls go through Better Auth's HTTP boundary, so the cookies their
+ * answers set stay here and the caller decides who gets them.
  */
-export async function deleteCurrentSession({ headers }: { headers: Headers }) {
-  const currentSession = await auth.api.getSession({
+export async function deleteCurrentSession({
+  headers,
+  requestURL,
+}: {
+  headers: Headers;
+  requestURL: string;
+}) {
+  const current = await sendNativeAuthRequest({
+    handler: auth.handler,
     headers,
-    query: { disableCookieCache: true },
+    path: "/get-session",
+    query: { disableCookieCache: "true" },
+    requestURL,
   });
 
-  if (currentSession) {
-    await prisma.session.deleteMany({ where: { token: currentSession.session.token } });
+  const token = getString(isJsonObject(current.body) ? current.body.session : null, "token");
+
+  if (token) {
+    await prisma.session.deleteMany({ where: { token } });
   }
 
-  const signOut = await auth.api.signOut({ headers, returnHeaders: true });
+  const signOut = await sendNativeAuthRequest({
+    body: {},
+    handler: auth.handler,
+    headers,
+    path: "/sign-out",
+    requestURL,
+  });
+
   return { headers: signOut.headers };
 }

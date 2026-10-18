@@ -1,0 +1,2 @@
+- Respect what `LEARNER_LANGUAGE` can read:
+  - For Spain Spanish readers: use "ch" or "y" for the English "j"; approximate a voiced "th" with "d" and an unvoiced one with "z"; English "v" can be written "b".

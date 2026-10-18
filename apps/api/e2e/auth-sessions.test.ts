@@ -7,6 +7,8 @@ import { getString } from "@zoonk/utils/json";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
 
 const TEST_RUN_ID = randomUUID().slice(0, 8);
+const DAY_MS = 24 * 60 * 60 * 1000;
+const SESSION_DAYS = 30;
 const BANNED_EMAIL = `e2e-session-banned-${TEST_RUN_ID}@zoonk.test`;
 const INVALID_CODE_EMAIL = `e2e-session-invalid-${TEST_RUN_ID}@zoonk.test`;
 const SESSION_EMAIL = `e2e-session-${TEST_RUN_ID}@zoonk.test`;
@@ -74,8 +76,23 @@ test.describe("Native session API", () => {
       user: { email: SESSION_EMAIL, id: session.userId },
     });
 
+    // The app's reads keep its session going: a read a day or more after the last renewal renews it.
+    const usedAt = new Date(Date.now() - 3 * DAY_MS);
+
+    await prisma.session.update({
+      data: { expiresAt: new Date(usedAt.getTime() + SESSION_DAYS * DAY_MS), updatedAt: usedAt },
+      where: { token },
+    });
+
+    const read = await bearerContext.get("/v1/me");
+    expect(read.status()).toBe(200);
+    const renewed = await prisma.session.findUniqueOrThrow({ where: { token } });
+    expect(renewed.updatedAt.getTime()).toBeGreaterThan(usedAt.getTime());
+    expect(renewed.expiresAt.getTime()).toBeGreaterThan(Date.now() + (SESSION_DAYS - 1) * DAY_MS);
+
     const signOutResponse = await bearerContext.delete("/v1/sessions/current");
     expect(signOutResponse.status()).toBe(204);
+    expect(signOutResponse.headers()["set-cookie"]).toBeUndefined();
     await expect(prisma.session.findUnique({ where: { token } })).resolves.toBeNull();
 
     const retryBearerContext = await request.newContext({
@@ -126,6 +143,23 @@ test.describe("Native session API", () => {
 
     expect(response.status()).toBe(403);
     await expect(response.json()).resolves.toMatchObject({ error: { code: "ACCOUNT_DISABLED" } });
+
+    await apiContext.dispose();
+  });
+
+  test("refuses a browser-looking request without an Origin on the product contract", async () => {
+    // Node's fetch sends fetch metadata like a browser page, so Better Auth asks it for an Origin.
+    const apiContext = await request.newContext({
+      baseURL,
+      extraHTTPHeaders: { "Sec-Fetch-Mode": "cors" },
+    });
+
+    const response = await apiContext.post("/v1/email-sign-in-codes", {
+      data: { email: INVALID_CODE_EMAIL },
+    });
+
+    expect(response.status()).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({ error: { code: "UNTRUSTED_ORIGIN" } });
 
     await apiContext.dispose();
   });

@@ -5,10 +5,13 @@
   "exports": {
     "./base.config": "./src/base.config.ts",
     "./fixtures": "./src/fixtures.ts",
+    "./fixtures/accessibility": "./src/fixtures/accessibility.ts",
     "./fixtures/base-url": "./src/fixtures/base-url.ts",
-    "./fixtures/dialog": "./src/fixtures/dialog.ts",
+    "./fixtures/guests": "./src/fixtures/guests.ts",
     "./fixtures/locale": "./src/fixtures/locale.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
+    "./fixtures/personas": "./src/fixtures/personas.ts",
+    "./fixtures/seed-v2": "./src/fixtures/seed-v2.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {
@@ -19,6 +22,7 @@
     "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/testing": "workspace:*",

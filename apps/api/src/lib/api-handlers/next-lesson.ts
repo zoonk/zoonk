@@ -1,29 +1,16 @@
 import "server-only";
-import { type LessonScope } from "@zoonk/core/lessons/scope";
-import { type NextLesson, getNextLessonResource } from "@zoonk/core/progress/get-next-lesson";
+import { type getCatalogCourseNextLesson } from "@zoonk/core/catalog/next-lesson";
 import { NextResponse } from "next/server";
 import { errors } from "../api-errors";
 
-/**
- * Converts Core's web-oriented route slug into the public organization field
- * and marks every target variant explicitly for reliable client narrowing.
- */
-function serializeNextLessonTarget(target: NextLesson) {
-  const { brandSlug, ...fields } = target;
-
-  if ("lessonId" in fields) {
-    return { ...fields, organizationSlug: brandSlug, type: "lesson" as const };
-  }
-
-  return { ...fields, organizationSlug: brandSlug, type: "chapter" as const };
-}
+type NextLessonResult = Awaited<ReturnType<typeof getCatalogCourseNextLesson>>;
 
 /**
- * Resolves and serializes the scope shared by the course, chapter, and lesson resource routes.
+ * Serializes the course and chapter next-lesson resources: Core's route-neutral
+ * brand becomes the public organization field, and a course or chapter without
+ * a target is an explicit empty variant.
  */
-export async function handleNextLesson({ scope }: { scope: LessonScope }) {
-  const result = await getNextLessonResource({ scope });
-
+export function toNextLessonResponse(result: NextLessonResult) {
   if (result.status === "notFound") {
     return errors.notFound();
   }
@@ -32,5 +19,6 @@ export async function handleNextLesson({ scope }: { scope: LessonScope }) {
     return NextResponse.json({ completed: false, hasStarted: false, type: "empty" });
   }
 
-  return NextResponse.json(serializeNextLessonTarget(result.target));
+  const { brandSlug, ...target } = result.target;
+  return NextResponse.json({ ...target, organizationSlug: brandSlug });
 }

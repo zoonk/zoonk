@@ -8,65 +8,74 @@ export type SeedUsers = {
   owner: User;
 };
 
+/** Every seeded account's email, by the name `seedUsers` returns it under. */
+export const SEED_USER_EMAILS = {
+  admin: "admin@zoonk.test",
+  logoutTest: "logout-test@zoonk.test",
+  member: "member@zoonk.test",
+  multiOrg: "multi-org@zoonk.test",
+  owner: "owner@zoonk.test",
+} as const satisfies Record<keyof SeedUsers, string>;
+
 export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
   const owner = await prisma.user.upsert({
     create: {
-      email: "owner@zoonk.test",
+      email: SEED_USER_EMAILS.owner,
       emailVerified: true,
       name: "Owner User",
       role: "admin",
       username: "owner_user",
     },
     update: { username: "owner_user" },
-    where: { email: "owner@zoonk.test" },
+    where: { email: SEED_USER_EMAILS.owner },
   });
 
   const admin = await prisma.user.upsert({
     create: {
-      email: "admin@zoonk.test",
+      email: SEED_USER_EMAILS.admin,
       emailVerified: true,
       name: "Admin User",
       role: "admin",
       username: "admin_user",
     },
     update: { username: "admin_user" },
-    where: { email: "admin@zoonk.test" },
+    where: { email: SEED_USER_EMAILS.admin },
   });
 
   const member = await prisma.user.upsert({
     create: {
-      email: "member@zoonk.test",
+      email: SEED_USER_EMAILS.member,
       emailVerified: true,
       name: "Member User",
       role: "member",
       username: "member_user",
     },
     update: { username: "member_user" },
-    where: { email: "member@zoonk.test" },
+    where: { email: SEED_USER_EMAILS.member },
   });
 
   const logoutTest = await prisma.user.upsert({
     create: {
-      email: "logout-test@zoonk.test",
+      email: SEED_USER_EMAILS.logoutTest,
       emailVerified: true,
       name: "Logout Test User",
       role: "member",
       username: "logout_test",
     },
     update: { username: "logout_test" },
-    where: { email: "logout-test@zoonk.test" },
+    where: { email: SEED_USER_EMAILS.logoutTest },
   });
 
   const multiOrg = await prisma.user.upsert({
     create: {
-      email: "multi-org@zoonk.test",
+      email: SEED_USER_EMAILS.multiOrg,
       emailVerified: true,
       name: "Multi Org User",
       role: "admin",
       username: "multi_org",
     },
     update: { username: "multi_org" },
-    where: { email: "multi-org@zoonk.test" },
+    where: { email: SEED_USER_EMAILS.multiOrg },
   });
 
   return { admin, logoutTest, member, multiOrg, owner };

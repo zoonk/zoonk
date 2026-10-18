@@ -1,0 +1,243 @@
+"use client";
+
+import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
+import { isFullMeal } from "@zoonk/core/sessions/missions";
+import { BeltIndicator, beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { Buddy } from "@zoonk/ui/components/buddy";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
+import { useExtracted, useFormatter } from "next-intl";
+import { StepCard, StepRow, StepRows, StepTitle } from "../../_components/step-card";
+import { useBeltName } from "../../_utils/use-belt-name";
+import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
+import { type StudySessionSummary } from "../session-types";
+import { useSessionSummary } from "./summary-context";
+
+/** A belt has ten levels, each a stripe. */
+const STRIPES_PER_BELT = 10;
+
+/** A streak worth naming: three right answers in a row or more. */
+const SHOWN_STREAK = 3;
+
+type SummaryBelt = NonNullable<StudySessionSummary["belt"]>;
+
+/** A level's tick in its belt's color; a white belt's would vanish on the page, so it's ink. */
+function tickClass(color: SummaryBelt["after"]["color"]): string {
+  return color === "white" ? "bg-foreground/70" : beltColorClasses[color];
+}
+
+/**
+ * Every mission of this session's day done, with the day's bonus earned. The bonus is once a day
+ * across goals, so another goal's earning it never says this goal's missions are done.
+ */
+function hasMissionsDone(summary: StudySessionSummary): boolean {
+  return summary.fullMeal && isFullMeal(summary.missions);
+}
+
+/**
+ * Whether the session earned more than the Brain Power its numbers already show (all of today's
+ * missions, a new stripe, a streak worth naming): only then does a phone give the rewards a step
+ * of their own. Wide screens show them beside the numbers either way.
+ */
+export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolean {
+  return (
+    hasMissionsDone(summary) ||
+    (summary.belt?.stripesGained ?? 0) > 0 ||
+    summary.bestStreak >= SHOWN_STREAK
+  );
+}
+
+/** The resolved buddy, glad about the day, including before a choice is saved. */
+function RewardsArt() {
+  const t = useExtracted();
+  const { buddy: learnerBuddy } = useSessionSummary();
+  const buddy = resolveLearnBuddy(learnerBuddy);
+  const name = useBuddyName(buddy);
+
+  return (
+    <Buddy
+      beltColor={buddy.beltColor}
+      className="size-24"
+      energy={buddy.energy}
+      expression="cheer"
+      glasses={buddy.glasses}
+      kind={buddy.kind}
+      label={t("{buddy}, happy with today", { buddy: name })}
+      studiedToday
+    />
+  );
+}
+
+/**
+ * A reward's value on its row's right, in the mono face: what the session added. Brain Power is in
+ * its violet, as every reward amount reads; a level gained is progress made, in green.
+ */
+function RewardValue({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone: "brain" | "progress";
+}) {
+  return (
+    <span
+      className={cn(
+        "shrink-0 font-mono text-xs font-medium tabular-nums",
+        tone === "brain" ? "text-brain-text" : "text-success-text",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** Today's missions, all done ("All 3 done", however many the day offered), and their bonus. */
+function MissionsBonusRow({ count }: { count: number }) {
+  const t = useExtracted();
+  const format = useFormatter();
+
+  return (
+    <StepRow>
+      <ListChecksIcon aria-hidden="true" />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="font-medium">{t("Today's missions")}</span>
+        <span className="text-muted-foreground text-xs">
+          {t("{count, plural, one {Done} other {All # done}}", { count })}
+        </span>
+      </span>
+      <RewardValue tone="brain">
+        {t("+{bonus}", { bonus: format.number(BRAIN_POWER_BONUS.fullMeal) })}
+      </RewardValue>
+    </StepRow>
+  );
+}
+
+/**
+ * A stripe earned today: the belt's ten levels as ticks, lit in its color, with the belt and level
+ * named and "+1 level" beside it. A new belt color starts over.
+ */
+function BeltRow({ belt }: { belt: SummaryBelt }) {
+  const t = useExtracted();
+  const beltName = useBeltName();
+  const { color, level } = belt.after;
+
+  return (
+    <StepRow className="flex-col items-stretch gap-2" data-slot="belt-stripes">
+      <span className="flex items-center gap-3">
+        <BeltIndicator color={color} label={beltName(color)} />
+        <span className="min-w-0 flex-1 font-medium">
+          {t("{belt}, level {level}", { belt: beltName(color), level: String(level) })}
+        </span>
+        <RewardValue tone="progress">
+          {t("{count, plural, one {+# level} other {+# levels}}", { count: belt.stripesGained })}
+        </RewardValue>
+      </span>
+
+      <span aria-hidden="true" className="flex h-1 gap-[3px]">
+        {Array.from({ length: STRIPES_PER_BELT }, (_, index) => (
+          <span
+            className={cn(
+              "flex-1 rounded-xs",
+              index < level ? tickClass(color) : "bg-surface-3",
+              // The levels earned today fill in, so the learner sees which ones are new.
+              index >= level - belt.stripesGained &&
+                index < level &&
+                "motion-safe:animate-energy-charge origin-left",
+            )}
+            // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
+            key={index}
+          />
+        ))}
+      </span>
+    </StepRow>
+  );
+}
+
+function StreakRow({ count }: { count: number }) {
+  const t = useExtracted();
+
+  return (
+    <StepRow>
+      <ChevronsUpIcon aria-hidden="true" />
+      <span className="font-medium">{t("{count} right in a row", { count: String(count) })}</span>
+    </StepRow>
+  );
+}
+
+/** "+27 Brain Power", the number in the mono face. */
+function renderMono(chunks: React.ReactNode) {
+  return <span className="font-mono font-medium tracking-[-0.04em]">{chunks}</span>;
+}
+
+/** Only what happened, as flat rows: the missions' bonus, a new stripe, the best streak. */
+function RewardRows() {
+  const { summary } = useSessionSummary();
+  const { belt, bestStreak } = summary;
+  const missionsDone = hasMissionsDone(summary);
+  const hasStripe = belt !== null && belt.stripesGained > 0;
+  const hasStreak = bestStreak >= SHOWN_STREAK;
+
+  if (!missionsDone && !hasStripe && !hasStreak) {
+    return null;
+  }
+
+  return (
+    <StepRows>
+      {missionsDone && <MissionsBonusRow count={summary.missions.length} />}
+      {hasStripe && <BeltRow belt={belt} />}
+      {hasStreak && <StreakRow count={bestStreak} />}
+    </StepRows>
+  );
+}
+
+/**
+ * What the session earned, with the buddy glad about it: Brain Power as the title, then only what
+ * happened as flat rows: the bonus for all of today's missions, a new stripe on the belt and the
+ * best streak of right answers. A phone's step when there's more than Brain Power.
+ */
+export function RewardsStep() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { summary } = useSessionSummary();
+  const { brainPower } = summary;
+
+  return (
+    <StepCard className="items-stretch">
+      <RewardsArt />
+
+      <StepTitle>
+        {brainPower > 0
+          ? t.rich("<mono>+{points}</mono> Brain Power", {
+              mono: renderMono,
+              points: format.number(brainPower),
+            })
+          : t("Rewards")}
+      </StepTitle>
+
+      <RewardRows />
+    </StepCard>
+  );
+}
+
+/**
+ * The same rewards in the aside of a wide screen, beside the day's numbers: the buddy, the Brain
+ * Power as a big mono number, and the rows. Not the page's heading (the summary's title is).
+ */
+export function EarnedToday() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { summary } = useSessionSummary();
+
+  return (
+    <div className="flex flex-col items-start gap-4" data-slot="earned-today">
+      <RewardsArt />
+      <p className="text-2xl font-semibold tracking-[-0.03em]">
+        {t.rich("<mono>+{points}</mono> Brain Power", {
+          mono: renderMono,
+          points: format.number(summary.brainPower),
+        })}
+      </p>
+      <RewardRows />
+    </div>
+  );
+}

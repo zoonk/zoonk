@@ -10,9 +10,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 
 const NOW = new Date("2025-01-10T12:00:00Z");
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 /** Selects the learner and local date used by one private Energy read. */
 function mockEnergyRequest({
   currentDate,

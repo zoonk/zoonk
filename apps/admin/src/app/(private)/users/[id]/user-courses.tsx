@@ -33,7 +33,6 @@ export async function UserCourses({ userId }: { userId: string }) {
               <TableRow>
                 <TableHead>Course</TableHead>
                 <TableHead className="text-right">Completed lessons</TableHead>
-                <TableHead className="text-right">Completed chapters</TableHead>
                 <TableHead>Last completed</TableHead>
               </TableRow>
             </TableHeader>
@@ -59,12 +58,9 @@ export async function UserCourses({ userId }: { userId: string }) {
 function UserCourseRow({ course }: { course: UserCompletedLessonCourse }) {
   return (
     <TableRow>
-      <TableCell className="font-medium">{course.course.title}</TableCell>
+      <TableCell className="font-medium">{course.course.title ?? "Deleted course"}</TableCell>
       <TableCell className="text-right tabular-nums">
         {course.completedLessonCount.toLocaleString()}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {course.completedChapterCount.toLocaleString()}
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(course.lastCompletedAt)}</TableCell>
     </TableRow>

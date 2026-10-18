@@ -1,0 +1,40 @@
+import "server-only";
+import { cacheTag } from "next/cache";
+import {
+  getGoalsCacheTag,
+  getLearningProfileCacheTag,
+  getUserSubscriptionCacheTag,
+} from "../cache/tags";
+import { readActiveGoal, readLearningProfile } from "../learner/facts/learning-profile";
+import { getOwnedGoal } from "../learner/get-owned-goal";
+import { loadGoalViews } from "./_utils/goal-view";
+import { type GoalView } from "./goal-contract";
+
+export type GoalResult =
+  | { goal: GoalView; status: "ready" }
+  | { status: "notFound" | "unauthorized" };
+
+/** One of the learner's goals with a short summary of its plan. */
+export async function getGoal(goalId: string): Promise<GoalResult> {
+  "use cache: private";
+
+  const owned = await getOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  cacheTag(
+    getGoalsCacheTag(owned.userId),
+    getLearningProfileCacheTag(owned.userId),
+    getUserSubscriptionCacheTag(owned.userId),
+  );
+
+  const profile = await readLearningProfile(owned.userId);
+  const fallbackGoal = profile?.activeGoalId ? null : await readActiveGoal(owned.userId);
+  /** This view only compares the stored selection to its already-owned goal. */
+  const activeGoalId = profile?.activeGoalId ?? fallbackGoal?.id ?? null;
+  const [goal] = await loadGoalViews({ activeGoalId, goals: [owned.goal] });
+
+  return goal ? { goal, status: "ready" } : { status: "notFound" };
+}

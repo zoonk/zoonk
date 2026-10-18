@@ -1,15 +1,7 @@
+import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
 import { getLessonQuestion } from "@/data/questions/get-lesson-question";
-import { getAdminLessonLabel } from "@/lib/lesson-label";
-import { getAdminQuestionContextLabel, getAdminQuestionStatusVariant } from "@/lib/lesson-question";
+import { getAdminQuestionStatusVariant } from "@/lib/lesson-question";
 import { Badge } from "@zoonk/ui/components/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
 import {
   Container,
   ContainerBody,
@@ -19,33 +11,22 @@ import {
 import { Separator } from "@zoonk/ui/components/separator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
-import Link from "next/link";
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { QuestionDetailField } from "./question-detail-field";
+import { QuestionDetails } from "./question-details";
 
-function QuestionBreadcrumb() {
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/questions" prefetch />}>Questions</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Details</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
+export const metadata: Metadata = { title: "Question" };
 
 export default function QuestionDetailPage({ params }: PageProps<"/questions/[id]">) {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <QuestionBreadcrumb />
+          <AdminBreadcrumb
+            current="Details"
+            parents={[{ href: "/questions", label: "Questions" }]}
+          />
         </ContainerHeaderGroup>
       </ContainerHeader>
 
@@ -70,8 +51,6 @@ async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]
   if (!question) {
     notFound();
   }
-
-  const { lesson, user } = question.thread;
 
   return (
     <>
@@ -113,43 +92,7 @@ async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]
         <h2 className="mb-2 font-medium" id="details-heading">
           Details
         </h2>
-        <dl className="divide-y">
-          <QuestionDetailField label="User">
-            <Link className="hover:underline" href={`/users/${user.id}`} prefetch>
-              {user.name || user.username || "User"}
-            </Link>
-            <span className="text-muted-foreground block">{user.email}</span>
-          </QuestionDetailField>
-          <QuestionDetailField label="Course">
-            {lesson?.chapter.course.title ?? "Deleted lesson"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Chapter">{lesson?.chapter.title ?? "—"}</QuestionDetailField>
-          <QuestionDetailField label="Lesson">
-            {lesson ? getAdminLessonLabel({ kind: lesson.kind, title: lesson.title }) : "—"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Context">
-            {getAdminQuestionContextLabel({
-              contextKind: question.contextKind,
-              stepNumber: question.stepNumber,
-            })}
-          </QuestionDetailField>
-          <QuestionDetailField label="Model">
-            {question.model ?? question.requestedModel ?? "—"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Provider">{question.provider ?? "—"}</QuestionDetailField>
-          <QuestionDetailField label="Input tokens">
-            {question.inputTokens?.toLocaleString() ?? "—"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Output tokens">
-            {question.outputTokens?.toLocaleString() ?? "—"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Finish reason">
-            {question.finishReason ?? "—"}
-          </QuestionDetailField>
-          <QuestionDetailField label="Updated">
-            {question.updatedAt.toLocaleString()}
-          </QuestionDetailField>
-        </dl>
+        <QuestionDetails question={question} />
       </section>
     </>
   );

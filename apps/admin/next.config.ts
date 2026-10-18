@@ -1,3 +1,4 @@
+import { CACHE_LIFE_PROFILES } from "@zoonk/core/cache-tags";
 import { type NextConfig } from "next";
 
 const CACHE_IMAGE_DAYS = 30;
@@ -5,6 +6,7 @@ const CACHE_IMAGE_DAYS = 30;
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
+  cacheLife: { ...CACHE_LIFE_PROFILES },
   experimental: {
     authInterrupts: true,
     serverActions: { bodySizeLimit: "10mb" },

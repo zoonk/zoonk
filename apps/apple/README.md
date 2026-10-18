@@ -56,6 +56,8 @@ pnpm openapi:generate
 
 CI checks the file byte-for-byte against the source contract, so a stale artifact cannot merge. Feature code should continue to call small hand-written clients such as `AccountAPIClient`; generated transport types stay behind those feature boundaries, while `APIClientFactory` owns shared transport and middleware configuration.
 
+The generator only builds the operations listed under `filter` in `Zoonk/openapi-generator-config.yaml`, plus the schemas they use, so endpoints the app doesn't call can't break its build. Add an operation there when a feature starts calling it.
+
 ## StoreKit testing
 
 The shared `Zoonk` scheme activates `Zoonk/Resources/StoreKit/Subscriptions.storekit` when the app runs from Xcode. This test-only file contains the Plus monthly and yearly products and is excluded from the app bundle. The `pnpm iphone` and `pnpm ipad` launchers install the built app directly and therefore do not attach the scheme's StoreKit configuration; use Xcode Run when local product data is required.

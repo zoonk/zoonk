@@ -4,17 +4,15 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 
 type CompletedLessonCourseRow = {
-  completedChapterCount: bigint | null;
   completedLessonCount: bigint;
   courseId: string;
-  courseTitle: string;
+  courseTitle: string | null;
   lastCompletedAt: Date;
 };
 
 export type UserCompletedLessonCourse = {
-  completedChapterCount: number;
   completedLessonCount: number;
-  course: { id: string; title: string };
+  course: { id: string; title: string | null };
   lastCompletedAt: Date;
 };
 
@@ -38,47 +36,33 @@ export async function listUserCompletedLessonCourses(params: { userId: string })
 }
 
 /**
- * The UI needs one row per course, not one row per completed lesson. Grouping
- * in SQL keeps the query proportional to the number of courses shown while
- * completion rows stay the source of truth for learner progress.
+ * The UI needs one row per course, not one row per completed lesson. Finished
+ * lesson rows in the learning ledger keep the course id without a foreign key,
+ * so the counts survive the course being deleted; the current course title is
+ * only looked up for display and is null once the course is gone.
  */
 function findUserCompletedLessonCourseRows({ userId }: { userId: string }) {
   return prisma.$queryRaw<CompletedLessonCourseRow[]>`
     WITH completed_lesson_courses AS (
       SELECT
-        courses.id AS "courseId",
-        courses.title AS "courseTitle",
+        learning_events.content_ids->>'courseId' AS "courseId",
         COUNT(*)::bigint AS "completedLessonCount",
-        MAX(lesson_progress.completed_at) AS "lastCompletedAt"
-      FROM lesson_progress
-      JOIN lessons ON lessons.id = lesson_progress.lesson_id
-      JOIN chapters ON chapters.id = lessons.chapter_id
-      JOIN courses ON courses.id = chapters.course_id
+        MAX(learning_events.ended_at) AS "lastCompletedAt"
+      FROM learning_events
       WHERE
-        lesson_progress.user_id = ${userId}::uuid
-        AND lesson_progress.completed_at IS NOT NULL
-      GROUP BY courses.id, courses.title
-    ),
-    completed_chapter_courses AS (
-      SELECT
-        chapters.course_id AS "courseId",
-        COUNT(*)::bigint AS "completedChapterCount"
-      FROM chapter_completions
-      JOIN chapters ON chapters.id = chapter_completions.chapter_id
-      JOIN completed_lesson_courses ON completed_lesson_courses."courseId" = chapters.course_id
-      WHERE
-        chapter_completions.user_id = ${userId}::uuid
-      GROUP BY chapters.course_id
+        learning_events.user_id = ${userId}::uuid
+        AND learning_events.kind = 'lesson'
+        AND learning_events.ended_at IS NOT NULL
+        AND learning_events.content_ids ? 'courseId'
+      GROUP BY learning_events.content_ids->>'courseId'
     )
     SELECT
       completed_lesson_courses."courseId",
-      completed_lesson_courses."courseTitle",
+      courses.title AS "courseTitle",
       completed_lesson_courses."completedLessonCount",
-      completed_lesson_courses."lastCompletedAt",
-      completed_chapter_courses."completedChapterCount"
+      completed_lesson_courses."lastCompletedAt"
     FROM completed_lesson_courses
-    LEFT JOIN completed_chapter_courses
-      ON completed_chapter_courses."courseId" = completed_lesson_courses."courseId"
+    LEFT JOIN courses ON courses.id::text = completed_lesson_courses."courseId"
     ORDER BY
       completed_lesson_courses."lastCompletedAt" DESC,
       completed_lesson_courses."courseId" ASC
@@ -96,7 +80,6 @@ function serializeCompletedLessonCourse({
   row: CompletedLessonCourseRow;
 }): UserCompletedLessonCourse {
   return {
-    completedChapterCount: Number(row.completedChapterCount ?? 0n),
     completedLessonCount: Number(row.completedLessonCount),
     course: { id: row.courseId, title: row.courseTitle },
     lastCompletedAt: row.lastCompletedAt,

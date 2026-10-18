@@ -11,19 +11,32 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { Loader2Icon } from "lucide-react";
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
-  return <div className={cn("flex w-full flex-col gap-6 p-4", className)}>{children}</div>;
+  return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
 }
 
 export function LoginHeader({ children, className }: React.ComponentProps<"div">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
+  return (
+    <header className={cn("flex flex-col items-center gap-2 text-center", className)}>
+      {children}
+    </header>
+  );
 }
 
 export function LoginTitle({ children, className }: React.ComponentProps<"h1">) {
-  return <h1 className={cn("text-xl font-bold", className)}>{children}</h1>;
+  return (
+    <h1
+      className={cn(
+        "text-[1.625rem] leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-[1.875rem]",
+        className,
+      )}
+    >
+      {children}
+    </h1>
+  );
 }
 
 export function LoginDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-center text-sm", className)}>{children}</p>;
+  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
 }
 
 export function LoginDivider({ children, className }: React.ComponentProps<"div">) {
@@ -53,7 +66,13 @@ function LoginWithProvider({
   ...props
 }: LoginWithProviderProps) {
   return (
-    <Button className={cn("w-full", className)} disabled={isLoading} variant="outline" {...props}>
+    <Button
+      className={cn("w-full", className)}
+      disabled={isLoading}
+      size="lg"
+      variant="outline"
+      {...props}
+    >
       {isLoading && <Loader2Icon className="animate-spin" />}
       {Icon && <Icon aria-hidden="true" />}
       {children}
@@ -114,6 +133,7 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
     <Input
       autoCapitalize="none"
       autoComplete="email"
+      className="h-11"
       id="email"
       name="email"
       required
@@ -126,7 +146,7 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
 
 export function LoginSubmit({ children, ...props }: React.ComponentProps<"button">) {
   return (
-    <SubmitButton full {...props}>
+    <SubmitButton className="h-11 font-[560]" full {...props}>
       {children}
     </SubmitButton>
   );

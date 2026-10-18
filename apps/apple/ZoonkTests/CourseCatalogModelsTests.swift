@@ -12,6 +12,7 @@ final class CourseCatalogModelsTests: XCTestCase {
     let course = Course(
       categories: [.science, .tech],
       description: "Understand the night sky.",
+      generationStatus: .completed,
       id: "00000000-0000-7000-8000-000000000002",
       imageURL: URL(string: "https://cdn.zoonk.test/course.png"),
       language: "en",
@@ -22,10 +23,11 @@ final class CourseCatalogModelsTests: XCTestCase {
     let chapter = CourseChapter(
       courseID: course.id,
       description: "Meet our cosmic neighborhood.",
+      generationStatus: .completed,
       id: "00000000-0000-7000-8000-000000000003",
-      imageURL: nil,
       language: "en",
       lessonCount: 4,
+      level: .beginner,
       position: 1,
       slug: "solar-system",
       title: "The Solar System")
@@ -46,11 +48,8 @@ final class CourseCatalogModelsTests: XCTestCase {
         "tech",
       ])
     XCTAssertEqual(
-      LessonKind.allCases.map(\.rawValue),
-      [
-        "alphabet", "custom", "explanation", "grammar", "listening", "practice", "quiz",
-        "reading", "review", "translation", "tutorial", "vocabulary",
-      ])
+      CourseLevel.allCases.map(\.rawValue),
+      ["overview", "beginner", "intermediate", "advanced"])
   }
 
   func testCatalogPageCanLoadMoreOnlyWithAnOpaqueCursor() {
@@ -118,6 +117,7 @@ extension Course {
   static let testFixture = Course(
     categories: [.science],
     description: "Understand the night sky.",
+    generationStatus: .completed,
     id: CourseSummary.testFixture.id,
     imageURL: CourseSummary.testFixture.imageURL,
     language: "en",
@@ -131,10 +131,11 @@ extension CourseChapter {
   static let testFixture = CourseChapter(
     courseID: Course.testFixture.id,
     description: "Meet our cosmic neighborhood.",
+    generationStatus: .completed,
     id: "00000000-0000-7000-8000-000000000004",
-    imageURL: nil,
     language: "en",
     lessonCount: 2,
+    level: .beginner,
     position: 0,
     slug: "solar-system",
     title: "The Solar System")
@@ -142,13 +143,20 @@ extension CourseChapter {
   static let resourceTestFixture = CourseChapter(
     courseID: Course.testFixture.id,
     description: "Meet our cosmic neighborhood.",
+    generationStatus: .completed,
     id: "00000000-0000-7000-8000-000000000004",
-    imageURL: nil,
     language: "en",
     lessonCount: nil,
+    level: .beginner,
     position: 0,
     slug: "solar-system",
     title: "The Solar System")
+}
+
+extension CatalogChapterKey {
+  static let testFixture = CatalogChapterKey(
+    chapterID: CourseChapter.testFixture.id,
+    courseID: Course.testFixture.id)
 }
 
 extension CourseLesson {
@@ -157,8 +165,6 @@ extension CourseLesson {
     courseID: Course.testFixture.id,
     description: "A first look at our star.",
     id: "00000000-0000-7000-8000-000000000005",
-    imageURL: nil,
-    kind: .explanation,
     language: "en",
     position: 0,
     slug: "the-sun",
@@ -222,7 +228,6 @@ extension CatalogSearchResults {
         courseTitle: Course.testFixture.title,
         description: CourseChapter.testFixture.description,
         id: CourseChapter.testFixture.id,
-        imageURL: URL(string: "https://cdn.zoonk.test/chapter.png"),
         language: "en",
         organizationSlug: CourseOrganization.testFixture.slug,
         slug: CourseChapter.testFixture.slug,

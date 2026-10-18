@@ -1,0 +1,284 @@
+{
+  "chapters": [
+    {
+      "description": "The body's first defenses keep many microbes out and respond quickly when a threat gets through.",
+      "lessons": [
+        {
+          "canDo": "Distinguish pathogens from harmless microbes",
+          "description": "Pathogens are microbes that can cause illness, while many other microbes live with us without causing harm.",
+          "estimatedMinutes": 3,
+          "skills": ["Identify pathogens that can cause illness"],
+          "title": "Pathogens and harmless microbes"
+        },
+        {
+          "canDo": "Describe how barriers block infection",
+          "description": "Skin, mucus and other barriers stop many pathogens before immune cells need to respond.",
+          "estimatedMinutes": 3,
+          "skills": ["Describe physical defenses against infection"],
+          "title": "Physical barriers to infection"
+        },
+        {
+          "canDo": "Describe how innate defenses spot a threat",
+          "description": "Early immune defenses detect common signs of microbes or damage without identifying a particular pathogen.",
+          "estimatedMinutes": 3,
+          "skills": ["Describe innate threat detection"],
+          "title": "Innate immune detection"
+        },
+        {
+          "canDo": "Explain how inflammation calls for help",
+          "description": "Inflammation brings immune cells and protective substances to a threatened area, causing signs such as warmth and swelling.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain innate immune alerts", "Interpret signs of inflammation"],
+          "title": "Inflammation and immune alerts"
+        },
+        {
+          "canDo": "Explain why inflammation needs to subside",
+          "description": "Immune defenses must ease after a threat is controlled so their activity does not keep damaging healthy tissue.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain resolution of inflammation"],
+          "title": "Resolution of inflammation"
+        }
+      ],
+      "objectives": [
+        "Identify microbes that can cause illness",
+        "Describe how barriers and innate defenses respond to threats",
+        "Explain why inflammation must be controlled"
+      ],
+      "skillKeys": ["identify-pathogens", "explain-innate-alerts"],
+      "title": "Threats and early defenses"
+    },
+    {
+      "description": "Targeted defenses use recognizable features of a threat to coordinate cells that make antibodies or remove infected cells.",
+      "lessons": [
+        {
+          "canDo": "Explain how antigens guide targeted defenses",
+          "description": "Antigens are recognizable features that let immune cells respond to a particular threat.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain antigen recognition"],
+          "title": "Antigens and immune recognition"
+        },
+        {
+          "canDo": "Describe how immune cells display antigens",
+          "description": "Some immune cells display pieces of a threat so other immune cells can recognize it and respond.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain antigen presentation"],
+          "title": "Antigen presentation"
+        },
+        {
+          "canDo": "Explain how helper T cells direct a response",
+          "description": "After recognizing a presented antigen, helper T cells send signals that coordinate targeted defenses.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain helper T cell coordination"],
+          "title": "Helper T cell coordination"
+        },
+        {
+          "canDo": "Describe how B cells start making antibodies",
+          "description": "A B cell that matches an antigen can receive help that prompts it to make antibodies.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain B cell activation"],
+          "title": "B cell activation"
+        },
+        {
+          "canDo": "Explain how antibodies can prevent illness",
+          "description": "Antibodies bind to matching targets and can block a pathogen or help other defenses clear it.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain antibody protection"],
+          "title": "Antibody protection"
+        },
+        {
+          "canDo": "Explain how killer T cells remove infected cells",
+          "description": "Killer T cells recognize infected cells displaying a matching target and destroy those cells to limit infection.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain killer T cell responses"],
+          "title": "Killer T cell responses"
+        }
+      ],
+      "objectives": [
+        "Explain how antigens make a targeted response possible",
+        "Describe how immune cells coordinate a targeted response",
+        "Compare antibody protection with the removal of infected cells"
+      ],
+      "skillKeys": [
+        "recognize-antigens",
+        "explain-antigen-presentation",
+        "explain-helper-t-cells",
+        "explain-b-cell-activation",
+        "explain-antibody-protection",
+        "explain-killer-t-cells"
+      ],
+      "title": "Targeted immune responses"
+    },
+    {
+      "description": "Immune memory helps the body respond to familiar threats, and vaccines build that memory without requiring the disease itself.",
+      "lessons": [
+        {
+          "canDo": "Explain a faster response to a familiar threat",
+          "description": "Some B and T cells remain after a response and can act more quickly when they meet the same threat again.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain immune memory"],
+          "title": "Immune memory"
+        },
+        {
+          "canDo": "Explain how vaccines train immune defenses",
+          "description": "Vaccines expose the immune system to an antigen or instructions for making one without requiring the disease itself.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain vaccine training"],
+          "title": "Vaccine training"
+        },
+        {
+          "canDo": "Compare broad ways vaccines supply a target",
+          "description": "Vaccines may supply a weakened pathogen, an inactivated pathogen, a pathogen piece or instructions for making a piece.",
+          "estimatedMinutes": 4,
+          "skills": ["Compare vaccine approaches"],
+          "title": "Ways vaccines present antigens"
+        },
+        {
+          "canDo": "Describe how messenger RNA vaccines supply instructions",
+          "description": "Messenger RNA vaccines give cells temporary instructions to make a pathogen piece that the immune system can recognize.",
+          "estimatedMinutes": 3,
+          "skills": ["Describe messenger RNA vaccine action"],
+          "title": "Messenger RNA vaccines"
+        },
+        {
+          "canDo": "Explain why another vaccine dose may help",
+          "description": "A booster gives immune defenses another encounter with a target, which can strengthen or renew protection.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain booster dose effects"],
+          "title": "Booster doses"
+        }
+      ],
+      "objectives": [
+        "Explain how immune memory develops",
+        "Compare ways vaccines train immune defenses",
+        "Describe why booster doses can renew protection"
+      ],
+      "skillKeys": [
+        "explain-immune-memory",
+        "explain-vaccine-training",
+        "compare-vaccine-approaches",
+        "explain-booster-doses"
+      ],
+      "title": "Immune memory and vaccination"
+    },
+    {
+      "description": "Vaccine protection varies with the pathogen and the person, so outcomes and side effects need careful interpretation.",
+      "lessons": [
+        {
+          "canDo": "Explain how variants can weaken recognition",
+          "description": "Changes to a pathogen can alter familiar antigens, making existing immune recognition less effective.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain effects of pathogen variants"],
+          "title": "Pathogen variants and immune recognition"
+        },
+        {
+          "canDo": "Explain why vaccination cannot prevent every infection",
+          "description": "Immune protection is not an absolute barrier, even when it lowers the chance of illness or severe disease.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain breakthrough infections"],
+          "title": "Breakthrough infections"
+        },
+        {
+          "canDo": "Distinguish protection against infection from severe disease",
+          "description": "A vaccine can have different effects on becoming infected, developing symptoms and becoming seriously ill.",
+          "estimatedMinutes": 3,
+          "skills": ["Distinguish vaccine protection outcomes"],
+          "title": "Measures of vaccine protection"
+        },
+        {
+          "canDo": "Relate individual protection to community spread",
+          "description": "When enough people have protection against infection or transmission, a pathogen may have fewer chances to spread.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain community effects of vaccination"],
+          "title": "Vaccination and community protection"
+        },
+        {
+          "canDo": "Explain common short-lived vaccine reactions",
+          "description": "Soreness, fatigue and fever can occur as immune activity rises after vaccination and usually fade soon afterward.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain common vaccine reactions"],
+          "title": "Common vaccine reactions"
+        },
+        {
+          "canDo": "Compare a vaccine's benefits and risks",
+          "description": "A sound vaccine decision weighs the risks of the disease against expected protection and possible adverse effects.",
+          "estimatedMinutes": 4,
+          "skills": ["Weigh vaccine benefits and risks"],
+          "title": "Vaccine benefit and risk"
+        }
+      ],
+      "objectives": [
+        "Explain why protection can change as pathogens change",
+        "Distinguish infection from other vaccine outcomes",
+        "Interpret common reactions and weigh benefits against risks"
+      ],
+      "skillKeys": [
+        "explain-pathogen-variants",
+        "explain-breakthrough-infections",
+        "explain-common-vaccine-reactions"
+      ],
+      "title": "The limits and effects of vaccine protection"
+    },
+    {
+      "description": "Immune defenses can cause harm when misdirected or weakened, and newer treatments aim to redirect them more precisely.",
+      "lessons": [
+        {
+          "canDo": "Explain how an allergy misdirects protection",
+          "description": "Allergies occur when immune defenses react to a usually harmless substance and cause symptoms.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain allergic responses"],
+          "title": "Allergic responses"
+        },
+        {
+          "canDo": "Explain how immunity can harm healthy tissue",
+          "description": "Autoimmune disease develops when immune defenses attack the body's own tissues instead of leaving them alone.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain autoimmune responses"],
+          "title": "Autoimmune disease"
+        },
+        {
+          "canDo": "Describe what happens when immune defenses are weak",
+          "description": "Immune deficiencies make some infections harder to prevent or clear, whether the weakness is inherited or acquired.",
+          "estimatedMinutes": 3,
+          "skills": ["Describe immune deficiency"],
+          "title": "Immune deficiency"
+        },
+        {
+          "canDo": "Explain why transplants can be rejected",
+          "description": "Immune cells may recognize a donated organ as foreign, so transplant care must balance rejection against infection risk.",
+          "estimatedMinutes": 3,
+          "skills": ["Explain transplant rejection"],
+          "title": "Transplant rejection"
+        },
+        {
+          "canDo": "Describe how cancers escape immune attack",
+          "description": "Some cancer cells avoid detection or dampen nearby immune activity, allowing a tumor to grow.",
+          "estimatedMinutes": 3,
+          "skills": ["Describe cancer immune evasion"],
+          "title": "Cancer immune evasion"
+        },
+        {
+          "canDo": "Explain the aim of checkpoint inhibitors",
+          "description": "Checkpoint inhibitors lift certain restraints on immune cells so they may attack a cancer, though healthy tissue can also be affected.",
+          "estimatedMinutes": 4,
+          "skills": ["Explain checkpoint inhibitor action"],
+          "title": "Checkpoint inhibitors"
+        },
+        {
+          "canDo": "Explain the aim of engineered T cell therapy",
+          "description": "Engineered T cell therapies give a person's immune cells a new way to recognize some cancers, with benefits and serious risks to weigh.",
+          "estimatedMinutes": 4,
+          "skills": ["Explain engineered T cell therapy"],
+          "title": "Engineered T cell therapies"
+        }
+      ],
+      "objectives": [
+        "Distinguish overactive, misdirected and weakened immunity",
+        "Explain why transplanted tissue may be rejected",
+        "Describe how cancer therapies redirect immune defenses"
+      ],
+      "skillKeys": [],
+      "title": "Immune disorders and targeted therapies"
+    }
+  ],
+  "uncoveredSkillKeys": []
+}

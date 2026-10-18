@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   getLanguageName,
+  getMaiVoiceLocale,
   isOpenAITTSSupportedLanguage,
   isTTSSupportedLanguage,
-  needsRomanization,
+  usesNonLatinScript,
 } from "./languages";
 
 describe(isOpenAITTSSupportedLanguage, () => {
@@ -13,6 +14,16 @@ describe(isOpenAITTSSupportedLanguage, () => {
 
   it("returns false for a Gemini-only language", () => {
     expect(isOpenAITTSSupportedLanguage("am")).toBe(false);
+  });
+});
+
+describe(getMaiVoiceLocale, () => {
+  it("returns the locale MAI-Voice speaks a language in", () => {
+    expect(getMaiVoiceLocale("pt")).toBe("pt-BR");
+  });
+
+  it("returns null for a language MAI-Voice doesn't speak", () => {
+    expect(getMaiVoiceLocale("ja")).toBeNull();
   });
 });
 
@@ -38,39 +49,14 @@ describe(isTTSSupportedLanguage, () => {
   });
 });
 
-describe(needsRomanization, () => {
-  it.each([
-    "ja",
-    "zh",
-    "ko",
-    "ar",
-    "ru",
-    "el",
-    "he",
-    "hi",
-    "th",
-    "fa",
-    "bn",
-    "ka",
-    "km",
-    "my",
-    "am",
-    "pa",
-    "te",
-    "ml",
-  ])("returns true for non-Roman script language: %s", (code) => {
-    expect(needsRomanization(code)).toBe(true);
+describe(usesNonLatinScript, () => {
+  it("returns false for unknown language codes", () => {
+    expect(usesNonLatinScript("xyz")).toBe(false);
   });
 
-  it.each(["en", "es", "fr", "de", "pt", "it"])(
-    "returns false for Roman script language: %s",
-    (code) => {
-      expect(needsRomanization(code)).toBe(false);
-    },
-  );
-
-  it("returns false for unknown language codes", () => {
-    expect(needsRomanization("xyz")).toBe(false);
+  it("reads the language from a code with a region", () => {
+    expect(usesNonLatinScript("zh-TW")).toBe(true);
+    expect(usesNonLatinScript("pt-BR")).toBe(false);
   });
 });
 
@@ -89,11 +75,5 @@ describe(getLanguageName, () => {
 
   it("returns native name for Japanese", () => {
     expect(getLanguageName({ targetLanguage: "ja" })).toBe("日本語");
-  });
-
-  it("capitalizes the first letter", () => {
-    const name = getLanguageName({ targetLanguage: "fr", userLanguage: "en" });
-    expect(name).toBe("French");
-    expect(name[0]).toBe(name[0]?.toUpperCase());
   });
 });

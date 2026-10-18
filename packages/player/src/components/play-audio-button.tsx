@@ -10,8 +10,6 @@ import { useSharedPlayerAudio } from "../player-audio-context";
 import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
 
-type PlayAudioButtonVariant = "filled" | "outline" | "text";
-
 /**
  * Picks the shared player audio controller when this button represents the
  * active step prompt, otherwise falls back to a local controller. That keeps
@@ -54,18 +52,21 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
   };
 }
 
+/**
+ * Plays a prompt's sound, as an outline button 44px tall. `icon` is the bare speaker beside the
+ * lesson's next action; `labeled` says "Play" (or "Pause") beside it, with its key on a keyboard,
+ * for a listening question whose sentence is the prompt.
+ */
 export function PlayAudioButton({
   audioUrl,
   className,
   preload = true,
-  size = "md",
-  variant = "filled",
+  variant,
 }: {
   audioUrl: string;
   className?: string;
   preload?: boolean;
-  size?: "sm" | "md";
-  variant?: PlayAudioButtonVariant;
+  variant: "icon" | "labeled";
 }) {
   const t = useExtracted();
 
@@ -77,61 +78,35 @@ export function PlayAudioButton({
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
 
-  if (variant === "text") {
-    return (
-      <button
-        aria-keyshortcuts={keyboardShortcut}
-        className={cn(
-          "text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors",
-          className,
-        )}
-        onClick={handleClick}
-        type="button"
-      >
-        <Icon aria-hidden className="size-4" />
-        {label}
-      </button>
-    );
-  }
-
-  if (variant === "outline") {
+  if (variant === "icon") {
     return (
       <Button
-        aria-label={label}
         aria-keyshortcuts={keyboardShortcut}
-        className={cn("relative", className)}
+        aria-label={label}
+        className={cn("size-11", className)}
         onClick={handleClick}
-        size={size === "md" ? "icon-lg" : "icon"}
+        size="icon"
         type="button"
         variant="outline"
       >
-        <Icon aria-hidden className={size === "md" ? "size-5" : "size-4"} />
-
-        {keyboardShortcut && (
-          <ShortcutKbd variant="badge">{keyboardShortcut.toUpperCase()}</ShortcutKbd>
-        )}
+        <Icon aria-hidden="true" />
       </Button>
     );
   }
 
   return (
-    <button
-      aria-label={label}
+    <Button
       aria-keyshortcuts={keyboardShortcut}
-      className={cn(
-        "bg-primary text-primary-foreground relative flex items-center justify-center rounded-full transition-all duration-150",
-        "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none hover:scale-105 focus-visible:ring-[3px] active:scale-95",
-        size === "md" ? "size-14" : "size-12",
-        className,
-      )}
+      aria-label={label}
+      className={cn("w-fit", className)}
       onClick={handleClick}
+      size="lg"
       type="button"
+      variant="outline"
     >
-      <Icon className={size === "md" ? "size-6" : "size-5"} />
-
-      {keyboardShortcut && (
-        <ShortcutKbd variant="badge">{keyboardShortcut.toUpperCase()}</ShortcutKbd>
-      )}
-    </button>
+      <Icon aria-hidden="true" />
+      {isPlaying ? t("Pause") : t("Play")}
+      {keyboardShortcut && <ShortcutKbd>{keyboardShortcut.toUpperCase()}</ShortcutKbd>}
+    </Button>
   );
 }

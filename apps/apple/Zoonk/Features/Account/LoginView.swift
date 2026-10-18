@@ -151,6 +151,18 @@ struct AccountFailureMessage: View {
   @ViewBuilder
   private func message(for failure: AccountFailure) -> some View {
     switch failure {
+    case .botDetected:
+      Text(
+        "A security check blocked this request. Try again or contact hello@zoonk.com.",
+        tableName: "Account",
+        comment:
+          "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button"
+      )
+    case .emailCodeDelivery:
+      Text(
+        "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
+        tableName: "Account",
+        comment: "Generic email verification code delivery failure")
     case .accountDeletion:
       Text(
         "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",

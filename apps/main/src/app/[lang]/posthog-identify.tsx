@@ -19,7 +19,7 @@ export function PostHogIdentify({
   username: string | null;
 }) {
   useEffect(() => {
-    identifyPostHogUser({ analyticsDisabled, plan, userId, username });
+    void identifyPostHogUser({ analyticsDisabled, plan, userId, username });
   }, [analyticsDisabled, plan, userId, username]);
 
   return null;

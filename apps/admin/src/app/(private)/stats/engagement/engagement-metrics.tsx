@@ -1,10 +1,10 @@
+import { getAccuracyRate } from "@/data/stats/get-accuracy-rate";
 import { getAccuracyRateTrend } from "@/data/stats/get-accuracy-rate-trend";
 import { getActiveLearnerTrend } from "@/data/stats/get-active-learner-trend";
 import { getAvgLessonTimeTrend } from "@/data/stats/get-avg-lesson-time-trend";
 import { getAvgTimeByLessonKind } from "@/data/stats/get-avg-time-by-lesson-kind";
 import { getCompletionRateTrend } from "@/data/stats/get-completion-rate-trend";
 import { getLearningTimeTrend } from "@/data/stats/get-learning-time-trend";
-import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
 import { getPeriodAvgLessonTime } from "@/data/stats/get-period-avg-lesson-time";
 import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate";
@@ -105,8 +105,8 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartEnd, chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
   const [currentValue, previousValue, trend] = await Promise.all([
-    getPeriodAccuracyRate(current.start, current.end),
-    getPeriodAccuracyRate(previous.start, previous.end),
+    getAccuracyRate(current.start, current.end),
+    getAccuracyRate(previous.start, previous.end),
     getAccuracyRateTrend(current.start, current.end, chartPeriod),
   ]);
 
@@ -121,7 +121,7 @@ async function AccuracyAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   return (
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: currentValue, previous: previousValue }}
-      description="Correct step answers divided by all step attempts in the selected period."
+      description="Correct answers divided by all answers in the selected period."
       value={`${currentValue.toFixed(1)}%`}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Accuracy rate" valueFormat="percent" />

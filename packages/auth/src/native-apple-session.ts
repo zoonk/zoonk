@@ -93,11 +93,7 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   return betterAuth({
     ...baseAuthConfig,
     databaseHooks: nativeAppleDatabaseHooks,
-    plugins: [
-      ...baseAuthPlugins,
-      stripePlugin({ createCustomerOnSignUp: false }),
-      nativeAppleRateLimitPlugin(),
-    ],
+    plugins: [...baseAuthPlugins, stripePlugin(), nativeAppleRateLimitPlugin()],
     rateLimit: { enabled: true, storage: "database" },
     socialProviders: nativeAppleProvider,
   });

@@ -1,8 +1,8 @@
-import { prisma } from "@zoonk/db";
 import {
   getContributionCalendarDateKey,
   getContributionCalendarDates,
 } from "@zoonk/utils/contribution-calendar";
+import { readLifetimeDailyProgress } from "./_utils/daily-progress-rows";
 import { projectEnergyTimeline } from "./_utils/energy-timeline";
 import { type EnergyCursor, type EnergyData, type EnergyDay, MAX_ENERGY } from "./energy";
 
@@ -10,7 +10,7 @@ type EnergyRows = Awaited<ReturnType<typeof listEnergyCursors>>;
 
 /** Loads truthful learner-local Energy history without coupling the query to an app cache. */
 export function listEnergyCursors({ userId }: { userId: string }) {
-  return prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId } });
+  return readLifetimeDailyProgress(userId);
 }
 
 /** Maps a sparse projected timeline onto every date in the requested visible range. */

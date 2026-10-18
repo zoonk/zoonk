@@ -1,3 +1,5 @@
+import { readQueryParam } from "@/lib/query-param";
+
 export const DEFAULT_COMPLETED_LESSONS_THRESHOLD = 10;
 export const DEFAULT_LEARNING_DAYS_THRESHOLD = 3;
 
@@ -14,7 +16,7 @@ export type LearnerMilestoneKind = "completedLessons" | "learningDays";
  * page from drifting when labels change.
  */
 export function parseLearnerMilestoneKind(value: SearchParamValue): LearnerMilestoneKind {
-  const firstValue = getFirstSearchParam(value);
+  const firstValue = readQueryParam(value);
 
   return isLearnerMilestoneKind(firstValue) ? firstValue : "completedLessons";
 }
@@ -31,7 +33,7 @@ export function parseLearnerMilestoneThreshold({
   defaultValue: number;
   value: SearchParamValue;
 }) {
-  const firstValue = getFirstSearchParam(value);
+  const firstValue = readQueryParam(value);
   const trimmedValue = firstValue?.trim();
 
   if (!trimmedValue) {
@@ -112,12 +114,4 @@ export function buildLearnerMilestoneUsersHref({
  */
 function isLearnerMilestoneKind(value: string | undefined): value is LearnerMilestoneKind {
   return value === "completedLessons" || value === "learningDays";
-}
-
-/**
- * Next.js returns repeated query params as arrays. Milestone filters only use
- * one value per key, so the first entry is the canonical value.
- */
-function getFirstSearchParam(value: SearchParamValue): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
 }

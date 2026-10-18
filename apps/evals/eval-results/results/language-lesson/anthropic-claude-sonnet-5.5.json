@@ -1,0 +1,257 @@
+{
+  "modelId": "anthropic/claude-sonnet-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The core English sentences and Portuguese translations are natural and accurate. However, the claim that 'the' is obligatory in the rent question is a false grammatical rule: 'How much is rent?' is also possible. This triggers the maximum score of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The lesson correctly distinguishes 'rent' from Portuguese 'renda', addresses the utilities false friend, and gives useful initial-r and th guidance without using 'rr'. No clearly added syllable triggers the respelling cap. However, several tips merely identify stress, while final-consonant retention and vowel length receive little useful coaching. The voiced th in 'the' also needs clearer guidance.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The vocabulary prioritizes rent, the deposit, utilities, inclusion, and monthly cost. Sentences are short and suitable for A2, and none of the known words is taught again as a vocabulary item. However, the explicit Chicago writing setting and US-specific deposit note do not match the Toronto situation in the expectations, even though the supplied local-context values point to the US.",
+          "score": 8,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The inclusion-question tip, examples, and two practice blanks consistently test the same pattern, with one correct answer per blank. Writing answers are valid and speaking prompts establish realistic moments in Portuguese. However, 'custa' is a valid alternative in both translated price questions, and 'são' can also produce a grammatical inclusion question. These distractors fail the requirement that wrong options be clearly wrong.",
+          "score": 6,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Brazilian Portuguese is generally natural and concise, and target-language fields remain in English. However, 'The rent is $1,500 per month.' and its translation retain prohibited decorative final periods. The summary explains what quoted sentences mean rather than directly stating learner capabilities.",
+          "score": 7,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3837,
+          "inputTokens": 3840,
+          "outputTokens": 1251,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation incorrectly says that 'the' is obligatory in the rent question; 'How much is rent?' is also grammatical. Some Portuguese distractors permit valid answers: 'custa' produces 'Quanto custa o aluguel?' and 'Quanto custa a caução?', so they are not clearly wrong alternatives.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The declarative rent sentence and its translation have final periods, contrary to the word-tile requirement. The lesson explicitly situates the writing task in Chicago and the deposit note in the US rather than the Toronto setting specified by the expectations. Pronunciation guidance does not adequately address final consonants or vowel length.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explain voicing for the 'th' in 'the', explicitly coach learners not to add vowels after final consonants, and distinguish short and long vowels. Rewrite the summary entries as direct statements of what the learner can now say.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian Portuguese speaker learning US English, A2, renting an apartment in Toronto. Words like \"the rent\", \"the deposit\", \"utilities\" or \"the lease\"; \"rent\" is \"aluguel\", and a note should catch that Portuguese \"renda\" means income. Tips should target sounds Portuguese speakers struggle with (English \"r\" at the start of a word, \"th\", final consonants, vowel length). Respellings are readable by a Brazilian (no \"rr\" for an English \"r\"). \"Deposit\" and \"utilities\" aren't in the known words, but \"apartment\" is and must not be taught again.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "knownWords": ["the apartment", "the bedroom", "the kitchen", "How much"],
+          "learnerLanguage": "pt",
+          "lessonCanDo": "Perguntar quanto é o aluguel e o que está incluído",
+          "lessonDescription": "Pergunte o valor do aluguel, da caução e das contas antes de visitar",
+          "lessonTitle": "Perguntando sobre o aluguel",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The Portuguese sentences and contextual translations are generally natural Brazilian Portuguese. However, 'Don't put anything between them' is a false grammatical rule: 'Pode me trazer a conta?' is valid. This triggers the explicit maximum score of 5 for a false rule. The claim that 'Eu quero' sounds blunt also needs contextual qualification.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The American 'butter' comparison, nasal-vowel guidance, and explanation of ordering 'uma água' show genuine attention to English speakers. Nevertheless, 'EH-oo' represents the single-syllable 'eu' as two syllables, triggering the explicit maximum score of 5 for a respelling that adds a syllable.",
+          "score": 5,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The lesson stays focused on requesting the menu, ordering a dish and water, and requesting the bill. Its short sentences and reusable polite chunks suit A1, and it does not reteach either known word. The vocabulary is compact and useful rather than padded.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "Both practice blanks have one correct option, and the speaking prompts establish usable restaurant moments in English. However, 'check' is a correct US English alternative to 'bill', making that translation distractor invalid. The tip also splits attention between two constructions instead of one pattern, and the writing answers and key points are not fully aligned.",
+          "score": 6,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The English is concise and natural. Target-language fields remain in Portuguese, and explanatory English appropriately quotes Portuguese expressions. The sentence pairs avoid decorative final punctuation while retaining question marks, and each summary line identifies a concrete expression the learner can now use.",
+          "score": 10,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3694,
+          "inputTokens": 3697,
+          "outputTokens": 1135,
+          "reasoningTokens": 379
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The respelling 'EH-oo' adds a syllable to 'eu', which normally has one syllable, teaching an English speaker the wrong pronunciation. The instruction 'Don't put anything between them' falsely prohibits valid requests such as 'Pode me trazer...'. Also, 'check' is a valid US English translation of 'conta' in this restaurant context, so it cannot serve as a clearly wrong translation distractor.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The tip teaches two constructions rather than focusing its examples and practice on one pattern. The writing key points mention only 'queria' despite accepting 'gostaria', and the accepted answers omit the common subjectless variant 'Gostaria do prato do dia, por favor'. Describing 'Eu quero' as blunt without qualification also understates how naturally it can be used in Brazil with polite delivery and 'por favor'.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Preserve the useful American-English tongue-tap comparison, but give a one-syllable approximation for 'eu'. Explain specifically that no equivalent of English 'to' is needed before 'trazer', rather than banning intervening words. Align the writing key points with all accepted constructions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese, A1, ordering at a restaurant. Brazilian words and forms (\"o cardápio\", \"a conta\", \"Eu quero...\", \"Por favor\"), not European Portuguese (\"a ementa\"). Tips should target sounds English speakers get wrong (nasal \"ão\", the \"r\" in \"carro\" sounding like \"h\", open and closed vowels). Respellings use English spelling habits (\"kar-DAH-pee-oo\").",
+        "id": "en-pt-a1-restaurant-1",
+        "userInput": {
+          "knownWords": ["Olá", "Obrigado"],
+          "learnerLanguage": "en",
+          "lessonCanDo": "Order a dish and ask for the bill",
+          "lessonDescription": "Ask for the menu, order and ask for the bill politely",
+          "lessonTitle": "Ordering and paying",
+          "level": "A1",
+          "targetLanguage": "pt",
+          "unitCanDos": ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+          "unitTitle": "At a restaurant"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Most target sentences are grammatical, natural US English. However, the universal claim about “do” in present-tense questions is a false rule, and translating “diner” as a roadside restaurant adds a location restriction absent from the English. Both trigger the accuracy cap of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "pairAwareness",
+          "reasoning": "The article contrast with Spanish, the warning about “work like”, and the guidance on “sh” and a non-vibrating English “r” are genuinely pair-specific. However, the requested “v”/“b” and initial consonant-cluster guidance and a real false-friend note are absent. “FUL-taim” also misdirects stress. No respelling clearly adds a syllable, so that specific cap is not triggered.",
+          "score": 7,
+          "label": "Written for this language pair",
+          "weight": 20
+        },
+        {
+          "categoryId": "situationAndLevel",
+          "reasoning": "The short sentences cover occupation, workplace, shift hours, and full-time employment at an appropriate A2 level. Vocabulary is relevant to the stated workplace situation, and neither known expression is retaught as a vocabulary item.",
+          "score": 9,
+          "label": "Situation and level",
+          "weight": 20
+        },
+        {
+          "categoryId": "practiceDesign",
+          "reasoning": "The main tip presents the related “work as”/“work at” distinction, and its examples and both practice blanks follow it with unique correct choices. Speaking prompts establish real workplace moments in Spanish. However, “hasta” is a valid alternative translation tile, violating the requirement that distractors be clearly wrong. Writing answers are correct but omit some common combinations and contractions.",
+          "score": 7,
+          "label": "Practice design",
+          "weight": 20
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "Learner-facing prose is generally concise, natural Spain Spanish, and target-language fields remain in English. Questions retain their question marks appropriately. However, all three tip example sentences and their translations include final periods despite the explicit rule against them in target sentences and translations.",
+          "score": 8,
+          "label": "Language and style",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3565,
+          "inputTokens": 3568,
+          "outputTokens": 1283,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation that English present-tense questions require “do” is false as stated: questions with “be” and modal verbs do not. “A diner” is mistranslated as “un restaurante de carretera”; a diner need not be roadside. The translation distractor “hasta” can validly replace “a” in “Mi turno es de 9 a 5”, so it is not clearly wrong.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The lesson omits the requested Spanish-speaker guidance on English “v” versus “b” and initial “s” plus consonant, and provides no actual false-friend warning such as “actually” versus “actualmente”. The respelling “FUL-taim” marks the wrong primary stress for “full-time”. Tip examples and their translations have decorative final periods, contrary to the tile-text requirement.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Add a short opportunity to state the learner’s own working hours and full-time status. Broaden accepted writing answers to include common combinations such as “I work as a cashier in a supermarket” and contractions such as “I’m a cashier at a grocery store”.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Spain Spanish speaker learning US English, A2, talking about their job. Words like \"I work as\", \"a nurse\", \"a shift\", \"full-time\". Tips for Spanish speakers (the English \"v\" and \"b\", the \"sh\" sound, adding \"e\" before \"s\" + consonant as in \"estudent\"), notes for false friends (\"actually\" is not \"actualmente\"). All learner-language text in Spain Spanish.",
+        "id": "es-en-a2-work-1",
+        "userInput": {
+          "knownWords": ["I am", "my name is"],
+          "learnerLanguage": "es",
+          "lessonCanDo": "Decir a qué te dedicas y qué horario tienes",
+          "lessonDescription": "Explica en qué trabajas, dónde y en qué horario",
+          "lessonTitle": "Hablar de tu trabajo",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitCanDos": [
+            "Presentarte en el trabajo",
+            "Hablar de tu trabajo",
+            "Pedir ayuda a un compañero"
+          ],
+          "unitTitle": "Tu primera semana en el trabajo"
+        }
+      }
+    }
+  ],
+  "taskId": "language-lesson"
+}

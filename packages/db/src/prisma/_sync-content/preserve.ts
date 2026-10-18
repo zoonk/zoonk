@@ -1,219 +1,232 @@
-import { type Client } from "pg";
+import { logInfo } from "@zoonk/utils/logger";
+import { type Client, escapeIdentifier, escapeLiteral } from "pg";
+import { runInOrder } from "./rows";
 
-type ReferenceCounts = {
-  chapterCompletions: number;
-  courseCompletions: number;
-  coursePromptLinks: number;
-  courseUsers: number;
-  lessonProgress: number;
-  stepAttempts: number;
+type TargetKind = "chapter" | "item" | "lesson" | "skill" | "step";
+
+/**
+ * How a replaced row is found again after the copy. Chapters, lessons and skills have one identity
+ * per language, a step is its lesson's screen at a position, and items only have their id.
+ */
+type Target = { join: string; keys: string[]; table: string };
+
+const IDENTITY_KEYS = ["target.language", "target.identity_key"];
+
+const TARGETS: Record<TargetKind, Target> = {
+  chapter: { join: "", keys: IDENTITY_KEYS, table: "library_chapters" },
+  item: { join: "", keys: ["target.id"], table: "items" },
+  lesson: { join: "", keys: IDENTITY_KEYS, table: "library_lessons" },
+  skill: { join: "", keys: IDENTITY_KEYS, table: "skills" },
+  step: {
+    join: "JOIN library_lessons lesson ON lesson.id = target.lesson_id",
+    keys: ["lesson.language", "lesson.identity_key", "target.position"],
+    table: "library_steps",
+  },
 };
 
-const REFERENCE_KEYS = [
-  "chapterCompletions",
-  "courseCompletions",
-  "coursePromptLinks",
-  "courseUsers",
-  "lessonProgress",
-  "stepAttempts",
-] as const satisfies readonly (keyof ReferenceCounts)[];
+/**
+ * A local learner's link to replaced content. `update` links are set to null by the removal and
+ * pointed at the copied row afterwards; `reinsert` rows would block the removal (`learner_skills`)
+ * or go with it (`step_example_lines`), so they are set aside and inserted back.
+ */
+type LearnerReference = {
+  column: string;
+  restore: "reinsert" | "update";
+  table: string;
+  target: TargetKind;
+};
 
-async function getReferenceCounts(destination: Client): Promise<ReferenceCounts> {
-  const result = await destination.query<ReferenceCounts>(
-    `SELECT
-       (SELECT count(*)::int FROM local_chapter_completions) AS "chapterCompletions",
-       (SELECT count(*)::int FROM local_course_completions) AS "courseCompletions",
-       (SELECT count(*)::int FROM local_course_prompt_links) AS "coursePromptLinks",
-       (SELECT count(*)::int FROM local_course_users) AS "courseUsers",
-       (SELECT count(*)::int FROM local_lesson_progress) AS "lessonProgress",
-       (SELECT count(*)::int FROM local_step_attempts) AS "stepAttempts"`,
-  );
+export const LEARNER_REFERENCES: readonly LearnerReference[] = [
+  { column: "chapter_id", restore: "update", table: "plan_items", target: "chapter" },
+  { column: "lesson_id", restore: "update", table: "plan_items", target: "lesson" },
+  { column: "skill_id", restore: "update", table: "plan_items", target: "skill" },
+  { column: "lesson_id", restore: "update", table: "study_session_blocks", target: "lesson" },
+  {
+    column: "library_lesson_id",
+    restore: "update",
+    table: "lesson_question_threads",
+    target: "lesson",
+  },
+  { column: "library_step_id", restore: "update", table: "lesson_questions", target: "step" },
+  { column: "chapter_id", restore: "update", table: "language_conversations", target: "chapter" },
+  { column: "step_id", restore: "update", table: "attempts", target: "step" },
+  { column: "skill_id", restore: "update", table: "attempts", target: "skill" },
+  { column: "item_id", restore: "update", table: "attempts", target: "item" },
+  { column: "step_id", restore: "update", table: "mistakes", target: "step" },
+  { column: "skill_id", restore: "update", table: "mistakes", target: "skill" },
+  { column: "item_id", restore: "update", table: "mistakes", target: "item" },
+  { column: "item_id", restore: "update", table: "mock_exam_answers", target: "item" },
+  { column: "skill_id", restore: "reinsert", table: "learner_skills", target: "skill" },
+  { column: "step_id", restore: "reinsert", table: "step_example_lines", target: "step" },
+];
 
-  return (
-    result.rows[0] ?? {
-      chapterCompletions: 0,
-      courseCompletions: 0,
-      coursePromptLinks: 0,
-      courseUsers: 0,
-      lessonProgress: 0,
-      stepAttempts: 0,
-    }
-  );
+type ReferenceCounts = readonly number[];
+
+function getSavedTable(index: number): string {
+  return `sync_reference_${index}`;
 }
 
-export async function snapshotDestinationReferences({
+function getKeyAlias(index: number): string {
+  return `key_${index}`;
+}
+
+function getSnapshotQuery({ index, reference }: { index: number; reference: LearnerReference }) {
+  const target = TARGETS[reference.target];
+  const keys = target.keys.map((key, keyIndex) => `${key} AS ${getKeyAlias(keyIndex)}`).join(", ");
+  const saved = reference.restore === "reinsert" ? "ref.*" : "ref.id";
+
+  return `CREATE TEMP TABLE ${getSavedTable(index)} ON COMMIT DROP AS
+          SELECT ${saved}, ${keys}
+            FROM ${escapeIdentifier(reference.table)} ref
+            JOIN ${target.table} target ON target.id = ref.${escapeIdentifier(reference.column)}
+            ${target.join}
+           WHERE target.id IN (SELECT id FROM sync_removed
+                                WHERE table_name = ${escapeLiteral(target.table)})`;
+}
+
+async function snapshotReference({
   destination,
-  organizationId,
+  index,
+  reference,
 }: {
   destination: Client;
-  organizationId: string;
-}): Promise<ReferenceCounts> {
-  await destination.query(
-    `CREATE TEMP TABLE local_course_users ON COMMIT DROP AS
-       SELECT course_users.*, courses.slug AS course_slug
-         FROM course_users
-         JOIN courses ON courses.id = course_users.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
+  index: number;
+  reference: LearnerReference;
+}): Promise<number> {
+  await destination.query(getSnapshotQuery({ index, reference }));
+
+  const result = await destination.query<{ count: number }>(
+    `SELECT count(*)::int AS count FROM ${getSavedTable(index)}`,
   );
 
-  await destination.query(
-    `CREATE TEMP TABLE local_course_completions ON COMMIT DROP AS
-       SELECT course_completions.*, courses.slug AS course_slug
-         FROM course_completions
-         JOIN courses ON courses.id = course_completions.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
-  );
+  if (reference.restore === "reinsert") {
+    await destination.query(
+      `DELETE FROM ${escapeIdentifier(reference.table)}
+        WHERE id IN (SELECT id FROM ${getSavedTable(index)})`,
+    );
+  }
 
-  await destination.query(
-    `CREATE TEMP TABLE local_chapter_completions ON COMMIT DROP AS
-       SELECT chapter_completions.*, courses.slug AS course_slug, chapters.slug AS chapter_slug
-         FROM chapter_completions
-         JOIN chapters ON chapters.id = chapter_completions.chapter_id
-         JOIN courses ON courses.id = chapters.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
-  );
-
-  await destination.query(
-    `CREATE TEMP TABLE local_lesson_progress ON COMMIT DROP AS
-       SELECT lesson_progress.*, courses.slug AS course_slug, chapters.slug AS chapter_slug,
-              lessons.slug AS lesson_slug
-         FROM lesson_progress
-         JOIN lessons ON lessons.id = lesson_progress.lesson_id
-         JOIN chapters ON chapters.id = lessons.chapter_id
-         JOIN courses ON courses.id = chapters.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
-  );
-
-  await destination.query(
-    `CREATE TEMP TABLE local_step_attempts ON COMMIT DROP AS
-       SELECT step_attempts.*, courses.slug AS course_slug, chapters.slug AS chapter_slug,
-              lessons.slug AS lesson_slug, steps.position AS step_position
-         FROM step_attempts
-         JOIN steps ON steps.id = step_attempts.step_id
-         JOIN lessons ON lessons.id = steps.lesson_id
-         JOIN chapters ON chapters.id = lessons.chapter_id
-         JOIN courses ON courses.id = chapters.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
-  );
-
-  await destination.query(
-    `CREATE TEMP TABLE local_course_prompt_links ON COMMIT DROP AS
-       SELECT course_prompts.id, courses.slug AS course_slug
-         FROM course_prompts
-         JOIN courses ON courses.id = course_prompts.course_id
-        WHERE courses.organization_id = $1`,
-    [organizationId],
-  );
-
-  return getReferenceCounts(destination);
+  return result.rows[0]?.count ?? 0;
 }
 
-function assertRestoredReferences({
-  expected,
-  restored,
-}: {
-  expected: ReferenceCounts;
-  restored: ReferenceCounts;
-}): void {
-  const missingReference = REFERENCE_KEYS.find(
-    (reference) => restored[reference] !== expected[reference],
+/**
+ * Saves each local learner link to content the sync replaces, with the natural key that finds the
+ * content again. Run it after `markRemovedContent` and before clearing.
+ */
+export async function snapshotLearnerReferences(destination: Client): Promise<ReferenceCounts> {
+  return runInOrder(
+    LEARNER_REFERENCES.map(
+      (reference, index) => () => snapshotReference({ destination, index, reference }),
+    ),
+  );
+}
+
+function getKeyMatch(target: Target): string {
+  return target.keys.map((key, index) => `${key} = saved.${getKeyAlias(index)}`).join(" AND ");
+}
+
+async function getColumns({ destination, table }: { destination: Client; table: string }) {
+  const result = await destination.query<{ column_name: string }>(
+    `SELECT column_name FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = $1
+      ORDER BY ordinal_position`,
+    [table],
   );
 
-  if (missingReference) {
-    throw new Error(`Could not preserve all local ${missingReference}`);
+  return result.rows.map((row) => row.column_name);
+}
+
+async function reinsertRows({
+  destination,
+  index,
+  reference,
+}: {
+  destination: Client;
+  index: number;
+  reference: LearnerReference;
+}): Promise<number> {
+  const target = TARGETS[reference.target];
+  const columns = await getColumns({ destination, table: reference.table });
+
+  const values = columns.map((column) =>
+    column === reference.column ? "target.id" : `saved.${escapeIdentifier(column)}`,
+  );
+
+  const result = await destination.query(
+    `INSERT INTO ${escapeIdentifier(reference.table)} (${columns.map((column) => escapeIdentifier(column)).join(", ")})
+     SELECT ${values.join(", ")}
+       FROM ${getSavedTable(index)} saved, ${target.table} target ${target.join}
+      WHERE ${getKeyMatch(target)}`,
+  );
+
+  return result.rowCount ?? 0;
+}
+
+async function updateLinks({
+  destination,
+  index,
+  reference,
+}: {
+  destination: Client;
+  index: number;
+  reference: LearnerReference;
+}): Promise<number> {
+  const target = TARGETS[reference.target];
+
+  const result = await destination.query(
+    `UPDATE ${escapeIdentifier(reference.table)} ref
+        SET ${escapeIdentifier(reference.column)} = target.id
+       FROM ${getSavedTable(index)} saved, ${target.table} target ${target.join}
+      WHERE ref.id = saved.id AND ${getKeyMatch(target)}`,
+  );
+
+  return result.rowCount ?? 0;
+}
+
+async function restoreReference({
+  destination,
+  expected,
+  index,
+  reference,
+}: {
+  destination: Client;
+  expected: number;
+  index: number;
+  reference: LearnerReference;
+}): Promise<void> {
+  const restored =
+    reference.restore === "reinsert"
+      ? await reinsertRows({ destination, index, reference })
+      : await updateLinks({ destination, index, reference });
+
+  const name = `${reference.table}.${reference.column}`;
+
+  if (restored !== expected) {
+    throw new Error(
+      `Could not keep ${expected - restored} local ${name} links: the source has no matching ${reference.target}`,
+    );
+  }
+
+  if (restored > 0) {
+    logInfo(`Kept ${restored} local ${name} links`);
   }
 }
 
-export async function restoreDestinationReferences({
+/**
+ * Points each saved learner link at the copied content with the same natural key, and fails (so the
+ * whole sync rolls back) when the source doesn't have that content anymore.
+ */
+export async function restoreLearnerReferences({
   destination,
   expected,
-  organizationId,
 }: {
   destination: Client;
   expected: ReferenceCounts;
-  organizationId: string;
 }): Promise<void> {
-  const courseUsers = await destination.query(
-    `INSERT INTO course_users (id, course_id, user_id, started_at)
-         SELECT local.id, courses.id, local.user_id, local.started_at
-           FROM local_course_users local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug`,
-    [organizationId],
-  );
-
-  const courseCompletions = await destination.query(
-    `INSERT INTO course_completions (id, course_id, user_id, completed_at)
-         SELECT local.id, courses.id, local.user_id, local.completed_at
-           FROM local_course_completions local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug`,
-    [organizationId],
-  );
-
-  const chapterCompletions = await destination.query(
-    `INSERT INTO chapter_completions (id, chapter_id, user_id, completed_at)
-         SELECT local.id, chapters.id, local.user_id, local.completed_at
-           FROM local_chapter_completions local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug
-           JOIN chapters ON chapters.course_id = courses.id AND chapters.slug = local.chapter_slug`,
-    [organizationId],
-  );
-
-  const lessonProgress = await destination.query(
-    `INSERT INTO lesson_progress
-           (id, user_id, lesson_id, started_at, completed_at, completed_date, duration_seconds)
-         SELECT local.id, local.user_id, lessons.id, local.started_at, local.completed_at,
-                local.completed_date, local.duration_seconds
-           FROM local_lesson_progress local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug
-           JOIN chapters ON chapters.course_id = courses.id AND chapters.slug = local.chapter_slug
-           JOIN lessons ON lessons.chapter_id = chapters.id AND lessons.slug = local.lesson_slug`,
-    [organizationId],
-  );
-
-  const stepAttempts = await destination.query(
-    `INSERT INTO step_attempts
-           (id, user_id, step_id, is_correct, answer, effects, duration_seconds, answered_at,
-            hour_of_day, day_of_week, correct_answers, incorrect_answers)
-         SELECT local.id, local.user_id, steps.id, local.is_correct, local.answer, local.effects,
-                local.duration_seconds, local.answered_at, local.hour_of_day, local.day_of_week,
-                local.correct_answers, local.incorrect_answers
-           FROM local_step_attempts local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug
-           JOIN chapters ON chapters.course_id = courses.id AND chapters.slug = local.chapter_slug
-           JOIN lessons ON lessons.chapter_id = chapters.id AND lessons.slug = local.lesson_slug
-           JOIN steps ON steps.lesson_id = lessons.id AND steps.position = local.step_position`,
-    [organizationId],
-  );
-
-  const prompts = await destination.query(
-    `UPDATE course_prompts prompts
-            SET course_id = courses.id
-           FROM local_course_prompt_links local
-           JOIN courses ON courses.organization_id = $1 AND courses.slug = local.course_slug
-          WHERE prompts.id = local.id`,
-    [organizationId],
-  );
-
-  const restored = {
-    chapterCompletions: chapterCompletions.rowCount ?? 0,
-    courseCompletions: courseCompletions.rowCount ?? 0,
-    coursePromptLinks: prompts.rowCount ?? 0,
-    courseUsers: courseUsers.rowCount ?? 0,
-    lessonProgress: lessonProgress.rowCount ?? 0,
-    stepAttempts: stepAttempts.rowCount ?? 0,
-  };
-
-  assertRestoredReferences({ expected, restored });
-
-  await destination.query(
-    `UPDATE courses
-        SET user_count = (SELECT count(*) FROM course_users WHERE course_users.course_id = courses.id)
-      WHERE organization_id = $1`,
-    [organizationId],
+  await runInOrder(
+    LEARNER_REFERENCES.map(
+      (reference, index) => () =>
+        restoreReference({ destination, expected: expected[index] ?? 0, index, reference }),
+    ),
   );
 }

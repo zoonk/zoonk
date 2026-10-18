@@ -1,0 +1,61 @@
+import { accessError, errors } from "@/lib/api-errors";
+import { withApiErrorBoundary } from "@/lib/api-handler";
+import { parseBody } from "@/lib/body-parser";
+import { planChangePathParamsSchema } from "@/lib/openapi/schemas/paths";
+import { parsePathParams } from "@/lib/path-params";
+import { planChangeConflict, planChangeInvalid } from "@/lib/plan-errors";
+import { scheduleGoalPreparation } from "@/lib/session-preparation";
+import { planChangeDecisionInputSchema } from "@zoonk/core/plans/contract";
+import { decidePlanChange } from "@zoonk/core/plans/decide-change";
+import { type NextRequest, NextResponse } from "next/server";
+
+/**
+ * Accepts or declines a proposed change, undoes an applied one, or marks it seen ("Got it"). A
+ * decision that changes the plan starts writing what it has soon, as a session's preparation does:
+ * Carla's added case study waited, never outlined, for a lesson she would start.
+ */
+async function decideChange(
+  request: NextRequest,
+  context: RouteContext<"/v1/goals/[goalId]/plan/changes/[changeId]">,
+) {
+  const [body, path] = await Promise.all([
+    parseBody(request, planChangeDecisionInputSchema),
+    context.params.then((params) =>
+      parsePathParams({ params, schema: planChangePathParamsSchema }),
+    ),
+  ]);
+
+  if (!path.success) {
+    return errors.validation(path.error);
+  }
+
+  if (!body.success) {
+    return errors.validation(body.error);
+  }
+
+  const result = await decidePlanChange({
+    changeId: path.data.changeId,
+    goalId: path.data.goalId,
+    input: body.data,
+  });
+
+  if (result.status === "invalid") {
+    return planChangeInvalid(result);
+  }
+
+  if (result.status === "conflict") {
+    return planChangeConflict();
+  }
+
+  if (result.status !== "updated") {
+    return accessError(result.status);
+  }
+
+  if (body.data.status === "applied" || body.data.status === "undone") {
+    await scheduleGoalPreparation(path.data.goalId);
+  }
+
+  return NextResponse.json(result.change);
+}
+
+export const POST = withApiErrorBoundary(decideChange);

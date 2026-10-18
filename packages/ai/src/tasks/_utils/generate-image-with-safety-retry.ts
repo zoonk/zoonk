@@ -1,5 +1,6 @@
 import { stringifyUnknown } from "@zoonk/utils/json";
 import { type GenerateImageResult, generateImage } from "ai";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { rewriteImageInputForSafetyRetry } from "../images/image-prompt-safety-rewrite";
 
 type GenerateImageParams = Parameters<typeof generateImage>[0];
@@ -29,13 +30,16 @@ const safetyRejectionSignals = [
  * format, style, language, and composition constraints do not drift on retry.
  */
 async function rewriteSafetyRejectedImageInput({
+  analytics,
   error,
   input,
 }: {
+  analytics?: AiGenerationContext;
   error: unknown;
   input: string;
 }): Promise<string> {
   const { data } = await rewriteImageInputForSafetyRetry({
+    analytics,
     errorContext: getErrorInspectionText({ error }),
     input,
   });
@@ -61,9 +65,12 @@ function buildGenerateImageParams({
  * or protected-content reasons. Normal transient failures are left to the AI
  * SDK retry layer, and normal non-safety failures still surface immediately.
  */
-export async function generateImageWithSafetyRetry(
-  params: GenerateImageWithSafetyRetryParams,
-): Promise<GenerateImageResult> {
+export async function generateImageWithSafetyRetry({
+  analytics,
+  ...params
+}: GenerateImageWithSafetyRetryParams & {
+  analytics?: AiGenerationContext;
+}): Promise<GenerateImageResult> {
   try {
     return await generateImage(buildGenerateImageParams(params));
   } catch (error) {
@@ -71,7 +78,7 @@ export async function generateImageWithSafetyRetry(
       throw error;
     }
 
-    const input = await rewriteSafetyRejectedImageInput({ error, input: params.input });
+    const input = await rewriteSafetyRejectedImageInput({ analytics, error, input: params.input });
 
     return generateImage(buildGenerateImageParams({ ...params, input }));
   }

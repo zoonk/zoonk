@@ -1,0 +1,5 @@
+/** The hero's goal box: the phone's bottom start bar appears once it scrolls away. */
+export const HERO_GOAL_ID = "goal";
+
+/** The closing goal box: the bottom start bar steps aside while it's on screen. */
+export const FINAL_GOAL_ID = "goal-again";

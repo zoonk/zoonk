@@ -3,3 +3,34 @@ generate:
   - client
 accessModifier: internal
 namingStrategy: idiomatic
+# Generates only the operations the app calls, and the schemas they reference. Add an operation here
+# when a feature starts using it.
+filter:
+  operations:
+    - createAppleSession
+    - createAppleSubscription
+    - createEmailCodeSession
+    - createEmailSignInCode
+    - createFeedback
+    - createGoogleSession
+    - deleteCurrentSession
+    - deleteCurrentUser
+    - getChapter
+    - getChapterNextLesson
+    - getChapterProgress
+    - getCourse
+    - getCourseNextLesson
+    - getCourseProgress
+    - getCurrentUser
+    - getCurrentUserActivity
+    - getCurrentUserEnergy
+    - getCurrentUserLevel
+    - getCurrentUserProgress
+    - getCurrentUserScore
+    - getCurrentUserScorePatterns
+    - listChapterLessons
+    - listCourseChapters
+    - listCourses
+    - listCurrentUserCourses
+    - searchCatalog
+    - updateCurrentUser

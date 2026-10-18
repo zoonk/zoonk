@@ -1,30 +1,31 @@
 import "server-only";
-import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { headers } from "next/headers";
-
-const DEFAULT_TIME_ZONE = "UTC";
-const VERCEL_TIME_ZONE_HEADER = "x-vercel-ip-timezone";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { cacheTag } from "next/cache";
+import { getGoalsCacheTag } from "../cache/tags";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readActiveGoal } from "../learner/facts/learning-profile";
+import { getRequestInstant } from "../learner/facts/request-instant";
+import { getSession } from "../users/get-session";
 
 type RequestProgressDateContext = { currentDate: Date; currentInstant: Date; timeZone: string };
 
 /**
- * Accepts only a valid IANA timezone from the hosting request so progress
- * calculations never trust an unchecked location value.
- */
-function getValidTimeZone(vercelTimeZone: string | null): string {
-  return vercelTimeZone && isValidTimeZone(vercelTimeZone) ? vercelTimeZone : DEFAULT_TIME_ZONE;
-}
-
-/**
- * Captures one instant, validated timezone, and matching learner-local date so
- * every progress capability in the same render tree uses one clock.
+ * Captures one instant and the learner's day for it, so every progress capability in the same
+ * render tree uses one clock. The day is in the learner's active goal's stored zone, as Today
+ * reads it (see `getAnswerTimeZone`); UTC for a visitor without one.
  */
 export async function getRequestProgressDateContext(): Promise<RequestProgressDateContext> {
   "use cache: private";
 
-  const requestHeaders = await headers();
-  const currentInstant = new Date();
-  const timeZone = getValidTimeZone(requestHeaders.get(VERCEL_TIME_ZONE_HEADER));
+  const session = await getSession();
+  const currentInstant = await getRequestInstant();
+
+  if (session) {
+    cacheTag(getGoalsCacheTag(session.user.id));
+  }
+
+  const goal = session ? await readActiveGoal(session.user.id) : null;
+  const timeZone = getAnswerTimeZone({ goal });
 
   return {
     currentDate: getDateInTimeZone({ date: currentInstant, timeZone }),

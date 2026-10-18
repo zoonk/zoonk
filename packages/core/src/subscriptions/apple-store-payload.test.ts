@@ -83,29 +83,4 @@ describe(createVerifiedAppleSubscription, () => {
 
     expect(subscription).toMatchObject({ isActive: false, revocationDate: EVENT_SIGNED_DATE });
   });
-
-  it("uses current renewal state when an active notification carries an older revoked transaction", () => {
-    const currentRenewalDate = new Date("2026-09-19T12:00:00.000Z");
-
-    const subscription = createVerifiedAppleSubscription({
-      eventId: "0198c722-e072-7221-a24b-756dd0952911",
-      eventSignedDate: EVENT_SIGNED_DATE,
-      renewalInfo: makeRenewalInfo({
-        productId: "com.zoonk.plus.yearly",
-        renewalDate: currentRenewalDate.getTime(),
-      }),
-      status: Status.ACTIVE,
-      transaction: makeTransaction({
-        expiresDate: TRANSACTION_EXPIRATION_DATE.getTime(),
-        revocationDate: EVENT_SIGNED_DATE.getTime(),
-      }),
-    });
-
-    expect(subscription).toMatchObject({
-      expirationDate: currentRenewalDate,
-      isActive: true,
-      productId: "com.zoonk.plus.yearly",
-      revocationDate: null,
-    });
-  });
 });

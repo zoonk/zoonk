@@ -1,5 +1,7 @@
 "use client";
 
+import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
+import { formatDollars, formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -11,6 +13,29 @@ import {
 import { downloadFile } from "@zoonk/utils/download";
 import { Download } from "lucide-react";
 
+/** The budget column only shows for tasks that have a latency budget. */
+function getMetricHeaders(showBudget: boolean): string[] {
+  return [
+    "Accuracy",
+    ...REQUIRED_LANGUAGES.map((language) => language.toUpperCase()),
+    "p50",
+    "p95",
+    "Cost / 1k runs",
+    ...(showBudget ? ["Latency budget"] : []),
+  ];
+}
+
+function formatMetrics({ entry, showBudget }: { entry: LeaderboardEntry; showBudget: boolean }) {
+  return [
+    entry.accuracy === null ? "—" : formatPercent(entry.accuracy),
+    ...formatLanguageResults(entry.languages).map((result) => result.text),
+    formatSeconds(entry.latencyP50),
+    formatSeconds(entry.latencyP95),
+    formatDollars(entry.costPer1000Runs),
+    ...(showBudget ? [formatLatencyVerdict(entry.meetsLatencyBudget)] : []),
+  ].join(" | ");
+}
+
 export function LeaderboardExport({
   taskId,
   entries,
@@ -20,7 +45,13 @@ export function LeaderboardExport({
 }) {
   const categories = entries[0]?.categoryScores ?? [];
   const categoryHeaders = categories.map((category) => category.label).join(" | ");
-  const anonymousDivider = ["---", "---", ...categories.map(() => "---"), "---", "---"].join(" | ");
+  const showBudget = entries.some((entry) => entry.meetsLatencyBudget !== null);
+  const metricHeaders = getMetricHeaders(showBudget);
+  const metricDividers = metricHeaders.map(() => "---");
+
+  const anonymousDivider = ["---", "---", ...categories.map(() => "---"), ...metricDividers].join(
+    " | ",
+  );
 
   const fullDivider = [
     "---",
@@ -28,8 +59,7 @@ export function LeaderboardExport({
     "---",
     "---",
     ...categories.map(() => "---"),
-    "---",
-    "---",
+    ...metricDividers,
   ].join(" | ");
 
   function formatCategoryScores(entry: LeaderboardEntry): string {
@@ -49,21 +79,21 @@ export function LeaderboardExport({
 
     if (anonymous) {
       // Export with position, average score, duration, and cost only
-      markdown = `| Position | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}Avg Duration | Cost |\n`;
+      markdown = `| Position | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}${metricHeaders.join(" | ")} |\n`;
       markdown += `| ${anonymousDivider} |\n`;
 
       for (const [index, entry] of entries.entries()) {
         const categoryScores = formatCategoryScores(entry);
-        markdown += `| ${index + 1} | ${entry.averageScore.toFixed(2)} | ${categoryScores ? `${categoryScores} | ` : ""}${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
+        markdown += `| ${index + 1} | ${entry.averageScore.toFixed(2)} | ${categoryScores ? `${categoryScores} | ` : ""}${formatMetrics({ entry, showBudget })} |\n`;
       }
     } else {
       // Export all data
-      markdown = `| Model | Provider | Reasoning | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}Avg Duration | Cost |\n`;
+      markdown = `| Model | Provider | Reasoning | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}${metricHeaders.join(" | ")} |\n`;
       markdown += `| ${fullDivider} |\n`;
 
       for (const entry of entries) {
         const categoryScores = formatCategoryScores(entry);
-        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.reasoning} | ${entry.averageScore.toFixed(2)} | ${categoryScores ? `${categoryScores} | ` : ""}${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
+        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.reasoning} | ${entry.averageScore.toFixed(2)} | ${categoryScores ? `${categoryScores} | ` : ""}${formatMetrics({ entry, showBudget })} |\n`;
       }
     }
 

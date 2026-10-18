@@ -30,13 +30,3 @@ export function isWebManagedSubscriptionProvider(
 ): provider is "stripe" {
   return provider === "stripe";
 }
-
-/**
- * Apple and Google purchases must be managed in the original store instead of
- * pretending the web app can cancel or change them.
- */
-export function isStoreSubscriptionProvider(
-  provider?: SubscriptionProvider | null,
-): provider is "apple" | "google" {
-  return provider === "apple" || provider === "google";
-}

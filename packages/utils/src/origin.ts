@@ -42,20 +42,31 @@ export function getBaseUrl(): string {
   );
 }
 
+/** Says on central auth's login page that the last sign-in couldn't finish. */
+export const AUTH_LOGIN_EXPIRED_ERROR = "expired";
+
 /**
  * Builds the centralized auth URL with the originating app's locale so login
  * does not fall back to a different API-host cookie or browser preference.
+ * `expired` is a sign-in the app's callback couldn't finish, which the login
+ * page says above the form.
  */
 export function buildAuthLoginUrl({
   callbackUrl,
+  expired = false,
   locale,
 }: {
   callbackUrl: string;
+  expired?: boolean;
   locale: SupportedLocale;
 }): string {
   const authUrl = new URL("/auth/login", API_URL);
   authUrl.searchParams.set("locale", locale);
   authUrl.searchParams.set("redirectTo", callbackUrl);
+
+  if (expired) {
+    authUrl.searchParams.set("error", AUTH_LOGIN_EXPIRED_ERROR);
+  }
 
   return authUrl.toString();
 }

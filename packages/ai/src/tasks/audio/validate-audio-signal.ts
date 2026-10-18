@@ -1,6 +1,5 @@
 import { type SpeechModelName } from "./speech-models";
 
-const MAX_AUDIO_DURATION_SECONDS = 18;
 const MIN_AUDIBLE_AMPLITUDE = 0.005;
 const MIN_AUDIBLE_DURATION_SECONDS = 0.04;
 
@@ -61,15 +60,18 @@ function hasSustainedAudibleSignal({
  */
 export function assertAudibleAudioSignal({
   audio,
+  maxSeconds,
   model,
 }: {
   audio: DecodedAudio;
+  /** Longer than the text could take to read, which means the model read something else. */
+  maxSeconds: number;
   model: SpeechModelName;
 }): void {
   const durationSeconds = audio.samplesDecoded / audio.sampleRate;
 
-  if (durationSeconds > MAX_AUDIO_DURATION_SECONDS) {
-    throw new Error(`${model} returned audio longer than ${MAX_AUDIO_DURATION_SECONDS} seconds`);
+  if (durationSeconds > maxSeconds) {
+    throw new Error(`${model} returned audio longer than ${maxSeconds} seconds`);
   }
 
   if (!hasSustainedAudibleSignal(audio)) {

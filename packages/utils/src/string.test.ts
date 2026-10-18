@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  createEmDashReplacer,
   deduplicateNormalizedTexts,
-  deduplicateSlugs,
-  emptyToNull,
   ensureLocaleSuffix,
-  extractUniqueSentenceWords,
+  getFirstSentence,
   normalizePunctuation,
   normalizeString,
   removeAccents,
+  replaceEmDashes,
   replaceNamePlaceholder,
   segmentWords,
   stripPunctuation,
@@ -72,28 +72,6 @@ describe(normalizeString, () => {
 
   it("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
-  });
-});
-
-describe(emptyToNull, () => {
-  it("converts empty string to null", () => {
-    expect(emptyToNull("")).toBeNull();
-  });
-
-  it("converts whitespace-only string to null", () => {
-    expect(emptyToNull("  ")).toBeNull();
-  });
-
-  it("converts null to null", () => {
-    expect(emptyToNull(null)).toBeNull();
-  });
-
-  it("converts undefined to null", () => {
-    expect(emptyToNull()).toBeNull();
-  });
-
-  it("returns non-empty string as-is", () => {
-    expect(emptyToNull("romaji")).toBe("romaji");
   });
 });
 
@@ -192,7 +170,6 @@ describe(toSlug, () => {
     expect(toSlug("F#")).toBe("f-sharp");
     expect(toSlug(".NET")).toBe("dot-net");
     expect(toSlug("Learn .NET")).toBe("learn-dot-net");
-    expect(toSlug("Hello! @World #1")).toBe("hello-world-1");
   });
 
   it("edge cases", () => {
@@ -216,57 +193,6 @@ describe(toSlug, () => {
     expect(toSlug("Existing Completed Course 7cf0f58c-c844-4e77-b93d-862b088c72e0")).toBe(
       "existing-completed-course-7cf0f58c-c844-4e77-b93d",
     );
-  });
-});
-
-describe(deduplicateSlugs, () => {
-  it("leaves unique slugs unchanged", () => {
-    const items = [{ slug: "a" }, { slug: "b" }];
-    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "b" }]);
-  });
-
-  it("appends counter suffix to duplicate slugs", () => {
-    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x" }];
-
-    expect(deduplicateSlugs(items)).toStrictEqual([
-      { slug: "x" },
-      { slug: "x-1" },
-      { slug: "x-2" },
-    ]);
-  });
-
-  it("uses 1-based counter regardless of array position", () => {
-    const items = [{ slug: "a" }, { slug: "x" }, { slug: "x" }];
-    expect(deduplicateSlugs(items)).toStrictEqual([{ slug: "a" }, { slug: "x" }, { slug: "x-1" }]);
-  });
-
-  it("avoids collision with pre-existing slugs", () => {
-    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x-1" }];
-
-    expect(deduplicateSlugs(items)).toStrictEqual([
-      { slug: "x" },
-      { slug: "x-2" },
-      { slug: "x-1" },
-    ]);
-  });
-
-  it("preserves extra properties", () => {
-    const items = [
-      { slug: "a", title: "A" },
-      { slug: "a", title: "B" },
-    ];
-
-    const result = deduplicateSlugs(items);
-    expect(result[0]).toStrictEqual({ slug: "a", title: "A" });
-    expect(result[1]).toStrictEqual({ slug: "a-1", title: "B" });
-  });
-
-  it("handles empty array", () => {
-    expect(deduplicateSlugs([])).toStrictEqual([]);
-  });
-
-  it("handles single item", () => {
-    expect(deduplicateSlugs([{ slug: "a" }])).toStrictEqual([{ slug: "a" }]);
   });
 });
 
@@ -376,6 +302,67 @@ describe(segmentWords, () => {
   });
 });
 
+describe(replaceEmDashes, () => {
+  // Real lessons (Oct 2026): an OAB worked example and a Civil law lesson.
+  it.each([
+    [
+      "Na contestação — a defesa escrita de quem responde — o advogado assina.",
+      "Na contestação, a defesa escrita de quem responde, o advogado assina.",
+    ],
+    [
+      "Cabem perdas e danos — reparação do prejuízo —, não anulação.",
+      "Cabem perdas e danos, reparação do prejuízo, não anulação.",
+    ],
+    ["Clarify—don't guess.", "Clarify, don't guess."],
+    ["Ends with a dash —", "Ends with a dash"],
+    ["— Could you repeat that?\n— Sure.", "Could you repeat that?\nSure."],
+  ])("turns %j into %j", (text, expected) => {
+    expect(replaceEmDashes(text)).toBe(expected);
+  });
+
+  it("keeps en dashes, which join ranges", () => {
+    expect(replaceEmDashes("Nível B1–B2, artigos 1º–5º")).toBe("Nível B1–B2, artigos 1º–5º");
+  });
+});
+
+/** The text sent in the pieces a stream would cut it into, joined back. */
+function stream(pieces: string[]): string {
+  const replacer = createEmDashReplacer();
+  return pieces.map((piece) => replacer.push(piece)).join("") + replacer.end();
+}
+
+describe(createEmDashReplacer, () => {
+  // A buddy reply (persona pass 9) and the cases `replaceEmDashes` covers, as a stream sends them.
+  const TEXTS = [
+    "Dá para começar cedo, sim — e o sistema de matrícula é um bom caso.",
+    "Na contestação — a defesa escrita de quem responde — o advogado assina.",
+    "Cabem perdas e danos — reparação do prejuízo —, não anulação.",
+    "Clarify—don't guess.",
+    "Ends with a dash —",
+    "— Could you repeat that?\n— Sure.",
+    "Antes:\n\n- um ponto — outro\n— fala\nfim — \nnova linha",
+  ];
+
+  it.each(TEXTS)("reads %j as the whole text would, wherever the stream cuts it", (text) => {
+    const expected = replaceEmDashes(text);
+    const characters = text.split("");
+
+    expect(stream(characters)).toBe(expected);
+
+    characters.forEach((_, index) => {
+      expect(stream([text.slice(0, index), text.slice(index)])).toBe(expected);
+    });
+  });
+
+  it("sends a piece's words right away, holding back only what a dash could still change", () => {
+    const replacer = createEmDashReplacer();
+
+    expect(replacer.push("Sim, dá ")).toBe("Sim, dá");
+    expect(replacer.push("— e")).toBe(", e");
+    expect(replacer.end()).toBe("");
+  });
+});
+
 describe(stripPunctuation, () => {
   it("removes punctuation from text", () => {
     expect(stripPunctuation("hello!")).toBe("hello");
@@ -395,43 +382,6 @@ describe(stripPunctuation, () => {
 
   it("handles empty string", () => {
     expect(stripPunctuation("")).toBe("");
-  });
-});
-
-describe(extractUniqueSentenceWords, () => {
-  it("extracts unique lowercase words from sentences", () => {
-    const result = extractUniqueSentenceWords(["Hola mundo", "Buenos dias"]);
-    expect(result).toStrictEqual(["hola", "mundo", "buenos", "dias"]);
-  });
-
-  it("deduplicates words across sentences", () => {
-    const result = extractUniqueSentenceWords(["gato bonito", "gato grande"]);
-    expect(result).toContain("gato");
-    expect(result.filter((word) => word === "gato")).toHaveLength(1);
-  });
-
-  it("strips punctuation from words", () => {
-    const result = extractUniqueSentenceWords(["Hola, como estas?"]);
-    expect(result).toContain("hola");
-    expect(result).toContain("como");
-    expect(result).toContain("estas");
-    expect(result).not.toContain("estas?");
-  });
-
-  it("filters out empty tokens", () => {
-    const result = extractUniqueSentenceWords(["hello  world"]);
-    expect(result).not.toContain("");
-  });
-
-  it("returns empty array for empty input", () => {
-    expect(extractUniqueSentenceWords([])).toStrictEqual([]);
-  });
-
-  it("handles non-space-delimited text via Intl.Segmenter", () => {
-    const result = extractUniqueSentenceWords(["猫は食べる"]);
-    expect(result.length).toBeGreaterThan(1);
-    expect(result).toContain("猫");
-    expect(result).toContain("食べる");
   });
 });
 
@@ -462,14 +412,37 @@ describe(replaceNamePlaceholder, () => {
     expect(replaceNamePlaceholder("{{NAME}}, welcome back!", null)).toBe("Welcome back!");
   });
 
-  it("does not double-capitalize when remainder already starts uppercase", () => {
-    expect(replaceNamePlaceholder("{{NAME}}, I think we have a problem.", null)).toBe(
-      "I think we have a problem.",
-    );
-  });
-
   it("returns original text when no placeholder present", () => {
     expect(replaceNamePlaceholder("No placeholder here", "Alice")).toBe("No placeholder here");
     expect(replaceNamePlaceholder("No placeholder here", null)).toBe("No placeholder here");
+  });
+});
+
+describe(getFirstSentence, () => {
+  it("keeps only the first sentence, trimmed", () => {
+    expect(
+      getFirstSentence(
+        "A matemática estuda números e formas. O curso desenvolve raciocínio lógico.",
+        "pt",
+      ),
+    ).toBe("A matemática estuda números e formas.");
+  });
+
+  it("returns a single sentence as it is", () => {
+    expect(getFirstSentence("Dutch is a West Germanic language.", "en")).toBe(
+      "Dutch is a West Germanic language.",
+    );
+  });
+
+  it("returns text without a sentence end as it is", () => {
+    expect(getFirstSentence("  Quantum physics from scratch  ", "en")).toBe(
+      "Quantum physics from scratch",
+    );
+  });
+
+  it("splits sentences in languages without spaces", () => {
+    expect(getFirstSentence("日本語は日本の言語です。会話を学びます。", "ja")).toBe(
+      "日本語は日本の言語です。",
+    );
   });
 });

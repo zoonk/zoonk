@@ -1,5 +1,5 @@
 import { createFixedScore } from "@/lib/score";
-import { type TaskScorer } from "@/lib/types";
+import { type ClassificationOutcome, type TaskScorer } from "@/lib/types";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
 type StringFieldScorerConfig<TExpected> = {
@@ -12,6 +12,17 @@ type StringFieldScorerConfig<TExpected> = {
   getForbiddenValues?: (expected: TExpected | undefined) => readonly string[];
   missingValueMessage?: string;
   normalizeValue?: (value: string) => string;
+  /**
+   * Fields the task's schema returns next to the scored one, such as a title that later code
+   * reads. They aren't extras; any other field still fails the case.
+   */
+  otherOutputFields?: readonly string[];
+  /**
+   * Classifiers pick from a fixed label set, so their results can report
+   * per-label accuracy and a confusion matrix. Free-text fields such as
+   * titles or translations leave this off.
+   */
+  reportsLabels?: boolean;
 };
 
 /**
@@ -19,10 +30,15 @@ type StringFieldScorerConfig<TExpected> = {
  * eval tasks use structured object output with a single meaningful field, so a
  * shared parser keeps missing-field and extra-field handling consistent.
  */
-function getGeneratedStringField({ field, output }: { field: string; output: string }): {
-  extraKeys: string[];
-  value: string | null;
-} {
+function getGeneratedStringField({
+  field,
+  otherOutputFields,
+  output,
+}: {
+  field: string;
+  otherOutputFields: readonly string[];
+  output: string;
+}): { extraKeys: string[]; value: string | null } {
   try {
     const parsed: unknown = JSON.parse(output);
 
@@ -31,7 +47,10 @@ function getGeneratedStringField({ field, output }: { field: string; output: str
     }
 
     const value = getString(parsed, field);
-    const extraKeys = Object.keys(parsed).filter((key) => key !== field);
+
+    const extraKeys = Object.keys(parsed).filter(
+      (key) => key !== field && !otherOutputFields.includes(key),
+    );
 
     return { extraKeys, value };
   } catch {
@@ -81,6 +100,27 @@ function getExpectedValuesMessage({
 }
 
 /**
+ * Some cases accept several labels. The confusion matrix needs one expected
+ * label per case: the accepted label the model chose, or the first accepted one.
+ */
+function getClassificationOutcome({
+  accepted,
+  acceptedValues,
+  normalizedValue,
+  value,
+}: {
+  accepted: string[];
+  acceptedValues: readonly string[];
+  normalizedValue: string | null;
+  value: string | null;
+}): ClassificationOutcome {
+  const matchIndex = normalizedValue === null ? -1 : accepted.indexOf(normalizedValue);
+  const expected = acceptedValues[matchIndex] ?? acceptedValues[0] ?? "unknown";
+
+  return { expected, predicted: matchIndex === -1 ? value : expected };
+}
+
+/**
  * Builds deterministic scorers for tasks whose output is one JSON string field.
  * The task supplies its accepted values and wording; this helper owns parsing,
  * normalization, extra-field rejection, and the fixed 10-or-6 score contract.
@@ -95,17 +135,23 @@ export function createDeterministicStringFieldScorer<TExpected>({
   getForbiddenValues,
   missingValueMessage = `Generated output did not include a string ${field}.`,
   normalizeValue = (value) => value,
+  otherOutputFields = [],
+  reportsLabels = false,
 }: StringFieldScorerConfig<TExpected>): TaskScorer<TExpected> {
   return ({ output, testCase }) => {
-    const { extraKeys, value } = getGeneratedStringField({ field, output });
+    const { extraKeys, value } = getGeneratedStringField({ field, otherOutputFields, output });
     const acceptedValues = getAcceptedValues(testCase.expected);
     const forbiddenValues = getForbiddenValues?.(testCase.expected) ?? [];
     const normalizedValue = value ? normalizeValue(value) : null;
     const accepted = acceptedValues.map((acceptedValue) => normalizeValue(acceptedValue));
     const forbidden = forbiddenValues.map((forbiddenValue) => normalizeValue(forbiddenValue));
 
+    const classification = reportsLabels
+      ? getClassificationOutcome({ accepted, acceptedValues, normalizedValue, value })
+      : undefined;
+
     if (normalizedValue && accepted.includes(normalizedValue) && extraKeys.length === 0) {
-      return createFixedScore({ conclusion: "None", score: 10 });
+      return { ...createFixedScore({ conclusion: "None", score: 10 }), classification };
     }
 
     const matchedForbiddenValue =
@@ -126,6 +172,6 @@ export function createDeterministicStringFieldScorer<TExpected>({
       .filter(Boolean)
       .join(" ");
 
-    return createFixedScore({ conclusion: details, score: 6 });
+    return { ...createFixedScore({ conclusion: details, score: 6 }), classification };
   };
 }

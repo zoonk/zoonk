@@ -55,11 +55,11 @@ private struct ActivityProgressContent: View {
         title: Text(
           "Learning activity",
           tableName: "Progress",
-          comment: "Title above the completed lesson contribution calendar"),
+          comment: "Title above the calendar of days the learner studied"),
         subtitle: Text(
           "Past 12 months.",
           tableName: "Progress",
-          comment: "Period shown above the completed lesson contribution calendar")
+          comment: "Period shown above the calendar of days the learner studied")
       ) {
         if contributionWeeks.isEmpty {
           ProgressDetailNoChartData()
@@ -79,12 +79,14 @@ private struct ActivityProgressContent: View {
             accessibilityLabel: Text(
               "Learning activity over the past 12 months",
               tableName: "Progress",
-              comment: "Accessibility label for the completed lesson contribution calendar"),
+              comment: "Accessibility label for the calendar of days the learner studied"),
             accessibilityValue: { point in
               Text(
-                "Lessons completed: \(Int(point.value ?? 0))",
+                "Activities finished: \(Int(point.value ?? 0))",
                 tableName: "Progress",
-                comment: "Accessible daily completed lesson value in the activity calendar")
+                comment:
+                  "Accessible count of lessons, reviews and practice the learner finished on one day of the activity calendar"
+              )
             })
         }
       }

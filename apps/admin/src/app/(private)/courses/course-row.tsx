@@ -18,12 +18,15 @@ export function CourseRow({ course }: { course: ListedCourse }) {
       <TableCell>{course.organization?.name ?? "—"}</TableCell>
       <TableCell className="uppercase">{course.language}</TableCell>
       <TableCell className="text-right tabular-nums">
-        {course.completedLessonCount.toLocaleString()}
+        {course.chapterCount.toLocaleString()}
+      </TableCell>
+      <TableCell className="text-right tabular-nums">
+        {course.writtenLessonCount.toLocaleString()}
       </TableCell>
 
       <TableCell>
         {course.isPublished ? (
-          <span className="text-success">✓</span>
+          <span className="text-success-text">✓</span>
         ) : (
           <span className="text-muted-foreground">—</span>
         )}

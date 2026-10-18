@@ -4,7 +4,6 @@
   "extends": "@zoonk/tsconfig/nextjs.json",
   "include": [
     "next-env.d.ts",
-    "markdown.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

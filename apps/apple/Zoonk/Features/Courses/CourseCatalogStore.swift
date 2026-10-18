@@ -7,7 +7,7 @@ private struct CourseCatalogRequest<Value: Codable & Equatable & Sendable>: Send
 }
 
 private enum CourseCatalogResource: Hashable, Sendable {
-  case chapter(String)
+  case chapter(CatalogChapterKey)
   case course(String)
   case courses
   case search
@@ -32,7 +32,7 @@ final class CourseCatalogStore {
   private var activeCourseQuery: CourseCatalogQuery?
   private var activeRequests: Set<CourseCatalogResource> = []
   private var activeSearchQuery: CatalogSearchQuery?
-  private var chapterStates: [String: CourseCatalogLoadState<ChapterDetail>] = [:]
+  private var chapterStates: [CatalogChapterKey: CourseCatalogLoadState<ChapterDetail>] = [:]
   private var courseStates: [String: CourseCatalogLoadState<CourseDetail>] = [:]
   private var loadMoreRevision: UUID?
   private var requestRevisions: [CourseCatalogResource: UUID] = [:]
@@ -205,17 +205,18 @@ final class CourseCatalogStore {
       CourseCatalogRequest(
         isEmpty: { _ in false },
         load: { api in
-          async let course = api.getCourse(id: id)
-          async let chapters = api.listCourseChapters(courseID: id)
+          let token = authenticatedSession?.bearerToken
+          async let course = api.getCourse(id: id, token: token)
+          async let chapters = api.listCourseChapters(courseID: id, token: token)
           async let continuation = loadCatalogSupplement {
             try await api.getCourseNextLesson(
               courseID: id,
-              token: authenticatedSession?.bearerToken)
+              token: token)
           }
           async let progress = loadCatalogSupplement {
             try await api.getCourseProgress(
               courseID: id,
-              token: authenticatedSession?.bearerToken)
+              token: token)
           }
           let (loadedCourse, loadedChapters, loadedContinuation, loadedProgress) =
             try await (course, chapters, continuation, progress)
@@ -233,51 +234,59 @@ final class CourseCatalogStore {
 
     courseStates[id] = stateAfterRequest(state, previousState: previousState)
     finishRequest(requestIdentity)
+
+    if state == .failed(.notFound) {
+      dropChapterStates(inCourse: id)
+    }
   }
 
-  func chapterState(for id: String) -> CourseCatalogLoadState<ChapterDetail> {
-    chapterStates[id] ?? .idle
+  func chapterState(for key: CatalogChapterKey) -> CourseCatalogLoadState<ChapterDetail> {
+    chapterStates[key] ?? .idle
   }
 
-  func loadChapterIfNeeded(id: String) async {
+  func loadChapterIfNeeded(_ key: CatalogChapterKey) async {
     synchronizeSession()
 
-    guard needsPresentationLoad(chapterState(for: id)) else {
+    guard needsPresentationLoad(chapterState(for: key)) else {
       return
     }
 
-    await loadChapter(id: id, force: true)
+    await loadChapter(key, force: true)
   }
 
-  func loadChapter(id: String, force: Bool = false) async {
+  /// Loads a chapter page in the context of the course it was opened from. A chapter that no longer
+  /// exists, for example after a content reset, also refreshes its course so the course page stops
+  /// listing it.
+  func loadChapter(_ key: CatalogChapterKey, force: Bool = false) async {
     synchronizeSession()
     let authenticatedSession = session.authenticatedSession
-    let resource = CourseCatalogResource.chapter(id)
-    let previousState = chapterState(for: id)
+    let resource = CourseCatalogResource.chapter(key)
+    let previousState = chapterState(for: key)
 
     guard canBeginRequest(resource: resource, state: previousState, force: force) else {
       return
     }
 
     let requestIdentity = beginRequest(for: resource)
-    chapterStates[id] = loadingState(from: previousState)
+    chapterStates[key] = loadingState(from: previousState)
     let state = await load(
       CourseCatalogRequest(
         isEmpty: { _ in false },
         load: { api in
+          let token = authenticatedSession?.bearerToken
           async let chapter = loadCatalogSupplement {
-            try await api.getChapter(id: id)
+            try await api.getChapter(key, token: token)
           }
-          async let lessons = api.listChapterLessons(chapterID: id)
+          async let lessons = api.listChapterLessons(key, token: token)
           async let continuation = loadCatalogSupplement {
             try await api.getChapterNextLesson(
-              chapterID: id,
-              token: authenticatedSession?.bearerToken)
+              key,
+              token: token)
           }
           async let progress = loadCatalogSupplement {
             try await api.getChapterProgress(
-              chapterID: id,
-              token: authenticatedSession?.bearerToken)
+              chapterID: key.chapterID,
+              token: token)
           }
           let (loadedChapter, loadedLessons, loadedContinuation, loadedProgress) =
             try await (chapter, lessons, continuation, progress)
@@ -293,8 +302,12 @@ final class CourseCatalogStore {
       return
     }
 
-    chapterStates[id] = stateAfterRequest(state, previousState: previousState)
+    chapterStates[key] = stateAfterRequest(state, previousState: previousState)
     finishRequest(requestIdentity)
+
+    if state == .failed(.notFound), courseStates[key.courseID] != nil {
+      await loadCourse(id: key.courseID, force: true)
+    }
   }
 
   /// Invalidates the previous query before a debounced request starts, without discarding an unchanged search.
@@ -395,6 +408,11 @@ final class CourseCatalogStore {
       })
     chapterStates.removeAll()
     courseStates.removeAll()
+  }
+
+  /// Forgets chapter pages opened from a course that no longer exists.
+  private func dropChapterStates(inCourse courseID: String) {
+    chapterStates = chapterStates.filter { $0.key.courseID != courseID }
   }
 
   private func load<Value>(

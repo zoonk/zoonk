@@ -1,0 +1,136 @@
+{
+  "screens": [
+    {
+      "kind": "hookGuess",
+      "question": "You scrape your knee. Before your body knows whether a germ entered, what might tell it something is wrong?",
+      "options": [
+        { "text": "Nearby injured cells", "isCorrect": true },
+        { "text": "The exact name of a germ", "isCorrect": false },
+        { "text": "Nothing until the scrape heals", "isCorrect": false }
+      ],
+      "reveal": "Nearby injured cells can be the clue. Let’s see why your body can notice them so quickly.",
+      "image": {
+        "prompt": "A small scrape on a knee, shown in a simple cutaway. Show several nearby cells just beneath the broken skin. Keep the scrape and cells easy to distinguish; no text labels.",
+        "alt": "A small scrape breaks the skin above nearby cells."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Cells on watch",
+      "text": "Some cells in your skin help defend you. They are **immune cells**. Like watchguards, they look for signs of trouble rather than a germ’s name.",
+      "exampleLineIdea": "a scrape that puts watchguard cells near injured skin cells",
+      "image": {
+        "prompt": "Simple skin cutaway with one watchguard-like immune cell beside several ordinary skin cells. Label the cells “immune cell” and “skin cells.” Show the immune cell watching its surroundings, with no uniform or human face.",
+        "alt": "An immune cell sits beside ordinary skin cells and watches for signs of trouble."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Spot the shared mark",
+      "text": "Two different bacteria can carry the same kind of mark on their outer surfaces. Bacteria are one kind of **microbe**, or tiny germ. A watchguard can spot that shared mark like a familiar uniform, without reading a name tag.",
+      "exampleLineIdea": "recognizing the same team uniform on different players",
+      "image": {
+        "prompt": "Two clearly different-looking bacteria, each with the same small outer-surface feature highlighted in yellow. Label the highlighted feature on each “shared mark.” Show no names for the bacteria.",
+        "alt": "Two different bacteria have the same highlighted mark on their outer surfaces."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "A watchguard cell encounters several different bacteria.",
+      "question": "Which clue could it notice early?",
+      "options": [
+        {
+          "text": "A feature shared by the bacteria",
+          "isCorrect": true,
+          "reason": "You can spot the same outer feature on different bacteria without knowing exactly which bacterium each one is."
+        },
+        {
+          "text": "The exact name of one bacterium",
+          "isCorrect": false,
+          "reason": "A name would identify one bacterium, but this early watchguard looks for shared signs instead."
+        },
+        {
+          "text": "Whether the bacteria have already caused a fever",
+          "isCorrect": false,
+          "reason": "A fever might happen later. The watchguard can notice a shared outer feature before then."
+        }
+      ],
+      "image": null
+    },
+    {
+      "kind": "explanation",
+      "title": "Damage is a clue",
+      "text": "A cell hurt by a splinter can give off a sign of damage, even if no germ entered. A watchguard can notice it like a smoke alarm sensing smoke: it detects trouble without knowing the exact cause.",
+      "exampleLineIdea": "a splinter that hurts skin even when no germ enters",
+      "image": {
+        "prompt": "Simple diagram: an injured skin cell on the left and a microbe on the right. Each sends a different visible sign toward the same watchguard immune cell in the center. Label the signs “damage sign” and “microbe sign.”",
+        "alt": "An injured cell and a microbe send different signs toward the same watchguard cell."
+      }
+    },
+    {
+      "kind": "explanation",
+      "title": "Send a warning",
+      "text": "When a watchguard notices a sign, it can warn nearby cells. This quick, broad response is part of **innate defense**—your body’s first watch, not a germ ID check. The warning flags possible trouble; it does not prove a germ is there.",
+      "exampleLineIdea": "nearby skin cells receiving a warning after a scrape",
+      "image": {
+        "prompt": "Simple skin cutaway showing one watchguard immune cell sending a visible signal toward several neighboring cells. Label the signal “warning.” Do not show a named germ or imply the signal identifies one.",
+        "alt": "A watchguard immune cell sends a warning signal to nearby cells."
+      }
+    },
+    {
+      "kind": "check",
+      "context": "A watchguard cell is near a new cut.",
+      "question": "Which situations could lead it to warn nearby cells?",
+      "options": [
+        {
+          "text": "Damaged cells or a microbe with a recognizable outer feature",
+          "isCorrect": true,
+          "reason": "You have two possible clues: signs from injured cells and features shared by microbes. Either can lead to an early warning."
+        },
+        {
+          "text": "Only a germ whose exact identity is known",
+          "isCorrect": false,
+          "reason": "An exact identity is tempting because it sounds certain, but the watchguard can act on broader signs."
+        },
+        {
+          "text": "Only damaged cells, never a microbe’s outer feature",
+          "isCorrect": false,
+          "reason": "Damaged cells can be a clue, but you can also recognize a shared feature on a microbe."
+        }
+      ],
+      "image": null
+    },
+    {
+      "kind": "check",
+      "context": "While pulling weeds in your backyard, you get a small splinter. It breaks your skin and hurts nearby cells.",
+      "question": "What might a watchguard notice, and why could it warn nearby cells before knowing whether a germ entered?",
+      "options": [
+        {
+          "text": "Signs from the hurt cells; they flag possible trouble without proving a germ entered.",
+          "isCorrect": true,
+          "reason": "You can have injured cells even without a germ. Their signs give the watchguard a reason to warn nearby cells."
+        },
+        {
+          "text": "The splinter’s exact name; that proves a germ entered.",
+          "isCorrect": false,
+          "reason": "A splinter’s name tells you nothing about whether a germ entered. The hurt cells provide the early clue."
+        },
+        {
+          "text": "Nothing yet; it must identify a germ before it can warn anyone.",
+          "isCorrect": false,
+          "reason": "It is tempting to wait for certainty, but the watchguard can warn nearby cells when it notices signs of damage."
+        }
+      ],
+      "image": {
+        "prompt": "A close-up cutaway of a hand after pulling weeds: a small splinter breaks the skin, with nearby injured cells and one watchguard immune cell beneath the surface. Label “splinter,” “injured cells,” and “watchguard cell.” Do not show a germ.",
+        "alt": "A splinter breaks the skin near injured cells and a watchguard immune cell."
+      }
+    }
+  ],
+  "summary": [
+    "Some immune cells act like watchguards, looking for signs of trouble rather than a germ’s exact identity.",
+    "A watchguard can notice an outer feature shared by different microbes.",
+    "Injured cells can also give off signs of damage, even when no germ is present.",
+    "A watchguard can warn nearby cells about possible trouble without proving that a germ entered."
+  ]
+}

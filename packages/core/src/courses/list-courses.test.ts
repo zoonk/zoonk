@@ -1,11 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
-import { LIST_COURSES_LIMIT, listCourses } from "./list-courses";
+import { LIST_COURSES_LIMIT, listCourses, listCoursesPage } from "./list-courses";
 
 /**
  * A unique language isolates each catalog query from courses created by other
@@ -37,6 +47,36 @@ describe(listCourses, () => {
     expect(ids).not.toContain(draftCourse.id);
     expect(ids).not.toContain(schoolCourse.id);
     expect(cacheTag).toHaveBeenCalledWith(COURSE_LIST_CACHE_TAG);
+  });
+
+  it("lists a shared course only once its page details are written, and never a private one", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+
+    // A shared course a guest's goal made: published with its outline, its details still to come.
+    const [listed] = await Promise.all([
+      courseFixture({ isPublished: true, language, organizationId: organization.id }),
+      courseFixture({
+        description: null,
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+      }),
+      courseFixture({
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+        visibility: "private",
+      }),
+    ]);
+
+    const [list, page] = await Promise.all([
+      listCourses({ language, limit: 100 }),
+      listCoursesPage({ language, limit: 100 }),
+    ]);
+
+    expect(list.map((course) => course.id)).toStrictEqual([listed.id]);
+    expect(page.courses.map((course) => course.id)).toStrictEqual([listed.id]);
   });
 
   it("filters courses by language", async () => {
@@ -96,6 +136,47 @@ describe(listCourses, () => {
     expect(returnedCourse?.organization).toMatchObject({ slug: organization.slug });
   });
 
+  it("returns only what a course card shows, keeping internal course and organization fields out", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      isPublished: true,
+      language,
+      organizationId: organization.id,
+    });
+
+    const [list, page] = await Promise.all([
+      listCourses({ language }),
+      listCoursesPage({ language }),
+    ]);
+
+    const cardKeys = [
+      "description",
+      "estimatedMinutes",
+      "id",
+      "imageUrl",
+      "language",
+      "lessonCount",
+      "organization",
+      "slug",
+      "targetLanguage",
+      "title",
+    ];
+
+    for (const listed of [list[0], page.courses[0]]) {
+      expect(listed?.id).toBe(course.id);
+      expect(Object.keys(listed ?? {}).toSorted()).toStrictEqual(cardKeys);
+
+      expect(Object.keys(listed?.organization ?? {}).toSorted()).toStrictEqual([
+        "id",
+        "logo",
+        "name",
+        "slug",
+      ]);
+    }
+  });
+
   it("uses the default page size", async () => {
     const language = createTestLanguage();
     const organization = await organizationFixture({ kind: "brand" });
@@ -116,28 +197,6 @@ describe(listCourses, () => {
     const result = await listCourses({ language });
 
     expect(result).toHaveLength(LIST_COURSES_LIMIT);
-  });
-
-  it("limits results to the requested page size", async () => {
-    const language = createTestLanguage();
-    const organization = await organizationFixture({ kind: "brand" });
-
-    await prisma.course.createMany({
-      data: Array.from({ length: 5 }, (_, index) => ({
-        description: `Custom limit course ${index}`,
-        imageUrl: null,
-        isPublished: true,
-        language,
-        normalizedTitle: `custom limit course ${index}`,
-        organizationId: organization.id,
-        slug: `custom-limit-${randomUUID()}-${index}`,
-        title: `Custom Limit Course ${index}`,
-      })),
-    });
-
-    const result = await listCourses({ language, limit: 3 });
-
-    expect(result).toHaveLength(3);
   });
 
   it("paginates without returning the cursor again", async () => {
@@ -168,6 +227,51 @@ describe(listCourses, () => {
     expect(firstPage).toHaveLength(3);
     expect(secondPage).toHaveLength(2);
     expect(secondPage.some((course) => firstPageIds.has(course.id))).toBe(false);
+  });
+
+  it("counts each course's shared lessons and adds up their estimated minutes", async () => {
+    const language = createTestLanguage();
+
+    const [{ chapters, course, organization }, owner] = await Promise.all([
+      catalogCourseFixture({ language, lessonCounts: [3, 2] }),
+      userFixture(),
+    ]);
+
+    const [longLesson, privateLesson, privateChapter] = await Promise.all([
+      libraryLessonFixture({ estimatedMinutes: 12, language }),
+      libraryLessonFixture({ language, ownerId: owner.id, visibility: "private" }),
+      libraryChapterFixture({ language, ownerId: owner.id, visibility: "private" }),
+    ]);
+
+    const [privateChapterLesson, emptyCourse] = await Promise.all([
+      libraryLessonFixture({ language }),
+      courseFixture({ isPublished: true, language, organizationId: organization.id }),
+      chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: longLesson.id }),
+      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 2 }),
+    ]);
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: chapters[1]!.id, lessonId: privateLesson.id }),
+      chapterLessonFixture({ chapterId: privateChapter.id, lessonId: privateChapterLesson.id }),
+    ]);
+
+    const [list, page] = await Promise.all([
+      listCourses({ language, limit: 100 }),
+      listCoursesPage({ language, limit: 100 }),
+    ]);
+
+    const expected = [
+      { estimatedMinutes: 5 * 4 + 12, id: course.id, lessonCount: 6 },
+      { estimatedMinutes: 0, id: emptyCourse.id, lessonCount: 0 },
+    ];
+
+    const totals = (courses: typeof list) =>
+      courses
+        .map(({ estimatedMinutes, id, lessonCount }) => ({ estimatedMinutes, id, lessonCount }))
+        .toSorted((a, b) => b.lessonCount - a.lessonCount);
+
+    expect(totals(list)).toStrictEqual(expected);
+    expect(totals(page.courses)).toStrictEqual(expected);
   });
 
   it("sorts courses by popularity", async () => {

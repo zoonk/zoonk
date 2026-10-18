@@ -8,26 +8,8 @@ import {
   ONE_TIME_TOKEN_LOGIN_STATE_COOKIE,
   ONE_TIME_TOKEN_LOGIN_STATE_MAX_AGE_SECONDS,
   addLoginStateToCallbackUrl,
+  createLoginState,
 } from "./ott-state";
-
-const LOGIN_STATE_BYTE_LENGTH = 32;
-const HEX_RADIX = 16;
-
-/** Encodes each random byte with a fixed width so the complete state can safely travel through cookies and URLs. */
-function byteToHex(byte: number): string {
-  return byte.toString(HEX_RADIX).padStart(2, "0");
-}
-
-/**
- * Creates an unpredictable state value in the browser that starts the login
- * flow. `getRandomValues` remains available on insecure HTTP origins such as
- * LAN development hosts, where browsers do not expose `randomUUID`.
- */
-function createLoginState(): string {
-  const randomBytes = globalThis.crypto.getRandomValues(new Uint8Array(LOGIN_STATE_BYTE_LENGTH));
-
-  return Array.from(randomBytes, byteToHex).join("");
-}
 
 /**
  * Builds the callback URL from the current browser origin so the same component

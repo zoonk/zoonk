@@ -16,6 +16,11 @@ await expect(page.getByRole("status")).toHaveText("Saved");
 
 Consult [Playwright actionability](https://playwright.dev/docs/actionability) or its [load-state guidance](https://playwright.dev/docs/api/class-page#page-wait-for-load-state) when diagnosing timing behavior.
 
+## Coverage and accessibility
+
+- Before adding a test, look for the flow that already reaches the screen or state and extend it. A new test pays for its own sign-in, fixtures and navigation, so it needs behavior of its own that no existing flow can reach.
+- Scan a screen for accessibility where a flow already shows it: `expectAccessibleScreen(page, label)` from `@zoonk/e2e/fixtures/accessibility`, once per screen, at the flow's width. It covers light and dark. Use `expectAccessibleRoutes` only for screens no flow passes through.
+
 ## Isolation and persistence
 
 Use the app's authentication fixtures; for example, `apps/main/e2e/fixtures.ts` owns test-scoped users with progress and subscription states. Reuse helpers from `packages/e2e` and `packages/testing` instead of inventing an authentication route or relying on a shared mutable seed account.

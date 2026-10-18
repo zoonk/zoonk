@@ -1,0 +1,195 @@
+import "server-only";
+import { isDeepStrictEqual } from "node:util";
+import { type Goal } from "@zoonk/db";
+import { parseCefrScore } from "@zoonk/utils/cefr";
+import { isJsonObject } from "@zoonk/utils/json";
+import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { readGoalDetails } from "../../_utils/language-goal";
+import {
+  LEVEL_TEST_PREPARING_SECONDS,
+  type LanguageLevelTestView,
+  type LevelTestBank,
+  type LevelTestProgress,
+  levelTestProgressSchema,
+} from "../level-test-contract";
+import {
+  LEVEL_TEST_TOTAL,
+  type LevelTestScores,
+  getLevelTestScores,
+  getNextLevelTestStep,
+  listLevelTestLevels,
+} from "../level-test-rules";
+import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
+
+/** A learner who didn't say their level starts the test at A2, where most beginners with some study are. */
+const DEFAULT_START = 1;
+
+export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: string };
+
+export type LevelTestContext =
+  | {
+      bank: LevelTestBank | null;
+      /** When the run writing the pair's questions started, while they're being written. */
+      bankStartedAt: Date | null;
+      owned: LevelTestGoal;
+      progress: LevelTestProgress;
+      status: "ready";
+    }
+  | { status: "notFound" | "notLanguage" | "unauthorized" };
+
+/**
+ * The test so far. It starts from the level the learner gave, until it keeps its own start: the
+ * level a finish sets must never become where the same test starts, or finishing it again would
+ * move the learner's level.
+ */
+export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
+  const details = readGoalDetails(goal);
+  const parsed = levelTestProgressSchema.safeParse(details.levelTest);
+  const stored = parsed.success ? parsed.data : levelTestProgressSchema.parse({});
+
+  return { ...stored, start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START };
+}
+
+/**
+ * The levels a test ended with before tests kept their start (`levelTestProgressSchema`): the level
+ * that finish set replaced the start, so the test can't be scored again, and finishing it again
+ * with nothing new keeps them. Null for any other test.
+ */
+export function readLevelsEndedBeforeStart(goal: Pick<Goal, "details">): LevelTestScores | null {
+  const details = readGoalDetails(goal);
+  const stored = levelTestProgressSchema.safeParse(details.levelTest);
+  const labels = isJsonObject(details.skillLevels) ? details.skillLevels : {};
+  const reading = parseCefrScore(labels.reading);
+  const listening = parseCefrScore(labels.listening);
+  const speaking = parseCefrScore(labels.speaking);
+
+  if (
+    !stored.success ||
+    stored.data.start !== undefined ||
+    stored.data.placement !== undefined ||
+    reading === null ||
+    listening === null
+  ) {
+    return null;
+  }
+
+  return speaking === null ? { listening, reading } : { listening, reading, speaking };
+}
+
+/**
+ * Keeps the test's answers on the goal, next to what onboarding already stored. `from` is the
+ * progress the change was made from: when another submission saved first (a double tap, another
+ * tab), the change no longer applies and nothing is saved. Returns whether it saved.
+ */
+export async function saveLevelTestProgress({
+  from,
+  goal,
+  progress,
+}: {
+  from: LevelTestProgress;
+  goal: Pick<Goal, "id" | "userId">;
+  progress: LevelTestProgress;
+}): Promise<boolean> {
+  return writeLearnerChange({ userId: goal.userId }, async (tx) => {
+    const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    if (!isDeepStrictEqual(readLevelTestProgress(current), from)) {
+      return unchanged(false);
+    }
+
+    await tx.goal.update({
+      data: { details: { ...readGoalDetails(current), levelTest: progress } },
+      where: { id: goal.id },
+    });
+
+    return true;
+  });
+}
+
+/**
+ * One of the learner's language goals with its test so far and the pair's questions, or since
+ * when they're being written. Read-only: the questions are written by a workflow.
+ */
+export async function loadLevelTestContext(
+  goalId: string,
+  knownOwned?: OwnedGoal,
+): Promise<LevelTestContext> {
+  const owned = knownOwned ?? (await findOwnedGoal(goalId));
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const { goal, userId } = owned;
+  const { targetLanguage } = goal;
+
+  if (goal.kind !== "language" || !targetLanguage) {
+    return { status: "notLanguage" };
+  }
+
+  const state: LevelTestBankState = await loadLevelTestBank({
+    language: goal.language,
+    targetLanguage,
+  });
+
+  return {
+    bank: state.status === "ready" ? state.bank : null,
+    bankStartedAt: state.status === "preparing" ? state.startedAt : null,
+    owned: { goal: { ...goal, targetLanguage }, userId },
+    progress: readLevelTestProgress(goal),
+    status: "ready",
+  };
+}
+
+/** What the test screen shows next: a question without its answer, the sentence to say, or done. */
+export function toLevelTestView({
+  bank,
+  bankStartedAt = null,
+  goal,
+  lastCorrect = null,
+  progress,
+}: {
+  bank: LevelTestBank | null;
+  bankStartedAt?: Date | null;
+  goal: LevelTestGoal["goal"];
+  lastCorrect?: boolean | null;
+  progress: LevelTestProgress;
+}): LanguageLevelTestView {
+  if (!bank) {
+    return {
+      expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
+      startedAt: bankStartedAt?.toISOString() ?? null,
+      status: "preparing",
+    };
+  }
+
+  const { start } = progress;
+  const step = getNextLevelTestStep({ bank, progress, start });
+  const scores = getLevelTestScores({ bank, progress, start });
+
+  const next =
+    step.kind === "question"
+      ? {
+          kind: "question" as const,
+          question: {
+            id: step.question.id,
+            level: step.question.level,
+            options: step.question.options,
+            passage: step.question.passage,
+            question: step.question.question,
+            skill: step.question.skill,
+          },
+        }
+      : step;
+
+  return {
+    answered: progress.answers.length + (progress.speaking ? 1 : 0),
+    lastCorrect,
+    levels: listLevelTestLevels(scores),
+    next,
+    status: "ready",
+    targetLanguage: goal.targetLanguage,
+    total: LEVEL_TEST_TOTAL,
+  };
+}

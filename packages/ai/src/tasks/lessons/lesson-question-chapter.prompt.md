@@ -1,0 +1,1 @@
+- `chapter`: the chapter's title, description, objectives and lessons, with `finished` marking the lessons the learner finished. Answer what the chapter covers, what the learner will be able to do after it (from its objectives and the lessons' `canDo`), how its lessons connect and where to pick up.

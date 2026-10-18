@@ -1,13 +1,15 @@
-import { describe, expect, it, vi } from "vitest";
+import { shuffle } from "@zoonk/utils/shuffle";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
 
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
-const shuffleMock = vi.hoisted(() => vi.fn((items: readonly unknown[]) => [...items]));
-
-vi.mock("@zoonk/utils/shuffle", () => ({ shuffle: shuffleMock }));
+/** Shuffles keep the order options are built in, unless a test shuffles them itself. */
+function keepOrder() {
+  vi.mocked(shuffle).mockImplementation((items) => [...items]);
+}
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -49,7 +51,6 @@ function makeStep(
     position: 0,
     sentence,
     sentenceWordOptions: [],
-    sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],
     word: null,
@@ -58,17 +59,12 @@ function makeStep(
 }
 
 function makeDistractorWord(overrides: Partial<DistractorWord> = {}): DistractorWord {
-  return {
-    audioUrl: null,
-    id: "distractor-1",
-    pronunciation: null,
-    romanization: null,
-    word: "word",
-    ...overrides,
-  };
+  return { audioUrl: null, id: "distractor-1", romanization: null, word: "word", ...overrides };
 }
 
 describe(buildWordBankOptions, () => {
+  beforeEach(keepOrder);
+
   it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
@@ -100,7 +96,6 @@ describe(buildWordBankOptions, () => {
         makeDistractorWord({
           audioUrl: "/audio/dog.mp3",
           id: "dog-1",
-          pronunciation: "EE-noo",
           romanization: "inu",
           word: "犬",
         }),
@@ -110,7 +105,6 @@ describe(buildWordBankOptions, () => {
 
     expect(options.find((option) => option.word === "犬")).toStrictEqual({
       audioUrl: "/audio/dog.mp3",
-      pronunciation: "EE-noo",
       romanization: "inu",
       translation: null,
       word: "犬",
@@ -149,7 +143,6 @@ describe(buildWordBankOptions, () => {
 
     expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
-      pronunciation: null,
       romanization: null,
       translation: null,
       word: "noite",
@@ -181,7 +174,7 @@ describe(buildWordBankOptions, () => {
   });
 
   it("shuffles reading distractors before applying the visible cap", () => {
-    shuffleMock
+    vi.mocked(shuffle)
       .mockImplementationOnce((items: readonly unknown[]) => [...items].toReversed())
       .mockImplementationOnce((items: readonly unknown[]) => [...items]);
 
@@ -248,53 +241,62 @@ describe(buildWordBankOptions, () => {
 });
 
 describe(buildSentenceWordOptions, () => {
+  beforeEach(keepOrder);
+
   it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions(
-      "Guten Morgen",
-      [makeLessonWord({ romanization: "guten morgen", word: "Guten Morgen" })],
+      "おはよう ございます",
+      [makeLessonWord({ romanization: "ohayou gozaimasu", word: "おはよう ございます" })],
       [],
       new Map(),
     );
 
     expect(options).toStrictEqual([
-      {
-        audioUrl: null,
-        pronunciation: null,
-        romanization: "guten",
-        translation: null,
-        word: "Guten",
-      },
-      {
-        audioUrl: null,
-        pronunciation: null,
-        romanization: "morgen",
-        translation: null,
-        word: "Morgen",
-      },
+      { audioUrl: null, romanization: "ohayou", translation: null, word: "おはよう" },
+      { audioUrl: null, romanization: "gozaimasu", translation: null, word: "ございます" },
+    ]);
+  });
+
+  it("shows no romanization or respelling under a word already in Latin letters", () => {
+    const options = buildSentenceWordOptions(
+      "Guten Morgen",
+      [
+        makeLessonWord({
+          pronunciation: "GOO-ten",
+          romanization: "guten morgen",
+          word: "Guten Morgen",
+        }),
+      ],
+      [],
+      new Map(),
+    );
+
+    expect(options).toStrictEqual([
+      { audioUrl: null, romanization: null, translation: null, word: "Guten" },
+      { audioUrl: null, romanization: null, translation: null, word: "Morgen" },
     ]);
   });
 
   it("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
     const options = buildSentenceWordOptions(
-      "Hola",
+      "Привет",
       [
         makeLessonWord({
-          audioUrl: "/audio/hola.mp3",
+          audioUrl: "/audio/privet.mp3",
           romanization: null,
           translation: "hello",
-          word: "Hola",
+          word: "Привет",
         }),
       ],
       [],
       new Map([
         [
-          "hola",
+          "привет",
           {
-            audioUrl: "/audio/hola-sentence.mp3",
-            pronunciation: "OH-lah",
-            romanization: "o-la",
+            audioUrl: "/audio/privet-sentence.mp3",
+            romanization: "privet",
             translation: "hello from sentence",
-            word: "Hola",
+            word: "Привет",
           },
         ],
       ]),
@@ -302,29 +304,27 @@ describe(buildSentenceWordOptions, () => {
 
     expect(options).toStrictEqual([
       {
-        audioUrl: "/audio/hola-sentence.mp3",
-        pronunciation: "OH-lah",
-        romanization: "o-la",
+        audioUrl: "/audio/privet-sentence.mp3",
+        romanization: "privet",
         translation: "hello",
-        word: "Hola",
+        word: "Привет",
       },
     ]);
   });
 
   it("uses sentence word translations when lesson words do not provide one", () => {
     const options = buildSentenceWordOptions(
-      "Hola",
+      "Привет",
       [],
       [],
       new Map([
         [
-          "hola",
+          "привет",
           {
-            audioUrl: "/audio/hola-sentence.mp3",
-            pronunciation: "OH-lah",
-            romanization: "o-la",
+            audioUrl: "/audio/privet-sentence.mp3",
+            romanization: "privet",
             translation: "hello",
-            word: "Hola",
+            word: "Привет",
           },
         ],
       ]),
@@ -332,11 +332,10 @@ describe(buildSentenceWordOptions, () => {
 
     expect(options).toStrictEqual([
       {
-        audioUrl: "/audio/hola-sentence.mp3",
-        pronunciation: "OH-lah",
-        romanization: "o-la",
+        audioUrl: "/audio/privet-sentence.mp3",
+        romanization: "privet",
         translation: "hello",
-        word: "Hola",
+        word: "Привет",
       },
     ]);
   });

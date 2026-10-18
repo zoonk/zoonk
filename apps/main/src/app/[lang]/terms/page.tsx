@@ -1,5 +1,8 @@
+import { LegalDocument } from "@/components/public/legal-document";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
+
+export const ensureStatic = "navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -18,8 +21,8 @@ export default async function Terms() {
   const { default: TermsOfService } = await import(`./${locale}.mdx`);
 
   return (
-    <main className="prose dark:prose-invert max-w-full p-4">
+    <LegalDocument pathname="/terms">
       <TermsOfService />
-    </main>
+    </LegalDocument>
   );
 }

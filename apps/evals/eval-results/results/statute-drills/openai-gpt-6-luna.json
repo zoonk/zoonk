@@ -1,0 +1,288 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "Drill 3 incorrectly marks a narrower, still-entailed prohibition as false, triggering the cap of 7 for one wrong key. The other five keys agree with the supplied texts. The reasons quote the relevant passages correctly and identify the appropriate caput or inciso.",
+          "score": 7,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "Each intended false statement changes exactly one textual element: “ou” to “e”, “dia” to “noite”, or “inafiançável” to “afiançável”. Each misconception precisely names that change, and the surrounding wording is preserved. The incorrect legal effect attributed to the first substitution is assessed under legal accuracy.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "All six drills use the requested right/wrong format in Brazilian Portuguese, with three labeled true and three labeled false. Statements retain the constitutional wording or faithfully paraphrase it, and explanations clearly identify the relevant text and intended changes.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "The six drills cover all five supplied provisions and include easy, medium, and hard difficulty labels. The two drills on inciso XI test distinct elements: emergency exceptions and the time condition for judicially ordered entry. No element is tested twice in the same way.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2657,
+          "outputTokens": 881,
+          "reasoningTokens": 373
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Drill 3 has a wrong key. Prohibiting treatment that is both inhuman and degrading is entailed by the supplied prohibition of treatment that is inhuman or degrading. The statement does not say that only treatment meeting both conditions is prohibited. Under the rubric's explicit rule that incomplete statements remain true, changing “ou” to “e” here does not make the statement false.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
+        "id": "pt-cebraspe-cf88-art5-direitos-fundamentais-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 5º, caput",
+              "text": "Art. 5º Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade, nos termos seguintes:"
+            },
+            {
+              "reference": "Art. 5º, II",
+              "text": "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei;"
+            },
+            {
+              "reference": "Art. 5º, III",
+              "text": "III - ninguém será submetido a tortura nem a tratamento desumano ou degradante;"
+            },
+            {
+              "reference": "Art. 5º, XI",
+              "text": "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;"
+            },
+            {
+              "reference": "Art. 5º, XLII",
+              "text": "XLII - a prática do racismo constitui crime inafiançável e imprescritível, sujeito à pena de reclusão, nos termos da lei;"
+            }
+          ],
+          "count": 6,
+          "language": "pt",
+          "law": {
+            "shortName": "CF/88",
+            "title": "Constituição da República Federativa do Brasil de 1988",
+            "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+          },
+          "style": "cebraspe"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All supplied answer keys agree with the input. The first true statement permissibly omits the timing qualification without denying it; the false statement reverses “unlikely” to “likely.” Both multiple-choice questions have exactly one text-supported answer, and all explanations quote and cite the correct paragraph. The blank reproduces an exact sentence with the correct answer removed. No wrong-key or misquotation cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false statement and every wrong option make identifiable single-element substitutions, and their misconceptions name those substitutions. However, the only gap removes the generic cross-reference noun “Article,” rather than an operative term governing a role, deadline, condition, or duty. Because this is the sole gap, the cap of 6 for mostly filler gaps applies. Several multiple-choice traps also depart from the task-specific requested trap dimensions.",
+          "score": 6,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The result provides the requested generic mix of true/false, a fill-in-the-blank passage, and four-option literal-text multiple choice. It consistently uses English, preserves the source's legal phrasing, and explains the substitutions clearly. No language-mixing or exam-style cap applies.",
+          "score": 9,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All three supplied paragraphs appear, and no two drills test the same element in the same way, so the majority-concentration cap does not apply. Nevertheless, the set is one drill short, omits direct testing of the central 72-hour deadline, undue-delay requirement, and duty to document every breach, and labels a straightforward cross-reference completion as hard. These omissions limit substantive coverage and difficulty variety.",
+          "score": 7,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "7 of 8 parts passed. Article 33(2) (typed): Repeats an earlier drill.",
+          "score": 8.875,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2898,
+          "outputTokens": 1159,
+          "reasoningTokens": 490
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The result supplies only five of the six requested drills. Its only fill-in-the-blank removes “Article,” a generic cross-reference completion rather than the requested load-bearing breach-notification or documentation language.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sole “hard” drill is a simple completion and does not provide meaningful difficulty progression. The multiple-choice traps test neighboring article numbers and documentation details rather than the specifically requested deadline, notification roles, risk exception, and duty to document every breach. Neither the 72-hour deadline nor the scope of “any personal data breaches” is tested.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a sixth drill on the 72-hour deadline, replace the existing blank with an exact passage omitting “without undue delay” or “controller,” and redirect a multiple-choice question toward the duty to document every breach. Preserve the existing accurate quotations and explicit explanations of changed words.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "style": "generic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "Checked against the supplied excerpts, each drill has exactly one option matching the relevant text, with the other options changing a textual element. All keys, quoted fragments, and article references are correct. Conditions omitted from the correct consequence-only options are supplied in their question stems. No wrong-key or misquotation cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The distractors generally make single-element changes to deadlines, triggering events, paragraph references, mandatory wording, or legal consequences. However, the option requiring an already sworn-in servant to take office within fifteen days of taking office is conspicuously circular and weakens the intended careful-reading trap. This is one implausible trap, not several, so the stated cap is not triggered.",
+          "score": 8,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "All four drills use four-option multiple choice in Brazilian Portuguese, preserve statutory vocabulary, and provide Portuguese explanations of the substitutions. However, two drills mix short consequence-only options with full conditional provisions even though their stems already establish the condition. This makes the alternatives less clear and parallel than they should be. The set remains recognizably in the requested format, so the out-of-place-style cap does not apply.",
+          "score": 8,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "Each of the four supplied provisions receives one drill. The set covers both deadlines, their starting points, and the distinct consequences of missing posse and exercício deadlines. It includes easy, medium, and hard items and does not duplicate the same provision-and-element test. No concentration or repetition cap applies.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3538,
+          "outputTokens": 1018,
+          "reasoningTokens": 387
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The fourth option in the Art. 15, § 1º drill gives an already sworn-in servant a deadline to take office counted from taking office. Although it changes only one element, the circular wording makes the distractor implausible rather than subtle. The Art. 13, § 6º and Art. 15, § 2º drills also mix consequence-only answers with answers that repeat and alter conditions already supplied in the question, reducing clarity and parallelism.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Vary the position of the correct answer; it is first in all four drills. Make the less specific misconception labels identify the actual substitution, such as 'Troca tornar sem efeito por anular', rather than merely saying the consequence changed.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "FGV-style multiple choice in Brazilian Portuguese on the deadlines for taking office (posse) and starting work (exercício) in Law 8.112/1990. Each item has 4 options, one reproducing the text and the others changing one element: thirty days for posse counted from the publication of the appointment, fifteen days for exercício counted from the posse, the appointment made void or the servant dismissed when a deadline is missed. Check every option against the given text.",
+        "id": "pt-fgv-lei8112-posse-exercicio-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 13, § 1º",
+              "text": "§ 1º A posse ocorrerá no prazo de trinta dias contados da publicação do ato de provimento."
+            },
+            {
+              "reference": "Art. 13, § 6º",
+              "text": "§ 6º Será tornado sem efeito o ato de provimento se a posse não ocorrer no prazo previsto no § 1º deste artigo."
+            },
+            {
+              "reference": "Art. 15, § 1º",
+              "text": "§ 1º É de quinze dias o prazo para o servidor empossado em cargo público entrar em exercício, contados da data da posse."
+            },
+            {
+              "reference": "Art. 15, § 2º",
+              "text": "§ 2º O servidor será exonerado do cargo ou será tornado sem efeito o ato de sua designação para função de confiança, se não entrar em exercício nos prazos previstos neste artigo, observado o disposto no art. 18."
+            }
+          ],
+          "count": 4,
+          "language": "pt",
+          "law": {
+            "shortName": "Lei nº 8.112/1990",
+            "title": "Lei nº 8.112, de 11 de dezembro de 1990 (regime jurídico dos servidores públicos civis da União)",
+            "url": "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm"
+          },
+          "style": "fgv"
+        }
+      }
+    }
+  ],
+  "taskId": "statute-drills"
+}

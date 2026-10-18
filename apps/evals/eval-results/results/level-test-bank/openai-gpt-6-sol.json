@@ -1,0 +1,130 @@
+{
+  "modelId": "openai/gpt-6-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The explicit cap of 5 applies because individual questions are clearly below their labeled level: the B2 clinic question asks for straightforward logistical deduction, and the C1 invitation tests a familiar, readily recognizable polite refusal. Elsewhere, A1 tests single stated facts, A2 tests simple information, and B1 appropriately tests reasons, main points, and opinions. The speaking sentences progress well from six simple words to a 23-word inverted conditional with an idiom, but that strength cannot offset the reading/listening calibration failures.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All marked indexes identify the supported option, and each question has one clearly best answer. For example, the garden passage supports helping with watering rather than obtaining an assigned bed, and the newsletter speaker combines workload complaints with satisfaction in the finished product. Options are generally comparable in length and require passage information. No wrong-key or multiple-defensible-answer cap is triggered.",
+          "score": 9,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences use natural English compatible with US usage; questions, options, and translations are in Brazilian Portuguese. Written reviews, notices, and correspondence are distinguishable from conversational messages and announcements. Contexts vary substantially across shopping, transportation, housing, classes, work, healthcare, and community activities, without brands, named real people, or stereotypes. No wrong-language cap applies.",
+          "score": 9,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4117,
+          "inputTokens": 4120,
+          "outputTokens": 1162,
+          "reasoningTokens": 609
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Some questions are clearly below their assigned levels. The B2 clinic item primarily requires selecting the available entrance from concrete logistical facts, rather than interpreting attitude, purpose, or implication in denser text. The C1 panel invitation presents a conventional polite refusal without enough nuance to distinguish it clearly from B2. These issues trigger the calibration cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Revise the clinic item to test an implied purpose or speaker attitude rather than practical entrance selection. For the C1 invitation, introduce a subtler distinction between the writer's expressed appreciation and underlying reservations. Preserve the successful progression in speaking length and grammatical complexity.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Brazilian learners: questions, options and translations in Brazilian Portuguese. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-en-1",
+        "userInput": { "learnerLanguage": "pt", "targetLanguage": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 tests single stated facts, A2 generally tests simple factual relationships, and B1 appropriately tests main points, reasons, and opinions. Speaking sentences increase from five to twenty words with increasing structural complexity. However, the B2 square and report items require only straightforward inferences from short, accessible messages, without the expected denser text. The C1 theater item tests a broad evaluative contrast much like the B2 restaurant item, rather than distinctively C1 nuance. These wrong-level demands trigger the maximum score of 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most marked answers are uniquely supported, and option lengths are generally comparable. However, the A2 train passage does not establish what happens on Friday: packing tomorrow only answers the question if an unstated current day is assumed. Thus no option is securely supported as the activity on the day before the Saturday train, triggering the maximum score of 4. Several distractors elsewhere are also insufficiently plausible.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences use natural Brazilian Portuguese, including você and conversational forms such as direitinho and forçar a barra. Questions, options, and translations are in natural US English. Reading texts resemble notices, reviews, and written updates; listening texts work as announcements or spoken messages. Situations are varied, with no brands, named real people, or stereotypes. No wrong-language cap applies.",
+          "score": 10,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4157,
+          "inputTokens": 4160,
+          "outputTokens": 1005,
+          "reasoningTokens": 355
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The A2 train question asks what happens the day before Saturday, but the passage only says the suitcase will be packed tomorrow; it never establishes that tomorrow is Friday. The keyed answer therefore depends on an unstated assumption. Calibration also weakens at the upper levels: several B2 items use short, straightforward texts and elementary inferences rather than denser B2 material, while the C1 theater question asks for a broad overall judgment rather than nuanced tone or implication.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are too implausible to function well. For example, waiting until the exhibition closes is not a credible recommendation for visiting it, and missing a train downtown has no grounding in the B1 hiking message. These options make elimination easier without testing the intended comprehension.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the train timeline explicit, such as stating that today is Thursday. Increase B2 textual density and competing cues, and make the C1 theater question target the implication that the ending delegates unresolved narrative work to the audience. Replace unsupported distractors with plausible misreadings of information actually present.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Brazilian Portuguese passages and sentences (Brazilian words and forms, \"você\", not European Portuguese) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-pt-1",
+        "userInput": { "learnerLanguage": "en", "targetLanguage": "pt" }
+      }
+    }
+  ],
+  "taskId": "level-test-bank"
+}
