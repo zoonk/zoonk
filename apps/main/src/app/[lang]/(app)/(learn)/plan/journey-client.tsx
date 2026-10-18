@@ -177,8 +177,8 @@ function useGoalStatus({
 
 /**
  * The Plan, read again while lessons in it are still being written, and when it opens from an
- * old prefetched copy. Its "…" leads to the buddy's conversation for questions about the plan, as
- * the plan editor's last row does.
+ * old prefetched copy whose plan changed since. Its "…" leads to the buddy's conversation for
+ * questions about the plan, as the plan editor's last row does.
  */
 export function JourneyClient({
   actions,
@@ -194,8 +194,8 @@ export function JourneyClient({
   ...props
 }: JourneyClientProps & { buddy: PlanTutor["buddy"] }) {
   const router = useRouter();
-  useRefreshWhenOld(readAt);
   const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, watch: "plan" });
+  useRefreshWhenOld(readAt, refreshOnPlanChange);
   const languageStanding = useLanguageStanding(language);
   const status = useGoalStatus({ goalId, resume, status: goalStatus });
   const arrival = useArrivalChoice();

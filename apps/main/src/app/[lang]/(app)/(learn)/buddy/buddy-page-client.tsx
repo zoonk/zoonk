@@ -4,6 +4,7 @@ import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearan
 import { useRouter } from "@/i18n/navigation";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
+import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
@@ -107,7 +108,9 @@ export function BuddyPageClient({
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId);
-  useRefreshWhenOld(readAt);
+  // The buddy's day (its missions, the energy they spent) moves with the goal's sessions.
+  const refreshIfChanged = useRefreshOnPlanChange({ goalId, readAt, watch: "today" });
+  useRefreshWhenOld(readAt, refreshIfChanged);
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },

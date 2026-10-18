@@ -9,6 +9,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { runtimePrefetchRead } from "./runtime-prefetch";
 import { openAs } from "./study-day";
 
 /**
@@ -73,6 +74,52 @@ async function createPlanBeingWritten(goalId: string) {
   return { chapter, landOutline };
 }
 
+// The Plan opened from a copy older than a few seconds (a link's prefetch, a visit a while ago) read
+// itself whole again each time, a second render that also dropped every page the browser had
+// prefetched: it asks whether its plan changed, and reads itself again only when it did.
+test("an old copy of the Plan asks whether it changed instead of reading itself again", async ({
+  browser,
+}) => {
+  const { goal, user } = await createPlanLearner();
+  await createPlanBeingWritten(goal.id);
+
+  const page = await openAs(browser, user);
+  await page.clock.install();
+
+  const prefetched = runtimePrefetchRead(page, "/plan");
+  await page.goto("/stats");
+  await prefetched;
+
+  // The prefetched copy grows older than a few seconds before the learner opens it.
+  await page.clock.fastForward(5000);
+
+  const requests = { asked: 0, reads: 0 };
+
+  page.on("request", (request) => {
+    const headers = request.headers();
+
+    if (headers["next-action"]) {
+      requests.asked += 1;
+    } else if (
+      headers.rsc &&
+      !headers["next-router-prefetch"] &&
+      new URL(request.url()).pathname === "/plan"
+    ) {
+      requests.reads += 1;
+    }
+  });
+
+  await page
+    .locator('[data-slot="learn-side-navigation"]')
+    .getByRole("link", { name: /^Plan/u })
+    .click();
+
+  await expect(page.getByRole("list", { name: "Your path" }).getByText(WRITING_LINE)).toBeVisible();
+  await expect.poll(() => requests.asked).toBeGreaterThan(0);
+  expect(requests.reads).toBe(0);
+  await page.context().close();
+});
+
 test.describe("Lessons being written in the plan", () => {
   test("the lesson being written turns into its chapter on the Plan on its own", async ({
     browser,
@@ -119,9 +166,8 @@ test.describe("Lessons being written in the plan", () => {
 
     const requests = { asked: 0, readsAfterAsking: 0 };
 
-    // Counted as they're sent. A page that hydrates after the clock moved on reads itself once as
-    // an old copy (`useRefreshWhenOld`) before it starts asking; what matters is that asking never
-    // reads it.
+    // Counted as they're sent. A page that hydrates after the clock moved on asks once more as an
+    // old copy (`useRefreshWhenOld`); what matters is that asking never reads it.
     page.on("request", (request) => {
       const headers = request.headers();
 

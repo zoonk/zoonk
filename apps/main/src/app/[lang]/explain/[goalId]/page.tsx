@@ -1,6 +1,5 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { getReadAt } from "@/lib/learn/read-at";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
@@ -28,11 +27,10 @@ async function ExplainContent({ params }: Props) {
     notFound();
   }
 
-  const [result, session, profile, readAt] = await Promise.all([
+  const [result, session, profile] = await Promise.all([
     getExplanation({ goalId }),
     getSession(),
     getLearningProfile(),
-    getReadAt(),
   ]);
 
   if (result.status === "unauthorized") {
@@ -48,7 +46,6 @@ async function ExplainContent({ params }: Props) {
       <ExplainClient
         explanation={result.explanation}
         hasSession={Boolean(session)}
-        readAt={readAt}
         soundsEnabled={profile?.soundsEnabled ?? true}
       />
     </MainLearnProvider>
